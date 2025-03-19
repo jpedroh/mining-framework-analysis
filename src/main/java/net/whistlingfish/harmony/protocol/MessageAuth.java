@@ -18,22 +18,23 @@ public class MessageAuth {
     /*
      * Request
      */
-
     public static class AuthRequest extends OAStanza {
-        private LoginToken loginToken;
 
         public AuthRequest() {
             super(MIME_TYPE);
-            this.loginToken = loginToken;
             setType(IQ.Type.get);
         }
 
         @Override
         protected Map<String, Object> getChildElementPairs() {
-
-            return ImmutableMap.<String, Object> builder() //
-                    .put(loginToken != null ? "token" : "method", 
-                            loginToken!= null ? loginToken.getUserAuthToken() : "pair")
+       		return ImmutableMap.<String, Object> builder() //
+<<<<<<< /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/protocol/MessageAuth.java/left.java
+                    .put(loginToken != null ? "method" : "method", "pair")
+||||||| /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/protocol/MessageAuth.java/base.java
+                    .put(loginToken != null ? "method" : "method", loginToken.getUserAuthToken())
+=======
+                    .put(loginToken != null ? "method" : "method", loginToken!= null ? loginToken.getUserAuthToken() : "pair")
+>>>>>>> /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/protocol/MessageAuth.java/right.java
                     .put("name", generateUniqueId() + "#" + getDeviceIdentifier())
                     .build();
       		

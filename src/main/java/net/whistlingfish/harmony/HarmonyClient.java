@@ -13,6 +13,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+<<<<<<< /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/left.java
+||||||| /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/base.java
+import javax.inject.Inject;
+
+=======
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -40,15 +45,19 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+>>>>>>> /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/right.java
 import net.whistlingfish.harmony.config.Activity;
 import net.whistlingfish.harmony.config.Device;
 import net.whistlingfish.harmony.config.HarmonyConfig;
 import net.whistlingfish.harmony.protocol.EmptyIncrementedIdReplyFilter;
-
+<<<<<<< /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/left.java
+||||||| /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/base.java
+import net.whistlingfish.harmony.protocol.LoginToken;
+=======
 import net.whistlingfish.harmony.protocol.HarmonyBindIQProvider;
 import net.whistlingfish.harmony.protocol.HarmonyXMPPTCPConnection;
 import net.whistlingfish.harmony.protocol.LoginToken;
-
+>>>>>>> /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/right.java
 import net.whistlingfish.harmony.protocol.MessageAuth.AuthReply;
 import net.whistlingfish.harmony.protocol.MessageAuth.AuthRequest;
 import net.whistlingfish.harmony.protocol.MessageGetConfig.GetConfigReply;
@@ -112,6 +121,20 @@ public class HarmonyClient {
         }
     }
 
+<<<<<<< /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/left.java
+    // This method is for backwards compatibility
+    public void connect(String host, String username, String password) {
+    	this.connect(host);
+    }
+    
+    // No need for username password with pair method
+    public void connect(String host) {
+        ConnectionConfiguration connectionConfig = createConnectionConfig(host, DEFAULT_PORT);
+        XMPPTCPConnection authConnection = new XMPPTCPConnection(connectionConfig);
+||||||| /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/base.java
+        ConnectionConfiguration connectionConfig = createConnectionConfig(host, DEFAULT_PORT);
+        XMPPTCPConnection authConnection = new XMPPTCPConnection(connectionConfig);
+=======
     public void connect(String host) {
         connect(host, null);
     }
@@ -121,7 +144,7 @@ public class HarmonyClient {
 
         XMPPTCPConnectionConfiguration connectionConfig = createConnectionConfig(host, DEFAULT_PORT);
         HarmonyXMPPTCPConnection authConnection = new HarmonyXMPPTCPConnection(connectionConfig);
-
+>>>>>>> /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/right.java
         try {
             addPacketLogging(authConnection, "auth");
 
@@ -130,8 +153,16 @@ public class HarmonyClient {
             authConnection.login(DEFAULT_XMPP_USER, DEFAULT_XMPP_PASSWORD, Resourcepart.from("auth"));
             authConnection.setFromMode(FromMode.USER);
 
+<<<<<<< /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/left.java
+            AuthRequest sessionRequest = createPairSessionRequest();
+            AuthReply oaResponse = sendOAPacket(authConnection, sessionRequest, AuthReply.class);
+||||||| /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/base.java
+            AuthRequest sessionRequest = createSessionRequest(loginToken);
+            AuthReply oaResponse = sendOAPacket(authConnection, sessionRequest, AuthReply.class);
+=======
             AuthRequest sessionRequest = createSessionRequest(loginToken);
             AuthReply oaResponse = sendOAStanza(authConnection, sessionRequest, AuthReply.class);
+>>>>>>> /usr/src/app/output/tuck182/harmony-java-client/fb735c719e4cfcc69791ce5365a58de81b892eab/src/main/java/net/whistlingfish/harmony/HarmonyClient.java/right.java
 
             authConnection.disconnect();
 
