@@ -100,6 +100,37 @@ public class KeePassFileBuilder implements KeePassFileContract {
 		return new KeePassFile(this);
 	}
 
+<<<<<<< /usr/src/app/output/cternes/openkeepass/6218ade3f2e50f22e5e263714197f176e856c5a2/src/main/java/de/slackspace/openkeepass/domain/KeePassFileBuilder.java/left.java
+||||||| /usr/src/app/output/cternes/openkeepass/6218ade3f2e50f22e5e263714197f176e856c5a2/src/main/java/de/slackspace/openkeepass/domain/KeePassFileBuilder.java/base.java
+	/**
+	 * Returns a {@link GroupZipper} with the structure of the builders
+	 * {@link KeePassFile} as underlying data.
+	 * <p>
+	 * A GroupZipper can be used to easily modify existing KeePass files.
+	 *
+	 * @return a new group zipper
+	 */
+	public GroupZipper getZipper() {
+		return new GroupZipper(keePassFile);
+	}
+
+=======
+	/**
+	 * Returns a {@link GroupZipper} with the structure of the builders
+	 * {@link KeePassFile} as underlying data.
+	 * <p>
+	 * A GroupZipper can be used to easily modify existing KeePass files.
+	 *
+	 * @return a new group zipper
+	 * @deprecated use {@link GroupZipper} directly instead
+	 * @see GroupZipper
+	 */
+	@Deprecated
+	public GroupZipper getZipper() {
+		return new GroupZipper(keePassFile);
+	}
+
+>>>>>>> /usr/src/app/output/cternes/openkeepass/6218ade3f2e50f22e5e263714197f176e856c5a2/src/main/java/de/slackspace/openkeepass/domain/KeePassFileBuilder.java/right.java
 	private void setTopGroupNameIfNotExisting() {
 		if (rootBuilder.getGroups().isEmpty()) {
 			rootBuilder.addGroup(topGroupBuilder.name(meta.getDatabaseName()).build());
