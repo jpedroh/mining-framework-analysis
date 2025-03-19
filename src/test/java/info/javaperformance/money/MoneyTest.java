@@ -345,8 +345,8 @@ public class MoneyTest extends TestCase {
         assertFalse(v4.isZero());
 		assertFalse(v5.isZero());
 		assertTrue(v6.isZero());
-    }
-    
+	}
+	
 	public void testMultiplicationIssue14() 
 	{
 		// allocation is 30%
