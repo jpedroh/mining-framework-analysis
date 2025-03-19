@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.nsgaii;
-
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
 import org.uma.jmetal.component.ranking.Ranking;
 import org.uma.jmetal.component.ranking.impl.ExperimentalFastNonDominanceRanking;
@@ -26,12 +25,12 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.observer.impl.RunTimeChartObserver;
 import org.uma.jmetal.util.observer.impl.WriteSolutionsToFilesObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
  * Class to configure and run the NSGA-II algorithm using the {@Link MergeSortNonDominatedSortRanking} algorithm.
+ * This algorithm can be applied to problems having three or more objectives.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
@@ -41,53 +40,34 @@ public class NSGAIIWithMNDSRankingExample extends AbstractAlgorithmRunner {
     NSGAII<DoubleSolution> algorithm;
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2";
-    String referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/DTLZ2.3D.pf";
-
+    String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
+    String referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf";
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int populationSize = 100;
     int offspringPopulationSize = populationSize;
-
-    Termination termination = new TerminationByEvaluations(75000);
-
-    Ranking<DoubleSolution> ranking =
-        new MergeSortNonDominatedSortRanking<>();
-
-    algorithm =
-        new NSGAII<>(
-                problem,
-                populationSize,
-                offspringPopulationSize,
-                crossover,
-                mutation,
-                termination,
-                ranking);
-
+    Termination termination = new TerminationByEvaluations(
+<<<<<<< /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-example/src/main/java/org/uma/jmetal/example/multiobjective/nsgaii/NSGAIIWithMNDSRankingExample.java/left.java
+    100000
+=======
+    25000
+>>>>>>> /usr/src/app/output/jmetal/jmetal/8402adb2ef2acf51473409b69ca9de43609d86a6/jmetal-example/src/main/java/org/uma/jmetal/example/multiobjective/nsgaii/NSGAIIWithMNDSRankingExample.java/right.java
+    );
+    Ranking<DoubleSolution> ranking = new MergeSortNonDominatedSortRanking<>();
+    algorithm = new NSGAII<>(problem, populationSize, offspringPopulationSize, crossover, mutation, termination, ranking);
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }
