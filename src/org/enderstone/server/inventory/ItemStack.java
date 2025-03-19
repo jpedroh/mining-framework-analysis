@@ -1,30 +1,10 @@
-/* 
- * Enderstone
- * Copyright (C) 2014 Sander Gielisse and Fernando van Loenhout
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.enderstone.server.inventory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.enderstone.server.regions.BlockId;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
@@ -39,108 +19,117 @@ import org.jnbt.Tag;
  * @author Fernando
  */
 public class ItemStack implements Cloneable {
+  private short blockId;
 
-	private short blockId;
-	private byte amount;
-	private short damage;
-	private CompoundTag compoundTag;
+  private byte amount;
 
-	public ItemStack(short blockId, byte amount, short damage) {
-		this(blockId, amount, damage, null);
-	}
+  private short damage;
 
-	public ItemStack(short blockId, byte amount, short damage, CompoundTag compoundTag) {
-		this.blockId = blockId;
-		this.amount = amount;
-		this.damage = damage;
-		this.compoundTag = compoundTag;
-		if (compoundTag == null) {
-			this.updateNBTData();
-		}
-	}
+  private CompoundTag compoundTag;
 
-	private void updateNBTData() {
-		Map<String, Tag> map = new HashMap<>();
-		if (map.isEmpty()) return;
-		this.compoundTag = new CompoundTag("Item", map);
-		//this.compoundTag = null;
-	}
+  public ItemStack(short blockId, byte amount, short damage, boolean generateNBT) {
+    this(blockId, amount, damage, null, generateNBT);
+  }
 
-	public short getBlockId() {
-		return blockId;
-	}
+  public ItemStack(short blockId, byte amount, short damage, CompoundTag compoundTag, boolean generateNBT) {
+    this.blockId = blockId;
+    this.amount = amount;
+    this.damage = damage;
+    this.compoundTag = compoundTag;
+    if (compoundTag == null && generateNBT) {
+      this.updateNBTData();
+    }
+  }
 
-	public void setBlockId(short blockId) {
-		this.blockId = blockId;
-	}
+  public void updateNBTData() {
+    Map<String, Tag> map = new HashMap<>();
+    if (map.isEmpty()) {
+      return;
+    }
+    this.compoundTag = new CompoundTag("Item", map);
+  }
 
-	public byte getAmount() {
-		return amount;
-	}
+  public short getBlockId() {
+    return blockId;
+  }
 
-	public void setAmount(byte amount) {
-		this.amount = amount;
-	}
+  public void setBlockId(short blockId) {
+    this.blockId = blockId;
+  }
 
-	public short getDamage() {
-		return damage;
-	}
+  public byte getAmount() {
+    return amount;
+  }
 
-	public void setDamage(short damage) {
-		this.damage = damage;
-	}
+  public void setAmount(byte amount) {
+    this.amount = amount;
+  }
 
-	public CompoundTag getCompoundTag() {
-		return compoundTag;
-	}
+  public short getDamage() {
+    return damage;
+  }
 
-	public void setCompoundTag(CompoundTag compoundTag) {
-		this.compoundTag = compoundTag;
-	}
+  public void setDamage(short damage) {
+    this.damage = damage;
+  }
 
-	@Override
-	@SuppressWarnings("CloneDeclaresCloneNotSupported")
-	public ItemStack clone() {
-		try {
-			ItemStack s = (ItemStack) super.clone();
-			if (compoundTag == null) return s;
-			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-			new NBTOutputStream(bytes).writeTag(compoundTag);
-			s.setCompoundTag((CompoundTag) new NBTInputStream(new ByteArrayInputStream(bytes.toByteArray())).readTag());
-			return s;
-		} catch (CloneNotSupportedException | IOException err) {
-			throw new AssertionError(err);
-		}
-	}
+  public CompoundTag getCompoundTag() {
+    return compoundTag;
+  }
 
-	public BlockId getId() {
-		return BlockId.byId(this.blockId);
-	}
+  public void setCompoundTag(CompoundTag compoundTag) {
+    this.compoundTag = compoundTag;
+  }
 
-	public boolean materialTypeMatches(ItemStack other) {
-		return other.blockId == this.blockId
-				&& other.damage == this.damage
-				&& (other.compoundTag == null ? this.compoundTag == null : other.compoundTag.equals(this.compoundTag));
-	}
+  @Override @SuppressWarnings(value = { "CloneDeclaresCloneNotSupported" }) public ItemStack clone() {
+    try {
+      ItemStack s = (ItemStack) super.clone();
+      if (compoundTag == null) {
+        return s;
+      }
+      ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+      new NBTOutputStream(bytes).writeTag(compoundTag);
+      s.setCompoundTag((CompoundTag) new NBTInputStream(new ByteArrayInputStream(bytes.toByteArray())).readTag());
+      return s;
+    } catch (CloneNotSupportedException | IOException err) {
+      throw new AssertionError(err);
+    }
+  }
 
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 23 * hash + this.blockId;
-		hash = 23 * hash + this.amount;
-		hash = 23 * hash + this.damage;
-		hash = 23 * hash + Objects.hashCode(this.compoundTag);
-		return hash;
-	}
+  public BlockId getId() {
+    return BlockId.byId(this.blockId);
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
-		final ItemStack other = (ItemStack) obj;
-		if (this.blockId != other.blockId) return false;
-		if (this.amount != other.amount) return false;
-		if (this.damage != other.damage) return false;
-		return Objects.equals(this.compoundTag, other.compoundTag);
-	}
+  public boolean materialTypeMatches(ItemStack other) {
+    return other.blockId == this.blockId && other.damage == this.damage && (other.compoundTag == null ? this.compoundTag == null : other.compoundTag.equals(this.compoundTag));
+  }
+
+  @Override public int hashCode() {
+    int hash = 3;
+    hash = 23 * hash + this.blockId;
+    hash = 23 * hash + this.amount;
+    hash = 23 * hash + this.damage;
+    hash = 23 * hash + Objects.hashCode(this.compoundTag);
+    return hash;
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ItemStack other = (ItemStack) obj;
+    if (this.blockId != other.blockId) {
+      return false;
+    }
+    if (this.amount != other.amount) {
+      return false;
+    }
+    if (this.damage != other.damage) {
+      return false;
+    }
+    return Objects.equals(this.compoundTag, other.compoundTag);
+  }
 }
