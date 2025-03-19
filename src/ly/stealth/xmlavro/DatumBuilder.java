@@ -109,19 +109,35 @@ public class DatumBuilder {
         throw new ConverterException("Unsupported schema type " + schema.getType());
     }
 
+<<<<<<< /usr/src/app/output/stealthly/xml-avro/4459180f2931d596524621a3b388e756cc4a22e9/src/ly/stealth/xmlavro/DatumBuilder.java/left.java
     private Object createArray(Schema schema, Element el) {
         NodeList childNodes = el.getChildNodes();
         Schema elementType = schema.getElementType();
+
         int numElements = childNodes.getLength();
         GenericData.Array array = new GenericData.Array(numElements, schema);
 
         for (int i = 0; i < numElements; i++) {
             Element child = (Element) childNodes.item(i);
-            //noinspection unchecked
             array.add(createNodeDatum(elementType, child, true));
         }
         return array;
     }
+||||||| /usr/src/app/output/stealthly/xml-avro/4459180f2931d596524621a3b388e756cc4a22e9/src/ly/stealth/xmlavro/DatumBuilder.java/base.java
+=======
+    private Object createArray(Schema schema, Element el) {
+        NodeList childNodes = el.getChildNodes();
+        final Schema elementType = schema.getElementType();
+        final int numElements = childNodes.getLength();
+        GenericData.Array array = new GenericData.Array(numElements, schema);
+
+        for (int i = 0; i < numElements; i++) {
+            Element child = (Element) childNodes.item(i);
+            array.add(createNodeDatum(elementType, child, true));
+        }
+        return array;
+    }
+>>>>>>> /usr/src/app/output/stealthly/xml-avro/4459180f2931d596524621a3b388e756cc4a22e9/src/ly/stealth/xmlavro/DatumBuilder.java/right.java
 
   private Object createUnionDatum(Schema union, Node source) {
         List<Schema> types = union.getTypes();
