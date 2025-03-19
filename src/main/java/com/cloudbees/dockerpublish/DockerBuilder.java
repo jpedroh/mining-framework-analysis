@@ -1,5 +1,4 @@
 package com.cloudbees.dockerpublish;
-
 import com.cloudbees.dockerpublish.DockerCLIHelper.InspectImageResponse;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.DescriptorExtensionList;
@@ -17,7 +16,6 @@ import hudson.tasks.Builder;
 import hudson.tools.ToolDescriptor;
 import hudson.tools.ToolInstallation;
 import hudson.util.FormValidation;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
-
 import org.apache.commons.io.output.TeeOutputStream;
 import org.jenkinsci.plugins.docker.commons.credentials.KeyMaterial;
 import org.jenkinsci.plugins.docker.commons.credentials.DockerRegistryEndpoint;
@@ -50,7 +46,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.apache.commons.lang.math.NumberUtils;
 
-
 /**
  * Plugin to build and publish docker projects to the docker registry/index.
  * This can optionally push, and bust cache.
@@ -58,382 +53,359 @@ import org.apache.commons.lang.math.NumberUtils;
  * @author Michael Neale
  */
 public class DockerBuilder extends Builder {
+  private static final Logger logger = Logger.getLogger(DockerBuilder.class.getName());
 
-    private static final Logger logger = Logger.getLogger(DockerBuilder.class.getName());
+  private static final Pattern IMAGE_BUILT_PATTERN = Pattern.compile("Successfully built ([0-9a-f]{12,})");
 
-    private static final Pattern IMAGE_BUILT_PATTERN = Pattern.compile("Successfully built ([0-9a-f]{12,})");
+  private DockerServerEndpoint server;
 
-    private DockerServerEndpoint server;
-    private DockerRegistryEndpoint registry;
-    private String repoName;
-    private boolean noCache;
-    private boolean forcePull;
-    @CheckForNull
-    private String buildContext;
-    @CheckForNull
-    private String dockerfilePath;
-    private boolean skipBuild;
-    private boolean skipDecorate;
-    @CheckForNull
-    private String repoTag;
-    private boolean skipPush = true;
-    private boolean createFingerprint = true;
-    private boolean skipTagLatest;
-    private String buildAdditionalArgs = "";
-    private boolean forceTag = false;
-    private String retryBuild;
-    
-    @CheckForNull
-    private String dockerToolName;
+  private DockerRegistryEndpoint registry;
 
-    @Deprecated
-    public DockerBuilder(String repoName, String repoTag, boolean skipPush, boolean noCache, boolean forcePull, boolean skipBuild, boolean skipDecorate, boolean skipTagLatest, String dockerfilePath) {
-        this(repoName);
-        this.repoTag = repoTag;
-        this.skipPush = skipPush;
-        this.noCache = noCache;
-        this.forcePull = forcePull;
-        this.dockerfilePath = dockerfilePath;
-        this.skipBuild = skipBuild;
-        this.skipDecorate = skipDecorate;
-        this.skipTagLatest = skipTagLatest;
-    }
+  private String repoName;
 
-    @DataBoundConstructor
-    public DockerBuilder(String repoName) {
-        this.server = new DockerServerEndpoint(null, null);
-        this.registry = new DockerRegistryEndpoint(null, null);
-        this.repoName = repoName;
-    }
+  private boolean noCache;
 
-    public DockerServerEndpoint getServer() {
-        return server;
-    }
+  private boolean forcePull;
 
-    @DataBoundSetter
-    public void setServer(DockerServerEndpoint server) {
-        this.server = server;
-    }
+  @CheckForNull private String buildContext;
 
-    public DockerRegistryEndpoint getRegistry() {
-        return registry;
-    }
+  @CheckForNull private String dockerfilePath;
 
-    @DataBoundSetter
-    public void setRegistry(DockerRegistryEndpoint registry) {
-        this.registry = registry;
-    }
+  private boolean skipBuild;
 
-    public String getRepoName() {
-        return repoName;
-    }
+  private boolean skipDecorate;
 
-    public boolean isNoCache() {
-        return noCache;
-    }
+  @CheckForNull private String repoTag;
 
-    @DataBoundSetter
-    public void setNoCache(boolean noCache) {
-        this.noCache = noCache;
-    }
+  private boolean skipPush = true;
 
-    public boolean isForcePull() {
-        return forcePull;
-    }
+  private boolean createFingerprint = true;
 
-    @DataBoundSetter
-    public void setForcePull(boolean forcePull) {
-        this.forcePull = forcePull;
-    }
+  private boolean skipTagLatest;
 
-    public String getBuildContext() {
-        return buildContext;
-    }
+  private String buildAdditionalArgs = "";
 
-    @DataBoundSetter
-    public void setBuildContext(String buildContext) {
-        this.buildContext = Util.fixEmptyAndTrim(buildContext);
-    }
+  private boolean forceTag = false;
 
-    public String getDockerfilePath() {
-        return dockerfilePath;
-    }
+  private String retryBuild;
 
-    @DataBoundSetter
-    public void setDockerfilePath(String dockerfilePath) {
-        this.dockerfilePath = Util.fixEmptyAndTrim(dockerfilePath);
-    }
-    
-    public String getBuildAdditionalArgs() {
-        return buildAdditionalArgs == null ? "" : buildAdditionalArgs;
-    }
+  @CheckForNull private String dockerToolName;
 
-    @DataBoundSetter
-    public void setBuildAdditionalArgs(String buildAdditionalArgs) {
-        this.buildAdditionalArgs = buildAdditionalArgs;
-    }
+  @Deprecated public DockerBuilder(String repoName, String repoTag, boolean skipPush, boolean noCache, boolean forcePull, boolean skipBuild, boolean skipDecorate, boolean skipTagLatest, String dockerfilePath) {
+    this(repoName);
+    this.repoTag = repoTag;
+    this.skipPush = skipPush;
+    this.noCache = noCache;
+    this.forcePull = forcePull;
+    this.dockerfilePath = dockerfilePath;
+    this.skipBuild = skipBuild;
+    this.skipDecorate = skipDecorate;
+    this.skipTagLatest = skipTagLatest;
+  }
 
-    public boolean isSkipBuild() {
-        return skipBuild;
-    }
+  @DataBoundConstructor public DockerBuilder(String repoName) {
+    this.server = new DockerServerEndpoint(null, null);
+    this.registry = new DockerRegistryEndpoint(null, null);
+    this.repoName = repoName;
+  }
 
-    @DataBoundSetter
-    public void setSkipBuild(boolean skipBuild) {
-        this.skipBuild = skipBuild;
-    }
+  public DockerServerEndpoint getServer() {
+    return server;
+  }
 
-    public boolean isSkipDecorate() {
-        return skipDecorate;
-    }
+  @DataBoundSetter public void setServer(DockerServerEndpoint server) {
+    this.server = server;
+  }
 
-    @DataBoundSetter
-    public void setSkipDecorate(boolean skipDecorate) {
-        this.skipDecorate = skipDecorate;
-    }
+  public DockerRegistryEndpoint getRegistry() {
+    return registry;
+  }
 
-    public String getRepoTag() {
-        return repoTag;
-    }
+  @DataBoundSetter public void setRegistry(DockerRegistryEndpoint registry) {
+    this.registry = registry;
+  }
 
-    @DataBoundSetter
-    public void setRepoTag(String repoTag) {
-        this.repoTag = repoTag;
-    }
+  public String getRepoName() {
+    return repoName;
+  }
 
-    public String getRetryBuild() { return retryBuild; }
+  public boolean isNoCache() {
+    return noCache;
+  }
 
-    @DataBoundSetter
-    public void setRetryBuild(String retryBuild) { this.retryBuild = retryBuild; }
+  @DataBoundSetter public void setNoCache(boolean noCache) {
+    this.noCache = noCache;
+  }
 
-    public boolean isSkipPush() {
-        return skipPush;
-    }
+  public boolean isForcePull() {
+    return forcePull;
+  }
 
-    @DataBoundSetter
-    public void setSkipPush(boolean skipPush) {
-        this.skipPush = skipPush;
-    }
+  @DataBoundSetter public void setForcePull(boolean forcePull) {
+    this.forcePull = forcePull;
+  }
 
-    public boolean isSkipTagLatest() {
-        return skipTagLatest;
-    }
+  public String getBuildContext() {
+    return buildContext;
+  }
 
-    @DataBoundSetter
-    public void setCreateFingerprint(boolean createFingerprint) {
-        this.createFingerprint = createFingerprint;
-    }
+  @DataBoundSetter public void setBuildContext(String buildContext) {
+    this.buildContext = Util.fixEmptyAndTrim(buildContext);
+  }
 
-    public boolean isCreateFingerprint() {
-        return createFingerprint;
-    }
-   
-    @DataBoundSetter
-    public void setSkipTagLatest(boolean skipTagLatest) {
-        this.skipTagLatest = skipTagLatest;
-    }
+  public String getDockerfilePath() {
+    return dockerfilePath;
+  }
 
-    public boolean isForceTag() {
-        return forceTag;
-    }
+  @DataBoundSetter public void setDockerfilePath(String dockerfilePath) {
+    this.dockerfilePath = Util.fixEmptyAndTrim(dockerfilePath);
+  }
 
-    @DataBoundSetter
-    public void setForceTag(boolean forceTag) {
-        this.forceTag = forceTag;
-    }
-    
-    public String getDockerToolName() {
-		return dockerToolName;
-	}
-    
-    @DataBoundSetter
-    public void setDockerToolName(String dockerToolName) {
-		this.dockerToolName = dockerToolName;
-	}
+  public String getBuildAdditionalArgs() {
+    return buildAdditionalArgs == null ? "" : buildAdditionalArgs;
+  }
 
-    /**
+  @DataBoundSetter public void setBuildAdditionalArgs(String buildAdditionalArgs) {
+    this.buildAdditionalArgs = buildAdditionalArgs;
+  }
+
+  public boolean isSkipBuild() {
+    return skipBuild;
+  }
+
+  @DataBoundSetter public void setSkipBuild(boolean skipBuild) {
+    this.skipBuild = skipBuild;
+  }
+
+  public boolean isSkipDecorate() {
+    return skipDecorate;
+  }
+
+  @DataBoundSetter public void setSkipDecorate(boolean skipDecorate) {
+    this.skipDecorate = skipDecorate;
+  }
+
+  public String getRepoTag() {
+    return repoTag;
+  }
+
+  @DataBoundSetter public void setRepoTag(String repoTag) {
+    this.repoTag = repoTag;
+  }
+
+  public String getRetryBuild() {
+    return retryBuild;
+  }
+
+  @DataBoundSetter public void setRetryBuild(String retryBuild) {
+    this.retryBuild = retryBuild;
+  }
+
+  public boolean isSkipPush() {
+    return skipPush;
+  }
+
+  @DataBoundSetter public void setSkipPush(boolean skipPush) {
+    this.skipPush = skipPush;
+  }
+
+  public boolean isSkipTagLatest() {
+    return skipTagLatest;
+  }
+
+  @DataBoundSetter public void setCreateFingerprint(boolean createFingerprint) {
+    this.createFingerprint = createFingerprint;
+  }
+
+  public boolean isCreateFingerprint() {
+    return createFingerprint;
+  }
+
+  @DataBoundSetter public void setSkipTagLatest(boolean skipTagLatest) {
+    this.skipTagLatest = skipTagLatest;
+  }
+
+  public boolean isForceTag() {
+    return forceTag;
+  }
+
+  @DataBoundSetter public void setForceTag(boolean forceTag) {
+    this.forceTag = forceTag;
+  }
+
+  public String getDockerToolName() {
+    return dockerToolName;
+  }
+
+  @DataBoundSetter public void setDockerToolName(String dockerToolName) {
+    this.dockerToolName = dockerToolName;
+  }
+
+  /**
      * Fully qualified repository/image name with the registry url in front
      * @return ie. docker.acme.com/jdoe/busybox
      * @throws IOException
      */
-    public String getRepo() throws IOException {
-        return getRegistry().imageName(repoName);
+  public String getRepo() throws IOException {
+    return getRegistry().imageName(repoName);
+  }
+
+  private boolean defined(String s) {
+    return s != null && !s.trim().isEmpty();
+  }
+
+  @Override public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
+    return new Perform(build, launcher, listener).exec();
+  }
+
+  private static class Result {
+    final boolean result;
+
+    final @Nonnull String stdout;
+
+    final @Nonnull String stderr;
+
+    private Result() {
+      this(true, "", "");
     }
 
-
-    private boolean defined(String s) {
-        return s != null && !s.trim().isEmpty();
+    private Result(boolean result, @CheckForNull String stdout, @CheckForNull String stderr) {
+      this.result = result;
+      this.stdout = hudson.Util.fixNull(stdout);
+      this.stderr = hudson.Util.fixNull(stderr);
     }
-    
-    @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener)  {
-        return new Perform(build, launcher, listener).exec();
+  }
+
+  @CheckForNull static String getImageBuiltFromStdout(CharSequence stdout) {
+    Matcher m = IMAGE_BUILT_PATTERN.matcher(stdout);
+    String lastmatch = null;
+    while (m.find()) {
+      lastmatch = m.group(1);
     }
-    
-    private static class Result {
-        final boolean result;
-        final @Nonnull String stdout;
-        final @Nonnull String stderr;
+    return lastmatch;
+  }
 
-        private Result() {
-            this(true, "", "");
-        }
+  private class Perform {
+    private final AbstractBuild build;
 
-        private Result(boolean result, @CheckForNull String stdout, @CheckForNull String stderr) {
-            this.result = result;
-            this.stdout = hudson.Util.fixNull(stdout);
-                this.stderr = hudson.Util.fixNull(stderr);
-        }
+    private final Launcher launcher;
+
+    private final BuildListener listener;
+
+    private Perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
+      this.build = build;
+      this.launcher = launcher;
+      this.listener = listener;
     }
 
-    @CheckForNull
-    static String getImageBuiltFromStdout(CharSequence stdout) {
-        Matcher m = IMAGE_BUILT_PATTERN.matcher(stdout);
-        String lastmatch = null;
-        while (m.find()) {
-            lastmatch = m.group(1);
+    private boolean exec() {
+      try {
+        if (!isSkipDecorate()) {
+          for (ImageTag imageTag : getImageTags()) {
+            build.setDisplayName(build.getDisplayName() + " " + imageTag);
+          }
         }
-        return lastmatch;
+        return (isSkipBuild() ? maybeTagOnly() : buildAndTag()) && (isSkipPush() || dockerPushCommand());
+      } catch (IOException e) {
+        return recordException(e);
+      } catch (InterruptedException e) {
+        return recordException(e);
+      } catch (MacroEvaluationException e) {
+        return recordException(e);
+      }
     }
-    
-    private class Perform {
-        private final AbstractBuild build;
-        private final Launcher launcher;
-        private final BuildListener listener;
 
-        private Perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
-            this.build = build;
-            this.launcher = launcher;
-            this.listener = listener;
-        }
+    private String expandAll(String s) throws MacroEvaluationException, IOException, InterruptedException {
+      return TokenMacro.expandAll(build, listener, s);
+    }
 
-        private boolean exec() {
-            try {
-                if (!isSkipDecorate()) {
-                    for (ImageTag imageTag : getImageTags()) {
-                        build.setDisplayName(build.getDisplayName() + " " + imageTag);
-                    }
-                }
-
-                return
-                    (isSkipBuild() ? maybeTagOnly() : buildAndTag()) &&
-                    (isSkipPush() || dockerPushCommand());
-
-            } catch (IOException e) {
-                return recordException(e);
-            } catch (InterruptedException e) {
-                return recordException(e);
-            } catch (MacroEvaluationException e) {
-                return recordException(e);
-            }
-        }
-
-        private String expandAll(String s) throws MacroEvaluationException, IOException, InterruptedException {
-            return TokenMacro.expandAll(build, listener, s);
-        }
-
-        /**
+    /**
          * This tag is what is used to build, tag and push the registry.
          */
-        private List<ImageTag> getImageTags() throws MacroEvaluationException, IOException, InterruptedException {
-            List<ImageTag> tags = new ArrayList<ImageTag>();
-            if (!defined(getRepoTag())) {
-                tags.add(new ImageTag(expandAll(getRepo())));
-            } else {
-                for (String rt : expandAll(getRepoTag()).trim().split(",")) {
-                    tags.add(new ImageTag(expandAll(getRepo()), expandAll(rt)));
-                }
-                if (!isSkipTagLatest()) {
-                    tags.add(new ImageTag(expandAll(getRepo()), "latest"));
-                }
-            }
-            return tags;
+    private List<ImageTag> getImageTags() throws MacroEvaluationException, IOException, InterruptedException {
+      List<ImageTag> tags = new ArrayList<ImageTag>();
+      if (!defined(getRepoTag())) {
+        tags.add(new ImageTag(expandAll(getRepo())));
+      } else {
+        for (String rt : expandAll(getRepoTag()).trim().split(",")) {
+          tags.add(new ImageTag(expandAll(getRepo()), expandAll(rt)));
         }
-        
-        private boolean maybeTagOnly() throws MacroEvaluationException, IOException, InterruptedException {
-            if (!defined(getRepoTag())) {
-                listener.getLogger().println("Nothing to build or tag");
-                return true;
-            }
-            List<String> result = new ArrayList<String>();
-            for (ImageTag imageTag : getImageTags()) {
-                result.add("tag " + (isForceTag() ? "--force=true " : "") + getRepo() + " " + imageTag);
-            }
-            return executeCmd(result);
+        if (!isSkipTagLatest()) {
+          tags.add(new ImageTag(expandAll(getRepo()), "latest"));
         }
+      }
+      return tags;
+    }
 
-        private boolean buildAndTag() throws MacroEvaluationException, IOException, InterruptedException {
-            FilePath context;
-            if (defined(expandAll(getBuildContext()))) {
-            	Node builtOn = build.getBuiltOn();
-            	
-                if (builtOn != null) {
-                    context = builtOn.createPath(expandAll(getBuildContext()));
-                } else {
-                    context = new FilePath(new File(expandAll(getBuildContext())));
-                }
-            } else {
-                context = build.getWorkspace();
-            }
-            Iterator<ImageTag> i = getImageTags().iterator();
-            Result lastResult = new Result();
-            if (i.hasNext()) {
-                lastResult = executeCmd("build " + expandAll(getBuildAdditionalArgs()) + " -t " + i.next()
-                    + ((isNoCache()) ? " --no-cache=true " : "") + " "
-                    + ((isForcePull()) ? " --pull=true " : "") + " "
-                    + (defined(getDockerfilePath()) ? " --file=" + expandAll(getDockerfilePath()) : "") + " "
-                    + "'" + context + "'");
-            }
-            // get the image to save rebuilding it to apply the other tags
-            String image = getImageBuiltFromStdout(lastResult.stdout);
-            if (image != null) {
-                // we know the image name so apply the tags directly
-                while (lastResult.result && i.hasNext()) {
-                    lastResult = executeCmd("tag "
-                            + (isForceTag() ? "--force=true " : "")
-                            + image + " " + i.next());
-                }
-                processFingerprints(image);
-            } else {
-                // we don't know the image name so rebuild the image for each tag
-                while (lastResult.result && i.hasNext()) {
-                    lastResult = executeCmd("build " + expandAll(getBuildAdditionalArgs()) +" -t " + i.next()
-                        + ((isNoCache()) ? " --no-cache=true " : "") + " "
-                        + ((isForcePull()) ? " --pull=true " : "") + " "
-                        + (defined(getDockerfilePath()) ? " --file=" + getDockerfilePath() : "") + " "
-                        + "'" + context + "'");
-                    processFingerprintsFromStdout(lastResult.stdout);
-                }
-            }
-            return lastResult.result;
-        }
+    private boolean maybeTagOnly() throws MacroEvaluationException, IOException, InterruptedException {
+      if (!defined(getRepoTag())) {
+        listener.getLogger().println("Nothing to build or tag");
+        return true;
+      }
+      List<String> result = new ArrayList<String>();
+      for (ImageTag imageTag : getImageTags()) {
+        result.add("tag " + (isForceTag() ? "--force=true " : "") + getRepo() + " " + imageTag);
+      }
+      return executeCmd(result);
+    }
 
-        private boolean dockerPushCommand() throws InterruptedException, MacroEvaluationException, IOException {
-            List<String> result = new ArrayList<String>();
-            for (ImageTag imageTag : getImageTags()) {
-                result.add("push " + imageTag.toString());
-            }
-            boolean lastResult = executeCmd(result);
-            int retryNo= NumberUtils.toInt(getRetryBuild());
-            while (!lastResult && retryNo > 1)
-            {
-                logger.log(Level.INFO, "Retrying push command : {0} attempt", retryNo);
-                lastResult = executeCmd(result);
-                retryNo--;
-            }
-            return lastResult;
+    private boolean buildAndTag() throws MacroEvaluationException, IOException, InterruptedException {
+      FilePath context;
+      if (defined(expandAll(getBuildContext()))) {
+        Node builtOn = build.getBuiltOn();
+        if (builtOn != null) {
+          context = builtOn.createPath(expandAll(getBuildContext()));
+        } else {
+          context = new FilePath(new File(expandAll(getBuildContext())));
         }
-
-        private boolean executeCmd(List<String> cmds) throws MacroEvaluationException, IOException, InterruptedException {
-            Iterator<String> i = cmds.iterator();
-            Result lastResult = new Result();
-            // if a command fails, do not continue
-            while (lastResult.result && i.hasNext()) {
-                lastResult = executeCmd(i.next());
-            }
-            return lastResult.result;
+      } else {
+        context = build.getWorkspace();
+      }
+      Iterator<ImageTag> i = getImageTags().iterator();
+      Result lastResult = new Result();
+      if (i.hasNext()) {
+        lastResult = executeCmd("build " + expandAll(getBuildAdditionalArgs()) + " -t " + i.next() + ((isNoCache()) ? " --no-cache=true " : "") + " " + ((isForcePull()) ? " --pull=true " : "") + " " + (defined(getDockerfilePath()) ? " --file=" + expandAll(getDockerfilePath()) : "") + " " + "\'" + context + "\'");
+      }
+      String image = getImageBuiltFromStdout(lastResult.stdout);
+      if (image != null) {
+        while (lastResult.result && i.hasNext()) {
+          lastResult = executeCmd("tag " + (isForceTag() ? "--force=true " : "") + image + " " + i.next());
         }
+        processFingerprints(image);
+      } else {
+        while (lastResult.result && i.hasNext()) {
+          lastResult = executeCmd("build " + expandAll(getBuildAdditionalArgs()) + " -t " + i.next() + ((isNoCache()) ? " --no-cache=true " : "") + " " + ((isForcePull()) ? " --pull=true " : "") + " " + (defined(getDockerfilePath()) ? " --file=" + getDockerfilePath() : "") + " " + "\'" + context + "\'");
+          processFingerprintsFromStdout(lastResult.stdout);
+        }
+      }
+      return lastResult.result;
+    }
 
-        /**
+    private boolean dockerPushCommand() throws InterruptedException, MacroEvaluationException, IOException {
+      List<String> result = new ArrayList<String>();
+      for (ImageTag imageTag : getImageTags()) {
+        result.add("push " + imageTag.toString());
+      }
+      boolean lastResult = executeCmd(result);
+      int retryNo = NumberUtils.toInt(getRetryBuild());
+      while (!lastResult && retryNo > 1) {
+        logger.log(Level.INFO, "Retrying push command : {0} attempt", retryNo);
+        lastResult = executeCmd(result);
+        retryNo--;
+      }
+      return lastResult;
+    }
+
+    private boolean executeCmd(List<String> cmds) throws MacroEvaluationException, IOException, InterruptedException {
+      Iterator<String> i = cmds.iterator();
+      Result lastResult = new Result();
+      while (lastResult.result && i.hasNext()) {
+        lastResult = executeCmd(i.next());
+      }
+      return lastResult.result;
+    }
+
+    /**
          * Runs Docker command using Docker CLI.
          * In this default implementation STDOUT and STDERR outputs will be printed to build logs.
          * Use {@link #executeCmd(java.lang.String, boolean, boolean)} to alter the behavior.
@@ -442,11 +414,11 @@ public class DockerBuilder extends Builder {
          * @throws IOException Execution error
          * @throws InterruptedException The build has been interrupted
          */
-        private Result executeCmd(String cmd) throws MacroEvaluationException, IOException, InterruptedException {
-            return executeCmd(cmd, true, true);
-        }
-        
-        /**
+    private Result executeCmd(String cmd) throws MacroEvaluationException, IOException, InterruptedException {
+      return executeCmd(cmd, true, true);
+    }
+
+    /**
          * Runs Docker command using Docker CLI.
          * @param cmd Command to be executed (Docker command will be prefixed)
          * @param logStdOut If true, propagate STDOUT to the build log
@@ -455,203 +427,147 @@ public class DockerBuilder extends Builder {
          * @throws IOException Execution error
          * @throws InterruptedException The build has been interrupted
          */
-        private @Nonnull Result executeCmd( @Nonnull String cmd, 
-                boolean logStdOut, boolean logStdErr) throws MacroEvaluationException, IOException, InterruptedException {
-            ByteArrayOutputStream baosStdOut = new ByteArrayOutputStream();
-            ByteArrayOutputStream baosStdErr = new ByteArrayOutputStream();
-            OutputStream stdout = logStdOut ? 
-                    new TeeOutputStream(listener.getLogger(), baosStdOut) : baosStdOut;
-            OutputStream stderr = logStdErr ? 
-                    new TeeOutputStream(listener.getLogger(), baosStdErr) : baosStdErr;
-
-            DockerRegistryEndpoint expandedRegistry = new DockerRegistryEndpoint(
-                expandAll(getRegistry().getEffectiveUrl().toString()),
-                getRegistry().getCredentialsId());
-            KeyMaterial dockerKeys = 
-                // Docker registry credentials
-                expandedRegistry.newKeyMaterialFactory(build)
-            .plus(
-                // Docker server credentials. If server is null (right after upgrading) do not use credentials
-                server == null ? null : server.newKeyMaterialFactory(build))
-            .materialize();
-
-            EnvVars env = new EnvVars();
-            env.putAll(build.getEnvironment(listener));
-            env.putAll(dockerKeys.env());
-
-            String dockerCmd = "docker";
-            
-            if (getDockerToolName() != null) {
-	            try {
-	          		dockerCmd = DockerTool.getExecutable(getDockerToolName(), build.getBuiltOn(), listener, env);
-	            } catch (Exception e) {
-	            	logger.log(Level.WARNING, "Something failed", e);
-	            }
-            }
-            
-            cmd = dockerCmd + " " +cmd;
-            
-            logger.log(Level.FINER, "Executing: {0}", cmd);
-
-            try {
-                
-                boolean result = launcher.launch()
-                        .envs(env)
-                        .pwd(build.getWorkspace())
-                        .stdout(stdout)
-                        .stderr(stderr)
-                        .cmdAsSingleString(cmd)
-                        .start().join() == 0;
-
-                // capture the stdout so it can be parsed later on
-                final String stdOutStr = DockerCLIHelper.getConsoleOutput(baosStdOut, logger);
-                final String stdErrStr = DockerCLIHelper.getConsoleOutput(baosStdErr, logger);
-                return new Result(result, stdOutStr, stdErrStr);
-
-            } finally {
-                dockerKeys.close();
-            }
+    private @Nonnull Result executeCmd(@Nonnull String cmd, boolean logStdOut, boolean logStdErr) throws MacroEvaluationException, IOException, InterruptedException {
+      ByteArrayOutputStream baosStdOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream baosStdErr = new ByteArrayOutputStream();
+      OutputStream stdout = logStdOut ? new TeeOutputStream(listener.getLogger(), baosStdOut) : baosStdOut;
+      OutputStream stderr = logStdErr ? new TeeOutputStream(listener.getLogger(), baosStdErr) : baosStdErr;
+      DockerRegistryEndpoint expandedRegistry = new DockerRegistryEndpoint(expandAll(getRegistry().getEffectiveUrl().toString()), getRegistry().getCredentialsId());
+      KeyMaterial dockerKeys = expandedRegistry.newKeyMaterialFactory(build).plus(server == null ? null : server.newKeyMaterialFactory(build)).materialize();
+      EnvVars env = new EnvVars();
+      env.putAll(build.getEnvironment(listener));
+      env.putAll(dockerKeys.env());
+      String dockerCmd = "docker";
+      if (getDockerToolName() != null) {
+        try {
+          dockerCmd = DockerTool.getExecutable(getDockerToolName(), build.getBuiltOn(), listener, env);
+        } catch (Exception e) {
+          logger.log(Level.WARNING, "Something failed", e);
         }
-        
-        void processFingerprintsFromStdout(@Nonnull String stdout) throws MacroEvaluationException, IOException, InterruptedException {
-            if (!createFingerprint) {
-                return;
-            }
-            
-            final String image = getImageBuiltFromStdout(stdout);
-            if (image == null) {
-                return;
-            }
-            processFingerprints(image);
-        }
-        
-        void processFingerprints(@Nonnull String image) throws MacroEvaluationException, IOException, InterruptedException {
-            if (!createFingerprint) {
-                return;
-            }
-            
-            // Retrieve full image ID using another call
-            final Result response = executeCmd("inspect " + image, false, true);
-            if (!response.result) {
-                return; // Bad result, cannot do anything
-            }
-            final InspectImageResponse rsp = DockerCLIHelper.parseInspectImageResponse(response.stdout);
-            logger.log(Level.FINEST, "Inspect image {0}: {1}", new Object[] { image, response.stdout });
-            if (rsp == null) {
-                return; // Cannot process the data
-            }
-            
-            //  Create or retrieve the fingerprint
-            // parent can be ""
-            DockerFingerprints.addFromFacet(Util.fixEmpty(rsp.getParent()), rsp.getId(), build);
-            
-        }
-
-        private boolean recordException(Exception e) {
-            listener.error(e.getMessage());
-            e.printStackTrace(listener.getLogger());
-            return false;
-        }
-
+      }
+      cmd = dockerCmd + " " + cmd;
+      logger.log(Level.FINER, "Executing: {0}", cmd);
+      try {
+        boolean result = launcher.launch().envs(env).pwd(build.getWorkspace()).stdout(stdout).stderr(stderr).cmdAsSingleString(cmd).start().join() == 0;
+        final String stdOutStr = DockerCLIHelper.getConsoleOutput(baosStdOut, logger);
+        final String stdErrStr = DockerCLIHelper.getConsoleOutput(baosStdErr, logger);
+        return new Result(result, stdOutStr, stdErrStr);
+      }  finally {
+        dockerKeys.close();
+      }
     }
 
-    private Object readResolve() throws ObjectStreamException {
-        // coming from an older version <1.0 ? let's try to parse the registry
-        if (registry == null) {
-            registry = DockerRegistryEndpoint.fromImageName(repoName, null);
-            if (registry.getUrl() != null) {
-                repoName = repoName.substring(repoName.indexOf('/') + 1); // take out the host:port part
-                logger.log(
-                        Level.WARNING,
-                        "Using Docker registry from old configuration field, you may need to configure credentials in the build step: {0} {1}",
-                        new String[] { registry.getUrl(), repoName });
-            }
-        }
-        return this;
+    void processFingerprintsFromStdout(@Nonnull String stdout) throws MacroEvaluationException, IOException, InterruptedException {
+      if (!createFingerprint) {
+        return;
+      }
+      final String image = getImageBuiltFromStdout(stdout);
+      if (image == null) {
+        return;
+      }
+      processFingerprints(image);
     }
 
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
+    void processFingerprints(@Nonnull String image) throws MacroEvaluationException, IOException, InterruptedException {
+      if (!createFingerprint) {
+        return;
+      }
+      final Result response = executeCmd("inspect " + image, false, true);
+      if (!response.result) {
+        return;
+      }
+      final InspectImageResponse rsp = DockerCLIHelper.parseInspectImageResponse(response.stdout);
+      logger.log(Level.FINEST, "Inspect image {0}: {1}", new Object[] { image, response.stdout });
+      if (rsp == null) {
+        return;
+      }
+      DockerFingerprints.addFromFacet(Util.fixEmpty(rsp.getParent()), rsp.getId(), build);
     }
+
+    private boolean recordException(Exception e) {
+      listener.error(e.getMessage());
+      e.printStackTrace(listener.getLogger());
+      return false;
+    }
+  }
+
+  private Object readResolve() throws ObjectStreamException {
+    if (registry == null) {
+      registry = DockerRegistryEndpoint.fromImageName(repoName, null);
+      if (registry.getUrl() != null) {
+        repoName = repoName.substring(repoName.indexOf('/') + 1);
+        logger.log(Level.WARNING, "Using Docker registry from old configuration field, you may need to configure credentials in the build step: {0} {1}", new String[] { registry.getUrl(), repoName });
+      }
+    }
+    return this;
+  }
+
+  @Override public DescriptorImpl getDescriptor() {
+    return (DescriptorImpl) super.getDescriptor();
+  }
+
+  @Extension public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+    @SuppressWarnings(value = { "unused" }) private transient String userName;
+
+    @SuppressWarnings(value = { "unused" }) private transient String password;
+
+    @SuppressWarnings(value = { "unused" }) private transient String email;
+
+    @SuppressWarnings(value = { "unused" }) private transient String registryUrl;
 
     /**
-     * Descriptor for {@link DockerBuilder}. Used as a singleton.
-     */
-    @Extension
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-        @SuppressWarnings("unused")
-        private transient String userName;
-        @SuppressWarnings("unused")
-        private transient String password;
-        @SuppressWarnings("unused")
-        private transient String email;
-        @SuppressWarnings("unused")
-        private transient String registryUrl;
-
-        /**
          * In order to load the persisted global configuration, you have to 
          * call load() in the constructor.
          */
-        public DescriptorImpl() {
-            load();
-        }
+    public DescriptorImpl() {
+      load();
+    }
 
-        // Using docker-commons now, methods left for backwards compatibility
+    @SuppressFBWarnings(value = "UWF_UNWRITTEN_FIELD", justification = "Methods left for backwards compatibility") @SuppressWarnings(value = { "unused" }) @Restricted(value = NoExternalUse.class) public String getUserName() {
+      return userName;
+    }
 
-        @SuppressFBWarnings(value = "UWF_UNWRITTEN_FIELD", justification = "Methods left for backwards compatibility")
-        @SuppressWarnings("unused")
-        @Restricted(NoExternalUse.class)
-        public String getUserName() {
-            return userName;
-        }
-        @SuppressWarnings("unused")
-        @Restricted(NoExternalUse.class)
-        public String getPassword() {
-            return password;
-        }
-        @SuppressWarnings("unused")
-        @Restricted(NoExternalUse.class)
-        public String getEmail() { return email; }
-        @SuppressWarnings("unused")
-        @Restricted(NoExternalUse.class)
-        public String getRegistryUrl() { return registryUrl; }
+    @SuppressWarnings(value = { "unused" }) @Restricted(value = NoExternalUse.class) public String getPassword() {
+      return password;
+    }
 
-        /**
+    @SuppressWarnings(value = { "unused" }) @Restricted(value = NoExternalUse.class) public String getEmail() {
+      return email;
+    }
+
+    @SuppressWarnings(value = { "unused" }) @Restricted(value = NoExternalUse.class) public String getRegistryUrl() {
+      return registryUrl;
+    }
+
+    /**
          * Performs on-the-fly validation of the form field 'repoName'.
          *
          * @param value
          *      Name of the docker repo (eg michaelneale/foo-bar).
          */
-        public FormValidation doCheckRepoName(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.error("Please set a name");
-            if (value.length() < 4)
-                return FormValidation.warning("Isn't the name too short?");
-            return FormValidation.ok();
-        }
+    public FormValidation doCheckRepoName(@QueryParameter String value) throws IOException, ServletException {
+      if (value.length() == 0) {
+        return FormValidation.error("Please set a name");
+      }
+      if (value.length() < 4) {
+        return FormValidation.warning("Isn\'t the name too short?");
+      }
+      return FormValidation.ok();
+    }
 
-        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
-            // Indicates that this builder can be used with all kinds of project types 
-            return true;
-        }
+    public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+      return true;
+    }
 
-        /**
+    /**
          * This human readable name is used in the configuration screen.
          */
-        public String getDisplayName() {
-            return "Docker Build and Publish";
-        }
-
-       private Object readResolve()
-                throws ObjectStreamException {
-            // TODO if we want to retain backwards compatibility we need to create the registry credentials
-            // here, taking the old global fields and creating the credentials
-            // new DockerRegistryEndpoint(getRegistryUrl(), null);
-            // new UsernamePasswordCredentials(getUserName(), getPassword());
-            return this;
-        }
-
+    public String getDisplayName() {
+      return "Docker Build and Publish";
     }
+
+    private Object readResolve() throws ObjectStreamException {
+      return this;
+    }
+  }
 }
