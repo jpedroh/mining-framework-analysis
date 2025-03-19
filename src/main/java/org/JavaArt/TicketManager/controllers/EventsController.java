@@ -72,11 +72,7 @@ public class EventsController {
     }
 
     @RequestMapping(value = "NewEvent/addEvent.do", method = RequestMethod.POST)
-<<<<<<< .mine
-    public String bookingAddEvent(@RequestParam(value = "dateEvent", required = true) String dateEvent,String inputTime, String description, String timeRemoveBooking, SessionStatus status, HttpServletRequest request) throws SQLException, ParseException {
-=======
-    public String bookingAddEvent(@RequestParam(value = "dateEvent", required = true) String dateEvent, String description, String timeRemoveBooking, SessionStatus status, HttpServletRequest request) throws SQLException, ParseException{
->>>>>>> .theirs
+    public String bookingAddEvent(@RequestParam(value = "dateEvent", required = true) String dateEvent,String inputTime, String description, String timeRemoveBooking, SessionStatus status, HttpServletRequest request) throws SQLException, ParseException{
         if (description == null) return "redirect:/NewEvent/NewEvent.do";
         Event event = new Event();
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -136,11 +132,13 @@ public class EventsController {
     }
 
     @RequestMapping(value = "EditEvent/EditEvent.do", method = RequestMethod.GET)
-<<<<<<< .mine
+<<<<<<< /usr/src/app/output/kvladislav/ticketmanager/2a3e487ca01bd50026ae47a9cf014b19804cc386/src/main/java/org/JavaArt/TicketManager/controllers/EventsController.java/left.java
     public String editEventGet(Model model,SessionStatus statusEvent) throws SQLException, ParseException {
+||||||| /usr/src/app/output/kvladislav/ticketmanager/2a3e487ca01bd50026ae47a9cf014b19804cc386/src/main/java/org/JavaArt/TicketManager/controllers/EventsController.java/base.java
+    public String editEventGet(Model model,SessionStatus statusEvent) throws SQLException {
 =======
     public String editEventGet(Model model,SessionStatus statusEvent) {
->>>>>>> .theirs
+>>>>>>> /usr/src/app/output/kvladislav/ticketmanager/2a3e487ca01bd50026ae47a9cf014b19804cc386/src/main/java/org/JavaArt/TicketManager/controllers/EventsController.java/right.java
         model.addAttribute("pageName", 8);//set menu page number
         model.addAttribute("eventEdit", this.editEvent);
         model.addAttribute("eventDescriptions", this.editEvent.getDescription());
