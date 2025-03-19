@@ -58,7 +58,6 @@ public class ChangeServiceTest {
     List<Method> foundMethods = changeService.fetchChangeSets(MongobeeTestResource.class);
     assertTrue(foundMethods.size() == 5);
   }
-
   @Test
   public void shouldFindAnotherChangeSetMethods() throws MongobeeChangeSetException {
     // given
@@ -71,6 +70,7 @@ public class ChangeServiceTest {
     // then
     assertTrue(foundMethods != null && foundMethods.size() == 6);
   }
+
 
   @Test
   public void shouldFindIsRunAlwaysMethod() throws MongobeeChangeSetException {
