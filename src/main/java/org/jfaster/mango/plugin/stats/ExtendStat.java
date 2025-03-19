@@ -17,7 +17,6 @@
 package org.jfaster.mango.plugin.stats;
 
 import org.jfaster.mango.annotation.DB;
-import org.jfaster.mango.annotation.SQL;
 import org.jfaster.mango.annotation.Sharding;
 import org.jfaster.mango.sharding.NotUseTableShardingStrategy;
 import org.jfaster.mango.stat.OperatorStat;
@@ -54,8 +53,8 @@ public class ExtendStat {
   }
 
   public String getSql() {
-    String sql = Joiner.on(' ').join(Arrays.asList(method.getAnnotation(SQL.class).value()));
-    DB dbAnno = method.getDeclaringClass().getAnnotation(DB.class);
+    String sql = Joiner.on(' ').join(Arrays.asList(operatorStat.getSql()));
+    DB dbAnno = operatorStat.getDaoClass().getAnnotation(DB.class);
     String table = dbAnno.table();
     if (Strings.isNotEmpty(table)) {
       Sharding shardingAnno = method.getAnnotation(Sharding.class);
