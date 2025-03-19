@@ -57,7 +57,7 @@ public class lsmop1With200variablesExperiment {
     String experimentBaseDirectory = args[0];
 
     List<ExperimentProblem<DoubleSolution>> problemList = new ArrayList<>();
-    problemList.add(new ExperimentProblem<>(new LSMOP1()).setReferenceFront("LSMOP1.2D.csv"));
+    problemList.add(new ExperimentProblem<>(new LSMOP1_2_200()).setReferenceFront("LSMOP1.2D.csv"));
 
     List<ExperimentAlgorithm<DoubleSolution, List<DoubleSolution>>> algorithmList =
         configureAlgorithmList(problemList);
@@ -118,7 +118,7 @@ public class lsmop1With200variablesExperiment {
             (DoubleProblem) experimentProblem.getProblem(),
             new CrowdingDistanceArchive<DoubleSolution>(100))
             .setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex))
-            .setMaxIterations(250)
+            .setMaxIterations(2000)
             .setSwarmSize(100)
             .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
             .build();
@@ -235,6 +235,7 @@ public class lsmop1With200variablesExperiment {
 
         algorithms.add(new ExperimentAlgorithm<>(omopso, "OMOPSO", experimentProblem, run));
       }
+
     }
     return algorithms;
   }
