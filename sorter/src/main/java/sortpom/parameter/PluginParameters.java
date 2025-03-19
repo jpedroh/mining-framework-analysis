@@ -144,8 +144,9 @@ public class PluginParameters {
         }
 
         /** Sets if any additional pom file elements should be sorted */
-        public Builder setSortEntities(final String sortDependencies, final String sortDependencyExclusions, final String sortPlugins,
-                                       final boolean sortProperties, final boolean sortModules, boolean sortExecutions) {
+        public Builder setSortEntities(final String sortDependencies, final String sortDependencyExclusions,
+                                       final String sortPlugins, final boolean sortProperties,
+                                       final boolean sortModules, boolean sortExecutions) {
             this.sortDependencies = new DependencySortOrder(sortDependencies);
             this.sortDependencyExclusions = new DependencySortOrder(sortDependencyExclusions);
             this.sortPlugins = new DependencySortOrder(sortPlugins);

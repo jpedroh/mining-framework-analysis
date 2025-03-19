@@ -80,7 +80,13 @@ public class XmlProcessorTestUtil {
                 .setFormatting(lineSeparator, expandEmptyElements, true, keepBlankLines)
                 .setIndent(2, indentBlankLines, false)
                 .setSortOrder(predefinedSortOrder + ".xml", null)
-                .setSortEntities("", "", "", false, false, false).build();
+<<<<<<< /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/util/XmlProcessorTestUtil.java/left.java
+                .setSortEntities("", "", "", false, false).build();
+||||||| /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/util/XmlProcessorTestUtil.java/base.java
+                .setSortEntities("", "", false, false).build();
+=======
+                .setSortEntities("", "", false, false, false).build();
+>>>>>>> /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/util/XmlProcessorTestUtil.java/right.java
         final String xml = IOUtils.toString(new FileInputStream(inputFileName), StandardCharsets.UTF_8);
 
         final FileUtil fileUtil = new FileUtil();

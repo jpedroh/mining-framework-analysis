@@ -28,7 +28,13 @@ class CustomSortOrderFileTest {
                 .setFormatting("\r\n", true, true, true)
                 .setIndent(2, false, false)
                 .setSortOrder("src/test/resources/sortOrderFiles/with_newline_tags.xml", null)
-                .setSortEntities("scope,groupId,artifactId", "groupId,artifactId", "groupId,artifactId", true, true, true).build();
+<<<<<<< /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/wrapper/CustomSortOrderFileTest.java/left.java
+                .setSortEntities("scope,groupId,artifactId", "groupId,artifactId", "groupId,artifactId", true, true).build();
+||||||| /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/wrapper/CustomSortOrderFileTest.java/base.java
+                .setSortEntities("scope,groupId,artifactId", "groupId,artifactId", true, true).build();
+=======
+                .setSortEntities("scope,groupId,artifactId", "groupId,artifactId", true, true, true).build();
+>>>>>>> /usr/src/app/output/ekryd/sortpom/7de865527033e53fe84739b53aae1f03ea3dbd86/sorter/src/test/java/sortpom/wrapper/CustomSortOrderFileTest.java/right.java
 
         FileUtil fileUtil = new FileUtil();
         fileUtil.setup(pluginParameters);
