@@ -177,6 +177,16 @@ public class FindbugsExecutor {
     } catch (Exception e) {
       throw new IllegalStateException("Can not execute Findbugs", e);
     } finally {
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/6ce2a4c07bb6f239f40cec2dc87286a39c606a4b/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/left.java
+      // we set back the original security manager BEFORE shutting down the executor service, otherwise there's a problem with Java 5
+      System.setSecurityManager(currentSecurityManager);
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/6ce2a4c07bb6f239f40cec2dc87286a39c606a4b/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/base.java
+      // we set back the original security manager BEFORE shutting down the executor service, otherwise there's a problem with Java 5
+      System.setSecurityManager(currentSecurityManager);
+      resetCustomPluginList(customPlugins);
+=======
+      resetCustomPluginList(customPlugins);
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/6ce2a4c07bb6f239f40cec2dc87286a39c606a4b/src/main/java/org/sonar/plugins/findbugs/FindbugsExecutor.java/right.java
       executorService.shutdown();
       IOUtils.closeQuietly(xmlOutput);
       Thread.currentThread().setContextClassLoader(initialClassLoader);
