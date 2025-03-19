@@ -119,7 +119,13 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * image data. When the cursor moves from one cell to the next, the
 	 * underlying data array of the {@link NativeType} must be switched to the
 	 * data array of the new cell.
+<<<<<<< /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/left.java
 	 * </p>
+||||||| /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/base.java
+	 * 
+=======
+	 *
+>>>>>>> /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/right.java
 	 * <p>
 	 * To achieve this, the {@link CellCursor} calls {@code updateContainer()}
 	 * with itself as the argument. {@code updateContainer()} in turn will call
@@ -130,15 +136,29 @@ public interface NativeType< T extends NativeType< T >> extends Type< T >
 	 * passed a {@link CellCursor} instance, which can be used to figure out the
 	 * current cell and the underlying data array, which is then returned to the
 	 * {@link NativeType}.
+<<<<<<< /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/left.java
 	 * </p>
+||||||| /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/base.java
+	 * 
+=======
+	 *
+>>>>>>> /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/right.java
 	 * <p>
 	 * The idea behind this concept is maybe not obvious. The {@link NativeType}
 	 * knows which basic type is used (float, int, byte, ...). However, it does
 	 * not know how the data is stored ({@link ArrayImg}, {@link CellImg}, ...).
+<<<<<<< /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/left.java
 	 * This prevents the need for multiple implementations of {@link NativeType}
 	 * .
 	 * </p>
 	 *
+||||||| /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/base.java
+	 * This prevents the need for multiple implementations of {@link NativeType}.
+	 * 
+=======
+	 * This prevents the need for multiple implementations of {@link NativeType}.
+	 *
+>>>>>>> /usr/src/app/output/imglib/imglib2/dd4b342823ffc8756a05e5006dccef4bf47ad066/src/main/java/net/imglib2/type/NativeType.java/right.java
 	 * @param c
 	 *            reference to an accessor which can be passed on to the
 	 *            container (which will know what to do with it).
