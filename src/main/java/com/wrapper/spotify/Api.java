@@ -1,24 +1,53 @@
 package com.wrapper.spotify;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wrapper.spotify.UtilProtos.Url.Scheme;
+import java.util.Arrays;
 import com.wrapper.spotify.requests.*;
 import com.wrapper.spotify.requests.authentication.AuthorizationCodeGrantRequest;
 import com.wrapper.spotify.requests.authentication.AuthorizationURLRequest;
 import com.wrapper.spotify.requests.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.requests.authentication.RefreshAccessTokenRequest;
-
-import java.util.Arrays;
 import java.util.List;
+import com.wrapper.spotify.methods.AbstractRequest;
+import com.wrapper.spotify.methods.AddToMySavedTracksRequest;
+import com.wrapper.spotify.methods.AddTrackToPlaylistRequest;
+import com.wrapper.spotify.methods.AlbumRequest;
+import com.wrapper.spotify.methods.AlbumSearchRequest;
+import com.wrapper.spotify.methods.AlbumsForArtistRequest;
+import com.wrapper.spotify.methods.AlbumsRequest;
+import com.wrapper.spotify.methods.ArtistRequest;
+import com.wrapper.spotify.methods.ArtistSearchRequest;
+import com.wrapper.spotify.methods.ArtistsRequest;
+import com.wrapper.spotify.methods.AudioFeatureRequest;
+import com.wrapper.spotify.methods.ChangePlaylistDetailsRequest;
+import com.wrapper.spotify.methods.ContainsMySavedTracksRequest;
+import com.wrapper.spotify.methods.CurrentUserRequest;
+import com.wrapper.spotify.methods.FeaturedPlaylistsRequest;
+import com.wrapper.spotify.methods.GetMySavedTracksRequest;
+import com.wrapper.spotify.methods.NewReleasesRequest;
+import com.wrapper.spotify.methods.PlaylistCreationRequest;
+import com.wrapper.spotify.methods.PlaylistRequest;
+import com.wrapper.spotify.methods.PlaylistTracksRequest;
+import com.wrapper.spotify.methods.PlaylistUnfollowRequest;
+import com.wrapper.spotify.methods.RelatedArtistsRequest;
+import com.wrapper.spotify.methods.RemoveFromMySavedTracksRequest;
+import com.wrapper.spotify.methods.ReplacePlaylistTracksRequest;
+import com.wrapper.spotify.methods.TopTracksRequest;
+import com.wrapper.spotify.methods.TrackRequest;
+import com.wrapper.spotify.methods.TrackSearchRequest;
+import com.wrapper.spotify.methods.TracksForAlbumRequest;
+import com.wrapper.spotify.methods.TracksRequest;
+import com.wrapper.spotify.methods.UserPlaylistsRequest;
+import com.wrapper.spotify.methods.UserRequest;
+import net.sf.json.JSONObject;
 
 /**
  * Instances of the Api class provide access to the Spotify Web API.
  */
 public class Api {
-
   /**
    * The default host of Spotify API calls.
    */
@@ -49,26 +78,31 @@ public class Api {
    * Api instance with the default settings.
    */
   public static final Api DEFAULT_API = Api.builder().build();
+
   private final String clientId;
-  private final String clientSecret;
-  private final String redirectURI;
+
   private HttpManager httpManager = null;
+
+  private final String clientSecret;
+
   private Scheme scheme;
+
+  private final String redirectURI;
+
   private int port;
+
   private String host;
+
   private String accessToken;
+
   private String refreshToken;
 
   private Api(Builder builder) {
     assert (builder.host != null);
     assert (builder.port > 0);
     assert (builder.scheme != null);
-
-
     if (builder.httpManager == null) {
-      this.httpManager = SpotifyHttpManager
-              .builder()
-              .build();
+      this.httpManager = SpotifyHttpManager.builder().build();
     } else {
       this.httpManager = builder.httpManager;
     }
@@ -117,9 +151,7 @@ public class Api {
     return builder;
   }
 
-  public TracksForAlbumRequest.Builder getTracksForAlbum(
-      String albumId
-  ) {
+  public TracksForAlbumRequest.Builder getTracksForAlbum(String albumId) {
     TracksForAlbumRequest.Builder builder = TracksForAlbumRequest.builder();
     setDefaults(builder);
     builder.forAlbum(albumId);
@@ -386,35 +418,21 @@ public class Api {
    */
   public AddTrackToPlaylistRequest.Builder addTracksToPlaylist(String userId, String playlistId, String[] trackUris) {
     final AddTrackToPlaylistRequest.Builder builder = AddTrackToPlaylistRequest.builder();
-
     userId = UrlUtil.escapeUsername(userId);
-
     setDefaults(builder);
     builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-
     return builder;
   }
 
-  /**
-   * Replace tracks in a playlist.
-   * @param userId The owner's username.
-   * @param playlistId The playlist's ID.
-   * @param trackUris URIs of the tracks to add.
-   * @return A builder object that can e used to build a request to add tracks to a playlist.
-   */
-  public ReplacePlaylistTracksRequest.Builder replacePlaylistsTracks(
-      String userId, String playlistId, List<String> trackUris
-  ) {
-    final ReplacePlaylistTracksRequest.Builder builder = ReplacePlaylistTracksRequest.builder();
-    setDefaults(builder);
-    final JSONObject urisObject = new JSONObject();
-    final JSONArray jsonArrayUri = new JSONArray();
-    jsonArrayUri.addAll(trackUris);
-    urisObject.put("uris", jsonArrayUri);
-    builder.body(urisObject);
-    builder.path("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
-    return builder;
+  private void setDefaults(AbstractRequest.Builder builder) {
+    builder.setHttpManager(httpManager);
+    builder.setScheme(scheme);
+    builder.setHost(host);
+    builder.setPort(port);
+    if (accessToken != null) {
+      builder.setHeaderParameter("Authorization", "Bearer " + accessToken);
+    }
   }
 
   /**
@@ -426,13 +444,29 @@ public class Api {
    */
   public RemoveTrackFromPlaylistRequest.Builder removeTrackFromPlaylist(String userId, String playlistId, String[] trackUris) {
     final RemoveTrackFromPlaylistRequest.Builder builder = RemoveTrackFromPlaylistRequest.builder();
-
     userId = UrlUtil.escapeUsername(userId);
-
     setDefaults(builder);
     builder.setBodyParameter(new JsonParser().parse(new Gson().toJson(trackUris)).getAsJsonArray());
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
+    return builder;
+  }
 
+  /**
+   * Replace tracks in a playlist.
+   * @param userId The owner's username.
+   * @param playlistId The playlist's ID.
+   * @param trackUris URIs of the tracks to add.
+   * @return A builder object that can e used to build a request to add tracks to a playlist.
+   */
+  public ReplacePlaylistTracksRequest.Builder replacePlaylistsTracks(String userId, String playlistId, List<String> trackUris) {
+    final ReplacePlaylistTracksRequest.Builder builder = ReplacePlaylistTracksRequest.builder();
+    setDefaults(builder);
+    final JSONObject urisObject = new JSONObject();
+    final JSONArray jsonArrayUri = new JSONArray();
+    jsonArrayUri.addAll(trackUris);
+    urisObject.put("uris", jsonArrayUri);
+    builder.body(urisObject);
+    builder.path("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
     return builder;
   }
 
@@ -562,16 +596,6 @@ public class Api {
     return builder;
   }
 
-  private void setDefaults(AbstractRequest.Builder builder) {
-    builder.setHttpManager(httpManager);
-    builder.setScheme(scheme);
-    builder.setHost(host);
-    builder.setPort(port);
-    if (accessToken != null) {
-      builder.setHeaderParameter("Authorization", "Bearer " + accessToken);
-    }
-  }
-
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }
@@ -581,15 +605,22 @@ public class Api {
   }
 
   public static class Builder {
-
     private String host = DEFAULT_HOST;
+
     private int port = DEFAULT_PORT;
+
     private HttpManager httpManager = null;
+
     private Scheme scheme = DEFAULT_SCHEME;
+
     private String accessToken;
+
     private String redirectURI;
+
     private String clientId;
+
     private String clientSecret;
+
     private String refreshToken;
 
     public Builder scheme(Scheme scheme) {
@@ -641,11 +672,7 @@ public class Api {
       assert (host != null);
       assert (port > 0);
       assert (scheme != null);
-
       return new Api(this);
     }
-
   }
-
 }
-
