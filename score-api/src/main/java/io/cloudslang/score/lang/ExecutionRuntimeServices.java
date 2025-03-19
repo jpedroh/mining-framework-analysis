@@ -101,9 +101,12 @@ public class ExecutionRuntimeServices implements Serializable {
 
     public static final String SC_NESTED_FOR_PARALLELISM_LEVEL = "SC_NESTED_FOR_PARALLELISM_LEVEL";
 
+<<<<<<< /usr/src/app/output/cloudslang/score/66ba4f51e37e04aaa677d3e92bfe5879285c363e/score-api/src/main/java/io/cloudslang/score/lang/ExecutionRuntimeServices.java/left.java
     public static final String LIC_SWITCH_MODE = "LIC_SWITCH_MODE";
-
+||||||| /usr/src/app/output/cloudslang/score/66ba4f51e37e04aaa677d3e92bfe5879285c363e/score-api/src/main/java/io/cloudslang/score/lang/ExecutionRuntimeServices.java/base.java
+=======
     private static final String LIC_SWITCH_MODE = "LIC_SWITCH_MODE";
+>>>>>>> /usr/src/app/output/cloudslang/score/66ba4f51e37e04aaa677d3e92bfe5879285c363e/score-api/src/main/java/io/cloudslang/score/lang/ExecutionRuntimeServices.java/right.java
 
     protected Map<String, Serializable> contextMap;
 
