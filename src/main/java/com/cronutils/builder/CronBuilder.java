@@ -12,7 +12,13 @@
  */
 package com.cronutils.builder;
 
-import static com.cronutils.model.field.CronFieldName.*;
+import static com.cronutils.model.field.CronFieldName.DAY_OF_MONTH;
+import static com.cronutils.model.field.CronFieldName.DAY_OF_WEEK;
+import static com.cronutils.model.field.CronFieldName.HOUR;
+import static com.cronutils.model.field.CronFieldName.MINUTE;
+import static com.cronutils.model.field.CronFieldName.MONTH;
+import static com.cronutils.model.field.CronFieldName.SECOND;
+import static com.cronutils.model.field.CronFieldName.YEAR;
 import static com.cronutils.utils.Preconditions.checkState;
 
 import java.util.ArrayList;

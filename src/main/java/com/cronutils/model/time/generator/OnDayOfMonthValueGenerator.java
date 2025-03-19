@@ -1,5 +1,8 @@
 package com.cronutils.model.time.generator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 

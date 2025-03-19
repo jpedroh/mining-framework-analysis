@@ -42,9 +42,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Range;
 
 import java.util.stream.Collectors;
+
 import java.util.stream.Stream;
 
-import static com.cronutils.model.field.CronFieldName.*;
 import static com.cronutils.model.time.generator.FieldValueGeneratorFactory.createDayOfYearValueGeneratorInstance;
 
 /*
