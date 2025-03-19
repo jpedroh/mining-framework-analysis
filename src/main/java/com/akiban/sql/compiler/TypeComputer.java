@@ -432,11 +432,7 @@ public class TypeComputer implements Visitor
             return new DataTypeDescriptor(TypeId.BOOLEAN_ID, nullableResult);
         }
         else
-        {
-            //throw new UnsupportedOperationException("Nested tuples not supported yet");
-            // TODO:
-            return new DataTypeDescriptor(TypeId.BOOLEAN_ID, true);
-        }
+            throw new UnsupportedOperationException("Nested tuples not supported yet");
     }
 
     protected DataTypeDescriptor subqueryNode(SubqueryNode node) throws StandardException {
