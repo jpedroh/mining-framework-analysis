@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2015 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.squareup.javapoet;
-
 import com.google.testing.compile.CompilationRule;
 import java.io.Closeable;
 import java.io.IOException;
@@ -34,11 +18,10 @@ import javax.lang.model.util.Types;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.truth.Truth.assertThat;
-import static com.squareup.javapoet.MethodSpec.CONSTRUCTOR;
 import static com.squareup.javapoet.TestUtil.findFirst;
+import static com.squareup.javapoet.MethodSpec.CONSTRUCTOR;
 import static javax.lang.model.util.ElementFilter.methodsIn;
 import static org.junit.Assert.fail;
 
@@ -46,6 +29,7 @@ public final class MethodSpecTest {
   @Rule public final CompilationRule compilation = new CompilationRule();
 
   private Elements elements;
+
   private Types types;
 
   @Before public void setUp() {
@@ -93,17 +77,15 @@ public final class MethodSpecTest {
     }
   }
 
-  @Target(ElementType.PARAMETER)
-  @interface Nullable {
+  @Target(value = { ElementType.PARAMETER }) @interface Nullable {
   }
 
   abstract static class Everything {
-    @Deprecated protected abstract <T extends Runnable & Closeable> Runnable everything(
-        @Nullable String thing, List<? extends T> things) throws IOException, SecurityException;
+    @Deprecated protected abstract <T extends Runnable & Closeable> Runnable everything(@Nullable String thing, List<? extends T> things) throws IOException, SecurityException;
   }
 
   abstract static class Generics {
-    <T, R, V extends Throwable> T run(R param) throws V {
+    <T extends java.lang.Object, R extends java.lang.Object, V extends Throwable> T run(R param) throws V {
       return null;
     }
   }
@@ -116,8 +98,7 @@ public final class MethodSpecTest {
     void fail() throws R;
   }
 
-  interface ExtendsOthers extends Callable<Integer>, Comparable<ExtendsOthers>,
-      Throws<IllegalStateException> {
+  interface ExtendsOthers extends Callable<Integer>, Comparable<ExtendsOthers>, Throws<IllegalStateException> {
   }
 
   interface ExtendsIterableWithDefaultMethods extends Iterable<Object> {
@@ -143,50 +124,30 @@ public final class MethodSpecTest {
     TypeElement classElement = getElement(Everything.class);
     ExecutableElement methodElement = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
     MethodSpec method = MethodSpec.overriding(methodElement).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "protected <T extends java.lang.Runnable & java.io.Closeable> java.lang.Runnable "
-        + "everything(\n"
-        + "    @com.squareup.javapoet.MethodSpecTest.Nullable java.lang.String arg0,\n"
-        + "    java.util.List<? extends T> arg1) throws java.io.IOException, java.lang.SecurityException {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "protected <T extends java.lang.Runnable & java.io.Closeable> java.lang.Runnable " + "everything(\n" + "    @com.squareup.javapoet.MethodSpecTest.Nullable java.lang.String arg0,\n" + "    java.util.List<? extends T> arg1) throws java.io.IOException, java.lang.SecurityException {\n" + "}\n");
   }
 
   @Test public void overrideGenerics() {
     TypeElement classElement = getElement(Generics.class);
     ExecutableElement methodElement = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
-    MethodSpec method = MethodSpec.overriding(methodElement)
-        .addStatement("return null")
-        .build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "<T, R, V extends java.lang.Throwable> T run(R param) throws V {\n"
-        + "  return null;\n"
-        + "}\n");
+    MethodSpec method = MethodSpec.overriding(methodElement).addStatement("return null").build();
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "<T, R, V extends java.lang.Throwable> T run(R param) throws V {\n" + "  return null;\n" + "}\n");
   }
 
   @Test public void overrideDoesNotCopyOverrideAnnotation() {
     TypeElement classElement = getElement(HasAnnotation.class);
     ExecutableElement exec = getOnlyElement(methodsIn(classElement.getEnclosedElements()));
     MethodSpec method = MethodSpec.overriding(exec).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "public java.lang.String toString() {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "public java.lang.String toString() {\n" + "}\n");
   }
 
   @Test public void overrideDoesNotCopyDefaultModifier() {
     TypeElement classElement = getElement(ExtendsIterableWithDefaultMethods.class);
     DeclaredType classType = (DeclaredType) classElement.asType();
     List<ExecutableElement> methods = methodsIn(elements.getAllMembers(classElement));
-    ExecutableElement exec = 
-      
-      (methods, "spliterator");
+    ExecutableElement exec = findFirst(methods, "spliterator");
     MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "public java.util.Spliterator<java.lang.Object> spliterator() {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "public java.util.Spliterator<java.lang.Object> spliterator() {\n" + "}\n");
   }
 
   @Test public void overrideExtendsOthersWorksWithActualTypeParameters() {
@@ -195,22 +156,13 @@ public final class MethodSpecTest {
     List<ExecutableElement> methods = methodsIn(elements.getAllMembers(classElement));
     ExecutableElement exec = findFirst(methods, "call");
     MethodSpec method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "public java.lang.Integer call() throws java.lang.Exception {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "public java.lang.Integer call() throws java.lang.Exception {\n" + "}\n");
     exec = findFirst(methods, "compareTo");
     method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "public int compareTo(" + ExtendsOthers.class.getCanonicalName() + " arg0) {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "public int compareTo(" + ExtendsOthers.class.getCanonicalName() + " arg0) {\n" + "}\n");
     exec = findFirst(methods, "fail");
     method = MethodSpec.overriding(exec, classType, types).build();
-    assertThat(method.toString()).isEqualTo(""
-        + "@java.lang.Override\n"
-        + "public void fail() throws java.lang.IllegalStateException {\n"
-        + "}\n");
+    assertThat(method.toString()).isEqualTo("" + "@java.lang.Override\n" + "public void fail() throws java.lang.IllegalStateException {\n" + "}\n");
   }
 
   @Test public void overrideFinalClassMethod() {
@@ -220,8 +172,7 @@ public final class MethodSpecTest {
       MethodSpec.overriding(findFirst(methods, "method"));
       fail();
     } catch (IllegalArgumentException expected) {
-      assertThat(expected).hasMessageThat().isEqualTo(
-          "Cannot override method on final class com.squareup.javapoet.MethodSpecTest.FinalClass");
+      assertThat(expected).hasMessageThat().isEqualTo("Cannot override method on final class com.squareup.javapoet.MethodSpecTest.FinalClass");
     }
   }
 
@@ -266,70 +217,26 @@ public final class MethodSpecTest {
   }
 
   @Test public void withoutParameterJavaDoc() {
-    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco")
-        .addModifiers(Modifier.PRIVATE)
-        .addParameter(TypeName.DOUBLE, "money")
-        .addJavadoc("Gets the best Taco\n")
-        .build();
-    assertThat(methodSpec.toString()).isEqualTo(""
-        + "/**\n"
-        + " * Gets the best Taco\n"
-        + " */\n"
-        + "private void getTaco(double money) {\n"
-        + "}\n");
+    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco").addModifiers(Modifier.PRIVATE).addParameter(TypeName.DOUBLE, "money").addJavadoc("Gets the best Taco\n").build();
+    assertThat(methodSpec.toString()).isEqualTo("" + "/**\n" + " * Gets the best Taco\n" + " */\n" + "private void getTaco(double money) {\n" + "}\n");
   }
 
   @Test public void withParameterJavaDoc() {
-    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco")
-        .addParameter(ParameterSpec.builder(TypeName.DOUBLE, "money")
-            .addJavadoc("the amount required to buy the taco.\n")
-            .build())
-        .addParameter(ParameterSpec.builder(TypeName.INT, "count")
-            .addJavadoc("the number of Tacos to buy.\n")
-            .build())
-        .addJavadoc("Gets the best Taco money can buy.\n")
-        .build();
-    assertThat(methodSpec.toString()).isEqualTo(""
-        + "/**\n"
-        + " * Gets the best Taco money can buy.\n"
-        + " *\n"
-        + " * @param money the amount required to buy the taco.\n"
-        + " * @param count the number of Tacos to buy.\n"
-        + " */\n"
-        + "void getTaco(double money, int count) {\n"
-        + "}\n");
+    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco").addParameter(ParameterSpec.builder(TypeName.DOUBLE, "money").addJavadoc("the amount required to buy the taco.\n").build()).addParameter(ParameterSpec.builder(TypeName.INT, "count").addJavadoc("the number of Tacos to buy.\n").build()).addJavadoc("Gets the best Taco money can buy.\n").build();
+    assertThat(methodSpec.toString()).isEqualTo("" + "/**\n" + " * Gets the best Taco money can buy.\n" + " *\n" + " * @param money the amount required to buy the taco.\n" + " * @param count the number of Tacos to buy.\n" + " */\n" + "void getTaco(double money, int count) {\n" + "}\n");
   }
 
   @Test public void withParameterJavaDocAndWithoutMethodJavadoc() {
-    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco")
-        .addParameter(ParameterSpec.builder(TypeName.DOUBLE, "money")
-            .addJavadoc("the amount required to buy the taco.\n")
-            .build())
-        .addParameter(ParameterSpec.builder(TypeName.INT, "count")
-            .addJavadoc("the number of Tacos to buy.\n")
-            .build())
-        .build();
-    assertThat(methodSpec.toString()).isEqualTo(""
-        + "/**\n"
-        + " * @param money the amount required to buy the taco.\n"
-        + " * @param count the number of Tacos to buy.\n"
-        + " */\n"
-        + "void getTaco(double money, int count) {\n"
-        + "}\n");
+    MethodSpec methodSpec = MethodSpec.methodBuilder("getTaco").addParameter(ParameterSpec.builder(TypeName.DOUBLE, "money").addJavadoc("the amount required to buy the taco.\n").build()).addParameter(ParameterSpec.builder(TypeName.INT, "count").addJavadoc("the number of Tacos to buy.\n").build()).build();
+    assertThat(methodSpec.toString()).isEqualTo("" + "/**\n" + " * @param money the amount required to buy the taco.\n" + " * @param count the number of Tacos to buy.\n" + " */\n" + "void getTaco(double money, int count) {\n" + "}\n");
   }
 
   @Test public void duplicateExceptionsIgnored() {
     ClassName ioException = ClassName.get(IOException.class);
     ClassName timeoutException = ClassName.get(TimeoutException.class);
-    MethodSpec methodSpec = MethodSpec.methodBuilder("duplicateExceptions")
-      .addException(ioException)
-      .addException(timeoutException)
-      .addException(timeoutException)
-      .addException(ioException)
-      .build();
+    MethodSpec methodSpec = MethodSpec.methodBuilder("duplicateExceptions").addException(ioException).addException(timeoutException).addException(timeoutException).addException(ioException).build();
     assertThat(methodSpec.exceptions).isEqualTo(Arrays.asList(ioException, timeoutException));
-    assertThat(methodSpec.toBuilder().addException(ioException).build().exceptions)
-      .isEqualTo(Arrays.asList(ioException, timeoutException));
+    assertThat(methodSpec.toBuilder().addException(ioException).build().exceptions).isEqualTo(Arrays.asList(ioException, timeoutException));
   }
 
   @Test public void nullIsNotAValidMethodName() {
@@ -343,8 +250,7 @@ public final class MethodSpecTest {
 
   @Test public void addModifiersVarargsShouldNotBeNull() {
     try {
-      MethodSpec.methodBuilder("taco")
-              .addModifiers((Modifier[]) null);
+      MethodSpec.methodBuilder("taco").addModifiers((Modifier[]) null);
       fail("NullPointerException expected");
     } catch (NullPointerException e) {
       assertThat(e.getMessage()).isEqualTo("modifiers == null");
@@ -352,14 +258,7 @@ public final class MethodSpecTest {
   }
 
   @Test public void modifyMethodName() {
-    MethodSpec methodSpec = MethodSpec.methodBuilder("initialMethod")
-        .build()
-        .toBuilder()
-        .setName("revisedMethod")
-        .build();
-
-    assertThat(methodSpec.toString()).isEqualTo(""
-        + "void revisedMethod() {\n"
-        + "}\n");
+    MethodSpec methodSpec = MethodSpec.methodBuilder("initialMethod").build().toBuilder().setName("revisedMethod").build();
+    assertThat(methodSpec.toString()).isEqualTo("" + "void revisedMethod() {\n" + "}\n");
   }
 }
