@@ -62,6 +62,7 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   public String getProcessBusinessKey() {
     return processBusinessKey;
   }
+<<<<<<< /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/left.java
 
   @Override
   public void setProcessBusinessKey(String processBusinessKey) {
@@ -69,6 +70,11 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
   }
 
   public DelegateExecutionFake withProcessBusinessKey(final String processBusinessKey) {
+||||||| /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/base.java
+  public DelegateExecutionFake withProcessBusinessKey(String processBusinessKey) {
+=======
+  public DelegateExecutionFake withProcessBusinessKey(final String processBusinessKey) {
+>>>>>>> /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/right.java
     this.processBusinessKey = processBusinessKey;
     return this;
   }
@@ -231,6 +237,28 @@ public class DelegateExecutionFake extends DelegateFake<DelegateExecutionFake> i
     throw new UnsupportedOperationException("not implemented");
   }
 
+<<<<<<< /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/left.java
+||||||| /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/base.java
+  @Override
+  public ProcessEngineServices getProcessEngineServices() {
+    return processEngineServices;
+  }
+
+  public DelegateExecutionFake withProcessEngineServices(ProcessEngineServices processEngineServices) {
+    this.processEngineServices = processEngineServices;
+    return this;
+  }
+=======
+  @Override
+  public ProcessEngineServices getProcessEngineServices() {
+    return processEngineServices;
+  }
+
+  public DelegateExecutionFake withProcessEngineServices(final ProcessEngineServices processEngineServices) {
+    this.processEngineServices = processEngineServices;
+    return this;
+  }
+>>>>>>> /usr/src/app/output/camunda/camunda-bpm-mockito/3b9d3c98b5b6e2dd753097976e21ee5e3ca2ae0b/src/main/java/org/camunda/bpm/extension/mockito/delegate/DelegateExecutionFake.java/right.java
 
   public Map<String, Incident> getIncidents() {
     return incidents;
