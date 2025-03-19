@@ -334,19 +334,19 @@ public class JDatePickerImpl extends JPanel implements JDatePicker {
 		public void propertyChange(PropertyChangeEvent evt) {
             // Short circuit if the following cases are found
             if (evt.getOldValue() == null && evt.getNewValue() == null) {
-                return;
-            }
+		    return;
+		}
             if (evt.getOldValue() != null && evt.getOldValue().equals(evt.getNewValue())) {
-                return;
-            }
+		    return;
+		}
             if (!formattedTextField.isEditable()) {
-                return;
-            }
+		    return;
+		}
             
             // If the field is editable and we need to parse the date entered
 			if (evt.getNewValue() != null) {
 				Calendar value = (Calendar)evt.getNewValue();
-                DateModel model = new UtilCalendarModel(value);
+                DateModel<Calendar> model = new UtilCalendarModel(value);
 				// check constraints
 				if (!datePanel.checkConstraints(model)) {
 					// rollback
@@ -365,19 +365,19 @@ public class JDatePickerImpl extends JPanel implements JDatePicker {
 		}
 
         public void eventDispatched(AWTEvent event) {
-            if (MouseEvent.MOUSE_CLICKED == event.getID() && event.getSource() != button) {
-                Set<Component> components = getAllComponents(datePanel);
-                boolean clickInPopup = false;
-                for (Component component: components) {
-                    if (event.getSource() == component) {
-                        clickInPopup = true;
-                    }
-                }
-                if (!clickInPopup) {
-                    hidePopup();
-                }
-            }
-        }
+	    if (MouseEvent.MOUSE_CLICKED == event.getID() && event.getSource() != button) {
+	        Set<Component> components = getAllComponents(datePanel);
+	        boolean clickInPopup = false;
+	        for (Component component: components) {
+	            if (event.getSource() == component) {
+	                clickInPopup = true;
+	            }
+	        }
+	        if (!clickInPopup) {
+	            hidePopup();
+	        }
+	    }
+	}
 
     }
 
