@@ -74,14 +74,15 @@ public class Base64EncoderDecoder {
 		out.close();
 	}
 	
-	public static String encodeString(String stringToEncode) {
+	
+	public static String encodeString(String stringToEncode){
 		byte[] encodedBytes = Base64.encodeBase64(stringToEncode.getBytes(Charset.forName("UTF-8")));
-		return new String(encodedBytes);
+		return new String(encodedBytes, Charset.forName("UTF-8"));
 	}
 	
-	public static String decodeString(String stringToDecode) {
+	public static String decodeString(String stringToDecode){
 		 byte[] decodedBytes = Base64.decodeBase64(stringToDecode.getBytes(Charset.forName("UTF-8")));
-		 return new String(decodedBytes);
+		 return new String(decodedBytes, Charset.forName("UTF-8"));
 	}
 	
 	public static String getPropertyFileLocation() {
