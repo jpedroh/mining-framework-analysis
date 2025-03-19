@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2014 jsonwebtoken.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.jsonwebtoken;
-
 import java.util.Map;
 
 /**
@@ -37,43 +21,41 @@ import java.util.Map;
  *
  * @since 0.1
  */
-public interface Header<T extends Header<T>> extends Map<String,Object> {
+public interface Header<T extends Header<T>> extends Map<String, Object> {
+  /** JWT {@code Type} (typ) value: <code>"JWT"</code> */
+  public static final String JWT_TYPE = "JWT";
 
-    /** JWT {@code Type} (typ) value: <code>"JWT"</code> */
-    public static final String JWT_TYPE = "JWT";
+  /** JWT {@code Type} header parameter name: <code>"typ"</code> */
+  public static final String TYPE = "typ";
 
-    /** JWT {@code Type} header parameter name: <code>"typ"</code> */
-    public static final String TYPE = "typ";
+  /** JWT {@code Content Type} header parameter name: <code>"cty"</code> */
+  public static final String CONTENT_TYPE = "cty";
 
-    /** JWT {@code Content Type} header parameter name: <code>"cty"</code> */
-    public static final String CONTENT_TYPE = "cty";
+  /** JWT {@code Compression Algorithm} header parameter name: <code>"zip"</code> */
+  public static final String COMPRESSION_ALGORITHM = "zip";
 
-    /** JWT {@code Compression Algorithm} header parameter name: <code>"zip"</code> */
-    public static final String COMPRESSION_ALGORITHM = "zip";
-
-    /** JJWT legacy/deprecated compression algorithm header parameter name: <code>"calg"</code>
+  /** JJWT legacy/deprecated compression algorithm header parameter name: <code>"calg"</code>
      * @deprecated use {@link #COMPRESSION_ALGORITHM} instead. */
-    @Deprecated
-    public static final String DEPRECATED_COMPRESSION_ALGORITHM = "calg";
+  @Deprecated public static final String DEPRECATED_COMPRESSION_ALGORITHM = "calg";
 
-    /**
+  /**
      * Returns the <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-5.1">
      * <code>typ</code></a> (type) header value or {@code null} if not present.
      *
      * @return the {@code typ} header value or {@code null} if not present.
      */
-    String getType();
+  String getType();
 
-    /**
+  /**
      * Sets the JWT <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-5.1">
      * <code>typ</code></a> (Type) header value.  A {@code null} value will remove the property from the JSON map.
      *
      * @param typ the JWT JOSE {@code typ} header value or {@code null} to remove the property from the JSON map.
      * @return the {@code Header} instance for method chaining.
      */
-    T setType(String typ);
+  T setType(String typ);
 
-    /**
+  /**
      * Returns the <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-5.2">
      * <code>cty</code></a> (Content Type) header value or {@code null} if not present.
      *
@@ -88,9 +70,9 @@ public interface Header<T extends Header<T>> extends Map<String,Object> {
      *
      * @return the {@code typ} header parameter value or {@code null} if not present.
      */
-    String getContentType();
+  String getContentType();
 
-    /**
+  /**
      * Sets the JWT <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-5.2">
      * <code>cty</code></a> (Content Type) header parameter value.  A {@code null} value will remove the property from
      * the JSON map.
@@ -107,17 +89,17 @@ public interface Header<T extends Header<T>> extends Map<String,Object> {
      * @param cty the JWT JOSE {@code cty} header value or {@code null} to remove the property from the JSON map.
      * @return the {@code Header} instance for method chaining.
      */
-    T setContentType(String cty);
+  T setContentType(String cty);
 
-    /**
+  /**
      * Returns the JWT <code>calg</code> (Compression Algorithm) header value or {@code null} if not present.
      *
      * @return the {@code calg} header parameter value or {@code null} if not present.
      * @since 0.6.0
      */
-    String getCompressionAlgorithm();
+  String getCompressionAlgorithm();
 
-    /**
+  /**
      * Sets the JWT <code>calg</code> (Compression Algorithm) header parameter value. A {@code null} value will remove
      * the property from the JSON map.
      * 
@@ -129,6 +111,5 @@ public interface Header<T extends Header<T>> extends Map<String,Object> {
      * @return the {@code Header} instance for method chaining.
      * @since 0.6.0
      */
-    T setCompressionAlgorithm(String calg);
-
+  T setCompressionAlgorithm(String calg);
 }
