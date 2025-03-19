@@ -1,25 +1,4 @@
-//  SMPSORunner.java
-//
-//  Author:
-//       Antonio J. Nebro <antonio@lcc.uma.es>
-//
-//  Copyright (c) 2014 Antonio J. Nebro
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-// 
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package org.uma.jmetal.runner.multiobjective;
-
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSO;
 import org.uma.jmetal.operator.MutationOperator;
@@ -34,7 +13,6 @@ import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.fileoutput.SolutionSetOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import java.util.List;
 
 /**
@@ -64,44 +42,31 @@ public class SMPSORunner {
     DoubleProblem problem;
     Algorithm algorithm;
     MutationOperator mutation;
-
-    String problemName ;
+    String problemName;
     if (args.length == 1) {
-      problemName = args[0] ;
+      problemName = args[0];
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+      problemName = 
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/left.java
+      "org.uma.jmetal.problem.multiobjective.Srinivas"
+=======
+      "org.uma.jmetal.problem.multiobjective.zdt.ZDT1"
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/right.java
+      ;
     }
-
     problem = (DoubleProblem) ProblemUtils.loadProblem(problemName);
-
-    Archive archive = new CrowdingDistanceArchive(100) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    algorithm = new SMPSO.Builder(problem, archive)
-            .setMutation(mutation)
-            .setMaxIterations(250)
-            .setSwarmSize(100)
-            //.setRandomGenerator(new MersenneTwisterGenerator())
-            .build();
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute();
-
-    List<DoubleSolution> population = ((SMPSO)algorithm).getResult();
+    Archive archive = new CrowdingDistanceArchive(100);
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    algorithm = new SMPSO.Builder(problem, archive).setMutation(mutation).setMaxIterations(250).setSwarmSize(100).build();
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+    List<DoubleSolution> population = ((SMPSO) algorithm).getResult();
     long computingTime = algorithmRunner.getComputingTime();
-
-    new SolutionSetOutput.Printer(population)
-            .setSeparator("\t")
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
-
+    new SolutionSetOutput.Printer(population).setSeparator("\t").setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
     JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed()) ;
+    JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
   }
 }
