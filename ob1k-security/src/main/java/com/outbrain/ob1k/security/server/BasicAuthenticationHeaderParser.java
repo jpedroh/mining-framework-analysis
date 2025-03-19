@@ -1,6 +1,7 @@
 package com.outbrain.ob1k.security.server;
 
 import java.util.Base64;
+
 import com.outbrain.ob1k.Request;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -73,7 +74,13 @@ public class BasicAuthenticationHeaderParser {
 
   private String decode(final String encodedCredentials) {
     try {
+<<<<<<< /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/main/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParser.java/left.java
+      return new String(java.util.Base64.getDecoder().decode(encodedCredentials), CharsetUtil.UTF_8);
+||||||| /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/main/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParser.java/base.java
+      return new String(Base64.decode(encodedCredentials), CharsetUtil.UTF_8);
+=======
       return new String(Base64.getDecoder().decode(encodedCredentials), CharsetUtil.UTF_8);
+>>>>>>> /usr/src/app/output/outbrain/ob1k/3f7bdcaadc669ba2d14a424104ee4e09433edf88/ob1k-security/src/main/java/com/outbrain/ob1k/security/server/BasicAuthenticationHeaderParser.java/right.java
     } catch (final Exception e) {
       logger.error("Error decoding credentials " + encodedCredentials, e);
       return null;
