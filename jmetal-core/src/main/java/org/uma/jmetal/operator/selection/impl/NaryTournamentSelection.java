@@ -1,5 +1,4 @@
 package org.uma.jmetal.operator.selection.impl;
-
 import java.util.Comparator;
 import java.util.List;
 import org.uma.jmetal.operator.selection.SelectionOperator;
@@ -14,10 +13,9 @@ import org.uma.jmetal.util.errorchecking.Check;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-@SuppressWarnings("serial")
-public class NaryTournamentSelection<S extends Solution<?>>
-    implements SelectionOperator<List<S>, S> {
+@SuppressWarnings(value = { "serial" }) public class NaryTournamentSelection<S extends Solution<?>> implements SelectionOperator<List<S>, S> {
   private Comparator<S> comparator;
+
   private int tournamentSize;
 
   /** Constructor */
@@ -31,34 +29,21 @@ public class NaryTournamentSelection<S extends Solution<?>>
     this.comparator = comparator;
   }
 
-  @Override
-  /** Execute() method */
-  public S execute(List<S> solutionList) {
+  @Override public S execute(List<S> solutionList) {
     Check.notNull(solutionList);
     Check.collectionIsNotEmpty(solutionList);
-    Check.that(
-        solutionList.size() >= tournamentSize,
-        "The solution list size ("
-            + solutionList.size()
-            + ") is less than "
-            + "the number of requested solutions ("
-            + tournamentSize
-            + ")");
-
+    Check.that(solutionList.size() >= tournamentSize, "The solution list size (" + solutionList.size() + ") is less than " + "the number of requested solutions (" + tournamentSize + ")");
     S result;
     if (solutionList.size() == 1) {
       result = solutionList.get(0);
     } else {
-      List<S> selectedSolutions =
-          SolutionListUtils.selectNRandomDifferentSolutions(
-                  tournamentSize, solutionList);
+      List<S> selectedSolutions = SolutionListUtils.selectNRandomDifferentSolutions(tournamentSize, solutionList);
       result = SolutionListUtils.findBestSolution(selectedSolutions, comparator);
     }
-
     return result;
   }
 
   public int getTournamentSize() {
-    return tournamentSize ;
+    return tournamentSize;
   }
 }

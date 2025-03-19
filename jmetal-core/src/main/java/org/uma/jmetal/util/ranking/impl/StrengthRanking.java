@@ -1,5 +1,4 @@
 package org.uma.jmetal.util.ranking.impl;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.uma.jmetal.util.ranking.Ranking;
  */
 public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
   private final String attributeId = getClass().getName();
+
   private Comparator<S> dominanceComparator;
 
   private List<ArrayList<S>> rankedSubPopulations;
@@ -36,12 +36,9 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
     this(new DominanceWithConstraintsComparator<>());
   }
 
-  @Override
-  public Ranking<S> compute(List<S> solutionList) {
+  @Override public Ranking<S> compute(List<S> solutionList) {
     int[] strength = new int[solutionList.size()];
     int[] rawFitness = new int[solutionList.size()];
-
-    // strength(i) = |{j | j <- SolutionSet and i dominate j}|
     for (int i = 0; i < solutionList.size(); i++) {
       for (int j = 0; j < solutionList.size(); j++) {
         if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) < 0) {
@@ -49,9 +46,6 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
         }
       }
     }
-
-    // Calculate the raw fitness:
-    // rawFitness(i) = |{sum strength(j) | j <- SolutionSet and j dominate i}|
     for (int i = 0; i < solutionList.size(); i++) {
       for (int j = 0; j < solutionList.size(); j++) {
         if (dominanceComparator.compare(solutionList.get(i), solutionList.get(j)) == 1) {
@@ -59,7 +53,6 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
         }
       }
     }
-
     int maxFitnessValue = 0;
     for (int i = 0; i < solutionList.size(); i++) {
       solutionList.get(i).attributes().put(attributeId, rawFitness[i]);
@@ -67,19 +60,9 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
         maxFitnessValue = rawFitness[i];
       }
     }
-
-    // front[i] contains the list of individuals belonging to the front i
     rankedSubPopulations = new ArrayList<>(maxFitnessValue + 1);
-    IntStream.range(0, maxFitnessValue + 1)
-        .forEach(index -> rankedSubPopulations.add(new ArrayList<>()));
-
-    // Assign each solution to its corresponding front
-    solutionList.forEach(
-        solution ->
-            rankedSubPopulations.get((int) solution.attributes().get(attributeId)).add(solution));
-
-    // Remove empty fronts
-    // rankedSubPopulations.stream().filter(list -> (list.size() == 0));
+    IntStream.range(0, maxFitnessValue + 1).forEach((index) -> rankedSubPopulations.add(new ArrayList<>()));
+    solutionList.forEach((solution) -> rankedSubPopulations.get((int) solution.attributes().get(attributeId)).add(solution));
     int counter = 0;
     while (counter < rankedSubPopulations.size()) {
       if (rankedSubPopulations.get(counter).size() == 0) {
@@ -88,28 +71,22 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
         counter++;
       }
     }
-
     return this;
   }
 
-  @Override
-  public List<S> getSubFront(int rank) {
+  @Override public List<S> getSubFront(int rank) {
     if (rank >= rankedSubPopulations.size()) {
-      throw new JMetalException(
-          "Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
+      throw new JMetalException("Invalid rank: " + rank + ". Max rank = " + (rankedSubPopulations.size() - 1));
     }
     return rankedSubPopulations.get(rank);
   }
 
-  @Override
-  public int getNumberOfSubFronts() {
+  @Override public int getNumberOfSubFronts() {
     return rankedSubPopulations.size();
   }
 
-  @Override
-  public Integer getRank(S solution) {
+  @Override public Integer getRank(S solution) {
     Check.notNull(solution);
-
     Integer result = -1;
     if (solution.attributes().get(attributeId) != null) {
       result = (Integer) solution.attributes().get(attributeId);
@@ -117,8 +94,7 @@ public class StrengthRanking<S extends Solution<?>> implements Ranking<S> {
     return result;
   }
 
-  @Override
-  public Object getAttributedId() {
-    return attributeId ;
+  @Override public Object getAttributedId() {
+    return attributeId;
   }
 }

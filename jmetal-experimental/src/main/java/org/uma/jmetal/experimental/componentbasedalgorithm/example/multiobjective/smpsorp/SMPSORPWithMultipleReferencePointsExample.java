@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.smpsorp;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -34,7 +33,6 @@ public class SMPSORPWithMultipleReferencePointsExample {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName;
     if (args.length == 1) {
       problemName = args[0];
@@ -42,52 +40,25 @@ public class SMPSORPWithMultipleReferencePointsExample {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     }
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
     referencePoints.add(List.of(0.2, 0.8));
     referencePoints.add(List.of(0.7, 0.4));
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int maxEvaluations = 25000;
     int swarmSize = 100;
-
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
     for (int i = 0; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-              new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-                      swarmSize / referencePoints.size(), referencePoints.get(i)));
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem) ;
-    Termination termination = new TerminationByEvaluations(maxEvaluations) ;
-
-    algorithm = new SMPSORP(problem,
-            swarmSize,
-            archivesWithReferencePoints,
-            referencePoints,
-            mutation,
-            0.0, 1.0,
-            0.0, 1.0,
-            2.5, 1.5,
-            2.5, 1.5,
-            0.1, 0.1,
-            -1.0, -1.0,
-            evaluation, termination);
-
+    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
+    Termination termination = new TerminationByEvaluations(maxEvaluations);
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, evaluation, termination);
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     System.exit(0);
   }
 }

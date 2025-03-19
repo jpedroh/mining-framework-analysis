@@ -1,5 +1,4 @@
 package org.uma.jmetal.parallel.synchronous;
-
 import java.io.Serializable;
 import java.util.List;
 import org.apache.spark.api.java.JavaRDD;
@@ -17,25 +16,25 @@ import org.uma.jmetal.solution.Solution;
  * @author Antonio J. Nebro
  */
 public class SparkEvaluation<S extends Solution<?>> implements Evaluation<S>, Serializable {
-  private int numberOfComputedEvaluations ;
-  private Problem<S> problem ;
-  static private JavaSparkContext sparkContext ;
+  private int numberOfComputedEvaluations;
+
+  private Problem<S> problem;
+
+  static private JavaSparkContext sparkContext;
 
   public SparkEvaluation(JavaSparkContext sparkContext, Problem<S> problem) {
-    this.numberOfComputedEvaluations = 0 ;
-    this.problem = problem ;
-    this.sparkContext = sparkContext ;
+    this.numberOfComputedEvaluations = 0;
+    this.problem = problem;
+    this.sparkContext = sparkContext;
   }
 
-  @Override
-  public List<S> evaluate(List<S> solutionList) {
+  @Override public List<S> evaluate(List<S> solutionList) {
     JavaRDD<S> solutionsToEvaluate = sparkContext.parallelize(solutionList);
     JavaRDD<S> evaluatedSolutions = solutionsToEvaluate.map(problem::evaluate);
-
-    return evaluatedSolutions.collect() ;
+    return evaluatedSolutions.collect();
   }
 
   public int getComputedEvaluations() {
-    return numberOfComputedEvaluations ;
+    return numberOfComputedEvaluations;
   }
 }

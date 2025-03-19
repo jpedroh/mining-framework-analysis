@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.smsemoa;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.multiobjective.smsemoa.SMSEMOA;
@@ -29,46 +28,26 @@ public class SMSEMOADefaultConfigurationExample extends AbstractAlgorithmRunner 
     Problem<DoubleSolution> problem;
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT2";
     String referenceParetoFront = "resources/referenceFrontsCSV/ZDT2.csv";
-
     problem = ProblemUtils.loadProblem(problemName);
-
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int populationSize = 100;
-
     Termination termination = new TerminationByEvaluations(25000);
-
-    var algorithm = new SMSEMOA<>(
-            problem,
-            populationSize,
-            crossover,
-            mutation,
-            termination);
-
+    var algorithm = new SMSEMOA<>(problem, populationSize, crossover, mutation, termination);
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.auto.parameter.catalogue;
-
 import java.util.List;
 import org.uma.jmetal.experimental.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.ea.variation.Variation;
@@ -15,31 +14,22 @@ public class VariationParameter extends CategoricalParameter {
 
   public Variation<?> getParameter() {
     Variation<?> result;
-    int offspringPopulationSize = (Integer)findGlobalParameter("offspringPopulationSize").getValue() ;
-
+    int offspringPopulationSize = (Integer) findGlobalParameter("offspringPopulationSize").getValue();
     switch (getValue()) {
       case "crossoverAndMutationVariation":
-        CrossoverParameter crossoverParameter =
-            (CrossoverParameter) findSpecificParameter("crossover");
-        MutationParameter mutationParameter = (MutationParameter) findSpecificParameter("mutation");
-
-        CrossoverOperator<DoubleSolution> crossoverOperator = crossoverParameter.getParameter();
-        MutationOperator<DoubleSolution> mutationOperatorOperator =
-            mutationParameter.getParameter();
-
-        result =
-            new CrossoverAndMutationVariation<>(
-                offspringPopulationSize, crossoverOperator, mutationOperatorOperator);
-        break;
+      CrossoverParameter crossoverParameter = (CrossoverParameter) findSpecificParameter("crossover");
+      MutationParameter mutationParameter = (MutationParameter) findSpecificParameter("mutation");
+      CrossoverOperator<DoubleSolution> crossoverOperator = crossoverParameter.getParameter();
+      MutationOperator<DoubleSolution> mutationOperatorOperator = mutationParameter.getParameter();
+      result = new CrossoverAndMutationVariation<>(offspringPopulationSize, crossoverOperator, mutationOperatorOperator);
+      break;
       default:
-        throw new RuntimeException("Variation component unknown: " + getValue());
+      throw new RuntimeException("Variation component unknown: " + getValue());
     }
-
     return result;
   }
 
-  @Override
-  public String getName() {
+  @Override public String getName() {
     return "variation";
   }
 }

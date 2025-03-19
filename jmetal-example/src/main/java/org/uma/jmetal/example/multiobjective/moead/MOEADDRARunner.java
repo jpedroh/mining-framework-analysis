@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.moead;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -31,52 +30,31 @@ public class MOEADDRARunner extends AbstractAlgorithmRunner {
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
     DifferentialEvolutionCrossover crossover;
-
     String problemName;
     String referenceParetoFront = "";
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0];
-      referenceParetoFront = args[1];
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F7";
-      referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F7";
+        referenceParetoFront = "resources/referenceFrontsCSV/LZ09_F2.csv";
+      }
     }
-
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     double cr = 1.0;
     double f = 0.5;
-    crossover =
-        new DifferentialEvolutionCrossover(
-            cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
-
+    crossover = new DifferentialEvolutionCrossover(cr, f, DifferentialEvolutionCrossover.DE_VARIANT.RAND_1_BIN);
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
-    algorithm =
-        new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADDRA)
-            .setCrossover(crossover)
-            .setMutation(mutation)
-            .setMaxEvaluations(175000)
-            .setPopulationSize(600)
-            .setResultPopulationSize(100)
-            .setNeighborhoodSelectionProbability(0.9)
-            .setMaximumNumberOfReplacedSolutions(2)
-            .setNeighborSize(20)
-            .setDataDirectory("resources/weightVectorFiles/moead/")
-            .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
-            .build();
-
+    algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADDRA).setCrossover(crossover).setMutation(mutation).setMaxEvaluations(175000).setPopulationSize(600).setResultPopulationSize(100).setNeighborhoodSelectionProbability(0.9).setMaximumNumberOfReplacedSolutions(2).setNeighborSize(20).setDataDirectory("resources/weightVectorFiles/moead/").setFunctionType(AbstractMOEAD.FunctionType.TCHE).build();
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
     List<DoubleSolution> population = algorithm.getResult();
     long computingTime = algorithmRunner.getComputingTime();
-
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
     printFinalSolutionSet(population);
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);

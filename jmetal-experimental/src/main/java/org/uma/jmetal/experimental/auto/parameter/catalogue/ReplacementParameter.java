@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.auto.parameter.catalogue;
-
 import java.util.Comparator;
 import java.util.List;
 import org.uma.jmetal.experimental.auto.parameter.CategoricalParameter;
@@ -15,7 +14,7 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
 import org.uma.jmetal.util.ranking.impl.StrengthRanking;
 
 public class ReplacementParameter extends CategoricalParameter {
-  public ReplacementParameter(String args[], List<String> selectionStrategies) {
+  public ReplacementParameter(String[] args, List<String> selectionStrategies) {
     super("replacement", args, selectionStrategies);
   }
 
@@ -24,39 +23,29 @@ public class ReplacementParameter extends CategoricalParameter {
     Replacement<?> result;
     switch (getValue()) {
       case "rankingAndDensityEstimatorReplacement":
-        String rankingName = (String) findSpecificParameter("rankingForReplacement").getValue();
-        String densityEstimatorName =
-            (String) findSpecificParameter("densityEstimatorForReplacement").getValue();
-
-        Ranking<Solution<?>> ranking;
-        if (rankingName.equals("dominanceRanking")) {
-          ranking = new FastNonDominatedSortRanking<>();
-        } else {
-          ranking = new StrengthRanking<>();
-        }
-
-        DensityEstimator<Solution<?>> densityEstimator;
-        if (densityEstimatorName.equals("crowdingDistance")) {
-          densityEstimator = new CrowdingDistanceDensityEstimator<>();
-        } else {
-          densityEstimator = new KnnDensityEstimator<>(1);
-        }
-
-        if (removalPolicy.equals("oneShot")) {
-          result =
-              new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, Replacement.RemovalPolicy.oneShot);
-        } else {
-          result =
-              new RankingAndDensityEstimatorReplacement<>(
-                  ranking, densityEstimator, Replacement.RemovalPolicy.sequential);
-        }
-
-        break;
+      String rankingName = (String) findSpecificParameter("rankingForReplacement").getValue();
+      String densityEstimatorName = (String) findSpecificParameter("densityEstimatorForReplacement").getValue();
+      Ranking<Solution<?>> ranking;
+      if (rankingName.equals("dominanceRanking")) {
+        ranking = new FastNonDominatedSortRanking<>();
+      } else {
+        ranking = new StrengthRanking<>();
+      }
+      DensityEstimator<Solution<?>> densityEstimator;
+      if (densityEstimatorName.equals("crowdingDistance")) {
+        densityEstimator = new CrowdingDistanceDensityEstimator<>();
+      } else {
+        densityEstimator = new KnnDensityEstimator<>(1);
+      }
+      if (removalPolicy.equals("oneShot")) {
+        result = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator, Replacement.RemovalPolicy.oneShot);
+      } else {
+        result = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator, Replacement.RemovalPolicy.sequential);
+      }
+      break;
       default:
-        throw new RuntimeException("Replacement component unknown: " + getValue());
+      throw new RuntimeException("Replacement component unknown: " + getValue());
     }
-
     return result;
   }
 }

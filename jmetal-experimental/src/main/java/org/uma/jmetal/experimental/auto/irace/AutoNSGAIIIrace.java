@@ -1,10 +1,22 @@
 package org.uma.jmetal.experimental.auto.irace;
-
 import static org.uma.jmetal.util.SolutionListUtils.getMatrixWithObjectiveValues;
-
 import java.io.IOException;
 import org.uma.jmetal.experimental.auto.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.experimental.auto.algorithm.nsgaii.AutoNSGAII;
+import org.uma.jmetal.experimental.auto.parameter.CategoricalParameter;
+import org.uma.jmetal.experimental.auto.parameter.IntegerParameter;
+import org.uma.jmetal.experimental.auto.parameter.Parameter;
+import org.uma.jmetal.experimental.auto.parameter.RealParameter;
+import org.uma.jmetal.experimental.auto.parameter.StringParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.CreateInitialSolutionsParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.CrossoverParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.DifferentialEvolutionCrossoverParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.MutationParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.PopulationSizeParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.ProbabilityParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.RepairDoubleSolutionStrategyParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.SelectionParameter;
+import org.uma.jmetal.experimental.auto.parameter.catalogue.VariationParameter;
 import org.uma.jmetal.qualityindicator.impl.NormalizedHypervolume;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.util.NormalizeUtils;
@@ -14,24 +26,14 @@ public class AutoNSGAIIIrace {
   public static void main(String[] args) throws IOException {
     AutoNSGAII nsgaiiWithParameters = new AutoNSGAII();
     nsgaiiWithParameters.parseAndCheckParameters(args);
-
     EvolutionaryAlgorithm<DoubleSolution> nsgaII = nsgaiiWithParameters.create();
     nsgaII.run();
-
-    String referenceFrontFile =
-        "resources/referenceFrontsCSV/" + nsgaiiWithParameters.referenceFrontFilename.getValue();
-
+    String referenceFrontFile = "resources/referenceFrontsCSV/" + nsgaiiWithParameters.referenceFrontFilename.getValue();
     double[][] referenceFront = VectorUtils.readVectors(referenceFrontFile, ",");
-    double[][] front = getMatrixWithObjectiveValues(nsgaII.getResult()) ;
-
+    double[][] front = getMatrixWithObjectiveValues(nsgaII.getResult());
     double[][] normalizedReferenceFront = NormalizeUtils.normalize(referenceFront);
-    double[][] normalizedFront =
-            NormalizeUtils.normalize(
-                    front,
-                    NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront),
-                    NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
-
-    var qualityIndicator = new NormalizedHypervolume(normalizedReferenceFront) ;
-    System.out.println(qualityIndicator.compute(normalizedFront)) ;
+    double[][] normalizedFront = NormalizeUtils.normalize(front, NormalizeUtils.getMinValuesOfTheColumnsOfAMatrix(referenceFront), NormalizeUtils.getMaxValuesOfTheColumnsOfAMatrix(referenceFront));
+    var qualityIndicator = new NormalizedHypervolume(normalizedReferenceFront);
+    System.out.println(qualityIndicator.compute(normalizedFront));
   }
 }

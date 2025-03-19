@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.smpsorp;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,100 +41,58 @@ public class SMPSORPWithMultipleReferencePointsAndChartsRunner {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
-    String referenceParetoFront = "" ;
-
-    String problemName ;
+    String referenceParetoFront = "";
+    String problemName;
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1" ;
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.pf" ;
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+        referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.pf";
+      }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
+    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
-    //referencePoints.add(Arrays.asList(0.6, 0.1)) ;
-    referencePoints.add(Arrays.asList(0.2, 0.3)) ;
-    referencePoints.add(Arrays.asList(0.8, 0.2)) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
+    referencePoints.add(Arrays.asList(0.2, 0.3));
+    referencePoints.add(Arrays.asList(0.8, 0.2));
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
     int maxIterations = 250;
-    int swarmSize = 100 ;
-
+    int swarmSize = 100;
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
-    for (int i = 0 ; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-          new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-              swarmSize/referencePoints.size(), referencePoints.get(i))) ;
+    for (int i = 0; i < referencePoints.size(); i++) {
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
-    algorithm = new SMPSORP(problem,
-            swarmSize,
-            archivesWithReferencePoints,
-            referencePoints,
-            mutation,
-            maxIterations,
-            0.0, 1.0,
-            0.0, 1.0,
-            2.5, 1.5,
-            2.5, 1.5,
-            0.1, 0.1,
-            -1.0, -1.0,
-            new DefaultDominanceComparator<>(),
-            new SequentialSolutionListEvaluator<>() );
-
-    /* Measure management */
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, maxIterations, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, new DefaultDominanceComparator<>(), new SequentialSolutionListEvaluator<>());
     MeasureManager measureManager = ((SMPSORP) algorithm).getMeasureManager();
-
-    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager
-            .<List<DoubleSolution>>getPushMeasure("currentPopulation");
+    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager.<List<DoubleSolution>>getPushMeasure("currentPopulation");
     CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure("currentIteration");
-
     ChartContainerWithReferencePoints chart = new ChartContainerWithReferencePoints(algorithm.getName(), 80);
     chart.setFrontChart(0, 1, referenceParetoFront);
     chart.setReferencePoint(referencePoints);
     chart.initChart();
-
     solutionListMeasure.register(new ChartListener(chart));
     iterationMeasure.register(new IterationListener(chart));
-
-    /* End of measure management */
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
-
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
     chart.saveChart("SMPSORP", BitmapEncoder.BitmapFormat.PNG);
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
+    List<DoubleSolution> population = algorithm.getResult();
+    long computingTime = algorithmRunner.getComputingTime();
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
-
-    for (int i = 0 ; i < archivesWithReferencePoints.size(); i++) {
-      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList())
-          .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv"))
-          .setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv"))
-          .print();
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
+    for (int i = 0; i < archivesWithReferencePoints.size(); i++) {
+      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList()).setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv")).print();
     }
-
     System.exit(0);
   }
 
   private static class ChartListener implements MeasureListener<List<DoubleSolution>> {
     private ChartContainerWithReferencePoints chart;
+
     private int iteration = 0;
 
     public ChartListener(ChartContainerWithReferencePoints chart) {
@@ -149,16 +106,11 @@ public class SMPSORPWithMultipleReferencePointsAndChartsRunner {
         this.chart.getFrontChart().setTitle("Iteration: " + this.iteration);
         this.chart.updateFrontCharts(solutionList);
         this.chart.refreshCharts();
-
-        new SolutionListOutput(solutionList)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR." + iteration + ".tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN." + iteration + ".tsv"))
-            .print();
+        new SolutionListOutput(solutionList).setVarFileOutputContext(new DefaultFileOutputContext("VAR." + iteration + ".tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN." + iteration + ".tsv")).print();
       }
     }
 
-    @Override
-    synchronized public void measureGenerated(List<DoubleSolution> solutions) {
+    @Override synchronized public void measureGenerated(List<DoubleSolution> solutions) {
       refreshChart(solutions);
     }
   }
@@ -171,8 +123,7 @@ public class SMPSORPWithMultipleReferencePointsAndChartsRunner {
       this.chart.getFrontChart().setTitle("Iteration: " + 0);
     }
 
-    @Override
-    synchronized public void measureGenerated(Long iteration) {
+    @Override synchronized public void measureGenerated(Long iteration) {
       if (this.chart != null) {
         this.chart.getFrontChart().setTitle("Iteration: " + iteration);
       }

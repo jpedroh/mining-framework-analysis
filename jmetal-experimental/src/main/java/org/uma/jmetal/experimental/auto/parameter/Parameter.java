@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.auto.parameter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,12 +19,17 @@ import org.uma.jmetal.util.errorchecking.Check;
  * @author Antonio J. Nebro
  * @param <T> Type of the parameter
  */
-public abstract class Parameter<T> {
+public abstract class Parameter<T extends java.lang.Object> {
   private T value;
+
   private final String name;
+
   private final String[] args;
-  private final List<Pair<String, Parameter<?>>> specificParameters = new ArrayList<>() ;
+
+  private final List<Pair<String, Parameter<?>>> specificParameters = new ArrayList<>();
+
   private final List<Parameter<?>> globalParameters = new ArrayList<>();
+
   private final Map<String, Object> nonConfigurableParameters = new HashMap<>();
 
   public Parameter(String name, String[] args) {
@@ -49,19 +53,14 @@ public abstract class Parameter<T> {
 
   public Parameter<T> parse(Function<String, T> parseFunction) {
     setValue(on("--" + getName(), getArgs(), parseFunction));
-
     for (Parameter<?> parameter : getGlobalParameters()) {
       parameter.parse().check();
     }
-
-    getSpecificParameters()
-            .forEach(
-                    pair -> {
-                      if (pair.getKey().equals(getValue())) {
-                        pair.getValue().parse().check();
-                      }
-                    });
-
+    getSpecificParameters().forEach((pair) -> {
+      if (pair.getKey().equals(getValue())) {
+        pair.getValue().parse().check();
+      }
+    });
     return this;
   }
 
@@ -86,11 +85,11 @@ public abstract class Parameter<T> {
   }
 
   public void addNonConfigurableParameter(String parameterName, Object value) {
-    nonConfigurableParameters.put(parameterName, value) ;
+    nonConfigurableParameters.put(parameterName, value);
   }
 
   public Object getNonConfigurableParameter(String parameterName) {
-    return nonConfigurableParameters.get(parameterName) ;
+    return nonConfigurableParameters.get(parameterName);
   }
 
   public T getValue() {
@@ -106,24 +105,14 @@ public abstract class Parameter<T> {
   }
 
   public Parameter<?> findGlobalParameter(String parameterName) {
-
-    return getGlobalParameters().stream()
-        .filter(parameter -> parameter.getName().equals(parameterName))
-        .findFirst()
-        .orElse(null);
+    return getGlobalParameters().stream().filter((parameter) -> parameter.getName().equals(parameterName)).findFirst().orElse(null);
   }
 
   public Parameter<?> findSpecificParameter(String parameterName) {
-
-    return Objects.requireNonNull(getSpecificParameters().stream()
-            .filter(pair -> pair.getRight().getName().equals(parameterName))
-            .findFirst()
-            .orElse(null))
-        .getValue();
+    return Objects.requireNonNull(getSpecificParameters().stream().filter((pair) -> pair.getRight().getName().equals(parameterName)).findFirst().orElse(null)).getValue();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder result = new StringBuilder("Name: " + getName() + ": " + "Value: " + getValue());
     if (globalParameters.size() > 0) {
       result.append("\n\t");
@@ -133,7 +122,6 @@ public abstract class Parameter<T> {
     }
     if (specificParameters.size() > 0) {
       result.append("\n\t");
-
       for (Pair<String, Parameter<?>> parameter : specificParameters) {
         result.append(" \n -> ").append(parameter.toString());
       }

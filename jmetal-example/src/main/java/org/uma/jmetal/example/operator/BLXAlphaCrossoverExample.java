@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.operator;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,54 +35,42 @@ public class BLXAlphaCrossoverExample {
    * @param args Command line arguments
    */
   public static void main(String[] args) throws FileNotFoundException {
-    int numberOfPoints ;
-    int granularity ;
-    double alpha ;
-
-    if (args.length !=3) {
-      JMetalLogger.logger.info("Usage: numberOfSolutions granularity alpha") ;
-      JMetalLogger.logger.info("Using default parameters") ;
-
-      numberOfPoints = 10000 ;
-      granularity = 100 ;
-      alpha = 0.1 ;
+    int numberOfPoints;
+    int granularity;
+    double alpha;
+    if (args.length != 3) {
+      JMetalLogger.logger.info("Usage: numberOfSolutions granularity alpha");
+      JMetalLogger.logger.info("Using default parameters");
+      numberOfPoints = 10000;
+      granularity = 100;
+      alpha = 0.1;
     } else {
       numberOfPoints = Integer.parseInt(args[0]);
       granularity = Integer.parseInt(args[1]);
       alpha = Double.parseDouble(args[2]);
     }
-
     DoubleProblem problem;
-
     problem = new Kursawe(1);
     CrossoverOperator<DoubleSolution> crossover = new BLXAlphaCrossover(1.0, alpha);
-
     DoubleSolution solution1 = problem.createSolution();
     DoubleSolution solution2 = problem.createSolution();
     solution1.variables().set(0, -2.0);
     solution2.variables().set(0, 2.0);
     List<DoubleSolution> parents = Arrays.asList(solution1, solution2);
-
     List<DoubleSolution> population = new ArrayList<>(numberOfPoints);
     for (int i = 0; i < numberOfPoints; i++) {
       List<DoubleSolution> solutions = (List<DoubleSolution>) crossover.execute(parents);
       population.add(solutions.get(0));
       population.add(solutions.get(1));
     }
-
-    population.sort(Comparator.comparingDouble(solution -> solution.objectives()[0])) ;
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("solutionsBLXAlpha"))
-        .print();
-
+    population.sort(Comparator.comparingDouble((solution) -> solution.objectives()[0]));
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("solutionsBLXAlpha")).print();
     double[][] classifier = classify(population, problem, granularity);
     PlotFront plot = new PlotSmile(classifier);
     plot.plot();
   }
 
-  private static double[][] classify(
-      List<DoubleSolution> solutions, DoubleProblem problem, int granularity) {
+  private static double[][] classify(List<DoubleSolution> solutions, DoubleProblem problem, int granularity) {
     Bounds<Double> bounds = problem.getBoundsForVariables().get(0);
     double grain = (bounds.getUpperBound() - bounds.getLowerBound()) / granularity;
     double[][] classifier = new double[granularity][];
@@ -92,7 +79,6 @@ public class BLXAlphaCrossoverExample {
       classifier[i][0] = bounds.getLowerBound() + i * grain;
       classifier[i][1] = 0;
     }
-
     for (DoubleSolution solution : solutions) {
       boolean found = false;
       int index = 0;
@@ -110,7 +96,6 @@ public class BLXAlphaCrossoverExample {
         }
       }
     }
-
     return classifier;
   }
 }

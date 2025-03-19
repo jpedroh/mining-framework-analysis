@@ -1,5 +1,4 @@
 package org.uma.jmetal.util.ranking.impl;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,33 +25,23 @@ import ru.ifmo.nds.NonDominatedSorting;
  * @author Maxim Buzdalov
  */
 public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implements Ranking<S> {
-  private final String attributeId = getClass().getName() ;
+  private final String attributeId = getClass().getName();
 
-  // Interface support: the place to store the fronts.
   private final List<List<S>> subFronts = new ArrayList<>();
 
-  // Constraint violation checking support.
-  private final OverallConstraintViolationDegreeComparator<S> constraintViolationComparator
-          = new OverallConstraintViolationDegreeComparator<>();
+  private final OverallConstraintViolationDegreeComparator<S> constraintViolationComparator = new OverallConstraintViolationDegreeComparator<>();
 
-  // Delegation.
   private NonDominatedSorting sortingInstance = null;
 
-  @Override
-  public Ranking<S> compute(List<S> solutionList) {
+  @Override public Ranking<S> compute(List<S> solutionList) {
     subFronts.clear();
     int nSolutions = solutionList.size();
     if (nSolutions == 0) {
       return this;
     }
-
-    // We have at least one individual
     S first = solutionList.get(0);
     int nObjectives = first.objectives().length;
     boolean hasConstraintViolation = getConstraint(first) < 0;
-
-    // Iterate over all individuals to check if all have the same number of objectives,
-    // and to get whether we have meaningful constraints
     for (int i = 1; i < nSolutions; ++i) {
       S current = solutionList.get(i);
       if (nObjectives != current.objectives().length) {
@@ -60,12 +49,9 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
       }
       hasConstraintViolation |= getConstraint(current) < 0;
     }
-
     if (!hasConstraintViolation) {
-      // Running directly on the input, no further work is necessary
       runSorting(solutionList, 0, nSolutions, nObjectives, 0);
     } else {
-      // Need to apply the constraint comparator first
       List<S> defensiveCopy = new ArrayList<>(solutionList);
       defensiveCopy.sort((Comparator<? super S>) constraintViolationComparator);
       int rankOffset = 0;
@@ -81,7 +67,6 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
       }
       runSorting(defensiveCopy, lastSpanStart, nSolutions, nObjectives, rankOffset);
     }
-
     return this;
   }
 
@@ -108,15 +93,8 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
   }
 
   private void ensureEnoughSpace(int nPoints, int dimension) {
-    if (sortingInstance == null
-            || sortingInstance.getMaximumPoints() < nPoints
-            || sortingInstance.getMaximumDimension() < dimension) {
-
-      // This might be more intellectual.
-      // For instance, for nPoints <= 10000 and dimension >= 7 one can instead use SetIntersectionSort aka MNDS.
-      sortingInstance = JensenFortinBuzdalov
-              .getRedBlackTreeSweepHybridENSImplementation(1)
-              .getInstance(nPoints, dimension);
+    if (sortingInstance == null || sortingInstance.getMaximumPoints() < nPoints || sortingInstance.getMaximumDimension() < dimension) {
+      sortingInstance = JensenFortinBuzdalov.getRedBlackTreeSweepHybridENSImplementation(1).getInstance(nPoints, dimension);
     }
   }
 
@@ -124,29 +102,24 @@ public class ExperimentalFastNonDominanceRanking<S extends Solution<?>> implemen
     return ConstraintHandling.overallConstraintViolationDegree(solution);
   }
 
-  @Override
-  public List<S> getSubFront(int rank) {
+  @Override public List<S> getSubFront(int rank) {
     return subFronts.get(rank);
   }
 
-  @Override
-  public int getNumberOfSubFronts() {
+  @Override public int getNumberOfSubFronts() {
     return subFronts.size();
   }
 
-  @Override
-  public Integer getRank(S solution) {
+  @Override public Integer getRank(S solution) {
     Check.notNull(solution);
-
-    Integer result = -1 ;
+    Integer result = -1;
     if (solution.attributes().get(attributeId) != null) {
-      result = (Integer) solution.attributes().get(attributeId) ;
+      result = (Integer) solution.attributes().get(attributeId);
     }
-    return result ;
+    return result;
   }
 
-  @Override
-  public Object getAttributedId() {
-    return attributeId ;
+  @Override public Object getAttributedId() {
+    return attributeId;
   }
 }

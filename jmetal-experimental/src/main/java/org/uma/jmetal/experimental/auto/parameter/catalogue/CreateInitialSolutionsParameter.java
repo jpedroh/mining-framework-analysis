@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.auto.parameter.catalogue;
-
 import java.util.List;
 import org.uma.jmetal.experimental.auto.parameter.CategoricalParameter;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.common.solutionscreation.SolutionsCreation;
@@ -10,26 +9,24 @@ import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 public class CreateInitialSolutionsParameter extends CategoricalParameter {
-
   public CreateInitialSolutionsParameter(String[] args, List<String> validValues) {
-    this("createInitialSolutions", args, validValues) ;
+    this("createInitialSolutions", args, validValues);
   }
 
   public CreateInitialSolutionsParameter(String parameterName, String[] args, List<String> validValues) {
-    super(parameterName, args, validValues) ;
+    super(parameterName, args, validValues);
   }
 
   public SolutionsCreation<DoubleSolution> getParameter(DoubleProblem problem, int populationSize) {
     switch (getValue()) {
       case "random":
-        return new RandomSolutionsCreation<>(problem, populationSize);
+      return new RandomSolutionsCreation<>(problem, populationSize);
       case "scatterSearch":
-        return new ScatterSearchSolutionsCreation(problem, populationSize, 4);
+      return new ScatterSearchSolutionsCreation(problem, populationSize, 4);
       case "latinHypercubeSampling":
-        return new LatinHypercubeSamplingSolutionsCreation(problem, populationSize);
+      return new LatinHypercubeSamplingSolutionsCreation(problem, populationSize);
       default:
-        throw new RuntimeException(
-            getValue() + " is not a valid initialization strategy");
+      throw new RuntimeException(getValue() + " is not a valid initialization strategy");
     }
   }
 }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.smpsorp;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,102 +39,61 @@ public class SMPSORPChangingTheReferencePointsAndRealTimeChartExample {
     DoubleProblem problem;
     SMPSORP algorithm;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
-
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
-
     referencePoints.add(Arrays.asList(0.2, 0.8));
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int maxEvaluations = 25000;
     int swarmSize = 100;
-
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
     for (int i = 0; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-              new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-                      swarmSize / referencePoints.size(), referencePoints.get(i)));
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
     Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
     Termination termination = new TerminationByEvaluations(maxEvaluations);
-
-    algorithm = new SMPSORP(problem,
-            swarmSize,
-            archivesWithReferencePoints,
-            referencePoints,
-            mutation,
-            0.0, 1.0,
-            0.0, 1.0,
-            2.5, 1.5,
-            2.5, 1.5,
-            0.1, 0.1,
-            -1.0, -1.0,
-            evaluation, termination);
-
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, evaluation, termination);
     var runTimeChartObserver = new RunTimeChartObserver<>("SMPSORP", 300, referenceParetoFront);
     runTimeChartObserver.setReferencePointList(referencePoints);
-
     algorithm.getObservable().register(runTimeChartObserver);
-
     Thread algorithmThread = new Thread(algorithm);
-    ChangeReferencePoint changeReferencePoint = new ChangeReferencePoint(algorithm, referencePoints, archivesWithReferencePoints, runTimeChartObserver.getChart()) ;
-
-    Thread changePointsThread = new Thread(changeReferencePoint) ;
-
+    ChangeReferencePoint changeReferencePoint = new ChangeReferencePoint(algorithm, referencePoints, archivesWithReferencePoints, runTimeChartObserver.getChart());
+    Thread changePointsThread = new Thread(changeReferencePoint);
     algorithmThread.start();
     changePointsThread.start();
-
     algorithmThread.join();
-
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(algorithm.getResult())
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(algorithm.getResult()).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     System.exit(0);
   }
 
   private static class ChangeReferencePoint implements Runnable {
-    GenericChartContainer<Solution<?>> chart ;
-    List<List<Double>> referencePoints;
-    SMPSORP algorithm ;
+    GenericChartContainer<Solution<?>> chart;
 
-    public ChangeReferencePoint(
-            Algorithm<List<DoubleSolution>> algorithm,
-            List<List<Double>> referencePoints,
-            List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints,
-            GenericChartContainer<Solution<?>> chart) {
+    List<List<Double>> referencePoints;
+
+    SMPSORP algorithm;
+
+    public ChangeReferencePoint(Algorithm<List<DoubleSolution>> algorithm, List<List<Double>> referencePoints, List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints, GenericChartContainer<Solution<?>> chart) {
       this.referencePoints = referencePoints;
-      this.chart = chart ;
-      this.algorithm = (SMPSORP) algorithm ;
+      this.chart = chart;
+      this.algorithm = (SMPSORP) algorithm;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       try (Scanner scanner = new Scanner(System.in)) {
-        double v1 ;
-        double v2 ;
-
+        double v1;
+        double v2;
         while (true) {
           System.out.println("Introduce the new reference point (between commas):");
-          String s = scanner.nextLine() ;
-
+          String s = scanner.nextLine();
           try (Scanner sl = new Scanner(s)) {
             sl.useDelimiter(",");
-
             for (int i = 0; i < referencePoints.size(); i++) {
               try {
                 v1 = Double.parseDouble(sl.next());
@@ -144,14 +102,11 @@ public class SMPSORPChangingTheReferencePointsAndRealTimeChartExample {
                 v1 = 0;
                 v2 = 0;
               }
-
               referencePoints.get(i).set(0, v1);
               referencePoints.get(i).set(1, v2);
             }
           }
-
           chart.updateReferencePoint(referencePoints);
-
           algorithm.changeReferencePoints(referencePoints);
         }
       }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.smpsorp;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.multiobjective.smpso.SMPSORP;
@@ -36,65 +35,34 @@ public class SMPSORPWithMultipleReferencePointsAndRealTimeChartExample {
     DoubleProblem problem;
     SMPSORP algorithm;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
-
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
     referencePoints.add(List.of(0.2, 0.8));
     referencePoints.add(List.of(0.7, 0.4));
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int maxEvaluations = 25000;
     int swarmSize = 100;
-
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
     for (int i = 0; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-              new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-                      swarmSize / referencePoints.size(), referencePoints.get(i)));
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
     Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
     Termination termination = new TerminationByEvaluations(maxEvaluations);
-
-    algorithm = new SMPSORP(problem,
-            swarmSize,
-            archivesWithReferencePoints,
-            referencePoints,
-            mutation,
-            0.0, 1.0,
-            0.0, 1.0,
-            2.5, 1.5,
-            2.5, 1.5,
-            0.1, 0.1,
-            -1.0, -1.0,
-            evaluation, termination);
-
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, evaluation, termination);
     var evaluationObserver = new EvaluationObserver(100);
     var runTimeChartObserver = new RunTimeChartObserver<>("SMPSORP", 80, referenceParetoFront);
     runTimeChartObserver.setReferencePointList(referencePoints);
-
     algorithm.getObservable().register(evaluationObserver);
     algorithm.getObservable().register(runTimeChartObserver);
-
     algorithm.run();
-
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(algorithm.getResult())
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(algorithm.getResult()).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     System.exit(0);
   }
 }

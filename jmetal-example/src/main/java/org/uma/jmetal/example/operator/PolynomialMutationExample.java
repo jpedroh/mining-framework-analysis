@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.operator;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,75 +35,63 @@ public class PolynomialMutationExample {
    * @param args Command line arguments
    */
   public static void main(String[] args) throws FileNotFoundException {
-    int numberOfPoints ;
-    int granularity ;
-    double distributionIndex ;
-
-    if (args.length !=3) {
-      JMetalLogger.logger.info("Usage: numberOfSolutions granularity distributionIndex") ;
-      JMetalLogger.logger.info("Using default parameters") ;
-
-      numberOfPoints = 10000 ;
-      granularity = 100 ;
-      distributionIndex = 20.0 ;
+    int numberOfPoints;
+    int granularity;
+    double distributionIndex;
+    if (args.length != 3) {
+      JMetalLogger.logger.info("Usage: numberOfSolutions granularity distributionIndex");
+      JMetalLogger.logger.info("Using default parameters");
+      numberOfPoints = 10000;
+      granularity = 100;
+      distributionIndex = 20.0;
     } else {
       numberOfPoints = Integer.parseInt(args[0]);
       granularity = Integer.parseInt(args[1]);
       distributionIndex = Double.parseDouble(args[2]);
     }
-
-    DoubleProblem problem ;
-
-    problem = new Sphere(1) ;
-    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(1.0, distributionIndex) ;
-
-    DoubleSolution solution = problem.createSolution() ;
+    DoubleProblem problem;
+    problem = new Sphere(1);
+    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(1.0, distributionIndex);
+    DoubleSolution solution = problem.createSolution();
     solution.variables().set(0, 0.0);
-
-    List<DoubleSolution> population = new ArrayList<>(numberOfPoints) ;
-    for (int i = 0 ; i < numberOfPoints ; i++) {
+    List<DoubleSolution> population = new ArrayList<>(numberOfPoints);
+    for (int i = 0; i < numberOfPoints; i++) {
       DoubleSolution newSolution = (DoubleSolution) solution.copy();
-      mutation.execute(newSolution) ;
-      population.add(newSolution) ;
+      mutation.execute(newSolution);
+      population.add(newSolution);
     }
-
-    population.sort(Comparator.comparingDouble(sol -> sol.objectives()[0])) ;
-
-
+    population.sort(Comparator.comparingDouble((sol) -> sol.objectives()[0]));
     double[][] classifier = classify(population, problem, granularity);
-
-    PlotFront plot = new PlotSmile(classifier, "") ;
+    PlotFront plot = new PlotSmile(classifier, "");
     plot.plot();
   }
 
   private static double[][] classify(List<DoubleSolution> solutions, DoubleProblem problem, int granularity) {
     Bounds<Double> bounds = problem.getBoundsForVariables().get(0);
-    double grain = (bounds.getUpperBound() - bounds.getLowerBound()) / granularity ;
-    double[][] classifier = new double[granularity][] ;
-    for (int i = 0 ; i < granularity; i++) {
-      classifier[i] = new double[2] ;
-      classifier[i][0] = bounds.getLowerBound() + i * grain ;
-      classifier[i][1] = 0 ;
+    double grain = (bounds.getUpperBound() - bounds.getLowerBound()) / granularity;
+    double[][] classifier = new double[granularity][];
+    for (int i = 0; i < granularity; i++) {
+      classifier[i] = new double[2];
+      classifier[i][0] = bounds.getLowerBound() + i * grain;
+      classifier[i][1] = 0;
     }
-
     for (DoubleSolution solution : solutions) {
-      boolean found = false ;
-      int index = 0 ;
+      boolean found = false;
+      int index = 0;
       while (!found) {
         if (solution.variables().get(0) <= classifier[index][0]) {
-          classifier[index][1] ++ ;
-          found = true ;
+          classifier[index][1]++;
+          found = true;
         } else {
           if (index == (granularity - 1)) {
-            classifier[index][1] ++ ;
-            found = true ;
+            classifier[index][1]++;
+            found = true;
           } else {
             index++;
           }
         }
       }
     }
-
-    return classifier ;
+    return classifier;
   }
 }

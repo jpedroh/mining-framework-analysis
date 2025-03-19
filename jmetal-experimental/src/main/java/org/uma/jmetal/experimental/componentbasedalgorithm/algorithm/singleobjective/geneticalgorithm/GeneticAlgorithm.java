@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.singleobjective.geneticalgorithm;
-
 import java.util.HashMap;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.ComponentBasedEvolutionaryAlgorithm;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.common.evaluation.Evaluation;
@@ -26,9 +25,7 @@ import org.uma.jmetal.util.termination.Termination;
  *
  * @author Antonio J. Nebro
  * */
-@SuppressWarnings("serial")
-public class GeneticAlgorithm<S extends Solution<?>> extends ComponentBasedEvolutionaryAlgorithm<S> {
-
+@SuppressWarnings(value = { "serial" }) public class GeneticAlgorithm<S extends Solution<?>> extends ComponentBasedEvolutionaryAlgorithm<S> {
   /**
    * Constructor
    *
@@ -39,61 +36,28 @@ public class GeneticAlgorithm<S extends Solution<?>> extends ComponentBasedEvolu
    * @param variation
    * @param replacement
    */
-  public GeneticAlgorithm (
-      Evaluation<S> evaluation,
-      SolutionsCreation<S> initialPopulationCreation,
-      Termination termination,
-      MatingPoolSelection<S> selection,
-      CrossoverAndMutationVariation<S> variation,
-      Replacement<S> replacement) {
-    super(
-        "Genetic algorithm",
-        evaluation,
-        initialPopulationCreation,
-        termination,
-        selection,
-        variation,
-        replacement);
+  public GeneticAlgorithm(Evaluation<S> evaluation, SolutionsCreation<S> initialPopulationCreation, Termination termination, MatingPoolSelection<S> selection, CrossoverAndMutationVariation<S> variation, Replacement<S> replacement) {
+    super("Genetic algorithm", evaluation, initialPopulationCreation, termination, selection, variation, replacement);
   }
 
   /** Constructor */
-  public GeneticAlgorithm(
-      Problem<S> problem,
-      int populationSize,
-      int offspringPopulationSize,
-      NaryTournamentSelection<S> selectionOperator,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination) {
+  public GeneticAlgorithm(Problem<S> problem, int populationSize, int offspringPopulationSize, NaryTournamentSelection<S> selectionOperator, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, Termination termination) {
     this.name = "Genetic algorithm";
     this.problem = problem;
     this.observable = new DefaultObservable<>(name);
     this.attributes = new HashMap<>();
-
     this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
-
-    this.replacement =
-        new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0)) ;
-
-    this.variation =
-        new CrossoverAndMutationVariation<>(
-            offspringPopulationSize, crossoverOperator, mutationOperator);
-
-    this.selection = new NaryTournamentMatingPoolSelection<>(selectionOperator, variation.getMatingPoolSize()) ;
-
+    this.replacement = new MuPlusLambdaReplacement<>(new ObjectiveComparator<>(0));
+    this.variation = new CrossoverAndMutationVariation<>(offspringPopulationSize, crossoverOperator, mutationOperator);
+    this.selection = new NaryTournamentMatingPoolSelection<>(selectionOperator, variation.getMatingPoolSize());
     this.termination = termination;
-
     this.evaluation = new SequentialEvaluation<>(problem);
-
     this.archive = null;
   }
 
-  @Override
-  protected void updateProgress() {
-    S bestFitnessSolution = population.stream().min(new ObjectiveComparator<>(0)).get() ;
+  @Override protected void updateProgress() {
+    S bestFitnessSolution = population.stream().min(new ObjectiveComparator<>(0)).get();
     attributes.put("BEST_SOLUTION", bestFitnessSolution);
-
     super.updateProgress();
   }
-
 }

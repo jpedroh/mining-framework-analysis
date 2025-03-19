@@ -1,5 +1,4 @@
 package org.uma.jmetal.algorithm.multiobjective.mocell;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,14 +23,17 @@ import org.uma.jmetal.util.ranking.impl.FastNonDominatedSortRanking;
  * @author JuanJo Durillo
  * @param <S>
  */
-@SuppressWarnings("serial")
-public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
+@SuppressWarnings(value = { "serial" }) public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
   protected int evaluations;
+
   protected int maxEvaluations;
+
   protected final SolutionListEvaluator<S> evaluator;
 
   protected Neighborhood<S> neighborhood;
+
   protected int currentIndividual;
+
   protected List<S> currentNeighbors;
 
   protected BoundedArchive<S> archive;
@@ -50,16 +52,7 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
    * @param selectionOperator
    * @param evaluator
    */
-  public MOCell(
-      Problem<S> problem,
-      int maxEvaluations,
-      int populationSize,
-      BoundedArchive<S> archive,
-      Neighborhood<S> neighborhood,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator,
-      SolutionListEvaluator<S> evaluator) {
+  public MOCell(Problem<S> problem, int maxEvaluations, int populationSize, BoundedArchive<S> archive, Neighborhood<S> neighborhood, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
     super(problem);
     this.maxEvaluations = maxEvaluations;
     setMaxPopulationSize(populationSize);
@@ -69,12 +62,10 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     this.mutationOperator = mutationOperator;
     this.selectionOperator = selectionOperator;
     this.dominanceComparator = new DominanceWithConstraintsComparator<S>();
-
     this.evaluator = evaluator;
   }
 
-  @Override
-  protected void initProgress() {
+  @Override protected void initProgress() {
     evaluations = 0;
     currentIndividual = 0;
     for (S solution : population) {
@@ -82,30 +73,24 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     }
   }
 
-  @Override
-  protected void updateProgress() {
+  @Override protected void updateProgress() {
     evaluations++;
     currentIndividual = (currentIndividual + 1) % getMaxPopulationSize();
   }
 
-  @Override
-  protected boolean isStoppingConditionReached() {
+  @Override protected boolean isStoppingConditionReached() {
     return (evaluations == maxEvaluations);
   }
 
-  @Override
-  protected List<S> evaluatePopulation(List<S> population) {
+  @Override protected List<S> evaluatePopulation(List<S> population) {
     population = evaluator.evaluate(population, getProblem());
-
     return population;
   }
 
-  @Override
-  protected List<S> selection(List<S> population) {
+  @Override protected List<S> selection(List<S> population) {
     List<S> parents = new ArrayList<>(2);
     currentNeighbors = neighborhood.getNeighbors(population, currentIndividual);
     currentNeighbors.add(population.get(currentIndividual));
-
     parents.add(selectionOperator.execute(currentNeighbors));
     if (archive.size() > 1) {
       parents.add(selectionOperator.execute(archive.getSolutionList()));
@@ -115,8 +100,7 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     return parents;
   }
 
-  @Override
-  protected List<S> reproduction(List<S> population) {
+  @Override protected List<S> reproduction(List<S> population) {
     List<S> result = new ArrayList<>(1);
     List<S> offspring = crossoverOperator.execute(population);
     mutationOperator.execute(offspring.get(0));
@@ -124,62 +108,50 @@ public class MOCell<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     return result;
   }
 
-  @Override
-  protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-    int flag =
-        dominanceComparator.compare(population.get(currentIndividual), offspringPopulation.get(0));
-
-    if (flag == 1) { // The new individual dominates
+  @Override protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
+    int flag = dominanceComparator.compare(population.get(currentIndividual), offspringPopulation.get(0));
+    if (flag == 1) {
       population = insertNewIndividualWhenItDominatesTheCurrentOne(population, offspringPopulation);
-    } else if (flag == 0) { // The new individual is non-dominated
-      population =
-          insertNewIndividualWhenItAndTheCurrentOneAreNonDominated(population, offspringPopulation);
+    } else {
+      if (flag == 0) {
+        population = insertNewIndividualWhenItAndTheCurrentOneAreNonDominated(population, offspringPopulation);
+      }
     }
     return population;
   }
 
-  @Override
-  public List<S> getResult() {
+  @Override public List<S> getResult() {
     return archive.getSolutionList();
   }
 
-  private List<S> insertNewIndividualWhenItDominatesTheCurrentOne(
-      List<S> population, List<S> offspringPopulation) {
+  private List<S> insertNewIndividualWhenItDominatesTheCurrentOne(List<S> population, List<S> offspringPopulation) {
     population.set(currentIndividual, offspringPopulation.get(0));
     archive.add(offspringPopulation.get(0));
     return population;
   }
 
-  private List<S> insertNewIndividualWhenItAndTheCurrentOneAreNonDominated(
-      List<S> population, List<S> offspringPopulation) {
+  private List<S> insertNewIndividualWhenItAndTheCurrentOneAreNonDominated(List<S> population, List<S> offspringPopulation) {
     currentNeighbors.add(offspringPopulation.get(0));
-
     Ranking<S> rank = new FastNonDominatedSortRanking<S>();
     rank.compute(currentNeighbors);
-
     DensityEstimator<S> crowdingDistance = new CrowdingDistanceDensityEstimator<>();
     for (int j = 0; j < rank.getNumberOfSubFronts(); j++) {
       crowdingDistance.compute(rank.getSubFront(j));
     }
-
     Collections.sort(this.currentNeighbors, new RankingAndCrowdingDistanceComparator<S>());
     S worst = this.currentNeighbors.get(this.currentNeighbors.size() - 1);
-
     archive.add(offspringPopulation.get(0));
-
     if (worst != offspringPopulation.get(0)) {
       population.set(currentIndividual, offspringPopulation.get(0));
     }
     return population;
   }
 
-  @Override
-  public String getName() {
+  @Override public String getName() {
     return "MOCell";
   }
 
-  @Override
-  public String getDescription() {
+  @Override public String getDescription() {
     return "Multi-Objective Cellular evolutionary algorithm";
   }
 }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.algorithm;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,24 +19,28 @@ import org.uma.jmetal.util.termination.Termination;
  * @param <S> Solution
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-@SuppressWarnings("serial")
-public class ComponentBasedRandomSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
+@SuppressWarnings(value = { "serial" }) public class ComponentBasedRandomSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
   protected Termination termination;
+
   protected SolutionsCreation<S> solutionsCreation;
+
   protected Evaluation<S> evaluation;
 
   protected Map<String, Object> attributes;
 
   protected long initTime;
+
   protected long totalComputingTime;
+
   protected int evaluations;
 
   protected Observable<Map<String, Object>> observable;
 
   protected String name;
+
   protected NonDominatedSolutionListArchive<S> archive;
 
-  private int evaluatedSolutions ;
+  private int evaluatedSolutions;
 
   /**
    * Constructor
@@ -45,80 +48,64 @@ public class ComponentBasedRandomSearchAlgorithm<S extends Solution<?>> implemen
    * @param name
    * @param termination
    */
-  public ComponentBasedRandomSearchAlgorithm(
-      String name,
-      SolutionsCreation<S> solutionsCreation,
-      Evaluation<S> evaluation,
-      Termination termination) {
+  public ComponentBasedRandomSearchAlgorithm(String name, SolutionsCreation<S> solutionsCreation, Evaluation<S> evaluation, Termination termination) {
     this.name = name;
-
     this.termination = termination;
     this.solutionsCreation = solutionsCreation;
-    this.evaluation = evaluation ;
-
+    this.evaluation = evaluation;
     this.observable = new DefaultObservable<>(name);
     this.attributes = new HashMap<>();
-
     this.archive = new NonDominatedSolutionListArchive<>();
   }
 
-  @Override
-  public void run() {
+  @Override public void run() {
     initTime = System.currentTimeMillis();
-    initProgress() ;
+    initProgress();
     while (!termination.isMet(attributes)) {
       List<S> solutions = solutionsCreation.create();
       evaluation.evaluate(solutions);
-      evaluatedSolutions = solutions.size() ;
-      updateBestFoundSolutions(solutions) ;
+      evaluatedSolutions = solutions.size();
+      updateBestFoundSolutions(solutions);
       updateProgress();
     }
-
     totalComputingTime = System.currentTimeMillis() - initTime;
   }
 
   protected void initProgress() {
-    evaluations = 0 ;
-
+    evaluations = 0;
     attributes.put("EVALUATIONS", evaluations);
     attributes.put("COMPUTING_TIME", getCurrentComputingTime());
     attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
-
     observable.setChanged();
     observable.notifyObservers(attributes);
   }
 
   protected void updateProgress() {
     evaluations += evaluatedSolutions;
-
     attributes.put("EVALUATIONS", evaluations);
     attributes.put("COMPUTING_TIME", getCurrentComputingTime());
     attributes.put("BEST_SOLUTIONS", archive.getSolutionList());
-
     observable.setChanged();
     observable.notifyObservers(attributes);
   }
 
   protected void updateBestFoundSolutions(List<S> solutions) {
-    solutions.forEach(solution -> archive.add(solution));
+    solutions.forEach((solution) -> archive.add(solution));
   }
 
   protected List<S> getBestSolutions() {
-    return archive.getSolutionList() ;
-  }
-
-  @Override
-  public List<S> getResult() {
     return archive.getSolutionList();
   }
 
-  @Override
-  public String getName() {
+  @Override public List<S> getResult() {
+    return archive.getSolutionList();
+  }
+
+  @Override public String getName() {
     return name;
   }
 
-  @Override
-  public String getDescription() {
+  @Override public String getDescription() {
     return name;
   }
 
@@ -132,13 +119,11 @@ public class ComponentBasedRandomSearchAlgorithm<S extends Solution<?>> implemen
 
   public ComponentBasedRandomSearchAlgorithm<S> withTermination(Termination termination) {
     this.termination = termination;
-
     return this;
   }
 
   public ComponentBasedRandomSearchAlgorithm<S> withName(String newName) {
     this.name = newName;
-
     return this;
   }
 

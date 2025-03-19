@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.smpsorp;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,6 @@ public class SMPSORPWithMultipleReferencePointsRunner {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName;
     if (args.length == 1) {
       problemName = args[0];
@@ -43,62 +41,28 @@ public class SMPSORPWithMultipleReferencePointsRunner {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT2";
     }
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
     referencePoints.add(Arrays.asList(0.2, 0.8));
     referencePoints.add(Arrays.asList(0.7, 0.4));
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int maxIterations = 250;
     int swarmSize = 100;
-
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
     for (int i = 0; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-              new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-                      swarmSize / referencePoints.size(), referencePoints.get(i)));
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
-    algorithm = new SMPSORP(problem,
-            swarmSize,
-            archivesWithReferencePoints,
-            referencePoints,
-            mutation,
-            maxIterations,
-            0.0, 1.0,
-            0.0, 1.0,
-            2.5, 1.5,
-            2.5, 1.5,
-            0.1, 0.1,
-            -1.0, -1.0,
-            new DefaultDominanceComparator<>(),
-            new SequentialSolutionListEvaluator<>());
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute();
-
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, maxIterations, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, new DefaultDominanceComparator<>(), new SequentialSolutionListEvaluator<>());
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
     List<DoubleSolution> population = algorithm.getResult();
     long computingTime = algorithmRunner.getComputingTime();
-
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
     for (int i = 0; i < archivesWithReferencePoints.size(); i++) {
-      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList())
-              .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv"))
-              .setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv"))
-              .print();
+      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList()).setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv")).print();
     }
-
     System.exit(0);
   }
 }

@@ -1,11 +1,11 @@
 package org.uma.jmetal.lab.visualization.html.impl.htmlTable.impl;
-
 import java.util.Arrays;
 import org.apache.commons.math3.stat.inference.WilcoxonSignedRankTest;
 import org.uma.jmetal.lab.visualization.html.impl.htmlTable.HtmlTable;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+
 /**
  * This class computes the Wilcoxon test for every pair of algorithms.
  *
@@ -14,20 +14,13 @@ import tech.tablesaw.api.Table;
  * @author Javier Pérez Abad
  */
 public class WilcoxonTestTable extends HtmlTable<WilcoxonTestTable.Difference[]> {
+  private static final String[] INDICATORS_TO_MAXIMIZE = { "HV" };
 
-  private static final String[] INDICATORS_TO_MAXIMIZE = {"HV"};
-
-  public WilcoxonTestTable(
-      Table table,
-      String indicator,
-      StringColumn algorithms,
-      StringColumn problems,
-      String indicatorValueColumnName) {
+  public WilcoxonTestTable(Table table, String indicator, StringColumn algorithms, StringColumn problems, String indicatorValueColumnName) {
     this.title = "Wilcoxon Test";
     this.headersColumn = algorithms.last(algorithms.size() - 1).asObjectArray();
     this.headersRow = algorithms.asObjectArray();
     this.data = new Difference[algorithms.size() - 1][algorithms.size() - 1][problems.size()];
-
     for (int row = 0; row < algorithms.size() - 1; row++) {
       Table tableAlgorithmA = filterTableBy(table, algorithms.name(), algorithms.get(row));
       for (int column = 1; column < algorithms.size(); column++) {
@@ -36,14 +29,10 @@ public class WilcoxonTestTable extends HtmlTable<WilcoxonTestTable.Difference[]>
           if (row == column) {
             this.data[row][column][index] = null;
           } else {
-            Table tableAlgorithmAByProblem =
-                filterTableBy(tableAlgorithmA, problems.name(), problems.get(index));
-            Table tableAlgorithmBByProblem =
-                filterTableBy(tableAlgorithmB, problems.name(), problems.get(index));
-            DoubleColumn resultsAlgorithmA =
-                tableAlgorithmAByProblem.doubleColumn(indicatorValueColumnName);
-            DoubleColumn resultsAlgorithmB =
-                tableAlgorithmBByProblem.doubleColumn(indicatorValueColumnName);
+            Table tableAlgorithmAByProblem = filterTableBy(tableAlgorithmA, problems.name(), problems.get(index));
+            Table tableAlgorithmBByProblem = filterTableBy(tableAlgorithmB, problems.name(), problems.get(index));
+            DoubleColumn resultsAlgorithmA = tableAlgorithmAByProblem.doubleColumn(indicatorValueColumnName);
+            DoubleColumn resultsAlgorithmB = tableAlgorithmBByProblem.doubleColumn(indicatorValueColumnName);
             if (Arrays.asList(INDICATORS_TO_MAXIMIZE).contains(indicator)) {
               this.data[row][column - 1][index] = compare(resultsAlgorithmA, resultsAlgorithmB);
             } else {
@@ -86,7 +75,7 @@ public class WilcoxonTestTable extends HtmlTable<WilcoxonTestTable.Difference[]>
     StringBuilder html = new StringBuilder();
     for (Difference[] differences : data[index]) {
       html.append("<td>");
-      html.append("<div class='horizontal'>");
+      html.append("<div class=\'horizontal\'>");
       for (Difference difference : differences) {
         if (difference == Difference.BETTER) {
           html.append("<a> + </a>");
@@ -105,10 +94,8 @@ public class WilcoxonTestTable extends HtmlTable<WilcoxonTestTable.Difference[]>
 
   public String getCSS() {
     StringBuilder css = new StringBuilder(super.getCSS());
-
     css.append(".horizontal { display: flex; justify-content: space-evenly; align-items: center;}");
     css.append(".fas { flex-shrink: 0; margin: 1px; color: #6b6b6b} ");
-
     return css.toString();
   }
 

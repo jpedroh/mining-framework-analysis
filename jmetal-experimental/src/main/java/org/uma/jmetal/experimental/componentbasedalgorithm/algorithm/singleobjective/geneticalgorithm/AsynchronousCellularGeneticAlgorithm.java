@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.singleobjective.geneticalgorithm;
-
 import java.util.HashMap;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.ComponentBasedEvolutionaryAlgorithm;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.common.evaluation.Evaluation;
@@ -29,10 +28,7 @@ import org.uma.jmetal.util.termination.Termination;
  *
  * @author Antonio J. Nebro
  */
-@SuppressWarnings("serial")
-public class AsynchronousCellularGeneticAlgorithm<S extends Solution<?>>
-    extends ComponentBasedEvolutionaryAlgorithm<S> {
-
+@SuppressWarnings(value = { "serial" }) public class AsynchronousCellularGeneticAlgorithm<S extends Solution<?>> extends ComponentBasedEvolutionaryAlgorithm<S> {
   protected SequenceGenerator<Integer> solutionIndexGenerator;
 
   /**
@@ -45,56 +41,23 @@ public class AsynchronousCellularGeneticAlgorithm<S extends Solution<?>>
    * @param variation
    * @param replacement
    */
-  public AsynchronousCellularGeneticAlgorithm(
-      Evaluation<S> evaluation,
-      SolutionsCreation<S> initialPopulationCreation,
-      Termination termination,
-      MatingPoolSelection<S> selection,
-      CrossoverAndMutationVariation<S> variation,
-      Replacement<S> replacement) {
-    super(
-        "Asynchronous Cellular Genetic algorithm",
-        evaluation,
-        initialPopulationCreation,
-        termination,
-        selection,
-        variation,
-        replacement);
+  public AsynchronousCellularGeneticAlgorithm(Evaluation<S> evaluation, SolutionsCreation<S> initialPopulationCreation, Termination termination, MatingPoolSelection<S> selection, CrossoverAndMutationVariation<S> variation, Replacement<S> replacement) {
+    super("Asynchronous Cellular Genetic algorithm", evaluation, initialPopulationCreation, termination, selection, variation, replacement);
   }
 
   /** Constructor */
-  public AsynchronousCellularGeneticAlgorithm(
-      Problem<S> problem,
-      int populationSize,
-      Neighborhood<S> neighborhood,
-      CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator,
-      Termination termination) {
+  public AsynchronousCellularGeneticAlgorithm(Problem<S> problem, int populationSize, Neighborhood<S> neighborhood, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, Termination termination) {
     this.name = "Asynchronous Cellular Genetic algorithm";
     this.problem = problem;
     this.observable = new DefaultObservable<>(name);
     this.attributes = new HashMap<>();
     this.solutionIndexGenerator = new IntegerBoundedSequenceGenerator(populationSize);
-
     this.createInitialPopulation = new RandomSolutionsCreation<>(problem, populationSize);
-
-    this.replacement =
-        new SingleSolutionReplacement<>(solutionIndexGenerator, new ObjectiveComparator<>(0));
-
+    this.replacement = new SingleSolutionReplacement<>(solutionIndexGenerator, new ObjectiveComparator<>(0));
     this.variation = new CrossoverAndMutationVariation<>(1, crossoverOperator, mutationOperator);
-
-    this.selection =
-        new NeighborhoodMatingPoolSelection<>(
-            variation.getMatingPoolSize(),
-            solutionIndexGenerator,
-            neighborhood,
-            new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)),
-            false);
-
+    this.selection = new NeighborhoodMatingPoolSelection<>(variation.getMatingPoolSize(), solutionIndexGenerator, neighborhood, new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)), false);
     this.termination = termination;
-
     this.evaluation = new SequentialEvaluation<>(problem);
-
     this.archive = null;
   }
 }

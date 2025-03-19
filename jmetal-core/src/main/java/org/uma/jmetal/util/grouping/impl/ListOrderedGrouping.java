@@ -1,5 +1,4 @@
 package org.uma.jmetal.util.grouping.impl;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,19 +18,15 @@ import org.uma.jmetal.util.errorchecking.Check;
  * @param <C>
  */
 public class ListOrderedGrouping<C extends Comparable<C>> extends ListGrouping<C> {
-
   public ListOrderedGrouping(int numberOfGroups) {
-    super(numberOfGroups) ;
+    super(numberOfGroups);
   }
 
-  @Override
-  public void computeGroups(List<C> list) {
+  @Override public void computeGroups(List<C> list) {
     Check.notNull(list);
     indices = new ArrayList<>(list.size());
-    IntStream.range(0, list.size()).forEach(i -> indices.add(i));
-
+    IntStream.range(0, list.size()).forEach((i) -> indices.add(i));
     indices = indices.stream().sorted(Comparator.comparing(list::get)).collect(Collectors.toList());
-
     createGroups();
   }
 }

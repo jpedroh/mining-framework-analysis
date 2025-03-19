@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.moead;
-
 import java.io.FileNotFoundException;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.multiobjective.moead.MOEADDE;
 import org.uma.jmetal.problem.doubleproblem.DoubleProblem;
@@ -27,46 +26,23 @@ public class MOEADDEWithRealTimeChartExample extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws FileNotFoundException {
     DoubleProblem problem;
     MOEADDE algorithm;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
     String referenceParetoFront = "resources/referenceFronts/LZ09_F2.csv";
-
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-    problem = new LSMOP3(5, 100, 2) ;
-
+    problem = new LSMOP3(5, 100, 2);
     int populationSize = 300;
-
     double cr = 1.0;
     double f = 0.5;
-
     double neighborhoodSelectionProbability = 0.9;
     int neighborhoodSize = 20;
-
     int maximumNumberOfReplacedSolutions = 2;
     AggregativeFunction aggregativeFunction = new Tschebyscheff();
-
-    algorithm =
-            new MOEADDE(
-                    problem,
-                    populationSize,
-                    cr,
-                    f,
-                    aggregativeFunction,
-                    neighborhoodSelectionProbability,
-                    maximumNumberOfReplacedSolutions,
-                    neighborhoodSize,
-                    "resources/weightVectorFiles/moead",
-                    new TerminationByEvaluations(150000));
-
+    algorithm = new MOEADDE(problem, populationSize, cr, f, aggregativeFunction, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborhoodSize, "resources/weightVectorFiles/moead", new TerminationByEvaluations(150000));
     EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("MOEA/D", 80, 1000, null);
-
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver = new RunTimeChartObserver<>("MOEA/D", 80, 1000, null);
     algorithm.getObservable().register(evaluationObserver);
     algorithm.getObservable().register(runTimeChartObserver);
-
     algorithm.run();
-
     System.exit(0);
   }
 }

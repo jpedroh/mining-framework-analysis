@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.singleobjective.randomsearch;
-
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.ComponentBasedRandomSearchAlgorithm;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.common.evaluation.Evaluation;
@@ -26,34 +25,21 @@ import org.uma.jmetal.util.termination.impl.TerminationByEvaluations;
  */
 public class RandomSearchSingleObjectiveBinaryEncodingExample extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws JMetalException {
-    BinaryProblem problem = new OneMax(512) ;
+    BinaryProblem problem = new OneMax(512);
     Termination termination = new TerminationByEvaluations(50000);
-    Evaluation<BinarySolution> evaluation = new SequentialEvaluation<>(problem) ;
-    SolutionsCreation<BinarySolution> solutionsCreation = new RandomSolutionsCreation<>(problem, 1) ;
-
-    var algorithm =
-            new ComponentBasedRandomSearchAlgorithm<>(
-          "Random Search", solutionsCreation, evaluation,
-                    termination);
-
-    EvaluationObserver evaluationObserver = new EvaluationObserver(1000) ;
+    Evaluation<BinarySolution> evaluation = new SequentialEvaluation<>(problem);
+    SolutionsCreation<BinarySolution> solutionsCreation = new RandomSolutionsCreation<>(problem, 1);
+    var algorithm = new ComponentBasedRandomSearchAlgorithm<>("Random Search", solutionsCreation, evaluation, termination);
+    EvaluationObserver evaluationObserver = new EvaluationObserver(1000);
     algorithm.getObservable().register(evaluationObserver);
-
     algorithm.run();
-
     List<BinarySolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]) ;
+    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
   }
 }

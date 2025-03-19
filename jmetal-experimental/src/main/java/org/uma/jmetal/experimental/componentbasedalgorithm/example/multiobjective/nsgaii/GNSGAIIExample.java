@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.nsgaii;
-
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,53 +27,31 @@ import org.uma.jmetal.util.termination.impl.TerminationByEvaluations;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class GNSGAIIExample extends AbstractAlgorithmRunner {
-
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
     Problem<DoubleSolution> problem;
     NSGAII<DoubleSolution> algorithm;
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     String referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
-
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int populationSize = 100;
     int offspringPopulationSize = 100;
-
     Termination termination = new TerminationByEvaluations(25000);
-
     List<Double> referencePoint = Arrays.asList(0.1, 0.5);
     Comparator<DoubleSolution> dominanceComparator = new GDominanceComparator<>(referencePoint);
     Ranking<DoubleSolution> ranking = new FastNonDominatedSortRanking<>(dominanceComparator);
-
-    algorithm =
-        new NSGAII<>(
-            problem,
-            populationSize,
-            offspringPopulationSize,
-            crossover,
-            mutation,
-            termination,
-            ranking);
-
-    RunTimeChartObserver<DoubleSolution> runTimeChartObserver =
-        new RunTimeChartObserver<>("NSGA-II", 80, referenceParetoFront);
+    algorithm = new NSGAII<>(problem, populationSize, offspringPopulationSize, crossover, mutation, termination, ranking);
+    RunTimeChartObserver<DoubleSolution> runTimeChartObserver = new RunTimeChartObserver<>("NSGA-II", 80, referenceParetoFront);
     algorithm.getObservable().register(runTimeChartObserver);
-
     runTimeChartObserver.setReferencePointList(List.of(referencePoint));
-
     algorithm.run();
-
     System.exit(0);
   }
 }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.smpsorp;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import org.uma.jmetal.util.measure.impl.BasicMeasure;
 import org.uma.jmetal.util.measure.impl.CountingMeasure;
 
 public class SMPSORPChangingTheReferencePointsAndChartsRunner {
-
   /**
    * Program to run the SMPSORP algorithm allowing to change a reference point interactively.
    * SMPSORP is described in "Extending the Speed-constrained Multi-Objective PSO (SMPSO) With Reference Point Based Preference
@@ -45,94 +43,50 @@ public class SMPSORPChangingTheReferencePointsAndChartsRunner {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;
-    String referenceParetoFront ;
-
-    problem = new Ebes("ebes/Mobile_Bridge_25N_35B_8G_16OrdZXY.ebe", new String[]{"W", "D"}) ;
-    referenceParetoFront = null ;
+    String referenceParetoFront;
+    problem = new Ebes("ebes/Mobile_Bridge_25N_35B_8G_16OrdZXY.ebe", new String[] { "W", "D" });
+    referenceParetoFront = null;
     List<List<Double>> referencePoints;
     referencePoints = new ArrayList<>();
-
     referencePoints.add(Arrays.asList(0.0, 0.0));
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     int maxIterations = 2500;
     int swarmSize = 100;
-
     List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints = new ArrayList<>();
-
     for (int i = 0; i < referencePoints.size(); i++) {
-      archivesWithReferencePoints.add(
-              new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(
-                      swarmSize/referencePoints.size(), referencePoints.get(i))) ;
+      archivesWithReferencePoints.add(new CrowdingDistanceArchiveWithReferencePoint<DoubleSolution>(swarmSize / referencePoints.size(), referencePoints.get(i)));
     }
-
-    algorithm = new SMPSORP(problem,
-        swarmSize,
-        archivesWithReferencePoints,
-        referencePoints,
-        mutation,
-        maxIterations,
-        0.0, 1.0,
-        0.0, 1.0,
-        2.5, 1.5,
-        2.5, 1.5,
-        0.1, 0.1,
-        -1.0, -1.0,
-        new DominanceWithConstraintsComparator<>(new OverallConstraintViolationDegreeComparator<>()),
-        new SequentialSolutionListEvaluator<>());
-
-    /* Measure management */
+    algorithm = new SMPSORP(problem, swarmSize, archivesWithReferencePoints, referencePoints, mutation, maxIterations, 0.0, 1.0, 0.0, 1.0, 2.5, 1.5, 2.5, 1.5, 0.1, 0.1, -1.0, -1.0, new DominanceWithConstraintsComparator<>(new OverallConstraintViolationDegreeComparator<>()), new SequentialSolutionListEvaluator<>());
     MeasureManager measureManager = ((SMPSORP) algorithm).getMeasureManager();
-
-    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager
-        .<List<DoubleSolution>>getPushMeasure("currentPopulation");
-    CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure(
-        "currentIteration");
-
+    BasicMeasure<List<DoubleSolution>> solutionListMeasure = (BasicMeasure<List<DoubleSolution>>) measureManager.<List<DoubleSolution>>getPushMeasure("currentPopulation");
+    CountingMeasure iterationMeasure = (CountingMeasure) measureManager.<Long>getPushMeasure("currentIteration");
     ChartContainerWithReferencePoints chart = new ChartContainerWithReferencePoints(algorithm.getName(), 300);
     chart.setFrontChart(0, 1, referenceParetoFront);
     chart.setReferencePoint(referencePoints);
     chart.initChart();
-
     solutionListMeasure.register(new ChartListener(chart));
     iterationMeasure.register(new IterationListener(chart));
-
-    /* End of measure management */
-
     Thread algorithmThread = new Thread(algorithm);
-    ChangeReferencePoint changeReferencePoint = new ChangeReferencePoint(algorithm, referencePoints, archivesWithReferencePoints, chart) ;
-
-    Thread changePointsThread = new Thread(changeReferencePoint) ;
-
+    ChangeReferencePoint changeReferencePoint = new ChangeReferencePoint(algorithm, referencePoints, archivesWithReferencePoints, chart);
+    Thread changePointsThread = new Thread(changeReferencePoint);
     algorithmThread.start();
     changePointsThread.start();
-
     algorithmThread.join();
-
     chart.saveChart("RSMPSO", BitmapEncoder.BitmapFormat.PNG);
     List<DoubleSolution> population = algorithm.getResult();
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-        .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
     for (int i = 0; i < archivesWithReferencePoints.size(); i++) {
-      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList())
-          .setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv"))
-          .setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv"))
-          .print();
+      new SolutionListOutput(archivesWithReferencePoints.get(i).getSolutionList()).setVarFileOutputContext(new DefaultFileOutputContext("VAR" + i + ".tsv")).setFunFileOutputContext(new DefaultFileOutputContext("FUN" + i + ".tsv")).print();
     }
-
-    System.out.println("FINISH") ;
+    System.out.println("FINISH");
     System.exit(0);
   }
 
   private static class ChartListener implements MeasureListener<List<DoubleSolution>> {
     private ChartContainerWithReferencePoints chart;
+
     private int iteration = 0;
 
     public ChartListener(ChartContainerWithReferencePoints chart) {
@@ -149,8 +103,7 @@ public class SMPSORPChangingTheReferencePointsAndChartsRunner {
       }
     }
 
-    @Override
-    synchronized public void measureGenerated(List<DoubleSolution> solutions) {
+    @Override synchronized public void measureGenerated(List<DoubleSolution> solutions) {
       refreshChart(solutions);
     }
   }
@@ -163,8 +116,7 @@ public class SMPSORPChangingTheReferencePointsAndChartsRunner {
       this.chart.getFrontChart().setTitle("Iteration: " + 0);
     }
 
-    @Override
-    synchronized public void measureGenerated(Long iteration) {
+    @Override synchronized public void measureGenerated(Long iteration) {
       if (this.chart != null) {
         this.chart.getFrontChart().setTitle("Iteration: " + iteration);
       }
@@ -172,50 +124,40 @@ public class SMPSORPChangingTheReferencePointsAndChartsRunner {
   }
 
   private static class ChangeReferencePoint implements Runnable {
-    ChartContainerWithReferencePoints chart ;
-    List<List<Double>> referencePoints;
-    SMPSORP algorithm ;
+    ChartContainerWithReferencePoints chart;
 
-    public ChangeReferencePoint(
-            Algorithm<List<DoubleSolution>> algorithm,
-        List<List<Double>> referencePoints,
-        List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints,
-            ChartContainerWithReferencePoints chart)
-        throws InterruptedException {
+    List<List<Double>> referencePoints;
+
+    SMPSORP algorithm;
+
+    public ChangeReferencePoint(Algorithm<List<DoubleSolution>> algorithm, List<List<Double>> referencePoints, List<ArchiveWithReferencePoint<DoubleSolution>> archivesWithReferencePoints, ChartContainerWithReferencePoints chart) throws InterruptedException {
       this.referencePoints = referencePoints;
-      this.chart = chart ;
-      this.algorithm = (SMPSORP) algorithm ;
+      this.chart = chart;
+      this.algorithm = (SMPSORP) algorithm;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       try (Scanner scanner = new Scanner(System.in)) {
-        double v1 ;
-        double v2 ;
-        
+        double v1;
+        double v2;
         while (true) {
           System.out.println("Introduce the new reference point (between commas):");
-          String s = scanner.nextLine() ;
-          
+          String s = scanner.nextLine();
           try (Scanner sl = new Scanner(s)) {
             sl.useDelimiter(",");
-            
             for (int i = 0; i < referencePoints.size(); i++) {
               try {
                 v1 = Double.parseDouble(sl.next());
                 v2 = Double.parseDouble(sl.next());
-              } catch (Exception e) {//any problem
+              } catch (Exception e) {
                 v1 = 0;
                 v2 = 0;
               }
-              
               referencePoints.get(i).set(0, v1);
               referencePoints.get(i).set(1, v2);
             }
           }
-          
           chart.updateReferencePoint(referencePoints);
-          
           algorithm.changeReferencePoints(referencePoints);
         }
       }

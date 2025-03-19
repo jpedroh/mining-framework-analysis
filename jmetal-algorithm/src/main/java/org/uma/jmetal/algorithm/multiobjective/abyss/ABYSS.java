@@ -1,5 +1,4 @@
 package org.uma.jmetal.algorithm.multiobjective.abyss;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -31,92 +30,93 @@ import org.uma.jmetal.util.solutionattribute.impl.DistanceToSolutionListAttribut
  *   @author Antonio J. Nebro <antonio@lcc.uma.es>
  *   @author Cristobal Barba
  */
-@SuppressWarnings("serial")
-public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolution>> {
-  public static final String SOLUTION_IS_MARKED = "MARKED_ATTRIBUTE" ;
+@SuppressWarnings(value = { "serial" }) public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolution>> {
+  public static final String SOLUTION_IS_MARKED = "MARKED_ATTRIBUTE";
 
-  protected final int maxEvaluations ;
+  protected final int maxEvaluations;
+
   protected final Problem<DoubleSolution> problem;
 
-  protected final int referenceSet1Size ;
-  protected final int referenceSet2Size ;
-  protected List<DoubleSolution> referenceSet1 ;
-  protected List<DoubleSolution> referenceSet2 ;
+  protected final int referenceSet1Size;
 
-  protected final int archiveSize ;
-  protected Archive<DoubleSolution> archive ;
+  protected final int referenceSet2Size;
 
-  protected LocalSearchOperator<DoubleSolution> localSearch ;
-  protected CrossoverOperator<DoubleSolution> crossover ;
+  protected List<DoubleSolution> referenceSet1;
+
+  protected List<DoubleSolution> referenceSet2;
+
+  protected final int archiveSize;
+
+  protected Archive<DoubleSolution> archive;
+
+  protected LocalSearchOperator<DoubleSolution> localSearch;
+
+  protected CrossoverOperator<DoubleSolution> crossover;
+
   protected int evaluations;
-  protected JMetalRandom randomGenerator ;
+
+  protected JMetalRandom randomGenerator;
 
   /**
    * These variables are used in the diversification method.
    */
   protected int numberOfSubRanges;
+
   protected int[] sumOfFrequencyValues;
+
   protected int[] sumOfReverseFrequencyValues;
+
   protected int[][] frequency;
+
   protected int[][] reverseFrequency;
 
-  protected StrenghtRawFitnessDensityEstimator<DoubleSolution> densityEstimator ;
-  protected Comparator<DoubleSolution> fitnessComparator; //TODO: invert this dependency
+  protected StrenghtRawFitnessDensityEstimator<DoubleSolution> densityEstimator;
+
+  protected Comparator<DoubleSolution> fitnessComparator;
+
   protected DistanceToSolutionListAttribute distanceToSolutionListAttribute;
+
   protected Comparator<DoubleSolution> dominanceComparator;
+
   protected Comparator<DoubleSolution> equalComparator;
+
   protected Comparator<DoubleSolution> crowdingDistanceComparator;
 
-  public ABYSS(DoubleProblem problem, int maxEvaluations, int populationSize, int referenceSet1Size,
-               int referenceSet2Size, int archiveSize, Archive<DoubleSolution> archive,
-               LocalSearchOperator<DoubleSolution> localSearch,
-               CrossoverOperator<DoubleSolution> crossoverOperator,
-               int numberOfSubRanges) {
-
+  public ABYSS(DoubleProblem problem, int maxEvaluations, int populationSize, int referenceSet1Size, int referenceSet2Size, int archiveSize, Archive<DoubleSolution> archive, LocalSearchOperator<DoubleSolution> localSearch, CrossoverOperator<DoubleSolution> crossoverOperator, int numberOfSubRanges) {
     setPopulationSize(populationSize);
-
-    this.problem = problem ;
-    this.maxEvaluations = maxEvaluations ;
-    this.referenceSet1Size = referenceSet1Size ;
-    this.referenceSet2Size = referenceSet2Size ;
-    this.archiveSize = archiveSize ;
-    this.archive = archive ;
-    this.localSearch = localSearch ;
-    this.crossover = crossoverOperator ;
-
-    referenceSet1 = new ArrayList<>(referenceSet1Size) ;
-    referenceSet2 = new ArrayList<>(referenceSet2Size) ;
-
-    this.numberOfSubRanges = numberOfSubRanges ;
-
-    randomGenerator = JMetalRandom.getInstance() ;
-
-    sumOfFrequencyValues       = new int[problem.getNumberOfVariables()] ;
-    sumOfReverseFrequencyValues = new int[problem.getNumberOfVariables()] ;
-    frequency       = new int[numberOfSubRanges][problem.getNumberOfVariables()] ;
-    reverseFrequency = new int[numberOfSubRanges][problem.getNumberOfVariables()] ;
-
-    densityEstimator = new StrenghtRawFitnessDensityEstimator<>(1) ;
+    this.problem = problem;
+    this.maxEvaluations = maxEvaluations;
+    this.referenceSet1Size = referenceSet1Size;
+    this.referenceSet2Size = referenceSet2Size;
+    this.archiveSize = archiveSize;
+    this.archive = archive;
+    this.localSearch = localSearch;
+    this.crossover = crossoverOperator;
+    referenceSet1 = new ArrayList<>(referenceSet1Size);
+    referenceSet2 = new ArrayList<>(referenceSet2Size);
+    this.numberOfSubRanges = numberOfSubRanges;
+    randomGenerator = JMetalRandom.getInstance();
+    sumOfFrequencyValues = new int[problem.getNumberOfVariables()];
+    sumOfReverseFrequencyValues = new int[problem.getNumberOfVariables()];
+    frequency = new int[numberOfSubRanges][problem.getNumberOfVariables()];
+    reverseFrequency = new int[numberOfSubRanges][problem.getNumberOfVariables()];
+    densityEstimator = new StrenghtRawFitnessDensityEstimator<>(1);
     fitnessComparator = densityEstimator.getComparator();
     distanceToSolutionListAttribute = new DistanceToSolutionListAttribute();
-
-    crowdingDistanceComparator = new CrowdingDistanceDensityEstimator<DoubleSolution>().getComparator() ;
-
+    crowdingDistanceComparator = new CrowdingDistanceDensityEstimator<DoubleSolution>().getComparator();
     dominanceComparator = new DominanceWithConstraintsComparator<>();
     equalComparator = new EqualSolutionsComparator<>();
-
-    evaluations = 0 ;
+    evaluations = 0;
   }
 
   @Override public boolean isStoppingConditionReached() {
-    return evaluations >= maxEvaluations ;
+    return evaluations >= maxEvaluations;
   }
 
   @Override public DoubleSolution improvement(DoubleSolution solution) {
-    DoubleSolution improvedSolution = localSearch.execute(solution) ;
-    evaluations += localSearch.getNumberOfEvaluations() ;
-
-    return improvedSolution ;
+    DoubleSolution improvedSolution = localSearch.execute(solution);
+    evaluations += localSearch.getNumberOfEvaluations();
+    return improvedSolution;
   }
 
   @Override public List<DoubleSolution> getResult() {
@@ -125,17 +125,14 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
 
   @Override public DoubleSolution diversificationGeneration() {
     DoubleSolution solution = problem.createSolution();
-
     double value;
     int range;
-
     for (int i = 0; i < problem.getNumberOfVariables(); i++) {
       sumOfReverseFrequencyValues[i] = 0;
       for (int j = 0; j < numberOfSubRanges; j++) {
         reverseFrequency[j][i] = sumOfFrequencyValues[i] - frequency[j][i];
         sumOfReverseFrequencyValues[i] += reverseFrequency[j][i];
       }
-
       if (sumOfReverseFrequencyValues[i] == 0) {
         range = randomGenerator.nextInt(0, numberOfSubRanges - 1);
       } else {
@@ -146,22 +143,18 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
           range++;
         }
       }
-
       frequency[range][i]++;
       sumOfFrequencyValues[i]++;
-
-      Bounds<Double> bounds = ((DoubleProblem)problem).getBoundsForVariables().get(i) ;
-      Double lowerBound = bounds.getLowerBound() ;
-      Double upperBound = bounds.getUpperBound() ;
-      double low = lowerBound + range * (upperBound - lowerBound) / numberOfSubRanges ;
-      double high = low + (upperBound - lowerBound) / numberOfSubRanges ;
-
+      Bounds<Double> bounds = ((DoubleProblem) problem).getBoundsForVariables().get(i);
+      Double lowerBound = bounds.getLowerBound();
+      Double upperBound = bounds.getUpperBound();
+      double low = lowerBound + range * (upperBound - lowerBound) / numberOfSubRanges;
+      double high = low + (upperBound - lowerBound) / numberOfSubRanges;
       value = randomGenerator.nextDouble(low, high);
       solution.variables().set(i, value);
     }
-
     problem.evaluate(solution);
-    evaluations ++ ;
+    evaluations++;
     return solution;
   }
 
@@ -169,7 +162,7 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
    * Build the reference set after the initialization phase
    */
   @Override public void referenceSetUpdate() {
-    buildNewReferenceSet1() ;
+    buildNewReferenceSet1();
     buildNewReferenceSet2();
   }
 
@@ -198,7 +191,6 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     DoubleSolution individual;
     densityEstimator.compute(getPopulation());
     getPopulation().sort(fitnessComparator);
-
     for (int i = 0; i < referenceSet1Size; i++) {
       individual = getPopulation().get(0);
       getPopulation().remove(0);
@@ -217,22 +209,17 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
   public void buildNewReferenceSet2() {
     for (int i = 0; i < getPopulation().size(); i++) {
       DoubleSolution individual = getPopulation().get(i);
-      double distanceAux = SolutionUtils
-          .distanceToSolutionListInSolutionSpace(individual, referenceSet1);
+      double distanceAux = SolutionUtils.distanceToSolutionListInSolutionSpace(individual, referenceSet1);
       distanceToSolutionListAttribute.setAttribute(individual, distanceAux);
     }
-
     int size = referenceSet2Size;
     if (getPopulation().size() < referenceSet2Size) {
       size = getPopulation().size();
     }
-
     for (int i = 0; i < size; i++) {
-      // Find the maximumMinimumDistanceToPopulation
       double maxMinimum = 0.0;
       int index = 0;
       for (int j = 0; j < getPopulation().size(); j++) {
-
         DoubleSolution auxSolution = getPopulation().get(j);
         if (distanceToSolutionListAttribute.getAttribute(auxSolution) > maxMinimum) {
           maxMinimum = distanceToSolutionListAttribute.getAttribute(auxSolution);
@@ -241,22 +228,15 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
       }
       DoubleSolution individual = getPopulation().get(index);
       getPopulation().remove(index);
-
-      // Update distances to REFSET in population
       for (int j = 0; j < getPopulation().size(); j++) {
         double aux = SolutionUtils.distanceBetweenSolutionsInObjectiveSpace(getPopulation().get(j), individual);
-
         if (aux < distanceToSolutionListAttribute.getAttribute(individual)) {
           DoubleSolution auxSolution = getPopulation().get(j);
           distanceToSolutionListAttribute.setAttribute(auxSolution, aux);
         }
       }
-
-      // Insert the individual into REFSET2
       individual.attributes().put(SOLUTION_IS_MARKED, false);
       referenceSet2.add(individual);
-
-      // Update distances in REFSET2
       for (int j = 0; j < referenceSet2.size(); j++) {
         for (DoubleSolution solution : referenceSet2) {
           if (i != j) {
@@ -284,23 +264,24 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     int i = 0;
     while (i < referenceSet1.size()) {
       flag = dominanceComparator.compare(solution, referenceSet1.get(i));
-      if (flag == -1) { //This is: solution dominates
+      if (flag == -1) {
         referenceSet1.remove(i);
-      } else if (flag == 1) {
-        dominated = true;
-        i++;
       } else {
-        flag = equalComparator.compare(solution, referenceSet1.get(i));
-        if (flag == 0) {
-          return true;
+        if (flag == 1) {
+          dominated = true;
+          i++;
+        } else {
+          flag = equalComparator.compare(solution, referenceSet1.get(i));
+          if (flag == 0) {
+            return true;
+          }
+          i++;
         }
-        i++;
       }
     }
-
     if (!dominated) {
       solution.attributes().put(SOLUTION_IS_MARKED, false);
-      if (referenceSet1.size() < referenceSet1Size) { //refSet1 isn't full
+      if (referenceSet1.size() < referenceSet1Size) {
         referenceSet1.add(solution);
       } else {
         archive.add(solution);
@@ -346,11 +327,9 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
         index = i;
       }
     }
-
     double auxDist = distanceToSolutionListAttribute.getAttribute(solution);
     if (auxDist < worst) {
       referenceSet2.remove(index);
-      //Update distances in REFSET2
       for (int j = 0; j < referenceSet2.size(); j++) {
         aux = SolutionUtils.distanceBetweenSolutionsInObjectiveSpace(referenceSet2.get(j), solution);
         if (aux < distanceToSolutionListAttribute.getAttribute(referenceSet2.get(j))) {
@@ -364,83 +343,68 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
     return false;
   }
 
-  @Override
-  public boolean restartConditionIsFulfilled(List<DoubleSolution> combinedSolutions) {
-    return combinedSolutions.isEmpty() ;
+  @Override public boolean restartConditionIsFulfilled(List<DoubleSolution> combinedSolutions) {
+    return combinedSolutions.isEmpty();
   }
 
   /**
    * Subset generation method
    * @return
    */
-  @Override
-  public List<List<DoubleSolution>> subsetGeneration() {
-    List<List<DoubleSolution>> solutionGroupsList ;
-
-    solutionGroupsList = generatePairsFromSolutionList(referenceSet1) ;
-
+  @Override public List<List<DoubleSolution>> subsetGeneration() {
+    List<List<DoubleSolution>> solutionGroupsList;
+    solutionGroupsList = generatePairsFromSolutionList(referenceSet1);
     solutionGroupsList.addAll(generatePairsFromSolutionList(referenceSet2));
-
-    return solutionGroupsList ;
+    return solutionGroupsList;
   }
 
   /**
    * Generate all pair combinations of the referenceSet1
    */
   public List<List<DoubleSolution>> generatePairsFromSolutionList(List<DoubleSolution> solutionList) {
-    List<List<DoubleSolution>> subset = new ArrayList<>() ;
+    List<List<DoubleSolution>> subset = new ArrayList<>();
     for (int i = 0; i < solutionList.size(); i++) {
       DoubleSolution solution1 = solutionList.get(i);
       for (int j = i + 1; j < solutionList.size(); j++) {
         DoubleSolution solution2 = solutionList.get(j);
-
-        if (!(Boolean)solution1.attributes().get(SOLUTION_IS_MARKED)||
-            !(Boolean)solution2.attributes().get(SOLUTION_IS_MARKED)) {
+        if (!(Boolean) solution1.attributes().get(SOLUTION_IS_MARKED) || !(Boolean) solution2.attributes().get(SOLUTION_IS_MARKED)) {
           List<DoubleSolution> pair = new ArrayList<>(2);
           pair.add(solution1);
           pair.add(solution2);
           subset.add(pair);
-
           solutionList.get(i).attributes().put(SOLUTION_IS_MARKED, true);
           solutionList.get(j).attributes().put(SOLUTION_IS_MARKED, true);
         }
       }
     }
-
-    return subset ;
+    return subset;
   }
 
-  @Override
-  public List<DoubleSolution> solutionCombination(List<List<DoubleSolution>> solutionList) {
-    List<DoubleSolution> resultList = new ArrayList<>() ;
+  @Override public List<DoubleSolution> solutionCombination(List<List<DoubleSolution>> solutionList) {
+    List<DoubleSolution> resultList = new ArrayList<>();
     for (List<DoubleSolution> pair : solutionList) {
       List<DoubleSolution> offspring = crossover.execute(pair);
-
       problem.evaluate(offspring.get(0));
       problem.evaluate(offspring.get(1));
       evaluations += 2;
       resultList.add(offspring.get(0));
       resultList.add(offspring.get(1));
     }
-
     return resultList;
   }
 
-  @Override
-  public void restart() {
+  @Override public void restart() {
     getPopulation().clear();
-    addReferenceSet1ToPopulation() ;
-    updatePopulationWithArchive() ;
-    fillPopulationWithRandomSolutions() ;
+    addReferenceSet1ToPopulation();
+    updatePopulationWithArchive();
+    fillPopulationWithRandomSolutions();
   }
 
   private void addReferenceSet1ToPopulation() {
     for (int i = 0; i < referenceSet1.size(); i++) {
       DoubleSolution solution = referenceSet1.get(i);
       solution = improvement(solution);
-
       solution.attributes().put(SOLUTION_IS_MARKED, true);
-
       getPopulation().add(solution);
     }
     referenceSet1.clear();
@@ -448,20 +412,17 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
   }
 
   private void updatePopulationWithArchive() {
-    CrowdingDistanceArchive<DoubleSolution> crowdingArchive ;
-    crowdingArchive = (CrowdingDistanceArchive<DoubleSolution>)archive ;
+    CrowdingDistanceArchive<DoubleSolution> crowdingArchive;
+    crowdingArchive = (CrowdingDistanceArchive<DoubleSolution>) archive;
     crowdingArchive.computeDensityEstimator();
-
     crowdingArchive.getSolutionList().sort(crowdingDistanceComparator);
-
     int insert = getPopulationSize() / 2;
-
-    if (insert > crowdingArchive.getSolutionList().size())
+    if (insert > crowdingArchive.getSolutionList().size()) {
       insert = crowdingArchive.getSolutionList().size();
-
-    if (insert > (getPopulationSize() - getPopulation().size()))
+    }
+    if (insert > (getPopulationSize() - getPopulation().size())) {
       insert = getPopulationSize() - getPopulation().size();
-
+    }
     for (int i = 0; i < insert; i++) {
       DoubleSolution solution = (DoubleSolution) crowdingArchive.getSolutionList().get(i).copy();
       solution.attributes().put(SOLUTION_IS_MARKED, false);
@@ -472,22 +433,19 @@ public class ABYSS extends AbstractScatterSearch<DoubleSolution, List<DoubleSolu
   private void fillPopulationWithRandomSolutions() {
     while (getPopulation().size() < getPopulationSize()) {
       DoubleSolution solution = diversificationGeneration();
-
       problem.evaluate(solution);
       evaluations++;
       solution = improvement(solution);
-
       solution.attributes().put(SOLUTION_IS_MARKED, false);
       getPopulation().add(solution);
     }
   }
 
   @Override public String getName() {
-    return "AbYSS" ;
+    return "AbYSS";
   }
 
   @Override public String getDescription() {
-    return "Archived based hYbrid Scatter Search Algorithm" ;
+    return "Archived based hYbrid Scatter Search Algorithm";
   }
 }
-

@@ -1,7 +1,5 @@
 package org.uma.jmetal.utilities;
-
 import static java.util.stream.Collectors.toList;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -30,48 +28,36 @@ public class GenerateReferenceFrontFromFile {
     if (args.length != 2) {
       throw new JMetalException("Wrong number of arguments: two file names are required.");
     }
-
-    String inputFileName = args[0] ;
-    String outputFileName = args[1] ;
-
+    String inputFileName = args[0];
+    String outputFileName = args[1];
     NonDominatedSolutionListArchive<PointSolution> archive = new NonDominatedSolutionListArchive<>();
     List<String> fileNameList = new ArrayList<>();
-
     if (Files.isRegularFile(Paths.get(inputFileName))) {
       fileNameList.add(inputFileName);
-
-    } else if (Files.isDirectory(Paths.get(inputFileName))) {
-
-      fileNameList.addAll(Files
-        .list(Paths.get(inputFileName))
-        .map(s -> s.toString())
-        .collect(toList()));
     } else {
-      throw new JMetalException("Error opening file/directory") ;
+      if (Files.isDirectory(Paths.get(inputFileName))) {
+        fileNameList.addAll(Files.list(Paths.get(inputFileName)).map((s) -> s.toString()).collect(toList()));
+      } else {
+        throw new JMetalException("Error opening file/directory");
+      }
     }
-
     int numberOfObjectives = determineNumberOfObjectives(fileNameList.get(0));
-    for (String fileName: fileNameList) {
-      System.out.println(fileName) ;
-      archive.addAll(StoredSolutionsUtils.readSolutionsFromFile(fileName,numberOfObjectives)) ;
+    for (String fileName : fileNameList) {
+      System.out.println(fileName);
+      archive.addAll(StoredSolutionsUtils.readSolutionsFromFile(fileName, numberOfObjectives));
     }
-
     StoredSolutionsUtils.writeToOutput(archive.getSolutionList(), new DefaultFileOutputContext(outputFileName));
   }
 
-
   private static int determineNumberOfObjectives(String inputFileName) {
-    Stream<String> lines ;
-
+    Stream<String> lines;
     try {
       lines = Files.lines(Paths.get(inputFileName), Charset.defaultCharset());
     } catch (IOException e) {
-      throw new JMetalException(e) ;
+      throw new JMetalException(e);
     }
-
-    int numberOfObjectives = lines.findFirst().get().split(" ").length ;
+    int numberOfObjectives = lines.findFirst().get().split(" ").length;
     lines.close();
-    
     return numberOfObjectives;
   }
 }

@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.smpso;
-
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.multiobjective.smpso.SMPSOWithArchive;
 import org.uma.jmetal.experimental.componentbasedalgorithm.catalogue.common.evaluation.Evaluation;
@@ -32,42 +31,26 @@ public class SMPSOWithUnboundedNonDominatedArchiveExample extends AbstractAlgori
     DoubleProblem problem;
     SMPSOWithArchive algorithm;
     MutationOperator<DoubleSolution> mutation;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2";
-    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.3D.csv" ;
-
+    String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.3D.csv";
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
-    int swarmSize = 100 ;
-    BoundedArchive<DoubleSolution> leadersArchive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem) ;
-    Termination termination = new TerminationByEvaluations(50000) ;
-
-    Archive<DoubleSolution> externalArchive = new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), swarmSize) ;
-
-    algorithm = new SMPSOWithArchive(problem, swarmSize, leadersArchive, mutation, evaluation, termination, externalArchive) ;
-
+    int swarmSize = 100;
+    BoundedArchive<DoubleSolution> leadersArchive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize);
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
+    Termination termination = new TerminationByEvaluations(50000);
+    Archive<DoubleSolution> externalArchive = new BestSolutionsArchive<>(new NonDominatedSolutionListArchive<>(), swarmSize);
+    algorithm = new SMPSOWithArchive(problem, swarmSize, leadersArchive, mutation, evaluation, termination, externalArchive);
     algorithm.run();
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-
+    List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }

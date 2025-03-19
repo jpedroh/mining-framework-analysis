@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective;
-
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.omopso.OMOPSOBuilder;
@@ -20,7 +19,6 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-
 public class OMOPSORunner extends AbstractAlgorithmRunner {
   /**
    * @param args Command line arguments.
@@ -33,43 +31,29 @@ public class OMOPSORunner extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws Exception {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
-
-    String referenceParetoFront = "" ;
-
-    String problemName ;
+    String referenceParetoFront = "";
+    String problemName;
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+        referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+      }
     }
-
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-
-    algorithm = new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<>())
-        .setMaxIterations(250)
-        .setSwarmSize(100)
-        .setEta(0.0075)
-        .setUniformMutation(new UniformMutation(mutationProbability, 0.5))
-        .setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250))
-        .build();
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute();
-
+    problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    algorithm = new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<>()).setMaxIterations(250).setSwarmSize(100).setEta(0.0075).setUniformMutation(new UniformMutation(mutationProbability, 0.5)).setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250)).build();
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
     List<DoubleSolution> population = SolutionListUtils.distanceBasedSubsetSelection(algorithm.getResult(), 100);
     long computingTime = algorithmRunner.getComputingTime();
-
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
     printFinalSolutionSet(population);
     if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
+      printQualityIndicators(population, referenceParetoFront);
     }
   }
 }

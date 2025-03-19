@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.nsgaii;
-
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,75 +43,35 @@ public class NSGAIIComponentBasedConfigurationExample extends AbstractAlgorithmR
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
     Problem<DoubleSolution> problem;
     NSGAII<DoubleSolution> algorithm;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ2";
     String referenceParetoFront = "resources/referenceFrontsCSV/DTLZ2.3D.csv";
-
     problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     int populationSize = 100;
-    int offspringPopulationSize = 100 ;
+    int offspringPopulationSize = 100;
     int maxNumberOfEvaluations = 25000;
-
     DensityEstimator<DoubleSolution> densityEstimator = new CrowdingDistanceDensityEstimator<>();
     Ranking<DoubleSolution> ranking = new MergeNonDominatedSortRanking<>();
-
-    SolutionsCreation<DoubleSolution> initialSolutionsCreation =
-        new RandomSolutionsCreation<>(problem, populationSize);
-
-    RankingAndDensityEstimatorReplacement<DoubleSolution> replacement =
-        new RankingAndDensityEstimatorReplacement<>(
-            ranking, densityEstimator, Replacement.RemovalPolicy.oneShot);
-
+    SolutionsCreation<DoubleSolution> initialSolutionsCreation = new RandomSolutionsCreation<>(problem, populationSize);
+    RankingAndDensityEstimatorReplacement<DoubleSolution> replacement = new RankingAndDensityEstimatorReplacement<>(ranking, densityEstimator, Replacement.RemovalPolicy.oneShot);
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
-    CrossoverOperator<DoubleSolution> crossover =
-        new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
+    CrossoverOperator<DoubleSolution> crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
-    MutationOperator<DoubleSolution> mutation =
-        new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
-    CrossoverAndMutationVariation<DoubleSolution> variation =
-        new CrossoverAndMutationVariation<>(offspringPopulationSize, crossover, mutation);
-
-    MatingPoolSelection<DoubleSolution> selection =
-        new NaryTournamentMatingPoolSelection<>(
-            2,
-            variation.getMatingPoolSize(),
-            new MultiComparator<>(
-                Arrays.asList(
-                    Comparator.comparing(ranking::getRank), Comparator.comparing(densityEstimator::getValue).reversed())));
-
+    MutationOperator<DoubleSolution> mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    CrossoverAndMutationVariation<DoubleSolution> variation = new CrossoverAndMutationVariation<>(offspringPopulationSize, crossover, mutation);
+    MatingPoolSelection<DoubleSolution> selection = new NaryTournamentMatingPoolSelection<>(2, variation.getMatingPoolSize(), new MultiComparator<>(Arrays.asList(Comparator.comparing(ranking::getRank), Comparator.comparing(densityEstimator::getValue).reversed())));
     Termination termination = new TerminationByEvaluations(maxNumberOfEvaluations);
-
     Evaluation<DoubleSolution> evaluation = new SequentialEvaluation<>(problem);
-
-    algorithm =
-        new NSGAII<>(
-            evaluation,
-            initialSolutionsCreation,
-            termination,
-            selection,
-            variation,
-            replacement);
-
+    algorithm = new NSGAII<>(evaluation, initialSolutionsCreation, termination, selection, variation, replacement);
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }

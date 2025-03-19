@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.singleobjective.geneticalgorithm;
-
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.ComponentBasedEvolutionaryAlgorithm;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithm;
@@ -31,53 +30,29 @@ public class MultithreadedGeneticAlgorithmExample extends AbstractAlgorithmRunne
   public static void main(String[] args) throws JMetalException {
     Problem<DoubleSolution> problem;
     ComponentBasedEvolutionaryAlgorithm<DoubleSolution> algorithm;
-    NaryTournamentSelection<DoubleSolution> selection ;
+    NaryTournamentSelection<DoubleSolution> selection;
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
-    
-    problem = new Sphere(20) ;
-
+    problem = new Sphere(20);
     int populationSize = 100;
     int offspringPopulationSize = populationSize;
-
-    selection = new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0)) ;
-
+    selection = new NaryTournamentSelection<>(2, new ObjectiveComparator<>(0));
     double crossoverProbability = 0.9;
     double crossoverDistributionIndex = 20.0;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     Termination termination = new TerminationByEvaluations(150000);
-
-    algorithm =
-            new GeneticAlgorithm<>(
-                    problem,
-                    populationSize,
-                    offspringPopulationSize,
-                    selection,
-                    crossover,
-                    mutation,
-                    termination)
-                    .withEvaluation(new MultithreadedEvaluation<>(8, problem));
-
+    algorithm = new GeneticAlgorithm<>(problem, populationSize, offspringPopulationSize, selection, crossover, mutation, termination).withEvaluation(new MultithreadedEvaluation<>(8, problem));
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-            .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
-    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]) ;
+    JMetalLogger.logger.info("Best found solution: " + population.get(0).objectives()[0]);
   }
 }

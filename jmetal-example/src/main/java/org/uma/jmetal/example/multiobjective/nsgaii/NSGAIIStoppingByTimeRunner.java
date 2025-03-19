@@ -1,5 +1,4 @@
 package org.uma.jmetal.example.multiobjective.nsgaii;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -40,60 +39,39 @@ public class NSGAIIStoppingByTimeRunner extends AbstractAlgorithmRunner {
     CrossoverOperator<DoubleSolution> crossover;
     MutationOperator<DoubleSolution> mutation;
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-    String referenceParetoFront = "" ;
-
-    String problemName ;
+    String referenceParetoFront = "";
+    String problemName;
     if (args.length == 1) {
       problemName = args[0];
-    } else if (args.length == 2) {
-      problemName = args[0] ;
-      referenceParetoFront = args[1] ;
     } else {
-      problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv" ;
+      if (args.length == 2) {
+        problemName = args[0];
+        referenceParetoFront = args[1];
+      } else {
+        problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+        referenceParetoFront = "resources/referenceFrontsCSV/ZDT1.csv";
+      }
     }
-
-    problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
-
-    double crossoverProbability = 0.9 ;
-    double crossoverDistributionIndex = 20.0 ;
-    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
-
-    double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-    double mutationDistributionIndex = 20.0 ;
-    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-    selection = new BinaryTournamentSelection<DoubleSolution>(
-        new RankingAndCrowdingDistanceComparator<DoubleSolution>());
-
-    int thresholdComputingTimeInMilliseconds = 4000 ;
-    int populationSize = 100 ;
-    int matingPoolSize = 100 ;
-    int offspringPopulationSize = 100 ;
-
-    algorithm = new NSGAIIStoppingByTime<DoubleSolution>(
-            problem,
-            populationSize,
-            thresholdComputingTimeInMilliseconds,
-            matingPoolSize,
-            offspringPopulationSize,
-            crossover,
-            mutation,
-            selection,
-            new DominanceWithConstraintsComparator<>(),
-            new SequentialSolutionListEvaluator<>()) ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-        .execute() ;
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
+    problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+    double crossoverProbability = 0.9;
+    double crossoverDistributionIndex = 20.0;
+    crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+    double mutationProbability = 1.0 / problem.getNumberOfVariables();
+    double mutationDistributionIndex = 20.0;
+    mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
+    selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
+    int thresholdComputingTimeInMilliseconds = 4000;
+    int populationSize = 100;
+    int matingPoolSize = 100;
+    int offspringPopulationSize = 100;
+    algorithm = new NSGAIIStoppingByTime<DoubleSolution>(problem, populationSize, thresholdComputingTimeInMilliseconds, matingPoolSize, offspringPopulationSize, crossover, mutation, selection, new DominanceWithConstraintsComparator<>(), new SequentialSolutionListEvaluator<>());
+    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+    List<DoubleSolution> population = algorithm.getResult();
+    long computingTime = algorithmRunner.getComputingTime();
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
     printFinalSolutionSet(population);
     if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
+      printQualityIndicators(population, referenceParetoFront);
     }
   }
 }

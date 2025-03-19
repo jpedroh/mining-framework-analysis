@@ -1,5 +1,4 @@
 package org.uma.jmetal.util.grouping.impl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -25,14 +24,11 @@ public class ListLinearGrouping<C extends Comparable<C>> extends ListGrouping<C>
     super(numberOfGroups);
   }
 
-  @Override
-  public void computeGroups(List<C> list) {
+  @Override public void computeGroups(List<C> list) {
     Check.notNull(list);
-
     if (lastListSize != list.size()) {
       indices = new ArrayList<>(list.size());
-      IntStream.range(0, list.size()).forEach(i -> indices.add(i));
-
+      IntStream.range(0, list.size()).forEach((i) -> indices.add(i));
       createGroups();
       lastListSize = list.size();
     }

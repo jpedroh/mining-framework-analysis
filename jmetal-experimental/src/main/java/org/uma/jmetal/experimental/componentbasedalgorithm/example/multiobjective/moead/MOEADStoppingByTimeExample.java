@@ -1,5 +1,4 @@
 package org.uma.jmetal.experimental.componentbasedalgorithm.example.multiobjective.moead;
-
 import java.io.FileNotFoundException;
 import java.util.List;
 import org.uma.jmetal.experimental.componentbasedalgorithm.algorithm.multiobjective.moead.MOEAD;
@@ -35,58 +34,30 @@ public class MOEADStoppingByTimeExample extends AbstractAlgorithmRunner {
     MOEAD<DoubleSolution> algorithm;
     MutationOperator<DoubleSolution> mutation;
     CrossoverOperator<DoubleSolution> crossover;
-
     String problemName = "org.uma.jmetal.problem.multiobjective.zdt1.ZDT1";
     String referenceParetoFront = "resources/referenceFronts/ZDT1.csv";
-
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
-
     int populationSize = 300;
-
     crossover = new SBXCrossover(1.0, 20.0);
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
     double mutationDistributionIndex = 20.0;
     mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
-
     double neighborhoodSelectionProbability = 1.0;
     int neighborhoodSize = 20;
-
     int maximumNumberOfReplacedSolutions = 2;
     AggregativeFunction aggregativeFunction = new PenaltyBoundaryIntersection();
-
-    algorithm =
-            new MOEAD<>(
-                    problem,
-                    populationSize,
-                    mutation,
-                    crossover,
-                    aggregativeFunction,
-                    neighborhoodSelectionProbability,
-                    maximumNumberOfReplacedSolutions,
-                    neighborhoodSize,
-                    "resources/weightVectorFiles/moead",
-                    new TerminationByComputingTime(2500));
-
+    algorithm = new MOEAD<>(problem, populationSize, mutation, crossover, aggregativeFunction, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborhoodSize, "resources/weightVectorFiles/moead", new TerminationByComputingTime(2500));
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
     JMetalLogger.logger.info("Total execution time : " + algorithm.getTotalComputingTime() + "ms");
     JMetalLogger.logger.info("Number of evaluations: " + algorithm.getEvaluations());
-
-    new SolutionListOutput(population)
-        .setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ","))
-        .setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ","))
-        .print();
-
+    new SolutionListOutput(population).setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv", ",")).setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv", ",")).print();
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
     JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
     JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
-
     if (!referenceParetoFront.equals("")) {
       printQualityIndicators(population, referenceParetoFront);
     }
-
     System.exit(0);
   }
 }

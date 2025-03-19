@@ -1,5 +1,4 @@
 package org.uma.jmetal.util.point;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,29 +11,26 @@ import org.uma.jmetal.solution.Solution;
  *
  * @author Antonio J. Nebro
  */
-@SuppressWarnings("serial")
-public class PointSolution implements Solution<Double> {
+@SuppressWarnings(value = { "serial" }) public class PointSolution implements Solution<Double> {
   private int numberOfObjectives;
+
   private double[] objectives;
+
   protected Map<Object, Object> attributes = new HashMap<>();
 
-  @Override
-  public List<Double> variables() {
+  @Override public List<Double> variables() {
     return new ArrayList<>();
   }
 
-  @Override
-  public double[] objectives() {
+  @Override public double[] objectives() {
     return objectives;
   }
 
-  @Override
-  public double[] constraints() {
+  @Override public double[] constraints() {
     return new double[0];
   }
 
-  @Override
-  public Map<Object, Object> attributes() {
+  @Override public Map<Object, Object> attributes() {
     return attributes;
   }
 
@@ -57,7 +53,6 @@ public class PointSolution implements Solution<Double> {
   public PointSolution(Point point) {
     this.numberOfObjectives = point.getDimension();
     objectives = new double[numberOfObjectives];
-
     for (int i = 0; i < numberOfObjectives; i++) {
       this.objectives[i] = point.getValue(i);
     }
@@ -71,7 +66,6 @@ public class PointSolution implements Solution<Double> {
   public PointSolution(Solution<?> solution) {
     this.numberOfObjectives = solution.objectives().length;
     objectives = new double[numberOfObjectives];
-
     for (int i = 0; i < numberOfObjectives; i++) {
       this.objectives[i] = solution.objectives()[i];
     }
@@ -84,37 +78,37 @@ public class PointSolution implements Solution<Double> {
    */
   public PointSolution(PointSolution point) {
     this(point.objectives().length);
-
     for (int i = 0; i < numberOfObjectives; i++) {
       this.objectives[i] = point.objectives()[i];
     }
   }
 
-  @Override
-  public PointSolution copy() {
+  @Override public PointSolution copy() {
     return new PointSolution(this);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     PointSolution that = (PointSolution) o;
-
-    if (numberOfObjectives != that.numberOfObjectives) return false;
-    if (!Arrays.equals(objectives, that.objectives)) return false;
-
+    if (numberOfObjectives != that.numberOfObjectives) {
+      return false;
+    }
+    if (!Arrays.equals(objectives, that.objectives)) {
+      return false;
+    }
     return true;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Arrays.hashCode(objectives);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return Arrays.toString(objectives);
   }
 }

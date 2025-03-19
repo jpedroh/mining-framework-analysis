@@ -1,5 +1,4 @@
 package org.uma.jmetal.util;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -49,7 +48,6 @@ public class VectorUtils {
   public static double[][] readVectors(String filePath, String separator) throws IOException {
     double[][] referenceVectors;
     String path = filePath;
-
     URL url = VectorUtils.class.getClassLoader().getResource(filePath);
     if (url != null) {
       try {
@@ -58,9 +56,7 @@ public class VectorUtils {
         e.printStackTrace();
       }
     }
-
     List<String> vectorStrList = Files.readAllLines(Paths.get(path));
-
     referenceVectors = new double[vectorStrList.size()][];
     for (int i = 0; i < vectorStrList.size(); i++) {
       String vectorStr = vectorStrList.get(i);
@@ -70,12 +66,11 @@ public class VectorUtils {
         referenceVectors[i][j] = Double.parseDouble(objectArray[j]);
       }
     }
-
     return referenceVectors;
   }
 
   public static double[][] readVectors(String filePath) throws IOException {
-    return readVectors(filePath, "\\s+") ;
+    return readVectors(filePath, "\\s+");
   }
 
   /**
@@ -87,7 +82,6 @@ public class VectorUtils {
    */
   public static boolean isVectorDominatedByAFront(double[] vector, double[][] front) {
     boolean result = false;
-
     int i = 0;
     while (!result && (i < front.length)) {
       if (VectorUtils.dominanceTest(vector, front[i]) == 1) {
@@ -95,7 +89,6 @@ public class VectorUtils {
       }
       i++;
     }
-
     return result;
   }
 
@@ -103,21 +96,17 @@ public class VectorUtils {
     return distanceToClosestVector(vector, front, new EuclideanDistanceBetweenVectors());
   }
 
-  public static double distanceToClosestVector(
-      double[] vector, double[][] front, Distance<double[], double[]> distance) {
+  public static double distanceToClosestVector(double[] vector, double[][] front, Distance<double[], double[]> distance) {
     Check.notNull(vector);
     Check.notNull(front);
     Check.that(front.length > 0, "The front is empty");
-
     double minDistance = distance.compute(vector, front[0]);
-
     for (int i = 1; i < front.length; i++) {
       double aux = distance.compute(vector, front[i]);
       if (aux < minDistance) {
         minDistance = aux;
       }
     }
-
     return minDistance;
   }
 
@@ -125,21 +114,17 @@ public class VectorUtils {
     return distanceToNearestVector(vector, front, new EuclideanDistanceBetweenVectors());
   }
 
-  public static double distanceToNearestVector(
-      double[] vector, double[][] front, Distance<double[], double[]> distance) {
+  public static double distanceToNearestVector(double[] vector, double[][] front, Distance<double[], double[]> distance) {
     Check.notNull(vector);
     Check.notNull(front);
     Check.that(front.length > 0, "The front is empty");
-
     double minDistance = Double.MAX_VALUE;
-
     for (int i = 0; i < front.length; i++) {
       double aux = distance.compute(vector, front[i]);
       if ((aux < minDistance) && (aux > 0.0)) {
         minDistance = aux;
       }
     }
-
     return minDistance;
   }
 
@@ -153,18 +138,20 @@ public class VectorUtils {
   public static double[][] getInvertedFront(double[][] front) {
     Check.notNull(front);
     Check.that(front.length > 0, "The front is empty");
-
     int numberOfDimensions = front[0].length;
-    double[][] invertedFront = new double[front.length][numberOfDimensions] ;
-
+    double[][] invertedFront = new double[front.length][numberOfDimensions];
     for (int i = 0; i < front.length; i++) {
       for (int j = 0; j < numberOfDimensions; j++) {
         if (front[i][j] <= 1.0 && front[i][j] >= 0.0) {
-          invertedFront[i][j] =  1.0 - front[i][j];
-        } else if (front[i][j] > 1.0) {
-          invertedFront[i][j] = 0.0 ;
-        } else if (front[i][j] < 0.0) {
-          invertedFront[i][j] = 1.0 ;
+          invertedFront[i][j] = 1.0 - front[i][j];
+        } else {
+          if (front[i][j] > 1.0) {
+            invertedFront[i][j] = 0.0;
+          } else {
+            if (front[i][j] < 0.0) {
+              invertedFront[i][j] = 1.0;
+            }
+          }
         }
       }
     }
@@ -178,6 +165,6 @@ public class VectorUtils {
    * @return
    */
   public static double[] toArray(List<Double> list) {
-    return list.stream().mapToDouble(v->v).toArray() ;
+    return list.stream().mapToDouble((v) -> v).toArray();
   }
 }

@@ -1,7 +1,5 @@
 package org.uma.jmetal.algorithm.multiobjective.omopso;
-
 import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import org.junit.Test;
 import org.uma.jmetal.algorithm.Algorithm;
@@ -24,61 +22,23 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 public class OMOPSOIT {
   Algorithm<List<DoubleSolution>> algorithm;
 
-  @Test
-  public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem()
-      throws Exception {
+  @Test public void shouldTheAlgorithmReturnANumberOfSolutionsWhenSolvingASimpleProblem() throws Exception {
     DoubleProblem problem = new ZDT1();
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
-
-    algorithm =
-        new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>())
-            .setMaxIterations(250)
-            .setSwarmSize(100)
-            .setEta(0.0075)
-            .setUniformMutation(new UniformMutation(mutationProbability, 0.5))
-            .setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250))
-            .build();
-
+    algorithm = new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>()).setMaxIterations(250).setSwarmSize(100).setEta(0.0075).setUniformMutation(new UniformMutation(mutationProbability, 0.5)).setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250)).build();
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
-
-    /*
-    Rationale: the default problem is ZDT1, and OMOPSO, configured with standard settings, should
-    return 100 solutions
-    */
     assertTrue(population.size() >= 98);
   }
 
-  @Test
-  public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
+  @Test public void shouldTheHypervolumeHaveAMininumValue() throws Exception {
     DoubleProblem problem = new ZDT1();
-
     double mutationProbability = 1.0 / problem.getNumberOfVariables();
-
-    algorithm =
-        new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>())
-            .setMaxIterations(250)
-            .setSwarmSize(100)
-            .setEta(0.0075)
-            .setUniformMutation(new UniformMutation(mutationProbability, 0.5))
-            .setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250))
-            .build();
-
+    algorithm = new OMOPSOBuilder(problem, new SequentialSolutionListEvaluator<DoubleSolution>()).setMaxIterations(250).setSwarmSize(100).setEta(0.0075).setUniformMutation(new UniformMutation(mutationProbability, 0.5)).setNonUniformMutation(new NonUniformMutation(mutationProbability, 0.5, 250)).build();
     algorithm.run();
-
     List<DoubleSolution> population = algorithm.getResult();
-
-    QualityIndicator hypervolume =
-            new PISAHypervolume(
-                    VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
-
-    // Rationale: the default problem is ZDT1, and OMOPSO, configured with standard settings, should
-    // return find a front with a hypervolume value higher than 0.64
-
+    QualityIndicator hypervolume = new PISAHypervolume(VectorUtils.readVectors("../resources/referenceFrontsCSV/ZDT1.csv", ","));
     double hv = hypervolume.compute(SolutionListUtils.getMatrixWithObjectiveValues(population));
-
     assertTrue(hv > 0.64);
   }
 }

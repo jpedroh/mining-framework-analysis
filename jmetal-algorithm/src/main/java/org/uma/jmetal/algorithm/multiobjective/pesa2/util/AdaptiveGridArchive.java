@@ -1,5 +1,4 @@
 package org.uma.jmetal.algorithm.multiobjective.pesa2.util;
-
 import java.util.Comparator;
 import java.util.Iterator;
 import org.uma.jmetal.solution.Solution;
@@ -13,9 +12,7 @@ import org.uma.jmetal.util.comparator.dominanceComparator.impl.DominanceWithCons
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  * @author Juan J. Durillo
  */
-@SuppressWarnings("serial")
-public class AdaptiveGridArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
-
+@SuppressWarnings(value = { "serial" }) public class AdaptiveGridArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
   private AdaptiveGrid<S> grid;
 
   private Comparator<S> dominanceComparator;
@@ -46,57 +43,44 @@ public class AdaptiveGridArchive<S extends Solution<?>> extends AbstractBoundedA
    * @return true if the <code>Solution</code> has been inserted, false
    * otherwise.
    */
-  @Override
-  public boolean add(S solution) {
-    //Iterator of individuals over the list
+  @Override public boolean add(S solution) {
     Iterator<S> iterator = getSolutionList().iterator();
-
     while (iterator.hasNext()) {
       S element = iterator.next();
       int flag = dominanceComparator.compare(solution, element);
-      if (flag == -1) { // The Individual to insert dominates other
-        // individuals in  the setArchive
-        iterator.remove(); //Delete it from the setArchive
+      if (flag == -1) {
+        iterator.remove();
         int location = grid.location(element);
-        if (grid.getLocationDensity(location) > 1) {//The hypercube contains
-          grid.removeSolution(location);            //more than one individual
+        if (grid.getLocationDensity(location) > 1) {
+          grid.removeSolution(location);
         } else {
           grid.updateGrid(getSolutionList());
         }
-      }
-      else if (flag == 1) { // An Individual into the file dominates the
-        // solution to insert
-        return false; // The solution will not be inserted
+      } else {
+        if (flag == 1) {
+          return false;
+        }
       }
     }
-
-    // At this point, the solution may be inserted
-    if (this.size() == 0) { //The setArchive is empty
+    if (this.size() == 0) {
       this.getSolutionList().add(solution);
       grid.updateGrid(getSolutionList());
       return true;
     }
-
-    if (this.getSolutionList().size() < this.getMaxSize()) { //The setArchive is not full
-      grid.updateGrid(solution, getSolutionList()); // Update the grid if applicable
+    if (this.getSolutionList().size() < this.getMaxSize()) {
+      grid.updateGrid(solution, getSolutionList());
       int location;
-      location = grid.location(solution); // Get the location of the solution
-      grid.addSolution(location); // Increment the density of the hypercube
-      getSolutionList().add(solution); // Add the solution to the list
+      location = grid.location(solution);
+      grid.addSolution(location);
+      getSolutionList().add(solution);
       return true;
     }
-
-    // At this point, the solution has to be inserted and the setArchive is full
     grid.updateGrid(solution, getSolutionList());
     int location = grid.location(solution);
-    if (location == grid.getMostPopulatedHypercube()) { // The solution is in the
-      // most populated hypercube
-      return false; // Not inserted
+    if (location == grid.getMostPopulatedHypercube()) {
+      return false;
     } else {
-      // Remove an solution from most populated area
       prune();
-      // A solution from most populated hypercube has been removed,
-      // insert now the solution
       grid.addSolution(location);
       getSolutionList().add(solution);
     }
@@ -106,7 +90,7 @@ public class AdaptiveGridArchive<S extends Solution<?>> extends AbstractBoundedA
   public AdaptiveGrid<S> getGrid() {
     return grid;
   }
-  
+
   public void prune() {
     Iterator<S> iterator = getSolutionList().iterator();
     while (iterator.hasNext()) {
@@ -120,13 +104,10 @@ public class AdaptiveGridArchive<S extends Solution<?>> extends AbstractBoundedA
     }
   }
 
-  @Override
-  public Comparator<S> getComparator() {
-    return null ; // TODO
+  @Override public Comparator<S> getComparator() {
+    return null;
   }
 
-  @Override
-  public void computeDensityEstimator() {
-    // TODO
+  @Override public void computeDensityEstimator() {
   }
 }
