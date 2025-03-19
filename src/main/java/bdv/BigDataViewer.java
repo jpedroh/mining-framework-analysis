@@ -6,13 +6,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -29,7 +29,6 @@
 package bdv;
 
 import bdv.tools.PreferencesDialog;
-import bdv.tools.movie.ProduceMovieDialog;
 import bdv.ui.UIUtils;
 import bdv.ui.keymap.Keymap;
 import bdv.ui.keymap.KeymapManager;
@@ -45,7 +44,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ActionMap;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -53,7 +51,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
-
 import net.imglib2.Volatile;
 import net.imglib2.converter.Converter;
 import net.imglib2.display.ColorConverter;
@@ -63,7 +60,6 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.volatiles.VolatileARGBType;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -92,6 +88,7 @@ import bdv.tools.brightness.MinMaxGroup;
 import bdv.tools.brightness.RealARGBColorConverterSetup;
 import bdv.tools.brightness.SetupAssignments;
 import bdv.tools.crop.CropDialog;
+import bdv.tools.movie.ProduceMovieDialog;
 import bdv.tools.transformation.ManualTransformation;
 import bdv.tools.transformation.ManualTransformationEditor;
 import bdv.tools.transformation.TransformedSource;
@@ -108,6 +105,7 @@ import mpicbg.spim.data.sequence.Angle;
 import mpicbg.spim.data.sequence.Channel;
 import org.scijava.ui.behaviour.util.Actions;
 
+import javax.swing.*;
 
 public class BigDataViewer
 {
@@ -785,47 +783,78 @@ public class BigDataViewer
 
 	public static void main( final String[] args )
 	{
-//		final String fn = "http://tomancak-mac-17.mpi-cbg.de:8080/openspim/";
-//		final String fn = "/Users/Pietzsch/Desktop/openspim/datasetHDF.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/spimrec2/dataset.xml";
-//		final String fn = "/Users/pietzsch/Desktop/HisYFP-SPIM/dataset.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/bdv example/drosophila 2.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid.xml";
-//		final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
-//		final String fn = "/home/saalfeld/catmaid.xml";
-//		final String fn = "/home/saalfeld/catmaid-fafb00-v9.xml";
-//		final String fn = "/home/saalfeld/catmaid-fafb00-sample_A_cutout_3k.xml";
-//		final String fn = "/home/saalfeld/catmaid-thorsten.xml";
-//		final String fn = "/home/saalfeld/knossos-example.xml";
-//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid-confocal.xml";
-//		final String fn = "/Users/pietzsch/desktop/data/BDV130418A325/BDV130418A325_NoTempReg.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/valia2/valia.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/fast fly/111010_weber/combined.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/mette/mette.xml";
-//		final String fn = "/Users/tobias/Desktop/openspim.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/fibsem.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/fibsem-remote.xml";
-//		final String fn = "/Users/pietzsch/Desktop/url-valia.xml";
-//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
-//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
-//		final String fn = "/Volumes/projects/tomancak_lightsheet/Mette/ZeissZ1SPIM/Maritigrella/021013_McH2BsGFP_CAAX-mCherry/11-use/hdf5/021013_McH2BsGFP_CAAX-mCherry-11-use.xml";
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/3173a1be985d9d2c0fac011dc0df6b11891d4933/src/main/java/bdv/BigDataViewer.java/left.java
+	//		final String fn = "http://tomancak-mac-17.mpi-cbg.de:8080/openspim/";
+	//		final String fn = "/Users/Pietzsch/Desktop/openspim/datasetHDF.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/spimrec2/dataset.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/HisYFP-SPIM/dataset.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/bdv example/drosophila 2.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid.xml";
+	//		final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
+	//		final String fn = "/home/saalfeld/catmaid.xml";
+	//		final String fn = "/home/saalfeld/catmaid-fafb00-v9.xml";
+	//		final String fn = "/home/saalfeld/catmaid-fafb00-sample_A_cutout_3k.xml";
+	//		final String fn = "/home/saalfeld/catmaid-thorsten.xml";
+	//		final String fn = "/home/saalfeld/knossos-example.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid-confocal.xml";
+	//		final String fn = "/Users/pietzsch/desktop/data/BDV130418A325/BDV130418A325_NoTempReg.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/valia2/valia.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/fast fly/111010_weber/combined.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/mette/mette.xml";
+	//		final String fn = "/Users/tobias/Desktop/openspim.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/fibsem.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/fibsem-remote.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/url-valia.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
+	//		final String fn = "/Volumes/projects/tomancak_lightsheet/Mette/ZeissZ1SPIM/Maritigrella/021013_McH2BsGFP_CAAX-mCherry/11-use/hdf5/021013_McH2BsGFP_CAAX-mCherry-11-use.xml";
 
-//		final String fn = "/Users/Marwan/Downloads/drosophila_his-yfp/dataset.xml";
+	//		final String fn = "/Users/Marwan/Downloads/drosophila_his-yfp/dataset.xml";
 
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/3173a1be985d9d2c0fac011dc0df6b11891d4933/src/main/java/bdv/BigDataViewer.java/base.java
+	//		final String fn = "http://tomancak-mac-17.mpi-cbg.de:8080/openspim/";
+	//		final String fn = "/Users/Pietzsch/Desktop/openspim/datasetHDF.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/spimrec2/dataset.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/HisYFP-SPIM/dataset.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/bdv example/drosophila 2.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid.xml";
+	//		final String fn = "src/main/resources/openconnectome-bock11-neariso.xml";
+	//		final String fn = "/home/saalfeld/catmaid.xml";
+	//		final String fn = "/home/saalfeld/catmaid-fafb00-v9.xml";
+	//		final String fn = "/home/saalfeld/catmaid-fafb00-sample_A_cutout_3k.xml";
+	//		final String fn = "/home/saalfeld/catmaid-thorsten.xml";
+	//		final String fn = "/home/saalfeld/knossos-example.xml";
+	//		final String fn = "/Users/Pietzsch/Desktop/data/catmaid-confocal.xml";
+	//		final String fn = "/Users/pietzsch/desktop/data/BDV130418A325/BDV130418A325_NoTempReg.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/valia2/valia.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/fast fly/111010_weber/combined.xml";
+	//		final String fn = "/Users/pietzsch/workspace/data/mette/mette.xml";
+	//		final String fn = "/Users/tobias/Desktop/openspim.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/fibsem.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/fibsem-remote.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/url-valia.xml";
+	//		final String fn = "/Users/pietzsch/Desktop/data/clusterValia/140219-1/valia-140219-1.xml";
+		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
+	//		final String fn = "/Volumes/projects/tomancak_lightsheet/Mette/ZeissZ1SPIM/Maritigrella/021013_McH2BsGFP_CAAX-mCherry/11-use/hdf5/021013_McH2BsGFP_CAAX-mCherry-11-use.xml";
+=======
+		final String fn = "/Users/pietzsch/workspace/data/111010_weber_resave.xml";
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/3173a1be985d9d2c0fac011dc0df6b11891d4933/src/main/java/bdv/BigDataViewer.java/right.java
 		try
 		{
 			final String fn = args[0];
 			System.setProperty( "apple.laf.useScreenMenuBar", "true" );
-//			System.setProperty( "apple.awt.application.appearance", "system" );
+	//			System.setProperty( "apple.awt.application.appearance", "system" );
 			UIUtils.installFlatLafInfos();
 
 			System.out.println( "reading config files from \"" + configDir + "\"" );
 			final BigDataViewer bdv = open( fn, new File( fn ).getName(), new ProgressWriterConsole(), ViewerOptions.options() );
 
-//			PanelSnapshot.showPanel(bdv.getViewer());
-//			DumpInputConfig.writeToYaml( System.getProperty( "user.home" ) + "/.bdv/bdvkeyconfig.yaml", bdv.getViewerFrame() );
+	//			PanelSnapshot.showPanel(bdv.getViewer());
+	//			DumpInputConfig.writeToYaml( System.getProperty( "user.home" ) + "/.bdv/bdvkeyconfig.yaml", bdv.getViewerFrame() );
 		}
 		catch ( final Exception e )
 		{
