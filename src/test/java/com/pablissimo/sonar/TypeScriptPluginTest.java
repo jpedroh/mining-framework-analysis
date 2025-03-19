@@ -33,11 +33,11 @@ public class TypeScriptPluginTest {
         List extensions = this.plugin.getExtensions();
 
         assertEquals(6, extensions.size());
-		assertTrue(extensions.contains(TypeScriptRuleProfile.class));
-		assertTrue(extensions.contains(TypeScriptLanguage.class));
-		assertTrue(extensions.contains(TsLintSensor.class));
-		assertTrue(extensions.contains(TsCoverageSensor.class));
-		assertTrue(extensions.contains(TsRulesDefinition.class));
+        assertTrue(extensions.contains(TypeScriptRuleProfile.class));
+        assertTrue(extensions.contains(TypeScriptLanguage.class));
+        assertTrue(extensions.contains(TsLintSensor.class));
+        assertTrue(extensions.contains(TsCoverageSensor.class));
+        assertTrue(extensions.contains(TsRulesDefinition.class));
     }
 
     @Test
