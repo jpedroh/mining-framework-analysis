@@ -66,11 +66,21 @@ public class SMPSORunner {
     MutationOperator mutation;
 
     String problemName ;
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/left.java
+    if (args.length == 1) {
+      problemName = args[0] ;
+    } else {
+      //problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+      problemName = "org.uma.jmetal.problem.multiobjective.Srinivas";
+    }
+||||||| /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/base.java
+=======
     if (args.length == 1) {
       problemName = args[0] ;
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
     }
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/right.java
 
     problem = (DoubleProblem) ProblemUtils.loadProblem(problemName);
 
@@ -84,7 +94,12 @@ public class SMPSORunner {
             .setMutation(mutation)
             .setMaxIterations(250)
             .setSwarmSize(100)
+<<<<<<< /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/left.java
             //.setRandomGenerator(new MersenneTwisterGenerator())
+||||||| /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/base.java
+=======
+            //       .setRandomGenerator(new MersenneTwisterGenerator())
+>>>>>>> /usr/src/app/output/jmetal/jmetal/e07ed5d8d0e73e7661571b5e7d35cc21fc313c94/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/SMPSORunner.java/right.java
             .build();
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
