@@ -393,6 +393,7 @@ public class MetricsHandler extends PipedHttpHandler {
          */
         static class AcceptHeaderEntryComparator
                 implements Comparator<AcceptHeaderEntry>, Serializable {
+
             @Override
             public int compare(AcceptHeaderEntry one, AcceptHeaderEntry two) {
                 return Double.compare(two.qValue, one.qValue);

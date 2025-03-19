@@ -37,8 +37,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import static org.restheart.representation.Resource.APPLICATION_PDF_TYPE;
-import static org.restheart.representation.Resource.HAL_JSON_MEDIA_TYPE;
+import org.restheart.representation.Resource;
+import static org.restheart.hal.Representation.APPLICATION_PDF_TYPE;
+import static org.restheart.hal.Representation.HAL_JSON_MEDIA_TYPE;
 import org.restheart.utils.HttpStatus;
 import static org.restheart.utils.HttpStatus.SC_CREATED;
 import static org.restheart.utils.HttpStatus.SC_NOT_FOUND;
@@ -95,8 +96,36 @@ public class GetFileHandlerIT extends FileHandlerAbstractIT {
     @Test
     public void testEmptyBucket() throws IOException {
         // test that GET /db includes the rh:bucket array
+<<<<<<< /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/left.java
+        Response resp = adminExecutor.execute(Request.Get(dbTmpUri));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Resource.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+||||||| /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/base.java
+        Response resp = adminExecutor.execute(Request.Get(dbTmpUri));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Representation.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+=======
         HttpResponse httpResp = this.check("Response is 200 OK", adminExecutor.execute(Request.Get(dbTmpUri)), SC_OK);
         HttpEntity entity = checkContentType(httpResp, HAL_JSON_MEDIA_TYPE);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/right.java
 
         String content = EntityUtils.toString(entity);
         JsonObject json = Json.parse(content).asObject();
@@ -114,8 +143,36 @@ public class GetFileHandlerIT extends FileHandlerAbstractIT {
 
         // test that GET /db/bucket.files includes the file
         String bucketUrl = dbTmpUri + "/" + BUCKET + ".files";
+<<<<<<< /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/left.java
+        Response resp = adminExecutor.execute(Request.Get(bucketUrl));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Resource.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+||||||| /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/base.java
+        Response resp = adminExecutor.execute(Request.Get(bucketUrl));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Representation.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+=======
         HttpResponse httpResp = this.check("Response is 200 OK", adminExecutor.execute(Request.Get(bucketUrl)), SC_OK);
         HttpEntity entity = checkContentType(httpResp, HAL_JSON_MEDIA_TYPE);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/right.java
 
         String content = EntityUtils.toString(entity);
         JsonObject json = Json.parse(content).asObject();
@@ -135,14 +192,63 @@ public class GetFileHandlerIT extends FileHandlerAbstractIT {
         String fileUrl = dbTmpUri + "/" + BUCKET + ".files/" + id;
         Response resp = adminExecutor.execute(Request.Get(fileUrl));
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/left.java
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Resource.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+||||||| /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/base.java
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", HttpStatus.SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Representation.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+=======
         HttpResponse httpResp = this.check("Response is 200 OK", resp, SC_OK);
         HttpEntity entity = checkContentType(httpResp, HAL_JSON_MEDIA_TYPE);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/ef75e2ee223cd17f1f8d37bf30a3d9e193e77eac/src/test/java/org/restheart/handlers/files/GetFileHandlerIT.java/right.java
 
         String content = EntityUtils.toString(entity);
 
         JsonObject json = Json.parse(content).asObject();
         assertNotNull(json.get("_id"));
         assertNotNull(json.get("metadata"));
+    }
+
+    private void createBucket() throws IOException {
+        // create db
+        Response resp = adminExecutor.execute(Request.Put(dbTmpUri)
+                .addHeader(Headers.CONTENT_TYPE_STRING, Resource.HAL_JSON_MEDIA_TYPE));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        StatusLine statusLine = httpResp.getStatusLine();
+
+        assertNotNull(statusLine);
+        assertEquals("check status code", HttpStatus.SC_CREATED, statusLine.getStatusCode());
+
+        // create bucket
+        String bucketUrl = dbTmpUri + "/" + BUCKET + ".files/";
+        resp = adminExecutor.execute(Request.Put(bucketUrl)
+                .addHeader(Headers.CONTENT_TYPE_STRING, Resource.HAL_JSON_MEDIA_TYPE));
+
+        httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        statusLine = httpResp.getStatusLine();
+
+        assertNotNull(statusLine);
+        assertEquals("check status code", HttpStatus.SC_CREATED, statusLine.getStatusCode());
     }
 
     private ObjectId createFile() throws UnknownHostException, IOException {

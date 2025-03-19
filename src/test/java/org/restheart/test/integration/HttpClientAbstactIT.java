@@ -42,7 +42,6 @@ import org.restheart.db.DbsDAO;
 import org.restheart.db.DocumentDAO;
 import org.restheart.representation.Resource;
 
-
 /**
  *
  * @author Andrea Di Cesare {@literal <andrea@softinstigate.com>}
