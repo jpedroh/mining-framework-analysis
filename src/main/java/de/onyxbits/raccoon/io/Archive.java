@@ -1,5 +1,4 @@
 package de.onyxbits.raccoon.io;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -18,7 +16,6 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
-
 import com.akdeniz.googleplaycrawler.Utils;
 
 /**
@@ -33,129 +30,137 @@ import com.akdeniz.googleplaycrawler.Utils;
  * 
  */
 public class Archive {
-
-	/**
+  /**
 	 * Relative path to where we keep APK files. This directory contains one
 	 * subdirectory per app, which in turn holds the apks.
 	 */
-	private static final String APKDIR = "apk_storage";
+  private static final String APKDIR = "apk_storage";
 
-	/**
+  /**
 	 * Name of the logdir (relative to the root dir).
 	 */
-	public static final String LOGDIR = "logs";
+  public static final String LOGDIR = "logs";
 
-	/**
+  /**
 	 * Name of the file containing the credentials for connecting to GPlay.
 	 */
-	private static final String CREDCFG = "credentials.cfg";
+  private static final String CREDCFG = "credentials.cfg";
 
-	/**
+  /**
 	 * Name of the file containing the network config
 	 */
-	public static final String NETCFG = "network.cfg";
+  public static final String NETCFG = "network.cfg";
 
-	public static final String PASSWORD = "password";
-	public static final String USERID = "userid";
-	public static final String ANDROIDID = "androidid";
-	public static final String PROXYHOST = "proxyhost";
-	public static final String PROXYPORT = "proxyport";
-	public static final String USERAGENT = "useragent";
-	public static final String PROXYUSER = "proxyuser";
-	public static final String PROXYPASS = "proxypass";
+  public static final String PASSWORD = "password";
 
-	private File root;
+  public static final String USERID = "userid";
 
-	private Properties credentials;
+  public static final String ANDROIDID = "androidid";
 
-	/**
+  public static final String PROXYHOST = "proxyhost";
+
+  public static final String PROXYPORT = "proxyport";
+
+  public static final String 
+<<<<<<< /usr/src/app/output/onyxbits/raccoon/ad6961824ce68e2e909617b87fe3f852e6e915d8/src/main/java/de/onyxbits/raccoon/io/Archive.java/left.java
+  USERAGENT = "useragent"
+=======
+  PROXYUSER = "proxyuser"
+>>>>>>> /usr/src/app/output/onyxbits/raccoon/ad6961824ce68e2e909617b87fe3f852e6e915d8/src/main/java/de/onyxbits/raccoon/io/Archive.java/right.java
+  ;
+
+  public static final String PROXYPASS = "proxypass";
+
+  private File root;
+
+  private Properties credentials;
+
+  /**
 	 * Cache of the auth token. This is not persisted. This may be null.
 	 */
-	private String authToken;
+  private String authToken;
 
-	/**
+  /**
 	 * Query the cached auth cookie.
 	 * 
 	 * @return the authToken
 	 */
-	public String getAuthToken() {
-		return authToken;
-	}
+  public String getAuthToken() {
+    return authToken;
+  }
 
-	/**
+  /**
 	 * Cache an auth cookie. WARNING: In a multithread environment, make sure that
 	 * you don't perform logins simultaneously, so you don't race for cookies.
 	 * 
 	 * @param authToken
 	 *          the authToken to set
 	 */
-	public void setAuthToken(String authToken) {
-		this.authToken = authToken;
-	}
+  public void setAuthToken(String authToken) {
+    this.authToken = authToken;
+  }
 
-	/**
+  /**
 	 * @return the androidId
 	 */
-	public String getAndroidId() {
-		return credentials.getProperty(ANDROIDID, "");
-	}
+  public String getAndroidId() {
+    return credentials.getProperty(ANDROIDID, "");
+  }
 
-	/**
+  /**
 	 * @param androidId
 	 *          the androidId to set
 	 */
-	public void setAndroidId(String androidId) {
-		credentials.setProperty(ANDROIDID, androidId);
-	}
+  public void setAndroidId(String androidId) {
+    credentials.setProperty(ANDROIDID, androidId);
+  }
 
-	/**
+  /**
 	 * @return the password
 	 */
-	public String getPassword() {
-		return credentials.getProperty(PASSWORD, "");
-	}
+  public String getPassword() {
+    return credentials.getProperty(PASSWORD, "");
+  }
 
-	/**
+  /**
 	 * @param password
 	 *          the password to set
 	 */
-	public void setPassword(String password) {
-		credentials.setProperty(PASSWORD, password);
-	}
+  public void setPassword(String password) {
+    credentials.setProperty(PASSWORD, password);
+  }
 
-	/**
+  /**
 	 * @return the userId
 	 */
-	public String getUserId() {
-		return credentials.getProperty(USERID, "");
-	}
+  public String getUserId() {
+    return credentials.getProperty(USERID, "");
+  }
 
-	/**
+  /**
 	 * @param userId
 	 *          the userId to set
 	 */
-	public void setUserId(String userId) {
-		credentials.setProperty(USERID, userId);
-	}
+  public void setUserId(String userId) {
+    credentials.setProperty(USERID, userId);
+  }
 
-	/**
+  /**
 	 * Create a new archive in the designated place
 	 * 
 	 * @param root
 	 *          directory in which to generate the archive
 	 */
-	public Archive(File root) {
-		this.root = root;
-		try {
-			credentials = new Properties();
-			credentials.load(new FileInputStream(new File(root, CREDCFG)));
-		}
-		catch (Exception e) {
-			// e.printStackTrace();
-		}
-	}
+  public Archive(File root) {
+    this.root = root;
+    try {
+      credentials = new Properties();
+      credentials.load(new FileInputStream(new File(root, CREDCFG)));
+    } catch (Exception e) {
+    }
+  }
 
-	/**
+  /**
 	 * Get a proxy client, if it is configured.
 	 * 
 	 * @return either a client or null
@@ -166,58 +171,54 @@ public class Archive {
 	 *           if that port could not be parsed.
 	 * @throws NoSuchAlgorithmException
 	 */
-	public HttpClient getProxyClient() throws IOException, KeyManagementException,
-			NoSuchAlgorithmException, NumberFormatException {
-		File cfgfile = new File(root, NETCFG);
-		if (cfgfile.exists()) {
-			Properties cfg = new Properties();
-			cfg.load(new FileInputStream(cfgfile));
-			String ph = cfg.getProperty(PROXYHOST, null);
-			String pp = cfg.getProperty(PROXYPORT, null);
-			String pu = cfg.getProperty(PROXYUSER, null);
-			String pw = cfg.getProperty(PROXYPASS, null);
-			if (ph == null || pp == null) {
-				return null;
-			}
-			PoolingClientConnectionManager connManager = new PoolingClientConnectionManager(
-					SchemeRegistryFactory.createDefault());
-			connManager.setMaxTotal(100);
-			connManager.setDefaultMaxPerRoute(30);
+  public HttpClient getProxyClient() throws IOException, KeyManagementException, NoSuchAlgorithmException, NumberFormatException {
+    File cfgfile = new File(root, NETCFG);
+    if (cfgfile.exists()) {
+      Properties cfg = new Properties();
+      cfg.load(new FileInputStream(cfgfile));
+      String ph = cfg.getProperty(PROXYHOST, null);
+      String pp = cfg.getProperty(PROXYPORT, null);
+      String pu = cfg.getProperty(PROXYUSER, null);
+      String pw = cfg.getProperty(PROXYPASS, null);
+      if (ph == null || pp == null) {
+        return null;
+      }
+      PoolingClientConnectionManager connManager = new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault());
+      connManager.setMaxTotal(100);
+      connManager.setDefaultMaxPerRoute(30);
+      DefaultHttpClient client = new DefaultHttpClient(connManager);
+      client.getConnectionManager().getSchemeRegistry().register(Utils.getMockedScheme());
+      HttpHost proxy = new HttpHost(ph, Integer.parseInt(pp));
+      client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+      if (pu != null && pw != null) {
+        client.getCredentialsProvider().setCredentials(new AuthScope(proxy), new UsernamePasswordCredentials(pu, pw));
+      }
+      return client;
+    }
+    return null;
+  }
 
-			DefaultHttpClient client = new DefaultHttpClient(connManager);
-			client.getConnectionManager().getSchemeRegistry().register(Utils.getMockedScheme());
-			HttpHost proxy = new HttpHost(ph, Integer.parseInt(pp));
-			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-			if (pu != null && pw != null) {
-				client.getCredentialsProvider().setCredentials(new AuthScope(proxy),
-						new UsernamePasswordCredentials(pu, pw));
-			}
-			return client;
-		}
-		return null;
-	}
-
-	/**
+  /**
 	 * Query the location of the archive
 	 * 
 	 * @return the directory in which the archive is kept.
 	 */
-	public File getRoot() {
-		return root;
-	}
+  public File getRoot() {
+    return root;
+  }
 
-	/**
+  /**
 	 * Persist credentials to the CREDS file.
 	 * 
 	 * @throws IOException
 	 *           if saving goes wrong.
 	 */
-	public void saveCredentials() throws IOException {
-		root.mkdirs();
-		credentials.store(new FileOutputStream(new File(root, CREDCFG)), "");
-	}
+  public void saveCredentials() throws IOException {
+    root.mkdirs();
+    credentials.store(new FileOutputStream(new File(root, CREDCFG)), "");
+  }
 
-	/**
+  /**
 	 * Figure out where to save an app
 	 * 
 	 * @param packName
@@ -226,12 +227,12 @@ public class Archive {
 	 *          versioncode of the app
 	 * @return the file where to save this app.
 	 */
-	public File fileUnder(String packName, int vc) {
-		File appRoot = new File(new File(root, APKDIR), packName.replace('.', '-'));
-		return new File(appRoot, packName.replace('.', '_') + "-" + vc + ".apk");
-	}
+  public File fileUnder(String packName, int vc) {
+    File appRoot = new File(new File(root, APKDIR), packName.replace('.', '-'));
+    return new File(appRoot, packName.replace('.', '_') + "-" + vc + ".apk");
+  }
 
-	/**
+  /**
 	 * Figure our where to save an expansion file for an app
 	 * 
 	 * @param type
@@ -243,51 +244,49 @@ public class Archive {
 	 *          version code of the expansion
 	 * @return where to save.
 	 */
-	public File fileExpansionUnder(String type, String packName, int vc) {
-		File appRoot = new File(new File(root, APKDIR), packName.replace('.', '-'));
-		return new File(appRoot, type + "." + vc + "." + packName + ".obb");
-	}
+  public File fileExpansionUnder(String type, String packName, int vc) {
+    File appRoot = new File(new File(root, APKDIR), packName.replace('.', '-'));
+    return new File(appRoot, type + "." + vc + "." + packName + ".obb");
+  }
 
-	/**
+  /**
 	 * List all apps in the archive
 	 * 
 	 * @return a list of packagenames.
 	 */
-	public List<String> list() {
-		File storage = new File(root, APKDIR);
-		storage.mkdirs();
-		File[] lst = storage.listFiles();
-		Vector<String> tmp = new Vector<String>();
-		for (File f : lst) {
-			if (f.isDirectory()) {
-				tmp.add(f.getName().replace('-', '.'));
-			}
-		}
-		return tmp;
-	}
+  public List<String> list() {
+    File storage = new File(root, APKDIR);
+    storage.mkdirs();
+    File[] lst = storage.listFiles();
+    Vector<String> tmp = new Vector<String>();
+    for (File f : lst) {
+      if (f.isDirectory()) {
+        tmp.add(f.getName().replace('-', '.'));
+      }
+    }
+    return tmp;
+  }
 
-	/**
+  /**
 	 * Statistics: count apps in this archive
 	 * 
 	 * @return the number of subdirectories in the APK_STORAGE
 	 */
-	public int countApps() {
-		int ret = 0;
-		try {
-			File[] lst = new File(root, APKDIR).listFiles();
-			for (File f : lst) {
-				if (f.isDirectory()) {
-					ret++;
-				}
-			}
-		}
-		catch (Exception e) {
-			// Obviously no apps.
-		}
-		return ret;
-	}
+  public int countApps() {
+    int ret = 0;
+    try {
+      File[] lst = new File(root, APKDIR).listFiles();
+      for (File f : lst) {
+        if (f.isDirectory()) {
+          ret++;
+        }
+      }
+    } catch (Exception e) {
+    }
+    return ret;
+  }
 
-	/**
+  /**
 	 * Turn a raw filesize into a human readable one
 	 * 
 	 * @param bytes
@@ -296,17 +295,17 @@ public class Archive {
 	 *          use SI units
 	 * @return formated string.
 	 */
-	public static String humanReadableByteCount(long bytes, boolean si) {
-		int unit = si ? 1000 : 1024;
-		if (bytes < unit)
-			return bytes + " B";
-		int exp = (int) (Math.log(bytes) / Math.log(unit));
-		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-	}
+  public static String humanReadableByteCount(long bytes, boolean si) {
+    int unit = si ? 1000 : 1024;
+    if (bytes < unit) {
+      return bytes + " B";
+    }
+    int exp = (int) (Math.log(bytes) / Math.log(unit));
+    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+  }
 
-	public String getUserAgent() {
-		return credentials.getProperty(USERAGENT,null);
-	}
-
+  public String getUserAgent() {
+    return credentials.getProperty(USERAGENT, null);
+  }
 }
