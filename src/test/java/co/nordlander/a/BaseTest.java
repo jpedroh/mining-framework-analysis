@@ -8,12 +8,9 @@ import static co.nordlander.a.A.CMD_PRIORITY;
 import static co.nordlander.a.A.CMD_PUT;
 import static co.nordlander.a.A.CMD_READ_FOLDER;
 import static co.nordlander.a.A.CMD_WAIT;
-<<<<<<< HEAD
 import static co.nordlander.a.A.CMD_SELECTOR;
-=======
 import static co.nordlander.a.A.CMD_TYPE;
 import static co.nordlander.a.A.TYPE_MAP;
->>>>>>> c38ca63a72b14a088082f52f328d3780cc697b30
 import static org.junit.Assert.*;
 
 import java.io.File;
