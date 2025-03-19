@@ -1,10 +1,12 @@
 package org.enderstone.server.packet;
 
 import io.netty.buffer.ByteBuf;
-import org.enderstone.server.EnderLogger;
 import java.io.IOException;
+import java.io.IOError;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
+import org.enderstone.server.EnderLogger;
 import org.enderstone.server.Vector;
 import org.enderstone.server.entity.DataWatcher;
 import org.enderstone.server.inventory.ItemStack;
@@ -94,7 +96,7 @@ public abstract class Packet {
 			buf.writeShort(-1);
 			
 			EnderLogger.warn("ItemStack: NULL");
-			return;
+			
 		}
 		buf.writeShort(stack.getBlockId());
 		buf.writeByte(stack.getAmount());
