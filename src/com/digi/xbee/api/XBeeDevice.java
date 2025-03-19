@@ -531,7 +531,7 @@ public class XBeeDevice {
 		if (!connectionInterface.isOpen())
 			throw new InterfaceNotOpenException();
 		// Check if the packet is being sent from a remote device.
-		if (!sentFromLocalDevice)
+		if (sentFromLocalDevice)
 			throw new OperationNotSupportedException("Remote devices cannot send data to other remote devices.");
 		
 		OperatingMode operatingMode = getOperatingMode();
@@ -692,7 +692,7 @@ public class XBeeDevice {
 		if (!connectionInterface.isOpen())
 			throw new InterfaceNotOpenException();
 		// Check if the packet is being sent from a remote device.
-		if (!sentFromLocalDevice)
+		if (sentFromLocalDevice)
 			throw new OperationNotSupportedException("Remote devices cannot send data to other remote devices.");
 		
 		OperatingMode operatingMode = getOperatingMode();
@@ -1023,10 +1023,58 @@ public class XBeeDevice {
 		case RAW_802_15_4:
 			// Generate and send the Tx64 packet.
 			xbeePacket = new TX64Packet(getNextFrameID(), address, XBeeTransmitOptions.NONE, data);
+<<<<<<< /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/left.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket, true);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+||||||| /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/base.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+=======
+>>>>>>> /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/right.java
 			break;
 		default:
 			// Generate and send the Transmit packet.
 			xbeePacket = new TransmitPacket(getNextFrameID(), address, XBee16BitAddress.UNKNOWN_ADDRESS, 0, XBeeTransmitOptions.NONE, data);
+<<<<<<< /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/left.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket, true);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+||||||| /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/base.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+=======
+>>>>>>> /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/right.java
 		}
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
@@ -1066,10 +1114,58 @@ public class XBeeDevice {
 		case RAW_802_15_4:
 			// Generate and send the Tx16 packet.
 			xbeePacket = new TX16Packet(getNextFrameID(), address, XBeeTransmitOptions.NONE, data);
+<<<<<<< /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/left.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket, true);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+||||||| /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/base.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+=======
+>>>>>>> /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/right.java
 			break;
 		default:
 			// Generate and send the Transmit packet.
 			xbeePacket = new TransmitPacket(getNextFrameID(), XBee64BitAddress.UNKNOWN_ADDRESS, address, 0, XBeeTransmitOptions.NONE, data);
+<<<<<<< /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/left.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket, true);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+||||||| /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/base.java
+			try {
+				receivedPacket = sendXBeePacket(xbeePacket);
+			} catch (IOException e) {
+				throw new XBeeException("Error writing in the communication interface.", e);
+			}
+			
+			// Check if the packet received is a valid transmit status packet. If the packet received 
+			// is null it means that the transmission was made asynchronously, so it is valid.
+			if (receivedPacket != null)
+				checkTransmitStatusPacketIsValid(receivedPacket);
+=======
+>>>>>>> /usr/src/app/output/digidotcom/xbeejavalibrary/b93d1fb5307232991a8db9db216ae99239edf483/src/com/digi/xbee/api/XBeeDevice.java/right.java
 		}
 		sendAndCheckXBeePacket(xbeePacket, false);
 	}
@@ -1110,9 +1206,9 @@ public class XBeeDevice {
 		// Send the XBee packet.
 		try {
 			if (asyncTransmission)
-				sendXBeePacketAsync(packet, true);
+				sendXBeePacketAsync(packet);
 			else
-				receivedPacket = sendXBeePacket(packet, true);
+				receivedPacket = sendXBeePacket(packet);
 		} catch (IOException e) {
 			throw new XBeeException("Error writing in the communication interface.", e);
 		}
