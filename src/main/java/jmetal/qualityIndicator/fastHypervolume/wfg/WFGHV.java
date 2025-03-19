@@ -1,37 +1,8 @@
-//  WFGHV.java
-//
-//  Authors:
-//       Antonio J. Nebro <antonio@lcc.uma.es>
-//       Juan J. Durillo <durillo@lcc.uma.es>
-//
-//  Copyright (c) 2013 Antonio J. Nebro, Juan J. Durillo
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-
-//  CREDIT
-//  This class is based on the code of the WFG group (http://www.wfg.csse.uwa.edu.au/hypervolume/)
-//  Copyright (C) 2010 Lyndon While, Lucas Bradstreet.
-
-
 package jmetal.qualityIndicator.fastHypervolume.wfg;
-
 import jmetal.core.Solution;
 import jmetal.core.SolutionSet;
 import jmetal.util.Configuration;
 import jmetal.util.JMException;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,14 +15,22 @@ import java.util.Comparator;
  * To change this template use File | Settings | File Templates.
  */
 public class WFGHV {
-  final int OPT = 2;
   Front[] fs_;
+
+  final int OPT = 2;
+
   Point referencePoint_;
+
   boolean maximizing_;
+
   int currentDeep_;
+
   int currentDimension_;
+
   int maxNumberOfPoints_;
+
   int maxNumberOfObjectives_;
+
   Comparator<Point> pointComparator_;
 
   public WFGHV(int dimension, int maxNumberOfPoints) {
@@ -62,7 +41,6 @@ public class WFGHV {
     maxNumberOfPoints_ = maxNumberOfPoints;
     maxNumberOfObjectives_ = dimension;
     pointComparator_ = new PointComparator(true);
-
     int maxd = maxNumberOfPoints_ - (OPT / 2 + 1);
     fs_ = new Front[maxd];
     for (int i = 0; i < maxd; i++) {
@@ -78,7 +56,6 @@ public class WFGHV {
     maxNumberOfPoints_ = maxNumberOfPoints;
     maxNumberOfObjectives_ = dimension;
     pointComparator_ = new PointComparator(true);
-
     int maxd = maxNumberOfPoints_ - (OPT / 2 + 1);
     fs_ = new Front[maxd];
     for (int i = 0; i < maxd; i++) {
@@ -94,7 +71,6 @@ public class WFGHV {
     maxNumberOfPoints_ = maxNumberOfPoints;
     maxNumberOfObjectives_ = dimension;
     pointComparator_ = new PointComparator(true);
-
     int maxd = maxNumberOfPoints_ - (OPT / 2 + 1);
     fs_ = new Front[maxd];
     for (int i = 0; i < maxd; i++) {
@@ -102,21 +78,37 @@ public class WFGHV {
     }
   }
 
-  public static void main(String args[]) throws IOException, JMException {
-    Front front = new Front();
+  public int getLessContributorHV(SolutionSet set) {
+    Front wholeFront = new Front();
+    wholeFront.loadFront(set, -1);
+    int index = 0;
+    double contribution = Double.POSITIVE_INFINITY;
+    for (int i = 0; i < set.size(); i++) {
+      double[] v = new double[set.get(i).getNumberOfObjectives()];
+      for (int j = 0; j < v.length; j++) {
+        v[j] = set.get(i).getObjective(j);
+      }
+      double aux = this.getExclusiveHV(wholeFront, i);
+      if ((aux) < contribution) {
+        index = i;
+        contribution = aux;
+      }
+      set.get(i).setCrowdingDistance(aux);
+    }
+    return index;
+  }
 
+  public static void main(String[] args) throws IOException, JMException {
+    Front front = new Front();
     if (args.length == 0) {
       throw new JMException("Usage: WFGHV front [reference point]");
     }
-
     if (args.length > 0) {
       front.readFront(args[0]);
     }
-
     int dimensions = front.getNumberOfObjectives();
     Point referencePoint;
     double[] points = new double[dimensions];
-
     if (args.length == (dimensions + 1)) {
       for (int i = 1; i <= dimensions; i++) {
         points[i - 1] = Double.parseDouble(args[i]);
@@ -126,94 +118,58 @@ public class WFGHV {
         points[i - 1] = 0.0;
       }
     }
-
     referencePoint = new Point(points);
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
     Configuration.logger_.info("Using reference point: " + referencePoint);
+>>>>>>> /usr/src/app/output/jmetal/jmetal/bf795549bfebe6116221d4d2136b42de3fc0004e/src/main/java/jmetal/qualityIndicator/fastHypervolume/wfg/WFGHV.java/right.java
 
-    WFGHV wfghv =
-      new WFGHV(referencePoint.getNumberOfObjectives(), front.getNumberOfPoints(), referencePoint);
-  }
-
-  public int getLessContributorHV(SolutionSet set) {
-    Front wholeFront = new Front();
-
-    wholeFront.loadFront(set, -1);
-
-    int index = 0;
-    double contribution = Double.POSITIVE_INFINITY;
-
-    for (int i = 0; i < set.size(); i++) {
-      double[] v = new double[set.get(i).getNumberOfObjectives()];
-      for (int j = 0; j < v.length; j++) {
-        v[j] = set.get(i).getObjective(j);
-      }
-
-      double aux = this.getExclusiveHV(wholeFront, i);
-      if ((aux) < contribution) {
-        index = i;
-        contribution = aux;
-      }
-      set.get(i).setCrowdingDistance(aux);
-    }
-
-    return index;
+    WFGHV wfghv = new WFGHV(referencePoint.getNumberOfObjectives(), front.getNumberOfPoints(), referencePoint);
+    Configuration.logger_.info("Using reference point: " + referencePoint);
+    Configuration.logger_.info("Hypervolume value: " + wfghv.get2DHV(front));
   }
 
   public double getHV(Front front, Solution referencePoint) {
     referencePoint_ = new Point(referencePoint);
     double volume = 0.0;
     sort(front);
-
     if (currentDimension_ == 2) {
       volume = get2DHV(front);
     } else {
-      volume = 0.0 ;
-
+      volume = 0.0;
       currentDimension_--;
       for (int i = front.nPoints_ - 1; i >= 0; i--) {
-        volume += Math.abs(front.getPoint(i).objectives_[currentDimension_] -
-          referencePoint_.objectives_[currentDimension_]) *
-          this.getExclusiveHV(front, i);
+        volume += Math.abs(front.getPoint(i).objectives_[currentDimension_] - referencePoint_.objectives_[currentDimension_]) * this.getExclusiveHV(front, i);
       }
       currentDimension_++;
     }
-
     return volume;
   }
 
   public double getHV(Front front) {
     double volume = 0.0;
     sort(front);
-
     if (currentDimension_ == 2) {
       volume = get2DHV(front);
     } else {
       volume = 0.0;
-
       currentDimension_--;
       for (int i = front.nPoints_ - 1; i >= 0; i--) {
-        volume += Math.abs(front.getPoint(i).objectives_[currentDimension_] -
-          referencePoint_.objectives_[currentDimension_]) *
-          this.getExclusiveHV(front, i);
+        volume += Math.abs(front.getPoint(i).objectives_[currentDimension_] - referencePoint_.objectives_[currentDimension_]) * this.getExclusiveHV(front, i);
       }
       currentDimension_++;
     }
-
     return volume;
   }
 
   public double get2DHV(Front front) {
     double hv = 0.0;
-
-    hv = Math.abs((front.getPoint(0).getObjectives()[0] - referencePoint_.objectives_[0]) *
-      (front.getPoint(0).getObjectives()[1] - referencePoint_.objectives_[1]));
-
+    hv = Math.abs((front.getPoint(0).getObjectives()[0] - referencePoint_.objectives_[0]) * (front.getPoint(0).getObjectives()[1] - referencePoint_.objectives_[1]));
     for (int i = 1; i < front.nPoints_; i++) {
-      hv += Math.abs((front.getPoint(i).getObjectives()[0] - referencePoint_.objectives_[0]) *
-        (front.getPoint(i).getObjectives()[1] - front.getPoint(i - 1).getObjectives()[1]));
-
+      hv += Math.abs((front.getPoint(i).getObjectives()[0] - referencePoint_.objectives_[0]) * (front.getPoint(i).getObjectives()[1] - front.getPoint(i - 1).getObjectives()[1]));
     }
-    return hv ;
+    return hv;
   }
 
   public double getInclusiveHV(Point p) {
@@ -221,13 +177,11 @@ public class WFGHV {
     for (int i = 0; i < currentDimension_; i++) {
       volume *= Math.abs(p.objectives_[i] - referencePoint_.objectives_[i]);
     }
-
     return volume;
   }
 
   public double getExclusiveHV(Front front, int point) {
     double volume;
-
     volume = getInclusiveHV(front.getPoint(point));
     if (front.nPoints_ > point + 1) {
       makeDominatedBit(front, point);
@@ -235,40 +189,35 @@ public class WFGHV {
       volume -= v;
       currentDeep_--;
     }
-
     return volume;
   }
 
   public void makeDominatedBit(Front front, int p) {
     int z = front.nPoints_ - 1 - p;
-
     for (int i = 0; i < z; i++) {
       for (int j = 0; j < currentDimension_; j++) {
-        fs_[currentDeep_].getPoint(i).objectives_[j] =
-          worse(front.points_[p].objectives_[j], front.points_[p + 1 + i].objectives_[j], false);
+        fs_[currentDeep_].getPoint(i).objectives_[j] = worse(front.points_[p].objectives_[j], front.points_[p + 1 + i].objectives_[j], false);
       }
     }
-
     Point t;
     fs_[currentDeep_].nPoints_ = 1;
-
     for (int i = 1; i < z; i++) {
       int j = 0;
       boolean keep = true;
       while (j < fs_[currentDeep_].nPoints_ && keep) {
         switch (dominates2way(fs_[currentDeep_].points_[i], fs_[currentDeep_].points_[j])) {
           case -1:
-            t = fs_[currentDeep_].points_[j];
-            fs_[currentDeep_].nPoints_--;
-            fs_[currentDeep_].points_[j] = fs_[currentDeep_].points_[fs_[currentDeep_].nPoints_];
-            fs_[currentDeep_].points_[fs_[currentDeep_].nPoints_] = t;
-            break;
+          t = fs_[currentDeep_].points_[j];
+          fs_[currentDeep_].nPoints_--;
+          fs_[currentDeep_].points_[j] = fs_[currentDeep_].points_[fs_[currentDeep_].nPoints_];
+          fs_[currentDeep_].points_[fs_[currentDeep_].nPoints_] = t;
+          break;
           case 0:
-            j++;
-            break;
+          j++;
+          break;
           default:
-            keep = false;
-            break;
+          keep = false;
+          break;
         }
       }
       if (keep) {
@@ -278,7 +227,6 @@ public class WFGHV {
         fs_[currentDeep_].nPoints_++;
       }
     }
-
     currentDeep_++;
   }
 
@@ -301,10 +249,6 @@ public class WFGHV {
   }
 
   int dominates2way(Point p, Point q) {
-    // returns -1 if p dominates q, 1 if q dominates p, 2 if p == q, 0 otherwise
-    // ASSUMING MINIMIZATION
-
-    // domination could be checked in either order
     for (int i = currentDimension_ - 1; i >= 0; i--) {
       if (p.objectives_[i] < q.objectives_[i]) {
         for (int j = i - 1; j >= 0; j--) {
@@ -313,13 +257,15 @@ public class WFGHV {
           }
         }
         return -1;
-      } else if (q.objectives_[i] < p.objectives_[i]) {
-        for (int j = i - 1; j >= 0; j--) {
-          if (p.objectives_[j] < q.objectives_[j]) {
-            return 0;
+      } else {
+        if (q.objectives_[i] < p.objectives_[i]) {
+          for (int j = i - 1; j >= 0; j--) {
+            if (p.objectives_[j] < q.objectives_[j]) {
+              return 0;
+            }
           }
+          return 1;
         }
-        return 1;
       }
     }
     return 2;
@@ -327,37 +273,5 @@ public class WFGHV {
 
   public void sort(Front front) {
     Arrays.sort(front.points_, 0, front.nPoints_, pointComparator_);
-  }
-
-  public static void main(String args[]) throws IOException, JMException {
-    Front front = new Front() ;
-
-    if (args.length == 0) {
-      throw new JMException("Usage: WFGHV front [reference point]") ;
-    }
-
-    if (args.length > 0) {
-      front.readFront(args[0]);
-    }
-
-    int dimensions = front.getNumberOfObjectives() ;
-    Point referencePoint ;
-    double [] points = new double[dimensions] ;
-
-    if (args.length == (dimensions + 1)) {
-       for (int i = 1; i <= dimensions; i++) {
-         points[i - 1] = Double.parseDouble(args[i]);
-       }
-    } else {
-      for (int i = 1; i <= dimensions; i++) {
-        points[i - 1] = 0.0;
-      }
-    }
-
-    referencePoint = new Point(points) ;
-
-    WFGHV wfghv = new WFGHV(referencePoint.getNumberOfObjectives(), front.getNumberOfPoints(), referencePoint) ;
-    Configuration.logger_.info("Using reference point: " + referencePoint) ;
-    Configuration.logger_.info("Hypervolume value: " + wfghv.get2DHV(front));
   }
 }
