@@ -87,11 +87,11 @@ public class MaterialAliases {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
                 String dataString;
 
-            try {
-                dataString = Utilities.dataString(Bukkit.createBlockData(m));
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
+                try {
+                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
 
                 query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) ->
                         storeCache(m, dataString, i, d), () -> {
