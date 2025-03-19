@@ -30,7 +30,7 @@ import java.util.Map;
  * header.{@link Map#put(Object, Object) put}("headerParamName", "headerParamValue");
  * </pre>
  *
- * <h4>Creation</h4>
+ * <h3>Creation</h3>
  *
  * <p>It is easiest to create a {@code Header} instance by calling one of the
  * {@link Jwts#header() JWTs.header()} factory methods.</p>
@@ -120,8 +120,16 @@ public interface Header<T extends Header<T>> extends Map<String,Object> {
     /**
      * Sets the JWT <code>calg</code> (Compression Algorithm) header parameter value. A {@code null} value will remove
      * the property from the JSON map.
+<<<<<<< /usr/src/app/output/jwtk/jjwt/b864f8820383baf76060579d3a2e9087ecc6eee3/src/main/java/io/jsonwebtoken/Header.java/left.java
      * 
      * <p>The compression algorithm is NOT part of the <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25>JWT specification</a>
+||||||| /usr/src/app/output/jwtk/jjwt/b864f8820383baf76060579d3a2e9087ecc6eee3/src/main/java/io/jsonwebtoken/Header.java/base.java
+     * <p>
+     * <p>The compression algorithm is NOT part of the <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25>JWT specification</a>
+=======
+     * <p>
+     * <p>The compression algorithm is NOT part of the <a href="https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25">JWT specification</a>
+>>>>>>> /usr/src/app/output/jwtk/jjwt/b864f8820383baf76060579d3a2e9087ecc6eee3/src/main/java/io/jsonwebtoken/Header.java/right.java
      * and must be used carefully since, is not expected that other libraries (including previous versions of this one)
      * be able to deserialize a compressed JTW body correctly. </p>
      *
