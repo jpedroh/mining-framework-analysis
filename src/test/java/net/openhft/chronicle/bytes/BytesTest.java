@@ -908,6 +908,20 @@ public class BytesTest extends BytesTestCommon {
         }
     }
 
+    @Ignore("https://github.com/OpenHFT/Chronicle-Bytes/issues/185")
+    @Test
+    public void capacityVsWriteLimitInvariant() {
+        final Bytes<?> bytes = alloc1.elasticBytes(20);
+        assertEquals(bytes.capacity(), bytes.writeLimit());
+    }
+
+    @Ignore("https://github.com/OpenHFT/Chronicle-Bytes/issues/185")
+    @Test
+    public void isClear() {
+        final Bytes<?> bytes = alloc1.elasticBytes(20);
+        assertTrue(bytes.isClear());
+    }
+
     @Test
     public void stopBitChar() {
         final Bytes bytes = alloc1.fixedBytes(64);
@@ -943,21 +957,6 @@ public class BytesTest extends BytesTestCommon {
         long l2 = bytes.readStopBit();
         assertEquals(l, l2);
         assertEquals(0x80, bytes.readUnsignedByte());
-    }
-
-
-    @Ignore("https://github.com/OpenHFT/Chronicle-Bytes/issues/185")
-    @Test
-    public void capacityVsWriteLimitInvariant() {
-        final Bytes<?> bytes = alloc1.elasticBytes(20);
-        assertEquals(bytes.capacity(), bytes.writeLimit());
-    }
-
-    @Ignore("https://github.com/OpenHFT/Chronicle-Bytes/issues/185")
-    @Test
-    public void isClear() {
-        final Bytes<?> bytes = alloc1.elasticBytes(20);
-        assertTrue(bytes.isClear());
     }
 
 }
