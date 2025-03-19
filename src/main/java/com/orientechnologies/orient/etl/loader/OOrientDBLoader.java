@@ -18,6 +18,7 @@
 
 package com.orientechnologies.orient.etl.loader;
 
+import java.util.List;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
@@ -26,19 +27,13 @@ import com.orientechnologies.orient.core.exception.OConfigurationException;
 import com.orientechnologies.orient.core.exception.OSchemaException;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.schema.OClassImpl;
-import com.orientechnologies.orient.core.metadata.schema.OProperty;
-import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
-import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.metadata.schema.*;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.etl.OETLProcessor;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientElement;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-
-import java.util.List;
 
 /**
  * ETL Loader that saves record into OrientDB database.

@@ -53,7 +53,7 @@ public class OEdgeTransformer extends OAbstractLookupTransformer {
             + "{direction:{optional:true,description:'Direction between \'in\' and \'out\'. Default is \'out\''}},"
             + "{class:{optional:true,description:'Edge class name. Default is \'E\''}},"
             + "{targetVertexFields:{optional:true,description:'Map of fields to set in target vertex. Use ${$input.<field>} to get input field values'}},"
-            + "{edgeFields:{optional:true,description:'Map of fields to set in edge. Use ${$input.<field>} to get input field values'}},"
+            + "{edgeFields:{optional:true,description:'Map of fields to set in edge. Use ${input.<field>} to get input field values'}},"
             + "{skipDuplicates:{optional:true,description:'Duplicated edges (with a composite index built on both out and in properties) are skipped', default:false}},"
             + "{unresolvedVertexAction:{optional:true,description:'action when a unresolved vertices is found',values:"
             + stringArray2Json(ACTION.values()) + "}}]," + "input:['ODocument','OrientVertex'],output:'OrientVertex'}");
@@ -108,6 +108,24 @@ public class OEdgeTransformer extends OAbstractLookupTransformer {
 
       final Object joinCurrentValue = joinValue != null ? joinValue : vertex.getProperty(joinFieldName);
 
+<<<<<<< /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/left.java
+    if (OMultiValue.isMultiValue(joinCurrentValue)) {
+      // RESOLVE SINGLE JOINS
+      for (Object o : OMultiValue.getMultiValueIterable(joinCurrentValue)) {
+        final Object r = lookup(o, false);
+        if (createEdge(vertex, o, r) == null) {
+          if (unresolvedLinkAction == ACTION.SKIP)
+            // RETURN NULL ONLY IN CASE SKIP ACTION IS REQUESTED
+            return null;
+        }
+||||||| /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/base.java
+    if (OMultiValue.isMultiValue(joinCurrentValue)) {
+      // RESOLVE SINGLE JOINS
+      for (Object o : OMultiValue.getMultiValueIterable(joinCurrentValue)) {
+        final Object r = lookup(o, false);
+        if (createEdge(vertex, o, r) == null)
+          return null;
+=======
       if (OMultiValue.isMultiValue(joinCurrentValue)) {
         // RESOLVE SINGLE JOINS
         for (Object ob : OMultiValue.getMultiValueIterable(joinCurrentValue)) {
@@ -125,7 +143,23 @@ public class OEdgeTransformer extends OAbstractLookupTransformer {
             // RETURN NULL ONLY IN CASE SKIP ACTION IS REQUESTED
             return null;
         }
+>>>>>>> /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/right.java
       }
+<<<<<<< /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/left.java
+    } else {
+      final Object result = lookup(joinCurrentValue, false);
+      if (createEdge(vertex, joinCurrentValue, result) == null) {
+        if (unresolvedLinkAction == ACTION.SKIP)
+          // RETURN NULL ONLY IN CASE SKIP ACTION IS REQUESTED
+          return null;
+      }
+||||||| /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/base.java
+    } else {
+      final Object result = lookup(joinCurrentValue, false);
+      if (createEdge(vertex, joinCurrentValue, result) == null)
+        return null;
+=======
+>>>>>>> /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/right.java
     }
 
     return input;
@@ -138,13 +172,45 @@ public class OEdgeTransformer extends OAbstractLookupTransformer {
       // APPLY THE STRATEGY DEFINED IN unresolvedLinkAction
       switch (unresolvedLinkAction) {
       case CREATE:
+<<<<<<< /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/left.java
+        //Don't try to create a Vertex with a null value
+        if (joinCurrentValue != null) {
+          if (lookup != null) {
+            final String[] lookupParts = lookup.split("\\.");
+            final OrientVertex linkedV = pipeline.getGraphDatabase().addTemporaryVertex(lookupParts[0]);
+            linkedV.setProperty(lookupParts[1], joinCurrentValue);
+||||||| /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/base.java
+        if (lookup != null) {
+          final String[] lookupParts = lookup.split("\\.");
+          final OrientVertex linkedV = pipeline.getGraphDatabase().addTemporaryVertex(lookupParts[0]);
+          linkedV.setProperty(lookupParts[1], joinCurrentValue);
+=======
         // Don't try to create a Vertex with a null value
         if (joinCurrentValue != null) {
           if (lookup != null) {
             final String[] lookupParts = lookup.split("\\.");
             final OrientVertex linkedV = pipeline.getGraphDatabase().addTemporaryVertex(lookupParts[0]);
             linkedV.setProperty(lookupParts[1], joinCurrentValue);
+>>>>>>> /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/right.java
 
+<<<<<<< /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/left.java
+            if (targetVertexFields != null) {
+              for (String f : targetVertexFields.fieldNames())
+                linkedV.setProperty(f, resolve(targetVertexFields.field(f)));
+            }
+
+            linkedV.save();
+
+            log(OETLProcessor.LOG_LEVELS.DEBUG, "created new vertex=%s", linkedV.getRecord());
+
+            result = linkedV;
+          } else {
+            throw new OConfigurationException("Cannot create linked document because target class is unknown. Use 'lookup' field");
+||||||| /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/base.java
+          if (targetVertexFields != null) {
+            for (String f : targetVertexFields.fieldNames())
+              linkedV.setProperty(f, resolve(targetVertexFields.field(f)));
+=======
             if (targetVertexFields != null) {
               for (String f : targetVertexFields.fieldNames())
                 linkedV.setProperty(f, resolve(targetVertexFields.field(f)));
@@ -157,6 +223,7 @@ public class OEdgeTransformer extends OAbstractLookupTransformer {
             result = linkedV.getIdentity();
           } else {
             throw new OConfigurationException("Cannot create linked document because target class is unknown. Use 'lookup' field");
+>>>>>>> /usr/src/app/output/orientechnologies/orientdb-etl/889e65b57d07559f507bcef0e966f6f0612ae9dd/src/main/java/com/orientechnologies/orient/etl/transformer/OEdgeTransformer.java/right.java
           }
         }
         break;
