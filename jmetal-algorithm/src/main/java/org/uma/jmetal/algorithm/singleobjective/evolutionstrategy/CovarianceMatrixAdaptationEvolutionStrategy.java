@@ -134,11 +134,11 @@ public class CovarianceMatrixAdaptationEvolutionStrategy
 
   /** Buider class */
   public static class Builder {
-    private DoubleProblem problem ;
 
     private final int DEFAULT_LAMBDA = 10 ;
     private final int DEFAULT_MAX_EVALUATIONS = 1000000 ;
 
+    private DoubleProblem problem ;
     private int lambda ;
     private int maxEvaluations ;
 
