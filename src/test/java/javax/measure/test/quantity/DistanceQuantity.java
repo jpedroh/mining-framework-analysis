@@ -163,9 +163,19 @@ public class DistanceQuantity extends TestQuantity<Length> {
 		return null;
 	}
 
+<<<<<<< /usr/src/app/output/unitsofmeasurement/unit-api/94a6c1870f42d1953348b06105b5091951a3e442/src/test/java/javax/measure/test/quantity/DistanceQuantity.java/left.java
 	@Override
     public Quantity<?> multiply(Quantity<?> that) {
 		// TODO Auto-generated method stub
+||||||| /usr/src/app/output/unitsofmeasurement/unit-api/94a6c1870f42d1953348b06105b5091951a3e442/src/test/java/javax/measure/test/quantity/DistanceQuantity.java/base.java
+	public Quantity<?> multiply(Quantity<?> that) {
+		// TODO Auto-generated method stub
+=======
+	public Quantity<?> multiply(Quantity<?> that) {
+		if (that.getClass().isInstance(Length.class)) {
+			return multiply((DistanceQuantity) that);
+		}
+>>>>>>> /usr/src/app/output/unitsofmeasurement/unit-api/94a6c1870f42d1953348b06105b5091951a3e442/src/test/java/javax/measure/test/quantity/DistanceQuantity.java/right.java
 		return null;
 	}
 
