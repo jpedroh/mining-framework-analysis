@@ -184,7 +184,8 @@ public class EnderPlayer extends Entity implements CommandSender {
 		List<ProfileProperty> list = new ArrayList<>();
 		ProfileProperty prop = new ProfileProperty("textures", this.textureValue, this.textureSignature);
 		list.add(prop);
-		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid, this.getPlayerName(), list, this.getLocation().getBlockX(), this.getLocation().getBlockY(), this.getLocation().getBlockZ(), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), (short) 0, this.getDataWatcher());
+		System.out.println(this.textureValue);
+		return new PacketOutSpawnPlayer(this.getEntityId(), this.uuid.toString().replace("-", ""), this.getPlayerName(), list, this.getLocation().getBlockX(), this.getLocation().getBlockY(), this.getLocation().getBlockZ(), (byte) this.getLocation().getYaw(), (byte) this.getLocation().getPitch(), (short) 0, this.getDataWatcher());
 	}
 
 	public void onPlayerChat(final String message) {
@@ -428,7 +429,7 @@ public class EnderPlayer extends Entity implements CommandSender {
 	@Override
 	protected String getDeadSound() {
 		return "game.player.dead";
-	}
+	}	
 
 	@Override
 	protected float getBaseHealth() {

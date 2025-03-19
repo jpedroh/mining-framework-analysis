@@ -140,6 +140,7 @@ public class EnderWorld {
 			if (playerChunks == null) {
 				players.put(player, playerChunks = new RegionSet());
 			}
+
 			int r2 = radius * 2 + 1;
 			int px = player.getLocation().getBlockX() >> 4;
 			int cx = (px) - radius;
@@ -167,11 +168,12 @@ public class EnderWorld {
 						for (cz = minz; cz < mz; cz++) {
 							EnderChunk tmp = getOrCreateChunk(cx, cz);
 							if (!copy.contains(tmp)) {
-								chunkLoad[index++] = new int[]{cx, cz};
+								chunkLoad[index++] = new int[] { cx, cz };
 							} else {
 								copy.remove(tmp);
 							}
 						}
+
 					}
 					Iterator<EnderChunk> loop = copy.iterator();
 					while (loop.hasNext()) {
@@ -180,7 +182,8 @@ public class EnderWorld {
 						informer.removeChunk(i);
 					}
 					Arrays.sort(chunkLoad, 0, index, new IntegerArrayComparator(px, pz));
-					if (maxSize < chunkLoad.length) chunkLoad[maxSize] = null;
+					if (maxSize < chunkLoad.length)
+						chunkLoad[maxSize] = null;
 					index = 0;
 					for (int[] l : chunkLoad) {
 						if (l == null) {
@@ -193,7 +196,8 @@ public class EnderWorld {
 						informer.sendChunk(c);
 						index++;
 					}
-					if (index > 0) EnderLogger.debug("Send " + index + " chunks to player: " + player.getName());
+					if (index > 0)
+						EnderLogger.debug("Send " + index + " chunks to player: " + player.getName());
 				}
 			} finally {
 				informer.done();
