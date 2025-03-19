@@ -1,32 +1,3 @@
-/*
- * Units of Measurement API
- * Copyright (c) 2014-2018, Jean-Marie Dautelle, Werner Keil, Otavio Santana.
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
- *    and the following disclaimer in the documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of JSR-385 nor the names of its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package javax.measure;
 
 /**
@@ -59,26 +30,25 @@ package javax.measure;
  * @since 1.0
  */
 public interface Quantity<Q extends Quantity<Q>> {
-
-	/**
+  /**
 	 * Returns the sum of this {@code Quantity} with the one specified.
 	 *
 	 * @param augend
 	 *            the {@code Quantity} to be added.
 	 * @return {@code this + augend}.
 	 */
-	Quantity<Q> add(Quantity<Q> augend);
+  Quantity<Q> add(Quantity<Q> augend);
 
-	/**
+  /**
 	 * Returns the difference between this {@code Quantity} and the one specified.
 	 *
 	 * @param subtrahend
 	 *            the {@code Quantity} to be subtracted.
 	 * @return <code>this - that</code>.
 	 */
-	Quantity<Q> subtract(Quantity<Q> subtrahend);
+  Quantity<Q> subtract(Quantity<Q> subtrahend);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} divided by the {@code Quantity}
 	 * specified.
 	 *
@@ -91,9 +61,9 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *            the {@code Quantity} divisor.
 	 * @return <code>this / that</code>.
 	 */
-	Quantity<?> divide(Quantity<?> divisor);
+  Quantity<?> divide(Quantity<?> divisor);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} divided by the {@code Number}
 	 * specified.
 	 *
@@ -101,9 +71,9 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *            the {@code Number} divisor.
 	 * @return <code>this / that</code>.
 	 */
-	Quantity<Q> divide(Number divisor);
+  Quantity<Q> divide(Number divisor);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} with the one specified.
 	 *
 	 * @throws ClassCastException
@@ -115,9 +85,9 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *            the {@code Quantity} multiplier.
 	 * @return <code>this * multiplier</code>.
 	 */
-	Quantity<?> multiply(Quantity<?> multiplier);
+  Quantity<?> multiply(Quantity<?> multiplier);
 
-	/**
+  /**
 	 * Returns the product of this {@code Quantity} with the {@code Number} value
 	 * specified.
 	 *
@@ -125,16 +95,16 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *            the {@code Number} multiplier.
 	 * @return <code>this * multiplier</code>.
 	 */
-	Quantity<Q> multiply(Number multiplier);
+  Quantity<Q> multiply(Number multiplier);
 
-	/**
+  /**
 	 * Returns a {@code Quantity} whose unit is {@code unit.inverse()}.
 	 *
 	 * @return {@code Quantity with this.getUnit().inverse()}.
 	 */
-	Quantity<?> inverse();
+  Quantity<?> inverse();
 
-	/**
+  /**
 	 * Returns this {@code Quantity} converted into another (compatible)
 	 * {@code Unit}.
 	 *
@@ -142,16 +112,9 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *            the {@code Unit} to convert to.
 	 * @return the converted result.
 	 */
-	Quantity<Q> to(Unit<Q> unit);
-  /**
-   * Returns a {@code Quantity} that is the multiplicative inverse of this {@code Quantity}, 
-   * having reciprocal value and reciprocal unit as given by {@code this.getUnit().inverse()}.
-   *
-   * @return reciprocal {@code Quantity}
-   */
-  Quantity<?> inverse();
+  Quantity<Q> to(Unit<Q> unit);
 
-	/**
+  /**
 	 * Casts this quantity to a parameterized unit of specified nature or throw a
 	 * <code>ClassCastException</code> if the dimension of the specified quantity
 	 * and this measure unit's dimension do not match. For example:
@@ -176,23 +139,23 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *             quantity.
 	 * @see Unit#asType(Class)
 	 */
-	<T extends Quantity<T>> Quantity<T> asType(Class<T> type) throws ClassCastException;
+  <T extends Quantity<T>> Quantity<T> asType(Class<T> type) throws ClassCastException;
 
-	/**
+  /**
 	 * Returns the value of this {@code Quantity}.
 	 *
 	 * @return a value.
 	 */
-	Number getValue();
+  Number getValue();
 
-	/**
+  /**
 	 * Returns the unit of this {@code Quantity}.
 	 *
 	 * @return the unit (shall not be {@code null}).
 	 */
-	Unit<Q> getUnit();
+  Unit<Q> getUnit();
 
-	/**
+  /**
 	 * Convenient method equivalent to {@link #to(javax.measure.Unit)
 	 * to(getUnit().toSystemUnit())}.
 	 *
@@ -202,7 +165,7 @@ public interface Quantity<Q extends Quantity<Q>> {
 	 *             if the result is inexact and the quotient has a non-terminating
 	 *             decimal expansion.
 	 */
-	default Quantity<Q> toSystemUnit() {
-		return to(getUnit().getSystemUnit());
-	}
+  default Quantity<Q> toSystemUnit() {
+    return to(getUnit().getSystemUnit());
+  }
 }
