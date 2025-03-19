@@ -137,7 +137,17 @@ public class Position implements Comparable<Position> {
      */
     public Position orIfInvalid(Position alternativePosition) {
         assertNotNull(alternativePosition);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/764600211e14871dfa43e68b6961403a113edb56/javaparser-core/src/main/java/com/github/javaparser/Position.java/left.java
         if (this.valid()) {
+||||||| /usr/src/app/output/javaparser/javaparser/764600211e14871dfa43e68b6961403a113edb56/javaparser-core/src/main/java/com/github/javaparser/Position.java/base.java
+        // TODO: Why the || ?
+        //  ... It seems that if both this and the alternative are invalid, then we return this..?
+        if (valid() || alternativePosition.invalid()) {
+=======
+        // TODO: Why the || ?
+        // ... It seems that if both this and the alternative are invalid, then we return this..?
+        if (valid() || alternativePosition.invalid()) {
+>>>>>>> /usr/src/app/output/javaparser/javaparser/764600211e14871dfa43e68b6961403a113edb56/javaparser-core/src/main/java/com/github/javaparser/Position.java/right.java
             return this;
         }
         return alternativePosition.valid() ? alternativePosition : this;
