@@ -110,6 +110,18 @@ public final class DefaultHtmlValidatorTest {
      * DefaultHtmlValidator throw IOException when W3C server error occurred.
      *
      * @throws Exception If something goes wrong inside
+<<<<<<< /usr/src/app/output/jcabi/jcabi-w3c/23fe00a21fa09bd2e74031f21bbe216fcce51734/src/test/java/com/jcabi/w3c/DefaultHtmlValidatorTest.java/left.java
+||||||| /usr/src/app/output/jcabi/jcabi-w3c/23fe00a21fa09bd2e74031f21bbe216fcce51734/src/test/java/com/jcabi/w3c/DefaultHtmlValidatorTest.java/base.java
+     * @todo #10:30min DefaultHtmlValidator have to be updated to throw only
+     *  IOException when W3C validation server is unavailable. Any other
+     *  exception type can be confusing for users. Remove @Ignore annotation
+     *  after finishing implementation.
+=======
+     * @todo #10:30min DefaultHtmlValidator have to be updated to throw only
+     *  IOException when W3C validation server is unavailable. Any other
+     *  exception type can be confusing for users. Remove @Ignore
+     *  annotation after finishing implementation.
+>>>>>>> /usr/src/app/output/jcabi/jcabi-w3c/23fe00a21fa09bd2e74031f21bbe216fcce51734/src/test/java/com/jcabi/w3c/DefaultHtmlValidatorTest.java/right.java
      */
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
