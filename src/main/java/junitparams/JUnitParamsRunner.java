@@ -1,7 +1,5 @@
 package junitparams;
-
 import java.util.List;
-
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -10,7 +8,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-
 import junitparams.internal.ParameterizedTestMethodProvider;
 import junitparams.internal.ParametrisedTestMethodsFilter;
 import junitparams.internal.TestMethod;
@@ -383,95 +380,88 @@ import junitparams.internal.TestMethod;
  * @author Pawel Lipinski (lipinski.pawel@gmail.com)
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
+  private ParametrisedTestMethodsFilter parametrisedTestMethodsFilter = new ParametrisedTestMethodsFilter(this);
 
-    private ParametrisedTestMethodsFilter parametrisedTestMethodsFilter = new ParametrisedTestMethodsFilter(this);
-    private ParameterizedTestMethodProvider parameterizedTestMethodProvider;
-    private Description classDescription;
+  private ParameterizedTestMethodProvider parameterizedTestMethodProvider;
 
-    public JUnitParamsRunner(Class<?> klass) throws InitializationError {
-        super(klass);
-        parameterizedTestMethodProvider = new ParameterizedTestMethodProvider(getTestClass());
+  private Description classDescription;
+
+  public JUnitParamsRunner(Class<?> klass) throws InitializationError {
+    super(klass);
+    parameterizedTestMethodProvider = new ParameterizedTestMethodProvider(getTestClass());
+  }
+
+  @Override public void filter(Filter filter) throws NoTestsRemainException {
+    super.filter(filter);
+    this.parametrisedTestMethodsFilter = new ParametrisedTestMethodsFilter(this, filter);
+  }
+
+  protected void collectInitializationErrors(List<Throwable> errors) {
+    for (Throwable throwable : errors) {
+      throwable.printStackTrace();
     }
+  }
 
-    @Override
-    public void filter(Filter filter) throws NoTestsRemainException {
-        super.filter(filter);
-        this.parametrisedTestMethodsFilter = new ParametrisedTestMethodsFilter(this,filter);
+  @Override protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+    if (handleIgnored(method, notifier)) {
+      return;
     }
-
-    protected void collectInitializationErrors(List<Throwable> errors) {
-        for (Throwable throwable : errors)
-            throwable.printStackTrace();
+    TestMethod testMethod = (TestMethod) method;
+    if (parameterizedTestMethodProvider.shouldRun(testMethod)) {
+      parameterizedTestMethodProvider.runParameterisedTest(testMethod, methodBlock(method), notifier);
+    } else {
+      super.runChild(method, notifier);
     }
+  }
 
-    @Override
-    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (handleIgnored(method, notifier))
-            return;
-
-        TestMethod testMethod = (TestMethod) method;
-        if (parameterizedTestMethodProvider.shouldRun(testMethod))
-            parameterizedTestMethodProvider.runParameterisedTest(testMethod, methodBlock(method), notifier);
-        else
-            super.runChild(method, notifier);
+  private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
+    TestMethod testMethod = (TestMethod) method;
+    if (testMethod.isIgnored()) {
+      notifier.fireTestIgnored(describeMethod(method));
     }
+    return testMethod.isIgnored();
+  }
 
-    private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
-        TestMethod testMethod = (TestMethod) method;
-        if (testMethod.isIgnored())
-            notifier.fireTestIgnored(describeMethod(method));
+  @Override protected List<FrameworkMethod> computeTestMethods() {
+    return parameterizedTestMethodProvider.computeFrameworkMethods();
+  }
 
-        return testMethod.isIgnored();
+  @Override protected Statement methodInvoker(FrameworkMethod method, Object test) {
+    try {
+      Statement methodInvoker = parameterizedTestMethodProvider.parameterisedMethodInvoker((TestMethod) method, test);
+      if (methodInvoker == null) {
+        methodInvoker = super.methodInvoker(method, test);
+      }
+      return methodInvoker;
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("Could not build method invoker for method %s", method.getMethod()), e);
     }
+  }
 
-    @Override
-    protected List<FrameworkMethod> computeTestMethods() {
-        return parameterizedTestMethodProvider.computeFrameworkMethods();
-    }
-
-    @Override
-    protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        try {
-            Statement methodInvoker = parameterizedTestMethodProvider.parameterisedMethodInvoker((TestMethod) method, test);
-            if (methodInvoker == null) {
-                methodInvoker = super.methodInvoker(method, test);
-            }
-
-            return methodInvoker;
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Could not build method invoker for method %s", method.getMethod()), e);
+  @Override public Description getDescription() {
+    if (classDescription == null) {
+      classDescription = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
+      List<FrameworkMethod> resultMethods = getListOfMethods();
+      for (FrameworkMethod method : resultMethods) {
+        Description description = describeMethod(method);
+        if (!classDescription.getChildren().contains(description)) {
+          classDescription.addChild(description);
         }
+      }
     }
+    return classDescription;
+  }
 
-    @Override
-    public Description getDescription() {
-        if (classDescription == null) {
-            classDescription = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-            List<FrameworkMethod> resultMethods = getListOfMethods();
+  private List<FrameworkMethod> getListOfMethods() {
+    List<FrameworkMethod> frameworkMethods = parameterizedTestMethodProvider.returnListOfMethods();
+    return parametrisedTestMethodsFilter.filteredMethods(frameworkMethods);
+  }
 
-            for (FrameworkMethod method : resultMethods) {
-                Description description = describeMethod(method);
-                if (!classDescription.getChildren().contains(description)) {
-                    classDescription.addChild(description);
-                }
-            }
-        }
-
-        return classDescription;
+  public Description describeMethod(FrameworkMethod method) {
+    Description child = parameterizedTestMethodProvider.describeParameterisedMethod(method);
+    if (child == null) {
+      child = describeChild(method);
     }
-
-    private List<FrameworkMethod> getListOfMethods() {
-        List<FrameworkMethod> frameworkMethods = parameterizedTestMethodProvider.returnListOfMethods();
-        return parametrisedTestMethodsFilter.filteredMethods(frameworkMethods);
-    }
-
-    public Description describeMethod(FrameworkMethod method) {
-        Description child = parameterizedTestMethodProvider.describeParameterisedMethod(method);
-
-        if (child == null)
-            child = describeChild(method);
-
-        return child;
-    }
-
+    return child;
+  }
 }
