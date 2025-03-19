@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright © Microsoft Open Technologies, Inc.
  *
  * All Rights Reserved
@@ -741,18 +741,79 @@ public class AuthenticationContext {
                 (String) null, callback);
     }
 
-    private void validateRefreshTokenRequestInput(final String refreshToken,
-                                                  final String clientId, final Object credential) {
+	/**
+	 * Acquires a security token from the authority using a Refresh Token
+	 * previously received. This method is suitable for the daemon OAuth2
+	 * flow when a client secret is not possible.
+	 *
+	 * @param refreshToken
+	 *            Refresh Token to use in the refresh flow.
+	 * @param clientId
+	 *            Name or ID of the client requesting the token.
+	 * @param callback
+	 *            optional callback object for non-blocking execution.
+	 * @return A {@link Future} object representing the
+	 *         {@link AuthenticationResult} of the call. It contains Access
+	 *         Token, Refresh Token and the Access Token's expiration time.
+	 * @throws AuthenticationException
+	 *             thrown if {@link AsymmetricKeyCredential} fails to sign the
+	 *             JWT token.
+	 */
+	public Future<AuthenticationResult> acquireTokenByRefreshToken(
+			final String refreshToken, final String clientId,
+			final AuthenticationCallback callback) {
 
-        if (StringHelper.isBlank(refreshToken)) {
-            throw new IllegalArgumentException("refreshToken is null or empty");
-        }
+		return acquireTokenByRefreshToken(refreshToken, clientId, (String)null, callback);
+	}
 
-        if (StringHelper.isBlank(clientId)) {
-            throw new IllegalArgumentException("clientId is null or empty");
-        }
-        this.validateInput(null, credential, false);
-    }
+	/**
+	 * Acquires a security token from the authority using a Refresh Token
+	 * previously received. This method is suitable for the daemon OAuth2
+	 * flow when a client secret is not possible.
+	 *
+	 * @param refreshToken
+	 *            Refresh Token to use in the refresh flow.
+	 * @param clientId
+	 *            Name or ID of the client requesting the token.
+	 * @param resource
+	 *            Identifier of the target resource that is the recipient of the
+	 *            requested token. If null, token is requested for the same
+	 *            resource refresh token was originally issued for. If passed,
+	 *            resource should match the original resource used to acquire
+	 *            refresh token unless token service supports refresh token for
+	 *            multiple resources.
+	 * @param callback
+	 *            optional callback object for non-blocking execution.
+	 * @return A {@link Future} object representing the
+	 *         {@link AuthenticationResult} of the call. It contains Access
+	 *         Token, Refresh Token and the Access Token's expiration time.
+	 * @throws AuthenticationException
+	 *             thrown if {@link AsymmetricKeyCredential} fails to sign the
+	 *             JWT token.
+	 */
+	public Future<AuthenticationResult> acquireTokenByRefreshToken(
+			final String refreshToken, final String clientId,
+			final String resource, final AuthenticationCallback callback) {
+
+		final ClientAuthentication clientAuth = new ClientAuthenticationPost(
+				ClientAuthenticationMethod.NONE, new ClientID(clientId));
+		final AdalAuthorizatonGrant authGrant = new AdalAuthorizatonGrant(
+				new RefreshTokenGrant(new RefreshToken(refreshToken)), resource);
+		return this.acquireToken(authGrant, clientAuth, callback);
+	}
+
+	private void validateRefreshTokenRequestInput(final String refreshToken,
+	                                              final String clientId, final Object credential) {
+
+	    if (StringHelper.isBlank(refreshToken)) {
+	        throw new IllegalArgumentException("refreshToken is null or empty");
+	    }
+
+	    if (StringHelper.isBlank(clientId)) {
+	        throw new IllegalArgumentException("clientId is null or empty");
+	    }
+	    this.validateInput(null, credential, false);
+	}
 
     private AuthenticationResult acquireTokenCommon(
             final AdalAuthorizatonGrant authGrant,
