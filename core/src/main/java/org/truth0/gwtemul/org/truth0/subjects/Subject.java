@@ -1,31 +1,10 @@
-/*
- * Copyright (c) 2011 David Saff
- * Copyright (c) 2011 Christian Gruber
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.truth0.subjects;
-
 import static org.truth0.util.StringUtil.format;
-
 import com.google.common.base.Preconditions;
-
 import org.truth0.util.Platform;
-
 import org.truth0.FailureStrategy;
 import org.truth0.TestVerb;
 import org.truth0.util.ReflectionUtil;
-
 import java.lang.reflect.Field;
 
 /**
@@ -35,9 +14,11 @@ import java.lang.reflect.Field;
  * @author David Saff
  * @author Christian Gruber (cgruber@israfil.net)
  */
-public class Subject<S extends Subject<S,T>,T> {
+public class Subject<S extends Subject<S, T>, T extends java.lang.Object> {
   protected final FailureStrategy failureStrategy;
+
   private final T subject;
+
   private String customName = null;
 
   public Subject(FailureStrategy failureStrategy, T subject) {
@@ -53,14 +34,12 @@ public class Subject<S extends Subject<S,T>,T> {
    * Renames the subject so that this name appears in the error messages in place of string
    * representations of the subject.
    */
-  @SuppressWarnings("unchecked")
-  public S named(String name) {
+  @SuppressWarnings(value = { "unchecked" }) public S named(String name) {
     if (name == null) {
-      // TODO: use check().withFailureMessage... here?
       throw new NullPointerException("Name passed to named() cannot be null.");
     }
     this.customName = name;
-    return (S)this;
+    return (S) this;
   }
 
   /**
@@ -88,7 +67,7 @@ public class Subject<S extends Subject<S,T>,T> {
 
   public void isEqualTo(Object other) {
     if (getSubject() == null) {
-      if(other != null) {
+      if (other != null) {
         fail("is equal to", other);
       }
     } else {
@@ -100,8 +79,8 @@ public class Subject<S extends Subject<S,T>,T> {
 
   public void isNotEqualTo(Object other) {
     if (getSubject() == null) {
-      if(other == null) {
-        fail("is not equal to", (Object)null);
+      if (other == null) {
+        fail("is not equal to", (Object) null);
       }
     } else {
       if (getSubject().equals(other)) {
@@ -116,8 +95,7 @@ public class Subject<S extends Subject<S,T>,T> {
     }
     if (!Platform.isInstanceOfType(getSubject(), clazz)) {
       if (getSubject() != null) {
-        failWithBadResults("is an instance of", clazz.getName(),
-            "is an instance of", getSubject().getClass().getName());
+        failWithBadResults("is an instance of", clazz.getName(), "is an instance of", getSubject().getClass().getName());
       } else {
         fail("is an instance of", clazz.getName());
       }
@@ -129,11 +107,10 @@ public class Subject<S extends Subject<S,T>,T> {
       throw new NullPointerException("clazz");
     }
     if (getSubject() == null) {
-      return; // null is not an instance of clazz.
+      return;
     }
     if (Platform.isInstanceOfType(getSubject(), clazz)) {
-      failWithRawMessage("%s expected not to be an instance of %s, but was.",
-          getDisplaySubject(), clazz.getName());
+      failWithRawMessage("%s expected not to be an instance of %s, but was.", getDisplaySubject(), clazz.getName());
     }
   }
 
@@ -142,9 +119,7 @@ public class Subject<S extends Subject<S,T>,T> {
   }
 
   protected String getDisplaySubject() {
-    return (customName == null)
-        ? "<" + getSubject() + ">"
-        : "\"" + this.customName + "\"";
+    return (customName == null) ? "<" + getSubject() + ">" : "\"" + this.customName + "\"";
   }
 
   /**
@@ -177,13 +152,8 @@ public class Subject<S extends Subject<S,T>,T> {
    * @param messageParts the expectations against which the subject is compared
    */
   protected void failWithBadResults(String verb, Object expected, String failVerb, Object actual) {
-    String message = format("Not true that %s %s <%s>. It %s <%s>",
-            getDisplaySubject(),
-            verb,
-            expected,
-            failVerb,
-            ((actual == null) ? "null reference" : actual));
-     failureStrategy.fail(message);
+    String message = format("Not true that %s %s <%s>. It %s <%s>", getDisplaySubject(), verb, expected, failVerb, ((actual == null) ? "null reference" : actual));
+    failureStrategy.fail(message);
   }
 
   /**
@@ -195,10 +165,7 @@ public class Subject<S extends Subject<S,T>,T> {
    * @param actual the custom representation of the subject to be reported in the failure.
    */
   protected void failWithCustomSubject(String verb, Object expected, Object actual) {
-    String message = format("Not true that <%s> %s <%s>",
-        ((actual == null) ? "null reference" : actual),
-        verb,
-        expected);
+    String message = format("Not true that <%s> %s <%s>", ((actual == null) ? "null reference" : actual), verb, expected);
     failureStrategy.fail(message);
   }
 
@@ -224,7 +191,7 @@ public class Subject<S extends Subject<S,T>,T> {
    *     value passed in as a string.
    * @param paramters the object parameters which will be applied to the message template.
    */
-  protected void failWithRawMessage(String message, Object ... parameters) {
+  protected void failWithRawMessage(String message, Object... parameters) {
     failureStrategy.fail(format(message, parameters));
   }
 
@@ -232,8 +199,7 @@ public class Subject<S extends Subject<S,T>,T> {
    * @deprecated This method is not a proposition, but the default Object equality method.
    *     Testing code should use "is" or "isEqualTo" propositions for equality tests.
    */
-  @Deprecated
-  @Override public boolean equals(Object o) {
+  @Deprecated @Override public boolean equals(Object o) {
     isEqualTo(o);
     return false;
   }
@@ -243,11 +209,7 @@ public class Subject<S extends Subject<S,T>,T> {
    *     propositions. Use of equals() is deprecated and forwards to isEqualTo() and
    *     hashCode() is disallowed.
    */
-  @Deprecated
-  @Override public int hashCode() {
-    throw new UnsupportedOperationException(""
-        + "Equals/Hashcode is not supported on Subjects. Their only use is as a holder of "
-        + "propositions. Use of equals() is deprecated and forwards to isEqualTo() and "
-        + "hashCode() is disallowed.");
+  @Deprecated @Override public int hashCode() {
+    throw new UnsupportedOperationException("" + "Equals/Hashcode is not supported on Subjects. Their only use is as a holder of " + "propositions. Use of equals() is deprecated and forwards to isEqualTo() and " + "hashCode() is disallowed.");
   }
 }
