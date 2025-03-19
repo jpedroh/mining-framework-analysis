@@ -85,6 +85,7 @@ import systems.composable.dropwizard.cassandra.cli.MigrationFactory;
  * If keyspace isn't specified in your configuration, then session will be opened with no
  * defined keyspace, so that you have to explicitly specify it in statements for tables/column&nbsp;families.
  *
+<<<<<<< /usr/src/app/output/stuartgunter/dropwizard-cassandra/41f878d01c4d9c8015295cdb67599294ec53d75c/src/main/java/systems/composable/dropwizard/cassandra/CassandraBundle.java/left.java
  * <h1>Migration configuration</h1>
  * If you don't specify migration configuration in your application descriptor,
  * then default values will be used, as specified in {@link MigrationFactory}.
@@ -115,6 +116,12 @@ import systems.composable.dropwizard.cassandra.cli.MigrationFactory;
  *   public void setMigrationFactory(MigrationFactory migrationFactory) { this.migrationFactory = migrationFactory; }
  * }
  * </pre>
+ *
+ * @author <a href="mailto:max@dominichenko.com">Max Dominichenko</a>
+||||||| /usr/src/app/output/stuartgunter/dropwizard-cassandra/41f878d01c4d9c8015295cdb67599294ec53d75c/src/main/java/systems/composable/dropwizard/cassandra/CassandraBundle.java/base.java
+ * @author <a href="mailto:max@dominichenko.com">Max Dominichenko</a>
+=======
+>>>>>>> /usr/src/app/output/stuartgunter/dropwizard-cassandra/41f878d01c4d9c8015295cdb67599294ec53d75c/src/main/java/systems/composable/dropwizard/cassandra/CassandraBundle.java/right.java
  */
 public abstract class CassandraBundle<T extends Configuration>
 		implements ConfiguredBundle<T>, CassandraConfiguration<T>, MigrationConfiguration<T> {
