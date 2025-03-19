@@ -157,9 +157,7 @@ public class PathNavigator {
 	private void updateCurrentGoal() {
 		if (currentGoal == null) {
 			for (Goal goal : goals) {
-
 				if (goal.start()) {
-
 					currentGoal = goal;
 
 					break;
@@ -175,11 +173,8 @@ public class PathNavigator {
 
 	private void updateCurrentTarget() {
 		if (currentTarget == null) {
-
 			for (Target newTarget : targets) {
-
 				if (newTarget.start()) {
-
 					currentTarget = newTarget;
 
 					break;

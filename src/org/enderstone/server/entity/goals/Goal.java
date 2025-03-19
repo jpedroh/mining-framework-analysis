@@ -17,14 +17,33 @@
  */
 package org.enderstone.server.entity.goals;
 
+import org.enderstone.server.entity.EnderEntity;
+
 /**
  *
  * @author gyroninja
  */
 public interface Goal {
 
+<<<<<<< /usr/src/app/output/sandergielisse/enderstone/17ed8520dacfc399023efb73188f3fd9c599bf01/src/org/enderstone/server/entity/goals/Goal.java/left.java
 	public abstract boolean start();
+||||||| /usr/src/app/output/sandergielisse/enderstone/17ed8520dacfc399023efb73188f3fd9c599bf01/src/org/enderstone/server/entity/goals/Goal.java/base.java
+	public abstract boolean shouldStart();
+	public abstract boolean shouldContinue();
+
+	public abstract void start();
+=======
+	public abstract boolean shouldStart();
+
+	public abstract boolean shouldContinue();
+
+	public abstract EnderEntity getCurrentTarget();
+
+	public abstract void start();
+
+>>>>>>> /usr/src/app/output/sandergielisse/enderstone/17ed8520dacfc399023efb73188f3fd9c599bf01/src/org/enderstone/server/entity/goals/Goal.java/right.java
 	public abstract void run();
+
 	public abstract void reset();
 
 	public abstract boolean shouldContinue();

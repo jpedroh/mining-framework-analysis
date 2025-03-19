@@ -66,8 +66,9 @@ public class EntitySpider extends EntityMob {
 	public boolean onCollision(EnderPlayer withPlayer) {
 		for (Goal pathfinder : this.getNavigator().getGoals()) {
 			if (pathfinder instanceof GoalAttackEntity) {
-				if (super.getNavigator().getTarget() != null && super.getNavigator().getTarget() instanceof EnderPlayer) {
-					if (super.getNavigator().getTarget().equals(withPlayer)) {
+				GoalAttackEntity entityAttack = (GoalAttackEntity) pathfinder;
+				if (entityAttack.getCurrentTarget() != null && entityAttack.getCurrentTarget() instanceof EnderPlayer) {
+					if (entityAttack.getCurrentTarget().equals(withPlayer)) {
 						withPlayer.damage(2F, Vector.substract(this.getLocation(), withPlayer.getLocation()).multiply(0.2F).add(0, 0.2F, 0));
 					}
 				}
