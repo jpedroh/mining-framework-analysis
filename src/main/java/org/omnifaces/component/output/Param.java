@@ -71,16 +71,36 @@ public class Param<T> extends UIParameter implements ParamHolder<T> {
 		converter;
 	}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/left.java
+	// Properties -----------------------------------------------------------------------------------------------------
+
+	private Converter<T> localConverter;
+
+||||||| /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/base.java
+	// Properties -----------------------------------------------------------------------------------------------------
+
+	private Converter localConverter;
+
+=======
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/right.java
 	// Attribute getters/setters --------------------------------------------------------------------------------------
 
 	@Override
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/left.java
 	@SuppressWarnings("unchecked")
 	public Converter<T> getConverter() {
-		return (Converter<T>) getStateHelper().eval(PropertyKeys.converter);
+		return localConverter != null ? localConverter : (Converter<T>) getStateHelper().eval(PropertyKeys.converter);
+||||||| /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/base.java
+	public Converter getConverter() {
+		return localConverter != null ? localConverter : (Converter) getStateHelper().eval(PropertyKeys.converter);
+=======
+	public Converter getConverter() {
+		return (Converter) getStateHelper().eval(PropertyKeys.converter);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/05abae8be2b4e35b6c7a849b68ad6af6b07d4310/src/main/java/org/omnifaces/component/output/Param.java/right.java
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setConverter(Converter converter) {
 		getStateHelper().put(PropertyKeys.converter, converter);
 	}
