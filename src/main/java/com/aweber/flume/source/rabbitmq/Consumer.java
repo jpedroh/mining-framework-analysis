@@ -195,12 +195,9 @@ public class Consumer implements Runnable {
                     continue;
                 }
                 sourceCounter.incrementEventAcceptedCount();
-                if (!autoAck) ackMessage(getDeliveryTag(delivery));
-            }
-
-            sourceCounter.incrementEventAcceptedCount();
-            if (!autoAck) {
-                ackMessage(getDeliveryTag(delivery));
+                if (!autoAck) {
+                    ackMessage(getDeliveryTag(delivery));
+                }
             }
         }
 
@@ -327,7 +324,7 @@ public class Consumer implements Runnable {
                     headers.put(key, userHeaders.get(key).toString());
                 } else {
                     // Keep the header just in case has to be used as a flag.
-                    headers.put(key, "");
+                    headers.put(key, "");                    
                 }
             }
         }
