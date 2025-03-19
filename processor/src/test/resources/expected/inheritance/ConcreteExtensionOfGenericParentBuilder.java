@@ -74,7 +74,16 @@ public final class ConcreteExtensionOfGenericParentBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/inheritance/ConcreteExtensionOfGenericParentBuilder.java/left.java
   public ConcreteExtensionOfGenericParentBuilder foos(Integer... foos) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/inheritance/ConcreteExtensionOfGenericParentBuilder.java/base.java
+  @SafeVarargs
+  public final ConcreteExtensionOfGenericParentBuilder foos(Integer... foos) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final ConcreteExtensionOfGenericParentBuilder foos(Integer... foos) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/inheritance/ConcreteExtensionOfGenericParentBuilder.java/right.java
     if (foos == null) {
       throw new NullPointerException("foos");
     }

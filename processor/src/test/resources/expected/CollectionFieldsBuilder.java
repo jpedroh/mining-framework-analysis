@@ -114,7 +114,16 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
   public CollectionFieldsBuilder strings(String... strings) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final CollectionFieldsBuilder strings(String... strings) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final CollectionFieldsBuilder strings(String... strings) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     if (strings == null) {
       throw new NullPointerException("strings");
     }
@@ -472,7 +481,16 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
   public CollectionFieldsBuilder numbers(Long... numbers) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final CollectionFieldsBuilder numbers(Long... numbers) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final CollectionFieldsBuilder numbers(Long... numbers) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     if (numbers == null) {
       throw new NullPointerException("numbers");
     }
@@ -539,7 +557,16 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
   public CollectionFieldsBuilder sortedNumbers(Long... sortedNumbers) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final CollectionFieldsBuilder sortedNumbers(Long... sortedNumbers) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final CollectionFieldsBuilder sortedNumbers(Long... sortedNumbers) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     if (sortedNumbers == null) {
       throw new NullPointerException("sortedNumbers");
     }
@@ -606,7 +633,16 @@ public final class CollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/left.java
   public CollectionFieldsBuilder navigableNumbers(Long... navigableNumbers) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final CollectionFieldsBuilder navigableNumbers(Long... navigableNumbers) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final CollectionFieldsBuilder navigableNumbers(Long... navigableNumbers) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionFieldsBuilder.java/right.java
     if (navigableNumbers == null) {
       throw new NullPointerException("navigableNumbers");
     }

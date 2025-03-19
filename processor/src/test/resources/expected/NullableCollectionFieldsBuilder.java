@@ -79,7 +79,16 @@ public final class NullableCollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/left.java
   public NullableCollectionFieldsBuilder strings(String... strings) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final NullableCollectionFieldsBuilder strings(String... strings) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final NullableCollectionFieldsBuilder strings(String... strings) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/right.java
     if (strings == null) {
       this.strings = null;
       return this;
@@ -197,7 +206,16 @@ public final class NullableCollectionFieldsBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/left.java
   public NullableCollectionFieldsBuilder numbers(Long... numbers) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/base.java
+  @SafeVarargs
+  public final NullableCollectionFieldsBuilder numbers(Long... numbers) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final NullableCollectionFieldsBuilder numbers(Long... numbers) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/NullableCollectionFieldsBuilder.java/right.java
     if (numbers == null) {
       this.numbers = null;
       return this;

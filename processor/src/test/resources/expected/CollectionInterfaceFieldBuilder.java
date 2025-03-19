@@ -69,7 +69,16 @@ public final class CollectionInterfaceFieldBuilder {
     return this;
   }
 
+<<<<<<< /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionInterfaceFieldBuilder.java/left.java
   public CollectionInterfaceFieldBuilder strings(String... strings) {
+||||||| /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionInterfaceFieldBuilder.java/base.java
+  @SafeVarargs
+  public final CollectionInterfaceFieldBuilder strings(String... strings) {
+=======
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public final CollectionInterfaceFieldBuilder strings(String... strings) {
+>>>>>>> /usr/src/app/output/danielnorberg/auto-matter/3d46ebaf5acd94a25945e6e6c586f174b9c1b41c/processor/src/test/resources/expected/CollectionInterfaceFieldBuilder.java/right.java
     if (strings == null) {
       throw new NullPointerException("strings");
     }
