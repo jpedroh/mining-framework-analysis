@@ -6,7 +6,13 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * See <a href="http://demos.jquerymobile.com/1.4.5/pages-dialog/">Dialogs</a>
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMDialog.java/left.java
  * <br> Also see <a href="http://vernonkesner.com/blog/2013/04/10/jquery-mobile-dialogs-and-popups/">
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMDialog.java/base.java
+ * <p/> Also see <a href="http://vernonkesner.com/blog/2013/04/10/jquery-mobile-dialogs-and-popups/">
+=======
+ *  Also see <a href="http://vernonkesner.com/blog/2013/04/10/jquery-mobile-dialogs-and-popups/">
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMDialog.java/right.java
  * jQuery Mobile: Dialogs and Popups</a>
  *
  * @author SlavaP

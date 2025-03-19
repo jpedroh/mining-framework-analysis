@@ -46,8 +46,14 @@ import com.sksamuel.jqm4gwt.html.FormLabel;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 May 2011 13:49:09
- * <br>
- * An implementation of a standard HTML text input.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMText.java/left.java
+ *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMText.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMText.java/right.java
+ *         An implementation of a standard HTML text input.
  */
 public class JQMText extends JQMFieldContainer implements HasText<JQMText>, HasFocusHandlers,
         HasClickHandlers, HasTapHandlers, HasChangeHandlers, HasValue<String>, HasReadOnly<JQMText>,

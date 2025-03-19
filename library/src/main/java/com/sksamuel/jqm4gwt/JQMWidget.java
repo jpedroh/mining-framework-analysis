@@ -22,16 +22,34 @@ import com.sksamuel.jqm4gwt.list.JQMList;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 17:02:40
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/left.java
  *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/right.java
  *         An extension of the standard GWT {@link Widget} that adds
  *         functionality common to all JQM elements, as well as convenience
  *         methods used by subclasses.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/left.java
  *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/right.java
  *         The {@link JQMWidget} is an extension of composite because
  *         {@link JQMWidget}s do not typically add new functionality (in terms
  *         of new elements), they are mostly compositions of existing HTML
  *         elements.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/left.java
  *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMWidget.java/right.java
  *         This abstract superclass does not define the nature of the
  *         composition in use. Implementating subclasses must decide how to
  *         compose and thus call initWidget() themselves.
@@ -95,11 +113,13 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
     }
 
     /** Returns this widget's ID (set on the main element) */
+    /** Returns this widget's ID (set on the main element) */
     @Override
     public final String getId() {
         return getElement().getId();
     }
 
+    /** The same as {@link JQMWidget#getId()}, but needed for UiBinder templates */
     /** The same as {@link JQMWidget#getId()}, but needed for UiBinder templates */
     public final String getWidgetId() {
         return getId();
@@ -192,15 +212,29 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * and full company names to be searched, or for covering common spellings
      * and abbreviations for countries.
      */
+    /**
+     * {@link JQMFilterable} will use this text when searching through this widget.
+     * <b>Detail description:</b> By default, the filter simply searches against
+     * the contents of each list item.
+     * If you want the filter to search against different content, add the data-filtertext
+     * attribute to the item and populate it with one or many keywords and phrases that
+     * should be used to match against. Note that if this attribute is added,
+     * the contents of the list item are ignored.
+     * <p> This attribute is useful for dealing with allowing for ticker symbols
+     * and full company names to be searched, or for covering common spellings
+     * and abbreviations for countries.
+     */
     public void setFilterText(String filterText) {
         JQMCommon.setFilterText(getDataFilterWidget(), filterText);
     }
 
     /** Can be overridden in descendants to provide proper data filter widget */
+    /** Can be overridden in descendants to provide proper data filter widget */
     protected Widget getDataFilterWidget() {
         return this;
     }
 
+    /** @return true if this list is set to filterable, false otherwise. */
     /** @return true if this list is set to filterable, false otherwise. */
     public boolean isFilterable() {
         return JQMCommon.isFilterable(getDataFilterWidget());
@@ -220,6 +254,15 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * <br> May not work for any widget or require {@link JQMWidget#getDataFilterWidget()} override
      * for composite widgets like {@link JQMSelect}.
      * <br> But {@link JQMList}, {@link JQMCollapsibleSet}, and others with children collection are supported.
+     *
+     * @param filterSelector - a jQuery selector that will be used to retrieve the element
+     * that will serve as the input source, UiBinder example: dataFilter="#{fltr1.getFilterId}"
+     */
+    /**
+     * To be used in conjunction with {@link JQMFilterable}.
+     *  May not work for any widget or require {@link JQMWidget#getDataFilterWidget()} override
+     * for composite widgets like {@link JQMSelect}.
+     *  But {@link JQMList}, {@link JQMCollapsibleSet}, and others with children collection are supported.
      *
      * @param filterSelector - a jQuery selector that will be used to retrieve the element
      * that will serve as the input source, UiBinder example: dataFilter="#{fltr1.getFilterId}"
@@ -286,6 +329,7 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
     }
 
     /** @param filter - currently entered filter text */
+    /** @param filter - currently entered filter text */
     protected void onBeforeFilter(String filter) {
     }
 
@@ -320,6 +364,16 @@ public abstract class JQMWidget extends Composite implements HasTheme<JQMWidget>
      * <br> - must return <b>false</b> if the element is to be <b>shown</b>.
      * <br> - null means default filtering should be used.
      * <br> JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
+     */
+    /**
+     * @param elt - current filtering element, JQMCommon.getTextForFiltering(elt) can be used to get filtering text
+     * @param index - filtering element's index
+     * @param searchValue - filtering text
+     *
+     * @return - must return <b>true</b> if the element is to be <b>filtered out</b>.
+     *  - must return <b>false</b> if the element is to be <b>shown</b>.
+     *  - null means default filtering should be used.
+     *  JQMCommon.getTextForFiltering(elt) can be used to get filtering element's text
      */
     protected Boolean onFiltering(Element elt, Integer index, String searchValue) {
         //String s = JQMCommon.getTextForFiltering(elt);

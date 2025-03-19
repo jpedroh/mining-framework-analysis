@@ -9,7 +9,13 @@ import com.sksamuel.jqm4gwt.JQMPopupEvent.PopupState;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 16 Sep 2012 00:26:35
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMPopup.java/left.java
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/popup/">Popup<a/>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMPopup.java/base.java
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/popup/">Popup<a/>
+=======
+ * See <a href="http://demos.jquerymobile.com/1.4.5/popup/">Popup</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMPopup.java/right.java
  */
 public class JQMPopup extends JQMContainer {
 
@@ -59,6 +65,10 @@ public class JQMPopup extends JQMContainer {
      * Initialize dynamically added popup with static content (for example added after page is loaded).
      * <br> Also see {@link JQMPopup#waitInitOpen(String)} if you need to wait for images to be loaded.
      */
+    /**
+     * Initialize dynamically added popup with static content (for example added after page is loaded).
+     *  Also see {@link JQMPopup#waitInitOpen(String)} if you need to wait for images to be loaded.
+     */
     public void initDynamic() {
         initialize(getElement());
     }
@@ -86,6 +96,10 @@ public class JQMPopup extends JQMContainer {
     /**
      * First wait till some elements are loaded, then initialize and open dynamically added popup.
      * <br> See <a href="http://demos.jquerymobile.com/1.4.5/popup-dynamic/#&ui-state=dialog&ui-state=dialog&ui-state=dialog">Dynamic popup with images</a>
+     */
+    /**
+     * First wait till some elements are loaded, then initialize and open dynamically added popup.
+     *  See <a href="http://demos.jquerymobile.com/1.4.5/popup-dynamic/#&ui-state=dialog&ui-state=dialog&ui-state=dialog">Dynamic popup with images</a>
      */
     public void waitInitOpen(String waitForSelector) {
         if (waitForSelector == null || waitForSelector.isEmpty()) {
@@ -167,6 +181,12 @@ public class JQMPopup extends JQMContainer {
      * The selector is filtered for elements that are visible with ":visible".
      * If the result is empty, the popup will be centered in the window.
      */
+    /**
+     * @param pos - origin, window, or jQuery selector.
+     * Element is searched by selector, and then popup is centered over it.
+     * The selector is filtered for elements that are visible with ":visible".
+     * If the result is empty, the popup will be centered in the window.
+     */
     public void setPosition(String pos) {
         JQMCommon.setPopupPos(this, pos);
     }
@@ -198,6 +218,13 @@ public class JQMPopup extends JQMContainer {
      * <br> Sets whether clicking outside the popup or pressing Escape while the popup is
      * open will close the popup.
      * <br> Note: When history support is turned on, pressing the browser's "Back" button
+     * will dismiss the popup even if this option is set to false.
+     */
+    /**
+     * Opposite to setDialog()
+     * Sets whether clicking outside the popup or pressing Escape while the popup is
+     * open will close the popup.
+     * Note: When history support is turned on, pressing the browser's "Back" button
      * will dismiss the popup even if this option is set to false.
      */
     public void setDismissible(boolean value) {
@@ -237,10 +264,30 @@ public class JQMPopup extends JQMContainer {
      * and the popup is positioned along the last examined edge.
      *
      */
+    /**
+     * @param arrows - possible values: true, false.
+     * Also comma-separated list of edge abbreviations: l t r b
+     * "l" for left, "t" for top, "r" for right, and "b" for bottom.
+     *
+     *  <b>The order in which the edges are given matters, see explanation below.</b>
+     *
+     *  For each edge given in the list, the framework calculates:
+     *  1. the distance between the tip of the arrow and the center of the origin
+     *  2. and whether minimizing the above distance would cause the arrow to appear
+     * too close to one of the corners of the popup along the given edge.
+     *
+     *  If the second condition applies, the edge is discarded as a possible solution
+     * for placing the arrow. Otherwise, the calculated distance is examined.
+     * If it is 0, meaning that the popup can be placed exactly such that the tip of
+     * the arrow points at the center of the origin, no further edges are examined,
+     * and the popup is positioned along the last examined edge.
+     *
+     */
     public void setArrows(String arrows) {
         JQMCommon.setAttribute(this, "data-arrow", arrows);
     }
 
+    /** Triggered when a popup has completely closed */
     /** Triggered when a popup has completely closed */
     protected void onAfterClose() {
     }
@@ -250,6 +297,7 @@ public class JQMPopup extends JQMContainer {
         JQMPopupEvent.fire(this, PopupState.AFTER_CLOSE);
     }
 
+    /** Triggered after a popup has completely opened */
     /** Triggered after a popup has completely opened */
     protected void onAfterOpen() {
     }
@@ -262,6 +310,15 @@ public class JQMPopup extends JQMContainer {
     /**
      * Triggered before a popup computes the coordinates where it will appear.
      * <br> Handling this event gives an opportunity to modify the content of
+     * the popup before it appears on the screen. For example, the content can be
+     * scaled or parts of it can be hidden or removed if it is too wide or too tall.
+     * You can also modify the options parameter to affect the popup's placement.
+     *
+     * @param openOptions
+     **/
+    /**
+     * Triggered before a popup computes the coordinates where it will appear.
+     *  Handling this event gives an opportunity to modify the content of
      * the popup before it appears on the screen. For example, the content can be
      * scaled or parts of it can be hidden or removed if it is too wide or too tall.
      * You can also modify the options parameter to affect the popup's placement.
@@ -381,6 +438,27 @@ public class JQMPopup extends JQMContainer {
      * from the left and right edge of the window.
      *
      * <br> 4. Four comma-separated numbers. The first will be used for tolerance from the top edge,
+     * the second for tolerance from the right edge, the third for tolerance from the bottom edge,
+     * and the fourth for tolerance from the left edge.
+     *
+     */
+    /**
+     * @param tolerance - Default: "30,15,30,15"
+     *  Sets the minimum distance from the edge of the window for the corresponding edge
+     * of the popup. By default, the values above will be used for the distance from
+     * the top, right, bottom, and left edge of the window, respectively.
+     *
+     *  You can specify a value for this option in one of four ways:
+     *  1. Empty string, null, or some other falsy value. This will cause the popup to revert
+     * to the above default values.
+     *
+     *  2. A single number. This number will be used for all four edge tolerances.
+     *
+     *  3. Two numbers separated by a comma. The first number will be used for tolerances
+     * from the top and bottom edge of the window, and the second number will be used for tolerances
+     * from the left and right edge of the window.
+     *
+     *  4. Four comma-separated numbers. The first will be used for tolerance from the top edge,
      * the second for tolerance from the right edge, the third for tolerance from the bottom edge,
      * and the fourth for tolerance from the left edge.
      *

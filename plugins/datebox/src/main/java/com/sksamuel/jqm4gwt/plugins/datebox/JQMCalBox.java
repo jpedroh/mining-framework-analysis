@@ -36,20 +36,20 @@ public class JQMCalBox extends JQMText {
 
     /** <a href="http://dev.jtsage.com/jQM-DateBox/doc/3-3-output/">Date Format Options</a> */
     public static final String FMT_MMDDYY = "%m/%d/%y";
-
     // HasValue<String> declared in JQMText and cannot be overridden as HasValue<Date> in this class.
     // So we are going to return well formatted string representation of date as getValue() result,
     // and expecting the same string format when setValue() method called.
     // By default ISO 8601 format is used, but it could be changed by setting valueStrFmt property.
     public static final DateTimeFormat VALUE_DFLT_STR_FMT = DateTimeFormat.getFormat("yyyy-MM-dd");
     private static DateTimeFormat valueStrFmt = VALUE_DFLT_STR_FMT;
-
     public static final String YEAR_PICK_NOW = "NOW";
-
     protected static final String MODE_CALBOX       = "\"mode\": \"calbox\"";
-    protected static final String USE_INLINE        = "\"useInline\":"; // Show control inline in the page, negating any open and close actions
-    protected static final String USE_INLINE_BLIND  = "\"useInlineBlind\":"; // Attach the control directly to the input element, and roll it down from there when opened
-    protected static final String HIDE_CONTAINER    = "\"hideContainer\":"; // Cause the original fieldcontain to be hidden on the page - really only appropriate with "useInline"
+    protected static final String USE_INLINE        = "\"useInline\":";
+// Show control inline in the page, negating any open and close actions
+    protected static final String USE_INLINE_BLIND  = "\"useInlineBlind\":";
+// Attach the control directly to the input element, and roll it down from there when opened
+    protected static final String HIDE_CONTAINER    = "\"hideContainer\":";
+// Cause the original fieldcontain to be hidden on the page - really only appropriate with "useInline"
     protected static final String OVERRIDE_DATE_FMT = "\"overrideDateFormat\":";
     protected static final String WEEK_START_DAY    = "\"overrideCalStartDay\":";
     protected static final String DIALOG_LABEL      = "\"overrideDialogLabel\":";
@@ -58,7 +58,6 @@ public class JQMCalBox extends JQMText {
     protected static final String BUTTON_ICON       = "\"buttonIcon\":";
     protected static final String NEXT_MONTH_ICON   = "\"calNextMonthIcon\":";
     protected static final String PREV_MONTH_ICON   = "\"calPrevMonthIcon\":";
-
     // See http://dev.jtsage.com/jQM-DateBox/doc/5-0-control/
     // CalBox Specific - Display
     protected static final String SHOW_DAYS            = "\"calShowDays\":";
@@ -67,7 +66,6 @@ public class JQMCalBox extends JQMText {
     protected static final String HIGHLIGHT_TODAY      = "\"calHighToday\":";
     protected static final String HIGHLIGHT_SELECTED   = "\"calHighPick\":";
     protected static final String COMPACT_DATE_BUTTONS = "\"calControlGroup\":";
-
     // See http://dev.jtsage.com/jQM-DateBox/doc/5-0-control/
     // CalBox Specific - Control
     protected static final String USE_TODAY_BUTTON    = "\"useTodayButton\":";
@@ -77,20 +75,29 @@ public class JQMCalBox extends JQMText {
     protected static final String YEAR_PICK_MIN       = "\"calYearPickMin\":";
     protected static final String YEAR_PICK_MAX       = "\"calYearPickMax\":";
     protected static final String NO_HEADER           = "\"calNoHeader\":";
-    protected static final String NO_TITLE            = "\"useHeader\":"; // Refers to the header with the close button and the title
-
+    protected static final String NO_TITLE            = "\"useHeader\":";
+// Refers to the header with the close button and the title
     // See http://dev.jtsage.com/jQM-DateBox/doc/3-1-themes/
-    protected static final String THEME              = "\"theme\":";            // false means inherited theme
-    protected static final String THEME_HEADER       = "\"themeHeader\":";      // Theme for header
-    protected static final String THEME_MODAL        = "\"useModalTheme\":";    // Theme for modal background of control. Shade the background with this color swatch. From the default themes, “a” is a very light grey, “b” is a slighly darker grey.
-    protected static final String THEME_DATE         = "\"themeDate\":";        // Theme for otherwise un-specified date buttons
-    protected static final String THEME_DATETODAY    = "\"themeDateToday\":";   // Theme for “today”
-    protected static final String THEME_DATEPICK     = "\"themeDatePick\":";    // Theme for choosen date (used last after other options fail)
-    protected static final String THEME_DAYHIGH      = "\"themeDayHigh\":";     // Theme for highlighted DAYS
-    protected static final String THEME_DATEHIGH     = "\"themeDateHigh\":";    // Theme for highlighted DATES
-    protected static final String THEME_DATEHIGH_ALT = "\"themeDateHighAlt\":"; // Theme for highlighted ALTERNATE DATES
-    protected static final String THEME_DATEHIGH_REC = "\"themeDateHighRec\":"; // Theme for highlighted RECURRING DATES
-
+    protected static final String THEME              = "\"theme\":";
+// false means inherited theme
+    protected static final String THEME_HEADER       = "\"themeHeader\":";
+// Theme for header
+    protected static final String THEME_MODAL        = "\"useModalTheme\":";
+// Theme for modal background of control. Shade the background with this color swatch. From the default themes, “a” is a very light grey, “b” is a slighly darker grey.
+    protected static final String THEME_DATE         = "\"themeDate\":";
+// Theme for otherwise un-specified date buttons
+    protected static final String THEME_DATETODAY    = "\"themeDateToday\":";
+// Theme for “today”
+    protected static final String THEME_DATEPICK     = "\"themeDatePick\":";
+// Theme for choosen date (used last after other options fail)
+    protected static final String THEME_DAYHIGH      = "\"themeDayHigh\":";
+// Theme for highlighted DAYS
+    protected static final String THEME_DATEHIGH     = "\"themeDateHigh\":";
+// Theme for highlighted DATES
+    protected static final String THEME_DATEHIGH_ALT = "\"themeDateHighAlt\":";
+// Theme for highlighted ALTERNATE DATES
+    protected static final String THEME_DATEHIGH_REC = "\"themeDateHighRec\":";
+// Theme for highlighted RECURRING DATES
     private Boolean useInline = null;
     private Boolean useInlineBlind = null;
     private Boolean hideContainer = null;
@@ -103,7 +110,6 @@ public class JQMCalBox extends JQMText {
     private String buttonIcon = null;
     private String nextMonthIcon = null;
     private String prevMonthIcon = null;
-
     private Boolean useTodayButton = null;
     private Boolean useTomorrowButton = null;
     private Boolean usePickers = null;
@@ -112,14 +118,12 @@ public class JQMCalBox extends JQMText {
     private String yearPickMax = null;
     private Boolean noHeader = null;
     private Boolean noTitle = null;
-
     private Boolean showDays = null;
     private Boolean showWeek = null;
     private Boolean showOneMonthOnly = null;
     private Boolean highlightToday = null;
     private Boolean highlightSelected = null;
     private Boolean compactDateButtons = null;
-
     private String theme = null;
     private String themeHeader = null;
     private String themeModal = null;
@@ -130,7 +134,6 @@ public class JQMCalBox extends JQMText {
     private String themeDateHigh = null;
     private String themeDateHighAlt = null;
     private String themeDateHighRec = null;
-
     /**
      * GWT Date and JsDate are both created in current browser's timezone.
      * Calbox's setTheDate() takes date and use year/month/day from it (time and timezone are ignored).
@@ -142,42 +145,33 @@ public class JQMCalBox extends JQMText {
      */
     @SuppressWarnings("deprecation")
     private static final double NULL_DATE = new Date(70, 0, 1).getTime();
-
-    private Date delayedSetDate = null; // used when not initialized yet
-
+    private Date delayedSetDate = null;
+// used when not initialized yet
     private boolean isInternSetDate;
-    private Date internDateToSet; // works when isInternSetDate == true
-
+    private Date internDateToSet;
+// works when isInternSetDate == true
     private boolean invalidateUnlockedInputOnBlur = true;
-
     /** Additional information can be added to days (1..31) buttons. */
     public static interface GridDateFormatter {
         String format(int yyyy, int mm, int dd, String iso8601, boolean selectedDateVisible);
     }
-
     public static interface GridDateFormatterEx extends GridDateFormatter {
         /**
          * @return - additional space separated classes for CSS styling (coloring, shaping, ...)
          */
         String getStyleNames(int yyyy, int mm, int dd, String iso8601, boolean selectedDateVisible);
     }
-
     private GridDateFormatter gridDateFormatter;
-
     private boolean calBoxHandlerAdded;
-
     static {
         addJsParts();
     }
-
     private static native void addJsParts() /*-{
         $wnd.mobileDateboxCallbackFalse = function() { return false; };
     }-*/;
-
     public JQMCalBox() {
         this(null);
     }
-
     public JQMCalBox(String text) {
         super(text);
         //setType("date"); // it's servicing by jqm-datebox, so type must not be set as "date"
@@ -201,11 +195,9 @@ public class JQMCalBox extends JQMText {
         });
         refreshDataOptions();
     }
-
     protected static String bool2Str(boolean value) {
         return value ? "true" : "false";
     }
-
     protected String constructDataOptions() {
         StringBuilder sb = new StringBuilder();
         sb.append('{').append(MODE_CALBOX);
@@ -331,50 +323,40 @@ public class JQMCalBox extends JQMText {
         sb.append('}');
         return sb.toString();
     }
-
     protected void refreshDataOptions() {
         setInputAttribute("data-options", constructDataOptions());
     }
-
     private void setInputAttribute(String name, String value) {
         if (input == null) return;
         input.getElement().setAttribute(name, value);
     }
-
     public Boolean getUseInline() {
         return useInline;
     }
-
     /** Show control inline in the page, negating any open and close actions */
     public void setUseInline(Boolean useInline) {
         this.useInline = useInline;
         refreshDataOptions();
     }
-
     public Boolean getUseInlineBlind() {
         return useInlineBlind;
     }
-
     /** Attach the control directly to the input element, and roll it down from there when opened */
     public void setUseInlineBlind(Boolean useInlineBlind) {
         this.useInlineBlind = useInlineBlind;
         refreshDataOptions();
     }
-
     public Boolean getHideContainer() {
         return hideContainer;
     }
-
     /** Cause the original fieldcontain to be hidden on the page - really only appropriate with "useInline" */
     public void setHideContainer(Boolean value) {
         this.hideContainer = value;
         refreshDataOptions();
     }
-
     public String getDateFormat() {
         return dateFormat;
     }
-
     /**
      * @param dateFormat - <a href="http://dev.jtsage.com/jQM-DateBox/doc/3-3-output/">Date Format Options</a>
      */
@@ -382,28 +364,23 @@ public class JQMCalBox extends JQMText {
         this.dateFormat = dateFormat;
         refreshDataOptions();
     }
-
     public String getActiveDateFormat() {
         if (dateFormat != null) return dateFormat;
         if (input == null) return null;
         String fmt = internGetOption(input.getElement(), "dateFormat");
         return fmt;
     }
-
     public Boolean getUsePickers() {
         return usePickers;
     }
-
     public void setUsePickers(Boolean usePickers) {
         this.usePickers = usePickers;
         if (this.usePickers != null && this.usePickers && noHeader == null) noHeader = true;
         refreshDataOptions();
     }
-
     public Boolean getUsePickersIcons() {
         return usePickersIcons;
     }
-
     /**
      * Only works with calNoHeader and calUsePickers turned on (true).
      */
@@ -411,31 +388,25 @@ public class JQMCalBox extends JQMText {
         this.usePickersIcons = value;
         refreshDataOptions();
     }
-
     public Boolean getNoHeader() {
         return noHeader;
     }
-
     /** Hide standard header (by default a plus button, the Month/Year combo, and a minus button) */
     public void setNoHeader(Boolean noHeader) {
         this.noHeader = noHeader;
         refreshDataOptions();
     }
-
     public Boolean getNoTitle() {
         return noTitle;
     }
-
     /** Refers to the header with the close button and the title */
     public void setNoTitle(Boolean value) {
         this.noTitle = value;
         refreshDataOptions();
     }
-
     public Integer getWeekStartDay() {
         return weekStartDay;
     }
-
     /**
      * @param weekStartDay - 0-6, where 0=Sunday, 1=Monday...
      */
@@ -443,11 +414,9 @@ public class JQMCalBox extends JQMText {
         this.weekStartDay = weekStartDay;
         refreshDataOptions();
     }
-
     public String getDialogLabel() {
         return dialogLabel;
     }
-
     /**
      * Needed in case for example you don't want placeholder to be shown as date selection dialog title.
      */
@@ -455,92 +424,72 @@ public class JQMCalBox extends JQMText {
         this.dialogLabel = dialogLabel;
         refreshDataOptions();
     }
-
     public Boolean getUseTodayButton() {
         return useTodayButton;
     }
-
     public void setUseTodayButton(Boolean useTodayButton) {
         this.useTodayButton = useTodayButton;
         refreshDataOptions();
     }
-
     public Boolean getUseTomorrowButton() {
         return useTomorrowButton;
     }
-
     public void setUseTomorrowButton(Boolean useTomorrowButton) {
         this.useTomorrowButton = useTomorrowButton;
         refreshDataOptions();
     }
-
     public Boolean getShowDays() {
         return showDays;
     }
-
     public void setShowDays(Boolean showDays) {
         this.showDays = showDays;
         refreshDataOptions();
     }
-
     public Boolean getShowWeek() {
         return showWeek;
     }
-
     public void setShowWeek(Boolean showWeek) {
         this.showWeek = showWeek;
         refreshDataOptions();
     }
-
     public Boolean getShowOneMonthOnly() {
         return showOneMonthOnly;
     }
-
     public void setShowOneMonthOnly(Boolean showOneMonthOnly) {
         this.showOneMonthOnly = showOneMonthOnly;
         refreshDataOptions();
     }
-
     public Boolean getHighlightToday() {
         return highlightToday;
     }
-
     public void setHighlightToday(Boolean highlightToday) {
         this.highlightToday = highlightToday;
         refreshDataOptions();
     }
-
     public Boolean getHighlightSelected() {
         return highlightSelected;
     }
-
     public void setHighlightSelected(Boolean highlightSelected) {
         this.highlightSelected = highlightSelected;
         refreshDataOptions();
     }
-
     public Boolean getCompactDateButtons() {
         return compactDateButtons;
     }
-
     public void setCompactDateButtons(Boolean compactDateButtons) {
         this.compactDateButtons = compactDateButtons;
         refreshDataOptions();
     }
-
     public Boolean getUseClearButton() {
         return useClearButton;
     }
-
     public void setUseClearButton(Boolean useClearButton) {
         this.useClearButton = useClearButton;
         refreshDataOptions();
     }
-
     public Boolean getEditable() {
         return editable;
     }
-
     /**
      * Read only mode for this widget, if false - open calendar button will be disabled and input locked.
      */
@@ -549,11 +498,9 @@ public class JQMCalBox extends JQMText {
         if (!editable) lockInput = true;
         refreshDataOptions();
     }
-
     public String getYearPickMin() {
         return yearPickMin;
     }
-
     /**
      * See {@link JQMCalBox#setYearPickMax(String)}
      */
@@ -561,11 +508,9 @@ public class JQMCalBox extends JQMText {
         this.yearPickMin = yearPickMin;
         refreshDataOptions();
     }
-
     public String getYearPickMax() {
         return yearPickMax;
     }
-
     /**
      * yearPickMin and yearPickMax - valid options are an integer less than 1800,
      * which will be added/subtracted from the current year
@@ -577,11 +522,9 @@ public class JQMCalBox extends JQMText {
         this.yearPickMax = yearPickMax;
         refreshDataOptions();
     }
-
     public Boolean getLockInput() {
         return lockInput;
     }
-
     /**
      * When false - user can type-in date manually (default is true, i.e. no manual typing).
      */
@@ -589,11 +532,9 @@ public class JQMCalBox extends JQMText {
         this.lockInput = lockInput;
         refreshDataOptions();
     }
-
     public String getButtonIcon() {
         return buttonIcon;
     }
-
     /**
      * This is the class of the button in the input element.
      * <br>Default value is calendar.
@@ -603,11 +544,9 @@ public class JQMCalBox extends JQMText {
         this.buttonIcon = buttonIcon;
         refreshDataOptions();
     }
-
     public String getNextMonthIcon() {
         return nextMonthIcon;
     }
-
     /**
      * This allows customization of the Next Month button in the calendar header.
      * <br>Default value is plus.
@@ -617,11 +556,9 @@ public class JQMCalBox extends JQMText {
         this.nextMonthIcon = nextMonthIcon;
         refreshDataOptions();
     }
-
     public String getPrevMonthIcon() {
         return prevMonthIcon;
     }
-
     /**
      * This allows customization of the Previous Month button in the calendar header.
      * <br>Default value is minus.
@@ -631,126 +568,100 @@ public class JQMCalBox extends JQMText {
         this.prevMonthIcon = prevMonthIcon;
         refreshDataOptions();
     }
-
     @Override
     public String getTheme() {
         if (theme == null || theme.isEmpty()) return super.getTheme();
         else return theme;
     }
-
     @Override
     public void setTheme(String theme) {
         super.setTheme(theme);
         this.theme = theme;
         refreshDataOptions();
     }
-
     public String getThemeHeader() {
         return themeHeader;
     }
-
     public void setThemeHeader(String themeHeader) {
         this.themeHeader = themeHeader;
         refreshDataOptions();
     }
-
     public String getThemeModal() {
         return themeModal;
     }
-
     public void setThemeModal(String themeModal) {
         this.themeModal = themeModal;
         refreshDataOptions();
     }
-
     public String getThemeDate() {
         return themeDate;
     }
-
     public void setThemeDate(String themeDate) {
         this.themeDate = themeDate;
         refreshDataOptions();
     }
-
     public String getThemeDateToday() {
         return themeDateToday;
     }
-
     public void setThemeDateToday(String themeDateToday) {
         this.themeDateToday = themeDateToday;
         refreshDataOptions();
     }
-
     public String getThemeDatePick() {
         return themeDatePick;
     }
-
     public void setThemeDatePick(String themeDatePick) {
         this.themeDatePick = themeDatePick;
         refreshDataOptions();
     }
-
     public String getThemeDayHigh() {
         return themeDayHigh;
     }
-
     public void setThemeDayHigh(String themeDayHigh) {
         this.themeDayHigh = themeDayHigh;
         refreshDataOptions();
     }
-
     public String getThemeDateHigh() {
         return themeDateHigh;
     }
-
     public void setThemeDateHigh(String themeDateHigh) {
         this.themeDateHigh = themeDateHigh;
         refreshDataOptions();
     }
-
     public String getThemeDateHighAlt() {
         return themeDateHighAlt;
     }
-
     public void setThemeDateHighAlt(String themeDateHighAlt) {
         this.themeDateHighAlt = themeDateHighAlt;
         refreshDataOptions();
     }
-
     public String getThemeDateHighRec() {
         return themeDateHighRec;
     }
-
     public void setThemeDateHighRec(String themeDateHighRec) {
         this.themeDateHighRec = themeDateHighRec;
         refreshDataOptions();
     }
-
     public boolean isInvalidateUnlockedInputOnBlur() {
         return invalidateUnlockedInputOnBlur;
     }
-
     /**
      * When lockInput == false this property controls if proper/parsed date is forcefully set on blur/exit (default: true)
      */
     public void setInvalidateUnlockedInputOnBlur(boolean invalidateUnlockedInputOnBlur) {
         this.invalidateUnlockedInputOnBlur = invalidateUnlockedInputOnBlur;
     }
-
     public static DateTimeFormat getValueStrFmt() {
         return valueStrFmt;
     }
-
     public static void setValueStrFmt(DateTimeFormat fmt) {
         valueStrFmt = fmt;
     }
-
     protected static class CalBoxValueChangeEvent extends ValueChangeEvent<String> {
         public CalBoxValueChangeEvent(String value) {
             super(value);
         }
     }
-
     protected static class CalBoxValueChangeHandler implements ValueChangeHandler<String> {
 
         private final ValueChangeHandler<String> handler;
@@ -783,19 +694,16 @@ public class JQMCalBox extends JQMText {
             }
         }
     }
-
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
         ValueChangeHandler<String> newHandler = new CalBoxValueChangeHandler(handler, this);
         return input.addValueChangeHandler(newHandler);
     }
-
     @Override
     public String getValue() {
         Date d = getDate();
         return d == null ? null : valueStrFmt.format(d);
     }
-
     @Override
     public void setValue(String value) {
         if (value == null || value.isEmpty()) {
@@ -805,7 +713,6 @@ public class JQMCalBox extends JQMText {
         Date d = valueStrFmt.parse(value);
         setDate(d);
     }
-
     @Override
     public void setValue(String value, boolean fireEvents) {
         Date oldD = fireEvents ? getDate() : null;
@@ -816,29 +723,24 @@ public class JQMCalBox extends JQMText {
             if (!eq) ValueChangeEvent.fire(input, getValue());
         }
     }
-
     private static native void bindCreated(Element elt, JQMCalBox cal) /*-{
         $wnd.$(elt).on( 'dateboxcreate', function( event, ui ) {
             cal.@com.sksamuel.jqm4gwt.plugins.datebox.JQMCalBox::created()();
         });
     }-*/;
-
     private static native void unbindCreated(Element elt) /*-{
         $wnd.$(elt).off( 'dateboxcreate' );
     }-*/;
-
     private void created() {
         setDate(delayedSetDate);
         initGridDateFormatter();
         initDisplayChange();
     }
-
     @Override
     protected void onLoad() {
         super.onLoad();
         bindCreated(input.getElement(), this);
     }
-
     @Override
     protected void onUnload() {
         final Date d = getDate();
@@ -846,25 +748,21 @@ public class JQMCalBox extends JQMText {
         super.onUnload();
         delayedSetDate = d;
     }
-
     public void setDate(Date d) {
         setDate(d, false);
     }
-
     /**
      * Refresh after a programmatic change has taken place.
      */
     public void refresh() {
         refresh(input.getElement());
     }
-
     private native void refresh(Element elt) /*-{
         var w = $wnd.$(elt);
         if (w.data('mobile-datebox') !== undefined) {
             w.datebox('refresh');
         }
     }-*/;
-
     private static native boolean isCalboxReady(Element elt) /*-{
         if ($wnd.$ === undefined || $wnd.$ === null) return false; // jQuery is not loaded
         var w = $wnd.$(elt);
@@ -874,11 +772,9 @@ public class JQMCalBox extends JQMText {
             return false;
         }
     }-*/;
-
     private boolean isReady() {
         return input.isAttached() && isCalboxReady(input.getElement());
     }
-
     /**
      * @param fireEvents - when true {@link com.google.gwt.event.logical.shared.ValueChangeEvent}
      * will be fired if date changed.
@@ -904,14 +800,12 @@ public class JQMCalBox extends JQMText {
             if (!eq) ValueChangeEvent.fire(input, getValue());
         }
     }
-
     private void updateInputText() {
         Element elt = input.getElement();
         JsDate jsd = internGetDate(elt);
         String fs = internFormat(elt, getActiveDateFormat(), jsd);
         input.setText(fs);
     }
-
     public Date getDate() {
         if (input == null) return null;
         if (!isReady()) return delayedSetDate;
@@ -926,7 +820,6 @@ public class JQMCalBox extends JQMText {
         JsDate jsd = internGetDate(input.getElement());
         return JQMContext.jsDateToDate(jsd);
     }
-
     public String getIso8601() {
         if (input == null) return null;
         if (!isReady()) return dateAsIso8601(delayedSetDate);
@@ -945,7 +838,6 @@ public class JQMCalBox extends JQMText {
         int dd = jsd.getDate();
         return dateAsIso8601(yyyy, mm, dd);
     }
-
     @SuppressWarnings("deprecation")
     public static String dateAsIso8601(Date d) {
         if (d == null) return null;
@@ -954,7 +846,6 @@ public class JQMCalBox extends JQMText {
         int dd = d.getDate();
         return dateAsIso8601(yyyy, mm, dd);
     }
-
     /**
      * @return - date in ISO8601 format, i.e. 2015-01-09
      */
@@ -986,7 +877,6 @@ public class JQMCalBox extends JQMText {
 
         return sb.toString();
     }
-
     /**
      * Doesn't change anything, just formats passed date as string according to widget's current settings.
      */
@@ -995,19 +885,15 @@ public class JQMCalBox extends JQMText {
         JsDate jsd = JsDate.create(d.getTime());
         return internFormat(input.getElement(), getActiveDateFormat(), jsd);
     }
-
     private static native String internFormat(Element elt, String fmt, JsDate d) /*-{
         return $wnd.$(elt).datebox('callFormat', fmt, d);
     }-*/;
-
     private static native JsDate internGetDate(Element elt) /*-{
         return $wnd.$(elt).datebox('getTheDate');
     }-*/;
-
     private static native boolean internIsSelDateVisible(Element elt) /*-{
         return $wnd.$(elt).datebox('dateVisible');
     }-*/;
-
     /**
      * @return - true if the selected calendar date is visible.
      * <br> Only valid for calbox, otherwise it will always return true.
@@ -1015,11 +901,9 @@ public class JQMCalBox extends JQMText {
     public boolean isSelectedDateVisible() {
         return internIsSelDateVisible(input.getElement());
     }
-
     private static native void internalSetDate(Element elt, double d) /*-{
         $wnd.$(elt).datebox('setTheDate', new $wnd.Date(d));
     }-*/;
-
     private void internSetDate(Date d) {
         final double v = d == null ? NULL_DATE : d.getTime();
         final Element elt = input.getElement();
@@ -1037,7 +921,6 @@ public class JQMCalBox extends JQMText {
             isInternSetDate = false;
         }
     }
-
     // partial copy of __fmt() and __() functions from jqm-datebox.comp.calbox.js
     // datebox('option') is not in official documentation, see also:
     // http://stackoverflow.com/a/8217857
@@ -1053,7 +936,6 @@ public class JQMCalBox extends JQMText {
         }
         return o.lang['default'][val];
     }-*/;
-
     /**
      * @param mm - month 0-11, Jan = 0 .. Dec = 11
      * @param dd - day 1-31
@@ -1065,7 +947,6 @@ public class JQMCalBox extends JQMText {
             return gridDateFormatter.format(yyyy, mm, dd, iso8601, selectedDateVisible);
         }
     }
-
     private void formatGridDateEx(int yyyy, int mm, int dd, String iso8601, boolean selectedDateVisible,
             JavaScriptObject result) {
         if (!(gridDateFormatter instanceof GridDateFormatterEx)) {
@@ -1079,13 +960,11 @@ public class JQMCalBox extends JQMText {
             JQMContext.setJsObjValue(result, "class", cls);
         }
     }
-
     private int getGridDateFormatterType() {
         if (gridDateFormatter == null) return 0;
         if (gridDateFormatter instanceof GridDateFormatterEx) return 2;
         return 1;
     }
-
     private static native void initGridDateFormatter(Element elt, JQMCalBox ctrl) /*-{
         if (ctrl == null) {
             $wnd.$(elt).datebox( { 'calFormatter': false } );
@@ -1104,16 +983,85 @@ public class JQMCalBox extends JQMText {
             }});
         }
     }-*/;
-
     private void initGridDateFormatter() {
         if (!isReady()) return;
         initGridDateFormatter(input.getElement(), gridDateFormatter != null ? this : null);
     }
-
     public GridDateFormatter getGridDateFormatter() {
         return gridDateFormatter;
     }
-
+    /** Additional information can be added to days (1..31) buttons. */
+    /** <a href="http://dev.jtsage.com/jQM-DateBox/doc/3-3-output/">Date Format Options</a> */
+    // HasValue<String> declared in JQMText and cannot be overridden as HasValue<Date> in this class.
+    // So we are going to return well formatted string representation of date as getValue() result,
+    // and expecting the same string format when setValue() method called.
+    // By default ISO 8601 format is used, but it could be changed by setting valueStrFmt property.
+// Show control inline in the page, negating any open and close actions
+// Attach the control directly to the input element, and roll it down from there when opened
+// Cause the original fieldcontain to be hidden on the page - really only appropriate with "useInline"
+    // See http://dev.jtsage.com/jQM-DateBox/doc/5-0-control/
+    // CalBox Specific - Display
+    // See http://dev.jtsage.com/jQM-DateBox/doc/5-0-control/
+    // CalBox Specific - Control
+// Refers to the header with the close button and the title
+    // See http://dev.jtsage.com/jQM-DateBox/doc/3-1-themes/
+// false means inherited theme
+// Theme for header
+// Theme for modal background of control. Shade the background with this color swatch. From the default themes, “a” is a very light grey, “b” is a slighly darker grey.
+// Theme for otherwise un-specified date buttons
+// Theme for “today”
+// Theme for choosen date (used last after other options fail)
+// Theme for highlighted DAYS
+// Theme for highlighted DATES
+// Theme for highlighted ALTERNATE DATES
+// Theme for highlighted RECURRING DATES
+    /**
+     * GWT Date and JsDate are both created in current browser's timezone.
+     * Calbox's setTheDate() takes date and use year/month/day from it (time and timezone are ignored).
+     *  Example: we are in PST (i.e. GMT-8) timezone.
+     * So new JsDate(0) gives us: 12/31/1969 16:00 GMT-8
+     *  Therefore we cannot use 0 constant, and need proper number for our timezone,
+     * which is 2.88E7 in that case.
+     *  For person in GMT timezone this constant is 0 of course.
+     */
+// used when not initialized yet
+// works when isInternSetDate == true
+    /** Additional information can be added to days (1..31) buttons. */
+    /** Show control inline in the page, negating any open and close actions */
+    /** Attach the control directly to the input element, and roll it down from there when opened */
+    /** Cause the original fieldcontain to be hidden on the page - really only appropriate with "useInline" */
+    /** Hide standard header (by default a plus button, the Month/Year combo, and a minus button) */
+    /** Refers to the header with the close button and the title */
+    /**
+     * yearPickMin and yearPickMax - valid options are an integer less than 1800,
+     * which will be added/subtracted from the current year
+     * (with Max, use a negative integer to go into the past - negative numbers for min will be abs()ed appropriatly),
+     * or if the number is greater than 1800, it will be assumed to be a hard year.
+     *  Finally, the string "NOW" (UPCASE!) will use the current year (today's date, not the picker year).
+     */
+    /**
+     * This is the class of the button in the input element.
+     * Default value is calendar.
+     * <a href="http://demos.jquerymobile.com/1.4.5/icons/">Icons</a>
+     */
+    /**
+     * This allows customization of the Next Month button in the calendar header.
+     * Default value is plus.
+     * <a href="http://demos.jquerymobile.com/1.4.5/icons/">Icons</a>
+     */
+    /**
+     * This allows customization of the Previous Month button in the calendar header.
+     * Default value is minus.
+     * <a href="http://demos.jquerymobile.com/1.4.5/icons/">Icons</a>
+     */
+    /**
+     * @return - true if the selected calendar date is visible.
+     *  Only valid for calbox, otherwise it will always return true.
+     */
+    // partial copy of __fmt() and __() functions from jqm-datebox.comp.calbox.js
+    // datebox('option') is not in official documentation, see also:
+    // http://stackoverflow.com/a/8217857
+    // http://dev.jtsage.com/jQM-DateBox2/demos/api/events.html
     /** Additional information can be added to days (1..31) buttons. */
     public void setGridDateFormatter(GridDateFormatter gridDateFormatter) {
         this.gridDateFormatter = gridDateFormatter;

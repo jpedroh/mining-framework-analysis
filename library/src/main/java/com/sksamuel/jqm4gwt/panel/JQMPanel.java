@@ -15,21 +15,55 @@ import com.sksamuel.jqm4gwt.list.JQMListItem;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 22:13:36
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/right.java
  * A panel that contains multiple child widgets. The child widgets can
  * be either {@link JQMWidget} widgets or regular GWT {@link Widget} widgets.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/right.java
  * The panel can use any HTML element type as the containing element. So
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/left.java
+ * for example, this class can be used by {@link JQMListItem} as an &lt;li>
+ * element panel, or by {@link JQMSelect} as a &lt;select> element panel.
+ * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/base.java
+ * for example, this class can be used by {@link JQMListItem} as an &lt;li>
+ * element panel, or by {@link JQMSelect} as a &lt;select> element panel.
+ * <p/>
+=======
  * for example, this class can be used by {@link JQMListItem} as an &lt;li&gt;
  * element panel, or by {@link JQMSelect} as a &lt;select&gt; element panel.
- * <br>
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/right.java
  * This is the reason for the existence of this class. Jquery mobile
  * uses many elements as containers for other elements. GWT does not
  * natively support panels other than div based panels.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/right.java
  * This panel implements {@link HasTheme} but this does not necessarily
  * have any effect. It depends on where the panel is being used.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMPanel.java/right.java
  * Typcially this class will only be used for implementing JQM Widgets
  * and users of the jqm4gwt framework will want to use a normal GWT
  * {@link Panel} instance.

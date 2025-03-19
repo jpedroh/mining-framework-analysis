@@ -3,8 +3,16 @@ package com.sksamuel.jqm4gwt;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 9 May 2011 23:41:05
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Transition.java/left.java
  * <br> Enum representing the different transitions methods available in JQM.
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/transitions/">Transitions</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Transition.java/base.java
+ * <p/> Enum representing the different transitions methods available in JQM.
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/transitions/">Transitions</a>
+=======
+ *  Enum representing the different transitions methods available in JQM.
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/transitions/">Transitions</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Transition.java/right.java
  *
  */
 public enum Transition {

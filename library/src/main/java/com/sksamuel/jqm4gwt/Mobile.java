@@ -4,7 +4,13 @@ import com.google.gwt.dom.client.Element;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 13 May 2011 11:14:24
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/right.java
  *         Utility methods. The static methods in this class map through to the
  *         equivalent JQM method in $.mobile
  *
@@ -12,10 +18,24 @@ import com.google.gwt.dom.client.Element;
 public class Mobile {
 
     /**
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/left.java
      * See <a href="http://api.jquerymobile.com/pagecontainer/#method-change">Pagecontainer.change -> options.role</a>
      * <br> The data-role value to be used when displaying the page.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/base.java
+     * See <a href="http://api.jquerymobile.com/pagecontainer/#method-change">Pagecontainer.change -> options.role</a>
+     * <p/> The data-role value to be used when displaying the page.
+=======
+     * See <a href="http://api.jquerymobile.com/pagecontainer/#method-change">Pagecontainer.change -&gt; options.role</a>
+     *  The data-role value to be used when displaying the page.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/right.java
      * By default this is undefined which means rely on the value of the data-role attribute defined on the element.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/left.java
      * <br> For example: pagecontainer.change() with dialog option is not deprecated, and as result of
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/base.java
+     * <p/> For example: pagecontainer.change() with dialog option is not deprecated, and as result of
+=======
+     *  For example: pagecontainer.change() with dialog option is not deprecated, and as result of
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/Mobile.java/right.java
      * such call page's data-role will be set to "dialog" and cause conflict with explicitly
      * defined data-dialog property.
      */
@@ -66,7 +86,7 @@ public class Mobile {
 
     /**
      * It's not enough for IE9, see <a href="http://stackoverflow.com/a/17852518">jQuery Mobile, disable all button when loading overlay is showed</a>
-     * <p> So &lt;div class="ui-loader-background"&gt;&lt;/div&gt; must be added to html body. </p>
+     * <p> So &lt;div class="ui-loader-background"/&lt; must be added to html body. </p>
      */
     public static native void disableUI() /*-{
         $wnd.$('body').addClass('ui-state-disabled');

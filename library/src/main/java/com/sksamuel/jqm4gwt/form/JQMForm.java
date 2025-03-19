@@ -26,12 +26,24 @@ import com.sksamuel.jqm4gwt.form.validators.Validator;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 12 Jul 2011 21:36:02
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/left.java
  *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/right.java
  *         A {@link JQMForm} is a standard GWT panel that offers extra
  *         functionality for quick building of input forms. The framework offers
  *         built in validation and error reporting and simplified submission
  *         processing.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/left.java
  *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/JQMForm.java/right.java
  *         Any {@link JQMSubmit} widgets that are added will be automatically
  *         wired to submit this form. Alternatively, any widget can be set to
  *         programatically submit the form by invoking submit();
@@ -51,6 +63,7 @@ public class JQMForm extends FlowPanel {
     private static final String JQM4GWT_ERROR_LABEL_STYLENAME = "jqm4gwt-error";
 
     /** The amount to adjust error scroll by so the error is not right at very top */
+    /** The amount to adjust error scroll by so the error is not right at very top */
     private static final int ERROR_SCROLL_OFFSET = 80;
 
     private final FlowPanel generalErrors = new FlowPanel();
@@ -63,8 +76,10 @@ public class JQMForm extends FlowPanel {
     private SubmissionHandler<?> submissionHandler;
 
     /** A mapping between the validators and the labels they use to show errors */
+    /** A mapping between the validators and the labels they use to show errors */
     private final Map<Validator, Label> validatorLabels = new HashMap<Validator, Label>();
 
+    /** A map containing the widgets and the validators that should be invoked on those */
     /** A map containing the widgets and the validators that should be invoked on those */
     private final Map<JQMFormWidget, Collection<Validator>> widgetValidators =
             new HashMap<JQMFormWidget, Collection<Validator>>();
@@ -141,6 +156,22 @@ public class JQMForm extends FlowPanel {
      * The label element will be located immediately after the supplied widget
      * (as first sibling).
      * <br>
+     * If the widget is not null then the an onBlur handler will be registered
+     * that will trigger validation for this validator only.
+     *
+     * @param widget    the element to which the error message should be
+     *                  associated with. If this param is null then the error will
+     *                  be added as a generic error.
+     * @param validator the validator that will perform the validation
+     */
+    /**
+     * This method will automatically add a label element which will be made
+     * visible with an error message when validate is called on this field and
+     * fails.
+     *
+     * The label element will be located immediately after the supplied widget
+     * (as first sibling).
+     *
      * If the widget is not null then the an onBlur handler will be registered
      * that will trigger validation for this validator only.
      *
@@ -344,6 +375,12 @@ public class JQMForm extends FlowPanel {
      * <br>
      * In effect, setting a field to required adds an implicit "not null or empty" validator.
      */
+    /**
+     * Sets the given widget to be required with a custom message. Then this
+     * field will be checked to ensure it has a value set before the form will be submitted.
+     *
+     * In effect, setting a field to required adds an implicit "not null or empty" validator.
+     */
     public void setRequired(JQMFormWidget widget, String msg) {
         setRequired(widget, msg, true);
     }
@@ -367,6 +404,20 @@ public class JQMForm extends FlowPanel {
      * invoked. Before the handler is invoked, the page loading dialog will be
      * shown so that async requests can complete in the background.
      * <br>
+     * The {@link SubmissionHandler} must hide the loading dialog by calling
+     * hideFormProcessingDialog() on the form or by calling Mobile.hideLoadingDialog()
+     */
+    /**
+     * This method is invoked when the form is ready for submission. Typically
+     * this method would be called from one of your submission buttons
+     * automatically but it is possible to invoke it programmatically.
+     *
+     * Before validation, the general errors are cleared.
+     *
+     * If the validation phase is passed the the submission handler will be
+     * invoked. Before the handler is invoked, the page loading dialog will be
+     * shown so that async requests can complete in the background.
+     *
      * The {@link SubmissionHandler} must hide the loading dialog by calling
      * hideFormProcessingDialog() on the form or by calling Mobile.hideLoadingDialog()
      */

@@ -18,19 +18,43 @@ import com.sksamuel.jqm4gwt.JQMWidget;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 9 May 2011 23:54:07
  *
- * <br> -  The {@link JQMTable} widget is a panel that allows other widgets to
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/left.java
+ * <br>    The {@link JQMTable} widget is a panel that allows other widgets to
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/base.java
+ * <p/>    The {@link JQMTable} widget is a panel that allows other widgets to
+=======
+ *     The {@link JQMTable} widget is a panel that allows other widgets to
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/right.java
  *         be added in a regular grid. The grid is regular in the sense that
  *         there is no concept of "cell span" like a normal HTML table has.
  *
- * <br> -  This table can accept any {@link JQMWidget} or any regular GWT
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/left.java
+ * <br>    This table can accept any {@link JQMWidget} or any regular GWT
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/base.java
+ * <p/>    This table can accept any {@link JQMWidget} or any regular GWT
+=======
+ *     This table can accept any {@link JQMWidget} or any regular GWT
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/right.java
  *         {@link Widget} as a child element. Each added widget is wrapped in a
  *         div element.
  *
- * <br> -  The table can be resized after being created by calling
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/left.java
+ * <br>    The table can be resized after being created by calling
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/base.java
+ * <p/>    The table can be resized after being created by calling
+=======
+ *     The table can be resized after being created by calling
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/right.java
  *         withColumns(int). That can be an expensive operation, see the javadoc
  *         for the withColumns(int) method for more information on why.
  *
- * <br> -  Tables must have at least 1 and at most 5 columns
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/left.java
+ * <br>    Tables must have at least 1 and at most 5 columns
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/base.java
+ * <p/>    Tables must have at least 1 and at most 5 columns
+=======
+ *     Tables must have at least 1 and at most 5 columns
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/right.java
  *
  * <p>See <a href="http://demos.jquerymobile.com/1.4.5/grids/">Grids</a></p>
  *
@@ -302,7 +326,13 @@ public class JQMTable extends JQMWidget {
     /**
      *
      * @param percents - comma separated percent size for each column.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/left.java
      * <br>For example: 10,30,30,30 defines table/grid with four columns.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/base.java
+     * <p/>For example: 10,30,30,30 defines table/grid with four columns.
+=======
+     * For example: 10,30,30,30 defines table/grid with four columns.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/layout/JQMTable.java/right.java
      */
     public void setPercentageColumns(String percents) {
         if (percents == null || percents.isEmpty()) {

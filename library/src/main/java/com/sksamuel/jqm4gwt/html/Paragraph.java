@@ -8,7 +8,13 @@ import com.sksamuel.jqm4gwt.HasText;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 18 May 2011 05:36:02
  *
- * <br> Implementation of a &lt;p&gt; element
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Paragraph.java/left.java
+ * <br> Implementation of a &lt;p> element
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Paragraph.java/base.java
+ * <p/> Implementation of a &lt;p> element
+=======
+ *  Implementation of a &lt;p&gt; element
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Paragraph.java/right.java
  *
  */
 public class Paragraph extends Widget implements HasText<Paragraph>, HasHTML<Paragraph> {

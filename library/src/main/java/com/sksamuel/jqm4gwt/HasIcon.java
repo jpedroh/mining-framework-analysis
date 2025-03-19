@@ -19,8 +19,16 @@ public interface HasIcon<T> extends HasIconPos<T> {
 
 	/**
 	 * Removes any icon previously set on the implementing class, i.e. reverts back to default icon (if any).
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/HasIcon.java/left.java
 	 * <br> If no icon has been previously set then this has no effect.
 	 * <br> To hide icon use {@link HasIcon#setBuiltInIcon(DataIcon)} with DataIcon.NONE parameter.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/HasIcon.java/base.java
+	 * <p/> If no icon has been previously set then this has no effect.
+	 * <p/> To hide icon use {@link HasIcon#setBuiltInIcon(DataIcon)} with DataIcon.NONE parameter.
+=======
+	 *  If no icon has been previously set then this has no effect.
+	 *  To hide icon use {@link HasIcon#setBuiltInIcon(DataIcon)} with DataIcon.NONE parameter.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/HasIcon.java/right.java
 	 */
 	T removeIcon();
 

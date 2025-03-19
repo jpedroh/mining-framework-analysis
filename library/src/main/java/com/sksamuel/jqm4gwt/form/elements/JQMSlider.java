@@ -30,8 +30,16 @@ import com.sksamuel.jqm4gwt.html.FormLabel;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 10 May 2011 00:24:06
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSlider.java/left.java
  * <br> An implementation of a jquery mobile "slider" widget.
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/slider/">Slider</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSlider.java/base.java
+ * <p/> An implementation of a jquery mobile "slider" widget.
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/slider/">Slider</a>
+=======
+ *  An implementation of a jquery mobile "slider" widget.
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/slider/">Slider</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSlider.java/right.java
  */
 public class JQMSlider extends JQMFieldContainer implements HasValue<Double>, HasMini<JQMSlider>,
         HasText<JQMSlider>, HasCorners<JQMSlider>, HasChangeHandlers, HasClickHandlers, HasTapHandlers {

@@ -66,6 +66,7 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     private CustomFlowPanel anchorPanel;
 
     /** Split button element */
+    /** Split button element */
     private Element split;
     private String splitTheme;
 
@@ -400,6 +401,10 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
      * Sets the image to be used to the given source url.
      * <br> The same as setImage(), but image is marked as icon class.
      */
+    /**
+     * Sets the image to be used to the given source url.
+     *  The same as setImage(), but image is marked as icon class.
+     */
     public void setIcon(String src) {
         setImage(src);
         if (imageElem != null) {
@@ -408,6 +413,7 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
         }
     }
 
+    /** The same as {@link JQMListItem#setIcon(String)} */
     /** The same as {@link JQMListItem#setIcon(String)} */
     public JQMListItem withIcon(String src) {
         setIcon(src);
@@ -418,6 +424,10 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
      * Sets the image to be used to the given source url.
      * <br> The same as setImage(), but image is marked as thumbnail class.
      */
+    /**
+     * Sets the image to be used to the given source url.
+     *  The same as setImage(), but image is marked as thumbnail class.
+     */
     public void setThumbnail(String src) {
         setImage(src);
         if (imageElem != null) {
@@ -427,6 +437,7 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     }
 
     /** The same as {@link JQMListItem#setThumbnail(String)} */
+    /** The same as {@link JQMListItem#setThumbnail(String)} */
     public JQMListItem withThumbnail(String src) {
         setThumbnail(src);
         return this;
@@ -435,6 +446,10 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     /**
      * Sets the image on this list item to the given source url.
      * <br> Neither 'jqm4gwt-listitem-thumb' nor 'jqm4gwt-listitem-icon' class is added.
+     */
+    /**
+     * Sets the image on this list item to the given source url.
+     *  Neither 'jqm4gwt-listitem-thumb' nor 'jqm4gwt-listitem-icon' class is added.
      */
     public void setImage(String src) {
         if (src == null) {
@@ -452,14 +467,20 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
     }
 
     /** The same as {@link JQMListItem#setImage(String)} */
+    /** The same as {@link JQMListItem#setImage(String)} */
     public JQMListItem withImage(String src) {
         setImage(src);
         return this;
     }
 
     /**
-     * Adds secondary image to this list item. It's forcefully added directly to &lt;li&gt; element.
+     * Adds secondary image to this list item. It's forcefully added directly to &lt;li> element.
      * <br> Additional CSS is needed to control appearance of this image, for example right side
+     * icon on the static band can be implemented, see <b>jqm4gwt-list-static-item-img-right</b> CSS rule.
+     */
+    /**
+     * Adds secondary image to this list item. It's forcefully added directly to &lt;li> element.
+     *  Additional CSS is needed to control appearance of this image, for example right side
      * icon on the static band can be implemented, see <b>jqm4gwt-list-static-item-img-right</b> CSS rule.
      */
     public ImageElement addSecondaryImage(String src) {
@@ -472,6 +493,7 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
         return img;
     }
 
+    /** For UiBinder, the same as {@link JQMListItem#addSecondaryImage(String)} */
     /** For UiBinder, the same as {@link JQMListItem#addSecondaryImage(String)} */
     public void setSecondaryImage(String src) {
         addSecondaryImage(src);
@@ -587,6 +609,7 @@ public class JQMListItem extends CustomFlowPanel implements HasText<JQMListItem>
         return this;
     }
 
+    /** Can be used in UiBinder */
     /** Can be used in UiBinder */
     public void setHref(String url) {
         setUrl(url);

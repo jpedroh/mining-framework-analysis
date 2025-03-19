@@ -30,10 +30,22 @@ import com.sksamuel.jqm4gwt.html.ListWidget;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 4 May 2011 21:21:13
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/right.java
  * An implementation of a jquery mobile list view as seen here:
  * <a href="http://jquerymobile.com/demos/1.2.1/docs/lists/index.html">Listviews</a>
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/list/JQMList.java/right.java
  * This list can be ordered or unordered (which must be set at constructor time).
  * The list can be dynamically modified with random access.
  *
@@ -72,8 +84,10 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     }
 
     /** The underlying &lt;li> or &lt;ul> widget */
+    /** The underlying &lt;li> or &lt;ul> widget */
     private final ListWidget list;
 
+    /** The index of the last click */
     /** The index of the last click */
     private int clickIndex;
     private boolean clickIsSplit;
@@ -112,6 +126,12 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
      * When a click event has been fired, you can get a reference to the position that was clicked by getClickIndex()
      * and a reference to the item that was clicked with getClickItem()
      */
+    /**
+     * Registers a new {@link ClickHandler} on this list.
+     *
+     * When a click event has been fired, you can get a reference to the position that was clicked by getClickIndex()
+     * and a reference to the item that was clicked with getClickItem()
+     */
     @Override
     public HandlerRegistration addClickHandler(ClickHandler handler) {
         return list.addDomHandler(handler, ClickEvent.getType());
@@ -146,6 +166,9 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
         return d;
     }
 
+    /**
+     * For UiBinder.
+     */
     /**
      * For UiBinder.
      */
@@ -230,6 +253,9 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     /**
      * For UiBinder.
      */
+    /**
+     * For UiBinder.
+     */
     @UiChild(tagname = "item")
     public void appendItem(JQMListItem item) {
         addItem(items.size(), item);
@@ -239,6 +265,14 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     /**
      * Adds a new {@link JQMListItem} that contains the given @param text as the heading element.
      * <br>
+     * The list item is made linkable to the given page
+     *
+     * @param text the text to use as the content of the header element
+     * @param page the page to make the list item link to
+     */
+    /**
+     * Adds a new {@link JQMListItem} that contains the given @param text as the heading element.
+     *
      * The list item is made linkable to the given page
      *
      * @param text the text to use as the content of the header element
@@ -255,6 +289,15 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
      * <br>
      * If you add an item after the page has been created then you must call .refresh() to update the layout.
      * <br>
+     * The list item is made linkable to the @param url
+     */
+    /**
+     * Adds a new {@link JQMListItem} that contains the given @param text as the content. Note that if you want to
+     * navigate to an internal url (ie, another JQM Page) then you must prefix the url with a hash. IE, the hash is
+     * not added automatically. This allows you to navigate to external urls as well.
+     *
+     * If you add an item after the page has been created then you must call .refresh() to update the layout.
+     *
      * The list item is made linkable to the @param url
      */
     public JQMListItem addItem(String text, String url) {
@@ -467,6 +510,11 @@ public class JQMList extends JQMWidget implements HasClickHandlers, HasTapHandle
     /**
      * Call to refresh the list after a programmatic change is made.
      * <br> In some cases you have to call recreate() first, and then refresh(), for example
+     * when adding complex list items.
+     */
+    /**
+     * Call to refresh the list after a programmatic change is made.
+     *  In some cases you have to call recreate() first, and then refresh(), for example
      * when adding complex list items.
      */
     public void refresh() {

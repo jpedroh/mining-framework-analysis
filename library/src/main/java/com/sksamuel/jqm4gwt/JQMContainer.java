@@ -16,7 +16,13 @@ import com.sksamuel.jqm4gwt.events.JQMHandlerRegistration.WidgetHandlerCounter;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 16 Sep 2012 00:22:18
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContainer.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContainer.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContainer.java/right.java
  * A JQMContainer is any "page level" widget, such as dialogs, popups and pages themselves,
  * which are directly attached to the DOM.
  * It is meant to contain the common functionality for showing these containers.

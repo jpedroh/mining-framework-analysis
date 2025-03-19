@@ -23,12 +23,18 @@ import com.sksamuel.jqm4gwt.button.JQMButton;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 24 Jul 2011 23:09:12
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMNavBar.java/left.java
  * <br>    jQuery Mobile has a very basic navbar widget that is useful for
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMNavBar.java/base.java
+ * <p/>    jQuery Mobile has a very basic navbar widget that is useful for
+=======
+ *     jQuery Mobile has a very basic navbar widget that is useful for
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMNavBar.java/right.java
  *         providing up to 5 buttons with optional icons in a bar, typically
  *         within a header or footer.
  *
  *
- * <p> See <a href="http://demos.jquerymobile.com/1.4.5/navbar/">Navbar</a></p>
+ * <p><a href="http://demos.jquerymobile.com/1.4.5/navbar/">Navbar</a></p>
  *
  *
  */

@@ -11,10 +11,24 @@ import com.sksamuel.jqm4gwt.html.Heading;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 10 Jul 2011 13:27:36
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/left.java
  * <br> Superclass for toolbars - {@link JQMHeader} and {@link JQMFooter}
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/base.java
+ * <p/> Superclass for toolbars - {@link JQMHeader} and {@link JQMFooter}
+=======
+ *  Superclass for toolbars - {@link JQMHeader} and {@link JQMFooter}
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/right.java
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/left.java
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/toolbar/">Toolbar</a>
  * <br> See also <a href="http://api.jquerymobile.com/toolbar/">Toolbar API</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/base.java
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/toolbar/">Toolbar</a>
+ * <p/> See also <a href="http://api.jquerymobile.com/toolbar/">Toolbar API</a>
+=======
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/toolbar/">Toolbar</a>
+ *  See also <a href="http://api.jquerymobile.com/toolbar/">Toolbar API</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMToolbar.java/right.java
  */
 public abstract class JQMToolbar extends JQMWidget implements HasText, HasFixedPosition {
 

@@ -10,14 +10,28 @@ public class JQMTabsEvent extends GwtEvent<JQMTabsEvent.Handler> {
     public interface Handler extends EventHandler {
         /**
          *  If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/left.java
          *  <br> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/base.java
+         *  <p/> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+=======
+         *   If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/right.java
          */
         void onActivate(JQMTabsEvent event);
 
         /**
          * If any exception is thrown then tabs won't be switched and current tab remains active.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/left.java
          *  <br> If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
          *  <br> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/base.java
+         *  <p/> If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
+         *  <p/> If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+=======
+         *   If the tabs are currently collapsed, event.oldTabHeader and event.oldTabContent will be null.
+         *   If the tabs are collapsing, event.newTabHeader and event.newTabContent will be null.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMTabsEvent.java/right.java
          */
         void onBeforeActivate(JQMTabsEvent event);
     }

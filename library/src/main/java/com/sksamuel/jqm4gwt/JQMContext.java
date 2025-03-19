@@ -12,7 +12,13 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 9 Jul 2011 12:57:43
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/left.java
  * <br>    The {@link JQMContext} provides methods that facilitate interaction
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/base.java
+ * <p/>    The {@link JQMContext} provides methods that facilitate interaction
+=======
+ *     The {@link JQMContext} provides methods that facilitate interaction
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/right.java
  *         between GWT, JQM and the DOM.
  *
  */
@@ -219,15 +225,33 @@ public class JQMContext {
 
     /**
      * See <a href="http://stackoverflow.com/a/12629050">Read :hover pseudo class with javascript</a>
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/left.java
      * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/base.java
+     * <p/>
+=======
+     *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/right.java
      * @param rule - substring for css rule search
      * @param props - requested property names
      * @param regexProps - regular expressions for requested properties, see the following links:
      *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/left.java
      * <br> <a href="http://www.w3schools.com/jsref/jsref_obj_regexp.asp">JavaScript RegExp Object</a>
      * <br> <a href="http://www.regular-expressions.info/javascriptexample.html">Regex Tester</a>
      * <br> <a href="http://www.regular-expressions.info/anchors.html">Start of String and End of String Anchors</a>
      * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/base.java
+     * <p/> <a href="http://www.w3schools.com/jsref/jsref_obj_regexp.asp">JavaScript RegExp Object</a>
+     * <p/> <a href="http://www.regular-expressions.info/javascriptexample.html">Regex Tester</a>
+     * <p/> <a href="http://www.regular-expressions.info/anchors.html">Start of String and End of String Anchors</a>
+     * <p/>
+=======
+     *  <a href="http://www.w3schools.com/jsref/jsref_obj_regexp.asp">JavaScript RegExp Object</a>
+     *  <a href="http://www.regular-expressions.info/javascriptexample.html">Regex Tester</a>
+     *  <a href="http://www.regular-expressions.info/anchors.html">Start of String and End of String Anchors</a>
+     *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/JQMContext.java/right.java
      *
      * @return - property/value javascript object
      */

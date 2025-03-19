@@ -15,8 +15,14 @@ import com.sksamuel.jqm4gwt.form.elements.JQMFilterableEvent;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 22:09:41
- * <br>
- * An implementation of {@link JQMPanel} for control groups.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/left.java
+ *         <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/base.java
+ *         <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/right.java
+ *         An implementation of {@link JQMPanel} for control groups.
  */
 public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMControlGroup>,
         HasMini<JQMControlGroup>, HasCorners<JQMControlGroup>, HasFilterable {
@@ -123,9 +129,19 @@ public class JQMControlGroup extends JQMPanel implements HasOrientation<JQMContr
 
     /**
      * After dynamic changes to widgets, can be called in conjunction with JQMContext.render().
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/left.java
      * <br> Example:
      * <br> JQMContext.render(grp.getElement().getId());
      * <br> grp.refresh();
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/base.java
+     * <p/> Example:
+     * <p/> JQMContext.render(grp.getElement().getId());
+     * <p/> grp.refresh();
+=======
+     *  Example:
+     *  JQMContext.render(grp.getElement().getId());
+     *  grp.refresh();
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/panel/JQMControlGroup.java/right.java
      */
     public void refresh() {
         refresh(getElement());

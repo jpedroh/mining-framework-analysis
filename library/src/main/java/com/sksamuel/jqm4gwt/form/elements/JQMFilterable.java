@@ -10,8 +10,16 @@ import com.sksamuel.jqm4gwt.JQMCommon;
 /**
  * @author SlavaP
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFilterable.java/left.java
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/filterable/">Filterable</a>
  * <br> See <a href="http://api.jquerymobile.com/filterable/">Filterable API</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFilterable.java/base.java
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/filterable/">Filterable</a>
+ * <p/> See <a href="http://api.jquerymobile.com/filterable/">Filterable API</a>
+=======
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/filterable/">Filterable</a>
+ *  See <a href="http://api.jquerymobile.com/filterable/">Filterable API</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFilterable.java/right.java
  *
  */
 public class JQMFilterable extends SimplePanel implements HasPlaceHolder<JQMFilterable>,

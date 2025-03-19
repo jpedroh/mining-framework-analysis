@@ -54,8 +54,16 @@ import com.sksamuel.jqm4gwt.html.FormLabel;
 
 /**
  * @author Stephen K Samuel samspade79@gmail.com 5 May 2011 10:58:58
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSelect.java/left.java
  * <br> An implementation of a jQuery mobile select element.
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/selectmenu/">Select menu</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSelect.java/base.java
+ * <p/> An implementation of a jQuery mobile select element.
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/selectmenu/">Select menu</a>
+=======
+ *  An implementation of a jQuery mobile select element.
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/selectmenu/">Select menu</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSelect.java/right.java
  */
 public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>, HasText<JQMSelect>,
         HasFocusHandlers, HasChangeHandlers, HasClickHandlers, HasTapHandlers, HasValue<String>,
@@ -159,6 +167,7 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     protected final ListBoxEx select;
 
     /** Unique search index: value, index in select */
+    /** Unique search index: value, index in select */
     protected final Map<String, Integer> selectIdx = new HashMap<String, Integer>(); // search index
 
     protected final FormLabel label;
@@ -170,6 +179,7 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     private boolean transparentPrevPageClearCache;
     private boolean transparentDoPrevPageLifecycle;
 
+    /** See {@link JQMSelect#getDelayedValue()} */
     /** See {@link JQMSelect#getDelayedValue()} */
     private String delayedValue;
     private Boolean delayedFireEvents;
@@ -248,6 +258,13 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
      * Adds an option with the given text. The text is also used as the value.
      * The option is added at the end of the list of options.
      * <br>
+     * If you want to specify a value diferent from the display text, then
+     * invoke addOption(String, String).
+     */
+    /**
+     * Adds an option with the given text. The text is also used as the value.
+     * The option is added at the end of the list of options.
+     *
      * If you want to specify a value diferent from the display text, then
      * invoke addOption(String, String).
      */
@@ -417,11 +434,13 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     }
 
     /** Sets the position of the icon. */
+    /** Sets the position of the icon. */
     @Override
     public void setIconPos(IconPos pos) {
         JQMCommon.setIconPos(select, pos);
     }
 
+    /** Sets the position of the icon. */
     /** Sets the position of the icon. */
     @Override
     public JQMSelect withIconPos(IconPos pos) {
@@ -435,11 +454,13 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     }
 
     /** If set to true then renders a smaller version of the standard-sized element. */
+    /** If set to true then renders a smaller version of the standard-sized element. */
     @Override
     public void setMini(boolean mini) {
         JQMCommon.setMini(select, mini);
     }
 
+    /** If set to true then renders a smaller version of the standard-sized element. */
     /** If set to true then renders a smaller version of the standard-sized element. */
     @Override
     public JQMSelect withMini(boolean mini) {
@@ -490,6 +511,14 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
      * it will be memorized and probably resolved later, when more options are added.
      * <br> On successful resolution regular setValue() will be called (and events fired if it was requested).
      * <br> Calling clear() resets delayedValue processing.
+     */
+    /**
+     * setValue() can be called before options are populated (or in the middle of their population).
+     * For example: asynchronous options loading or data binding scenarios.
+     *  if value != null and cannot be resolved immediately through current options,
+     * it will be memorized and probably resolved later, when more options are added.
+     *  On successful resolution regular setValue() will be called (and events fired if it was requested).
+     *  Calling clear() resets delayedValue processing.
      */
     public String getDelayedValue() {
         return delayedValue;
@@ -582,6 +611,7 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     }
 
     /** Programmatically close an open select menu */
+    /** Programmatically close an open select menu */
     public void close() {
         close(select.getElement());
     }
@@ -590,6 +620,7 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
         $wnd.$(elt).selectmenu('close');
     }-*/;
 
+    /** Programmatically open a select menu */
     /** Programmatically open a select menu */
     public void open() {
         open(select.getElement());
@@ -696,6 +727,9 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     /**
      * Sets the icon used by this button. See {@link DataIcon}.
      */
+    /**
+     * Sets the icon used by this button. See {@link DataIcon}.
+     */
     @Override
     public void setBuiltInIcon(DataIcon icon) {
         String oldIcon = JQMCommon.getCustomIcon(select.getElement());
@@ -725,6 +759,9 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
         $wnd.$(elt).children().find('.ui-btn').removeClass(oldIcon).addClass(newIcon);
     }-*/;
 
+    /**
+     * Sets the icon used by this button. See {@link DataIcon}.
+     */
     /**
      * Sets the icon used by this button. See {@link DataIcon}.
      */
@@ -778,6 +815,14 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
      * nor {@link ValueChangeHandler#onValueChange(ValueChangeEvent)}
      * events to be fired.
      * <br> Call {@link JQMSelect#setValue(String, boolean)} with <b>true</b> if you need them raised.
+     */
+    /**
+     * Change the selection to the option at the given index.
+     *  Setting the selected index programmatically does <em>NOT</em>
+     * cause the {@link ChangeHandler#onChange(ChangeEvent)}
+     * nor {@link ValueChangeHandler#onValueChange(ValueChangeEvent)}
+     * events to be fired.
+     *  Call {@link JQMSelect#setValue(String, boolean)} with <b>true</b> if you need them raised.
      */
     public void setSelectedIndex(int index) {
         select.setSelectedIndex(index);
@@ -834,11 +879,19 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
      * Sets the selected value to the given value. If no option matches the
      * given value then the selected is removed.
      */
+    /**
+     * Sets the selected value to the given value. If no option matches the
+     * given value then the selected is removed.
+     */
     @Override
     public void setValue(String value) {
         setValue(value, false);
     }
 
+    /**
+     * Sets the selected value to the given value. If no option matches the
+     * given value then the selected is removed.
+     */
     /**
      * Sets the selected value to the given value. If no option matches the
      * given value then the selected is removed.
@@ -909,6 +962,12 @@ public class JQMSelect extends JQMFieldContainer implements HasNative<JQMSelect>
     /**
      * Default is true.
      * <br> Sets whether placeholder menu items are hidden.
+     * When true, the menu item used as the placeholder for the select menu widget
+     * will not appear in the list of choices.
+     */
+    /**
+     * Default is true.
+     *  Sets whether placeholder menu items are hidden.
      * When true, the menu item used as the placeholder for the select menu widget
      * will not appear in the list of choices.
      */

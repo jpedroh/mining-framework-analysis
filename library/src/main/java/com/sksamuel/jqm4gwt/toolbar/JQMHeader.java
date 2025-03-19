@@ -13,10 +13,11 @@ import com.sksamuel.jqm4gwt.button.JQMButton.PosOnBand;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 4 May 2011 21:21:13
  *
- * <br> This class models a Jquery Mobile header element.
- * It can contain text, and two optional buttons, one left and one right.
+ *         This class models a Jquery Mobile header element. It can contain
+ *         text, and two optional buttons, one left and one right.
  *
- * <br> See <a href="http://jquerymobile.com/demos/1.2.0/docs/toolbars/docs-headers.html">Header structure</a>
+ * @link
+ *       http://jquerymobile.com/demos/1.2.0/docs/toolbars/docs-headers.html
  *
  */
 public class JQMHeader extends JQMToolbar implements HasText<JQMHeader>, HasJqmHeader {
@@ -381,7 +382,13 @@ public class JQMHeader extends JQMToolbar implements HasText<JQMHeader>, HasJqmH
      * Sets whether or not this page should have an auto generated back
      * button. If so, it will be placed in the left slot and override any left
      * button already there.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMHeader.java/left.java
      * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMHeader.java/base.java
+     * <p/>
+=======
+     *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMHeader.java/right.java
      * If you want a back button in the right, then programatically create a
      * button, set it to back using btn.setBack(), and call header.setRightButton(btn) with
      * the button as the param.

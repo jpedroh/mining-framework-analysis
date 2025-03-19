@@ -8,7 +8,13 @@ import com.sksamuel.jqm4gwt.HasText;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 11 Jul 2011 13:38:38
  *
- * <br> An implemenation of a &lt;span&gt; element exposed as a widget.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Span.java/left.java
+ * <br> An implemenation of a &lt;span> element exposed as a widget
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Span.java/base.java
+ * <p/> An implemenation of a &lt;span> element exposed as a widget
+=======
+ *  An implemenation of a &lt;span&gt; element exposed as a widget
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/Span.java/right.java
  *
  */
 public class Span extends Widget implements HasText<Span>, HasHTML<Span> {

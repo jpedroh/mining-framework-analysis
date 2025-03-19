@@ -13,7 +13,13 @@ public interface JQMFormWidget extends IsWidget, HasValue<String>, HasBlurHandle
 
     /**
      * Optional, can return null, then JQMForm will create label by itself.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFormWidget.java/left.java
      * <br> Create and return a new Label for displaying errors and attach to the form widget.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFormWidget.java/base.java
+     * <p/> Create and return a new Label for displaying errors and attach to the form widget.
+=======
+     *  Create and return a new Label for displaying errors and attach to the form widget.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMFormWidget.java/right.java
      **/
     Label addErrorLabel();
 }

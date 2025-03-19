@@ -6,7 +6,13 @@ import com.sksamuel.jqm4gwt.examples.uibinder.TestView1;
  * GWT JUnit <b>integration</b> tests must extend GWTTestCase.
  * Using <code>"GwtTest*"</code> naming pattern exclude them from running with
  * surefire during the test phase.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/examples/src/main/java/com/sksamuel/jqm4gwt/examples/GWTTestUiBinder.java/left.java
  * <br>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/examples/src/main/java/com/sksamuel/jqm4gwt/examples/GWTTestUiBinder.java/base.java
+ * <p/>
+=======
+ *
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/examples/src/main/java/com/sksamuel/jqm4gwt/examples/GWTTestUiBinder.java/right.java
  * If you run the tests using the Maven command line, you will have to
  * navigate with your browser to a specific url given by Maven.
  * See http://mojo.codehaus.org/gwt-maven-plugin/user-guide/testing.html

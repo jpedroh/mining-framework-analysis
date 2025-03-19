@@ -10,7 +10,13 @@ import com.google.gwt.user.client.ui.WidgetCollection;
 
 /**
  * Flow panel based on the given HTML element sent as constructor argument.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/CustomFlowPanel.java/left.java
  * <br> A panel that formats its child widgets using the default HTML layout behavior.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/CustomFlowPanel.java/base.java
+ * <p/> A panel that formats its child widgets using the default HTML layout behavior.
+=======
+ *  A panel that formats its child widgets using the default HTML layout behavior.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/html/CustomFlowPanel.java/right.java
  */
 public class CustomFlowPanel extends ComplexPanel {
 

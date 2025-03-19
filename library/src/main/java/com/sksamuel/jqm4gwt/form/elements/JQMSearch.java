@@ -16,9 +16,21 @@ import com.sksamuel.jqm4gwt.events.JQMInputHandler;
 /**
  * @author Stephen K Samuel samspade79@gmail.com 18 May 2011 04:17:45
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/left.java
  * <br> Text element stylised as a search box.
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/base.java
+ * <p/> Text element stylised as a search box.
+=======
+ *  Text element stylised as a search box.
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/right.java
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/left.java
  * <br> See <a href="http://demos.jquerymobile.com/1.4.5/forms/#search">Search Input</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/base.java
+ * <p/> See <a href="http://demos.jquerymobile.com/1.4.5/forms/#search">Search Input</a>
+=======
+ *  See <a href="http://demos.jquerymobile.com/1.4.5/forms/#search">Search Input</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/right.java
  *
  */
 public class JQMSearch extends JQMText {
@@ -73,7 +85,13 @@ public class JQMSearch extends JQMText {
 
 	/**
      * Occurs on every entered/deleted symbol.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/left.java
      * <br><b>Warning!</b> Clear button does not raise this event, use
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/base.java
+     * <p/><b>Warning!</b> Clear button does not raise this event, use
+=======
+     * <b>Warning!</b> Clear button does not raise this event, use
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/form/elements/JQMSearch.java/right.java
      * addValueChangeHandler() to react on it.
 	 */
 	public HandlerRegistration addInputHandler(JQMInputHandler handler) {

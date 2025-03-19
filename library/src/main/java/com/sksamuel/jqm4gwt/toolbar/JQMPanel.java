@@ -18,10 +18,22 @@ import com.sksamuel.jqm4gwt.toolbar.JQMPanelEvent.PanelState;
 /**
  * @author Gabi Boros gabi.boros@gmail.com 7 June 2013 15:24:13
  *
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/left.java
  * <br> This class models a Jquery Mobile
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/base.java
+ * <p/> This class models a Jquery Mobile
+=======
+ *  This class models a Jquery Mobile
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/right.java
  *
  * <a href="http://demos.jquerymobile.com/1.4.5/panel/">Panel Widget</a>
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/left.java
  * <br> See also <a href="http://api.jquerymobile.com/panel/">API for Panel Widget</a>
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/base.java
+ * <p/> See also <a href="http://api.jquerymobile.com/panel/">API for Panel Widget</a>
+=======
+ *  See also <a href="http://api.jquerymobile.com/panel/">API for Panel Widget</a>
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/right.java
  *
  *
  */
@@ -154,7 +166,13 @@ public class JQMPanel extends JQMWidget {
 
     /**
      * @param positionFixed - if true contents will appear no matter how far down the page you're scrolled.
+<<<<<<< /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/left.java
      * <br> The framework also checks to see if the panel contents will fit within the viewport before
+||||||| /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/base.java
+     * <p/> The framework also checks to see if the panel contents will fit within the viewport before
+=======
+     *  The framework also checks to see if the panel contents will fit within the viewport before
+>>>>>>> /usr/src/app/output/jqm4gwt/jqm4gwt/5d69eb0c67f1964835f082cfaffec4da5ca60067/library/src/main/java/com/sksamuel/jqm4gwt/toolbar/JQMPanel.java/right.java
      * applying the fixed positioning because this property would prevent the panel contents from
      * scrolling and make it inaccessible.
      */
