@@ -210,7 +210,6 @@ public final class MethodDeclaration extends BodyDeclaration implements Document
         this.isDefault = isDefault;
     }
 
-
     @Override
     public String getDeclarationAsString() {
         return getDeclarationAsString(true, true, true);
@@ -220,7 +219,7 @@ public final class MethodDeclaration extends BodyDeclaration implements Document
     public String getDeclarationAsString(boolean includingModifiers, boolean includingThrows) {
         return getDeclarationAsString(includingModifiers, includingThrows, true);
     }
-    
+
     /**
      * The declaration returned has this schema:
      *
