@@ -1,5 +1,4 @@
 package sortpom;
-
 import java.io.InputStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -20,6 +19,7 @@ public class XmlProcessor {
   private final WrapperFactory factory;
 
   private Document originalDocument;
+
   private Document newDocument;
 
   public XmlProcessor(WrapperFactory factory) {
@@ -42,15 +42,12 @@ public class XmlProcessor {
   public void sortXml() {
     newDocument = (Document) originalDocument.clone();
     final Element rootElement = originalDocument.getRootElement().createCopy();
-
     HierarchyRootWrapper rootWrapper = factory.createFromRootElement(rootElement);
-
     rootWrapper.createWrappedStructure(factory);
     rootWrapper.detachStructure();
     rootWrapper.sortStructureAttributes();
     rootWrapper.sortStructureElements();
     rootWrapper.connectXmlStructure();
-
     replaceRootElementInNewDocument(rootWrapper.getElementContent().getContent());
   }
 
@@ -58,9 +55,7 @@ public class XmlProcessor {
   private void replaceRootElementInNewDocument(Element newElement) {
     var rootElement = newDocument.getRootElement();
     var content = newDocument.content();
-
     newDocument.clearContent();
-
     for (var node : content) {
       if (node == rootElement) {
         newDocument.add(newElement);
@@ -75,8 +70,7 @@ public class XmlProcessor {
   }
 
   public XmlOrderedResult isXmlOrdered() {
-    ElementComparator elementComparator =
-        new ElementComparator(originalDocument.getRootElement(), newDocument.getRootElement());
+    ElementComparator elementComparator = new ElementComparator(originalDocument.getRootElement(), newDocument.getRootElement());
     return elementComparator.isElementOrdered();
   }
 }
