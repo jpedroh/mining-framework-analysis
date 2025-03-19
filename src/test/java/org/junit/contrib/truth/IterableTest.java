@@ -1,26 +1,7 @@
-/*
- * Copyright (c) 2011 David Saff
- * Copyright (c) 2011 Christian Gruber
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.junit.contrib.truth;
-
 import static org.junit.Assert.fail;
 import static org.junit.contrib.truth.Truth.ASSERT;
-
 import java.util.Arrays;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,11 +12,7 @@ import org.junit.runners.JUnit4;
  * @author David Saff
  * @author Christian Gruber (cgruber@israfil.net)
  */
-@RunWith(JUnit4.class)
-public class IterableTest {
-
-
-
+@RunWith(value = JUnit4.class) public class IterableTest {
   @Test public void iterableContainsWithNull() {
     ASSERT.that(iterable(1, null, 3)).contains(null);
   }
@@ -50,7 +27,8 @@ public class IterableTest {
     try {
       ASSERT.that(iterable(1, 2, 3)).contains(1).and().contains(5);
       fail("Should have thrown.");
-    } catch (AssertionError e) {}
+    } catch (AssertionError e) {
+    }
   }
 
   @Test public void iterableContainsFailure() {
@@ -105,8 +83,7 @@ public class IterableTest {
    * Helper that returns a general Collection rather than a List.
    * This ensures that we test CollectionSubject (rather than ListSubject).
    */
-  private static <T> Iterable<T> iterable(T... items) {
+  private static <T extends java.lang.Object> Iterable<T> iterable(T... items) {
     return Arrays.asList(items);
   }
-
 }
