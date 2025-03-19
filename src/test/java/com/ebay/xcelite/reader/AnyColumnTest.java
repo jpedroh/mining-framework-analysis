@@ -20,10 +20,10 @@ import com.ebay.xcelite.Xcelite;
 import com.ebay.xcelite.exceptions.XceliteException;
 import com.ebay.xcelite.model.AnyColumnBean;
 import com.ebay.xcelite.model.AnyColumnBeanDoneWrong;
-import com.ebay.xcelite.model.AnyColumnBeanDoneWrongNotUsingMap;
 import com.ebay.xcelite.model.AnyColumnEmployeeBean;
 import com.ebay.xcelite.options.XceliteOptions;
 import com.ebay.xcelite.policies.MissingCellPolicy;
+import com.ebay.xcelite.model.AnyColumnBeanDoneWrongNotUsingMap;
 import com.ebay.xcelite.reader.SheetReader;
 import com.ebay.xcelite.sheet.XceliteSheet;
 import org.junit.jupiter.api.Assertions;
@@ -146,7 +146,6 @@ class AnyColumnTest {
             cnt++;
         }
     }
-
     /**
      * When `anyColumnCreatesCollection` from XceliteOptions is `true`, must correctly
      * create Collections for fields with @AnyColumn and repeated column headers

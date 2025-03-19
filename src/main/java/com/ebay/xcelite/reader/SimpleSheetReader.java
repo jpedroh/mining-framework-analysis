@@ -73,7 +73,31 @@ public class SimpleSheetReader extends AbstractSheetReader<Collection<Object>> {
      * No-Op for SimpleSheetReader, we don't handle headers
      */
     @Override
+<<<<<<< /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/left.java
+    public Collection<Collection<Object>> read() {
+        List<Collection<Object>> rows = new ArrayList<>();
+        int lastNonEmptyRowId = 0;
+        boolean firstIteration = true;
+        Iterator<Row> rowIterator = sheet.moveToFirstDataRow(this, false);
+        if (!rowIterator.hasNext())
+            return rows;
+/*
+        rowIterator.forEachRemaining(excelRow -> {
+            Collection<Object> row;*/
+||||||| /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/base.java
+    public Collection<Collection<Object>> read() {
+        List<Collection<Object>> rows = new ArrayList<>();
+        int lastNonEmptyRowId = 0;
+        Boolean firstIteration = true;
+        Iterator<Row> rowIterator = sheet.moveToFirstDataRow(this, false);
+        if (!rowIterator.hasNext())
+            return rows;
+/*
+        rowIterator.forEachRemaining(excelRow -> {
+            Collection<Object> row;*/
+=======
     void buildHeader(Row row) {}
+>>>>>>> /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/right.java
 
     /**
      * No-Op for SimpleSheetReader, we don't handle headers
@@ -81,6 +105,68 @@ public class SimpleSheetReader extends AbstractSheetReader<Collection<Object>> {
     @Override
     void validateColumns() {}
 
+<<<<<<< /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/left.java
+            Row excelRow = rowIterator.next();
+            if (firstIteration) {
+                int rowNum = excelRow.getRowNum();
+                if (rows.size() < rowNum) {
+                    int firstDataRowIndex = XceliteSheetImpl.getFirstDataRowIndex(this);
+                    for (int i = firstDataRowIndex; i < rowNum; i++) {
+                        rows.add(handleEmptyRow(sheet.getNativeSheet().getRow(i)));
+                    }
+                }
+                firstIteration = false;
+            }
+            if (isBlankRow(excelRow)) {
+                row = handleEmptyRow(excelRow);
+                if (!options.getMissingRowPolicy().equals(SKIP)) {
+                    if (shouldKeepObject(row, rowPostProcessors)) {
+                        rows.add(row);
+                    }
+                }
+            } else {
+                row = fillObject(excelRow);
+                if (shouldKeepObject(row, rowPostProcessors)) {
+                    rows.add(row);
+                    lastNonEmptyRowId = rows.size();
+                }
+            }
+        }
+
+        return applyTrailingEmptyRowPolicy(rows, lastNonEmptyRowId);
+    }
+||||||| /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/base.java
+            Row excelRow = rowIterator.next();
+            if (firstIteration) {
+                int rowNum = excelRow.getRowNum();
+                if (rows.size() < rowNum) {
+                    int firstDataRowIndex = XceliteSheetImpl.getFirstDataRowIndex(this);
+                    for (int i = firstDataRowIndex; i < rowNum; i++) {
+                        rows.add(handleEmptyRow(sheet.getNativeSheet().getRow(i)));
+                    }
+                }
+                firstIteration = false;
+            }
+            if (isBlankRow(excelRow)) {
+                row = handleEmptyRow(excelRow);
+                if (!options.getMissingRowPolicy().equals(SKIP)) {
+                    if (shouldKeepObject(row, rowPostProcessors)) {
+                        rows.add(row);
+                    }
+                }
+            } else {
+                row = fillObject(excelRow);
+                if (shouldKeepObject(row, rowPostProcessors)) {
+                    rows.add(row);
+                    lastNonEmptyRowId = rows.size();
+                }
+            }
+        };
+
+        return applyTrailingEmptyRowPolicy(rows, lastNonEmptyRowId);
+    }
+=======
+>>>>>>> /usr/src/app/output/ebay/xcelite/40e1d22a1ff208cd99f014eac25fe2a51f1cc6df/src/main/java/com/ebay/xcelite/reader/SimpleSheetReader.java/right.java
 
     @SneakyThrows
     @Override

@@ -17,7 +17,8 @@ package com.ebay.xcelite;
 
 import com.ebay.xcelite.exceptions.XceliteException;
 import com.ebay.xcelite.options.XceliteOptions;
-import com.ebay.xcelite.sheet.*;
+import com.ebay.xcelite.sheet.XceliteSheet;
+import com.ebay.xcelite.sheet.XceliteSheetImpl;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Workbook;
