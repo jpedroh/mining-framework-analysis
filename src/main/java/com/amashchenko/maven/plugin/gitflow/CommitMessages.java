@@ -1,18 +1,3 @@
-/*
- * Copyright 2014-2019 Aleksandr Mashchenko.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.amashchenko.maven.plugin.gitflow;
 
 /**
@@ -20,310 +5,320 @@ package com.amashchenko.maven.plugin.gitflow;
  *
  */
 public class CommitMessages {
-    private String featureStartMessage;
-    private String featureFinishMessage;
+  private String featureStartMessage;
 
-    private String hotfixStartMessage;
-    private String hotfixFinishMessage;
+  private String featureFinishMessage;
 
-    private String hotfixVersionUpdateMessage;
+  private String hotfixStartMessage;
 
-    private String releaseStartMessage;
-    private String releaseFinishMessage;
+  private String hotfixFinishMessage;
 
-    private String releaseVersionUpdateMessage;
+  private String hotfixVersionUpdateMessage;
 
-    private String releaseFinishMergeMessage;
-    private String releaseFinishDevMergeMessage;
+  private String releaseStartMessage;
 
-    private String tagHotfixMessage;
-    private String tagReleaseMessage;
+  private String releaseFinishMessage;
 
-    private String suportStartMessage;
-  
-    private String updateDevToAvoidConflictsMessage;
-    private String updateDevBackPreMergeStateMessage;
+  private String releaseVersionUpdateMessage;
 
-    private String updateReleaseToAvoidConflictsMessage;
-    private String updateReleaseBackPreMergeStateMessage;
+  private String tagHotfixMessage;
 
-    public CommitMessages() {
-        featureStartMessage = "Update versions for feature branch";
-        featureFinishMessage = "Update versions for development branch";
+  private String 
+<<<<<<< /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/left.java
+  suportStartMessage
+=======
+  releaseFinishMergeMessage
+>>>>>>> /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/right.java
+  ;
 
-        hotfixStartMessage = "Update versions for hotfix";
-        hotfixFinishMessage = "Update for next development version";
+  private String releaseFinishDevMergeMessage;
 
-        hotfixVersionUpdateMessage = "Update to hotfix version";
+  private String tagReleaseMessage;
 
-        releaseStartMessage = "Update versions for release";
-        releaseFinishMessage = "Update for next development version";
+  private String updateDevToAvoidConflictsMessage;
 
-        releaseVersionUpdateMessage = "Update for next development version";
+  private String updateDevBackPreMergeStateMessage;
 
-        releaseFinishMergeMessage = "";
-        releaseFinishDevMergeMessage = "";
+  private String updateReleaseToAvoidConflictsMessage;
 
-        tagHotfixMessage = "Tag hotfix";
-        tagReleaseMessage = "Tag release";
+  private String updateReleaseBackPreMergeStateMessage;
 
-        suportStartMessage = "Update versions for support";
-      
-        updateDevToAvoidConflictsMessage = "Update develop to production version to avoid merge conflicts";
-        updateDevBackPreMergeStateMessage = "Update develop version back to pre-merge state";
+  public CommitMessages() {
+    featureStartMessage = "Update versions for feature branch";
+    featureFinishMessage = "Update versions for development branch";
+    hotfixStartMessage = "Update versions for hotfix";
+    hotfixFinishMessage = "Update for next development version";
+    hotfixVersionUpdateMessage = "Update to hotfix version";
+    releaseStartMessage = "Update versions for release";
+    releaseFinishMessage = "Update for next development version";
+    releaseVersionUpdateMessage = "Update for next development version";
+    releaseFinishMergeMessage = "";
+    releaseFinishDevMergeMessage = "";
+    tagHotfixMessage = "Tag hotfix";
+    tagReleaseMessage = "Tag release";
+    updateDevToAvoidConflictsMessage = "Update develop to production version to avoid merge conflicts";
+    updateDevBackPreMergeStateMessage = "Update develop version back to pre-merge state";
+    updateReleaseToAvoidConflictsMessage = "Update release to hotfix version to avoid merge conflicts";
 
-        updateReleaseToAvoidConflictsMessage = "Update release to hotfix version to avoid merge conflicts";
-        updateReleaseBackPreMergeStateMessage = "Update release version back to pre-merge state";
-    }
+<<<<<<< /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/left.java
+    suportStartMessage
+=======
+    updateReleaseBackPreMergeStateMessage
+>>>>>>> /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/right.java
+     = 
+<<<<<<< /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/left.java
+    "update versions for support"
+=======
+    "Update release version back to pre-merge state"
+>>>>>>> /usr/src/app/output/aleksandr-m/gitflow-maven-plugin/21e89d1e201502c297cc8d03fae44c05bc51dfc4/src/main/java/com/amashchenko/maven/plugin/gitflow/CommitMessages.java/right.java
+    ;
+  }
 
-    /**
+  /**
      * @return the suportStartMessage
      */
-    public String getSuportStartMessage() {
+  public String getSuportStartMessage() {
+    return suportStartMessage;
+  }
 
-        return suportStartMessage;
-    }
-
-    /**
+  /**
      * @param suportStartMessage
      *            the suportStartMessage to set
      */
-    public void setSuportStartMessage(String suportStartMessage) {
+  public void setSuportStartMessage(String suportStartMessage) {
+    this.suportStartMessage = suportStartMessage;
+  }
 
-        this.suportStartMessage = suportStartMessage;
-    }
-
-    /**
+  /**
      * @return the featureStartMessage
      */
-    public String getFeatureStartMessage() {
-        return featureStartMessage;
-    }
+  public String getFeatureStartMessage() {
+    return featureStartMessage;
+  }
 
-    /**
+  /**
      * @param featureStartMessage
      *            the featureStartMessage to set
      */
-    public void setFeatureStartMessage(String featureStartMessage) {
-        this.featureStartMessage = featureStartMessage;
-    }
+  public void setFeatureStartMessage(String featureStartMessage) {
+    this.featureStartMessage = featureStartMessage;
+  }
 
-    /**
+  /**
      * @return the featureFinishMessage
      */
-    public String getFeatureFinishMessage() {
-        return featureFinishMessage;
-    }
+  public String getFeatureFinishMessage() {
+    return featureFinishMessage;
+  }
 
-    /**
+  /**
      * @param featureFinishMessage
      *            the featureFinishMessage to set
      */
-    public void setFeatureFinishMessage(String featureFinishMessage) {
-        this.featureFinishMessage = featureFinishMessage;
-    }
+  public void setFeatureFinishMessage(String featureFinishMessage) {
+    this.featureFinishMessage = featureFinishMessage;
+  }
 
-    /**
+  /**
      * @return the hotfixStartMessage
      */
-    public String getHotfixStartMessage() {
-        return hotfixStartMessage;
-    }
+  public String getHotfixStartMessage() {
+    return hotfixStartMessage;
+  }
 
-    /**
+  /**
      * @param hotfixStartMessage
      *            the hotfixStartMessage to set
      */
-    public void setHotfixStartMessage(String hotfixStartMessage) {
-        this.hotfixStartMessage = hotfixStartMessage;
-    }
+  public void setHotfixStartMessage(String hotfixStartMessage) {
+    this.hotfixStartMessage = hotfixStartMessage;
+  }
 
-    /**
+  /**
      * @return the hotfixFinishMessage
      */
-    public String getHotfixFinishMessage() {
-        return hotfixFinishMessage;
-    }
+  public String getHotfixFinishMessage() {
+    return hotfixFinishMessage;
+  }
 
-    /**
+  /**
      * @param hotfixFinishMessage
      *            the hotfixFinishMessage to set
      */
-    public void setHotfixFinishMessage(String hotfixFinishMessage) {
-        this.hotfixFinishMessage = hotfixFinishMessage;
-    }
+  public void setHotfixFinishMessage(String hotfixFinishMessage) {
+    this.hotfixFinishMessage = hotfixFinishMessage;
+  }
 
-    public String getHotfixVersionUpdateMessage() {
-        return hotfixVersionUpdateMessage;
-    }
+  public String getHotfixVersionUpdateMessage() {
+    return hotfixVersionUpdateMessage;
+  }
 
-    public void setHotfixVersionUpdateMessage(String hotfixVersionUpdateMessage) {
-        this.hotfixVersionUpdateMessage = hotfixVersionUpdateMessage;
-    }
+  public void setHotfixVersionUpdateMessage(String hotfixVersionUpdateMessage) {
+    this.hotfixVersionUpdateMessage = hotfixVersionUpdateMessage;
+  }
 
-    /**
+  /**
      * @return the releaseStartMessage
      */
-    public String getReleaseStartMessage() {
-        return releaseStartMessage;
-    }
+  public String getReleaseStartMessage() {
+    return releaseStartMessage;
+  }
 
-    /**
+  /**
      * @param releaseStartMessage
      *            the releaseStartMessage to set
      */
-    public void setReleaseStartMessage(String releaseStartMessage) {
-        this.releaseStartMessage = releaseStartMessage;
-    }
+  public void setReleaseStartMessage(String releaseStartMessage) {
+    this.releaseStartMessage = releaseStartMessage;
+  }
 
-    /**
+  /**
      * @return the releaseFinishMessage
      */
-    public String getReleaseFinishMessage() {
-        return releaseFinishMessage;
-    }
+  public String getReleaseFinishMessage() {
+    return releaseFinishMessage;
+  }
 
-    /**
+  /**
      * @param releaseFinishMessage
      *            the releaseFinishMessage to set
      */
-    public void setReleaseFinishMessage(String releaseFinishMessage) {
-        this.releaseFinishMessage = releaseFinishMessage;
-    }
+  public void setReleaseFinishMessage(String releaseFinishMessage) {
+    this.releaseFinishMessage = releaseFinishMessage;
+  }
 
-    public String getReleaseVersionUpdateMessage() {
-        return releaseVersionUpdateMessage;
-    }
+  public String getReleaseVersionUpdateMessage() {
+    return releaseVersionUpdateMessage;
+  }
 
-    public void setReleaseVersionUpdateMessage(String releaseVersionUpdateMessage) {
-        this.releaseVersionUpdateMessage = releaseVersionUpdateMessage;
-    }
+  public void setReleaseVersionUpdateMessage(String releaseVersionUpdateMessage) {
+    this.releaseVersionUpdateMessage = releaseVersionUpdateMessage;
+  }
 
-    /**
+  /**
      * @return the releaseFinishMergeMessage
      */
-    public String getReleaseFinishMergeMessage() {
-        return releaseFinishMergeMessage;
-    }
+  public String getReleaseFinishMergeMessage() {
+    return releaseFinishMergeMessage;
+  }
 
-    /**
+  /**
      * @param releaseFinishMergeMessage
      *            the releaseFinishMergeMessage to set
      */
-    public void setReleaseFinishMergeMessage(String releaseFinishMergeMessage) {
-        this.releaseFinishMergeMessage = releaseFinishMergeMessage;
-    }
+  public void setReleaseFinishMergeMessage(String releaseFinishMergeMessage) {
+    this.releaseFinishMergeMessage = releaseFinishMergeMessage;
+  }
 
-    /**
+  /**
      * @return the releaseFinishDevMergeMessage
      */
-    public String getReleaseFinishDevMergeMessage() {
-        return releaseFinishDevMergeMessage;
-    }
+  public String getReleaseFinishDevMergeMessage() {
+    return releaseFinishDevMergeMessage;
+  }
 
-    /**
+  /**
      * @param releaseFinishDevMergeMessage
      *            the releaseFinishDevMergeMessage to set
      */
-    public void setReleaseFinishDevMergeMessage(String releaseFinishDevMergeMessage) {
-        this.releaseFinishDevMergeMessage = releaseFinishDevMergeMessage;
-    }
+  public void setReleaseFinishDevMergeMessage(String releaseFinishDevMergeMessage) {
+    this.releaseFinishDevMergeMessage = releaseFinishDevMergeMessage;
+  }
 
-    /**
+  /**
      * @return the tagHotfixMessage
      */
-    public String getTagHotfixMessage() {
-        return tagHotfixMessage;
-    }
+  public String getTagHotfixMessage() {
+    return tagHotfixMessage;
+  }
 
-    /**
+  /**
      * @param tagHotfixMessage
      *            the tagHotfixMessage to set
      */
-    public void setTagHotfixMessage(String tagHotfixMessage) {
-        this.tagHotfixMessage = tagHotfixMessage;
-    }
+  public void setTagHotfixMessage(String tagHotfixMessage) {
+    this.tagHotfixMessage = tagHotfixMessage;
+  }
 
-    /**
+  /**
      * @return the tagReleaseMessage
      */
-    public String getTagReleaseMessage() {
-        return tagReleaseMessage;
-    }
+  public String getTagReleaseMessage() {
+    return tagReleaseMessage;
+  }
 
-    /**
+  /**
      * @param tagReleaseMessage
      *            the tagReleaseMessage to set
      */
-    public void setTagReleaseMessage(String tagReleaseMessage) {
-        this.tagReleaseMessage = tagReleaseMessage;
-    }
+  public void setTagReleaseMessage(String tagReleaseMessage) {
+    this.tagReleaseMessage = tagReleaseMessage;
+  }
 
-    /**
+  /**
      * @return the updateDevToAvoidConflictsMessage
      */
-    public String getUpdateDevToAvoidConflictsMessage() {
-        return updateDevToAvoidConflictsMessage;
-    }
+  public String getUpdateDevToAvoidConflictsMessage() {
+    return updateDevToAvoidConflictsMessage;
+  }
 
-    /**
+  /**
      * @param updateDevToAvoidConflictsMessage
      *            the updateDevToAvoidConflictsMessage to set
      */
-    public void setUpdateDevToAvoidConflictsMessage(String updateDevToAvoidConflictsMessage) {
-        this.updateDevToAvoidConflictsMessage = updateDevToAvoidConflictsMessage;
-    }
+  public void setUpdateDevToAvoidConflictsMessage(String updateDevToAvoidConflictsMessage) {
+    this.updateDevToAvoidConflictsMessage = updateDevToAvoidConflictsMessage;
+  }
 
-    /**
+  /**
      * @param updateDevToAvoidConflitsMessage
      *            the updateDevToAvoidConflitsMessage to set
      * @deprecated Use the correctly spelt updateDevToAvoidConflictsMessage instead
      */
-    @Deprecated
-    public void setUpdateDevToAvoidConflitsMessage(String updateDevToAvoidConflitsMessage) {
-        this.updateDevToAvoidConflictsMessage = updateDevToAvoidConflitsMessage;
-    }
+  @Deprecated public void setUpdateDevToAvoidConflitsMessage(String updateDevToAvoidConflitsMessage) {
+    this.updateDevToAvoidConflictsMessage = updateDevToAvoidConflitsMessage;
+  }
 
-    /**
+  /**
      * @return the updateDevBackPreMergeStateMessage
      */
-    public String getUpdateDevBackPreMergeStateMessage() {
-        return updateDevBackPreMergeStateMessage;
-    }
+  public String getUpdateDevBackPreMergeStateMessage() {
+    return updateDevBackPreMergeStateMessage;
+  }
 
-    /**
+  /**
      * @param updateDevBackPreMergeStateMessage
      *            the updateDevBackPreMergeStateMessage to set
      */
-    public void setUpdateDevBackPreMergeStateMessage(String updateDevBackPreMergeStateMessage) {
-        this.updateDevBackPreMergeStateMessage = updateDevBackPreMergeStateMessage;
-    }
+  public void setUpdateDevBackPreMergeStateMessage(String updateDevBackPreMergeStateMessage) {
+    this.updateDevBackPreMergeStateMessage = updateDevBackPreMergeStateMessage;
+  }
 
-    /**
+  /**
      * @return the updateReleaseToAvoidConflictsMessage
      */
-    public String getUpdateReleaseToAvoidConflictsMessage() {
-        return updateReleaseToAvoidConflictsMessage;
-    }
+  public String getUpdateReleaseToAvoidConflictsMessage() {
+    return updateReleaseToAvoidConflictsMessage;
+  }
 
-    /**
+  /**
      * @param updateReleaseToAvoidConflictsMessage the updateReleaseToAvoidConflictsMessage to set
      */
-    public void setUpdateReleaseToAvoidConflictsMessage(String updateReleaseToAvoidConflictsMessage) {
-        this.updateReleaseToAvoidConflictsMessage = updateReleaseToAvoidConflictsMessage;
-    }
+  public void setUpdateReleaseToAvoidConflictsMessage(String updateReleaseToAvoidConflictsMessage) {
+    this.updateReleaseToAvoidConflictsMessage = updateReleaseToAvoidConflictsMessage;
+  }
 
-    /**
+  /**
      * @return the updateReleaseBackPreMergeStateMessage
      */
-    public String getUpdateReleaseBackPreMergeStateMessage() {
-        return updateReleaseBackPreMergeStateMessage;
-    }
+  public String getUpdateReleaseBackPreMergeStateMessage() {
+    return updateReleaseBackPreMergeStateMessage;
+  }
 
-    /**
+  /**
      * @param updateReleaseBackPreMergeStateMessage the updateReleaseBackPreMergeStateMessage to set
      */
-    public void setUpdateReleaseBackPreMergeStateMessage(String updateReleaseBackPreMergeStateMessage) {
-        this.updateReleaseBackPreMergeStateMessage = updateReleaseBackPreMergeStateMessage;
-    }
+  public void setUpdateReleaseBackPreMergeStateMessage(String updateReleaseBackPreMergeStateMessage) {
+    this.updateReleaseBackPreMergeStateMessage = updateReleaseBackPreMergeStateMessage;
+  }
 }
