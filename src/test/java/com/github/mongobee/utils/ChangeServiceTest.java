@@ -1,5 +1,4 @@
 package com.github.mongobee.utils;
-
 import com.github.mongobee.ChangeLogsSupplier;
 import com.github.mongobee.PackageScanningChangeLogsSupplier;
 import com.github.mongobee.changeset.ChangeEntry;
@@ -11,10 +10,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
 import java.lang.reflect.Method;
 import java.util.List;
-
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
@@ -23,66 +20,41 @@ import static junit.framework.Assert.assertTrue;
  * @since 27/07/2014
  */
 public class ChangeServiceTest {
-
-  @Test
-  public void shouldFindChangeLogObjs() throws Exception {
-    // given
+  @Test public void shouldFindChangeLogObjs() throws Exception {
     String scanPackage = MongobeeTestResource.class.getPackage().getName();
     ChangeService service = new ChangeService(new PackageScanningChangeLogsSupplier(scanPackage));
-    // when
     List<Object> found = service.fetchChangeLogs();
-    // then
     assertTrue(found != null && found.size() > 0);
   }
-  
-  @Test
-  public void shouldFindChangeSetMethods() throws MongobeeChangeSetException {
-    // given
+
+  @Test public void shouldFindChangeSetMethods() throws MongobeeChangeSetException {
     String scanPackage = MongobeeTestResource.class.getPackage().getName();
     ChangeService service = new ChangeService(new PackageScanningChangeLogsSupplier(scanPackage));
-
-    // when
     List<Method> foundMethods = service.fetchChangeSets(MongobeeTestResource.class);
-    
-    // then
     assertTrue(foundMethods != null && foundMethods.size() == 5);
   }
 
-  @Test
-  public void shouldFindChangeSetsOnProxiedClass() throws MongobeeChangeSetException {
-
+  @Test public void shouldFindChangeSetsOnProxiedClass() throws MongobeeChangeSetException {
     ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfigWithProxying.class);
     ChangeLogsSupplier changeLogsSupplier = context.getBean(ChangeLogsSupplier.class);
     ChangeService changeService = new ChangeService(changeLogsSupplier);
-
     List<Method> foundMethods = changeService.fetchChangeSets(MongobeeTestResource.class);
     assertTrue(foundMethods.size() == 5);
   }
 
-  @Test
-  public void shouldFindAnotherChangeSetMethods() throws MongobeeChangeSetException {
-    // given
+  @Test public void shouldFindAnotherChangeSetMethods() throws MongobeeChangeSetException {
     String scanPackage = MongobeeTestResource.class.getPackage().getName();
     ChangeService service = new ChangeService(scanPackage);
-
-    // when
     List<Method> foundMethods = service.fetchChangeSets(AnotherMongobeeTestResource.class);
-
-    // then
     assertTrue(foundMethods != null && foundMethods.size() == 6);
   }
 
-  @Test
-  public void shouldFindIsRunAlwaysMethod() throws MongobeeChangeSetException {
-    // given
+  @Test public void shouldFindIsRunAlwaysMethod() throws MongobeeChangeSetException {
     String scanPackage = MongobeeTestResource.class.getPackage().getName();
     ChangeService service = new ChangeService(new PackageScanningChangeLogsSupplier(scanPackage));
-
-    // when
     List<Method> foundMethods = service.fetchChangeSets(AnotherMongobeeTestResource.class);
-    // then
     for (Method foundMethod : foundMethods) {
-      if (foundMethod.getName().equals("testChangeSetWithAlways")){
+      if (foundMethod.getName().equals("testChangeSetWithAlways")) {
         assertTrue(service.isRunAlwaysChangeSet(foundMethod));
       } else {
         assertFalse(service.isRunAlwaysChangeSet(foundMethod));
@@ -90,20 +62,12 @@ public class ChangeServiceTest {
     }
   }
 
-  @Test
-  public void shouldCreateEntry() throws MongobeeChangeSetException {
-    
-    // given
+  @Test public void shouldCreateEntry() throws MongobeeChangeSetException {
     String scanPackage = MongobeeTestResource.class.getPackage().getName();
     ChangeService service = new ChangeService(new PackageScanningChangeLogsSupplier(scanPackage));
     List<Method> foundMethods = service.fetchChangeSets(MongobeeTestResource.class);
-
     for (Method foundMethod : foundMethods) {
-    
-      // when
       ChangeEntry entry = service.createChangeEntry(foundMethod);
-      
-      // then
       Assert.assertEquals("testuser", entry.getAuthor());
       Assert.assertEquals(MongobeeTestResource.class.getName(), entry.getChangeLogClass());
       Assert.assertNotNull(entry.getTimestamp());
@@ -112,11 +76,9 @@ public class ChangeServiceTest {
     }
   }
 
-  @Test(expected = MongobeeChangeSetException.class)
-  public void shouldFailOnDuplicatedChangeSets() throws MongobeeChangeSetException {
+  @Test(expected = MongobeeChangeSetException.class) public void shouldFailOnDuplicatedChangeSets() throws MongobeeChangeSetException {
     String scanPackage = ChangeLogWithDuplicate.class.getPackage().getName();
     ChangeService service = new ChangeService(new PackageScanningChangeLogsSupplier(scanPackage));
     service.fetchChangeSets(ChangeLogWithDuplicate.class);
   }
-
 }
