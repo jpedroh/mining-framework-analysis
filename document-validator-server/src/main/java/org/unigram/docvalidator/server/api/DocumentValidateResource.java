@@ -69,7 +69,7 @@ public class DocumentValidateResource {
     Parser parser = DocumentParserFactory.generate(
         Parser.Type.PLAIN, server.getDocumentValidatorResource());
     Document fileContent = parser.generateDocument(new
-        ByteArrayInputStream(document.getBytes("UTF-8")));
+      ByteArrayInputStream(document.getBytes("UTF-8")));
 
     DocumentCollection d = new DocumentCollection();
     d.addDocument(fileContent);

@@ -25,6 +25,7 @@ import org.unigram.docvalidator.server.util.ServerConfigurationLoader;
 import org.unigram.docvalidator.util.DVResource;
 import org.unigram.docvalidator.util.DocumentValidatorException;
 import org.unigram.docvalidator.DocumentValidator;
+import org.unigram.docvalidator.util.Formatter;
 
 /**
  * Document validator server.
@@ -49,11 +50,19 @@ public class DocumentValidatorServer {
             .getResourceAsStream("/conf/dv-conf.xml")
     );
 
-//    ResultDistributor distributor = ResultDistributorFactory
-//        .createDistributor("plain", System.out);
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/ea815d7ad42ed88e93bc78aac909f030439f77d3/document-validator-server/src/main/java/org/unigram/docvalidator/server/DocumentValidatorServer.java/left.java
+  //    ResultDistributor distributor = ResultDistributorFactory
+  //        .createDistributor("plain", System.out);
+||||||| /usr/src/app/output/recruit-tech/redpen/ea815d7ad42ed88e93bc78aac909f030439f77d3/document-validator-server/src/main/java/org/unigram/docvalidator/server/DocumentValidatorServer.java/base.java
+    ResultDistributor distributor = ResultDistributorFactory
+        .createDistributor("plain", System.out);
+=======
+    ResultDistributor distributor = ResultDistributorFactory
+        .createDistributor(Formatter.Type.PLAIN, System.out);
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/ea815d7ad42ed88e93bc78aac909f030439f77d3/document-validator-server/src/main/java/org/unigram/docvalidator/server/DocumentValidatorServer.java/right.java
     validator = new DocumentValidator.Builder()
         .setResource(documentValidatorResource)
-//        .setResultDistributor(distributor)
+  //        .setResultDistributor(distributor)
         .build();
   }
 
