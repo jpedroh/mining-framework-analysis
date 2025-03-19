@@ -1,27 +1,6 @@
-/**
- * Copyright (C) 2009-2012 the original author or authors.
- * See the notice.md file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.fusesource.restygwt;
-
-
 import junit.framework.Test;
 import junit.framework.TestCase;
-
 import org.fusesource.restygwt.client.basic.CacheCallbackTestGwt;
 import org.fusesource.restygwt.client.basic.CachingTestGwt;
 import org.fusesource.restygwt.client.basic.ConfiguredServiceTestGwt;
@@ -45,9 +24,7 @@ import org.fusesource.restygwt.client.codec.InnerClassesEncoderDecoderTestGwt;
 import org.fusesource.restygwt.client.codec.MapInRestServiceEncoderDecoderTestGwt;
 import org.fusesource.restygwt.client.codec.PolymorphicEncoderDecoderTestGwt;
 import org.fusesource.restygwt.client.complex.JsonTypeIdResolver;
-
 import com.google.gwt.junit.tools.GWTTestSuite;
-
 
 /**
  *
@@ -67,44 +44,34 @@ import com.google.gwt.junit.tools.GWTTestSuite;
  * @author <a href="mailto:mail@raphaelbauer.com">rEyez</<a>
  */
 public class GwtCompleteTestSuite extends TestCase {
-
-
-    /**
+  /**
      * @return the suite of that module
      */
-    public static Test suite() {
-        GWTTestSuite suite = new GWTTestSuite("all GwtTestCases but AnnotationResolver" );
-
-        // keep the cache-callback at the beginning to get it pass
-        // TODO why ? and what goes wrong when at located at the end ?
-        suite.addTestSuite(CacheCallbackTestGwt.class);
-        suite.addTestSuite(InnerClassesEncoderDecoderTestGwt.class);
-        suite.addTestSuite(MapInRestServiceEncoderDecoderTestGwt.class);
-        suite.addTestSuite(EncoderDecoderTestGwt.class);
-        suite.addTestSuite(PolymorphicEncoderDecoderTestGwt.class);
-        
-        suite.addTestSuite(FlakyTestGwt.class);
-        suite.addTestSuite(TimeoutTestGwt.class);
-        suite.addTestSuite(CachingTestGwt.class);
-        suite.addTestSuite(ResourceTestGwt.class);
-        suite.addTestSuite(ResourcePassesHeadersTestGwt.class);
-        suite.addTestSuite(VolatileQueueableCacheStorageTestGwt.class);       
-        suite.addTestSuite(FailingTestGwt.class);
-        suite.addTestSuite(GenericsTestGwt.class);
-        suite.addTestSuite(ParameterizedTypeDTO.class);
-        suite.addTestSuite(ParameterizedTypeServiceInterfaces.class);
-        suite.addTestSuite(SubResourceClientGeneration.class);
-        suite.addTestSuite(JsonTypeIdResolver.class);
-        suite.addTestSuite(JsonCreatorWithSubtypes.class);
-        suite.addTestSuite(PathParamTestGwt.class);
-        suite.addTestSuite(QueryParamTestGwt.class);
-        suite.addTestSuite(FormParamTestGwt.class);
-        suite.addTestSuite(DirectRestServiceTestGwt.class);
-        suite.addTestSuite(ConfiguredServiceTestGwt.class);
-        
-        //TODO not sure what a jsonp servlet looks like, i.e. the one used by the test just
-        // produces error on the javascript callback
-        //suite.addTestSuite(JsonpTestGwt.class);
-        return suite;
-    }
+  public static Test suite() {
+    GWTTestSuite suite = new GWTTestSuite("all GwtTestCases but AnnotationResolver");
+    suite.addTestSuite(CacheCallbackTestGwt.class);
+    suite.addTestSuite(InnerClassesEncoderDecoderTestGwt.class);
+    suite.addTestSuite(MapInRestServiceEncoderDecoderTestGwt.class);
+    suite.addTestSuite(EncoderDecoderTestGwt.class);
+    suite.addTestSuite(PolymorphicEncoderDecoderTestGwt.class);
+    suite.addTestSuite(FlakyTestGwt.class);
+    suite.addTestSuite(TimeoutTestGwt.class);
+    suite.addTestSuite(CachingTestGwt.class);
+    suite.addTestSuite(ResourceTestGwt.class);
+    suite.addTestSuite(ResourcePassesHeadersTestGwt.class);
+    suite.addTestSuite(VolatileQueueableCacheStorageTestGwt.class);
+    suite.addTestSuite(FailingTestGwt.class);
+    suite.addTestSuite(GenericsTestGwt.class);
+    suite.addTestSuite(ParameterizedTypeDTO.class);
+    suite.addTestSuite(ParameterizedTypeServiceInterfaces.class);
+    suite.addTestSuite(SubResourceClientGeneration.class);
+    suite.addTestSuite(JsonTypeIdResolver.class);
+    suite.addTestSuite(JsonCreatorWithSubtypes.class);
+    suite.addTestSuite(PathParamTestGwt.class);
+    suite.addTestSuite(QueryParamTestGwt.class);
+    suite.addTestSuite(FormParamTestGwt.class);
+    suite.addTestSuite(DirectRestServiceTestGwt.class);
+    suite.addTestSuite(ConfiguredServiceTestGwt.class);
+    return suite;
+  }
 }
