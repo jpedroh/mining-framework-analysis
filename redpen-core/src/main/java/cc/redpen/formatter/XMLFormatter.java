@@ -88,11 +88,29 @@ public class XMLFormatter implements Formatter {
     Text lineNum = doc.createTextNode(Integer.toString(error.getLineNumber()));
     lineNumberElement.appendChild(lineNum);
 
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/9af5140829baa1e9dd5094879ad0681606574646/redpen-core/src/main/java/cc/redpen/formatter/XMLFormatter.java/left.java
     error.getSentence().ifPresent(e -> {
       Element sentenceElement = doc.createElement("sentence");
       errorElement.appendChild(sentenceElement);
       sentenceElement.appendChild(doc.createTextNode(e.content));
     });
+||||||| /usr/src/app/output/recruit-tech/redpen/9af5140829baa1e9dd5094879ad0681606574646/redpen-core/src/main/java/cc/redpen/formatter/XMLFormatter.java/base.java
+    if (error.getSentence() != null
+        && !error.getSentence().content.equals("")) {
+      Element sentencElement = doc.createElement("sentence");
+      errorElement.appendChild(sentencElement);
+      Text content = doc.createTextNode(error.getSentence().content);
+      sentencElement.appendChild(content);
+    }
+=======
+    if (error.getSentence() != null
+        && !error.getSentence().content.equals("")) {
+      Element sentenceElement = doc.createElement("sentence");
+      errorElement.appendChild(sentenceElement);
+      Text content = doc.createTextNode(error.getSentence().content);
+      sentenceElement.appendChild(content);
+    }
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/9af5140829baa1e9dd5094879ad0681606574646/redpen-core/src/main/java/cc/redpen/formatter/XMLFormatter.java/right.java
 
     // create a transformer
     Transformer transformer = createTransformer();
