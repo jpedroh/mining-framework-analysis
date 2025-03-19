@@ -56,12 +56,22 @@ public class DefaultHeader<T extends Header<T>> extends JwtMap implements Header
     @SuppressWarnings("deprecation")
     @Override
     public String getCompressionAlgorithm() {
+<<<<<<< /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/impl/DefaultHeader.java/left.java
         String s = getString(COMPRESSION_ALGORITHM);
         if (!Strings.hasText(s)) {
             //backwards compatibility TODO: remove when releasing 1.0
             s = getString(DEPRECATED_COMPRESSION_ALGORITHM);
         }
         return s;
+||||||| /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/impl/DefaultHeader.java/base.java
+        return getString(COMPRESSION_ALGORITHM);
+=======
+        String alg = getString(COMPRESSION_ALGORITHM);
+        if (!Strings.hasText(alg)) {
+            alg = getString(DEPRECATED_COMPRESSION_ALGORITHM);
+        }
+        return alg;
+>>>>>>> /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/impl/DefaultHeader.java/right.java
     }
 
     @Override

@@ -48,7 +48,17 @@ public interface Header<T extends Header<T>> extends Map<String,Object> {
     /** JWT {@code Content Type} header parameter name: <code>"cty"</code> */
     public static final String CONTENT_TYPE = "cty";
 
+<<<<<<< /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/Header.java/left.java
     /** JWT {@code Compression Algorithm} header parameter name: <code>"zip"</code> */
+    public static final String COMPRESSION_ALGORITHM = "zip";
+
+    /** JJWT legacy/deprecated {@code Compression Algorithm} header parameter names <code>"calg"</code>
+     * @deprecated use {@link #COMPRESSION_ALGORITHM} instead. */
+||||||| /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/Header.java/base.java
+    /** JWT {@code Compression Algorithm} header parameter name: <code>"calg"</code> */
+=======
+    /** JWT {@code Compression Algorithm} header parameter name: <code>"zip"</code> */
+>>>>>>> /usr/src/app/output/jwtk/jjwt/cb5734d8a64949a05604ebf1c2a7065f055bacb9/src/main/java/io/jsonwebtoken/Header.java/right.java
     public static final String COMPRESSION_ALGORITHM = "zip";
 
     /** JJWT legacy/deprecated compression algorithm header parameter name: <code>"calg"</code>
