@@ -284,7 +284,6 @@ public class CommandLineOptions {
 	public Level getApiLogLevel() {
 		return apiLogLevel;
 	}
-
 	public Boolean isValidateSha26GetworkShares() {
 		return validateSha26GetworkShares;
 	}
