@@ -134,6 +134,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- bilateral --
 
 	/** Executes the "bilateral" filter on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.bilateral.DefaultBilateral.class)
 	public <I extends RealType<I>, O extends RealType<O>>
 		RandomAccessibleInterval<O> bilateral(final RandomAccessibleInterval<O> out,
@@ -146,11 +147,11 @@ public class FilterNamespace extends AbstractNamespace {
 				in, sigmaR, sigmaS, radius);
 		return result;
 	}
-	
-	
+
 	// -- convolve --
-	
+
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.filter.convolve.ConvolveNaiveF.class,
 		net.imagej.ops.filter.convolve.PadAndConvolveFFTF.class })
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
@@ -164,8 +165,10 @@ public class FilterNamespace extends AbstractNamespace {
 				in, kernel);
 		return result;
 	}
-	
+
 	/** Executes the "convolve" operation on the given arguments. */
+
+<<<<<<< /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/left.java
 	@OpMethod(ops = { net.imagej.ops.filter.convolve.ConvolveFFTC.class,
 		net.imagej.ops.filter.convolve.PadAndConvolveFFT.class })
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
@@ -180,8 +183,23 @@ public class FilterNamespace extends AbstractNamespace {
 				raiExtendedInput, raiExtendedKernel);
 		return result;
 	}
+	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
+	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
+		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
+			final RandomAccessibleInterval<K> kernel, final long... borderSize)
+	{
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<O> result =
+			(RandomAccessibleInterval<O>) ops().run(Ops.Filter.Convolve.class,out, in,
+				kernel, borderSize);
+		return result;
+	}
+||||||| /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/base.java
+=======
+>>>>>>> /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/right.java
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.filter.convolve.ConvolveNaiveF.class,
 		net.imagej.ops.filter.convolve.PadAndConvolveFFTF.class })
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
@@ -197,6 +215,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(ops = { net.imagej.ops.filter.convolve.ConvolveNaiveF.class,
 		net.imagej.ops.filter.convolve.PadAndConvolveFFTF.class })
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
@@ -213,19 +232,9 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
-	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
-	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
-		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
-			final RandomAccessibleInterval<K> kernel, final long... borderSize)
-	{
-		@SuppressWarnings("unchecked")
-		final RandomAccessibleInterval<O> result =
-			(RandomAccessibleInterval<O>) ops().run(Ops.Filter.Convolve.class,out, in,
-				kernel, borderSize);
-		return result;
-	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -240,6 +249,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -255,6 +265,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -271,6 +282,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.PadAndConvolveFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -287,6 +299,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.ConvolveNaiveC.class)
 	public <I extends RealType<I>, K extends RealType<K>, O extends RealType<O>>
 		RandomAccessibleInterval<O> convolve(final RandomAccessibleInterval<O> out,
@@ -300,6 +313,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.ConvolveFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> convolve(
@@ -316,6 +330,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.ConvolveFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> convolve(
@@ -333,6 +348,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.ConvolveFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> convolve(
@@ -352,6 +368,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "convolve" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.convolve.ConvolveFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> convolve(
@@ -373,6 +390,8 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- correlate --
 
 	/** Executes the "correlate" operation on the given arguments. */
+
+<<<<<<< /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/left.java
 	@OpMethod(ops = {net.imagej.ops.filter.correlate.CorrelateFFTC.class,net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class})
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -384,8 +403,6 @@ public class FilterNamespace extends AbstractNamespace {
 				kernel);
 		return result;
 	}
-
-	/** Executes the "correlate" operation on the given arguments. */
 	@OpMethod(op = net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -397,8 +414,14 @@ public class FilterNamespace extends AbstractNamespace {
 				kernel, borderSize);
 		return result;
 	}
+||||||| /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/base.java
+=======
+>>>>>>> /usr/src/app/output/imagej/imagej-ops/4a3b273c23ad343d026a0e4770cb755b81032f9d/src/main/java/net/imagej/ops/filter/FilterNamespace.java/right.java
 
 	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -413,6 +436,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -428,6 +452,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -444,6 +469,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.PadAndCorrelateFFT.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> correlate(final RandomAccessibleInterval<O> out,final RandomAccessibleInterval<I> in,
@@ -460,6 +486,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.CorrelateFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> correlate(
@@ -476,6 +503,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.CorrelateFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> correlate(
@@ -493,6 +521,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.CorrelateFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> correlate(
@@ -512,6 +541,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "correlate" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.correlate.CorrelateFFTC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> correlate(
@@ -553,6 +583,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- fft --
 
 	/** Executes the "fft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpF.class)
 	public <T extends RealType<T>, I extends RandomAccessibleInterval<T>, C extends ComplexType<C>, O extends RandomAccessibleInterval<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<T> in)
@@ -562,8 +593,6 @@ public class FilterNamespace extends AbstractNamespace {
 			(RandomAccessibleInterval<C>) ops().run(Ops.Filter.FFT.class, in);
 		return result;
 	}
-
-	/** Executes the "fft" operation on the given arguments. */
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpF.class)
 	public <T extends RealType<T>, I extends RandomAccessibleInterval<T>, C extends ComplexType<C>, O extends RandomAccessibleInterval<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<T> in,
@@ -577,6 +606,9 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpF.class)
 	public <T extends RealType<T>, I extends RandomAccessibleInterval<T>, C extends ComplexType<C>, O extends RandomAccessibleInterval<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<T> in,
@@ -590,6 +622,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "fft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpF.class)
 	public <T extends RealType<T>, I extends RandomAccessibleInterval<T>, C extends ComplexType<C>, O extends RandomAccessibleInterval<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<T> in,
@@ -604,6 +637,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "fft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpF.class)
 	public <T extends RealType<T>, I extends RandomAccessibleInterval<T>, C extends ComplexType<C>, O extends RandomAccessibleInterval<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<T> in,
@@ -619,6 +653,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "fft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.fft.FFTMethodsOpC.class)
 	public <T extends RealType<T>, C extends ComplexType<C>>
 		RandomAccessibleInterval<C> fft(final RandomAccessibleInterval<C> out,
@@ -631,6 +666,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	// -- fftSize --
+
 	@OpMethod(op = net.imagej.ops.filter.fftSize.ComputeFFTMethodsSize.class)
 	public long[][] fftSize(final Dimensions in1, final boolean forward,
 		final boolean fast)
@@ -644,18 +680,6 @@ public class FilterNamespace extends AbstractNamespace {
 	public long[][] fftSize(final Dimensions in1, final boolean powerOfTwo) {
 		final long[][] result = (long[][]) ops().run(Ops.Filter.FFTSize.class, in1,
 			powerOfTwo);
-		return result;
-	}
-	
-	// -- findEdges --
-
-	@OpMethod(op = net.imagej.ops.filter.findEdges.DefaultFindEdges.class)
-	public <T extends RealType<T>> RandomAccessibleInterval<T> findEdges(
-		final RandomAccessibleInterval<T> input)
-	{
-		@SuppressWarnings("unchecked")
-		final RandomAccessibleInterval<T> result =
-			(RandomAccessibleInterval<T>) ops().run(Ops.Filter.FindEdges.class, input);
 		return result;
 	}
 
@@ -798,6 +822,7 @@ public class FilterNamespace extends AbstractNamespace {
 	 * @param scale - the scale (number of pixels) over which the filter
 	 *          calculates. The smaller the value, the more sensitive the filter.
 	 */
+
 	@OpMethod(op = net.imagej.ops.filter.vesselness.DefaultFrangi.class)
 	public <T extends RealType<T>, U extends RealType<U>>
 		RandomAccessibleInterval<U> frangiVesselness(
@@ -815,6 +840,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- gauss --
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.DefaultGaussRAI.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<V> out,
@@ -829,6 +855,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.DefaultGaussRAI.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<V> out,
@@ -842,6 +869,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.DefaultGaussRAI.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<T> in,
@@ -855,6 +883,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.GaussRAISingleSigma.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<V> out,
@@ -868,6 +897,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.GaussRAISingleSigma.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<V> out,
@@ -894,6 +924,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "gauss" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.gauss.DefaultGaussRA.class)
 	public <T extends NumericType<T>, V extends NumericType<V>>
 		RandomAccessibleInterval<V> gauss(final RandomAccessibleInterval<V> out,
@@ -922,6 +953,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- ifft --
 
 	/** Executes the "ifft" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.ifft.IFFTMethodsOpC.class)
 	public <C extends ComplexType<C>, T extends RealType<T>>
 		RandomAccessibleInterval<T> ifft(final RandomAccessibleInterval<T> out,
@@ -946,6 +978,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- linear filter --
 
 	/** Executes the "linearFilter" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.FFTMethodsLinearFFTFilterC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> linearFilter(
@@ -962,6 +995,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "linearFilter" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.FFTMethodsLinearFFTFilterC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> linearFilter(
@@ -979,6 +1013,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "linearFilter" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.FFTMethodsLinearFFTFilterC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> linearFilter(
@@ -997,6 +1032,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "linearFilter" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.FFTMethodsLinearFFTFilterC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> linearFilter(
@@ -1016,6 +1052,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "linearFilter" operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.FFTMethodsLinearFFTFilterC.class)
 	public <I extends RealType<I>, O extends RealType<O>, K extends RealType<K>, C extends ComplexType<C>>
 		RandomAccessibleInterval<O> linearFilter(
@@ -1038,6 +1075,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- mean filter --
 
 	/** Executes the "mean" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.mean.DefaultMeanFilter.class)
 	public <I extends ComplexType<I>, O extends ComplexType<O>>
 		IterableInterval<O> mean(final IterableInterval<O> out,
@@ -1050,6 +1088,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "mean" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.mean.DefaultMeanFilter.class)
 	public <I extends ComplexType<I>, O extends ComplexType<O>>
 		IterableInterval<O> mean(final IterableInterval<O> out,
@@ -1065,6 +1104,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- non-linear filters --
 
 	/** Executes the "max" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.max.DefaultMaxFilter.class)
 	public <T extends RealType<T>, V extends RealType<V>> IterableInterval<T> max(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1077,6 +1117,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "max" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.max.DefaultMaxFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> max(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1089,6 +1130,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "median" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.median.DefaultMedianFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> median(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1101,6 +1143,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "median" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.median.DefaultMedianFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> median(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1113,6 +1156,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "min" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.min.DefaultMinFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> min(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1125,6 +1169,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "min" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.min.DefaultMinFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> min(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1139,6 +1184,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "paddingIntervalCentered" operation on the given arguments.
 	 */
+
 	@OpMethod(op = net.imagej.ops.filter.pad.PaddingIntervalCentered.class)
 	public <T extends ComplexType<T>> Interval paddingIntervalCentered(
 		final RandomAccessibleInterval<T> in, final Dimensions paddedDimensions)
@@ -1151,6 +1197,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "paddingIntervalOrigin" operation on the given arguments.
 	 */
+
 	@OpMethod(op = net.imagej.ops.filter.pad.PaddingIntervalOrigin.class)
 	public <T extends ComplexType<T>> Interval paddingIntervalOrigin(
 		final RandomAccessibleInterval<T> in, final Interval centeredInterval)
@@ -1161,6 +1208,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "padInput" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.pad.PadInput.class)
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T> padInput(
 		final RandomAccessibleInterval<T> in, final Dimensions paddedDimensions)
@@ -1173,6 +1221,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "padInput" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.pad.PadInput.class)
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T> padInput(
 		final RandomAccessibleInterval<T> in, final Dimensions paddedDimensions,
@@ -1190,6 +1239,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "padInputFFT" filter operation on the given arguments.
 	 */
+
 	@OpMethod(ops = { net.imagej.ops.filter.pad.PadInputFFTMethods.class,
 		net.imagej.ops.filter.pad.DefaultPadInputFFT.class })
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T> padFFTInput(
@@ -1205,6 +1255,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "padInputFFT" filter operation on the given arguments.
 	 */
+
 	@OpMethod(ops = { net.imagej.ops.filter.pad.PadInputFFTMethods.class,
 		net.imagej.ops.filter.pad.DefaultPadInputFFT.class })
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T> padFFTInput(
@@ -1221,6 +1272,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "padInputFFT" filter operation on the given arguments.
 	 */
+
 	@OpMethod(ops = { net.imagej.ops.filter.pad.PadInputFFTMethods.class,
 		net.imagej.ops.filter.pad.DefaultPadInputFFT.class })
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T> padFFTInput(
@@ -1240,6 +1292,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "padShiftFFTKernel" filter operation on the given arguments.
 	 */
+
 	@OpMethod(ops = { net.imagej.ops.filter.pad.PadShiftKernelFFTMethods.class,
 		net.imagej.ops.filter.pad.PadShiftKernel.class,
 		net.imagej.ops.filter.pad.DefaultPadShiftKernelFFT.class })
@@ -1257,6 +1310,7 @@ public class FilterNamespace extends AbstractNamespace {
 	/**
 	 * Executes the "padShiftFFTKernel" filter operation on the given arguments.
 	 */
+
 	@OpMethod(ops = { net.imagej.ops.filter.pad.PadShiftKernelFFTMethods.class,
 		net.imagej.ops.filter.pad.DefaultPadShiftKernelFFT.class })
 	public <T extends ComplexType<T>> RandomAccessibleInterval<T>
@@ -1273,6 +1327,7 @@ public class FilterNamespace extends AbstractNamespace {
 	// -- partial derivative --
 
 	/** Executes the "partial derivative" operation on the given arguments */
+
 	@OpMethod(op = net.imagej.ops.filter.derivative.PartialDerivativeRAI.class)
 	public <T extends RealType<T>> RandomAccessibleInterval<T> partialDerivative(
 		final RandomAccessibleInterval<T> in, final int dimension)
@@ -1286,6 +1341,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "partial derivative" operation on the given arguments */
+
 	@OpMethod(op = net.imagej.ops.filter.derivative.PartialDerivativeRAI.class)
 	public <T extends RealType<T>> RandomAccessibleInterval<T> partialDerivative(
 		final RandomAccessibleInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1300,6 +1356,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "partial derivative" operation on all dimensions */
+
 	@OpMethod(op = net.imagej.ops.filter.derivative.PartialDerivativesRAI.class)
 	public <T extends RealType<T>> CompositeIntervalView<T, RealComposite<T>>
 		allPartialDerivatives(final RandomAccessibleInterval<T> in)
@@ -1312,6 +1369,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "sigma" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.sigma.DefaultSigmaFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> sigma(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1324,6 +1382,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "sigma" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.sigma.DefaultSigmaFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> sigma(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1351,6 +1410,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "tubeness" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.tubeness.DefaultTubeness.class)
 	public <T extends RealType<T>> IterableInterval<DoubleType> tubeness(
 		final IterableInterval<DoubleType> out,
@@ -1365,6 +1425,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "tubeness" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.tubeness.DefaultTubeness.class)
 	public <T extends RealType<T>> IterableInterval<DoubleType> tubeness(
 		final RandomAccessibleInterval<T> in, final double sigma,
@@ -1389,6 +1450,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "variance" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.variance.DefaultVarianceFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> variance(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1401,6 +1463,7 @@ public class FilterNamespace extends AbstractNamespace {
 	}
 
 	/** Executes the "variance" filter operation on the given arguments. */
+
 	@OpMethod(op = net.imagej.ops.filter.variance.DefaultVarianceFilter.class)
 	public <T extends RealType<T>> IterableInterval<T> variance(
 		final IterableInterval<T> out, final RandomAccessibleInterval<T> in,
@@ -1411,6 +1474,190 @@ public class FilterNamespace extends AbstractNamespace {
 			Ops.Filter.Variance.class, out, in, shape, outOfBoundsFactory);
 		return result;
 	}
+
+	// -- Namespace methods --
+
+	// -- addNoise --
+
+	// -- addPoissonNoise --
+
+	// -- convolve --
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	/** Executes the "convolve" operation on the given arguments. */
+
+	// -- correlate --
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	/** Executes the "correlate" operation on the given arguments. */
+
+	// -- create fft output
+
+	// -- fft --
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	/** Executes the "fft" operation on the given arguments. */
+
+	// -- fftSize --
+
+	/** Executes the "fftSize" operation on the given arguments. */
+
+	// -- findEdges --
+
+	@OpMethod(op = net.imagej.ops.filter.findEdges.DefaultFindEdges.class)
+	public <T extends RealType<T>> RandomAccessibleInterval<T> findEdges(
+		final RandomAccessibleInterval<T> input)
+	{
+		@SuppressWarnings("unchecked")
+		final RandomAccessibleInterval<T> result =
+			(RandomAccessibleInterval<T>) ops().run(Ops.Filter.FindEdges.class, input);
+		return result;
+	}
+
+	// -- derivativeGauss --
+
+	// -- dog --
+
+	// -- frangiVesselness --
+
+	// -- gauss --
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	/** Executes the "gauss" operation on the given arguments. */
+
+	// -- hessian --
+
+	// -- ifft --
+
+	/** Executes the "ifft" operation on the given arguments. */
+
+	// -- linear filter --
+
+	/** Executes the "linearFilter" operation on the given arguments. */
+
+	/** Executes the "linearFilter" operation on the given arguments. */
+
+	/** Executes the "linearFilter" operation on the given arguments. */
+
+	// -- mean filter --
+
+	/** Executes the "mean" filter operation on the given arguments. */
+
+	/** Executes the "mean" filter operation on the given arguments. */
+
+	// -- non-linear filters --
+
+	/** Executes the "max" filter operation on the given arguments. */
+
+	/** Executes the "max" filter operation on the given arguments. */
+
+	/** Executes the "median" filter operation on the given arguments. */
+
+	/** Executes the "median" filter operation on the given arguments. */
+
+	/** Executes the "min" filter operation on the given arguments. */
+
+	/** Executes the "min" filter operation on the given arguments. */
+
+	/** Executes the "padInput" filter operation on the given arguments. */
+
+	/** Executes the "padInput" filter operation on the given arguments. */
+
+	// -- pad input fft methods
+
+	/**
+	 * Executes the "padInputFFT" filter operation on the given arguments.
+	 */
+
+	/**
+	 * Executes the "padInputFFT" filter operation on the given arguments.
+	 */
+
+	/**
+	 * Executes the "padInputFFT" filter operation on the given arguments.
+	 */
+
+	// - pad shift fft kernel
+
+	/**
+	 * Executes the "padShiftFFTKernel" filter operation on the given arguments.
+	 */
+
+	/**
+	 * Executes the "padShiftFFTKernel" filter operation on the given arguments.
+	 */
+
+	// -- partial derivative --
+
+	/** Executes the "partial derivative" operation on the given arguments */
+
+	/** Executes the "partial derivative" operation on the given arguments */
+
+	/** Executes the "partial derivative" operation on all dimensions */
+
+	/** Executes the "sigma" filter operation on the given arguments. */
+
+	/** Executes the "sigma" filter operation on the given arguments. */
+
+	// -- Sobel
+
+	/** Executes the "tubeness" filter operation on the given arguments. */
+
+	/** Executes the "tubeness" filter operation on the given arguments. */
+
+	/** Executes the "variance" filter operation on the given arguments. */
+
+	/** Executes the "variance" filter operation on the given arguments. */
 
 	// -- Namespace methods --
 
