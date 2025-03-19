@@ -38,6 +38,12 @@ class FindbugsPluginTest {
     FindbugsPlugin plugin = new FindbugsPlugin();
     plugin.define(ctx);
 
-    assertEquals(26, ctx.getExtensions().size(), "extension count");
+<<<<<<< /usr/src/app/output/sonarsource/sonar-findbugs/91cc3c30b31fa91cd854d16ff0d4023c5eac065a/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/left.java
+    assertEquals(24, ctx.getExtensions().size(), "extension count");
+||||||| /usr/src/app/output/sonarsource/sonar-findbugs/91cc3c30b31fa91cd854d16ff0d4023c5eac065a/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/base.java
+    assertEquals(21, ctx.getExtensions().size(), "extension count");
+=======
+    assertEquals(22, ctx.getExtensions().size(), "extension count");
+>>>>>>> /usr/src/app/output/sonarsource/sonar-findbugs/91cc3c30b31fa91cd854d16ff0d4023c5eac065a/src/test/java/org/sonar/plugins/findbugs/FindbugsPluginTest.java/right.java
   }
 }

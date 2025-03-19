@@ -130,6 +130,14 @@ public class FindbugsConfiguration implements Startable {
       }
     }
 
+    for (File classToAnalyze : classFilesToAnalyze) {
+      String absolutePath = classToAnalyze.getCanonicalPath();
+
+      if(!"module-info.class".equals(classToAnalyze.getName())) {
+        findbugsProject.addFile(absolutePath);
+      }
+    }
+
     copyLibs();
     if (annotationsLib != null) {
       // Findbugs dependencies are packaged by Maven. They are not available during execution of unit tests.
