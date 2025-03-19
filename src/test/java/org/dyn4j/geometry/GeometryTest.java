@@ -117,7 +117,6 @@ public class GeometryTest {
 			null
 		});
 	}
-	
 	/**
 	 * Tests the getAverageCenter method passing a null list.
 	 * @since 2.0.0
@@ -126,7 +125,6 @@ public class GeometryTest {
 	public void getAverageCenterNullList() {
 		Geometry.getAverageCenter((List<Vector2>) null);
 	}
-	
 	/**
 	 * Tests the getAverageCenter method passing an empty list.
 	 * @since 2.0.0
@@ -135,7 +133,6 @@ public class GeometryTest {
 	public void getAverageCenterEmptyList() {
 		Geometry.getAverageCenter(new ArrayList<Vector2>());
 	}
-	
 	/**
 	 * Tests the getAverageCenter method passing an array with null elements.
 	 * @since 3.1.0
@@ -150,7 +147,6 @@ public class GeometryTest {
 		vertices.add(null);
 		Geometry.getAverageCenter(vertices);
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method.
 	 */
@@ -171,7 +167,6 @@ public class GeometryTest {
 		TestCase.assertEquals(-0.318, c.x, 1.0e-3);
 		TestCase.assertEquals( 0.527, c.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method with a polygon that is not centered
 	 * about the origin.
@@ -194,7 +189,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.682, c.x, 1.0e-3);
 		TestCase.assertEquals(1.527, c.y, 1.0e-3);
 	}
-
 	/**
 	 * Tests the getAreaWeightedCenter method passing a null array.
 	 * @since 2.0.0
@@ -203,7 +197,6 @@ public class GeometryTest {
 	public void getAreaWeightedCenterNullArray() {
 		Geometry.getAreaWeightedCenter((Vector2[]) null);
 	}
-
 	/**
 	 * Tests the getAreaWeightedCenter method passing an empty array.
 	 * @since 3.1.0
@@ -212,7 +205,6 @@ public class GeometryTest {
 	public void getAreaWeightedCenterEmptyArray() {
 		Geometry.getAreaWeightedCenter(new Vector2[] {});
 	}
-
 	/**
 	 * Tests the getAreaWeightedCenter method passing an array with null elements.
 	 * @since 3.1.0
@@ -227,7 +219,6 @@ public class GeometryTest {
 			null
 		});
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method passing a null list.
 	 * @since 2.0.0
@@ -236,7 +227,6 @@ public class GeometryTest {
 	public void getAreaWeightedCenterNullList() {
 		Geometry.getAreaWeightedCenter((List<Vector2>) null);
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method passing an empty list.
 	 * @since 2.0.0
@@ -245,7 +235,6 @@ public class GeometryTest {
 	public void getAreaWeightedCenterEmptyList() {
 		Geometry.getAreaWeightedCenter(new ArrayList<Vector2>());
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method passing an list with null elements.
 	 * @since 3.1.0
@@ -260,7 +249,6 @@ public class GeometryTest {
 		vertices.add(null);
 		Geometry.getAreaWeightedCenter(vertices);
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method passing a list of
 	 * points who are all the same yielding zero area.
@@ -279,7 +267,6 @@ public class GeometryTest {
 		TestCase.assertEquals(2.000, c.x, 1.0e-3);
 		TestCase.assertEquals(1.000, c.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the getAreaWeightedCenter method passing a list of
 	 * points who are all the same yielding zero area.
@@ -298,7 +285,6 @@ public class GeometryTest {
 		TestCase.assertEquals(2.000, c.x, 1.0e-3);
 		TestCase.assertEquals(1.000, c.y, 1.0e-3);
 	}
-	
 	/**
 	 * Test case for the unitCirclePolygon methods.
 	 * @since 3.1.0
@@ -341,7 +327,6 @@ public class GeometryTest {
 		double angle = v11.getAngleBetween(v21);
 		TestCase.assertEquals(Math.PI / 2.0, angle, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the failed creation of a negative radius unit circle polygon.
 	 * @since 3.1.0
@@ -350,7 +335,6 @@ public class GeometryTest {
 	public void createNegativeRadiusUnitCirclePolygon() {
 		Geometry.createUnitCirclePolygon(5, -0.5);
 	}
-
 	/**
 	 * Tests the failed creation of a zero radius unit circle polygon.
 	 * @since 3.1.0
@@ -359,7 +343,6 @@ public class GeometryTest {
 	public void createZeroRadiusUnitCirclePolygon() {
 		Geometry.createUnitCirclePolygon(5, 0.0);
 	}
-
 	/**
 	 * Tests the failed creation of a unit circle polygon with less than 3 points.
 	 * @since 3.1.0
@@ -368,7 +351,6 @@ public class GeometryTest {
 	public void createLessThan3PointsUnitCirclePolygon() {
 		Geometry.createUnitCirclePolygon(2, 0.5);
 	}
-	
 	/**
 	 * Tests the successful creation of a circle.
 	 */
@@ -376,7 +358,6 @@ public class GeometryTest {
 	public void createCircle() {
 		Geometry.createCircle(1.0);
 	}
-	
 	/**
 	 * Tests the failed creation of a circle using a negative radius.
 	 * @since 3.1.0
@@ -385,7 +366,6 @@ public class GeometryTest {
 	public void createNegativeRadiusCircle() {
 		Geometry.createCircle(-1.0);
 	}
-
 	/**
 	 * Tests the failed creation of a circle using a zero radius.
 	 * @since 3.1.0
@@ -394,7 +374,6 @@ public class GeometryTest {
 	public void createZeroRadiusCircle() {
 		Geometry.createCircle(0.0);
 	}
-	
 	/**
 	 * Tests the creation of a polygon with a null array.
 	 */
@@ -404,7 +383,6 @@ public class GeometryTest {
 		// should fail since the vertices list contains null items
 		Geometry.createPolygon(vertices);
 	}
-	
 	/**
 	 * Tests the creation of a polygon with a null point.
 	 */
@@ -414,7 +392,6 @@ public class GeometryTest {
 		// should fail since the vertices list contains null items
 		Geometry.createPolygon(vertices);
 	}
-	
 	/**
 	 * Tests the successful creation of a polygon using vertices.
 	 */
@@ -436,7 +413,6 @@ public class GeometryTest {
 			TestCase.assertFalse(p.vertices[0] == vertices[0]);
 		}
 	}
-	
 	/**
 	 * Tests the successful creation of a polygon using vertices.
 	 */
@@ -463,7 +439,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, c.x, 1.0e-3);
 		TestCase.assertEquals(0.000, c.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the creation of a square with a zero size.
 	 */
@@ -471,7 +446,6 @@ public class GeometryTest {
 	public void createZeroSizeSquare() {
 		Geometry.createSquare(0.0);
 	}
-	
 	/**
 	 * Tests the creation of a square with a negative size.
 	 */
@@ -479,7 +453,6 @@ public class GeometryTest {
 	public void createNegativeSizeSquare() {
 		Geometry.createSquare(-1.0);
 	}
-	
 	/**
 	 * Tests the successful creation of a square.
 	 */
@@ -489,7 +462,6 @@ public class GeometryTest {
 		TestCase.assertEquals(1.000, r.getWidth(), 1.0e-3);
 		TestCase.assertEquals(1.000, r.getHeight(), 1.0e-3);
 	}
-	
 	/**
 	 * Tests the successful creation of a rectangle.
 	 */
@@ -497,7 +469,6 @@ public class GeometryTest {
 	public void createRectangle() {
 		Geometry.createRectangle(1.0, 2.0);
 	}
-	
 	/**
 	 * Tests the failed creation of a rectangle with a negative width.
 	 */
@@ -505,7 +476,6 @@ public class GeometryTest {
 	public void createNegativeWidthRectangle() {
 		Geometry.createRectangle(-1.0, 2.0);
 	}
-	
 	/**
 	 * Tests the failed creation of a rectangle with a negative height.
 	 */
@@ -513,7 +483,6 @@ public class GeometryTest {
 	public void createNegativeHeightRectangle() {
 		Geometry.createRectangle(1.0, -2.0);
 	}
-
 	/**
 	 * Tests the failed creation of a rectangle with a zero width.
 	 */
@@ -521,7 +490,6 @@ public class GeometryTest {
 	public void createZeroWidthRectangle() {
 		Geometry.createRectangle(0.0, 2.0);
 	}
-	
 	/**
 	 * Tests the failed creation of a rectangle with a zero height.
 	 */
@@ -529,7 +497,6 @@ public class GeometryTest {
 	public void createZeroHeightRectangle() {
 		Geometry.createRectangle(1.0, 0.0);
 	}
-	
 	/**
 	 * Tests the creation of a triangle using a null point.
 	 */
@@ -540,7 +507,6 @@ public class GeometryTest {
 		// should fail since the vertices list contains null items
 		Geometry.createTriangle(p1, p2, null);
 	}
-	
 	/**
 	 * Tests the successful creation of a triangle using points.
 	 */
@@ -556,7 +522,6 @@ public class GeometryTest {
 		TestCase.assertFalse(t.vertices[1] == p2);
 		TestCase.assertFalse(t.vertices[2] == p3);
 	}
-	
 	/**
 	 * Tests the successful creation of a triangle using points.
 	 */
@@ -577,7 +542,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, c.x, 1.0e-3);
 		TestCase.assertEquals(0.000, c.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a zero width.
 	 */
@@ -585,7 +549,6 @@ public class GeometryTest {
 	public void createZeroWidthRightTriangle() {
 		Geometry.createRightTriangle(0.0, 2.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a zero height.
 	 */
@@ -593,7 +556,6 @@ public class GeometryTest {
 	public void createZeroHeightRightTriangle() {
 		Geometry.createRightTriangle(1.0, 0.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a negative width.
 	 */
@@ -601,7 +563,6 @@ public class GeometryTest {
 	public void createNegativeWidthRightTriangle() {
 		Geometry.createRightTriangle(-1.0, 2.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a negative height.
 	 */
@@ -609,7 +570,6 @@ public class GeometryTest {
 	public void createNegativeHeightRightTriangle() {
 		Geometry.createRightTriangle(2.0, -2.0);
 	}
-	
 	/**
 	 * Tests the successful creation of a right angle triangle.
 	 */
@@ -652,7 +612,6 @@ public class GeometryTest {
 		// if we get here we didn't find a 90 degree angle
 		TestCase.assertFalse(true);
 	}
-	
 	/**
 	 * Tests the successful creation of a right angle triangle.
 	 */
@@ -695,7 +654,6 @@ public class GeometryTest {
 		// if we get here we didn't find a 90 degree angle
 		TestCase.assertFalse(true);
 	}
-	
 	/**
 	 * Tests the create equilateral triangle method with a zero height.
 	 */
@@ -703,7 +661,6 @@ public class GeometryTest {
 	public void createZeroHeightEquilateralTriangle() {
 		Geometry.createEquilateralTriangle(0.0);
 	}
-	
 	/**
 	 * Tests the create equilateral triangle method with a negative height.
 	 */
@@ -711,7 +668,6 @@ public class GeometryTest {
 	public void createNegativeHeightEquilateralTriangle() {
 		Geometry.createEquilateralTriangle(-1.0);
 	}
-	
 	/**
 	 * Tests the successful creation of an equilateral angle triangle.
 	 */
@@ -752,7 +708,6 @@ public class GeometryTest {
 		// if we get here we didn't find a 90 degree angle
 		TestCase.assertTrue(true);
 	}
-
 	/**
 	 * Tests the create right triangle method with a zero width.
 	 */
@@ -760,7 +715,6 @@ public class GeometryTest {
 	public void createZeroWidthIsoscelesTriangle() {
 		Geometry.createIsoscelesTriangle(0.0, 1.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a zero height.
 	 */
@@ -768,7 +722,6 @@ public class GeometryTest {
 	public void createZeroHeightIsoscelesTriangle() {
 		Geometry.createIsoscelesTriangle(1.0, 0.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a negative width.
 	 */
@@ -776,7 +729,6 @@ public class GeometryTest {
 	public void createNegativeWidthIsoscelesTriangle() {
 		Geometry.createIsoscelesTriangle(-1.0, 2.0);
 	}
-	
 	/**
 	 * Tests the create right triangle method with a negative height.
 	 */
@@ -784,7 +736,6 @@ public class GeometryTest {
 	public void createNegativeHeightIsoscelesTriangle() {
 		Geometry.createIsoscelesTriangle(2.0, -2.0);
 	}
-	
 	/**
 	 * Tests the successful creation of an isosceles triangle.
 	 */
@@ -813,7 +764,6 @@ public class GeometryTest {
 		// then angles between e1 and e2 and e2 and e3 should be identical
 		TestCase.assertEquals(e1.getAngleBetween(e2), e2.getAngleBetween(e3), 1.0e-3);
 	}
-	
 	/**
 	 * Tests the creation of a segment passing a null point.
 	 */
@@ -821,7 +771,6 @@ public class GeometryTest {
 	public void createSegmentNullPoint1() {
 		Geometry.createSegment(null, new Vector2());
 	}
-
 	/**
 	 * Tests the creation of a segment passing a null point.
 	 * @since 3.1.0
@@ -830,7 +779,6 @@ public class GeometryTest {
 	public void createSegmentNullPoint2() {
 		Geometry.createSegment(new Vector2(), null);
 	}
-	
 	/**
 	 * Tests the successful creation of a segment given two points.
 	 */
@@ -838,7 +786,6 @@ public class GeometryTest {
 	public void createSegment() {
 		Geometry.createSegment(new Vector2(1.0, 1.0), new Vector2(2.0, -1.0));
 	}
-	
 	/**
 	 * Tests the successful creation of a segment given two points at the origin.
 	 */
@@ -851,7 +798,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, center.x, 1.0e-3);
 		TestCase.assertEquals(0.000, center.y, 1.0e-3);
 	}
-
 	/**
 	 * Tests the successful creation of a segment given an end point.
 	 */
@@ -859,7 +805,6 @@ public class GeometryTest {
 	public void createSegmentEnd() {
 		Geometry.createSegment(new Vector2(1.0, 1.0));
 	}
-	
 	/**
 	 * Tests the creation of a segment passing a zero length.
 	 */
@@ -867,7 +812,6 @@ public class GeometryTest {
 	public void createZeroLengthHorizontalSegment() {
 		Geometry.createHorizontalSegment(0.0);
 	}
-
 	/**
 	 * Tests the creation of a segment passing a negative length.
 	 */
@@ -875,7 +819,6 @@ public class GeometryTest {
 	public void createNegativeLengthHorizontalSegment() {
 		Geometry.createHorizontalSegment(-1.0);
 	}
-	
 	/**
 	 * Tests the successful creation of a segment given a length.
 	 */
@@ -888,7 +831,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, center.x, 1.0e-3);
 		TestCase.assertEquals(0.000, center.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the creation of a segment passing a zero length.
 	 * @since 2.2.3
@@ -897,7 +839,6 @@ public class GeometryTest {
 	public void createZeroLengthVerticalSegment() {
 		Geometry.createVerticalSegment(0.0);
 	}
-
 	/**
 	 * Tests the creation of a segment passing a negative length.
 	 * @since 2.2.3
@@ -906,7 +847,6 @@ public class GeometryTest {
 	public void createNegativeLengthVerticalSegment() {
 		Geometry.createVerticalSegment(-1.0);
 	}
-	
 	/**
 	 * Tests the successful creation of a segment given a length.
 	 * @since 2.2.3
@@ -920,7 +860,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, center.x, 1.0e-3);
 		TestCase.assertEquals(0.000, center.y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a list.
 	 */
@@ -936,7 +875,6 @@ public class GeometryTest {
 		Collections.reverse(points);
 		TestCase.assertTrue(Geometry.getWinding(points) < 0);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a null list.
 	 */
@@ -944,7 +882,6 @@ public class GeometryTest {
 	public void getWindingNullList() {
 		Geometry.getWinding((List<Vector2>)null);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a list with 1 point.
 	 */
@@ -954,7 +891,6 @@ public class GeometryTest {
 		points.add(new Vector2());
 		Geometry.getWinding(points);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a list that contains a null point.
 	 */
@@ -966,7 +902,6 @@ public class GeometryTest {
 		points.add(null);
 		Geometry.getWinding(points);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a valid array.
 	 */
@@ -989,7 +924,6 @@ public class GeometryTest {
 		
 		TestCase.assertTrue(Geometry.getWinding(points) < 0);
 	}
-	
 	/**
 	 * Tests the getWinding method passing a null array.
 	 */
@@ -997,7 +931,6 @@ public class GeometryTest {
 	public void getWindingNullArray() {
 		Geometry.getWinding((Vector2[])null);
 	}
-	
 	/**
 	 * Tests the getWinding method passing an array with less than two points.
 	 */
@@ -1007,7 +940,6 @@ public class GeometryTest {
 		points[0] = new Vector2(-1.0, -1.0);
 		Geometry.getWinding(points);
 	}
-	
 	/**
 	 * Tests the getWinding method passing an array containing null points.
 	 */
@@ -1020,7 +952,6 @@ public class GeometryTest {
 		points[3] = null;
 		Geometry.getWinding(points);
 	}
-	
 	/**
 	 * Tests the reverse winding method passing a null list.
 	 */
@@ -1028,7 +959,6 @@ public class GeometryTest {
 	public void reverseWindingNullList() {
 		Geometry.reverseWinding((List<Vector2>) null);
 	}
-	
 	/**
 	 * Tests the reverse winding method passing a null array.
 	 */
@@ -1036,7 +966,6 @@ public class GeometryTest {
 	public void reverseWindingNullArray() {
 		Geometry.reverseWinding((Vector2[]) null);
 	}
-	
 	/**
 	 * Tests the cleanse method passing a null list.
 	 * @since 2.2.3
@@ -1045,7 +974,6 @@ public class GeometryTest {
 	public void cleanseNullList() {
 		Geometry.cleanse((List<Vector2>)null);
 	}
-	
 	/**
 	 * Tests the cleanse method passing a null array.
 	 * @since 2.2.3
@@ -1054,7 +982,6 @@ public class GeometryTest {
 	public void cleanseNullArray() {
 		Geometry.cleanse((Vector2[])null);
 	}
-	
 	/**
 	 * Tests the cleanse method passing a null list.
 	 * @since 2.2.3
@@ -1068,7 +995,6 @@ public class GeometryTest {
 		list.add(new Vector2());
 		Geometry.cleanse(list);
 	}
-	
 	/**
 	 * Tests the cleanse method passing a null array.
 	 * @since 2.2.3
@@ -1081,7 +1007,6 @@ public class GeometryTest {
 		array[4] = new Vector2();
 		Geometry.cleanse(array);
 	}
-	
 	/**
 	 * Tests the cleanse empty.
 	 */
@@ -1095,7 +1020,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0, result1.size());
 		TestCase.assertEquals(0, result2.length);
 	}
-	
 	/**
 	 * Tests the cleanse list method.
 	 */
@@ -1124,7 +1048,6 @@ public class GeometryTest {
 		TestCase.assertTrue(Geometry.getWinding(result) > 0.0);
 		TestCase.assertEquals(4, result.size());
 	}
-	
 	/**
 	 * Tests the cleanse array method.
 	 */
@@ -1154,7 +1077,6 @@ public class GeometryTest {
 		TestCase.assertTrue(Geometry.getWinding(result) > 0.0);
 		TestCase.assertEquals(4, result.length);
 	}
-	
 	/**
 	 * Tests the createEllipse method(s)
 	 * @since 4.1.0
@@ -1168,7 +1090,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, e.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, e.getCenter().y, 1.0e-3);
 	}
-
 	/**
 	 * Tests the createEllipse method(s)
 	 * @since 4.1.0
@@ -1182,7 +1103,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, e.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.212, e.getCenter().y, 1.0e-3);
 	}
-
 	/**
 	 * Tests the createEllipse method(s)
 	 * @since 4.1.0
@@ -1196,7 +1116,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, e.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, e.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method.
 	 * @since 3.1.5
@@ -1209,7 +1128,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, p.getCenter().y, 1.0e-3);
 	}
-
 	/**
 	 * Tests the createPolygonalEllipse method with an odd count.
 	 * @since 3.1.5
@@ -1226,7 +1144,6 @@ public class GeometryTest {
 		// and the center should be the origin
 		TestCase.assertEquals(10, p.getVertices().length);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method with less than 4 vertices.
 	 * @since 3.1.5
@@ -1235,7 +1152,6 @@ public class GeometryTest {
 	public void createPolygonalEllipseLessCount() {
 		Geometry.createPolygonalEllipse(3, 2, 1);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method with a zero width.
 	 * @since 3.1.5
@@ -1244,7 +1160,6 @@ public class GeometryTest {
 	public void createPolygonalEllipseZeroWidth() {
 		Geometry.createPolygonalEllipse(10, 0, 1);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method with a zero height.
 	 * @since 3.1.5
@@ -1253,7 +1168,6 @@ public class GeometryTest {
 	public void createPolygonalEllipseZeroHeight() {
 		Geometry.createPolygonalEllipse(10, 2, 0);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method with a negative width.
 	 * @since 3.1.5
@@ -1262,7 +1176,6 @@ public class GeometryTest {
 	public void createPolygonalEllipseNegativeWidth() {
 		Geometry.createPolygonalEllipse(10, -1, 1);
 	}
-	
 	/**
 	 * Tests the createPolygonalEllipse method with a negative height.
 	 * @since 3.1.5
@@ -1271,7 +1184,6 @@ public class GeometryTest {
 	public void createPolygonalEllipseNegativeHeight() {
 		Geometry.createPolygonalEllipse(10, 2, -1);
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method.
 	 * @since 3.1.5
@@ -1284,7 +1196,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.658, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, p.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalSliceAtOrigin method.
 	 * @since 3.1.5
@@ -1297,7 +1208,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, p.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method with an invalid count.
 	 * @since 3.1.5
@@ -1306,7 +1216,6 @@ public class GeometryTest {
 	public void createPolygonalSliceInvalidCount() {
 		Geometry.createPolygonalSlice(0, 1.0, Math.toRadians(30));
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method with a negative radius.
 	 * @since 3.1.5
@@ -1315,7 +1224,6 @@ public class GeometryTest {
 	public void createPolygonalSliceNegativeRadius() {
 		Geometry.createPolygonalSlice(5, -1, Math.toRadians(30));
 	}
-
 	/**
 	 * Tests the createPolygonalSlice method with a zero radius.
 	 * @since 3.1.5
@@ -1324,7 +1232,6 @@ public class GeometryTest {
 	public void createPolygonalSliceZeroRadius() {
 		Geometry.createPolygonalSlice(5, 0, Math.toRadians(30));
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method with a negative theta.
 	 * @since 3.1.5
@@ -1333,7 +1240,6 @@ public class GeometryTest {
 	public void createPolygonalSliceThetaLessThanZero() {
 		Geometry.createPolygonalSlice(5, 1.0, -Math.toRadians(30));
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method with theta equal to zero.
 	 * @since 3.1.5
@@ -1342,7 +1248,6 @@ public class GeometryTest {
 	public void createPolygonalSliceThetaLessZero() {
 		Geometry.createPolygonalSlice(5, 1.0, 0);
 	}
-	
 	/**
 	 * Tests the createPolygonalSlice method with theta greater than 180 degrees.
 	 * @since 3.1.5
@@ -1351,7 +1256,6 @@ public class GeometryTest {
 	public void createPolygonalSliceThetaGreaterThan180() {
 		Geometry.createPolygonalSlice(5, 1.0, Math.toRadians(190));
 	}
-
 	/**
 	 * Tests the createPolygonalHalfEllipse method.
 	 * @since 3.1.5
@@ -1364,7 +1268,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.103, p.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalHalfEllipseAtOrigin method.
 	 * @since 3.1.5
@@ -1377,7 +1280,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, p.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalHalfEllipse method with an invalid count.
 	 * @since 3.1.5
@@ -1386,7 +1288,6 @@ public class GeometryTest {
 	public void createPolygonalHalfEllipseInvalidCount() {
 		Geometry.createPolygonalHalfEllipse(0, 1.0, 0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalHalfEllipse method with a negative width.
 	 * @since 3.1.5
@@ -1395,7 +1296,6 @@ public class GeometryTest {
 	public void createPolygonalHalfEllipseZeroWidth() {
 		Geometry.createPolygonalHalfEllipse(5, 0, 0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalHalfEllipse method with zero width.
 	 * @since 3.1.5
@@ -1404,7 +1304,6 @@ public class GeometryTest {
 	public void createPolygonalHalfEllipseNegativeWidth() {
 		Geometry.createPolygonalHalfEllipse(5, -1, 0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalHalfEllipse method with a negative height.
 	 * @since 3.1.5
@@ -1413,7 +1312,6 @@ public class GeometryTest {
 	public void createPolygonalHalfEllipseNegativeHeight() {
 		Geometry.createPolygonalHalfEllipse(5, 1.0, -0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalHalfEllipse method with zero height.
 	 * @since 3.1.5
@@ -1422,7 +1320,6 @@ public class GeometryTest {
 	public void createPolygonalHalfEllipseZeroHeight() {
 		Geometry.createPolygonalHalfEllipse(5, 1.0, 0);
 	}
-
 	/**
 	 * Tests the createPolygonalCapsule method.
 	 * @since 3.1.5
@@ -1435,7 +1332,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.000, p.getCenter().x, 1.0e-3);
 		TestCase.assertEquals(0.000, p.getCenter().y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the createPolygonalCapsule method with an invalid count.
 	 * @since 3.1.5
@@ -1444,7 +1340,6 @@ public class GeometryTest {
 	public void createPolygonalCapsuleInvalidCount() {
 		Geometry.createPolygonalCapsule(0, 1.0, 0.5);
 	}
-	
 	/**
 	 * Tests the createPolygonalCapsule method with zero width.
 	 * @since 3.1.5
@@ -1453,7 +1348,6 @@ public class GeometryTest {
 	public void createPolygonalCapsuleZeroWidth() {
 		Geometry.createPolygonalCapsule(5, 0, 0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalCapsule method with a negative width.
 	 * @since 3.1.5
@@ -1462,7 +1356,6 @@ public class GeometryTest {
 	public void createPolygonalCapsuleNegativeWidth() {
 		Geometry.createPolygonalCapsule(5, -1, 0.5);
 	}
-
 	/**
 	 * Tests the createPolygonalCapsule method with zero height.
 	 * @since 3.1.5
@@ -1471,7 +1364,6 @@ public class GeometryTest {
 	public void createPolygonalCapsuleZeroHeight() {
 		Geometry.createPolygonalCapsule(5, 1.0, 0);
 	}
-
 	/**
 	 * Tests the createPolygonalCapsule method with zero width.
 	 * @since 3.1.5
@@ -1480,7 +1372,6 @@ public class GeometryTest {
 	public void createPolygonalCapsuleNegativeHeight() {
 		Geometry.createPolygonalCapsule(5, 1.0, -0.5);
 	}
-	
 	/**
 	 * Tests the flip polygon method.
 	 * @since 3.1.4
@@ -1504,7 +1395,6 @@ public class GeometryTest {
 		TestCase.assertEquals(-2.000, vertices[4].x, 1.0e-3);
 		TestCase.assertEquals( 3.000, vertices[4].y, 1.0e-3);
 	}
-	
 	/**
 	 * Tests the flip polygon method with a null polygon.
 	 * @since 3.1.4
@@ -1513,7 +1403,6 @@ public class GeometryTest {
 	public void flipNullPolygon() {
 		Geometry.flip(null, new Vector2(1.0, 1.0),  null);
 	}
-	
 	/**
 	 * Tests the flip polygon method with a null axis.
 	 * @since 3.1.4
@@ -1522,7 +1411,6 @@ public class GeometryTest {
 	public void flipNullAxis() {
 		Geometry.flip(Geometry.createSquare(1.0), null,  null);
 	}
-
 	/**
 	 * Tests the flip polygon method with a zero vector axis.
 	 * @since 3.1.4
@@ -1531,7 +1419,6 @@ public class GeometryTest {
 	public void flipZeroAxis() {
 		Geometry.flip(Geometry.createSquare(1.0), new Vector2(),  null);
 	}
-	
 	/**
 	 * Tests the flip polygon method with a null point.
 	 * @since 3.1.4
@@ -1541,7 +1428,6 @@ public class GeometryTest {
 		// it should use the center
 		Geometry.flip(Geometry.createSquare(1.0), new Vector2(1.0, 1.0),  null);
 	}
-	
 	/**
 	 * Test the minkowski sum method.
 	 * @since 3.1.5
@@ -1570,7 +1456,6 @@ public class GeometryTest {
 		p = Geometry.minkowskiSum(Geometry.createSegment(new Vector2(1.0, 0.0)), Geometry.createSegment(new Vector2(0.5, 0.5)));
 		TestCase.assertEquals(4, p.vertices.length);
 	}
-	
 	/**
 	 * Test the minkowski sum method with invalid segments.
 	 * @since 3.1.5
@@ -1579,7 +1464,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidSegments() {
 		Geometry.minkowskiSum(Geometry.createSegment(new Vector2(1.0, 0.0)), Geometry.createSegment(new Vector2(-0.5, 0.0)));
 	}
-	
 	/**
 	 * Test the minkowski sum method given a null shape.
 	 * @since 3.1.5
@@ -1588,7 +1472,6 @@ public class GeometryTest {
 	public void minkowskiSumNullWound1() {
 		Geometry.minkowskiSum(null, Geometry.createUnitCirclePolygon(5, 0.5));
 	}
-	
 	/**
 	 * Test the minkowski sum method given a null shape.
 	 * @since 3.1.5
@@ -1597,7 +1480,6 @@ public class GeometryTest {
 	public void minkowskiSumNullWound2() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), null);
 	}
-	
 	/**
 	 * Test the minkowski sum method given a null shape.
 	 * @since 3.1.5
@@ -1606,7 +1488,6 @@ public class GeometryTest {
 	public void minkowskiSumNullShape1() {
 		Geometry.minkowskiSum(null, Geometry.createCircle(0.2), 3);
 	}
-	
 	/**
 	 * Test the minkowski sum method given a null shape.
 	 * @since 3.1.5
@@ -1615,7 +1496,6 @@ public class GeometryTest {
 	public void minkowskiSumNullShape2() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), null, 3);
 	}
-	
 	/**
 	 * Test the minkowski sum method given a null shape.
 	 * @since 3.1.5
@@ -1624,7 +1504,6 @@ public class GeometryTest {
 	public void minkowskiSumNullShape3() {
 		Geometry.minkowskiSum(null, 0.2, 3);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid count.
 	 * @since 3.1.5
@@ -1633,7 +1512,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidCount1() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), 0.2, 0);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid count.
 	 * @since 3.1.5
@@ -1642,7 +1520,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidCount2() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), 0.2, -2);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid count.
 	 * @since 3.1.5
@@ -1651,7 +1528,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidCount3() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), Geometry.createCircle(0.5), 0);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid count.
 	 * @since 3.1.5
@@ -1660,7 +1536,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidCount4() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), Geometry.createCircle(0.5), -2);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid radius.
 	 * @since 3.1.5
@@ -1669,7 +1544,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidRadius1() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), 0, 3);
 	}
-	
 	/**
 	 * Test the minkowski sum method given an invalid radius.
 	 * @since 3.1.5
@@ -1678,7 +1552,6 @@ public class GeometryTest {
 	public void minkowskiSumInvalidRadius2() {
 		Geometry.minkowskiSum(Geometry.createUnitCirclePolygon(5, 0.5), -2.0, 3);
 	}
-	
 	/**
 	 * Tests that the scale methods work as expected.
 	 * @since 3.1.5
@@ -1723,7 +1596,6 @@ public class GeometryTest {
 		TestCase.assertEquals(0.250, s6.radius, 1.0e-3);
 		TestCase.assertEquals(0.500, s7.length, 1.0e-3);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1732,7 +1604,6 @@ public class GeometryTest {
 	public void scaleNullCircle() {
 		Geometry.scale((Circle)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1741,7 +1612,6 @@ public class GeometryTest {
 	public void scaleNullCapsule() {
 		Geometry.scale((Capsule)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1750,7 +1620,6 @@ public class GeometryTest {
 	public void scaleNullEllipse() {
 		Geometry.scale((Ellipse)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1759,7 +1628,6 @@ public class GeometryTest {
 	public void scaleNullHalfEllipse() {
 		Geometry.scale((HalfEllipse)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1768,7 +1636,6 @@ public class GeometryTest {
 	public void scaleNullSlice() {
 		Geometry.scale((Slice)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1777,7 +1644,6 @@ public class GeometryTest {
 	public void scaleNullPolygon() {
 		Geometry.scale((Polygon)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given a null shape.
 	 * @since 3.1.5
@@ -1786,7 +1652,6 @@ public class GeometryTest {
 	public void scaleNullSegment() {
 		Geometry.scale((Segment)null, 1.2);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1795,7 +1660,6 @@ public class GeometryTest {
 	public void scaleCircleInvalid() {
 		Geometry.scale(Geometry.createCircle(0.5), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1804,7 +1668,6 @@ public class GeometryTest {
 	public void scaleCapsuleInvalid() {
 		Geometry.scale(Geometry.createCapsule(1.0, 0.5), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1813,7 +1676,6 @@ public class GeometryTest {
 	public void scaleEllipseInvalid() {
 		Geometry.scale(Geometry.createEllipse(1.0, 0.5), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1822,7 +1684,6 @@ public class GeometryTest {
 	public void scaleHalfEllipseInvalid() {
 		Geometry.scale(Geometry.createHalfEllipse(1.0, 0.25), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1831,7 +1692,6 @@ public class GeometryTest {
 	public void scaleSliceInvalid() {
 		Geometry.scale(Geometry.createSlice(0.5, Math.toRadians(30)), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1840,7 +1700,6 @@ public class GeometryTest {
 	public void scalePolygonInvalid() {
 		Geometry.scale(Geometry.createUnitCirclePolygon(5, 0.5), 0);
 	}
-	
 	/**
 	 * Tests that the scale method fails if given an invalid scale factor.
 	 * @since 3.1.5
@@ -1849,33 +1708,10 @@ public class GeometryTest {
 	public void scaleSegmentInvalid() {
 		Geometry.scale(Geometry.createSegment(new Vector2(1.0, 1.0)), 0);
 	}
-
-	/**
-	 * Tests the createLinks method.
-	 * @since 4.0.1
-	 */
-	@Test
-	public void createLinksWrap() {
-		Vector2 a = new Vector2(0.0, 0.0);
-		Vector2 b = new Vector2(2.4, 0.0);
-		Vector2 c = new Vector2(2.4, 1.6);
-		Vector2 d = new Vector2(0.0, 1.6);
-		List<Link> links = Geometry.createLinks(List.of(a, b, c, d), true);
-		
-		TestCase.assertEquals(4, links.size());
-		TestCase.assertEquals(links.get(0).getPoint1(), a);
-		TestCase.assertEquals(links.get(0).getPoint2(), b);
-		TestCase.assertEquals(links.get(1).getPoint1(), b);
-		TestCase.assertEquals(links.get(1).getPoint2(), c);
-		TestCase.assertEquals(links.get(2).getPoint1(), c);
-		TestCase.assertEquals(links.get(2).getPoint2(), d);
-		TestCase.assertEquals(links.get(3).getPoint1(), d);
-		TestCase.assertEquals(links.get(3).getPoint2(), a);
-	}
-	
 	/**
 	 * Tests the creation of a link chain.
 	 */
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/geometry/GeometryTest.java/left.java
 	@Test
 	public void createLinks() {
 		List<Vector2> verts = new ArrayList<Vector2>();
@@ -1915,4 +1751,213 @@ public class GeometryTest {
 		links = Geometry.createLinks(verts, false);
 		TestCase.assertEquals(3, links.size());
 	}
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/geometry/GeometryTest.java/base.java
+=======
+	@Test
+	public void createLinks() {
+		Vector2 a = new Vector2(0.0, 0.0);
+		Vector2 b = new Vector2(2.4, 0.0);
+		Vector2 c = new Vector2(2.4, 1.6);
+		Vector2 d = new Vector2(0.0, 1.6);
+		List<Link> links = Geometry.createLinks(List.of(a, b, c, d), true);
+		
+		TestCase.assertEquals(4, links.size());
+		TestCase.assertEquals(links.get(0).getPoint1(), a);
+		TestCase.assertEquals(links.get(0).getPoint2(), b);
+		TestCase.assertEquals(links.get(1).getPoint1(), b);
+		TestCase.assertEquals(links.get(1).getPoint2(), c);
+		TestCase.assertEquals(links.get(2).getPoint1(), c);
+		TestCase.assertEquals(links.get(2).getPoint2(), d);
+		TestCase.assertEquals(links.get(3).getPoint1(), d);
+		TestCase.assertEquals(links.get(3).getPoint2(), a);
+	}
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/geometry/GeometryTest.java/right.java
+	/**
+	 * Tests the getAverageCenter method passing an array with null elements.
+	 * @since 3.1.0
+	 */
+	/**
+	 * Tests the getAverageCenter method passing an array with null elements.
+	 * @since 3.1.0
+	 */
+	/**
+	 * Tests the getAreaWeightedCenter method passing a list of
+	 * points who are all the same yielding zero area.
+	 * @since 2.0.0
+	 */
+	/**
+	 * Tests the getAreaWeightedCenter method passing a list of
+	 * points who are all the same yielding zero area.
+	 * @since 2.0.0
+	 */
+	/**
+	 * Tests the createLinks method.
+	 * @since 4.0.1
+	 */
+	/**
+	 * Tests the successful creation of a polygon using vertices.
+	 */
+	/**
+	 * Tests the successful creation of a polygon using vertices.
+	 */
+	/**
+	 * Tests the successful creation of a triangle using points.
+	 */
+	/**
+	 * Tests the successful creation of a triangle using points.
+	 */
+	/**
+	 * Tests the create right triangle method with a zero width.
+	 */
+	/**
+	 * Tests the create right triangle method with a zero height.
+	 */
+	/**
+	 * Tests the create right triangle method with a negative width.
+	 */
+	/**
+	 * Tests the create right triangle method with a negative height.
+	 */
+	/**
+	 * Tests the successful creation of a right angle triangle.
+	 */
+	/**
+	 * Tests the successful creation of a right angle triangle.
+	 */
+	/**
+	 * Tests the create right triangle method with a zero width.
+	 */
+	/**
+	 * Tests the create right triangle method with a zero height.
+	 */
+	/**
+	 * Tests the create right triangle method with a negative width.
+	 */
+	/**
+	 * Tests the create right triangle method with a negative height.
+	 */
+	/**
+	 * Tests the cleanse method passing a null list.
+	 * @since 2.2.3
+	 */
+	/**
+	 * Tests the cleanse method passing a null array.
+	 * @since 2.2.3
+	 */
+	/**
+	 * Tests the cleanse method passing a null list.
+	 * @since 2.2.3
+	 */
+	/**
+	 * Tests the cleanse method passing a null array.
+	 * @since 2.2.3
+	 */
+	/**
+	 * Tests the createPolygonalCapsule method with zero width.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests the createPolygonalCapsule method with zero width.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid count.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid count.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid count.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid count.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid radius.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Test the minkowski sum method given an invalid radius.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given a null shape.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
+	/**
+	 * Tests that the scale method fails if given an invalid scale factor.
+	 * @since 3.1.5
+	 */
 }

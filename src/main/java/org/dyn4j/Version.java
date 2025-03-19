@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2021 William Bittle  http://www.dyn4j.org/
+ * Copyright (c) 2010-2020 William Bittle  http://www.dyn4j.org/
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -27,7 +27,13 @@ package org.dyn4j;
 /**
  * The version of the engine.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/Version.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/Version.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.2
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/Version.java/right.java
  * @since 1.0.0
  */
 public final class Version {
@@ -38,7 +44,7 @@ public final class Version {
 	private static final int MINOR = 1;
 	
 	/** The revision number; low impact changes; deprecating API changes, minor bug fixes, etc. */
-	private static final int REVISION = 0;
+	private static final int REVISION = 2;
 	
 	/**
 	 * Hide the constructor.

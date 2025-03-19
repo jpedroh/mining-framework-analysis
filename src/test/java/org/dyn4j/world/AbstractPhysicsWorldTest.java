@@ -72,7 +72,13 @@ import junit.framework.TestCase;
 /**
  * Test case for the {@link AbstractPhysicsWorld} class.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/world/AbstractPhysicsWorldTest.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/world/AbstractPhysicsWorldTest.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/world/AbstractPhysicsWorldTest.java/right.java
  * @since 4.0.0
  */
 public class AbstractPhysicsWorldTest {
@@ -145,6 +151,8 @@ public class AbstractPhysicsWorldTest {
 		public void begin(ContactCollisionData<Body> collision, Contact contact) { }
 		@Override
 		public void end(ContactCollisionData<Body> collision, Contact contact) { this.end++; }
+		@Override
+		public void collision(ContactCollisionData<Body> collision, ContactConstraint<Body> contactConstraint) {}
 		@Override
 		public void destroyed(ContactCollisionData<Body> collision, Contact contact) { this.destroyed++; }
 		@Override

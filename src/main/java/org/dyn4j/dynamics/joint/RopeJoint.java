@@ -56,7 +56,13 @@ import org.dyn4j.resources.Messages;
  * separate, but it's recommended that they start separated instead. If the lower
  * limit is not being used, then the initial state doesn't matter.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RopeJoint.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RopeJoint.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RopeJoint.java/right.java
  * @since 2.2.1
  * @see <a href="http://www.dyn4j.org/documentation/joints/#Rope_Joint" target="_blank">Documentation</a>
  * @see <a href="http://www.dyn4j.org/2010/09/distance-constraint/" target="_blank">Distance Constraint</a>

@@ -72,7 +72,13 @@ import org.dyn4j.resources.Messages;
  * clockwise or counter-clockwise rotation.  The maximum motor torque must be 
  * greater than zero for the motor to apply any motion.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RevoluteJoint.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RevoluteJoint.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/RevoluteJoint.java/right.java
  * @since 1.0.0
  * @see <a href="http://www.dyn4j.org/documentation/joints/#Revolute_Joint" target="_blank">Documentation</a>
  * @see <a href="http://www.dyn4j.org/2010/07/point-to-point-constraint/" target="_blank">Point-to-Point Constraint</a>

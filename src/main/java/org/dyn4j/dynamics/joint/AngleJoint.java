@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2021 William Bittle  http://www.dyn4j.org/
+ * Copyright (c) 2010-2020 William Bittle  http://www.dyn4j.org/
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -78,7 +78,13 @@ import org.dyn4j.resources.Messages;
  * the world space center points for the joined bodies.  This constraint 
  * doesn't need anchor points.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/AngleJoint.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/AngleJoint.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/dynamics/joint/AngleJoint.java/right.java
  * @since 2.2.2
  * @see <a href="http://www.dyn4j.org/documentation/joints/#Angle_Joint" target="_blank">Documentation</a>
  * @see <a href="http://www.dyn4j.org/2010/12/angle-constraint/" target="_blank">Angle Constraint</a>

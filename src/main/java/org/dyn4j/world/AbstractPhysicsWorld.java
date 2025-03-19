@@ -89,7 +89,13 @@ import org.dyn4j.world.listener.TimeOfImpactListener;
  * more than one world. Likewise, the {@link Joint#setOwner(Object)} method is used to handle
  * joints being added to the world. Callers should <b>NOT</b> use the methods.
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/base.java
+ * @version 4.0.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/right.java
  * @since 4.0.0
  * @param <T> the {@link PhysicsBody} type
  * @param <V> the {@link ContactCollisionData} type
@@ -1332,10 +1338,18 @@ public abstract class AbstractPhysicsWorld<T extends PhysicsBody, V extends Cont
 				// build the contact edges
 				this.constraintGraph.addContactConstraint(contactConstraint);
 				
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/left.java
 				// let any contact listeners churn on it
 				for (ContactListener<T> listener : this.contactListeners) {
 					listener.collision(collision);
 				}
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/base.java
+=======
+				// let any contact listeners churn on it
+				for (ContactListener<T> listener : this.contactListeners) {
+					listener.collision(collision, contactConstraint);
+				}
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/main/java/org/dyn4j/world/AbstractPhysicsWorld.java/right.java
 				
 				// add it to a list of contact-constraint only collisions for
 				// quicker post/pre solve notification if it's enabled and

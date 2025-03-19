@@ -35,7 +35,13 @@ import junit.framework.TestCase;
 /**
  * Test case for the {@link SegmentDetector} class
  * @author William Bittle
+<<<<<<< /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/collision/narrowphase/SegmentDetectorTest.java/left.java
  * @version 4.1.0
+||||||| /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/collision/narrowphase/SegmentDetectorTest.java/base.java
+ * @version 3.4.0
+=======
+ * @version 4.0.1
+>>>>>>> /usr/src/app/output/wnbittle/dyn4j/b6c114ea1ff974840b5daa3092732877134ecda2/src/test/java/org/dyn4j/collision/narrowphase/SegmentDetectorTest.java/right.java
  * @since 3.4.0
  */
 public class SegmentDetectorTest {	
