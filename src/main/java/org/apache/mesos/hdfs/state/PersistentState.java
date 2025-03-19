@@ -1,5 +1,4 @@
 package org.apache.mesos.hdfs.state;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,7 +9,6 @@ import org.apache.mesos.hdfs.config.SchedulerConf;
 import org.apache.mesos.hdfs.util.HDFSConstants;
 import org.apache.mesos.state.Variable;
 import org.apache.mesos.state.ZooKeeperState;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,20 +25,23 @@ import java.util.concurrent.TimeUnit;
 
 public class PersistentState {
   public static final Log log = LogFactory.getLog(PersistentState.class);
+
   private static String FRAMEWORK_ID_KEY = "frameworkId";
+
   private static String NAMENODES_KEY = "nameNodes";
+
   private static String JOURNALNODES_KEY = "journalNodes";
+
   private static String DATANODES_KEY = "dataNodes";
+
   private ZooKeeperState zkState;
 
   public PersistentState(SchedulerConf conf) {
     MesosNativeLibrary.load(conf.getNativeLibrary());
-    this.zkState = new ZooKeeperState(conf.getStateZkServers(),
-        conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
+    this.zkState = new ZooKeeperState(conf.getStateZkServers(), conf.getStateZkTimeout(), TimeUnit.MILLISECONDS, "/hdfs-mesos/" + conf.getFrameworkName());
   }
 
-  public FrameworkID getFrameworkID() throws InterruptedException, ExecutionException,
-      InvalidProtocolBufferException {
+  public FrameworkID getFrameworkID() throws InterruptedException, ExecutionException, InvalidProtocolBufferException {
     byte[] existingFrameworkId = zkState.fetch(FRAMEWORK_ID_KEY).get().value();
     if (existingFrameworkId.length > 0) {
       return FrameworkID.parseFrom(existingFrameworkId);
@@ -49,8 +50,7 @@ public class PersistentState {
     }
   }
 
-  public void setFrameworkId(FrameworkID frameworkId) throws InterruptedException,
-      ExecutionException {
+  public void setFrameworkId(FrameworkID frameworkId) throws InterruptedException, ExecutionException {
     Variable value = zkState.fetch(FRAMEWORK_ID_KEY).get();
     value = value.mutate(frameworkId.toByteArray());
     zkState.store(value).get();
@@ -60,8 +60,7 @@ public class PersistentState {
     HashMap<String, String> journalNodes = getJournalNodes();
     Set<String> journalHosts = journalNodes.keySet();
     List<String> deadJournalHosts = new ArrayList<>();
-
-    for (String journalHost: journalHosts) {
+    for (String journalHost : journalHosts) {
       if (journalNodes.get(journalHost) == null) {
         deadJournalHosts.add(journalHost);
       }
@@ -73,7 +72,6 @@ public class PersistentState {
     HashMap<String, String> nameNodes = getNameNodes();
     Set<String> nameHosts = nameNodes.keySet();
     List<String> deadNameHosts = new ArrayList<>();
-
     for (String nameHost : nameHosts) {
       if (nameNodes.get(nameHost) == null) {
         deadNameHosts.add(nameHost);
@@ -86,7 +84,6 @@ public class PersistentState {
     HashMap<String, String> dataNodes = getDataNodes();
     Set<String> dataHosts = dataNodes.keySet();
     List<String> deadDataHosts = new ArrayList<>();
-
     for (String dataHost : dataHosts) {
       if (dataNodes.get(dataHost) == null) {
         deadDataHosts.add(dataHost);
@@ -95,7 +92,6 @@ public class PersistentState {
     return deadDataHosts;
   }
 
-  // TODO (nicgrayson) add tests with in-memory state implementation for zookeeper
   public HashMap<String, String> getJournalNodes() {
     return getHashMap(JOURNALNODES_KEY);
   }
@@ -117,30 +113,29 @@ public class PersistentState {
 
   public void addHdfsNode(Protos.TaskID taskId, String hostname, String taskName) {
     switch (taskName) {
-      case HDFSConstants.NAME_NODE_ID :
-        HashMap<String, String> nameNodes = getNameNodes();
-        nameNodes.put(hostname, taskId.getValue());
-        System.out.println("Saving the name node " + hostname + " " + taskId.getValue());
-        setNameNodes(nameNodes);
-        break;
-      case HDFSConstants.JOURNAL_NODE_ID :
-        HashMap<String, String> journalNodes = getJournalNodes();
-        journalNodes.put(hostname, taskId.getValue());
-        setJournalNodes(journalNodes);
-        break;
-      case HDFSConstants.DATA_NODE_ID :
-        HashMap<String, String> dataNodes = getDataNodes();
-        dataNodes.put(hostname, taskId.getValue());
-        setDataNodes(dataNodes);
-        break;
-      case HDFSConstants.ZKFC_NODE_ID :
-        break;
-      default :
-        log.error("Task name unknown");
+      case HDFSConstants.NAME_NODE_ID:
+      HashMap<String, String> nameNodes = getNameNodes();
+      nameNodes.put(hostname, taskId.getValue());
+      System.out.println("Saving the name node " + hostname + " " + taskId.getValue());
+      setNameNodes(nameNodes);
+      break;
+      case HDFSConstants.JOURNAL_NODE_ID:
+      HashMap<String, String> journalNodes = getJournalNodes();
+      journalNodes.put(hostname, taskId.getValue());
+      setJournalNodes(journalNodes);
+      break;
+      case HDFSConstants.DATA_NODE_ID:
+      HashMap<String, String> dataNodes = getDataNodes();
+      dataNodes.put(hostname, taskId.getValue());
+      setDataNodes(dataNodes);
+      break;
+      case HDFSConstants.ZKFC_NODE_ID:
+      break;
+      default:
+      log.error("Task name unknown");
     }
   }
 
-  // TODO (elingg) optimize this method/ Possibly index by task id instead of hostname
   public void removeTaskId(String taskId) {
     HashMap<String, String> journalNodes = getJournalNodes();
     if (journalNodes.values().contains(taskId)) {
@@ -232,9 +227,7 @@ public class PersistentState {
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  @SuppressWarnings("unchecked")
-  private <T extends Object> T get(String key) throws InterruptedException, ExecutionException,
-      IOException, ClassNotFoundException {
+  @SuppressWarnings(value = { "unchecked" }) private <T extends Object> T get(String key) throws InterruptedException, ExecutionException, IOException, ClassNotFoundException {
     byte[] existingNodes = zkState.fetch(key).get().value();
     if (existingNodes.length > 0) {
       ByteArrayInputStream bis = new ByteArrayInputStream(existingNodes);
@@ -242,10 +235,10 @@ public class PersistentState {
       try {
         in = new ObjectInputStream(bis);
         return (T) in.readObject();
-      } finally {
+      }  finally {
         try {
           bis.close();
-        } finally {
+        }  finally {
           if (in != null) {
             in.close();
           }
@@ -263,8 +256,7 @@ public class PersistentState {
    * @throws InterruptedException
    * @throws IOException
    */
-  private <T extends Object> void set(String key, T object) throws InterruptedException,
-      ExecutionException, IOException {
+  private <T extends Object> void set(String key, T object) throws InterruptedException, ExecutionException, IOException {
     Variable value = zkState.fetch(key).get();
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ObjectOutputStream out = null;
@@ -273,12 +265,12 @@ public class PersistentState {
       out.writeObject(object);
       value = value.mutate(bos.toByteArray());
       zkState.store(value).get();
-    } finally {
+    }  finally {
       try {
         if (out != null) {
           out.close();
         }
-      } finally {
+      }  finally {
         bos.close();
       }
     }
