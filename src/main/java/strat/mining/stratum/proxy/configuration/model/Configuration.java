@@ -1,246 +1,249 @@
-/**
- * stratum-proxy is a proxy supporting the crypto-currency stratum pool mining
- * protocol.
- * Copyright (C) 2014  Stratehm (stratehm@hotmail.com)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with multipool-stats-backend. If not, see <http://www.gnu.org/licenses/>.
- */
 package strat.mining.stratum.proxy.configuration.model;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
 
 public class Configuration {
+  private String logDirectory;
 
-	private String logDirectory;
-	private String logLevel;
-	private String apiLogLevel;
+  private String logLevel;
 
-	private Integer stratumListenPort;
-	private String stratumListenAddress;
-	private Integer getworkListenPort;
-	private String getworkListenAddress;
-	private Integer apiListenPort;
-	private String apiListenAddress;
+  private 
+<<<<<<< /usr/src/app/output/stratehm/stratum-proxy/3d9c994eece6a6a6ccf078915a9d6910c45b2f03/src/main/java/strat/mining/stratum/proxy/configuration/model/Configuration.java/left.java
+  String
+=======
+  Boolean
+>>>>>>> /usr/src/app/output/stratehm/stratum-proxy/3d9c994eece6a6a6ccf078915a9d6910c45b2f03/src/main/java/strat/mining/stratum/proxy/configuration/model/Configuration.java/right.java
+   
+<<<<<<< /usr/src/app/output/stratehm/stratum-proxy/3d9c994eece6a6a6ccf078915a9d6910c45b2f03/src/main/java/strat/mining/stratum/proxy/configuration/model/Configuration.java/left.java
+  apiLogLevel
+=======
+  validateSha26GetworkShares
+>>>>>>> /usr/src/app/output/stratehm/stratum-proxy/3d9c994eece6a6a6ccf078915a9d6910c45b2f03/src/main/java/strat/mining/stratum/proxy/configuration/model/Configuration.java/right.java
+  ;
 
-	private Integer poolConnectionRetryDelay;
-	private Integer poolReconnectStabilityPeriod;
-	private Integer poolNoNotifyTimeout;
-	private Boolean rejectReconnectOnDifferentHost;
+  private Integer stratumListenPort;
 
-	private Integer poolHashrateSamplingPeriod;
-	private Integer userHashrateSamplingPeriod;
-	private Integer connectionHashrateSamplingPeriod;
+  private String stratumListenAddress;
 
-	private String databaseDirectory;
-	private Integer hashrateDatabaseSamplingPeriod;
-	private Integer hashrateDatabaseHistoryDepth;
+  private Integer getworkListenPort;
 
-	private Boolean isScrypt;
-	private Boolean noMidstate;
-	private Boolean validateSha26GetworkShares;
+  private String getworkListenAddress;
 
-	@Valid
-	private List<Pool> pools;
+  private Integer apiListenPort;
 
-	public String getLogDirectory() {
-		return logDirectory;
-	}
+  private String apiListenAddress;
 
-	public void setLogDirectory(String logDirectory) {
-		this.logDirectory = logDirectory;
-	}
+  private Integer poolConnectionRetryDelay;
 
-	public String getLogLevel() {
-		return logLevel;
-	}
+  private Integer poolReconnectStabilityPeriod;
 
-	public void setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-	}
+  private Integer poolNoNotifyTimeout;
 
-	public String getApiLogLevel() {
-		return apiLogLevel;
-	}
+  private Boolean rejectReconnectOnDifferentHost;
 
-	public void setApiLogLevel(String apiLogLevel) {
-		this.apiLogLevel = apiLogLevel;
-	}
+  private Integer poolHashrateSamplingPeriod;
 
-	public Integer getStratumListenPort() {
-		return stratumListenPort;
-	}
+  private Integer userHashrateSamplingPeriod;
 
-	public void setStratumListenPort(Integer stratumListenPort) {
-		this.stratumListenPort = stratumListenPort;
-	}
+  private Integer connectionHashrateSamplingPeriod;
 
-	public String getStratumListenAddress() {
-		return stratumListenAddress;
-	}
+  private String databaseDirectory;
 
-	public void setStratumListenAddress(String stratumListenAddress) {
-		this.stratumListenAddress = stratumListenAddress;
-	}
+  private Integer hashrateDatabaseSamplingPeriod;
 
-	public Integer getGetworkListenPort() {
-		return getworkListenPort;
-	}
+  private Integer hashrateDatabaseHistoryDepth;
 
-	public void setGetworkListenPort(Integer getworkListenPort) {
-		this.getworkListenPort = getworkListenPort;
-	}
+  private Boolean isScrypt;
 
-	public String getGetworkListenAddress() {
-		return getworkListenAddress;
-	}
+  private Boolean noMidstate;
 
-	public void setGetworkListenAddress(String getworkListenAddress) {
-		this.getworkListenAddress = getworkListenAddress;
-	}
+  @Valid private List<Pool> pools;
 
-	public Integer getApiListenPort() {
-		return apiListenPort;
-	}
+  public String getLogDirectory() {
+    return logDirectory;
+  }
 
-	public void setApiListenPort(Integer apiListenPort) {
-		this.apiListenPort = apiListenPort;
-	}
+  public void setLogDirectory(String logDirectory) {
+    this.logDirectory = logDirectory;
+  }
 
-	public String getApiListenAddress() {
-		return apiListenAddress;
-	}
+  public String getLogLevel() {
+    return logLevel;
+  }
 
-	public void setApiListenAddress(String apiListenAddress) {
-		this.apiListenAddress = apiListenAddress;
-	}
+  public void setLogLevel(String logLevel) {
+    this.logLevel = logLevel;
+  }
 
-	public Integer getPoolConnectionRetryDelay() {
-		return poolConnectionRetryDelay;
-	}
+  public String getApiLogLevel() {
+    return apiLogLevel;
+  }
 
-	public void setPoolConnectionRetryDelay(Integer poolConnectionRetryDelay) {
-		this.poolConnectionRetryDelay = poolConnectionRetryDelay;
-	}
+  public void setApiLogLevel(String apiLogLevel) {
+    this.apiLogLevel = apiLogLevel;
+  }
 
-	public Integer getPoolReconnectStabilityPeriod() {
-		return poolReconnectStabilityPeriod;
-	}
+  public Integer getStratumListenPort() {
+    return stratumListenPort;
+  }
 
-	public void setPoolReconnectStabilityPeriod(Integer poolReconnectStabilityPeriod) {
-		this.poolReconnectStabilityPeriod = poolReconnectStabilityPeriod;
-	}
+  public void setStratumListenPort(Integer stratumListenPort) {
+    this.stratumListenPort = stratumListenPort;
+  }
 
-	public Integer getPoolNoNotifyTimeout() {
-		return poolNoNotifyTimeout;
-	}
+  public String getStratumListenAddress() {
+    return stratumListenAddress;
+  }
 
-	public void setPoolNoNotifyTimeout(Integer poolNoNotifyTimeout) {
-		this.poolNoNotifyTimeout = poolNoNotifyTimeout;
-	}
+  public void setStratumListenAddress(String stratumListenAddress) {
+    this.stratumListenAddress = stratumListenAddress;
+  }
 
-	public Boolean getRejectReconnectOnDifferentHost() {
-		return rejectReconnectOnDifferentHost;
-	}
+  public Integer getGetworkListenPort() {
+    return getworkListenPort;
+  }
 
-	public void setRejectReconnectOnDifferentHost(Boolean rejectReconnectOnDifferentHost) {
-		this.rejectReconnectOnDifferentHost = rejectReconnectOnDifferentHost;
-	}
+  public void setGetworkListenPort(Integer getworkListenPort) {
+    this.getworkListenPort = getworkListenPort;
+  }
 
-	public Integer getPoolHashrateSamplingPeriod() {
-		return poolHashrateSamplingPeriod;
-	}
+  public String getGetworkListenAddress() {
+    return getworkListenAddress;
+  }
 
-	public void setPoolHashrateSamplingPeriod(Integer poolHashrateSamplingPeriod) {
-		this.poolHashrateSamplingPeriod = poolHashrateSamplingPeriod;
-	}
+  public void setGetworkListenAddress(String getworkListenAddress) {
+    this.getworkListenAddress = getworkListenAddress;
+  }
 
-	public Integer getUserHashrateSamplingPeriod() {
-		return userHashrateSamplingPeriod;
-	}
+  public Integer getApiListenPort() {
+    return apiListenPort;
+  }
 
-	public void setUserHashrateSamplingPeriod(Integer userHashrateSamplingPeriod) {
-		this.userHashrateSamplingPeriod = userHashrateSamplingPeriod;
-	}
+  public void setApiListenPort(Integer apiListenPort) {
+    this.apiListenPort = apiListenPort;
+  }
 
-	public Integer getConnectionHashrateSamplingPeriod() {
-		return connectionHashrateSamplingPeriod;
-	}
+  public String getApiListenAddress() {
+    return apiListenAddress;
+  }
 
-	public void setConnectionHashrateSamplingPeriod(Integer connectionHashrateSamplingPeriod) {
-		this.connectionHashrateSamplingPeriod = connectionHashrateSamplingPeriod;
-	}
+  public void setApiListenAddress(String apiListenAddress) {
+    this.apiListenAddress = apiListenAddress;
+  }
 
-	public Boolean getIsScrypt() {
-		return isScrypt;
-	}
+  public Integer getPoolConnectionRetryDelay() {
+    return poolConnectionRetryDelay;
+  }
 
-	public void setIsScrypt(Boolean isScrypt) {
-		this.isScrypt = isScrypt;
-	}
+  public void setPoolConnectionRetryDelay(Integer poolConnectionRetryDelay) {
+    this.poolConnectionRetryDelay = poolConnectionRetryDelay;
+  }
 
-	public List<Pool> getPools() {
-		return pools;
-	}
+  public Integer getPoolReconnectStabilityPeriod() {
+    return poolReconnectStabilityPeriod;
+  }
 
-	public void setPools(List<Pool> pools) {
-		if (pools == null) {
-			pools = new ArrayList<>();
-		}
-		this.pools = pools;
-	}
+  public void setPoolReconnectStabilityPeriod(Integer poolReconnectStabilityPeriod) {
+    this.poolReconnectStabilityPeriod = poolReconnectStabilityPeriod;
+  }
 
-	public String getDatabaseDirectory() {
-		return databaseDirectory;
-	}
+  public Integer getPoolNoNotifyTimeout() {
+    return poolNoNotifyTimeout;
+  }
 
-	public void setDatabaseDirectory(String databaseDirectory) {
-		this.databaseDirectory = databaseDirectory;
-	}
+  public void setPoolNoNotifyTimeout(Integer poolNoNotifyTimeout) {
+    this.poolNoNotifyTimeout = poolNoNotifyTimeout;
+  }
 
-	public Integer getHashrateDatabaseSamplingPeriod() {
-		return hashrateDatabaseSamplingPeriod;
-	}
+  public Boolean getRejectReconnectOnDifferentHost() {
+    return rejectReconnectOnDifferentHost;
+  }
 
-	public void setHashrateDatabaseSamplingPeriod(Integer hashrateDatabaseSamplingPeriod) {
-		this.hashrateDatabaseSamplingPeriod = hashrateDatabaseSamplingPeriod;
-	}
+  public void setRejectReconnectOnDifferentHost(Boolean rejectReconnectOnDifferentHost) {
+    this.rejectReconnectOnDifferentHost = rejectReconnectOnDifferentHost;
+  }
 
-	public Integer getHashrateDatabaseHistoryDepth() {
-		return hashrateDatabaseHistoryDepth;
-	}
+  public Integer getPoolHashrateSamplingPeriod() {
+    return poolHashrateSamplingPeriod;
+  }
 
-	public void setHashrateDatabaseHistoryDepth(Integer hashrateDatabaseHistoryDepth) {
-		this.hashrateDatabaseHistoryDepth = hashrateDatabaseHistoryDepth;
-	}
+  public void setPoolHashrateSamplingPeriod(Integer poolHashrateSamplingPeriod) {
+    this.poolHashrateSamplingPeriod = poolHashrateSamplingPeriod;
+  }
 
-	public Boolean getNoMidstate() {
-		return noMidstate;
-	}
+  public Integer getUserHashrateSamplingPeriod() {
+    return userHashrateSamplingPeriod;
+  }
 
-	public void setNoMidstate(Boolean noMidstate) {
-		this.noMidstate = noMidstate;
-	}
+  public void setUserHashrateSamplingPeriod(Integer userHashrateSamplingPeriod) {
+    this.userHashrateSamplingPeriod = userHashrateSamplingPeriod;
+  }
 
-	public Boolean getValidateSha26GetworkShares() {
-		return validateSha26GetworkShares;
-	}
+  public Integer getConnectionHashrateSamplingPeriod() {
+    return connectionHashrateSamplingPeriod;
+  }
 
-	public void setValidateSha26GetworkShares(Boolean validateSha26GetworkShares) {
-		this.validateSha26GetworkShares = validateSha26GetworkShares;
-	}
+  public void setConnectionHashrateSamplingPeriod(Integer connectionHashrateSamplingPeriod) {
+    this.connectionHashrateSamplingPeriod = connectionHashrateSamplingPeriod;
+  }
 
+  public Boolean getIsScrypt() {
+    return isScrypt;
+  }
+
+  public void setIsScrypt(Boolean isScrypt) {
+    this.isScrypt = isScrypt;
+  }
+
+  public List<Pool> getPools() {
+    return pools;
+  }
+
+  public void setPools(List<Pool> pools) {
+    if (pools == null) {
+      pools = new ArrayList<>();
+    }
+    this.pools = pools;
+  }
+
+  public String getDatabaseDirectory() {
+    return databaseDirectory;
+  }
+
+  public void setDatabaseDirectory(String databaseDirectory) {
+    this.databaseDirectory = databaseDirectory;
+  }
+
+  public Integer getHashrateDatabaseSamplingPeriod() {
+    return hashrateDatabaseSamplingPeriod;
+  }
+
+  public void setHashrateDatabaseSamplingPeriod(Integer hashrateDatabaseSamplingPeriod) {
+    this.hashrateDatabaseSamplingPeriod = hashrateDatabaseSamplingPeriod;
+  }
+
+  public Integer getHashrateDatabaseHistoryDepth() {
+    return hashrateDatabaseHistoryDepth;
+  }
+
+  public void setHashrateDatabaseHistoryDepth(Integer hashrateDatabaseHistoryDepth) {
+    this.hashrateDatabaseHistoryDepth = hashrateDatabaseHistoryDepth;
+  }
+
+  public Boolean getNoMidstate() {
+    return noMidstate;
+  }
+
+  public void setNoMidstate(Boolean noMidstate) {
+    this.noMidstate = noMidstate;
+  }
+
+  public Boolean getValidateSha26GetworkShares() {
+    return validateSha26GetworkShares;
+  }
+
+  public void setValidateSha26GetworkShares(Boolean validateSha26GetworkShares) {
+    this.validateSha26GetworkShares = validateSha26GetworkShares;
+  }
 }
