@@ -1,27 +1,9 @@
-/**
- * Copyright (C) 2009 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.inject.assistedinject;
-
 import com.google.inject.Key;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-
 import java.lang.annotation.Annotation;
 
 /**
@@ -93,7 +75,7 @@ import java.lang.annotation.Annotation;
  *
  * <pre>install(new FactoryModuleBuilder()
  *     .implement(Payment.class, RealPayment.class)
- *     .build(PaymentFactory.class));</pre>
+ *     .build(PaymentFactory.class);</pre>
  *
  * As a side-effect of this binding, Guice will inject the factory to initialize it for use. The
  * factory cannot be used until the injector has been initialized.
@@ -115,7 +97,7 @@ import java.lang.annotation.Annotation;
  *     // excluding .implement for Shipment means the implementation class
  *     // will be 'Shipment' itself, which is legal if it's not an interface.
  *     .implement(Receipt.class, RealReceipt.class)
- *     .build(OrderFactory.class));</pre>
+ *     .build(OrderFactory.class);</pre>
  * </pre>
  *
  * <h3>Using the factory</h3>
@@ -202,113 +184,103 @@ import java.lang.annotation.Annotation;
  * @author schmitt@google.com (Peter Schmitt)
  */
 public final class FactoryModuleBuilder {
-
   private final BindingCollector bindings = new BindingCollector();
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source, Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, Class<? extends T> target) {
     return implement(source, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source, TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, TypeLiteral<? extends T> target) {
     return implement(TypeLiteral.get(source), target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source, Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, Class<? extends T> target) {
     return implement(source, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source,
-      TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, TypeLiteral<? extends T> target) {
     return implement(Key.get(source), target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source, Annotation annotation,
-      Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, Annotation annotation, Class<? extends T> target) {
     return implement(source, annotation, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source, Annotation annotation,
-      TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, Annotation annotation, TypeLiteral<? extends T> target) {
     return implement(TypeLiteral.get(source), annotation, target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source, Annotation annotation,
-      Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, Annotation annotation, Class<? extends T> target) {
     return implement(source, annotation, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source, Annotation annotation,
-      TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, Annotation annotation, TypeLiteral<? extends T> target) {
     return implement(Key.get(source, annotation), target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source,
-      Class<? extends Annotation> annotationType, Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, Class<? extends Annotation> annotationType, Class<? extends T> target) {
     return implement(source, annotationType, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Class<T> source,
-      Class<? extends Annotation> annotationType, TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Class<T> source, Class<? extends Annotation> annotationType, TypeLiteral<? extends T> target) {
     return implement(TypeLiteral.get(source), annotationType, target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source,
-      Class<? extends Annotation> annotationType, Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, Class<? extends Annotation> annotationType, Class<? extends T> target) {
     return implement(source, annotationType, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(TypeLiteral<T> source,
-      Class<? extends Annotation> annotationType, TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(TypeLiteral<T> source, Class<? extends Annotation> annotationType, TypeLiteral<? extends T> target) {
     return implement(Key.get(source, annotationType), target);
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Key<T> source, Class<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Key<T> source, Class<? extends T> target) {
     return implement(source, TypeLiteral.get(target));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <T> FactoryModuleBuilder implement(Key<T> source, TypeLiteral<? extends T> target) {
+  public <T extends java.lang.Object> FactoryModuleBuilder implement(Key<T> source, TypeLiteral<? extends T> target) {
     bindings.addBinding(source, target);
     return this;
   }
@@ -316,19 +288,18 @@ public final class FactoryModuleBuilder {
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <F> Module build(Class<F> factoryInterface) {
+  public <F extends java.lang.Object> Module build(Class<F> factoryInterface) {
     return build(TypeLiteral.get(factoryInterface));
   }
 
   /**
    * See the factory configuration examples at {@link FactoryModuleBuilder}.
    */
-  public <F> Module build(TypeLiteral<F> factoryInterface) {
+  public <F extends java.lang.Object> Module build(TypeLiteral<F> factoryInterface) {
     return build(Key.get(factoryInterface));
   }
 
-
-  public <F> Module build(final Key<F> factoryInterface) {
+  public <F extends java.lang.Object> Module build(final Key<F> factoryInterface) {
     return new AbstractModule() {
       @Override protected void configure() {
         Provider<F> provider = new FactoryProvider2<F>(factoryInterface, bindings);

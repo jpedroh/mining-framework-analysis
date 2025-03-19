@@ -1,21 +1,4 @@
-/**
- * Copyright (C) 2006 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.inject;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.internal.MoreTypesTest;
 import com.google.inject.internal.UniqueAnnotationsTest;
@@ -42,25 +25,18 @@ import com.google.inject.util.ProvidersTest;
 import com.google.inject.util.TypesTest;
 import com.googlecode.guice.GuiceTck;
 import com.googlecode.guice.Jsr330Test;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import java.util.Set;
 
 /**
  * @author crazybob@google.com (Bob Lee)
  */
 public class AllTests {
-
-  private static final Set<String> SUPPRESSED_TEST_NAMES = ImmutableSet.of(
-      "testUnscopedProviderWorksOutsideOfRequestedScope(" + ScopesTest.class.getName() + ")",
-      "testCannotConvertUnannotatedBindings(" + TypeConversionTest.class.getName() + ")"
-  );
+  private static final Set<String> SUPPRESSED_TEST_NAMES = ImmutableSet.of("testUnscopedProviderWorksOutsideOfRequestedScope(" + ScopesTest.class.getName() + ")", "testCannotConvertUnannotatedBindings(" + TypeConversionTest.class.getName() + ")");
 
   public static Test suite() {
     TestSuite suite = new TestSuite();
-
     suite.addTest(GuiceTck.suite());
     suite.addTestSuite(BinderTest.class);
     suite.addTest(BinderTestSuite.suite());
@@ -71,17 +47,14 @@ public class AllTests {
     suite.addTestSuite(BoundProviderTest.class);
     suite.addTestSuite(CircularDependencyTest.class);
     suite.addTestSuite(DuplicateBindingsTest.class);
-    // ErrorHandlingTest.class is not a testcase
     suite.addTestSuite(EagerSingletonTest.class);
     suite.addTestSuite(GenericInjectionTest.class);
     suite.addTestSuite(ImplicitBindingTest.class);
     suite.addTestSuite(TypeListenerTest.class);
     suite.addTestSuite(InjectorTest.class);
     suite.addTestSuite(JitBindingsTest.class);
-    // IntegrationTest is AOP-only
     suite.addTestSuite(KeyTest.class);
     suite.addTestSuite(LoggerInjectionTest.class);
-    // MethodInterceptionTest is AOP-only
     suite.addTestSuite(MembersInjectorTest.class);
     suite.addTestSuite(ModulesTest.class);
     suite.addTestSuite(ModuleTest.class);
@@ -93,7 +66,6 @@ public class AllTests {
     suite.addTestSuite(ProviderInjectionTest.class);
     suite.addTestSuite(ProvisionExceptionTest.class);
     suite.addTestSuite(ProvisionListenerTest.class);
-    // ProxyFactoryTest is AOP-only
     suite.addTestSuite(ReflectionTest.class);
     suite.addTestSuite(RequestInjectionTest.class);
     suite.addTestSuite(RequireAtInjectOnConstructorsTest.class);
@@ -105,20 +77,12 @@ public class AllTests {
     suite.addTestSuite(TypeLiteralTest.class);
     suite.addTestSuite(TypeLiteralTypeResolutionTest.class);
     suite.addTestSuite(WeakKeySetTest.class);
-
-    // internal
     suite.addTestSuite(LineNumbersTest.class);
     suite.addTestSuite(MoreTypesTest.class);
     suite.addTestSuite(UniqueAnnotationsTest.class);
-
-    // matcher
     suite.addTestSuite(MatcherTest.class);
-
-    // names
     suite.addTestSuite(NamesTest.class);
     suite.addTestSuite(NamedEquivalanceTest.class);
-
-    // spi
     suite.addTestSuite(BindingTargetVisitorTest.class);
     suite.addTestSuite(ElementsTest.class);
     suite.addTestSuite(ElementApplyToTest.class);
@@ -131,26 +95,15 @@ public class AllTests {
     suite.addTestSuite(ToolStageInjectorTest.class);
     suite.addTestSuite(ModuleSourceTest.class);
     suite.addTestSuite(ElementSourceTest.class);
-
-    // tools
-    // suite.addTestSuite(JmxTest.class); not a testcase
-
-    // util
     suite.addTestSuite(NoopOverrideTest.class);
     suite.addTestSuite(ProvidersTest.class);
     suite.addTestSuite(TypesTest.class);
-
-    /*if[AOP]*/
     suite.addTestSuite(com.google.inject.internal.ProxyFactoryTest.class);
     suite.addTestSuite(IntegrationTest.class);
     suite.addTestSuite(MethodInterceptionTest.class);
     suite.addTestSuite(com.googlecode.guice.BytecodeGenTest.class);
-    /*end[AOP]*/
-
-    // googlecode.guice
     suite.addTestSuite(com.googlecode.guice.OSGiContainerTest.class);
     suite.addTestSuite(Jsr330Test.class);
-
     return SuiteUtils.removeSuppressedTests(suite, SUPPRESSED_TEST_NAMES);
   }
 }

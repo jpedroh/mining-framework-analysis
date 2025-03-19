@@ -1,25 +1,7 @@
-/**
- * Copyright (C) 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.inject.spi;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.inject.internal.InternalFlags.IncludeStackTraceOption;
 import static com.google.inject.internal.InternalFlags.getIncludeStackTraceOption;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -48,7 +30,6 @@ import com.google.inject.internal.ProviderMethodsModule;
 import com.google.inject.internal.util.SourceProvider;
 import com.google.inject.internal.util.StackTraceElements;
 import com.google.inject.matcher.Matcher;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -65,9 +46,7 @@ import java.util.Set;
  * @since 2.0
  */
 public final class Elements {
-
-  private static final BindingTargetVisitor<Object, Object> GET_INSTANCE_VISITOR
-      = new DefaultBindingTargetVisitor<Object, Object>() {
+  private static final BindingTargetVisitor<Object, Object> GET_INSTANCE_VISITOR = new DefaultBindingTargetVisitor<Object, Object>() {
     @Override public Object visit(InstanceBinding<?> binding) {
       return binding.getInstance();
     }
@@ -106,11 +85,10 @@ public final class Elements {
     for (Module module : modules) {
       binder.install(module);
     }
-    // Free the memory consumed by the stack trace elements cache
     StackTraceElements.clearCache();
     return Collections.unmodifiableList(binder.elements);
   }
-  
+
   private static class ElementsAsModule implements Module {
     private final Iterable<? extends Element> elements;
 
@@ -132,22 +110,27 @@ public final class Elements {
     return new ElementsAsModule(elements);
   }
 
-  @SuppressWarnings("unchecked")
-  static <T> BindingTargetVisitor<T, T> getInstanceVisitor() {
+  @SuppressWarnings(value = { "unchecked" }) static <T extends java.lang.Object> BindingTargetVisitor<T, T> getInstanceVisitor() {
     return (BindingTargetVisitor<T, T>) GET_INSTANCE_VISITOR;
   }
 
   private static class RecordingBinder implements Binder, PrivateBinder {
     private final Stage stage;
+
     private final Set<Module> modules;
+
     private final List<Element> elements;
+
     private final Object source;
+
     /** The current modules stack */
     private ModuleSource moduleSource = null;
+
     private final SourceProvider sourceProvider;
 
     /** The binder where exposed bindings will be created */
     private final RecordingBinder parent;
+
     private final PrivateElementsImpl privateElements;
 
     private RecordingBinder(Stage stage) {
@@ -155,18 +138,14 @@ public final class Elements {
       this.modules = Sets.newHashSet();
       this.elements = Lists.newArrayList();
       this.source = null;
-      this.sourceProvider = SourceProvider.DEFAULT_INSTANCE.plusSkippedClasses(
-          Elements.class, RecordingBinder.class, AbstractModule.class,
-          ConstantBindingBuilderImpl.class, AbstractBindingBuilder.class, BindingBuilder.class);
+      this.sourceProvider = SourceProvider.DEFAULT_INSTANCE.plusSkippedClasses(Elements.class, RecordingBinder.class, AbstractModule.class, ConstantBindingBuilderImpl.class, AbstractBindingBuilder.class, BindingBuilder.class);
       this.parent = null;
       this.privateElements = null;
     }
 
     /** Creates a recording binder that's backed by {@code prototype}. */
-    private RecordingBinder(
-        RecordingBinder prototype, Object source, SourceProvider sourceProvider) {
+    private RecordingBinder(RecordingBinder prototype, Object source, SourceProvider sourceProvider) {
       checkArgument(source == null ^ sourceProvider == null);
-
       this.stage = prototype.stage;
       this.modules = prototype.modules;
       this.elements = prototype.elements;
@@ -189,46 +168,37 @@ public final class Elements {
       this.privateElements = privateElements;
     }
 
-    /*if[AOP]*/
-    public void bindInterceptor(
-        Matcher<? super Class<?>> classMatcher,
-        Matcher<? super Method> methodMatcher,
-        org.aopalliance.intercept.MethodInterceptor... interceptors) {
-      elements.add(new InterceptorBinding(
-          getElementSource(), classMatcher, methodMatcher, interceptors));
+    public void bindInterceptor(Matcher<? super Class<?>> classMatcher, Matcher<? super Method> methodMatcher, org.aopalliance.intercept.MethodInterceptor... interceptors) {
+      elements.add(new InterceptorBinding(getElementSource(), classMatcher, methodMatcher, interceptors));
     }
-    /*end[AOP]*/
 
     public void bindScope(Class<? extends Annotation> annotationType, Scope scope) {
       elements.add(new ScopeBinding(getElementSource(), annotationType, scope));
     }
 
-    @SuppressWarnings("unchecked") // it is safe to use the type literal for the raw type
-    public void requestInjection(Object instance) {
+    @SuppressWarnings(value = { "unchecked" }) public void requestInjection(Object instance) {
       requestInjection((TypeLiteral<Object>) TypeLiteral.get(instance.getClass()), instance);
     }
 
-    public <T> void requestInjection(TypeLiteral<T> type, T instance) {
+    public <T extends java.lang.Object> void requestInjection(TypeLiteral<T> type, T instance) {
       elements.add(new InjectionRequest<T>(getElementSource(), type, instance));
     }
 
-    public <T> MembersInjector<T> getMembersInjector(final TypeLiteral<T> typeLiteral) {
-      final MembersInjectorLookup<T> element
-          = new MembersInjectorLookup<T>(getElementSource(), typeLiteral);
+    public <T extends java.lang.Object> MembersInjector<T> getMembersInjector(final TypeLiteral<T> typeLiteral) {
+      final MembersInjectorLookup<T> element = new MembersInjectorLookup<T>(getElementSource(), typeLiteral);
       elements.add(element);
       return element.getMembersInjector();
     }
 
-    public <T> MembersInjector<T> getMembersInjector(Class<T> type) {
+    public <T extends java.lang.Object> MembersInjector<T> getMembersInjector(Class<T> type) {
       return getMembersInjector(TypeLiteral.get(type));
     }
 
     public void bindListener(Matcher<? super TypeLiteral<?>> typeMatcher, TypeListener listener) {
       elements.add(new TypeListenerBinding(getElementSource(), listener, typeMatcher));
     }
-    
-    public void bindListener(Matcher<? super Binding<?>> bindingMatcher,
-        ProvisionListener... listeners) {
+
+    public void bindListener(Matcher<? super Binding<?>> bindingMatcher, ProvisionListener... listeners) {
       elements.add(new ProvisionListenerBinding(getElementSource(), bindingMatcher, listeners));
     }
 
@@ -241,13 +211,12 @@ public final class Elements {
     public void install(Module module) {
       if (modules.add(module)) {
         Binder binder = this;
-        // Update the module source for the new module
         if (!(module instanceof ProviderMethodsModule)) {
           moduleSource = getModuleSource(module);
         }
         if (module instanceof PrivateModule) {
           binder = binder.newPrivateBinder();
-        }      
+        }
         try {
           module.configure(binder);
         } catch (RuntimeException e) {
@@ -259,7 +228,6 @@ public final class Elements {
           }
         }
         binder.install(ProviderMethodsModule.forModule(module));
-        // We are done with this module, so undo module source change
         if (!(module instanceof ProviderMethodsModule)) {
           moduleSource = moduleSource.getParent();
         }
@@ -283,16 +251,16 @@ public final class Elements {
       elements.add(message);
     }
 
-    public <T> AnnotatedBindingBuilder<T> bind(Key<T> key) {
+    public <T extends java.lang.Object> AnnotatedBindingBuilder<T> bind(Key<T> key) {
       BindingBuilder<T> builder = new BindingBuilder<T>(this, elements, getElementSource(), key);
       return builder;
     }
 
-    public <T> AnnotatedBindingBuilder<T> bind(TypeLiteral<T> typeLiteral) {
+    public <T extends java.lang.Object> AnnotatedBindingBuilder<T> bind(TypeLiteral<T> typeLiteral) {
       return bind(Key.get(typeLiteral));
     }
 
-    public <T> AnnotatedBindingBuilder<T> bind(Class<T> type) {
+    public <T extends java.lang.Object> AnnotatedBindingBuilder<T> bind(Class<T> type) {
       return bind(Key.get(type));
     }
 
@@ -300,31 +268,28 @@ public final class Elements {
       return new ConstantBindingBuilderImpl<Void>(this, elements, getElementSource());
     }
 
-    public <T> Provider<T> getProvider(final Key<T> key) {
+    public <T extends java.lang.Object> Provider<T> getProvider(final Key<T> key) {
       final ProviderLookup<T> element = new ProviderLookup<T>(getElementSource(), key);
       elements.add(element);
       return element.getProvider();
     }
 
-    public <T> Provider<T> getProvider(Class<T> type) {
+    public <T extends java.lang.Object> Provider<T> getProvider(Class<T> type) {
       return getProvider(Key.get(type));
     }
 
-    public void convertToTypes(Matcher<? super TypeLiteral<?>> typeMatcher,
-        TypeConverter converter) {
+    public void convertToTypes(Matcher<? super TypeLiteral<?>> typeMatcher, TypeConverter converter) {
       elements.add(new TypeConverterBinding(getElementSource(), typeMatcher, converter));
     }
 
-    public RecordingBinder withSource(final Object source) {            
+    public RecordingBinder withSource(final Object source) {
       return source == this.source ? this : new RecordingBinder(this, source, null);
     }
 
     public RecordingBinder skipSources(Class... classesToSkip) {
-      // if a source is specified explicitly, we don't need to skip sources
       if (source != null) {
         return this;
       }
-
       SourceProvider newSourceProvider = sourceProvider.plusSkippedClasses(classesToSkip);
       return new RecordingBinder(this, null, newSourceProvider);
     }
@@ -335,15 +300,15 @@ public final class Elements {
       elements.add(privateElements);
       return binder;
     }
-    
+
     public void disableCircularProxies() {
       elements.add(new DisableCircularProxiesOption(getElementSource()));
     }
-    
+
     public void requireExplicitBindings() {
-      elements.add(new RequireExplicitBindingsOption(getElementSource()));     
+      elements.add(new RequireExplicitBindingsOption(getElementSource()));
     }
-    
+
     public void requireAtInjectOnConstructors() {
       elements.add(new RequireAtInjectOnConstructorsOption(getElementSource()));
     }
@@ -364,16 +329,17 @@ public final class Elements {
       return exposeInternal(Key.get(type));
     }
 
-    private <T> AnnotatedElementBuilder exposeInternal(Key<T> key) {
+    private <T extends java.lang.Object> AnnotatedElementBuilder exposeInternal(Key<T> key) {
       if (privateElements == null) {
-        addError("Cannot expose %s on a standard binder. "
-            + "Exposed bindings are only applicable to private binders.", key);
+        addError("Cannot expose %s on a standard binder. " + "Exposed bindings are only applicable to private binders.", key);
         return new AnnotatedElementBuilder() {
-          public void annotatedWith(Class<? extends Annotation> annotationType) {}
-          public void annotatedWith(Annotation annotation) {}
+          public void annotatedWith(Class<? extends Annotation> annotationType) {
+          }
+
+          public void annotatedWith(Annotation annotation) {
+          }
         };
       }
-
       ExposureBuilder<T> builder = new ExposureBuilder<T>(this, getElementSource(), key);
       privateElements.addExposureBuilder(builder);
       return builder;
@@ -393,41 +359,29 @@ public final class Elements {
     }
 
     private ElementSource getElementSource() {
-      // Full call stack
       StackTraceElement[] callStack = null;
-      // The call stack starts from current top module configure and ends at this method caller
       StackTraceElement[] partialCallStack = new StackTraceElement[0];
-      // The element original source
       ElementSource originalSource = null;
-      // The element declaring source
       Object declaringSource = source;
       if (declaringSource instanceof ElementSource) {
         originalSource = (ElementSource) declaringSource;
         declaringSource = originalSource.getDeclaringSource();
       }
       IncludeStackTraceOption stackTraceOption = getIncludeStackTraceOption();
-      if (stackTraceOption == IncludeStackTraceOption.COMPLETE ||
-          (stackTraceOption == IncludeStackTraceOption.ONLY_FOR_DECLARING_SOURCE 
-          && declaringSource == null)) {
+      if (stackTraceOption == IncludeStackTraceOption.COMPLETE || (stackTraceOption == IncludeStackTraceOption.ONLY_FOR_DECLARING_SOURCE && declaringSource == null)) {
         callStack = new Throwable().getStackTrace();
       }
       if (stackTraceOption == IncludeStackTraceOption.COMPLETE) {
         partialCallStack = getPartialCallStack(callStack);
       }
       if (declaringSource == null) {
-        // So 'source' and 'originalSource' are null otherwise declaringSource has some value
-        if (stackTraceOption == IncludeStackTraceOption.COMPLETE ||
-            stackTraceOption == IncludeStackTraceOption.ONLY_FOR_DECLARING_SOURCE) {
-          // With the above conditions and assignments 'callStack' is non-null
+        if (stackTraceOption == IncludeStackTraceOption.COMPLETE || stackTraceOption == IncludeStackTraceOption.ONLY_FOR_DECLARING_SOURCE) {
           declaringSource = sourceProvider.get(callStack);
-        } else { // or if (stackTraceOption == IncludeStackTraceOptions.OFF)
-          // As neither 'declaring source' nor 'call stack' is available use 'module source'
+        } else {
           declaringSource = sourceProvider.getFromClassNames(moduleSource.getModuleClassNames());
         }
       }
-      // Build the binding call stack
-      return new ElementSource(
-          originalSource, declaringSource, moduleSource, partialCallStack);
+      return new ElementSource(originalSource, declaringSource, moduleSource, partialCallStack);
     }
 
     /**
@@ -440,14 +394,12 @@ public final class Elements {
       if (moduleSource != null) {
         toSkip = moduleSource.getStackTraceSize();
       }
-      // -1 for skipping 'getModuleSource' and 'getElementSource' calls
       int chunkSize = callStack.length - toSkip - 1;
-
       StackTraceElement[] partialCallStack = new StackTraceElement[chunkSize];
       System.arraycopy(callStack, 1, partialCallStack, 0, chunkSize);
       return partialCallStack;
     }
-    
+
     @Override public String toString() {
       return "Binder";
     }
