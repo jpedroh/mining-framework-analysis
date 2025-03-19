@@ -930,6 +930,8 @@ public class NodeToString
             bd.append(toString(node));
     }
     
+     
+    
     protected String zorderFuncNode (SpecialIndexFuncNode node)
     {
         return node.getFunctionType() + "(" 
