@@ -1,23 +1,5 @@
-/*
- * Copyright 2012 SURFnet bv, The Netherlands
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.surfnet.oaaas.config;
-
 import com.googlecode.flyway.core.Flyway;
-
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.context.annotation.*;
@@ -30,7 +12,6 @@ import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 import org.surfnet.oaaas.support.Cleaner;
-
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
@@ -44,27 +25,14 @@ import javax.validation.Validator;
  * editing the application.apis.properties file where the implementations are
  * configured.
  */
-@Configuration
-@PropertySource("classpath:apis.application.properties")
-@Import(CasSpringConfiguration.class)
-/*
- * The component scan can be used to add packages and exclusions to the default
- * package
- */
-@ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
-@ImportResource("classpath:spring-repositories.xml")
-@EnableTransactionManagement
-@EnableScheduling
-public class SpringConfiguration {
-
+@Configuration @PropertySource(value = "classpath:apis.application.properties") @Import(value = CasSpringConfiguration.class) @ComponentScan(basePackages = { "org.surfnet.oaaas.resource" }) @ImportResource(value = "classpath:spring-repositories.xml") @EnableTransactionManagement @EnableScheduling public class SpringConfiguration {
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
+
   private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
 
-  @Inject
-  Environment env;
+  @Inject Environment env;
 
-  @Bean
-  public javax.sql.DataSource dataSource() {
+  @Bean public javax.sql.DataSource dataSource() {
     DataSource dataSource = new DataSource();
     dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
     dataSource.setUrl(env.getProperty("jdbc.url"));
@@ -75,8 +43,7 @@ public class SpringConfiguration {
     return dataSource;
   }
 
-  @Bean
-  public Flyway flyway() {
+  @Bean public Flyway flyway() {
     final Flyway flyway = new Flyway();
     flyway.setInitOnMigrate(true);
     flyway.setDataSource(dataSource());
@@ -87,13 +54,11 @@ public class SpringConfiguration {
     return flyway;
   }
 
-  @Bean
-  public JpaTransactionManager transactionManager() {
+  @Bean public JpaTransactionManager transactionManager() {
     return new JpaTransactionManager();
   }
 
-  @Bean
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+  @Bean public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     final LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
     emfBean.setDataSource(dataSource());
     emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
@@ -101,27 +66,23 @@ public class SpringConfiguration {
     return emfBean;
   }
 
-  @Bean
-  public Filter oauth2AuthenticationFilter() {
+  @Bean public Filter oauth2AuthenticationFilter() {
     final AuthenticationFilter authenticationFilter = new AuthenticationFilter();
     authenticationFilter.setAuthenticator(authenticator());
     return authenticationFilter;
   }
 
-  @Bean
-  public Filter oauth2UserConsentFilter() {
+  @Bean public Filter oauth2UserConsentFilter() {
     final UserConsentFilter userConsentFilter = new UserConsentFilter();
     userConsentFilter.setUserConsentHandler(userConsentHandler());
     return userConsentFilter;
   }
 
-  @Bean
-  public OAuth2Validator oAuth2Validator() {
+  @Bean public OAuth2Validator oAuth2Validator() {
     return new OAuth2ValidatorImpl();
   }
-  
-  @Bean
-  public ResourceOwnerAuthenticator resourceOwnerAuthenticator() {
+
+  @Bean public ResourceOwnerAuthenticator resourceOwnerAuthenticator() {
     return (ResourceOwnerAuthenticator) getConfiguredBean("resourceOwnerAuthenticatorClass");
   }
 
@@ -131,8 +92,7 @@ public class SpringConfiguration {
    *
    * @return an {@link AbstractAuthenticator}
    */
-  @Bean
-  public AbstractAuthenticator authenticator() {
+  @Bean public AbstractAuthenticator authenticator() {
     AbstractAuthenticator authenticatorClass = (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
     try {
       authenticatorClass.init(null);
@@ -142,13 +102,11 @@ public class SpringConfiguration {
     return authenticatorClass;
   }
 
-  @Bean
-  public AbstractUserConsentHandler userConsentHandler() {
+  @Bean public AbstractUserConsentHandler userConsentHandler() {
     return (AbstractUserConsentHandler) getConfiguredBean("userConsentHandlerClass");
   }
 
-  @Bean
-  public ExceptionTranslator exceptionTranslator() {
+  @Bean public ExceptionTranslator exceptionTranslator() {
     return new OpenJPAExceptionTranslator();
   }
 
@@ -160,15 +118,11 @@ public class SpringConfiguration {
     }
   }
 
-  @Bean
-  public Validator validator() {
-    // This LocalValidatorFactoryBean already uses the SpringConstraintValidatorFactory by default,
-    // so available validators will be wired automatically.
+  @Bean public Validator validator() {
     return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
   }
 
-  @Bean
-  public Cleaner cleaner() {
+  @Bean public Cleaner cleaner() {
     return new Cleaner();
   }
 }
