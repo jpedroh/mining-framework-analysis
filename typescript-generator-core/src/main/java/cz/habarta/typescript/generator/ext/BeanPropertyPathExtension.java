@@ -1,13 +1,12 @@
 package cz.habarta.typescript.generator.ext;
-
 import cz.habarta.typescript.generator.Settings;
+import java.util.*;
 import cz.habarta.typescript.generator.TsType;
 import cz.habarta.typescript.generator.emitter.EmitterExtension;
 import cz.habarta.typescript.generator.emitter.EmitterExtensionFeatures;
 import cz.habarta.typescript.generator.emitter.TsBeanModel;
 import cz.habarta.typescript.generator.emitter.TsModel;
 import cz.habarta.typescript.generator.emitter.TsPropertyModel;
-import java.util.*;
 
 /**
  * Emitter which generates type-safe property path getters.
@@ -22,148 +21,114 @@ import java.util.*;
  * (in this case "field1.field2")
  */
 public class BeanPropertyPathExtension extends EmitterExtension {
+  @Override public EmitterExtensionFeatures getFeatures() {
+    final EmitterExtensionFeatures features = new EmitterExtensionFeatures();
+    features.generatesRuntimeCode = true;
+    return features;
+  }
 
-    @Override
-    public EmitterExtensionFeatures getFeatures() {
-        final EmitterExtensionFeatures features = new EmitterExtensionFeatures();
-        features.generatesRuntimeCode = true;
-        return features;
+  @Override public void emitElements(Writer writer, Settings settings, boolean exportKeyword, TsModel model) {
+    emitFieldsClass(writer, settings);
+    Set<TsBeanModel> emittedBeans = new HashSet<>();
+    for (TsBeanModel bean : model.getBeans()) {
+      emittedBeans.addAll(writeBeanAndParentsFieldSpecs(writer, settings, model, emittedBeans, bean));
     }
-
-    @Override
-    public void emitElements(Writer writer, Settings settings, boolean exportKeyword, TsModel model) {
-        emitFieldsClass(writer, settings);
-
-        Set<TsBeanModel> emittedBeans = new HashSet<>();
-        for (TsBeanModel bean : model.getBeans()) {
-            emittedBeans.addAll(
-                writeBeanAndParentsFieldSpecs(writer, settings, model, emittedBeans, bean));
-        }
-        for (TsBeanModel bean : model.getBeans()) {
-            createBeanFieldConstant(writer, exportKeyword, bean);
-        }
+    for (TsBeanModel bean : model.getBeans()) {
+      createBeanFieldConstant(writer, exportKeyword, bean);
     }
+  }
 
-    private static void emitFieldsClass(Writer writer, Settings settings) {
-        List<String> fieldsClassLines = Arrays.asList(
-            "class Fields {",
-            "    protected $$parent: Fields | undefined;",
-            "    protected $$name: string;",
-            "    constructor(parent?: Fields, name?: string) {",
-            "        this.$$parent = parent;",
-            "        this.$$name = name || '';",
-            "    };",
-            "    get(): string {",
-            "        if (this.$$parent && this.$$parent.get().length > 0) {",
-            "            return this.$$parent.get() + \".\" + this.$$name;",
-            "        } else {",
-            "            return this.$$name;",
-            "        }",
-            "    }",
-            "}");
-        writer.writeIndentedLine("");
-        for (String fieldsClassLine : fieldsClassLines) {
-            writer.writeIndentedLine(fieldsClassLine.replace("    ", settings.indentString));
-        }
+  private static void emitFieldsClass(Writer writer, Settings settings) {
+    List<String> fieldsClassLines = Arrays.asList("class Fields {", "    protected $$parent: Fields | undefined;", "    protected $$name: string;", "    constructor(parent?: Fields, name?: string) {", "        this.$$parent = parent;", "        this.$$name = name || \'\';", "    };", "    get(): string {", "        if (this.$$parent && this.$$parent.get().length > 0) {", "            return this.$$parent.get() + \".\" + this.$$name;", "        } else {", "            return this.$$name;", "        }", "    }", "}");
+    writer.writeIndentedLine("");
+    for (String fieldsClassLine : fieldsClassLines) {
+      writer.writeIndentedLine(fieldsClassLine.replace("    ", settings.indentString));
     }
+  }
 
-    /**
+  /**
      * Emits a bean and its parent beans before if needed.
      * Returns the list of beans that were emitted.
      */
-    private static Set<TsBeanModel> writeBeanAndParentsFieldSpecs(
-        Writer writer, Settings settings, TsModel model, Set<TsBeanModel> emittedSoFar, TsBeanModel bean) {
-        if (emittedSoFar.contains(bean)) {
-            return new HashSet<>();
-        }
-        final TsBeanModel parentBean = getBeanModelByType(model, bean.getParent());
-        final Set<TsBeanModel> emittedBeans = parentBean != null
-            ? writeBeanAndParentsFieldSpecs(writer, settings, model, emittedSoFar, parentBean)
-            : new HashSet<TsBeanModel>();
-        final String parentClassName = parentBean != null
-            ? getBeanModelClassName(parentBean) + "Fields"
-            : "Fields";
-        writer.writeIndentedLine("");
-        writer.writeIndentedLine(
-            "class " + getBeanModelClassName(bean) + "Fields extends " + parentClassName + " {");
-        writer.writeIndentedLine(
-            settings.indentString + "constructor(parent?: Fields, name?: string) { super(parent, name); }");
-        for (TsPropertyModel property : bean.getProperties()) {
-            writeBeanProperty(writer, settings, model, bean, property);
-        }
-        writer.writeIndentedLine("}");
-
-        emittedBeans.add(bean);
-        return emittedBeans;
+  private static Set<TsBeanModel> writeBeanAndParentsFieldSpecs(Writer writer, Settings settings, TsModel model, Set<TsBeanModel> emittedSoFar, TsBeanModel bean) {
+    if (emittedSoFar.contains(bean)) {
+      return new HashSet<>();
     }
+    final TsBeanModel parentBean = getBeanModelByType(model, bean.getParent());
+    final Set<TsBeanModel> emittedBeans = parentBean != null ? writeBeanAndParentsFieldSpecs(writer, settings, model, emittedSoFar, parentBean) : new HashSet<TsBeanModel>();
+    final String parentClassName = parentBean != null ? getBeanModelClassName(parentBean) + "Fields" : "Fields";
+    writer.writeIndentedLine("");
+    writer.writeIndentedLine("class " + getBeanModelClassName(bean) + "Fields extends " + parentClassName + " {");
+    writer.writeIndentedLine(settings.indentString + "constructor(parent?: Fields, name?: string) { super(parent, name); }");
+    for (TsPropertyModel property : bean.getProperties()) {
+      writeBeanProperty(writer, settings, model, bean, property);
+    }
+    writer.writeIndentedLine("}");
+    emittedBeans.add(bean);
+    return emittedBeans;
+  }
 
-    /**
+  /**
      * is this type an 'original' TS type, or a contextual information?
      * null, undefined and optional info are not original types, everything
      * else is original
      */
-    private static boolean isOriginalTsType(TsType type) {
-        if (type instanceof TsType.BasicType) {
-            TsType.BasicType basicType = (TsType.BasicType)type;
-            return !(basicType.name.equals("null") || basicType.name.equals("undefined"));
-        }
-        return true;
+  private static boolean isOriginalTsType(TsType type) {
+    if (type instanceof TsType.BasicType) {
+      TsType.BasicType basicType = (TsType.BasicType) type;
+      return !(basicType.name.equals("null") || basicType.name.equals("undefined"));
     }
+    return true;
+  }
 
-    /**
+  /**
      * If the type is optional of number|null|undefined, or list of
      * of integer, we want to be able to recognize it as number
      * to link the member to another class.
      * => extract the original type while ignoring the |null|undefined
      * and optional informations.
      */
-    private static TsType extractOriginalTsType(TsType type) {
-        if (type instanceof TsType.OptionalType) {
-            return extractOriginalTsType(((TsType.OptionalType)type).type);
+  private static TsType extractOriginalTsType(TsType type) {
+    if (type instanceof TsType.OptionalType) {
+      return extractOriginalTsType(((TsType.OptionalType) type).type);
+    }
+    if (type instanceof TsType.UnionType) {
+      TsType.UnionType union = (TsType.UnionType) type;
+      List<TsType> originalTypes = new ArrayList<>();
+      for (TsType curType : union.types) {
+        if (isOriginalTsType(curType)) {
+          originalTypes.add(curType);
         }
-        if (type instanceof TsType.UnionType) {
-            TsType.UnionType union = (TsType.UnionType)type;
-            List<TsType> originalTypes = new ArrayList<>();
-            for (TsType curType : union.types) {
-                if (isOriginalTsType(curType)) {
-                    originalTypes.add(curType);
-                }
-            }
-            return originalTypes.size() == 1
-                ? extractOriginalTsType(originalTypes.get(0))
-                : type;
-        }
-        if (type instanceof TsType.BasicArrayType) {
-            return extractOriginalTsType(((TsType.BasicArrayType)type).elementType);
-        }
-        return type;
+      }
+      return originalTypes.size() == 1 ? extractOriginalTsType(originalTypes.get(0)) : type;
     }
+    if (type instanceof TsType.BasicArrayType) {
+      return extractOriginalTsType(((TsType.BasicArrayType) type).elementType);
+    }
+    return type;
+  }
 
-    private static TsBeanModel getBeanModelByType(TsModel model, TsType type) {
-        TsType originalType = extractOriginalTsType(type);
-        for (TsBeanModel curBean : model.getBeans()) {
-            if (curBean.getName().equals(originalType)) {
-                return curBean;
-            }
-        }
-        return null;
+  private static TsBeanModel getBeanModelByType(TsModel model, TsType type) {
+    TsType originalType = extractOriginalTsType(type);
+    for (TsBeanModel curBean : model.getBeans()) {
+      if (curBean.getName().equals(originalType)) {
+        return curBean;
+      }
     }
+    return null;
+  }
 
-    private static String getBeanModelClassName(TsBeanModel bean) {
-        return bean.getName().toString();
-    }
+  private static String getBeanModelClassName(TsBeanModel bean) {
+    return bean.getName().toString();
+  }
 
-    private static void writeBeanProperty(
-        Writer writer, Settings settings, TsModel model, TsBeanModel bean,
-        TsPropertyModel property) {
-        TsBeanModel fieldBeanModel = getBeanModelByType(model, property.getTsType());
-        String fieldClassName = fieldBeanModel != null ? getBeanModelClassName(fieldBeanModel) : "";
-        writer.writeIndentedLine(
-            settings.indentString + property.getName() + " = new " + fieldClassName + "Fields(this, \"" + property.getName() + "\");");
-    }
+  private static void writeBeanProperty(Writer writer, Settings settings, TsModel model, TsBeanModel bean, TsPropertyModel property) {
+    TsBeanModel fieldBeanModel = getBeanModelByType(model, property.getTsType());
+    String fieldClassName = fieldBeanModel != null ? getBeanModelClassName(fieldBeanModel) : "";
+    writer.writeIndentedLine(settings.indentString + property.getName() + " = new " + fieldClassName + "Fields(this, \"" + property.getName() + "\");");
+  }
 
-    private static void createBeanFieldConstant(Writer writer, boolean exportKeyword, TsBeanModel bean) {
-        writer.writeIndentedLine((exportKeyword ? "export " : "")
-            + "const " + getBeanModelClassName(bean) + " = new " + getBeanModelClassName(bean) + "Fields();");
-    }
+  private static void createBeanFieldConstant(Writer writer, boolean exportKeyword, TsBeanModel bean) {
+    writer.writeIndentedLine((exportKeyword ? "export " : "") + "const " + getBeanModelClassName(bean) + " = new " + getBeanModelClassName(bean) + "Fields();");
+  }
 }
