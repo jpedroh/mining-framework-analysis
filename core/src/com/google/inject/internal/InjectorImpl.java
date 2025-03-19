@@ -855,7 +855,8 @@ final class InjectorImpl implements Injector, Lookups {
               jitDisabled,
               parent.options.jitDisabled ? JitLimitation.NO_JIT : jitType);
         } catch (ErrorsException ignored) {
-        // TODO(b/160910914): Why are ErrorsExceptions ignored?
+          // TODO(b/160910914): Why are ErrorsExceptions ignored?
+        }
       }
     }
 
