@@ -122,7 +122,7 @@ public class GitLabPushTrigger extends Trigger<Job<?, ?>> implements MergeReques
     @Deprecated
     @GeneratePojoBuilder(intoPackage = "*.builder.generated", withFactoryMethod = "*")
     public GitLabPushTrigger(boolean triggerOnPush, boolean triggerToBranchDeleteRequest, boolean triggerOnMergeRequest, boolean triggerOnlyIfNewCommitsPushed, boolean triggerOnAcceptedMergeRequest, boolean triggerOnClosedMergeRequest,
-    						 TriggerOpenMergeRequest triggerOpenMergeRequestOnPush, boolean triggerOnNoteRequest, String noteRegex,
+                             TriggerOpenMergeRequest triggerOpenMergeRequestOnPush, boolean triggerOnNoteRequest, String noteRegex,
                              boolean skipWorkInProgressMergeRequest, boolean ciSkip, String labelsThatForcesBuildIfAdded,
                              boolean setBuildDescription, boolean addNoteOnMergeRequest, boolean addCiMessage, boolean addVoteOnMergeRequest,
                              boolean acceptMergeRequestOnSuccess, BranchFilterType branchFilterType,

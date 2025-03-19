@@ -51,23 +51,19 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
 
     private final boolean onlyIfNewCommitsPushed;
     private final boolean skipWorkInProgressMergeRequest;
-    private final Set<String> labelsThatForcesBuildIfAdded;
     private final Predicate<MergeRequestObjectAttributes> triggerConfig;
     private final EnumSet<Action> skipBuiltYetCheckActions = EnumSet.of(Action.open, Action.approved, Action.merge);
     private final EnumSet<Action> skipAllowedStateForActions = EnumSet.of(Action.approved);
     private final boolean cancelPendingBuildsOnUpdate;
-
-    MergeRequestHookTriggerHandlerImpl(Collection<State> allowedStates, boolean skipWorkInProgressMergeRequest, boolean cancelPendingBuildsOnUpdate) {
-        this(allowedStates, EnumSet.noneOf(Action.class), skipWorkInProgressMergeRequest, cancelPendingBuildsOnUpdate);
+    MergeRequestHookTriggerHandlerImpl(Collection<State> allowedStates, boolean onlyIfNewCommitsPushed, boolean skipWorkInProgressMergeRequest, boolean cancelPendingBuildsOnUpdate) {
+        this(allowedStates, EnumSet.noneOf(Action.class), onlyIfNewCommitsPushed, skipWorkInProgressMergeRequest, cancelPendingBuildsOnUpdate);
     }
-
     // this retains internal API, however, the plugin code no longer instantiates the handler this way.
     // any code using it should test it on higher level
     @Deprecated
-    MergeRequestHookTriggerHandlerImpl(Collection<State> allowedStates, Collection<Action> allowedActions, boolean skipWorkInProgressMergeRequest, boolean cancelPendingBuildsOnUpdate) {
-        this(new TriggerConfigChain().add(allowedStates, null).add(null, allowedActions), false, skipWorkInProgressMergeRequest, emptySet(), cancelPendingBuildsOnUpdate);
+    MergeRequestHookTriggerHandlerImpl(Collection<State> allowedStates, Collection<Action> allowedActions, boolean onlyIfNewCommitsPushed, boolean skipWorkInProgressMergeRequest, boolean cancelPendingBuildsOnUpdate) {
+        this(new TriggerConfigChain().add(allowedStates, null).add(null, allowedActions), onlyIfNewCommitsPushed, skipWorkInProgressMergeRequest, emptySet(), cancelPendingBuildsOnUpdate);
     }
-
     MergeRequestHookTriggerHandlerImpl(Predicate<MergeRequestObjectAttributes> triggerConfig, boolean onlyIfNewCommitsPushed, boolean skipWorkInProgressMergeRequest, Set<String> labelsThatForcesBuildIfAdded, boolean cancelPendingBuildsOnUpdate) {
         this.triggerConfig = triggerConfig;
         this.onlyIfNewCommitsPushed = onlyIfNewCommitsPushed;
@@ -75,10 +71,20 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
         this.labelsThatForcesBuildIfAdded = labelsThatForcesBuildIfAdded;
         this.cancelPendingBuildsOnUpdate = cancelPendingBuildsOnUpdate;
     }
-
     @Override
     public void handle(Job<?, ?> job, MergeRequestHook hook, boolean ciSkip, BranchFilter branchFilter, MergeRequestLabelFilter mergeRequestLabelFilter) {
+<<<<<<< /usr/src/app/output/dabsquared/gitlab-plugin/387517997c283739cbe1f4c0de882e6be6dd8b12/src/main/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImpl.java/left.java
+        if (isAllowedByConfig(objectAttributes)
+            && isLastCommitNotYetBuild(job, hook)
+            && isNotSkipWorkInProgressMergeRequest(objectAttributes)
+            && isNewCommitPushed(hook)) {
+||||||| /usr/src/app/output/dabsquared/gitlab-plugin/387517997c283739cbe1f4c0de882e6be6dd8b12/src/main/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImpl.java/base.java
+        if (isAllowedByConfig(objectAttributes)
+            && isLastCommitNotYetBuild(job, hook)
+            && isNotSkipWorkInProgressMergeRequest(objectAttributes)) {
+=======
         if (isExecutable(job, hook)) {
+>>>>>>> /usr/src/app/output/dabsquared/gitlab-plugin/387517997c283739cbe1f4c0de882e6be6dd8b12/src/main/java/com/dabsquared/gitlabjenkins/trigger/handler/merge/MergeRequestHookTriggerHandlerImpl.java/right.java
             List<String> labelsNames = new ArrayList<>();
             if (hook.getLabels() != null) {
                 for (MergeRequestLabel label : hook.getLabels()) {
@@ -91,7 +97,6 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
             }
         }
     }
-
     protected boolean isNewCommitPushed(MergeRequestHook hook) {
         if (this.onlyIfNewCommitsPushed) {
             if (hook.getObjectAttributes().getAction().equals(Action.update)) {
@@ -107,16 +112,6 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
 
         return false;
     }
-
-    private boolean isExecutable(Job<?, ?> job, MergeRequestHook hook) {
-        MergeRequestObjectAttributes objectAttributes = hook.getObjectAttributes();
-        boolean forcedByAddedLabel = isForcedByAddedLabel(hook);
-        return isAllowedByConfig(objectAttributes)
-            && (forcedByAddedLabel || isLastCommitNotYetBuild(job, hook))
-            && isNotSkipWorkInProgressMergeRequest(objectAttributes)
-            && isNewCommitPushed(hook);
-    }
-
     @Override
     protected boolean isCiSkip(MergeRequestHook hook) {
         return hook.getObjectAttributes() != null
@@ -131,7 +126,6 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
                 )
         );
     }
-
     @Override
     protected void cancelPendingBuildsIfNecessary(Job<?, ?> job, MergeRequestHook hook) {
         if (!this.cancelPendingBuildsOnUpdate) {
@@ -142,22 +136,18 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
         }
         this.pendingBuildsHandler.cancelPendingBuilds(job, hook.getObjectAttributes().getSourceProjectId(), hook.getObjectAttributes().getSourceBranch());
     }
-
     @Override
     protected String getSourceBranch(MergeRequestHook hook) {
         return hook.getObjectAttributes() == null ? null : hook.getObjectAttributes().getSourceBranch();
     }
-
     @Override
     protected String getTargetBranch(MergeRequestHook hook) {
         return hook.getObjectAttributes() == null ? null : hook.getObjectAttributes().getTargetBranch();
     }
-
     @Override
     protected String getTriggerType() {
         return "merge request";
     }
-
     @Override
     protected CauseData retrieveCauseData(MergeRequestHook hook) {
         return causeData()
@@ -192,12 +182,10 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
                 .withTargetProjectUrl(hook.getObjectAttributes().getTarget().getWebUrl())
                 .build();
     }
-
     @Override
     protected RevisionParameterAction createRevisionParameter(MergeRequestHook hook, GitSCM gitSCM) throws NoRevisionToBuildException {
         return new RevisionParameterAction(retrieveRevisionToBuild(hook), retrieveUrIish(hook));
     }
-
     @Override
     protected BuildStatusUpdate retrieveBuildStatusUpdate(MergeRequestHook hook) {
         return buildStatusUpdate()
@@ -206,7 +194,6 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
             .withRef(hook.getObjectAttributes().getSourceBranch())
             .build();
     }
-
     private String retrieveRevisionToBuild(MergeRequestHook hook) throws NoRevisionToBuildException {
         if (hook.getObjectAttributes() != null
                 && hook.getObjectAttributes().getLastCommit() != null
@@ -217,7 +204,6 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
             throw new NoRevisionToBuildException();
         }
     }
-
     private boolean isLastCommitNotYetBuild(Job<?, ?> project, MergeRequestHook hook) {
         MergeRequestObjectAttributes objectAttributes = hook.getObjectAttributes();
 
@@ -248,16 +234,23 @@ class MergeRequestHookTriggerHandlerImpl extends AbstractWebHookTriggerHandler<M
 
         return true;
     }
-
     private String getTargetBranchFromBuild(Run<?, ?> mergeBuild) {
         GitLabWebHookCause cause = mergeBuild.getCause(GitLabWebHookCause.class);
         return cause == null ? null : cause.getData().getTargetBranch();
     }
-
 	private boolean isAllowedByConfig(MergeRequestObjectAttributes objectAttributes) {
 		return triggerConfig.apply(objectAttributes);
     }
-
+    private final Set<String> labelsThatForcesBuildIfAdded;
+    // this retains internal API, however, the plugin code no longer instantiates the handler this way.
+    // any code using it should test it on higher level
+    private boolean isExecutable(Job<?, ?> job, MergeRequestHook hook) {
+        MergeRequestObjectAttributes objectAttributes = hook.getObjectAttributes();
+        boolean forcedByAddedLabel = isForcedByAddedLabel(hook);
+        return isAllowedByConfig(objectAttributes)
+            && (forcedByAddedLabel || isLastCommitNotYetBuild(job, hook))
+            && isNotSkipWorkInProgressMergeRequest(objectAttributes);
+    }
     private boolean isForcedByAddedLabel(MergeRequestHook hook) {
         if (labelsThatForcesBuildIfAdded.isEmpty()) {
             return false;
