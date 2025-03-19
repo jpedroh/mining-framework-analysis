@@ -45,7 +45,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.JmxReporter;
-import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.client.util.BackOff;
 import com.yahoo.ads.pb.PistachiosClientImpl;
 import com.yahoo.ads.pb.PistachiosServer;
@@ -53,8 +52,6 @@ import com.yahoo.ads.pb.customization.LookupCallbackRegistry;
 import com.yahoo.ads.pb.customization.ProcessorRegistry;
 import com.yahoo.ads.pb.exception.*;
 import com.yahoo.ads.pb.network.netty.NettyPistachioClient;
-
-import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
