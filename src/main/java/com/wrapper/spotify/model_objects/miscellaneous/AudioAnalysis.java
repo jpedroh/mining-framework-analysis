@@ -1,11 +1,10 @@
 package com.wrapper.spotify.model_objects.miscellaneous;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.gson.JsonObject;
 import com.wrapper.spotify.model_objects.AbstractModelObject;
 
 /**
- * Retrieve information about <a href="https://developer.spotify.com/web-api/get-audio-analysis/">
+ * Retrieve information about <a href="hhttps://developer.spotify.com/web-api/get-audio-analysis/">
  * Audio Analysis objects</a> by building instances from this class. <br>
  * These objects contain a great amount of additional information to
  * {@link com.wrapper.spotify.model_objects.specification.AudioFeatures} objects. <br><br>
@@ -15,19 +14,23 @@ import com.wrapper.spotify.model_objects.AbstractModelObject;
  * on the side of Spotify, so it is possible that this Javadoc page (and other Audio Analysis related Javadoc pages)
  * contains speculative information about a few of its corresponding methods.
  */
-@JsonDeserialize(builder = AudioAnalysis.Builder.class)
-public class AudioAnalysis extends AbstractModelObject {
+@JsonDeserialize(builder = AudioAnalysis.Builder.class) public class AudioAnalysis extends AbstractModelObject {
   private final AudioAnalysisMeasure[] bars;
+
   private final AudioAnalysisMeasure[] beats;
+
   private final AudioAnalysisMeta meta;
+
   private final AudioAnalysisSection[] sections;
+
   private final AudioAnalysisSegment[] segments;
+
   private final AudioAnalysisMeasure[] tatums;
+
   private final AudioAnalysisTrack track;
 
   private AudioAnalysis(final Builder builder) {
     super(builder);
-
     this.bars = builder.bars;
     this.beats = builder.beats;
     this.meta = builder.meta;
@@ -107,21 +110,23 @@ public class AudioAnalysis extends AbstractModelObject {
     return track;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
-  /**
-   * Builder class for building {@link AudioAnalysis} instances.
-   */
   public static final class Builder extends AbstractModelObject.Builder {
     private AudioAnalysisMeasure[] bars;
+
     private AudioAnalysisMeasure[] beats;
+
     private AudioAnalysisMeta meta;
+
     private AudioAnalysisSection[] sections;
+
     private AudioAnalysisSegment[] segments;
+
     private AudioAnalysisMeasure[] tatums;
+
     private AudioAnalysisTrack track;
 
     /**
@@ -202,58 +207,17 @@ public class AudioAnalysis extends AbstractModelObject {
       return this;
     }
 
-    @Override
-    public AudioAnalysis build() {
+    @Override public AudioAnalysis build() {
       return new AudioAnalysis(this);
     }
   }
 
-  /**
-   * JsonUtil class for building {@link AudioAnalysis} instances.
-   */
   public static final class JsonUtil extends AbstractModelObject.JsonUtil<AudioAnalysis> {
     public AudioAnalysis createModelObject(JsonObject jsonObject) {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new AudioAnalysis.Builder()
-        .setBars(
-          hasAndNotNull(jsonObject, "bars")
-            ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("bars"))
-            : null)
-        .setBeats(
-          hasAndNotNull(jsonObject, "beats")
-            ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("beats"))
-            : null)
-        .setMeta(
-          hasAndNotNull(jsonObject, "meta")
-            ? new AudioAnalysisMeta.JsonUtil().createModelObject(
-            jsonObject.getAsJsonObject("meta"))
-            : null)
-        .setSections(
-          hasAndNotNull(jsonObject, "sections")
-            ? new AudioAnalysisSection.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("sections"))
-            : null)
-        .setSegments(
-          hasAndNotNull(jsonObject, "segments")
-            ? new AudioAnalysisSegment.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("segments"))
-            : null)
-        .setTatums(
-          hasAndNotNull(jsonObject, "tatums")
-            ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("tatums"))
-            : null)
-        .setTrack(
-          hasAndNotNull(jsonObject, "track")
-            ? new AudioAnalysisTrack.JsonUtil().createModelObject(
-            jsonObject.getAsJsonObject("track"))
-            : null)
-        .build();
+      return new AudioAnalysis.Builder().setBars(hasAndNotNull(jsonObject, "bars") ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("bars")) : null).setBeats(hasAndNotNull(jsonObject, "beats") ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("beats")) : null).setMeta(hasAndNotNull(jsonObject, "meta") ? new AudioAnalysisMeta.JsonUtil().createModelObject(jsonObject.getAsJsonObject("meta")) : null).setSections(hasAndNotNull(jsonObject, "sections") ? new AudioAnalysisSection.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("sections")) : null).setSegments(hasAndNotNull(jsonObject, "segments") ? new AudioAnalysisSegment.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("segments")) : null).setTatums(hasAndNotNull(jsonObject, "tatums") ? new AudioAnalysisMeasure.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("tatums")) : null).setTrack(hasAndNotNull(jsonObject, "track") ? new AudioAnalysisTrack.JsonUtil().createModelObject(jsonObject.getAsJsonObject("track")) : null).build();
     }
   }
 }

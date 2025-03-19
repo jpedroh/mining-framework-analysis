@@ -1,5 +1,4 @@
 package com.wrapper.spotify.model_objects.specification;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -14,24 +13,33 @@ import com.wrapper.spotify.requests.data.search.interfaces.ISearchModelObject;
  * Retrieve information about <a href="https://developer.spotify.com/web-api/object-model/#album-object-simplified">
  * simplified Album objects</a> by building instances from this class.
  */
-@JsonDeserialize(builder = AlbumSimplified.Builder.class)
-public class AlbumSimplified extends AbstractModelObject implements ISearchModelObject {
+@JsonDeserialize(builder = AlbumSimplified.Builder.class) public class AlbumSimplified extends AbstractModelObject implements ISearchModelObject {
   private final AlbumType albumType;
+
   private final ArtistSimplified[] artists;
+
   private final CountryCode[] availableMarkets;
+
   private final ExternalUrl externalUrls;
+
   private final String href;
+
   private final String id;
+
   private final Image[] images;
+
   private final String name;
+
   private final String releaseDate;
+
   private final ReleaseDatePrecision releaseDatePrecision;
+
   private final ModelObjectType type;
+
   private final String uri;
 
   private AlbumSimplified(final Builder builder) {
     super(builder);
-
     this.albumType = builder.albumType;
     this.artists = builder.artists;
     this.availableMarkets = builder.availableMarkets;
@@ -156,27 +164,33 @@ public class AlbumSimplified extends AbstractModelObject implements ISearchModel
     return uri;
   }
 
-  @Override
-  public Builder builder() {
+  @Override public Builder builder() {
     return new Builder();
   }
 
-  /**
-   * Builder class for building {@link AlbumSimplified} instances.
-   */
   public static final class Builder extends AbstractModelObject.Builder {
-
     private AlbumType albumType;
+
     private ArtistSimplified[] artists;
+
     private CountryCode[] availableMarkets;
+
     private ExternalUrl externalUrls;
+
     private String href;
+
     private String id;
+
     private Image[] images;
+
     private String name;
+
     private String releaseDate;
+
     private ReleaseDatePrecision releaseDatePrecision;
+
     private ModelObjectType type;
+
     private String uri;
 
     /**
@@ -188,7 +202,6 @@ public class AlbumSimplified extends AbstractModelObject implements ISearchModel
     public Builder setAlbumType(AlbumType albumType) {
       this.albumType = albumType;
       return this;
-
     }
 
     /**
@@ -314,69 +327,17 @@ public class AlbumSimplified extends AbstractModelObject implements ISearchModel
       return this;
     }
 
-    @Override
-    public AlbumSimplified build() {
+    @Override public AlbumSimplified build() {
       return new AlbumSimplified(this);
     }
   }
 
-  /**
-   * JsonUtil class for building {@link AlbumSimplified} instances.
-   */
   public static final class JsonUtil extends AbstractModelObject.JsonUtil<AlbumSimplified> {
     public AlbumSimplified createModelObject(JsonObject jsonObject) {
       if (jsonObject == null || jsonObject.isJsonNull()) {
         return null;
       }
-
-      return new AlbumSimplified.Builder()
-        .setAlbumType(
-          hasAndNotNull(jsonObject, "album_type")
-            ? AlbumType.keyOf(
-            jsonObject.get("album_type").getAsString().toLowerCase())
-            : null)
-        .setArtists(
-          hasAndNotNull(jsonObject, "artists")
-            ? new ArtistSimplified.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("artists"))
-            : null)
-        .setAvailableMarkets(
-          hasAndNotNull(jsonObject, "available_markets")
-            ? new Gson().fromJson(
-            jsonObject.get("available_markets"), CountryCode[].class)
-            : null)
-        .setExternalUrls(
-          hasAndNotNull(jsonObject, "external_urls")
-            ? new ExternalUrl.JsonUtil().createModelObject(
-            jsonObject.getAsJsonObject("external_urls"))
-            : null)
-        .setHref(
-          hasAndNotNull(jsonObject, "href")
-            ? jsonObject.get("href").getAsString()
-            : null)
-        .setId(
-          hasAndNotNull(jsonObject, "id")
-            ? jsonObject.get("id").getAsString()
-            : null)
-        .setImages(
-          hasAndNotNull(jsonObject, "images")
-            ? new Image.JsonUtil().createModelObjectArray(
-            jsonObject.getAsJsonArray("images"))
-            : null)
-        .setName(
-          hasAndNotNull(jsonObject, "name")
-            ? jsonObject.get("name").getAsString()
-            : null)
-        .setType(
-          hasAndNotNull(jsonObject, "type")
-            ? ModelObjectType.keyOf(
-            jsonObject.get("type").getAsString().toLowerCase())
-            : null)
-        .setUri(
-          hasAndNotNull(jsonObject, "uri")
-            ? jsonObject.get("uri").getAsString()
-            : null)
-        .build();
+      return new AlbumSimplified.Builder().setAlbumType(hasAndNotNull(jsonObject, "album_type") ? AlbumType.keyOf(jsonObject.get("album_type").getAsString().toLowerCase()) : null).setArtists(hasAndNotNull(jsonObject, "artists") ? new ArtistSimplified.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("artists")) : null).setAvailableMarkets(hasAndNotNull(jsonObject, "available_markets") ? new Gson().fromJson(jsonObject.get("available_markets"), CountryCode[].class) : null).setExternalUrls(hasAndNotNull(jsonObject, "external_urls") ? new ExternalUrl.JsonUtil().createModelObject(jsonObject.getAsJsonObject("external_urls")) : null).setHref(hasAndNotNull(jsonObject, "href") ? jsonObject.get("href").getAsString() : null).setId(hasAndNotNull(jsonObject, "id") ? jsonObject.get("id").getAsString() : null).setImages(hasAndNotNull(jsonObject, "images") ? new Image.JsonUtil().createModelObjectArray(jsonObject.getAsJsonArray("images")) : null).setName(hasAndNotNull(jsonObject, "name") ? jsonObject.get("name").getAsString() : null).setReleaseDate(hasAndNotNull(jsonObject, "release_date") ? jsonObject.get("release_date").getAsString() : null).setReleaseDatePrecision(hasAndNotNull(jsonObject, "release_date_precision") ? ReleaseDatePrecision.keyOf(jsonObject.get("release_date_precision").getAsString().toLowerCase()) : null).setType(hasAndNotNull(jsonObject, "type") ? ModelObjectType.keyOf(jsonObject.get("type").getAsString().toLowerCase()) : null).setUri(hasAndNotNull(jsonObject, "uri") ? jsonObject.get("uri").getAsString() : null).build();
     }
   }
 }
