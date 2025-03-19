@@ -1,21 +1,4 @@
-/*
- * Copyright 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.common.css;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -39,42 +22,81 @@ import java.util.Set;
  */
 public class JobDescriptionBuilder {
   List<SourceCode> inputs;
+
   String copyrightNotice;
+
   OutputFormat outputFormat;
+
   InputOrientation inputOrientation;
+
   OutputOrientation outputOrientation;
+
   OptimizeStrategy optimize;
+
   List<String> trueConditionNames;
+
   boolean useInternalBidiFlipper;
+
   boolean swapLtrRtlInUrl;
+
   boolean swapLeftRightInUrl;
+
   boolean simplifyCss;
+
   boolean eliminateDeadStyles;
+
   boolean allowDefPropagation;
+
   boolean allowUnrecognizedFunctions;
+
+
+<<<<<<< /usr/src/app/output/google/closure-stylesheets/db92c42dd890921c3f05b3a5ad70436b6d77f9b4/src/com/google/common/css/JobDescriptionBuilder.java/left.java
   boolean allowDuplicateDeclarations;
-  Set<String> allowedNonStandardFunctions;
-  boolean allowUnrecognizedProperties;
-  Set<String> allowedUnrecognizedProperties;
-  boolean allowUndefinedConstants;
-  boolean allowMozDocument;
-  Vendor vendor;
-  boolean allowKeyframes;
-  boolean allowWebkitKeyframes;
-  boolean processDependencies;
-  String cssRenamingPrefix;
-  List<String> excludedClassesFromRenaming;
-  GssFunctionMapProvider gssFunctionMapProvider;
-  SubstitutionMapProvider cssSubstitutionMapProvider;
-  OutputRenamingMapFormat outputRenamingMapFormat;
+=======
   Map<String, String> inputRenamingMap;
+>>>>>>> /usr/src/app/output/google/closure-stylesheets/db92c42dd890921c3f05b3a5ad70436b6d77f9b4/src/com/google/common/css/JobDescriptionBuilder.java/right.java
+
+
+  Set<String> allowedNonStandardFunctions;
+
+  boolean allowUnrecognizedProperties;
+
+  Set<String> allowedUnrecognizedProperties;
+
+  boolean allowUndefinedConstants;
+
+  boolean allowMozDocument;
+
+  Vendor vendor;
+
+  boolean allowKeyframes;
+
+  boolean allowWebkitKeyframes;
+
+  boolean processDependencies;
+
+  String cssRenamingPrefix;
+
+  List<String> excludedClassesFromRenaming;
+
+  GssFunctionMapProvider gssFunctionMapProvider;
+
+  SubstitutionMapProvider cssSubstitutionMapProvider;
+
+  OutputRenamingMapFormat outputRenamingMapFormat;
+
   boolean preserveComments;
+
   boolean suppressDependencyCheck;
+
   Map<String, Integer> compileConstants;
+
   boolean preserveImportantComments;
 
   JobDescription job = null;
+
   boolean createSourceMap;
+
   SourceMapDetailLevel sourceMapLevel;
 
   public JobDescriptionBuilder() {
@@ -132,19 +154,16 @@ public class JobDescriptionBuilder {
     this.allowDefPropagation = jobToCopy.allowDefPropagation;
     this.allowUnrecognizedFunctions = jobToCopy.allowUnrecognizedFunctions;
     this.allowDuplicateDeclarations = jobToCopy.allowDuplicateDeclarations;
-    this.allowedNonStandardFunctions =
-        ImmutableSet.copyOf(jobToCopy.allowedNonStandardFunctions);
+    this.allowedNonStandardFunctions = ImmutableSet.copyOf(jobToCopy.allowedNonStandardFunctions);
     this.allowUnrecognizedProperties = jobToCopy.allowUnrecognizedProperties;
-    this.allowedUnrecognizedProperties =
-        ImmutableSet.copyOf(jobToCopy.allowedUnrecognizedProperties);
+    this.allowedUnrecognizedProperties = ImmutableSet.copyOf(jobToCopy.allowedUnrecognizedProperties);
     this.allowUndefinedConstants = jobToCopy.allowUndefinedConstants;
     this.allowMozDocument = jobToCopy.allowMozDocument;
     this.vendor = jobToCopy.vendor;
     this.allowKeyframes = jobToCopy.allowKeyframes;
     this.allowWebkitKeyframes = jobToCopy.allowWebkitKeyframes;
     this.cssRenamingPrefix = jobToCopy.cssRenamingPrefix;
-    setExcludedClassesFromRenaming(
-        ImmutableList.copyOf(jobToCopy.excludedClassesFromRenaming));
+    setExcludedClassesFromRenaming(ImmutableList.copyOf(jobToCopy.excludedClassesFromRenaming));
     this.gssFunctionMapProvider = jobToCopy.gssFunctionMapProvider;
     this.cssSubstitutionMapProvider = jobToCopy.cssSubstitutionMapProvider;
     this.outputRenamingMapFormat = jobToCopy.outputRenamingMapFormat;
@@ -159,8 +178,7 @@ public class JobDescriptionBuilder {
   }
 
   void checkJobIsNotAlreadyCreated() {
-    Preconditions.checkState(job == null, "You cannot set job properties " +
-        "after the message was created.");
+    Preconditions.checkState(job == null, "You cannot set job properties " + "after the message was created.");
   }
 
   public JobDescriptionBuilder clearInputs() {
@@ -197,8 +215,7 @@ public class JobDescriptionBuilder {
     return this;
   }
 
-  public JobDescriptionBuilder setTrueConditionNames(
-      List<String> newTrueConditionNames) {
+  public JobDescriptionBuilder setTrueConditionNames(List<String> newTrueConditionNames) {
     checkJobIsNotAlreadyCreated();
     Preconditions.checkState(this.trueConditionNames.isEmpty());
     Preconditions.checkArgument(!newTrueConditionNames.contains(null));
@@ -213,13 +230,11 @@ public class JobDescriptionBuilder {
     return this;
   }
 
-  public JobDescriptionBuilder setExcludedClassesFromRenaming(
-      List<String> excludedClassesFromRenaming) {
+  public JobDescriptionBuilder setExcludedClassesFromRenaming(List<String> excludedClassesFromRenaming) {
     checkJobIsNotAlreadyCreated();
     Preconditions.checkState(this.excludedClassesFromRenaming.isEmpty());
     Preconditions.checkArgument(!excludedClassesFromRenaming.contains(null));
-    this.excludedClassesFromRenaming =
-        Lists.newArrayList(excludedClassesFromRenaming);
+    this.excludedClassesFromRenaming = Lists.newArrayList(excludedClassesFromRenaming);
     return this;
   }
 
@@ -270,16 +285,14 @@ public class JobDescriptionBuilder {
     return setSwapLeftRightInUrl(true);
   }
 
-  public JobDescriptionBuilder setInputOrientation(
-      InputOrientation newInputOrientation) {
+  public JobDescriptionBuilder setInputOrientation(InputOrientation newInputOrientation) {
     checkJobIsNotAlreadyCreated();
     Preconditions.checkNotNull(newInputOrientation);
     this.inputOrientation = newInputOrientation;
     return this;
   }
 
-  public JobDescriptionBuilder setOutputOrientation(
-      OutputOrientation newOutputOrientation) {
+  public JobDescriptionBuilder setOutputOrientation(OutputOrientation newOutputOrientation) {
     checkJobIsNotAlreadyCreated();
     Preconditions.checkNotNull(newOutputOrientation);
     this.outputOrientation = newOutputOrientation;
@@ -313,15 +326,13 @@ public class JobDescriptionBuilder {
     return setEliminateDeadStyles(true);
   }
 
-  public JobDescriptionBuilder setGssFunctionMapProvider(
-      GssFunctionMapProvider gssFunctionMapProvider) {
+  public JobDescriptionBuilder setGssFunctionMapProvider(GssFunctionMapProvider gssFunctionMapProvider) {
     checkJobIsNotAlreadyCreated();
     this.gssFunctionMapProvider = gssFunctionMapProvider;
     return this;
   }
 
-  public JobDescriptionBuilder setCssSubstitutionMapProvider(
-      SubstitutionMapProvider cssSubstitutionMapProvider) {
+  public JobDescriptionBuilder setCssSubstitutionMapProvider(SubstitutionMapProvider cssSubstitutionMapProvider) {
     checkJobIsNotAlreadyCreated();
     this.cssSubstitutionMapProvider = cssSubstitutionMapProvider;
     return this;
@@ -337,17 +348,16 @@ public class JobDescriptionBuilder {
     return setAllowUnrecognizedFunctions(true);
   }
 
-  public JobDescriptionBuilder setAllowedNonStandardFunctions(
-      List<String> functionNames) {
+  public JobDescriptionBuilder setAllowedNonStandardFunctions(List<String> functionNames) {
     checkJobIsNotAlreadyCreated();
     this.allowedNonStandardFunctions.addAll(functionNames);
     return this;
   }
 
   public JobDescriptionBuilder setAllowDuplicateDeclarations(boolean allow) {
-      checkJobIsNotAlreadyCreated();
-      this.allowDuplicateDeclarations = allow;
-      return this;
+    checkJobIsNotAlreadyCreated();
+    this.allowDuplicateDeclarations = allow;
+    return this;
   }
 
   public JobDescriptionBuilder allowDuplicateDeclarations() {
@@ -364,8 +374,7 @@ public class JobDescriptionBuilder {
     return setAllowUnrecognizedProperties(true);
   }
 
-  public JobDescriptionBuilder setAllowedUnrecognizedProperties(
-      List<String> propertyNames) {
+  public JobDescriptionBuilder setAllowedUnrecognizedProperties(List<String> propertyNames) {
     checkJobIsNotAlreadyCreated();
     this.allowedUnrecognizedProperties.addAll(propertyNames);
     return this;
@@ -403,8 +412,7 @@ public class JobDescriptionBuilder {
     return this;
   }
 
-  public JobDescriptionBuilder setOutputRenamingMapFormat(
-      OutputRenamingMapFormat outputFormat) {
+  public JobDescriptionBuilder setOutputRenamingMapFormat(OutputRenamingMapFormat outputFormat) {
     checkJobIsNotAlreadyCreated();
     this.outputRenamingMapFormat = outputFormat;
     return this;
@@ -459,8 +467,7 @@ public class JobDescriptionBuilder {
     return setPreserveComments(true);
   }
 
-  public JobDescriptionBuilder setCompileConstants(
-      Map<String, Integer> newCompileConstants) {
+  public JobDescriptionBuilder setCompileConstants(Map<String, Integer> newCompileConstants) {
     checkJobIsNotAlreadyCreated();
     Preconditions.checkState(this.compileConstants.isEmpty());
     Preconditions.checkArgument(!newCompileConstants.containsKey(null));
@@ -482,7 +489,6 @@ public class JobDescriptionBuilder {
     if (job != null) {
       return job;
     }
-
     Set<String> allowedAtRules = Sets.newHashSet();
     if (allowKeyframes || allowWebkitKeyframes) {
       allowedAtRules.add("keyframes");
@@ -494,22 +500,7 @@ public class JobDescriptionBuilder {
     if (allowMozDocument) {
       allowedAtRules.add("-moz-document");
     }
-
-
-    job = new JobDescription(inputs,
-        copyrightNotice, outputFormat, inputOrientation, outputOrientation,
-        optimize, trueConditionNames, useInternalBidiFlipper, swapLtrRtlInUrl,
-        swapLeftRightInUrl, simplifyCss, eliminateDeadStyles,
-        allowDefPropagation, allowUnrecognizedFunctions, allowDuplicateDeclarations,
-        allowedNonStandardFunctions, allowUnrecognizedProperties,
-        allowedUnrecognizedProperties, allowUndefinedConstants,
-        allowMozDocument, vendor,
-        allowKeyframes, allowWebkitKeyframes, processDependencies,
-        allowedAtRules, cssRenamingPrefix, excludedClassesFromRenaming,
-        gssFunctionMapProvider, cssSubstitutionMapProvider,
-        outputRenamingMapFormat, inputRenamingMap, preserveComments,
-        suppressDependencyCheck, compileConstants,
-        createSourceMap, sourceMapLevel, preserveImportantComments);
+    job = new JobDescription(inputs, copyrightNotice, outputFormat, inputOrientation, outputOrientation, optimize, trueConditionNames, useInternalBidiFlipper, swapLtrRtlInUrl, swapLeftRightInUrl, simplifyCss, eliminateDeadStyles, allowDefPropagation, allowUnrecognizedFunctions, allowDuplicateDeclarations, allowedNonStandardFunctions, allowUnrecognizedProperties, allowedUnrecognizedProperties, allowUndefinedConstants, allowMozDocument, vendor, allowKeyframes, allowWebkitKeyframes, processDependencies, allowedAtRules, cssRenamingPrefix, excludedClassesFromRenaming, gssFunctionMapProvider, cssSubstitutionMapProvider, outputRenamingMapFormat, inputRenamingMap, preserveComments, suppressDependencyCheck, compileConstants, createSourceMap, sourceMapLevel, preserveImportantComments);
     return job;
   }
 
@@ -522,5 +513,4 @@ public class JobDescriptionBuilder {
     this.createSourceMap = createSourceMap;
     return this;
   }
-
 }

@@ -1,21 +1,4 @@
-/*
- * Copyright 2011 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.google.common.css.compiler.passes;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -37,20 +20,19 @@ import javax.annotation.Nullable;
  * @author bolinfest@google.com (Michael Bolin)
  */
 public class PassRunner {
-
-  private static final ImmutableMap<String, GssFunction>
-      EMPTY_GSS_FUNCTION_MAP = ImmutableMap.of();
+  private static final ImmutableMap<String, GssFunction> EMPTY_GSS_FUNCTION_MAP = ImmutableMap.of();
 
   private final JobDescription job;
+
   private final ErrorManager errorManager;
+
   private final RecordingSubstitutionMap recordingSubstitutionMap;
 
   public PassRunner(JobDescription job, ErrorManager errorManager) {
     this(job, errorManager, createSubstitutionMap(job));
   }
 
-  public PassRunner(JobDescription job, ErrorManager errorManager,
-      RecordingSubstitutionMap recordingSubstitutionMap) {
+  public PassRunner(JobDescription job, ErrorManager errorManager, RecordingSubstitutionMap recordingSubstitutionMap) {
     this.job = job;
     this.errorManager = errorManager;
     this.recordingSubstitutionMap = recordingSubstitutionMap;
@@ -62,128 +44,63 @@ public class PassRunner {
    * per input file.
    */
   public void runPasses(CssTree cssTree) {
-    new CheckDependencyNodes(cssTree.getMutatingVisitController(),
-        errorManager, job.suppressDependencyCheck).runPass();
-    new CreateStandardAtRuleNodes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new CreateMixins(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new CreateDefinitionNodes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new CreateConstantReferences(cssTree.getMutatingVisitController())
-        .runPass();
-    new CreateConditionalNodes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new CreateForLoopNodes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new CreateComponentNodes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
+    new CheckDependencyNodes(cssTree.getMutatingVisitController(), errorManager, job.suppressDependencyCheck).runPass();
+    new CreateStandardAtRuleNodes(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new CreateMixins(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new CreateDefinitionNodes(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new CreateConstantReferences(cssTree.getMutatingVisitController()).runPass();
+    new CreateConditionalNodes(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new CreateForLoopNodes(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new CreateComponentNodes(cssTree.getMutatingVisitController(), errorManager).runPass();
     new ValidatePropertyValues(cssTree.getVisitController(), errorManager).runPass();
     new WarnOnCustomProperty(cssTree.getVisitController(), errorManager).runPass();
-
-    new HandleUnknownAtRuleNodes(cssTree.getMutatingVisitController(),
-        errorManager, job.allowedAtRules,
-        true /* report */, false /* remove */).runPass();
-    new ProcessKeyframes(cssTree.getMutatingVisitController(),
-        errorManager, job.allowKeyframes || job.allowWebkitKeyframes,
-        job.simplifyCss).runPass();
-    new CreateVendorPrefixedKeyframes(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    new EvaluateCompileConstants(cssTree.getMutatingVisitController(),
-        job.compileConstants).runPass();
+    new HandleUnknownAtRuleNodes(cssTree.getMutatingVisitController(), errorManager, job.allowedAtRules, true, false).runPass();
+    new ProcessKeyframes(cssTree.getMutatingVisitController(), errorManager, job.allowKeyframes || job.allowWebkitKeyframes, job.simplifyCss).runPass();
+    new CreateVendorPrefixedKeyframes(cssTree.getMutatingVisitController(), errorManager).runPass();
+    new EvaluateCompileConstants(cssTree.getMutatingVisitController(), job.compileConstants).runPass();
     new UnrollLoops(cssTree.getMutatingVisitController(), errorManager).runPass();
-    new ProcessRefiners(cssTree.getMutatingVisitController(), errorManager,
-        job.simplifyCss).runPass();
-
-    // Eliminate conditional nodes.
-    new EliminateConditionalNodes(
-        cssTree.getMutatingVisitController(),
-        ImmutableSet.copyOf(job.trueConditionNames)).runPass();
-
-    // Collect mixin definitions and replace mixins
-    CollectMixinDefinitions collectMixinDefinitions =
-        new CollectMixinDefinitions(cssTree.getMutatingVisitController(),
-            errorManager);
+    new ProcessRefiners(cssTree.getMutatingVisitController(), errorManager, job.simplifyCss).runPass();
+    new EliminateConditionalNodes(cssTree.getMutatingVisitController(), ImmutableSet.copyOf(job.trueConditionNames)).runPass();
+    CollectMixinDefinitions collectMixinDefinitions = new CollectMixinDefinitions(cssTree.getMutatingVisitController(), errorManager);
     collectMixinDefinitions.runPass();
-    new ReplaceMixins(cssTree.getMutatingVisitController(), errorManager,
-        collectMixinDefinitions.getDefinitions()).runPass();
-
-    new ProcessComponents<Object>(cssTree.getMutatingVisitController(),
-        errorManager).runPass();
-    // Collect constant definitions.
-    CollectConstantDefinitions collectConstantDefinitionsPass =
-        new CollectConstantDefinitions(cssTree);
+    new ReplaceMixins(cssTree.getMutatingVisitController(), errorManager, collectMixinDefinitions.getDefinitions()).runPass();
+    new ProcessComponents<Object>(cssTree.getMutatingVisitController(), errorManager).runPass();
+    CollectConstantDefinitions collectConstantDefinitionsPass = new CollectConstantDefinitions(cssTree);
     collectConstantDefinitionsPass.runPass();
-    // Replace constant references.
-    ReplaceConstantReferences replaceConstantReferences =
-        new ReplaceConstantReferences(cssTree,
-            collectConstantDefinitionsPass.getConstantDefinitions(),
-            true /* removeDefs */, errorManager, job.allowUndefinedConstants);
+    ReplaceConstantReferences replaceConstantReferences = new ReplaceConstantReferences(cssTree, collectConstantDefinitionsPass.getConstantDefinitions(), true, errorManager, job.allowUndefinedConstants);
     replaceConstantReferences.runPass();
-
     Map<String, GssFunction> gssFunctionMap = getGssFunctionMap();
-    new ResolveCustomFunctionNodes(
-        cssTree.getMutatingVisitController(), errorManager,
-        gssFunctionMap, job.allowUnrecognizedFunctions,
-        job.allowedNonStandardFunctions)
-        .runPass();
-
+    new ResolveCustomFunctionNodes(cssTree.getMutatingVisitController(), errorManager, gssFunctionMap, job.allowUnrecognizedFunctions, job.allowedNonStandardFunctions).runPass();
     if (job.simplifyCss) {
-      // Eliminate empty rules.
-      new EliminateEmptyRulesetNodes(cssTree.getMutatingVisitController())
-          .runPass();
-      // Eliminating units for zero values.
-      new EliminateUnitsFromZeroNumericValues(
-          cssTree.getMutatingVisitController()).runPass();
-      // Optimize color values.
-      new ColorValueOptimizer(
-          cssTree.getMutatingVisitController()).runPass();
-      // Compress redundant top-right-bottom-left value lists.
-      new AbbreviatePositionalValues(
-          cssTree.getMutatingVisitController()).runPass();
+      new EliminateEmptyRulesetNodes(cssTree.getMutatingVisitController()).runPass();
+      new EliminateUnitsFromZeroNumericValues(cssTree.getMutatingVisitController()).runPass();
+      new ColorValueOptimizer(cssTree.getMutatingVisitController()).runPass();
+      new AbbreviatePositionalValues(cssTree.getMutatingVisitController()).runPass();
     }
-    // Report errors for duplicate declarations
     if (!job.allowDuplicateDeclarations) {
-      new DisallowDuplicateDeclarations(
-          cssTree.getVisitController(), errorManager).runPass();
+      new DisallowDuplicateDeclarations(cssTree.getVisitController(), errorManager).runPass();
     }
     if (job.eliminateDeadStyles) {
-      // Split rules by selector and declaration.
       new SplitRulesetNodes(cssTree.getMutatingVisitController()).runPass();
-      // Dead code elimination.
       new MarkRemovableRulesetNodes(cssTree).runPass();
       new EliminateUselessRulesetNodes(cssTree).runPass();
-      // Merge of rules with same selector.
       new MergeAdjacentRulesetNodesWithSameSelector(cssTree).runPass();
       new EliminateUselessRulesetNodes(cssTree).runPass();
-      // Merge of rules with same styles.
       new MergeAdjacentRulesetNodesWithSameDeclarations(cssTree).runPass();
       new EliminateUselessRulesetNodes(cssTree).runPass();
     }
-    // Perform BiDi flipping if required.
     if (job.needsBiDiFlipping()) {
-      new MarkNonFlippableNodes(cssTree.getVisitController(),
-          errorManager).runPass();
-      new BiDiFlipper(cssTree.getMutatingVisitController(),
-                        job.swapLtrRtlInUrl, job.swapLeftRightInUrl).runPass();
+      new MarkNonFlippableNodes(cssTree.getVisitController(), errorManager).runPass();
+      new BiDiFlipper(cssTree.getMutatingVisitController(), job.swapLtrRtlInUrl, job.swapLeftRightInUrl).runPass();
     }
-    // If specified, remove all vendor-specific properties except for the
-    // whitelisted vendor.
     if (job.vendor != null) {
-      new RemoveVendorSpecificProperties(job.vendor,
-          cssTree.getMutatingVisitController()).runPass();
+      new RemoveVendorSpecificProperties(job.vendor, cssTree.getMutatingVisitController()).runPass();
     }
-    // Unless all unrecognized properties are allowed, check for unrecognized
-    // properties.
     if (!job.allowUnrecognizedProperties) {
-      new VerifyRecognizedProperties(job.allowedUnrecognizedProperties,
-          cssTree.getVisitController(), errorManager).runPass();
+      new VerifyRecognizedProperties(job.allowedUnrecognizedProperties, cssTree.getVisitController(), errorManager).runPass();
     }
-    // Rename class names
     if (recordingSubstitutionMap != null) {
-      new CssClassRenaming(
-          cssTree.getMutatingVisitController(),
-          recordingSubstitutionMap, null).runPass();
+      new CssClassRenaming(cssTree.getMutatingVisitController(), recordingSubstitutionMap, null).runPass();
     }
   }
 
@@ -197,8 +114,7 @@ public class PassRunner {
    * classes. Additionaly wraps in a recording substituion map which excludes a
    * blacklist of classnames and allows the map to produced as an output.
    */
-  private static RecordingSubstitutionMap createSubstitutionMap(
-      JobDescription job) {
+  private static RecordingSubstitutionMap createSubstitutionMap(JobDescription job) {
     if (job.cssSubstitutionMapProvider != null) {
       SubstitutionMap baseMap = job.cssSubstitutionMapProvider.get();
       if (baseMap != null) {
@@ -206,12 +122,7 @@ public class PassRunner {
         if (!job.cssRenamingPrefix.isEmpty()) {
           map = new PrefixingSubstitutionMap(baseMap, job.cssRenamingPrefix);
         }
-        RecordingSubstitutionMap recording =
-            new RecordingSubstitutionMap.Builder()
-                .withSubstitutionMap(map)
-                .shouldRecordMappingForCodeGeneration(
-                    Predicates.not(Predicates.in(job.excludedClassesFromRenaming)))
-                .build();
+        RecordingSubstitutionMap recording = new RecordingSubstitutionMap.Builder().withSubstitutionMap(map).shouldRecordMappingForCodeGeneration(Predicates.not(Predicates.in(job.excludedClassesFromRenaming))).build();
         recording.initializeWithMappings(job.inputRenamingMap);
         return recording;
       }
@@ -228,13 +139,10 @@ public class PassRunner {
     if (job.gssFunctionMapProvider == null) {
       return EMPTY_GSS_FUNCTION_MAP;
     }
-
-    Map<String, GssFunction> map =
-        job.gssFunctionMapProvider.get(GssFunction.class);
+    Map<String, GssFunction> map = job.gssFunctionMapProvider.get(GssFunction.class);
     if (map == null) {
       return EMPTY_GSS_FUNCTION_MAP;
     }
-
     return map;
   }
 }
