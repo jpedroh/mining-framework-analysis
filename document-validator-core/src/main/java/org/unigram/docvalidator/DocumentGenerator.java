@@ -1,22 +1,4 @@
-/**
- * redpen: a text inspection tool
- * Copyright (C) 2014 Recruit Technologies Co., Ltd. and contributors
- * (see CONTRIBUTORS.md)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.unigram.docvalidator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unigram.docvalidator.parser.Parser;
@@ -37,9 +19,7 @@ public final class DocumentGenerator {
    * @param format         input file format
    * @return a generated DocumentCollection object
    */
-  static DocumentCollection generate(String[] inputFileNames,
-                           DVResource resource,
-                           Parser.Type format) {
+  static DocumentCollection generate(String[] inputFileNames, DVResource resource, Parser.Type format) {
     Parser docparser;
     try {
       docparser = DocumentParserFactory.generate(format, resource);
@@ -47,7 +27,6 @@ public final class DocumentGenerator {
       LOG.error("Failed to create documentCollection parser: " + e.getMessage());
       return null;
     }
-
     DocumentCollection documentCollection = new DocumentCollection();
     for (String inputFileName : inputFileNames) {
       try {
@@ -57,12 +36,10 @@ public final class DocumentGenerator {
         return null;
       }
     }
-    // @TODO extract summary information to validate documentCollection effectively
     return documentCollection;
   }
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DocumentGenerator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DocumentGenerator.class);
 
   private DocumentGenerator() {
     super();
