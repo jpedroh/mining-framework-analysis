@@ -286,7 +286,7 @@ public final class JsonDiff {
         return toReturn;
     }
 
-    private static List<JsonNode> getLCS(final JsonNode first, final JsonNode second) {
+    private List<JsonNode> getLCS(final JsonNode first, final JsonNode second) {
         return ListUtils.longestCommonSubsequence(InternalUtils.toList((ArrayNode) first), InternalUtils.toList((ArrayNode) second));
     }
 }
