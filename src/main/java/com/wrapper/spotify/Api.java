@@ -58,7 +58,6 @@ public class Api {
   private String host;
   private String accessToken;
   private String refreshToken;
-
   private Api(Builder builder) {
     assert (builder.host != null);
     assert (builder.port > 0);
@@ -81,11 +80,9 @@ public class Api {
     clientSecret = builder.clientSecret;
     redirectURI = builder.redirectURI;
   }
-
   public static Builder builder() {
     return new Builder();
   }
-
   /**
    * Returns a an album with the id given below.
    *
@@ -98,25 +95,21 @@ public class Api {
     builder.id(id);
     return builder;
   }
-
   public AlbumsRequest.Builder getAlbums(String... ids) {
     return getAlbums(Arrays.asList(ids));
   }
-
   public AlbumsRequest.Builder getAlbums(List<String> ids) {
     AlbumsRequest.Builder builder = AlbumsRequest.builder();
     setDefaults(builder);
     builder.id(ids);
     return builder;
   }
-
   public AlbumsForArtistRequest.Builder getAlbumsForArtist(String artistId) {
     AlbumsForArtistRequest.Builder builder = AlbumsForArtistRequest.builder();
     setDefaults(builder);
     builder.forArtist(artistId);
     return builder;
   }
-
   public TracksForAlbumRequest.Builder getTracksForAlbum(
       String albumId
   ) {
@@ -125,89 +118,75 @@ public class Api {
     builder.forAlbum(albumId);
     return builder;
   }
-
   public ArtistRequest.Builder getArtist(String id) {
     ArtistRequest.Builder builder = ArtistRequest.builder();
     setDefaults(builder);
     builder.setPath(String.format("/v1/artists/%s", id));
     return builder;
   }
-
   public ArtistsRequest.Builder getArtists(String... ids) {
     return getArtists(Arrays.asList(ids));
   }
-
   public ArtistsRequest.Builder getArtists(List<String> ids) {
     ArtistsRequest.Builder builder = ArtistsRequest.builder();
     setDefaults(builder);
     builder.id(ids);
     return builder;
   }
-
   public TrackRequest.Builder getTrack(String id) {
     TrackRequest.Builder builder = TrackRequest.builder();
     setDefaults(builder);
     builder.id(id);
     return builder;
   }
-
   public TracksRequest.Builder getTracks(String... ids) {
     return getTracks(Arrays.asList(ids));
   }
-
   public TracksRequest.Builder getTracks(List<String> ids) {
     TracksRequest.Builder builder = TracksRequest.builder();
     setDefaults(builder);
     builder.id(ids);
     return builder;
   }
-
   public AlbumSearchRequest.Builder searchAlbums(String query) {
     AlbumSearchRequest.Builder builder = AlbumSearchRequest.builder();
     setDefaults(builder);
     builder.query(query);
     return builder;
   }
-
   public TrackSearchRequest.Builder searchTracks(String query) {
     TrackSearchRequest.Builder builder = TrackSearchRequest.builder();
     setDefaults(builder);
     builder.query(query);
     return builder;
   }
-
   public ArtistSearchRequest.Builder searchArtists(String query) {
     ArtistSearchRequest.Builder builder = ArtistSearchRequest.builder();
     setDefaults(builder);
     builder.query(query);
     return builder;
   }
-
   public NewReleasesRequest.Builder getNewReleases() {
     NewReleasesRequest.Builder builder = NewReleasesRequest.builder();
     setDefaults(builder);
     return builder;
   }
-
   public AudioFeatureRequest.Builder getAudioFeature(String id) {
     AudioFeatureRequest.Builder builder = AudioFeatureRequest.builder();
     setDefaults(builder);
     builder.id(id);
     return builder;
   }
-
   public RecentlyPlayedTracksRequest.Builder getRecentlyPlayedTracks() {
     RecentlyPlayedTracksRequest.Builder builder = RecentlyPlayedTracksRequest.builder();
     setDefaults(builder);
     return builder;
   }
-
   public CurrentlyPlayingTrackRequest.Builder getCurrentlyPlayingTrack() {
     CurrentlyPlayingTrackRequest.Builder builder = CurrentlyPlayingTrackRequest.builder();
     setDefaults(builder);
     return builder;
   }
-
   /**
    * Used to get Featured Playlists.
    *
@@ -218,7 +197,6 @@ public class Api {
     setDefaults(builder);
     return builder;
   }
-
   public TopTracksRequest.Builder getTopTracksForArtist(String artistId, String countryCode) {
     TopTracksRequest.Builder builder = TopTracksRequest.builder();
     setDefaults(builder);
@@ -226,7 +204,7 @@ public class Api {
     builder.countryCode(countryCode);
     return builder;
   }
-
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public UserRequest.Builder getUser(String userId) {
     UserRequest.Builder builder = UserRequest.builder();
     setDefaults(builder);
@@ -234,7 +212,16 @@ public class Api {
     builder.username(userId);
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public UserRequest.Builder getUser(String userId) {
+    UserRequest.Builder builder = UserRequest.builder();
+    setDefaults(builder);
+    builder.username(userId);
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public UserPlaylistsRequest.Builder getPlaylistsForUser(String userId) {
     UserPlaylistsRequest.Builder builder = UserPlaylistsRequest.builder();
     setDefaults(builder);
@@ -242,7 +229,15 @@ public class Api {
     builder.username(userId);
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public UserPlaylistsRequest.Builder getPlaylistsForUser(String userId) {
+    UserPlaylistsRequest.Builder builder = UserPlaylistsRequest.builder();
+    setDefaults(builder);
+    builder.username(userId);
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
   /**
    * Returns a builder that can be used to build requests for authorization code
    * grants.
@@ -260,7 +255,6 @@ public class Api {
     builder.redirectUri(redirectURI);
     return builder;
   }
-
   /**
    * Returns a builder that can be used to build requests to refresh an access token
    * that has been retrieved using the authorization code grant flow.
@@ -275,7 +269,6 @@ public class Api {
     builder.basicAuthorizationHeader(clientId, clientSecret);
     return builder;
   }
-
   /**
    * Returns a builder that can be used to build requests for client credential grants.
    * Requires client ID and client secret to be set.
@@ -289,7 +282,6 @@ public class Api {
     builder.basicAuthorizationHeader(clientId, clientSecret);
     return builder;
   }
-
   /**
    * Get a playlist.
    *
@@ -297,6 +289,7 @@ public class Api {
    * @param playlistId The playlist's ID.
    * @return A builder object that can be used to build a request to retrieve a playlist.
    */
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public PlaylistRequest.Builder getPlaylist(String userId, String playlistId) {
     PlaylistRequest.Builder builder = PlaylistRequest.builder();
     setDefaults(builder);
@@ -304,7 +297,15 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId);
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public PlaylistRequest.Builder getPlaylist(String userId, String playlistId) {
+    PlaylistRequest.Builder builder = PlaylistRequest.builder();
+    setDefaults(builder);
+    builder.path("/v1/users/" + userId + "/playlists/" + playlistId);
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
   /**
    * Get information about the user that has given authorization to the application.
    *
@@ -316,7 +317,6 @@ public class Api {
     setDefaults(builder);
     return builder;
   }
-
   /**
    * Create a playlist.
    *
@@ -328,11 +328,17 @@ public class Api {
     final PlaylistCreationRequest.Builder builder = PlaylistCreationRequest.builder();
     setDefaults(builder);
     builder.title(title);
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
     userId = UrlUtil.escapeUsername(userId);
     builder.setPath("/v1/users/" + userId + "/playlists");
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+    userId = UrlUtil.userToUri(userId);
+    builder.path("/v1/users/" + userId + "/playlists");
+=======
+    builder.path("/v1/users/" + userId + "/playlists");
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
     return builder;
   }
-
   /**
    * Get artists related/similar to an artist.
    *
@@ -345,7 +351,6 @@ public class Api {
     builder.setPath("/v1/artists/" + artistId + "/related-artists");
     return builder;
   }
-
   /**
    * Get a playlist's tracks.
    *
@@ -353,6 +358,7 @@ public class Api {
    * @param playlistId The playlist's id.
    * @return A builder object that can be used to build a request to retrieve playlist tracks.
    */
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public PlaylistTracksRequest.Builder getPlaylistTracks(String userId, String playlistId) {
     final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
     setDefaults(builder);
@@ -360,7 +366,15 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public PlaylistTracksRequest.Builder getPlaylistTracks(String userId, String playlistId) {
+    final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
+    setDefaults(builder);
+    builder.path("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
   /**
    * Get a user's starred tracks.
    *
@@ -368,6 +382,7 @@ public class Api {
    * @return A builder object that can be used to build a request to retrieve a user's starred
    * tracks.
    */
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public PlaylistTracksRequest.Builder getStarred(String userId) {
     final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
     setDefaults(builder);
@@ -375,7 +390,15 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/starred/tracks");
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public PlaylistTracksRequest.Builder getStarred(String userId) {
+    final PlaylistTracksRequest.Builder builder = PlaylistTracksRequest.builder();
+    setDefaults(builder);
+    builder.path("/v1/users/" + userId + "/starred/tracks");
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
   /**
    * Add tracks to a playlist.
    *
@@ -395,7 +418,6 @@ public class Api {
 
     return builder;
   }
-
   /**
    * Replace tracks in a playlist.
    * @param userId The owner's username.
@@ -416,7 +438,6 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/tracks");
     return builder;
   }
-
   /**
    * delete tracks from a playlist
    * @param userId The owner's username.
@@ -435,7 +456,6 @@ public class Api {
 
     return builder;
   }
-
   /**
    * Update a playlist's properties.
    *
@@ -443,6 +463,7 @@ public class Api {
    * @param playlistId The playlist's ID.
    * @return A builder object that can be used to build a request to change a playlist's details.
    */
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/left.java
   public ChangePlaylistDetailsRequest.Builder changePlaylistDetails(String userId, String playlistId) {
     final ChangePlaylistDetailsRequest.Builder builder = ChangePlaylistDetailsRequest.builder();
     setDefaults(builder);
@@ -450,7 +471,15 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId);
     return builder;
   }
-
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public ChangePlaylistDetailsRequest.Builder changePlaylistDetails(String userId, String playlistId) {
+    final ChangePlaylistDetailsRequest.Builder builder = ChangePlaylistDetailsRequest.builder();
+    setDefaults(builder);
+    builder.path("/v1/users/" + userId + "/playlists/" + playlistId);
+    return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/bda8b0dfcf3a5ace4edbe9c8fe67df559fbd9b26/src/main/java/com/wrapper/spotify/Api.java/right.java
   /**
    * Remove the current user as a follower of a playlist.
    * @param userId The owner's username.
@@ -464,7 +493,6 @@ public class Api {
     builder.setPath("/v1/users/" + userId + "/playlists/" + playlistId + "/followers");
     return builder;
   }
-
   /**
    * Get a users Your Music tracks.
    *
@@ -476,7 +504,6 @@ public class Api {
     builder.setPath("/v1/me/tracks");
     return builder;
   }
-
   /**
    * Check if a track is saved in the user's Your Music library.
    *
@@ -490,7 +517,6 @@ public class Api {
     builder.setPath("/v1/me/tracks/contains");
     return builder;
   }
-
   /**
    * Remove a track if saved to the user's Your Music library.
    *
@@ -504,7 +530,6 @@ public class Api {
     builder.setPath("/v1/me/tracks");
     return builder;
   }
-
   /**
    * Save tracks in the user's Your Music library.
    *
@@ -518,7 +543,6 @@ public class Api {
     builder.setPath("/v1/me/tracks");
     return builder;
   }
-
   /**
    * Retrieve a URL where the user can give the application permissions.
    *
@@ -549,7 +573,6 @@ public class Api {
     
     return builder.build().toUrl();
   }
-  
   /**
    * Retrieve a URL where the user can give the application permissions.
    * @param scopes The scopes corresponding to the permissions the application needs
@@ -576,7 +599,6 @@ public class Api {
 
     return builder.build().toUrl();
   }
-
   /**
    * Retrieve a URL where the user can give the application permissions.
    * This method returns a builder instead, so that any optional parameters can be added.
@@ -600,7 +622,6 @@ public class Api {
 
     return builder;
   }
-
   private void setDefaults(AbstractRequest.Builder builder) {
     builder.setHttpManager(httpManager);
     builder.setScheme(scheme);
@@ -613,32 +634,27 @@ public class Api {
   public RecommendationsRequest.Builder getRecommendations(String... ids) {
     return getRecommendations(Arrays.asList(ids));
   }
-
   public RecommendationsRequest.Builder getRecommendations(List<String> ids) {
     RecommendationsRequest.Builder builder = RecommendationsRequest.builder();
     setDefaults(builder);
     builder.genres(ids);
     return builder;
   }
-
   public AvailableGenreSeedsRequest.Builder getAvailableGenreSeeds() {
     AvailableGenreSeedsRequest.Builder builder = new AvailableGenreSeedsRequest.Builder();
     setDefaults(builder);
     return builder;
   }
-
   public CategoriesRequest.Builder getCategories() {
     CategoriesRequest.Builder builder = new CategoriesRequest.Builder();
     setDefaults(builder);
     return builder;
   }
-
   public CategoryRequest.Builder getCategory(String categoryId) {
     CategoryRequest.Builder builder = new CategoryRequest.Builder().forCategory(categoryId);
     setDefaults(builder);
     return builder;
   }
-
   public CategoryPlaylistsRequest.Builder getPlaylistsForCategory(String categoryId) {
     CategoryPlaylistsRequest.Builder builder = CategoryPlaylistsRequest.builder();
     setDefaults(builder);
