@@ -1,5 +1,4 @@
 package com.github.mongobee;
-
 import com.github.mongobee.changeset.ChangeEntry;
 import com.github.mongobee.dao.ChangeEntryDao;
 import com.github.mongobee.exception.MongobeeChangeSetException;
@@ -35,13 +34,19 @@ public class Mongobee implements InitializingBean {
   private ChangeEntryDao dao;
 
   private boolean enabled = true;
+
   private String changeLogsScanPackage;
+
   private MongoClientURI mongoClientURI;
+
   private Mongo mongo;
+
   private String dbName;
+
   private Environment springEnvironment;
 
   private MongoTemplate mongoTemplate;
+
   private Jongo jongo;
 
   /**
@@ -106,7 +111,6 @@ public class Mongobee implements InitializingBean {
    * @param mongoURI with correct format
    * @see com.mongodb.MongoClientURI
    */
-
   public Mongobee(String mongoURI) {
     this(new MongoClientURI(mongoURI));
   }
@@ -116,8 +120,7 @@ public class Mongobee implements InitializingBean {
    *
    * @throws Exception exception
    */
-  @Override
-  public void afterPropertiesSet() throws Exception {
+  @Override public void afterPropertiesSet() throws Exception {
     execute();
   }
 
@@ -131,56 +134,47 @@ public class Mongobee implements InitializingBean {
       logger.info("Mongobee is disabled. Exiting.");
       return;
     }
-
     validateConfig();
-
     if (this.mongo != null) {
       dao.connectMongoDb(this.mongo, dbName);
     } else {
       dao.connectMongoDb(this.mongoClientURI, dbName);
     }
-
     if (!dao.acquireProcessLock()) {
       logger.info("Mongobee did not aqcuire process lock. Exiting.");
       return;
     }
-
     logger.info("Mongobee aqcuired process lock, starting the data migration sequence..");
-
     try {
       executeMigration();
-    } finally {
+    }  finally {
       logger.info("Mongobee is releasing process lock.");
       dao.releaseProcessLock();
     }
-
     logger.info("Mongobee has finished his job.");
   }
 
   private void executeMigration() throws MongobeeConnectionException, MongobeeException {
-
     ChangeService service = new ChangeService(changeLogsScanPackage, springEnvironment);
-
     for (Class<?> changelogClass : service.fetchChangeLogs()) {
-
       Object changelogInstance = null;
       try {
         changelogInstance = changelogClass.getConstructor().newInstance();
         List<Method> changesetMethods = service.fetchChangeSets(changelogInstance.getClass());
-
         for (Method changesetMethod : changesetMethods) {
           ChangeEntry changeEntry = service.createChangeEntry(changesetMethod);
-
           try {
             if (dao.isNewChange(changeEntry)) {
               executeChangeSetMethod(changesetMethod, changelogInstance, dao.getDb());
               dao.save(changeEntry);
               logger.info(changeEntry + " applied");
-            } else if (service.isRunAlwaysChangeSet(changesetMethod)) {
-              executeChangeSetMethod(changesetMethod, changelogInstance, dao.getDb());
-              logger.info(changeEntry + " reapplied");
             } else {
-              logger.info(changeEntry + " passed over");
+              if (service.isRunAlwaysChangeSet(changesetMethod)) {
+                executeChangeSetMethod(changesetMethod, changelogInstance, dao.getDb());
+                logger.info(changeEntry + " reapplied");
+              } else {
+                logger.info(changeEntry + " passed over");
+              }
             }
           } catch (MongobeeChangeSetException e) {
             logger.error(e.getMessage());
@@ -196,34 +190,30 @@ public class Mongobee implements InitializingBean {
       } catch (InstantiationException e) {
         throw new MongobeeException(e.getMessage(), e);
       }
-
     }
   }
 
-  private Object executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance, DB db)
-      throws IllegalAccessException, InvocationTargetException, MongobeeChangeSetException {
-    if (changeSetMethod.getParameterTypes().length == 1
-        && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
+  private Object executeChangeSetMethod(Method changeSetMethod, Object changeLogInstance, DB db) throws IllegalAccessException, InvocationTargetException, MongobeeChangeSetException {
+    if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(DB.class)) {
       logger.debug("method with DB argument");
-
       return changeSetMethod.invoke(changeLogInstance, db);
-    } else if (changeSetMethod.getParameterTypes().length == 1
-        && changeSetMethod.getParameterTypes()[0].equals(Jongo.class)) {
-      logger.debug("method with Jongo argument");
-
-      return changeSetMethod.invoke(changeLogInstance, jongo != null ? jongo : new Jongo(db));
-    } else if (changeSetMethod.getParameterTypes().length == 1
-        && changeSetMethod.getParameterTypes()[0].equals(MongoTemplate.class)) {
-      logger.debug("method with MongoTemplate argument");
-
-      return changeSetMethod.invoke(changeLogInstance, mongoTemplate != null ? mongoTemplate : new MongoTemplate(db.getMongo(), dbName));
-    } else if (changeSetMethod.getParameterTypes().length == 0) {
-      logger.debug("method with no params");
-
-      return changeSetMethod.invoke(changeLogInstance);
     } else {
-      throw new MongobeeChangeSetException("ChangeSet method " + changeSetMethod.getName() +
-          " has wrong arguments list. Please see docs for more info!");
+      if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(Jongo.class)) {
+        logger.debug("method with Jongo argument");
+        return changeSetMethod.invoke(changeLogInstance, jongo != null ? jongo : new Jongo(db));
+      } else {
+        if (changeSetMethod.getParameterTypes().length == 1 && changeSetMethod.getParameterTypes()[0].equals(MongoTemplate.class)) {
+          logger.debug("method with MongoTemplate argument");
+          return changeSetMethod.invoke(changeLogInstance, mongoTemplate != null ? mongoTemplate : new MongoTemplate(db.getMongo(), dbName));
+        } else {
+          if (changeSetMethod.getParameterTypes().length == 0) {
+            logger.debug("method with no params");
+            return changeSetMethod.invoke(changeLogInstance);
+          } else {
+            throw new MongobeeChangeSetException("ChangeSet method " + changeSetMethod.getName() + " has wrong arguments list. Please see docs for more info!");
+          }
+        }
+      }
     }
   }
 
@@ -328,12 +318,11 @@ public class Mongobee implements InitializingBean {
     return this;
   }
 
-
   /**
    * Closes the Mongo instance used by Mongobee.
    * This will close either the connection Mongobee was initiated with or that which was internally created.
    */
   public void close() {
-     dao.close();
+    dao.close();
   }
 }

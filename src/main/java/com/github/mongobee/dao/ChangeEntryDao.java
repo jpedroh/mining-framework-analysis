@@ -1,16 +1,12 @@
 package com.github.mongobee.dao;
-
 import static com.github.mongobee.changeset.ChangeEntry.CHANGELOG_COLLECTION;
+import com.github.mongobee.changeset.ChangeEntry;
 import static org.springframework.util.StringUtils.hasText;
-
+import com.github.mongobee.exception.MongobeeConfigurationException;
 import java.net.UnknownHostException;
-
+import com.github.mongobee.exception.MongobeeConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.mongobee.changeset.ChangeEntry;
-import com.github.mongobee.exception.MongobeeConfigurationException;
-import com.github.mongobee.exception.MongobeeConnectionException;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -27,10 +23,22 @@ public class ChangeEntryDao {
   private static final Logger logger = LoggerFactory.getLogger("Mongobee dao");
 
   private DB db;
-  private Mongo mongo;
+
   private ChangeEntryIndexDao indexDao = new ChangeEntryIndexDao();
 
-  private LockDao lockDao = new LockDao();
+  private 
+<<<<<<< /usr/src/app/output/mongobee/mongobee/abf507930c55a2a4d918d70d5c3ff852fb5cbf5e/src/main/java/com/github/mongobee/dao/ChangeEntryDao.java/left.java
+  LockDao
+=======
+  Mongo
+>>>>>>> /usr/src/app/output/mongobee/mongobee/abf507930c55a2a4d918d70d5c3ff852fb5cbf5e/src/main/java/com/github/mongobee/dao/ChangeEntryDao.java/right.java
+   
+<<<<<<< /usr/src/app/output/mongobee/mongobee/abf507930c55a2a4d918d70d5c3ff852fb5cbf5e/src/main/java/com/github/mongobee/dao/ChangeEntryDao.java/left.java
+  lockDao = new LockDao()
+=======
+  mongo
+>>>>>>> /usr/src/app/output/mongobee/mongobee/abf507930c55a2a4d918d70d5c3ff852fb5cbf5e/src/main/java/com/github/mongobee/dao/ChangeEntryDao.java/right.java
+  ;
 
   public DB getDb() {
     return db;
@@ -48,8 +56,7 @@ public class ChangeEntryDao {
     }
   }
 
-  public DB connectMongoDb(MongoClientURI mongoClientURI, String dbName)
-      throws MongobeeConfigurationException, MongobeeConnectionException {
+  public DB connectMongoDb(MongoClientURI mongoClientURI, String dbName) throws MongobeeConfigurationException, MongobeeConnectionException {
     try {
       final Mongo mongoClient = new MongoClient(mongoClientURI);
       final String database = (!hasText(dbName)) ? mongoClientURI.getDatabase() : dbName;
@@ -57,7 +64,6 @@ public class ChangeEntryDao {
     } catch (UnknownHostException e) {
       throw new MongobeeConnectionException(e.getMessage(), e);
     }
-
   }
 
   /**
@@ -82,24 +88,20 @@ public class ChangeEntryDao {
 
   public boolean isNewChange(ChangeEntry changeEntry) throws MongobeeConnectionException {
     verifyDbConnection();
-
     DBCollection mongobeeChangeLog = getDb().getCollection(CHANGELOG_COLLECTION);
     DBObject entry = mongobeeChangeLog.findOne(changeEntry.buildSearchQueryDBObject());
-
     return entry == null;
   }
 
   public WriteResult save(ChangeEntry changeEntry) throws MongobeeConnectionException {
     verifyDbConnection();
-
     DBCollection mongobeeLog = getDb().getCollection(CHANGELOG_COLLECTION);
     return mongobeeLog.save(changeEntry.buildFullDBObject());
   }
 
   private void verifyDbConnection() throws MongobeeConnectionException {
     if (getDb() == null) {
-      throw new MongobeeConnectionException("Database is not connected. Mongobee has thrown an unexpected error",
-          new NullPointerException());
+      throw new MongobeeConnectionException("Database is not connected. Mongobee has thrown an unexpected error", new NullPointerException());
     }
   }
 
@@ -108,30 +110,28 @@ public class ChangeEntryDao {
     if (index == null) {
       indexDao.createRequiredUniqueIndex(collection);
       logger.debug("Index in collection " + CHANGELOG_COLLECTION + " was created");
-    } else if (!indexDao.isUnique(index)) {
-      indexDao.dropIndex(collection, index);
-      indexDao.createRequiredUniqueIndex(collection);
-      logger.debug("Index in collection " + CHANGELOG_COLLECTION + " was recreated");
+    } else {
+      if (!indexDao.isUnique(index)) {
+        indexDao.dropIndex(collection, index);
+        indexDao.createRequiredUniqueIndex(collection);
+        logger.debug("Index in collection " + CHANGELOG_COLLECTION + " was recreated");
+      }
     }
-
-  }
-
-  public void close() {
-      this.mongo.close();
   }
 
   private void initializeLock() {
     lockDao.intitializeLock(db);
   }
 
-  /* Visible for testing */
+  public void close() {
+    this.mongo.close();
+  }
+
   void setIndexDao(ChangeEntryIndexDao changeEntryIndexDao) {
     this.indexDao = changeEntryIndexDao;
   }
 
-  /* Visible for testing */
   void setLockDao(LockDao lockDao) {
     this.lockDao = lockDao;
   }
-
 }
