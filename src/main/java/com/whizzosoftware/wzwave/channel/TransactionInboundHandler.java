@@ -132,10 +132,12 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
                 logger.trace("Detected transaction timeout");
                 NettyZWaveChannelContext zctx = new NettyZWaveChannelContext();
                 transactionContext.processTimeoutEvent(zctx);
+                transactionContext = null;
                 zctx.process(ctx);
             } else {
                 logger.error("Received timeout event for unknown transaction: {}", tte.getId());
             }
+<<<<<<< /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/main/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandler.java/left.java
         } else if (evt instanceof TransactionFailedEvent) {
             TransactionFailedEvent tfe = (TransactionFailedEvent)evt;
             if (tfe.getId().equals(transactionContext.getId())) {
@@ -154,6 +156,21 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
         } else {
             ctx.fireUserEventTriggered(evt);
         }
+||||||| /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/main/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandler.java/base.java
+        } else {
+            ctx.fireUserEventTriggered(evt);
+        }
+=======
+        } else if (evt instanceof IncompleteDataFrameEvent) {
+            if (transactionContext != null) {
+                logger.trace("Incomplete data received from network; extending transaction timeout for {}", transactionContext.getId());
+                transactionContext.resetTimeout(System.currentTimeMillis());
+            }
+            ctx.fireUserEventTriggered(evt);
+        } else {
+            ctx.fireUserEventTriggered(evt);
+        }
+>>>>>>> /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/main/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandler.java/right.java
     }
 
     /**
@@ -216,24 +233,19 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
         ScheduledFuture future;
         long timeoutStartTime;
         long timeoutDuration;
-
         TransactionContext(DataFrameTransaction transaction, long startTime) {
             this.transaction = transaction;
             scheduleTimeout(startTime);
         }
-
         public DataFrameTransaction getTransaction() {
             return transaction;
         }
-
         String getId() {
             return transaction.getId();
         }
-
         DataFrame getStartFrame() {
             return transaction.getStartFrame();
         }
-
         boolean addFrame(ZWaveChannelContext ctx, Frame frame) {
             boolean b = transaction.addFrame(ctx, frame);
             if (transaction.isComplete()) {
@@ -241,28 +253,22 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
             }
             return b;
         }
-
         boolean isComplete() {
             return transaction.isComplete();
         }
-
         void processTimeoutEvent(ZWaveChannelContext ctx) {
             transaction.timeout(ctx);
         }
-
         public long getTimeoutStartTime() {
             return timeoutStartTime;
         }
-
         void resetTimeout(long currentTime) {
             cancelTimeout();
             scheduleTimeout(currentTime);
         }
-
         void cleanup() {
             cancelTimeout();
         }
-
         private void scheduleTimeout(long currentTime) {
             if (transaction.getTimeout() > 0 && handlerContext != null && handlerContext.executor() != null) {
                 this.timeoutStartTime = currentTime;
@@ -280,7 +286,6 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
                 logger.warn("Unable to schedule transaction timeout callback");
             }
         }
-
         private void cancelTimeout() {
             if (future != null) {
                 future.cancel(true);
@@ -288,4 +293,7 @@ public class TransactionInboundHandler extends ChannelInboundHandlerAdapter {
             }
         }
     }
+    /**
+     * A class that wrappers a DataFrameTransaction and manages timeout logic.
+     */
 }

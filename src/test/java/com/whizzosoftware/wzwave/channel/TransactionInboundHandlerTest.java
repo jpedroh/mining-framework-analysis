@@ -170,7 +170,6 @@ public class TransactionInboundHandlerTest {
         MockChannelHandlerContext ctx = new MockChannelHandlerContext();
         TransactionInboundHandler h = new TransactionInboundHandler();
         assertFalse(h.hasCurrentTransaction());
-
         SendData startFrame = new SendData(Unpooled.wrappedBuffer(new byte[] {0x01, 0x09, 0x00, 0x13, 0x03, 0x02, 0x20, 0x02, 0x05, 0x31, (byte)0xF2}));
         h.userEventTriggered(ctx, new DataFrameSentEvent(startFrame, true));
         assertTrue(h.hasCurrentTransaction());
@@ -283,6 +282,7 @@ public class TransactionInboundHandlerTest {
         assertTrue(ctx.getUserEvents().get(1) instanceof TransactionCompletedEvent);
     }
 
+<<<<<<< /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/test/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandlerTest.java/left.java
     @Test
     public void testTransactionTimeoutExtension() throws Exception {
         MockChannelHandlerContext ctx = new MockChannelHandlerContext();
@@ -300,4 +300,24 @@ public class TransactionInboundHandlerTest {
         assertTrue(h.hasCurrentTransaction());
         assertEquals(now, h.getTransactionContext().getTimeoutStartTime());
     }
+||||||| /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/test/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandlerTest.java/base.java
+=======
+    @Test
+    public void testTransactionTimeoutExtension() throws Exception {
+        MockChannelHandlerContext ctx = new MockChannelHandlerContext();
+        TransactionInboundHandler h = new TransactionInboundHandler();
+        h.handlerAdded(ctx);
+        assertFalse(h.hasCurrentTransaction());
+
+        long now = System.currentTimeMillis();
+        h.processEvent(ctx, new DataFrameSentEvent(new SendData(Unpooled.wrappedBuffer(new byte[] {0x01, 0x09, 0x00, 0x13, 0x03, 0x02, 0x20, 0x02, 0x05, 0x31, (byte)0xF2})), true), now);
+        assertTrue(h.hasCurrentTransaction());
+        assertEquals(now, h.getTransactionContext().getTimeoutStartTime());
+
+        now = System.currentTimeMillis();
+        h.userEventTriggered(ctx, new IncompleteDataFrameEvent());
+        assertTrue(h.hasCurrentTransaction());
+        assertEquals(now, h.getTransactionContext().getTimeoutStartTime());
+    }
+>>>>>>> /usr/src/app/output/whizzosoftware/wzwave/957ba2027da2ce9a5bf458ec36101136224e2711/src/test/java/com/whizzosoftware/wzwave/channel/TransactionInboundHandlerTest.java/right.java
 }
