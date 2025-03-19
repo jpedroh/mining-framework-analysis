@@ -58,6 +58,7 @@ public abstract class StaticDataAPI {
     /**
      * @return all the champions
      */
+<<<<<<< /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/left.java
     public synchronized static List<Champion> getChampions() {
         List<Champion> champions = RiotAPI.store.getAll(Champion.class);
         if(champions != null) {
@@ -81,7 +82,70 @@ public abstract class StaticDataAPI {
 
         return Collections.unmodifiableList(champions);
     }
+    public static List<Champion> getChampions(final long... IDs) {
+        return getChampions(Utils.convert(IDs));
+    }
+||||||| /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/base.java
+    public static List<Champion> getChampions() {
+        List<Champion> champions = RiotAPI.store.getAll(Champion.class);
+        if(champions != null) {
+            return champions;
+        }
 
+        final ChampionList champs = BaseRiotAPI.getChampions();
+
+        champions = new ArrayList<>(champs.getData().size());
+        final List<Long> IDs = new ArrayList<>(champions.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Champion champ : champs.getData().values()) {
+            champions.add(new Champion(champ));
+            IDs.add(champ.getId().longValue());
+        }
+
+        if(RiotAPI.loadPolicy == LoadPolicy.UPFRONT) {
+            RiotAPI.getItems(new ArrayList<>(champs.getItemIDs()));
+        }
+
+        RiotAPI.store.store(champions, IDs, true);
+
+        return Collections.unmodifiableList(champions);
+    }
+    public static List<Champion> getChampions(final long... IDs) {
+        return getChampions(Utils.convert(IDs));
+    }
+=======
+    public static List<Champion> getChampions() {
+        List<Champion> champions = RiotAPI.store.getAll(Champion.class);
+        if(champions != null) {
+            return champions;
+        }
+
+        final ChampionList champs = BaseRiotAPI.getChampions();
+
+        champions = new ArrayList<>(champs.getData().size());
+        final List<Long> IDs = new ArrayList<>(champions.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Champion champ : champs.getData().values()) {
+            champions.add(new Champion(champ));
+            IDs.add(champ.getId().longValue());
+        }
+
+        if(RiotAPI.loadPolicy == LoadPolicy.UPFRONT) {
+            RiotAPI.getItems(new ArrayList<>(champs.getItemIDs()));
+        }
+
+        RiotAPI.store.store(champions, IDs, true);
+
+        return Collections.unmodifiableList(champions);
+    }
+    public static List<Champion> getChampions(final long... IDs) {
+        return getChampions(Utils.convert(IDs));
+    }
+>>>>>>> /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/right.java
+
+    /**
+ * @param IDs
+ *            the IDs of the champions to get
+ * @return the champions
+ */
     /**
      * @param IDs
      *            the IDs of the champions to get
@@ -126,9 +190,11 @@ public abstract class StaticDataAPI {
      *            the IDs of the champions to get
      * @return the champions
      */
-    public static List<Champion> getChampions(final long... IDs) {
-        return getChampions(Utils.convert(IDs));
-    }
+    /**
+     * @param IDs
+     *            the IDs of the champions to get
+     * @return the champions
+     */
 
     /**
      * @param ID
@@ -155,6 +221,7 @@ public abstract class StaticDataAPI {
     /**
      * @return all the items
      */
+<<<<<<< /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/left.java
     public synchronized static List<Item> getItems() {
         List<Item> items = RiotAPI.store.getAll(Item.class);
         if(items != null) {
@@ -173,7 +240,60 @@ public abstract class StaticDataAPI {
 
         return Collections.unmodifiableList(items);
     }
+    public static List<Item> getItems(final long... IDs) {
+        return getItems(Utils.convert(IDs));
+    }
+||||||| /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/base.java
+    public static List<Item> getItems() {
+        List<Item> items = RiotAPI.store.getAll(Item.class);
+        if(items != null) {
+            return items;
+        }
 
+        final ItemList its = BaseRiotAPI.getItems();
+
+        items = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(items.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Item item : its.getData().values()) {
+            items.add(new Item(item));
+            IDs.add(item.getId().longValue());
+        }
+        RiotAPI.store.store(items, IDs, true);
+
+        return Collections.unmodifiableList(items);
+    }
+    public static List<Item> getItems(final long... IDs) {
+        return getItems(Utils.convert(IDs));
+    }
+=======
+    public static List<Item> getItems() {
+        List<Item> items = RiotAPI.store.getAll(Item.class);
+        if(items != null) {
+            return items;
+        }
+
+        final ItemList its = BaseRiotAPI.getItems();
+
+        items = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(items.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Item item : its.getData().values()) {
+            items.add(new Item(item));
+            IDs.add(item.getId().longValue());
+        }
+        RiotAPI.store.store(items, IDs, true);
+
+        return Collections.unmodifiableList(items);
+    }
+    public static List<Item> getItems(final long... IDs) {
+        return getItems(Utils.convert(IDs));
+    }
+>>>>>>> /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/right.java
+
+    /**
+ * @param IDs
+ *            the IDs of the items to get
+ * @return the items
+ */
     /**
      * @param IDs
      *            the IDs of the items to get
@@ -218,9 +338,11 @@ public abstract class StaticDataAPI {
      *            the IDs of the items to get
      * @return the items
      */
-    public static List<Item> getItems(final long... IDs) {
-        return getItems(Utils.convert(IDs));
-    }
+    /**
+     * @param IDs
+     *            the IDs of the items to get
+     * @return the items
+     */
 
     /**
      * @return the languages
@@ -261,6 +383,7 @@ public abstract class StaticDataAPI {
     /**
      * @return all the masteries
      */
+<<<<<<< /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/left.java
     public synchronized static List<Mastery> getMasteries() {
         List<Mastery> masteries = RiotAPI.store.getAll(Mastery.class);
         if(masteries != null) {
@@ -279,7 +402,60 @@ public abstract class StaticDataAPI {
 
         return Collections.unmodifiableList(masteries);
     }
+    public static List<Mastery> getMasteries(final long... IDs) {
+        return getMasteries(Utils.convert(IDs));
+    }
+||||||| /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/base.java
+    public static List<Mastery> getMasteries() {
+        List<Mastery> masteries = RiotAPI.store.getAll(Mastery.class);
+        if(masteries != null) {
+            return masteries;
+        }
 
+        final MasteryList its = BaseRiotAPI.getMasteries();
+
+        masteries = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(masteries.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Mastery mastery : its.getData().values()) {
+            masteries.add(new Mastery(mastery));
+            IDs.add(mastery.getId().longValue());
+        }
+        RiotAPI.store.store(masteries, IDs, true);
+
+        return Collections.unmodifiableList(masteries);
+    }
+    public static List<Mastery> getMasteries(final long... IDs) {
+        return getMasteries(Utils.convert(IDs));
+    }
+=======
+    public static List<Mastery> getMasteries() {
+        List<Mastery> masteries = RiotAPI.store.getAll(Mastery.class);
+        if(masteries != null) {
+            return masteries;
+        }
+
+        final MasteryList its = BaseRiotAPI.getMasteries();
+
+        masteries = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(masteries.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Mastery mastery : its.getData().values()) {
+            masteries.add(new Mastery(mastery));
+            IDs.add(mastery.getId().longValue());
+        }
+        RiotAPI.store.store(masteries, IDs, true);
+
+        return Collections.unmodifiableList(masteries);
+    }
+    public static List<Mastery> getMasteries(final long... IDs) {
+        return getMasteries(Utils.convert(IDs));
+    }
+>>>>>>> /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/right.java
+
+    /**
+ * @param IDs
+ *            the IDs of the masteries to get
+ * @return the masteries
+ */
     /**
      * @param IDs
      *            the IDs of the masteries to get
@@ -324,9 +500,11 @@ public abstract class StaticDataAPI {
      *            the IDs of the masteries to get
      * @return the masteries
      */
-    public static List<Mastery> getMasteries(final long... IDs) {
-        return getMasteries(Utils.convert(IDs));
-    }
+    /**
+     * @param IDs
+     *            the IDs of the masteries to get
+     * @return the masteries
+     */
 
     /**
      * @param ID
@@ -382,6 +560,7 @@ public abstract class StaticDataAPI {
     /**
      * @return all the runes
      */
+<<<<<<< /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/left.java
     public synchronized static List<Rune> getRunes() {
         List<Rune> runes = RiotAPI.store.getAll(Rune.class);
         if(runes != null) {
@@ -400,7 +579,60 @@ public abstract class StaticDataAPI {
 
         return Collections.unmodifiableList(runes);
     }
+    public static List<Rune> getRunes(final long... IDs) {
+        return getRunes(Utils.convert(IDs));
+    }
+||||||| /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/base.java
+    public static List<Rune> getRunes() {
+        List<Rune> runes = RiotAPI.store.getAll(Rune.class);
+        if(runes != null) {
+            return runes;
+        }
 
+        final RuneList its = BaseRiotAPI.getRunes();
+
+        runes = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(runes.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Rune rune : its.getData().values()) {
+            runes.add(new Rune(rune));
+            IDs.add(rune.getId().longValue());
+        }
+        RiotAPI.store.store(runes, IDs, true);
+
+        return Collections.unmodifiableList(runes);
+    }
+    public static List<Rune> getRunes(final long... IDs) {
+        return getRunes(Utils.convert(IDs));
+    }
+=======
+    public static List<Rune> getRunes() {
+        List<Rune> runes = RiotAPI.store.getAll(Rune.class);
+        if(runes != null) {
+            return runes;
+        }
+
+        final RuneList its = BaseRiotAPI.getRunes();
+
+        runes = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(runes.size());
+        for(final com.robrua.orianna.type.dto.staticdata.Rune rune : its.getData().values()) {
+            runes.add(new Rune(rune));
+            IDs.add(rune.getId().longValue());
+        }
+        RiotAPI.store.store(runes, IDs, true);
+
+        return Collections.unmodifiableList(runes);
+    }
+    public static List<Rune> getRunes(final long... IDs) {
+        return getRunes(Utils.convert(IDs));
+    }
+>>>>>>> /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/right.java
+
+    /**
+ * @param IDs
+ *            the IDs of the runes to get
+ * @return the runes
+ */
     /**
      * @param IDs
      *            the IDs of the runes to get
@@ -445,9 +677,11 @@ public abstract class StaticDataAPI {
      *            the IDs of the runes to get
      * @return the runes
      */
-    public static List<Rune> getRunes(final long... IDs) {
-        return getRunes(Utils.convert(IDs));
-    }
+    /**
+     * @param IDs
+     *            the IDs of the runes to get
+     * @return the runes
+     */
 
     /**
      * @param ID
@@ -470,6 +704,7 @@ public abstract class StaticDataAPI {
     /**
      * @return all the summoner spells
      */
+<<<<<<< /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/left.java
     public synchronized static List<SummonerSpell> getSummonerSpells() {
         List<SummonerSpell> spells = RiotAPI.store.getAll(SummonerSpell.class);
         if(spells != null) {
@@ -488,7 +723,60 @@ public abstract class StaticDataAPI {
 
         return Collections.unmodifiableList(spells);
     }
+    public static List<SummonerSpell> getSummonerSpells(final long... IDs) {
+        return getSummonerSpells(Utils.convert(IDs));
+    }
+||||||| /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/base.java
+    public static List<SummonerSpell> getSummonerSpells() {
+        List<SummonerSpell> spells = RiotAPI.store.getAll(SummonerSpell.class);
+        if(spells != null) {
+            return spells;
+        }
 
+        final SummonerSpellList its = BaseRiotAPI.getSummonerSpells();
+
+        spells = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(spells.size());
+        for(final com.robrua.orianna.type.dto.staticdata.SummonerSpell spell : its.getData().values()) {
+            spells.add(new SummonerSpell(spell));
+            IDs.add(spell.getId().longValue());
+        }
+        RiotAPI.store.store(spells, IDs, true);
+
+        return Collections.unmodifiableList(spells);
+    }
+    public static List<SummonerSpell> getSummonerSpells(final long... IDs) {
+        return getSummonerSpells(Utils.convert(IDs));
+    }
+=======
+    public static List<SummonerSpell> getSummonerSpells() {
+        List<SummonerSpell> spells = RiotAPI.store.getAll(SummonerSpell.class);
+        if(spells != null) {
+            return spells;
+        }
+
+        final SummonerSpellList its = BaseRiotAPI.getSummonerSpells();
+
+        spells = new ArrayList<>(its.getData().size());
+        final List<Long> IDs = new ArrayList<>(spells.size());
+        for(final com.robrua.orianna.type.dto.staticdata.SummonerSpell spell : its.getData().values()) {
+            spells.add(new SummonerSpell(spell));
+            IDs.add(spell.getId().longValue());
+        }
+        RiotAPI.store.store(spells, IDs, true);
+
+        return Collections.unmodifiableList(spells);
+    }
+    public static List<SummonerSpell> getSummonerSpells(final long... IDs) {
+        return getSummonerSpells(Utils.convert(IDs));
+    }
+>>>>>>> /usr/src/app/output/robrua/orianna/1115503e06d523ceb185a8bf300681607a00ac05/src/com/robrua/orianna/api/core/StaticDataAPI.java/right.java
+
+    /**
+ * @param IDs
+ *            the IDs of the summoner spells to get
+ * @return the summoner spells
+ */
     /**
      * @param IDs
      *            the IDs of the summoner spells to get
@@ -533,9 +821,11 @@ public abstract class StaticDataAPI {
      *            the IDs of the summoner spells to get
      * @return the summoner spells
      */
-    public static List<SummonerSpell> getSummonerSpells(final long... IDs) {
-        return getSummonerSpells(Utils.convert(IDs));
-    }
+    /**
+     * @param IDs
+     *            the IDs of the summoner spells to get
+     * @return the summoner spells
+     */
 
     /**
      * @return the versions
