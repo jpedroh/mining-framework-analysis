@@ -169,12 +169,12 @@ public class RankedFeatureVector extends FeatureVector {
         }
         assert (fs.getAlphabet() == dictionary);
         // xxx Make this more efficient!  I'm pretty sure that Java BitSet's can do this more efficiently
-
+        
         // YJP: fix NullPointerException 
         if (rankOrder == null) {
         	setRankOrder(0);
         }
-
+        
         @Var
         int i = 0;
         while (!fs.contains(rankOrder[i])) {
