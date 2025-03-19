@@ -242,11 +242,13 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
             }
         }
         sample.setTrim((int)trimSpinner.getValue());
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/left.java
         sample.processSamples(dither.isSelected());
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/base.java
+        sample.processSamples(true);
 =======
         sample.processSamples(dither);
->>>>>>> ce522dbe7c021ffbfdc790e0c984df28e144932b
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/right.java
         compileKit();
         if (bytesFree() < 0) {
             // Sample did not fit, likely due to increased volume. Trim to fit.
@@ -254,11 +256,13 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
             assert fixedTrim >= 0;
             trimSpinner.setValue(fixedTrim);
             sample.setTrim(fixedTrim);
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/left.java
             sample.processSamples(dither.isSelected());
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/base.java
+            sample.processSamples(true);
 =======
             sample.processSamples(dither);
->>>>>>> ce522dbe7c021ffbfdc790e0c984df28e144932b
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/right.java
             compileKit();
         }
         // Makes sure trim is in valid range.
@@ -266,11 +270,13 @@ public class KitEditor extends JFrame implements SamplePicker.Listener {
         if ((int)trimSpinner.getValue() > maxTrim) {
             trimSpinner.setValue(maxTrim);
             sample.setTrim(maxTrim);
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/left.java
             sample.processSamples(dither.isSelected());
+||||||| /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/base.java
+            sample.processSamples(true);
 =======
             sample.processSamples(dither);
->>>>>>> ce522dbe7c021ffbfdc790e0c984df28e144932b
+>>>>>>> /usr/src/app/output/jkotlinski/lsdpatch/6a4e1c82830d6579ddf349bea58a67acbdb29320/src/main/java/kitEditor/KitEditor.java/right.java
             compileKit();
         }
         samplePicker.setSelectedIndex(index);
