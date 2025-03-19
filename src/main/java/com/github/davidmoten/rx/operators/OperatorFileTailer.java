@@ -1,5 +1,4 @@
 package com.github.davidmoten.rx.operators;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,7 +6,6 @@ import java.io.InputStream;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.util.concurrent.atomic.AtomicLong;
-
 import rx.Observable;
 import rx.Observable.Operator;
 import rx.Subscriber;
@@ -23,12 +21,13 @@ import rx.subjects.PublishSubject;
  * last source event.
  */
 public class OperatorFileTailer implements Operator<byte[], Object> {
+  private final File file;
 
-    private final File file;
-    private final AtomicLong currentPosition = new AtomicLong();
-    private final int maxBytesPerEmission;
+  private final AtomicLong currentPosition = new AtomicLong();
 
-    /**
+  private final int maxBytesPerEmission;
+
+  /**
      * Constructor.
      * 
      * @param file
@@ -36,159 +35,114 @@ public class OperatorFileTailer implements Operator<byte[], Object> {
      * @param startPosition
      *            start tailing the file after this many bytes
      */
-    public OperatorFileTailer(File file, long startPosition, int maxBytesPerEmission) {
-        if (file == null)
-            throw new NullPointerException("file cannot be null");
-        this.file = file;
-        this.currentPosition.set(startPosition);
-        this.maxBytesPerEmission = maxBytesPerEmission;
+  public OperatorFileTailer(File file, long startPosition, int maxBytesPerEmission) {
+    if (file == null) {
+      throw new NullPointerException("file cannot be null");
     }
+    this.file = file;
+    this.currentPosition.set(startPosition);
+    this.maxBytesPerEmission = maxBytesPerEmission;
+  }
 
-    /**
+  /**
      * Constructor. Emits byte arrays of up to 8*1024 bytes.
      * 
      * @param file
      * @param startPosition
      */
-    public OperatorFileTailer(File file, long startPosition) {
-        this(file, startPosition, 8192);
-    }
+  public OperatorFileTailer(File file, long startPosition) {
+    this(file, startPosition, 8192);
+  }
 
-    @Override
-    public Subscriber<? super Object> call(Subscriber<? super byte[]> child) {
-        final PublishSubject<? super Object> subject = PublishSubject.create();
-        Subscriber<? super Object> parent = Subscribers.from(subject);
-        child.add(parent);
-        subject
-        // report new lines for each event
-        .concatMap(reportNewLines(file, currentPosition, maxBytesPerEmission))
-        // subscribe
-                .unsafeSubscribe(child);
-        return parent;
-    }
+  @Override public Subscriber<? super Object> call(Subscriber<? super byte[]> child) {
+    final PublishSubject<? super Object> subject = PublishSubject.create();
+    Subscriber<? super Object> parent = Subscribers.from(subject);
+    child.add(parent);
+    subject.concatMap(reportNewLines(file, currentPosition, maxBytesPerEmission)).unsafeSubscribe(child);
+    return parent;
+  }
 
-    private static Func1<Object, Observable<byte[]>> reportNewLines(final File file,
-            final AtomicLong currentPosition, final int maxBytesPerEmission) {
-        return new Func1<Object, Observable<byte[]>>() {
-            @Override
-            public Observable<byte[]> call(Object event) {
-                // reset current position if file is moved or deleted
-                if (event instanceof WatchEvent) {
-                    WatchEvent<?> w = (WatchEvent<?>) event;
-                    String kind = w.kind().name();
-                    if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE.name())) {
-                        currentPosition.set(0);
-                    }
-                }
-                long length = file.length();
-                if (length > currentPosition.get()) {
-                        // apply using method to ensure fis is closed on
-                        // termination or unsubscription
-<<<<<<< HEAD
-                        return Observable.using(new Func0<InputStream>() {
+  private static Func1<Object, Observable<byte[]>> reportNewLines(final File file, final AtomicLong currentPosition, final int maxBytesPerEmission) {
+    return new Func1<Object, Observable<byte[]>>() {
+      @Override public Observable<byte[]> call(Object event) {
+        if (event instanceof WatchEvent) {
+          WatchEvent<?> w = (WatchEvent<?>) event;
+          String kind = w.kind().name();
+          if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE.name())) {
+            currentPosition.set(0);
+          }
+        }
+        long length = file.length();
+        if (length > currentPosition.get()) {
 
-                            @Override
-                            public InputStream call() {
-                                return fis;
-                            }
-                        }, new Func1<InputStream, Observable<byte[]>>() {
-
-                            @Override
-                            public Observable<byte[]> call(InputStream t1) {
-                                return StringObservable.from(fis, maxBytesPerEmission)
-                                // move marker
-                                        .doOnNext(new Action1<byte[]>() {
-                                            @Override
-                                            public void call(byte[] bytes) {
-                                                currentPosition.addAndGet(bytes.length);
-                                            }
-                                        });
-                            }
-                        }, new Action1<InputStream>() {
-=======
-                        Func0<InputStream> resourceFactory = new Func0<InputStream>() {
-                            @Override
-                            public InputStream call() {
-                                try {
-                                    final FileInputStream fis = new FileInputStream(file);
-                                    fis.skip(currentPosition.get());
-                                    return fis;
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }};
-                        Func1<InputStream, Observable<byte[]>> observableFactory = createObservableFactory(
-                                currentPosition, maxBytesPerEmission);
-                        Action1<InputStream> disposeAction = new Action1<InputStream>() {
->>>>>>> af848d22b776b5286ab49c817ec42ee8f333f940
-                            @Override
-                            public void call(InputStream is) {
-                                try {
-                                    is.close();
-                                } catch (IOException e) {
-<<<<<<< HEAD
-                                    // don't care
-                                }
-                            }
-                        });
-                    } catch (IOException e) {
-                        return Observable.error(e);
-                    }
-=======
-                                    throw new RuntimeException(e);
-                                }
-                            }};
-                        return Observable.using(resourceFactory, observableFactory,disposeAction);
->>>>>>> af848d22b776b5286ab49c817ec42ee8f333f940
-                } else
-                    return Observable.empty();
-            }
-
-        };
-    }
-
-<<<<<<< HEAD
-    private static Func0<Subscription> createSubscriptionFactory(final InputStream is) {
-        return new Func0<Subscription>() {
-
-            @Override
-            public Subscription call() {
-                return Subscriptions.create(new Action0() {
-                    @Override
-                    public void call() {
-                        try {
-                            is.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+<<<<<<< /usr/src/app/output/davidmoten/rxjava-file/cb7c3d9a00024b03b9d23c6d5ad47ba35b3e092e/src/main/java/com/github/davidmoten/rx/operators/OperatorFileTailer.java/left.java
+          try {
+            final FileInputStream fis = new FileInputStream(file);
+            fis.skip(currentPosition.get());
+            return Observable.using(new Func0<InputStream>() {
+              @Override public InputStream call() {
+                return fis;
+              }
+            }, new Func1<InputStream, Observable<byte[]>>() {
+              @Override public Observable<byte[]> call(InputStream t1) {
+                return StringObservable.from(fis, maxBytesPerEmission).doOnNext(new Action1<byte[]>() {
+                  @Override public void call(byte[] bytes) {
+                    currentPosition.addAndGet(bytes.length);
+                  }
                 });
-            }
-        };
-    }
-
-    private static Func1<Subscription, Observable<byte[]>> createObservableFactory(
-            final FileInputStream fis, final AtomicLong currentPosition,
-            final int maxBytesPerEmission) {
-        return new Func1<Subscription, Observable<byte[]>>() {
+              }
+            }, new Action1<InputStream>() {
+              @Override public void call(InputStream is) {
+                try {
+                  is.close();
+                } catch (IOException e) {
+                }
+              }
+            });
+          } catch (IOException e) {
+            return Observable.error(e);
+          }
 =======
-    private static Func1<InputStream, Observable<byte[]>> createObservableFactory(
-            final AtomicLong currentPosition, final int maxBytesPerEmission) {
-        return new Func1<InputStream, Observable<byte[]>>() {
->>>>>>> af848d22b776b5286ab49c817ec42ee8f333f940
-
-            @Override
-            public Observable<byte[]> call(InputStream is) {
-                return StringObservable.from(is, maxBytesPerEmission)
-                // move marker
-                        .doOnNext(new Action1<byte[]>() {
-                            @Override
-                            public void call(byte[] bytes) {
-                                currentPosition.addAndGet(bytes.length);
-                            }
-                        });
+          Func0<InputStream> resourceFactory = new Func0<InputStream>() {
+            @Override public InputStream call() {
+              try {
+                final FileInputStream fis = new FileInputStream(file);
+                fis.skip(currentPosition.get());
+                return fis;
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
             }
-        };
-    }
+          };
+>>>>>>> /usr/src/app/output/davidmoten/rxjava-file/cb7c3d9a00024b03b9d23c6d5ad47ba35b3e092e/src/main/java/com/github/davidmoten/rx/operators/OperatorFileTailer.java/right.java
 
+          Func1<InputStream, Observable<byte[]>> observableFactory = createObservableFactory(currentPosition, maxBytesPerEmission);
+          Action1<InputStream> disposeAction = new Action1<InputStream>() {
+            @Override public void call(InputStream is) {
+              try {
+                is.close();
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          return Observable.using(resourceFactory, observableFactory, disposeAction);
+        } else {
+          return Observable.empty();
+        }
+      }
+    };
+  }
+
+  private static Func1<InputStream, Observable<byte[]>> createObservableFactory(final AtomicLong currentPosition, final int maxBytesPerEmission) {
+    return new Func1<InputStream, Observable<byte[]>>() {
+      @Override public Observable<byte[]> call(InputStream is) {
+        return StringObservable.from(is, maxBytesPerEmission).doOnNext(new Action1<byte[]>() {
+          @Override public void call(byte[] bytes) {
+            currentPosition.addAndGet(bytes.length);
+          }
+        });
+      }
+    };
+  }
 }
