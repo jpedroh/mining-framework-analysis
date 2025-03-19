@@ -21,10 +21,14 @@ import io.undertow.server.HttpServerExchange;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Deque;
 import java.util.Objects;
 import org.bson.BsonBoolean;
 import org.bson.BsonDateTime;
+import org.bson.BsonDouble;
+import org.bson.BsonInt32;
+import org.bson.BsonInt64;
 import org.bson.BsonMaxKey;
 import org.bson.BsonMinKey;
 import org.bson.BsonNull;
@@ -33,12 +37,15 @@ import org.bson.BsonObjectId;
 import org.bson.BsonString;
 import org.bson.BsonType;
 import org.bson.BsonValue;
+import org.bson.types.MaxKey;
+import org.bson.types.MinKey;
 import org.bson.types.ObjectId;
 import org.restheart.Bootstrapper;
 import org.restheart.representation.UnsupportedDocumentIdException;
 import org.restheart.handlers.RequestContext;
 import org.restheart.handlers.RequestContext.DOC_ID_TYPE;
 import static org.restheart.handlers.RequestContext.DOC_ID_TYPE.STRING;
+import static org.restheart.handlers.RequestContext.DOC_ID_TYPE_QPARAM_KEY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +57,455 @@ public class URLUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(URLUtils.class);
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/920927de1918cd741aecdf03bc018149be020f46/src/main/java/org/restheart/utils/URLUtils.java/left.java
+||||||| /usr/src/app/output/softinstigate/restheart/920927de1918cd741aecdf03bc018149be020f46/src/main/java/org/restheart/utils/URLUtils.java/base.java
+    public static String getReferenceLink(
+            RequestContext context,
+            String parentUrl,
+            BsonValue docId) {
+        if (context == null || parentUrl == null) {
+            LOGGER.error("error creating URI, null arguments: "
+                    + "context = {}, parentUrl = {}, docId = {}",
+                    context,
+                    parentUrl,
+                    docId);
+            return "";
+        }
+
+        String uri = "#";
+
+        if (docId == null) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_null");
+        } else if (docId.isString()
+                && ObjectId.isValid(docId.asString().getValue())) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asString().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.STRING.name());
+        } else if (docId.isString()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asString().getValue());
+        } else if (docId.isObjectId()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asObjectId().getValue().toString());
+        } else if (docId.isBoolean()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + docId.asBoolean().getValue());
+        } else if (docId.isInt32()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asInt32().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isInt64()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asInt64().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isDouble()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asDouble().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isNull()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_null");
+        } else if (docId instanceof BsonMaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MaxKey");
+        } else if (docId instanceof BsonMinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MinKey");
+        } else if (docId.isDateTime()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asDateTime().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.DATE.name());
+        } else {
+            String _id;
+
+            try {
+                _id = getIdString(docId);
+            } catch (UnsupportedDocumentIdException uie) {
+                _id = docId.toString();
+            }
+
+            context.addWarning("resource with _id: "
+                    + _id + " does not have an URI "
+                    + "since the _id is of type "
+                    + docId.getClass().getSimpleName());
+        }
+
+        return uri;
+    }
+
+    public static String getReferenceLink(String parentUrl, Object docId) {
+        if (parentUrl == null) {
+            LOGGER.error("error creating URI, null arguments: "
+                    + "parentUrl = {}, docId = {}",
+                    parentUrl,
+                    docId);
+            return "";
+        }
+
+        String uri;
+
+        if (docId == null) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_null");
+        } else if (docId instanceof String && ObjectId.isValid((String) docId)) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.STRING.name());
+        } else if (docId instanceof String || docId instanceof ObjectId) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString());
+        } else if (docId instanceof BsonObjectId) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((BsonObjectId) docId).getValue().toString());
+        } else if (docId instanceof BsonString) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((BsonString) docId).getValue());
+        } else if (docId instanceof BsonBoolean) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + ((BsonBoolean) docId).getValue());
+        } else if (docId instanceof BsonInt32) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonNumber) docId).asInt32().getValue());
+        } else if (docId instanceof BsonInt64) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonNumber) docId).asInt64().getValue());
+        } else if (docId instanceof BsonDouble) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonDouble) docId).asDouble().getValue());
+        } else if (docId instanceof BsonNull) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_null");
+        } else if (docId instanceof BsonMaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MaxKey");
+        } else if (docId instanceof BsonMinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MinKey");
+        } else if (docId instanceof BsonDateTime) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonDateTime) docId).getValue());
+        } else if (docId instanceof Integer) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Long) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Float) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Double) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof MinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_MinKey");
+        } else if (docId instanceof MaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_MaxKey");
+        } else if (docId instanceof Date) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((Date) docId).getTime() + "")
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.DATE.name());
+        } else if (docId instanceof Boolean) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + (boolean) docId);
+        } else {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_? (unsuppored _id type)");
+        }
+
+        return uri;
+    }
+
+=======
+    public static String getReferenceLink(
+            RequestContext context,
+            String parentUrl,
+            BsonValue docId) {
+        if (context == null || parentUrl == null) {
+            LOGGER.error("error creating URI, null arguments: "
+                    + "context = {}, parentUrl = {}, docId = {}",
+                    context,
+                    parentUrl,
+                    docId);
+            return "";
+        }
+
+        String uri = "#";
+
+        if (docId == null) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_null");
+        } else if (docId.isString()
+                && ObjectId.isValid(docId.asString().getValue())) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asString().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.STRING.name());
+        } else if (docId.isString()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asString().getValue());
+        } else if (docId.isObjectId()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.asObjectId().getValue().toString());
+        } else if (docId.isBoolean()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + docId.asBoolean().getValue());
+        } else if (docId.isInt32()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asInt32().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isInt64()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asInt64().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isDouble()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asDouble().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId.isNull()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_null");
+        } else if (docId instanceof BsonMaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MaxKey");
+        } else if (docId instanceof BsonMinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MinKey");
+        } else if (docId.isDateTime()) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + docId.asDateTime().getValue())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.DATE.name());
+        } else {
+            String _id;
+
+            try {
+                _id = getIdString(docId);
+            } catch (UnsupportedDocumentIdException uie) {
+                _id = docId.toString();
+            }
+
+            context.addWarning("resource with _id: "
+                    + _id + " does not have an URI "
+                    + "since the _id is of type "
+                    + docId.getClass().getSimpleName());
+        }
+
+        return uri;
+    }
+
+    public static String getReferenceLink(String parentUrl, Object docId) {
+        if (parentUrl == null) {
+            LOGGER.error("error creating URI, null arguments: parentUrl = null, docId = {}", docId);
+            return "";
+        }
+
+        String uri;
+
+        if (docId == null) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_null");
+        } else if (docId instanceof String && ObjectId.isValid((String) docId)) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.STRING.name());
+        } else if (docId instanceof String || docId instanceof ObjectId) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString());
+        } else if (docId instanceof BsonObjectId) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((BsonObjectId) docId).getValue().toString());
+        } else if (docId instanceof BsonString) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((BsonString) docId).getValue());
+        } else if (docId instanceof BsonBoolean) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + ((BsonBoolean) docId).getValue());
+        } else if (docId instanceof BsonInt32) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonNumber) docId).asInt32().getValue());
+        } else if (docId instanceof BsonInt64) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonNumber) docId).asInt64().getValue());
+        } else if (docId instanceof BsonDouble) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonDouble) docId).asDouble().getValue());
+        } else if (docId instanceof BsonNull) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_null");
+        } else if (docId instanceof BsonMaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MaxKey");
+        } else if (docId instanceof BsonMinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/_MinKey");
+        } else if (docId instanceof BsonDateTime) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("" + ((BsonDateTime) docId).getValue());
+        } else if (docId instanceof Integer) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Long) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Float) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof Double) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(docId.toString())
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.NUMBER.name());
+        } else if (docId instanceof MinKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_MinKey");
+        } else if (docId instanceof MaxKey) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_MaxKey");
+        } else if (docId instanceof Date) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat(((Date) docId).getTime() + "")
+                    .concat("?")
+                    .concat(DOC_ID_TYPE_QPARAM_KEY)
+                    .concat("=")
+                    .concat(DOC_ID_TYPE.DATE.name());
+        } else if (docId instanceof Boolean) {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_" + (boolean) docId);
+        } else {
+            uri = URLUtils.removeTrailingSlashes(parentUrl)
+                    .concat("/")
+                    .concat("_? (unsuppored _id type)");
+        }
+
+        return uri;
+    }
+
+>>>>>>> /usr/src/app/output/softinstigate/restheart/920927de1918cd741aecdf03bc018149be020f46/src/main/java/org/restheart/utils/URLUtils.java/right.java
     public static DOC_ID_TYPE checkId(BsonValue id)
             throws UnsupportedDocumentIdException {
         Objects.requireNonNull(id);

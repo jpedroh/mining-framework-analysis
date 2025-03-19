@@ -33,7 +33,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import static org.restheart.representation.Resource.HAL_JSON_MEDIA_TYPE;
+import org.restheart.representation.Resource;
+import static org.restheart.hal.Representation.HAL_JSON_MEDIA_TYPE;
 import static org.restheart.utils.HttpStatus.SC_CREATED;
 import static org.restheart.utils.HttpStatus.SC_OK;
 
@@ -50,6 +51,31 @@ public class PutFileHandlerIT extends FileHandlerAbstractIT {
     public void init() throws Exception {
         Thread.sleep(1000); // Sleep 1 second to avoid NoHttpResponseException
         createBucket();
+    }
+
+    private void createBucket() throws IOException {
+        // create db
+        Response resp = adminExecutor.execute(Request.Put(dbTmpUri)
+                                                  .addHeader(Headers.CONTENT_TYPE_STRING, Resource.HAL_JSON_MEDIA_TYPE));
+
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        StatusLine statusLine = httpResp.getStatusLine();
+
+        assertNotNull(statusLine);
+        assertEquals("check status code", SC_CREATED, statusLine.getStatusCode());
+
+        // create bucket
+        String bucketUrl = dbTmpUri + "/" + BUCKET + ".files/";
+        resp = adminExecutor.execute(Request.Put(bucketUrl)
+                                         .addHeader(Headers.CONTENT_TYPE_STRING, Resource.HAL_JSON_MEDIA_TYPE));
+
+        httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        statusLine = httpResp.getStatusLine();
+
+        assertNotNull(statusLine);
+        assertEquals("check status code", SC_CREATED, statusLine.getStatusCode());
     }
 
     private HttpResponse createFilePut(String id) throws UnknownHostException, IOException {
@@ -81,9 +107,29 @@ public class PutFileHandlerIT extends FileHandlerAbstractIT {
         final String fileUrl = dbTmpUri + "/" + BUCKET + ".files/" + id;
         Response resp = adminExecutor.execute(Request.Get(fileUrl));
 
-        HttpResponse httpResp = this.check("Response is 200 OK", resp, SC_OK);
-        HttpEntity entity = checkContentType(httpResp, HAL_JSON_MEDIA_TYPE);
-        checkNotNullMetadata(entity);
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Resource.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+
+        String content = EntityUtils.toString(entity);
+
+        JsonObject json = null;
+
+        try {
+            json = Json.parse(content).asObject();
+        } catch (Throwable t) {
+            fail("parsing received json");
+        }
+
+        assertNotNull(json.get("_id"));
+        assertNotNull(json.get("metadata"));
     }
 
     @Test
@@ -100,8 +146,28 @@ public class PutFileHandlerIT extends FileHandlerAbstractIT {
         final String fileUrl = dbTmpUri + "/" + BUCKET + ".files/" + id;
         Response resp = adminExecutor.execute(Request.Get(fileUrl));
 
-        HttpResponse httpResp = this.check("Response is 200 OK", resp, SC_OK);
-        HttpEntity entity = checkContentType(httpResp, HAL_JSON_MEDIA_TYPE);
-        checkNotNullMetadata(entity);
+        HttpResponse httpResp = resp.returnResponse();
+        assertNotNull(httpResp);
+        HttpEntity entity = httpResp.getEntity();
+        assertNotNull(entity);
+        StatusLine statusLine = httpResp.getStatusLine();
+        assertNotNull(statusLine);
+
+        assertEquals("check status code", SC_OK, statusLine.getStatusCode());
+        assertNotNull("content type not null", entity.getContentType());
+        assertEquals("check content type", Resource.HAL_JSON_MEDIA_TYPE, entity.getContentType().getValue());
+
+        String content = EntityUtils.toString(entity);
+
+        JsonObject json = null;
+
+        try {
+            json = Json.parse(content).asObject();
+        } catch (Throwable t) {
+            fail("parsing received json");
+        }
+
+        assertNotNull(json.get("_id"));
+        assertNotNull(json.get("metadata"));
     }
 }
