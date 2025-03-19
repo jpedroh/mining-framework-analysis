@@ -1,22 +1,4 @@
-/*
- * RESTHeart - the data REST API server
- * Copyright (C) 2014 - 2015 SoftInstigate Srl
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.restheart.handlers;
-
 import com.mongodb.DBObject;
 import org.restheart.db.DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY;
 import org.restheart.utils.URLUtilis;
@@ -34,71 +16,94 @@ import java.util.Deque;
  * @author Andrea Di Cesare <andrea@softinstigate.com>
  */
 public class RequestContext {
+  public enum TYPE {
+    ERROR,
+    ROOT,
+    DB,
+    COLLECTION,
+    DOCUMENT,
+    COLLECTION_INDEXES,
+    INDEX,
+    FILE
+  }
 
-    public enum TYPE {
 
-        ERROR,
-        ROOT,
-        DB,
-        COLLECTION,
-        DOCUMENT,
-        COLLECTION_INDEXES,
-        INDEX,
-        FILE
-    };
 
-    public enum METHOD {
+  public enum METHOD {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    PATCH,
+    OPTIONS,
+    OTHER
+  }
 
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        PATCH,
-        OPTIONS,
-        OTHER
-    };
 
-    public static final String PAGE_QPARAM_KEY = "page";
-    public static final String PAGESIZE_QPARAM_KEY = "pagesize";
-    public static final String COUNT_QPARAM_KEY = "count";
-    public static final String SORT_BY_QPARAM_KEY = "sort_by";
-    public static final String FILTER_QPARAM_KEY = "filter";
-    public static final String EAGER_CURSOR_ALLOCATION_POLICY_QPARAM_KEY = "eager";
 
-    public static final String SLASH = "/";
-    public static final String PATCH = "PATCH";
-    public static final String UNDERSCORE = "_";
-    public static final String SYSTEM = "system.";
-    public static final String LOCAL = "local";
-    public static final String ADMIN = "admin";
-    public static final String _INDEXES = "_indexes";
-    public static final String _FILES = "_files";
+  public static final String PAGE_QPARAM_KEY = "page";
 
-    private final String whereUri;
-    private final String whatUri;
+  public static final String PAGESIZE_QPARAM_KEY = "pagesize";
 
-    private final TYPE type;
-    private final METHOD method;
-    private final String[] pathTokens;
+  public static final String COUNT_QPARAM_KEY = "count";
 
-    private DBObject dbProps;
-    private DBObject collectionProps;
+  public static final String SORT_BY_QPARAM_KEY = "sort_by";
 
-    private DBObject content;
+  public static final String FILTER_QPARAM_KEY = "filter";
 
-    private final ArrayList<String> warnings = new ArrayList<>();
+  public static final String EAGER_CURSOR_ALLOCATION_POLICY_QPARAM_KEY = "eager";
 
-    private int page = 1;
-    private int pagesize = 100;
-    private boolean count = false;
-    private EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy;
-    private Deque<String> filter = null;
-    private Deque<String> sortBy = null;
+  public static final String SLASH = "/";
 
-    private String unmappedRequestUri = null;
-    private String mappedRequestUri = null;
+  public static final String PATCH = "PATCH";
 
-    /**
+  public static final String UNDERSCORE = "_";
+
+  public static final String SYSTEM = "system.";
+
+  public static final String LOCAL = "local";
+
+  public static final String ADMIN = "admin";
+
+  public static final String _INDEXES = "_indexes";
+
+  public static final String _FILES = "_files";
+
+  private final String whereUri;
+
+  private final String whatUri;
+
+  private final TYPE type;
+
+  private final METHOD method;
+
+  private final String[] pathTokens;
+
+  private DBObject dbProps;
+
+  private DBObject collectionProps;
+
+  private DBObject content;
+
+  private final ArrayList<String> warnings = new ArrayList<>();
+
+  private int page = 1;
+
+  private int pagesize = 100;
+
+  private boolean count = false;
+
+  private EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy;
+
+  private Deque<String> filter = null;
+
+  private Deque<String> sortBy = null;
+
+  private String unmappedRequestUri = null;
+
+  private String mappedRequestUri = null;
+
+  /**
      *
      * @param exchange the url rewriting feature is implemented by the whatUri
      * and whereUri parameters
@@ -122,59 +127,73 @@ public class RequestContext {
      * @param whereUri the uri to map to
      * @param whatUri the uri to map
      */
-    public RequestContext(HttpServerExchange exchange, String whereUri, String whatUri) {
-        this.whereUri = URLUtilis.removeTrailingSlashes(whereUri);
-        this.whatUri = whatUri;
+  public RequestContext(HttpServerExchange exchange, String whereUri, String whatUri) {
+    this.whereUri = URLUtilis.removeTrailingSlashes(whereUri);
+    this.whatUri = whatUri;
+    this.unmappedRequestUri = exchange.getRequestPath();
+    this.mappedRequestUri = unmapUri(exchange.getRequestPath());
+    pathTokens = mappedRequestUri.split(SLASH);
+    this.type = selectRequestType(pathTokens);
+    this.method = selectRequestMethod(exchange.getRequestMethod());
+  }
 
-        this.unmappedRequestUri = exchange.getRequestPath();
-        this.mappedRequestUri = unmapUri(exchange.getRequestPath());
-
-        // "/db/collection/document" --> { "", "mappedDbName", "collection", "document" }
-        pathTokens = mappedRequestUri.split(SLASH);
-        this.type = selectRequestType(pathTokens);
-
-        this.method = selectRequestMethod(exchange.getRequestMethod());
-    }
-
-    protected static METHOD selectRequestMethod(HttpString _method) {
-        METHOD method;
-        if (Methods.GET.equals(_method)) {
-            method = METHOD.GET;
-        } else if (Methods.POST.equals(_method)) {
-            method = METHOD.POST;
-        } else if (Methods.PUT.equals(_method)) {
-            method = METHOD.PUT;
-        } else if (Methods.DELETE.equals(_method)) {
+  protected static METHOD selectRequestMethod(HttpString _method) {
+    METHOD method;
+    if (Methods.GET.equals(_method)) {
+      method = METHOD.GET;
+    } else {
+      if (Methods.POST.equals(_method)) {
+        method = METHOD.POST;
+      } else {
+        if (Methods.PUT.equals(_method)) {
+          method = METHOD.PUT;
+        } else {
+          if (Methods.DELETE.equals(_method)) {
             method = METHOD.DELETE;
-        } else if (PATCH.equals(_method.toString())) {
-            method = METHOD.PATCH;
-        } else if (Methods.OPTIONS.equals(_method)) {
-            method = METHOD.OPTIONS;
-        } else {
-            method = METHOD.OTHER;
+          } else {
+            if (PATCH.equals(_method.toString())) {
+              method = METHOD.PATCH;
+            } else {
+              if (Methods.OPTIONS.equals(_method)) {
+                method = METHOD.OPTIONS;
+              } else {
+                method = METHOD.OTHER;
+              }
+            }
+          }
         }
-        return method;
+      }
     }
+    return method;
+  }
 
-    protected static TYPE selectRequestType(String[] pathTokens) {
-        TYPE type;
-        if (pathTokens.length < 2) {
-            type = TYPE.ROOT;
-        } else if (pathTokens.length < 3) {
-            type = TYPE.DB;
-        } else if (pathTokens.length < 4) {
-            type = TYPE.COLLECTION;
-        } else if (pathTokens.length == 4 && pathTokens[3].equals(_INDEXES)) {
+  protected static TYPE selectRequestType(String[] pathTokens) {
+    TYPE type;
+    if (pathTokens.length < 2) {
+      type = TYPE.ROOT;
+    } else {
+      if (pathTokens.length < 3) {
+        type = TYPE.DB;
+      } else {
+        if (pathTokens.length < 4) {
+          type = TYPE.COLLECTION;
+        } else {
+          if (pathTokens.length == 4 && pathTokens[3].equals(_INDEXES)) {
             type = TYPE.COLLECTION_INDEXES;
-        } else if (pathTokens.length > 4 && pathTokens[3].equals(_INDEXES)) {
-            type = TYPE.INDEX;
-        } else {
-            type = TYPE.DOCUMENT;
+          } else {
+            if (pathTokens.length > 4 && pathTokens[3].equals(_INDEXES)) {
+              type = TYPE.INDEX;
+            } else {
+              type = TYPE.DOCUMENT;
+            }
+          }
         }
-        return type;
+      }
     }
+    return type;
+  }
 
-    /**
+  /**
      * given a mapped uri (/some/mapping/coll) returns the canonical uri
      * (/db/coll) URLs are mapped to mongodb resources by using the mongo-mounts
      * configuration properties
@@ -182,25 +201,22 @@ public class RequestContext {
      * @param mappedUri
      * @return
      */
-    public final String unmapUri(String mappedUri) {
-        String ret = URLUtilis.removeTrailingSlashes(mappedUri);
-
-        if (whatUri.equals("*")) {
-            if (!this.whereUri.equals(SLASH)) {
-                ret = ret.replaceFirst("^" + this.whereUri, "");
-            }
-        } else {
-            ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whereUri, this.whatUri));
-        }
-
-        if (ret.isEmpty()) {
-            ret = SLASH;
-        }
-
-        return ret;
+  public final String unmapUri(String mappedUri) {
+    String ret = URLUtilis.removeTrailingSlashes(mappedUri);
+    if (whatUri.equals("*")) {
+      if (!this.whereUri.equals(SLASH)) {
+        ret = ret.replaceFirst("^" + this.whereUri, "");
+      }
+    } else {
+      ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whereUri, this.whatUri));
     }
+    if (ret.isEmpty()) {
+      ret = SLASH;
+    }
+    return ret;
+  }
 
-    /**
+  /**
      * given a canonical uri (/db/coll) returns the mapped uri (/db/coll)
      * relative to this context URLs are mapped to mongodb resources by using
      * the mongo-mounts configuration properties
@@ -208,25 +224,22 @@ public class RequestContext {
      * @param unmappedUri
      * @return
      */
-    public final String mapUri(String unmappedUri) {
-        String ret = URLUtilis.removeTrailingSlashes(unmappedUri);
-
-        if (whatUri.equals("*")) {
-            if (!this.whereUri.equals(SLASH)) {
-                return this.whereUri + unmappedUri;
-            }
-        } else {
-            ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whatUri, this.whereUri));
-        }
-
-        if (ret.isEmpty()) {
-            ret = SLASH;
-        }
-
-        return ret;
+  public final String mapUri(String unmappedUri) {
+    String ret = URLUtilis.removeTrailingSlashes(unmappedUri);
+    if (whatUri.equals("*")) {
+      if (!this.whereUri.equals(SLASH)) {
+        return this.whereUri + unmappedUri;
+      }
+    } else {
+      ret = URLUtilis.removeTrailingSlashes(ret.replaceFirst("^" + this.whatUri, this.whereUri));
     }
-    
-    /**
+    if (ret.isEmpty()) {
+      ret = SLASH;
+    }
+    return ret;
+  }
+
+  /**
      * check if the parent of the requested resource is accessible in this
      * request context
      *
@@ -237,288 +250,280 @@ public class RequestContext {
      *
      * @return true if parent of the requested resource is accessible
      */
-    public final boolean isParentAccessible() {
-        return type == TYPE.DB
-                ? unmappedRequestUri.split(SLASH).length > 1
-                : unmappedRequestUri.split(SLASH).length > 2;
-    }
+  public final boolean isParentAccessible() {
+    return type == TYPE.DB ? unmappedRequestUri.split(SLASH).length > 1 : unmappedRequestUri.split(SLASH).length > 2;
+  }
 
-    /**
+  /**
      *
      * @return type
      */
-    public TYPE getType() {
-        return type;
-    }
+  public TYPE getType() {
+    return type;
+  }
 
-    /**
+  /**
      *
      * @return DB Name
      */
-    public String getDBName() {
-        return getPathTokenAt(1);
-    }
+  public String getDBName() {
+    return getPathTokenAt(1);
+  }
 
-    /**
+  /**
      *
      * @return collection name
      */
-    public String getCollectionName() {
-        return getPathTokenAt(2);
-    }
+  public String getCollectionName() {
+    return getPathTokenAt(2);
+  }
 
-    /**
+  /**
      *
      * @return document id
      */
-    public String getDocumentId() {
-        return getPathTokenAt(3);
-    }
+  public String getDocumentId() {
+    return getPathTokenAt(3);
+  }
 
-    /**
+  /**
      *
      * @return index id
      */
-    public String getIndexId() {
-        return getPathTokenAt(4);
-    }
+  public String getIndexId() {
+    return getPathTokenAt(4);
+  }
 
-    /**
+  /**
      *
      * @return URI
      * @throws URISyntaxException
      */
-    public URI getUri() throws URISyntaxException {
-        return new URI(Arrays.asList(pathTokens).stream().reduce(SLASH, (t1, t2) -> t1 + SLASH + t2));
-    }
+  public URI getUri() throws URISyntaxException {
+    return new URI(Arrays.asList(pathTokens).stream().reduce(SLASH, (t1, t2) -> t1 + SLASH + t2));
+  }
 
-    /**
+  /**
      *
      * @return method
      */
-    public METHOD getMethod() {
-        return method;
-    }
+  public METHOD getMethod() {
+    return method;
+  }
 
-    /**
+  /**
      *
      * @param dbName
      * @return isReservedResourceDb
      */
-    public static boolean isReservedResourceDb(String dbName) {
-        return dbName.equals(ADMIN)
-                || dbName.equals(LOCAL)
-                || dbName.startsWith(SYSTEM)
-                || dbName.startsWith(UNDERSCORE);
-    }
+  public static boolean isReservedResourceDb(String dbName) {
+    return dbName.equals(ADMIN) || dbName.equals(LOCAL) || dbName.startsWith(SYSTEM) || dbName.startsWith(UNDERSCORE);
+  }
 
-    /**
+  /**
      *
      * @param collectionName
      * @return isReservedResourceCollection
      */
-    public static boolean isReservedResourceCollection(String collectionName) {
-        return collectionName != null && (collectionName.startsWith(SYSTEM) || collectionName.startsWith(UNDERSCORE));
-    }
+  public static boolean isReservedResourceCollection(String collectionName) {
+    return collectionName != null && (collectionName.startsWith(SYSTEM) || collectionName.startsWith(UNDERSCORE));
+  }
 
-    /**
+  /**
      *
      * @param documentId
      * @return isReservedResourceDocument
      */
-    public static boolean isReservedResourceDocument(String documentId) {
-        return documentId != null && documentId.startsWith(UNDERSCORE) && !documentId.equals(_INDEXES);
-    }
+  public static boolean isReservedResourceDocument(String documentId) {
+    return documentId != null && documentId.startsWith(UNDERSCORE) && !documentId.equals(_INDEXES);
+  }
 
-    /**
+  /**
      *
      * @return isReservedResource
      */
-    public boolean isReservedResource() {
-        if (type == TYPE.ROOT) {
-            return false;
-        }
-
-        return isReservedResourceDb(getDBName())
-                || isReservedResourceCollection(getCollectionName())
-                || isReservedResourceDocument(getDocumentId());
+  public boolean isReservedResource() {
+    if (type == TYPE.ROOT) {
+      return false;
     }
+    return isReservedResourceDb(getDBName()) || isReservedResourceCollection(getCollectionName()) || isReservedResourceDocument(getDocumentId());
+  }
 
-    /**
+  /**
      * @return the whereUri
      */
-    public String getUriPrefix() {
-        return whereUri;
-    }
+  public String getUriPrefix() {
+    return whereUri;
+  }
 
-    /**
+  /**
      * @return the whatUri
      */
-    public String getMappingUri() {
-        return whatUri;
-    }
+  public String getMappingUri() {
+    return whatUri;
+  }
 
-    /**
+  /**
      * @return the page
      */
-    public int getPage() {
-        return page;
-    }
+  public int getPage() {
+    return page;
+  }
 
-    /**
+  /**
      * @param page the page to set
      */
-    public void setPage(int page) {
-        this.page = page;
-    }
+  public void setPage(int page) {
+    this.page = page;
+  }
 
-    /**
+  /**
      * @return the pagesize
      */
-    public int getPagesize() {
-        return pagesize;
-    }
+  public int getPagesize() {
+    return pagesize;
+  }
 
-    /**
+  /**
      * @param pagesize the pagesize to set
      */
-    public void setPagesize(int pagesize) {
-        this.pagesize = pagesize;
-    }
+  public void setPagesize(int pagesize) {
+    this.pagesize = pagesize;
+  }
 
-    /**
+  /**
      * @return the count
      */
-    public boolean isCount() {
-        return count;
-    }
+  public boolean isCount() {
+    return count;
+  }
 
-    /**
+  /**
      * @param count the count to set
      */
-    public void setCount(boolean count) {
-        this.count = count;
-    }
+  public void setCount(boolean count) {
+    this.count = count;
+  }
 
-    /**
+  /**
      * @return the filter
      */
-    public Deque<String> getFilter() {
-        return filter;
-    }
+  public Deque<String> getFilter() {
+    return filter;
+  }
 
-    /**
+  /**
      * @param filter the filter to set
      */
-    public void setFilter(Deque<String> filter) {
-        this.filter = filter;
-    }
+  public void setFilter(Deque<String> filter) {
+    this.filter = filter;
+  }
 
-    /**
+  /**
      * @return the sortBy
      */
-    public Deque<String> getSortBy() {
-        return sortBy;
-    }
+  public Deque<String> getSortBy() {
+    return sortBy;
+  }
 
-    /**
+  /**
      * @param sortBy the sortBy to set
      */
-    public void setSortBy(Deque<String> sortBy) {
-        this.sortBy = sortBy;
-    }
+  public void setSortBy(Deque<String> sortBy) {
+    this.sortBy = sortBy;
+  }
 
-    /**
+  /**
      * @return the collectionProps
      */
-    public DBObject getCollectionProps() {
-        return collectionProps;
-    }
+  public DBObject getCollectionProps() {
+    return collectionProps;
+  }
 
-    /**
+  /**
      * @param collectionProps the collectionProps to set
      */
-    public void setCollectionProps(DBObject collectionProps) {
-        this.collectionProps = collectionProps;
-    }
+  public void setCollectionProps(DBObject collectionProps) {
+    this.collectionProps = collectionProps;
+  }
 
-    /**
+  /**
      * @return the dbProps
      */
-    public DBObject getDbProps() {
-        return dbProps;
-    }
+  public DBObject getDbProps() {
+    return dbProps;
+  }
 
-    /**
+  /**
      * @param dbProps the dbProps to set
      */
-    public void setDbProps(DBObject dbProps) {
-        this.dbProps = dbProps;
-    }
+  public void setDbProps(DBObject dbProps) {
+    this.dbProps = dbProps;
+  }
 
-    /**
+  /**
      * @return the content
      */
-    public DBObject getContent() {
-        return content;
-    }
+  public DBObject getContent() {
+    return content;
+  }
 
-    /**
+  /**
      * @param content the content to set
      */
-    public void setContent(DBObject content) {
-        this.content = content;
-    }
+  public void setContent(DBObject content) {
+    this.content = content;
+  }
 
-    /**
+  /**
      * @return the warnings
      */
-    public ArrayList<String> getWarnings() {
-        return warnings;
-    }
+  public ArrayList<String> getWarnings() {
+    return warnings;
+  }
 
-    /**
+  /**
      * @param warning
      */
-    public void addWarning(String warning) {
-        warnings.add(warning);
-    }
+  public void addWarning(String warning) {
+    warnings.add(warning);
+  }
 
-    /**
+  /**
      * @return the mappedRequestUri
      */
-    public String getMappedRequestUri() {
-        return mappedRequestUri;
-    }
+  public String getMappedRequestUri() {
+    return mappedRequestUri;
+  }
 
-    /**
+  /**
      * @return the unmappedRequestUri
      */
-    public String getUnmappedRequestUri() {
-        return unmappedRequestUri;
-    }
+  public String getUnmappedRequestUri() {
+    return unmappedRequestUri;
+  }
 
-    /**
+  /**
      *
      * @param index
      * @return pathTokens[index] if pathTokens.length > index, else null
      */
-    private String getPathTokenAt(int index) {
-        return pathTokens.length > index ? pathTokens[index] : null;
-    }
+  private String getPathTokenAt(int index) {
+    return pathTokens.length > index ? pathTokens[index] : null;
+  }
 
-    /**
+  /**
      *
      * @return the cursorAllocationPolicy
      */
-    public EAGER_CURSOR_ALLOCATION_POLICY getCursorAllocationPolicy() {
-        return cursorAllocationPolicy;
-    }
+  public EAGER_CURSOR_ALLOCATION_POLICY getCursorAllocationPolicy() {
+    return cursorAllocationPolicy;
+  }
 
-    /**
+  /**
      * @param cursorAllocationPolicy the cursorAllocationPolicy to set
      */
-    public void setCursorAllocationPolicy(EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy) {
-        this.cursorAllocationPolicy = cursorAllocationPolicy;
-    }
+  public void setCursorAllocationPolicy(EAGER_CURSOR_ALLOCATION_POLICY cursorAllocationPolicy) {
+    this.cursorAllocationPolicy = cursorAllocationPolicy;
+  }
 }
