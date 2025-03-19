@@ -117,18 +117,13 @@ public class ReindexingService extends AbstractLifecycleComponent<ReindexingServ
         final String toIndex = params.param("toindex");
         final String toType = params.param("totype");
         final String[] fields = params.paramAsBoolean("parent", true) ? new String[] {"_source", "_parent" } : new String[] { "_source" };
-<<<<<<< HEAD
-        final ReindexingListener reindexingListener = new ReindexingListener(
-                url, toIndex, toType, scroll, listener);
-=======
         final boolean deletion = params.paramAsBoolean("deletion" , false);
 
         final ReindexingListener reindexingListener = new ReindexingListener(url, fromIndex, fromType, toIndex, toType, scroll, deletion, listener);
->>>>>>> origin/master
 
         // Create search request builder
         final SearchRequestBuilder builder = client.prepareSearch(fromIndex)
-                .setScroll(scroll).addFields(fields);
+            .setScroll(scroll).addFields(fields);
         if (fromType != null && fromType.trim().length() > 0) {
             builder.setTypes(fromType.split(","));
         }
@@ -168,13 +163,9 @@ public class ReindexingService extends AbstractLifecycleComponent<ReindexingServ
 
         private volatile String scrollId;
 
-<<<<<<< HEAD
-        ReindexingListener(final String url, final String toIndex, final String toType, final String scroll, final ActionListener<Void> listener) {
-=======
         private boolean deletion;
 
         ReindexingListener(final String url, final String fromIndex, final String fromType, final String toIndex, final String toType, final String scroll,final boolean deletion, final ActionListener<Void> listener) {
->>>>>>> origin/master
             if (toIndex == null) {
                 throw new ReindexingException("toindex is blank.");
             }
@@ -200,11 +191,13 @@ public class ReindexingService extends AbstractLifecycleComponent<ReindexingServ
                 return;
             }
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-reindexing/5b0dea22a41d4c5684434fd59b989e7aa048b8a7/src/main/java/org/codelibs/elasticsearch/reindex/service/ReindexingService.java/left.java
             // Get hit result
+||||||| /usr/src/app/output/codelibs/elasticsearch-reindexing/5b0dea22a41d4c5684434fd59b989e7aa048b8a7/src/main/java/org/codelibs/elasticsearch/reindex/service/ReindexingService.java/base.java
 =======
             // Get 10 hit results
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-reindexing/5b0dea22a41d4c5684434fd59b989e7aa048b8a7/src/main/java/org/codelibs/elasticsearch/reindex/service/ReindexingService.java/right.java
+
             final SearchHits searchHits = response.getHits();
             final SearchHit[] hits = searchHits.getHits();
             if (hits.length == 0) { // finished
