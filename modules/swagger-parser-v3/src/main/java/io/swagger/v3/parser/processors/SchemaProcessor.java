@@ -139,21 +139,21 @@ public class SchemaProcessor {
             processReferenceSchema(schema);
         }
 
-         Map<String, Schema> properties = schema.getProperties();
-         if (properties != null) {
-             for (Map.Entry<String, Schema> propertyEntry : properties.entrySet()) {
-                 Schema property = propertyEntry.getValue();
-                 if(property.get$ref() != null) {
-                     if (property instanceof ArraySchema) {
-                         processReferenceSchemaForProperty(property);
-                     } else {
-                         processReferenceSchema(property);
-                     }
-                 }else {
-                     processSchemaType(property);
-                 }
-             }
-         }
+        Map<String, Schema> properties = schema.getProperties();
+        if (properties != null) {
+            for (Map.Entry<String, Schema> propertyEntry : properties.entrySet()) {
+                Schema property = propertyEntry.getValue();
+                if(property.get$ref() != null) {
+                    if (property instanceof ArraySchema) {
+                        processReferenceSchemaForProperty(property);
+                    } else {
+                        processReferenceSchema(property);
+                    }
+                }else {
+                    processSchemaType(property);
+                }
+            }
+        }
     }
 
     private void processInternalPropertyReferences(Schema schema) {
