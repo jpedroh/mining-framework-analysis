@@ -117,6 +117,7 @@ public class Api {
     return builder;
   }
 
+<<<<<<< /usr/src/app/output/thelinmichael/spotify-web-api-java/32abc2923898eea889c491ca33471d81fd462015/src/main/java/com/wrapper/spotify/Api.java/left.java
   public TracksForAlbumRequest.Builder getTracksForAlbum(
       String albumId
   ) {
@@ -125,13 +126,22 @@ public class Api {
     builder.forAlbum(albumId);
     return builder;
   }
+||||||| /usr/src/app/output/thelinmichael/spotify-web-api-java/32abc2923898eea889c491ca33471d81fd462015/src/main/java/com/wrapper/spotify/Api.java/base.java
+=======
+  public TracksForAlbumRequest.Builder getTracksForAlbum(String albumName) {
+	TracksForAlbumRequest.Builder builder = TracksForAlbumRequest.builder();
+	setDefaults(builder);
+	builder.forAlbum(albumName);
+	return builder;
+  }
+>>>>>>> /usr/src/app/output/thelinmichael/spotify-web-api-java/32abc2923898eea889c491ca33471d81fd462015/src/main/java/com/wrapper/spotify/Api.java/right.java
 
   public ArtistRequest.Builder getArtist(String id) {
-    ArtistRequest.Builder builder = ArtistRequest.builder();
-    setDefaults(builder);
-    builder.setPath(String.format("/v1/artists/%s", id));
-    return builder;
-  }
+  ArtistRequest.Builder builder = ArtistRequest.builder();
+  setDefaults(builder);
+  builder.setPath(String.format("/v1/artists/%s", id));
+  return builder;
+}
 
   public ArtistsRequest.Builder getArtists(String... ids) {
     return getArtists(Arrays.asList(ids));
@@ -160,13 +170,6 @@ public class Api {
     setDefaults(builder);
     builder.id(ids);
     return builder;
-  }
-  
-  public TracksForAlbumRequest.Builder getTracksForAlbum(String albumName) {
-	TracksForAlbumRequest.Builder builder = TracksForAlbumRequest.builder();
-	setDefaults(builder);
-	builder.forAlbum(albumName);
-	return builder;
   }
 
   public AlbumSearchRequest.Builder searchAlbums(String query) {
