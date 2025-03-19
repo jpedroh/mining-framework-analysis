@@ -45,9 +45,17 @@ public final class FileContent implements Block {
   }
 
   /**
+<<<<<<< /usr/src/app/output/recruit-tech/redpen/22bf7588fafb4e06e903c4a38945422e07d24623/document-validator-core/src/main/java/org/unigram/docvalidator/store/FileContent.java/left.java
    * Add a Section.
    *
    * @param section a section in file content
+||||||| /usr/src/app/output/recruit-tech/redpen/22bf7588fafb4e06e903c4a38945422e07d24623/document-validator-core/src/main/java/org/unigram/docvalidator/store/FileContent.java/base.java
+   * add Section.
+   * @param section
+=======
+   * add Section.
+   * @param section section
+>>>>>>> /usr/src/app/output/recruit-tech/redpen/22bf7588fafb4e06e903c4a38945422e07d24623/document-validator-core/src/main/java/org/unigram/docvalidator/store/FileContent.java/right.java
    */
   public void appendSection(Section section) {
     sections.add(section);

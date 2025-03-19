@@ -20,7 +20,6 @@ package org.unigram.docvalidator.store;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 /**
  * Represent a paragraph of text.
  */
