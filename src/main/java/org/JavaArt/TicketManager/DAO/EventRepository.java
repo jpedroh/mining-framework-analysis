@@ -1,26 +1,27 @@
 package org.JavaArt.TicketManager.DAO;
-
 import org.JavaArt.TicketManager.entities.Event;
 import org.springframework.stereotype.Repository;
-
 import java.util.Date;
 import java.util.List;
 
-@Repository
+/**
+ * Created with IntelliJ IDEA.
+ * User: Vladislav Karpenko
+ * Date: 06.06.2014
+ * Time: 10:28
+ */
+@Repository public interface EventRepository {
+  public void addEvent(Event event);
 
-public interface EventRepository {
-    public void addEvent(Event event);
+  public void updateEvent(Event event);
 
-    public void updateEvent(Event event);
+  public Event getEventById(int id);
 
-    public Event getEventById(int id);
+  public List<Event> getFutureEvents();
 
-    public List<Event> getFutureEvents();
-    public List<Event> getFutureBookableEvents();
+  public List<Event> getFutureBookableEvents();
 
-    public List<Event> getAllEvents();
-//    public void deleteEvent(Event event);
+  public List<Event> getAllEvents();
 
-    public Event getEventByDate(Date date);
-
+  public Event getEventByDate(Date date);
 }
