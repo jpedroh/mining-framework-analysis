@@ -256,38 +256,38 @@ public class CreateResources {
             String dataPropList, String annotationProps, String namedIndividuals, Properties lang) {
             String textToWrite = "";
             if ((c.getOverviewPath() != null) && (!"".equals(c.getOverviewPath()))) {
-                textToWrite = WidocoUtils.readExternalResource(c.getOverviewPath());
-            } else {
-                textToWrite = Constants.getOverviewSectionTitleAndPlaceHolder(c, lang);
-                if (!"".equals(classesList) && classesList != null) {
-                        textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_CLASSES) + "</h4>\n");
-                        textToWrite += (classesList);
-                }
-                if (!"".equals(propList) && propList != null) {
-                        textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_OBJ_PROP) + "</h4>");
-                        textToWrite += (propList);
-                }
-                if (!"".equals(dataPropList) && dataPropList != null) {
-                        textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_DATA_PROP) + "</h4>");
-                        textToWrite += (dataPropList);
-                }
-                if (!"".equals(annotationProps) && annotationProps != null && c.isIncludeAnnotationProperties()) {
-                        textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_ANN_PROP) + "</h4>");
-                        textToWrite += (annotationProps);
-                }
-                if (!"".equals(namedIndividuals) && namedIndividuals != null && c.isIncludeNamedIndividuals()) {
-                        textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_NAMED_INDIV) + "</h4>");
-                        textToWrite += (namedIndividuals);
-                }
-                // add the webvowl diagram, if selected
-                if (c.isCreateWebVowlVisualization()) {
-                        textToWrite += "<iframe align=\"center\" width=\"100%\" height =\"500px\" src=\"webvowl/index.html\"></iframe> ";
-                }
-                textToWrite += "\n";
-                if(!c.isIncludeAllSectionsInOneDocument()){
-                    saveDocument(path + File.separator + "overview-" + c.getCurrentLanguage() + ".html", textToWrite, c);
-                }
-            }
+	    textToWrite = WidocoUtils.readExternalResource(c.getOverviewPath());
+	} else {
+	    textToWrite = Constants.getOverviewSectionTitleAndPlaceHolder(c, lang);
+	    if (!"".equals(classesList) && classesList != null) {
+	            textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_CLASSES) + "</h4>\n");
+	            textToWrite += (classesList);
+	    }
+	    if (!"".equals(propList) && propList != null) {
+	            textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_OBJ_PROP) + "</h4>");
+	            textToWrite += (propList);
+	    }
+	    if (!"".equals(dataPropList) && dataPropList != null) {
+	            textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_DATA_PROP) + "</h4>");
+	            textToWrite += (dataPropList);
+	    }
+	    if (!"".equals(annotationProps) && annotationProps != null && c.isIncludeAnnotationProperties()) {
+	            textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_ANN_PROP) + "</h4>");
+	            textToWrite += (annotationProps);
+	    }
+	    if (!"".equals(namedIndividuals) && namedIndividuals != null && c.isIncludeNamedIndividuals()) {
+	            textToWrite += ("<h4>" + lang.getProperty(Constants.LANG_NAMED_INDIV) + "</h4>");
+	            textToWrite += (namedIndividuals);
+	    }
+	    // add the webvowl diagram, if selected
+	    if (c.isCreateWebVowlVisualization()) {
+	            textToWrite += "<iframe align=\"center\" width=\"100%\" height =\"500px\" src=\"webvowl/index.html#\"></iframe> ";
+	    }
+	    textToWrite += "\n";
+	    if(!c.isIncludeAllSectionsInOneDocument()){
+	        saveDocument(path + File.separator + "overview-" + c.getCurrentLanguage() + ".html", textToWrite, c);
+	    }
+	}
             return textToWrite;
 	}
 
