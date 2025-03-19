@@ -1,10 +1,7 @@
 package io.tracee.contextlogger.servlet;
-
 import java.io.IOException;
-
 import io.tracee.contextlogger.TraceeContextLogger;
 import io.tracee.contextlogger.api.ImplicitContext;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,47 +11,36 @@ import javax.servlet.http.HttpServletResponse;
  * Created by Tobias Gindler, holisticon AG on 11.12.13.
  */
 public class TraceeErrorLoggingFilter implements Filter {
+  static final String LOGGING_PREFIX_MESSAGE = "TRACEE SERVLET ERROR CONTEXT LOGGING LISTENER  : ";
 
-    static final String LOGGING_PREFIX_MESSAGE = "TRACEE SERVLET ERROR CONTEXT LOGGING LISTENER  : ";
+  @Override public final void init(FilterConfig filterConfig) throws ServletException {
+  }
 
-    @Override
-    public final void init(FilterConfig filterConfig) throws ServletException {
-
-    }
-
-    @Override
-    public final void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
-            ServletException {
-
-        try {
-            filterChain.doFilter(servletRequest, servletResponse);
+  @Override public final void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    try {
+      filterChain.doFilter(servletRequest, servletResponse);
+    } catch (Exception e) {
+      if (servletRequest instanceof HttpServletRequest) {
+        handleHttpServletRequest((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, e);
+      }
+      if (e instanceof RuntimeException) {
+        throw (RuntimeException) e;
+      } else {
+        if (e instanceof ServletException) {
+          throw (ServletException) e;
+        } else {
+          if (e instanceof IOException) {
+            throw (IOException) e;
+          }
         }
-        catch (Exception e) {
-            if (servletRequest instanceof HttpServletRequest) {
-                handleHttpServletRequest((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse, e);
-            }
-
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException)e;
-            }
-            else if (e instanceof ServletException) {
-                throw (ServletException)e;
-            }
-            else if (e instanceof IOException) {
-                throw (IOException)e;
-            }
-        }
+      }
     }
+  }
 
-    private void handleHttpServletRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
+  private void handleHttpServletRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Exception e) {
+    TraceeContextLogger.createDefault().logJsonWithPrefixedMessage(LOGGING_PREFIX_MESSAGE, ImplicitContext.COMMON, ImplicitContext.TRACEE, servletRequest, servletResponse, servletRequest.getSession(false), e);
+  }
 
-        TraceeContextLogger.createDefault().logJsonWithPrefixedMessage(LOGGING_PREFIX_MESSAGE, ImplicitContext.COMMON, ImplicitContext.TRACEE,
-                servletRequest, servletResponse, servletRequest.getSession(false), e);
-
-    }
-
-    @Override
-    public final void destroy() {
-
-    }
+  @Override public final void destroy() {
+  }
 }
