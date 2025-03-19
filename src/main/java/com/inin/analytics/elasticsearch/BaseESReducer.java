@@ -20,6 +20,7 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
 import com.inin.analytics.elasticsearch.transport.SnapshotTransportStrategy;
 
 public abstract class BaseESReducer implements Reducer<Text, Text, NullWritable, Text> {
@@ -83,22 +84,25 @@ public abstract class BaseESReducer implements Reducer<Text, Text, NullWritable,
 		String templateJson = getTemplate();
 
 		ESEmbededContainer.Builder builder = new ESEmbededContainer.Builder()
-		.withNodeName("embededESTempLoaderNode" + partition)
-		.withWorkingDir(esWorkingDir)
-		.withClusterName("bulkLoadPartition:" + partition)
-		.withSnapshotWorkingLocation(snapshotWorkingLocation)
-		.withSnapshotRepoName(snapshotRepoName);
+    .withNodeName("embededESTempLoaderNode" + partition)
+    .withWorkingDir(esWorkingDir)
+    .withClusterName("bulkLoadPartition:" + partition)
+    .withSnapshotWorkingLocation(snapshotWorkingLocation)
+    .withSnapshotRepoName(snapshotRepoName);
 		
 		if(templateName != null && templateJson != null) {
-			builder.withTemplate(templateName, templateJson);	
-		}
+    	builder.withTemplate(templateName, templateJson);	
+    }
 		
 		if(esEmbededContainer == null) {
-			esEmbededContainer = builder.build();	
-		} 
+    	esEmbededContainer = builder.build();	
+    } 
 
 		// Create index
-		esEmbededContainer.getNode().client().admin().indices().prepareCreate(index).setSettings(builder().put("index.number_of_replicas", 0)).get();
+		esEmbededContainer.getNode().client().admin().indices().prepareCreate(index).setSettings(builder()
+            .put("index.number_of_replicas", 0)
+            .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, shardConfig.getShardsForIndex(index))
+            ).get();
 	}
 	
 	/**

@@ -86,7 +86,8 @@ public abstract class BaseTransport {
 		close();
 	}
 	
-    public void placeMissingShards(String snapshotName, String index, ShardConfig shardConfig, boolean includeRootManifest) throws IOException {
+<<<<<<< /usr/src/app/output/mypurecloud/elasticsearch-lambda/9ad6ef3cc4463ad5e7c71ae057264ad3ba7b2f86/src/main/java/com/inin/analytics/elasticsearch/transport/BaseTransport.java/left.java
+    public void placeMissingShards(String snapshotName, String index, int numShards, boolean includeRootManifest) throws IOException {
         init();
         String destination = removeStorageSystemFromPath(snapshotFinalDestination);
 
@@ -109,6 +110,51 @@ public abstract class BaseTransport {
         }
         close();
     }
+||||||| /usr/src/app/output/mypurecloud/elasticsearch-lambda/9ad6ef3cc4463ad5e7c71ae057264ad3ba7b2f86/src/main/java/com/inin/analytics/elasticsearch/transport/BaseTransport.java/base.java
+	public void placeMissingShards(String snapshotName, String index, int numShards, boolean includeRootManifest) throws IOException {
+		init();
+		String destination = removeStorageSystemFromPath(snapshotFinalDestination);
+		
+		if(includeRootManifest) {
+			// Upload top level manifests
+			transferFile(false, destination, "metadata-" + snapshotName, snapshotWorkingLocation);
+			transferFile(false, destination, "snapshot-" + snapshotName, snapshotWorkingLocation);
+			transferFile(false, destination, "index", snapshotWorkingLocation);
+		}
+		
+		for(int shard = 0; shard < numShards; shard++) {
+			String indexDestination = destination + BaseESReducer.DIR_SEPARATOR + "indices" + BaseESReducer.DIR_SEPARATOR + index + BaseESReducer.DIR_SEPARATOR  ;
+			if(!checkExists(indexDestination, shard)) {
+				// Upload shard data
+				String shardSource = snapshotWorkingLocation + "indices" + BaseESReducer.DIR_SEPARATOR + index + BaseESReducer.DIR_SEPARATOR + shard;
+				transferDir(indexDestination, shardSource, new Integer(shard).toString());
+			}
+		}
+		close();
+	}
+=======
+	public void placeMissingShards(String snapshotName, String index, ShardConfig shardConfig, boolean includeRootManifest) throws IOException {
+		init();
+		String destination = removeStorageSystemFromPath(snapshotFinalDestination);
+		
+		if(includeRootManifest) {
+			// Upload top level manifests
+			transferFile(false, destination, "metadata-" + snapshotName, snapshotWorkingLocation);
+			transferFile(false, destination, "snapshot-" + snapshotName, snapshotWorkingLocation);
+			transferFile(false, destination, "index", snapshotWorkingLocation);
+		}
+		
+		for(int shard = 0; shard < shardConfig.getShardsForIndex(index); shard++) {
+			String indexDestination = destination + BaseESReducer.DIR_SEPARATOR + "indices" + BaseESReducer.DIR_SEPARATOR + index + BaseESReducer.DIR_SEPARATOR  ;
+			if(!checkExists(indexDestination, shard)) {
+				// Upload shard data
+				String shardSource = snapshotWorkingLocation + "indices" + BaseESReducer.DIR_SEPARATOR + index + BaseESReducer.DIR_SEPARATOR + shard;
+				transferDir(indexDestination, shardSource, new Integer(shard).toString());
+			}
+		}
+		close();
+	}
+>>>>>>> /usr/src/app/output/mypurecloud/elasticsearch-lambda/9ad6ef3cc4463ad5e7c71ae057264ad3ba7b2f86/src/main/java/com/inin/analytics/elasticsearch/transport/BaseTransport.java/right.java
 	
 	/**
 	 * Rip out filesystem specific stuff off the path EG s3:// 

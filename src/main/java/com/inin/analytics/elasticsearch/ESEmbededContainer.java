@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.hadoop.mapred.Reporter;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
@@ -202,6 +203,7 @@ public class ESEmbededContainer {
                 // Configure the cluster with an index template mapping
     			if(templateName != null && templateSource != null) {
     			    org.elasticsearch.common.settings.Settings.Builder indexBuilder = Settings.builder()
+    			            .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, numShardsPerIndex) 
     			            .put("index.refresh_interval", -1) 
     			            .put("index.translog.flush_threshold_size", "128mb") // Aggressive flushing helps keep the memory footprint below the yarn container max. TODO: Make configurable 
     			            .put("index.load_fixed_bitset_filters_eagerly", false)
@@ -296,6 +298,11 @@ public class ESEmbededContainer {
 			return this;
 		}
 		
+		/**
+		 * 
+		 * @param memoryBackedIndex
+		 * @return Builder
+		 */
 		public Builder withCustomPlugin(String customPluginListFile) {
 		    this.customPluginListFile = customPluginListFile;
 		    return this;

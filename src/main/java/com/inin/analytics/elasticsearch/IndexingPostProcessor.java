@@ -1,5 +1,7 @@
 package com.inin.analytics.elasticsearch;
 
+import static org.elasticsearch.common.settings.ImmutableSettings.settingsBuilder;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +20,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +84,8 @@ public class IndexingPostProcessor {
 			
 			// Create all the indexes
 			for(String index : indicies) {
-			    esEmbededContainer.getNode().client().admin().indices().prepareCreate(index).get();
+			    esEmbededContainer.getNode().client().admin().indices().prepareCreate(index).setSettings(settingsBuilder()
+			               .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, shardConfig.getShardsForIndex(index))).get();
 			}
 			
 			// Snapshot it
