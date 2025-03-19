@@ -23,7 +23,13 @@ import org.cloudbus.cloudsim.Vm;
 public class PeList {
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/PeList.java/left.java
 	 * Gets a {@link Pe} with a given id.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/PeList.java/base.java
+	 * Gets a Pe by its id.
+=======
+	 * Gets a reference to a {@link Pe} that has a given id.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/PeList.java/right.java
 	 * 
 	 * @param peList the PE list where to get a given PE
 	 * @param id the id of the PE to be get

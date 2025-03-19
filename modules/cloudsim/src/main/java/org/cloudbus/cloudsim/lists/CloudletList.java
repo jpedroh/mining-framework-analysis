@@ -23,7 +23,13 @@ import org.cloudbus.cloudsim.Cloudlet;
 public class CloudletList {
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/CloudletList.java/left.java
 	 * Gets a {@link Cloudlet} with a given id.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/CloudletList.java/base.java
+	 * Gets the by id.
+=======
+	 * Gets a reference to a {@link Cloudlet} that has a given id.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/CloudletList.java/right.java
 	 * 
 	 * @param cloudletList the list of existing Cloudlets
 	 * @param id the Cloudlet id

@@ -21,7 +21,13 @@ import org.cloudbus.cloudsim.Vm;
 public class VmList {
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/left.java
 	 * Gets a {@link Vm} with a given id.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/base.java
+	 * Return a reference to a Vm object from its ID.
+=======
+	 * Gets a reference to a {@link Vm} that has a given id.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/right.java
 	 * 
 	 * @param id ID of required VM
 	 * @param vmList list of existing VMs
@@ -56,7 +62,14 @@ public class VmList {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/left.java
 	 * Gets a {@link Vm} with a given id and owned by a given user.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/base.java
+	 * Return a reference to a Vm object from its ID and user ID.
+=======
+	 * Gets a reference to a {@link Vm} that has a given id
+         * and is owned by a given user.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/VmList.java/right.java
 	 * 
 	 * @param vmList list of existing VMs
 	 * @param id ID of required VM

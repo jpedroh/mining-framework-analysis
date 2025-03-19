@@ -21,7 +21,13 @@ import org.cloudbus.cloudsim.Host;
 public class HostList {
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/left.java
 	 * Gets a {@link Host} with a given id.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/base.java
+	 * Gets the host (PM) object for a particular ID.
+=======
+	 * Gets a reference to a {@link Host} that has a given id.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/right.java
 	 * 
 	 * @param <T> the generic type
 	 * @param hostList the list of existing hosts
@@ -105,7 +111,13 @@ public class HostList {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/left.java
 	 * Gets the first Host with a specified number of free PEs.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/base.java
+	 * Gets the first PM with a specified number of free Pe's.
+=======
+	 * Gets the first PM with a specified number of free PEs.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/right.java
 	 * 
 	 * @param <T> the generic type
 	 * @param hostList the list of existing hosts
@@ -124,7 +136,13 @@ public class HostList {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/left.java
 	 * Sets the status of a particular PE on a given Host.
+||||||| /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/base.java
+	 * Sets the particular Pe status on a PM.
+=======
+	 * Sets the status of a particular PE on a PM.
+>>>>>>> /usr/src/app/output/cloudslab/cloudsim/e0205e647461340fcbdf2de516d1cd0ad9fd1154/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/lists/HostList.java/right.java
 	 * 
 	 * @param <T> the generic type
 	 * @param hostList the list of existing hosts
