@@ -37,13 +37,16 @@ import java.util.logging.Logger;
  * of the fluent-builder plugin.
  */
 public abstract class BuilderGenerator {
-	private static final Logger LOGGER = Logger.getLogger(BuilderGenerator.class.getName());
 	protected final ApiConstructs apiConstructs;
 
 	protected final JDefinedClass definedClass;
+
 	protected final JDefinedClass builderClass;
+
 	protected final ClassOutline classOutline;
+
 	protected final boolean hasImmutablePlugin;
+
 	protected final Map<String,BuilderOutline> builderOutlines;
 
 	protected BuilderGenerator(final ApiConstructs apiConstructs, final Map<String,BuilderOutline> builderOutlines, final BuilderOutline builderOutline) {
@@ -56,13 +59,14 @@ public abstract class BuilderGenerator {
 	}
 
 	public void buildProperties() {
-		final ClassOutline superClass = this.classOutline.getSuperClass();
+		try {
+			final ClassOutline superClass = this.classOutline.getSuperClass();
 
-		final JMethod initMethod = this.builderClass.method(JMod.PROTECTED, this.definedClass, ApiConstructs.INIT_METHOD_NAME);
-		final JTypeVar typeVar = initMethod.generify("P", this.definedClass);
-		initMethod.type(typeVar);
-		final JVar productParam = initMethod.param(JMod.FINAL, typeVar, ApiConstructs.PRODUCT_INSTANCE_NAME);
-		final JBlock initBody = initMethod.body();
+			final JMethod initMethod = this.builderClass.method(JMod.PROTECTED, this.definedClass, ApiConstructs.INIT_METHOD_NAME);
+			final JTypeVar typeVar = initMethod.generify("P", this.definedClass);
+			initMethod.type(typeVar);
+			final JVar productParam = initMethod.param(JMod.FINAL, typeVar, ApiConstructs.PRODUCT_INSTANCE_NAME);
+			final JBlock initBody = initMethod.body();
 
 			for (final FieldOutline fieldOutline : this.classOutline.getDeclaredFields()) {
 				final JFieldVar declaredField = this.definedClass.fields().get(fieldOutline.getPropertyInfo().getName(false));
@@ -71,19 +75,23 @@ public abstract class BuilderGenerator {
 				}
 			}
 
-		if (superClass != null) {
-			generateExtendsClause(getBuilderDeclaration(superClass.implClass));
-			initBody._return(JExpr._super().invoke(initMethod).arg(productParam));
-			generateBuilderMemberOverrides(superClass);
-		} else {
-			initBody._return(productParam);
-		}
+			if (superClass != null) {
+				generateExtendsClause(getBuilderDeclaration(superClass.implClass));
+				initBody._return(JExpr._super().invoke(initMethod).arg(productParam));
+				generateBuilderMemberOverrides(superClass);
+			} else {
+				initBody._return(productParam);
+			}
 
-		if (!this.definedClass.isAbstract()) {
-			generateBuildMethod(initMethod);
-			generateBuilderMethod();
+			if (!this.definedClass.isAbstract()) {
+				generateBuildMethod(initMethod);
+				generateBuilderMethod();
+			}
+		} catch(final Exception x) {
+			BuilderGenerator.LOGGER.severe(x.getMessage());
+			System.err.println(x.getMessage());
+			x.printStackTrace();
 		}
-
 	}
 
 	private void generateBuilderMemberOverrides(final ClassOutline superClass) {
@@ -104,6 +112,10 @@ public abstract class BuilderGenerator {
 	protected BuilderOutline getBuilderDeclaration(final JType type) {
 		return this.builderOutlines.get(type.fullName());
 	}
+
+	protected abstract void generateBuilderMember(final FieldOutline fieldOutline, final JBlock initBody, final JVar productParam);
+
+	private static final Logger LOGGER = Logger.getLogger(BuilderGenerator.class.getName());
 
 	protected void generateArrayProperty(final JBlock initBody, final JVar productParam, final JFieldVar declaredField, final String propertyName, final JType elementType, final JType builderType) {
 
