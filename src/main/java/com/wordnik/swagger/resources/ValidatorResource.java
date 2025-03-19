@@ -48,14 +48,10 @@ public class ValidatorResource {
         try {
             return Response.ok().entity(service.debugByUrl(request, response, url)).build();
         } catch (Exception e) {
-            return Response.status(500).build();
+          e.printStackTrace();
+          return Response.status(500).build();
         }
     }
-    catch (Exception e) {
-      e.printStackTrace();
-      return Response.status(500).build();
-    }
-  }
 
     @POST
     @Path("/debug")
