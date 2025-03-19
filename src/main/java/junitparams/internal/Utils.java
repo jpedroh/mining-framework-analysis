@@ -1,7 +1,6 @@
 package junitparams.internal;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.lang.reflect.Method;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -82,7 +81,7 @@ public class Utils {
         }
         return params;
     }
-    
+
     private static String asCsvString(Object[] params) {
         if (params == null)
             return "null";
