@@ -64,10 +64,10 @@ public class Config {
   private static final String CLIENT_PREFIX = GLOBAL_PREFIX + "rest-client.";
   public static final String CLIENT_SERVER_URL = CLIENT_PREFIX + "server-url";
   public static final String CLIENT_RETURN_NONE_ON_EXCEPTIONS = CLIENT_PREFIX + "return-none-on-exceptions";
-
   // JSON parser config
   private static final String JSON_PREFIX = GLOBAL_PREFIX + "json.";
   public static final String JSON_UTIL_IMPLEMENTATION = JSON_PREFIX + "util-implementation";
+  // REST client config
 
   // Default values for the above
 
@@ -95,12 +95,19 @@ public class Config {
     DEFAULTS.setProperty(ZK_CONNECTION_TIMEOUT, "2000");
     DEFAULTS.setProperty(ZK_CURATOR_SLEEP_TIME_BETWEEN_RETRIES, "2000");
     DEFAULTS.setProperty(ZK_CURATOR_NUMBER_OF_RETRIES, "10");
-
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/common/src/main/java/org/schemarepo/config/Config.java/left.java
+  
     // Client defaults
     DEFAULTS.setProperty(CLIENT_RETURN_NONE_ON_EXCEPTIONS, "true");
 
     // JSON defaults
     DEFAULTS.setProperty(JSON_UTIL_IMPLEMENTATION, GsonJsonUtil.class.getName());
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/common/src/main/java/org/schemarepo/config/Config.java/base.java
+=======
+  
+    // Client defaults
+    DEFAULTS.setProperty(CLIENT_RETURN_NONE_ON_EXCEPTIONS, "true");
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/common/src/main/java/org/schemarepo/config/Config.java/right.java
   }
 
   public static String getDefault(String propertyName) {

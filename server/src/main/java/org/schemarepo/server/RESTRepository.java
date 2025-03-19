@@ -114,6 +114,7 @@ public class RESTRepository {
     if (null == s) {
       throw new NotFoundException(MessageStrings.SUBJECT_DOES_NOT_EXIST_ERROR);
     }
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/server/src/main/java/org/schemarepo/server/RESTRepository.java/left.java
     if (mediaType.equals(MediaType.APPLICATION_JSON)) {
       return Response.ok(
               jsonUtil.schemasToJson(s.allEntries()),
@@ -124,6 +125,12 @@ public class RESTRepository {
               MediaType.TEXT_PLAIN).build();
 
     }
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/server/src/main/java/org/schemarepo/server/RESTRepository.java/base.java
+    String result = RepositoryUtil.schemasToString(s.allEntries());
+    return result;
+=======
+    return RepositoryUtil.schemasToString(s.allEntries());
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/server/src/main/java/org/schemarepo/server/RESTRepository.java/right.java
   }
 
   @GET

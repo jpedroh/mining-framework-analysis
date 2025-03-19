@@ -73,16 +73,35 @@ public class RESTRepositoryClient implements RepositoryClient {
   private boolean returnNoneOnExceptions;
 
   @Inject
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/left.java
   public RESTRepositoryClient(@Named(Config.CLIENT_SERVER_URL) String url,
                               @Named(Config.JSON_UTIL_IMPLEMENTATION) JsonUtil jsonUtil,
                               @Named(Config.CLIENT_RETURN_NONE_ON_EXCEPTIONS) boolean returnNoneOnExceptions)
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/base.java
+  public RESTRepositoryClient(@Named("schema-repo.url") String url)
+=======
+  public RESTRepositoryClient(@Named(Config.CLIENT_SERVER_URL) String url,
+                              @Named(Config.CLIENT_RETURN_NONE_ON_EXCEPTIONS) boolean returnNoneOnExceptions)
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/right.java
   {
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/left.java
     logger.info(format("Pointing to schema-repo server at %s", url));
     logger.info(format("Remote exceptions from GET requests will be %s",
             returnNoneOnExceptions ? "swallowed and an 'empty' value returned" : "propagated to the caller"));
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/base.java
+=======
+    logger.info(format("Pointing to schema-repo server at %s", url));
+    logger.info(format("Remote exceptions from GET requests will be %s",
+        returnNoneOnExceptions ? "swallowed and an 'empty' value returned" : "propagated to the caller"));
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/right.java
     this.webResource = Client.create().resource(url);
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/left.java
     this.returnNoneOnExceptions = returnNoneOnExceptions;
     this.jsonUtil = jsonUtil;
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/base.java
+=======
+    this.returnNoneOnExceptions = returnNoneOnExceptions;
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/right.java
   }
 
   @Override
@@ -248,12 +267,24 @@ public class RESTRepositoryClient implements RepositoryClient {
       String path = getName() + "/all";
       Iterable<SchemaEntry> entries = Collections.emptyList();
       try {
+<<<<<<< /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/left.java
         String entriesStr = webResource.path(path)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
         entries = jsonUtil.schemasFromJson(entriesStr);
       } catch (RuntimeException e) {
         handleException(e, format("Failed to retrieve all schema entries in subject %s", getName()), false);
+||||||| /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/base.java
+        String entriesStr = webResource.path(path).get(String.class);
+        return schemaEntriesFromStr(entriesStr);
+      } catch (UniformInterfaceException e) {
+        return Collections.emptyList();
+=======
+        String entriesStr = webResource.path(path).get(String.class);
+        entries = schemaEntriesFromStr(entriesStr);
+      } catch (RuntimeException e) {
+        handleException(e, format("Failed to retrieve all schema entries in subject %s", getName()), false);
+>>>>>>> /usr/src/app/output/schema-repo/schema-repo/f1a22946df99bc2bd9997867310bc9420c72adf2/client/src/main/java/org/schemarepo/client/RESTRepositoryClient.java/right.java
       }
       return entries;
     }
