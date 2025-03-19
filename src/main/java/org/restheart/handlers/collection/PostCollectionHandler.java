@@ -96,7 +96,7 @@ public class PostCollectionHandler extends PutCollectionHandler {
         }
 
         int httpCode = this.documentDAO
-                .upsertDocumentPost(exchange, context.getDBName(), context.getCollectionName(), content, etag);
+                .upsertDocumentPost(exchange, context.getDBName(), context.getCollectionName(), docId, content, etag);
 
         // send the warnings if any (and in case no_content change the return code to ok
         if (context.getWarnings() != null && !context.getWarnings().isEmpty()) {

@@ -46,7 +46,12 @@ import org.slf4j.LoggerFactory;
 public class DbsDAO implements Database {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbsDAO.class);
+<<<<<<< /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/left.java
     public static final BasicDBObject PROPS_QUERY = new BasicDBObject("_id", "_properties");
+||||||| /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/base.java
+    public static final BasicDBObject METADATA_QUERY = new BasicDBObject("_id", "_properties");
+=======
+>>>>>>> /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/right.java
 
     private static final BasicDBObject fieldsToReturn;
 
@@ -151,7 +156,15 @@ public class DbsDAO implements Database {
             return null;
         }
 
+<<<<<<< /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/left.java
+        final CollectionDAO collectionDAO = new CollectionDAO();
+        DBCollection propsColl = collectionDAO.getCollection(dbName, "_properties");
+||||||| /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/base.java
+        final CollectionDAO collectionDAO = new CollectionDAO();
         DBCollection propscoll = collectionDAO.getCollection(dbName, "_properties");
+=======
+        DBCollection propscoll = collectionDAO.getCollection(dbName, "_properties");
+>>>>>>> /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/right.java
 
         DBObject row = propsColl.findOne(PROPS_QUERY);
 
@@ -293,8 +306,17 @@ public class DbsDAO implements Database {
             // we use findAndModify to get the @created_on field value from the existing document
             // we need to put this field back using a second update 
             // it is not possible in a single update even using $setOnInsert update operator
+<<<<<<< /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/left.java
             // in this case we need to provide the other data using $set operator and this makes it a partial update (patch semantic) 
             DBObject old = coll.findAndModify(PROPS_QUERY, fieldsToReturn, null, false, content, false, true);
+||||||| /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/base.java
+            // in this case we need to provide the other data using $set operator and this makes it a partial update (patch semantic) 
+            DBObject old = coll.findAndModify(METADATA_QUERY, fieldsToReturn, null, false, content, false, true);
+=======
+            // in this case we need to provide the other data using $set operator 
+            // and this makes it a partial update (patch semantic) 
+            DBObject old = coll.findAndModify(METADATA_QUERY, fieldsToReturn, null, false, content, false, true);
+>>>>>>> /usr/src/app/output/softinstigate/restheart/0747dae87d95db10cd2f8c43757649542e6c6d62/src/main/java/org/restheart/db/DbsDAO.java/right.java
 
             if (old != null) {
                 Object oldTimestamp = old.get("_created_on");

@@ -160,7 +160,7 @@ public class LoadGetPT {
         ArrayList<DBObject> data;
         
         try {
-            data = collectionDAO.getCollectionData(dbcoll, page, pagesize, null, _filter, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY.NONE, true);
+            data = dbsDAO.getCollectionData(dbcoll, page, pagesize, null, _filter, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY.NONE, true);
         } catch(Exception e) {
             System.out.println("error: " + e.getMessage());
             return;

@@ -102,7 +102,7 @@ class CollectionDAO {
      * @param coll the mongodb DBCollection object
      * @return true if the commection is empty
      */
-    public boolean isCollectionEmpty(DBCollection coll) {
+     boolean isCollectionEmpty(DBCollection coll) {
         return coll.count() == 0;
     }
 
@@ -116,7 +116,7 @@ class CollectionDAO {
      * @return the number of documents in the given collection (taking into
      * account the filters in case)
      */
-    public long getCollectionSize(DBCollection coll, Deque<String> filters) {
+     long getCollectionSize(DBCollection coll, Deque<String> filters) {
         final BasicDBObject query = new BasicDBObject();
 
         if (filters != null) {
@@ -180,14 +180,13 @@ class CollectionDAO {
         return coll.find(query).sort(sort);
     }
 
-    public ArrayList<DBObject> getCollectionData(DBCollection coll, int page, int pagesize, Deque<String> sortBy, Deque<String> filters, DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager, boolean detectOids) throws JSONParseException {
-    ArrayList<DBObject> getCollectionData(
+     ArrayList<DBObject> getCollectionData(
             DBCollection coll,
             int page,
             int pagesize,
             Deque<String> sortBy,
             Deque<String> filters,
-            DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager) throws JSONParseException {
+            DBCursorPool.EAGER_CURSOR_ALLOCATION_POLICY eager, boolean detectOids) throws JSONParseException {
         ArrayList<DBObject> ret = new ArrayList<>();
 
         int toskip = pagesize * (page - 1);
@@ -245,7 +244,7 @@ class CollectionDAO {
      * @param collName the collection name
      * @return the collection properties document
      */
-    public DBObject getCollectionProps(String dbName, String collName) {
+     DBObject getCollectionProps(String dbName, String collName) {
         DBCollection propsColl = getCollection(dbName, "_properties");
 
         DBObject properties = propsColl.findOne(new BasicDBObject("_id", "_properties.".concat(collName)));
