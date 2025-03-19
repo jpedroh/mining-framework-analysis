@@ -1,3 +1,4 @@
+<<<<<<< /usr/src/app/output/andreaskl/springboot-angular-atmosphere-quickstart/cadddbad17de1526cd54f53de4a0c633acb328e9/src/test/java/net/andreaskluth/toastonatmosphere/security/FakeAuthenticationProviderTest.java/left.java
 package net.andreaskluth.toastonatmosphere.security;
 
 import org.junit.Assert;
@@ -49,3 +50,61 @@ public class FakeAuthenticationProviderTest {
   }
 
 }
+||||||| /usr/src/app/output/andreaskl/springboot-angular-atmosphere-quickstart/cadddbad17de1526cd54f53de4a0c633acb328e9/src/test/java/net/andreaskluth/toastonatmosphere/security/FakeAuthenticationProviderTest.java/base.java
+package net.andreaskluth.toastonatmosphere.security;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+/**
+ * Test suite for {@link FakeAuthenticationProvider}.
+ * 
+ * @author Andreas Kluth
+ */
+public class FakeAuthenticationProviderTest {
+
+  @Test
+  public void arbitraryCasedNameReturnsValidAuthentication() {
+    AuthenticationProvider provider = createProvider();
+    Authentication authentication = provider.authenticate(createAuthenticationTokenWithUserAndPw("AdMiN", "adm1n"));
+    Assert.assertNotNull(authentication);
+  }
+
+  @Test
+  public void validPasswordReturnsValidAuthentication() {
+    AuthenticationProvider provider = createProvider();
+    Authentication authentication = provider.authenticate(createAuthenticationTokenWithUserAndPw("admin", "adm1n"));
+    Assert.assertNotNull(authentication);
+  }
+
+  @Test(expected = BadCredentialsException.class)
+  public void invalidPasswordRaises() {
+    AuthenticationProvider provider = createProvider();
+    provider.authenticate(createAuthenticationTokenWithUserAndPw("admin", "admin"));
+  }
+
+  @Test(expected = BadCredentialsException.class)
+  public void invalidUserRaises() {
+    AuthenticationProvider provider = createProvider();
+    provider.authenticate(createAuthenticationTokenWithUserAndPw("admon", "adm1n"));
+  }
+
+  private AuthenticationProvider createProvider() {
+    PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+    return new FakeAuthenticationProvider(encoder);
+  }
+
+  private TestingAuthenticationToken createAuthenticationTokenWithUserAndPw(String username, String password) {
+    return new TestingAuthenticationToken(username, password);
+  }
+
+}
+=======
+fatal: path 'src/test/java/net/andreaskluth/toastonatmosphere/security/FakeAuthenticationProviderTest.java' exists on disk, but not in 'ca84722195aac40f62ec2db5eed3eea4273a6ff8'
+>>>>>>> /usr/src/app/output/andreaskl/springboot-angular-atmosphere-quickstart/cadddbad17de1526cd54f53de4a0c633acb328e9/src/test/java/net/andreaskluth/toastonatmosphere/security/FakeAuthenticationProviderTest.java/right.java
