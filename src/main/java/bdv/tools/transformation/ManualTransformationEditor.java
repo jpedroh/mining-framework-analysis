@@ -131,6 +131,12 @@ public class ManualTransformationEditor implements TransformListener< AffineTran
 
 		if ( a )
 		{
+<<<<<<< /usr/src/app/output/tpietzsch/bigdataviewer-core/572d4602a6282501870c01d3660fea9b22a817f6/src/main/java/bdv/tools/transformation/ManualTransformationEditor.java/left.java
+			active = true;
+||||||| /usr/src/app/output/tpietzsch/bigdataviewer-core/572d4602a6282501870c01d3660fea9b22a817f6/src/main/java/bdv/tools/transformation/ManualTransformationEditor.java/base.java
+			active = a;
+=======
+>>>>>>> /usr/src/app/output/tpietzsch/bigdataviewer-core/572d4602a6282501870c01d3660fea9b22a817f6/src/main/java/bdv/tools/transformation/ManualTransformationEditor.java/right.java
 			// Enter manual edit mode
 			final ViewerState state = viewer.state().snapshot();
 			final List< SourceAndConverter< ? > > currentSources = new ArrayList<>();
