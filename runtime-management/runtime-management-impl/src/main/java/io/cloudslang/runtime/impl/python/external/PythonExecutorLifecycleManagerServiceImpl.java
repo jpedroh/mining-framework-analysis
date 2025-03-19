@@ -80,54 +80,34 @@ public class PythonExecutorLifecycleManagerServiceImpl implements PythonExecutor
         return isAlivePythonExecutor();
     }
 
+<<<<<<< /usr/src/app/output/cloudslang/score/4f8ad3c2a0d651ccf999d4f65275113de84766b3/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/PythonExecutorLifecycleManagerServiceImpl.java/left.java
+    @PreDestroy
     @Override
     public void stop() {
         doStopPythonExecutor();
     }
+||||||| /usr/src/app/output/cloudslang/score/4f8ad3c2a0d651ccf999d4f65275113de84766b3/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/PythonExecutorLifecycleManagerServiceImpl.java/base.java
+=======
+    @Override
+    public void stop() {
+        doStopPythonExecutor();
+    }
+>>>>>>> /usr/src/app/output/cloudslang/score/4f8ad3c2a0d651ccf999d4f65275113de84766b3/runtime-management/runtime-management-impl/src/main/java/io/cloudslang/runtime/impl/python/external/PythonExecutorLifecycleManagerServiceImpl.java/right.java
 
     private boolean isAlivePythonExecutor() {
-        try (Response response = restEasyClient
-                .target(pythonExecutorConfigurationDataService.getPythonExecutorConfiguration().getUrl())
-                .path(EXTERNAL_PYTHON_EXECUTOR_HEALTH_PATH)
-                .request()
-                .accept(APPLICATION_JSON_TYPE)
-                .header(CONTENT_TYPE, APPLICATION_JSON)
-                .build("GET")
-                .invoke()) {
-            return response.getStatus() == 200;
-        } catch (Exception e) {
-            return false;
-        }
+    try (Response response = restEasyClient
+            .target(pythonExecutorConfigurationDataService.getPythonExecutorConfiguration().getUrl())
+            .path(EXTERNAL_PYTHON_EXECUTOR_HEALTH_PATH)
+            .request()
+            .accept(APPLICATION_JSON_TYPE)
+            .header(CONTENT_TYPE, APPLICATION_JSON)
+            .build("GET")
+            .invoke()) {
+        return response.getStatus() == 200;
+    } catch (Exception e) {
+        return false;
     }
-
-    private void doStopPythonExecutor() {
-        logger.info("A request to stop the Python Executor was sent");
-        if (!isAlivePythonExecutor()) {
-            logger.info("Python Executor was already stopped");
-            return;
-        }
-
-        PythonExecutorDetails pythonExecutorConfiguration = pythonExecutorConfigurationDataService.getPythonExecutorConfiguration();
-        try (Response response = restEasyClient
-                .target(pythonExecutorConfiguration.getUrl())
-                .path(EXTERNAL_PYTHON_EXECUTOR_STOP_PATH)
-                .request()
-                .accept(APPLICATION_JSON_TYPE)
-                .header(CONTENT_TYPE, APPLICATION_JSON)
-                .header(AUTHORIZATION, pythonExecutorConfiguration.getLifecycleEncodedAuth())
-                .build("POST")
-                .invoke()) {
-
-            if (response.getStatus() == 200) {
-                waitToStop();
-            }
-        } catch (ProcessingException processingEx) {
-            // Might not get a response if server gets shutdown immediately
-            if (containsIgnoreCase(processingEx.getMessage(), "RESTEASY004655: Unable to invoke request")) {
-                waitToStop();
-            }
-        }
-    }
+}
 
     @SuppressWarnings("unused")
     // Scheduled in xml
@@ -205,6 +185,35 @@ public class PythonExecutorLifecycleManagerServiceImpl implements PythonExecutor
 
         logger.error("Python executor did not start successfully within the allocated time");
         destroyPythonExecutorProcess();
+    }
+
+    private void doStopPythonExecutor() {
+        logger.info("A request to stop the Python Executor was sent");
+        if (!isAlivePythonExecutor()) {
+            logger.info("Python Executor was already stopped");
+            return;
+        }
+
+        PythonExecutorDetails pythonExecutorConfiguration = pythonExecutorConfigurationDataService.getPythonExecutorConfiguration();
+        try (Response response = restEasyClient
+                .target(pythonExecutorConfiguration.getUrl())
+                .path(EXTERNAL_PYTHON_EXECUTOR_STOP_PATH)
+                .request()
+                .accept(APPLICATION_JSON_TYPE)
+                .header(CONTENT_TYPE, APPLICATION_JSON)
+                .header(AUTHORIZATION, pythonExecutorConfiguration.getLifecycleEncodedAuth())
+                .build("POST")
+                .invoke()) {
+
+            if (response.getStatus() == 200) {
+                waitToStop();
+            }
+        } catch (ProcessingException processingEx) {
+            // Might not get a response if server gets shutdown immediately
+            if (containsIgnoreCase(processingEx.getMessage(), "RESTEASY004655: Unable to invoke request")) {
+                waitToStop();
+            }
+        }
     }
 
     private void waitToStop() {
