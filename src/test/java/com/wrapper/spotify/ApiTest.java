@@ -5,6 +5,8 @@ import com.google.gson.JsonParser;
 import com.wrapper.spotify.UtilProtos.Url.Scheme;
 import com.wrapper.spotify.model_objects.AlbumType;
 import com.wrapper.spotify.requests.Request;
+import com.wrapper.spotify.models.PlaylistTrackPosition;
+
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 
