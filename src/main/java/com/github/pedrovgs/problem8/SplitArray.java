@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2014 Pedro Vicente Gómez Sánchez.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.github.pedrovgs.problem8;
 
 /**
@@ -25,7 +10,6 @@ package com.github.pedrovgs.problem8;
  * @author Pedro Vicente Gómez Sánchez.
  */
 public class SplitArray {
-
   /**
    * First solution implemented for this problem. It's is based on a sorting algorithm called
    * "Bubble Sorting Algorithm".
@@ -37,9 +21,8 @@ public class SplitArray {
    */
   public void splitSorting(int[] array) {
     if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
+      throw new IllegalArgumentException("Array passed as parameter can\'t be null.");
     }
-
     boolean flag = true;
     while (flag) {
       flag = false;
@@ -61,9 +44,8 @@ public class SplitArray {
    */
   public void splitSwappingIterative(int[] array) {
     if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
+      throw new IllegalArgumentException("Array passed as parameter can\'t be null.");
     }
-
     int left = 0;
     int right = array.length - 1;
     while (left < right) {
@@ -76,8 +58,10 @@ public class SplitArray {
       } else {
         if (!shouldChangeLeft) {
           left++;
-        } else if (!shouldChangeRight) {
-          right--;
+        } else {
+          if (!shouldChangeRight) {
+            right--;
+          }
         }
       }
     }
@@ -88,18 +72,33 @@ public class SplitArray {
    */
   public void splitSwappingPartition(int[] array) {
     if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
+      throw new IllegalArgumentException("Array passed as parameter can\'t be null.");
     }
-
     int left = 0;
     int right = array.length - 1;
     while (left < right) {
+
+<<<<<<< /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/left.java
       while (array[left] < 0 && left < right) {
         left++;
       }
+=======
+      while (array[left] < 0 && left < right) {
+        left++;
+      }
+>>>>>>> /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/right.java
+
+
+<<<<<<< /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/left.java
       while (array[right] >= 0 && left < right) {
         right--;
       }
+=======
+      while (array[right] >= 0 && left < right) {
+        right--;
+      }
+>>>>>>> /usr/src/app/output/pedrovgs/algorithms/d7e0b1c03fa7cacf40b32dcfde30871e8947445a/src/main/java/com/github/pedrovgs/problem8/SplitArray.java/right.java
+
       if (left < right) {
         swap(array, left, right);
         left++;
@@ -117,13 +116,11 @@ public class SplitArray {
    */
   public void splitSwappingRecursive(int[] array) {
     if (array == null) {
-      throw new IllegalArgumentException("Array passed as parameter can't be null.");
+      throw new IllegalArgumentException("Array passed as parameter can\'t be null.");
     }
-
     if (array.length == 0) {
       return;
     }
-
     splitSwappingRecursiveInner(array, 0, array.length - 1);
   }
 
@@ -137,8 +134,10 @@ public class SplitArray {
       } else {
         if (!shouldChangeLeft) {
           splitSwappingRecursiveInner(array, left + 1, right);
-        } else if (!shouldChangeRight) {
-          splitSwappingRecursiveInner(array, left, right - 1);
+        } else {
+          if (!shouldChangeRight) {
+            splitSwappingRecursiveInner(array, left, right - 1);
+          }
         }
       }
     }
