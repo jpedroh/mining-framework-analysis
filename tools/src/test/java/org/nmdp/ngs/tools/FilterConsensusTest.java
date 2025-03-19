@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
+
 import java.util.List;
 import java.util.Map;
 
@@ -136,7 +137,6 @@ public final class FilterConsensusTest {
     private static void copyResource(final String name, final File file) throws Exception {
         Files.write(Resources.toByteArray(FilterConsensusTest.class.getResource(name)), file);        
     }
-    
     @Test
     public void testRunPloidy() throws Exception {
               // copy hla-a.bam resource to inputBamFile

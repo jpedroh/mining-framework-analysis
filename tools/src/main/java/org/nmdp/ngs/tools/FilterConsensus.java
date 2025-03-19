@@ -203,7 +203,7 @@ public final class FilterConsensus implements Runnable {
                     int sequenceLength = allele.sequence.seqString().length();
                     List<String> fields = Splitter.on("|").splitToList(allele.getName());
 
-                    Double locusLength = Double.parseDouble(fields.get(fields.size() - 1));
+                    int locusLength = Integer.parseInt(fields.get(fields.size() - 1));
 
                     if (sequenceLength/locusLength >= minimumBreadth) {
                         if (!contigs.containsKey(fields.get(0))) {
@@ -238,7 +238,7 @@ public final class FilterConsensus implements Runnable {
 
                     String cdnaSequence = sb.toString();
                     if (removeGaps) {
-                        cdnaSequence = cdnaSequence.replaceAll("-", "");
+                        cdnaSequence.replaceAll("-", "");
                     }
 
                     // todo:  use strand from genomic region file
