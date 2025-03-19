@@ -19,6 +19,7 @@
  * =========================LICENSE_END==================================
  */
 package org.restheart.graphql.scalars;
+import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
 import org.restheart.graphql.scalars.bsonCoercing.*;
 
@@ -43,11 +44,15 @@ public class BsonScalars {
     public static final GraphQLScalarType GraphQLBsonDocument = GraphQLScalarType.newScalar()
             .name("BsonDocument").description("BSON Document scalar").coercing(new GraphQLBsonDocumentCoercing()).build();
 
+    public static final GraphQLScalarType GraphQLBsonArray = GraphQLScalarType.newScalar()
+            .name("BsonArray").description("BSON Array scalar").coercing(new GraphQLBsonArrayCoercing()).build();
+
     public static final GraphQLScalarType GraphQLBsonDate = GraphQLScalarType.newScalar()
             .name("DateTime").description("BSON DateTime scalar").coercing(new GraphQLBsonDateCoercing()).build();
 
     public static final GraphQLScalarType GraphQLBsonRegularExpression = GraphQLScalarType.newScalar()
             .name("Regex").description("Bson regular expression scalar").coercing(new GraphQLBsonRegexCoercing()).build();
+
 
     public static final GraphQLScalarType GraphQLBsonInt64 = GraphQLScalarType.newScalar()
             .name("Long").description("BSON Int64 scalar (Long)").coercing(new GraphQLBsonInt64Coercing()).build();
@@ -58,6 +63,7 @@ public class BsonScalars {
         GraphQLBsonDecimal128,
         GraphQLBsonTimestamp,
         GraphQLBsonDate,
+        GraphQLBsonArray,
         GraphQLBsonRegularExpression,
         GraphQLBsonInt64
     );
