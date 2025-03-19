@@ -1,6 +1,4 @@
-// Copyright 2013 Square, Inc.
 package com.squareup.java;
-
 import com.example.Binding;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -11,23 +9,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public final class JavaWriterTest {
   private final StringWriter stringWriter = new StringWriter();
+
   private final JavaWriter javaWriter = new JavaWriter(stringWriter);
 
   @Test public void typeDeclaration() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "public final class Foo {\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "public final class Foo {\n" + "}\n");
   }
 
   @Test public void enumDeclaration() throws IOException {
@@ -36,13 +30,7 @@ public final class JavaWriterTest {
     javaWriter.emitEnumValue("BAR");
     javaWriter.emitEnumValue("BAZ");
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "public enum Foo {\n"
-        + "  BAR,\n"
-        + "  BAZ,\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "public enum Foo {\n" + "  BAR,\n" + "  BAZ,\n" + "}\n");
   }
 
   @Test public void fieldDeclaration() throws IOException {
@@ -50,12 +38,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", 0);
     javaWriter.emitField("java.lang.String", "string", Modifier.PRIVATE | Modifier.STATIC);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  private static String string;\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  private static String string;\n" + "}\n");
   }
 
   @Test public void fieldDeclarationWithInitialValue() throws IOException {
@@ -63,44 +46,25 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", 0);
     javaWriter.emitField("java.lang.String", "string", 0, "\"bar\" + \"baz\"");
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  String string = \"bar\" + \"baz\";\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  String string = \"bar\" + \"baz\";\n" + "}\n");
   }
 
   @Test public void abstractMethodDeclaration() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.beginType("com.squareup.Foo", "class", 0);
-    javaWriter.beginMethod("java.lang.String", "foo", Modifier.ABSTRACT | Modifier.PUBLIC,
-        "java.lang.Object", "object", "java.lang.String", "s");
+    javaWriter.beginMethod("java.lang.String", "foo", Modifier.ABSTRACT | Modifier.PUBLIC, "java.lang.Object", "object", "java.lang.String", "s");
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  public abstract String foo(Object object, String s);\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  public abstract String foo(Object object, String s);\n" + "}\n");
   }
 
   @Test public void abstractMethodDeclarationWithThrows() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.beginType("com.squareup.Foo", "class", 0);
-    javaWriter.beginMethod("java.lang.String", "foo", Modifier.ABSTRACT | Modifier.PUBLIC,
-        Arrays.asList("java.lang.Object", "object", "java.lang.String", "s"),
-        Arrays.asList("IOException"));
+    javaWriter.beginMethod("java.lang.String", "foo", Modifier.ABSTRACT | Modifier.PUBLIC, Arrays.asList("java.lang.Object", "object", "java.lang.String", "s"), Arrays.asList("IOException"));
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  public abstract String foo(Object object, String s)\n"
-        + "      throws IOException;\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  public abstract String foo(Object object, String s)\n" + "      throws IOException;\n" + "}\n");
   }
 
   @Test public void nonAbstractMethodDeclaration() throws IOException {
@@ -109,30 +73,16 @@ public final class JavaWriterTest {
     javaWriter.beginMethod("int", "foo", 0, "java.lang.String", "s");
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "  }\n" + "}\n");
   }
 
   @Test public void nonAbstractMethodDeclarationWithThrows() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.beginType("com.squareup.Foo", "class", 0);
-    javaWriter.beginMethod("int", "foo", 0, Arrays.asList("java.lang.String", "s"),
-        Arrays.asList("IOException"));
+    javaWriter.beginMethod("int", "foo", 0, Arrays.asList("java.lang.String", "s"), Arrays.asList("IOException"));
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s)\n"
-        + "      throws IOException {\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s)\n" + "      throws IOException {\n" + "  }\n" + "}\n");
   }
 
   @Test public void constructorDeclaration() throws IOException {
@@ -141,30 +91,16 @@ public final class JavaWriterTest {
     javaWriter.beginMethod(null, "com.squareup.Foo", Modifier.PUBLIC, "java.lang.String", "s");
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  public Foo(String s) {\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  public Foo(String s) {\n" + "  }\n" + "}\n");
   }
 
   @Test public void constructorDeclarationWithThrows() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.beginType("com.squareup.Foo", "class", 0);
-    javaWriter.beginMethod(null, "com.squareup.Foo", Modifier.PUBLIC,
-        Arrays.asList("java.lang.String", "s"), Arrays.asList("IOException"));
+    javaWriter.beginMethod(null, "com.squareup.Foo", Modifier.PUBLIC, Arrays.asList("java.lang.String", "s"), Arrays.asList("IOException"));
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  public Foo(String s)\n"
-        + "      throws IOException {\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  public Foo(String s)\n" + "      throws IOException {\n" + "  }\n" + "}\n");
   }
 
   @Test public void statement() throws IOException {
@@ -174,14 +110,7 @@ public final class JavaWriterTest {
     javaWriter.emitStatement("int j = s.length() + %s", 13);
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "    int j = s.length() + 13;\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "    int j = s.length() + 13;\n" + "  }\n" + "}\n");
   }
 
   @Test public void statementPrecededByComment() throws IOException {
@@ -192,15 +121,7 @@ public final class JavaWriterTest {
     javaWriter.emitStatement("int j = s.length() + %s", 13);
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "    // foo\n"
-        + "    int j = s.length() + 13;\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "    // foo\n" + "    int j = s.length() + 13;\n" + "  }\n" + "}\n");
   }
 
   @Test public void multiLineStatement() throws IOException {
@@ -211,16 +132,7 @@ public final class JavaWriterTest {
     javaWriter.emitStatement("return Math.sqrt(cSquared)");
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Triangle {\n"
-        + "  double pythagorean(int a, int b) {\n"
-        + "    int cSquared = a * a\n"
-        + "        + b * b;\n"
-        + "    return Math.sqrt(cSquared);\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Triangle {\n" + "  double pythagorean(int a, int b) {\n" + "    int cSquared = a * a\n" + "        + b * b;\n" + "    return Math.sqrt(cSquared);\n" + "  }\n" + "}\n");
   }
 
   @Test public void addImport() throws IOException {
@@ -229,13 +141,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.emitField("java.util.ArrayList", "list", 0, "new java.util.ArrayList()");
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "import java.util.ArrayList;\n"
-        + "public final class Foo {\n"
-        + "  ArrayList list = new java.util.ArrayList();\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "import java.util.ArrayList;\n" + "public final class Foo {\n" + "  ArrayList list = new java.util.ArrayList();\n" + "}\n");
   }
 
   @Test public void addStaticImport() throws IOException {
@@ -244,13 +150,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.emitField("String", "bar", 0, "getProperty(\"bar\")");
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "import static java.lang.System.getProperty;\n"
-        + "public final class Foo {\n"
-        + "  String bar = getProperty(\"bar\");\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "import static java.lang.System.getProperty;\n" + "public final class Foo {\n" + "  String bar = getProperty(\"bar\");\n" + "}\n");
   }
 
   @Test public void addStaticWildcardImport() throws IOException {
@@ -259,13 +159,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.emitField("String", "bar", 0, "getProperty(\"bar\")");
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "import static java.lang.System.*;\n"
-        + "public final class Foo {\n"
-        + "  String bar = getProperty(\"bar\");\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "import static java.lang.System.*;\n" + "public final class Foo {\n" + "  String bar = getProperty(\"bar\");\n" + "}\n");
   }
 
   @Test public void emptyImports() throws IOException {
@@ -273,11 +167,7 @@ public final class JavaWriterTest {
     javaWriter.emitImports(Collections.<String>emptyList());
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "public final class Foo {\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "public final class Foo {\n" + "}\n");
   }
 
   @Test public void emptyStaticImports() throws IOException {
@@ -285,11 +175,7 @@ public final class JavaWriterTest {
     javaWriter.emitStaticImports(Collections.<String>emptyList());
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "public final class Foo {\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "public final class Foo {\n" + "}\n");
   }
 
   @Test public void addImportFromSubpackage() throws IOException {
@@ -297,12 +183,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", Modifier.PUBLIC | Modifier.FINAL);
     javaWriter.emitField("com.squareup.bar.Baz", "baz", 0);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "public final class Foo {\n"
-        + "  com.squareup.bar.Baz baz;\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "public final class Foo {\n" + "  com.squareup.bar.Baz baz;\n" + "}\n");
   }
 
   @Test public void ifControlFlow() throws IOException {
@@ -314,16 +195,7 @@ public final class JavaWriterTest {
     javaWriter.endControlFlow();
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "    if (s.isEmpty()) {\n"
-        + "      int j = s.length() + 13;\n"
-        + "    }\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "    if (s.isEmpty()) {\n" + "      int j = s.length() + 13;\n" + "    }\n" + "  }\n" + "}\n");
   }
 
   @Test public void doWhileControlFlow() throws IOException {
@@ -335,16 +207,7 @@ public final class JavaWriterTest {
     javaWriter.endControlFlow("while (s.isEmpty())");
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "    do {\n"
-        + "      int j = s.length() + 13;\n"
-        + "    } while (s.isEmpty());\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "    do {\n" + "      int j = s.length() + 13;\n" + "    } while (s.isEmpty());\n" + "  }\n" + "}\n");
   }
 
   @Test public void tryCatchFinallyControlFlow() throws IOException {
@@ -360,38 +223,17 @@ public final class JavaWriterTest {
     javaWriter.endControlFlow();
     javaWriter.endMethod();
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  int foo(String s) {\n"
-        + "    try {\n"
-        + "      int j = s.length() + 13;\n"
-        + "    } catch (RuntimeException e) {\n"
-        + "      e.printStackTrace();\n"
-        + "    } finally {\n"
-        + "      int k = 13;\n"
-        + "    }\n"
-        + "  }\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  int foo(String s) {\n" + "    try {\n" + "      int j = s.length() + 13;\n" + "    } catch (RuntimeException e) {\n" + "      e.printStackTrace();\n" + "    } finally {\n" + "      int k = 13;\n" + "    }\n" + "  }\n" + "}\n");
   }
 
   @Test public void annotatedType() throws IOException {
     javaWriter.emitPackage("com.squareup");
     javaWriter.emitImports("javax.inject.Singleton");
     javaWriter.emitAnnotation("javax.inject.Singleton");
-    javaWriter.emitAnnotation(SuppressWarnings.class,
-        JavaWriter.stringLiteral("unchecked"));
+    javaWriter.emitAnnotation(SuppressWarnings.class, JavaWriter.stringLiteral("unchecked"));
     javaWriter.beginType("com.squareup.Foo", "class", 0);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "import javax.inject.Singleton;\n"
-        + "@Singleton\n"
-        + "@SuppressWarnings(\"unchecked\")\n"
-        + "class Foo {\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "import javax.inject.Singleton;\n" + "@Singleton\n" + "@SuppressWarnings(\"unchecked\")\n" + "class Foo {\n" + "}\n");
   }
 
   @Test public void annotatedMember() throws IOException {
@@ -400,13 +242,7 @@ public final class JavaWriterTest {
     javaWriter.emitAnnotation(Deprecated.class);
     javaWriter.emitField("java.lang.String", "s", 0);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "class Foo {\n"
-        + "  @Deprecated\n"
-        + "  String s;\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "class Foo {\n" + "  @Deprecated\n" + "  String s;\n" + "}\n");
   }
 
   @Test public void annotatedWithAttributes() throws IOException {
@@ -414,25 +250,11 @@ public final class JavaWriterTest {
     attributes.put("overrides", true);
     attributes.put("entryPoints", new Object[] { "entryPointA", "entryPointB", "entryPointC" });
     attributes.put("staticInjections", "com.squareup.Quux");
-
     javaWriter.emitPackage("com.squareup");
     javaWriter.emitAnnotation("Module", attributes);
     javaWriter.beginType("com.squareup.FooModule", "class", 0);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "@Module(\n"
-        + "  overrides = true,\n"
-        + "  entryPoints = {\n"
-        + "    entryPointA,\n"
-        + "    entryPointB,\n"
-        + "    entryPointC\n"
-        + "  },\n"
-        + "  staticInjections = com.squareup.Quux\n"
-        + ")\n"
-        + "class FooModule {\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "@Module(\n" + "  overrides = true,\n" + "  entryPoints = {\n" + "    entryPointA,\n" + "    entryPointB,\n" + "    entryPointC\n" + "  },\n" + "  staticInjections = com.squareup.Quux\n" + ")\n" + "class FooModule {\n" + "}\n");
   }
 
   @Test public void parameterizedType() throws IOException {
@@ -441,14 +263,7 @@ public final class JavaWriterTest {
     javaWriter.beginType("com.squareup.Foo", "class", 0);
     javaWriter.emitField("java.util.Map<java.lang.String, java.util.Date>", "map", 0);
     javaWriter.endType();
-    assertCode(""
-        + "package com.squareup;\n"
-        + "\n"
-        + "import java.util.Date;\n"
-        + "import java.util.Map;\n"
-        + "class Foo {\n"
-        + "  Map<String, Date> map;\n"
-        + "}\n");
+    assertCode("" + "package com.squareup;\n" + "\n" + "import java.util.Date;\n" + "import java.util.Map;\n" + "class Foo {\n" + "  Map<String, Date> map;\n" + "}\n");
   }
 
   @Test public void eolComment() throws IOException {
@@ -458,20 +273,12 @@ public final class JavaWriterTest {
 
   @Test public void javadoc() throws IOException {
     javaWriter.emitJavadoc("foo");
-    assertCode(""
-        + "/**\n"
-        + " * foo\n"
-        + " */\n");
+    assertCode("" + "/**\n" + " * foo\n" + " */\n");
   }
 
   @Test public void multilineJavadoc() throws IOException {
-    javaWriter.emitJavadoc("0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n"
-        + "0123456789 0123456789 0123456789 0123456789");
-    assertCode(""
-        + "/**\n"
-        + " * 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n"
-        + " * 0123456789 0123456789 0123456789 0123456789\n"
-        + " */\n");
+    javaWriter.emitJavadoc("0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" + "0123456789 0123456789 0123456789 0123456789");
+    assertCode("" + "/**\n" + " * 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" + " * 0123456789 0123456789 0123456789 0123456789\n" + " */\n");
   }
 
   @Test public void testStringLiteral() {
@@ -487,9 +294,7 @@ public final class JavaWriterTest {
     assertThat(JavaWriter.type(String.class)).as("simple type").isEqualTo("java.lang.String");
     assertThat(JavaWriter.type(Set.class)).as("raw type").isEqualTo("java.util.Set");
     assertThat(JavaWriter.type(Set.class, "?")).as("wildcard type").isEqualTo("java.util.Set<?>");
-    assertThat(JavaWriter.type(Map.class, JavaWriter.type(String.class), "?"))
-        .as("mixed type and wildcard generic type parameters")
-        .isEqualTo("java.util.Map<java.lang.String, ?>");
+    assertThat(JavaWriter.type(Map.class, JavaWriter.type(String.class), "?")).as("mixed type and wildcard generic type parameters").isEqualTo("java.util.Map<java.lang.String, ?>");
     try {
       JavaWriter.type(String.class, "foo");
       failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
