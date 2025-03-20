@@ -1,31 +1,10 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy core.
- *
- * billy core is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy core is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy core. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.core.services.entities.documents;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOBusiness;
 import com.premiumminds.billy.core.persistence.dao.DAOCustomer;
 import com.premiumminds.billy.core.persistence.dao.DAOGenericInvoice;
@@ -40,80 +19,76 @@ import com.premiumminds.billy.core.services.entities.ShippingPoint;
 import com.premiumminds.billy.core.services.entities.Supplier;
 
 public interface GenericInvoice extends Entity {
+  public static enum CreditOrDebit {
+    CREDIT,
+    DEBIT
+  }
 
-    public static enum CreditOrDebit {
-        CREDIT, DEBIT
+  public static class Builder extends GenericInvoiceBuilderImpl<Builder, GenericInvoiceEntry, GenericInvoiceEntity> {
+    @Inject public Builder(DAOGenericInvoice daoGenericInvoice, DAOBusiness daoBusiness, DAOCustomer daoCustomer, DAOSupplier daoSupplier) {
+      super(daoGenericInvoice, daoBusiness, daoCustomer, daoSupplier);
     }
+  }
 
-    public static class Builder extends GenericInvoiceBuilderImpl<Builder, GenericInvoiceEntry, GenericInvoiceEntity> {
+  public String getNumber();
 
-        @Inject
-        public Builder(DAOGenericInvoice daoGenericInvoice, DAOBusiness daoBusiness, DAOCustomer daoCustomer,
-                DAOSupplier daoSupplier) {
-            super(daoGenericInvoice, daoBusiness, daoCustomer, daoSupplier);
-        }
-    }
+  public Integer getSeriesNumber();
 
-    public String getNumber();
+  public String getSeries();
 
-    public Integer getSeriesNumber();
+  public <T extends Business> T getBusiness();
 
-    public String getSeries();
+  public <T extends Customer> T getCustomer();
 
-    public <T extends Business> T getBusiness();
+  public <T extends Supplier> T getSupplier();
 
-    public <T extends Customer> T getCustomer();
+  public String getOfficeNumber();
 
-    public <T extends Supplier> T getSupplier();
+  public Date getDate();
 
-    public String getOfficeNumber();
+  public BigDecimal getAmountWithTax();
 
-    public Date getDate();
+  public BigDecimal getAmountWithoutTax();
 
-    public BigDecimal getAmountWithTax();
+  public BigDecimal getTaxAmount();
 
-    public BigDecimal getAmountWithoutTax();
+  public BigDecimal getDiscountsAmount();
 
-    public BigDecimal getTaxAmount();
+  public <T extends ShippingPoint> T getShippingOrigin();
 
-    public BigDecimal getDiscountsAmount();
+  public <T extends ShippingPoint> T getShippingDestination();
 
-    public <T extends ShippingPoint> T getShippingOrigin();
+  public String getPaymentTerms();
 
-    public <T extends ShippingPoint> T getShippingDestination();
+  public Boolean isSelfBilled();
 
-    public String getPaymentTerms();
+  public Boolean isCashVATEndorser();
 
-    public Boolean isSelfBilled();
+  public Boolean isThirdPartyBilled();
 
-    public Boolean isCashVATEndorser();
+  public String getSourceId();
 
-    public Boolean isThirdPartyBilled();
+  public Date getGeneralLedgerDate();
 
-    public String getSourceId();
+  public String getBatchId();
 
-    public Date getGeneralLedgerDate();
+  public String getTransactionId();
 
-    public String getBatchId();
+  public Collection<String> getReceiptNumbers();
 
-    public String getTransactionId();
+  public <T extends GenericInvoiceEntry> Collection<T> getEntries();
 
-    public Collection<String> getReceiptNumbers();
+  public Currency getCurrency();
 
-    public <T extends GenericInvoiceEntry> Collection<T> getEntries();
+  public String getSettlementDescription();
 
-    public Currency getCurrency();
+  public BigDecimal getSettlementDiscount();
 
-    public String getSettlementDescription();
+  public Date getSettlementDate();
 
-    public BigDecimal getSettlementDiscount();
+  public <T extends Payment> List<T> getPayments();
 
-    public Date getSettlementDate();
+  public CreditOrDebit getCreditOrDebit();
 
-    public <T extends Payment> List<T> getPayments();
-
-    public CreditOrDebit getCreditOrDebit();
-
-    public Integer getScale();
-
+  public Integer getScale();
 }

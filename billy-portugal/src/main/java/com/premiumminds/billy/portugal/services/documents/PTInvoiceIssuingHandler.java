@@ -1,25 +1,5 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy portugal (PT Pack).
- *
- * billy portugal (PT Pack) is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy portugal (PT Pack) is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy portugal (PT Pack). If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.portugal.services.documents;
-
 import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTInvoice;
@@ -28,20 +8,25 @@ import com.premiumminds.billy.portugal.services.documents.util.PTIssuingParams;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
 
 public class PTInvoiceIssuingHandler extends PTGenericInvoiceIssuingHandler<PTInvoiceEntity, PTIssuingParams> {
+  public final static TYPE INVOICE_TYPE = TYPE.FT;
 
-    public final static TYPE INVOICE_TYPE = TYPE.FT;
+  private final DAOPTInvoice daoInvoice;
 
-    private final DAOPTInvoice daoInvoice;
+  @Inject public PTInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOPTInvoice daoInvoice) {
+    super(daoInvoiceSeries);
+    this.daoInvoice = daoInvoice;
+  }
 
-    @Inject
-    public PTInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries, DAOPTInvoice daoInvoice) {
-        super(daoInvoiceSeries);
-        this.daoInvoice = daoInvoice;
-    }
+  @Override public PTInvoiceEntity issue(PTInvoiceEntity document, PTIssuingParams parameters) throws DocumentIssuingException {
+    return issue(document, parameters, daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
+  }
 
-    @Override
-    public PTInvoiceEntity issue(PTInvoiceEntity document, PTIssuingParams parameters) throws DocumentIssuingException {
-        return this.issue(document, parameters, this.daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
-    }
 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Override public <T extends GenericInvoice, P extends IssuingParams> T issue(final T document, P parameters) throws DocumentIssuingException {
+    final PTIssuingParams parametersPT = (PTIssuingParams) parameters;
+    return this.issue(document, parametersPT, this.daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
+  }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTInvoiceIssuingHandler.java/right.java
 }
