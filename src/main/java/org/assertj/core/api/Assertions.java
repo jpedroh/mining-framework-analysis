@@ -375,7 +375,6 @@ public class Assertions {
   public static AbstractDoubleAssert<?> assertThat(double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -386,7 +385,6 @@ public class Assertions {
   public static AbstractDoubleAssert<?> assertThat(Double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleArrayAssert}</code>.
    *
@@ -397,7 +395,6 @@ public class Assertions {
   public static AbstractDoubleArrayAssert<?> assertThat(double[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FileAssert}</code>.
    *
@@ -408,7 +405,6 @@ public class Assertions {
   public static AbstractFileAssert<?> assertThat(File actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InputStreamAssert}</code>.
    *
@@ -419,7 +415,6 @@ public class Assertions {
   public static AbstractInputStreamAssert<?, ? extends InputStream> assertThat(InputStream actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -430,7 +425,6 @@ public class Assertions {
   public static AbstractFloatAssert<?> assertThat(float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -441,7 +435,6 @@ public class Assertions {
   public static AbstractFloatAssert<?> assertThat(Float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatArrayAssert}</code>.
    *
@@ -452,7 +445,6 @@ public class Assertions {
   public static AbstractFloatArrayAssert<?> assertThat(float[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -463,7 +455,6 @@ public class Assertions {
   public static AbstractIntegerAssert<?> assertThat(int actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntArrayAssert}</code>.
    *
@@ -474,7 +465,6 @@ public class Assertions {
   public static AbstractIntArrayAssert<?> assertThat(int[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -485,7 +475,6 @@ public class Assertions {
   public static AbstractIntegerAssert<?> assertThat(Integer actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -526,7 +515,6 @@ public class Assertions {
                                                                                  AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -558,7 +546,6 @@ public class Assertions {
                                                                                           Class<ELEMENT_ASSERT> assertClass) {
            return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -598,7 +585,6 @@ public class Assertions {
                                                                                         AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> tallowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -630,9 +616,7 @@ public class Assertions {
                                                                                       Class<ELEMENT_ASSERT> assertClass) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
 //@format:on
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -643,7 +627,6 @@ public class Assertions {
   public static AbstractLongAssert<?> assertThat(long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -654,7 +637,6 @@ public class Assertions {
   public static AbstractLongAssert<?> assertThat(Long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongArrayAssert}</code>.
    *
@@ -665,18 +647,60 @@ public class Assertions {
   public static AbstractLongArrayAssert<?> assertThat(long[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectAssert}</code>.
    *
    * @param actual the actual value.
    * @return the created assertion object.
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
   @CheckReturnValue
   public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+=======
+  @CheckReturnValue
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return new GenericComparableAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
    *
@@ -687,7 +711,6 @@ public class Assertions {
   public static <T> AbstractObjectArrayAssert<?, T> assertThat(T[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -698,7 +721,6 @@ public class Assertions {
   public static AbstractShortAssert<?> assertThat(short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -709,7 +731,6 @@ public class Assertions {
   public static AbstractShortAssert<?> assertThat(Short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortArrayAssert}</code>.
    *
@@ -720,7 +741,6 @@ public class Assertions {
   public static AbstractShortArrayAssert<?> assertThat(short[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link StringAssert}</code>.
    *
@@ -731,7 +751,6 @@ public class Assertions {
   public static AbstractCharSequenceAssert<?, String> assertThat(String actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DateAssert}</code>.
    *
@@ -742,7 +761,6 @@ public class Assertions {
   public static AbstractDateAssert<?> assertThat(Date actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
@@ -753,7 +771,6 @@ public class Assertions {
   public static AbstractZonedDateTimeAssert<?> assertThat(ZonedDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
@@ -764,7 +781,6 @@ public class Assertions {
   public static AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link java.time.OffsetDateTime}</code>.
    *
@@ -775,7 +791,6 @@ public class Assertions {
   public static AbstractOffsetDateTimeAssert<?> assertThat(OffsetDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.time.OffsetTime}.
    *
@@ -786,7 +801,6 @@ public class Assertions {
   public static AbstractOffsetTimeAssert<?> assertThat(OffsetTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -797,7 +811,6 @@ public class Assertions {
   public static AbstractLocalTimeAssert<?> assertThat(LocalTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
@@ -808,7 +821,6 @@ public class Assertions {
   public static AbstractLocalDateAssert<?> assertThat(LocalDate actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code>.
    *
@@ -819,7 +831,6 @@ public class Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThat(Throwable actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -850,31 +861,190 @@ public class Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
+  /**
+   * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
+   * standard comparison semantics.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  // public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> assertThat(Iterable<? extends T>
+  // actual) {
+  // return null;// new IterableAssert<>(actual);
+  // }
+  // public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> assertThat(Iterator<? extends T>
+  // actual) {
+  // return new IterableAssert<>(actual);
+  // }
+  /**
+   * Creates a new instance of {@link PathAssert}
+   *
+   * @param actual the path to test
+   * @return the created assertion object
+   */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
+  @CheckReturnValue
+  public static AbstractPathAssert<?> assertThat(Path actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static AbstractPathAssert<?> assertThat(Path actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+=======
+  @CheckReturnValue
+  public static AbstractPathAssert<?> assertThat(Path actual) {
+    return new PathAssert(actual);
+  }
+  @CheckReturnValue
+  public static AbstractPathAssert<?> assertThat(Path actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  @CheckReturnValue
+  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterable<? extends ELEMENT> actual) {
+    return new IterableAssert<>(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code>.
+   * <p>
+   * <b>Be aware that calls to most methods on returned IterableAssert will consume Iterator so it won't be possible to
+   * iterate over it again.</b> Calling multiple methods on returned IterableAssert is safe as Iterator's elements are
+   * cached by IterableAssert first time Iterator is consumed.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
+  @CheckReturnValue
+  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+=======
+  @CheckReturnValue
+  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
+    return new IterableAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
+  /**
+   * Creates a new instance of <code>{@link ListAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
+  @CheckReturnValue
+  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+=======
+  @CheckReturnValue
+  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
+    return new ListAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
+  @CheckReturnValue
+  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+=======
+  @CheckReturnValue
+  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+    return new MapAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
+  /**
+   * Creates a new instance of <code>{@link CharSequenceAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/left.java
+  @CheckReturnValue
+  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+=======
+  @CheckReturnValue
+  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
+    return new CharSequenceAssert(actual);
+  }
+  @CheckReturnValue
+  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/1c531c0a5a9652826ffb582b603722ab3481b830/src/main/java/org/assertj/core/api/Assertions.java/right.java
 
   /**
-   * Allows to catch an {@link Throwable} more easily when used with Java 8 lambdas.
-   *
-   * <p>
-   * This caught {@link Throwable} can then be asserted.
-   * </p>
-   *
-   * <p>
-   * Example:
-   * </p>
-   *
-   * <pre><code class='java'> {@literal @}Test
-   * public void testException() {
-   *   // when
-   *   Throwable thrown = catchThrowable(() -> { throw new Exception("boom!"); });
-   *
-   *   // then
-   *   assertThat(thrown).isInstanceOf(Exception.class)
-   *                     .hasMessageContaining("boom");
-   * } </code></pre>
-   *
-   * @param shouldRaiseThrowable The lambda with the code that should raise the exception.
-   * @return The captured exception or <code>null</code> if none was raised by the callable.
-   */
+ * Allows to catch an {@link Throwable} more easily when used with Java 8 lambdas.
+ *
+ * <p>
+ * This caught {@link Throwable} can then be asserted.
+ * </p>
+ *
+ * <p>
+ * Example:
+ * </p>
+ *
+ * <pre><code class='java'> {@literal @}Test
+ * public void testException() {
+ *   // when
+ *   Throwable thrown = catchThrowable(() -> { throw new Exception("boom!"); });
+ *
+ *   // then
+ *   assertThat(thrown).isInstanceOf(Exception.class)
+ *                     .hasMessageContaining("boom");
+ * } </code></pre>
+ *
+ * @param shouldRaiseThrowable The lambda with the code that should raise the exception.
+ * @return The captured exception or <code>null</code> if none was raised by the callable.
+ */
   public static Throwable catchThrowable(ThrowingCallable shouldRaiseThrowable) {
     return AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
   }
@@ -1817,10 +1987,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
@@ -1828,10 +1994,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterable<? extends ELEMENT> actual) {
-    return new IterableAssert<>(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
@@ -1843,10 +2005,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link ListAssert}</code>.
@@ -1854,10 +2012,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
@@ -1880,10 +2034,6 @@ public class Assertions {
    * @param actual the path to test
    * @return the created assertion object
    */
-  @CheckReturnValue
-  public static AbstractPathAssert<?> assertThat(Path actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link MapAssert}</code>.
@@ -1894,10 +2044,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
@@ -1906,10 +2052,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -1962,10 +2104,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Register a {@link Representation} that will be used in all following assertions.
