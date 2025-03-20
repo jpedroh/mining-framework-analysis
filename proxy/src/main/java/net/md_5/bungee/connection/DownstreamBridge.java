@@ -367,11 +367,11 @@ public class DownstreamBridge extends PacketHandler
             }
             if (subChannel.equals("IP"))
             {
-                out.writeUTF( "IP" );
+                out.writeUTF("IP");
                 if ( con.getSocketAddress() instanceof InetSocketAddress )
                 {
-                    out.writeUTF( con.getAddress().getHostString() );
-                    out.writeInt( con.getAddress().getPort() );
+                    out.writeUTF(con.getAddress().getHostString());
+                    out.writeInt(con.getAddress().getPort());
                 } else
                 {
                     out.writeUTF( "unix://" + ( (DomainSocketAddress) con.getSocketAddress() ).path() );
