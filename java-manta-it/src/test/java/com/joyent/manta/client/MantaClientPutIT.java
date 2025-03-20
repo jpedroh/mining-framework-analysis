@@ -7,12 +7,8 @@
  */
 package com.joyent.manta.client;
 
-<<<<<<< HEAD
 import com.joyent.manta.client.helper.IntegrationTestHelper;
-||||||| merged common ancestors
-=======
 import com.joyent.manta.config.ChainedConfigContext;
->>>>>>> master
 import com.joyent.manta.config.ConfigContext;
 import com.joyent.manta.config.IntegrationTestConfigContext;
 import com.joyent.manta.config.StandardConfigContext;
@@ -70,30 +66,20 @@ public class MantaClientPutIT {
 
         // Let TestNG configuration take precedence over environment variables
         ConfigContext config = new IntegrationTestConfigContext(usingEncryption);
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/left.java
         final String testName = this.getClass().getSimpleName();
-||||||| merged common ancestors
+||||||| /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/base.java
 =======
         ConfigContext context = new ChainedConfigContext(
                 config, new StandardConfigContext()
                     .setContentTypeDetectionEnabled(true));
->>>>>>> master
+>>>>>>> /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/right.java
 
-<<<<<<< HEAD
-        mantaClient = new MantaClient(config);
+        mantaClient = new MantaClient(context);
         testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,
                 testName, testType);
 
         IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType);
-||||||| merged common ancestors
-        mantaClient = new MantaClient(config);
-        testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
-        mantaClient.putDirectory(testPathPrefix, true);
-=======
-        mantaClient = new MantaClient(context);
-        testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
-        mantaClient.putDirectory(testPathPrefix, true);
->>>>>>> master
     }
 
     @AfterClass
@@ -122,7 +108,10 @@ public class MantaClientPutIT {
     }
 
     @Test
-    public final void testContentTypeSetByFilename() throws IOException {
+    public
+    final
+<<<<<<< /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/left.java
+    @Test void testContentTypeSetByFilename() throws IOException {
         final String name = UUID.randomUUID().toString() + ".html";
         final String path = testPathPrefix + name;
 
@@ -136,10 +125,10 @@ public class MantaClientPutIT {
         MantaAssert.assertResponseFailureCode(404,
                 (MantaFunction<Object>) () -> mantaClient.get(path));
     }
-
-
-    @Test
-    public final void testContentTypeSetByFilename() throws IOException {
+||||||| /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/base.java
+    @Test void testContentTypeSetByFilename() throws IOException 
+=======
+    @Test void testContentTypeSetByFilename() throws IOException {
         final String name = UUID.randomUUID().toString() + ".html";
         final String path = testPathPrefix + name;
 
@@ -149,6 +138,7 @@ public class MantaClientPutIT {
         Assert.assertEquals(object.getContentType(),
                 "text/html", "Content type wasn't auto-assigned");
     }
+>>>>>>> /usr/src/app/output/joyent/java-manta/653d367a15a830e3207a0fb48a3928657dbf64e7/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientPutIT.java/right.java
 
     @Test
     public final void testPutWithErrorProneCharacters() throws IOException {
