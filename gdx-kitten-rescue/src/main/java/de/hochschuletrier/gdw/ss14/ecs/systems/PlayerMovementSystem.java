@@ -14,6 +14,14 @@ import de.hochschuletrier.gdw.ss14.ecs.components.PhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.PlayerComponent;
 import de.hochschuletrier.gdw.ss14.physics.PhysicsActions;
 import de.hochschuletrier.gdw.ss14.sound.SoundManager;
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/3c60f16254f1074a6b4a380abfefff7e1c8b12cb/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/left.java
+||||||| /usr/src/app/output/lusito/gamedevweek/3c60f16254f1074a6b4a380abfefff7e1c8b12cb/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/base.java
+=======
+import de.hochschuletrier.gdw.ss14.ecs.components.*;
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/3c60f16254f1074a6b4a380abfefff7e1c8b12cb/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/right.java
+=======
+import de.hochschuletrier.gdw.ss14.ecs.components.*;
+>>>>>>> theirs
 import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
 
 /**
