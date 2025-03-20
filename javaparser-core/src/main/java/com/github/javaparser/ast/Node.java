@@ -215,6 +215,58 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable 
         return unmodifiableList(childrenNodes);
     }
 
+<<<<<<< /usr/src/app/output/javaparser/javaparser/18f43c9c5ea7448000cf56dee0da3bc782030e0a/javaparser-core/src/main/java/com/github/javaparser/ast/Node.java/left.java
+||||||| /usr/src/app/output/javaparser/javaparser/18f43c9c5ea7448000cf56dee0da3bc782030e0a/javaparser-core/src/main/java/com/github/javaparser/ast/Node.java/base.java
+    /**
+     * Before 3.0.0.alpha-5, if we had a list of nodes, those nodes would not have the list
+     * as its parent, but the node containing the list.
+     * This method returns the children in that way: there are no lists, and all nodes that are
+     * in lists are directly in this list.
+     * @deprecated this will be gone in 3.0.0 release.
+     */
+    @Deprecated
+    public List<Node> getBackwardsCompatibleChildrenNodes() {
+        List<Node> children = new ArrayList<>();
+        for (Node childNode : getChildrenNodes()) {
+            // Avoid attributing comments to NodeLists by pretending they don't exist.
+            if (childNode instanceof NodeList) {
+                for (Node subChildNode : ((NodeList<Node>) childNode)) {
+                    children.add(subChildNode);
+                }
+            } else {
+                children.add(childNode);
+            }
+        }
+        PositionUtils.sortByBeginPosition(children);
+        return children;
+    }
+
+=======
+    /**
+     * Before 3.0.0.alpha-5, if we had a list of nodes, those nodes would not have the list
+     * as its parent, but the node containing the list.
+     * This method returns the children in that way: there are no lists, and all nodes that are
+     * in lists are directly in this list.
+     * @deprecated this will be gone in 3.0.0 release.
+     */
+    @Deprecated
+    public List<Node> getBackwardsCompatibleChildrenNodes() {
+        List<Node> children = new ArrayList<>();
+        for (Node childNode : getChildNodes()) {
+            // Avoid attributing comments to NodeLists by pretending they don't exist.
+            if (childNode instanceof NodeList) {
+                for (Node subChildNode : ((NodeList<Node>) childNode)) {
+                    children.add(subChildNode);
+                }
+            } else {
+                children.add(childNode);
+            }
+        }
+        PositionUtils.sortByBeginPosition(children);
+        return children;
+    }
+
+>>>>>>> /usr/src/app/output/javaparser/javaparser/18f43c9c5ea7448000cf56dee0da3bc782030e0a/javaparser-core/src/main/java/com/github/javaparser/ast/Node.java/right.java
     public <N extends Node> boolean containsWithin(N other) {
         return range.contains(other.getRange());
     }
