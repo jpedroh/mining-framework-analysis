@@ -37,6 +37,14 @@ public class Introspection_getProperty_Test {
   }
 
   @Test
+  public void get_descriptor_for_property_from_interface_default_method() {
+    PropertyDescriptor propertyDescriptor = getProperty("degree", judy);
+    assertThat(propertyDescriptor).isNotNull();
+    assertThat(propertyDescriptor.getName()).isEqualTo("degree");
+    assertThat(propertyDescriptor.getPropertyType()).isEqualTo(String.class);
+  }
+
+  @Test
   public void should_raise_an_error_because_of_missing_getter() {
     assertThatThrownBy(() -> getPropertyGetter("salary", judy)).isInstanceOf(IntrospectionError.class)
                                                          .hasMessage("No getter for property 'salary' in org.assertj.core.util.Employee");
