@@ -28,7 +28,13 @@ import net.imglib2.type.numeric.RealType;
  * @author Jean- Yves Tinevez
  */
 @SuppressWarnings( "deprecation" )
+<<<<<<< /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/features/spot/SpotContrastAndSNRAnalyzerFactory.java/left.java
 @Plugin( type = SpotAnalyzerFactory.class, priority = Priority.LOW )
+||||||| /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/features/spot/SpotContrastAndSNRAnalyzerFactory.java/base.java
+@Plugin( type = SpotAnalyzerFactory.class, priority = 1d )
+=======
+@Plugin( type = SpotAnalyzerFactory.class, priority = -1d )
+>>>>>>> /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/features/spot/SpotContrastAndSNRAnalyzerFactory.java/right.java
 public class SpotContrastAndSNRAnalyzerFactory< T extends RealType< T > & NativeType< T >> implements SpotAnalyzerFactory< T >
 {
 

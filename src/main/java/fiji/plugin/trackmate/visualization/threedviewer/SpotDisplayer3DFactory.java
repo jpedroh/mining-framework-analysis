@@ -25,7 +25,13 @@ import ij3d.ContentCreator;
 import ij3d.Image3DUniverse;
 import ij3d.ImageWindow3D;
 
+<<<<<<< /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/visualization/threedviewer/SpotDisplayer3DFactory.java/left.java
 @Plugin( type = ViewFactory.class, priority = Priority.LOW, enabled = false )
+||||||| /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/visualization/threedviewer/SpotDisplayer3DFactory.java/base.java
+@Plugin( type = ViewFactory.class, priority = 1d, enabled = false )
+=======
+@Plugin( type = ViewFactory.class, priority = -1d, enabled = false )
+>>>>>>> /usr/src/app/output/fiji/trackmate/e9fd83ec1cee916c0233327a36de928f90aaec7a/src/main/java/fiji/plugin/trackmate/visualization/threedviewer/SpotDisplayer3DFactory.java/right.java
 public class SpotDisplayer3DFactory implements ViewFactory
 {
 
