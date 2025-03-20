@@ -93,7 +93,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void evaluateBlock(String blockName, Writer writer) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(null);
+        EvaluationContext context = this.initContext(null);
         this.evaluate(new NoopWriter(), context);
 
         this.block(writer, context, blockName, false);
@@ -101,7 +101,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void evaluateBlock(String blockName, Writer writer, Locale locale) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(locale);
+        EvaluationContext context = this.initContext(locale);
         this.evaluate(new NoopWriter(), context);
 
         this.block(writer, context, blockName, false);
@@ -109,7 +109,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void evaluateBlock(String blockName, Writer writer, Map<String, Object> map) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(null);
+        EvaluationContext context = this.initContext(null);
         context.getScopeChain().pushScope(map);
         this.evaluate(new NoopWriter(), context);
 
@@ -118,7 +118,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void evaluateBlock(String blockName, Writer writer, Map<String, Object> map, Locale locale) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(locale);
+        EvaluationContext context = this.initContext(locale);
         context.getScopeChain().pushScope(map);
         this.evaluate(new NoopWriter(), context);
 
@@ -173,7 +173,13 @@ public class PebbleTemplateImpl implements PebbleTemplate {
         // global vars provided from extensions
         scopeChain.pushScope(this.engine.getExtensionRegistry().getGlobalVariables());
 
-        return new EvaluationContextImpl(this, this.engine.isStrictVariables(), locale,
+<<<<<<< /usr/src/app/output/mbosecke/pebble/9f773c7306182426f6f49ddf5c6763c4af481c14/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = new EvaluationContextImpl(this, this.engine.isStrictVariables(), locale,
+||||||| /usr/src/app/output/mbosecke/pebble/9f773c7306182426f6f49ddf5c6763c4af481c14/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = new EvaluationContext(this, this.engine.isStrictVariables(), locale,
+=======
+        return new EvaluationContext(this, this.engine.isStrictVariables(), locale,
+>>>>>>> /usr/src/app/output/mbosecke/pebble/9f773c7306182426f6f49ddf5c6763c4af481c14/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
                 this.engine.getExtensionRegistry(), this.engine.getTagCache(), this.engine.getExecutorService(),
                 new ArrayList<PebbleTemplateImpl>(), scopeChain, null);
     }
