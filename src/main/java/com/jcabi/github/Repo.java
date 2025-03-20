@@ -147,6 +147,15 @@ public interface Repo extends JsonReadable, JsonPatchable {
     @NotNull(message = "RepoCommits are never NULL")
     RepoCommits commits();
 
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/2603735cfe4efc6e6a45aa877d7e836cdb46b41c/src/main/java/com/jcabi/github/Repo.java/left.java
+    /**
+     * Gel all collaborators.
+     * @return Collaborators
+     * @see <a href="http://developer.github.com/v3/repos/collaborators/">Collaborators API</a>
+     */
+    Collaborators collaborators();
+||||||| /usr/src/app/output/jcabi/jcabi-github/2603735cfe4efc6e6a45aa877d7e836cdb46b41c/src/main/java/com/jcabi/github/Repo.java/base.java
+=======
     /**
      * Get all contents of the repo.
      * @return Contents
@@ -154,17 +163,11 @@ public interface Repo extends JsonReadable, JsonPatchable {
      */
     @NotNull(message = "Contents are never NULL")
     Contents contents();
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/2603735cfe4efc6e6a45aa877d7e836cdb46b41c/src/main/java/com/jcabi/github/Repo.java/right.java
 
     /**
-     * Gel all collaborators.
-     * @return Collaborators
-     * @see <a href="http://developer.github.com/v3/repos/collaborators/">Collaborators API</a>
-     */
-    Collaborators collaborators();
-
-    /**
-     * Smart Repo with extra features.
-     */
+ * Smart Repo with extra features.
+ */
     @Immutable
     @ToString
     @Loggable(Loggable.DEBUG)
