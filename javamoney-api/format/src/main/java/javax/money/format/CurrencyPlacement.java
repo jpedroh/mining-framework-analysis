@@ -1,3 +1,53 @@
+<<<<<<< /usr/src/app/output/javamoney/jsr354-api/3f5f06efc0d7fc308b4fb8ed89bac42312e4fb4c/javamoney-api/format/src/main/java/javax/money/format/CurrencyPlacement.java/left.java
+fatal: path 'javamoney-api/format/src/main/java/javax/money/format/CurrencyPlacement.java' does not exist in 'dda8733fcd2f1fe5b44f8780760080490277e107'
+||||||| /usr/src/app/output/javamoney/jsr354-api/3f5f06efc0d7fc308b4fb8ed89bac42312e4fb4c/javamoney-api/format/src/main/java/javax/money/format/CurrencyPlacement.java/base.java
+/*
+ * Copyright (c) 2012-2013, Credit Suisse
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  * Neither the name of JSR-354 nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package javax.money.format;
+
+/**
+ * Enumeration for the different placement of a currency when formatting an amount.
+ * 
+ * @author Anatole Tresch
+ */
+public enum CurrencyPlacement {
+	/** Place the currency before the number. */
+	BEFORE,
+	/** Place the currency after the number. */
+	AFTER,
+	/** Omit the currency completely. */
+	OMIT
+}
+=======
 /*
  * Copyright (c) 2012-2013, Credit Suisse
  *
@@ -44,3 +94,4 @@ public enum CurrencyPlacement {
 	/** Omit the currency completely. */
 	OMIT
 }
+>>>>>>> /usr/src/app/output/javamoney/jsr354-api/3f5f06efc0d7fc308b4fb8ed89bac42312e4fb4c/javamoney-api/format/src/main/java/javax/money/format/CurrencyPlacement.java/right.java

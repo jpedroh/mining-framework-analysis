@@ -733,6 +733,17 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	public boolean greaterThanOrEqualTo(Number number);
 
 	/**
+	 * Allows to check, if the currency of the two amounts are the same. This
+	 * means that corresponding currency's namespace and code must match.
+	 * 
+	 * @param amount
+	 *            The amount to comapre to, not {@code null}.
+	 * @return true, if the {@link CurrencyUnit} of this instance has the same
+	 *         namespace and code.
+	 */
+	public boolean isSameCurrencyAs(MonetaryAmount amount);
+
+	/**
 	 * Checks if this amount is the same compared to the amount passed. This is
 	 * a convenience method to reflect {@link #same(Number)} also for amounts,
 	 * but basically should behave similarly as {@link #equals(Object)}.
@@ -743,17 +754,6 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *         passed.
 	 */
 	public boolean isEqualTo(MonetaryAmount amount);
-	
-	/**
-	 * Allows to check, if the currency of the two amounts are the same. This
-	 * means that corresponding currency's namespace and code must match.
-	 * 
-	 * @param amount
-	 *            The amount to comapre to, not {@code null}.
-	 * @return true, if the {@link CurrencyUnit} of this instance has the same
-	 *         namespace and code.
-	 */
-	public boolean isSameCurrencyAs(MonetaryAmount amount);
 
 	/**
 	 * Checks if this amount's value is the same compared to the number passed.
