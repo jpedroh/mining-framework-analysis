@@ -7,7 +7,6 @@ import com.github.dakusui.jcunit8.factorspace.Parameter;
 import com.github.dakusui.jcunit8.testsuite.TestCase;
 import com.github.dakusui.jcunit8.testsuite.TestSuite;
 import com.github.dakusui.jcunit8.testutils.PipelineTestBase;
-import com.github.dakusui.jcunit8.testutils.UTUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -76,12 +75,12 @@ public class ParserTest extends PipelineTestBase {
 
   @Before
   public void before() {
-    UTUtils.configureStdIOs();
+    com.github.dakusui.jcunit8.core.Utils.configureStdIOs();
   }
 
   @Test
   public void parseTreePrintingWithId() {
-    System.out.println("input expression:" + input());
+    com.github.dakusui.jcunit8.core.Utils.out().println("input expression:" + input());
     new Parser().parse(input()).accept(
         new RegexTestUtils.ExprTreePrinter(ID_FORMATTER)
     );
@@ -89,7 +88,7 @@ public class ParserTest extends PipelineTestBase {
 
   @Test
   public void parseTreePrintingWithName() {
-    System.out.println("input expression:" + input());
+    com.github.dakusui.jcunit8.core.Utils.out().println("input expression:" + input());
     new Parser().parse(input()).accept(new RegexTestUtils.ExprTreePrinter(NAME_FORMATTER));
   }
 
@@ -129,9 +128,8 @@ public class ParserTest extends PipelineTestBase {
     return this._input.split("\\;")[0];
   }
 
-  @SuppressWarnings("unchecked")
-  private Matcher generatedStringsMatcher() {
-
+  @SuppressWarnings("unchecked") @SuppressWarnings("unchecked")
+  private Matcher<Set<String>> generatedStringsMatcher() {
     return CoreMatchers.allOf(
         CoreMatchers.is(possibleStrings(expectationForGeneratedStrings()))
     );

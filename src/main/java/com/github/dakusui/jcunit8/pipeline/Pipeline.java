@@ -160,6 +160,12 @@ public interface Pipeline {
     @SuppressWarnings("unchecked")
     private Parameter toSimpleParameterIfNecessary(Config config, Parameter parameter, List<Constraint> constraints) {
       if (!(parameter instanceof Parameter.Simple) && isInvolvedByAnyConstraint(parameter, constraints)) {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/pipeline/Pipeline.java/left.java
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/pipeline/Pipeline.java/base.java
+        //noinspection unchecked,RedundantTypeArguments
+=======
+        //noinspection RedundantTypeArguments
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/pipeline/Pipeline.java/right.java
         return Parameter.Simple.Factory.of(
             Utils.unique(
                 Stream.<Object>concat(

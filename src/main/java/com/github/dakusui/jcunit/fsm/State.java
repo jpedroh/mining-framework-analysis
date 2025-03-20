@@ -85,7 +85,14 @@ public interface State<SUT> extends StateChecker<SUT>, Serializable {
           args.values()
       );
       try {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit/fsm/State.java/left.java
+        ret = (Expectation<SUT>) m.invoke(stateSpec, argsToMethod);
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit/fsm/State.java/base.java
+        //noinspection unchecked
+        ret = (Expectation<SUT>) m.invoke(stateSpec, argsToMethod);
+=======
         return (Expectation<SUT>) m.invoke(stateSpec, argsToMethod);
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit/fsm/State.java/right.java
       } catch (IllegalArgumentException e) {
         throw Checks.wraptesterror(
             e,

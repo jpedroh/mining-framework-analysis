@@ -30,9 +30,16 @@ public enum NodeUtils {
       @SuppressWarnings("unchecked")
       @Override
       public void visitLeaf(Node.Leaf leaf) {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/runners/core/NodeUtils.java/left.java
+        result = (Predicate<T>) lookupTestPredicate(leaf.id()).orElseThrow(FrameworkException::unexpectedByDesign);
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/runners/core/NodeUtils.java/base.java
+        //noinspection unchecked
+        result = (Predicate<T>) lookupTestPredicate(leaf.id()).orElseThrow(FrameworkException::unexpectedByDesign);
+=======
         TestPredicate predicate = lookupTestPredicate(leaf.id()).orElseThrow(FrameworkException::unexpectedByDesign);
         involvedKeys.addAll(predicate.involvedKeys());
         result = predicate;
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/runners/core/NodeUtils.java/right.java
       }
 
       @Override

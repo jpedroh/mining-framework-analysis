@@ -59,8 +59,12 @@ class FsmTupleAccessor<SUT> {
     return tuple.get(composeActionParamFactorName(name, i, j));
   }
 
-
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/fsm/FsmTupleAccessor.java/left.java
+  @SuppressWarnings({ "unchecked" })
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/fsm/FsmTupleAccessor.java/base.java
+=======
   @SuppressWarnings("unchecked")
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/fsm/FsmTupleAccessor.java/right.java
   Stream<Edge<SUT>> allPossibleEdges(Predicate<State<SUT>> from, Predicate<Action<SUT>> action, Predicate<State<SUT>> to) {
     return new StreamableCartesianator<Object>(
         model.states().stream().filter(from).collect(toList()),

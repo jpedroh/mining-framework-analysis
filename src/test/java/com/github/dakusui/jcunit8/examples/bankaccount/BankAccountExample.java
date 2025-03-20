@@ -2,8 +2,8 @@ package com.github.dakusui.jcunit8.examples.bankaccount;
 
 import com.github.dakusui.jcunit8.factorspace.Parameter.Regex;
 import com.github.dakusui.jcunit8.factorspace.Parameter.Simple;
-import com.github.dakusui.jcunit8.pipeline.stages.ConfigFactory;
 import com.github.dakusui.jcunit8.runners.junit4.JCUnit8;
+import com.github.dakusui.jcunit8.pipeline.stages.ConfigFactory;
 import com.github.dakusui.jcunit8.runners.junit4.annotations.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -132,7 +132,7 @@ public class BankAccountExample {
       @From("withdrawAmount") int amountOfWithdraw,
       @From("transferAmount") int amountOfTransfer
   ) {
-    System.out.println(scenario + ":" + amountOfDeposit + ":" + amountOfWithdraw + ":" + amountOfTransfer);
+    com.github.dakusui.jcunit8.core.Utils.out().println(scenario + ":" + amountOfDeposit + ":" + amountOfWithdraw + ":" + amountOfTransfer);
   }
 
   private int perform(

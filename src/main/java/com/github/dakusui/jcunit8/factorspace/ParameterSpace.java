@@ -68,6 +68,7 @@ public interface ParameterSpace {
         @SuppressWarnings("unchecked")
         @Override
         public <P> Parameter<P> getParameter(String name) {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/ParameterSpace.java/left.java
           return (Parameter<P>) (parameters.stream(
 
           ).filter(
@@ -80,6 +81,19 @@ public interface ParameterSpace {
                   getParameterNames()
               ))
           ));
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/ParameterSpace.java/base.java
+          //noinspection unchecked,OptionalGetWithoutIsPresent
+          return (Parameter<P>) (parameters
+              .stream()
+              .filter(parameter -> parameter.getName().equals(name))
+              .findFirst().<Parameter<P>>get());
+=======
+          //noinspection OptionalGetWithoutIsPresent
+          return (Parameter<P>) (parameters
+              .stream()
+              .filter(parameter -> parameter.getName().equals(name))
+              .findFirst().<Parameter<P>>get());
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/factorspace/ParameterSpace.java/right.java
         }
 
         @Override

@@ -12,7 +12,7 @@ import java.util.TreeMap;
 import static java.util.Arrays.asList;
 
 public interface Tuple extends Map<String, Object>, Cloneable, Serializable {
-  @SuppressWarnings("unchecked")
+  
   class Builder {
     LinkedHashMap<String, Object> attrs = new LinkedHashMap<>();
     private boolean dictionaryOrder = true;

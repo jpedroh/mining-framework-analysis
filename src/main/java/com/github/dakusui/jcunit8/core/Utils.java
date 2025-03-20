@@ -38,7 +38,7 @@ public enum Utils {
 
   public static <T> Function<T, T> printer(Function<T, String> formatter) {
     return t -> {
-      System.out.println(formatter.apply(t));
+      Utils.out().println(formatter.apply(t));
       return t;
     };
   }
@@ -128,6 +128,7 @@ public enum Utils {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw unexpectedByDesign(e);
     }
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/core/Utils.java/left.java
   }
 
   public static <T extends Predicate<E>, E> Predicate<E> conjunct(Iterable<T> predicates) {
@@ -136,5 +137,34 @@ public enum Utils {
       ret = ret.and(each);
     }
     return ret;
+||||||| /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/core/Utils.java/base.java
+=======
+  }
+
+  public static boolean isRunByMaven() {
+    final String s = System.getProperty("sun.java.command");
+    return s != null && s.contains("surefire");
+  }
+
+  public synchronized static void configureStdIOs() {
+    if (isRunByMaven()) {
+      setSilent();
+    } else {
+      setVerbose();
+    }
+  }
+
+  public synchronized static void setSilent() {
+    out = DUMMY_PRINTSTREAM;
+  }
+
+  public synchronized static void setVerbose() {
+    out = System.out;
+  }
+
+  public static PrintStream out() {
+    configureStdIOs();
+    return out;
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/core/Utils.java/right.java
   }
 }

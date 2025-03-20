@@ -33,7 +33,7 @@ public class PartitionerTest extends PipelineTestBase {
         UTUtils.matcher()
     );
 
-    System.out.println(
+    com.github.dakusui.jcunit8.core.Utils.out().println(
         new Cartesian(factorSpaces.get(0), requirement()).generate().size()
     );
   }
