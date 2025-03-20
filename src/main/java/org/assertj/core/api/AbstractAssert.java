@@ -1,23 +1,6 @@
-/*
- * Created on Nov 18, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.util.Strings.formatIfArgs;
-
 import java.util.Comparator;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.error.BasicErrorMessageFactory;
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
@@ -39,27 +22,18 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Mikhail Mazursky
  * @author Nicolas François
  */
-public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implements Assert<S, A> {
+public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A extends java.lang.Object> implements Assert<S, A> {
+  @VisibleForTesting Objects objects = Objects.instance();
 
-  @VisibleForTesting
-  Objects objects = Objects.instance();
+  @VisibleForTesting Conditions conditions = Conditions.instance();
 
-  @VisibleForTesting
-  Conditions conditions = Conditions.instance();
+  @VisibleForTesting protected final WritableAssertionInfo info;
 
-  @VisibleForTesting
-  protected final WritableAssertionInfo info;
+  @VisibleForTesting protected final A actual;
 
-  // visibility is protected to allow us write custom assertions that need access to actual
-  @VisibleForTesting
-  protected final A actual;
   protected final S myself;
 
-  // we prefer not to use Class<? extends S> selfType because it would force inherited
-  // constructor to cast with a compiler warning
-  // let's keep compiler warning internal to fest (when we can) and not expose them to our end users.
-  @SuppressWarnings("unchecked")
-  protected AbstractAssert(A actual, Class<?> selfType) {
+  @SuppressWarnings(value = { "unchecked" }) protected AbstractAssert(A actual, Class<?> selfType) {
     myself = (S) selfType.cast(this);
     this.actual = actual;
     info = new WritableAssertionInfo();
@@ -306,14 +280,12 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
 
   /** {@inheritDoc} */
   public S usingComparator(Comparator<? super A> customComparator) {
-    // using a specific strategy to compare actual with other objects.
     this.objects = new Objects(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
   /** {@inheritDoc} */
   public S usingDefaultComparator() {
-    // fall back to default strategy to compare actual with other objects.
     this.objects = Objects.instance();
     return myself;
   }
@@ -322,10 +294,8 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * {@inheritDoc}
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public final boolean equals(Object obj) {
-    throw new UnsupportedOperationException("'equals' is not supported...maybe you intended to call 'isEqualTo'");
+  @Override @Deprecated public final boolean equals(Object obj) {
+    throw new UnsupportedOperationException("\'equals\' is not supported...maybe you intended to call \'isEqualTo\'");
   }
 
   /**
@@ -333,9 +303,7 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * 
    * @return 1.
    */
-  @Override
-  public final int hashCode() {
+  @Override public final int hashCode() {
     return 1;
   }
-
 }
