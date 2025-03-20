@@ -344,12 +344,10 @@ public class HttpEventCollectorSender extends TimerTask implements HttpEventColl
                 .writeTimeout(timeoutSettings.writeTimeout, TimeUnit.MILLISECONDS);
 
         Dispatcher dispatcher = new Dispatcher();
-
-        // limit max number of async requests in sequential mode
+        // limit max  number of async requests in sequential mode
         if (sendMode == SendMode.Sequential) {
             dispatcher.setMaxRequests(1);
         }
-        
         builder.dispatcher(dispatcher);
 
         if (disableCertificateValidation) {
