@@ -1,37 +1,17 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.gbif.nameparser.util;
-
 import org.gbif.nameparser.api.NomCode;
 import org.gbif.nameparser.api.ParsedName;
 import org.gbif.nameparser.api.Rank;
-
 import org.junit.Test;
-
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.Assert.*;
 
 /**
  *
  */
 public class RankUtilsTest {
-
-
-  @Test
-  public void testNextLowerLinneanRank() throws Exception {
+  @Test public void testNextLowerLinneanRank() throws Exception {
     assertEquals(Rank.SPECIES, RankUtils.nextLowerLinneanRank(Rank.GENUS));
     assertEquals(Rank.GENUS, RankUtils.nextLowerLinneanRank(Rank.SUBFAMILY));
     assertEquals(Rank.SPECIES, RankUtils.nextLowerLinneanRank(Rank.SUBGENUS));
@@ -42,8 +22,7 @@ public class RankUtilsTest {
     assertEquals(null, RankUtils.nextLowerLinneanRank(Rank.VARIETY));
   }
 
-  @Test
-  public void testNextHigherLinneanRank() throws Exception {
+  @Test public void testNextHigherLinneanRank() throws Exception {
     assertEquals(Rank.FAMILY, RankUtils.nextHigherLinneanRank(Rank.GENUS));
     assertEquals(Rank.FAMILY, RankUtils.nextHigherLinneanRank(Rank.SUBFAMILY));
     assertEquals(Rank.GENUS, RankUtils.nextHigherLinneanRank(Rank.SUBGENUS));
@@ -52,8 +31,7 @@ public class RankUtilsTest {
     assertEquals(Rank.SPECIES, RankUtils.nextHigherLinneanRank(Rank.VARIETY));
   }
 
-  @Test
-  public void minRank() throws Exception {
+  @Test public void minRank() throws Exception {
     List<Rank> ranks = RankUtils.minRanks(Rank.GENUS);
     assertTrue(ranks.contains(Rank.GENUS));
     assertTrue(ranks.contains(Rank.FAMILY));
@@ -61,11 +39,16 @@ public class RankUtilsTest {
     assertTrue(ranks.contains(Rank.INFRACOHORT));
     assertFalse(ranks.contains(Rank.SUBGENUS));
     assertFalse(ranks.contains(Rank.SPECIES));
-    assertEquals(63, ranks.size());
+    assertEquals(
+<<<<<<< /usr/src/app/output/gbif/name-parser/3c1d815c087b4201c84f5bae97c9760487776e06/name-parser-api/src/test/java/org/gbif/nameparser/util/RankUtilsTest.java/left.java
+    62
+=======
+    63
+>>>>>>> /usr/src/app/output/gbif/name-parser/3c1d815c087b4201c84f5bae97c9760487776e06/name-parser-api/src/test/java/org/gbif/nameparser/util/RankUtilsTest.java/right.java
+    , ranks.size());
   }
 
-  @Test
-  public void maxRank() throws Exception {
+  @Test public void maxRank() throws Exception {
     List<Rank> ranks = RankUtils.maxRanks(Rank.GENUS);
     assertTrue(ranks.contains(Rank.GENUS));
     assertFalse(ranks.contains(Rank.FAMILY));
@@ -78,15 +61,13 @@ public class RankUtilsTest {
     assertEquals(43, ranks.size());
   }
 
-  @Test
-  public void between() throws Exception {
+  @Test public void between() throws Exception {
     Set<Rank> ranks = RankUtils.between(Rank.GENUS, Rank.FAMILY, true);
     assertTrue(ranks.contains(Rank.GENUS));
     assertTrue(ranks.contains(Rank.FAMILY));
     assertTrue(ranks.contains(Rank.SUBFAMILY));
     assertFalse(ranks.contains(Rank.SUPERFAMILY));
     assertEquals(10, ranks.size());
-
     ranks = RankUtils.between(Rank.GENUS, Rank.FAMILY, false);
     assertFalse(ranks.contains(Rank.GENUS));
     assertFalse(ranks.contains(Rank.FAMILY));
@@ -95,27 +76,24 @@ public class RankUtilsTest {
     assertEquals(8, ranks.size());
   }
 
-  @Test
-  public void testFamilyGroup() {
+  @Test public void testFamilyGroup() {
     assertTrue(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.SUBTRIBE));
     assertTrue(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.TRIBE));
     assertTrue(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.INFRAFAMILY));
     assertTrue(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.SUPERFAMILY));
-
     assertFalse(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.ORDER));
     assertFalse(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.SECTION));
     assertFalse(RankUtils.RANK_MARKER_MAP_FAMILY_GROUP.containsValue(Rank.GENUS));
   }
-  
+
   private void assertInferred(String uninomial, NomCode code, Rank rank) {
     ParsedName pn = new ParsedName();
     pn.setUninomial(uninomial);
     pn.setCode(code);
     assertEquals(rank, RankUtils.inferRank(pn));
   }
-  
-  @Test
-  public void testInferRank() {
+
+  @Test public void testInferRank() {
     assertInferred("Asteraceae", NomCode.BOTANICAL, Rank.FAMILY);
     assertInferred("Asteraceae", null, Rank.FAMILY);
     assertInferred("Asteraceae", NomCode.ZOOLOGICAL, Rank.UNRANKED);
@@ -128,18 +106,15 @@ public class RankUtilsTest {
     assertInferred("Woodsioideae", null, Rank.SUBFAMILY);
     assertInferred("Antrophyoideae", null, Rank.SUBFAMILY);
     assertInferred("Protowoodsioideae", null, Rank.SUBFAMILY);
-  
     assertInferred("Negarnaviricota", NomCode.VIRUS, Rank.PHYLUM);
     assertInferred("Negarnaviricota", null, Rank.PHYLUM);
     assertInferred("Picornavirales", null, Rank.ORDER);
     assertInferred("Riboviria", null, Rank.REALM);
-  
-    assertEquals(Rank.SPECIES, RankUtils.inferRank(build("Abies","Abies", "alba")));
+    assertEquals(Rank.SPECIES, RankUtils.inferRank(build("Abies", "Abies", "alba")));
     assertEquals(Rank.SPECIES, RankUtils.inferRank(build("Abies", null, "alba")));
     assertEquals(Rank.INFRAGENERIC_NAME, RankUtils.inferRank(build(null, "Abies", null)));
     assertEquals(Rank.INFRAGENERIC_NAME, RankUtils.inferRank(build("", "Abies", null)));
     assertEquals(Rank.SUBFAMILY, RankUtils.inferRank(build("Neurolaenodinae", null, null, NomCode.ZOOLOGICAL)));
-    // should not be able to infer the correct family
     assertEquals(Rank.UNRANKED, RankUtils.inferRank(build("Compositae", null, null, NomCode.BOTANICAL)));
   }
 
@@ -157,23 +132,21 @@ public class RankUtilsTest {
     return pn;
   }
 
-  @Test
-  public void testInferRank2() {
+  @Test public void testInferRank2() {
     for (Rank r : Rank.values()) {
       if (r.getMarker() != null) {
         assertEquals(r.getMarker(), r, RankUtils.inferRank(r.getMarker()));
       }
     }
   }
-  
-  @Test
-  public void testRankMarkers() {
+
+  @Test public void testRankMarkers() {
     assertEquals(Rank.SUBSPECIES, RankUtils.inferRank("agamossp."));
     assertEquals(Rank.SUBSPECIES, RankUtils.inferRank("nothossp."));
     for (Rank r : Rank.values()) {
       if (r.notOtherOrUnranked() && r != Rank.CULTIVAR_GROUP) {
         assertEquals(r, RankUtils.inferRank(r.getMarker()));
-        assertEquals(r, RankUtils.inferRank("notho"+r.getMarker()));
+        assertEquals(r, RankUtils.inferRank("notho" + r.getMarker()));
       }
     }
   }
