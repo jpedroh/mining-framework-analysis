@@ -36,9 +36,9 @@ public class CovBuildCommandTest extends CommandTestBase {
     public void commandForCompileSourcesTest_WithCaptureScriptSources() throws IOException, InterruptedException {
         InvocationAssistance invocationAssistance = new InvocationAssistanceBuilder().withIsScriptSrc(true).withIsCompiledSrc(true).build();
         CoverityPublisher publisher = new CoverityPublisherBuilder().withInvocationAssistance(invocationAssistance).build();
+
         Command covBuildCommand = new CovBuildCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars, true);
         setExpectedArguments(new String[] {"cov-build", "--dir", "TestDir", "--fs-capture-search", "$WORKSPACE"});
-
         covBuildCommand.runCommand();
         consoleLogger.verifyLastMessage("[Coverity] cov-build command line arguments: " + actualArguments.toString());
     }
