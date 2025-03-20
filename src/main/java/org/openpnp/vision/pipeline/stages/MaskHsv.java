@@ -40,14 +40,14 @@ public class MaskHsv extends CvStage {
     @Property(description="Maximum value to be masked.  Note values range from 0 to 255 (inclusive). Setting valueMax less than valueMin will result in no pixels being masked.")
     private int valueMax = 255;
 
-    @Attribute(required=false)
-    @Property(description="Inverts the selection of pixels to mask.")
-    private Boolean invert;
-    
     @Attribute(required = false)
     @Property(description = "If set, the mask is returned directly as a grayscale image with the masked area black, the unmasked white. Otherwise the masked area is blackened in the source image.")
     private boolean binaryMask = false;
 
+    @Attribute(required=false)
+    @Property(description="Inverts the selection of pixels to mask.")
+    private Boolean invert;
+    
     public int getHueMin() {
         return hueMin;
     }
@@ -96,6 +96,14 @@ public class MaskHsv extends CvStage {
         this.valueMax = valueMax;
     }
 
+    public boolean isBinaryMask() {
+        return binaryMask;
+    }
+
+    public void setBinaryMask(boolean binaryMask) {
+        this.binaryMask = binaryMask;
+    }
+
     public Boolean getInvert() {
         return invert;
     }
@@ -103,7 +111,6 @@ public class MaskHsv extends CvStage {
     public void setInvert(Boolean invert) {
         this.invert = invert;
     }
-
 
     @Commit
     public void commit() {
@@ -127,14 +134,6 @@ public class MaskHsv extends CvStage {
     }
     
     
-    public boolean isBinaryMask() {
-        return binaryMask;
-    }
-
-    public void setBinaryMask(boolean binaryMask) {
-        this.binaryMask = binaryMask;
-    }
-
     @Override
     public Result process(CvPipeline pipeline) throws Exception {
         Mat mat = pipeline.getWorkingImage();
@@ -173,7 +172,7 @@ public class MaskHsv extends CvStage {
         if (!invert) {
             Core.bitwise_not(mask, mask);
         }
-        
+
         if (binaryMask) {
             return new Result(mask);
         } 
