@@ -1,25 +1,4 @@
-/*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2021 The JavaParser Team.
- *
- * This file is part of JavaParser.
- *
- * JavaParser can be used either under the terms of
- * a) the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * b) the terms of the Apache License
- *
- * You should have received a copy of both licenses in LICENCE.LGPL and
- * LICENCE.APACHE. Please refer to those files for details.
- *
- * JavaParser is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- */
 package com.github.javaparser.ast.type;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -35,11 +14,9 @@ import com.github.javaparser.metamodel.PrimitiveTypeMetaModel;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedType;
-
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
-
 import static com.github.javaparser.StaticJavaParser.parseClassOrInterfaceType;
 import static com.github.javaparser.utils.Utils.assertNotNull;
 
@@ -52,194 +29,168 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
  * @author Julio Vilmar Gesser
  */
 public class PrimitiveType extends Type implements NodeWithAnnotations<PrimitiveType> {
+  public static PrimitiveType booleanType() {
+    return new PrimitiveType(Primitive.BOOLEAN);
+  }
 
-    public static PrimitiveType booleanType() {
-        return new PrimitiveType(Primitive.BOOLEAN);
-    }
+  public static PrimitiveType charType() {
+    return new PrimitiveType(Primitive.CHAR);
+  }
 
-    public static PrimitiveType charType() {
-        return new PrimitiveType(Primitive.CHAR);
-    }
+  public static PrimitiveType byteType() {
+    return new PrimitiveType(Primitive.BYTE);
+  }
 
-    public static PrimitiveType byteType() {
-        return new PrimitiveType(Primitive.BYTE);
-    }
+  public static PrimitiveType shortType() {
+    return new PrimitiveType(Primitive.SHORT);
+  }
 
-    public static PrimitiveType shortType() {
-        return new PrimitiveType(Primitive.SHORT);
-    }
+  public static PrimitiveType intType() {
+    return new PrimitiveType(Primitive.INT);
+  }
 
-    public static PrimitiveType intType() {
-        return new PrimitiveType(Primitive.INT);
-    }
+  public static PrimitiveType longType() {
+    return new PrimitiveType(Primitive.LONG);
+  }
 
-    public static PrimitiveType longType() {
-        return new PrimitiveType(Primitive.LONG);
-    }
+  public static PrimitiveType floatType() {
+    return new PrimitiveType(Primitive.FLOAT);
+  }
 
-    public static PrimitiveType floatType() {
-        return new PrimitiveType(Primitive.FLOAT);
-    }
+  public static PrimitiveType doubleType() {
+    return new PrimitiveType(Primitive.DOUBLE);
+  }
 
-    public static PrimitiveType doubleType() {
-        return new PrimitiveType(Primitive.DOUBLE);
-    }
+  public enum Primitive {
+    BOOLEAN("Boolean", "Z"),
+    CHAR("Character", "C"),
+    BYTE("Byte", "B"),
+    SHORT("Short", "S"),
+    INT("Integer", "I"),
+    LONG("Long", "J"),
+    FLOAT("Float", "F"),
+    DOUBLE("Double", "D")
+    ;
 
-    public enum Primitive {
+    final String nameOfBoxedType;
 
-        BOOLEAN("Boolean", "Z"),
-        CHAR("Character", "C"),
-        BYTE("Byte", "B"),
-        SHORT("Short", "S"),
-        INT("Integer", "I"),
-        LONG("Long", "J"),
-        FLOAT("Float", "F"),
-        DOUBLE("Double", "D");
+    final String descriptor;
 
-        final String nameOfBoxedType;
-
-        final String descriptor;
-
-        private String codeRepresentation;
-
-        public ClassOrInterfaceType toBoxedType() {
-            return parseClassOrInterfaceType(nameOfBoxedType);
-        }
-
-        public String asString() {
-            return codeRepresentation;
-        }
-
-        Primitive(String nameOfBoxedType, String descriptor) {
-            this.nameOfBoxedType = nameOfBoxedType;
-            this.codeRepresentation = name().toLowerCase();
-            this.descriptor = descriptor;
-        }
-    }
-
-    static final HashMap<String, Primitive> unboxMap = new HashMap<>();
-
-    static {
-        for (Primitive unboxedType : Primitive.values()) {
-            unboxMap.put(unboxedType.nameOfBoxedType, unboxedType);
-        }
-    }
-
-    private Primitive type;
-
-    public PrimitiveType() {
-        this(null, Primitive.INT, new NodeList<>());
-    }
-
-    public PrimitiveType(final Primitive type) {
-        this(null, type, new NodeList<>());
-    }
-
-    @AllFieldsConstructor
-    public PrimitiveType(final Primitive type, NodeList<AnnotationExpr> annotations) {
-        this(null, type, annotations);
-    }
-
-    /**
-     * This constructor is used by the parser and is considered private.
-     */
-    @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
-    public PrimitiveType(TokenRange tokenRange, Primitive type, NodeList<AnnotationExpr> annotations) {
-        super(tokenRange, annotations);
-        setType(type);
-        customInitialization();
-    }
-
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.AcceptGenerator")
-    public <R, A> R accept(final GenericVisitor<R, A> v, final A arg) {
-        return v.visit(this, arg);
-    }
-
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.AcceptGenerator")
-    public <A> void accept(final VoidVisitor<A> v, final A arg) {
-        v.visit(this, arg);
-    }
-
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
-    public Primitive getType() {
-        return type;
-    }
+    private String codeRepresentation;
 
     public ClassOrInterfaceType toBoxedType() {
-        return type.toBoxedType();
+      return parseClassOrInterfaceType(nameOfBoxedType);
     }
 
-    @Override
-    public String toDescriptor() {
-        return type.descriptor;
-    }
-
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
-    public PrimitiveType setType(final Primitive type) {
-        assertNotNull(type);
-        if (type == this.type) {
-            return this;
-        }
-        notifyPropertyChange(ObservableProperty.TYPE, this.type, type);
-        this.type = type;
-        return this;
-    }
-
-    @Override
     public String asString() {
-        return type.asString();
+      return codeRepresentation;
     }
 
-    @Override
-    public PrimitiveType setAnnotations(NodeList<AnnotationExpr> annotations) {
-        return (PrimitiveType) super.setAnnotations(annotations);
+    Primitive(String nameOfBoxedType, String descriptor) {
+      this.nameOfBoxedType = nameOfBoxedType;
+      this.codeRepresentation = name().toLowerCase();
+      this.descriptor = descriptor;
     }
+  }
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.CloneGenerator")
-    public PrimitiveType clone() {
-        return (PrimitiveType) accept(new CloneVisitor(), null);
-    }
+  static final HashMap<String, Primitive> unboxMap = new HashMap<>();
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.GetMetaModelGenerator")
-    public PrimitiveTypeMetaModel getMetaModel() {
-        return JavaParserMetaModel.primitiveTypeMetaModel;
+  static {
+    for (Primitive unboxedType : Primitive.values()) {
+      unboxMap.put(unboxedType.nameOfBoxedType, unboxedType);
     }
+  }
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
-    public boolean isPrimitiveType() {
-        return true;
-    }
+  private Primitive type;
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
-    public PrimitiveType asPrimitiveType() {
-        return this;
-    }
+  public PrimitiveType() {
+    this(null, Primitive.INT, new NodeList<>());
+  }
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
-    public void ifPrimitiveType(Consumer<PrimitiveType> action) {
-        action.accept(this);
-    }
+  public PrimitiveType(final Primitive type) {
+    this(null, type, new NodeList<>());
+  }
 
-    @Override
-    public ResolvedPrimitiveType resolve() {
-        return getSymbolResolver().toResolvedType(this, ResolvedPrimitiveType.class);
-    }
+  @AllFieldsConstructor public PrimitiveType(final Primitive type, NodeList<AnnotationExpr> annotations) {
+    this(null, type, annotations);
+  }
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.TypeCastingGenerator")
-    public Optional<PrimitiveType> toPrimitiveType() {
-        return Optional.of(this);
-    }
+  /**
+     * This constructor is used by the parser and is considered private.
+     */
+  @Generated(value = "com.github.javaparser.generator.core.node.MainConstructorGenerator") public PrimitiveType(TokenRange tokenRange, Primitive type, NodeList<AnnotationExpr> annotations) {
+    super(tokenRange, annotations);
+    setType(type);
+    customInitialization();
+  }
 
-    @Override
-    public ResolvedType convertToUsage(Context context) {
-        return ResolvedPrimitiveType.byName(getType().name());
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.AcceptGenerator") public <R extends java.lang.Object, A extends java.lang.Object> R accept(final GenericVisitor<R, A> v, final A arg) {
+    return v.visit(this, arg);
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.AcceptGenerator") public <A extends java.lang.Object> void accept(final VoidVisitor<A> v, final A arg) {
+    v.visit(this, arg);
+  }
+
+  @Generated(value = "com.github.javaparser.generator.core.node.PropertyGenerator") public Primitive getType() {
+    return type;
+  }
+
+  public ClassOrInterfaceType toBoxedType() {
+    return type.toBoxedType();
+  }
+
+  @Override public String toDescriptor() {
+    return type.descriptor;
+  }
+
+  @Generated(value = "com.github.javaparser.generator.core.node.PropertyGenerator") public PrimitiveType setType(final Primitive type) {
+    assertNotNull(type);
+    if (type == this.type) {
+      return this;
     }
+    notifyPropertyChange(ObservableProperty.TYPE, this.type, type);
+    this.type = type;
+    return this;
+  }
+
+  @Override public String asString() {
+    return type.asString();
+  }
+
+  @Override public PrimitiveType setAnnotations(NodeList<AnnotationExpr> annotations) {
+    return (PrimitiveType) super.setAnnotations(annotations);
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.CloneGenerator") public PrimitiveType clone() {
+    return (PrimitiveType) accept(new CloneVisitor(), null);
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.GetMetaModelGenerator") public PrimitiveTypeMetaModel getMetaModel() {
+    return JavaParserMetaModel.primitiveTypeMetaModel;
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.TypeCastingGenerator") public boolean isPrimitiveType() {
+    return true;
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.TypeCastingGenerator") public PrimitiveType asPrimitiveType() {
+    return this;
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.TypeCastingGenerator") public void ifPrimitiveType(Consumer<PrimitiveType> action) {
+    action.accept(this);
+  }
+
+  @Override public ResolvedPrimitiveType resolve() {
+    return getSymbolResolver().toResolvedType(this, ResolvedPrimitiveType.class);
+  }
+
+  @Override @Generated(value = "com.github.javaparser.generator.core.node.TypeCastingGenerator") public Optional<PrimitiveType> toPrimitiveType() {
+    return Optional.of(this);
+  }
+
+  @Override public ResolvedType convertToUsage(Context context) {
+    return ResolvedPrimitiveType.byName(getType().name());
+  }
 }
