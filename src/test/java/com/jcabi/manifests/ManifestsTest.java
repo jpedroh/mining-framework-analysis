@@ -53,7 +53,6 @@ public final class ManifestsTest {
             Matchers.notNullValue()
         );
     }
-
     /**
      * Manifests can read a default value.
      * @throws Exception If something goes wrong
@@ -66,16 +65,6 @@ public final class ManifestsTest {
             Matchers.equalTo(value)
         );
     }
-
-    /**
-     * Manifests can throw an exception if an attribute is empty.
-     * @throws Exception If something goes wrong
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionWhenAttributeIsEmpty() throws Exception {
-        Manifests.read("Jcabi-Test-Empty-Attribute");
-    }
-
     @Test
     public void throwsExceptionWhenAttributeIsEmpty() {
         Assertions.assertThrows(
@@ -83,7 +72,6 @@ public final class ManifestsTest {
             () -> Manifests.read("Jcabi-Test-Empty-Attribute")
         );
     }
-
     @Test
     public void throwsExceptionIfAttributeIsMissed() {
         Assertions.assertThrows(
@@ -91,7 +79,6 @@ public final class ManifestsTest {
             () -> Manifests.read("absent-property")
         );
     }
-
     @Test
     public void throwsExceptionWhenNoAttributes() {
         Assertions.assertThrows(
@@ -106,7 +93,6 @@ public final class ManifestsTest {
             }
         );
     }
-
     @Test
     public void appendsAttributesFromFile() throws Exception {
         final String name = "Test-Attribute-From-File";
