@@ -687,7 +687,6 @@ public class ShardConsumerTest {
                 null,
                 parentShardPollIntervalMillis,
                 cleanupLeasesOfCompletedShards,
-                ignoreUnexpectedChildShards,
                 mockExecutorService,
                 metricsFactory,
                 taskBackoffTimeMillis,

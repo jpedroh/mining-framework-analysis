@@ -341,16 +341,27 @@ public class Worker implements Runnable {
      */
     // NOTE: This has package level access solely for testing
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 10 LINES
-    Worker(String applicationName, IRecordProcessorFactory recordProcessorFactory, KinesisClientLibConfiguration config,
-           StreamConfig streamConfig, InitialPositionInStreamExtended initialPositionInStream, long parentShardPollIntervalMillis,
+    Worker(String applicationName, IRecordProcessorFactory recordProcessorFactory, StreamConfig streamConfig,
+            InitialPositionInStreamExtended initialPositionInStream, long parentShardPollIntervalMillis,
             long shardSyncIdleTimeMillis, boolean cleanupLeasesUponShardCompletion, boolean ignoreUnexpectedChildShards,
             ICheckpoint checkpoint, KinesisClientLibLeaseCoordinator leaseCoordinator, ExecutorService execService,
             IMetricsFactory metricsFactory, long taskBackoffTimeMillis, long failoverTimeMillis,
             boolean skipShardSyncAtWorkerInitializationIfLeasesExist, ShardPrioritization shardPrioritization) {
-        this(applicationName, recordProcessorFactory, config, streamConfig, initialPositionInStream, parentShardPollIntervalMillis,
+        this(applicationName, recordProcessorFactory, streamConfig, initialPositionInStream, parentShardPollIntervalMillis,
                 shardSyncIdleTimeMillis, cleanupLeasesUponShardCompletion, ignoreUnexpectedChildShards, checkpoint,
                 leaseCoordinator, execService, metricsFactory, taskBackoffTimeMillis, failoverTimeMillis,
                 skipShardSyncAtWorkerInitializationIfLeasesExist, shardPrioritization, Optional.empty(), Optional.empty());
+    }
+    Worker(String applicationName, IRecordProcessorFactory recordProcessorFactory, KinesisClientLibConfiguration config,
+           StreamConfig streamConfig, InitialPositionInStreamExtended initialPositionInStream, long parentShardPollIntervalMillis,
+            long shardSyncIdleTimeMillis, boolean cleanupLeasesUponShardCompletion, ICheckpoint checkpoint,
+            KinesisClientLibLeaseCoordinator leaseCoordinator, ExecutorService execService,
+            IMetricsFactory metricsFactory, long taskBackoffTimeMillis, long failoverTimeMillis,
+            boolean skipShardSyncAtWorkerInitializationIfLeasesExist, ShardPrioritization shardPrioritization) {
+        this(applicationName, recordProcessorFactory, config, streamConfig, initialPositionInStream, parentShardPollIntervalMillis,
+                shardSyncIdleTimeMillis, cleanupLeasesUponShardCompletion, checkpoint, leaseCoordinator, execService,
+                metricsFactory, taskBackoffTimeMillis, failoverTimeMillis, skipShardSyncAtWorkerInitializationIfLeasesExist,
+                shardPrioritization, Optional.empty(), Optional.empty());
     }
 
     /**
@@ -862,8 +873,7 @@ public class Worker implements Runnable {
                 leaseCoordinator.getLeaseManager(),
                 parentShardPollIntervalMillis,
                 cleanupLeasesUponShardCompletion,
-                ignoreUnexpectedChildShards,
-                executorService,
+                ignoreUnexpectedChildShards, executorService,
                 metricsFactory,
                 taskBackoffTimeMillis,
                 skipShardSyncAtWorkerInitializationIfLeasesExist,

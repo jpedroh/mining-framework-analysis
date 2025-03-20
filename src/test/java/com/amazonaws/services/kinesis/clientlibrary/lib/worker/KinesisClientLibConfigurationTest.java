@@ -319,7 +319,7 @@ public class KinesisClientLibConfigurationTest {
                     TEST_VALUE_LONG,
                     TEST_VALUE_LONG,
                     true,
-                    false,
+                        false,
                     new ClientConfiguration(),
                     new ClientConfiguration(),
                     new ClientConfiguration(),

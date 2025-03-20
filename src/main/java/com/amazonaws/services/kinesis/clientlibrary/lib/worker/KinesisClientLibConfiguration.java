@@ -279,31 +279,15 @@ public class KinesisClientLibConfiguration {
             AWSCredentialsProvider dynamoDBCredentialsProvider,
             AWSCredentialsProvider cloudWatchCredentialsProvider,
             String workerId) {
-        this(applicationName,
-                streamName,
-                null,
-                null,
-                DEFAULT_INITIAL_POSITION_IN_STREAM,
-                kinesisCredentialsProvider,
-                dynamoDBCredentialsProvider,
-                cloudWatchCredentialsProvider,
-                DEFAULT_FAILOVER_TIME_MILLIS,
-                workerId,
-                DEFAULT_MAX_RECORDS,
-                DEFAULT_IDLETIME_BETWEEN_READS_MILLIS,
-                DEFAULT_DONT_CALL_PROCESS_RECORDS_FOR_EMPTY_RECORD_LIST,
-                DEFAULT_PARENT_SHARD_POLL_INTERVAL_MILLIS,
-                DEFAULT_SHARD_SYNC_INTERVAL_MILLIS,
-                DEFAULT_CLEANUP_LEASES_UPON_SHARDS_COMPLETION,
+        this(applicationName, streamName, null, null, DEFAULT_INITIAL_POSITION_IN_STREAM, kinesisCredentialsProvider,
+                dynamoDBCredentialsProvider, cloudWatchCredentialsProvider, DEFAULT_FAILOVER_TIME_MILLIS, workerId,
+                DEFAULT_MAX_RECORDS, DEFAULT_IDLETIME_BETWEEN_READS_MILLIS,
+                DEFAULT_DONT_CALL_PROCESS_RECORDS_FOR_EMPTY_RECORD_LIST, DEFAULT_PARENT_SHARD_POLL_INTERVAL_MILLIS,
+                DEFAULT_SHARD_SYNC_INTERVAL_MILLIS, DEFAULT_CLEANUP_LEASES_UPON_SHARDS_COMPLETION,
                 DEFAULT_IGNORE_UNEXPECTED_CHILD_SHARDS,
-                new ClientConfiguration(),
-                new ClientConfiguration(),
-                new ClientConfiguration(),
-                DEFAULT_TASK_BACKOFF_TIME_MILLIS,
-                DEFAULT_METRICS_BUFFER_TIME_MILLIS,
-                DEFAULT_METRICS_MAX_QUEUE_SIZE,
-                DEFAULT_VALIDATE_SEQUENCE_NUMBER_BEFORE_CHECKPOINTING,
-                null,
+                new ClientConfiguration(), new ClientConfiguration(), new ClientConfiguration(),
+                DEFAULT_TASK_BACKOFF_TIME_MILLIS, DEFAULT_METRICS_BUFFER_TIME_MILLIS, DEFAULT_METRICS_MAX_QUEUE_SIZE,
+                DEFAULT_VALIDATE_SEQUENCE_NUMBER_BEFORE_CHECKPOINTING, null,
                 DEFAULT_SHUTDOWN_GRACE_MILLIS);
     }
 
@@ -345,30 +329,30 @@ public class KinesisClientLibConfiguration {
     // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
     public KinesisClientLibConfiguration(String applicationName,
-                                         String streamName,
-                                         String kinesisEndpoint,
-                                         InitialPositionInStream initialPositionInStream,
-                                         AWSCredentialsProvider kinesisCredentialsProvider,
-                                         AWSCredentialsProvider dynamoDBCredentialsProvider,
-                                         AWSCredentialsProvider cloudWatchCredentialsProvider,
-                                         long failoverTimeMillis,
-                                         String workerId,
-                                         int maxRecords,
-                                         long idleTimeBetweenReadsInMillis,
-                                         boolean callProcessRecordsEvenForEmptyRecordList,
-                                         long parentShardPollIntervalMillis,
-                                         long shardSyncIntervalMillis,
-                                         boolean cleanupTerminatedShardsBeforeExpiry,
-                                         boolean ignoreUnexpectedChildShards,
-                                         ClientConfiguration kinesisClientConfig,
-                                         ClientConfiguration dynamoDBClientConfig,
-                                         ClientConfiguration cloudWatchClientConfig,
-                                         long taskBackoffTimeMillis,
-                                         long metricsBufferTimeMillis,
-                                         int metricsMaxQueueSize,
-                                         boolean validateSequenceNumberBeforeCheckpointing,
-                                         String regionName,
-                                         long shutdownGraceMillis) {
+            String streamName,
+            String kinesisEndpoint,
+            InitialPositionInStream initialPositionInStream,
+            AWSCredentialsProvider kinesisCredentialsProvider,
+            AWSCredentialsProvider dynamoDBCredentialsProvider,
+            AWSCredentialsProvider cloudWatchCredentialsProvider,
+            long failoverTimeMillis,
+            String workerId,
+            int maxRecords,
+            long idleTimeBetweenReadsInMillis,
+            boolean callProcessRecordsEvenForEmptyRecordList,
+            long parentShardPollIntervalMillis,
+            long shardSyncIntervalMillis,
+            boolean cleanupTerminatedShardsBeforeExpiry,
+            boolean ignoreUnexpectedChildShards,
+            ClientConfiguration kinesisClientConfig,
+            ClientConfiguration dynamoDBClientConfig,
+            ClientConfiguration cloudWatchClientConfig,
+            long taskBackoffTimeMillis,
+            long metricsBufferTimeMillis,
+            int metricsMaxQueueSize,
+            boolean validateSequenceNumberBeforeCheckpointing,
+            String regionName,
+            long shutdownGraceMillis) {
         this(applicationName, streamName, kinesisEndpoint, null, initialPositionInStream, kinesisCredentialsProvider,
                 dynamoDBCredentialsProvider, cloudWatchCredentialsProvider, failoverTimeMillis, workerId,
                 maxRecords, idleTimeBetweenReadsInMillis,
@@ -402,7 +386,6 @@ public class KinesisClientLibConfiguration {
      * @param shardSyncIntervalMillis Time between tasks to sync leases and Kinesis shards
      * @param cleanupTerminatedShardsBeforeExpiry Clean up shards we've finished processing (don't wait for expiration
      *        in Kinesis)
-     * @param ignoreUnexpectedChildShards Ignore child shards with open parents
      * @param kinesisClientConfig Client Configuration used by Kinesis client
      * @param dynamoDBClientConfig Client Configuration used by DynamoDB client
      * @param cloudWatchClientConfig Client Configuration used by CloudWatch client
@@ -432,7 +415,6 @@ public class KinesisClientLibConfiguration {
                                          long parentShardPollIntervalMillis,
                                          long shardSyncIntervalMillis,
                                          boolean cleanupTerminatedShardsBeforeExpiry,
-                                         boolean ignoreUnexpectedChildShards,
                                          ClientConfiguration kinesisClientConfig,
                                          ClientConfiguration dynamoDBClientConfig,
                                          ClientConfiguration cloudWatchClientConfig,
@@ -469,7 +451,6 @@ public class KinesisClientLibConfiguration {
         this.parentShardPollIntervalMillis = parentShardPollIntervalMillis;
         this.shardSyncIntervalMillis = shardSyncIntervalMillis;
         this.cleanupLeasesUponShardCompletion = cleanupTerminatedShardsBeforeExpiry;
-        this.ignoreUnexpectedChildShards = ignoreUnexpectedChildShards;
         this.workerIdentifier = workerId;
         this.kinesisClientConfig = checkAndAppendKinesisClientLibUserAgent(kinesisClientConfig);
         this.dynamoDBClientConfig = checkAndAppendKinesisClientLibUserAgent(dynamoDBClientConfig);

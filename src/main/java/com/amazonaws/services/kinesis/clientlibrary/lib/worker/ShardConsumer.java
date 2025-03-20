@@ -103,13 +103,28 @@ class ShardConsumer {
      */
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 11 LINES
     ShardConsumer(ShardInfo shardInfo,
+            StreamConfig streamConfig,
+            ICheckpoint checkpoint,
+            IRecordProcessor recordProcessor,
+            ILeaseManager<KinesisClientLease> leaseManager,
+            long parentShardPollIntervalMillis,
+            boolean cleanupLeasesOfCompletedShards,
+            boolean ignoreUnexpectedChildShards,
+            ExecutorService executorService,
+            IMetricsFactory metricsFactory,
+            long backoffTimeMillis,
+            boolean skipShardSyncAtWorkerInitializationIfLeasesExist) {
+        this(shardInfo, streamConfig, checkpoint,recordProcessor, leaseManager, parentShardPollIntervalMillis,
+                cleanupLeasesOfCompletedShards, ignoreUnexpectedChildShards, executorService, metricsFactory, backoffTimeMillis,
+                skipShardSyncAtWorkerInitializationIfLeasesExist, Optional.empty(), Optional.empty());
+    }
+    ShardConsumer(ShardInfo shardInfo,
                   StreamConfig streamConfig,
                   ICheckpoint checkpoint,
                   IRecordProcessor recordProcessor,
                   ILeaseManager<KinesisClientLease> leaseManager,
                   long parentShardPollIntervalMillis,
                   boolean cleanupLeasesOfCompletedShards,
-                  boolean ignoreUnexpectedChildShards,
                   ExecutorService executorService,
                   IMetricsFactory metricsFactory,
                   long backoffTimeMillis,
@@ -122,7 +137,6 @@ class ShardConsumer {
                 leaseManager,
                 parentShardPollIntervalMillis,
                 cleanupLeasesOfCompletedShards,
-                ignoreUnexpectedChildShards,
                 executorService,
                 metricsFactory,
                 backoffTimeMillis,
@@ -178,7 +192,6 @@ class ShardConsumer {
                 leaseManager,
                 parentShardPollIntervalMillis,
                 cleanupLeasesOfCompletedShards,
-                ignoreUnexpectedChildShards,
                 executorService,
                 metricsFactory,
                 backoffTimeMillis,
@@ -216,7 +229,6 @@ class ShardConsumer {
                   ILeaseManager<KinesisClientLease> leaseManager,
                   long parentShardPollIntervalMillis,
                   boolean cleanupLeasesOfCompletedShards,
-                  boolean ignoreUnexpectedChildShards,
                   ExecutorService executorService,
                   IMetricsFactory metricsFactory,
                   long backoffTimeMillis,
@@ -233,9 +245,13 @@ class ShardConsumer {
         this.leaseManager = leaseManager;
         this.parentShardPollIntervalMillis = parentShardPollIntervalMillis;
         this.cleanupLeasesOfCompletedShards = cleanupLeasesOfCompletedShards;
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/8358322835a391c38d975fc4c708b19d62e523dd/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/left.java
         this.ignoreUnexpectedChildShards = ignoreUnexpectedChildShards;
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/8358322835a391c38d975fc4c708b19d62e523dd/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/base.java
+=======
         this.executorService = executorService;
         this.metricsFactory = metricsFactory;
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/8358322835a391c38d975fc4c708b19d62e523dd/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/right.java
         this.taskBackoffTimeMillis = backoffTimeMillis;
         this.skipShardSyncAtWorkerInitializationIfLeasesExist = skipShardSyncAtWorkerInitializationIfLeasesExist;
         this.config = config;
