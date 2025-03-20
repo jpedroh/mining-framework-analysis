@@ -491,6 +491,17 @@ public class GrpcChannelExecutor implements Runnable {
 			return;
 		}
 
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/955ae938535640e4e76c48a3a2aa1af0b649c18f/proxy/src/com/aerospike/client/proxy/grpc/GrpcChannelExecutor.java/left.java
+		streams.remove(grpcStream.getId());
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/955ae938535640e4e76c48a3a2aa1af0b649c18f/proxy/src/com/aerospike/client/proxy/grpc/GrpcChannelExecutor.java/base.java
+		streamsOpen--;
+		streamsClosed++;
+		streams.remove(grpcStream.getId());
+=======
+		streamsOpen--;
+		streamsClosed++;
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/955ae938535640e4e76c48a3a2aa1af0b649c18f/proxy/src/com/aerospike/client/proxy/grpc/GrpcChannelExecutor.java/right.java
+
 		// Schedule each of the pending calls.
 		grpcStream.getPendingCalls().forEach(this::scheduleCalls);
 	}
@@ -550,7 +561,7 @@ public class GrpcChannelExecutor implements Runnable {
 		}
 
 		GrpcStream stream = new GrpcStream(this, methodDescriptor,
-			pendingCalls, options, nextStreamId(), eventLoop,
+		pendingCalls, options, nextStreamId(), eventLoop,
 			maxConcurrentRequestsPerStream, totalRequestsPerStream);
 
 		streams.put(stream.getId(), stream);
