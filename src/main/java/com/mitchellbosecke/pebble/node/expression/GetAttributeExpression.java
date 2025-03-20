@@ -90,6 +90,15 @@ public class GetAttributeExpression implements Expression<Object> {
         Object result = null;
 
         Object[] argumentValues = this.getArgumentValues(self, context);
+
+<<<<<<< /usr/src/app/output/mbosecke/pebble/048fd30ae42f4450120204a5ed618bcfa18adc70/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+        // check if the object is able to provide the attribute dynamically
+        if(object != null && object instanceof DynamicAttributeProvider) {
+            DynamicAttributeProvider dynamicAttributeProvider = (DynamicAttributeProvider) object;
+            if(dynamicAttributeProvider.canProvideDynamicAttribute(attributeName)) {
+                return dynamicAttributeProvider.getDynamicAttribute(attributeNameValue, argumentValues);
+            }
+        }
         
         // check if the object should provide the attribute by macro invocation
         if (object != null && object instanceof MacroAttributeProvider) {
@@ -97,6 +106,17 @@ public class GetAttributeExpression implements Expression<Object> {
             return macroAttributeProvider.macro(context, attributeName, args, false, this.lineNumber);
         }
 
+||||||| /usr/src/app/output/mbosecke/pebble/048fd30ae42f4450120204a5ed618bcfa18adc70/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+        // check if the object is able to provide the attribute dynamically
+        if(object != null && object instanceof DynamicAttributeProvider) {
+            DynamicAttributeProvider dynamicAttributeProvider = (DynamicAttributeProvider) object;
+            if(dynamicAttributeProvider.canProvideDynamicAttribute(attributeName)) {
+                return dynamicAttributeProvider.getDynamicAttribute(attributeNameValue, argumentValues);
+            }
+        }
+
+=======
+>>>>>>> /usr/src/app/output/mbosecke/pebble/048fd30ae42f4450120204a5ed618bcfa18adc70/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
         Member member = object == null ? null : this.memberCache.get(new MemberCacheKey(object.getClass(), attributeName));
         if (object != null && member == null) {
 

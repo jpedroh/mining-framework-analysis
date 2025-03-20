@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  ******************************************************************************/
 package com.mitchellbosecke.pebble.template;
+import com.mitchellbosecke.pebble.cache.CacheKey;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import com.google.common.cache.Cache;
-import com.mitchellbosecke.pebble.cache.CacheKey;
+import com.mitchellbosecke.pebble.cache.BaseTagCacheKey;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.ExtensionRegistry;
 
@@ -92,7 +93,7 @@ public class EvaluationContext {
      */
     public EvaluationContext(PebbleTemplateImpl self, boolean strictVariables, Locale locale,
                              ExtensionRegistry extensionRegistry, Cache<CacheKey, Object> tagCache,
-                             ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates,
+                             ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates, 
                              Map<String, PebbleTemplateImpl> namedImportedTemplates, ScopeChain scopeChain,
                              Hierarchy hierarchy) {
 
