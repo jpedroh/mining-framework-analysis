@@ -1,19 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.util;
-
 import static org.assertj.core.util.Lists.newArrayList;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
@@ -22,11 +8,12 @@ import java.util.*;
  * Utility methods related to <code>{@link Throwable}</code>s.
  * 
  * @author Alex Ruiz
- * @author Daniel Zlotin
  */
 public final class Throwables {
   private static final String ORG_ASSERTJ_CORE_ERROR_CONSTRUCTOR_INVOKER = "org.assertj.core.error.ConstructorInvoker";
+
   private static final String JAVA_LANG_REFLECT_CONSTRUCTOR = "java.lang.reflect.Constructor";
+
   private static final String ORG_ASSERTJ = "org.assert";
 
   /**
@@ -89,15 +76,7 @@ public final class Throwables {
     for (StackTraceElement element : throwable.getStackTrace()) {
       if (element.getClassName().contains(ORG_ASSERTJ)) {
         filtered.remove(element);
-        // Handle the case when AssertJ builds a ComparisonFailure by reflection (see ShouldBeEqual.newAssertionError
-        // method), the stack trace looks like:
-        //
-        // java.lang.reflect.Constructor.newInstance(Constructor.java:501),
-        // org.assertj.core.error.ConstructorInvoker.newInstance(ConstructorInvoker.java:34),
-        //
-        // We want to remove java.lang.reflect.Constructor.newInstance element because it is related to AssertJ.
-        if (previous != null && JAVA_LANG_REFLECT_CONSTRUCTOR.equals(previous.getClassName())
-            && element.getClassName().contains(ORG_ASSERTJ_CORE_ERROR_CONSTRUCTOR_INVOKER)) {
+        if (previous != null && JAVA_LANG_REFLECT_CONSTRUCTOR.equals(previous.getClassName()) && element.getClassName().contains(ORG_ASSERTJ_CORE_ERROR_CONSTRUCTOR_INVOKER)) {
           filtered.remove(previous);
         }
       }
@@ -114,9 +93,13 @@ public final class Throwables {
    * @return the root cause if any, else {@code null}.
    */
   public static Throwable getRootCause(Throwable throwable) {
-    if (throwable.getCause() == null) return null;
+    if (throwable.getCause() == null) {
+      return null;
+    }
     Throwable cause;
-    while ((cause = throwable.getCause()) != null) throwable = cause;
+    while ((cause = throwable.getCause()) != null) {
+      throwable = cause;
+    }
     return throwable;
   }
 
@@ -140,10 +123,11 @@ public final class Throwables {
       pw = new PrintWriter(sw, true);
       throwable.printStackTrace(pw);
       return sw.getBuffer().toString();
-    } finally {
+    }  finally {
       Closeables.closeQuietly(sw, pw);
     }
   }
 
-  private Throwables() {}
+  private Throwables() {
+  }
 }

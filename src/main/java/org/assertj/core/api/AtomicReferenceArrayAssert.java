@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.filter.Filters.filter;
 import static org.assertj.core.extractor.Extractors.byName;
 import static org.assertj.core.extractor.Extractors.resultOf;
@@ -20,7 +7,6 @@ import static org.assertj.core.util.Arrays.isArray;
 import static org.assertj.core.util.IterableUtil.toArray;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +18,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.api.iterable.Extractor;
@@ -57,18 +42,15 @@ import org.assertj.core.util.IterableUtil;
 import org.assertj.core.util.VisibleForTesting;
 import org.assertj.core.util.introspection.IntrospectionError;
 
-public class AtomicReferenceArrayAssert<T>
-    extends AbstractAssert<AtomicReferenceArrayAssert<T>, AtomicReferenceArray<T>>
-    implements IndexedObjectEnumerableAssert<AtomicReferenceArrayAssert<T>, T>,
-    ArraySortedAssert<AtomicReferenceArrayAssert<T>, T> {
-
+public class AtomicReferenceArrayAssert<T extends java.lang.Object> extends AbstractAssert<AtomicReferenceArrayAssert<T>, AtomicReferenceArray<T>> implements IndexedObjectEnumerableAssert<AtomicReferenceArrayAssert<T>, T>, ArraySortedAssert<AtomicReferenceArrayAssert<T>, T> {
   private T[] array;
-  @VisibleForTesting
-  ObjectArrays arrays = ObjectArrays.instance();
-  @VisibleForTesting
-  Iterables iterables = Iterables.instance();
+
+  @VisibleForTesting ObjectArrays arrays = ObjectArrays.instance();
+
+  @VisibleForTesting Iterables iterables = Iterables.instance();
 
   private Map<String, Comparator<?>> comparatorsForElementPropertyOrFieldNames = new HashMap<>();
+
   private TypeComparators comparatorsForElementPropertyOrFieldTypes = new TypeComparators();
 
   public AtomicReferenceArrayAssert(AtomicReferenceArray<T> actual) {
@@ -76,16 +58,14 @@ public class AtomicReferenceArrayAssert<T>
     array = array(actual);
   }
 
-  @Override
-  public AtomicReferenceArrayAssert<T> as(Description description) {
+  @Override public AtomicReferenceArrayAssert<T> as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public AtomicReferenceArrayAssert<T> as(String description, Object... args) {
+  @Override public AtomicReferenceArrayAssert<T> as(String description, Object... args) {
     return super.as(description, args);
   }
- 
+
   /**
    * Verifies that the AtomicReferenceArray is {@code null} or empty.
    * <p>
@@ -101,9 +81,10 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the AtomicReferenceArray is not {@code null} or not empty.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public void isNullOrEmpty() {
-    if (actual == null) return;
+  @Override public void isNullOrEmpty() {
+    if (actual == null) {
+      return;
+    }
     isEmpty();
   }
 
@@ -120,8 +101,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the AtomicReferenceArray is not empty.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, array);
   }
 
@@ -139,8 +119,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the AtomicReferenceArray is empty.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> isNotEmpty() {
+  @Override public AtomicReferenceArrayAssert<T> isNotEmpty() {
     arrays.assertNotEmpty(info, array);
     return myself;
   }
@@ -166,7 +145,6 @@ public class AtomicReferenceArrayAssert<T>
     arrays.assertContainsExactly(info, array, expected);
     return myself;
   }
-  
 
   /**
    * Verifies that the number of values in the AtomicReferenceArray is equal to the given one.
@@ -184,8 +162,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the number of values of the AtomicReferenceArray is not equal to the given one.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasSize(int expected) {
+  @Override public AtomicReferenceArrayAssert<T> hasSize(int expected) {
     arrays.assertHasSize(info, array, expected);
     return myself;
   }
@@ -206,15 +183,14 @@ public class AtomicReferenceArrayAssert<T>
    * // assertion will fail
    * assertThat(abc).hasSameSizeAs(sevenEight);</code></pre>
    *
-   * @param other the array to compare size with actual AtomicReferenceArray.
+   * @param array the array to compare size with actual AtomicReferenceArray.
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual AtomicReferenceArray and given array don't have the same size.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasSameSizeAs(Object other) {
+  @Override public AtomicReferenceArrayAssert<T> hasSameSizeAs(Object other) {
     arrays.assertHasSameSizeAs(info, array, other);
     return myself;
   }
@@ -239,8 +215,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if actual AtomicReferenceArray and given {@code Iterable} don't have the same size.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasSameSizeAs(Iterable<?> other) {
+  @Override public AtomicReferenceArrayAssert<T> hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, array, other);
     return myself;
   }
@@ -267,8 +242,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray does not contain the given values.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> contains(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> contains(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContains(info, array, values);
     return myself;
   }
@@ -295,8 +269,7 @@ public class AtomicReferenceArrayAssert<T>
    *           or none of the given values, or the actual AtomicReferenceArray contains more values than the given ones.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsOnly(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnly(info, array, values);
     return myself;
   }
@@ -320,8 +293,7 @@ public class AtomicReferenceArrayAssert<T>
    * @param iterable the given {@code Iterable} we will get elements from.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsOnlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public AtomicReferenceArrayAssert<T> containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
@@ -348,8 +320,7 @@ public class AtomicReferenceArrayAssert<T>
    *           {@code Iterable}
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasSameElementsAs(Iterable<? extends T> iterable) {
+  @Override public AtomicReferenceArrayAssert<T> hasSameElementsAs(Iterable<? extends T> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
@@ -378,8 +349,7 @@ public class AtomicReferenceArrayAssert<T>
    *           or none of the given values, or the actual AtomicReferenceArray contains more than once these values.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsOnlyOnce(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnlyOnce(info, array, values);
     return myself;
   }
@@ -405,8 +375,7 @@ public class AtomicReferenceArrayAssert<T>
    *           or values are the same but the order is not.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsExactly(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsExactly(info, array, values);
     return myself;
   }
@@ -431,8 +400,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray does not contain the given values, i.e. it
    *           contains some or none of the given values, or more values than the given ones.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsExactlyInAnyOrder(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsExactlyInAnyOrder(info, array, values);
     return myself;
   }
@@ -452,8 +420,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * @param iterable the given {@code Iterable} we will get elements from.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsExactlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public AtomicReferenceArrayAssert<T> containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
   }
 
@@ -479,8 +446,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not contain the given sequence.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsSequence(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public AtomicReferenceArrayAssert<T> containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertContainsSequence(info, array, sequence);
     return myself;
   }
@@ -498,14 +464,13 @@ public class AtomicReferenceArrayAssert<T>
    * // assertion will fail
    * assertThat(elvesRings).containsSubsequence(nenya, vilya);</code></pre>
    *
-   * @param subsequence the subsequence of objects to look for.
+   * @param sequence the sequence of objects to look for.
    * @return this assertion object.
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not contain the given subsequence.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsSubsequence(@SuppressWarnings("unchecked") T... subsequence) {
+  @Override public AtomicReferenceArrayAssert<T> containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... subsequence) {
     arrays.assertContainsSubsequence(info, array, subsequence);
     return myself;
   }
@@ -535,8 +500,7 @@ public class AtomicReferenceArrayAssert<T>
    *           AtomicReferenceArray.
    * @throws AssertionError if the actual AtomicReferenceArray does not contain the given object at the given index.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> contains(T value, Index index) {
+  @Override public AtomicReferenceArrayAssert<T> contains(T value, Index index) {
     arrays.assertContains(info, array, value, index);
     return myself;
   }
@@ -590,8 +554,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray contains any of the given values.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> doesNotContain(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertDoesNotContain(info, array, values);
     return myself;
   }
@@ -616,8 +579,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray contains some elements of the given {@link Iterable}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
+  @Override public AtomicReferenceArrayAssert<T> doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
     arrays.assertDoesNotContainAnyElementsOf(info, array, iterable);
     return myself;
   }
@@ -639,8 +601,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray contains duplicates.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> doesNotHaveDuplicates() {
+  @Override public AtomicReferenceArrayAssert<T> doesNotHaveDuplicates() {
     arrays.assertDoesNotHaveDuplicates(info, array);
     return myself;
   }
@@ -666,8 +627,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not start with the given sequence of objects.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> startsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public AtomicReferenceArrayAssert<T> startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertStartsWith(info, array, sequence);
     return myself;
   }
@@ -693,8 +653,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not end with the given sequence of objects.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> endsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public AtomicReferenceArrayAssert<T> endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertEndsWith(info, array, sequence);
     return myself;
   }
@@ -718,8 +677,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws NullPointerException if the given {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of set {@code Iterable}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> isSubsetOf(Iterable<? extends T> values) {
+  @Override public AtomicReferenceArrayAssert<T> isSubsetOf(Iterable<? extends T> values) {
     arrays.assertIsSubsetOf(info, array, values);
     return myself;
   }
@@ -743,8 +701,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of the given values.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> isSubsetOf(@SuppressWarnings("unchecked") T... values) {
+  @Override public AtomicReferenceArrayAssert<T> isSubsetOf(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertIsSubsetOf(info, array, Arrays.asList(values));
     return myself;
   }
@@ -766,8 +723,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not contain a null element.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsNull() {
+  @Override public AtomicReferenceArrayAssert<T> containsNull() {
     arrays.assertContainsNull(info, array);
     return myself;
   }
@@ -789,8 +745,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray contains a null element.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> doesNotContainNull() {
+  @Override public AtomicReferenceArrayAssert<T> doesNotContainNull() {
     arrays.assertDoesNotContainNull(info, array);
     return myself;
   }
@@ -817,8 +772,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements don't satisfy the given condition.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> are(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> are(Condition<? super T> condition) {
     arrays.assertAre(info, array, condition);
     return myself;
   }
@@ -845,8 +799,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> areNot(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> areNot(Condition<? super T> condition) {
     arrays.assertAreNot(info, array, condition);
     return myself;
   }
@@ -873,8 +826,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> have(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> have(Condition<? super T> condition) {
     arrays.assertHave(info, array, condition);
     return myself;
   }
@@ -901,8 +853,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> doNotHave(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> doNotHave(Condition<? super T> condition) {
     arrays.assertDoNotHave(info, array, condition);
     return myself;
   }
@@ -921,15 +872,14 @@ public class AtomicReferenceArrayAssert<T>
    * // assertion will fail
    * oneThwoThree.areAtLeast(3, oddNumber);</code></pre>
    *
-   * @param times the minimum number of times the condition should be verified.
+   * @param n the minimum number of times the condition should be verified.
    * @param condition the given condition.
    * @return {@code this} object.
    * @throws NullPointerException if the given condition is {@code null}.
    * @throws AssertionError if an element can not be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &lt; n.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> areAtLeast(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> areAtLeast(int times, Condition<? super T> condition) {
     arrays.assertAreAtLeast(info, array, times, condition);
     return myself;
   }
@@ -947,8 +897,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * @see #haveAtLeast(int, Condition)
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> areAtLeastOne(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> areAtLeastOne(Condition<? super T> condition) {
     areAtLeast(1, condition);
     return myself;
   }
@@ -968,15 +917,14 @@ public class AtomicReferenceArrayAssert<T>
    * // assertion will fail
    * oneThwoThree.areAtMost(1, oddNumber);</code></pre>
    *
-   * @param times the number of times the condition should be at most verified.
+   * @param n the number of times the condition should be at most verified.
    * @param condition the given condition.
    * @return {@code this} object.
    * @throws NullPointerException if the given condition is {@code null}.
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &gt; n.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> areAtMost(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> areAtMost(int times, Condition<? super T> condition) {
     arrays.assertAreAtMost(info, array, times, condition);
     return myself;
   }
@@ -996,15 +944,14 @@ public class AtomicReferenceArrayAssert<T>
    * oneThwoThree.areExactly(1, oddNumber);
    * oneThwoThree.areExactly(3, oddNumber);</code></pre>
    *
-   * @param times the exact number of times the condition should be verified.
+   * @param n the exact number of times the condition should be verified.
    * @param condition the given condition.
    * @return {@code this} object.
    * @throws NullPointerException if the given condition is {@code null}.
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &ne; n.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> areExactly(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> areExactly(int times, Condition<? super T> condition) {
     arrays.assertAreExactly(info, array, times, condition);
     return myself;
   }
@@ -1022,8 +969,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * @see #haveAtLeast(int, Condition)
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> haveAtLeastOne(Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
@@ -1043,8 +989,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * This method is an alias for {@link #areAtLeast(int, Condition)}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> haveAtLeast(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> haveAtLeast(int times, Condition<? super T> condition) {
     arrays.assertHaveAtLeast(info, array, times, condition);
     return myself;
   }
@@ -1066,8 +1011,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * This method is an alias {@link #areAtMost(int, Condition)}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> haveAtMost(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> haveAtMost(int times, Condition<? super T> condition) {
     arrays.assertHaveAtMost(info, array, times, condition);
     return myself;
   }
@@ -1089,8 +1033,7 @@ public class AtomicReferenceArrayAssert<T>
    *
    * This method is an alias {@link #areExactly(int, Condition)}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> haveExactly(int times, Condition<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> haveExactly(int times, Condition<? super T> condition) {
     arrays.assertHaveExactly(info, array, times, condition);
     return myself;
   }
@@ -1113,8 +1056,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not have any elements of the given type.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasAtLeastOneElementOfType(Class<?> expectedType) {
+  @Override public AtomicReferenceArrayAssert<T> hasAtLeastOneElementOfType(Class<?> expectedType) {
     arrays.assertHasAtLeastOneElementOfType(info, array, expectedType);
     return myself;
   }
@@ -1137,22 +1079,19 @@ public class AtomicReferenceArrayAssert<T>
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if one element is not of the expected type.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> hasOnlyElementsOfType(Class<?> expectedType) {
+  @Override public AtomicReferenceArrayAssert<T> hasOnlyElementsOfType(Class<?> expectedType) {
     arrays.assertHasOnlyElementsOfType(info, array, expectedType);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AtomicReferenceArrayAssert<T> isSorted() {
+  @Override public AtomicReferenceArrayAssert<T> isSorted() {
     arrays.assertIsSorted(info, array);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AtomicReferenceArrayAssert<T> isSortedAccordingTo(Comparator<? super T> comparator) {
+  @Override public AtomicReferenceArrayAssert<T> isSortedAccordingTo(Comparator<? super T> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, array, comparator);
     return myself;
   }
@@ -1176,8 +1115,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if the actual AtomicReferenceArray is {@code null}.
    * @throws AssertionError if the actual AtomicReferenceArray does not contain all the elements of given {@code Iterable}.
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> containsAll(Iterable<? extends T> iterable) {
+  @Override public AtomicReferenceArrayAssert<T> containsAll(Iterable<? extends T> iterable) {
     arrays.assertContainsAll(info, array, iterable);
     return myself;
   }
@@ -1208,7 +1146,7 @@ public class AtomicReferenceArrayAssert<T>
    * assertThat(fellowshipOfTheRing).usingElementComparator(raceComparator)
    *                                .contains(sauron);</code></pre>
    *
-   * @param elementComparator the comparator to use for incoming assertion checks.
+   * @param customComparator the comparator to use for incoming assertion checks.
    * @throws NullPointerException if the given comparator is {@code null}.
    * @return {@code this} assertion object.
    */
@@ -1219,8 +1157,7 @@ public class AtomicReferenceArrayAssert<T>
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AtomicReferenceArrayAssert<T> usingDefaultElementComparator() {
+  @Override public AtomicReferenceArrayAssert<T> usingDefaultElementComparator() {
     this.arrays = ObjectArrays.instance();
     return myself;
   }
@@ -1289,8 +1226,7 @@ public class AtomicReferenceArrayAssert<T>
    * @return {@code this} assertions object
    * @since 2.7.0 / 3.7.0
    */
-  public <C> AtomicReferenceArrayAssert<T> usingComparatorForElementFieldsWithNames(Comparator<C> comparator,
-                                                        String... elementPropertyOrFieldNames) {
+  public <C extends java.lang.Object> AtomicReferenceArrayAssert<T> usingComparatorForElementFieldsWithNames(Comparator<C> comparator, String... elementPropertyOrFieldNames) {
     for (String elementPropertyOrField : elementPropertyOrFieldNames) {
       comparatorsForElementPropertyOrFieldNames.put(elementPropertyOrField, comparator);
     }
@@ -1366,7 +1302,7 @@ public class AtomicReferenceArrayAssert<T>
    * @return {@code this} assertions object
    * @since 2.7.0 / 3.7.0
    */
-  public <C> AtomicReferenceArrayAssert<T> usingComparatorForElementFieldsWithType(Comparator<C> comparator, Class<C> type) {
+  public <C extends java.lang.Object> AtomicReferenceArrayAssert<T> usingComparatorForElementFieldsWithType(Comparator<C> comparator, Class<C> type) {
     comparatorsForElementPropertyOrFieldTypes.put(type, comparator);
     return myself;
   }
@@ -1399,8 +1335,7 @@ public class AtomicReferenceArrayAssert<T>
    * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceArrayAssert<T> usingFieldByFieldElementComparator() {
-    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                             comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1447,8 +1382,7 @@ public class AtomicReferenceArrayAssert<T>
    * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceArrayAssert<T> usingRecursiveFieldByFieldElementComparator() {
-    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                                      comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1480,8 +1414,7 @@ public class AtomicReferenceArrayAssert<T>
    * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceArrayAssert<T> usingElementComparatorOnFields(String... fields) {
-    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                         comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   /**
@@ -1513,8 +1446,7 @@ public class AtomicReferenceArrayAssert<T>
    * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceArrayAssert<T> usingElementComparatorIgnoringFields(String... fields) {
-    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                               comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   /**
@@ -1609,9 +1541,8 @@ public class AtomicReferenceArrayAssert<T>
    * @throws IntrospectionError if no field or property exists with the given name
    * @since 2.7.0 / 3.7.0
    */
-  public <P> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(array, byName(fieldOrProperty));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(array, byName(fieldOrProperty));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -1670,7 +1601,6 @@ public class AtomicReferenceArrayAssert<T>
   public ObjectArrayAssert<Tuple> extracting(String... propertiesOrFields) {
     Object[] values = FieldsOrPropertiesExtractor.extract(array, byName(propertiesOrFields));
     Tuple[] result = Arrays.copyOf(values, values.length, Tuple[].class);
-
     return new ObjectArrayAssert<>(result);
   }
 
@@ -1715,9 +1645,8 @@ public class AtomicReferenceArrayAssert<T>
    * @return a new assertion object whose object under test is the list of values extracted
    * @since 2.7.0 / 3.7.0
    */
-  public <U> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
+  public <U extends java.lang.Object> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
     U[] extracted = FieldsOrPropertiesExtractor.extract(array, extractor);
-
     return new ObjectArrayAssert<>(extracted);
   }
 
@@ -1757,14 +1686,12 @@ public class AtomicReferenceArrayAssert<T>
    * @return a new assertion object whose object under test is the list of values extracted
    * @since 2.7.0 / 3.7.0
    */
-  public <U, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
+  public <U extends java.lang.Object, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
     final List<C> extractedValues = FieldsOrPropertiesExtractor.extract(Arrays.asList(array), extractor);
-
     final List<U> result = newArrayList();
     for (C e : extractedValues) {
       result.addAll(e);
     }
-
     return new ObjectArrayAssert<>(IterableUtil.toArray(result));
   }
 
@@ -1802,19 +1729,20 @@ public class AtomicReferenceArrayAssert<T>
     List<Object> extractedValues = newArrayList();
     List<?> extractedGroups = FieldsOrPropertiesExtractor.extract(Arrays.asList(array), byName(propertyName));
     for (Object group : extractedGroups) {
-      // expecting AtomicReferenceArray to be an iterable or an array
       if (isArray(group)) {
         int size = Array.getLength(group);
         for (int i = 0; i < size; i++) {
           extractedValues.add(Array.get(group, i));
         }
-      } else if (group instanceof Iterable) {
-        Iterable<?> iterable = (Iterable<?>) group;
-        for (Object value : iterable) {
-          extractedValues.add(value);
-        }
       } else {
-        CommonErrors.wrongElementTypeForFlatExtracting(group);
+        if (group instanceof Iterable) {
+          Iterable<?> iterable = (Iterable<?>) group;
+          for (Object value : iterable) {
+            extractedValues.add(value);
+          }
+        } else {
+          CommonErrors.wrongElementTypeForFlatExtracting(group);
+        }
       }
     }
     return new ObjectArrayAssert<>(extractedValues.toArray());
@@ -1908,9 +1836,8 @@ public class AtomicReferenceArrayAssert<T>
    *           return void, or method accepts arguments.
    * @since 2.7.0 / 3.7.0
    */
-  public <P> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(array, resultOf(method));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(array, resultOf(method));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -1944,13 +1871,11 @@ public class AtomicReferenceArrayAssert<T>
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> inHexadecimal() {
+  @Override public AtomicReferenceArrayAssert<T> inHexadecimal() {
     return super.inHexadecimal();
   }
 
-  @Override
-  public AtomicReferenceArrayAssert<T> inBinary() {
+  @Override public AtomicReferenceArrayAssert<T> inBinary() {
     return super.inBinary();
   }
 
@@ -2056,8 +1981,6 @@ public class AtomicReferenceArrayAssert<T>
    * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceArrayAssert<T> filteredOnNull(String propertyOrFieldName) {
-    // need to cast nulll to Object otherwise it calls :
-    // filteredOn(String propertyOrFieldName, FilterOperation<?> filterOperation)
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
@@ -2172,7 +2095,6 @@ public class AtomicReferenceArrayAssert<T>
     return new AtomicReferenceArrayAssert<>(new AtomicReferenceArray<T>(toArray(filteredIterable)));
   }
 
-
   /**
    * Verifies that all elements match the given {@link Predicate}.
    * <p>
@@ -2195,8 +2117,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    * @since 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> allMatch(Predicate<? super T> condition) {
+  @Override public AtomicReferenceArrayAssert<T> allMatch(Predicate<? super T> condition) {
     iterables.assertAllMatch(info, newArrayList(array), condition, PredicateDescription.GIVEN);
     return myself;
   }
@@ -2230,8 +2151,7 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    * @since 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> allMatch(Predicate<? super T> predicate, String predicateDescription) {
+  @Override public AtomicReferenceArrayAssert<T> allMatch(Predicate<? super T> predicate, String predicateDescription) {
     iterables.assertAllMatch(info, newArrayList(array), predicate, new PredicateDescription(predicateDescription));
     return myself;
   }
@@ -2255,10 +2175,8 @@ public class AtomicReferenceArrayAssert<T>
    * @throws AssertionError if one or more elements don't satisfy given requirements.
    * @since 3.7.0
    */
-  @Override
-  public AtomicReferenceArrayAssert<T> allSatisfy(Consumer<? super T> requirements) {
+  @Override public AtomicReferenceArrayAssert<T> allSatisfy(Consumer<? super T> requirements) {
     iterables.assertAllSatisfy(info, newArrayList(array), requirements);
     return myself;
   }
-
 }

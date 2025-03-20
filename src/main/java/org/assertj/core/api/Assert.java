@@ -1,22 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
-
 import org.assertj.core.presentation.Representation;
 import org.assertj.core.presentation.StandardRepresentation;
 
@@ -33,8 +19,7 @@ import org.assertj.core.presentation.StandardRepresentation;
  * @author Nicolas François
  * @author Mikhail Mazursky
  */
-public interface Assert<S extends Assert<S, A>, A> extends Descriptable<S>, ExtensionPoints<S, A> {
-
+public interface Assert<S extends Assert<S, A>, A extends java.lang.Object> extends Descriptable<S>, ExtensionPoints<S, A> {
   /**
    * Verifies that the actual value is equal to the given one.
    * <p>
@@ -309,8 +294,8 @@ public interface Assert<S extends Assert<S, A>, A> extends Descriptable<S>, Exte
    * @throws AssertionError if the actual value is {@code null}.
    * @throws AssertionError if the actual value is not an instance of the given type.
    */
-  <T> S isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
-  
+  <T extends java.lang.Object> S isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
+
   /**
    * Verifies that the actual value is an instance of any of the given types.
    * <p>
@@ -564,9 +549,7 @@ public interface Assert<S extends Assert<S, A>, A> extends Descriptable<S>, Exte
    *             <code>equals(Object)</code> instead of <code>{@link #isEqualTo(Object)}</code>.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  boolean equals(Object obj);
+  @Override @Deprecated boolean equals(Object obj);
 
   /**
    * In case of assertion error, the thread dump will be printed on {@link System#err}.
@@ -660,7 +643,7 @@ public interface Assert<S extends Assert<S, A>, A> extends Descriptable<S>, Exte
    *  &lt;$bar$&gt;</code></pre>
    * 
    * @param representation Describe/represent values in AssertJ error messages.
-   * @return this assertion object.
+   * @return
    */
   S withRepresentation(Representation representation);
 }

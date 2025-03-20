@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -22,7 +9,6 @@ import static org.assertj.core.util.DateUtil.newIsoDateTimeWithMsFormat;
 import static org.assertj.core.util.DateUtil.newTimestampDateFormat;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -35,7 +21,6 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import org.assertj.core.internal.Dates;
 import org.assertj.core.util.VisibleForTesting;
@@ -58,19 +43,15 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  * @author William Delanoue
- * @author Michal Kordas
  */
 public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extends AbstractAssert<S, Date> {
-
   /**
    * the default DateFormat used to parse any String date representation.
    */
-  private static final List<DateFormat> DEFAULT_DATE_FORMATS = newArrayList(newIsoDateTimeWithMsFormat(),
-                                                                            newTimestampDateFormat(),
-                                                                            newIsoDateTimeFormat(),
-                                                                            newIsoDateFormat());
+  private static final List<DateFormat> DEFAULT_DATE_FORMATS = newArrayList(newIsoDateTimeWithMsFormat(), newTimestampDateFormat(), newIsoDateTimeFormat(), newIsoDateFormat());
 
   private static final String DATE_FORMAT_PATTERN_SHOULD_NOT_BE_NULL = "Given date format pattern should not be null";
+
   private static final String DATE_FORMAT_SHOULD_NOT_BE_NULL = "Given date format should not be null";
 
   /**
@@ -78,15 +59,13 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
    * to Date.<br>
    * It keeps the insertion order so first format added will be first format used.
    */
-  @VisibleForTesting
-  static ThreadLocal<LinkedHashSet<DateFormat>> userDateFormats = new ThreadLocal<LinkedHashSet<DateFormat>>() {
-    @Override
-    protected LinkedHashSet<DateFormat> initialValue() {
+  @VisibleForTesting static ThreadLocal<LinkedHashSet<DateFormat>> userDateFormats = new ThreadLocal<LinkedHashSet<DateFormat>>() {
+    @Override protected LinkedHashSet<DateFormat> initialValue() {
       return new LinkedHashSet<>();
     }
   };
-  @VisibleForTesting
-  Dates dates = Dates.instance();
+
+  @VisibleForTesting Dates dates = Dates.instance();
 
   public AbstractDateAssert(Date actual, Class<?> selfType) {
     super(actual, selfType);
@@ -1300,12 +1279,11 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
   /**
    * @deprecated use {@link #hasYear(int)} instead.
    */
-  @Deprecated
-  public S isWithinYear(int year) {
+  @Deprecated public S isWithinYear(int year) {
     dates.assertHasYear(info, actual, year);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual {@code Date} month is equal to the given month, <b>month value starting at 1</b>
    * (January=1, February=2, ...).
@@ -1333,12 +1311,11 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
   /**
    * @deprecated use {@link #hasMonth(int)} instead.
    */
-  @Deprecated
-  public S isWithinMonth(int month) {
+  @Deprecated public S isWithinMonth(int month) {
     dates.assertHasMonth(info, actual, month);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual {@code Date} day of month is equal to the given day of month.
    * <p>
@@ -1365,12 +1342,11 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
   /**
    * @deprecated use {@link #hasDayOfMonth(int)} instead.
    */
-  @Deprecated
-  public S isWithinDayOfMonth(int dayOfMonth) {
+  @Deprecated public S isWithinDayOfMonth(int dayOfMonth) {
     dates.assertHasDayOfMonth(info, actual, dayOfMonth);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual {@code Date} day of week is equal to the given day of week (see
    * {@link Calendar#DAY_OF_WEEK} for valid values).
@@ -1394,12 +1370,11 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
     dates.assertHasDayOfWeek(info, actual, dayOfWeek);
     return myself;
   }
-  
+
   /**
    * @deprecated use {@link #hasDayOfWeek(int)} instead.
    */
-  @Deprecated
-  public S isWithinDayOfWeek(int dayOfWeek) {
+  @Deprecated public S isWithinDayOfWeek(int dayOfWeek) {
     dates.assertHasDayOfWeek(info, actual, dayOfWeek);
     return myself;
   }
@@ -1425,12 +1400,11 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
     dates.assertHasHourOfDay(info, actual, hourOfDay);
     return myself;
   }
-  
+
   /**
    * @deprecated use {@link #hasHourOfDay(int)} instead.
    */
-  @Deprecated
-  public S isWithinHourOfDay(int hourOfDay) {
+  @Deprecated public S isWithinHourOfDay(int hourOfDay) {
     dates.assertHasHourOfDay(info, actual, hourOfDay);
     return myself;
   }
@@ -1456,16 +1430,15 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
     dates.assertHasMinute(info, actual, minute);
     return myself;
   }
-  
+
   /**
    * @deprecated use {@link #hasMinute(int)} instead.
    */
-  @Deprecated
-  public S isWithinMinute(int minute) {
+  @Deprecated public S isWithinMinute(int minute) {
     dates.assertHasMinute(info, actual, minute);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual {@code Date} second is equal to the given second.
    * <p>
@@ -1487,16 +1460,15 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
     dates.assertHasSecond(info, actual, second);
     return myself;
   }
-  
+
   /**
    * @deprecated use {@link #hasSecond(int)} instead.
    */
-  @Deprecated
-  public S isWithinSecond(int second) {
+  @Deprecated public S isWithinSecond(int second) {
     dates.assertHasSecond(info, actual, second);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual {@code Date} millisecond is equal to the given millisecond.
    * <p>
@@ -1518,16 +1490,15 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
     dates.assertHasMillisecond(info, actual, millisecond);
     return myself;
   }
-  
+
   /**
    * @deprecated use {@link #hasMillisecond(int)} instead.
    */
-  @Deprecated
-  public S isWithinMillisecond(int second) {
+  @Deprecated public S isWithinMillisecond(int second) {
     dates.assertHasMillisecond(info, actual, second);
     return myself;
   }
-  
+
   /**
    * Verifies that actual and given {@code Date} are in the same year.
    * <p>
@@ -2525,19 +2496,19 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
    * @return the corresponding Date, null if dateAsString parameter is null.
    * @throws AssertionError if the string can't be parsed as a Date
    */
-  @VisibleForTesting
-  Date parse(String dateAsString) {
-    if (dateAsString == null) return null;
-    // parse with date format specified by user if any, otherwise use default formats
-    // no synchronization needed as userCustomDateFormat is thread local
+  @VisibleForTesting Date parse(String dateAsString) {
+    if (dateAsString == null) {
+      return null;
+    }
     Date date = parseDateWith(dateAsString, userDateFormats.get());
-    if (date != null) return date;
-    // no matching user date format, let's try default format
+    if (date != null) {
+      return date;
+    }
     date = parseDateWithDefaultDateFormats(dateAsString);
-    if (date != null) return date;
-    // no matching date format, throw an error
-    throw new AssertionError(String.format("Failed to parse %s with any of these date formats:%n   %s", dateAsString,
-                                           info.representation().toStringOf(dateFormatsInOrderOfUsage())));
+    if (date != null) {
+      return date;
+    }
+    throw new AssertionError(String.format("Failed to parse %s with any of these date formats:%n   %s", dateAsString, info.representation().toStringOf(dateFormatsInOrderOfUsage())));
   }
 
   private Date parseDateWithDefaultDateFormats(final String dateAsString) {
@@ -2557,24 +2528,20 @@ public abstract class AbstractDateAssert<S extends AbstractDateAssert<S>> extend
       try {
         return defaultDateFormat.parse(dateAsString);
       } catch (ParseException e) {
-        // ignore and try next date format
       }
     }
     return null;
   }
 
-  @Override
-  public S usingComparator(Comparator<? super Date> customComparator) {
+  @Override public S usingComparator(Comparator<? super Date> customComparator) {
     super.usingComparator(customComparator);
     this.dates = new Dates(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public S usingDefaultComparator() {
+  @Override public S usingDefaultComparator() {
     super.usingDefaultComparator();
     this.dates = Dates.instance();
     return myself;
   }
-
 }
