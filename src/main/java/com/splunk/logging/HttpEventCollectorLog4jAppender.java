@@ -73,9 +73,14 @@ public final class HttpEventCollectorLog4jAppender extends AbstractAppender
                                             String sendMode,
                                             String middleware,
                                             final String disableCertificateValidation,
+<<<<<<< /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/left.java
                                             final String eventBodySerializer,
-                                            final String eventHeaderSerializer,
-                                            HttpEventCollectorSender.TimeoutSettings timeoutSettings)
+                         final String eventHeaderSerializer)
+||||||| /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/base.java
+                                            final String eventBodySerializer)
+=======
+                                            final String eventBodySerializer, HttpEventCollectorSender.TimeoutSettings timeoutSettings)
+>>>>>>> /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/right.java
     {
         super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
         Map<String, String> metadata = new HashMap<>();
@@ -195,7 +200,7 @@ public final class HttpEventCollectorLog4jAppender extends AbstractAppender
         return new HttpEventCollectorLog4jAppender(
                 name, url, token,  channel, type,
                 source, sourcetype, messageFormat, host, index,
-                filter, layout,
+                filter, layout, 
                 includeLoggerName, includeThreadName, includeMDC, includeException, includeMarker,
                 ignoreExceptionsBool,
                 parseInt(batchInterval, HttpEventCollectorSender.DefaultBatchInterval),
@@ -205,9 +210,15 @@ public final class HttpEventCollectorLog4jAppender extends AbstractAppender
                 sendMode,
                 middleware,
                 disableCertificateValidation,
+<<<<<<< /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/left.java
                 eventBodySerializer,
-                eventHeaderSerializer,
+                eventHeaderSerializer
+||||||| /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/base.java
+                eventBodySerializer
+=======
+                eventBodySerializer,
                 new HttpEventCollectorSender.TimeoutSettings(connectTimeout, callTimeout, readTimeout, writeTimeout)
+>>>>>>> /usr/src/app/output/splunk/splunk-library-javalogging/f80bc59f417077de739ae23c10be9b1658219bed/src/main/java/com/splunk/logging/HttpEventCollectorLog4jAppender.java/right.java
         );
     }
 

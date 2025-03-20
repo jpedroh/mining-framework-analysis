@@ -72,7 +72,7 @@ public class HttpEventCollectorLogbackAppender<E> extends AppenderBase<E> {
 
         if (_sourcetype != null)
             metadata.put(MetadataTags.SOURCETYPE, _sourcetype);
-
+        
         if (_messageFormat != null)
             metadata.put(MetadataTags.MESSAGEFORMAT, _messageFormat);
 
@@ -246,7 +246,7 @@ public class HttpEventCollectorLogbackAppender<E> extends AppenderBase<E> {
     public String getSourcetype() {
         return this._sourcetype;
     }
-
+    
     public void setMessageFormat(String messageFormat) {
         this._messageFormat = messageFormat;
     }
@@ -334,7 +334,6 @@ public class HttpEventCollectorLogbackAppender<E> extends AppenderBase<E> {
     public long getCallTimeout(long milliseconds) {
         return this.timeoutSettings.callTimeout = milliseconds;
     }
-
 
     public void setReadTimeout(long milliseconds) {
         this.timeoutSettings.readTimeout = milliseconds;

@@ -153,9 +153,9 @@ public final class HttpEventCollectorLoggingHandler extends Handler {
         long batchSize = getConfigurationNumericProperty(BatchSizeConfTag, HttpEventCollectorSender.DefaultBatchSize);
         long retriesOnError = getConfigurationNumericProperty(RetriesOnErrorTag, 0);
         String sendMode = getConfigurationProperty(SendModeTag, "sequential");
-        String eventHeaderSerializer = getConfigurationProperty("eventHeaderSerializer", "");
         String middleware = getConfigurationProperty(MiddlewareTag, null);
         String eventBodySerializer = getConfigurationProperty("eventBodySerializer", null);
+        String eventHeaderSerializer = getConfigurationProperty("eventHeaderSerializer", "");
 
         includeLoggerName = getConfigurationBooleanProperty(IncludeLoggerNameConfTag, true);
         includeThreadName = getConfigurationBooleanProperty(IncludeThreadNameConfTag, true);
