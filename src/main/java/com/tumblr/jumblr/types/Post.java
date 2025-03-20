@@ -36,15 +36,17 @@ public class Post extends Resource {
     private Long reblogged_from_id;
     private String reblogged_from_name;
     private Long note_count;
-    private List<Note> notes;
 
     /**
      * Get the id of the author of the post
      * @return possibly null author id
      */
+
     public String getAuthorId() {
         return author;
     }
+
+    private Note[] notes;
 
     /**
      * Get whether or not this post is liked
@@ -203,16 +205,12 @@ public class Post extends Resource {
      * options map for this to work.
      * @return a copy of the array of the notes on this post
      */
-    public List<Note> getNotes() {
-        return notes;
-    }
-
-    /**
-     * Get the number of notes on this post
-     * @return the number of notes
-     */
-    public Long getNoteCount() {
-        return note_count;
+    public Note[] getNotes() {
+        if (notes == null)
+            return null;
+        Note[] result = new Note[notes.length];
+        System.arraycopy(notes, 0, result, 0, notes.length);
+        return result;
     }
 
     /**
