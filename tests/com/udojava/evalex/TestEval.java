@@ -396,6 +396,40 @@ public class TestEval {
 	}
 
 	@Test
+	public void canEvalHexExpression() throws Exception {
+		BigDecimal result = new Expression("0xcafe").eval();
+		assertEquals("51966", result.toPlainString());
+	}
+
+	@Test
+	public void hexExpressionCanUseUpperCaseCharacters() throws Exception {
+		BigDecimal result = new Expression("0XCAFE").eval();
+		assertEquals("51966", result.toPlainString());
+	}
+
+	@Test
+	public void longHexExpressionWorks() throws Exception {
+		BigDecimal result = new Expression("0xcafebabe", MathContext.DECIMAL128).eval();
+		assertEquals("3405691582", result.toPlainString());
+	}
+
+	@Test(expected = ExpressionException.class)
+	public void hexExpressionDoesNotAllowNonHexCharacters() throws Exception {
+		BigDecimal result = new Expression("0xbaby").eval();
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void throwsExceptionIfDoesNotContainHexDigits() throws Exception {
+		BigDecimal result = new Expression("0x").eval();
+	}
+
+	@Test
+	public void hexExpressionsEvaluatedAsExpected() throws Exception {
+		BigDecimal result = new Expression("0xcafe + 0xbabe").eval();
+		assertEquals("99772", result.toPlainString());
+	}
+
+	@Test
 	public void testNull() {
 		Expression e = null;
 		e = new Expression("null");
@@ -437,36 +471,4 @@ public class TestEval {
 		assertEquals("Second operand may not be null",err);
 	}
 
-	@Test
-	public void canEvalHexExpression() throws Exception {
-		BigDecimal result = new Expression("0xcafe").eval();
-		assertEquals("51966", result.toPlainString());
-	}
-
-	@Test
-	public void hexExpressionCanUseUpperCaseCharacters() throws Exception {
-		BigDecimal result = new Expression("0XCAFE").eval();
-		assertEquals("51966", result.toPlainString());
-	}
-
-	@Test
-	public void longHexExpressionWorks() throws Exception {
-		BigDecimal result = new Expression("0xcafebabe", MathContext.DECIMAL128).eval();
-		assertEquals("3405691582", result.toPlainString());
-	}
-
-	@Test(expected = ExpressionException.class)
-	public void hexExpressionDoesNotAllowNonHexCharacters() throws Exception {
-		BigDecimal result = new Expression("0xbaby").eval();
-	}
-
-	@Test(expected = NumberFormatException.class)
-	public void throwsExceptionIfDoesNotContainHexDigits() throws Exception {
-		BigDecimal result = new Expression("0x").eval();
-	}
-
-	@Test
-	public void hexExpressionsEvaluatedAsExpected() throws Exception {
-		BigDecimal result = new Expression("0xcafe + 0xbabe").eval();
-		assertEquals("99772", result.toPlainString());
-	}}
+}

@@ -605,7 +605,13 @@ public class Expression {
 	}
 
 	enum TokenType {
-		VARIABLE, FUNCTION, LITERAL, OPERATOR, OPEN_PAREN, COMMA, CLOSE_PAREN, HEX_LITERAL, STRINGPARAM
+<<<<<<< /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/left.java
+		VARIABLE, FUNCTION, LITERAL, OPERATOR, OPEN_PAREN, COMMA, CLOSE_PAREN, STRINGPARAM
+||||||| /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/base.java
+		VARIABLE, FUNCTION, LITERAL, OPERATOR, OPEN_PAREN, COMMA, CLOSE_PAREN
+=======
+		VARIABLE, FUNCTION, LITERAL, OPERATOR, OPEN_PAREN, COMMA, CLOSE_PAREN, HEX_LITERAL
+>>>>>>> /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/right.java
 	}
 
 	class Token {
@@ -1331,6 +1337,7 @@ public class Expression {
 					if (!stack.isEmpty() && stack.peek().type == TokenType.FUNCTION) {
 						outputQueue.add(stack.pop());
 					}
+					break;
 			}
 			previousToken = token;
 		}
@@ -1421,6 +1428,7 @@ public class Expression {
 						}
 					});
 					break;
+<<<<<<< /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/left.java
 				case STRINGPARAM:
 					stack.push(new LazyNumber() {
 						public BigDecimal eval() {
@@ -1432,16 +1440,16 @@ public class Expression {
 						} 
 					});
 					break;
+||||||| /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/base.java
+=======
 				case HEX_LITERAL:
 					stack.push(new LazyNumber() {
 						public BigDecimal eval() {
 							return new BigDecimal(new BigInteger(token.surface.substring(2), 16), mc);
 						}
-						public String getString() {
-							return new BigInteger(token.surface.substring(2), 16).toString();
-						} 
 					});
 					break;
+>>>>>>> /usr/src/app/output/uklimaschewski/evalex/b712e336e13c0bc27119d445050721515f71f6d4/src/com/udojava/evalex/Expression.java/right.java
 			}
 		}
 		BigDecimal result = stack.pop().eval();
