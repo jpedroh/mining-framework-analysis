@@ -122,15 +122,16 @@ public class JMeterPluginsMojo extends AbstractMojo {
         	getLog().info("Processing " + source);
 
 	        for (Graph graph : graphs) {
-	            getLog().debug("Creating graph: " + graphs != null ? graphs.toString() : "<null>");
-	            String outputResultFile = graph.getOutputFile(source).getAbsolutePath();
-	            
-	            ArrayList<Element> argList = new ArrayList<Element>();
+            getLog().debug("Creating graph: " + graphs != null ? graphs.toString() : "<null>");
+            String outputResultFile = graph.getOutputFile(source).getAbsolutePath();
+            
+            ArrayList<Element> argList = new ArrayList<Element>();
+				argList.add(element(name("argument"), "-Dlog_file="));
 				argList.add(element(name("argument"), "-classpath"));
 				argList.add(element(name("argument"),
-						libDir.getAbsolutePath() + File.separator + "*" +
-								File.pathSeparator +
-								libExtDir.getAbsolutePath() + File.separator + "*"));
+        		libDir.getAbsolutePath() + File.separator + "*" +
+        				File.pathSeparator +
+        				libExtDir.getAbsolutePath() + File.separator + "*"));
 				argList.add(element(name("argument"), "kg.apc.cmd.UniversalRunner"));
 				argList.add(element(name("argument"), "--tool"));
 				argList.add(element(name("argument"), "Reporter"));
@@ -140,67 +141,108 @@ public class JMeterPluginsMojo extends AbstractMojo {
 				argList.add(element(name("argument"), graph.pluginType));
 				
 				if (graph.relativeTimes != null) {
-					argList.add(element(name("argument"), "--relative-times"));
-					argList.add(element(name("argument"), "no".equalsIgnoreCase(graph.relativeTimes)? "no" : "yes"));
-				}
+        	argList.add(element(name("argument"), "--relative-times"));
+        	argList.add(element(name("argument"), "no".equalsIgnoreCase(graph.relativeTimes)? "no" : "yes"));
+        }
 				if (graph.includeLabels != null) {
-					argList.add(element(name("argument"), "--include-labels"));
-					argList.add(element(name("argument"), graph.includeLabels));
-				}
+        	argList.add(element(name("argument"), "--include-labels"));
+        	argList.add(element(name("argument"), graph.includeLabels));
+        }
 				if (graph.excludeLabels != null) {
-					argList.add(element(name("argument"), "--exclude-labels"));
-					argList.add(element(name("argument"), graph.excludeLabels));
-				}
+        	argList.add(element(name("argument"), "--exclude-labels"));
+        	argList.add(element(name("argument"), graph.excludeLabels));
+        }
 				
                 // branch in case we have csv file
 				if(outputResultFile.endsWith(".csv")){
-					argList.add(element(name("argument"), "--generate-csv"));
-				} else {
-					argList.add(element(name("argument"), "--width"));
-					argList.add(element(name("argument"), String.valueOf(graph.width)));
-					argList.add(element(name("argument"), "--height"));
-					argList.add(element(name("argument"), String.valueOf(graph.height)));
-					if(!StringUtils.isBlank(graph.graphPerRow)){
-						argList.add(element(name("argument"), "--graph-per-row"));
-						argList.add(element(name("argument"), graph.graphPerRow));
-					}
-					if(graph.granulation != null){
-						argList.add(element(name("argument"), "--granulation"));
-						argList.add(element(name("argument"), String.valueOf(graph.granulation)));
-					}
-					if(!StringUtils.isBlank(graph.preventOutliers)){
-						argList.add(element(name("argument"), "--prevent-outliers"));
-						argList.add(element(name("argument"), graph.preventOutliers));
-					}
-					if(!StringUtils.isBlank(graph.lineWeight)){
-						argList.add(element(name("argument"), "--line-weight"));
-						argList.add(element(name("argument"), graph.lineWeight));
-					}
-					argList.add(element(name("argument"), "--generate-png"));
-				}
+        	argList.add(element(name("argument"), "--generate-csv"));
+        } else {
+        	argList.add(element(name("argument"), "--width"));
+        	argList.add(element(name("argument"), String.valueOf(graph.width)));
+        	argList.add(element(name("argument"), "--height"));
+        	argList.add(element(name("argument"), String.valueOf(graph.height)));
+        	if(!StringUtils.isBlank(graph.graphPerRow)){
+        		argList.add(element(name("argument"), "--graph-per-row"));
+        		argList.add(element(name("argument"), graph.graphPerRow));
+        	}
+        	if(graph.granulation != null){
+        		argList.add(element(name("argument"), "--granulation"));
+        		argList.add(element(name("argument"), String.valueOf(graph.granulation)));
+        	}
+        	if(!StringUtils.isBlank(graph.preventOutliers)){
+        		argList.add(element(name("argument"), "--prevent-outliers"));
+        		argList.add(element(name("argument"), graph.preventOutliers));
+        	}
+        	if(!StringUtils.isBlank(graph.lineWeight)){
+        		argList.add(element(name("argument"), "--line-weight"));
+        		argList.add(element(name("argument"), graph.lineWeight));
+        	}
+        	argList.add(element(name("argument"), "--generate-png"));
+        }
 				
 				argList.add(element(name("argument"), outputResultFile));
 				
 				try {
         			executeMojo(
-                        plugin(
-                                groupId("org.codehaus.mojo"),
-                                artifactId("exec-maven-plugin"),
-                                version("1.2.1")),
-                        goal("exec"),
-                        configuration(
-                                element(name("executable"), "java"),
-                                element(name("workingDirectory"), binDir.getAbsolutePath()),
-                                element(name("arguments"),
-                                		argList.toArray(new Element[0]))),
-                        executionEnvironment(
-                                mavenProject,
-                                mavenSession,
-                                pluginManager));
+                                plugin(
+                                        groupId("org.codehaus.mojo"),
+                                        artifactId("exec-maven-plugin"),
+                                        version("1.2.1")),
+                                goal("exec"),
+                                configuration(
+                                        element(name("executable"), "java"),
+                                        element(name("workingDirectory"), binDir.getAbsolutePath()),
+                                        element(name("arguments"),
+<<<<<<< /usr/src/app/output/codecentric/jmeter-graph-maven-plugin/1a548b68d5c5dcb7e618bcefcdbbcd8dc00d209f/src/main/java/de/codecentric/jmeter/JMeterPluginsMojo.java/left.java
+                                        		argList.toArray(new Element[0]))),
+||||||| /usr/src/app/output/codecentric/jmeter-graph-maven-plugin/1a548b68d5c5dcb7e618bcefcdbbcd8dc00d209f/src/main/java/de/codecentric/jmeter/JMeterPluginsMojo.java/base.java
+                                                element(name("argument"), "-Dlog_file="),
+                                                element(name("argument"), "-classpath"),
+                                                element(name("argument"),
+                                                        libDir.getAbsolutePath() + File.separator + "*" +
+                                                        File.pathSeparator +
+                                                        libExtDir.getAbsolutePath() + File.separator + "*"),
+                                                element(name("argument"), "kg.apc.cmd.UniversalRunner"),
+                                                element(name("argument"), "--tool"),
+                                                element(name("argument"), "Reporter"),
+                                                element(name("argument"), "--input-jtl"),
+                                                element(name("argument"), inputFile.getAbsolutePath()),
+                                                element(name("argument"), "--plugin-type"),
+                                                element(name("argument"), graph.pluginType),
+                                                element(name("argument"), "--width"),
+                                                element(name("argument"), String.valueOf(graph.width)),
+                                                element(name("argument"), "--height"),
+                                                element(name("argument"), String.valueOf(graph.height)),
+                                                element(name("argument"), "--generate-png"),
+                                                element(name("argument"), graph.outputFile.getAbsolutePath()))),
+=======
+                                                element(name("argument"), "-classpath"),
+                                                element(name("argument"),
+                                                        libDir.getAbsolutePath() + File.separator + "*" +
+                                                        File.pathSeparator +
+                                                        libExtDir.getAbsolutePath() + File.separator + "*"),
+                                                element(name("argument"), "kg.apc.cmd.UniversalRunner"),
+                                                element(name("argument"), "--tool"),
+                                                element(name("argument"), "Reporter"),
+                                                element(name("argument"), "--input-jtl"),
+                                                element(name("argument"), inputFile.getAbsolutePath()),
+                                                element(name("argument"), "--plugin-type"),
+                                                element(name("argument"), graph.pluginType),
+                                                element(name("argument"), "--width"),
+                                                element(name("argument"), String.valueOf(graph.width)),
+                                                element(name("argument"), "--height"),
+                                                element(name("argument"), String.valueOf(graph.height)),
+                                                element(name("argument"), "--generate-png"),
+                                                element(name("argument"), graph.outputFile.getAbsolutePath()))),
+>>>>>>> /usr/src/app/output/codecentric/jmeter-graph-maven-plugin/1a548b68d5c5dcb7e618bcefcdbbcd8dc00d209f/src/main/java/de/codecentric/jmeter/JMeterPluginsMojo.java/right.java
+                                executionEnvironment(
+                                        mavenProject,
+                                        mavenSession,
+                                        pluginManager));
 		        } catch (Throwable throwable) {
 		            throw new RuntimeException(throwable);
 		        }
-	        }
+        }
         }
     }
 
