@@ -58,9 +58,14 @@ public class ComponentMojo extends AbstractMojo {
 		LogSingleton.getInstance().setLogger(getLog());
 
 		try {
-
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+			List<String> classpathElements = getClasspathElements();
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+		    List<String> classpathElements = getClasspathElements();
+=======
 		    @SuppressWarnings("unchecked")
             List<String> classpathElements = project.getCompileClasspathElements();
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
 			ClassLoader classLoader = ComponentMojoUtil.getClassLoader(classpathElements, this.getClass()
 				.getClassLoader());
@@ -93,16 +98,75 @@ public class ComponentMojo extends AbstractMojo {
 
 	}
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+	/**
+	 * Returns a list of paths to elements of the classpath for the project. If
+	 * dependencies are specified for exclusion via the excludeDependencies POM
+	 * configuration, the classpath elements related to the excluded
+	 * dependencies are not included in the resultant list.
+	 * 
+	 * @return
+	 * @throws DependencyResolutionRequiredException
+	 */
+	@SuppressWarnings("unchecked")
+	private List<String> getClasspathElements() throws DependencyResolutionRequiredException {
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+	/**
+	 * Returns a list of paths to elements of the classpath for the project.  If
+	 * dependencies are specified for exclusion via the excludeDependencies POM configuration,
+	 * the classpath elements related to the excluded dependencies are not included in
+	 * the resultant list.
+	 *
+	 * @return
+	 * @throws DependencyResolutionRequiredException
+	 */
+    @SuppressWarnings("unchecked")
+    private List<String> getClasspathElements() throws DependencyResolutionRequiredException {
+=======
 	private Set<String> getExcludedClasses() throws DependencyResolutionRequiredException, MalformedURLException {
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+		if (excludeDependencies != null && !excludeDependencies.isEmpty()) {
+			List<Artifact> compileArtifacts = project.getCompileArtifacts();
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+        if (excludeDependencies != null && !excludeDependencies.isEmpty()) {
+            List<Artifact> compileArtifacts = project.getCompileArtifacts();
+=======
 	    getLog().debug("Constructing set of excluded Class names");
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+			List<String> classpathElements = new ArrayList<String>();
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+            List<String> classpathElements = new ArrayList<String>();
+=======
 	    List<String> excludedDependencyPaths = getExcludedDependencyPaths();
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+			classpathElements.add(project.getBuild().getOutputDirectory());
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+            classpathElements.add(project.getBuild().getOutputDirectory());
+=======
 	    if (excludedDependencyPaths != null) {
     	    ClassLoader exclusionClassLoader = ComponentMojoUtil.getClassLoader(excludedDependencyPaths, this
                 .getClass().getClassLoader());
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+			/*
+			 * Construct a set representation of the dependency exclusions
+			 * mapped by group id and artifact id for easy lookup
+			 */
+			Set<String> excludedArtifactIdentifiers = new HashSet<String>();
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+            /*
+             * Construct a set representation of the dependency exclusions mapped by
+             * group id and artifact id for easy lookup
+             */
+            Set<String> excludedArtifactIdentifiers = new HashSet<String>();
+=======
     	    Reflections reflections = ComponentMojoUtil.getReflections(exclusionClassLoader);
 
     	    Set<String> excludedClassNames = reflections.getStore().getTypesAnnotatedWith(Component.class.getName());
@@ -123,14 +187,49 @@ public class ComponentMojo extends AbstractMojo {
 	        List<String> excludedClasspathElements = new ArrayList<String>();
 
 	        Set<String> excludedArtifactIdentifiers = new HashSet<String>();
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
-            for (Dependency curDependency : excludeDependencies) {
-                excludedArtifactIdentifiers.add(curDependency.getGroupId() + ":" + curDependency.getArtifactId());
+			for (Dependency curDependency : excludeDependencies) {
+				excludedArtifactIdentifiers.add(curDependency.getGroupId() + ":" + curDependency.getArtifactId());
+			}
+
+			for (Artifact curArtifact : compileArtifacts) {
+				String referenceIdentifier = curArtifact.getGroupId() + ":" + curArtifact.getArtifactId();
+
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+				if (!excludedArtifactIdentifiers.contains(referenceIdentifier)) {
+					MavenProject identifiedProject = (MavenProject) project.getProjectReferences().get(
+						referenceIdentifier);
+					if (identifiedProject != null) {
+						classpathElements.add(identifiedProject.getBuild().getOutputDirectory());
+					} else {
+						File file = curArtifact.getFile();
+						if (file == null) {
+							throw new DependencyResolutionRequiredException(curArtifact);
+						}
+						classpathElements.add(file.getPath());
+					}
+				}
+			}
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+                if (!excludedArtifactIdentifiers.contains(referenceIdentifier)) {
+                    MavenProject identifiedProject = (MavenProject) project.getProjectReferences().get(referenceIdentifier);
+                    if (identifiedProject != null)
+                    {
+                        classpathElements.add(identifiedProject.getBuild().getOutputDirectory());
+                    }
+                    else
+                    {
+                        File file = curArtifact.getFile();
+                        if (file == null)
+                        {
+                            throw new DependencyResolutionRequiredException(curArtifact);
+                        }
+                        classpathElements.add(file.getPath());
+                    }
+                }
             }
-
-            for (Artifact curArtifact : compileArtifacts) {
-                String referenceIdentifier = curArtifact.getGroupId() + ":" + curArtifact.getArtifactId();
-
+=======
                 if (excludedArtifactIdentifiers.contains(referenceIdentifier)) {
                     MavenProject identifiedProject = (MavenProject) project.getProjectReferences().get(referenceIdentifier);
                     if (identifiedProject != null)
@@ -150,13 +249,31 @@ public class ComponentMojo extends AbstractMojo {
                     }
                 }
             }
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+			return classpathElements;
+		}
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+            return classpathElements;
+        }
+=======
             return excludedClasspathElements;
 	    }
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
-	    return null;
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/left.java
+		return project.getCompileClasspathElements();
 
 	}
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/base.java
+        return project.getCompileClasspathElements();
+
+    }
+=======
+	    return null;
+	}
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/16db663469b71596e26c87ce12b67c53668ceda9/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/maven/ComponentMojo.java/right.java
 
 	private File getArchiveFileForProject() {
 		File buildDirectory = new File(project.getBuild().getDirectory());

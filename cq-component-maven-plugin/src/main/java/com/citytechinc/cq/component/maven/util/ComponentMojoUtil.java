@@ -130,7 +130,6 @@ public class ComponentMojoUtil {
 
 		return placeholder.replace('/', '.');
 	}
-
 	/**
 	 * Add files to the already constructed Archive file by creating a new
 	 * Archive file, appending the contents of the existing Archive file to it,
@@ -238,7 +237,6 @@ public class ComponentMojoUtil {
 		tempArchiveFile.renameTo(existingArchiveFile);
 
 	}
-
 	/**
 	 * Finds and retrieves the constructed CQ Package archive file for the
 	 * project
@@ -255,7 +253,6 @@ public class ComponentMojoUtil {
 
 		return new File(buildDirectory, zipFileName);
 	}
-
 	/**
 	 * Create a temporary archive file which will live alongside the constructed
 	 * project CQ5 Package archive.
@@ -272,7 +269,6 @@ public class ComponentMojoUtil {
 
 		return new File(buildDirectory, zipFileName);
 	}
-
 	/**
 	 * Determine the appropriate output directory for a component's artifacts
 	 * based on the component class as well as POM configuration.
@@ -287,6 +283,7 @@ public class ComponentMojoUtil {
 	public static File getOutputDirectoryForComponentClass(ComponentNameTransformer transformer,
 		CtClass componentClass, File buildDirectory, String componentPathBase, String defaultComponentPathSuffix)
 		throws OutputFailureException, ClassNotFoundException {
+		// File buildDirectory = new File(project.getBuild().getDirectory());
 
 		String dialogFilePath = OUTPUT_PATH + "/"
 			+ getComponentBasePathForComponentClass(componentClass, componentPathBase) + "/"
@@ -303,7 +300,6 @@ public class ComponentMojoUtil {
 
 		return componentOutputDirectory;
 	}
-
 	public static String getComponentBasePathForComponentClass(CtClass componentClass, String componentPathBase)
 		throws ClassNotFoundException {
 		Component componentAnnotation = (Component) componentClass.getAnnotation(Component.class);
@@ -318,7 +314,6 @@ public class ComponentMojoUtil {
 
 		return componentPathBase;
 	}
-
 	/**
 	 * Deletes the temporary output directory which is created as part of the
 	 * build process to temporarily hold the generated files for components.
@@ -333,7 +328,6 @@ public class ComponentMojoUtil {
 			FileUtils.deleteDirectory(componentOutputDirectory);
 		}
 	}
-
 	/**
 	 * Determines the suffix portion of the path leading to the artifacts of a
 	 * particular component
@@ -357,7 +351,6 @@ public class ComponentMojoUtil {
 
 		return defaultComponentPathSuffix;
 	}
-
 	/**
 	 * Determines the name of the component class for use in constructing file
 	 * paths
@@ -380,7 +373,6 @@ public class ComponentMojoUtil {
 
 		return transformer.transform(componentClass.getSimpleName());
 	}
-
 	/**
 	 * Constructs a list of widget configurations based on the information
 	 * provided by classes annotated as Widgets.
@@ -414,7 +406,6 @@ public class ComponentMojoUtil {
 		}
 		return builtInWidgets;
 	}
-
 	/**
 	 * Retrieves a List of all classes which are annotated as Components and are
 	 * within the scope of the provided Reflections purview.
@@ -449,7 +440,6 @@ public class ComponentMojoUtil {
 
 		return classes;
 	}
-
 	/**
 	 * Retrieves a List of all classes which are annotated as Transformers and
 	 * are within the scope of the provided Reflections purview.
@@ -478,7 +468,6 @@ public class ComponentMojoUtil {
 
 		return transformers;
 	}
-
 	/**
 	 * Constructs a list of all fields contained in the provided CtClass and any
 	 * of its parent classes.
@@ -495,7 +484,6 @@ public class ComponentMojoUtil {
 		}
 		return fields;
 	}
-
 	public static List<CtMethod> collectMethods(CtClass ctClass) {
 		List<CtMethod> methods = new ArrayList<CtMethod>();
 		if (ctClass != null) {
@@ -503,7 +491,6 @@ public class ComponentMojoUtil {
 		}
 		return methods;
 	}
-
 	/**
 	 * Constructs a Reflections object suitable for reflecting on classes
 	 * accessible via the provided ClassLoader
@@ -518,5 +505,65 @@ public class ComponentMojoUtil {
 			.setScanners(new TypeAnnotationsScanner()));
 		return reflections;
 	}
-
+	/**
+	 * Given a set of configured xtype mappings, construct a mapping from Class
+	 * objects to xtype Strings
+	 *
+	 * @param classLoader
+	 * @param xtypeMappings
+	 * @return The constructed mapping
+	 *
+	 * @throws ClassNotFoundException
+	 */
+	/**
+	 * Transforms a List of WidgetConfigHolders into a mapping between xtypes
+	 * and WidgetMakers
+	 *
+	 * @param widgetConfigs
+	 * @return Mapping from xtype to WidgetMaker
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 */
+	/**
+	 * Constructs a list of Content objects representing .content.xml files from
+	 * a list of Classes. For each Class annotated with a Component annotation a
+	 * Content object is constructed.
+	 *
+	 * @param classList
+	 * @param zipOutputStream
+	 * @param reservedNames
+	 * @return The constructed Content objects
+	 * @throws InvalidComponentClassException
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws OutputFailureException
+	 * @throws ClassNotFoundException
+	 */
+	/**
+	 * Retrieves a field for a Class. To allow for the retrieval of inherited
+	 * fields, the class hierarchy is traversed upwards starting at the provided
+	 * class. If the top of the hierarchy is reached without finding a field of
+	 * the specified name, null is returned.
+	 *
+	 * @param clazz
+	 * @param fieldName
+	 * @return The Field specified by the provided name or null if no such field
+	 *         could be found for the Class or its parents.
+	 */
+	/**
+	 * Retrieves a Method for a Class.
+	 *
+	 * @param clazz
+	 * @param fieldName
+	 * @return The Method specified by the provided name or null if no such
+	 *         Method could be found for the Class.
+	 */
+	/**
+	 * Changes a class name into a human readable string by adding spaces
+	 *
+	 * @param className The class name to transform upon
+	 * @return The transformed string
+	 */
 }
