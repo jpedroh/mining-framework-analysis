@@ -1,3 +1,4 @@
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/input/InputDevice.java/left.java
 package de.hochschuletrier.gdw.ss14.input;
 
 import java.util.LinkedList;
@@ -119,3 +120,69 @@ public abstract class InputDevice extends InputAdapter {
         return false;
     }
 }
+||||||| /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/input/InputDevice.java/base.java
+package de.hochschuletrier.gdw.ss14.input;
+
+import java.util.LinkedList;
+
+import de.hochschuletrier.gdw.ss14.sandbox.inputTest.GameInputAdapter;
+
+public abstract class InputDevice {
+
+	private LinkedList<GameInputAdapter> listener = new LinkedList<>(); 
+	
+    /**
+     * 
+     * @param gia @ GameInputAdapter to the Listener
+     */
+    public void addGameInputAdapter(GameInputAdapter gia) {
+    	listener.add(gia);
+    }
+    
+    /**
+     * 
+     * @param gia remove GameInputAdapter gia from the listener
+     */
+    public void removeGameInputAdapter(GameInputAdapter gia) {
+    	listener.remove(gia);
+	}
+    
+    /**
+	 *  Laser on / off
+	 */
+	private void fireLaserButtonPressed() {	
+		for(GameInputAdapter inp: listener) {
+			inp.laserButtonPressed();
+		}
+	}
+	
+	/**
+	 * water pistol on
+	 */
+	private void fireWaterPistolButtonDown() {
+		for(GameInputAdapter inp: listener) {
+			inp.waterPistolButtonDown();
+		}
+	}
+	
+	/**
+	 * water pistol off
+	 */
+	private void fireWaterPistolButtonUp() {
+		for(GameInputAdapter inp: listener) {
+			inp.waterPistolButtonUp();
+		}
+	}
+	
+	/**
+	 * go to the menu or back
+	 */
+	private void fireMenuButtonPressed() {
+		for(GameInputAdapter inp: listener) {
+			inp.menueButtonPressed();
+		}
+	}
+}
+=======
+fatal: path 'gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/input/InputDevice.java' does not exist in 'f2ab58c7b6a4d05f8aaddd6a5fb33c7b397d23dc'
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/input/InputDevice.java/right.java

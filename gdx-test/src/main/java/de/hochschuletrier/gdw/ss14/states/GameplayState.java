@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+
 import de.hochschuletrier.gdw.commons.gdx.assets.AssetManagerX;
 import de.hochschuletrier.gdw.commons.gdx.cameras.orthogonal.LimitedSmoothCamera;
 import de.hochschuletrier.gdw.commons.gdx.sound.SoundEmitter;
@@ -15,6 +16,12 @@ import de.hochschuletrier.gdw.commons.tiled.TiledMap;
 import de.hochschuletrier.gdw.commons.utils.FpsCalculator;
 import de.hochschuletrier.gdw.ss14.Main;
 import de.hochschuletrier.gdw.ss14.game.Game;
+import de.hochschuletrier.gdw.ss14.input.InputDevice.DeviceType;
+import de.hochschuletrier.gdw.ss14.input.InputManager;
+import de.hochschuletrier.gdw.ss14.input.infos.InputInfo;
+import de.hochschuletrier.gdw.ss14.input.infos.InputSettings;
+import de.hochschuletrier.gdw.ss14.input.infos.KeyboardInfo;
+import de.hochschuletrier.gdw.ss14.input.infos.MouseInfo;
 
 /**
  * Gameplay state
@@ -51,7 +58,14 @@ public class GameplayState extends GameState implements InputProcessor {
         totalMapHeight = map.getHeight() * map.getTileHeight();
         camera.setBounds(0, 0, totalMapWidth, totalMapHeight);
         camera.updateForced();
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/left.java
+        Main.getInstance().addScreenListener(camera);
+        InputManager.init();
+||||||| /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/base.java
+        Main.getInstance().addScreenListener(camera);
+=======
         Main.getInstance().addScreenListener(camera);*/
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/right.java
     }
 
     @Override
@@ -67,7 +81,14 @@ public class GameplayState extends GameState implements InputProcessor {
 
     @Override
     public void update(float delta) {
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/left.java
+        InputManager.getInstance().update();
+        emitter.update();
+||||||| /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/base.java
+        emitter.update();
+=======
         /*emitter.update();
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/031267b3d3b6132387dccf92ccd80c18597d21e2/gdx-test/src/main/java/de/hochschuletrier/gdw/ss14/states/GameplayState.java/right.java
         emitter.setPosition(cursor.x, cursor.y, 0);
         game.update(delta);
         camera.update(delta);
