@@ -997,8 +997,87 @@ public class HyperLogLogPlus implements ICardinality
             {
                 throw new HyperLogLogPlusMergeException("Cannot merge estimators of different class");
             }
+<<<<<<< /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/left.java
+||||||| /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/base.java
+            if (estimator.sizeof() != size)
+            {
+                throw new HyperLogLogPlusMergeException("Cannot merge estimators of different sizes");
+            }
+=======
+            if (estimator.sizeof() != size)
+            {
+                throw new HyperLogLogPlusMergeException("Cannot merge estimators of different sizes, " + estimator.sizeof() + " != " + size);
+            }
+>>>>>>> /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/right.java
             HyperLogLogPlus hll = (HyperLogLogPlus) estimator;
+<<<<<<< /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/left.java
             merged.addAll(hll);
+||||||| /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/base.java
+            if (format == Format.SPARSE)
+            {
+                if (hll.format == Format.SPARSE)
+                {
+                    if (sparseSet.size() + hll.sparseSet.size() > sparseSetThreshold)
+                    {
+                        convertToNormal();
+                        hll.convertToNormal();
+                    }
+                    else
+                    {
+                        sparseSet = mergeEstimators(hll);
+                    }
+                }
+                else
+                {
+                    convertToNormal();
+                }
+            }
+            else
+            {
+                if (hll.format == Format.SPARSE)
+                {
+                    hll.convertToNormal();
+                }
+            }
+            if (format != Format.SPARSE)
+            {
+                registerSet.merge(hll.registerSet);
+            }
+=======
+            if (format == Format.SPARSE)
+            {
+                if (hll.format == Format.SPARSE)
+                {
+                    this.mergeTempList();
+                    hll.mergeTempList();
+                    int totalLength = merge(sparseSet, hll.sparseSet).length;
+                    if (totalLength > sparseSetThreshold)
+                    {
+                        convertToNormal();
+                        hll.convertToNormal();
+                    }
+                    else
+                    {
+                        sparseSet = mergeEstimators(hll);
+                    }
+                }
+                else
+                {
+                    convertToNormal();
+                }
+            }
+            else
+            {
+                if (hll.format == Format.SPARSE)
+                {
+                    hll.convertToNormal();
+                }
+            }
+            if (format != Format.SPARSE)
+            {
+                registerSet.merge(hll.registerSet);
+            }
+>>>>>>> /usr/src/app/output/addthis/stream-lib/e0a13b01fbf96812dd1ba290045339e5ff85302a/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/right.java
         }
         
         return merged;
