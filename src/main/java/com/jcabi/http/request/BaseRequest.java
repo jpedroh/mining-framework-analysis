@@ -76,16 +76,17 @@ final class BaseRequest implements Request {
      * The encoding to use.
      */
     private static final String ENCODING = "UTF-8";
-
-    /**
-     * The Charset to use.
-     */
-    private static final Charset CHARSET = Charset.forName(ENCODING);
-
     /**
      * An empty immutable {@code byte} array.
      */
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+    /**
+     * The encoding to use.
+     */
+    /**
+     * The Charset to use.
+     */
+    private static final Charset CHARSET = Charset.forName(ENCODING);
 
     /**
      * Wire to use.

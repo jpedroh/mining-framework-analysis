@@ -55,7 +55,9 @@ final class MkGrizzlyAdapter extends GrizzlyAdapter {
      * The encoding to use.
      */
     private static final String ENCODING = "UTF-8";
-
+    /**
+     * The encoding to use.
+     */
     /**
      * The Charset to use.
      */

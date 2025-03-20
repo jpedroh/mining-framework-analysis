@@ -63,12 +63,10 @@ import lombok.EqualsAndHashCode;
 @Loggable(Loggable.DEBUG)
 @SuppressWarnings("PMD.TooManyMethods")
 public final class FakeRequest implements Request {
-
     /**
      * An empty immutable {@code byte} array.
      */
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
     /**
      * The Charset to use.
      */
