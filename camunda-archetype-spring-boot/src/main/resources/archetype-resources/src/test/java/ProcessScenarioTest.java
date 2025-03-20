@@ -29,6 +29,20 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class ProcessScenarioTest {
 
+<<<<<<< /usr/src/app/output/camunda/camunda-archetypes/4bc11ca34e0b8a811a6d5f12d45eaddd2f646cc6/camunda-archetype-spring-boot/src/main/resources/archetype-resources/src/test/java/ProcessScenarioTest.java/left.java
+  @Autowired
+  private ProcessEngine processEngine;
+
+||||||| /usr/src/app/output/camunda/camunda-archetypes/4bc11ca34e0b8a811a6d5f12d45eaddd2f646cc6/camunda-archetype-spring-boot/src/main/resources/archetype-resources/src/test/java/ProcessScenarioTest.java/base.java
+  private static final String PROCESS_DEFINITION_KEY = "${artifactId}";
+
+  @Autowired
+  private ProcessEngine processEngine;
+
+=======
+  private static final String PROCESS_DEFINITION_KEY = "${artifactId}";
+
+>>>>>>> /usr/src/app/output/camunda/camunda-archetypes/4bc11ca34e0b8a811a6d5f12d45eaddd2f646cc6/camunda-archetype-spring-boot/src/main/resources/archetype-resources/src/test/java/ProcessScenarioTest.java/right.java
   static {
     LogFactory.useSlf4jLogging(); // MyBatis
   }
