@@ -23,9 +23,9 @@ public class CatMovementSystem extends ECSystem
         super(entityManager, 1);
     }
 
-
     @Override
-    public void render(){
+    public void render()
+    {
 
     }
 
@@ -56,12 +56,6 @@ public class CatMovementSystem extends ECSystem
                 Vector2 tmp = new Vector2(inputComponent.whereToGo.x - physicsComponent.getPosition().x, inputComponent.whereToGo.y - physicsComponent.getPosition().y);
                 float distance = tmp.len();
 
-                //falls Maus nicht zu nah an Katze (glitscht nicht mehr
-                   if(!(distance <= 5)){
-                       movementComponent.directionVec.x = tmp.x;
-                       movementComponent.directionVec.y = tmp.y;
-                    }
-
                 //needed not normalized directions for sliding (more natural curves)
                 if(movementComponent.oldPositionVec==null){
                     movementComponent.oldPositionVec=movementComponent.directionVec;
@@ -76,8 +70,15 @@ public class CatMovementSystem extends ECSystem
                 movementComponent.oldPositionVec = movementComponent.positionVec;
                 movementComponent.positionVec.nor();//normalize position for PhysicsComponent
 
+                //falls Maus nicht zu nah an Katze (glitscht nicht mehr
+                   if(!(distance <= 5)){
+                       movementComponent.directionVec.x = tmp.x;
+                       movementComponent.directionVec.y = tmp.y;
+                    }
 
-                if (distance >= 200)
+
+
+                 if (distance >= 200)
                 {
                     movementComponent.velocity += movementComponent.acceleration * delta;
 
@@ -167,6 +168,6 @@ public class CatMovementSystem extends ECSystem
             physicsComponent.setVelocityX(movementComponent.positionVec.x * movementComponent.velocity);
             physicsComponent.setVelocityY(movementComponent.positionVec.y * movementComponent.velocity);
         }
-    }
 
+    }
 }
