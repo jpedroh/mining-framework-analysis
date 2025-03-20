@@ -39,11 +39,10 @@ import com.premiumminds.billy.spain.services.builders.ESManualInvoiceEntryBuilde
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoiceEntry;
 
 public class ESManualInvoiceEntryBuilderImpl<TBuilder extends ESManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends ESGenericInvoiceEntry>
-        extends ESManualEntryBuilderImpl<TBuilder, TEntry, DAOESInvoiceEntry, DAOESInvoice>
-        implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
+        extends ESManualEntryBuilderImpl<TBuilder, TEntry, DAOESInvoiceEntry, DAOESInvoice> implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public ESManualInvoiceEntryBuilderImpl(DAOESInvoiceEntry daoESEntry, DAOESInvoice daoESInvoice, DAOESTax daoESTax,
-            DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+    public ESManualInvoiceEntryBuilderImpl(DAOESInvoiceEntry daoESEntry, DAOESInvoice daoESInvoice,
+            DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
         super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
     }
 

@@ -40,8 +40,9 @@ public class PTInvoiceIssuingHandler extends PTGenericInvoiceIssuingHandler<PTIn
     }
 
     @Override
-    public PTInvoiceEntity issue(PTInvoiceEntity document, PTIssuingParams parameters) throws DocumentIssuingException {
-        return this.issue(document, parameters, this.daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
+    public PTInvoiceEntity issue(PTInvoiceEntity document, PTIssuingParams parameters)
+            throws DocumentIssuingException {
+    	return issue(document, parameters, this.daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
     }
 
 }

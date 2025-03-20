@@ -39,18 +39,18 @@ import com.premiumminds.billy.portugal.services.builders.PTManualInvoiceEntryBui
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoiceEntry;
 
 public class PTManualInvoiceEntryBuilderImpl<TBuilder extends PTManualInvoiceEntryBuilderImpl<TBuilder, TEntry>, TEntry extends PTGenericInvoiceEntry>
-        extends PTManualEntryBuilderImpl<TBuilder, TEntry, DAOPTInvoiceEntry, DAOPTInvoice>
-        implements PTManualInvoiceEntryBuilder<TBuilder, TEntry> {
+        extends PTManualEntryBuilderImpl<TBuilder, TEntry, DAOPTInvoiceEntry, DAOPTInvoice> implements PTManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public PTManualInvoiceEntryBuilderImpl(DAOPTInvoiceEntry daoPTEntry, DAOPTInvoice daoPTInvoice, DAOPTTax daoPTTax,
-            DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
+    public PTManualInvoiceEntryBuilderImpl(DAOPTInvoiceEntry daoPTEntry, DAOPTInvoice daoPTInvoice,
+            DAOPTTax daoPTTax, DAOPTProduct daoPTProduct, DAOPTRegionContext daoPTRegionContext) {
         super(daoPTEntry, daoPTInvoice, daoPTTax, daoPTProduct, daoPTRegionContext);
     }
-
-    @Override
-    protected PTInvoiceEntryEntity getTypeInstance() {
-        return (PTInvoiceEntryEntity) super.getTypeInstance();
-    }
+	
+	
+	@Override
+	protected PTInvoiceEntryEntity getTypeInstance() {
+	    return (PTInvoiceEntryEntity) super.getTypeInstance();
+	}
 
     @Override
     protected void validateInstance() throws BillyValidationException {

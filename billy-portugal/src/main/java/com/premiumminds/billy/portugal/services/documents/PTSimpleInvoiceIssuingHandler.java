@@ -27,8 +27,7 @@ import com.premiumminds.billy.portugal.persistence.entities.PTSimpleInvoiceEntit
 import com.premiumminds.billy.portugal.services.documents.util.PTIssuingParams;
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
 
-public class PTSimpleInvoiceIssuingHandler
-        extends PTGenericInvoiceIssuingHandler<PTSimpleInvoiceEntity, PTIssuingParams> {
+public class PTSimpleInvoiceIssuingHandler extends PTGenericInvoiceIssuingHandler<PTSimpleInvoiceEntity, PTIssuingParams> {
 
     public final static TYPE INVOICE_TYPE = TYPE.FS;
     private final DAOPTSimpleInvoice daoSimpleInvoice;
@@ -42,7 +41,7 @@ public class PTSimpleInvoiceIssuingHandler
     @Override
     public PTSimpleInvoiceEntity issue(PTSimpleInvoiceEntity document, PTIssuingParams parameters)
             throws DocumentIssuingException {
-        return this.issue(document, parameters, this.daoSimpleInvoice, PTSimpleInvoiceIssuingHandler.INVOICE_TYPE);
+    	return issue(document, parameters, this.daoSimpleInvoice, PTSimpleInvoiceIssuingHandler.INVOICE_TYPE);
     }
 
 }

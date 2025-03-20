@@ -31,16 +31,18 @@ public class ESCreditNoteIssuingHandler extends ESGenericInvoiceIssuingHandler<E
     private final DAOESCreditNote daoCreditNote;
 
     @Inject
-    public ESCreditNoteIssuingHandler(DAOInvoiceSeries invoiceSeries, DAOESCreditNote daoCreditNote) {
-
-        super(invoiceSeries);
-        this.daoCreditNote = daoCreditNote;
+    public ESCreditNoteIssuingHandler(
+    		DAOInvoiceSeries invoiceSeries,
+    		DAOESCreditNote daoCreditNote) {
+    	
+    	super(invoiceSeries);
+    	this.daoCreditNote = daoCreditNote;
     }
 
     @Override
     public ESCreditNoteEntity issue(ESCreditNoteEntity document, ESIssuingParams parameters)
-            throws DocumentIssuingException {
+    		throws DocumentIssuingException {
 
-        return this.issue(document, parameters, this.daoCreditNote);
+    	return issue(document, parameters, this.daoCreditNote);
     }
 }

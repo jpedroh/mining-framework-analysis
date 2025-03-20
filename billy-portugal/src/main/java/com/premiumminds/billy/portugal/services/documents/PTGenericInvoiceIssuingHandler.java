@@ -39,8 +39,8 @@ import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.Source
 import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.TYPE;
 import com.premiumminds.billy.portugal.util.GenerateHash;
 
-public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceEntity, P extends PTIssuingParams>
-        implements DocumentIssuingHandler<T, P> {
+public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceEntity, P extends PTIssuingParams> 
+implements DocumentIssuingHandler<T, P>	 {
 
     protected DAOInvoiceSeries daoInvoiceSeries;
 
@@ -56,73 +56,189 @@ public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceE
         }
     }
 
-    protected <D extends AbstractDAOPTGenericInvoice<T>> T issue(final T document, final PTIssuingParams parametersPT,
-            final D daoInvoice, final TYPE invoiceType) throws DocumentIssuingException {
+	protected <D extends AbstractDAOPTGenericInvoice<T>> T issue(final T document,
+	        final PTIssuingParams parametersPT, final D daoInvoice, final TYPE invoiceType)
+	        throws DocumentIssuingException {
 
-        String series = parametersPT.getInvoiceSeries();
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		String series = parametersPT.getInvoiceSeries();
+		
+		InvoiceSeriesEntity invoiceSeriesEntity = getInvoiceSeries(document,
+				series, LockModeType.PESSIMISTIC_WRITE);
+		
+		SourceBilling sourceBilling = ((PTGenericInvoice) document)
+				.getSourceBilling();
+		
+		document.initializeEntityDates();
+		
+		//If the date is null then the invoice date is the current date
+		Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+		Date systemDate = document.getCreateTimestamp();
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		String series = parametersPT.getInvoiceSeries();
+		
+		InvoiceSeriesEntity invoiceSeriesEntity = getInvoiceSeries(document,
+				series, LockModeType.PESSIMISTIC_WRITE);
+		
+		PTGenericInvoiceEntity documentEntity = (PTGenericInvoiceEntity) document;
+		SourceBilling sourceBilling = ((PTGenericInvoice) document)
+				.getSourceBilling();
+		
+		((BaseEntity)document).initializeEntityDates();
+		
+		//If the date is null then the invoice date is the current date
+		Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+		Date systemDate = document.getCreateTimestamp();
+=======
+	    String series = parametersPT.getInvoiceSeries();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        InvoiceSeriesEntity invoiceSeriesEntity =
-                this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		Integer seriesNumber = 1;
+		String previousHash = null;
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+	//		if (systemDate..after(invoiceDate)) {
+	//			throw new InvalidInvoiceDateException();
+	//		}
 
-        SourceBilling sourceBilling = ((PTGenericInvoice) document).getSourceBilling();
+		Integer seriesNumber = 1;
+		String previousHash = null;
+=======
+	    InvoiceSeriesEntity invoiceSeriesEntity =
+	            this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
 
-        document.initializeEntityDates();
+	    PTGenericInvoiceEntity documentEntity = (PTGenericInvoiceEntity) document;
+	    SourceBilling sourceBilling = ((PTGenericInvoice) document).getSourceBilling();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        // If the date is null then the invoice date is the current date
-        Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
-        Date systemDate = document.getCreateTimestamp();
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		T latestInvoice = daoInvoice
+				.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(), document.getBusiness()
+						.getUID().toString());
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		PTGenericInvoiceEntity latestInvoice = daoInvoice
+				.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(), document.getBusiness()
+						.getUID().toString());
+=======
+	    ((BaseEntity) document).initializeEntityDates();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        Integer seriesNumber = 1;
-        String previousHash = null;
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		if (null != latestInvoice) {
+			seriesNumber = latestInvoice.getSeriesNumber() + 1;
+			previousHash = latestInvoice.getHash();
+			Date latestInvoiceDate = latestInvoice.getDate();
+			
+			validateDocumentType(invoiceType, latestInvoice.getType(), invoiceSeriesEntity.getSeries());
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		if (null != latestInvoice) {
+			seriesNumber = latestInvoice.getSeriesNumber() + 1;
+			previousHash = latestInvoice.getHash();
+			Date latestInvoiceDate = latestInvoice.getDate();
+			PTGenericInvoiceIssuingHandler.this.validateDocumentType(
+					invoiceType, latestInvoice.getType(), invoiceSeriesEntity.getSeries());
+=======
+	    // If the date is null then the invoice date is the current date
+	    Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+	    Date systemDate = document.getCreateTimestamp();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        T latestInvoice = daoInvoice.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(),
-                document.getBusiness().getUID().toString());
+	    // if (systemDate..after(invoiceDate)) {
+	    // throw new InvalidInvoiceDateException();
+	    // }
 
-        if (null != latestInvoice) {
-            seriesNumber = latestInvoice.getSeriesNumber() + 1;
-            previousHash = latestInvoice.getHash();
-            Date latestInvoiceDate = latestInvoice.getDate();
+	    Integer seriesNumber = 1;
+	    String previousHash = null;
 
-            this.validateDocumentType(invoiceType, latestInvoice.getType(), invoiceSeriesEntity.getSeries());
+	    PTGenericInvoiceEntity latestInvoice = daoInvoice.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(),
+	            document.getBusiness().getUID().toString());
 
-            if (!latestInvoice.getSourceBilling().equals(sourceBilling)) {
-                throw new InvalidSourceBillingException(invoiceSeriesEntity.getSeries(), sourceBilling.toString(),
-                        latestInvoice.getSourceBilling().toString());
-            }
+	    if (null != latestInvoice) {
+	        seriesNumber = latestInvoice.getSeriesNumber() + 1;
+	        previousHash = latestInvoice.getHash();
+	        Date latestInvoiceDate = latestInvoice.getDate();
+	        PTGenericInvoiceIssuingHandler.this.validateDocumentType(invoiceType, latestInvoice.getType(),
+	                invoiceSeriesEntity.getSeries());
 
-            if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
-                throw new InvalidInvoiceDateException();
-            }
-        }
+	        if (!latestInvoice.getSourceBilling().equals(sourceBilling)) {
+	            throw new InvalidSourceBillingException(invoiceSeriesEntity.getSeries(), sourceBilling.toString(),
+	                    latestInvoice.getSourceBilling().toString());
+	        }
 
-        String formatedNumber = invoiceType.toString() + " " + parametersPT.getInvoiceSeries() + "/" + seriesNumber;
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		document.setDate(invoiceDate);
+		document.setNumber(formatedNumber);
+		document.setSeries(invoiceSeriesEntity.getSeries());
+		document.setSeriesNumber(seriesNumber);
+		document.setHash(newHash);
+		document.setBilled(false);
+		document.setCancelled(false);
+		document.setType(invoiceType);
+		document.setSourceHash(sourceHash);
+		document.setHashControl(parametersPT.getPrivateKeyVersion());
+		document.setEACCode(parametersPT.getEACCode());
+		document.setCurrency(document.getCurrency());
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		documentEntity.setDate(invoiceDate);
+		documentEntity.setNumber(formatedNumber);
+		documentEntity.setSeries(invoiceSeriesEntity.getSeries());
+		documentEntity.setSeriesNumber(seriesNumber);
+		documentEntity.setHash(newHash);
+		documentEntity.setBilled(false);
+		documentEntity.setCancelled(false);
+		documentEntity.setType(invoiceType);
+		documentEntity.setSourceHash(sourceHash);
+		documentEntity.setHashControl(parametersPT.getPrivateKeyVersion());
+		documentEntity.setEACCode(parametersPT.getEACCode());
+		documentEntity.setCurrency(document.getCurrency());
+=======
+	        if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
+	            throw new InvalidInvoiceDateException();
+	        }
+	    }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        String newHash = GenerateHash.generateHash(parametersPT.getPrivateKey(), parametersPT.getPublicKey(),
-                invoiceDate, systemDate, formatedNumber, document.getAmountWithTax(), previousHash);
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		daoInvoice.create(document);
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		daoInvoice.create(documentEntity);
+=======
+	    String formatedNumber = invoiceType.toString() + " " + parametersPT.getInvoiceSeries() + "/" + seriesNumber;
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-        String sourceHash = GenerateHash.generateSourceHash(invoiceDate, systemDate, formatedNumber,
-                document.getAmountWithTax(), previousHash);
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/left.java
+		return document;
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/base.java
+		return (T) documentEntity;
+=======
+	    String newHash = GenerateHash.generateHash(parametersPT.getPrivateKey(), parametersPT.getPublicKey(),
+	            invoiceDate, systemDate, formatedNumber, document.getAmountWithTax(), previousHash);
 
-        document.setDate(invoiceDate);
-        document.setNumber(formatedNumber);
-        document.setSeries(invoiceSeriesEntity.getSeries());
-        document.setSeriesNumber(seriesNumber);
-        document.setHash(newHash);
-        document.setBilled(false);
-        document.setCancelled(false);
-        document.setType(invoiceType);
-        document.setSourceHash(sourceHash);
-        document.setHashControl(parametersPT.getPrivateKeyVersion());
-        document.setEACCode(parametersPT.getEACCode());
-        document.setCurrency(document.getCurrency());
+	    String sourceHash = GenerateHash.generateSourceHash(invoiceDate, systemDate, formatedNumber,
+	            document.getAmountWithTax(), previousHash);
 
-        daoInvoice.create(document);
+	    documentEntity.setDate(invoiceDate);
+	    documentEntity.setNumber(formatedNumber);
+	    documentEntity.setSeries(invoiceSeriesEntity.getSeries());
+	    documentEntity.setSeriesNumber(seriesNumber);
+	    documentEntity.setHash(newHash);
+	    documentEntity.setBilled(false);
+	    documentEntity.setCancelled(false);
+	    documentEntity.setType(invoiceType);
+	    documentEntity.setSourceHash(sourceHash);
+	    documentEntity.setHashControl(parametersPT.getPrivateKeyVersion());
+	    documentEntity.setEACCode(parametersPT.getEACCode());
+	    documentEntity.setCurrency(document.getCurrency());
 
-        return document;
+	    daoInvoice.create(documentEntity);
 
-    }
+	    return (T) documentEntity;
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTGenericInvoiceIssuingHandler.java/right.java
 
-    private InvoiceSeriesEntity getInvoiceSeries(final T document, String series, LockModeType lockMode) {
+	}
+
+    private InvoiceSeriesEntity getInvoiceSeries(final T document, String series,
+            LockModeType lockMode) {
         InvoiceSeriesEntity invoiceSeriesEntity =
                 this.daoInvoiceSeries.getSeries(series, document.getBusiness().getUID().toString(), lockMode);
 

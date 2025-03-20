@@ -21,9 +21,9 @@ package com.premiumminds.billy.spain.services.builders.impl;
 import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoice.CreditOrDebit;
 import com.premiumminds.billy.core.util.Localizer;
-import com.premiumminds.billy.spain.persistence.dao.AbstractDAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.dao.DAOESBusiness;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCustomer;
+import com.premiumminds.billy.spain.persistence.dao.AbstractDAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.dao.DAOESSupplier;
 import com.premiumminds.billy.spain.persistence.entities.ESInvoiceEntity;
 import com.premiumminds.billy.spain.services.builders.ESInvoiceBuilder;
@@ -36,8 +36,8 @@ public class ESInvoiceBuilderImpl<TBuilder extends ESInvoiceBuilderImpl<TBuilder
 
     protected static final Localizer LOCALIZER = new Localizer("com/premiumminds/billy/core/i18n/FieldNames");
 
-    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESInvoiceBuilderImpl(TDAO daoESInvoice,
-            DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer, DAOESSupplier daoESSupplier) {
+    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESInvoiceBuilderImpl(TDAO daoESInvoice, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer,
+            DAOESSupplier daoESSupplier) {
         super(daoESInvoice, daoESBusiness, daoESCustomer, daoESSupplier);
     }
 

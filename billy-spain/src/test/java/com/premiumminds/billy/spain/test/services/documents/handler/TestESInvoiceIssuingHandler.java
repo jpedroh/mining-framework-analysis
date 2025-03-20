@@ -55,7 +55,7 @@ public class TestESInvoiceIssuingHandler extends ESDocumentAbstractTest {
 
     @Test
     public void testIssuedInvoiceSimple() throws DocumentIssuingException {
-        ESInvoice issuedInvoice = this.getInstance(DAOESInvoice.class).get(this.issuedInvoiceUID);
+        ESInvoice issuedInvoice = (ESInvoice) this.getInstance(DAOESInvoice.class).get(this.issuedInvoiceUID);
 
         Assert.assertEquals(this.DEFAULT_SERIES, issuedInvoice.getSeries());
         Assert.assertTrue(1 == issuedInvoice.getSeriesNumber());
@@ -63,19 +63,27 @@ public class TestESInvoiceIssuingHandler extends ESDocumentAbstractTest {
         Assert.assertEquals(formatedNumber, issuedInvoice.getNumber());
     }
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/left.java
+		ESInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/base.java
+		ESGenericInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+=======
     @Test
     public void testIssuedInvoiceSameSeries() throws DocumentIssuingException {
-        ESInvoice issuedInvoice = this.getInstance(DAOESInvoice.class).get(this.issuedInvoiceUID);
+        ESInvoice issuedInvoice = (ESInvoice) this.getInstance(DAOESInvoice.class).get(this.issuedInvoiceUID);
         Integer nextNumber = 2;
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/right.java
 
-        ESInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
+        ESGenericInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
 
         UID newInvoiceUID = newInvoice.getUID();
         newInvoice.setBusiness(issuedInvoice.getBusiness());
 
         this.issueNewInvoice(this.handler, newInvoice, this.DEFAULT_SERIES);
 
-        ESInvoice lastInvoice = this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
+        ESInvoice lastInvoice = (ESInvoice) this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
 
         Assert.assertEquals(this.DEFAULT_SERIES, lastInvoice.getSeries());
         Assert.assertEquals(nextNumber, lastInvoice.getSeriesNumber());
@@ -83,34 +91,65 @@ public class TestESInvoiceIssuingHandler extends ESDocumentAbstractTest {
         Assert.assertEquals(formatedNumber, lastInvoice.getNumber());
     }
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/left.java
+		ESInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/base.java
+		ESGenericInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+=======
     @Test
     public void testIssuedInvoiceDifferentSeries() throws DocumentIssuingException {
         Integer nextNumber = 1;
         String newSeries = "FT NEW_SERIES";
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/right.java
 
-        ESInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
+        ESGenericInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
 
         UID newInvoiceUID = newInvoice.getUID();
 
         this.issueNewInvoice(this.handler, newInvoice, newSeries);
 
-        ESInvoice issuedInvoice = this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
+        ESInvoice issuedInvoice = (ESInvoice) this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/left.java
+	@Test
+	public void testIssuedInvoiceSameSourceBilling()
+			throws DocumentIssuingException {
+		ESInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/base.java
+	@Test
+	public void testIssuedInvoiceSameSourceBilling()
+			throws DocumentIssuingException {
+		ESGenericInvoiceEntity newInvoice = this.newInvoice(
+				INVOICE_TYPE.FT);
+=======
         Assert.assertEquals(newSeries, issuedInvoice.getSeries());
         Assert.assertEquals(nextNumber, issuedInvoice.getSeriesNumber());
         String formatedNumber = newSeries + "/" + nextNumber;
         Assert.assertEquals(formatedNumber, issuedInvoice.getNumber());
     }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/right.java
 
     @Test
     public void testIssuedInvoiceSameSourceBilling() throws DocumentIssuingException {
-        ESInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
+        ESGenericInvoiceEntity newInvoice = this.newInvoice(INVOICE_TYPE.FT);
 
         UID newInvoiceUID = newInvoice.getUID();
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/left.java
+		this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
+	}
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/base.java
+		ESInvoice issuedInvoice = (ESInvoice) this.getInstance(
+				DAOESInvoice.class).get(newInvoiceUID);
+	}
+=======
         this.issueNewInvoice(this.handler, newInvoice, this.DEFAULT_SERIES);
 
-        this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
+        ESInvoice issuedInvoice = (ESInvoice) this.getInstance(DAOESInvoice.class).get(newInvoiceUID);
     }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/handler/TestESInvoiceIssuingHandler.java/right.java
 
 }

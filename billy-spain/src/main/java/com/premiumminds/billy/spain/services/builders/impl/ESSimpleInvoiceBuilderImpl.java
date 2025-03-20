@@ -24,9 +24,9 @@ import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.util.BillyValidator;
 import com.premiumminds.billy.core.util.Localizer;
 import com.premiumminds.billy.spain.exceptions.BillySimpleInvoiceException;
-import com.premiumminds.billy.spain.persistence.dao.AbstractDAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.dao.DAOESBusiness;
 import com.premiumminds.billy.spain.persistence.dao.DAOESCustomer;
+import com.premiumminds.billy.spain.persistence.dao.AbstractDAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.dao.DAOESSupplier;
 import com.premiumminds.billy.spain.persistence.entities.ESSimpleInvoiceEntity;
 import com.premiumminds.billy.spain.services.builders.ESSimpleInvoiceBuilder;
@@ -35,14 +35,13 @@ import com.premiumminds.billy.spain.services.entities.ESSimpleInvoice;
 import com.premiumminds.billy.spain.services.entities.ESSimpleInvoice.CLIENTTYPE;
 
 public class ESSimpleInvoiceBuilderImpl<TBuilder extends ESSimpleInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends ESInvoiceEntry, TDocument extends ESSimpleInvoice>
-        extends ESGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument>
-        implements ESSimpleInvoiceBuilder<TBuilder, TEntry, TDocument> {
+extends ESGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument>
+implements ESSimpleInvoiceBuilder<TBuilder, TEntry, TDocument> {
 
     protected static final Localizer LOCALIZER = new Localizer("com/premiumminds/billy/core/i18n/FieldNames");
 
-    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESSimpleInvoiceBuilderImpl(
-            TDAO daoESSimpleInvoice, DAOESBusiness daoESBusiness, DAOESCustomer daoESCustomer,
-            DAOESSupplier daoESSupplier) {
+    public <TDAO extends AbstractDAOESGenericInvoice<? extends TDocument>> ESSimpleInvoiceBuilderImpl(TDAO daoESSimpleInvoice, DAOESBusiness daoESBusiness,
+            DAOESCustomer daoESCustomer, DAOESSupplier daoESSupplier) {
         super(daoESSimpleInvoice, daoESBusiness, daoESCustomer, daoESSupplier);
     }
 
@@ -60,17 +59,21 @@ public class ESSimpleInvoiceBuilderImpl<TBuilder extends ESSimpleInvoiceBuilderI
 
     @Override
     protected void validateInstance() throws BillyValidationException {
-        ESSimpleInvoiceEntity i = this.getTypeInstance();
-        BillyValidator.mandatory(i.getClientType(),
-                ESGenericInvoiceBuilderImpl.LOCALIZER.getString("field.clientType"));
-        super.validateInstance();
+    	ESSimpleInvoiceEntity i = this.getTypeInstance();
+    	BillyValidator.mandatory(i.getClientType(),
+    			ESGenericInvoiceBuilderImpl.LOCALIZER
+    			.getString("field.clientType"));
+    	super.validateInstance();
 
-        if (i.getClientType() == CLIENTTYPE.CUSTOMER && i.getAmountWithTax().compareTo(new BigDecimal(1000)) >= 0) {
-            throw new BillySimpleInvoiceException("Amount > 1000 for customer simple invoice. Issue invoice");
-        } else if (i.getClientType() == CLIENTTYPE.BUSINESS &&
-                i.getAmountWithTax().compareTo(new BigDecimal(100)) >= 0) {
-            throw new BillySimpleInvoiceException("Amount > 100 for business simple invoice. Issue invoice");
-        }
+    	if (i.getClientType() == CLIENTTYPE.CUSTOMER
+    			&& i.getAmountWithTax().compareTo(new BigDecimal(1000)) >= 0) {
+    		throw new BillySimpleInvoiceException(
+    				"Amount > 1000 for customer simple invoice. Issue invoice");
+    	} else if (i.getClientType() == CLIENTTYPE.BUSINESS
+    			&& i.getAmountWithTax().compareTo(new BigDecimal(100)) >= 0) {
+    		throw new BillySimpleInvoiceException(
+    				"Amount > 100 for business simple invoice. Issue invoice");
+    	}
     }
 
 }

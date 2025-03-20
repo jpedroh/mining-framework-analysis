@@ -26,8 +26,7 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESReceipt;
 import com.premiumminds.billy.spain.persistence.entities.ESReceiptEntity;
 import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESReceiptEntity;
 
-public class DAOESReceiptImpl extends AbstractDAOESGenericInvoiceImpl<ESReceiptEntity, JPAESReceiptEntity>
-        implements DAOESReceipt {
+public class DAOESReceiptImpl extends AbstractDAOESGenericInvoiceImpl<ESReceiptEntity, JPAESReceiptEntity> implements DAOESReceipt {
 
     @Inject
     public DAOESReceiptImpl(Provider<EntityManager> emProvider) {
@@ -43,5 +42,5 @@ public class DAOESReceiptImpl extends AbstractDAOESGenericInvoiceImpl<ESReceiptE
     protected Class<? extends JPAESReceiptEntity> getEntityClass() {
         return JPAESReceiptEntity.class;
     }
-
+	
 }

@@ -39,44 +39,57 @@ import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntryEn
 import com.premiumminds.billy.spain.services.builders.ESManualInvoiceEntryBuilder;
 import com.premiumminds.billy.spain.services.entities.ESGenericInvoiceEntry;
 
-public class ESManualEntryBuilderImpl<TBuilder extends ESManualEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>, TEntry extends ESGenericInvoiceEntry, TDAOEntry extends AbstractDAOESGenericInvoiceEntry<?>, TDAOInvoice extends AbstractDAOESGenericInvoice<?>>
+public class ESManualEntryBuilderImpl<TBuilder extends ESManualEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>, 
+TEntry extends ESGenericInvoiceEntry,
+TDAOEntry extends AbstractDAOESGenericInvoiceEntry<?>, 
+TDAOInvoice extends AbstractDAOESGenericInvoice<?>>
         extends ESGenericInvoiceEntryBuilderImpl<TBuilder, TEntry, TDAOEntry, TDAOInvoice>
         implements ESManualInvoiceEntryBuilder<TBuilder, TEntry> {
 
-    public ESManualEntryBuilderImpl(TDAOEntry daoESEntry, TDAOInvoice daoESInvoice, DAOESTax daoESTax,
-            DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
+    public ESManualEntryBuilderImpl(
+    		TDAOEntry daoESEntry, TDAOInvoice daoESInvoice,
+            DAOESTax daoESTax, DAOESProduct daoESProduct, DAOESRegionContext daoESRegionContext) {
         super(daoESEntry, daoESInvoice, daoESTax, daoESProduct, daoESRegionContext);
     }
 
-    @Override
-    protected void validateInstance() throws BillyValidationException {
-        this.validateValues();
+	@Override
+	protected void validateInstance() throws BillyValidationException {
+		this.validateValues();
 
-        ESGenericInvoiceEntryEntity i = this.getTypeInstance();
-        BillyValidator.mandatory(i.getQuantity(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.quantity"));
-        BillyValidator.mandatory(i.getUnitOfMeasure(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.unit"));
-        BillyValidator.mandatory(i.getProduct(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.product"));
-        BillyValidator.notEmpty(i.getTaxes(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
-        BillyValidator.mandatory(i.getTaxAmount(), ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax"));
-        BillyValidator.mandatory(i.getTaxPointDate(),
-                ESGenericInvoiceEntryBuilderImpl.LOCALIZER.getString("field.tax_point_date"));
-    }
+		ESGenericInvoiceEntryEntity i = this.getTypeInstance();
+		BillyValidator.mandatory(i.getQuantity(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.quantity"));
+		BillyValidator.mandatory(i.getUnitOfMeasure(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.unit"));
+		BillyValidator.mandatory(i.getProduct(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.product"));
+		BillyValidator.notEmpty(i.getTaxes(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.tax"));
+		BillyValidator.mandatory(i.getTaxAmount(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.tax"));
+		BillyValidator.mandatory(i.getTaxPointDate(),
+				ESGenericInvoiceEntryBuilderImpl.LOCALIZER
+				.getString("field.tax_point_date"));
+	}
 
-    @Override
-    protected void validateValues() throws ValidationException {
-        GenericInvoiceEntryEntity e = this.getTypeInstance();
+	@Override
+	protected void validateValues() throws ValidationException {
+	    GenericInvoiceEntryEntity e = this.getTypeInstance();
 
-        for (Tax t : e.getProduct().getTaxes()) {
-            if (this.daoContext.isSubContext(t.getContext(), this.context)) {
-                Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
-                if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
-                    e.getTaxes().add(t);
-                }
-            }
-        }
-    }
+	    for (Tax t : e.getProduct().getTaxes()) {
+	        if (this.daoContext.isSubContext(t.getContext(), this.context)) {
+	            Date taxDate = e.getTaxPointDate() == null ? new Date() : e.getTaxPointDate();
+	            if (DateUtils.isSameDay(t.getValidTo(), taxDate) || t.getValidTo().after(taxDate)) {
+	                e.getTaxes().add(t);
+	            }
+	        }
+	    }
+	}
 
     @Override
     @NotOnUpdate

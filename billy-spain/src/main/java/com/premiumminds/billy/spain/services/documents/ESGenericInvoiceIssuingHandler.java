@@ -33,8 +33,7 @@ import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntity;
 import com.premiumminds.billy.spain.services.documents.exceptions.InvalidInvoiceDateException;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
 
-public abstract class ESGenericInvoiceIssuingHandler<T extends ESGenericInvoiceEntity, P extends ESIssuingParams>
-        implements DocumentIssuingHandler<T, P> {
+public abstract class ESGenericInvoiceIssuingHandler<T extends ESGenericInvoiceEntity, P extends ESIssuingParams> implements DocumentIssuingHandler<T, P> {
 
     protected DAOInvoiceSeries daoInvoiceSeries;
 
@@ -42,51 +41,124 @@ public abstract class ESGenericInvoiceIssuingHandler<T extends ESGenericInvoiceE
     public ESGenericInvoiceIssuingHandler(DAOInvoiceSeries daoInvoiceSeries) {
         this.daoInvoiceSeries = daoInvoiceSeries;
     }
+	
+	protected <D extends AbstractDAOGenericInvoice<T>> T issue(final T document,
+	        final ESIssuingParams parametersES, final D daoInvoice) throws DocumentIssuingException {
 
-    protected <D extends AbstractDAOGenericInvoice<T>> T issue(final T document, final ESIssuingParams parametersES,
-            final D daoInvoice) throws DocumentIssuingException {
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		document.initializeEntityDates();
+		
+		//If the date is null then the invoice date is the current date
+		Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+		ESGenericInvoiceEntity documentEntity = (ESGenericInvoiceEntity) document;
+		
+		((BaseEntity)document).initializeEntityDates();
+		
+		//If the date is null then the invoice date is the current date
+		Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+=======
+	    String series = parametersES.getInvoiceSeries();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
 
-        String series = parametersES.getInvoiceSeries();
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		Integer seriesNumber = 1;
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+	//		if (systemDate..after(invoiceDate)) {
+	//			throw new InvalidInvoiceDateException();
+	//		}
 
-        InvoiceSeriesEntity invoiceSeriesEntity =
-                this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
+		Integer seriesNumber = 1;
+=======
+	    InvoiceSeriesEntity invoiceSeriesEntity =
+	            this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
 
-        document.initializeEntityDates();
+	    ESGenericInvoiceEntity documentEntity = (ESGenericInvoiceEntity) document;
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
 
-        // If the date is null then the invoice date is the current date
-        Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		T latestInvoice = daoInvoice
+				.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(), document.getBusiness()
+						.getUID().toString());
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+		ESGenericInvoiceEntity latestInvoice = daoInvoice
+				.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(), document.getBusiness()
+						.getUID().toString());
+=======
+	    ((BaseEntity) document).initializeEntityDates();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
 
-        Integer seriesNumber = 1;
+	    // If the date is null then the invoice date is the current date
+	    Date invoiceDate = document.getDate() == null ? new Date() : document.getDate();
 
-        T latestInvoice = daoInvoice.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(),
-                document.getBusiness().getUID().toString());
+	    // if (systemDate..after(invoiceDate)) {
+	    // throw new InvalidInvoiceDateException();
+	    // }
 
-        if (null != latestInvoice) {
-            seriesNumber = latestInvoice.getSeriesNumber() + 1;
-            Date latestInvoiceDate = latestInvoice.getDate();
+	    Integer seriesNumber = 1;
 
-            if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
-                throw new InvalidInvoiceDateException();
-            }
-        }
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		document.setDate(invoiceDate);
+		document.setNumber(formatedNumber);
+		document.setSeries(invoiceSeriesEntity.getSeries());
+		document.setSeriesNumber(seriesNumber);
+		document.setBilled(false);
+		document.setCancelled(false);
+		document.setEACCode(parametersES.getEACCode());
+		document.setCurrency(document.getCurrency());
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+		documentEntity.setDate(invoiceDate);
+		documentEntity.setNumber(formatedNumber);
+		documentEntity.setSeries(invoiceSeriesEntity.getSeries());
+		documentEntity.setSeriesNumber(seriesNumber);
+		documentEntity.setBilled(false);
+		documentEntity.setCancelled(false);
+		documentEntity.setEACCode(parametersES.getEACCode());
+		documentEntity.setCurrency(document.getCurrency());
+=======
+	    ESGenericInvoiceEntity latestInvoice = daoInvoice.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(),
+	            document.getBusiness().getUID().toString());
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
 
-        String formatedNumber = parametersES.getInvoiceSeries() + "/" + seriesNumber;
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		daoInvoice.create(document);
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+		daoInvoice.create(documentEntity);
+=======
+	    if (null != latestInvoice) {
+	        seriesNumber = latestInvoice.getSeriesNumber() + 1;
+	        Date latestInvoiceDate = latestInvoice.getDate();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
 
-        document.setDate(invoiceDate);
-        document.setNumber(formatedNumber);
-        document.setSeries(invoiceSeriesEntity.getSeries());
-        document.setSeriesNumber(seriesNumber);
-        document.setBilled(false);
-        document.setCancelled(false);
-        document.setEACCode(parametersES.getEACCode());
-        document.setCurrency(document.getCurrency());
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/left.java
+		return document;
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/base.java
+		return (T) documentEntity;
+=======
+	        if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
+	            throw new InvalidInvoiceDateException();
+	        }
+	    }
 
-        daoInvoice.create(document);
+	    String formatedNumber = parametersES.getInvoiceSeries() + "/" + seriesNumber;
 
-        return document;
-    }
+	    documentEntity.setDate(invoiceDate);
+	    documentEntity.setNumber(formatedNumber);
+	    documentEntity.setSeries(invoiceSeriesEntity.getSeries());
+	    documentEntity.setSeriesNumber(seriesNumber);
+	    documentEntity.setBilled(false);
+	    documentEntity.setCancelled(false);
+	    documentEntity.setEACCode(parametersES.getEACCode());
+	    documentEntity.setCurrency(document.getCurrency());
 
-    private InvoiceSeriesEntity getInvoiceSeries(final T document, String series, LockModeType lockMode) {
+	    daoInvoice.create(documentEntity);
+
+	    return (T) documentEntity;
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/services/documents/ESGenericInvoiceIssuingHandler.java/right.java
+	}
+
+    private InvoiceSeriesEntity getInvoiceSeries(final T document, String series,
+            LockModeType lockMode) {
         InvoiceSeriesEntity invoiceSeriesEntity =
                 this.daoInvoiceSeries.getSeries(series, document.getBusiness().getUID().toString(), lockMode);
 

@@ -25,9 +25,9 @@ import com.premiumminds.billy.core.util.BillyValidator;
 import com.premiumminds.billy.core.util.Localizer;
 import com.premiumminds.billy.core.util.NotOnUpdate;
 import com.premiumminds.billy.portugal.exceptions.BillySimpleInvoiceException;
-import com.premiumminds.billy.portugal.persistence.dao.AbstractDAOPTGenericInvoice;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTBusiness;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTCustomer;
+import com.premiumminds.billy.portugal.persistence.dao.AbstractDAOPTGenericInvoice;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTSupplier;
 import com.premiumminds.billy.portugal.persistence.entities.PTSimpleInvoiceEntity;
 import com.premiumminds.billy.portugal.services.builders.PTSimpleInvoiceBuilder;
@@ -37,16 +37,15 @@ import com.premiumminds.billy.portugal.services.entities.PTSimpleInvoice;
 import com.premiumminds.billy.portugal.services.entities.PTSimpleInvoice.CLIENTTYPE;
 
 public class PTSimpleInvoiceBuilderImpl<TBuilder extends PTSimpleInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends PTInvoiceEntry, TDocument extends PTSimpleInvoice>
-        extends PTGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument>
-        implements PTSimpleInvoiceBuilder<TBuilder, TEntry, TDocument> {
+extends PTGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument> 
+implements PTSimpleInvoiceBuilder<TBuilder, TEntry, TDocument> {
 
     protected static final Localizer LOCALIZER = new Localizer("com/premiumminds/billy/core/i18n/FieldNames");
 
-    public <TDAO extends AbstractDAOPTGenericInvoice<? extends TDocument>> PTSimpleInvoiceBuilderImpl(
-            TDAO daoPTSimpleInvoice, DAOPTBusiness daoPTBusiness, DAOPTCustomer daoPTCustomer,
-            DAOPTSupplier daoPTSupplier) {
+    public <TDAO extends AbstractDAOPTGenericInvoice<? extends TDocument>> PTSimpleInvoiceBuilderImpl(TDAO daoPTSimpleInvoice, DAOPTBusiness daoPTBusiness,
+            DAOPTCustomer daoPTCustomer, DAOPTSupplier daoPTSupplier) {
         super(daoPTSimpleInvoice, daoPTBusiness, daoPTCustomer, daoPTSupplier);
-        this.setSourceBilling(SourceBilling.P);
+    	setSourceBilling(SourceBilling.P);
     }
 
     @Override
@@ -75,17 +74,17 @@ public class PTSimpleInvoiceBuilderImpl<TBuilder extends PTSimpleInvoiceBuilderI
             throw new BillySimpleInvoiceException("Amount > 100 for business simple invoice. Issue invoice");
         }
     }
-
-    @Override
-    @NotOnUpdate
-    public TBuilder setSourceBilling(SourceBilling sourceBilling) {
-        switch (sourceBilling) {
-            case P:
-                return super.setSourceBilling(sourceBilling);
-            case M:
-            default:
-                throw new BillyValidationException();
-        }
-    }
+	
+	@Override
+	@NotOnUpdate
+	public TBuilder setSourceBilling(SourceBilling sourceBilling) {
+		switch (sourceBilling) {
+		case P:
+			return super.setSourceBilling(sourceBilling);
+		case M:
+		default:
+			throw new BillyValidationException();
+		}
+	}
 
 }

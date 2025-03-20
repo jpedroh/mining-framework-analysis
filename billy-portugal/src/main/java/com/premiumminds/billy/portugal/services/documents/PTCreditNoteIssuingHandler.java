@@ -40,8 +40,8 @@ public class PTCreditNoteIssuingHandler extends PTGenericInvoiceIssuingHandler<P
 
     @Override
     public PTCreditNoteEntity issue(PTCreditNoteEntity document, PTIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoCreditNote, PTCreditNoteIssuingHandler.INVOICE_TYPE);
+    		throws DocumentIssuingException {
+    	
+    	return issue(document, parameters, this.daoCreditNote, PTCreditNoteIssuingHandler.INVOICE_TYPE);
     }
 }

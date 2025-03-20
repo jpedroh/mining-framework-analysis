@@ -62,7 +62,8 @@ public class TestPTSimpleInvoiceIssuingHandler extends PTDocumentAbstractTest {
 
     @Test
     public void testIssuedInvoiceSimple() throws DocumentIssuingException {
-        PTSimpleInvoice issuedInvoice = this.getInstance(DAOPTSimpleInvoice.class).get(this.issuedInvoiceUID);
+        PTSimpleInvoice issuedInvoice =
+                (PTSimpleInvoice) this.getInstance(DAOPTSimpleInvoice.class).get(this.issuedInvoiceUID);
 
         Assert.assertEquals(PTPersistencyAbstractTest.DEFAULT_SERIES, issuedInvoice.getSeries());
         Assert.assertTrue(1 == issuedInvoice.getSeriesNumber());
@@ -74,8 +75,8 @@ public class TestPTSimpleInvoiceIssuingHandler extends PTDocumentAbstractTest {
 
     @Test(expected = BillySimpleInvoiceException.class)
     public void testBusinessSimpleInvoice() {
-        new PTSimpleInvoiceTestUtil(PTAbstractTest.injector)
-                .getSimpleInvoiceEntity(TestPTSimpleInvoiceIssuingHandler.SOURCE_BILLING, CLIENTTYPE.BUSINESS);
+    	 new PTSimpleInvoiceTestUtil(PTAbstractTest.injector)
+    	        .getSimpleInvoiceEntity(TestPTSimpleInvoiceIssuingHandler.SOURCE_BILLING, CLIENTTYPE.BUSINESS);
     }
 
 }

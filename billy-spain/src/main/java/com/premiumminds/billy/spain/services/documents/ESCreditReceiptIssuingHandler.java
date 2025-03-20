@@ -26,8 +26,7 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESCreditReceipt;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
 
-public class ESCreditReceiptIssuingHandler
-        extends ESGenericInvoiceIssuingHandler<ESCreditReceiptEntity, ESIssuingParams> {
+public class ESCreditReceiptIssuingHandler extends ESGenericInvoiceIssuingHandler<ESCreditReceiptEntity, ESIssuingParams> {
 
     private final DAOESCreditReceipt daoCreditReceipt;
 
@@ -39,8 +38,8 @@ public class ESCreditReceiptIssuingHandler
 
     @Override
     public ESCreditReceiptEntity issue(ESCreditReceiptEntity document, ESIssuingParams parameters)
-            throws DocumentIssuingException {
-
-        return this.issue(document, parameters, this.daoCreditReceipt);
+    		throws DocumentIssuingException {
+    	
+    	return issue(document, parameters, this.daoCreditReceipt);
     }
 }

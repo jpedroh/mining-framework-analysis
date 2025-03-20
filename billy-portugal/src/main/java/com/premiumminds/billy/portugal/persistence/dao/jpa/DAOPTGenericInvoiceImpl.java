@@ -27,22 +27,107 @@ import com.premiumminds.billy.portugal.persistence.entities.PTGenericInvoiceEnti
 import com.premiumminds.billy.portugal.persistence.entities.jpa.JPAPTGenericInvoiceEntity;
 
 public class DAOPTGenericInvoiceImpl
-        extends AbstractDAOPTGenericInvoiceImpl<PTGenericInvoiceEntity, JPAPTGenericInvoiceEntity>
-        implements DAOPTGenericInvoice {
+    extends AbstractDAOPTGenericInvoiceImpl<PTGenericInvoiceEntity, JPAPTGenericInvoiceEntity>
+    implements DAOPTGenericInvoice {
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/left.java
+  @Inject
+  public DAOPTGenericInvoiceImpl(Provider<EntityManager> emProvider) {
+    super(emProvider);
+  }
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/base.java
+	@Inject
+	public DAOPTGenericInvoiceImpl(Provider<EntityManager> emProvider) {
+		super(emProvider);
+	}
+=======
     @Inject
     public DAOPTGenericInvoiceImpl(Provider<EntityManager> emProvider) {
         super(emProvider);
     }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/left.java
+  @Override
+  public PTGenericInvoiceEntity getEntityInstance() {
+    return new JPAPTGenericInvoiceEntity();
+  }
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/base.java
+	@Override
+	public PTGenericInvoiceEntity getEntityInstance() {
+		return new JPAPTGenericInvoiceEntity();
+	}
+=======
     @Override
     public PTGenericInvoiceEntity getEntityInstance() {
         return new JPAPTGenericInvoiceEntity();
     }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/left.java
+  @Override
+  protected Class<? extends JPAPTGenericInvoiceEntity> getEntityClass() {
+    return JPAPTGenericInvoiceEntity.class;
+  }
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/base.java
+	@Override
+	protected Class<? extends JPAPTGenericInvoiceEntity> getEntityClass() {
+		return JPAPTGenericInvoiceEntity.class;
+	}
+=======
     @Override
     protected Class<? extends JPAPTGenericInvoiceEntity> getEntityClass() {
         return JPAPTGenericInvoiceEntity.class;
     }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/left.java
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/base.java
+	protected PTBusinessEntity getBusinessEntity(UID uid) {
+
+		QJPAPTBusinessEntity business = QJPAPTBusinessEntity.jPAPTBusinessEntity;
+		JPAQuery query = new JPAQuery(this.getEntityManager());
+
+		query.from(business).where(business.uid.eq(uid.getValue()));
+
+		return this.checkEntity(query.singleResult(business),
+				PTBusinessEntity.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends PTGenericInvoiceEntity> T findByNumber(UID uidBusiness, String number) {
+		QJPAPTGenericInvoiceEntity invoice = QJPAPTGenericInvoiceEntity.jPAPTGenericInvoiceEntity;
+
+		return (T) this.checkEntity(createQuery()
+				.from(invoice)
+				.where(
+						toDSL(invoice.business, QJPAPTBusinessEntity.class).uid.eq(uidBusiness.toString())
+						.and(invoice.number.eq(number)))
+				.singleResult(invoice), PTGenericInvoiceEntity.class);
+	}
+=======
+    protected PTBusinessEntity getBusinessEntity(UID uid) {
+
+        QJPAPTBusinessEntity business = QJPAPTBusinessEntity.jPAPTBusinessEntity;
+        JPAQuery query = new JPAQuery(this.getEntityManager());
+
+        query.from(business).where(business.uid.eq(uid.getValue()));
+
+        return this.checkEntity(query.singleResult(business), PTBusinessEntity.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends PTGenericInvoiceEntity> T findByNumber(UID uidBusiness, String number) {
+        QJPAPTGenericInvoiceEntity invoice = QJPAPTGenericInvoiceEntity.jPAPTGenericInvoiceEntity;
+
+        return (T) this.checkEntity(
+                this.createQuery()
+                        .from(invoice).where(this.toDSL(invoice.business, QJPAPTBusinessEntity.class).uid
+                                .eq(uidBusiness.toString()).and(invoice.number.eq(number)))
+                        .singleResult(invoice),
+                PTGenericInvoiceEntity.class);
+    }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-portugal/src/main/java/com/premiumminds/billy/portugal/persistence/dao/jpa/DAOPTGenericInvoiceImpl.java/right.java
 }

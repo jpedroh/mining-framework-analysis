@@ -26,9 +26,8 @@ import com.premiumminds.billy.spain.persistence.dao.DAOESGenericInvoice;
 import com.premiumminds.billy.spain.persistence.entities.ESGenericInvoiceEntity;
 import com.premiumminds.billy.spain.persistence.entities.jpa.JPAESGenericInvoiceEntity;
 
-public class DAOESGenericInvoiceImpl
-        extends AbstractDAOESGenericInvoiceImpl<ESGenericInvoiceEntity, JPAESGenericInvoiceEntity>
-        implements DAOESGenericInvoice {
+public class DAOESGenericInvoiceImpl extends AbstractDAOESGenericInvoiceImpl<ESGenericInvoiceEntity, JPAESGenericInvoiceEntity> 
+implements DAOESGenericInvoice {
 
     @Inject
     public DAOESGenericInvoiceImpl(Provider<EntityManager> emProvider) {
@@ -45,4 +44,53 @@ public class DAOESGenericInvoiceImpl
         return JPAESGenericInvoiceEntity.class;
     }
 
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/persistence/dao/jpa/DAOESGenericInvoiceImpl.java/left.java
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/persistence/dao/jpa/DAOESGenericInvoiceImpl.java/base.java
+	protected ESBusinessEntity getBusinessEntity(UID uid) {
+
+		QJPAESBusinessEntity business = QJPAESBusinessEntity.jPAESBusinessEntity;
+		JPAQuery query = new JPAQuery(this.getEntityManager());
+
+		query.from(business).where(business.uid.eq(uid.getValue()));
+
+		return this.checkEntity(query.singleResult(business),
+				ESBusinessEntity.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ESGenericInvoiceEntity> T findByNumber(UID uidBusiness, String number) {
+		QJPAESGenericInvoiceEntity invoice = QJPAESGenericInvoiceEntity.jPAESGenericInvoiceEntity;
+
+		return (T) this.checkEntity(createQuery()
+				.from(invoice)
+				.where(
+						toDSL(invoice.business, QJPAESBusinessEntity.class).uid.eq(uidBusiness.toString())
+						.and(invoice.number.eq(number)))
+				.singleResult(invoice), ESGenericInvoiceEntity.class);
+	}
+=======
+    protected ESBusinessEntity getBusinessEntity(UID uid) {
+
+        QJPAESBusinessEntity business = QJPAESBusinessEntity.jPAESBusinessEntity;
+        JPAQuery query = new JPAQuery(this.getEntityManager());
+
+        query.from(business).where(business.uid.eq(uid.getValue()));
+
+        return this.checkEntity(query.singleResult(business), ESBusinessEntity.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends ESGenericInvoiceEntity> T findByNumber(UID uidBusiness, String number) {
+        QJPAESGenericInvoiceEntity invoice = QJPAESGenericInvoiceEntity.jPAESGenericInvoiceEntity;
+
+        return (T) this.checkEntity(
+                this.createQuery()
+                        .from(invoice).where(this.toDSL(invoice.business, QJPAESBusinessEntity.class).uid
+                                .eq(uidBusiness.toString()).and(invoice.number.eq(number)))
+                        .singleResult(invoice),
+                ESGenericInvoiceEntity.class);
+    }
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-spain/src/main/java/com/premiumminds/billy/spain/persistence/dao/jpa/DAOESGenericInvoiceImpl.java/right.java
 }

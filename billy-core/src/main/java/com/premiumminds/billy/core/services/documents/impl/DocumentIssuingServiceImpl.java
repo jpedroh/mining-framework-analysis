@@ -41,26 +41,33 @@ import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 
 public class DocumentIssuingServiceImpl implements DocumentIssuingService {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentIssuingServiceImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(DocumentIssuingServiceImpl.class);
 
     protected Map<Class<? extends GenericInvoice>, DocumentIssuingHandler<? extends GenericInvoice, ? extends IssuingParams>> handlers;
-    protected DAOGenericInvoice daoInvoice;
+    protected DAOGenericInvoice	daoInvoice;
     protected TicketManager ticketManager;
 
     @Inject
-    public DocumentIssuingServiceImpl(DAOGenericInvoice daoInvoice, TicketManager ticketManager) {
-
-        this.handlers =
-                new HashMap<>();
+    public DocumentIssuingServiceImpl(
+    		DAOGenericInvoice daoInvoice,
+    		TicketManager ticketManager) {
+    	
+<<<<<<< /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/left.java
+    	this.handlers = new HashMap<Class<? extends GenericInvoice>, DocumentIssuingHandler<? extends GenericInvoice, ? extends IssuingParams>>();
+||||||| /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/base.java
+    	this.handlers = new HashMap<Class<? extends GenericInvoiceEntity>, DocumentIssuingHandler>();
+=======
+    	this.handlers = new HashMap<>();
+>>>>>>> /usr/src/app/output/premium-minds/billy/e481179c9fa61835d2db73bd8cdcb9f47123f892/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/right.java
         this.daoInvoice = daoInvoice;
         this.ticketManager = ticketManager;
     }
 
     @Override
-    public <T extends GenericInvoice, P extends IssuingParams> void addHandler(Class<T> handledClass,
-            DocumentIssuingHandler<T, P> handler) {
-
-        this.handlers.put(handledClass, handler);
+    public <T extends GenericInvoice, P extends IssuingParams> void addHandler(
+    		Class<T> handledClass, DocumentIssuingHandler<T, P> handler) {
+    	
+    	this.handlers.put(handledClass, handler);
     }
 
     @Override
@@ -114,16 +121,15 @@ public class DocumentIssuingServiceImpl implements DocumentIssuingService {
     }
 
     private <T extends GenericInvoice> T issueDocument(Builder<T> documentBuilder, final IssuingParams parameters)
-            throws DocumentIssuingException {
+    				throws DocumentIssuingException {
 
         final T document = documentBuilder.build();
         final Type[] types = document.getClass().getGenericInterfaces();
         for (Type type : types) {
             if (this.handlers.containsKey(type)) {
-                @SuppressWarnings("unchecked")
-                DocumentIssuingHandler<T, IssuingParams> handler =
-                        (DocumentIssuingHandler<T, IssuingParams>) this.handlers.get(type);
-                return handler.issue(document, parameters);
+            	@SuppressWarnings("unchecked")
+            	DocumentIssuingHandler<T, IssuingParams> handler = (DocumentIssuingHandler<T,IssuingParams>) this.handlers.get(type);
+            	return handler.issue(document, parameters);
             }
         }
 

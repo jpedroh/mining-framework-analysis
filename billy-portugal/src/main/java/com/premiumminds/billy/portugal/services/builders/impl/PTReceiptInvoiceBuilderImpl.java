@@ -21,9 +21,9 @@ package com.premiumminds.billy.portugal.services.builders.impl;
 import com.premiumminds.billy.core.exceptions.BillyValidationException;
 import com.premiumminds.billy.core.util.Localizer;
 import com.premiumminds.billy.core.util.NotOnUpdate;
-import com.premiumminds.billy.portugal.persistence.dao.AbstractDAOPTGenericInvoice;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTBusiness;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTCustomer;
+import com.premiumminds.billy.portugal.persistence.dao.AbstractDAOPTGenericInvoice;
 import com.premiumminds.billy.portugal.persistence.dao.DAOPTSupplier;
 import com.premiumminds.billy.portugal.persistence.entities.PTReceiptInvoiceEntity;
 import com.premiumminds.billy.portugal.services.builders.PTReceiptInvoiceBuilder;
@@ -31,17 +31,16 @@ import com.premiumminds.billy.portugal.services.entities.PTGenericInvoice.Source
 import com.premiumminds.billy.portugal.services.entities.PTInvoiceEntry;
 import com.premiumminds.billy.portugal.services.entities.PTReceiptInvoice;
 
-public class PTReceiptInvoiceBuilderImpl<TBuilder extends PTReceiptInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends PTInvoiceEntry, TDocument extends PTReceiptInvoice>
-        extends PTGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument>
-        implements PTReceiptInvoiceBuilder<TBuilder, TEntry, TDocument> {
+public class PTReceiptInvoiceBuilderImpl<TBuilder extends PTReceiptInvoiceBuilderImpl<TBuilder, TEntry, TDocument>, TEntry extends PTInvoiceEntry, TDocument extends PTReceiptInvoice> 
+extends PTGenericInvoiceBuilderImpl<TBuilder, TEntry, TDocument> 
+implements PTReceiptInvoiceBuilder<TBuilder, TEntry, TDocument> {
 
     protected static final Localizer LOCALIZER = new Localizer("com/premiumminds/billy/core/i18n/FieldNames");
 
-    public <TDAO extends AbstractDAOPTGenericInvoice<? extends TDocument>> PTReceiptInvoiceBuilderImpl(
-            TDAO daoPTReceiptInvoice, DAOPTBusiness daoPTBusiness, DAOPTCustomer daoPTCustomer,
-            DAOPTSupplier daoPTSupplier) {
+    public <TDAO extends AbstractDAOPTGenericInvoice<? extends TDocument>> PTReceiptInvoiceBuilderImpl(TDAO daoPTReceiptInvoice, DAOPTBusiness daoPTBusiness,
+            DAOPTCustomer daoPTCustomer, DAOPTSupplier daoPTSupplier) {
         super(daoPTReceiptInvoice, daoPTBusiness, daoPTCustomer, daoPTSupplier);
-        this.setSourceBilling(SourceBilling.P);
+    	setSourceBilling(SourceBilling.P);
     }
 
     @Override
@@ -53,16 +52,16 @@ public class PTReceiptInvoiceBuilderImpl<TBuilder extends PTReceiptInvoiceBuilde
     protected void validateInstance() throws BillyValidationException {
         super.validateInstance();
     }
-
-    @Override
-    @NotOnUpdate
-    public TBuilder setSourceBilling(SourceBilling sourceBilling) {
-        switch (sourceBilling) {
-            case P:
-                return super.setSourceBilling(sourceBilling);
-            case M:
-            default:
-                throw new BillyValidationException();
-        }
-    }
+	
+	@Override
+	@NotOnUpdate
+	public TBuilder setSourceBilling(SourceBilling sourceBilling) {
+		switch (sourceBilling) {
+		case P:
+			return super.setSourceBilling(sourceBilling);
+		case M:
+		default:
+			throw new BillyValidationException();
+		}
+	}
 }
