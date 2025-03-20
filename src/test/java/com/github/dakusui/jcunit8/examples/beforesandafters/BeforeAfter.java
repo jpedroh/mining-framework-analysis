@@ -86,6 +86,7 @@ public class BeforeAfter {
     System.out.println("  afterTestCase:" + f);
   }
 
+<<<<<<< /usr/src/app/output/dakusui/jcunit/be578312371b6ad0b79f2c4d3e6edae2940ae2ca/src/test/java/com/github/dakusui/jcunit8/examples/beforesandafters/BeforeAfter.java/left.java
   @AfterClass
   public static void afterClass(@From("@suite") TestSuite suite) {
     System.out.println("afterClass:[");
@@ -107,4 +108,32 @@ public class BeforeAfter {
     );
     System.out.println("]");
   }
+||||||| /usr/src/app/output/dakusui/jcunit/be578312371b6ad0b79f2c4d3e6edae2940ae2ca/src/test/java/com/github/dakusui/jcunit8/examples/beforesandafters/BeforeAfter.java/base.java
+=======
+  @AfterClass
+  public static void afterClass(@From("@suite") TestSuite suite) {
+    System.out.println("afterClass:[");
+    System.out.print("  ");
+    suite.getScenario().oracles().forEach(
+        testOracle -> System.out.printf(
+            "%-20s",
+            testOracle.getName()
+        )
+    );
+    System.out.println();
+    suite.forEach(
+        testCase -> {
+          System.out.print("  ");
+          suite.getScenario().oracles().forEach(
+              testOracle -> System.out.printf(
+                  "%-20s",
+                  testOracle.shouldInvoke().test(testCase.getTestInput())
+              )
+          );
+          System.out.println();
+        }
+    );
+    System.out.println("]");
+  }
+>>>>>>> /usr/src/app/output/dakusui/jcunit/be578312371b6ad0b79f2c4d3e6edae2940ae2ca/src/test/java/com/github/dakusui/jcunit8/examples/beforesandafters/BeforeAfter.java/right.java
 }
