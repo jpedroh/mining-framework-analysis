@@ -78,14 +78,14 @@ public class I18nExtensionTest extends AbstractTest {
 
 	@Test
 	public void testMessageWithParams() throws PebbleException, IOException {
-		Loader loader = new StringLoader();
-		PebbleEngine pebble = new PebbleEngine(loader);
-		pebble.addExtension(new I18nExtension());
+	    Loader<?> loader = new StringLoader();
+	    PebbleEngine pebble = new PebbleEngine(loader);
+	    pebble.addExtension(new I18nExtension());
 
-        PebbleTemplate template = pebble.getTemplate("{{ i18n('testMessages','greeting.someone', 'Pebble') }}");
+	    PebbleTemplate template = pebble.getTemplate("{{ i18n('testMessages','greeting.someone', 'Pebble') }}");
 
-        Writer writer = new StringWriter();
-        template.evaluate(writer, new Locale("es", "US"));
-        assertEquals("Hola, Pebble", writer.toString());
-    }
+	    Writer writer = new StringWriter();
+	    template.evaluate(writer, new Locale("es", "US"));
+	    assertEquals("Hola, Pebble", writer.toString());
+	}
 }
