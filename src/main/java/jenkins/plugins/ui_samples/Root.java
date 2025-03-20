@@ -1,11 +1,9 @@
 package jenkins.plugins.ui_samples;
-
 import hudson.Extension;
 import hudson.model.RootAction;
 import jenkins.model.ModelObjectWithContextMenu;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-
 import java.util.List;
 
 /**
@@ -13,34 +11,34 @@ import java.util.List;
  * 
  * @author Kohsuke Kawaguchi
  */
-@Extension
-public class Root implements RootAction, ModelObjectWithContextMenu {
-    public String getIconFileName() {
-        return "symbol-ui-samples";
-    }
+@Extension public class Root implements RootAction, ModelObjectWithContextMenu {
+  public String getIconFileName() {
+    return "symbol-ui-samples";
+  }
 
-    public String getDisplayName() {
-        return "UI Samples";
-    }
+  public String getDisplayName() {
+    return "UI Samples";
+  }
 
-    public String getUrlName() {
-        return "ui-samples";
-    }
+  public String getUrlName() {
+    return "ui-samples";
+  }
 
-    public UISample getDynamic(String name) {
-        for (UISample ui : getAll()) {
-            String urlName = ui.getUrlName();
-            if (urlName != null && urlName.equals(name))
-                return ui;
-        }
-        return null;
+  public UISample getDynamic(String name) {
+    for (UISample ui : getAll()) {
+      String urlName = ui.getUrlName();
+      if (urlName != null && urlName.equals(name)) {
+        return ui;
+      }
     }
+    return null;
+  }
 
-    public List<UISample> getAll() {
-        return UISample.getAll();
-    }
+  public List<UISample> getAll() {
+    return UISample.getAll();
+  }
 
-    public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response) {
-        return null;
-    }
+  public ContextMenu doContextMenu(StaplerRequest request, StaplerResponse response) {
+    return null;
+  }
 }
