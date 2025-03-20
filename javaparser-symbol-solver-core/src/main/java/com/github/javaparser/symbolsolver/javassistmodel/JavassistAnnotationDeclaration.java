@@ -100,7 +100,13 @@ public class JavassistAnnotationDeclaration extends AbstractTypeDeclaration impl
 
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistAnnotationDeclaration.java/left.java
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+||||||| /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistAnnotationDeclaration.java/base.java
+        throw new UnsupportedOperationException();
+=======
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistAnnotationDeclaration.java/right.java
     }
 
     @Override

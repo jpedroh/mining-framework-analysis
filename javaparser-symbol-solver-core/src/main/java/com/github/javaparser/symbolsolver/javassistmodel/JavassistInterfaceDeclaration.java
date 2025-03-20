@@ -38,12 +38,7 @@ import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -124,17 +119,25 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         throw new UnsupportedOperationException();
     }
 
+<<<<<<< /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistInterfaceDeclaration.java/left.java
+    @Override
+    public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+    }
+||||||| /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistInterfaceDeclaration.java/base.java
+=======
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
     }
+>>>>>>> /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistInterfaceDeclaration.java/right.java
 
     @Override
-    public Set<ResolvedMethodDeclaration> getDeclaredMethods() {
-        return Arrays.stream(ctClass.getDeclaredMethods())
-                .map(m -> new JavassistMethodDeclaration(m, typeSolver))
-                .collect(Collectors.toSet());
-    }
+public Set<ResolvedMethodDeclaration> getDeclaredMethods() {
+    return Arrays.stream(ctClass.getDeclaredMethods())
+            .map(m -> new JavassistMethodDeclaration(m, typeSolver))
+            .collect(Collectors.toSet());
+}
 
     @Override
     public boolean hasDirectlyAnnotation(String canonicalName) {

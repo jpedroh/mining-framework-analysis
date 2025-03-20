@@ -88,17 +88,25 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
         return ctClass.getName().replace('$', '.');
     }
 
+<<<<<<< /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistEnumDeclaration.java/left.java
+    @Override
+    public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+    }
+||||||| /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistEnumDeclaration.java/base.java
+=======
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
     }
+>>>>>>> /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistEnumDeclaration.java/right.java
 
     @Override
-    public ResolvedFieldDeclaration getField(String name) {
-        Optional<ResolvedFieldDeclaration> field = javassistTypeDeclarationAdapter.getDeclaredFields().stream().filter(f -> f.getName().equals(name)).findFirst();
+public ResolvedFieldDeclaration getField(String name) {
+    Optional<ResolvedFieldDeclaration> field = javassistTypeDeclarationAdapter.getDeclaredFields().stream().filter(f -> f.getName().equals(name)).findFirst();
 
-        return field.orElseThrow(() -> new RuntimeException("Field " + name + " does not exist in " + ctClass.getName() + "."));
-    }
+    return field.orElseThrow(() -> new RuntimeException("Field " + name + " does not exist in " + ctClass.getName() + "."));
+}
 
     @Override
     public boolean hasField(String name) {

@@ -39,11 +39,7 @@ import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -169,16 +165,24 @@ public class JavassistClassDeclaration extends AbstractClassDeclaration implemen
         return ctClass.getClassFile().getSuperclass();
     }
 
+<<<<<<< /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistClassDeclaration.java/left.java
+    @Override
+    public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
+        return javassistTypeDeclarationAdapter.getAncestors(this, acceptIncompleteList);
+    }
+||||||| /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistClassDeclaration.java/base.java
+=======
     @Override
     public List<ResolvedReferenceType> getAncestors(boolean acceptIncompleteList) {
         return javassistTypeDeclarationAdapter.getAncestors(acceptIncompleteList);
     }
+>>>>>>> /usr/src/app/output/javaparser/javaparser/e6f40627657f5019c674263079a75adcc8d18ec1/javaparser-symbol-solver-core/src/main/java/com/github/javaparser/symbolsolver/javassistmodel/JavassistClassDeclaration.java/right.java
 
     @Override
-    @Deprecated
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
-        return JavassistUtils.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, ctClass);
-    }
+@Deprecated
+public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+    return JavassistUtils.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, ctClass);
+}
 
     public ResolvedType getUsage(Node node) {
         return new ReferenceTypeImpl(this, typeSolver);
