@@ -26,6 +26,7 @@ public class AsyncRetryJob<V> extends RetryJob<V> {
 	@Override
 	public void run(final long startTime) {
 		try {
+<<<<<<< /usr/src/app/output/nurkiewicz/async-retry/27316bb87f8ad572d714cb0907a04ed67cc92d7f/src/main/java/com/blogspot/nurkiewicz/asyncretry/AsyncRetryJob.java/left.java
 			Futures.addCallback(userTask.call(context), new FutureCallback<V>() {
 				@Override
 				public void onSuccess(V result) {
@@ -37,6 +38,26 @@ public class AsyncRetryJob<V> extends RetryJob<V> {
 					handleThrowable(throwable, System.currentTimeMillis() - startTime);
 				}
 			});
+||||||| /usr/src/app/output/nurkiewicz/async-retry/27316bb87f8ad572d714cb0907a04ed67cc92d7f/src/main/java/com/blogspot/nurkiewicz/asyncretry/AsyncRetryJob.java/base.java
+			userTask.call(context).
+					exceptionally(throwable -> {
+						throwable.printStackTrace();
+						handleThrowable(throwable, System.currentTimeMillis() - startTime);
+						return null;
+					}).thenAccept(result ->
+							complete(result, System.currentTimeMillis() - startTime)
+					);
+=======
+			userTask.call(context).handle((result, throwable) -> {
+				final long stopTime = System.currentTimeMillis() - startTime;
+				if (throwable != null) {
+					handleThrowable(throwable, stopTime);
+				} else {
+					complete(result, stopTime);
+				}
+				return null;
+			});
+>>>>>>> /usr/src/app/output/nurkiewicz/async-retry/27316bb87f8ad572d714cb0907a04ed67cc92d7f/src/main/java/com/blogspot/nurkiewicz/asyncretry/AsyncRetryJob.java/right.java
 		} catch (Throwable t) {
 			handleThrowable(t, System.currentTimeMillis() - startTime);
 		}
@@ -46,4 +67,6 @@ public class AsyncRetryJob<V> extends RetryJob<V> {
 	protected RetryJob<V> nextTask(AsyncRetryContext nextRetryContext) {
 		return new AsyncRetryJob<>(userTask, parent, nextRetryContext, future);
 	}
+
+
 }
