@@ -1,5 +1,4 @@
 package net.md_5.bungee;
-
 import java.security.Security;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -10,48 +9,52 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.command.ConsoleCommandSender;
 
-public class BungeeCordLauncher
-{
-
-    public static void main(String[] args) throws Exception
-    {
-        Security.setProperty( "networkaddress.cache.ttl", "30" );
-        Security.setProperty( "networkaddress.cache.negative.ttl", "10" );
-
-        OptionParser parser = new OptionParser();
-        parser.allowsUnrecognizedOptions();
-        parser.acceptsAll( Arrays.asList( "help" ), "Show the help" );
-        parser.acceptsAll( Arrays.asList( "v", "version" ), "Print version and exit" );
-        parser.acceptsAll( Arrays.asList( "noconsole" ), "Disable console input" );
-
-        OptionSet options = parser.parse( args );
-
-        if ( options.has( "help" ) )
-        {
-            parser.printHelpOn( System.out );
-            return;
-        }
-        if ( options.has( "version" ) )
-        {
-            System.out.println( BungeeCord.class.getPackage().getImplementationVersion() );
-            return;
-        }
-
-        BungeeCord bungee = new BungeeCord();
-        ProxyServer.setInstance( bungee );
-        bungee.getLogger().log( Level.WARNING, "Включаю BungeCord BotFilter {0} от vk.com/Leymooo_s", bungee.getGameVersion() );//BotFilter
-        bungee.start();
-
-        if ( !options.has( "noconsole" ) )
-        {
-            String line;
-            while ( bungee.isRunning && ( line = bungee.getConsoleReader().readLine( ">" ) ) != null )
-            {
-                if ( !bungee.getPluginManager().dispatchCommand( ConsoleCommandSender.getInstance(), line ) )
-                {
-                    bungee.getConsole().sendMessage( new ComponentBuilder( "Команда не найдена :(" ).color( ChatColor.RED ).create() ); //BotFilter
-                }
-            }
-        }
+public class BungeeCordLauncher {
+  public static void main(String[] args) throws Exception {
+    Security.setProperty("networkaddress.cache.ttl", "30");
+    Security.setProperty("networkaddress.cache.negative.ttl", "10");
+    OptionParser parser = new OptionParser();
+    parser.allowsUnrecognizedOptions();
+    parser.acceptsAll(Arrays.asList("help"), "Show the help");
+    parser.acceptsAll(Arrays.asList("v", "version"), "Print version and exit");
+    parser.acceptsAll(Arrays.asList("noconsole"), "Disable console input");
+    OptionSet options = parser.parse(args);
+    if (options.has("help")) {
+      parser.printHelpOn(System.out);
+      return;
     }
+    if (options.has("version")) {
+      System.out.println(BungeeCord.class.getPackage().getImplementationVersion());
+      return;
+    }
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+    if (BungeeCord.class.getPackage().getSpecificationVersion() != null && System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
+      Date buildDate = new SimpleDateFormat("yyyyMMdd").parse(BungeeCord.class.getPackage().getSpecificationVersion());
+      Calendar deadline = Calendar.getInstance();
+      deadline.add(Calendar.WEEK_OF_YEAR, -8);
+      if (buildDate.before(deadline.getTime())) {
+        System.err.println("*** Warning, this build is outdated ***");
+        System.err.println("*** Please download a new build from http://ci.md-5.net/job/BungeeCord ***");
+        System.err.println("*** You will get NO support regarding this build ***");
+        System.err.println("*** Server will start in 10 seconds ***");
+        Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+      }
+    }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/62c7678c3e748660d3f87099fdac3e93e688855b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/right.java
+
+    BungeeCord bungee = new BungeeCord();
+    ProxyServer.setInstance(bungee);
+    bungee.getLogger().log(Level.WARNING, "\u0412\u043a\u043b\u044e\u0447\u0430\u044e BungeCord BotFilter {0} \u043e\u0442 vk.com/Leymooo_s", bungee.getGameVersion());
+    bungee.start();
+    if (!options.has("noconsole")) {
+      String line;
+      while (bungee.isRunning && (line = bungee.getConsoleReader().readLine(">")) != null) {
+        if (!bungee.getPluginManager().dispatchCommand(ConsoleCommandSender.getInstance(), line)) {
+          bungee.getConsole().sendMessage(new ComponentBuilder("\u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430 :(").color(ChatColor.RED).create());
+        }
+      }
+    }
+  }
 }
