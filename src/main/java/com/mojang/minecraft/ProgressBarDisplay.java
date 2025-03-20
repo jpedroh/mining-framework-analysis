@@ -209,7 +209,7 @@ public final class ProgressBarDisplay {
 
     public final void setText(String message) {
         if (!minecraft.isRunning) {
-            throw new StopGameException();
+        	throw new StopGameException();
         } else {
             text = message;
             passServerCommand(message);
@@ -222,7 +222,8 @@ public final class ProgressBarDisplay {
             String joinedString = (title + " " + text).toLowerCase();
 
             if (joinedString.contains("-hax")) {
-                HackState.setAllDisabled();
+                                HackState.setAllEnabled();
+            	//HackState.setAllDisabled();
             } else { // enable all, it's either +hax or nothing at all
                 HackState.setAllEnabled();
             }
@@ -230,18 +231,36 @@ public final class ProgressBarDisplay {
             if (joinedString.contains("+fly")) {
                 HackState.fly = true;
             } else if (joinedString.contains("-fly")) {
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
+            	//HackState.Fly = false;
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+            	HackState.Fly = false;
+=======
                 HackState.fly = false;
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
             }
             if (joinedString.contains("+noclip")) {
                 HackState.noclip = true;
             } else if (joinedString.contains("-noclip")) {
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
+            	//HackState.Noclip = false;
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+            	HackState.Noclip = false;
+=======
                 HackState.noclip = false;
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
             }
 
             if (joinedString.contains("+speed")) {
                 HackState.speed = true;
             } else if (joinedString.contains("-speed")) {
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
+            	//HackState.Speed = false;
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+            	HackState.Speed = false;
+=======
                 HackState.speed = false;
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
             }
 
             if (joinedString.contains("+respawn")) {

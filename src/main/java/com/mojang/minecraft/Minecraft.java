@@ -2149,7 +2149,7 @@ public final class Minecraft implements Runnable {
                                         }
                                     } else if (packetType == PacketType.CLICK_DISTANCE) {
                                         short Distance = (Short) packetParams[0];
-                                        gamemode.reachDistance = Distance / 32;
+                                    	//gamemode.reachDistance = Distance / 32;
                                     } else if (packetType == PacketType.HOLDTHIS) {
                                         byte blockToHold = (Byte) packetParams[0];
                                         byte preventChange = (Byte) packetParams[1];
@@ -2300,8 +2300,16 @@ public final class Minecraft implements Runnable {
                                         }
                                     } else if (packetType == PacketType.IDENTIFICATION) {
                                         networkManager.minecraft.progressBar.setTitle(packetParams[1].toString());
-                                        networkManager.minecraft.player.userType = (Byte) packetParams[3];
-                                        networkManager.minecraft.progressBar.setText(packetParams[2].toString());
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+                                        networkManager.minecraft.player.userType = 100;//((Byte) packetParams[3])
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                                        networkManager.minecraft.player.userType = ((Byte) packetParams[3])
+												.byteValue();//((Byte) packetParams[3])
+=======
+                                        networkManager.minecraft.player.userType = (Byte) packetParams[3];//((Byte) packetParams[3])
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
+                                    			//.byteValue();
+                                    	networkManager.minecraft.progressBar.setText(packetParams[2].toString());
                                     } else if (packetType == PacketType.LEVEL_INIT) {
 									    selectionBoxes.clear();
                                         networkManager.minecraft.setLevel(null);
@@ -2397,9 +2405,10 @@ public final class Minecraft implements Runnable {
                                                 var36 = var10003;
                                                 byte var5 = var10001;
                                                 if (var5 < 0) {
-                                                    networkManager.minecraft.player.moveTo(
-                                                            var66 / 32F, var36 / 32F, var47 / 32F,
-                                                            var53 * 360 / 256F, var9 * 360 / 256F);
+                                                                                                    if (!settings.TPDisabled){
+													networkManager.minecraft.player.moveTo(
+                                                        var66 / 32F, var36 / 32F, var47 / 32F,
+                                                        var53 * 360 / 256F, var9 * 360 / 256F);}
                                                 } else {
                                                     var53 = (byte) (var53 + 128);
                                                     var36 = (short) (var36 - 22);
@@ -2417,6 +2426,70 @@ public final class Minecraft implements Runnable {
                                                 byte var65;
                                                 byte var67;
                                                 if (packetType == PacketType.POSITION_ROTATION_UPDATE) {
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+                                                	var10001 = ((Byte) packetParams[0])
+                                                			.byteValue();
+                                                	var67 = ((Byte) packetParams[1])
+                                                			.byteValue();
+                                                	var65 = ((Byte) packetParams[2])
+                                                			.byteValue();
+                                                	byte var64 = ((Byte) packetParams[3])
+                                                			.byteValue();
+                                                	var69 = ((Byte) packetParams[4])
+                                                			.byteValue();
+                                                	var9 = ((Byte) packetParams[5])
+                                                			.byteValue();
+                                                	var53 = var69;
+                                                	var49 = var64;
+                                                	var44 = var65;
+                                                	var37 = var67;
+                                                	byte playerID = var10001;
+                                                	if (playerID >= 0) {
+                                                                                                                                                            if (!settings.TPDisabled){
+                                                		var53 = (byte) (var53 + 128);
+                                                		if ((networkPlayer = networkManager.players
+                                                				.get(Byte
+                                                						.valueOf(playerID))) != null) {
+                                                			networkPlayer
+                                                					.queue(var37,
+                                                							var44,
+                                                							var49,
+                                                							var53 * 360 / 256.0F,
+                                                							var9 * 360 / 256.0F);
+                                                		}}
+                                                	}
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                                                	var10001 = ((Byte) packetParams[0])
+                                                			.byteValue();
+                                                	var67 = ((Byte) packetParams[1])
+                                                			.byteValue();
+                                                	var65 = ((Byte) packetParams[2])
+                                                			.byteValue();
+                                                	byte var64 = ((Byte) packetParams[3])
+                                                			.byteValue();
+                                                	var69 = ((Byte) packetParams[4])
+                                                			.byteValue();
+                                                	var9 = ((Byte) packetParams[5])
+                                                			.byteValue();
+                                                	var53 = var69;
+                                                	var49 = var64;
+                                                	var44 = var65;
+                                                	var37 = var67;
+                                                	byte playerID = var10001;
+                                                	if (playerID >= 0) {
+                                                		var53 = (byte) (var53 + 128);
+                                                		if ((networkPlayer = networkManager.players
+                                                				.get(Byte
+                                                						.valueOf(playerID))) != null) {
+                                                			networkPlayer
+                                                					.queue(var37,
+                                                							var44,
+                                                							var49,
+                                                							var53 * 360 / 256.0F,
+                                                							var9 * 360 / 256.0F);
+                                                		}
+                                                	}
+=======
                                                     byte playerID = (Byte) packetParams[0];
                                                     var37 = (Byte) packetParams[1];
                                                     var44 = (Byte) packetParams[2];
@@ -2432,24 +2505,26 @@ public final class Minecraft implements Runnable {
                                                             );
                                                         }
                                                     }
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
                                                 } else if (packetType == PacketType.ROTATION_UPDATE) {
                                                     byte playerID = (Byte) packetParams[0];
                                                     var37 = (Byte) packetParams[1];
                                                     var44 = (Byte) packetParams[2];
                                                     if (playerID >= 0) {
-                                                        var37 = (byte) (var37 + 128);
-                                                        NetworkPlayer networkPlayerInstance = networkManager.players.get(Byte.valueOf(playerID));
-                                                        if (networkPlayerInstance != null) {
-                                                            networkPlayerInstance.queue(var44 * 360 / 256F, var37 * 360 / 256F
-                                                            );
-                                                        }
+                                                                                                            if (!settings.TPDisabled){
+														var37 = (byte) (var37 + 128);
+														NetworkPlayer networkPlayerInstance = networkManager.players.get(Byte.valueOf(playerID));
+														if (networkPlayerInstance != null) {
+                                                        networkPlayerInstance.queue(var44 * 360 / 256F, var37 * 360 / 256F
+                                                        );
+                                                    }}
                                                     }
                                                 } else if (packetType == PacketType.POSITION_UPDATE) {
                                                     byte playerID = (Byte) packetParams[0];
                                                     NetworkPlayer networkPlayerInstance = networkManager.players.get(Byte.valueOf(playerID));
-                                                    if (playerID >= 0 && networkPlayerInstance != null) {
+                                                    if (playerID >= 0 && networkPlayerInstance != null) {if(!settings.TPDisabled){
                                                         networkPlayerInstance.queue((Byte) packetParams[1], (Byte) packetParams[2], (Byte) packetParams[3]);
-                                                    }
+                                                                                                                                                        }}
                                                 } else if (packetType == PacketType.DESPAWN_PLAYER) {
                                                     byte playerID = (Byte) packetParams[0];
                                                     var33 = networkManager.players.remove(Byte.valueOf(playerID));
@@ -2502,7 +2577,15 @@ public final class Minecraft implements Runnable {
                                                             "Connection lost",
                                                             (String) packetParams[0]));
                                                 } else if (packetType == PacketType.UPDATE_PLAYER_TYPE) {
-                                                    networkManager.minecraft.player.userType = (Byte) packetParams[0];
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+                                                    networkManager.minecraft.player.userType = 100;//((Byte) packetParams[0])
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                                                    networkManager.minecraft.player.userType = ((Byte) packetParams[0])
+															.byteValue();//((Byte) packetParams[0])
+=======
+                                                    networkManager.minecraft.player.userType = (Byte) packetParams[0];//((Byte) packetParams[0])
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
+                                                			//.byteValue();
                                                 }
                                             }
                                         }
@@ -2769,6 +2852,26 @@ public final class Minecraft implements Runnable {
                                 break;
                         }
 
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+                    	if (Keyboard.getEventKey() == settings.chatKey.key
+                    			&& networkManager != null
+                    			&& networkManager.isConnected()) {
+                    		player.releaseAllKeys();
+                    		setCurrentScreen(new ChatInputScreenExtension());
+                    	}
+                                                                    if (Keyboard.getEventKey() == settings.toggleTPKey.key) {
+                                                                        settings.TPDisabled = !settings.TPDisabled;
+                                                                        System.out.println("toggling TP");
+                                                                        System.out.println(settings.TPDisabled);
+                                                                    }
+||||||| /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                    	if (Keyboard.getEventKey() == settings.chatKey.key
+                    			&& networkManager != null
+                    			&& networkManager.isConnected()) {
+                    		player.releaseAllKeys();
+                    		setCurrentScreen(new ChatInputScreenExtension());
+                    	}
+=======
                         if (settings.HacksEnabled) {
                             // Check for hack toggle keys
                             if (settings.HackType == 0) {
@@ -2807,6 +2910,7 @@ public final class Minecraft implements Runnable {
                             player.releaseAllKeys();
                             setCurrentScreen(new ChatInputScreen());
                         }
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/268948793e799134b9a023699c3f118f381d8447/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
                     }
                     for (int i = 0; i < 9; ++i) {
                         if (Keyboard.getEventKey() == i + 2) {

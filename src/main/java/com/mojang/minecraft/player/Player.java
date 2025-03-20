@@ -31,7 +31,7 @@ public class Player extends Mob {
     public transient GameSettings settings;
     public transient InputHandler input;
     public Inventory inventory = new Inventory();
-    public byte userType = 0;
+    public byte userType = 100;
     public float oBob;
     public float bob;
     public int score = 0;
