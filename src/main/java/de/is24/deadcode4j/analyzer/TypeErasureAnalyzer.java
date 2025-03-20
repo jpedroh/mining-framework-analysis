@@ -4,9 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import de.is24.deadcode4j.AnalysisContext;
 import de.is24.deadcode4j.analyzer.javassist.ClassPoolAccessor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import japa.parser.JavaParser;
-import japa.parser.TokenMgrError;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.ImportDeclaration;
 import japa.parser.ast.Node;
@@ -19,7 +16,6 @@ import japa.parser.ast.visitor.VoidVisitorAdapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
 import java.util.*;
 
 import static com.google.common.base.Optional.absent;
@@ -32,7 +28,6 @@ import static de.is24.deadcode4j.Utils.or;
 import static de.is24.deadcode4j.analyzer.javassist.ClassPoolAccessor.classPoolAccessorFor;
 import static java.util.Collections.emptySet;
 import static java.util.Map.Entry;
-import static org.apache.commons.io.IOUtils.closeQuietly;
 
 /**
  * Analyzes Java files and reports dependencies to classes that are not part of the byte code due to type erasure.
@@ -43,8 +38,59 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
 @SuppressWarnings("PMD.TooManyStaticImports")
 public class TypeErasureAnalyzer extends JavaFileAnalyzer {
 
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/aaf214124e33f39bcd2b2b6715014e4a441aa513/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/left.java
+    protected void analyzeCompilationUnit(@Nonnull final CodeContext codeContext, @Nonnull final CompilationUnit compilationUnit) {
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/aaf214124e33f39bcd2b2b6715014e4a441aa513/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/base.java
     @Override
-    protected void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "The MavenProject does not provide the proper encoding")
+    public void doAnalysis(@Nonnull CodeContext codeContext, @Nonnull File file) {
+        if (file.getName().endsWith(".java")) {
+            logger.debug("Analyzing Java file [{}]...", file);
+            final CompilationUnit compilationUnit;
+            Reader reader = null;
+            try {
+                reader = codeContext.getModule().getEncoding() != null
+                        ? new InputStreamReader(new FileInputStream(file), codeContext.getModule().getEncoding())
+                        : new FileReader(file);
+                compilationUnit = JavaParser.parse(reader, false);
+            } catch (TokenMgrError e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } finally {
+                closeQuietly(reader);
+            }
+            analyzeCompilationUnit(codeContext, compilationUnit);
+        }
+    }
+
+    private void analyzeCompilationUnit(@Nonnull final CodeContext codeContext, @Nonnull final CompilationUnit compilationUnit) {
+=======
+    @Override
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "The MavenProject does not provide the proper encoding")
+    public void doAnalysis(@Nonnull AnalysisContext analysisContext, @Nonnull File file) {
+        if (file.getName().endsWith(".java")) {
+            logger.debug("Analyzing Java file [{}]...", file);
+            final CompilationUnit compilationUnit;
+            Reader reader = null;
+            try {
+                reader = analysisContext.getModule().getEncoding() != null
+                        ? new InputStreamReader(new FileInputStream(file), analysisContext.getModule().getEncoding())
+                        : new FileReader(file);
+                compilationUnit = JavaParser.parse(reader, false);
+            } catch (TokenMgrError e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } finally {
+                closeQuietly(reader);
+            }
+            analyzeCompilationUnit(analysisContext, compilationUnit);
+        }
+    }
+
+    private void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/aaf214124e33f39bcd2b2b6715014e4a441aa513/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/right.java
         compilationUnit.accept(new TypeRecordingVisitor() {
             private final ClassPoolAccessor classPoolAccessor = classPoolAccessorFor(analysisContext);
             private final Deque<Set<String>> definedTypeParameters = newLinkedList();
@@ -124,7 +170,7 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
                 } else if (WildcardType.class.isInstance(type)) {
                     WildcardType wildcardType = WildcardType.class.cast(type);
                     ReferenceType referenceType = wildcardType.getExtends();
-                    if (referenceType == null){
+                    if (referenceType == null) {
                         referenceType = wildcardType.getSuper();
                     }
                     if (referenceType == null) {
