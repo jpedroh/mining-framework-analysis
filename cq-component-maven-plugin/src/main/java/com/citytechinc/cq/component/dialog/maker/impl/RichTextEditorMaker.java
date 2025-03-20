@@ -76,8 +76,14 @@ public class RichTextEditorMaker extends AbstractWidgetMaker {
 		return new RichTextEditorWidget(
 				fieldLabel,
 				fieldDescription,
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/447888f97bfc287ad25a59cea5b892a96e8acba3/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/dialog/maker/impl/RichTextEditorMaker.java/left.java
 				isRequired,
 				hideLabel,
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/447888f97bfc287ad25a59cea5b892a96e8acba3/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/dialog/maker/impl/RichTextEditorMaker.java/base.java
+				isRequired,
+=======
+				!isRequired,
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/447888f97bfc287ad25a59cea5b892a96e8acba3/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/dialog/maker/impl/RichTextEditorMaker.java/right.java
 				defaultValue,
 				name,
 				fieldName,
