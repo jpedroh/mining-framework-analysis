@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.toList;
 public class IpoGplus extends Generator.Base {
   private final TupleSet      precovered;
   private final AtomicInteger optimizer;
+  private final AtomicInteger randomizer;
 
   public IpoGplus(FactorSpace factorSpace, Requirement requirement, List<Tuple> seeds) {
     super(factorSpace, requirement);
@@ -52,7 +53,13 @@ public class IpoGplus extends Generator.Base {
             toList()
         )
     ).build();
+<<<<<<< /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/left.java
     optimizer = new AtomicInteger(0);
+||||||| /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/base.java
+    ;
+=======
+    randomizer = new AtomicInteger(0);
+>>>>>>> /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/right.java
   }
 
   /**
@@ -205,9 +212,15 @@ public class IpoGplus extends Generator.Base {
           .map(
               replaceDontCareValuesWithActualLevels(
                   allFactors,
+<<<<<<< /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/left.java
                   allConstraints,
-                  optimizer
-              )
+                  optimizer)
+||||||| /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/base.java
+                  allConstraints)
+=======
+                  allConstraints,
+                  randomizer)
+>>>>>>> /usr/src/app/output/dakusui/jcunit/3a0bd16df54d702110f4937cf463befd426bcdfe/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/generators/IpoGplus.java/right.java
           ).collect(toList());
     }
     return ts;
