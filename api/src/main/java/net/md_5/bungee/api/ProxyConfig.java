@@ -1,5 +1,4 @@
 package net.md_5.bungee.api;
-
 import java.util.Collection;
 import java.util.Map;
 import net.md_5.bungee.api.config.ListenerInfo;
@@ -10,129 +9,100 @@ import net.md_5.bungee.api.config.ServerInfo;
  *
  * @deprecated This class is subject to rapid change between releases
  */
-@Deprecated
-public interface ProxyConfig
-{
-
-    /**
+@Deprecated public interface ProxyConfig {
+  /**
      * Time before users are disconnected due to no network activity.
-     *
-     * @return timeout
      */
-    int getTimeout();
+  int getTimeout();
 
-    /**
+  /**
      * UUID used for metrics.
-     *
-     * @return uuid
      */
-    String getUuid();
+  String getUuid();
 
-    /**
+  /**
      * Set of all listeners.
-     *
-     * @return listeners
      */
-    Collection<ListenerInfo> getListeners();
+  Collection<ListenerInfo> getListeners();
 
-    /**
+  /**
      * Set of all servers.
-     *
-     * @return servers
      */
-    Map<String, ServerInfo> getServers();
+  Map<String, ServerInfo> getServers();
 
-    /**
-     * Does the server authenticate with Mojang.
-     *
-     * @return online mode
+  /**
+     * Does the server authenticate with mojang
      */
-    boolean isOnlineMode();
+  boolean isOnlineMode();
 
-    /**
-     * Whether proxy commands are logged to the proxy log.
-     *
-     * @return log commands
+  /**
+     * Whether proxy commands are logged to the proxy log
      */
-    boolean isLogCommands();
+  boolean isLogCommands();
 
-    /**
+  /**
      * Time in milliseconds to cache server list info from a ping request from
      * the proxy to a server.
      *
      * @return cache time
      */
-    int getRemotePingCache();
+  int getRemotePingCache();
 
-    /**
+  /**
      * Returns the player max.
-     *
-     * @return player limit
      */
-    int getPlayerLimit();
+  int getPlayerLimit();
 
-    /**
+  /**
      * A collection of disabled commands.
-     *
-     * @return disabled commands
      */
-    Collection<String> getDisabledCommands();
+  Collection<String> getDisabledCommands();
 
-    /**
+  /**
      * Time in milliseconds before timing out a clients request to connect to a
      * server.
      *
      * @return connect timeout
      */
-    int getServerConnectTimeout();
+  int getServerConnectTimeout();
 
-    /**
+  /**
      * Time in milliseconds before timing out a ping request from the proxy to a
      * server when attempting to request server list info.
      *
      * @return ping timeout
      */
-    int getRemotePingTimeout();
+  int getRemotePingTimeout();
 
-    /**
+  /**
      * The connection throttle delay.
-     *
-     * @return throttle
      */
-    @Deprecated
-    int getThrottle();
+  @Deprecated int getThrottle();
 
-    /**
-     * Whether the proxy will parse IPs with spigot or not.
-     *
-     * @return ip forward
+  /**
+     * Whether the proxy will parse IPs with spigot or not
      */
-    @Deprecated
-    boolean isIpForward();
+  @Deprecated boolean isIpForward();
 
-    /**
+  /**
      * The encoded favicon.
      *
-     * @return favicon
      * @deprecated Use #getFaviconObject instead.
      */
-    @Deprecated
-    String getFavicon();
+  @Deprecated String getFavicon();
 
-    /**
+  /**
      * The favicon used for the server ping list.
-     *
-     * @return favicon
      */
-    Favicon getFaviconObject();
+  Favicon getFaviconObject();
 
-    /**
+  /**
      * The server name for the server ping list.
      */
-    String getCustomServerName();
+  String getCustomServerName();
 
-    /**
+  /**
      * Whether the server should handle packets before the player has connected to a server
      */
-    boolean getAlwaysHandlePackets();
+  boolean getAlwaysHandlePackets();
 }
