@@ -20,6 +20,7 @@
 package net.rcarz.jiraclient;
 
 import org.apache.http.Header;
+
 /**
  * An exception for JIRA REST errors.
  */

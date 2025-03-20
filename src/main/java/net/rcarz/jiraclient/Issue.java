@@ -32,9 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import net.rcarz.utils.WorklogUtils;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -1576,6 +1573,10 @@ public class Issue extends Resource {
         }
 
         return Field.getWorkLogs(obj, restclient);
+    }
+
+    public Security getSecurity() {
+        return security;
     }
 
     public boolean delete(final boolean deleteSubtasks) throws JiraException {

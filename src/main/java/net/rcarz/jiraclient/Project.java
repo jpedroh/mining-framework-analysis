@@ -22,8 +22,6 @@ package net.rcarz.jiraclient;
 import lombok.Getter;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import static net.rcarz.jiraclient.Resource.getBaseUri;
 
 import net.sf.json.JSON;
