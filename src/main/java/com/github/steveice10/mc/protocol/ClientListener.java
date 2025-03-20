@@ -125,7 +125,13 @@ public class ClientListener extends SessionAdapter {
 
             if (this.targetState == ProtocolState.LOGIN) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/ClientListener.java/left.java
+                session.send(new ServerboundHelloPacket(profile.getName(), null, null, null, profile.getId()));
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/ClientListener.java/base.java
+                session.send(new ServerboundHelloPacket(profile.getName(), null, null, null));
+=======
                 session.send(new ServerboundHelloPacket(profile.getName(), null, profile.getId()));
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/ClientListener.java/right.java
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }

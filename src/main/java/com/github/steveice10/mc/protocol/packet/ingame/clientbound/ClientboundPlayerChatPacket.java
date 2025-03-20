@@ -3,8 +3,8 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
-import com.github.steveice10.mc.protocol.data.game.ChatFilterType;
 import com.github.steveice10.mc.protocol.data.game.LastSeenMessage;
+import com.github.steveice10.mc.protocol.data.game.ChatFilterType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
+import java.util.BitSet;
 import java.util.UUID;
 
 @Data
@@ -70,13 +70,39 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 			this.unsignedContent = null;
 		}
 
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/left.java
+		this.chatType = helper.readVarInt(in);
+		this.name = helper.readComponent(in);
+		if (in.readBoolean()) {
+			this.targetName = helper.readComponent(in);
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/base.java
+		this.typeId = helper.readVarInt(in);
+		this.senderUUID = helper.readUUID(in);
+		this.senderName = helper.readComponent(in);
+		if (in.readBoolean()) {
+			this.senderTeamName = helper.readComponent(in);
+=======
 		this.filterType = ChatFilterType.from(helper.readVarInt(in));
 		if (filterType == ChatFilterType.PARTIALLY_FILTERED) {
 			this.filterMask = BitSet.valueOf(helper.readLongArray(in));
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/right.java
 		} else {
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/left.java
+			this.targetName = null;
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/base.java
+			this.senderTeamName = null;
+=======
 			this.filterMask = new BitSet(0);
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/right.java
 		}
-
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/left.java
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/base.java
+	
+		this.timeStamp = in.readLong();
+		this.salt = in.readLong();
+		this.signature = helper.readByteArray(in);
+=======
+	
 		this.chatType = helper.readVarInt(in);
 		this.name = helper.readComponent(in);
 		if (in.readBoolean()) {
@@ -84,6 +110,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 		} else {
 			this.targetName = null;
 		}
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/right.java
 	}
 
 	@Override
@@ -109,6 +136,33 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
 		out.writeLong(this.timeStamp);
 		out.writeLong(this.salt);
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/left.java
+		helper.writeVarInt(out, this.lastSeenMessages.size());
+		for (LastSeenMessage entry : this.lastSeenMessages) {
+			helper.writeUUID(out, entry.getProfileId());
+			helper.writeVarInt(out, entry.getLastSignature().length);
+			out.writeBytes(entry.getLastSignature());
+		}
+
+		if (this.unsignedContent != null) {
+			out.writeBoolean(true);
+			helper.writeComponent(out, this.unsignedContent);
+		} else {
+			out.writeBoolean(false);
+		}
+
+		helper.writeVarInt(out, this.chatType);
+		helper.writeComponent(out, this.name);
+		if (this.targetName != null) {
+			out.writeBoolean(true);
+			helper.writeComponent(out, this.targetName);
+		} else {
+			out.writeBoolean(false);
+		}
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/base.java
+		helper.writeVarInt(out, this.signature.length);
+		out.writeBytes(this.signature);
+=======
 		helper.writeVarInt(out, this.lastSeenMessages.size());
 		for (LastSeenMessage entry : this.lastSeenMessages) {
 			helper.writeUUID(out, entry.getProfileId());
@@ -136,5 +190,6 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 		} else {
 			out.writeBoolean(false);
 		}
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/ingame/clientbound/ClientboundPlayerChatPacket.java/right.java
 	}
 }

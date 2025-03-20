@@ -15,16 +15,32 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/left.java
+import java.util.UUID;
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/base.java
+=======
 import java.time.Instant;
 import java.util.UUID;
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/right.java
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundHelloPacket implements MinecraftPacket {
     private final @NonNull String username;
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/left.java
+    private final @Nullable Long expiresAt;
+    private final @Nullable PublicKey publicKey;
+    private final byte @Nullable[] keySignature;
+    private final @Nullable UUID profileId;
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/base.java
+    private final @Nullable Long expiresAt;
+    private final @Nullable PublicKey publicKey;
+    private final @Nullable byte[] keySignature;
+=======
     private final @Nullable ProfilePublicKeyData publicKey;
     private final @Nullable UUID profileId;
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/right.java
 
     public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.username = helper.readString(in);
@@ -68,6 +84,17 @@ public class ServerboundHelloPacket implements MinecraftPacket {
                 throw new IOException("Could not decode public key.", e);
             }
         }
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/left.java
+        if (in.readBoolean()) {
+            this.profileId = helper.readUUID(in);
+        } else {
+            this.profileId = null;
+        }
+    }
+||||||| /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/base.java
+    }
+=======
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/535d2000ef4f73d3cecddaaa87ead561e11ab648/src/main/java/com/github/steveice10/mc/protocol/packet/login/serverbound/ServerboundHelloPacket.java/right.java
 
         public ProfilePublicKeyData(long expiresAt, PublicKey publicKey, byte[] keySignature) {
             this.expiresAt = expiresAt;
@@ -80,6 +107,10 @@ public class ServerboundHelloPacket implements MinecraftPacket {
             byte[] encoded = this.publicKey.getEncoded();
             helper.writeByteArray(out, encoded);
             helper.writeByteArray(out, this.keySignature);
+        }
+        out.writeBoolean(this.profileId != null);
+        if (this.profileId != null) {
+            helper.writeUUID(out, this.profileId);
         }
 
         @Contract("-> new")
