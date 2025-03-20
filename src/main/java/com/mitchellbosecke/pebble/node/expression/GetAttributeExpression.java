@@ -59,11 +59,23 @@ public class GetAttributeExpression implements Expression<Object> {
     }
 
     @Override
+<<<<<<< /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
     public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
         final Object object = this.node.evaluate(self, context);
         final Object attributeNameValue = this.attributeNameExpression.evaluate(self, context);
         final String attributeName = String.valueOf(attributeNameValue);
         final Object[] argumentValues = this.getArgumentValues(self, context);
+||||||| /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+    public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
+        Object object = this.node.evaluate(self, context);
+        Object attributeNameValue = this.attributeNameExpression.evaluate(self, context);
+        String attributeName = String.valueOf(attributeNameValue);
+=======
+    public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) {
+        Object object = this.node.evaluate(self, context);
+        Object attributeNameValue = this.attributeNameExpression.evaluate(self, context);
+        String attributeName = String.valueOf(attributeNameValue);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
 
         if (object == null && context.isStrictVariables()) {
             if (this.node instanceof ContextVariableExpression) {
@@ -77,10 +89,110 @@ public class GetAttributeExpression implements Expression<Object> {
             }
         }
 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
         for (AttributeResolver attributeResolver: context.getExtensionRegistry().getAttributeResolver()) {
             Optional<ResolvedAttribute> resolvedAttribute = attributeResolver.resolve(object, attributeNameValue, argumentValues, context.isStrictVariables(), this.filename, this.lineNumber);
             if (resolvedAttribute.isPresent()) {
                 return resolvedAttribute.get().evaluate();
+||||||| /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+    }
+
+    private Object getObjectFromMap(Map<?, ?> object, Object attributeNameValue) throws PebbleException {
+        if (object.isEmpty()) {
+            return null;
+        }
+        if (attributeNameValue != null && Number.class.isAssignableFrom(attributeNameValue.getClass())) {
+            Number keyAsNumber = (Number) attributeNameValue;
+
+            Class<?> keyClass = object.keySet().iterator().next().getClass();
+            Object key = this.cast(keyAsNumber, keyClass);
+            return object.get(key);
+        }
+        return object.get(attributeNameValue);
+    }
+
+    private Object cast(Number number, Class<?> desiredType) throws PebbleException {
+        if (desiredType == Long.class) {
+            return number.longValue();
+        } else if (desiredType == Integer.class) {
+            return number.intValue();
+        } else if (desiredType == Double.class) {
+            return number.doubleValue();
+        } else if (desiredType == Float.class) {
+            return number.floatValue();
+        } else if (desiredType == Short.class) {
+            return number.shortValue();
+        } else if (desiredType == Byte.class) {
+            return number.byteValue();
+        }
+        throw new PebbleException(null, String.format("type %s not supported for key %s", desiredType, number), this.getLineNumber(), this.filename);
+    }
+
+    /**
+     * Invoke the "Member" that was found via reflection.
+     *
+     * @param object
+     * @param member
+     * @param argumentValues
+     * @return
+     */
+    private Object invokeMember(Object object, Member member, Object[] argumentValues) {
+        Object result = null;
+        try {
+            if (member instanceof Method) {
+                result = ((Method) member).invoke(object, argumentValues);
+            } else if (member instanceof Field) {
+                result = ((Field) member).get(object);
+=======
+    }
+
+    private Object getObjectFromMap(Map<?, ?> object, Object attributeNameValue) {
+        if (object.isEmpty()) {
+            return null;
+        }
+        if (attributeNameValue != null && Number.class.isAssignableFrom(attributeNameValue.getClass())) {
+            Number keyAsNumber = (Number) attributeNameValue;
+
+            Class<?> keyClass = object.keySet().iterator().next().getClass();
+            Object key = this.cast(keyAsNumber, keyClass);
+            return object.get(key);
+        }
+        return object.get(attributeNameValue);
+    }
+
+    private Object cast(Number number, Class<?> desiredType) {
+        if (desiredType == Long.class) {
+            return number.longValue();
+        } else if (desiredType == Integer.class) {
+            return number.intValue();
+        } else if (desiredType == Double.class) {
+            return number.doubleValue();
+        } else if (desiredType == Float.class) {
+            return number.floatValue();
+        } else if (desiredType == Short.class) {
+            return number.shortValue();
+        } else if (desiredType == Byte.class) {
+            return number.byteValue();
+        }
+        throw new PebbleException(null, String.format("type %s not supported for key %s", desiredType, number), this.getLineNumber(), this.filename);
+    }
+
+    /**
+     * Invoke the "Member" that was found via reflection.
+     *
+     * @param object
+     * @param member
+     * @param argumentValues
+     * @return
+     */
+    private Object invokeMember(Object object, Member member, Object[] argumentValues) {
+        Object result = null;
+        try {
+            if (member instanceof Method) {
+                result = ((Method) member).invoke(object, argumentValues);
+            } else if (member instanceof Field) {
+                result = ((Field) member).get(object);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/7782fd3abe099bf8c22a34159b6b05e66bc13d05/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
             }
         }
         
