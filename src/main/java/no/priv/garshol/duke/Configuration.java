@@ -1,11 +1,8 @@
-
 package no.priv.garshol.duke;
-
 import java.util.List;
 import java.util.Collection;
 
 public interface Configuration {
-
   /**
    * Returns the data sources to use (in deduplication mode; don't use
    * this method in record linkage mode).
@@ -107,14 +104,12 @@ public interface Configuration {
 
   /**
    * Adds a custom comparator.
-   * @since 1.3
    */
   public void addCustomComparator(Comparator comparator);
 
   /**
-   * Returns any customized comparators declared using object tags
+   * Returns any customized comparators declared using object tags  
    * in the config file.
-   * @since 1.3
    */
   public List<Comparator> getCustomComparators();
 }
