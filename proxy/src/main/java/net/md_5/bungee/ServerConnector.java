@@ -136,8 +136,8 @@ public class ServerConnector extends PacketHandler
         channel.write(copiedHandshake);
         
         channel.setProtocol(Protocol.LOGIN);
-        channel.write(new LoginRequest(user.getName()));
-}
+        channel.write( new LoginRequest( user.getName() ) );
+    }
     
     @Override
     public void disconnected(ChannelWrapper channel) throws Exception
