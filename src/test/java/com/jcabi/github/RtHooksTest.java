@@ -37,11 +37,11 @@ import com.rexsl.test.mock.MkGrizzlyContainer;
 import com.rexsl.test.mock.MkQuery;
 import com.rexsl.test.request.JdkRequest;
 import java.net.HttpURLConnection;
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -100,6 +100,29 @@ public final class RtHooksTest {
      * RtHooks can fetch single hook.
      * @throws Exception if some problem inside
      */
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/test/java/com/jcabi/github/RtHooksTest.java/left.java
+    @Test
+    public void canFetchSingleHook() throws Exception {
+        final String name = "hook name";
+        final MkContainer container = new MkGrizzlyContainer().next(
+            new MkAnswer.Simple(
+                HttpURLConnection.HTTP_OK,
+                RtHooksTest.hook(name).toString()
+            )
+        ).start();
+        final Hooks hooks = new RtHooks(
+            new JdkRequest(container.home()),
+            RtHooksTest.repo()
+        );
+        final Hook hook = hooks.get(1);
+        MatcherAssert.assertThat(
+            new Hook.Smart(hook).name(),
+            Matchers.equalTo(name)
+        );
+        container.stop();
+    }
+||||||| /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/test/java/com/jcabi/github/RtHooksTest.java/base.java
+=======
     @Test
     public void canFetchSingleHook() throws Exception {
         final String name = "hook name";
@@ -123,12 +146,14 @@ public final class RtHooksTest {
         );
         container.stop();
     }
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/test/java/com/jcabi/github/RtHooksTest.java/right.java
 
     /**
      * RtHooks can create a hook.
      *
      * @throws Exception if something goes wrong.
      */
+
     @Test
     public void canCreateHook() throws Exception {
         final String name = "hook name";
@@ -164,6 +189,7 @@ public final class RtHooksTest {
      *
      * @throws Exception if something goes wrong.
      */
+
     @Test
     public void canDeleteHook() throws Exception {
         final MkContainer container = new MkGrizzlyContainer().next(
@@ -192,10 +218,24 @@ public final class RtHooksTest {
     /**
      * Create and return JsonObject to test.
      * @param name Name of the hook
+     * @return JsonObject
+     * @throws Exception If some problem inside
+     */
+
+    private static JsonObject hook(final String name) throws Exception {
+        return Json.createObjectBuilder()
+            .add("name", name)
+            .build();
+    }
+
+    /**
+     * Create and return JsonObject to test.
+     * @param name Name of the hook
      * @param config Config of hook
      * @return JsonObject
      * @throws Exception If some problem inside
      */
+
     private static JsonObject hook(final String name,
         final Map<String, String> config)
         throws Exception {

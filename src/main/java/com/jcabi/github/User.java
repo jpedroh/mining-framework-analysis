@@ -52,8 +52,32 @@ import lombok.ToString;
  *  This new UserEmails interface should be implemented by GhUserEmails,
  *  tested in a unit and integration tests. Besides that, we should
  *  implement MkUserEmails class.
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/User.java/left.java
+ * @todo #1:1hr Public keys of a user. Let's implement a new method
+ *  keys(), which should return an instance of interface PublicKeys. This
+ *  interface should have at least methods 1) iterate() to list all public
+ *  keys of a user, 2) get(String) to get a single public key, 3) remove(String)
+ *  to remove a key. Every key should be an instance of interface PublicKey,
+ *  extending JsonReadable and JsonPatchable. All of the new classes should
+ *  be implemented with GhPublicKeys and GhPublicKey classes. We should
+ *  create integration and unit tests, and implement MkPublicKeys
+ *  and MkPublicKey classes.
  * @see <a href="http://developer.github.com/v3/users/">User API</a>
  * @since 0.1
+||||||| /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/User.java/base.java
+ * @todo #1:1hr Public keys of a user. Let's implement a new method
+ *  keys(), which should return an instance of interface PublicKeys. This
+ *  interface should have at least methods 1) iterate() to list all public
+ *  keys of a user, 2) get(String) to get a single public key, 3) remove(String)
+ *  to remove a key. Every key should be an instance of interface PublicKey,
+ *  extending JsonReadable and JsonPatchable. All of the new classes should
+ *  be implemented with GhPublicKeys and GhPublicKey classes. We should
+ *  create integration and unit tests, and implement MkPublicKeys
+ *  and MkPublicKey classes.
+=======
+ * @see <a href="http://developer.github.com/v3/users/">User API</a>
+ * @since 0.1
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/User.java/right.java
  */
 @Immutable
 @SuppressWarnings("PMD.TooManyMethods")
@@ -215,7 +239,6 @@ public interface User extends JsonReadable, JsonPatchable {
         public Organizations organizations() {
             return this.user.organizations();
         }
-
 
         @Override
         public PublicKeys keys() {

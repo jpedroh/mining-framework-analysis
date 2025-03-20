@@ -113,13 +113,12 @@ public final class MkHooks implements Hooks {
     }
 
     @Override
-    public Hook create(final String name, final Map<String, String> config) {
-        throw new UnsupportedOperationException("Create not yet implemented.");
-    }
-
-    @Override
     public void remove(final int number) throws IOException {
         throw new UnsupportedOperationException("Remove not yet implemented.");
     }
 
+    @Override
+    public Hook create(final String name, final Map<String, String> config) {
+        throw new UnsupportedOperationException("Create not yet implemented.");
+    }
 }

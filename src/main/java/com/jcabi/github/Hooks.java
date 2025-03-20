@@ -59,6 +59,26 @@ public interface Hooks {
      */
     @NotNull(message = "iterable is never NULL")
     Iterable<Hook> iterate();
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/Hooks.java/left.java
+
+    /**
+     * Remove hook by ID.
+     * @param number ID of the label to remove
+     * @throws IOException If there is any I/O problem
+     * @see <a href="http://developer.github.com/v3/repos/hooks/#delete-a-hook">List</a>
+     */
+    void remove(int number) throws IOException;
+
+    /**
+     * Get specific hook by number.
+     * @param number Hook number
+     * @return Hook
+     * @see <a href="http://developer.github.com/v3/repos/hooks/#get-single-hook">Get single hook</a>
+     */
+    @NotNull(message = "hook is never NULL")
+    Hook get(int number);
+||||||| /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/Hooks.java/base.java
+=======
 
     /**
      * Remove hook by ID.
@@ -77,7 +97,6 @@ public interface Hooks {
     @NotNull(message = "hook is never NULL")
     Hook get(int number);
 
-
     /**
      * Create new hook.
      * @param name Hook name
@@ -88,4 +107,5 @@ public interface Hooks {
      */
     @NotNull(message = "hook is never NULL")
     Hook create(String name, Map<String, String> config)throws IOException;
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/26cda5a366cc3d44e4fc4265b18c085d7cf6de2e/src/main/java/com/jcabi/github/Hooks.java/right.java
 }
