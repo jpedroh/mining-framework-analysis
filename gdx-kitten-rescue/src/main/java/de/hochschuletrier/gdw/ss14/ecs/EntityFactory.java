@@ -27,8 +27,6 @@ import de.hochschuletrier.gdw.ss14.states.ParticleEmitterTypeEnum;
 import java.util.ArrayList;
 
 import de.hochschuletrier.gdw.commons.gdx.physix.PhysixBody;
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixBodyDef;
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixFixtureDef;
 import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePropertyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.LightComponent;
