@@ -1,5 +1,4 @@
 package be.ugent.mmlab.rml;
-
 import be.ugent.mmlab.rml.core.RMLEngine;
 import be.ugent.mmlab.rml.core.RMLMappingFactory;
 import be.ugent.mmlab.rml.model.RMLMapping;
@@ -24,86 +23,125 @@ import org.openrdf.rio.RDFParseException;
 /**
  * Unit test for simple App.
  */
-public class MapperTest
-        extends TestCase {
-
-    /**
+public class MapperTest extends TestCase {
+  /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public MapperTest(String testName) {
-        super(testName);
-    }
+  public MapperTest(String testName) {
+    super(testName);
 
-    /**
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("museum.json", getClass().getResource("/example5/museum.json").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    RMLEngine.getFileMap().put("moon-walkers7.csv", getClass().getResource("/example7/moon-walkers7.csv").getFile());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+  }
+
+  /**
      * @return the suite of tests being tested
      */
-    public static Test suite() {
-        return new TestSuite(MapperTest.class);
-    }
+  public static Test suite() {
+    return new TestSuite(MapperTest.class);
+  }
 
-    /**
-     * Tests
+  /**
+     * Rigourous Test :-)
      */
-    public void testExample1() {
-        URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  public void testExample1() {
+    URL fileToRMLFile = getClass().getResource("/example1/example.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example1/example.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  public void testExample2() {
+    URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  public void testExample3() {
+    URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  public void testExample4() {
+    URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  public void testExample6() {
+    URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  public void testExample7() {
+    URL fileToRMLFile = getClass().getResource("/example7/moon-walkers.rml.ttl");
+    URL fileToOutputFile = getClass().getResource("/example7/moon-walkers.output.ttl");
+    assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+  }
+
+  private boolean assertMap(URL mappingURL, URL outputURL) {
+    try {
+      RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
+      RMLEngine engine = new RMLEngine();
+      SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
+      output.dumpRDF(System.out, RDFFormat.TURTLE);
+      SesameDataSet desiredOutput = new SesameDataSet();
+      desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
+      return desiredOutput.isEqualTo(output);
+    } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException ex) {
+      Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (UnsupportedEncodingException ex) {
+      Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+      Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
     }
-
-    public void testExample2() {
-        URL fileToRMLFile = getClass().getResource("/example2/example.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example2/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-
-    public void testExample3() {
-        URL fileToRMLFile = getClass().getResource("/example3/example3.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example3/example3.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-
-    public void testExample4() {
-        URL fileToRMLFile = getClass().getResource("/example4/example4_Venue.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example4/example4_Venue.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-
-    /*public void testExample5() {
-        URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }*/
-    
-    public void testExample6() {
-        URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
-        URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
-        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
-    }
-    
-    private boolean assertMap(URL mappingURL, URL outputURL) {
-        try {
-            RMLMapping mapping = RMLMappingFactory.extractRMLMapping(mappingURL.getFile());
-
-            RMLEngine engine = new RMLEngine();
-                       
-            SesameDataSet output = engine.runRMLMapping(mapping, "http://example.com");
-
-            output.dumpRDF(System.out, RDFFormat.TURTLE);
-
-            SesameDataSet desiredOutput = new SesameDataSet();
-            desiredOutput.addFile(outputURL.getFile(), RDFFormat.TURTLE);
-
-            return desiredOutput.isEqualTo(output);
-        } catch (SQLException | InvalidR2RMLStructureException | InvalidR2RMLSyntaxException | R2RMLDataError | RepositoryException | RDFParseException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MapperTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
-    }
+    return false;
+  }
 }
