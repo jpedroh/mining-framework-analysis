@@ -1,5 +1,4 @@
 package burlap.behavior.singleagent.planning.deterministic.informed.astar;
-
 import burlap.behavior.singleagent.options.Option;
 import burlap.behavior.singleagent.planning.deterministic.SDPlannerPolicy;
 import burlap.behavior.singleagent.planning.deterministic.informed.Heuristic;
@@ -14,7 +13,6 @@ import burlap.oomdp.singleagent.GroundedAction;
 import burlap.oomdp.singleagent.RewardFunction;
 import burlap.oomdp.statehashing.HashableState;
 import burlap.oomdp.statehashing.HashableStateFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,29 +43,27 @@ import java.util.Map;
  *
  */
 public class DynamicWeightedAStar extends AStar {
-
-	/**
+  /**
 	 * parameter &gt; 1 indicating the maximum amount of greediness; the larger the more greedy.
 	 */
-	protected double										epsilon;
-	
-	/**
+  protected double epsilon;
+
+  /**
 	 * The expected depth required for a plan
 	 */
-	protected int											expectedDepth;
-	
-	/**
+  protected int expectedDepth;
+
+  /**
 	 * Data structure for storing the depth of explored states
 	 */
-	protected Map <HashableState, Integer>					depthMap;
-	
-	/**
+  protected Map<HashableState, Integer> depthMap;
+
+  /**
 	 * maintains the depth of the last explored node
 	 */
-	protected int											lastComputedDepth;
-	
-	
-	/**
+  protected int lastComputedDepth;
+
+  /**
 	 * Initializes the valueFunction.
 	 * @param domain the domain in which to plan
 	 * @param rf the reward function that represents costs as negative reward
@@ -77,39 +73,33 @@ public class DynamicWeightedAStar extends AStar {
 	 * @param epsilon parameter &gt; 1 indicating greediness; the larger the value the more greedy.
 	 * @param expectedDepth the expected depth of the plan
 	 */
-	public DynamicWeightedAStar(Domain domain, RewardFunction rf, StateConditionTest gc, HashableStateFactory hashingFactory, Heuristic heuristic, double epsilon, int expectedDepth) {
-		super(domain, rf, gc, hashingFactory, heuristic);
-		this.epsilon = epsilon;
-		this.expectedDepth = expectedDepth;
-	}
-	
-	@Override
-	public void prePlanPrep(){
-		super.prePlanPrep();
-		depthMap = new HashMap<HashableState, Integer>();
-	}
-	
-	@Override
-	public void postPlanPrep(){
-		super.postPlanPrep();
-		depthMap = null; //clear out to reclaim memory
-	}
-	
-	@Override
-	public void insertIntoOpen(HashIndexedHeap<PrioritizedSearchNode> openQueue, PrioritizedSearchNode psn){
-		super.insertIntoOpen(openQueue, psn);
-		depthMap.put(psn.s, lastComputedDepth);
-	}
-	
-	@Override
-	public void updateOpen(HashIndexedHeap<PrioritizedSearchNode> openQueue, PrioritizedSearchNode openPSN, PrioritizedSearchNode npsn){
-		super.updateOpen(openQueue, openPSN, npsn);
-		depthMap.put(npsn.s, lastComputedDepth);
-	}
+  public DynamicWeightedAStar(Domain domain, RewardFunction rf, StateConditionTest gc, HashableStateFactory hashingFactory, Heuristic heuristic, double epsilon, int expectedDepth) {
+    super(domain, rf, gc, hashingFactory, heuristic);
+    this.epsilon = epsilon;
+    this.expectedDepth = expectedDepth;
+  }
 
+  @Override public void prePlanPrep() {
+    super.prePlanPrep();
+    depthMap = new HashMap<HashableState, Integer>();
+  }
 
+  @Override public void postPlanPrep() {
+    super.postPlanPrep();
+    depthMap = null;
+  }
 
-	/**
+  @Override public void insertIntoOpen(HashIndexedHeap<PrioritizedSearchNode> openQueue, PrioritizedSearchNode psn) {
+    super.insertIntoOpen(openQueue, psn);
+    depthMap.put(psn.s, lastComputedDepth);
+  }
+
+  @Override public void updateOpen(HashIndexedHeap<PrioritizedSearchNode> openQueue, PrioritizedSearchNode openPSN, PrioritizedSearchNode npsn) {
+    super.updateOpen(openQueue, openPSN, npsn);
+    depthMap.put(npsn.s, lastComputedDepth);
+  }
+
+  /**
 	 * Plans and returns a {@link burlap.behavior.singleagent.planning.deterministic.SDPlannerPolicy}. If
 	 * a {@link burlap.oomdp.core.states.State} is not in the solution path of this planner, then
 	 * the {@link burlap.behavior.singleagent.planning.deterministic.SDPlannerPolicy} will throw
@@ -121,147 +111,94 @@ public class DynamicWeightedAStar extends AStar {
 	 * @param initialState the initial state of the planning problem
 	 * @return a {@link burlap.behavior.singleagent.planning.deterministic.SDPlannerPolicy}.
 	 */
+  @Override public SDPlannerPolicy planFromState(State initialState) {
+    HashableState sih = this.stateHash(initialState);
+    if (mapToStateIndex.containsKey(sih)) {
+      return new SDPlannerPolicy(this);
+    }
+    this.prePlanPrep();
+    HashIndexedHeap<PrioritizedSearchNode> openQueue = new HashIndexedHeap<PrioritizedSearchNode>(new PrioritizedSearchNode.PSNComparator());
+    Map<PrioritizedSearchNode, PrioritizedSearchNode> closedSet = new HashMap<PrioritizedSearchNode, PrioritizedSearchNode>();
+    PrioritizedSearchNode ipsn = new PrioritizedSearchNode(sih, this.computeF(null, null, sih));
+    this.insertIntoOpen(openQueue, ipsn);
+    int nexpanded = 0;
+    PrioritizedSearchNode lastVistedNode = null;
+    double minF = ipsn.priority;
+    while (openQueue.size() > 0) {
+      PrioritizedSearchNode node = openQueue.poll();
+      closedSet.put(node, node);
+      nexpanded++;
+      if (node.priority < minF) {
+        minF = node.priority;
+        DPrint.cl(debugCode, "Min F Expanded: " + minF + "; Nodes expanded so far: " + nexpanded + "; Open size: " + openQueue.size());
+      }
+      State s = node.s.s;
+      if (gc.satisfies(s)) {
+        lastVistedNode = node;
+        break;
+      }
+      if (this.tf.isTerminal(s)) {
+        continue;
+      }
+      for (Action a : actions) {
+        List<GroundedAction> gas = a.getAllApplicableGroundedActions(s);
+        for (GroundedAction ga : gas) {
+          State ns = ga.executeIn(s);
+          HashableState nsh = this.stateHash(ns);
+          double F = this.computeF(node, ga, nsh);
+          PrioritizedSearchNode npsn = new PrioritizedSearchNode(nsh, ga, node, F);
+          PrioritizedSearchNode closedPSN = closedSet.get(npsn);
+          if (closedPSN != null && lastComputedCumR <= cumulatedRewardMap.get(closedPSN.s)) {
+            continue;
+          }
+          PrioritizedSearchNode openPSN = openQueue.containsInstance(npsn);
+          if (openPSN == null) {
+            this.insertIntoOpen(openQueue, npsn);
+          } else {
+            if (lastComputedCumR > cumulatedRewardMap.get(openPSN.s)) {
+              this.updateOpen(openQueue, openPSN, npsn);
+            }
+          }
+        }
+      }
+    }
+    this.encodePlanIntoPolicy(lastVistedNode);
+    DPrint.cl(debugCode, "Num Expanded: " + nexpanded);
+    this.postPlanPrep();
+    return new SDPlannerPolicy(this);
+  }
 
-	@Override
-	public SDPlannerPolicy planFromState(State initialState) {
-		
-		//first determine if there is even a need to plan
-		HashableState sih = this.stateHash(initialState);
-		
-		if(mapToStateIndex.containsKey(sih)){
-			return new SDPlannerPolicy(this); //no need to plan since this is already solved
-		}
-		
-		
-		//a plan is not cached so being planning process
-		this.prePlanPrep();
+  @Override public double computeF(PrioritizedSearchNode parentNode, GroundedAction generatingAction, HashableState successorState) {
+    double cumR = 0.;
+    double r;
+    int d = 0;
+    if (parentNode != null) {
+      double pCumR = cumulatedRewardMap.get(parentNode.s);
+      r = rf.reward(parentNode.s.s, generatingAction, successorState.s);
+      cumR = pCumR + r;
+      int pD = depthMap.get(parentNode.s);
+      if (generatingAction.action.isPrimitive()) {
+        d = pD + 1;
+      } else {
+        Option o = (Option) generatingAction.action;
+        d = pD + o.getLastNumSteps();
+      }
+    }
+    double H = heuristic.h(successorState.s);
+    lastComputedCumR = cumR;
+    lastComputedDepth = d;
+    double weightedE = this.epsilon * this.epsilonWeight(d);
+    double F = cumR + ((1. + weightedE) * H);
+    return F;
+  }
 
-		HashIndexedHeap<PrioritizedSearchNode> openQueue = new HashIndexedHeap<PrioritizedSearchNode>(new PrioritizedSearchNode.PSNComparator());
-		Map<PrioritizedSearchNode, PrioritizedSearchNode> closedSet = new HashMap<PrioritizedSearchNode,PrioritizedSearchNode>();
-		
-		PrioritizedSearchNode ipsn = new PrioritizedSearchNode(sih, this.computeF(null, null, sih));
-		this.insertIntoOpen(openQueue, ipsn);
-		
-		int nexpanded = 0;
-		PrioritizedSearchNode lastVistedNode = null;
-		double minF = ipsn.priority;
-		while(openQueue.size() > 0){
-			
-			PrioritizedSearchNode node = openQueue.poll();
-			closedSet.put(node, node);
-			
-			nexpanded++;
-			if(node.priority < minF){
-				minF = node.priority;
-				DPrint.cl(debugCode, "Min F Expanded: " + minF + "; Nodes expanded so far: " + nexpanded + "; Open size: " + openQueue.size());
-			}
-			
-			
-			State s = node.s.s;
-			if(gc.satisfies(s)){
-				lastVistedNode = node;
-				break;
-			}
-			
-			if(this.tf.isTerminal(s)){
-				continue; //do not expand terminal state
-			}
-		
-			//generate successors
-			for(Action a : actions){
-				//List<GroundedAction> gas = s.getAllGroundedActionsFor(a);
-				List<GroundedAction> gas = a.getAllApplicableGroundedActions(s);
-				for(GroundedAction ga : gas){
-					State ns = ga.executeIn(s);
-					HashableState nsh = this.stateHash(ns);
-					
-					double F = this.computeF(node, ga, nsh);
-					PrioritizedSearchNode npsn = new PrioritizedSearchNode(nsh, ga, node, F);
-					
-					//check closed
-					PrioritizedSearchNode closedPSN = closedSet.get(npsn);
-					if(closedPSN != null && lastComputedCumR <= cumulatedRewardMap.get(closedPSN.s)){
-					    continue; //no need to reopen because this is a worse path to an already explored node
-					}
-					
-					
-					//check open
-					PrioritizedSearchNode openPSN = openQueue.containsInstance(npsn);
-					if(openPSN == null){
-						this.insertIntoOpen(openQueue, npsn);
-					}
-					else if(lastComputedCumR > cumulatedRewardMap.get(openPSN.s)){
-						this.updateOpen(openQueue, openPSN, npsn);
-					}
-					
-					
-				}
-				
-				
-			}
-			
-			
-			
-			
-		}
-		
-		
-		
-		//search to goal complete. Now follow back pointers to set policy
-		this.encodePlanIntoPolicy(lastVistedNode);
-		
-		DPrint.cl(debugCode, "Num Expanded: " + nexpanded);
-		
-		this.postPlanPrep();
-
-
-		return new SDPlannerPolicy(this);
-		
-	}
-	
-	
-	
-	@Override
-	public double computeF(PrioritizedSearchNode parentNode, GroundedAction generatingAction, HashableState successorState) {
-		double cumR = 0.;
-		double r;
-		int d = 0;
-		if(parentNode != null){
-			double pCumR = cumulatedRewardMap.get(parentNode.s);
-			r = rf.reward(parentNode.s.s, generatingAction, successorState.s);
-			cumR = pCumR + r;
-			
-			int pD = depthMap.get(parentNode.s);
-			if(generatingAction.action.isPrimitive()){
-				d = pD + 1;
-			}
-			else{
-				Option o = (Option)generatingAction.action;
-				d = pD + o.getLastNumSteps();
-			}
-		}
-		
-		double H  = heuristic.h(successorState.s);
-		lastComputedCumR = cumR;
-		lastComputedDepth = d;
-		double weightedE = this.epsilon * this.epsilonWeight(d);
-		double F = cumR + ((1. + weightedE)*H);
-		
-		return F;
-	}
-	
-	
-	/**
+  /**
 	 * Returns the weighted epsilon value at the given search depth
 	 * @param depth the search depth
 	 * @return the weighted epsilon value at the given search depth
 	 */
-	protected double epsilonWeight(int depth){
-		
-		double ratio = ((double)depth)/((double)expectedDepth);
-		return Math.max(1.-ratio, 0.0);
-		//return 1.;
-		
-	}
-	
+  protected double epsilonWeight(int depth) {
+    double ratio = ((double) depth) / ((double) expectedDepth);
+    return Math.max(1. - ratio, 0.0);
+  }
 }
