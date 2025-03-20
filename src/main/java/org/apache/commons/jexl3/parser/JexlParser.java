@@ -384,7 +384,13 @@ public abstract class JexlParser extends StringParser {
      * @param variable the identifier used to declare
      * @param token      the variable name toekn
      */
+<<<<<<< /usr/src/app/output/apache/commons-jexl/4182a62141e41033c71b24d437c5ba2daf998331/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/left.java
     protected void declareVariable(final ASTVar variable, final Token token, boolean lexical, boolean constant) {
+||||||| /usr/src/app/output/apache/commons-jexl/4182a62141e41033c71b24d437c5ba2daf998331/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/base.java
+    protected void declareVariable(final ASTVar variable, final Token token) {
+=======
+    protected void declareVariable(final ASTVar variable, final Token token, boolean lexical) {
+>>>>>>> /usr/src/app/output/apache/commons-jexl/4182a62141e41033c71b24d437c5ba2daf998331/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/right.java
         final String name = token.image;
         if (!allowVariable(name)) {
             throwFeatureException(JexlFeatures.LOCAL_VAR, token);
