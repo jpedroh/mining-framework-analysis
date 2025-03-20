@@ -142,6 +142,7 @@ public class GifReadTest extends GifBaseTest {
 
     @ParameterizedTest
     @MethodSource("data")
+<<<<<<< /usr/src/app/output/apache/commons-imaging/593976a269f5e32bd525e3a1d5e0f7ac39bb388e/src/test/java/org/apache/commons/imaging/formats/gif/GifReadTest.java/left.java
     public void testMetadata(final File imageFile) throws IOException {
         ImageMetadata metadata = Imaging.getMetadata(imageFile);
         assertNotNull(metadata);
@@ -149,6 +150,13 @@ public class GifReadTest extends GifBaseTest {
         assertTrue(((GifImageMetadata)metadata).getWidth() > 0);
         assertTrue(((GifImageMetadata)metadata).getHeight() > 0);
         assertNotNull(metadata.getItems());
+||||||| /usr/src/app/output/apache/commons-imaging/593976a269f5e32bd525e3a1d5e0f7ac39bb388e/src/test/java/org/apache/commons/imaging/formats/gif/GifReadTest.java/base.java
+    public void testMetadata(final File imageFile) {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> Imaging.getMetadata(imageFile));
+=======
+    public void testMetadata(final File imageFile) {
+        assertThrows(UnsupportedOperationException.class, () -> Imaging.getMetadata(imageFile));
+>>>>>>> /usr/src/app/output/apache/commons-imaging/593976a269f5e32bd525e3a1d5e0f7ac39bb388e/src/test/java/org/apache/commons/imaging/formats/gif/GifReadTest.java/right.java
     }
 
     /**
