@@ -136,10 +136,26 @@ public class EtlMultiOutputCommitter extends FileOutputCommitter {
       log.info("Not moving run data.");
     }
 
-    SequenceFile.Writer offsetWriter = SequenceFile.createWriter(workFs, context.getConfiguration(),
+<<<<<<< /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/left.java
+    SequenceFile.Writer offsetWriter =
+        SequenceFile.createWriter(
+            workFs,
+            context.getConfiguration(),
+            new Path(super.getWorkPath(), EtlMultiOutputFormat.getUniqueFile(context,
+                EtlMultiOutputFormat.OFFSET_PREFIX, "")), EtlKey.class, NullWritable.class);
+||||||| /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/base.java
+    SequenceFile.Writer offsetWriter =
+        SequenceFile.createWriter(
+            fs,
+            context.getConfiguration(),
+            new Path(super.getWorkPath(), EtlMultiOutputFormat.getUniqueFile(context,
+                EtlMultiOutputFormat.OFFSET_PREFIX, "")), EtlKey.class, NullWritable.class);
+=======
+    SequenceFile.Writer offsetWriter = SequenceFile.createWriter(fs, context.getConfiguration(),
         new Path(super.getWorkPath(),
             EtlMultiOutputFormat.getUniqueFile(context, EtlMultiOutputFormat.OFFSET_PREFIX, "")),
         EtlKey.class, NullWritable.class);
+>>>>>>> /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/right.java
     for (String s : offsets.keySet()) {
       log.info("Avg record size for " + offsets.get(s).getTopic() + ":" + offsets.get(s).getPartition() + " = "
           + offsets.get(s).getMessageSize());
@@ -150,12 +166,19 @@ public class EtlMultiOutputCommitter extends FileOutputCommitter {
   }
 
   protected void commitFile(JobContext job, Path source, Path target) throws IOException {
+<<<<<<< /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/left.java
     FileSystem sourceFs = FileSystem.get(source.toUri(), job.getConfiguration());
     FileSystem targetFs = FileSystem.get(target.toUri(), job.getConfiguration());
-    if (!FileUtil.copy(sourceFs, source, targetFs, target, true, true, job.getConfiguration())) {
+    FileUtil.copy(sourceFs, source, targetFs, target, true, true, job.getConfiguration());
+||||||| /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/base.java
+    FileSystem.get(job.getConfiguration()).rename(source, target);
+=======
+    log.info(String.format("Moving %s to %s", source, target));
+    if (!FileSystem.get(job.getConfiguration()).rename(source, target)) {
       log.error(String.format("Failed to move from %s to %s", source, target));
       throw new IOException(String.format("Failed to move from %s to %s", source, target));
     }
+>>>>>>> /usr/src/app/output/linkedin/camus/7e09695726f8b8a768bf461ffaad338ebb7ca354/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputCommitter.java/right.java
   }
 
   public String getPartitionedPath(JobContext context, String file, int count, long offset) throws IOException {
