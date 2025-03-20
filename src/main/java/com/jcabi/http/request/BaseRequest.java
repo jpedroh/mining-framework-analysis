@@ -56,8 +56,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonStructure;
-import javax.ws.rs.core.HttpHeaders;
 import javax.net.ssl.SSLContext;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 import lombok.EqualsAndHashCode;
 
@@ -213,7 +213,7 @@ public final class BaseRequest implements Request {
             addr = UriBuilder.fromUri(addr).path("/").build();
         }
         this.home = addr.toString();
-        this.hdrs = new Array<Map.Entry<String, String>>(headers);
+        this.hdrs = new Array<>(headers);
         this.mtd = method;
         this.content = body.clone();
         this.connect = cnct;

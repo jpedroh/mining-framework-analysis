@@ -48,6 +48,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -652,6 +653,136 @@ public final class RequestTest {
             .method(Request.GET)
             .body().set("already set").back()
             .fetch(new ByteArrayInputStream("ba".getBytes(CharEncoding.UTF_8)));
+    }
+
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    /**
+     * The connect and read timeouts are properly set no matter in which order
+     * <code>Request.timeout</code> is called.
+     *
+     * @throws Exception If something goes wrong inside
+     */
+    @Test
+    public void passesThroughWire() throws IOException {
+        final Wire original = Mockito.mock(Wire.class);
+        final Wire wire = Mockito.mock(Wire.class);
+        final Response response = Mockito.mock(Response.class);
+        final Supplier<Collection<Map.Entry<String, String>>> hdrs =
+            new Supplier<Collection<Map.Entry<String, String>>>() {
+                @Override
+                public Collection<Map.Entry<String, String>> get() {
+                    return org.mockito.Matchers.anyCollectionOf(null);
+                }
+            };
+        final String url = "fake-url";
+        Mockito.when(
+            wire.send(
+                org.mockito.Matchers.any(Request.class),
+                org.mockito.Matchers.eq(url),
+                org.mockito.Matchers.anyString(),
+                hdrs.get(),
+                org.mockito.Matchers.any(InputStream.class),
+                org.mockito.Matchers.anyInt(),
+                org.mockito.Matchers.anyInt(),
+                org.mockito.Mockito.any(SSLContext.class)
+            )
+        ).thenReturn(response);
+        new BaseRequest(original, url).through(wire).fetch();
+        Mockito.verify(original, Mockito.never()).send(
+            org.mockito.Matchers.any(Request.class),
+            org.mockito.Matchers.anyString(),
+            org.mockito.Matchers.anyString(),
+            hdrs.get(),
+            org.mockito.Matchers.any(InputStream.class),
+            org.mockito.Matchers.anyInt(),
+            org.mockito.Matchers.anyInt(),
+            org.mockito.Mockito.any(SSLContext.class)
+        );
+        Mockito.verify(wire).send(
+            org.mockito.Matchers.any(Request.class),
+            org.mockito.Matchers.anyString(),
+            org.mockito.Matchers.anyString(),
+            hdrs.get(),
+            org.mockito.Matchers.any(InputStream.class),
+            org.mockito.Matchers.anyInt(),
+            org.mockito.Matchers.anyInt(),
+            org.mockito.Mockito.any(SSLContext.class)
+        );
+    }
+    @SuppressWarnings("unchecked")
+    private void testTimeoutOrderDoesntMatter(final Runnable execution)
+            throws Exception {
+        synchronized (MockWire.class) {
+            final Wire mockWire = Mockito.mock(Wire.class);
+            final ArgumentCaptor<Integer> connectCaptor = ArgumentCaptor
+                    .forClass(Integer.class);
+            final ArgumentCaptor<Integer> readCaptor = ArgumentCaptor
+                    .forClass(Integer.class);
+            final int connect = 1234;
+            final int read = 2345;
+            MockWire.setMockDelegate(mockWire);
+            final Response mockResponse = Mockito.mock(Response.class);
+            Mockito.when(
+                    mockWire.send(
+                            Mockito.any(Request.class),
+                            Mockito.anyString(),
+                            Mockito.anyString(),
+                            Mockito.<Map.Entry<String, String>>anyCollection(),
+                            Mockito.any(InputStream.class),
+                            Mockito.anyInt(),
+                            Mockito.anyInt(),
+                            Mockito.any(SSLContext.class)
+                    )
+            ).thenReturn(mockResponse);
+            execution.run();
+            Mockito.verify(mockWire).send(
+                    Mockito.any(Request.class),
+                    Mockito.anyString(),
+                    Mockito.anyString(),
+                    Mockito.<Map.Entry<String, String>>anyCollection(),
+                    Mockito.any(InputStream.class),
+                    connectCaptor.capture(),
+                    readCaptor.capture(),
+                    Mockito.any(SSLContext.class)
+            );
+            MatcherAssert.assertThat(
+                    connectCaptor.getValue().intValue(),
+                    Matchers.is(connect)
+            );
+            MatcherAssert.assertThat(
+                    readCaptor.getValue().intValue(),
+                    Matchers.is(read)
+            );
+        }
     }
 
     /**
