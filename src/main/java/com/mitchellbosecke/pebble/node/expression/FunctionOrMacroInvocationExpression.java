@@ -1,80 +1,60 @@
-/*******************************************************************************
- * This file is part of Pebble.
- * <p>
- * Copyright (c) 2014 by Mitchell Bösecke
- * <p>
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble.node.expression;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.mitchellbosecke.pebble.error.PebbleException;
+import java.util.Collections;
 import com.mitchellbosecke.pebble.extension.Function;
+import java.util.List;
 import com.mitchellbosecke.pebble.extension.NodeVisitor;
+import java.util.Map;
 import com.mitchellbosecke.pebble.node.ArgumentsNode;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 
 public class FunctionOrMacroInvocationExpression implements Expression<Object> {
+  private final String functionName;
 
-    private final String functionName;
+  private final ArgumentsNode args;
 
-    private final ArgumentsNode args;
+  private final int lineNumber;
 
-    private final int lineNumber;
+  public FunctionOrMacroInvocationExpression(String functionName, ArgumentsNode arguments, int lineNumber) {
+    this.functionName = functionName;
+    this.args = arguments;
+    this.lineNumber = lineNumber;
+  }
 
-    public FunctionOrMacroInvocationExpression(String functionName, ArgumentsNode arguments, int lineNumber) {
-        this.functionName = functionName;
-        this.args = arguments;
-        this.lineNumber = lineNumber;
+  @Override public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
+    Function function = context.getExtensionRegistry().getFunction(functionName);
+    if (function != null) {
+      return applyFunction(self, context, function, args);
     }
+    return self.macro(context, functionName, args, false);
+  }
 
-    @Override
-    public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
-        Function function = context.getExtensionRegistry().getFunction(functionName);
-        if (function != null) {
-            return applyFunction(self, context, function, args);
-        }
-        return self.macro(context, functionName, args, false);
-    }
+  private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function, ArgumentsNode args) throws PebbleException {
+    List<Object> arguments = new ArrayList<>();
+    Collections.addAll(arguments, args);
+    Map<String, Object> namedArguments = args.getArgumentMap(self, context, function);
+    return function.execute(namedArguments, self, context, this.getLineNumber());
+  }
 
-    private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function,
-                                 ArgumentsNode args) throws PebbleException {
-        List<Object> arguments = new ArrayList<>();
+  @Override public void accept(NodeVisitor visitor) {
+    visitor.visit(this);
+  }
 
-        Collections.addAll(arguments, args);
+  public String getFunctionName() {
+    return functionName;
+  }
 
-        Map<String, Object> namedArguments = args.getArgumentMap(self, context, function);
-        return function.execute(namedArguments, self, context, this.getLineNumber());
-    }
+  public ArgumentsNode getArguments() {
+    return args;
+  }
 
-    @Override
-    public void accept(NodeVisitor visitor) {
-        visitor.visit(this);
-    }
+  @Override public int getLineNumber() {
+    return this.lineNumber;
+  }
 
-    public String getFunctionName() {
-        return functionName;
-    }
-
-    public ArgumentsNode getArguments() {
-        return args;
-    }
-
-    @Override
-    public int getLineNumber() {
-        return this.lineNumber;
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return String.format("%s%s", functionName, args);
-    }
-
+  @Override public String toString() {
+    return String.format("%s%s", functionName, args);
+  }
 }

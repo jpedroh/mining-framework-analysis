@@ -1,52 +1,39 @@
-/*******************************************************************************
- * This file is part of Pebble.
- *
- * Copyright (c) 2014 by Mitchell Bösecke
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble.node;
-
+import java.util.HashMap;
 import com.mitchellbosecke.pebble.error.PebbleException;
+import java.util.List;
 import com.mitchellbosecke.pebble.extension.NamedArguments;
+import java.util.Map;
 import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class ArgumentsNode implements Node {
+  private final List<NamedArgumentNode> namedArgs;
 
-    private final List<NamedArgumentNode> namedArgs;
+  private final List<PositionalArgumentNode> positionalArgs;
 
-    private final List<PositionalArgumentNode> positionalArgs;
+  private final int lineNumber;
 
-    private final int lineNumber;
+  public ArgumentsNode(List<PositionalArgumentNode> positionalArgs, List<NamedArgumentNode> namedArgs, int lineNumber) {
+    this.positionalArgs = positionalArgs;
+    this.namedArgs = namedArgs;
+    this.lineNumber = lineNumber;
+  }
 
-    public ArgumentsNode(List<PositionalArgumentNode> positionalArgs, List<NamedArgumentNode> namedArgs,
-            int lineNumber) {
-        this.positionalArgs = positionalArgs;
-        this.namedArgs = namedArgs;
-        this.lineNumber = lineNumber;
-    }
+  @Override public void accept(NodeVisitor visitor) {
+    visitor.visit(this);
+  }
 
-    @Override
-    public void accept(NodeVisitor visitor) {
-        visitor.visit(this);
-    }
+  public List<NamedArgumentNode> getNamedArgs() {
+    return namedArgs;
+  }
 
-    public List<NamedArgumentNode> getNamedArgs() {
-        return namedArgs;
-    }
+  public List<PositionalArgumentNode> getPositionalArgs() {
+    return positionalArgs;
+  }
 
-    public List<PositionalArgumentNode> getPositionalArgs() {
-        return positionalArgs;
-    }
-
-    /**
+  /**
      * Using hints from the filter/function/test/macro it will convert an
      * ArgumentMap (which holds both positional and named arguments) into a
      * regular Map that the filter/function/test/macro is expecting.
@@ -61,56 +48,40 @@ public class ArgumentsNode implements Node {
      * @throws PebbleException
      *             Thrown if an expected name argument does not exist
      */
-    public Map<String, Object> getArgumentMap(PebbleTemplateImpl self, EvaluationContextImpl context,
-            NamedArguments invocableWithNamedArguments) throws PebbleException {
-        Map<String, Object> result = new HashMap<>();
-        List<String> argumentNames = invocableWithNamedArguments.getArgumentNames();
-
-        if (argumentNames == null) {
-
-            /* Some functions such as min and max use un-named varags */
-            if (positionalArgs != null && !positionalArgs.isEmpty()) {
-                for (int i = 0; i < positionalArgs.size(); i++) {
-                    result.put(String.valueOf(i), positionalArgs.get(i).getValueExpression().evaluate(self, context));
-                }
-            }
-        } else {
-
-            if (positionalArgs != null) {
-                int nameIndex = 0;
-
-                for (PositionalArgumentNode arg : positionalArgs) {
-                    if (argumentNames.size() <= nameIndex) {
-                        throw new PebbleException(null, "The argument at position " + (nameIndex + 1)
-                                + " is not allowed. Only " + argumentNames.size() + " argument(s) are allowed.",
-                                this.lineNumber, self.getName());
-                    }
-
-                    result.put(argumentNames.get(nameIndex), arg.getValueExpression().evaluate(self, context));
-                    nameIndex++;
-                }
-            }
-
-            if (namedArgs != null) {
-                for (NamedArgumentNode arg : namedArgs) {
-                    // check if user used an incorrect name
-                    if (!argumentNames.contains(arg.getName())) {
-                        throw new PebbleException(null, "The following named argument does not exist: " + arg.getName(),
-                                this.lineNumber, self.getName());
-                    }
-                    Object value = arg.getValueExpression() == null ? null : arg.getValueExpression().evaluate(self,
-                            context);
-                    result.put(arg.getName(), value);
-                }
-            }
+  public Map<String, Object> getArgumentMap(PebbleTemplateImpl self, EvaluationContextImpl context, NamedArguments invocableWithNamedArguments) throws PebbleException {
+    Map<String, Object> result = new HashMap<>();
+    List<String> argumentNames = invocableWithNamedArguments.getArgumentNames();
+    if (argumentNames == null) {
+      if (positionalArgs != null && !positionalArgs.isEmpty()) {
+        for (int i = 0; i < positionalArgs.size(); i++) {
+          result.put(String.valueOf(i), positionalArgs.get(i).getValueExpression().evaluate(self, context));
         }
-
-        return result;
+      }
+    } else {
+      if (positionalArgs != null) {
+        int nameIndex = 0;
+        for (PositionalArgumentNode arg : positionalArgs) {
+          if (argumentNames.size() <= nameIndex) {
+            throw new PebbleException(null, "The argument at position " + (nameIndex + 1) + " is not allowed. Only " + argumentNames.size() + " argument(s) are allowed.", this.lineNumber, self.getName());
+          }
+          result.put(argumentNames.get(nameIndex), arg.getValueExpression().evaluate(self, context));
+          nameIndex++;
+        }
+      }
+      if (namedArgs != null) {
+        for (NamedArgumentNode arg : namedArgs) {
+          if (!argumentNames.contains(arg.getName())) {
+            throw new PebbleException(null, "The following named argument does not exist: " + arg.getName(), this.lineNumber, self.getName());
+          }
+          Object value = arg.getValueExpression() == null ? null : arg.getValueExpression().evaluate(self, context);
+          result.put(arg.getName(), value);
+        }
+      }
     }
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        return positionalArgs.toString();
-    }
-
+  @Override public String toString() {
+    return positionalArgs.toString();
+  }
 }
