@@ -253,16 +253,25 @@ public class ServerConnector extends PacketHandler
             user.getTabListHandler().onServerChange();
             
             Scoreboard serverScoreboard = user.getServerSentScoreboard();
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
+            for (Objective objective : serverScoreboard.getObjectives())
+                user.unsafe().sendPacket(new ScoreboardObjective(objective.getName(), objective.getValue(), "integer", (byte) 1)); // TODO:
+||||||| /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+            for ( Objective objective : serverScoreboard.getObjectives() )
+            {
+                user.unsafe().sendPacket( new ScoreboardObjective( objective.getName(), objective.getValue(), "integer", (byte) 1 ) ); // TODO:
+            } 
+=======
             for ( Objective objective : serverScoreboard.getObjectives() )
             {
                 user.unsafe().sendPacket( new ScoreboardObjective( objective.getName(), objective.getValue(), objective.getType(), (byte) 1 ) );
-            }
-            for ( Score score : serverScoreboard.getScores() )
+            } for ( Score score : serverScoreboard.getScores() )
             {
                 user.unsafe().sendPacket( new ScoreboardScore( score.getItemName(), (byte) 1, score.getScoreName(), score.getValue() ) );
             }
-            for ( Team team : serverScoreboard.getTeams() )
-                user.unsafe().sendPacket(new net.md_5.bungee.protocol.packet.Team(team.getName()));
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
+            for (Team team : serverScoreboard.getTeams())
+            user.unsafe().sendPacket(new net.md_5.bungee.protocol.packet.Team(team.getName()));
             serverScoreboard.clear();
             
             for (UUID bossbar : user.getSentBossBars())

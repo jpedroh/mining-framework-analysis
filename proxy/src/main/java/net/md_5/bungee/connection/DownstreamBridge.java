@@ -2,7 +2,6 @@ package net.md_5.bungee.connection;
 
 
 import java.io.DataInput;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -128,12 +127,22 @@ public class DownstreamBridge extends PacketHandler
                 serverScoreboard.removeObjective(objective.getName());
                 break;
             case 2:
-                Objective oldObjective = serverScoreboard.getObjective( objective.getName() );
+                Objective oldObjective = serverScoreboard.getObjective(objective.getName());
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/left.java
+                if (oldObjective != null)
+                    oldObjective.setValue(objective.getValue());
+||||||| /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/base.java
+                if ( oldObjective != null )
+                {
+                    oldObjective.setValue( objective.getValue() );
+                }
+=======
                 if ( oldObjective != null )
                 {
                     oldObjective.setValue( objective.getValue() );
                     oldObjective.setType( objective.getType() );
                 }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/right.java
                 break;
             default:
                 throw new IllegalArgumentException("Unknown objective action: " + objective.getAction());
@@ -188,31 +197,35 @@ public class DownstreamBridge extends PacketHandler
         else
             t = serverScoreboard.getTeam(team.getName());
         
-        if ( t != null )
+        if (t != null)
         {
-            if ( team.getMode() == 0 || team.getMode() == 2 )
+            if (team.getMode() == 0 || team.getMode() == 2)
             {
-                t.setDisplayName( team.getDisplayName() );
-                t.setPrefix( team.getPrefix() );
-                t.setSuffix( team.getSuffix() );
-                t.setFriendlyFire( team.getFriendlyFire() );
-                t.setNameTagVisibility( team.getNameTagVisibility() );
-                t.setCollisionRule( team.getCollisionRule() );
-                t.setColor( team.getColor() );
+                t.setDisplayName(team.getDisplayName());
+                t.setPrefix(team.getPrefix());
+                t.setSuffix(team.getSuffix());
+                t.setFriendlyFire(team.getFriendlyFire());
+                t.setNameTagVisibility(team.getNameTagVisibility());
+                t.setCollisionRule(team.getCollisionRule());
+                t.setColor(team.getColor());
             }
-            if ( team.getPlayers() != null )
-            {
-                for ( String s : team.getPlayers() )
-                {
-                    if ( team.getMode() == 0 || team.getMode() == 3 )
-                    {
-                        t.addPlayer( s );
-                    } else if ( team.getMode() == 4 )
+            if (team.getPlayers() != null)
+                for (String s : team.getPlayers())
+                    if (team.getMode() == 0 || team.getMode() == 3)
+                        t.addPlayer(s);
+                    else
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/left.java
+                    t.removePlayer( s );
+||||||| /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/base.java
                     {
                         t.removePlayer( s );
                     }
-                }
-            }
+=======
+                    if ( team.getMode() == 4 )
+                    {
+                        t.removePlayer( s );
+                    }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7c146a9b0553145ce14a78957402b027d4c57da2/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java/right.java
         }
     }
     
