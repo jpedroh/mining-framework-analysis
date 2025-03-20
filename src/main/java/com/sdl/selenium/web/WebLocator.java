@@ -46,6 +46,11 @@ public class WebLocator extends WebLocatorAbstractBuilder {
         withText(text);
     }
 
+    public WebLocator(String text, boolean isInternationalized, String cls, WebLocator container) {
+        this(cls, container);
+        withText(text, isInternationalized);
+    }
+
     // getters and setters
 
     public static void setDriverExecutor(WebDriver driver) {
@@ -501,11 +506,12 @@ public class WebLocator extends WebLocatorAbstractBuilder {
      *
      * @param seconds     time in seconds
      * @param excludeText exclude text
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @return string
      */
-    public String waitTextToRender(int seconds, String excludeText) {
+    public String waitTextToRender(int seconds, String excludeText, boolean isInternationalized) {
         if (!getPathBuilder().getSearchTextType().contains(SearchType.NOT_INTERNATIONALIZED)) {
-            excludeText = InternationalizationUtils.getInternationalizedText(excludeText);
+            excludeText = InternationalizationUtils.getInternationalizedText(excludeText, isInternationalized);
         }
         String text = null;
         if (seconds == 0 && ((text = getText(true)) != null && text.length() > 0 && !text.equals(excludeText))) {
@@ -524,6 +530,13 @@ public class WebLocator extends WebLocatorAbstractBuilder {
         }
         LOGGER.warn("No text was found for Element after " + seconds + " sec; " + this);
         return excludeText.equals(text) ? null : text;
+    }
+
+    /***
+     * @see #waitTextToRender(int, String, boolean)
+     */
+    public String waitTextToRender(int seconds, String excludeText) {
+        return waitTextToRender(seconds, excludeText, InternationalizationUtils.isInternationalizedTestsSuite());
     }
 
     public boolean waitToActivate() {

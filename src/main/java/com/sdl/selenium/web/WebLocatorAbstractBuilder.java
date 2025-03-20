@@ -179,13 +179,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param text       with which to identify the item
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes type search text element: see more details see {@link SearchType}
      * @param <T>        the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T setText(String text, final SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T setText(String text, boolean isInternationalized, final SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        text = InternationalizationUtils.getInternationalizedText(text);
+=======
+        text = InternationalizationUtils.getInternationalizedText(text, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setText(text, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #setLabel(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T setText(String text, final SearchType... searchTypes) {
+        return setText(text, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -241,13 +255,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param title of element
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes see {@link SearchType}
      * @param <T>   the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T setTitle(String title, SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T setTitle(String title, boolean isInternationalized, SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        title = InternationalizationUtils.getInternationalizedText(title);
+=======
+        title = InternationalizationUtils.getInternationalizedText(title, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setTitle(title, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #setTitle(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T setTitle(String title, SearchType... searchTypes) {
+        return setTitle(title, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -374,13 +402,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param label      text label element
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes type search text element: see more details see {@link SearchType}
      * @param <T>        the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T setLabel(String label, final SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T setLabel(String label, boolean isInternationalized, final SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        label = InternationalizationUtils.getInternationalizedText(label);
+=======
+        label = InternationalizationUtils.getInternationalizedText(label, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setLabel(label, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #setLabel(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T setLabel(String label, final SearchType... searchTypes) {
+        return setLabel(label, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -503,6 +545,25 @@ public abstract class WebLocatorAbstractBuilder {
      */
     public <T extends WebLocatorAbstractBuilder> T setAttribute(final String attribute, String value, final SearchType ... searchTypes) {
         pathBuilder.setAttribute(attribute, value, searchTypes);
+        return (T) this;
+    }
+
+    /**
+     * <p><b>Used for finding element process (to generate xpath address)</b></p>
+     * <p>Result Example:</p>
+     * <pre>
+     *     //*[@placeholder='Search']
+     * </pre>
+     *
+     * @param attribute eg. placeholder
+     * @param value     eg. Search
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
+     * @param searchTypes see {@link SearchType}
+     * @param <T>       the element which calls this method
+     * @return this element
+     */
+    public <T extends WebLocatorAbstractBuilder> T setAttribute(final String attribute, String value, boolean isInternationalized, final SearchType ... searchTypes) {
+        pathBuilder.setAttribute(attribute, value, isInternationalized, searchTypes);
         return (T) this;
     }
 
@@ -647,13 +708,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param text       with which to identify the item
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes type search text element: see more details see {@link SearchType}
      * @param <T>        the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T withText(String text, final SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T withText(String text, boolean isInternationalized, final SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        text = InternationalizationUtils.getInternationalizedText(text);
+=======
+        text = InternationalizationUtils.getInternationalizedText(text, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setText(text, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #withText(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T withText(String text, final SearchType... searchTypes) {
+        return withText(text, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -722,13 +797,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param title of element
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes see {@link SearchType}
      * @param <T>   the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T withTitle(String title, SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T withTitle(String title, boolean isInternationalized, SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        title = InternationalizationUtils.getInternationalizedText(title);
+=======
+        title = InternationalizationUtils.getInternationalizedText(title, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setTitle(title, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #withTitle(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T withTitle(String title, SearchType... searchTypes) {
+        return withTitle(title, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -857,13 +946,27 @@ public abstract class WebLocatorAbstractBuilder {
      * <p><b>Used for finding element process (to generate xpath address)</b></p>
      *
      * @param label      text label element
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
      * @param searchTypes type search text element: see more details see {@link SearchType}
      * @param <T>        the element which calls this method
      * @return this element
      */
-    public <T extends WebLocatorAbstractBuilder> T withLabel(String label, final SearchType... searchTypes) {
+    public <T extends WebLocatorAbstractBuilder> T withLabel(String label, boolean isInternationalized, final SearchType... searchTypes) {
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/left.java
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/base.java
+        label = InternationalizationUtils.getInternationalizedText(label);
+=======
+        label = InternationalizationUtils.getInternationalizedText(label, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/WebLocatorAbstractBuilder.java/right.java
         pathBuilder.setLabel(label, searchTypes);
         return (T) this;
+    }
+
+    /***
+     * @see #withLabel(String, boolean, SearchType...)
+     */
+    public <T extends WebLocatorAbstractBuilder> T withLabel(String label, final SearchType... searchTypes) {
+        return withLabel(label, InternationalizationUtils.isInternationalizedTestsSuite(), searchTypes);
     }
 
     /**
@@ -954,6 +1057,25 @@ public abstract class WebLocatorAbstractBuilder {
      */
     public <T extends WebLocatorAbstractBuilder> T withAttribute(final String attribute, String value, final SearchType ... searchTypes) {
         pathBuilder.setAttribute(attribute, value, searchTypes);
+        return (T) this;
+    }
+
+    /**
+     * <p><b>Used for finding element process (to generate xpath address)</b></p>
+     * <p>Result Example:</p>
+     * <pre>
+     *     //*[@placeholder='Search']
+     * </pre>
+     *
+     * @param attribute eg. placeholder
+     * @param value     eg. Search
+     * @param isInternationalized override general internationalization setting for this specific WebLocator
+     * @param searchTypes see {@link SearchType}
+     * @param <T>       the element which calls this method
+     * @return this element
+     */
+    public <T extends WebLocatorAbstractBuilder> T withAttribute(final String attribute, String value, boolean isInternationalized, final SearchType ... searchTypes) {
+        pathBuilder.setAttribute(attribute, value, isInternationalized, searchTypes);
         return (T) this;
     }
 

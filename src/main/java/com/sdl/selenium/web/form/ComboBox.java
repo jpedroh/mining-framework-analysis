@@ -22,12 +22,20 @@ public class ComboBox extends WebLocator implements ICombo {
         withContainer(container);
     }
 
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/left.java
     @Override
     public boolean select(String value) {
         return select(value, InternationalizationUtils.isInternationalizedTestsSuite());
     }
 
     public boolean select(String value, boolean isInternationalized) {
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/base.java
+    @Override
+    public boolean select(String value) {
+=======
+    public boolean select(String value, boolean isInternationalized) {
+        value = InternationalizationUtils.getInternationalizedText(value, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/right.java
         boolean selected = waitToRender();
         assertThat("Element was not rendered " + toString(), selected);
         selected = doSelect(value, isInternationalized);
@@ -35,8 +43,20 @@ public class ComboBox extends WebLocator implements ICombo {
         return selected;
     }
 
+<<<<<<< /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/left.java
     public boolean doSelect(String value, boolean isInternationalized) {
         value = InternationalizationUtils.getInternationalizedText(value, isInternationalized);
+||||||| /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/base.java
+    public boolean doSelect(String value) {
+=======
+    @Override
+    public boolean select(String value) {
+        return select(value, InternationalizationUtils.isInternationalizedTestsSuite());
+    }
+
+    public boolean doSelect(String value, boolean isInternationalized) {
+        value = InternationalizationUtils.getInternationalizedText(value, isInternationalized);
+>>>>>>> /usr/src/app/output/sdllanguagetechnologies/testy/35283116d46d5daf14d53f20d03dd14febf9013e/src/main/java/com/sdl/selenium/web/form/ComboBox.java/right.java
         boolean selected;
         ready();
         if ("".equals(value)) {
