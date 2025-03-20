@@ -2,12 +2,8 @@
  * 
  */
 package com.microtripit.mandrillapp.lutung.model;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
 import java.util.List;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import com.microtripit.mandrillapp.lutung.logging.Logger;
@@ -21,6 +17,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.params.HttpConnectionParams;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author rschreijer
