@@ -83,7 +83,13 @@ public class FlingFrame extends JFrame implements ActionListener, BroadcastDisco
 	private static final String HEADER_APPLICATION_URL = "Application-URL";
 	private static final String CHROME_CAST_MODEL_NAME = "Eureka Dongle";
 	private static final String TRANSCODING_EXTENSIONS = "wmv,avi,mkv,mpg,mpeg,flv,3gp,ogm";
+<<<<<<< /usr/src/app/output/entertailion/fling/e008cc1cee6c339a24627ec7e00cc5be46f916ee/src/com/entertailion/java/fling/FlingFrame.java/left.java
 	private static final String TRANSCODING_PARAMETERS = "vcodec=VP80,vb=1000,vfilter=canvas{width=640,height=360},acodec=vorb,ab=128,channels=2,samplerate=44100,threads=2";
+||||||| /usr/src/app/output/entertailion/fling/e008cc1cee6c339a24627ec7e00cc5be46f916ee/src/com/entertailion/java/fling/FlingFrame.java/base.java
+	private static final String TRANSCODING_PARAMETERS = "vcodec=VP80,vb=1000,width=500,acodec=vorb,ab=128,channels=2,samplerate=44100";
+=======
+	private static final String TRANSCODING_PARAMETERS = "vcodec=VP80,vb=1000,vfilter=canvas{width=640,height=360},acodec=vorb,ab=128,channels=2,samplerate=44100";
+>>>>>>> /usr/src/app/output/entertailion/fling/e008cc1cee6c339a24627ec7e00cc5be46f916ee/src/com/entertailion/java/fling/FlingFrame.java/right.java
 	private static final String PROPERTY_TRANSCODING_EXTENSIONS = "transcoding.extensions";
 	private static final String PROPERTY_TRANSCODING_PARAMETERS = "transcoding.parameters";
 	private int port = EmbeddedServer.HTTP_PORT;
