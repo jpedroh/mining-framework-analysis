@@ -583,19 +583,25 @@ final class TestDataHelper {
                         .bankCode("NBIQ")
                         .branchCode("850")
                         .accountNumber("123456789012")
+<<<<<<< /usr/src/app/output/arturmkrtchyan/iban4j/66c4c0fe6fc398e325c12eeccdba1c0473c75990/src/test/java/org/iban4j/TestDataHelper.java/left.java
                         .build(), "IQ98NBIQ850123456789012"},
-                {new Iban.Builder()
-                        .countryCode(CountryCode.GA)
-                        .bankCode("40001")
-                        .branchCode("09080")
-                        .accountNumber("0008120005890")
-                        .build(), "GA2140001090800008120005890"},
                 {new Iban.Builder()
                         .countryCode(CountryCode.CV)
                         .bankCode("0002")
                         .branchCode("0000")
                         .accountNumber("0311180710148")
                         .build(), "CV64000200000311180710148"}
+||||||| /usr/src/app/output/arturmkrtchyan/iban4j/66c4c0fe6fc398e325c12eeccdba1c0473c75990/src/test/java/org/iban4j/TestDataHelper.java/base.java
+                        .build(), "IQ98NBIQ850123456789012"}
+=======
+                        .build(), "IQ98NBIQ850123456789012"},
+                {new Iban.Builder()
+                        .countryCode(CountryCode.GA)
+                        .bankCode("40001")
+                        .branchCode("09080")
+                        .accountNumber("0008120005890")
+                        .build(), "GA2140001090800008120005890"}
+>>>>>>> /usr/src/app/output/arturmkrtchyan/iban4j/66c4c0fe6fc398e325c12eeccdba1c0473c75990/src/test/java/org/iban4j/TestDataHelper.java/right.java
         });
     }
 
