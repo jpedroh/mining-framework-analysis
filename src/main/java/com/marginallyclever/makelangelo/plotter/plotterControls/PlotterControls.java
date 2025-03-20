@@ -79,6 +79,11 @@ public class PlotterControls extends JPanel {
 			}
 			updateProgressBar();
 		});
+		myPlotter.addPlotterEventListener((e)-> {
+			if (e.type == PlotterEvent.HOME_FOUND) {
+				updateButtonStatusConnected();
+			}
+		});
 		
 		chooseConnection.addListener(e -> {
 			switch (e.flag) {
@@ -86,7 +91,7 @@ public class PlotterControls extends JPanel {
 				case NetworkSessionEvent.CONNECTION_CLOSED -> onDisconnect();
 			}
 		});
-
+		
 		myPlotter.addPlotterEventListener((e)-> {
 			if (e.type == PlotterEvent.HOME_FOUND) {
 				updateButtonStatusConnected();
