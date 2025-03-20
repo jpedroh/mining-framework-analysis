@@ -53,9 +53,9 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
     private HashSet<String> ignoreServerServiceList = null;
 
     private String statusMsg = "";
+    private static Logger log = Logger.getLogger(EtlRecordReader.class);
 
     EtlSplit split;
-    private static Logger log = Logger.getLogger(EtlRecordReader.class);
 
     /**
      * Record reader to fetch directly from Kafka
@@ -110,6 +110,14 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
         }
 
         this.totalBytes = this.split.getLength();
+<<<<<<< /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/left.java
+    
+        log.info("Finished executing the initialize part");
+||||||| /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/base.java
+    
+        System.out.println("Finished executing the initialize part");
+=======
+>>>>>>> /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/right.java
     }
 
     @Override

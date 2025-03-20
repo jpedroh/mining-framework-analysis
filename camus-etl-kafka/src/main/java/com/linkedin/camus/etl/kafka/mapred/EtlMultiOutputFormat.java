@@ -68,6 +68,7 @@ public class EtlMultiOutputFormat extends FileOutputFormat<EtlKey, Object> {
     public static final String REQUESTS_FILE = "requests.previous";
     private static EtlMultiOutputCommitter committer = null;
     private static Map<String, Partitioner> partitionersByTopic = new HashMap<String, Partitioner>();
+    private static Logger log = Logger.getLogger(EtlMultiOutputFormat.class);
 
     private long granularityMs;
     private static Logger log = Logger.getLogger(EtlMultiOutputFormat.class);
@@ -296,8 +297,8 @@ public class EtlMultiOutputFormat extends FileOutputFormat<EtlKey, Object> {
                 }
             } else if (val instanceof ExceptionWritable) {
                 committer.addOffset(key);
-                System.err.println(key.toString());
-                System.err.println(val.toString());
+                log.error(key.toString());
+                log.error(val.toString());
                 errorWriter.append(key, (ExceptionWritable) val);
             }
         }

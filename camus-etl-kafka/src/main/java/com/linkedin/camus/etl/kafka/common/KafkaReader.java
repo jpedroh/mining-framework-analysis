@@ -16,9 +16,8 @@ import kafka.message.Message;
 import kafka.message.MessageAndOffset;
 
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.log4j.Logger;
-
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import com.linkedin.camus.etl.kafka.CamusJob;
 
 /**
@@ -46,7 +45,6 @@ public class KafkaReader {
 	private long lastFetchTime = 0;
 
 	private int fetchBufferSize;
-
 	/**
 	 * Construct using the json representation of the kafka request
 	 */
@@ -70,6 +68,11 @@ public class KafkaReader {
 
 		// read data from queue
 
+<<<<<<< /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/common/KafkaReader.java/left.java
+		log.info("Connected to node " + uri + " beginning reading at offset " + beginOffset + " latest offset=" + lastOffset);
+||||||| /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/common/KafkaReader.java/base.java
+		System.out.println("Connected to node " + uri + " beginning reading at offset " + beginOffset + " latest offset=" + lastOffset);
+=======
 		URI uri = kafkaRequest.getURI();
 		simpleConsumer = new SimpleConsumer(uri.getHost(), uri.getPort(),
 				CamusJob.getKafkaTimeoutValue(context),
@@ -79,6 +82,7 @@ public class KafkaReader {
 				+ " beginning reading at offset " + beginOffset
 				+ " latest offset=" + lastOffset);
 		fetch();
+>>>>>>> /usr/src/app/output/linkedin/camus/afe16bd0816776894fd39f6605651d8b566312b0/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/common/KafkaReader.java/right.java
 	}
 
 	public boolean hasNext() throws IOException {
