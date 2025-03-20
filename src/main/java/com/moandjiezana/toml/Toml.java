@@ -1,23 +1,9 @@
 package com.moandjiezana.toml;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import java.io.*;
+import java.util.*;
 
 /**
  * <p>Provides access to the keys and tables in a TOML data source.</p>
@@ -39,10 +25,10 @@ import com.google.gson.JsonElement;
  *
  */
 public class Toml {
-  
   private static final Gson DEFAULT_GSON = new Gson();
 
   private Map<String, Object> values = new HashMap<String, Object>();
+
   private final Toml defaults;
 
   /**
@@ -96,7 +82,6 @@ public class Toml {
     BufferedReader bufferedReader = null;
     try {
       bufferedReader = new BufferedReader(reader);
-
       StringBuilder w = new StringBuilder();
       String line = bufferedReader.readLine();
       while (line != null) {
@@ -109,7 +94,8 @@ public class Toml {
     } finally {
       try {
         bufferedReader.close();
-      } catch (IOException e) {}
+      } catch (IOException e) {
+      }
     }
     return this;
   }
@@ -126,9 +112,7 @@ public class Toml {
     if (results.errors.hasErrors()) {
       throw new IllegalStateException(results.errors.toString());
     }
-
     this.values = results.consume();
-
     return this;
   }
 
@@ -155,10 +139,8 @@ public class Toml {
    * @param <T> type of list items
    * @return <code>null</code> if the key is not found
    */
-  public <T> List<T> getList(String key) {
-    @SuppressWarnings("unchecked")
-    List<T> list = (List<T>) get(key);
-    
+  public <T extends java.lang.Object> List<T> getList(String key) {
+    @SuppressWarnings(value = { "unchecked" }) List<T> list = (List<T>) get(key);
     return list;
   }
 
@@ -168,9 +150,8 @@ public class Toml {
    * @param <T> type of list items
    * @return <code>null</code> is the key is not found
    */
-  public <T> List<T> getList(String key, List<T> defaultValue) {
+  public <T extends java.lang.Object> List<T> getList(String key, List<T> defaultValue) {
     List<T> list = getList(key);
-    
     return list != null ? list : defaultValue;
   }
 
@@ -205,10 +186,8 @@ public class Toml {
    * @param key A table name, not including square brackets.
    * @return A new Toml instance or <code>null</code> if no value is found for key.
    */
-  @SuppressWarnings("unchecked")
-  public Toml getTable(String key) {
+  @SuppressWarnings(value = { "unchecked" }) public Toml getTable(String key) {
     Map<String, Object> map = (Map<String, Object>) get(key);
-    
     return map != null ? new Toml(null, map) : null;
   }
 
@@ -216,20 +195,15 @@ public class Toml {
    * @param key Name of array of tables, not including square brackets.
    * @return A {@link List} of Toml instances or <code>null</code> if no value is found for key.
    */
-  @SuppressWarnings("unchecked")
-  public List<Toml> getTables(String key) {
+  @SuppressWarnings(value = { "unchecked" }) public List<Toml> getTables(String key) {
     List<Map<String, Object>> tableArray = (List<Map<String, Object>>) get(key);
-
     if (tableArray == null) {
       return null;
     }
-
     ArrayList<Toml> tables = new ArrayList<Toml>();
-
     for (Map<String, Object> table : tableArray) {
       tables.add(new Toml(null, table));
     }
-
     return tables;
   }
 
@@ -247,7 +221,6 @@ public class Toml {
    */
   public boolean containsKey(String key) {
     Object object = get(key);
-    
     return object != null && !(object instanceof Map) && !(object instanceof List);
   }
 
@@ -257,7 +230,6 @@ public class Toml {
    */
   public boolean containsTable(String key) {
     Object object = get(key);
-    
     return object != null && (object instanceof Map);
   }
 
@@ -267,7 +239,6 @@ public class Toml {
    */
   public boolean containsTableArray(String key) {
     Object object = get(key);
-    
     return object != null && (object instanceof List);
   }
 
@@ -300,9 +271,8 @@ public class Toml {
    * @param <T> type of targetClass.
    * @return A new instance of targetClass.
    */
-  public <T> T to(Class<T> targetClass) {
+  public <T extends java.lang.Object> T to(Class<T> targetClass) {
     HashMap<String, Object> valuesCopy = new HashMap<String, Object>(values);
-    
     if (defaults != null) {
       for (Map.Entry<String, Object> entry : defaults.values.entrySet()) {
         if (!valuesCopy.containsKey(entry.getKey())) {
@@ -310,66 +280,11 @@ public class Toml {
         }
       }
     }
-    
     JsonElement json = DEFAULT_GSON.toJsonTree(valuesCopy);
-    
     if (targetClass == JsonElement.class) {
       return targetClass.cast(json);
     }
-    
     return DEFAULT_GSON.fromJson(json, targetClass);
-  }
-  
-  /**
-   * @return a {@link Set} of Map.Entry instances. Modifications to the {@link Set} are not reflected in this Toml instance. Entries are immutable, so {@link Map.Entry#setValue(Object)} throws an UnsupportedOperationException.
-   */
-  public Set<Map.Entry<String,Object>> entrySet() {
-    Set<Map.Entry<String, Object>> entries = new LinkedHashSet<Map.Entry<String, Object>>();
-    
-    for (Map.Entry<String, Object> entry : values.entrySet()) {
-      Class<? extends Object> entryClass = entry.getValue().getClass();
-      
-      if (Map.class.isAssignableFrom(entryClass)) {
-        entries.add(new Toml.Entry(entry.getKey(), getTable(entry.getKey())));
-      } else if (List.class.isAssignableFrom(entryClass)) {
-        List<?> value = (List<?>) entry.getValue();
-        if (!value.isEmpty() && value.get(0) instanceof Map) {
-          entries.add(new Toml.Entry(entry.getKey(), getTables(entry.getKey())));
-        } else {
-          entries.add(new Toml.Entry(entry.getKey(), value));
-        }
-      } else {
-        entries.add(new Toml.Entry(entry.getKey(), entry.getValue()));
-      }
-    }
-    
-    return entries;
-  }
-
-  private class Entry implements Map.Entry<String, Object> {
-    
-    private final String key;
-    private final Object value;
-
-    @Override
-    public String getKey() {
-      return key;
-    }
-
-    @Override
-    public Object getValue() {
-      return value;
-    }
-
-    @Override
-    public Object setValue(Object value) {
-      throw new UnsupportedOperationException("TOML entry values cannot be changed.");
-    }
-    
-    private Entry(String key, Object value) {
-      this.key = key;
-      this.value = value;
-    }
   }
 
   /**
@@ -379,6 +294,31 @@ public class Toml {
    */
   public String serialize() {
     return Serializers.serialize(values);
+  }
+
+  /**
+   * @return a {@link Set} of Map.Entry instances. Modifications to the {@link Set} are not reflected in this Toml instance. Entries are immutable, so {@link Map.Entry#setValue(Object)} throws an UnsupportedOperationException.
+   */
+  public Set<Map.Entry<String, Object>> entrySet() {
+    Set<Map.Entry<String, Object>> entries = new LinkedHashSet<Map.Entry<String, Object>>();
+    for (Map.Entry<String, Object> entry : values.entrySet()) {
+      Class<? extends Object> entryClass = entry.getValue().getClass();
+      if (Map.class.isAssignableFrom(entryClass)) {
+        entries.add(new Toml.Entry(entry.getKey(), getTable(entry.getKey())));
+      } else {
+        if (List.class.isAssignableFrom(entryClass)) {
+          List<?> value = (List<?>) entry.getValue();
+          if (!value.isEmpty() && value.get(0) instanceof Map) {
+            entries.add(new Toml.Entry(entry.getKey(), getTables(entry.getKey())));
+          } else {
+            entries.add(new Toml.Entry(entry.getKey(), value));
+          }
+        } else {
+          entries.add(new Toml.Entry(entry.getKey(), entry.getValue()));
+        }
+      }
+    }
+    return entries;
   }
 
   /**
@@ -395,39 +335,53 @@ public class Toml {
     return Serializers.serialize(from);
   }
 
-  @SuppressWarnings("unchecked")
-  private Object get(String key) {
+  private class Entry implements Map.Entry<String, Object> {
+    private final String key;
+
+    private final Object value;
+
+    @Override public String getKey() {
+      return key;
+    }
+
+    @Override public Object getValue() {
+      return value;
+    }
+
+    @Override public Object setValue(Object value) {
+      throw new UnsupportedOperationException("TOML entry values cannot be changed.");
+    }
+
+    private Entry(String key, Object value) {
+      this.key = key;
+      this.value = value;
+    }
+  }
+
+  @SuppressWarnings(value = { "unchecked" }) private Object get(String key) {
     if (values.containsKey(key)) {
       return values.get(key);
     }
-
     Object current = new HashMap<String, Object>(values);
-    
     Keys.Key[] keys = Keys.split(key);
-    
     for (Keys.Key k : keys) {
       if (k.index == -1 && current instanceof Map && ((Map<String, Object>) current).containsKey(k.path)) {
         return ((Map<String, Object>) current).get(k.path);
       }
-
       current = ((Map<String, Object>) current).get(k.name);
-
       if (k.index > -1 && current != null) {
         if (k.index >= ((List<?>) current).size()) {
           return null;
         }
-        
         current = ((List<?>) current).get(k.index);
       }
-
       if (current == null) {
         return defaults != null ? defaults.get(key) : null;
       }
     }
-    
     return current;
   }
-  
+
   private Toml(Toml defaults, Map<String, Object> values) {
     this.values = values;
     this.defaults = defaults;
