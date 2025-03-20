@@ -21,7 +21,6 @@ import org.apache.commons.net.tftp.TFTPServer.ServerMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -111,11 +109,45 @@ public class TFTPServerPathTest {
             assertEquals(fileToReadContentLength, bytesRead);
         }
 
+<<<<<<< /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/left.java
         // but we cannot write to it
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             final String readFileName = fileToRead.getFileName().toString();
             final IOException exception = assertThrows(IOException.class, () -> tftpClient.sendFile(readFileName, TFTP.BINARY_MODE, is, serverAddress, serverPort));
             assertEquals("Error code 4 received: Write not allowed by server.", exception.getMessage());
+||||||| /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/base.java
+                    assertTrue(out.exists(), "file not created");
+
+                    out.delete();
+
+                    try (final FileInputStream fis = new FileInputStream(file)) {
+                        tftp.sendFile(out.getName(), TFTP.BINARY_MODE, fis, "localhost", SERVER_PORT);
+                        fail("Server allowed write");
+                    } catch (final IOException e) {
+                        // expected path
+                    }
+                } finally {
+                    deleteFixture(file);
+                    deleteFixture(out);
+                }
+            }
+=======
+                    assertTrue(out.exists(), "file not created");
+
+                    out.delete();
+
+                    assertThrows(IOException.class, () -> {
+                        try (final FileInputStream fis = new FileInputStream(file)) {
+                            tftp.sendFile(out.getName(), TFTP.BINARY_MODE, fis, "localhost", SERVER_PORT);
+                            fail("Server allowed write");
+                        }
+                    });
+                } finally {
+                    deleteFixture(file);
+                    deleteFixture(out);
+                }
+            }
+>>>>>>> /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/right.java
         }
     }
 
@@ -137,6 +169,7 @@ public class TFTPServerPathTest {
             assertEquals("Error code 4 received: Read not allowed by server.", exception.getMessage());
         }
 
+<<<<<<< /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/left.java
         // but we can write to it
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             deleteFile(fileToWrite);
@@ -144,6 +177,23 @@ public class TFTPServerPathTest {
             tftpClient.sendFile(writeFileName, TFTP.BINARY_MODE, is, serverAddress, serverPort);
         }
     }
+||||||| /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/base.java
+                    try (final FileOutputStream output = new FileOutputStream(out)) {
+                        tftp.receiveFile(file.getName(), TFTP.BINARY_MODE, output, "localhost", SERVER_PORT);
+                        fail("Server allowed read");
+                    } catch (final IOException e) {
+                        // expected path
+                    }
+                    out.delete();
+=======
+                    assertThrows(IOException.class, () -> {
+                        try (final FileOutputStream output = new FileOutputStream(out)) {
+                            tftp.receiveFile(file.getName(), TFTP.BINARY_MODE, output, "localhost", SERVER_PORT);
+                            fail("Server allowed read");
+                        }
+                    });
+                    out.delete();
+>>>>>>> /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/right.java
 
     @Test
     public void testWriteVerifyContents() throws IOException {
@@ -185,10 +235,48 @@ public class TFTPServerPathTest {
         tftpClient = new TFTPClient();
         tftpClient.open();
 
+<<<<<<< /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/left.java
         try (final InputStream is = Files.newInputStream(fileToRead)) {
             final IOException exception = assertThrows(IOException.class, () -> tftpClient.sendFile("../foo", TFTP.BINARY_MODE, is, serverAddress, serverPort));
             assertEquals("Error code 0 received: Cannot access files outside of TFTP server root.", exception.getMessage());
             assertFalse(Files.exists(serverDirectory.resolve("foo")), "file created when it should not have been");
+||||||| /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/base.java
+                try {
+                    assertFalse(new File(serverDirectory, "../foo").exists(), "test construction error");
+
+                    try (final FileInputStream fis = new FileInputStream(file)) {
+                        tftp.sendFile("../foo", TFTP.BINARY_MODE, fis, "localhost", SERVER_PORT);
+                        fail("Server allowed write!");
+                    } catch (final IOException e) {
+                        // expected path
+                    }
+
+                    assertFalse(new File(serverDirectory, "../foo").exists(), "file created when it should not have been");
+
+                } finally {
+                    // cleanup
+                    deleteFixture(file);
+                }
+            }
+=======
+                try {
+                    assertFalse(new File(serverDirectory, "../foo").exists(), "test construction error");
+
+                    assertThrows(IOException.class, () -> {
+                        try (final FileInputStream fis = new FileInputStream(file)) {
+                            tftp.sendFile("../foo", TFTP.BINARY_MODE, fis, "localhost", SERVER_PORT);
+                            fail("Server allowed write!");
+                        }
+                    });
+
+                    assertFalse(new File(serverDirectory, "../foo").exists(), "file created when it should not have been");
+
+                } finally {
+                    // cleanup
+                    deleteFixture(file);
+                }
+            }
+>>>>>>> /usr/src/app/output/apache/commons-net/e3013d784b0b6c93a7624a36870f2dd73e6ecc41/src/test/java/org/apache/commons/net/tftp/TFTPServerPathTest.java/right.java
         }
     }
 
