@@ -99,34 +99,48 @@ import com.jgoodies.forms.layout.RowSpec;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
     private static final String PREF_WINDOW_X = "MainFrame.windowX"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_WINDOW_X_DEF = 0;
     private static final String PREF_WINDOW_Y = "MainFrame.windowY"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_WINDOW_Y_DEF = 0;
     private static final String PREF_WINDOW_WIDTH = "MainFrame.windowWidth"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_WINDOW_WIDTH_DEF = 1024;
     private static final String PREF_WINDOW_HEIGHT = "MainFrame.windowHeight"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_WINDOW_HEIGHT_DEF = 768;
     private static final String PREF_DIVIDER_POSITION = "MainFrame.dividerPosition"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_DIVIDER_POSITION_DEF = -1;
     private static final String PREF_WINDOW_STYLE_MULTIPLE = "MainFrame.windowStyleMultiple"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final boolean PREF_WINDOW_STYLE_MULTIPLE_DEF = false;
 
     private static final String PREF_CAMERA_WINDOW_X = "CameraFrame.windowX"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_CAMERA_WINDOW_X_DEF = 0;
     private static final String PREF_CAMERA_WINDOW_Y = "CameraFrame.windowY"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_CAMERA_WINDOW_Y_DEF = 0;
     private static final String PREF_CAMERA_WINDOW_WIDTH = "CameraFrame.windowWidth"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_CAMERA_WINDOW_WIDTH_DEF = 800;
     private static final String PREF_CAMERA_WINDOW_HEIGHT = "CameraFrame.windowHeight"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_CAMERA_WINDOW_HEIGHT_DEF = 600;
 
     private static final String PREF_MACHINECONTROLS_WINDOW_X = "MachineControlsFrame.windowX"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_MACHINECONTROLS_WINDOW_X_DEF = 0;
     private static final String PREF_MACHINECONTROLS_WINDOW_Y = "MachineControlsFrame.windowY"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_MACHINECONTROLS_WINDOW_Y_DEF = 0;
     private static final String PREF_MACHINECONTROLS_WINDOW_WIDTH = "MachineControlsFrame.windowWidth"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_MACHINECONTROLS_WINDOW_WIDTH_DEF = 490;
     private static final String PREF_MACHINECONTROLS_WINDOW_HEIGHT = "MachineControlsFrame.windowHeight"; //$NON-NLS-1$
+//$NON-NLS-1$
     private static final int PREF_MACHINECONTROLS_WINDOW_HEIGHT_DEF = 340;
 
     private final Configuration configuration;
@@ -330,14 +344,18 @@ public class MainFrame extends JFrame {
         buttonGroup.add(menuItem);
         mnLanguage.add(menuItem);
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/9bc82cac8412a1180d6fe19b42c9262765a4b2e8/src/main/java/org/openpnp/gui/MainFrame.java/left.java
         menuItem = new JCheckBoxMenuItem(new LanguageSelectionAction(new Locale("fr")));
         buttonGroup.add(menuItem);
         mnLanguage.add(menuItem);
-		
+    		
+||||||| /usr/src/app/output/openpnp/openpnp/9bc82cac8412a1180d6fe19b42c9262765a4b2e8/src/main/java/org/openpnp/gui/MainFrame.java/base.java
+=======
         menuItem = new JCheckBoxMenuItem(new LanguageSelectionAction(new Locale("it")));
         buttonGroup.add(menuItem);
         mnLanguage.add(menuItem);
 
+>>>>>>> /usr/src/app/output/openpnp/openpnp/9bc82cac8412a1180d6fe19b42c9262765a4b2e8/src/main/java/org/openpnp/gui/MainFrame.java/right.java
         for (int i = 0; i < mnLanguage.getItemCount(); i++) {
             JCheckBoxMenuItem item = (JCheckBoxMenuItem) mnLanguage.getItem(i);
             LanguageSelectionAction action = (LanguageSelectionAction) item.getAction();
@@ -546,7 +564,7 @@ public class MainFrame extends JFrame {
                 machineControlsPanel.getJogControlsPanel().setIncrement4Action);
         hotkeyActionMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK),
                 machineControlsPanel.getJogControlsPanel().setIncrement5Action);
-				
+    				
         tabs = new JTabbedPane(JTabbedPane.TOP);
         splitPaneMachineAndTabs.setRightComponent(tabs);
 
@@ -637,6 +655,7 @@ public class MainFrame extends JFrame {
         splitWindows();
     }
 
+    // 20161222 - ldpgh/lutz_dd
     // 20161222 - ldpgh/lutz_dd
     /**
      * Add multiple windows (aka JFrame) to OpenPnp for the camera (frameCamera) and the machine
