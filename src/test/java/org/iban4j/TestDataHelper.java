@@ -94,16 +94,16 @@ final class TestDataHelper {
                         .ownerAccountType("1")
                         .build(), "BR9700360305000010009795493P1"},
                 {new Iban.Builder()
+                        .countryCode(CountryCode.CH)
+                        .bankCode("00762")
+                        .accountNumber("011623852957")
+                        .build(), "CH9300762011623852957"},
+                {new Iban.Builder()
                             .countryCode(CountryCode.BY)
                             .bankCode("NBRB")
                             .branchCode("3600")
                             .accountNumber("900000002Z00AB00")
                             .build(), "BY13NBRB3600900000002Z00AB00"},
-                {new Iban.Builder()
-                        .countryCode(CountryCode.CH)
-                        .bankCode("00762")
-                        .accountNumber("011623852957")
-                        .build(), "CH9300762011623852957"},
                 {new Iban.Builder()
                         .countryCode(CountryCode.CR)
                         .bankCode("0152")
@@ -269,20 +269,32 @@ final class TestDataHelper {
                         .accountNumber("0000000000001234560101")
                         .build(), "KW81CBKU0000000000001234560101"},
                 {new Iban.Builder()
+<<<<<<< /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/left.java
                         .countryCode(CountryCode.KZ)
                         .bankCode("125")
                         .accountNumber("KZT5004100100")
                         .build(), "KZ86125KZT5004100100"},
+||||||| /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/base.java
+                        .countryCode(CountryCode.LV)
+                        .bankCode("BANK")
+                        .accountNumber("0000435195001")
+                        .build(), "LV80BANK0000435195001"},
+=======
+                            .countryCode(CountryCode.LC)
+                            .bankCode("HEMM")
+                            .accountNumber("000100010012001200023015")
+                            .build(), "LC55HEMM000100010012001200023015"},
+                {new Iban.Builder()
+                        .countryCode(CountryCode.LV)
+                        .bankCode("BANK")
+                        .accountNumber("0000435195001")
+                        .build(), "LV80BANK0000435195001"},
+>>>>>>> /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/right.java
                 {new Iban.Builder()
                         .countryCode(CountryCode.LB)
                         .bankCode("0999")
                         .accountNumber("00000001001901229114")
                         .build(), "LB62099900000001001901229114"},
-                {new Iban.Builder()
-                            .countryCode(CountryCode.LC)
-                            .bankCode("HEMM")
-                            .accountNumber("000100010012001200023015")
-                            .build(), "LC55HEMM000100010012001200023015"},
                 {new Iban.Builder()
                         .countryCode(CountryCode.LI)
                         .bankCode("08810")
@@ -422,12 +434,41 @@ final class TestDataHelper {
                         .accountNumber("00001234567890ABCDEFG")
                         .build(), "QA58DOHB00001234567890ABCDEFG"},
                 {new Iban.Builder()
+<<<<<<< /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/left.java
                         .countryCode(CountryCode.RE)
                         .bankCode("12345")
                         .branchCode("12345")
                         .accountNumber("123456789AB")
                         .nationalCheckDigit("13")
                         .build(), "RE131234512345123456789AB13"},
+||||||| /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/base.java
+                        .countryCode(CountryCode.SM)
+                        .bankCode("03225")
+                        .branchCode("09800")
+                        .accountNumber("000000270100")
+                        .nationalCheckDigit("U")
+                        .build(), "SM86U0322509800000000270100"},
+=======
+                            .countryCode(CountryCode.SC)
+                            .bankCode("SSCB")
+                            .branchCode("1101")
+                            .accountNumber("0000000000001497")
+                            .accountType("USD")
+                            .build(), "SC18SSCB11010000000000001497USD"},
+                {new Iban.Builder()
+                        .countryCode(CountryCode.SM)
+                        .bankCode("03225")
+                        .branchCode("09800")
+                        .accountNumber("000000270100")
+                        .nationalCheckDigit("U")
+                        .build(), "SM86U0322509800000000270100"},
+                {new Iban.Builder()
+                            .countryCode(CountryCode.ST)
+                            .bankCode("0001")
+                            .branchCode("0001")
+                            .accountNumber("0051845310112")
+                            .build(), "ST68000100010051845310112"},
+>>>>>>> /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/right.java
                 {new Iban.Builder()
                         .countryCode(CountryCode.RO)
                         .bankCode("AAAA")
@@ -441,22 +482,32 @@ final class TestDataHelper {
                         .nationalCheckDigit("79")
                         .build(), "RS35260005601001611379"},
                 {new Iban.Builder()
+<<<<<<< /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/left.java
                         .countryCode(CountryCode.SA)
                         .bankCode("80")
                         .accountNumber("000000608010167519")
                         .build(), "SA0380000000608010167519"},
                 {new Iban.Builder()
-                            .countryCode(CountryCode.SC)
-                            .bankCode("SSCB")
-                            .branchCode("1101")
-                            .accountNumber("0000000000001497")
-                            .accountType("USD")
-                            .build(), "SC18SSCB11010000000000001497USD"},
-                {new Iban.Builder()
                         .countryCode(CountryCode.SE)
                         .bankCode("500")
                         .accountNumber("00000058398257466")
                         .build(), "SE4550000000058398257466"},
+||||||| /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/base.java
+                        .countryCode(CountryCode.SK)
+                        .bankCode("1200")
+                        .accountNumber("0000198742637541")
+                        .build(), "SK3112000000198742637541"},
+=======
+                        .countryCode(CountryCode.SK)
+                        .bankCode("1200")
+                        .accountNumber("0000198742637541")
+                        .build(), "SK3112000000198742637541"},
+                {new Iban.Builder()
+                            .countryCode(CountryCode.SV)
+                            .bankCode("CENR")
+                            .accountNumber("00000000000000700025")
+                            .build(), "SV62CENR00000000000000700025"},
+>>>>>>> /usr/src/app/output/arturmkrtchyan/iban4j/1a4730a5aae1edbe3256807f0dd84b518711e0ea/src/test/java/org/iban4j/TestDataHelper.java/right.java
                 {new Iban.Builder()
                         .countryCode(CountryCode.SI)
                         .bankCode("26")
@@ -476,17 +527,6 @@ final class TestDataHelper {
                         .accountNumber("000000270100")
                         .nationalCheckDigit("U")
                         .build(), "SM86U0322509800000000270100"},
-                {new Iban.Builder()
-                            .countryCode(CountryCode.ST)
-                            .bankCode("0001")
-                            .branchCode("0001")
-                            .accountNumber("0051845310112")
-                            .build(), "ST68000100010051845310112"},
-                {new Iban.Builder()
-                            .countryCode(CountryCode.SV)
-                            .bankCode("CENR")
-                            .accountNumber("00000000000000700025")
-                            .build(), "SV62CENR00000000000000700025"},
                 {new Iban.Builder()
                         .countryCode(CountryCode.TF)
                         .bankCode("12345")
