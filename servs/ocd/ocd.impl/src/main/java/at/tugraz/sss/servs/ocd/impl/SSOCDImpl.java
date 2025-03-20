@@ -63,9 +63,10 @@ public class SSOCDImpl extends SSServImplWithDBA implements SSOCDClientI, SSOCDS
     //SSServCallerU.checkKey(parA);
     final SSOCDCreateGraphPar par    = (SSOCDCreateGraphPar) parA.getFromJSON(SSOCDCreateGraphPar.class);
     String response = ocdCreateGraph(par);
-    //sSCon.writeRetFullToClient(response, parA.op);
+    sSCon.writeRetFullToClient(response, parA.op);
   }
 
+<<<<<<< /usr/src/app/output/learning-layers/socialsemanticserver/6a7dca76f4993e256c13ab95b0e38d9b40847fe1/servs/ocd/ocd.impl/src/main/java/at/tugraz/sss/servs/ocd/impl/SSOCDImpl.java/left.java
   @Override
   public String ocdCreateGraph(SSOCDCreateGraphPar parA) throws Exception {
     return SSOCDResource.requestCreateGraph(parA);
@@ -75,7 +76,7 @@ public class SSOCDImpl extends SSServImplWithDBA implements SSOCDClientI, SSOCDS
   public void ocdGetGraphs(SSSocketCon sSCon, SSServPar parA) throws Exception {
     final SSOCDGetGraphsPar par = (SSOCDGetGraphsPar) parA.getFromJSON(SSOCDGetGraphsPar.class);
     String response = ocdGetGraphs(par);
-    //sSCon.writeRetFullToClient(response, parA.op);
+    sSCon.writeRetFullToClient(response, parA.op);
   }
   
   @Override
@@ -87,8 +88,23 @@ public class SSOCDImpl extends SSServImplWithDBA implements SSOCDClientI, SSOCDS
   public void ocdGetGraph(SSSocketCon sSCon, SSServPar parA) throws Exception {
     final SSOCDGetGraphPar par = (SSOCDGetGraphPar) parA.getFromJSON(SSOCDGetGraphPar.class);
     String response = ocdGetGraph(par);
-    //sSCon.writeRetFullToClient(response, parA.op);
+    sSCon.writeRetFullToClient(response, parA.op);
   }
+||||||| /usr/src/app/output/learning-layers/socialsemanticserver/6a7dca76f4993e256c13ab95b0e38d9b40847fe1/servs/ocd/ocd.impl/src/main/java/at/tugraz/sss/servs/ocd/impl/SSOCDImpl.java/base.java
+        //Fixme uncomment to turn on user authorization 
+        //SSServCallerU.checkKey(parA);
+        
+        String response = ocdCreateGraph(1);
+        sSCon.writeRetFullToClient(response, parA.op);
+    }
+=======
+        //Fixme uncomment to turn on user authorization 
+        //SSServCallerU.checkKey(parA);
+        
+        String response = ocdCreateGraph(1);
+        sSCon.writeRetFullToClient(null);
+    }
+>>>>>>> /usr/src/app/output/learning-layers/socialsemanticserver/6a7dca76f4993e256c13ab95b0e38d9b40847fe1/servs/ocd/ocd.impl/src/main/java/at/tugraz/sss/servs/ocd/impl/SSOCDImpl.java/right.java
 
   @Override
   public String ocdGetGraph(SSOCDGetGraphPar parA) throws Exception {
@@ -99,7 +115,7 @@ public class SSOCDImpl extends SSServImplWithDBA implements SSOCDClientI, SSOCDS
   public void ocdDeleteGraph(SSSocketCon sSCon, SSServPar parA) throws Exception {
     final SSOCDDeleteGraphPar par = (SSOCDDeleteGraphPar) parA.getFromJSON(SSOCDDeleteGraphPar.class);
     String response = ocdDeleteGraph(par);
-    //sSCon.writeRetFullToClient(response, parA.op);
+    sSCon.writeRetFullToClient(response, parA.op);
   }
   
   @Override
@@ -113,7 +129,7 @@ public class SSOCDImpl extends SSServImplWithDBA implements SSOCDClientI, SSOCDS
     //SSServCallerU.checkKey(parA);
     final SSOCDCreateCoverPar par = (SSOCDCreateCoverPar) parA.getFromJSON(SSOCDCreateCoverPar.class);
     String response = ocdCreateCover(par);
-    //sSCon.writeRetFullToClient(response, parA.op);
+    sSCon.writeRetFullToClient(response, parA.op);
   }
   
   @Override
