@@ -1,39 +1,22 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.lang.String.format;
-
 import java.lang.reflect.Field;
 import java.util.List;
-
 import org.assertj.core.internal.Failures;
 
 public class AbstractSoftAssertions {
-
   protected final SoftProxies proxies;
 
   public AbstractSoftAssertions() {
     proxies = new SoftProxies();
   }
 
-  public <T, V> V proxy(Class<V> assertClass, Class<T> actualClass, T actual) {
+  public <T extends java.lang.Object, V extends java.lang.Object> V proxy(Class<V> assertClass, Class<T> actualClass, T actual) {
     return proxies.create(assertClass, actualClass, actual);
   }
 
   /**
    * Fails with the given message.
-   * 
    * @param failureMessage error message.
    * @since 2.6.0 / 3.6.0
    */
@@ -52,10 +35,9 @@ public class AbstractSoftAssertions {
     AssertionError error = Failures.instance().failure(String.format(failureMessage, args));
     proxies.collectError(error);
   }
-  
+
   /**
    * Fails with the given message and with the {@link Throwable} that caused the failure.
-   * 
    * @param failureMessage error message.
    * @param realCause cause of the error.
    * @since 2.6.0 / 3.6.0
@@ -69,7 +51,6 @@ public class AbstractSoftAssertions {
   /**
    * Fails with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
-   * 
    * @param throwableClass the Throwable class that was expected to be thrown.
    * @throws AssertionError with a message explaining that a {@link Throwable} of given class was expected to be thrown but had
    *           not been.
@@ -78,21 +59,20 @@ public class AbstractSoftAssertions {
    * {@link Fail#shouldHaveThrown(Class)} can be used as a replacement.
    */
   public void failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
-      shouldHaveThrown(throwableClass);
+    shouldHaveThrown(throwableClass);
   }
 
   /**
    * Fails with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
-   * 
    * @param throwableClass the Throwable class that was expected to be thrown.
    * @throws AssertionError with a message explaining that a {@link Throwable} of given class was expected to be thrown but had
    *           not been.
    * @since 2.6.0 / 3.6.0
    */
   public void shouldHaveThrown(Class<? extends Throwable> throwableClass) {
-      AssertionError error = Failures.instance().expectedThrowableNotThrown(throwableClass);
-      proxies.collectError(error);
+    AssertionError error = Failures.instance().expectedThrowableNotThrown(throwableClass);
+    proxies.collectError(error);
   }
 
   /**
@@ -145,7 +125,8 @@ public class AbstractSoftAssertions {
       Field field = Throwable.class.getDeclaredField("detailMessage");
       field.setAccessible(true);
       field.set(error, errorMessageWithLineNumber);
-    } catch (Exception ignored) {}
+    } catch (Exception ignored) {
+    }
   }
 
   private String simpleClassNameOf(StackTraceElement testStackTraceElement) {
@@ -156,15 +137,7 @@ public class AbstractSoftAssertions {
   private StackTraceElement getFirstStackTraceElementFromTest(StackTraceElement[] stacktrace) {
     for (StackTraceElement element : stacktrace) {
       String className = element.getClassName();
-      if (className.startsWith("sun.reflect")
-          || className.startsWith("java.")
-          || className.startsWith("javax.")
-          || className.startsWith("org.junit.")
-          || className.startsWith("org.eclipse.jdt.internal.junit.")
-          || className.startsWith("org.eclipse.jdt.internal.junit4.")
-          || className.startsWith("org.apache.maven.surefire")
-          || className.startsWith("net.sf.cglib.proxy")
-          || className.startsWith("org.assertj")) {
+      if (className.startsWith("sun.reflect") || className.startsWith("java.") || className.startsWith("javax.") || className.startsWith("org.junit.") || className.startsWith("org.eclipse.jdt.internal.junit.") || className.startsWith("org.eclipse.jdt.internal.junit4.") || className.startsWith("org.apache.maven.surefire") || className.startsWith("net.sf.cglib.proxy") || className.startsWith("org.assertj")) {
         continue;
       }
       return element;

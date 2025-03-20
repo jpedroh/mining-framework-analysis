@@ -1,21 +1,7 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import org.assertj.core.internal.Failures;
 import org.assertj.core.internal.Throwables;
 import org.assertj.core.util.VisibleForTesting;
-
 import java.util.IllegalFormatException;
 
 /**
@@ -31,18 +17,17 @@ import java.util.IllegalFormatException;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-public abstract class AbstractThrowableAssert<S extends AbstractThrowableAssert<S, A>, A extends Throwable>
-    extends AbstractObjectAssert<S, A> {
-
-  @VisibleForTesting
-  Throwables throwables = Throwables.instance();
+public abstract class AbstractThrowableAssert<S extends AbstractThrowableAssert<S, A>, A extends Throwable> extends AbstractObjectAssert<S, A> {
+  @VisibleForTesting Throwables throwables = Throwables.instance();
 
   public AbstractThrowableAssert(A actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
   protected S hasBeenThrown() {
-    if (actual == null) throw Failures.instance().failure("Expecting code to raise a throwable.");
+    if (actual == null) {
+      throw Failures.instance().failure("Expecting code to raise a throwable.");
+    }
     return myself;
   }
 
@@ -308,7 +293,7 @@ public abstract class AbstractThrowableAssert<S extends AbstractThrowableAssert<
   }
 
   /**
-   * Verifies that the actual {@code Throwable} has no suppressed exceptions.
+   * Verifies the actual {@code Throwable} has no suppressed exceptions.
    * <p>
    * Example:
    * <pre><code class='java'> // assertion will pass
@@ -344,7 +329,7 @@ public abstract class AbstractThrowableAssert<S extends AbstractThrowableAssert<
    *
    * // These assertions fail:
    * assertThat(throwable).hasSuppressedException(new IllegalArgumentException("invalid parameter"));
-   * assertThat(throwable).hasSuppressedException(new NullPointerException());</code></pre>
+   * assertThat(throwable).hasCause(new NullPointerException());</code></pre>
    *
    * @param suppressedException the expected suppressed exception
    * @return this assertion object.

@@ -1,24 +1,9 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.data.MapEntry.entry;
 import static org.assertj.core.util.Arrays.array;
-
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Consumer;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.internal.Maps;
 import org.assertj.core.util.Preconditions;
@@ -41,11 +26,8 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Nicolas François
  * @author dorzey
  */
-public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>, A extends Map<K, V>, K, V>
-    extends AbstractAssert<S, A> implements EnumerableAssert<S, Map.Entry<? extends K, ? extends V>> {
-
-  @VisibleForTesting
-  Maps maps = Maps.instance();
+public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>, A extends Map<K, V>, K extends java.lang.Object, V extends java.lang.Object> extends AbstractAssert<S, A> implements EnumerableAssert<S, Map.Entry<? extends K, ? extends V>> {
+  @VisibleForTesting Maps maps = Maps.instance();
 
   public AbstractMapAssert(A actual, Class<?> selfType) {
     super(actual, selfType);
@@ -67,8 +49,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * </p>
    * @throws AssertionError if the {@link Map} is not {@code null} or not empty.
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     maps.assertNullOrEmpty(info, actual);
   }
 
@@ -86,8 +67,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * </p>
    * @throws AssertionError if the {@link Map} of values is not empty.
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     maps.assertEmpty(info, actual);
   }
 
@@ -107,8 +87,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @return {@code this} assertion object.
    * @throws AssertionError if the {@link Map} is empty.
    */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     maps.assertNotEmpty(info, actual);
     return myself;
   }
@@ -132,8 +111,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @return {@code this} assertion object.
    * @throws AssertionError if the number of values of the {@link Map} is not equal to the given one.
    */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     maps.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -191,8 +169,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the other {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual map and the given {@code Iterable} don't have the same size
    */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     maps.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -258,7 +235,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given entries.
    */
-  public S contains(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public S contains(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContains(info, actual, entries);
     return myself;
   }
@@ -277,7 +254,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * assertThat(ringBearers).containsAnyOf(entry(oneRing, frodo), entry(oneRing, sauron));
    * assertThat(emptyMap).containsAnyOf();
    * 
-   * // assertion will fail
+   * // assertions will fail
    * assertThat(ringBearers).containsAnyOf(entry(oneRing, gandalf), entry(oneRing, aragorn));</code></pre>
    *
    * @param entries the given entries.
@@ -288,11 +265,11 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain any of the given entries.
    */
-  public S containsAnyOf(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public S containsAnyOf(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsAnyOf(info, actual, entries);
     return myself;
   }
-  
+
   /**
    * Verifies that the actual map contains all entries of the given map, in any order.
    * <p>
@@ -322,8 +299,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map does not contain the given entries.
    */
   public S containsAllEntriesOf(Map<? extends K, ? extends V> other) {
-    @SuppressWarnings("unchecked")
-    Map.Entry<? extends K, ? extends V>[] entries = other.entrySet().toArray(new Map.Entry[other.size()]);
+    @SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>[] entries = other.entrySet().toArray(new Map.Entry[other.size()]);
     maps.assertContains(info, actual, entries);
     return myself;
   }
@@ -339,10 +315,10 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * ringBearers.put(oneRing, frodo);
    * 
    * // assertions will pass
-   * assertThat(ringBearers).containsEntry(oneRing, frodo).containsEntry(nenya, galadriel);
+   * assertThat(ringBearers).containsEntry(oneRing, frodo).containsEntry(nenya, galadriel);</code></pre>
    * 
    * // assertion will fail
-   * assertThat(ringBearers).containsEntry(oneRing, sauron);</code></pre>
+   * assertThat(ringBearers).containsEntry(oneRing, sauron);
    * 
    * @param key the given key to check.
    * @param value the given value to check.
@@ -359,7 +335,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
   }
 
   /**
-   * Verifies that the actual map contains a value for the given {@code key} that satisfies the given {@code valueCondition}.
+   * Verifies that the actual map contains the value for given {@code key} that satisfy given {@code valueCondition}.
    * <p>
    * Example:
    * <pre><code class='java'> Map&lt;Ring, TolkienCharacter&gt; ringBearers = new HashMap<>();
@@ -368,7 +344,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * ringBearers.put(vilya, elrond);
    * ringBearers.put(oneRing, frodo);
    * 
-   * Condition&lt;TolkienCharacter&gt elfBearer = new Condition&lt;&gt;(&quot;an elf bearer&quot;) {
+   * Condition&lt;Boolean&gt elfBearer = new Condition&lt;TolkienCharacter&gt;(&quot;elf&quot;) {
    *   public boolean matches(TolkienCharacter character) {
    *     return character.getRace() == ELF;
    *   }
@@ -452,7 +428,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains any of the given entries.
    */
-  public S doesNotContain(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public S doesNotContain(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertDoesNotContain(info, actual, entries);
     return myself;
   }
@@ -505,8 +481,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given key.
    */
-  @SuppressWarnings("unchecked")
-  public S containsKey(K key) {
+  @SuppressWarnings(value = { "unchecked" }) public S containsKey(K key) {
     return containsKeys(key);
   }
 
@@ -531,8 +506,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map does not contain the given key.
    * @throws IllegalArgumentException if the given argument is an empty array.
    */
-
-  public S containsKeys(@SuppressWarnings("unchecked") K... keys) {
+  public S containsKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertContainsKeys(info, actual, keys);
     return myself;
   }
@@ -556,8 +530,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains the given key.
    */
-  @SuppressWarnings("unchecked")
-  public S doesNotContainKey(K key) {
+  @SuppressWarnings(value = { "unchecked" }) public S doesNotContainKey(K key) {
     return doesNotContainKeys(key);
   }
 
@@ -581,7 +554,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains the given key.
    */
-  public S doesNotContainKeys(@SuppressWarnings("unchecked") K... keys) {
+  public S doesNotContainKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertDoesNotContainKeys(info, actual, keys);
     return myself;
   }
@@ -609,8 +582,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    *           of the given keys, or the actual map contains more entries than the given ones.
    * @throws IllegalArgumentException if the given argument is an empty array.
    */
-
-  public S containsOnlyKeys(@SuppressWarnings("unchecked") K... keys) {
+  public S containsOnlyKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertContainsOnlyKeys(info, actual, keys);
     return myself;
   }
@@ -661,8 +633,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given values.
    */
-
-  public S containsValues(@SuppressWarnings("unchecked") V... values) {
+  public S containsValues(@SuppressWarnings(value = { "unchecked" }) V... values) {
     maps.assertContainsValues(info, actual, values);
     return myself;
   }
@@ -716,7 +687,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @throws AssertionError if the actual map does not contain the given entries, i.e. the actual map contains some or
    *           none of the given entries, or the actual map contains more entries than the given ones.
    */
-  public S containsOnly(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public S containsOnly(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsOnly(info, actual, entries);
     return myself;
   }
@@ -749,7 +720,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    *           contains some or none of the given entries, or the actual map contains more entries than the given ones
    *           or entries are the same but the order is not.
    */
-  public S containsExactly(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public S containsExactly(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsExactly(info, actual, entries);
     return myself;
   }
@@ -760,9 +731,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @deprecated Custom element Comparator is not supported for MapEntry comparison.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public S usingElementComparator(Comparator<? super Map.Entry<? extends K, ? extends V>> customComparator) {
+  @Override @Deprecated public S usingElementComparator(Comparator<? super Map.Entry<? extends K, ? extends V>> customComparator) {
     throw new UnsupportedOperationException("custom element Comparator is not supported for MapEntry comparison");
   }
 
@@ -772,177 +741,139 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * @deprecated Custom element Comparator is not supported for MapEntry comparison.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public S usingDefaultElementComparator() {
+  @Override @Deprecated public S usingDefaultElementComparator() {
     throw new UnsupportedOperationException("custom element Comparator is not supported for MapEntry comparison");
   }
 
-  // override methods to avoid compilation error when chaining an AbstractAssert method with a AbstractMapAssert one
-  // this is pretty sad, a better fix for that would be welcome
-
-  @Override
-  public S as(String description, Object... args) {
+  @Override public S as(String description, Object... args) {
     return super.as(description, args);
   }
 
-  @Override
-  public S as(Description description) {
+  @Override public S as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public S describedAs(Description description) {
+  @Override public S describedAs(Description description) {
     return super.describedAs(description);
   }
 
-  @Override
-  public S describedAs(String description, Object... args) {
+  @Override public S describedAs(String description, Object... args) {
     return super.describedAs(description, args);
   }
 
-  @Override
-  public S doesNotHave(Condition<? super A> condition) {
+  @Override public S doesNotHave(Condition<? super A> condition) {
     return super.doesNotHave(condition);
   }
 
-  @Override
-  public S doesNotHaveSameClassAs(Object other) {
+  @Override public S doesNotHaveSameClassAs(Object other) {
     return super.doesNotHaveSameClassAs(other);
   }
 
-  @Override
-  public S has(Condition<? super A> condition) {
+  @Override public S has(Condition<? super A> condition) {
     return super.has(condition);
   }
 
-  @Override
-  public S hasSameClassAs(Object other) {
+  @Override public S hasSameClassAs(Object other) {
     return super.hasSameClassAs(other);
   }
 
-  @Override
-  public S hasToString(String expectedToString) {
+  @Override public S hasToString(String expectedToString) {
     return super.hasToString(expectedToString);
   }
 
-  @Override
-  public S is(Condition<? super A> condition) {
+  @Override public S is(Condition<? super A> condition) {
     return super.is(condition);
   }
 
-  @Override
-  public S isEqualTo(Object expected) {
+  @Override public S isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
-  @Override
-  public S isExactlyInstanceOf(Class<?> type) {
+  @Override public S isExactlyInstanceOf(Class<?> type) {
     return super.isExactlyInstanceOf(type);
   }
 
-  @Override
-  public S isIn(Iterable<?> values) {
+  @Override public S isIn(Iterable<?> values) {
     return super.isIn(values);
   }
 
-  @Override
-  public S isIn(Object... values) {
+  @Override public S isIn(Object... values) {
     return super.isIn(values);
   }
 
-  @Override
-  public S isInstanceOf(Class<?> type) {
+  @Override public S isInstanceOf(Class<?> type) {
     return super.isInstanceOf(type);
   }
 
-  @Override
-  public S isInstanceOfAny(Class<?>... types) {
+  @Override public S isInstanceOfAny(Class<?>... types) {
     return super.isInstanceOfAny(types);
   }
 
-  @Override
-  public S isNot(Condition<? super A> condition) {
+  @Override public S isNot(Condition<? super A> condition) {
     return super.isNot(condition);
   }
 
-  @Override
-  public S isNotEqualTo(Object other) {
+  @Override public S isNotEqualTo(Object other) {
     return super.isNotEqualTo(other);
   }
 
-  @Override
-  public S isNotExactlyInstanceOf(Class<?> type) {
+  @Override public S isNotExactlyInstanceOf(Class<?> type) {
     return super.isNotExactlyInstanceOf(type);
   }
 
-  @Override
-  public S isNotIn(Iterable<?> values) {
+  @Override public S isNotIn(Iterable<?> values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public S isNotIn(Object... values) {
+  @Override public S isNotIn(Object... values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public S isNotInstanceOf(Class<?> type) {
+  @Override public S isNotInstanceOf(Class<?> type) {
     return super.isNotInstanceOf(type);
   }
 
-  @Override
-  public S isNotInstanceOfAny(Class<?>... types) {
+  @Override public S isNotInstanceOfAny(Class<?>... types) {
     return super.isNotInstanceOfAny(types);
   }
 
-  @Override
-  public S isNotOfAnyClassIn(Class<?>... types) {
+  @Override public S isNotOfAnyClassIn(Class<?>... types) {
     return super.isNotOfAnyClassIn(types);
   }
 
-  @Override
-  public S isNotNull() {
+  @Override public S isNotNull() {
     return super.isNotNull();
   }
 
-  @Override
-  public S isNotSameAs(Object other) {
+  @Override public S isNotSameAs(Object other) {
     return super.isNotSameAs(other);
   }
 
-  @Override
-  public S isOfAnyClassIn(Class<?>... types) {
+  @Override public S isOfAnyClassIn(Class<?>... types) {
     return super.isOfAnyClassIn(types);
   }
 
-  @Override
-  public S isSameAs(Object expected) {
+  @Override public S isSameAs(Object expected) {
     return super.isSameAs(expected);
   }
 
-  @Override
-  public S overridingErrorMessage(String newErrorMessage, Object... args) {
+  @Override public S overridingErrorMessage(String newErrorMessage, Object... args) {
     return super.overridingErrorMessage(newErrorMessage, args);
   }
 
-  @Override
-  public S usingDefaultComparator() {
+  @Override public S usingDefaultComparator() {
     return super.usingDefaultComparator();
   }
 
-  @Override
-  public S usingComparator(Comparator<? super A> customComparator) {
+  @Override public S usingComparator(Comparator<? super A> customComparator) {
     return super.usingComparator(customComparator);
   }
 
-  @Override
-  public S withFailMessage(String newErrorMessage, Object... args) {
+  @Override public S withFailMessage(String newErrorMessage, Object... args) {
     return super.withFailMessage(newErrorMessage, args);
   }
 
-  @Override
-  public S withThreadDumpOnError() {
+  @Override public S withThreadDumpOnError() {
     return super.withThreadDumpOnError();
   }
 
@@ -969,8 +900,7 @@ public abstract class AbstractMapAssert<S extends AbstractMapAssert<S, A, K, V>,
    * 
    * @throws NullPointerException if the given map is {@code null}.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  public AbstractMapSizeAssert<S, A, K, V> size() {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) public AbstractMapSizeAssert<S, A, K, V> size() {
     Preconditions.checkNotNull(actual, "Can not perform assertions on the size of a null map.");
     return new MapSizeAssert(this, actual.size());
   }
