@@ -21,4 +21,19 @@ public class CheckBoxTest extends TestBase {
         leftCheckBox.click();
         assertTrue(leftCheckBox.isSelected());
     }*/
+//    Panel simpleFormPanel = new Panel(null, "Simple Form");
+//    Checkbox rightCheckBox = new Checkbox("CatRight", simpleFormPanel);
+//    Checkbox leftCheckBox = new Checkbox("CatLeft:", simpleFormPanel);
+//
+//    @Test
+//    public void rightCheckBox() {
+//        rightCheckBox.click();
+//        assertTrue(rightCheckBox.isSelected());
+//    }
+//
+//    @Test
+//    public void leftCheckBox() {
+//        leftCheckBox.click();
+//        assertTrue(leftCheckBox.isSelected());
+//    }
 }
