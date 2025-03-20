@@ -15,17 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class MailboxFactory {
-    private static Logger LOG = LoggerFactory.getLogger(MailboxFactory.class);;
     private final ExecutorService executorService;
     private final MessageQueueFactory messageQueueFactory;
     /** Must also be thread-safe. */
     private final List<AutoCloseable> closables = new Vector<AutoCloseable>();
     private final AtomicBoolean shuttingDown = new AtomicBoolean();
-
     public MailboxFactory() {
         this(null, null);
     }
-
     public MailboxFactory(final ExecutorService executorService,
             final MessageQueueFactory messageQueueFactory) {
         this.executorService = (executorService == null) ? Executors
@@ -33,6 +30,8 @@ public final class MailboxFactory {
         this.messageQueueFactory = (messageQueueFactory == null) ? MessageQueueFactoryImpl.INTANCE
                 : messageQueueFactory;
     }
+	private static Logger LOG = LoggerFactory.getLogger(MailboxFactory.class);
+;
 
     public Mailbox createMailbox() {
         return new MailboxImpl(this, messageQueueFactory.createMessageQueue());
@@ -48,8 +47,8 @@ public final class MailboxFactory {
         } catch (final Exception e) {
             if (!isShuttingDown())
                 throw e;
-            else
-                LOG.warn("Unable to process the request, possible mailbox shutdown had been called in the application");
+            else            
+            	LOG.warn("Unable to process the request, possible mailbox shutdown had been called in the application");
         } catch (final Error e) {
             if (!isShuttingDown())
                 throw e;
