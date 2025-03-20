@@ -1,24 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.commons.csv;
-
 import static org.apache.commons.csv.Token.Type.TOKEN;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -132,8 +113,7 @@ import java.util.TreeMap;
  * @see <a href="package-summary.html">package documentation for more details</a>
  */
 public final class CSVParser implements Iterable<CSVRecord>, Closeable {
-
-    /**
+  /**
      * Creates a parser for the given {@link File}.
      *
      * @param file
@@ -148,14 +128,13 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
-    @SuppressWarnings("resource")
-    public static CSVParser parse(final File file, final Charset charset, final CSVFormat format) throws IOException {
-        Assertions.notNull(file, "file");
-        Assertions.notNull(format, "format");
-        return new CSVParser(new InputStreamReader(new FileInputStream(file), charset), format);
-    }
+  @SuppressWarnings(value = { "resource" }) public static CSVParser parse(final File file, final Charset charset, final CSVFormat format) throws IOException {
+    Assertions.notNull(file, "file");
+    Assertions.notNull(format, "format");
+    return new CSVParser(new InputStreamReader(new FileInputStream(file), charset), format);
+  }
 
-    /**
+  /**
      * Creates a CSV parser using the given {@link CSVFormat}.
      *
      * <p>
@@ -176,15 +155,13 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If there is a problem reading the header or skipping the first record
      * @since 1.5
      */
-    @SuppressWarnings("resource")
-    public static CSVParser parse(final InputStream inputStream, final Charset charset, final CSVFormat format)
-            throws IOException {
-        Assertions.notNull(inputStream, "inputStream");
-        Assertions.notNull(format, "format");
-        return parse(new InputStreamReader(inputStream, charset), format);
-    }
+  @SuppressWarnings(value = { "resource" }) public static CSVParser parse(final InputStream inputStream, final Charset charset, final CSVFormat format) throws IOException {
+    Assertions.notNull(inputStream, "inputStream");
+    Assertions.notNull(format, "format");
+    return parse(new InputStreamReader(inputStream, charset), format);
+  }
 
-    /**
+  /**
      * Creates a parser for the given {@link Path}.
      *
      * @param path
@@ -200,13 +177,13 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If an I/O error occurs
      * @since 1.5
      */
-    public static CSVParser parse(final Path path, final Charset charset, final CSVFormat format) throws IOException {
-        Assertions.notNull(path, "path");
-        Assertions.notNull(format, "format");
-        return parse(Files.newInputStream(path), charset, format);
-    }
+  public static CSVParser parse(final Path path, final Charset charset, final CSVFormat format) throws IOException {
+    Assertions.notNull(path, "path");
+    Assertions.notNull(format, "format");
+    return parse(Files.newInputStream(path), charset, format);
+  }
 
-    /**
+  /**
      * Creates a CSV parser using the given {@link CSVFormat}
      *
      * <p>
@@ -225,11 +202,11 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If there is a problem reading the header or skipping the first record
      * @since 1.5
      */
-    public static CSVParser parse(final Reader reader, final CSVFormat format) throws IOException {
-        return new CSVParser(reader, format);
-    }
+  public static CSVParser parse(final Reader reader, final CSVFormat format) throws IOException {
+    return new CSVParser(reader, format);
+  }
 
-    /**
+  /**
      * Creates a parser for the given {@link String}.
      *
      * @param string
@@ -242,14 +219,13 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
-    public static CSVParser parse(final String string, final CSVFormat format) throws IOException {
-        Assertions.notNull(string, "string");
-        Assertions.notNull(format, "format");
+  public static CSVParser parse(final String string, final CSVFormat format) throws IOException {
+    Assertions.notNull(string, "string");
+    Assertions.notNull(format, "format");
+    return new CSVParser(new StringReader(string), format);
+  }
 
-        return new CSVParser(new StringReader(string), format);
-    }
-
-    /**
+  /**
      * Creates a parser for the given URL.
      *
      * <p>
@@ -269,42 +245,39 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @throws IOException
      *             If an I/O error occurs
      */
-    public static CSVParser parse(final URL url, final Charset charset, final CSVFormat format) throws IOException {
-        Assertions.notNull(url, "url");
-        Assertions.notNull(charset, "charset");
-        Assertions.notNull(format, "format");
+  public static CSVParser parse(final URL url, final Charset charset, final CSVFormat format) throws IOException {
+    Assertions.notNull(url, "url");
+    Assertions.notNull(charset, "charset");
+    Assertions.notNull(format, "format");
+    return new CSVParser(new InputStreamReader(url.openStream(), charset), format);
+  }
 
-        return new CSVParser(new InputStreamReader(url.openStream(), charset), format);
-    }
+  private final CSVFormat format;
 
-    // the following objects are shared to reduce garbage
+  /** A mapping of column names to column indices */
+  private final Map<String, Integer> headerMap;
 
-    private final CSVFormat format;
+  private final Lexer lexer;
 
-    /** A mapping of column names to column indices */
-    private final Map<String, Integer> headerMap;
+  private final CSVRecordIterator csvRecordIterator;
 
-    private final Lexer lexer;
+  /** A record buffer for getRecord(). Grows as necessary and is reused. */
+  private final List<String> recordList = new ArrayList<>();
 
-    private final CSVRecordIterator csvRecordIterator;
-
-    /** A record buffer for getRecord(). Grows as necessary and is reused. */
-    private final List<String> recordList = new ArrayList<>();
-
-    /**
+  /**
      * The next record number to assign.
      */
-    private long recordNumber;
+  private long recordNumber;
 
-    /**
+  /**
      * Lexer offset when the parser does not start parsing at the beginning of the source. Usually used in combination
      * with {@link #recordNumber}.
      */
-    private final long characterOffset;
+  private final long characterOffset;
 
-    private final Token reusableToken = new Token();
+  private final Token reusableToken = new Token();
 
-    /**
+  /**
      * Customized CSV parser using the given {@link CSVFormat}
      *
      * <p>
@@ -321,11 +294,11 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @throws IOException
      *             If there is a problem reading the header or skipping the first record
      */
-    public CSVParser(final Reader reader, final CSVFormat format) throws IOException {
-        this(reader, format, 0, 1);
-    }
+  public CSVParser(final Reader reader, final CSVFormat format) throws IOException {
+    this(reader, format, 0, 1);
+  }
 
-    /**
+  /**
      * Customized CSV parser using the given {@link CSVFormat}
      *
      * <p>
@@ -347,44 +320,40 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *             If there is a problem reading the header or skipping the first record
      * @since 1.1
      */
-    @SuppressWarnings("resource")
-    public CSVParser(final Reader reader, final CSVFormat format, final long characterOffset, final long recordNumber)
-            throws IOException {
-        Assertions.notNull(reader, "reader");
-        Assertions.notNull(format, "format");
+  @SuppressWarnings(value = { "resource" }) public CSVParser(final Reader reader, final CSVFormat format, final long characterOffset, final long recordNumber) throws IOException {
+    Assertions.notNull(reader, "reader");
+    Assertions.notNull(format, "format");
+    this.format = format;
+    this.lexer = new Lexer(format, new ExtendedBufferedReader(reader));
+    this.csvRecordIterator = new CSVRecordIterator();
+    this.headerMap = this.initializeHeader();
+    this.characterOffset = characterOffset;
+    this.recordNumber = recordNumber - 1;
+  }
 
-        this.format = format;
-        this.lexer = new Lexer(format, new ExtendedBufferedReader(reader));
-        this.csvRecordIterator = new CSVRecordIterator();
-        this.headerMap = this.initializeHeader();
-        this.characterOffset = characterOffset;
-        this.recordNumber = recordNumber - 1;
+  private void addRecordValue(final boolean lastRecord) {
+    final String input = this.reusableToken.content.toString();
+    final String inputClean = this.format.getTrim() ? input.trim() : input;
+    if (lastRecord && inputClean.isEmpty() && this.format.getTrailingDelimiter()) {
+      return;
     }
+    final String nullString = this.format.getNullString();
+    this.recordList.add(inputClean.equals(nullString) ? null : inputClean);
+  }
 
-    private void addRecordValue(final boolean lastRecord) {
-        final String input = this.reusableToken.content.toString();
-        final String inputClean = this.format.getTrim() ? input.trim() : input;
-        if (lastRecord && inputClean.isEmpty() && this.format.getTrailingDelimiter()) {
-            return;
-        }
-        final String nullString = this.format.getNullString();
-        this.recordList.add(inputClean.equals(nullString) ? null : inputClean);
-    }
-
-    /**
+  /**
      * Closes resources.
      *
      * @throws IOException
      *             If an I/O error occurs
      */
-    @Override
-    public void close() throws IOException {
-        if (this.lexer != null) {
-            this.lexer.close();
-        }
+  @Override public void close() throws IOException {
+    if (this.lexer != null) {
+      this.lexer.close();
     }
+  }
 
-    /**
+  /**
      * Returns the current line number in the input stream.
      *
      * <p>
@@ -394,32 +363,32 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *
      * @return current line number
      */
-    public long getCurrentLineNumber() {
-        return this.lexer.getCurrentLineNumber();
-    }
+  public long getCurrentLineNumber() {
+    return this.lexer.getCurrentLineNumber();
+  }
 
-    /**
+  /**
      * Gets the first end-of-line string encountered.
      *
      * @return the first end-of-line string
      * @since 1.5
      */
-    public String getFirstEndOfLine() {
-        return lexer.getFirstEol();
-    }
+  public String getFirstEndOfLine() {
+    return lexer.getFirstEol();
+  }
 
-    /**
+  /**
      * Returns a copy of the header map that iterates in column order.
      * <p>
      * The map keys are column names. The map values are 0-based indices.
      * </p>
      * @return a copy of the header map that iterates in column order.
      */
-    public Map<String, Integer> getHeaderMap() {
-        return this.headerMap == null ? null : new LinkedHashMap<>(this.headerMap);
-    }
+  public Map<String, Integer> getHeaderMap() {
+    return this.headerMap == null ? null : new LinkedHashMap<>(this.headerMap);
+  }
 
-    /**
+  /**
      * Returns the current record number in the input stream.
      *
      * <p>
@@ -429,11 +398,11 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      *
      * @return current record number
      */
-    public long getRecordNumber() {
-        return this.recordNumber;
-    }
+  public long getRecordNumber() {
+    return this.recordNumber;
+  }
 
-    /**
+  /**
      * Parses the CSV input according to the given format and returns the content as a list of
      * {@link CSVRecord CSVRecords}.
      *
@@ -445,70 +414,63 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * @throws IOException
      *             on parse error or input read-failure
      */
-    public List<CSVRecord> getRecords() throws IOException {
-        CSVRecord rec;
-        final List<CSVRecord> records = new ArrayList<>();
-        while ((rec = this.nextRecord()) != null) {
-            records.add(rec);
-        }
-        return records;
+  public List<CSVRecord> getRecords() throws IOException {
+    CSVRecord rec;
+    final List<CSVRecord> records = new ArrayList<>();
+    while ((rec = this.nextRecord()) != null) {
+      records.add(rec);
     }
+    return records;
+  }
 
-    /**
+  /**
      * Initializes the name to index mapping if the format defines a header.
      *
      * @return null if the format has no header.
      * @throws IOException if there is a problem reading the header or skipping the first record
      */
-    private Map<String, Integer> initializeHeader() throws IOException {
-        Map<String, Integer> hdrMap = null;
-        final String[] formatHeader = this.format.getHeader();
-        if (formatHeader != null) {
-            hdrMap = this.format.getIgnoreHeaderCase() ?
-                    new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER) :
-                    new LinkedHashMap<String, Integer>();
-
-            String[] headerRecord = null;
-            if (formatHeader.length == 0) {
-                // read the header from the first line of the file
-                final CSVRecord nextRecord = this.nextRecord();
-                if (nextRecord != null) {
-                    headerRecord = nextRecord.values();
-                }
-            } else {
-                if (this.format.getSkipHeaderRecord()) {
-                    this.nextRecord();
-                }
-                headerRecord = formatHeader;
-            }
-
-            // build the name to index mappings
-            if (headerRecord != null) {
-                for (int i = 0; i < headerRecord.length; i++) {
-                    final String header = headerRecord[i];
-                    final boolean containsHeader = hdrMap.containsKey(header);
-                    final boolean emptyHeader = header == null || header.trim().isEmpty();
-                    if (containsHeader && (!emptyHeader || !this.format.getAllowMissingColumnNames())) {
-                        throw new IllegalArgumentException("The header contains a duplicate name: \"" + header +
-                                "\" in " + Arrays.toString(headerRecord));
-                    }
-                    hdrMap.put(header, Integer.valueOf(i));
-                }
-            }
+  private Map<String, Integer> initializeHeader() throws IOException {
+    Map<String, Integer> hdrMap = null;
+    final String[] formatHeader = this.format.getHeader();
+    if (formatHeader != null) {
+      hdrMap = this.format.getIgnoreHeaderCase() ? new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER) : new LinkedHashMap<String, Integer>();
+      String[] headerRecord = null;
+      if (formatHeader.length == 0) {
+        final CSVRecord nextRecord = this.nextRecord();
+        if (nextRecord != null) {
+          headerRecord = nextRecord.values();
         }
-        return hdrMap;
+      } else {
+        if (this.format.getSkipHeaderRecord()) {
+          this.nextRecord();
+        }
+        headerRecord = formatHeader;
+      }
+      if (headerRecord != null) {
+        for (int i = 0; i < headerRecord.length; i++) {
+          final String header = headerRecord[i];
+          final boolean containsHeader = hdrMap.containsKey(header);
+          final boolean emptyHeader = header == null || header.trim().isEmpty();
+          if (containsHeader && (!emptyHeader || !this.format.getAllowMissingColumnNames())) {
+            throw new IllegalArgumentException("The header contains a duplicate name: \"" + header + "\" in " + Arrays.toString(headerRecord));
+          }
+          hdrMap.put(header, Integer.valueOf(i));
+        }
+      }
     }
+    return hdrMap;
+  }
 
-    /**
+  /**
      * Gets whether this parser is closed.
      *
      * @return whether this parser is closed.
      */
-    public boolean isClosed() {
-        return this.lexer.isClosed();
-    }
+  public boolean isClosed() {
+    return this.lexer.isClosed();
+  }
 
-    /**
+  /**
      * Returns an iterator on the records.
      *
      * <p>
@@ -520,110 +482,100 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
      * {@link NoSuchElementException}.
      * </p>
      */
-    @Override
-    public Iterator<CSVRecord> iterator() {
-        return csvRecordIterator;
+  @Override public Iterator<CSVRecord> iterator() {
+    return csvRecordIterator;
+  }
+
+  class CSVRecordIterator implements Iterator<CSVRecord> {
+    private CSVRecord current;
+
+    private CSVRecord getNextRecord() {
+      try {
+        return CSVParser.this.nextRecord();
+      } catch (final IOException e) {
+        throw new IllegalStateException(e.getClass().getSimpleName() + " reading next record: " + e.toString(), e);
+      }
     }
 
-    class CSVRecordIterator implements Iterator<CSVRecord> {
-        private CSVRecord current;
+    @Override public boolean hasNext() {
+      if (CSVParser.this.isClosed()) {
+        return false;
+      }
+      if (this.current == null) {
+        this.current = this.getNextRecord();
+      }
+      return this.current != null;
+    }
 
-        private CSVRecord getNextRecord() {
-            try {
-                return CSVParser.this.nextRecord();
-            } catch (final IOException e) {
-                throw new IllegalStateException(
-                        e.getClass().getSimpleName() + " reading next record: " + e.toString(), e);
-            }
+    @Override public CSVRecord next() {
+      if (CSVParser.this.isClosed()) {
+        throw new NoSuchElementException("CSVParser has been closed");
+      }
+      CSVRecord next = this.current;
+      this.current = null;
+      if (next == null) {
+        next = this.getNextRecord();
+        if (next == null) {
+          throw new NoSuchElementException("No more CSV records available");
         }
+      }
+      return next;
+    }
 
-        @Override
-        public boolean hasNext() {
-            if (CSVParser.this.isClosed()) {
-                return false;
-            }
-            if (this.current == null) {
-                this.current = this.getNextRecord();
-            }
+    @Override public void remove() {
+      throw new UnsupportedOperationException();
+    }
+  }
 
-            return this.current != null;
-        }
 
-        @Override
-        public CSVRecord next() {
-            if (CSVParser.this.isClosed()) {
-                throw new NoSuchElementException("CSVParser has been closed");
-            }
-            CSVRecord next = this.current;
-            this.current = null;
 
-            if (next == null) {
-                // hasNext() wasn't called before
-                next = this.getNextRecord();
-                if (next == null) {
-                    throw new NoSuchElementException("No more CSV records available");
-                }
-            }
-
-            return next;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    };
-
-    /**
+  /**
      * Parses the next record from the current point in the stream.
      *
      * @return the record as an array of values, or {@code null} if the end of the stream has been reached
      * @throws IOException
      *             on parse error or input read-failure
      */
-    CSVRecord nextRecord() throws IOException {
-        CSVRecord result = null;
-        this.recordList.clear();
-        StringBuilder sb = null;
-        final long startCharPosition = lexer.getCharacterPosition() + this.characterOffset;
-        do {
-            this.reusableToken.reset();
-            this.lexer.nextToken(this.reusableToken);
-            switch (this.reusableToken.type) {
-            case TOKEN:
-                this.addRecordValue(false);
-                break;
-            case EORECORD:
-                this.addRecordValue(true);
-                break;
-            case EOF:
-                if (this.reusableToken.isReady) {
-                    this.addRecordValue(true);
-                }
-                break;
-            case INVALID:
-                throw new IOException("(line " + this.getCurrentLineNumber() + ") invalid parse sequence");
-            case COMMENT: // Ignored currently
-                if (sb == null) { // first comment for this record
-                    sb = new StringBuilder();
-                } else {
-                    sb.append(Constants.LF);
-                }
-                sb.append(this.reusableToken.content);
-                this.reusableToken.type = TOKEN; // Read another token
-                break;
-            default:
-                throw new IllegalStateException("Unexpected Token type: " + this.reusableToken.type);
-            }
-        } while (this.reusableToken.type == TOKEN);
-
-        if (!this.recordList.isEmpty()) {
-            this.recordNumber++;
-            final String comment = sb == null ? null : sb.toString();
-            result = new CSVRecord(this.recordList.toArray(new String[this.recordList.size()]), this.headerMap, comment,
-                    this.recordNumber, startCharPosition);
+  CSVRecord nextRecord() throws IOException {
+    CSVRecord result = null;
+    this.recordList.clear();
+    StringBuilder sb = null;
+    final long startCharPosition = lexer.getCharacterPosition() + this.characterOffset;
+    do {
+      this.reusableToken.reset();
+      this.lexer.nextToken(this.reusableToken);
+      switch (this.reusableToken.type) {
+        case TOKEN:
+        this.addRecordValue(false);
+        break;
+        case EORECORD:
+        this.addRecordValue(true);
+        break;
+        case EOF:
+        if (this.reusableToken.isReady) {
+          this.addRecordValue(true);
         }
-        return result;
+        break;
+        case INVALID:
+        throw new IOException("(line " + this.getCurrentLineNumber() + ") invalid parse sequence");
+        case COMMENT:
+        if (sb == null) {
+          sb = new StringBuilder();
+        } else {
+          sb.append(Constants.LF);
+        }
+        sb.append(this.reusableToken.content);
+        this.reusableToken.type = TOKEN;
+        break;
+        default:
+        throw new IllegalStateException("Unexpected Token type: " + this.reusableToken.type);
+      }
+    } while(this.reusableToken.type == TOKEN);
+    if (!this.recordList.isEmpty()) {
+      this.recordNumber++;
+      final String comment = sb == null ? null : sb.toString();
+      result = new CSVRecord(this.recordList.toArray(new String[this.recordList.size()]), this.headerMap, comment, this.recordNumber, startCharPosition);
     }
-
+    return result;
+  }
 }
