@@ -76,7 +76,6 @@ public class DialogFactory {
 						xTypeToWidgetMakerMap,
 						classLoader,
 						classPool);
-
 				if(builtFieldWidget instanceof Html5SmartImageWidget && ((Html5SmartImageWidget)builtFieldWidget).isTab()){
 					tabList.add(builtFieldWidget);
 				}else{

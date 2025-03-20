@@ -6,20 +6,20 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.NotFoundException;
-
 import org.codehaus.plexus.util.StringUtils;
-
 import com.citytechinc.cq.component.annotations.DialogField;
-import com.citytechinc.cq.component.dialog.DialogElement;
 import com.citytechinc.cq.component.dialog.exception.InvalidComponentFieldException;
 import com.citytechinc.cq.component.dialog.maker.WidgetMaker;
-
+import com.citytechinc.cq.component.dialog.DialogElement;
+import com.citytechinc.cq.component.dialog.impl.Html5SmartImageWidget;
+import com.citytechinc.cq.component.dialog.impl.MultiValueWidget;
+import com.citytechinc.cq.component.dialog.impl.Option;
+import com.citytechinc.cq.component.dialog.impl.SelectionWidget;
 
 public class WidgetFactory {
 
@@ -30,7 +30,7 @@ public class WidgetFactory {
 	public static final String MULTIFIELD_XTYPE = "multifield";
 	public static final String HTML5SMARTIMAGE_XTYPE = "html5smartimage";
 
-	public static DialogElement make(
+	public static Widget make(
 			CtClass componentClass,
 			CtField annotatedWidgetField,
 			Field widgetField,
@@ -56,6 +56,50 @@ public class WidgetFactory {
 
 		return xTypeToWidgetMakerMap.get(xtype).make(xtype, widgetField, annotatedWidgetField, containingClass, componentClass, classToXTypeMap);
 
+	}
+
+	private static final Html5SmartImageWidget buildHtml5SmartImageWidget(String fieldName,String fieldLabel, String fieldDescription,boolean required,Html5SmartImage smartImage,DialogField dialogField){
+		boolean disableFlush=smartImage.disableFlush();
+		boolean disableInfo=smartImage.disableInfo();
+		boolean disableZoom=smartImage.disableZoom();
+		boolean allowUpload=smartImage.allowUpload();
+		String cropParameter=null;
+		String fileNameParameter=null;
+		String fileReferenceParameter=null;
+		String mapParameter=null;
+		String rotateParameter=null;
+		String uploadUrl=null;
+		String ddGroups=null;
+		String name=null;
+		Integer height=null;
+		if(!StringUtils.isEmpty(smartImage.name())){
+			name=smartImage.name();
+		}
+		if(!StringUtils.isEmpty(smartImage.cropParameter())){
+			cropParameter=smartImage.cropParameter();
+		}
+		if(!StringUtils.isEmpty(smartImage.fileNameParameter())){
+			fileNameParameter=smartImage.fileNameParameter();
+		}
+		if(!StringUtils.isEmpty(smartImage.fileReferenceParameter())){
+			fileReferenceParameter=smartImage.fileReferenceParameter();
+		}
+		if(!StringUtils.isEmpty(smartImage.mapParameter())){
+			mapParameter=smartImage.mapParameter();
+		}
+		if(!StringUtils.isEmpty(smartImage.rotateParameter())){
+			rotateParameter=smartImage.rotateParameter();
+		}
+		if(!StringUtils.isEmpty(smartImage.uploadUrl())){
+			uploadUrl=smartImage.uploadUrl();
+		}
+		if(!StringUtils.isEmpty(smartImage.ddGroups())){
+			ddGroups=smartImage.ddGroups();
+		}
+		if(smartImage.height()!=0){
+			height=smartImage.height();
+		}
+		return new Html5SmartImageWidget(name,disableFlush, disableInfo, disableZoom, cropParameter, fileNameParameter, fileReferenceParameter, mapParameter, rotateParameter, uploadUrl, ddGroups, allowUpload, required, fieldLabel, fieldName, fieldDescription,height,smartImage.tab());
 	}
 
 	private static final String getXTypeForField(Field widgetField, CtField ctWidgetField, DialogField propertyAnnotation, Map<Class<?>, String> classToXTypeMap, ClassLoader classLoader, ClassPool classPool) throws InvalidComponentFieldException, CannotCompileException, NotFoundException, ClassNotFoundException {
