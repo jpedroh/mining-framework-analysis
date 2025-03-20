@@ -25,9 +25,11 @@ import org.scribe.oauth.OAuthService;
  * @author jc
  */
 public class RequestBuilder {
-
-    private String hostname = "api.tumblr.com";
+    
+    private OAuthService service;
+    private Token token;
     private final JumblrClient client;
+    private String hostname = "api.tumblr.com";
 
     public RequestBuilder(JumblrClient client) {
         this.client = client;
@@ -67,7 +69,13 @@ public class RequestBuilder {
     }
 
     private OAuthRequest constructGet(String path, Map<String, ?> queryParams) {
-        String url = "https://" + hostname + "/v2" + path;
+<<<<<<< /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/left.java
+        String url = "http://" + hostname + "/v2" + path;
+||||||| /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/base.java
+        String url = "http://api.tumblr.com/v2" + path;
+=======
+        String url = "https://api.tumblr.com/v2" + path;
+>>>>>>> /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/right.java
         OAuthRequest request = new OAuthRequest(Verb.GET, url);
         if (queryParams != null) {
             for (String key : queryParams.keySet()) {
@@ -78,7 +86,13 @@ public class RequestBuilder {
     }
 
     private OAuthRequest constructPost(String path, Map<String, ?> bodyMap) {
-        String url = "https://" + hostname + "/v2" + path;
+<<<<<<< /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/left.java
+        String url = "http://" + hostname + "/v2" + path;
+||||||| /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/base.java
+        String url = "http://api.tumblr.com/v2" + path;
+=======
+        String url = "https://api.tumblr.com/v2" + path;
+>>>>>>> /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/right.java
         OAuthRequest request = new OAuthRequest(Verb.POST, url);
 
         for (String key : bodyMap.keySet()) {
@@ -133,11 +147,11 @@ public class RequestBuilder {
     }
 
     /**
-     * Set hostname without protocol
+     * Set hostname without protocol 
      * @param host such as "api.tumblr.com"
      */
     public void setHostname(String host) {
         this.hostname = host;
     }
-
+    
 }

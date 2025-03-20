@@ -35,7 +35,6 @@ public class Post extends Resource {
     private Long reblogged_from_id;
     private String reblogged_from_name;
     private Long note_count;
-
     /**
      * Get the id of the author of the post
      * @return possibly null author id
