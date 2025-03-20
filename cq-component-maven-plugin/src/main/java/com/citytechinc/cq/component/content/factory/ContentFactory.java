@@ -1,153 +1,121 @@
 package com.citytechinc.cq.component.content.factory;
-
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javassist.CtClass;
-
-import org.codehaus.plexus.util.StringUtils;
-
 import com.citytechinc.cq.component.annotations.Component;
-import com.citytechinc.cq.component.annotations.ContentProperty;
+import java.util.List;
 import com.citytechinc.cq.component.content.Content;
-import com.citytechinc.cq.component.content.ContentParameters;
+import javassist.CtClass;
 import com.citytechinc.cq.component.dialog.exception.InvalidComponentClassException;
-import com.citytechinc.cq.component.xml.NameSpacedAttribute;
+import org.codehaus.plexus.util.StringUtils;
+import com.citytechinc.cq.component.content.ContentParameters;
 
 public class ContentFactory {
+  private ContentFactory() {
+  }
 
-	private ContentFactory() {
-	}
+  public static final Content make(CtClass componentClass, String defaultGroup) throws InvalidComponentClassException, ClassNotFoundException {
+    Component componentAnnotation = (Component) componentClass.getAnnotation(Component.class);
+    if (componentAnnotation == null) {
+      throw new InvalidComponentClassException();
+    }
+    ContentParameters parameters = new ContentParameters();
+    parameters.setAllowedChildren(getAllowedChildrenForComponent(componentAnnotation));
+    parameters.setAllowedParents(getAllowedParentsForComponent(componentAnnotation));
+    parameters.setComponentGroup(getGroupForComponent(componentClass, componentAnnotation, defaultGroup));
+    parameters.setCellName(getCellNameForComponent(componentAnnotation));
 
-	public static final Content make(CtClass componentClass, String defaultGroup)
-		throws InvalidComponentClassException, ClassNotFoundException {
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/07c0f64ada9b04b6050f7897c803cfb942b15eb3/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/content/factory/ContentFactory.java/left.java
+    parameters.setIsContainer(getIsContainerForComponent(componentClass, componentAnnotation));
+=======
+    List<ContentProperty> additionalProperties = Arrays.asList(componentAnnotation.contentAdditionalProperties());
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/07c0f64ada9b04b6050f7897c803cfb942b15eb3/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/content/factory/ContentFactory.java/right.java
 
-		Component componentAnnotation = (Component) componentClass.getAnnotation(Component.class);
+    parameters.setNoDecoration(getNoDecorationForComponent(componentAnnotation));
+    parameters.setTemplatePath(getTemplatePathForComponent(componentAnnotation));
+    parameters.setDialogPath(getDialogPathForComponent(componentAnnotation));
+    parameters.setCreated(getCreatedForComponent(componentAnnotation));
+    parameters.setDescription(getDescriptionForComponent(componentAnnotation));
+    parameters.setTitle(getTitleForComponent(componentClass, componentAnnotation));
+    parameters.setResourceSuperType(getResourceSuperTypeForComponent(componentAnnotation));
+    return new Content(parameters, additionalProperties);
+  }
 
-		if (componentAnnotation == null) {
-			throw new InvalidComponentClassException();
-		}
+  private static String getDescriptionForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.description())) {
+      return componentAnnotation.description();
+    }
+    return null;
+  }
 
-		ContentParameters parameters = new ContentParameters();
+  private static String getCreatedForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.created())) {
+      return componentAnnotation.created();
+    }
+    return null;
+  }
 
-		parameters.setAllowedChildren(getAllowedChildrenForComponent(componentAnnotation));
-		parameters.setAllowedParents(getAllowedParentsForComponent(componentAnnotation));
-		parameters.setComponentGroup(getGroupForComponent(componentClass, componentAnnotation, defaultGroup));
-		parameters.setCellName(getCellNameForComponent(componentAnnotation));
-		parameters.setIsContainer(getIsContainerForComponent(componentClass, componentAnnotation));
-		parameters.setNoDecoration(getNoDecorationForComponent(componentAnnotation));
-		parameters.setTemplatePath(getTemplatePathForComponent(componentAnnotation));
-		parameters.setDialogPath(getDialogPathForComponent(componentAnnotation));
-		parameters.setCreated(getCreatedForComponent(componentAnnotation));
-		parameters.setDescription(getDescriptionForComponent(componentAnnotation));
-		parameters.setTitle(getTitleForComponent(componentClass, componentAnnotation));
-		parameters.setResourceSuperType(getResourceSuperTypeForComponent(componentAnnotation));
-		parameters.setAdditionalProperties(getAdditionalPropertiesForComponent(componentAnnotation));
+  private static String getResourceSuperTypeForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.resourceSuperType())) {
+      return componentAnnotation.resourceSuperType();
+    }
+    return null;
+  }
 
-		return new Content(parameters);
-	}
+  private static String getDialogPathForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.dialogPath())) {
+      return componentAnnotation.dialogPath();
+    }
+    return null;
+  }
 
-	private static Map<String, ?> getAdditionalPropertiesForComponent(Component componentAnnotation) {
-		if (componentAnnotation.contentAdditionalProperties().length > 0) {
-			Map<String, Object> additionalProperties = new HashMap<String, Object>();
-			for (ContentProperty contentProp : componentAnnotation.contentAdditionalProperties()) {
-				if (contentProp.namespace().isEmpty()) {
-					additionalProperties.put(contentProp.name(), contentProp.value());
-				} else {
-					NameSpacedAttribute<String> nsa = new NameSpacedAttribute<String>(contentProp.namespace(), null,
-						contentProp.value());
-					additionalProperties.put(contentProp.name(), nsa);
-				}
-			}
-			return additionalProperties;
-		}
-		return null;
-	}
+  private static String getTemplatePathForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.templatePath())) {
+      return componentAnnotation.templatePath();
+    }
+    return null;
+  }
 
-	private static String getDescriptionForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.description())) {
-			return componentAnnotation.description();
-		}
-		return null;
-	}
+  private static Boolean getNoDecorationForComponent(Component componentAnnotation) {
+    return componentAnnotation.noDecoration();
+  }
 
-	private static String getCreatedForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.created())) {
-			return componentAnnotation.created();
-		}
-		return null;
-	}
+  private static String getCellNameForComponent(Component componentAnnotation) {
+    if (StringUtils.isNotEmpty(componentAnnotation.cellName())) {
+      return componentAnnotation.cellName();
+    }
+    return null;
+  }
 
-	private static String getResourceSuperTypeForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.resourceSuperType())) {
-			return componentAnnotation.resourceSuperType();
-		}
-		return null;
-	}
+  private static List<String> getAllowedParentsForComponent(Component componentAnnotation) {
+    if (componentAnnotation.allowedParents().length > 0) {
+      return Arrays.asList(componentAnnotation.allowedParents());
+    }
+    return null;
+  }
 
-	private static String getDialogPathForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.dialogPath())) {
-			return componentAnnotation.dialogPath();
-		}
-		return null;
-	}
+  private static List<String> getAllowedChildrenForComponent(Component componentAnnotation) {
+    if (componentAnnotation.allowedChildren().length > 0) {
+      return Arrays.asList(componentAnnotation.allowedChildren());
+    }
+    return null;
+  }
 
-	private static String getTemplatePathForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.templatePath())) {
-			return componentAnnotation.templatePath();
-		}
-		return null;
-	}
+  private static final Boolean getIsContainerForComponent(CtClass componentClass, Component componentAnnotation) {
+    return componentAnnotation.isContainer();
+  }
 
-	private static Boolean getNoDecorationForComponent(Component componentAnnotation) {
-		return componentAnnotation.noDecoration();
-	}
+  private static final String getTitleForComponent(CtClass componentClass, Component componentAnnotation) {
+    String overrideTitle = componentAnnotation.value();
+    if (StringUtils.isNotEmpty(overrideTitle)) {
+      return overrideTitle;
+    }
+    return componentClass.getSimpleName();
+  }
 
-	private static String getCellNameForComponent(Component componentAnnotation) {
-		if (StringUtils.isNotEmpty(componentAnnotation.cellName())) {
-			return componentAnnotation.cellName();
-		}
-		return null;
-	}
-
-	private static List<String> getAllowedParentsForComponent(Component componentAnnotation) {
-		if (componentAnnotation.allowedParents().length > 0) {
-			return Arrays.asList(componentAnnotation.allowedParents());
-		}
-		return null;
-	}
-
-	private static List<String> getAllowedChildrenForComponent(Component componentAnnotation) {
-		if (componentAnnotation.allowedChildren().length > 0) {
-			return Arrays.asList(componentAnnotation.allowedChildren());
-		}
-		return null;
-	}
-
-	private static final Boolean getIsContainerForComponent(CtClass componentClass, Component componentAnnotation) {
-		return componentAnnotation.isContainer();
-	}
-
-	private static final String getTitleForComponent(CtClass componentClass, Component componentAnnotation) {
-		String overrideTitle = componentAnnotation.value();
-
-		if (StringUtils.isNotEmpty(overrideTitle)) {
-			return overrideTitle;
-		}
-
-		return componentClass.getSimpleName();
-	}
-
-	private static final String getGroupForComponent(CtClass componentClass, Component componentAnnotation,
-		String defaultGroup) {
-		String overrideGroup = componentAnnotation.group();
-
-		if (StringUtils.isNotEmpty(overrideGroup)) {
-			return overrideGroup;
-		}
-
-		return defaultGroup;
-	}
+  private static final String getGroupForComponent(CtClass componentClass, Component componentAnnotation, String defaultGroup) {
+    String overrideGroup = componentAnnotation.group();
+    if (StringUtils.isNotEmpty(overrideGroup)) {
+      return overrideGroup;
+    }
+    return defaultGroup;
+  }
 }
