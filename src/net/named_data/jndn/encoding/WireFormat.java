@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2013-2015 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn.encoding;
-
 import java.nio.ByteBuffer;
 import net.named_data.jndn.ControlParameters;
 import net.named_data.jndn.Data;
@@ -39,9 +19,7 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeName(Name name)
-  {
+  public Blob encodeName(Name name) {
     throw new UnsupportedOperationException("encodeName is not implemented");
   }
 
@@ -53,9 +31,7 @@ public class WireFormat {
    * limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  decodeName(Name name, ByteBuffer input) throws EncodingException
-  {
+  public void decodeName(Name name, ByteBuffer input) throws EncodingException {
     throw new UnsupportedOperationException("decodeName is not implemented");
   }
 
@@ -79,11 +55,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeInterest(Interest interest, int[] signedPortionBeginOffset, int[] signedPortionEndOffset)
-  {
-    throw new UnsupportedOperationException
-      ("encodeInterest is not implemented");
+  public Blob encodeInterest(Interest interest, int[] signedPortionBeginOffset, int[] signedPortionEndOffset) {
+    throw new UnsupportedOperationException("encodeInterest is not implemented");
   }
 
   /**
@@ -94,9 +67,7 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public final Blob
-  encodeInterest(Interest interest)
-  {
+  public final Blob encodeInterest(Interest interest) {
     return encodeInterest(interest, new int[1], new int[1]);
   }
 
@@ -124,13 +95,8 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  decodeInterest
-    (Interest interest, ByteBuffer input, int[] signedPortionBeginOffset,
-     int[] signedPortionEndOffset) throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeInterest is not implemented");
+  public void decodeInterest(Interest interest, ByteBuffer input, int[] signedPortionBeginOffset, int[] signedPortionEndOffset) throws EncodingException {
+    throw new UnsupportedOperationException("decodeInterest is not implemented");
   }
 
   /**
@@ -143,9 +109,7 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public final void
-  decodeInterest(Interest interest, ByteBuffer input) throws EncodingException
-  {
+  public final void decodeInterest(Interest interest, ByteBuffer input) throws EncodingException {
     decodeInterest(interest, input, new int[1], new int[1]);
   }
 
@@ -164,10 +128,7 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeData
-    (Data data, int[] signedPortionBeginOffset, int[] signedPortionEndOffset)
-  {
+  public Blob encodeData(Data data, int[] signedPortionBeginOffset, int[] signedPortionEndOffset) {
     throw new UnsupportedOperationException("encodeData is not implemented");
   }
 
@@ -178,9 +139,7 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public final Blob
-  encodeData(Data data)
-  {
+  public final Blob encodeData(Data data) {
     return encodeData(data, new int[1], new int[1]);
   }
 
@@ -202,11 +161,7 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  decodeData
-    (Data data, ByteBuffer input, int[] signedPortionBeginOffset,
-     int[] signedPortionEndOffset) throws EncodingException
-  {
+  public void decodeData(Data data, ByteBuffer input, int[] signedPortionBeginOffset, int[] signedPortionEndOffset) throws EncodingException {
     throw new UnsupportedOperationException("decodeData is not implemented");
   }
 
@@ -220,9 +175,7 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public final void
-  decodeData(Data data, ByteBuffer input) throws EncodingException
-  {
+  public final void decodeData(Data data, ByteBuffer input) throws EncodingException {
     decodeData(data, input, new int[1], new int[1]);
   }
 
@@ -234,11 +187,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeControlParameters(ControlParameters controlParameters)
-  {
-    throw new UnsupportedOperationException
-      ("encodeControlParameters is not implemented");
+  public Blob encodeControlParameters(ControlParameters controlParameters) {
+    throw new UnsupportedOperationException("encodeControlParameters is not implemented");
   }
 
   /**
@@ -252,12 +202,8 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  decodeControlParameters
-    (ControlParameters controlParameters, ByteBuffer input) throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeControlParameters is not implemented");
+  public void decodeControlParameters(ControlParameters controlParameters, ByteBuffer input) throws EncodingException {
+    throw new UnsupportedOperationException("decodeControlParameters is not implemented");
   }
 
   /**
@@ -268,11 +214,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeSignatureInfo(Signature signature)
-  {
-    throw new UnsupportedOperationException
-      ("encodeSignatureInfo is not implemented");
+  public Blob encodeSignatureInfo(Signature signature) {
+    throw new UnsupportedOperationException("encodeSignatureInfo is not implemented");
   }
 
   /**
@@ -288,12 +231,8 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public Signature
-  decodeSignatureInfoAndValue
-    (ByteBuffer signatureInfo, ByteBuffer signatureValue) throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeSignatureInfoAndValue is not implemented");
+  public Signature decodeSignatureInfoAndValue(ByteBuffer signatureInfo, ByteBuffer signatureValue) throws EncodingException {
+    throw new UnsupportedOperationException("decodeSignatureInfoAndValue is not implemented");
   }
 
   /**
@@ -306,11 +245,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeSignatureValue(Signature signature)
-  {
-    throw new UnsupportedOperationException
-      ("encodeSignatureValue is not implemented");
+  public Blob encodeSignatureValue(Signature signature) {
+    throw new UnsupportedOperationException("encodeSignatureValue is not implemented");
   }
 
   /**
@@ -321,11 +257,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeLocalControlHeader(LocalControlHeader localControlHeader)
-  {
-    throw new UnsupportedOperationException
-      ("encodeLocalControlHeader is not implemented");
+  public Blob encodeLocalControlHeader(LocalControlHeader localControlHeader) {
+    throw new UnsupportedOperationException("encodeLocalControlHeader is not implemented");
   }
 
   /**
@@ -339,13 +272,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public void
-  decodeLocalControlHeader
-    (LocalControlHeader localControlHeader, ByteBuffer input)
-    throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeLocalControlHeader is not implemented");
+  public void decodeLocalControlHeader(LocalControlHeader localControlHeader, ByteBuffer input) throws EncodingException {
+    throw new UnsupportedOperationException("decodeLocalControlHeader is not implemented");
   }
 
   /**
@@ -356,11 +284,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeDelegationSet(DelegationSet delegationSet)
-  {
-    throw new UnsupportedOperationException
-      ("encodeDelegationSet is not implemented");
+  public Blob encodeDelegationSet(DelegationSet delegationSet) {
+    throw new UnsupportedOperationException("encodeDelegationSet is not implemented");
   }
 
   /**
@@ -373,13 +298,10 @@ public class WireFormat {
    * class does not override.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  decodeDelegationSet
-    (DelegationSet delegationSet, ByteBuffer input) throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeDelegationSet is not implemented");
+  public void decodeDelegationSet(DelegationSet delegationSet, ByteBuffer input) throws EncodingException {
+    throw new UnsupportedOperationException("decodeDelegationSet is not implemented");
   }
+
   /**
    * Encode the EncryptedContent and return the encoding. Your derived class
    * should override.
@@ -388,11 +310,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public Blob
-  encodeEncryptedContent(EncryptedContent encryptedContent)
-  {
-    throw new UnsupportedOperationException
-      ("encodeEncryptedContent is not implemented");
+  public Blob encodeEncryptedContent(EncryptedContent encryptedContent) {
+    throw new UnsupportedOperationException("encodeEncryptedContent is not implemented");
   }
 
   /**
@@ -406,13 +325,8 @@ public class WireFormat {
    * @throws UnsupportedOperationException for unimplemented if the derived
    * class does not override.
    */
-  public void
-  decodeEncryptedContent
-    (EncryptedContent encryptedContent, ByteBuffer input)
-    throws EncodingException
-  {
-    throw new UnsupportedOperationException
-      ("decodeEncryptedContent is not implemented");
+  public void decodeEncryptedContent(EncryptedContent encryptedContent, ByteBuffer input) throws EncodingException {
+    throw new UnsupportedOperationException("decodeEncryptedContent is not implemented");
   }
 
   /**
@@ -421,9 +335,7 @@ public class WireFormat {
    * @param wireFormat An object of a subclass of WireFormat.  This does not
    * make a copy.
    */
-  public static void
-  setDefaultWireFormat(WireFormat wireFormat)
-  {
+  public static void setDefaultWireFormat(WireFormat wireFormat) {
     defaultWireFormat_ = wireFormat;
   }
 
@@ -432,9 +344,7 @@ public class WireFormat {
    * which was set with setDefaultWireFormat.
    * @return The WireFormat object.
    */
-  public static WireFormat
-  getDefaultWireFormat()
-  {
+  public static WireFormat getDefaultWireFormat() {
     return defaultWireFormat_;
   }
 
