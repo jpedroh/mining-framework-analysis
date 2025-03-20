@@ -11,7 +11,7 @@ import se.vidstige.jadb.managers.BatteryManager;
 import se.vidstige.jadb.managers.KeyInputManager;
 
 import java.io.*;
-
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class RealDeviceTestCases {
