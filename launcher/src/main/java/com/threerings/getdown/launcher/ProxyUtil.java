@@ -8,37 +8,34 @@ package com.threerings.getdown.launcher;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Reader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.ServiceLoader;
-
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
-import ca.beq.util.win32.registry.RegistryKey;
-import ca.beq.util.win32.registry.RegistryValue;
-import ca.beq.util.win32.registry.RootKey;
-
 import com.threerings.getdown.data.Application;
 import com.threerings.getdown.spi.ProxyAuth;
 import com.threerings.getdown.util.Config;
 import com.threerings.getdown.util.ConnectionUtil;
 import com.threerings.getdown.util.LaunchUtil;
 import com.threerings.getdown.util.StringUtil;
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RegistryValue;
+import ca.beq.util.win32.registry.RootKey;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import javax.script.Bindings;
+import javax.script.Invocable;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import static com.threerings.getdown.Log.log;
 
@@ -70,7 +67,7 @@ public final class ProxyUtil {
                     if ("ProxyEnable".equals(value.getName())) {
                         enabled = "1".equals(value.getStringValue());
                     }
-                    if (value.getName().equals("ProxyServer")) {
+                    if ("ProxyServer".equals(value.getName())) {
                         String[] hostPort = splitHostPort(value.getStringValue());
                         rhost = hostPort[0];
                         rport = hostPort[1];
@@ -269,7 +266,7 @@ public final class ProxyUtil {
     }
 
     private static String[] splitHostPort (String hostPort) {
-        int cidx = hostPort.indexOf(":");
+        int cidx = hostPort.indexOf(':');
         if (cidx == -1) {
             return new String[] { hostPort, null};
         } else {
