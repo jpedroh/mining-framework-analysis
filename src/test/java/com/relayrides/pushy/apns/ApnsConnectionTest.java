@@ -252,8 +252,7 @@ public class ApnsConnectionTest extends BasePushyTest {
 		final TestListener listener = new TestListener(mutex);
 		final ApnsConnection<SimpleApnsPushNotification> apnsConnection =
 				new ApnsConnection<SimpleApnsPushNotification>(
-						TEST_ENVIRONMENT, SSLTestUtil.createSSLContextForTestClient(), this.getEventLoopGroup(),
-						ApnsConnection.DEFAULT_SENT_NOTIFICATION_BUFFER_CAPACITY, listener);
+						TEST_ENVIRONMENT, SSLTestUtil.createSSLContextForTestClient(), this.getEventLoopGroup(), listener);
 
 		final CountDownLatch latch = this.getApnsServer().getAcceptedNotificationCountDownLatch(1);
 

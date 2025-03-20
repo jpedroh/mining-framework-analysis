@@ -94,8 +94,6 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 
 	private static final Logger log = LoggerFactory.getLogger(ApnsConnection.class);
 
-	public static final int DEFAULT_SENT_NOTIFICATION_BUFFER_CAPACITY = 8192;
-
 	protected enum ApnsFrameItem {
 		DEVICE_TOKEN((byte)1),
 		PAYLOAD((byte)2),
@@ -123,6 +121,7 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 			throw new IllegalArgumentException(String.format("No frame item found with code %d", code));
 		}
 	}
+	public static final int DEFAULT_SENT_NOTIFICATION_BUFFER_CAPACITY = 8192;
 
 	private class RejectedNotificationDecoder extends ByteToMessageDecoder {
 
