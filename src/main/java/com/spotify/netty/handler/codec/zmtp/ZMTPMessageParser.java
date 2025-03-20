@@ -1,62 +1,49 @@
-/*
- * Copyright (c) 2012-2013 Spotify AB
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.spotify.netty.handler.codec.zmtp;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.spotify.netty.handler.codec.zmtp.ZMTPUtils.MORE_FLAG;
-import static java.lang.Math.min;
 import static java.nio.ByteOrder.BIG_ENDIAN;
+import static java.lang.Math.min;
+import static org.jboss.netty.buffer.ChannelBuffers.swapLong;
 
 /**
  * Decodes ZMTP messages from a channel buffer, reading and accumulating frame by frame, keeping
  * state and updating buffer reader indices as necessary.
  */
 public class ZMTPMessageParser {
+  private static final byte LONG_FLAG = 0x02;
 
-    private static final byte LONG_FLAG = 0x02;
-    private final boolean enveloped;
+  private final boolean enveloped;
 
-    private final long sizeLimit;
-    private final int version;
+  private final long sizeLimit;
 
-    private List<ZMTPFrame> envelope;
-    private List<ZMTPFrame> content;
-    private List<ZMTPFrame> part;
-    private boolean hasMore;
-    private long size;
-    private int frameSize;
+  private final int version;
 
-    // Used by discarding mode
-    private int frameRemaining;
-    private boolean headerParsed;
+  private List<ZMTPFrame> envelope;
 
-    public ZMTPMessageParser(final boolean enveloped, final long sizeLimit, int version) {
-        this.enveloped = enveloped;
-        this.sizeLimit = sizeLimit;
-        this.version = version;
-        reset();
-    }
+  private List<ZMTPFrame> content;
 
-    /**
+  private List<ZMTPFrame> part;
+
+  private boolean hasMore;
+
+  private long size;
+
+  private int frameSize;
+
+  private int frameRemaining;
+
+  private boolean headerParsed;
+
+  public ZMTPMessageParser(final boolean enveloped, final long sizeLimit, int version) {
+    this.enveloped = enveloped;
+    this.sizeLimit = sizeLimit;
+    this.version = version;
+    reset();
+  }
+
+  /**
      * Parses as many whole frames from the buffer as possible, until the final frame is encountered.
      * If the message was completed, it returns the frames of the message. Otherwise it returns null
      * to indicate that more data is needed.
@@ -67,185 +54,174 @@ public class ZMTPMessageParser {
      * @param buffer Buffer with data
      * @return A {@link ZMTPMessage} if it was completely parsed, otherwise null.
      */
-    public ZMTPParsedMessage parse(final ByteBuf buffer) throws ZMTPMessageParsingException {
-
-        // If we're in discarding mode, continue discarding data
-        if (isOversized(size)) {
-            return discardFrames(buffer);
-        }
-
-        while (buffer.readableBytes() > 0) {
-            buffer.markReaderIndex();
-
-            // Parse frame header
-            final boolean parsedHeader = parseZMTPHeader(buffer);
-            if (!parsedHeader) {
-                // Wait for more data to decode
-                buffer.resetReaderIndex();
-                return null;
-            }
-
-            // Check if the message size limit is reached
-            if (isOversized(size + frameSize)) {
-                // Enter discarding mode
-                buffer.resetReaderIndex();
-                return discardFrames(buffer);
-            }
-
-            if (frameSize > buffer.readableBytes()) {
-                // Wait for more data to decode
-                buffer.resetReaderIndex();
-                return null;
-            }
-
-            size += frameSize;
-
-            // Read frame content
-            final ZMTPFrame frame = ZMTPFrame.read(buffer, frameSize);
-
-            if (!frame.hasData() && part == envelope) {
-                // Skip the delimiter
-                part = content;
-            } else {
-                part.add(frame);
-            }
-
-            if (!hasMore) {
-                return finish(false);
-            }
-        }
-
-        return null;
+  public ZMTPParsedMessage parse(final ByteBuf buffer) throws ZMTPMessageParsingException {
+    if (isOversized(size)) {
+      return discardFrames(buffer);
     }
+    while (buffer.readableBytes() > 0) {
+      buffer.markReaderIndex();
+      final boolean parsedHeader = parseZMTPHeader(buffer);
+      if (!parsedHeader) {
+        buffer.resetReaderIndex();
+        return null;
+      }
+      if (isOversized(size + frameSize)) {
+        buffer.resetReaderIndex();
+        return discardFrames(buffer);
+      }
+      if (frameSize > buffer.readableBytes()) {
+        buffer.resetReaderIndex();
+        return null;
+      }
+      size += frameSize;
+      final ZMTPFrame frame = ZMTPFrame.read(buffer, frameSize);
+      if (!frame.hasData() && part == envelope) {
+        part = content;
+      } else {
+        part.add(frame);
+      }
+      if (!hasMore) {
+        return finish(false);
+      }
+    }
+    return null;
+  }
 
-    /**
+  /**
      * Check if the message is too large and frames should be discarded.
      */
-    private boolean isOversized(final long size) {
-        return size > sizeLimit;
-    }
+  private boolean isOversized(final long size) {
+    return size > sizeLimit;
+  }
 
-    /**
+  /**
      * Create a message from the parsed frames and reset the parser.
      */
-    private ZMTPParsedMessage finish(final boolean truncated) {
-        final ZMTPMessage message = new ZMTPMessage(envelope, content);
-        final ZMTPParsedMessage parsedMessage = new ZMTPParsedMessage(truncated, size, message);
-        reset();
-        return parsedMessage;
-    }
+  private ZMTPParsedMessage finish(final boolean truncated) {
+    final ZMTPMessage message = new ZMTPMessage(envelope, content);
+    final ZMTPParsedMessage parsedMessage = new ZMTPParsedMessage(truncated, size, message);
+    reset();
+    return parsedMessage;
+  }
 
-    /**
+  /**
      * Reset parser in preparation for the next message.
      */
-    private void reset() {
-        envelope = new ArrayList<ZMTPFrame>(3);
-        content = new ArrayList<ZMTPFrame>(3);
-        part = enveloped ? envelope : content;
-        hasMore = true;
-        size = 0;
-    }
+  private void reset() {
+    envelope = new ArrayList<ZMTPFrame>(3);
+    content = new ArrayList<ZMTPFrame>(3);
+    part = enveloped ? envelope : content;
+    hasMore = true;
+    size = 0;
+  }
 
-    /**
+  /**
      * Discard frames for current message.
      *
      * @return A truncated message if done discarding, null if not yet done.
      */
-    private ZMTPParsedMessage discardFrames(final ByteBuf buffer)
-            throws ZMTPMessageParsingException {
-
-        while (buffer.readableBytes() > 0) {
-            // Parse header if necessary
-            if (!headerParsed) {
-                buffer.markReaderIndex();
-                headerParsed = parseZMTPHeader(buffer);
-                if (!headerParsed) {
-                    // Wait for more data to decode
-                    buffer.resetReaderIndex();
-                    return null;
-                }
-                size += frameSize;
-                frameRemaining = frameSize;
-            }
-
-            // Discard bytes
-            final int discardBytes = min(frameRemaining, buffer.readableBytes());
-            frameRemaining -= discardBytes;
-            buffer.skipBytes(discardBytes);
-
-            // Check if this frame is completely discarded
-            final boolean done = frameRemaining == 0;
-            if (done) {
-                headerParsed = false;
-            }
-
-            // Check if this message is done discarding
-            if (done && !hasMore) {
-                // We're done discarding
-                return finish(true);
-            }
+  private ZMTPParsedMessage discardFrames(final ByteBuf buffer) throws ZMTPMessageParsingException {
+    while (buffer.readableBytes() > 0) {
+      if (!headerParsed) {
+        buffer.markReaderIndex();
+        headerParsed = parseZMTPHeader(buffer);
+        if (!headerParsed) {
+          buffer.resetReaderIndex();
+          return null;
         }
-
-        return null;
+        size += frameSize;
+        frameRemaining = frameSize;
+      }
+      final int discardBytes = min(frameRemaining, buffer.readableBytes());
+      frameRemaining -= discardBytes;
+      buffer.skipBytes(discardBytes);
+      final boolean done = frameRemaining == 0;
+      if (done) {
+        headerParsed = false;
+      }
+      if (done && !hasMore) {
+        return finish(true);
+      }
     }
+    return null;
+  }
 
-    private boolean parseZMTPHeader(final ByteBuf buffer) throws ZMTPMessageParsingException {
-        return version == 1 ? parseZMTP1Header(buffer) : parseZMTP2Header(buffer);
-    }
 
-    /**
+<<<<<<< /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/main/java/com/spotify/netty/handler/codec/zmtp/ZMTPMessageParser.java/left.java
+  /**
      * Parse a frame header.
      */
-    private boolean parseZMTP1Header(final ByteBuf buffer) throws ZMTPMessageParsingException {
-        final long len = ZMTPUtils.decodeLength(buffer);
-
-        if (len > Integer.MAX_VALUE) {
-            throw new ZMTPMessageParsingException("Received too large frame: " + len);
-        }
-
-        if (len == -1) {
-            return false;
-        }
-
-        if (len == 0) {
-            throw new ZMTPMessageParsingException("Received frame with zero length");
-        }
-
-        // Read if we have more frames from flag byte
-        if (buffer.readableBytes() < 1) {
-            // Wait for more data to decode
-            return false;
-        }
-
-        frameSize = (int) len - 1;
-        hasMore = (buffer.readByte() & MORE_FLAG) == MORE_FLAG;
-
-        return true;
+  private boolean parseFrameHeader(final ByteBuf buffer) throws ZMTPMessageParsingException {
+    final long len = ZMTPUtils.decodeLength(buffer);
+    if (len > Integer.MAX_VALUE) {
+      throw new ZMTPMessageParsingException("Received too large frame: " + len);
     }
-
-    private boolean parseZMTP2Header(ByteBuf buffer) throws ZMTPMessageParsingException {
-        if (buffer.readableBytes() < 2) {
-            return false;
-        }
-        int flags = buffer.readByte();
-        hasMore = (flags & MORE_FLAG) == MORE_FLAG;
-        if ((flags & LONG_FLAG) != LONG_FLAG) {
-            frameSize = buffer.readByte() & 0xff;
-            return true;
-        }
-        if (buffer.readableBytes() < 8) {
-            return false;
-        }
-        long len;
-        if (buffer.order() == BIG_ENDIAN) {
-            len = buffer.readLong();
-        } else {
-            len = ByteBufUtil.swapLong(buffer.readLong());
-        }
-        if (len > Integer.MAX_VALUE) {
-            throw new ZMTPMessageParsingException("Received too large frame: " + len);
-        }
-        frameSize = (int) len;
-        return true;
+    if (len == -1) {
+      return false;
     }
+    if (len == 0) {
+      throw new ZMTPMessageParsingException("Received frame with zero length");
+    }
+    if (buffer.readableBytes() < 1) {
+      return false;
+    }
+    frameSize = (int) len - 1;
+    hasMore = (buffer.readByte() & MORE_FLAG) == MORE_FLAG;
+    return true;
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+  private boolean parseZMTPHeader(final ChannelBuffer buffer) throws ZMTPMessageParsingException {
+    return version == 1 ? parseZMTP1Header(buffer) : parseZMTP2Header(buffer);
+  }
+
+  /**
+   * Parse a frame header.
+   */
+  private boolean parseZMTP1Header(final ChannelBuffer buffer) throws ZMTPMessageParsingException {
+    final long len = ZMTPUtils.decodeLength(buffer);
+    if (len > Integer.MAX_VALUE) {
+      throw new ZMTPMessageParsingException("Received too large frame: " + len);
+    }
+    if (len == -1) {
+      return false;
+    }
+    if (len == 0) {
+      throw new ZMTPMessageParsingException("Received frame with zero length");
+    }
+    if (buffer.readableBytes() < 1) {
+      return false;
+    }
+    frameSize = (int) len - 1;
+    hasMore = (buffer.readByte() & MORE_FLAG) == MORE_FLAG;
+    return true;
+  }
+
+  private boolean parseZMTP2Header(ChannelBuffer buffer) throws ZMTPMessageParsingException {
+    if (buffer.readableBytes() < 2) {
+      return false;
+    }
+    int flags = buffer.readByte();
+    hasMore = (flags & MORE_FLAG) == MORE_FLAG;
+    if ((flags & LONG_FLAG) != LONG_FLAG) {
+      frameSize = buffer.readByte() & 0xff;
+      return true;
+    }
+    if (buffer.readableBytes() < 8) {
+      return false;
+    }
+    long len;
+    if (buffer.order() == BIG_ENDIAN) {
+      len = buffer.readLong();
+    } else {
+      len = swapLong(buffer.readLong());
+    }
+    if (len > Integer.MAX_VALUE) {
+      throw new ZMTPMessageParsingException("Received too large frame: " + len);
+    }
+    frameSize = (int) len;
+    return true;
+  }
 }
