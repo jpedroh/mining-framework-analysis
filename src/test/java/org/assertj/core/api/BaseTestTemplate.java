@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-
 import org.assertj.core.api.abstract_.AbstractAssert_isNull_Test;
 import org.assertj.core.internal.Conditions;
 import org.assertj.core.internal.Objects;
@@ -45,13 +31,14 @@ import org.junit.Test;
  * 
  * @author Olivier Michallat
  */
-public abstract class BaseTestTemplate<S extends AbstractAssert<S, A>, A> extends BaseTest {
+public abstract class BaseTestTemplate<S extends AbstractAssert<S, A>, A extends java.lang.Object> extends BaseTest {
   protected S assertions;
+
   protected Objects objects;
+
   protected Conditions conditions;
 
-  @Before
-  public final void setUp() {
+  @Before public final void setUp() {
     assertions = create_assertions();
     inject_internal_objects();
   }
@@ -75,8 +62,7 @@ public abstract class BaseTestTemplate<S extends AbstractAssert<S, A>, A> extend
     assertions.conditions = conditions;
   }
 
-  @Test
-  public void should_have_internal_effects() {
+  @Test public void should_have_internal_effects() {
     invoke_api_method();
     verify_internal_effects();
   }
@@ -85,8 +71,7 @@ public abstract class BaseTestTemplate<S extends AbstractAssert<S, A>, A> extend
    * For the few API methods that don't return {@code this}, override this method to do nothing (see
    * {@link AbstractAssert_isNull_Test#should_return_this()} for an example).
    */
-  @Test
-  public void should_return_this() {
+  @Test public void should_return_this() {
     S returned = invoke_api_method();
     assertThat(returned).isSameAs(assertions);
   }
@@ -94,7 +79,7 @@ public abstract class BaseTestTemplate<S extends AbstractAssert<S, A>, A> extend
   protected AssertionInfo getInfo(S someAssertions) {
     return someAssertions.info;
   }
-  
+
   protected AssertionInfo info() {
     return getInfo(assertions);
   }
