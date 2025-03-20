@@ -122,6 +122,7 @@ public interface User extends JsonReadable, JsonPatchable {
 
     /**
      * Smart user with extra features.
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/0ee30e0fca501fd57580cfb2470c9eefd5b50969/src/main/java/com/jcabi/github/User.java/left.java
      * @todo #1:30min Implement methods to retrieve all values provided
      *  by Github for a single user, see:
      *  http://developer.github.com/v3/users/#get-a-single-user
@@ -129,6 +130,15 @@ public interface User extends JsonReadable, JsonPatchable {
      *  items should have its own method. Of course, every new item should
      *  be tested by a new unit test method.
      * @todo #913:30min Implement the operation User.Smart.markAsRead().
+||||||| /usr/src/app/output/jcabi/jcabi-github/0ee30e0fca501fd57580cfb2470c9eefd5b50969/src/main/java/com/jcabi/github/User.java/base.java
+     * @todo #1:30min Implement methods to retrieve all values provided
+     *  by Github for a single user, see:
+     *  http://developer.github.com/v3/users/#get-a-single-user
+     *  At the moment we implement just a few, but every data
+     *  items should have its own method. Of course, every new item should
+     *  be tested by a new unit test method.
+=======
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/0ee30e0fca501fd57580cfb2470c9eefd5b50969/src/main/java/com/jcabi/github/User.java/right.java
      * @see <a href="http://developer.github.com/v3/users/#get-a-single-user">Get a Single User</a>
      */
     @Immutable
