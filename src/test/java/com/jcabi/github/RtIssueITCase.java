@@ -30,9 +30,9 @@
 package com.jcabi.github;
 
 import com.jcabi.aspects.Tv;
-import com.jcabi.log.Logger;
 import javax.json.Json;
 import org.apache.commons.lang3.RandomStringUtils;
+import com.jcabi.log.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
