@@ -6,6 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
+import org.opencv.core.RotatedRect;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
@@ -15,11 +16,9 @@ import org.openpnp.machine.reference.wizards.ReferenceNozzleTipConfigurationWiza
 import org.openpnp.machine.reference.wizards.ReferenceNozzleTipPartDetectionWizard;
 import org.openpnp.machine.reference.wizards.ReferenceNozzleTipToolChangerWizard;
 import org.openpnp.model.Configuration;
+import org.openpnp.model.Length;
 import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
-import org.openpnp.spi.Head;
-import org.openpnp.spi.Nozzle;
-import org.openpnp.spi.NozzleTip;
 import org.openpnp.spi.PropertySheetHolder;
 import org.openpnp.spi.base.AbstractNozzleTip;
 import org.simpleframework.xml.Attribute;
@@ -194,19 +193,6 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
         this.changerMid2ToEndSpeed = changerMid2ToEndSpeed;
     }
 
-    public Nozzle getParentNozzle() {
-        for (Head head : Configuration.get().getMachine().getHeads()) {
-            for (Nozzle nozzle : head.getNozzles()) {
-                for (NozzleTip nozzleTip : Configuration.get().getMachine().getNozzleTips()) {
-                    if (nozzleTip == this) {
-                        return nozzle;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-	
     public double getVacuumLevelPartOnLow() {
         return vacuumLevelPartOnLow;
     }

@@ -30,7 +30,6 @@ import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
-import org.simpleframework.xml.core.Commit;
 
 @Root
 public class ReferenceNozzleTipCalibration extends AbstractModelObject {
@@ -415,18 +414,6 @@ public class ReferenceNozzleTipCalibration extends AbstractModelObject {
     @Attribute(required = false)
     private RecalibrationTrigger recalibrationTrigger = RecalibrationTrigger.NozzleTipChangeInJob;
 
-    /**
-     * TODO Left for backward compatibility. Unused. Can be removed after Feb 7, 2020.
-     */
-    @Deprecated
-    @Attribute(required=false)
-    private Double angleIncrement = null;
-
-    @Commit
-    public void commit() {
-        angleIncrement = null;
-    }
-
     // Max allowed linear distance w.r.t. bottom camera for an offset measurement - measurements above threshold are removed from pipelines results 
     @Attribute(required = false)
     @Deprecated
@@ -460,8 +447,19 @@ public class ReferenceNozzleTipCalibration extends AbstractModelObject {
         if (!(homing || Configuration.get().getMachine().isHomed())) {
             throw new Exception("Machine not yet homed, nozzle tip calibration request aborted");
         }
-
+        
+        // TODO STOPSHIP refactor calibration to nozzle, instead of nozzletip
+        if (true) {
+            throw new Exception("Calibration is broken in this version. Please downgrade if you require calibration.");
+        }
+//        Nozzle nozzle = nozzleTip.getParentNozzle();
+<<<<<<< /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTipCalibration.java/left.java
+        ReferenceNozzle nozzle = null;
+||||||| /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTipCalibration.java/base.java
+        ReferenceNozzle nozzle = nozzleTip.getParentNozzle();
+=======
         ReferenceNozzle nozzle = (ReferenceNozzle)nozzleTip.getParentNozzle();
+>>>>>>> /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTipCalibration.java/right.java
         if (nozzle.getCalibrationNozzleTip() != nozzleTip) {
             if (nozzleTip.isUnloadedNozzleTipStandin()) {
                 throw new Exception("Please unload the nozzle tip first.");
@@ -603,7 +601,7 @@ public class ReferenceNozzleTipCalibration extends AbstractModelObject {
         // reset all nozzle tip calibrations, as they have become invalid
         for (Head head : Configuration.get().getMachine().getHeads()) {
             for (Nozzle nozzle  : head.getNozzles()) {
-                for (NozzleTip nt : nozzle.getCompatibleNozzleTips()) {
+                for (NozzleTip nt : nozzle.getNozzleTips()) {
                     if (nt instanceof ReferenceNozzleTip) {
                         ReferenceNozzleTip rnt = (ReferenceNozzleTip)nt;
                         // the calibration has become invalid

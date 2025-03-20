@@ -19,6 +19,7 @@
 
 package org.openpnp.machine.reference.wizards;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,23 +34,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Bindings;
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
 import org.openpnp.gui.support.DoubleConverter;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.IntegerConverter;
-import org.openpnp.gui.support.LengthConverter;
 import org.openpnp.machine.reference.ReferenceNozzleTip;
 import org.openpnp.machine.reference.ReferenceNozzleTipCalibration;
 import org.openpnp.model.Configuration;
-import org.openpnp.model.Location;
-import org.openpnp.spi.Camera;
-import org.openpnp.spi.HeadMountable;
-import org.openpnp.util.MovableUtils;
 import org.openpnp.util.UiUtils;
-import org.openpnp.util.VisionUtils;
 import org.openpnp.vision.pipeline.CvPipeline;
 import org.openpnp.vision.pipeline.ui.CvPipelineEditor;
 import org.openpnp.vision.pipeline.ui.CvPipelineEditorDialog;
@@ -59,10 +57,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.Bindings;
-import java.awt.FlowLayout;
 
 public class ReferenceNozzleTipCalibrationWizard extends AbstractConfigurationWizard {
     private final ReferenceNozzleTip nozzleTip;
@@ -261,6 +255,25 @@ public class ReferenceNozzleTipCalibrationWizard extends AbstractConfigurationWi
         @Override
         public void actionPerformed(ActionEvent arg0) {
             UiUtils.submitUiMachineTask(() -> {
+<<<<<<< /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/wizards/ReferenceNozzleTipCalibrationWizard.java/left.java
+                // TODO STOPSHIP refactor calibration to nozzle, instead of nozzletip
+                
+                if (true) {
+                    throw new Exception("Calibration is broken in this version. Please downgrade if you require calibration.");
+                }
+                
+            //                HeadMountable nozzle = nozzleTip.getParentNozzle();
+            //                Camera camera = VisionUtils.getBottomVisionCamera();
+            //                Location location = camera.getLocation();
+            //
+            //                MovableUtils.moveToLocationAtSafeZ(nozzle, location);
+||||||| /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/wizards/ReferenceNozzleTipCalibrationWizard.java/base.java
+                HeadMountable nozzle = nozzleTip.getParentNozzle();
+                Camera camera = VisionUtils.getBottomVisionCamera();
+                Location location = camera.getLocation();
+
+                MovableUtils.moveToLocationAtSafeZ(nozzle, location);
+=======
                 HeadMountable nozzle = nozzleTip.getParentNozzle();
                 Camera camera = VisionUtils.getBottomVisionCamera();
                 Location location = camera.getLocation(nozzle)
@@ -268,6 +281,7 @@ public class ReferenceNozzleTipCalibrationWizard extends AbstractConfigurationWi
                                 nozzleTip.getCalibration().getCalibrationZOffset().getValue(), 0));
 
                 MovableUtils.moveToLocationAtSafeZ(nozzle, location);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/14992da6ab44f34a81b4cab67ed34628e22a13e2/src/main/java/org/openpnp/machine/reference/wizards/ReferenceNozzleTipCalibrationWizard.java/right.java
             });
         }
     };

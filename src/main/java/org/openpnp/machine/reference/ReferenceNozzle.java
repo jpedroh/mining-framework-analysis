@@ -161,7 +161,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     }
     
     private ReferenceNozzleTip getUnloadedNozzleTipStandin() {
-        for (NozzleTip nozzleTip : this.getCompatibleNozzleTips()) {
+        for (NozzleTip nozzleTip : this.getNozzleTips()) {
             if (nozzleTip instanceof ReferenceNozzleTip) {
                 ReferenceNozzleTip referenceNozzleTip = (ReferenceNozzleTip)nozzleTip;
                 if (referenceNozzleTip.isUnloadedNozzleTipStandin()) {
@@ -254,7 +254,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     @Override
     public void home() throws Exception {
         Logger.debug("{}.home()", getName());
-        for (NozzleTip attachedNozzleTip : this.getCompatibleNozzleTips()) {
+        for (NozzleTip attachedNozzleTip : this.getNozzleTips()) {
             if (attachedNozzleTip instanceof ReferenceNozzleTip) {
                 ReferenceNozzleTip calibrationNozzleTip = (ReferenceNozzleTip)attachedNozzleTip;
                 if (calibrationNozzleTip.getCalibration().isRecalibrateOnHomeNeeded()) {
