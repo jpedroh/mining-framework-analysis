@@ -1,42 +1,9 @@
-/*
- * Copyright (c) 2007-present, Stephen Colebourne & Michael Nascimento Santos
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- *  * Neither the name of JSR-310 nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package org.threeten.extra.scale;
-
 import static java.time.temporal.ChronoField.INSTANT_SECONDS;
 import static java.time.temporal.ChronoField.NANO_OF_SECOND;
 import static org.threeten.extra.scale.UtcRules.NANOS_PER_SECOND;
 import static org.threeten.extra.scale.UtcRules.OFFSET_MJD_EPOCH;
 import static org.threeten.extra.scale.UtcRules.SECS_PER_DAY;
-
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -46,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.JulianFields;
 import java.time.temporal.TemporalAccessor;
-
 import org.joda.convert.FromString;
 import org.joda.convert.ToString;
 
@@ -107,32 +73,29 @@ import org.joda.convert.ToString;
  * This class must be treated as a value type. Do not synchronize, rely on the
  * identity hash code or use the distinction between equals() and ==.
  */
-public final class UtcInstant
-        implements Comparable<UtcInstant>, Serializable {
-    // does not implement Temporal as that would enable methods like
-    // Duration.between which gives the wrong answer due to lossy conversion
-
-    /**
+public final class UtcInstant implements Comparable<UtcInstant>, Serializable {
+  /**
      * Serialization version.
      */
-    private static final long serialVersionUID = 2600294095511836210L;
+  private static final long serialVersionUID = 2600294095511836210L;
 
-    /**
+  /**
      * The Modified Julian Day, from the epoch of 1858-11-17.
      */
-    private final long mjDay;
-    /**
+  private final long mjDay;
+
+  /**
      * The number of nanoseconds, later along the time-line, from the MJD field.
      * This is always positive and includes leap seconds.
      */
-    private final long nanoOfDay;
-    /**
+  private final long nanoOfDay;
+
+  /**
      * A cache of the result from {@link #toString()} 
      */
-    private transient String toString;
+  private transient String toString;
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Obtains an instance of {@code UtcInstant} from a Modified Julian Day with
      * a nanosecond fraction of day.
      * <p>
@@ -154,12 +117,12 @@ public final class UtcInstant
      * @return the UTC instant, not null
      * @throws IllegalArgumentException if nanoOfDay is out of range
      */
-    public static UtcInstant ofModifiedJulianDay(long mjDay, long nanoOfDay) {
-        UtcRules.system().validateModifiedJulianDay(mjDay, nanoOfDay);
-        return new UtcInstant(mjDay, nanoOfDay);
-    }
+  public static UtcInstant ofModifiedJulianDay(long mjDay, long nanoOfDay) {
+    UtcRules.system().validateModifiedJulianDay(mjDay, nanoOfDay);
+    return new UtcInstant(mjDay, nanoOfDay);
+  }
 
-    /**
+  /**
      * Obtains an instance of {@code UtcInstant} from an {@code Instant}.
      * <p>
      * Converting a UTC-SLS instant to UTC requires leap second rules.
@@ -173,11 +136,11 @@ public final class UtcInstant
      * @throws DateTimeException if the range of {@code UtcInstant} is exceeded
      * @throws ArithmeticException if numeric overflow occurs
      */
-    public static UtcInstant of(Instant instant) {
-        return UtcRules.system().convertToUtc(instant);
-    }
+  public static UtcInstant of(Instant instant) {
+    return UtcRules.system().convertToUtc(instant);
+  }
 
-    /**
+  /**
      * Obtains an instance of {@code UtcInstant} from a {@code TaiInstant}.
      * <p>
      * Converting a TAI instant to UTC requires leap second rules.
@@ -193,12 +156,11 @@ public final class UtcInstant
      * @throws DateTimeException if the range of {@code UtcInstant} is exceeded
      * @throws ArithmeticException if numeric overflow occurs
      */
-    public static UtcInstant of(TaiInstant instant) {
-        return UtcRules.system().convertToUtc(instant);
-    }
+  public static UtcInstant of(TaiInstant instant) {
+    return UtcRules.system().convertToUtc(instant);
+  }
 
-    //-------------------------------------------------------------------------
-    /**
+  /**
      * Obtains an instance of {@code UtcInstant} from a text string,
      * such as {@code 2007-12-03T10:15:30.00Z}.
      * <p>
@@ -210,36 +172,33 @@ public final class UtcInstant
      * @throws DateTimeParseException if the text cannot be parsed
      * @throws DateTimeException if parsed text represents an invalid leap second
      */
-    @FromString
-    public static UtcInstant parse(CharSequence text) {
-        TemporalAccessor parsed = DateTimeFormatter.ISO_INSTANT.parse(text);
-        long epochSecond = parsed.getLong(INSTANT_SECONDS);
-        long nanoOfSecond = parsed.getLong(NANO_OF_SECOND);
-        boolean leap = parsed.query(DateTimeFormatter.parsedLeapSecond());
-        long epochDay = Math.floorDiv(epochSecond, SECS_PER_DAY);
-        long mjd = epochDay + OFFSET_MJD_EPOCH;
-        long nanoOfDay = Math.floorMod(epochSecond, SECS_PER_DAY) * NANOS_PER_SECOND + nanoOfSecond;
-        if (leap) {
-            nanoOfDay += NANOS_PER_SECOND;
-        }
-        return UtcInstant.ofModifiedJulianDay(mjd, nanoOfDay);
+  @FromString public static UtcInstant parse(CharSequence text) {
+    TemporalAccessor parsed = DateTimeFormatter.ISO_INSTANT.parse(text);
+    long epochSecond = parsed.getLong(INSTANT_SECONDS);
+    long nanoOfSecond = parsed.getLong(NANO_OF_SECOND);
+    boolean leap = parsed.query(DateTimeFormatter.parsedLeapSecond());
+    long epochDay = Math.floorDiv(epochSecond, SECS_PER_DAY);
+    long mjd = epochDay + OFFSET_MJD_EPOCH;
+    long nanoOfDay = Math.floorMod(epochSecond, SECS_PER_DAY) * NANOS_PER_SECOND + nanoOfSecond;
+    if (leap) {
+      nanoOfDay += NANOS_PER_SECOND;
     }
+    return UtcInstant.ofModifiedJulianDay(mjd, nanoOfDay);
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Constructs an instance.
      *
      * @param mjDay  the date as a Modified Julian Day (number of days from the epoch of 1858-11-17)
      * @param nanoOfDay  the nanoseconds within the day, including leap seconds
      */
-    private UtcInstant(long mjDay, long nanoOfDay) {
-        super();
-        this.mjDay = mjDay;
-        this.nanoOfDay = nanoOfDay;
-    }
+  private UtcInstant(long mjDay, long nanoOfDay) {
+    super();
+    this.mjDay = mjDay;
+    this.nanoOfDay = nanoOfDay;
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Gets the Modified Julian Day (MJD).
      * <p>
      * The Modified Julian Day is a simple incrementing count of days where day 0 is 1858-11-17.
@@ -248,11 +207,11 @@ public final class UtcInstant
      *
      * @return the Modified Julian Day based on the epoch 1858-11-17
      */
-    public long getModifiedJulianDay() {
-        return mjDay;
-    }
+  public long getModifiedJulianDay() {
+    return mjDay;
+  }
 
-    /**
+  /**
      * Returns a copy of this {@code UtcInstant} with the Modified Julian Day (MJD) altered.
      * <p>
      * The Modified Julian Day is a simple incrementing count of days where day 0 is 1858-11-17.
@@ -265,11 +224,11 @@ public final class UtcInstant
      * @return a {@code UtcInstant} based on this instant with the requested day, not null
      * @throws DateTimeException if nanoOfDay becomes invalid
      */
-    public UtcInstant withModifiedJulianDay(long mjDay) {
-        return UtcInstant.ofModifiedJulianDay(mjDay, nanoOfDay);
-    }
+  public UtcInstant withModifiedJulianDay(long mjDay) {
+    return UtcInstant.ofModifiedJulianDay(mjDay, nanoOfDay);
+  }
 
-    /**
+  /**
      * Gets the number of nanoseconds, later along the time-line, from the start
      * of the Modified Julian Day.
      * <p>
@@ -279,11 +238,11 @@ public final class UtcInstant
      *
      * @return the nanoseconds within the day, including leap seconds
      */
-    public long getNanoOfDay() {
-        return nanoOfDay;
-    }
+  public long getNanoOfDay() {
+    return nanoOfDay;
+  }
 
-    /**
+  /**
      * Returns a copy of this {@code UtcInstant} with the nano-of-day altered.
      * <p>
      * The nanosecond-of-day value measures the total number of nanoseconds within
@@ -296,12 +255,11 @@ public final class UtcInstant
      * @return a {@code UtcInstant} based on this instant with the requested nano-of-day, not null
      * @throws DateTimeException if the nanoOfDay value is invalid
      */
-    public UtcInstant withNanoOfDay(long nanoOfDay) {
-        return UtcInstant.ofModifiedJulianDay(mjDay, nanoOfDay);
-    }
+  public UtcInstant withNanoOfDay(long nanoOfDay) {
+    return UtcInstant.ofModifiedJulianDay(mjDay, nanoOfDay);
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Checks if the instant is within a leap second.
      * <p>
      * This method returns true when an accurate clock would return a seconds
@@ -309,12 +267,11 @@ public final class UtcInstant
      *
      * @return true if this instant is within a leap second
      */
-    public boolean isLeapSecond() {
-        return nanoOfDay >= SECS_PER_DAY * NANOS_PER_SECOND;
-    }
+  public boolean isLeapSecond() {
+    return nanoOfDay >= SECS_PER_DAY * NANOS_PER_SECOND;
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Returns a copy of this instant with the specified duration added.
      * <p>
      * The duration is added using simple addition of the seconds and nanoseconds
@@ -328,12 +285,11 @@ public final class UtcInstant
      * @return a {@code UtcInstant} with the duration added, not null
      * @throws ArithmeticException if the calculation exceeds the supported range
      */
-    public UtcInstant plus(Duration duration) {
-        return UtcInstant.of(toTaiInstant().plus(duration));
-    }
+  public UtcInstant plus(Duration duration) {
+    return UtcInstant.of(toTaiInstant().plus(duration));
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Returns a copy of this instant with the specified duration subtracted.
      * <p>
      * The duration is subtracted using simple subtraction of the seconds and nanoseconds
@@ -347,12 +303,11 @@ public final class UtcInstant
      * @return a {@code UtcInstant} with the duration subtracted, not null
      * @throws ArithmeticException if the calculation exceeds the supported range
      */
-    public UtcInstant minus(Duration duration) {
-        return UtcInstant.of(toTaiInstant().minus(duration));
-    }
+  public UtcInstant minus(Duration duration) {
+    return UtcInstant.of(toTaiInstant().minus(duration));
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Returns the duration between this instant and the specified instant.
      * <p>
      * This calculates the duration between this instant and another based on
@@ -364,14 +319,13 @@ public final class UtcInstant
      * @return the duration until the specified instant, may be negative, not null
      * @throws ArithmeticException if the calculation exceeds the supported range
      */
-    public Duration durationUntil(UtcInstant utcInstant) {
-        TaiInstant thisTAI = toTaiInstant();
-        TaiInstant otherTAI = utcInstant.toTaiInstant();
-        return thisTAI.durationUntil(otherTAI);
-    }
+  public Duration durationUntil(UtcInstant utcInstant) {
+    TaiInstant thisTAI = toTaiInstant();
+    TaiInstant otherTAI = utcInstant.toTaiInstant();
+    return thisTAI.durationUntil(otherTAI);
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Converts this instant to an {@code Instant}.
      * <p>
      * Converting a UTC instant to UTC-SLS requires leap second rules.
@@ -384,11 +338,11 @@ public final class UtcInstant
      * @throws DateTimeException if the range  of {@code Instant} is exceeded
      * @throws ArithmeticException if numeric overflow occurs
      */
-    public Instant toInstant() {
-        return UtcRules.system().convertToInstant(this);
-    }
+  public Instant toInstant() {
+    return UtcRules.system().convertToInstant(this);
+  }
 
-    /**
+  /**
      * Converts this instant to a {@code TaiInstant}.
      * <p>
      * Converting a UTC instant to TAI requires leap second rules.
@@ -403,12 +357,11 @@ public final class UtcInstant
      * @throws DateTimeException if the range of {@code TaiInstant} is exceeded
      * @throws ArithmeticException if numeric overflow occurs
      */
-    public TaiInstant toTaiInstant() {
-        return UtcRules.system().convertToTai(this);
-    }
+  public TaiInstant toTaiInstant() {
+    return UtcRules.system().convertToTai(this);
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Compares this instant to another based on the time-line.
      * <p>
      * The comparison is based first on the Modified Julian Day, then on the nano-of-day.
@@ -417,16 +370,15 @@ public final class UtcInstant
      * @param otherInstant  the other instant to compare to, not null
      * @return the comparator value, negative if less, positive if greater
      */
-    @Override
-    public int compareTo(UtcInstant otherInstant) {
-        int cmp = Long.compare(mjDay, otherInstant.mjDay);
-        if (cmp != 0) {
-            return cmp;
-        }
-        return Long.compare(nanoOfDay, otherInstant.nanoOfDay);
+  @Override public int compareTo(UtcInstant otherInstant) {
+    int cmp = Long.compare(mjDay, otherInstant.mjDay);
+    if (cmp != 0) {
+      return cmp;
     }
+    return Long.compare(nanoOfDay, otherInstant.nanoOfDay);
+  }
 
-    /**
+  /**
      * Checks if this instant is after the specified instant.
      * <p>
      * The comparison is based on the time-line position of the instants.
@@ -435,11 +387,11 @@ public final class UtcInstant
      * @return true if this instant is after the specified instant
      * @throws NullPointerException if otherInstant is null
      */
-    public boolean isAfter(UtcInstant otherInstant) {
-        return compareTo(otherInstant) > 0;
-    }
+  public boolean isAfter(UtcInstant otherInstant) {
+    return compareTo(otherInstant) > 0;
+  }
 
-    /**
+  /**
      * Checks if this instant is before the specified instant.
      * <p>
      * The comparison is based on the time-line position of the instants.
@@ -448,12 +400,11 @@ public final class UtcInstant
      * @return true if this instant is before the specified instant
      * @throws NullPointerException if otherInstant is null
      */
-    public boolean isBefore(UtcInstant otherInstant) {
-        return compareTo(otherInstant) < 0;
-    }
+  public boolean isBefore(UtcInstant otherInstant) {
+    return compareTo(otherInstant) < 0;
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Checks if this instant is equal to the specified {@code UtcInstant}.
      * <p>
      * The comparison is based on the Modified Julian Day, then on the nano-of-day.
@@ -461,31 +412,27 @@ public final class UtcInstant
      * @param otherInstant  the other instant, null returns false
      * @return true if the other instant is equal to this one
      */
-    @Override
-    public boolean equals(Object otherInstant) {
-        if (this == otherInstant) {
-            return true;
-        }
-        if (otherInstant instanceof UtcInstant) {
-            UtcInstant other = (UtcInstant) otherInstant;
-            return this.mjDay == other.mjDay &&
-                    this.nanoOfDay == other.nanoOfDay;
-        }
-        return false;
+  @Override public boolean equals(Object otherInstant) {
+    if (this == otherInstant) {
+      return true;
     }
+    if (otherInstant instanceof UtcInstant) {
+      UtcInstant other = (UtcInstant) otherInstant;
+      return this.mjDay == other.mjDay && this.nanoOfDay == other.nanoOfDay;
+    }
+    return false;
+  }
 
-    /**
+  /**
      * Returns a hash code for this instant.
      *
      * @return a suitable hash code
      */
-    @Override
-    public int hashCode() {
-        return ((int) (mjDay ^ (mjDay >>> 32))) + 51 * ((int) (nanoOfDay ^ (nanoOfDay >>> 32)));
-    }
+  @Override public int hashCode() {
+    return ((int) (mjDay ^ (mjDay >>> 32))) + 51 * ((int) (nanoOfDay ^ (nanoOfDay >>> 32)));
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * A string representation of this instant.
      * <p>
      * The string is formatted using ISO-8601.
@@ -494,48 +441,42 @@ public final class UtcInstant
      *
      * @return a representation of this instant, not null
      */
-    @Override
-    @ToString
-    public String toString() {
-        // racy single-check idiom
-        String currentStringValue = toString;
-        if (currentStringValue == null) {
-            currentStringValue = buildToString();
-            toString = currentStringValue;
-        }
-        return currentStringValue;
+  @Override @ToString public String toString() {
+    String currentStringValue = toString;
+    if (currentStringValue == null) {
+      currentStringValue = buildToString();
+      toString = currentStringValue;
     }
+    return currentStringValue;
+  }
 
-    // produces the string representation of this instant
-    private String buildToString() {
-        LocalDate date = LocalDate.MAX.with(JulianFields.MODIFIED_JULIAN_DAY, mjDay); // TODO: capacity/import issues
-        StringBuilder buf = new StringBuilder(30);
-        int sod = (int) (nanoOfDay / NANOS_PER_SECOND);
-        int hourValue = sod / (60 * 60);
-        int minuteValue = (sod / 60) % 60;
-        int secondValue = sod % 60;
-        int nanoValue = (int) (nanoOfDay % NANOS_PER_SECOND);
-        if (hourValue == 24) {
-            hourValue = 23;
-            minuteValue = 59;
-            secondValue = 60;
-        }
-        buf.append(date).append('T')
-                .append(hourValue < 10 ? "0" : "").append(hourValue)
-                .append(minuteValue < 10 ? ":0" : ":").append(minuteValue)
-                .append(secondValue < 10 ? ":0" : ":").append(secondValue);
-        if (nanoValue > 0) {
-            buf.append('.');
-            if (nanoValue % 1000_000 == 0) {
-                buf.append(Integer.toString((nanoValue / 1000_000) + 1000).substring(1));
-            } else if (nanoValue % 1000 == 0) {
-                buf.append(Integer.toString((nanoValue / 1000) + 1000_000).substring(1));
-            } else {
-                buf.append(Integer.toString((nanoValue) + 1000_000_000).substring(1));
-            }
-        }
-        buf.append('Z');
-        return buf.toString();
+  private String buildToString() {
+    LocalDate date = LocalDate.MAX.with(JulianFields.MODIFIED_JULIAN_DAY, mjDay);
+    StringBuilder buf = new StringBuilder(30);
+    int sod = (int) (nanoOfDay / NANOS_PER_SECOND);
+    int hourValue = sod / (60 * 60);
+    int minuteValue = (sod / 60) % 60;
+    int secondValue = sod % 60;
+    int nanoValue = (int) (nanoOfDay % NANOS_PER_SECOND);
+    if (hourValue == 24) {
+      hourValue = 23;
+      minuteValue = 59;
+      secondValue = 60;
     }
-
+    buf.append(date).append('T').append(hourValue < 10 ? "0" : "").append(hourValue).append(minuteValue < 10 ? ":0" : ":").append(minuteValue).append(secondValue < 10 ? ":0" : ":").append(secondValue);
+    if (nanoValue > 0) {
+      buf.append('.');
+      if (nanoValue % 1000_000 == 0) {
+        buf.append(Integer.toString((nanoValue / 1000_000) + 1000).substring(1));
+      } else {
+        if (nanoValue % 1000 == 0) {
+          buf.append(Integer.toString((nanoValue / 1000) + 1000_000).substring(1));
+        } else {
+          buf.append(Integer.toString((nanoValue) + 1000_000_000).substring(1));
+        }
+      }
+    }
+    buf.append('Z');
+    return buf.toString();
+  }
 }
