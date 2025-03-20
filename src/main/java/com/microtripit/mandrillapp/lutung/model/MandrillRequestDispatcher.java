@@ -36,7 +36,7 @@ public final class MandrillRequestDispatcher {
 	 * A value of 0 means no timeout at all.
 	 * The value is expressed in milliseconds.
 	 * */
-	public static int SOCKET_TIMEOUT_MILLIS = 0;
+	public static int socketTimeout = 0;
 
 	/**
 	 * See https://hc.apache.org/httpcomponents-core-4.3.x/httpcore/apidocs/org/apache/http/params/HttpConnectionParams.html#setConnectionTimeout(org.apache.http.params.HttpParams, int)
@@ -44,7 +44,7 @@ public final class MandrillRequestDispatcher {
 	 * A value of 0 means no timeout at all.
 	 * The value is expressed in milliseconds.
 	 * */
-	public static int CONNECTION_TIMEOUT_MILLIS = 0;
+	public static int connectionTimeoutMillis = 0;
 
 	public static final <T> T execute(final RequestModel<T> requestModel, 
 			HttpClient client) throws MandrillApiError, IOException {
@@ -58,6 +58,7 @@ public final class MandrillRequestDispatcher {
 				client.getParams().setParameter(
 						CoreProtocolPNames.USER_AGENT, 
 						client.getParams().getParameter(CoreProtocolPNames.USER_AGENT)+ "/Lutung-0.1");
+<<<<<<< /usr/src/app/output/rschreijer/lutung/747fdbc2ccde5a130386cd425ef70a475af95b27/src/main/java/com/microtripit/mandrillapp/lutung/model/MandrillRequestDispatcher.java/left.java
                 // use proxy?
                 final ProxyData proxyData = detectProxyServer(requestModel.getUrl());
                 if(proxyData != null) {
@@ -67,8 +68,11 @@ public final class MandrillRequestDispatcher {
                     final HttpHost proxy = new HttpHost(proxyData.host, proxyData.port);
                     client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
                 }
-				HttpConnectionParams.setSoTimeout(client.getParams(), SOCKET_TIMEOUT_MILLIS);
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), CONNECTION_TIMEOUT_MILLIS);
+||||||| /usr/src/app/output/rschreijer/lutung/747fdbc2ccde5a130386cd425ef70a475af95b27/src/main/java/com/microtripit/mandrillapp/lutung/model/MandrillRequestDispatcher.java/base.java
+=======
+                HttpConnectionParams.setSoTimeout(client.getParams(), socketTimeout);
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), connectionTimeoutMillis);
+>>>>>>> /usr/src/app/output/rschreijer/lutung/747fdbc2ccde5a130386cd425ef70a475af95b27/src/main/java/com/microtripit/mandrillapp/lutung/model/MandrillRequestDispatcher.java/right.java
 			}
 			if(log.isDebugEnabled()) {
 				log.debug("starting request '" +requestModel.getUrl()+ "'");
