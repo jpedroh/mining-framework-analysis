@@ -182,8 +182,8 @@ public class GeneralJobInsertionWithShipmentsTest {
 
         VehicleRoutingProblem.Builder.newInstance().addJob(shipment).addJob(shipment2).addJob(shipment3).build();
 
-        List<JobActivity> shipmentActivities = getTourActivities(shipment);
-        List<JobActivity> shipment2Activities = getTourActivities(shipment2);
+        List<JobActivity> shipmentActivities = shipment.getActivityList().getAll();
+        List<JobActivity> shipment2Activities = shipment2.getActivityList().getAll();
         VehicleRoute route = VehicleRoute.emptyRoute();
 
         route.setVehicleAndDepartureTime(vehicle, 0d);
