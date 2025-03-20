@@ -6,15 +6,19 @@ import de.is24.deadcode4j.DeadCode;
 import de.is24.deadcode4j.DeadCodeFinder;
 import de.is24.deadcode4j.Module;
 import de.is24.deadcode4j.analyzer.*;
+import de.is24.deadcode4j.plugin.packaginghandler.DefaultPackagingHandler;
+import de.is24.deadcode4j.plugin.packaginghandler.PomPackagingHandler;
+import de.is24.deadcode4j.plugin.packaginghandler.WarPackagingHandler;
 import de.is24.maven.slf4j.AbstractSlf4jMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import java.util.concurrent.Callable;
 import org.apache.maven.repository.RepositorySystem;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +48,14 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 @SuppressWarnings("PMD.TooManyStaticImports")
 public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
 
+    private final Callable<Log> logAccessor = new Callable<Log>() {
+        @Override
+        public Log call() {
+            return getLog();
+        }
+    };
+    private final de.is24.deadcode4j.plugin.packaginghandler.PackagingHandler defaultPackagingHandler = new DefaultPackagingHandler(logAccessor);
+    private final Map<String, de.is24.deadcode4j.plugin.packaginghandler.PackagingHandler> packagingHandlers = newHashMap();
     /**
      * Lists the fqcn of the annotations marking a class as being "live code".
      *
@@ -106,7 +118,10 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
     @Parameter(defaultValue = "fooBar")
     @SuppressWarnings("unused")
     private String workAroundForHelpMojo;
-
+    public FindDeadCodeOnlyMojo() {
+        packagingHandlers.put("pom", new PomPackagingHandler(logAccessor));
+        packagingHandlers.put("war", new WarPackagingHandler(logAccessor));
+    }
     public void doExecute() throws MojoExecutionException {
         try {
             logWelcome();
@@ -119,13 +134,11 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
             throw rE;
         }
     }
-
     private void logWelcome() {
         if (mojoExecution != null && CLI.equals(mojoExecution.getSource())) {
             getLog().info("Thanks for calling me! Let's see what I can do for you...");
         }
     }
-
     private DeadCode analyzeCode() throws MojoExecutionException {
         Set<Analyzer> analyzers = Sets.<Analyzer>newHashSet(
                 new AopXmlAnalyzer(),
@@ -152,28 +165,24 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
         DeadCodeFinder deadCodeFinder = new DeadCodeFinder(analyzers);
         return deadCodeFinder.findDeadCode(gatherModules());
     }
-
     private void addCustomAnnotationsAnalyzerIfConfigured(Set<Analyzer> analyzers) {
         if (annotationsMarkingLiveCode.isEmpty())
             return;
         analyzers.add(new CustomAnnotationsAnalyzer(annotationsMarkingLiveCode));
         getLog().info("Treating classes annotated with any of " + annotationsMarkingLiveCode + " as live code.");
     }
-
     private void addCustomInterfacesAnalyzerIfConfigured(Set<Analyzer> analyzers) {
         if (interfacesMarkingLiveCode.isEmpty())
             return;
         analyzers.add(new CustomInterfacesAnalyzer(interfacesMarkingLiveCode));
         getLog().info("Treating classes implementing any of " + interfacesMarkingLiveCode + " as live code.");
     }
-
     private void addCustomSuperClassesAnalyzerIfConfigured(Set<Analyzer> analyzers) {
         if (superClassesMarkingLiveCode.isEmpty())
             return;
         analyzers.add(new CustomSuperClassAnalyzer(superClassesMarkingLiveCode));
         getLog().info("Treating classes being subclasses of any of " + superClassesMarkingLiveCode + " as live code.");
     }
-
     private void addCustomXmlAnalyzerIfConfigured(Set<Analyzer> analyzers) {
         if (customXmls.isEmpty())
             return;
@@ -187,12 +196,13 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
             analyzers.add(customXmlAnalyzer);
         }
     }
-
-    private Iterable<Module> gatherModules() throws MojoExecutionException {
-        ModuleGenerator moduleGenerator = new ModuleGenerator(this.repositorySystem);
-        return moduleGenerator.getModulesFor(getProjectsToAnalyze());
+    private Iterable<CodeRepository> gatherCodeRepositories() throws MojoExecutionException {
+        List<CodeRepository> codeRepositories = newArrayList();
+        for (MavenProject project : getProjectsToAnalyze()) {
+            codeRepositories.addAll(getCodeRepositoryFor(project));
+        }
+        return codeRepositories;
     }
-
     private Collection<MavenProject> getProjectsToAnalyze() {
         if (this.modulesToSkip.isEmpty()) {
             return this.reactorProjects;
@@ -222,6 +232,16 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
         }
 
         return mavenProjects;
+    }
+    @Nonnull
+    private Collection<CodeRepository> getCodeRepositoryFor(@Nonnull MavenProject project) throws MojoExecutionException {
+        de.is24.deadcode4j.plugin.packaginghandler.PackagingHandler packagingHandler =
+                getValueOrDefault(this.packagingHandlers, project.getPackaging(), this.defaultPackagingHandler);
+        return packagingHandler.getCodeRepositoriesFor(project);
+    }
+    private Iterable<Module> gatherModules() throws MojoExecutionException {
+        ModuleGenerator moduleGenerator = new ModuleGenerator(this.repositorySystem);
+        return moduleGenerator.getModulesFor(getProjectsToAnalyze());
     }
 
     private void log(DeadCode deadCode) {
