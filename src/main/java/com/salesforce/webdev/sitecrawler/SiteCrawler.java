@@ -569,12 +569,12 @@ public class SiteCrawler {
             }
         }
 
-        scheduler.unpause();
         Object[] args = { toVisit.size(), actions.size(), actions };
         logger.info("Starting crawl with the {} defined endpoints and {} plugins: {}", args);
         this.running = true;
         init();
 
+        scheduler.unpause();
         startCrawler();
 
         scheduler.pause();
@@ -681,6 +681,45 @@ public class SiteCrawler {
      */
     private void init() {
         scheduler.init();
+
+<<<<<<< /usr/src/app/output/forcedotcom/sitecrawler/bb56b3dd8e132d8d625dab3ee71ed828754cdde0/src/main/java/com/salesforce/webdev/sitecrawler/SiteCrawler.java/left.java
+||||||| /usr/src/app/output/forcedotcom/sitecrawler/bb56b3dd8e132d8d625dab3ee71ed828754cdde0/src/main/java/com/salesforce/webdev/sitecrawler/SiteCrawler.java/base.java
+        linkExecutor = Executors.newFixedThreadPool(threadLimit, linkExecutorThreadFactory);
+        linkService = new ExecutorCompletionService<ProcessPage>(linkExecutor);
+
+        int pageExecutorSize = (int) Math.ceil(threadLimit * downloadVsProcessRatio);
+        pageExecutor = Executors.newFixedThreadPool(pageExecutorSize, pageExecutorThreadFactory);
+        pageService = new ExecutorCompletionService<Collection<String>>(pageExecutor);
+
+        // in bytes
+        long maxHeap = Runtime.getRuntime().maxMemory();
+        // to mb
+        double gbMaxHeap = maxHeap / (1024.0 * 1024.0);
+        // Final result, rounded
+        int maxProcessWaiting = (int) (gbMaxHeap * maxProcessWaitingRatio);
+        setMaxProcessWaiting(maxProcessWaiting);
+
+        Object[] args = { wcPool.getName(), threadLimit, threadLimit, pageExecutorSize, maxProcessWaiting };
+        logger.info("WebClientPool {} created with size {}, linkExecutor with size {}, pageExecutor with size {}, maxProcessWaiting={}", args);
+=======
+        linkExecutor = Executors.newFixedThreadPool(threadLimit, linkExecutorThreadFactory);
+        linkService = new ExecutorCompletionService<ProcessPage>(linkExecutor);
+
+        int pageExecutorSize = (int) Math.ceil(threadLimit * downloadVsProcessRatio);
+        pageExecutor = Executors.newFixedThreadPool(pageExecutorSize, pageExecutorThreadFactory);
+        pageService = new ExecutorCompletionService<Collection<String>>(pageExecutor);
+
+        // in bytes
+        long maxHeap = Runtime.getRuntime().maxMemory();
+        // to gb via mb
+        double gbMaxHeap = maxHeap / (1024.0 * 1024.0);
+        // Final result, rounded
+        int maxProcessWaiting = (int) (gbMaxHeap * maxProcessWaitingRatio);
+        setMaxProcessWaiting(maxProcessWaiting);
+
+        Object[] args = { wcPool.getName(), threadLimit, threadLimit, pageExecutorSize, maxProcessWaiting };
+        logger.info("WebClientPool {} created with size {}, linkExecutor with size {}, pageExecutor with size {}, maxProcessWaiting={}", args);
+>>>>>>> /usr/src/app/output/forcedotcom/sitecrawler/bb56b3dd8e132d8d625dab3ee71ed828754cdde0/src/main/java/com/salesforce/webdev/sitecrawler/SiteCrawler.java/right.java
     }
 
     /**
