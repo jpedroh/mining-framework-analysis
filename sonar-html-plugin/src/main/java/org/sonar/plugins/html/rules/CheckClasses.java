@@ -140,8 +140,12 @@ public final class CheckClasses {
     FixmeCommentCheck.class,
     ElementWithGivenIdPresentCheck.class,
     LayoutTableCheck.class,
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-web/2034e49e0066e082d7277df1af9a7e54a33b1db2/sonar-html-plugin/src/main/java/org/sonar/plugins/html/rules/CheckClasses.java/left.java
     LayoutTableWithSemanticMarkupCheck.class,
+||||||| /usr/src/app/output/sonarcommunity/sonar-web/2034e49e0066e082d7277df1af9a7e54a33b1db2/sonar-html-plugin/src/main/java/org/sonar/plugins/html/rules/CheckClasses.java/base.java
+=======
     TableWithoutHeaderCheck.class,
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-web/2034e49e0066e082d7277df1af9a7e54a33b1db2/sonar-html-plugin/src/main/java/org/sonar/plugins/html/rules/CheckClasses.java/right.java
     LangAttributeCheck.class
   );
 
