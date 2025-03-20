@@ -1282,10 +1282,25 @@ public class Expression {
 					if (!variables.containsKey(token.surface)) {
 						throw new ExpressionException("Unknown operator or function: " + token);
 					}
+<<<<<<< /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/left.java
 					
 					public String getString() {
                         return String.valueOf(operators.get(token).eval(v2.eval(), v1.eval()));
                     }
+				};
+				stack.push(number);
+			} else if (variables.containsKey(token)) {
+				stack.push(new LazyNumber() {
+					public BigDecimal eval() {
+						return variables.get(token).round(mc);
+||||||| /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/base.java
+				};
+				stack.push(number);
+			} else if (variables.containsKey(token)) {
+				stack.push(new LazyNumber() {
+					public BigDecimal eval() {
+						return variables.get(token).round(mc);
+=======
 
 					stack.push(new LazyNumber() {
 						public BigDecimal eval() {
@@ -1301,18 +1316,70 @@ public class Expression {
 					// this function's parameter list
 					while (!stack.isEmpty() && stack.peek() != PARAMS_START) {
 						p.add(0, stack.pop());
+>>>>>>> /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/right.java
 					}
+<<<<<<< /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/left.java
 					
 					public String getString() {
                         return String.valueOf(variables.get(token).round(mc));
                     }
+				});
+			} else if (functions.containsKey(token.toUpperCase(Locale.ROOT))) {
+				LazyFunction f = functions.get(token.toUpperCase(Locale.ROOT));
+				ArrayList<LazyNumber> p = new ArrayList<LazyNumber>(
+						!f.numParamsVaries() ? f.getNumParams() : 0);
+				// pop parameters off the stack until we hit the start of 
+				// this function's parameter list
+				while (!stack.isEmpty() && stack.peek() != PARAMS_START) {
+					p.add(0, stack.pop());
+				}
+				if (stack.peek() == PARAMS_START) {
+					stack.pop();
+				}
+				LazyNumber fResult = f.lazyEval(p);
+				stack.push(fResult);
+			} else if ("(".equals(token)) {
+				stack.push(PARAMS_START);
+			} else {
+				stack.push(new LazyNumber() {
+					public BigDecimal eval() {
+						return new BigDecimal(token, mc);
+||||||| /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/base.java
+				});
+			} else if (functions.containsKey(token.toUpperCase(Locale.ROOT))) {
+				LazyFunction f = functions.get(token.toUpperCase(Locale.ROOT));
+				ArrayList<LazyNumber> p = new ArrayList<LazyNumber>(
+						!f.numParamsVaries() ? f.getNumParams() : 0);
+				// pop parameters off the stack until we hit the start of 
+				// this function's parameter list
+				while (!stack.isEmpty() && stack.peek() != PARAMS_START) {
+					p.add(0, stack.pop());
+				}
+				if (stack.peek() == PARAMS_START) {
+					stack.pop();
+				}
+				LazyNumber fResult = f.lazyEval(p);
+				stack.push(fResult);
+			} else if ("(".equals(token)) {
+				stack.push(PARAMS_START);
+			} else {
+				stack.push(new LazyNumber() {
+					public BigDecimal eval() {
+						return new BigDecimal(token, mc);
+=======
 					if (stack.peek() == PARAMS_START) {
 						stack.pop();
+>>>>>>> /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/right.java
 					}
+<<<<<<< /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/left.java
 					
 					public String getString() {
                         return token;
                     }
+				});
+||||||| /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/base.java
+				});
+=======
 					LazyNumber fResult = f.lazyEval(p);
 					stack.push(fResult);
 					break;
@@ -1325,6 +1392,7 @@ public class Expression {
 							return new BigDecimal(token.surface, mc);
 						}
 					});
+>>>>>>> /usr/src/app/output/uklimaschewski/evalex/91a75fc15bc48b2c27f5eba7f00ed1b6260b76ab/src/com/udojava/evalex/Expression.java/right.java
 			}
 		}
 		return stack.pop().eval().stripTrailingZeros();
