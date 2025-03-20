@@ -1,25 +1,4 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
-
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,140 +27,118 @@ import com.svenjacobs.gwtbootstrap3.client.ui.constants.Toggle;
  * @author Sven Jacobs
  * @author Joshua Godi
  */
-public class Anchor extends ComplexWidget implements HasClickHandlers, HasDoubleClickHandlers, HasHref, HasToggle,
-        HasTargetHistoryToken, HasText, HasIcon, HasIconPosition, HasIconSize, HasTabIndex, Focusable,
-        HasResponsiveness {
+public class Anchor extends ComplexWidget implements HasClickHandlers, HasDoubleClickHandlers, HasHref, HasToggle, HasTargetHistoryToken, HasText, HasIcon, HasIconPosition, HasIconSize, HasTabIndex, Focusable, HasResponsiveness {
+  private final ToggleMixin<Anchor> toggleMixin = new ToggleMixin<Anchor>(this);
 
-    private final ToggleMixin<Anchor> toggleMixin = new ToggleMixin<Anchor>(this);
-    private final IconTextMixin<Anchor> iconTextMixin = new IconTextMixin<Anchor>(this);
-    private final FocusableMixin focusableMixin;
-    private String targetHistoryToken;
+  private final IconTextMixin<Anchor> iconTextMixin = new IconTextMixin<Anchor>(this);
 
-    public Anchor(final String href) {
-        setElement(Document.get().createAnchorElement());
-        setHref(href);
-        focusableMixin = new FocusableMixin(AnchorElement.as(getElement()));
-        iconTextMixin.addTextWidgetToParent();
-    }
+  private final FocusableMixin focusableMixin;
 
-    public Anchor(final String text, final String href) {
-        this(href);
-        setText(text);
-    }
+  private String targetHistoryToken;
 
-    public Anchor() {
-        this("#");
-    }
+  public Anchor(final String href) {
+    setElement(Document.get().createAnchorElement());
+    setHref(href);
+    focusableMixin = new FocusableMixin(AnchorElement.as(getElement()));
+    iconTextMixin.addTextWidgetToParent();
+  }
 
-    @Override
-    public HandlerRegistration addClickHandler(final ClickHandler handler) {
-        return addDomHandler(handler, ClickEvent.getType());
-    }
+  public Anchor(final String text, final String href) {
+    this(href);
+    setText(text);
+  }
 
-    @Override
-    public HandlerRegistration addDoubleClickHandler(final DoubleClickHandler handler) {
-        return addDomHandler(handler, DoubleClickEvent.getType());
-    }
+  public Anchor() {
+    this("#");
+  }
 
-    @Override
-    public void setText(final String text) {
-        iconTextMixin.setText(text);
-    }
+  @Override public HandlerRegistration addClickHandler(final ClickHandler handler) {
+    return addDomHandler(handler, ClickEvent.getType());
+  }
 
-    @Override
-    public String getText() {
-        return iconTextMixin.getText();
-    }
+  @Override public HandlerRegistration addDoubleClickHandler(final DoubleClickHandler handler) {
+    return addDomHandler(handler, DoubleClickEvent.getType());
+  }
 
-    @Override
-    public void setIcon(final IconType iconType) {
-        iconTextMixin.setIcon(iconType);
-    }
+  @Override public void setText(final String text) {
+    iconTextMixin.setText(text);
+  }
 
-    @Override
-    public IconType getIcon() {
-        return iconTextMixin.getIcon();
-    }
+  @Override public String getText() {
+    return iconTextMixin.getText();
+  }
 
-    @Override
-    public void setIconPosition(final IconPosition iconPosition) {
-        iconTextMixin.setIconPosition(iconPosition);
-    }
+  @Override public void setIcon(final IconType iconType) {
+    iconTextMixin.setIcon(iconType);
+  }
 
-    @Override
-    public IconPosition getIconPosition() {
-        return iconTextMixin.getIconPosition();
-    }
+  @Override public IconType getIcon() {
+    return iconTextMixin.getIcon();
+  }
 
-    @Override
-    public void setIconSize(final IconSize iconSize) {
-        iconTextMixin.setIconSize(iconSize);
-    }
+  @Override public void setIconPosition(final IconPosition iconPosition) {
+    iconTextMixin.setIconPosition(iconPosition);
+  }
 
-    @Override
-    public IconSize getIconSize() {
-        return iconTextMixin.getIconSize();
-    }
+  @Override public IconPosition getIconPosition() {
+    return iconTextMixin.getIconPosition();
+  }
 
-    @Override
-    public void setHref(final String href) {
-        AnchorElement.as(getElement()).setHref(href);
-    }
+  @Override public void setIconSize(final IconSize iconSize) {
+    iconTextMixin.setIconSize(iconSize);
+  }
 
-    @Override
-    public String getHref() {
-        return AnchorElement.as(getElement()).getHref();
-    }
+  @Override public IconSize getIconSize() {
+    return iconTextMixin.getIconSize();
+  }
 
-    @Override
-    public void setTargetHistoryToken(final String targetHistoryToken) {
-        this.targetHistoryToken = targetHistoryToken;
-        final String hash = History.encodeHistoryToken(targetHistoryToken);
-        setHref("#" + hash);
-    }
+  @Override public void setHref(final String href) {
+    AnchorElement.as(getElement()).setHref(href);
+  }
 
-    @Override
-    public String getTargetHistoryToken() {
-        return targetHistoryToken;
-    }
+  @Override public String getHref() {
+    return AnchorElement.as(getElement()).getHref();
+  }
 
-    @Override
-    public void setToggle(final Toggle toggle) {
-        toggleMixin.setToggle(toggle);
-    }
+  @Override public void setTargetHistoryToken(final String targetHistoryToken) {
+    this.targetHistoryToken = targetHistoryToken;
+    final String hash = History.encodeHistoryToken(targetHistoryToken);
+    setHref("#" + hash);
+  }
 
-    @Override
-    public Toggle getToggle() {
-        return toggleMixin.getToggle();
-    }
+  @Override public String getTargetHistoryToken() {
+    return targetHistoryToken;
+  }
 
-    @Override
-    public int getTabIndex() {
-        return focusableMixin.getTabIndex();
-    }
+  @Override public void setToggle(final Toggle toggle) {
+    toggleMixin.setToggle(toggle);
+  }
 
-    @Override
-    public void setTabIndex(final int index) {
-        focusableMixin.setTabIndex(index);
-    }
+  @Override public Toggle getToggle() {
+    return toggleMixin.getToggle();
+  }
 
-    @Override
-    public void setAccessKey(final char key) {
-        focusableMixin.setAccessKey(key);
-    }
+  @Override public int getTabIndex() {
+    return focusableMixin.getTabIndex();
+  }
 
-    @Override
-    public void setFocus(final boolean focused) {
-        focusableMixin.setFocus(focused);
-    }
+  @Override public void setTabIndex(final int index) {
+    focusableMixin.setTabIndex(index);
+  }
 
-    @Override
-    public void setVisibleOn(final String deviceSizeString) {
-        StyleHelper.setVisibleOn(this, deviceSizeString);
-    }
+  @Override public void setAccessKey(final char key) {
+    focusableMixin.setAccessKey(key);
+  }
 
-    @Override
-    public void setHiddenOn(final String deviceSizeString) {
-        StyleHelper.setHiddenOn(this, deviceSizeString);
-    }
+  @Override public void setFocus(final boolean focused) {
+    focusableMixin.setFocus(focused);
+  }
+
+  @Override public void setVisibleOn(final String deviceSizeString) {
+    StyleHelper.setVisibleOn(this, deviceSizeString);
+  }
+
+  @Override public void setHiddenOn(final String deviceSizeString) {
+    StyleHelper.setHiddenOn(this, deviceSizeString);
+  }
 }

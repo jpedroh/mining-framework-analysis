@@ -1,25 +1,4 @@
 package com.svenjacobs.gwtbootstrap3.client.ui;
-
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 Sven Jacobs
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.svenjacobs.gwtbootstrap3.client.ui.base.TextBoxBase;
@@ -31,17 +10,33 @@ import com.svenjacobs.gwtbootstrap3.client.ui.constants.Styles;
  * @author Pontus Enmark
  */
 public class TextBox extends TextBoxBase {
+  public TextBox() {
+    this(DOM.createInputText());
+  }
 
-    public TextBox() {
-        this(DOM.createInputText());
-    }
+  public TextBox(final Element element) {
+    super(element);
+    setStyleName(Styles.FORM_CONTROL);
+  }
 
-    public TextBox(final Element element) {
-        super(element);
-        setStyleName(Styles.FORM_CONTROL);
-    }
+  public void clear() {
+    super.setValue(null);
+  }
 
-    public void clear() {
-        super.setValue(null);
-    }
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Override public void setVisibleOn(final String deviceSizeString) {
+    StyleHelper.setVisibleOn(this, deviceSizeString);
+  }
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/client/ui/TextBox.java/right.java
+
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Override public void setHiddenOn(final String deviceSizeString) {
+    StyleHelper.setHiddenOn(this, deviceSizeString);
+  }
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/client/ui/TextBox.java/right.java
 }
