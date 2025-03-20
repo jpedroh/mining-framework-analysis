@@ -359,16 +359,25 @@ public class Service extends AbstractJob {
 
     /**
      * Returns the time-window a service(-operation) is allowed to start.
-     * It is recommended to use getTimeWindows() instead. If you still use this, it returns the first time window of getTimeWindows() collection.
+     *
+     * @deprecated It is recommended to use getTimeWindows() instead. If you
+     *             still use this, it returns the first time window of
+     *             getTimeWindows() collection.
      *
      * @return time window
      *
      */
     @Deprecated
     public TimeWindow getTimeWindow() {
+<<<<<<< /usr/src/app/output/jsprit/jsprit/2cb1d93fd7875330c77da7f4848b81352a1d349e/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/job/Service.java/left.java
+        return theRealActivity.getTimeWindows().iterator().next();
+||||||| /usr/src/app/output/jsprit/jsprit/2cb1d93fd7875330c77da7f4848b81352a1d349e/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/job/Service.java/base.java
+        return theRealActivity.getSingleTimeWindow();
+=======
         if (getTheRealActivity().getTimeWindows().size() > 1)
             throw new IllegalArgumentException("More than one time window in. " + this);
         return getTheRealActivity().getTimeWindows().iterator().next();
+>>>>>>> /usr/src/app/output/jsprit/jsprit/2cb1d93fd7875330c77da7f4848b81352a1d349e/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/job/Service.java/right.java
     }
 
     /**
