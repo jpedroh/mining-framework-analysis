@@ -15,14 +15,11 @@
  */
 
 package com.clearspring.analytics.stream.cardinality;
-
-
+import java.util.Arrays;
 import com.clearspring.analytics.hash.MurmurHash;
 import com.clearspring.analytics.util.IBuilder;
 
 import java.io.Serializable;
-
-import java.util.Arrays;
 
 /**
  * See <i>A Linear-Time Probabilistic Counting Algorithm for Database Applications</i>
