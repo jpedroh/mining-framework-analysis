@@ -31,10 +31,10 @@ public class Main {
 	
 	static String[] args_temp;
 	public static int build = -1;
-	static File recursion;
-	static File settingsDir;
-	static File settingsFile;
-	static SettingsHandler settings;
+	public static File recursion;
+	public static File settingsDir;
+	public static File settingsFile;
+	public static SettingsHandler settings;
 
 	public Main() throws Exception {
 		main(new String[0]);
