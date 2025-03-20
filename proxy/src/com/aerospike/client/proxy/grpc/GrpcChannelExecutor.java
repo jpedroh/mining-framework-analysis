@@ -573,7 +573,7 @@ public class GrpcChannelExecutor implements Runnable {
 		}
 
 		GrpcStream stream = new GrpcStream(this, methodDescriptor,
-		pendingCalls, options, nextStreamId(), eventLoop,
+			pendingCalls, options, nextStreamId(), eventLoop,
 			maxConcurrentRequestsPerStream, totalRequestsPerStream);
 
 		streams.put(stream.getId(), stream);

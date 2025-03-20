@@ -302,7 +302,8 @@ public class GrpcStream implements StreamObserver<Kvs.AerospikeResponsePayload>,
 
 				iterator.remove(); // Remove from pending.
 			}
-			else if (requestsSent < totalRequestsToExecute &&
+			else if (
+				requestsSent < totalRequestsToExecute &&
 				executingCalls.size() < maxConcurrentRequests) {
 				execute(call);
 
