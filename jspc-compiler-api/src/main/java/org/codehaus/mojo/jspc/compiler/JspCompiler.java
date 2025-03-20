@@ -60,7 +60,13 @@ public interface JspCompiler {
     void setCompilerSourceVM(String source);
 
     void setCompilerTargetVM(String target);
-
+    
+<<<<<<< /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-compiler-api/src/main/java/org/codehaus/mojo/jspc/compiler/JspCompiler.java/left.java
+    void setCompileThreads(int threads);
+    
+    void setCompileTimeout(long timeout);
+||||||| /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-compiler-api/src/main/java/org/codehaus/mojo/jspc/compiler/JspCompiler.java/base.java
+=======
     void setCaching(boolean caching);
 
     void setGenStringAsCharArray(boolean genStringAsCharArray);
@@ -68,10 +74,7 @@ public interface JspCompiler {
     void setPoolingEnabled(boolean poolingEnabled);
 
     void setClassDebugInfo(boolean classDebugInfo);
-    
-    void setCompileThreads(int threads);
-    
-    void setCompileTimeout(long timeout);
-    
+>>>>>>> /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-compiler-api/src/main/java/org/codehaus/mojo/jspc/compiler/JspCompiler.java/right.java
+
     void compile(Iterable<File> jspFiles) throws Exception;
 }

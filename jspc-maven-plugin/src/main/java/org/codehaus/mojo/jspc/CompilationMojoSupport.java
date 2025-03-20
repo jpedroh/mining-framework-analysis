@@ -210,41 +210,37 @@ abstract class CompilationMojoSupport extends AbstractMojo {
     boolean errorOnUseBeanInvalidClassAttribute;
 
     /**
+     * Number of threads to compile with
+     */
+    @Parameter(defaultValue="1")
+    int compileThreads;
+    /**
+     * maximum amount of time compilation can take or be killed in minutes 
+     */
+    @Parameter(defaultValue="5")
+    int compilationTimeout;
+    /**
      * Set Caching option for JspC.
      */
     @Parameter(defaultValue="true")
     boolean caching;
-
     /**
      * Determines whether text strings are to be generated as char arrays,
      * which improves performance in some cases.
      */
     @Parameter(defaultValue="false")
     boolean genStringAsCharArray;
-
     /**
      * Set Pooling Enabled option for JspC.
      */
     @Parameter(defaultValue="true")
     boolean poolingEnabled;
-
     /**
      * Set Class Debug Enabled option for JspC.
      */
     @Parameter(defaultValue="true")
     boolean classDebugInfo;
 
-    /**
-     * Number of threads to compile with
-     */
-    @Parameter(defaultValue="1")
-    int compileThreads;
-    
-    /**
-     * maximum amount of time compilation can take or be killed in minutes 
-     */
-    @Parameter(defaultValue="5")
-    int compilationTimeout;
     //
     // Components
     //
@@ -351,12 +347,16 @@ abstract class CompilationMojoSupport extends AbstractMojo {
         jspCompiler.setErrorOnUseBeanInvalidClassAttribute(errorOnUseBeanInvalidClassAttribute);
         jspCompiler.setCompilerSourceVM(source);
         jspCompiler.setCompilerTargetVM(target);
+<<<<<<< /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-maven-plugin/src/main/java/org/codehaus/mojo/jspc/CompilationMojoSupport.java/left.java
+        jspCompiler.setCompileThreads(compileThreads);
+        jspCompiler.setCompileTimeout(TimeUnit.MINUTES.toMillis(compilationTimeout));
+||||||| /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-maven-plugin/src/main/java/org/codehaus/mojo/jspc/CompilationMojoSupport.java/base.java
+=======
         jspCompiler.setCaching(caching);
         jspCompiler.setGenStringAsCharArray(genStringAsCharArray);
         jspCompiler.setPoolingEnabled(poolingEnabled);
         jspCompiler.setClassDebugInfo(classDebugInfo);
-        jspCompiler.setCompileThreads(compileThreads);
-        jspCompiler.setCompileTimeout(TimeUnit.MINUTES.toMillis(compilationTimeout));
+>>>>>>> /usr/src/app/output/jasig/jspc-maven-plugin/634922effc3238357db5ca24c0a5feb8e8f5853c/jspc-maven-plugin/src/main/java/org/codehaus/mojo/jspc/CompilationMojoSupport.java/right.java
         
         // Make directories if needed
         workingDirectory.mkdirs();
