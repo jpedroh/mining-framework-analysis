@@ -661,9 +661,16 @@ public class DockerClient
 
         MultivaluedMap<String,String> params = new MultivaluedMapImpl();
         params.add("t", tag);
+<<<<<<< /usr/src/app/output/kpelykh/docker-java/df7030520c8ca278f800a8d200312563da556633/src/main/java/com/kpelykh/docker/client/DockerClient.java/left.java
         if(noCache) {
         	params.add("nocache", "true");
         }
+||||||| /usr/src/app/output/kpelykh/docker-java/df7030520c8ca278f800a8d200312563da556633/src/main/java/com/kpelykh/docker/client/DockerClient.java/base.java
+=======
+        if(noCache) {
+        	params.add("nocache", "");
+        }
+>>>>>>> /usr/src/app/output/kpelykh/docker-java/df7030520c8ca278f800a8d200312563da556633/src/main/java/com/kpelykh/docker/client/DockerClient.java/right.java
 
         // ARCHIVE TAR
         String archiveNameWithOutExtension = UUID.randomUUID().toString();
