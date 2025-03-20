@@ -1,38 +1,6 @@
-/*
- * Copyright (c) 2014, Enrico Maria Crisostomo
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *   * Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- *
- *   * Neither the name of the author nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package com.warrenstrange.googleauth;
-
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -40,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -69,96 +36,113 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 1.0
  */
 public final class GoogleAuthenticator implements IGoogleAuthenticator {
-
-    /**
+  /**
      * The logger for this class.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(GoogleAuthenticator.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(GoogleAuthenticator.class.getName());
 
-    /**
+  /**
      * The number of bits of a secret key in binary form. Since the Base32
      * encoding with 8 bit characters introduces an 160% overhead, we just need
      * 80 bits (10 bytes) to generate a 16 bytes Base32-encoded secret key.
      */
-    private static final int SECRET_BITS = 80;
+  private static final int SECRET_BITS = 80;
 
-    /**
+  /**
      * Number of scratch codes to generate during the key generation.
      * We are using Google's default of providing 5 scratch codes.
      */
-    private static final int SCRATCH_CODES = 5;
+  private static final int SCRATCH_CODES = 5;
 
-    /**
+  /**
      * Number of digits of a scratch code represented as a decimal integer.
      */
-    private static final int SCRATCH_CODE_LENGTH = 8;
+  private static final int SCRATCH_CODE_LENGTH = 8;
 
-    /**
+  /**
      * Modulus used to truncate the scratch code.
      */
-    public static final int SCRATCH_CODE_MODULUS = (int) Math.pow(10, SCRATCH_CODE_LENGTH);
+  public static final int SCRATCH_CODE_MODULUS = (int) Math.pow(10, SCRATCH_CODE_LENGTH);
 
-    /**
+  /**
      * Magic number representing an invalid scratch code.
      */
-    private static final int SCRATCH_CODE_INVALID = -1;
+  private static final int SCRATCH_CODE_INVALID = -1;
 
-    /**
+  /**
      * Length in bytes of each scratch code. We're using Google's default of
      * using 4 bytes per scratch code.
      */
-    private static final int BYTES_PER_SCRATCH_CODE = 4;
+  private static final int BYTES_PER_SCRATCH_CODE = 4;
 
-    /**
+  /**
      * The SecureRandom algorithm to use.
      *
      * @see java.security.SecureRandom#getInstance(String)
      */
-    @SuppressWarnings("SpellCheckingInspection")
+  @SuppressWarnings(value = { "SpellCheckingInspection" }) private static final String RANDOM_NUMBER_ALGORITHM = "SHA1PRNG";
 
-    private static final String RANDOM_NUMBER_ALGORITHM = "SHA1PRNG";
-
-    /**
+  /**
      * Sun random number algorithm provider name.
      */
-    private static final String RANDOM_NUMBER_ALGORITHM_PROVIDER = "SUN";
+  private static final String RANDOM_NUMBER_ALGORITHM_PROVIDER = "SUN";
 
-    /**
+  /**
      * Cryptographic hash function used to calculate the HMAC (Hash-based
      * Message Authentication Code). This implementation uses the SHA1 hash
      * function.
      */
-    private static final String HMAC_HASH_FUNCTION = "HmacSHA1";
+  private static final String HMAC_HASH_FUNCTION = "HmacSHA1";
 
-    /**
-     * The configuration used by the current instance.
+  /**
+     * Minimum secret key length (inclusive).
      */
-    private final GoogleAuthenticatorConfig config;
+  private final GoogleAuthenticatorConfig 
+<<<<<<< /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/left.java
+  SECRET_KEY_LENGTH_MIN = 6
+=======
+  config
+>>>>>>> /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/right.java
+  ;
 
-    /**
+  /**
+     * Maximum secret key length (inclusive).
+     */
+  private static final int SECRET_KEY_LENGTH_MAX = 9;
+
+  /**
+     * The secret key length used by the current instance.
+     */
+  private final int secretKeyModule;
+
+  /**
      * The internal SecureRandom instance used by this class. Since as of Java 7
      * Random instances are required to be thread-safe, no synchronisation is
-     * required in the methods of this class using this instance. Thread-safety
+     * required in the methods of this class using this instance.  Thread-safety
      * of this class was a de-facto standard in previous versions of Java so
      * that it is expected to work correctly in previous versions of the Java
      * platform as well.
      */
-    private ReseedingSecureRandom secureRandom = new ReseedingSecureRandom(
-            RANDOM_NUMBER_ALGORITHM,
-            RANDOM_NUMBER_ALGORITHM_PROVIDER);
+  private ReseedingSecureRandom secureRandom = new ReseedingSecureRandom(RANDOM_NUMBER_ALGORITHM, RANDOM_NUMBER_ALGORITHM_PROVIDER);
 
-    public GoogleAuthenticator() {
-        config = new GoogleAuthenticatorConfig();
+  /**
+     * Default constructor.
+     */
+  public GoogleAuthenticator(GoogleAuthenticatorConfig config) {
+    this(SECRET_KEY_LENGTH_MIN);
+    checkNotNull(config, "Configuration cannot be null.");
+    this.config = config;
+  }
+
+  public GoogleAuthenticator(int secretKeyLength) {
+    config = new GoogleAuthenticatorConfig();
+    if (secretKeyLength < SECRET_KEY_LENGTH_MIN || secretKeyLength > SECRET_KEY_LENGTH_MAX) {
+      throw new IllegalArgumentException(String.format("Length must be in the [%d, %d] range.", SECRET_KEY_LENGTH_MIN, SECRET_KEY_LENGTH_MAX));
     }
+    this.secretKeyModule = (int) Math.pow(10, secretKeyLength);
+  }
 
-    public GoogleAuthenticator(GoogleAuthenticatorConfig config) {
-        checkNotNull(config, "Configuration cannot be null.");
-
-        this.config = config;
-    }
-
-    /**
+  /**
      * Calculates the verification code of the provided key at the specified
      * instant of time using the algorithm specified in RFC 6238.
      *
@@ -167,184 +151,124 @@ public final class GoogleAuthenticator implements IGoogleAuthenticator {
      * @return the validation code for the provided key at the specified instant
      * of time.
      */
-    private int calculateCode(byte[] key, long tm) {
-        // Allocating an array of bytes to represent the specified instant
-        // of time.
-        byte[] data = new byte[8];
-        long value = tm;
-
-        // Converting the instant of time from the long representation to a
-        // big-endian array of bytes (RFC4226, 5.2. Description).
-        for (int i = 8; i-- > 0; value >>>= 8) {
-            data[i] = (byte) value;
-        }
-
-        // Building the secret key specification for the HmacSHA1 algorithm.
-        SecretKeySpec signKey = new SecretKeySpec(key, HMAC_HASH_FUNCTION);
-
-        try {
-            // Getting an HmacSHA1 algorithm implementation from the JCE.
-            Mac mac = Mac.getInstance(HMAC_HASH_FUNCTION);
-
-            // Initializing the MAC algorithm.
-            mac.init(signKey);
-
-            // Processing the instant of time and getting the encrypted data.
-            byte[] hash = mac.doFinal(data);
-
-            // Building the validation code performing dynamic truncation
-            // (RFC4226, 5.3. Generating an HOTP value)
-            int offset = hash[hash.length - 1] & 0xF;
-
-            // We are using a long because Java hasn't got an unsigned integer type
-            // and we need 32 unsigned bits).
-            long truncatedHash = 0;
-
-            for (int i = 0; i < 4; ++i) {
-                truncatedHash <<= 8;
-
-                // Java bytes are signed but we need an unsigned integer:
-                // cleaning off all but the LSB.
-                truncatedHash |= (hash[offset + i] & 0xFF);
-            }
-
-            // Clean bits higher than the 32nd (inclusive) and calculate the
-            // module with the maximum validation code value.
-            truncatedHash &= 0x7FFFFFFF;
-            truncatedHash %= config.getKeyModulus();
-
-            // Returning the validation code to the caller.
-            return (int) truncatedHash;
-        } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
-            // Logging the exception.
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-
-            // We're not disclosing internal error details to our clients.
-            throw new GoogleAuthenticatorException("The operation cannot be "
-                    + "performed now.");
-        }
+  private int calculateCode(byte[] key, long tm) {
+    byte[] data = new byte[8];
+    long value = tm;
+    for (int i = 8; i-- > 0; value >>>= 8) {
+      data[i] = (byte) value;
     }
+    SecretKeySpec signKey = new SecretKeySpec(key, HMAC_HASH_FUNCTION);
+    try {
+      Mac mac = Mac.getInstance(HMAC_HASH_FUNCTION);
+      mac.init(signKey);
+      byte[] hash = mac.doFinal(data);
+      int offset = hash[hash.length - 1] & 0xF;
+      long truncatedHash = 0;
+      for (int i = 0; i < 4; ++i) {
+        truncatedHash <<= 8;
+        truncatedHash |= (hash[offset + i] & 0xFF);
+      }
+      truncatedHash &= 0x7FFFFFFF;
+      truncatedHash %= 
+<<<<<<< /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/left.java
+      this.secretKeyModule
+=======
+      config.getKeyModulus()
+>>>>>>> /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/right.java
+      ;
+      return (int) truncatedHash;
+    } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
+      LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+      throw new GoogleAuthenticatorException("The operation cannot be " + "performed now.");
+    }
+  }
 
-    /**
+  /**
+     * Get the current TOTP password of the specified key.
+     *
+     * @param secret The shared secret.
+     * @return the current TOTP password of the specified key.
+     */
+  public int getCurrentCode(String secret) {
+    byte[] decodedKey = decodeSecretKey(secret);
+    final long timeWindow = new Date().getTime() / KEY_VALIDATION_INTERVAL_MS;
+    return calculateCode(decodedKey, timeWindow);
+  }
+
+  /**
      * This method implements the algorithm specified in RFC 6238 to check if a
      * validation code is valid in a given instant of time for the given secret
      * key.
      *
-     * @param secret    the Base32 encoded secret key.
-     * @param code      the code to validate.
-     * @param timestamp the instant of time to use during the validation process.
-     * @param window    the window size to use during the validation process.
+     * @param secret the Base32 encoded secret key.
+     * @param code   the code to validate.
+     * @param tm     the instant of time to use during the validation process.
+     * @param window the window size to use during the validation process.
      * @return <code>true</code> if the validation code is valid,
      * <code>false</code> otherwise.
      */
-    private boolean checkCode(
-            String secret,
-            long code,
-            long timestamp,
-            int window) {
-        byte[] decodedKey;
-
-        // Decoding the secret key to get its raw byte representation.
-        switch (config.getKeyRepresentation()) {
-            case BASE32:
-                Base32 codec32 = new Base32();
-                decodedKey = codec32.decode(secret);
-                break;
-            case BASE64:
-                Base64 codec64 = new Base64();
-                decodedKey = codec64.decode(secret);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown key representation type.");
-        }
-
-        // convert unix time into a 30 second "window" as specified by the
-        // TOTP specification. Using Google's default interval of 30 seconds.
-        final long timeWindow = timestamp / this.config.getTimeStepSizeInMillis();
-
-        // Calculating the verification code of the given key in each of the
-        // time intervals and returning true if the provided code is equal to
-        // one of them.
-        for (int i = -((window - 1) / 2); i <= window / 2; ++i) {
-            // Calculating the verification code for the current time interval.
-            long hash = calculateCode(decodedKey, timeWindow + i);
-
-            // Checking if the provided code is equal to the calculated one.
-            if (hash == code) {
-                // The verification code is valid.
-                return true;
-            }
-        }
-
-        // The verification code is invalid.
-        return false;
+  private boolean checkCode(String secret, long code, long timestamp, int window) {
+    byte[] decodedKey = 
+<<<<<<< /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/left.java
+    decodeSecretKey(secret)
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+    ;
+    switch (config.getKeyRepresentation()) {
+      case BASE32:
+      Base32 codec32 = new Base32();
+      decodedKey = codec32.decode(secret);
+      break;
+      case BASE64:
+      Base64 codec64 = new Base64();
+      decodedKey = codec64.decode(secret);
+      break;
+      default:
+      throw new IllegalArgumentException("Unknown key representation type.");
     }
-
-    @Override
-    public GoogleAuthenticatorKey createCredentials() {
-
-        // Allocating a buffer sufficiently large to hold the bytes required by
-        // the secret key and the scratch codes.
-        byte[] buffer =
-                new byte[SECRET_BITS / 8 + SCRATCH_CODES * BYTES_PER_SCRATCH_CODE];
-
-        secureRandom.nextBytes(buffer);
-
-        // Extracting the bytes making up the secret key.
-        byte[] secretKey = Arrays.copyOf(buffer, SECRET_BITS / 8);
-        String generatedKey = calculateSecretKey(secretKey);
-
-        // Generating the verification code at time = 0.
-        int validationCode = calculateValidationCode(secretKey);
-
-        // Calculate scratch codes
-        List<Integer> scratchCodes = calculateScratchCodes(buffer);
-
-        return new GoogleAuthenticatorKey(
-                generatedKey,
-                validationCode,
-                scratchCodes);
+    final long timeWindow = timestamp / this.config.getTimeStepSizeInMillis();
+    for (int i = -((window - 1) / 2); i <= window / 2; ++i) {
+      long hash = calculateCode(decodedKey, timeWindow + i);
+      if (hash == code) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public GoogleAuthenticatorKey createCredentials(String userName) {
-        // Further validation will be performed by the configured provider.
-        checkNotNull(userName, "User name cannot be null.");
+  @Override public GoogleAuthenticatorKey createCredentials() {
+    byte[] buffer = new byte[SECRET_BITS / 8 + SCRATCH_CODES * BYTES_PER_SCRATCH_CODE];
+    secureRandom.nextBytes(buffer);
+    byte[] secretKey = Arrays.copyOf(buffer, SECRET_BITS / 8);
+    String generatedKey = encodeSecretKey(secretKey);
+    int validationCode = calculateValidationCode(secretKey);
+    List<Integer> scratchCodes = calculateScratchCodes(buffer);
+    return new GoogleAuthenticatorKey(generatedKey, validationCode, scratchCodes);
+  }
 
-        GoogleAuthenticatorKey key = createCredentials();
+  @Override public GoogleAuthenticatorKey createCredentials(String userName) {
+    checkNotNull(userName, "User name cannot be null.");
+    GoogleAuthenticatorKey key = createCredentials();
+    ICredentialRepository repository = getValidCredentialRepository();
+    repository.saveUserCredentials(userName, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+    return key;
+  }
 
-        ICredentialRepository repository = getValidCredentialRepository();
-        repository.saveUserCredentials(
-                userName,
-                key.getKey(),
-                key.getVerificationCode(),
-                key.getScratchCodes());
-
-        return key;
+  private List<Integer> calculateScratchCodes(byte[] buffer) {
+    List<Integer> scratchCodes = new ArrayList<>();
+    while (scratchCodes.size() < SCRATCH_CODES) {
+      byte[] scratchCodeBuffer = Arrays.copyOfRange(buffer, SECRET_BITS / 8 + BYTES_PER_SCRATCH_CODE * scratchCodes.size(), SECRET_BITS / 8 + BYTES_PER_SCRATCH_CODE * scratchCodes.size() + BYTES_PER_SCRATCH_CODE);
+      int scratchCode = calculateScratchCode(scratchCodeBuffer);
+      if (scratchCode != SCRATCH_CODE_INVALID) {
+        scratchCodes.add(scratchCode);
+      } else {
+        scratchCodes.add(generateScratchCode());
+      }
     }
+    return scratchCodes;
+  }
 
-    private List<Integer> calculateScratchCodes(byte[] buffer) {
-        List<Integer> scratchCodes = new ArrayList<>();
-
-        while (scratchCodes.size() < SCRATCH_CODES) {
-            byte[] scratchCodeBuffer = Arrays.copyOfRange(
-                    buffer,
-                    SECRET_BITS / 8 + BYTES_PER_SCRATCH_CODE * scratchCodes.size(),
-                    SECRET_BITS / 8 + BYTES_PER_SCRATCH_CODE * scratchCodes.size() + BYTES_PER_SCRATCH_CODE);
-
-            int scratchCode = calculateScratchCode(scratchCodeBuffer);
-
-            if (scratchCode != SCRATCH_CODE_INVALID) {
-                scratchCodes.add(scratchCode);
-            } else {
-                scratchCodes.add(generateScratchCode());
-            }
-        }
-
-        return scratchCodes;
-    }
-
-    /**
+  /**
      * This method calculates a scratch code from a random byte buffer of
      * suitable size <code>#BYTES_PER_SCRATCH_CODE</code>.
      *
@@ -352,33 +276,26 @@ public final class GoogleAuthenticator implements IGoogleAuthenticator {
      *                          <code>#BYTES_PER_SCRATCH_CODE</code>.
      * @return the scratch code.
      */
-    private int calculateScratchCode(byte[] scratchCodeBuffer) {
-        checkArgument(scratchCodeBuffer.length >= BYTES_PER_SCRATCH_CODE,
-                "The provided random byte buffer is too small:", scratchCodeBuffer.length);
-
-        int scratchCode = 0;
-
-        for (int i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
-            scratchCode <<= 8;
-            scratchCode += scratchCodeBuffer[i];
-        }
-
-        scratchCode = (scratchCode & 0x7FFFFFFF) % SCRATCH_CODE_MODULUS;
-
-        // Accept the scratch code only if it has exactly
-        // SCRATCH_CODE_LENGTH digits.
-        if (validateScratchCode(scratchCode)) {
-            return scratchCode;
-        } else {
-            return SCRATCH_CODE_INVALID;
-        }
+  private int calculateScratchCode(byte[] scratchCodeBuffer) {
+    checkArgument(scratchCodeBuffer.length >= BYTES_PER_SCRATCH_CODE, "The provided random byte buffer is too small:", scratchCodeBuffer.length);
+    int scratchCode = 0;
+    for (int i = 0; i < BYTES_PER_SCRATCH_CODE; ++i) {
+      scratchCode <<= 8;
+      scratchCode += scratchCodeBuffer[i];
     }
-
-    /* package */ boolean validateScratchCode(int scratchCode) {
-        return (scratchCode >= SCRATCH_CODE_MODULUS / 10);
+    scratchCode = (scratchCode & 0x7FFFFFFF) % SCRATCH_CODE_MODULUS;
+    if (validateScratchCode(scratchCode)) {
+      return scratchCode;
+    } else {
+      return SCRATCH_CODE_INVALID;
     }
+  }
 
-    /**
+  boolean validateScratchCode(int scratchCode) {
+    return (scratchCode >= SCRATCH_CODE_MODULUS / 10);
+  }
+
+  /**
      * This method creates a new random byte buffer from which a new scratch
      * code is generated. This function is invoked if a scratch code generated
      * from the main buffer is invalid because it does not satisfy the scratch
@@ -386,84 +303,99 @@ public final class GoogleAuthenticator implements IGoogleAuthenticator {
      *
      * @return A valid scratch code.
      */
-    private int generateScratchCode() {
-        while (true) {
-            byte[] scratchCodeBuffer = new byte[BYTES_PER_SCRATCH_CODE];
-            secureRandom.nextBytes(scratchCodeBuffer);
-
-            int scratchCode = calculateScratchCode(scratchCodeBuffer);
-
-            if (scratchCode != SCRATCH_CODE_INVALID) {
-                return scratchCode;
-            }
-        }
+  private int generateScratchCode() {
+    while (true) {
+      byte[] scratchCodeBuffer = new byte[BYTES_PER_SCRATCH_CODE];
+      secureRandom.nextBytes(scratchCodeBuffer);
+      int scratchCode = calculateScratchCode(scratchCodeBuffer);
+      if (scratchCode != SCRATCH_CODE_INVALID) {
+        return scratchCode;
+      }
     }
+  }
 
-    /**
+  /**
      * This method calculates the validation code at time 0.
      *
      * @param secretKey The secret key to use.
      * @return the validation code at time 0.
      */
-    private int calculateValidationCode(byte[] secretKey) {
-        return calculateCode(secretKey, 0);
-    }
+  private int calculateValidationCode(byte[] secretKey) {
+    return calculateCode(secretKey, 0);
+  }
 
-    /**
+  /**
      * This method calculates the secret key given a random byte buffer.
      *
      * @param secretKey a random byte buffer.
      * @return the secret key.
      */
-    private String calculateSecretKey(byte[] secretKey) {
-        byte[] encodedKey;
+  private String encodeSecretKey(byte[] secretKey) {
+    Base32 codec = new Base32();
+    byte[] encodedKey = codec.encode(secretKey);
+    return new String(encodedKey);
+  }
 
-        switch (config.getKeyRepresentation()) {
-            case BASE32:
-                Base32 codec = new Base32();
-                encodedKey = codec.encode(secretKey);
-                break;
-            case BASE64:
-                Base64 codec64 = new Base64();
-                encodedKey = codec64.encode(secretKey);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown key representation type.");
-        }
 
-        // Creating a string in the specified representation.
-        return new String(encodedKey);
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+     * This method calculates the secret key given a random byte buffer.
+     *
+     * @param secretKey a random byte buffer.
+     * @return the secret key.
+     */
+  private String calculateSecretKey(byte[] secretKey) {
+    byte[] encodedKey;
+    switch (config.getKeyRepresentation()) {
+      case BASE32:
+      Base32 codec = new Base32();
+      encodedKey = codec.encode(secretKey);
+      break;
+      case BASE64:
+      Base64 codec64 = new Base64();
+      encodedKey = codec64.encode(secretKey);
+      break;
+      default:
+      throw new IllegalArgumentException("Unknown key representation type.");
     }
+    return new String(encodedKey);
+  }
+>>>>>>> /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/right.java
 
-    @Override
-    public boolean authorize(String secret, int verificationCode)
-            throws GoogleAuthenticatorException {
-        // Checking user input and failing if the secret key was not provided.
-        checkNotNull(secret, "Secret cannot be null.");
 
-        // Checking if the verification code is between the legal bounds.
-        if (verificationCode <= 0 || verificationCode >= this.config.getKeyModulus()) {
-            return false;
-        }
+  /**
+     * This method decodes the shared secret from its Base32 representation.
+     *
+     * @param secret The Base32-encoded shared secret.
+     * @return the secret key.
+     */
+  private byte[] decodeSecretKey(String secret) {
+    Base32 codec = new Base32();
+    byte[] decodedKey = codec.decode(secret);
+    return decodedKey;
+  }
 
-        // Checking the validation code using the current UNIX time.
-        return checkCode(
-                secret,
-                verificationCode,
-                new Date().getTime(),
-                this.config.getWindowSize());
+  @Override public boolean authorizeUser(String userName, int verificationCode) throws GoogleAuthenticatorException {
+    ICredentialRepository repository = getValidCredentialRepository();
+    return authorize(repository.getSecretKey(userName), verificationCode);
+  }
+
+  @Override public boolean authorize(String secret, int verificationCode) throws GoogleAuthenticatorException {
+    checkNotNull(secret, "Secret cannot be null.");
+    if (verificationCode <= 0 || verificationCode >= 
+<<<<<<< /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/left.java
+    this.secretKeyModule
+=======
+    this.config.getKeyModulus()
+>>>>>>> /usr/src/app/output/wstrange/googleauth/bb6e4a0c6f4c595a93bcd3b06c05d0c55df8e365/src/main/java/com/warrenstrange/googleauth/GoogleAuthenticator.java/right.java
+    ) {
+      return false;
     }
+    return checkCode(secret, verificationCode, new Date().getTime(), this.config.getWindowSize());
+  }
 
-    @Override
-    public boolean authorizeUser(String userName, int verificationCode)
-            throws GoogleAuthenticatorException {
-
-        ICredentialRepository repository = getValidCredentialRepository();
-
-        return authorize(repository.getSecretKey(userName), verificationCode);
-    }
-
-    /**
+  /**
      * This method loads the first available and valid ICredentialRepository
      * registered using the Java service loader API.
      *
@@ -471,37 +403,26 @@ public final class GoogleAuthenticator implements IGoogleAuthenticator {
      * @throws java.lang.UnsupportedOperationException if no valid service is
      *                                                 found.
      */
-    private ICredentialRepository getValidCredentialRepository() {
-        ICredentialRepository repository = getCredentialRepository();
-
-        if (repository == null) {
-            throw new UnsupportedOperationException(
-                    String.format("An instance of the %s service must be " +
-                                    "configured in order to use this feature.",
-                            ICredentialRepository.class.getName()
-                    )
-            );
-        }
-
-        return repository;
+  private ICredentialRepository getValidCredentialRepository() {
+    ICredentialRepository repository = getCredentialRepository();
+    if (repository == null) {
+      throw new UnsupportedOperationException(String.format("An instance of the %s service must be " + "configured in order to use this feature.", ICredentialRepository.class.getName()));
     }
+    return repository;
+  }
 
-    /**
+  /**
      * This method loads the first available ICredentialRepository
      * registered using the Java service loader API.
      *
      * @return the first registered ICredentialRepository or <code>null</code>
      * if none is found.
      */
-    private ICredentialRepository getCredentialRepository() {
-        ServiceLoader<ICredentialRepository> loader =
-                ServiceLoader.load(ICredentialRepository.class);
-
-        //noinspection LoopStatementThatDoesntLoop
-        for (ICredentialRepository repository : loader) {
-            return repository;
-        }
-
-        return null;
+  private ICredentialRepository getCredentialRepository() {
+    ServiceLoader<ICredentialRepository> loader = ServiceLoader.load(ICredentialRepository.class);
+    for (ICredentialRepository repository : loader) {
+      return repository;
     }
+    return null;
+  }
 }
