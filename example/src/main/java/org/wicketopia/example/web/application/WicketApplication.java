@@ -1,22 +1,7 @@
-/*
- * Copyright (c) 2011 Carman Consulting, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.wicketopia.example.web.application;
-
 import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.ISpringContextLocator;
@@ -39,76 +24,46 @@ import org.wicketopia.persistence.hibernate.decorator.HibernatePropertyDecorator
  * Application object for your web application. If you want to run this
  * application without deploying, run the Start class.
  */
-@Component("wicketApplication")
-public class WicketApplication extends WebApplication implements
-		ISpringContextLocator, ApplicationContextAware {
-	// ----------------------------------------------------------------------------------------------------------------------
-	// Fields
-	// ----------------------------------------------------------------------------------------------------------------------
+@Component(value = "wicketApplication") public class WicketApplication extends WebApplication implements ISpringContextLocator, ApplicationContextAware {
+  private static final long serialVersionUID = -6044515824643215562L;
 
-	private static final long serialVersionUID = -6044515824643215562L;
-	private String configurationType = RuntimeConfigurationType.DEVELOPMENT.name();
-	private ApplicationContext applicationContext;
+  private String configurationType = RuntimeConfigurationType.DEVELOPMENT.name();
 
-	@Autowired
-	private LocalSessionFactoryBean sessionFactoryBean;
+  private ApplicationContext applicationContext;
 
-	// ----------------------------------------------------------------------------------------------------------------------
-	// Constructors
-	// ----------------------------------------------------------------------------------------------------------------------
+  @Autowired private LocalSessionFactoryBean sessionFactoryBean;
 
-	public WicketApplication() {
-	}
+  public WicketApplication() {
+  }
 
-	// ----------------------------------------------------------------------------------------------------------------------
-	// ApplicationContextAware Implementation
-	// ----------------------------------------------------------------------------------------------------------------------
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
 
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+  public ApplicationContext getSpringContext() {
+    return applicationContext;
+  }
 
-	// ----------------------------------------------------------------------------------------------------------------------
-	// ISpringContextLocator Implementation
-	// ----------------------------------------------------------------------------------------------------------------------
+  @Value(value = "${wicket.configuration}") public void setConfigurationType(String configurationType) {
+    this.configurationType = configurationType;
+  }
 
-	public ApplicationContext getSpringContext() {
-		return applicationContext;
-	}
+  @Override public Class<HomePage> getHomePage() {
+    return HomePage.class;
+  }
 
-	// ----------------------------------------------------------------------------------------------------------------------
-	// Getter/Setter Methods
-	// ----------------------------------------------------------------------------------------------------------------------
+  protected void init() {
+    super.init();
+    Wicketopia plugin = new Wicketopia();
+    plugin.addPropertyMetaDataDecorator(new HibernatePropertyDecorator(new PropertyModel<Configuration>(sessionFactoryBean, "configuration")));
+    plugin.addPropertyViewerProvider("image-boolean", ImageBooleanViewer.getProvider());
+    plugin.install(this);
+    getComponentInstantiationListeners().add(new SpringComponentInjector(this, getSpringContext(), true));
+  }
 
-//	@Override
-//	public String getConfigurationType() {
-//		return configurationType;
-//	}
-
-	@Value("${wicket.configuration}")
-	public void setConfigurationType(String configurationType) {
-		this.configurationType = configurationType;
-	}
-
-	// ----------------------------------------------------------------------------------------------------------------------
-	// Other Methods
-	// ----------------------------------------------------------------------------------------------------------------------
-
-	@Override
-	public Class<HomePage> getHomePage() {
-		return HomePage.class;
-	}
-
-    protected void init()
-    {
-        super.init();
-        Wicketopia plugin = new Wicketopia();
-        plugin.addPropertyMetaDataDecorator(new HibernatePropertyDecorator(new PropertyModel<Configuration>(sessionFactoryBean, "configuration")));
-        plugin.addPropertyViewerProvider("image-boolean", ImageBooleanViewer.getProvider());
-        plugin.install(this);
-		getComponentInstantiationListeners().add(
-				new SpringComponentInjector(this, getSpringContext(), true));
-		getAjaxRequestTargetListeners().add(new AutoFeedbackListener());
-    }
+  @Override public AjaxRequestTarget newAjaxRequestTarget(Page page) {
+    AjaxRequestTarget target = super.newAjaxRequestTarget(page);
+    target.addListener(new AutoFeedbackListener());
+    return target;
+  }
 }
