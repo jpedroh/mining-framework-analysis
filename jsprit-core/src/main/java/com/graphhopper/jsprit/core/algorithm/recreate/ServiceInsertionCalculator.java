@@ -153,77 +153,83 @@ final class ServiceInsertionCalculator extends AbstractInsertionCalculator {
             }
             boolean not_fulfilled_break = true;
 			for(TimeWindow timeWindow : service.getTimeWindows()) {
-                deliveryAct2Insert.setTheoreticalEarliestOperationStartTime(timeWindow.getStart());
-                deliveryAct2Insert.setTheoreticalLatestOperationStartTime(timeWindow.getEnd());
-                ActivityContext activityContext = new ActivityContext();
-                activityContext.setInsertionIndex(actIndex);
-                insertionContext.setActivityContext(activityContext);
-                ConstraintsStatus status = fulfilled(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime, failedActivityConstraints, constraintManager);
+                        deliveryAct2Insert.setTheoreticalEarliestOperationStartTime(timeWindow.getStart());
+                        deliveryAct2Insert.setTheoreticalLatestOperationStartTime(timeWindow.getEnd());
+                        ActivityContext activityContext = new ActivityContext();
+                        activityContext.setInsertionIndex(actIndex);
+                        insertionContext.setActivityContext(activityContext);
+<<<<<<< /usr/src/app/output/jsprit/jsprit/2bc9a23b5449301c14c93439fa61f2d462be38d0/jsprit-core/src/main/java/com/graphhopper/jsprit/core/algorithm/recreate/ServiceInsertionCalculator.java/left.java
+                        ConstraintsStatus status = fulfilled(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime, failedActivityConstraints, constraintManager);
 
-                // check if new vehicle has break
-                Break aBreak = newVehicle.getBreak();
-                if (aBreak != null) {
-                    // check if break has been inserted
-                    if (!currentRoute.getTourActivities().servesJob(aBreak)) {
-                        // get new route end time before insertion of newAct
-                        Double routeEndTime = stateManager.getRouteState(currentRoute, newVehicle, InternalStates.END_TIME, Double.class);
-                        if (routeEndTime == null) routeEndTime = newVehicle.getEarliestDeparture();
-                        // get future waiting of nextAct in the new route
-                        Double futureWaiting = stateManager.getActivityState(nextAct, newVehicle, InternalStates.FUTURE_WAITING, Double.class);
-                        if (futureWaiting == null) futureWaiting = 0.;
-                        // get nextAct end time delay after insertion of newAct in the new route
-                        double newActArrTime = prevActStartTime + transportCosts.getTransportTime(prevAct.getLocation(), deliveryAct2Insert.getLocation(), prevActStartTime, newDriver, newVehicle);
-                        double newActEndTime = Math.max(deliveryAct2Insert.getTheoreticalEarliestOperationStartTime(), newActArrTime) + activityCosts.getActivityDuration(deliveryAct2Insert, newActArrTime, newDriver, newVehicle);
-                        double nextActArrTime = newActEndTime + transportCosts.getTransportTime(deliveryAct2Insert.getLocation(), nextAct.getLocation(), newActEndTime, newDriver, newVehicle);
-                        double nextActEndTime = Math.max(nextAct.getTheoreticalEarliestOperationStartTime(), nextActArrTime) + activityCosts.getActivityDuration(nextAct, nextActArrTime, newDriver, newVehicle);
-                        Double nextActEndTimeOld = stateManager.getActivityState(nextAct, newVehicle, InternalStates.END_TIME, Double.class);
-                        if (nextActEndTimeOld == null) nextActEndTimeOld = routeEndTime;
-                        double nextActEndTimeDelay = Math.max(0., nextActEndTime - nextActEndTimeOld);
-                        // get new route end time after insertion of newAct
-                        double routeEndTimeNew = routeEndTime + Math.max(0., nextActEndTimeDelay - futureWaiting);
-                        // check if new route end time later than break time window
-                        if (routeEndTimeNew > aBreak.getTimeWindow().getEnd()) {
-                            VehicleRoute.Builder routeBuilder = VehicleRoute.Builder.newInstance(newVehicle, newDriver);
-                            routeBuilder.setJobActivityFactory(activityFactory);
-                            for (int tourActIndex = 0; tourActIndex < currentRoute.getActivities().size(); tourActIndex++) {
-                                if (tourActIndex == actIndex) {
-                                    addJobActToRouteBuilder(routeBuilder, jobToInsert, deliveryAct2Insert);
+                        // check if new vehicle has break
+                        Break aBreak = newVehicle.getBreak();
+                        if (aBreak != null) {
+                            // check if break has been inserted
+                            if (!currentRoute.getTourActivities().servesJob(aBreak)) {
+                                // get new route end time before insertion of newAct
+                                Double routeEndTime = stateManager.getRouteState(currentRoute, newVehicle, InternalStates.END_TIME, Double.class);
+                                if (routeEndTime == null) routeEndTime = newVehicle.getEarliestDeparture();
+                                // get future waiting of nextAct in the new route
+                                Double futureWaiting = stateManager.getActivityState(nextAct, newVehicle, InternalStates.FUTURE_WAITING, Double.class);
+                                if (futureWaiting == null) futureWaiting = 0.;
+                                // get nextAct end time delay after insertion of newAct in the new route
+                                double newActArrTime = prevActStartTime + transportCosts.getTransportTime(prevAct.getLocation(), deliveryAct2Insert.getLocation(), prevActStartTime, newDriver, newVehicle);
+                                double newActEndTime = Math.max(deliveryAct2Insert.getTheoreticalEarliestOperationStartTime(), newActArrTime) + activityCosts.getActivityDuration(deliveryAct2Insert, newActArrTime, newDriver, newVehicle);
+                                double nextActArrTime = newActEndTime + transportCosts.getTransportTime(deliveryAct2Insert.getLocation(), nextAct.getLocation(), newActEndTime, newDriver, newVehicle);
+                                double nextActEndTime = Math.max(nextAct.getTheoreticalEarliestOperationStartTime(), nextActArrTime) + activityCosts.getActivityDuration(nextAct, nextActArrTime, newDriver, newVehicle);
+                                Double nextActEndTimeOld = stateManager.getActivityState(nextAct, newVehicle, InternalStates.END_TIME, Double.class);
+                                if (nextActEndTimeOld == null) nextActEndTimeOld = routeEndTime;
+                                double nextActEndTimeDelay = Math.max(0., nextActEndTime - nextActEndTimeOld);
+                                // get new route end time after insertion of newAct
+                                double routeEndTimeNew = routeEndTime + Math.max(0., nextActEndTimeDelay - futureWaiting);
+                                // check if new route end time later than break time window
+                                if (routeEndTimeNew > aBreak.getTimeWindow().getEnd()) {
+                                    VehicleRoute.Builder routeBuilder = VehicleRoute.Builder.newInstance(newVehicle, newDriver);
+                                    routeBuilder.setJobActivityFactory(activityFactory);
+                                    for (int tourActIndex = 0; tourActIndex < currentRoute.getActivities().size(); tourActIndex++) {
+                                        if (tourActIndex == actIndex) {
+                                            addJobActToRouteBuilder(routeBuilder, jobToInsert, deliveryAct2Insert);
+                                        }
+                                        TourActivity tourActivity = currentRoute.getActivities().get(tourActIndex);
+                                        if (tourActivity instanceof TourActivity.JobActivity) {
+                                            addJobActToRouteBuilder(routeBuilder, ((TourActivity.JobActivity) tourActivity).getJob(), tourActivity);
+                                        }
+                                    }
+                                    if (actIndex == currentRoute.getActivities().size()) {
+                                        addJobActToRouteBuilder(routeBuilder, jobToInsert, deliveryAct2Insert);
+                                    }
+                                    routeBuilder.setDepartureTime(newVehicleDepartureTime);
+                                    VehicleRoute route = routeBuilder.build();
+                                    stateManager.reCalculateStates(route);
+                                    // check if break can be inserted
+                                    InsertionData iData = breakInsertionCalculator.getInsertionData(route, aBreak, newVehicle, newVehicleDepartureTime, newDriver, Double.MAX_VALUE);
+                                    if (iData instanceof InsertionData.NoInsertionFound) {
+                                        status = ConstraintsStatus.NOT_FULFILLED;
+                                    }
+                                    if (!currentRoute.isEmpty())
+                                        stateManager.reCalculateStates(currentRoute);
                                 }
-                                TourActivity tourActivity = currentRoute.getActivities().get(tourActIndex);
-                                if (tourActivity instanceof TourActivity.JobActivity) {
-                                    addJobActToRouteBuilder(routeBuilder, ((TourActivity.JobActivity) tourActivity).getJob(), tourActivity);
-                                }
                             }
-                            if (actIndex == currentRoute.getActivities().size()) {
-                                addJobActToRouteBuilder(routeBuilder, jobToInsert, deliveryAct2Insert);
-                            }
-                            routeBuilder.setDepartureTime(newVehicleDepartureTime);
-                            VehicleRoute route = routeBuilder.build();
-                            stateManager.reCalculateStates(route);
-                            // check if break can be inserted
-                            InsertionData iData = breakInsertionCalculator.getInsertionData(route, aBreak, newVehicle, newVehicleDepartureTime, newDriver, Double.MAX_VALUE);
-                            if (iData instanceof InsertionData.NoInsertionFound) {
-                                status = ConstraintsStatus.NOT_FULFILLED;
-                            }
-                            if (!currentRoute.isEmpty())
-                                stateManager.reCalculateStates(currentRoute);
                         }
-                    }
-                }
 
-                if (status.equals(ConstraintsStatus.FULFILLED)) {
-                    double additionalICostsAtActLevel = softActivityConstraint.getCosts(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime);
-                    double additionalTransportationCosts = additionalTransportCostsCalculator.getCosts(insertionContext, prevAct, nextAct, deliveryAct2Insert, prevActStartTime);
-                    if (additionalICostsAtRouteLevel + additionalICostsAtActLevel + additionalTransportationCosts < bestCost) {
-                        bestCost = additionalICostsAtRouteLevel + additionalICostsAtActLevel + additionalTransportationCosts;
-                        insertionIndex = actIndex;
-                        bestTimeWindow = timeWindow;
-                    }
-                    not_fulfilled_break = false;
-                } else if (status.equals(ConstraintsStatus.NOT_FULFILLED)) {
-                    not_fulfilled_break = false;
-                }
-			}
+||||||| /usr/src/app/output/jsprit/jsprit/2bc9a23b5449301c14c93439fa61f2d462be38d0/jsprit-core/src/main/java/com/graphhopper/jsprit/core/algorithm/recreate/ServiceInsertionCalculator.java/base.java
+                        ConstraintsStatus status = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime);
+=======
+                        ConstraintsStatus status = fulfilled(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime, failedActivityConstraints, constraintManager);
+>>>>>>> /usr/src/app/output/jsprit/jsprit/2bc9a23b5449301c14c93439fa61f2d462be38d0/jsprit-core/src/main/java/com/graphhopper/jsprit/core/algorithm/recreate/ServiceInsertionCalculator.java/right.java
+                        if (status.equals(ConstraintsStatus.FULFILLED)) {
+                            double additionalICostsAtActLevel = softActivityConstraint.getCosts(insertionContext, prevAct, deliveryAct2Insert, nextAct, prevActStartTime);
+                            double additionalTransportationCosts = additionalTransportCostsCalculator.getCosts(insertionContext, prevAct, nextAct, deliveryAct2Insert, prevActStartTime);
+                            if (additionalICostsAtRouteLevel + additionalICostsAtActLevel + additionalTransportationCosts < bestCost) {
+                                bestCost = additionalICostsAtRouteLevel + additionalICostsAtActLevel + additionalTransportationCosts;
+                                insertionIndex = actIndex;
+                                bestTimeWindow = timeWindow;
+                            }
+                            not_fulfilled_break = false;
+                        } else if (status.equals(ConstraintsStatus.NOT_FULFILLED)) {
+                            not_fulfilled_break = false;
+                        }
+        }
             if(not_fulfilled_break) break;
             double nextActArrTime = prevActStartTime + transportCosts.getTransportTime(prevAct.getLocation(), nextAct.getLocation(), prevActStartTime, newDriver, newVehicle);
             prevActStartTime = Math.max(nextActArrTime, nextAct.getTheoreticalEarliestOperationStartTime()) + activityCosts.getActivityDuration(nextAct,nextActArrTime,newDriver,newVehicle);
@@ -264,4 +270,6 @@ final class ServiceInsertionCalculator extends AbstractInsertionCalculator {
         else
             throw new IllegalStateException("job " + job.getName());
     }
+
+
 }
