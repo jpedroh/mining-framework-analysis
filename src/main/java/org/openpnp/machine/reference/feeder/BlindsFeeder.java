@@ -150,14 +150,15 @@ public class BlindsFeeder extends ReferenceFeeder {
     private Length sprocketPitch = new Length(4, LengthUnit.Millimeters);
 
     @Element(required = false)
-    private Length edgeOpenDistance = new Length(2, LengthUnit.Millimeters); 
+    private Length edgeOpenDistance = new Length(2, LengthUnit.Millimeters);
 
     @Element(required = false)
-    private Length edgeClosedDistance = new Length(2, LengthUnit.Millimeters); 
+    private Length edgeClosedDistance = new Length(2, LengthUnit.Millimeters);
 
     // we have 1mm push edge standard and the smallest CP40 nozzle tip has 0.8mm usable tip shaft
+
     @Element(required = false)
-    private Length pushZOffset = new Length(0.25, LengthUnit.Millimeters); 
+    private Length pushZOffset = new Length(0.25, LengthUnit.Millimeters);
 
     @Attribute(required = false)
     private double pushSpeed = 0.1;
@@ -167,11 +168,12 @@ public class BlindsFeeder extends ReferenceFeeder {
         CheckCorrect,
         ChangePart
     }
+
     @Attribute(required = false) 
     private OcrAction ocrAction = OcrAction.None;
 
     @Element(required = false)
-    private Length ocrMargin = new Length(20, LengthUnit.Millimeters); 
+    private Length ocrMargin = new Length(20, LengthUnit.Millimeters);
 
     @Attribute(required = false) 
     private String ocrFontName = "Liberation Mono";
@@ -182,12 +184,15 @@ public class BlindsFeeder extends ReferenceFeeder {
     public enum OcrTextOrientation {
         AwayFromTape,
         TowardsTape
-    };
+    }
+
+;
+
     @Attribute(required = false) 
     private OcrTextOrientation ocrTextOrientation = OcrTextOrientation.AwayFromTape;
 
-
     // These internal setting are not on the GUI but can be changed in the XML.
+
     @Attribute(required = false)
     private int fidLocMaxPasses = 3;
 
@@ -200,22 +205,29 @@ public class BlindsFeeder extends ReferenceFeeder {
     /**
      * Maximum label size (derived from the fact that even 8mm tape labels must fit).
      */
+
     @Attribute(required = false) 
     private double maxLabelSizeMm = 10.0;
 
     /**
      * Offset of the tape center from the pocket center according to EIA 481 (derived).
      */
+
     @Attribute(required = false) 
-    private double tapeCenterOffsetMm = -1.0625; 
+    private double tapeCenterOffsetMm = -1.0625;
 
     // Transient state
+
     private Length coverPosition = new Length(Double.NaN, LengthUnit.Millimeters);
+
     private Length pocketDistance = new Length(Double.NaN, LengthUnit.Millimeters);
+
     private boolean calibrating = false;
+
     private boolean calibrated = false;
 
     public static final String defaultGroupName = "Default";
+
     private static final List<String> locationGroupNamesList = Arrays.asList(new String[]{defaultGroupName, defaultGroupName.toUpperCase(), "LOCATION", "NONE", ""});
 
     private void checkHomedState(Machine machine) {
@@ -297,6 +309,7 @@ public class BlindsFeeder extends ReferenceFeeder {
      * @param pocketNumber 1-based number of the pocket 
      * @return the Location of the pocket with the given number in the tape
      */
+
     public Location getUncalibratedPickLocation(double pocketNumber)  {
         recalculateGeometry();
         // Calculate the pick location in local feeder coordinates. 
@@ -307,7 +320,7 @@ public class BlindsFeeder extends ReferenceFeeder {
                 location.getZ(), getPickRotationInTape());
         Location machineLocation = transformFeederToMachineLocation(feederLocation);
         return machineLocation;
-    } 
+    }
 
     public Location getPickLocation(double pocketNumber) throws Exception {
         assertCalibration();
@@ -411,6 +424,7 @@ public class BlindsFeeder extends ReferenceFeeder {
      * Makes the assumption, that after each feed a pick followed,
      * so the pockets are now empty.
      */
+
     @Override
     public boolean canTakeBackPart() {
         if (getFeedCount() > 0 ) {  
@@ -803,7 +817,13 @@ public class BlindsFeeder extends ReferenceFeeder {
                         }
                         if (positionTolerant || Math.abs(cameraFeederY - center.getY()) < positionTolerance) {
                             if (positionTolerant || Math.abs(cameraFeederX - center.getX()) < pocketRange) {
+<<<<<<< /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/BlindsFeeder.java/left.java
+                                if (angleTolerant || Math.abs(angleNorm(angle - 0)) < angleTolerance) {
+||||||| /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/BlindsFeeder.java/base.java
+                                    if (angleTolerant || Math.abs(angleNorm(angle - 0)) < angleTolerance) {
+=======
                                     if (angleTolerant || Math.abs(Utils2D.angleNorm(angle - 0)) < angleTolerance) {
+>>>>>>> /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/BlindsFeeder.java/right.java
                                     if (mmSize.getX() > blindMin && mmSize.getX() < blindMax && mmSize.getY() > blindMin && mmSize.getY() < blindMax
                                             && mmSize.getX()/mmSize.getY() < blindAspect 
                                             && mmSize.getY()/mmSize.getX() < blindAspect) {
@@ -1003,6 +1023,7 @@ public class BlindsFeeder extends ReferenceFeeder {
         if (coverType == CoverType.BlindsCover) {
             // For a BlindsCover we can use vision to try and determine the specs.
             ensureCameraZ(camera);
+
             try (CvPipeline pipeline = getCvPipeline(camera, true, getOcrAction())) {
 
                 // Reset the specs to allow FindFeatures to acquire them freely.
@@ -1048,17 +1069,6 @@ public class BlindsFeeder extends ReferenceFeeder {
             Location cameraLocation = camera.getLocation();
             Location feederLocation = transformMachineToFeederLocation(cameraLocation).convertToUnits(LengthUnit.Millimeters);
             setPocketCenterline(new Length(Math.round(feederLocation.getY()), LengthUnit.Millimeters));
-        }
-    }
-
-    public void ensureCameraZ(Camera camera) throws Exception {
-        if (camera.isUnitsPerPixelAtZCalibrated()
-                && !getLocation().getLengthZ().isInitialized()) {
-            throw new Exception("Feeder "+getName()+": Please set the Part Z first.");
-        }
-        if (getLocation().getLengthZ().isInitialized()) {
-            // If we already have the Feeder Z, move the camera there to get the right units per pixel.
-            camera.moveTo(camera.getLocation().deriveLengths(null, null, getLocation().getLengthZ(), null));
         }
     }
 
@@ -1287,6 +1297,7 @@ public class BlindsFeeder extends ReferenceFeeder {
     public enum CoverType {
         NoCover, BlindsCover, PushCover
     }
+
     public enum CoverActuation {
         Manual, CheckOpen, OpenOnFirstUse, OpenOnJobStart
     }
@@ -1431,6 +1442,7 @@ public class BlindsFeeder extends ReferenceFeeder {
             return changed;
         }
     }
+
     public static NozzleAndTipForPushing getNozzleAndTipForPushing(Nozzle preferredNozzle, boolean loadNozzleTipIfNeeded) throws Exception {
         // Search for any nozzle and nozzle tip that may be used for cover pushing. 
         // First, try the preferredNozzle.
@@ -1499,7 +1511,6 @@ public class BlindsFeeder extends ReferenceFeeder {
         return new NozzleAndTipForPushing(null, null, false);
     }
 
-
     @Override
     public Location getJobPreparationLocation() {
         if (getOcrAction() != OcrAction.None
@@ -1513,7 +1524,9 @@ public class BlindsFeeder extends ReferenceFeeder {
     }
 
     // transient store for the job preparation nozzle tip change and OCR
+
     private NozzleAndTipForPushing nozzleAndTipForPushing = null;
+
     private String ocrChangedPartId = null;
 
     @Override
@@ -1702,10 +1715,12 @@ public class BlindsFeeder extends ReferenceFeeder {
     /**
      * The Machine to Feeder transformation and inverse.
      */
-    private AffineTransform tx;
-    private AffineTransform txInverse;
-    private double txRotation;
 
+    private AffineTransform tx;
+
+    private AffineTransform txInverse;
+
+    private double txRotation;
 
     public void invalidateFeederTransformation() {
         tx = null;
@@ -1717,6 +1732,7 @@ public class BlindsFeeder extends ReferenceFeeder {
      * machine coordinates as defined by the fiducials.
      * @return
      */
+
     private boolean updateFeederToMachineTransform() {
         // Make sure the inverse will be regenerated.
         txInverse = null;
@@ -1842,10 +1858,12 @@ public class BlindsFeeder extends ReferenceFeeder {
     public double transformFeederToMachineAngle(double angle) {
         return angle+getFeederToMachineRotation();
     }
+
     public double transformMachineToFeederAngle(double angle) {
         // We don't need th reverse transform, a simple sign reversion will do.
         return angle+getMachineToFeederRotation();
     }
+
     public double transformPixelToFeederAngle(double angle) {
         // Pixel angles are left-handed, coming from the OpenCV coordinate system, where 
         // Z points away from the viewer whereas in OpenPNP the opposite is true. 
@@ -2050,6 +2068,7 @@ public class BlindsFeeder extends ReferenceFeeder {
             }
         }
     }
+
     public void updateConnectedFeedersFromThis() {
         updateConnectedFeedersFromThis(fiducial1Location, true);
     }
@@ -2248,7 +2267,6 @@ public class BlindsFeeder extends ReferenceFeeder {
         return tapeLength;
     }
 
-
     public void setTapeLength(Length tapeLength) {
         Length oldValue = this.tapeLength;
         this.tapeLength = tapeLength;
@@ -2258,11 +2276,9 @@ public class BlindsFeeder extends ReferenceFeeder {
         }
     }
 
-
     public Length getFeederExtent() {
         return feederExtent;
     }
-
 
     public void setFeederExtent(Length feederExtent) {
         Length oldValue = this.feederExtent;
@@ -2273,11 +2289,9 @@ public class BlindsFeeder extends ReferenceFeeder {
         }
     }
 
-
     public Length getPocketCenterline() {
         return pocketCenterline;
     }
-
 
     public void setPocketCenterline(Length pocketCenterline) {
         Length oldValue = this.pocketCenterline;
@@ -2286,11 +2300,9 @@ public class BlindsFeeder extends ReferenceFeeder {
         updateTapeNumbering();
     }
 
-
     public Length getPocketPitch() {
         return pocketPitch;
     }
-
 
     public void setPocketPitch(Length pocketPitch) {
         Length oldValue = this.pocketPitch;
@@ -2298,11 +2310,9 @@ public class BlindsFeeder extends ReferenceFeeder {
         firePropertyChange("pocketPitch", oldValue, pocketPitch);
     }
 
-
     public Length getPocketSize() {
         return pocketSize;
     }
-
 
     public void setPocketSize(Length pocketSize) {
         Length oldValue = this.pocketSize;
@@ -2466,7 +2476,6 @@ public class BlindsFeeder extends ReferenceFeeder {
         firePropertyChange("feederNo", oldValue, feederNo);
     }
 
-
     public int getFeedersTotal() {
         return feedersTotal;
     }
@@ -2624,6 +2633,25 @@ public class BlindsFeeder extends ReferenceFeeder {
                 new PropertySheetWizardAdapter(new BlindsFeederArrayConfigurationWizard(this), "Feeder Array"),
         };
     }
+
+    // we have 1mm push edge standard and the smallest CP40 nozzle tip has 0.8mm usable tip shaft
+
+    // These internal setting are not on the GUI but can be changed in the XML.
+
+    // Transient state
+
+    public void ensureCameraZ(Camera camera) throws Exception {
+        if (camera.isUnitsPerPixelAtZCalibrated()
+                && !getLocation().getLengthZ().isInitialized()) {
+            throw new Exception("Feeder "+getName()+": Please set the Part Z first.");
+        }
+        if (getLocation().getLengthZ().isInitialized()) {
+            // If we already have the Feeder Z, move the camera there to get the right units per pixel.
+            camera.moveTo(camera.getLocation().deriveLengths(null, null, getLocation().getLengthZ(), null));
+        }
+    }
+
+    // transient store for the job preparation nozzle tip change
 
     @Override
     public PropertySheetHolder[] getChildPropertySheetHolders() {

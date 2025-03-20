@@ -21,8 +21,6 @@
  */
 
 package org.openpnp.machine.reference.feeder.wizards;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -645,6 +643,67 @@ public class BlindsFeederConfigurationWizard extends AbstractConfigurationWizard
     private JButton btnShowInfo;
     private JTextField textFieldFirstPocket;
     private JLabel lblFirstPocket;
+<<<<<<< /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/wizards/BlindsFeederConfigurationWizard.java/left.java
     private JButton btnOcrDetect;
+||||||| /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/wizards/BlindsFeederConfigurationWizard.java/base.java
+    private JButton btnExtractOpenscadModel;
+
+    private void calibrateFiducials() {
+        UiUtils.submitUiMachineTask(() -> {
+            feeder.calibrateFeederLocations();
+        });
+    }
+
+    private void editPipeline() throws Exception {
+        Camera camera = Configuration.get().getMachine().getDefaultHead().getDefaultCamera();
+        CvPipeline pipeline = feeder.getCvPipeline(camera, false);
+        CvPipelineEditor editor = new CvPipelineEditor(pipeline);
+        JDialog dialog = new JDialog(MainFrame.get(), feeder.getName() + " Pipeline");
+        dialog.getContentPane().setLayout(new BorderLayout());
+        dialog.getContentPane().add(editor);
+        dialog.setSize(1024, 768);
+        dialog.setVisible(true);
+    }
+
+    private void resetPipeline() {
+        feeder.resetPipeline();
+    }
+
+    private void setPipelineToAllFeeders() throws CloneNotSupportedException {
+        feeder.setPipelineToAllFeeders();
+    }
+    protected void initDataBindings() {
+    }
+=======
+    private JButton btnExtractOpenscadModel;
+
+    private void calibrateFiducials() {
+        UiUtils.submitUiMachineTask(() -> {
+            feeder.calibrateFeederLocations();
+        });
+    }
+
+    private void editPipeline() throws Exception {
+        Camera camera = Configuration.get().getMachine().getDefaultHead().getDefaultCamera();
+        feeder.ensureCameraZ(camera);
+        CvPipeline pipeline = feeder.getCvPipeline(camera, false);
+        CvPipelineEditor editor = new CvPipelineEditor(pipeline);
+        JDialog dialog = new JDialog(MainFrame.get(), feeder.getName() + " Pipeline");
+        dialog.getContentPane().setLayout(new BorderLayout());
+        dialog.getContentPane().add(editor);
+        dialog.setSize(1024, 768);
+        dialog.setVisible(true);
+    }
+
+    private void resetPipeline() {
+        feeder.resetPipeline();
+    }
+
+    private void setPipelineToAllFeeders() throws CloneNotSupportedException {
+        feeder.setPipelineToAllFeeders();
+    }
+    protected void initDataBindings() {
+    }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/36f65ec0aa210007f525f3fad494d0f2e8d843cb/src/main/java/org/openpnp/machine/reference/feeder/wizards/BlindsFeederConfigurationWizard.java/right.java
 }
 

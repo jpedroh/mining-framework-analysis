@@ -257,8 +257,6 @@ public class ReferencePushPullFeeder extends ReferenceFeeder {
 
     private boolean partsMayContainSpaces = false;
 
-    public static final Location nullLocation = new Location(LengthUnit.Millimeters);
-
     private void checkHomedState(Machine machine) {
         if (!machine.isHomed()) {
             this.resetCalibration();
