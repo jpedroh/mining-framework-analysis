@@ -1,30 +1,12 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.gbif.nameparser;
-
 import org.gbif.nameparser.api.*;
 import org.gbif.nameparser.utils.CallerBlocksPolicy;
 import org.gbif.nameparser.utils.NamedThreadFactory;
-
 import java.util.concurrent.*;
 import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -37,6 +19,7 @@ import com.google.common.base.Strings;
  */
 public class NameParserGBIF implements NameParser {
   public static final String THREAD_NAME = "NameParser-worker";
+
   private static final Logger LOG = LoggerFactory.getLogger(NameParserGBIF.class);
 
   /**
@@ -44,7 +27,9 @@ public class NameParserGBIF implements NameParser {
    * timeouts. If idle the pool shrinks to no threads after 1 seconds plus configured timeout.
    */
   private final ExecutorService exec;
-  private final long timeout;  // max parsing time in milliseconds
+
+  private final long timeout;
+
   private final ParserConfigs configs = new ParserConfigs();
 
   /**
@@ -65,11 +50,7 @@ public class NameParserGBIF implements NameParser {
    * @param timeout max parsing time in milliseconds
    */
   public NameParserGBIF(long timeout, int corePoolSize, int maxPoolSize) {
-    this(timeout, new ThreadPoolExecutor(corePoolSize, maxPoolSize,
-        2*timeout, TimeUnit.MILLISECONDS,
-        new SynchronousQueue<>(),
-        new NamedThreadFactory(THREAD_NAME, Thread.NORM_PRIORITY, true),
-        new CallerBlocksPolicy(timeout)));
+    this(timeout, new ThreadPoolExecutor(corePoolSize, maxPoolSize, 2 * timeout, TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new NamedThreadFactory(THREAD_NAME, Thread.NORM_PRIORITY, true), new CallerBlocksPolicy(timeout)));
   }
 
   /**
@@ -85,62 +66,48 @@ public class NameParserGBIF implements NameParser {
   /**
    * @deprecated provide rank and code parameters
    */
-  @Deprecated
-  public ParsedName parse(String scientificName) throws UnparsableNameException, InterruptedException {
+  @Deprecated public ParsedName parse(String scientificName) throws UnparsableNameException, InterruptedException {
     return parse(scientificName, Rank.UNRANKED);
   }
 
-  @Override
-  public ParsedAuthorship parseAuthorship(String authorship) throws UnparsableNameException, InterruptedException {
+  @Override public ParsedAuthorship parseAuthorship(String authorship) throws UnparsableNameException, InterruptedException {
     if (Strings.isNullOrEmpty(authorship)) {
       throw new UnparsableNameException.UnparsableAuthorshipException(authorship);
     }
-
-    // override exists?
     ParsedAuthorship over = configs.forAuthorship(authorship);
     if (over != null) {
       LOG.debug("Manual override found for authorship: {}", authorship);
       return over;
     }
-
     AuthorshipParsingJob job = new AuthorshipParsingJob(authorship, configs);
-
     return execute(job, authorship, () -> new UnparsableNameException.UnparsableAuthorshipException(authorship));
   }
 
   private ParsedName execute(ParsingJob job, String name, Supplier<UnparsableNameException> unparsableSupplier) throws UnparsableNameException, InterruptedException {
     FutureTask<ParsedName> task = new FutureTask<>(job);
     exec.execute(task);
-
     try {
       return task.get(timeout, TimeUnit.MILLISECONDS);
-
     } catch (ExecutionException e) {
-      // unwrap UnparsableNameException
       if (e.getCause() instanceof UnparsableNameException) {
         throw (UnparsableNameException) e.getCause();
-
       } else {
         LOG.warn("ExecutionException when parsing: {}", name, e);
       }
-
     } catch (TimeoutException e) {
-      // parsing timeout
       LOG.warn("Parsing timeout for: {}", name);
       task.cancel(true);
     }
-
     throw unparsableSupplier.get();
   }
 
   /**
    * @deprecated provide rank and code parameters
    */
-  @Deprecated
-  public ParsedName parse(final String scientificName, Rank rank) throws UnparsableNameException, InterruptedException {
+  @Deprecated public ParsedName parse(final String scientificName, Rank rank) throws UnparsableNameException, InterruptedException {
     return parse(scientificName, rank, null);
   }
-  
+
   /**
    * Fully parse the supplied name also trying to extract authorships, a conceptual sec reference, remarks or notes
    * on the nomenclatural status. In some cases the authorship parsing proves impossible and this nameparser will
@@ -156,8 +123,7 @@ public class NameParserGBIF implements NameParser {
    *
    * @throws UnparsableNameException
    */
-  @Override
-  public ParsedName parse(final String scientificName, Rank rank, @Nullable NomCode code) throws UnparsableNameException, InterruptedException {
+  @Override public ParsedName parse(final String scientificName, Rank rank, @Nullable NomCode code) throws UnparsableNameException, InterruptedException {
     if (Strings.isNullOrEmpty(scientificName)) {
       throw new UnparsableNameException(NameType.NO_NAME, scientificName);
     }
@@ -169,8 +135,7 @@ public class NameParserGBIF implements NameParser {
     return configs;
   }
 
-  @Override
-  public void close() throws Exception {
+  @Override public void close() throws Exception {
     LOG.info("Shutting down name parser worker threads");
     exec.shutdown();
     if (exec.awaitTermination(1, TimeUnit.SECONDS)) {
