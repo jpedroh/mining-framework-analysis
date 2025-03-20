@@ -97,14 +97,14 @@ public class YeomanMojo extends AbstractMojo {
         }
     }
 
-    void bowerInstall() throws MojoExecutionException {
-        if (skipBowerInstall) {
-            getLog().info("Skipping 'bower install' Execution");
-        } else {
-            logToolVersion(bowerVariant);
-            logAndExecuteCommand(bowerVariant + " " + bowerInstallArgs);
-        }
-    }
+	void bowerInstall() throws MojoExecutionException {
+	    if (skipBowerInstall) {
+	        getLog().info("Skipping 'bower install' Execution");
+	    } else {
+	        logToolVersion(bowerVariant);
+	        logAndExecuteCommand(bowerVariant + " " + bowerInstallArgs);
+	    }
+	}
     
     void build() throws MojoExecutionException {
         logToolVersion(buildTool);
