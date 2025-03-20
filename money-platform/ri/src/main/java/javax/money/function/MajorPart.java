@@ -1,16 +1,6 @@
-/*
- * CREDIT SUISSE IS WILLING TO LICENSE THIS SPECIFICATION TO YOU ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS AGREEMENT. PLEASE READ THE TERMS AND CONDITIONS OF THIS AGREEMENT CAREFULLY. BY DOWNLOADING THIS SPECIFICATION, YOU ACCEPT THE TERMS AND CONDITIONS OF THE AGREEMENT. IF YOU ARE NOT WILLING TO BE BOUND BY IT, SELECT THE "DECLINE" BUTTON AT THE BOTTOM OF THIS PAGE.
- *
- * Specification:  JSR-354  Money and Currency API ("Specification")
- *
- * Copyright (c) 2012-2013, Credit Suisse
- * All rights reserved.
- */
 package javax.money.function;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import javax.money.MonetaryOperator;
 import javax.money.MonetaryAmount;
 
@@ -21,25 +11,24 @@ import javax.money.MonetaryAmount;
  * @author Anatole Tresch
  */
 public final class MajorPart implements MonetaryOperator {
-
-	/**
+  /**
 	 * The shared instance of this class.
 	 */
-	private MajorPart INSTANCE = new MajorPart();
+  private MajorPart INSTANCE = new MajorPart();
 
-	/**
+  /**
 	 * Access the shared instance of {@link MajorPart} for use.
 	 * 
 	 * @return the shared instance, never {@code null}.
 	 */
-	private MajorPart() {
-	}
+  private MajorPart() {
+  }
 
-	public MajorPart of() {
-		return INSTANCE;
-	}
-	
-	/**
+  public MajorPart of() {
+    return INSTANCE;
+  }
+
+  /**
 	 * Gets the amount in major units as a {@code MonetaryAmount} with scale 0.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -53,12 +42,11 @@ public final class MajorPart implements MonetaryOperator {
 	 * 
 	 * @return the major units part of the amount, never {@code null}
 	 */
-	@Override
-	public MonetaryAmount apply(MonetaryAmount amount) {
-		return fromAmount(amount);
-	}
-	
-	/**
+  @Override public MonetaryAmount apply(MonetaryAmount amount) {
+    return fromAmount(amount);
+  }
+
+  /**
 	 * Gets the amount in major units as a {@code long}.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -71,18 +59,15 @@ public final class MajorPart implements MonetaryOperator {
 	 * @throws ArithmeticException
 	 *             if the amount is too large for a {@code long}
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends MonetaryAmount> T fromAmount(T amount) {
-		if (amount == null) {
-			throw new IllegalArgumentException("Amount required.");
-		}
-		BigDecimal number = amount.asType(BigDecimal.class);
-		return (T) amount.from(number.setScale(0,
-				RoundingMode.DOWN));
-	}
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends MonetaryAmount> T fromAmount(T amount) {
+    if (amount == null) {
+      throw new IllegalArgumentException("Amount required.");
+    }
+    BigDecimal number = amount.asType(BigDecimal.class);
+    return (T) amount.from(number.setScale(0, RoundingMode.DOWN));
+  }
 
-	
-	/**
+  /**
 	 * Gets the amount in major units as a {@code long}.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -95,15 +80,15 @@ public final class MajorPart implements MonetaryOperator {
 	 * @throws ArithmeticException
 	 *             if the amount is too large for a {@code long}
 	 */
-	public static long fromAsLong(MonetaryAmount amount) {
-		if(amount==null){
-			throw new IllegalArgumentException("Amount required.");
-		}
-		BigDecimal number = amount.asType(BigDecimal.class);
-		return number.setScale(0, RoundingMode.DOWN).longValueExact();
-	}
+  public static long fromAsLong(MonetaryAmount amount) {
+    if (amount == null) {
+      throw new IllegalArgumentException("Amount required.");
+    }
+    BigDecimal number = amount.asType(BigDecimal.class);
+    return number.setScale(0, RoundingMode.DOWN).longValueExact();
+  }
 
-	/**
+  /**
 	 * Gets the amount in major units as an {@code int}.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -116,14 +101,11 @@ public final class MajorPart implements MonetaryOperator {
 	 * @throws ArithmeticException
 	 *             if the amount is too large for an {@code int}
 	 */
-	public static int fromAsInteger(MonetaryAmount amount) {
-		if(amount==null){
-			throw new IllegalArgumentException("Amount required.");
-		}
-		BigDecimal number = amount.asType(BigDecimal.class);
-		return number.setScale(0, RoundingMode.DOWN).intValueExact();
-	}
-
-
+  public static int fromAsInteger(MonetaryAmount amount) {
+    if (amount == null) {
+      throw new IllegalArgumentException("Amount required.");
+    }
+    BigDecimal number = amount.asType(BigDecimal.class);
+    return number.setScale(0, RoundingMode.DOWN).intValueExact();
+  }
 }
-
