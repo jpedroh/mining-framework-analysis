@@ -160,40 +160,6 @@ public final class H2DataTest {
     }
 
     /**
-     * H2Data can delete records.
-     * @throws Exception In case test fails
-     */
-    @Test
-    public void deletesRecords() throws Exception {
-        final String table = "customers";
-        final String field = "name";
-        final String man = "Kevin";
-        final String woman = "Helen";
-        final H2Data data = new H2Data()
-            .with(table, new String[]{field}, new String[0]);
-        data.put(
-            table,
-            new Attributes().with(field, man)
-        );
-        data.put(
-            table,
-            new Attributes().with(field, woman)
-        );
-        data.delete(table, new Attributes().with(field, man));
-        final List<Attributes> rest = Lists.newArrayList(
-            data.iterate(table, new Conditions())
-        );
-        MatcherAssert.assertThat(
-            rest.size(),
-            Matchers.equalTo(1)
-        );
-        MatcherAssert.assertThat(
-            rest.get(0).get(field).getS(),
-            Matchers.equalTo(woman)
-        );
-    }
-
-    /**
      * H2Data can update table attributes.
      * @throws Exception In case test fails
      */
@@ -227,6 +193,40 @@ public final class H2DataTest {
         MatcherAssert.assertThat(
             result,
             Matchers.<Attributes>iterableWithSize(1)
+        );
+    }
+
+    /**
+     * H2Data can delete records.
+     * @throws Exception In case test fails
+     */
+    @Test
+    public void deletesRecords() throws Exception {
+        final String table = "customers";
+        final String field = "name";
+        final String man = "Kevin";
+        final String woman = "Helen";
+        final H2Data data = new H2Data()
+            .with(table, new String[]{field}, new String[0]);
+        data.put(
+            table,
+            new Attributes().with(field, man)
+        );
+        data.put(
+            table,
+            new Attributes().with(field, woman)
+        );
+        data.delete(table, new Attributes().with(field, man));
+        final List<Attributes> rest = Lists.newArrayList(
+            data.iterate(table, new Conditions())
+        );
+        MatcherAssert.assertThat(
+            rest.size(),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            rest.get(0).get(field).getS(),
+            Matchers.equalTo(woman)
         );
     }
 }
