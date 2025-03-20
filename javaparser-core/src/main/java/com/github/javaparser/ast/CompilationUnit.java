@@ -355,22 +355,26 @@ public final class CompilationUnit extends Node {
      * @param name the class name
      * @return the newly created class
      */
+<<<<<<< /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/left.java
     public ClassOrInterfaceDeclaration addClass(String name) {
         return addClass(name, Modifier.Keyword.PUBLIC);
     }
-
-    /**
-     * Add a class to the types of this compilation unit
-     *
-     * @param name the class name
-     * @param modifiers the modifiers (like Modifier.PUBLIC)
-     * @return the newly created class
-     */
     public ClassOrInterfaceDeclaration addClass(String name, Modifier.Keyword... modifiers) {
         ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), false, name);
         getTypes().add(classOrInterfaceDeclaration);
         return classOrInterfaceDeclaration;
     }
+||||||| /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/base.java
+=======
+>>>>>>> /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/right.java
+
+    /**
+ * Add a class to the types of this compilation unit
+ *
+ * @param name the class name
+ * @param modifiers the modifiers (like Modifier.PUBLIC)
+ * @return the newly created class
+ */
 
     /**
      * Add a public interface class to the types of this compilation unit
@@ -378,22 +382,26 @@ public final class CompilationUnit extends Node {
      * @param name the interface name
      * @return the newly created class
      */
+<<<<<<< /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/left.java
     public ClassOrInterfaceDeclaration addInterface(String name) {
         return addInterface(name, Modifier.Keyword.PUBLIC);
     }
-
-    /**
-     * Add an interface to the types of this compilation unit
-     *
-     * @param name the interface name
-     * @param modifiers the modifiers (like Modifier.PUBLIC)
-     * @return the newly created class
-     */
     public ClassOrInterfaceDeclaration addInterface(String name, Modifier.Keyword... modifiers) {
         ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), true, name);
         getTypes().add(classOrInterfaceDeclaration);
         return classOrInterfaceDeclaration;
     }
+||||||| /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/base.java
+=======
+>>>>>>> /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/right.java
+
+    /**
+ * Add an interface to the types of this compilation unit
+ *
+ * @param name the interface name
+ * @param modifiers the modifiers (like Modifier.PUBLIC)
+ * @return the newly created class
+ */
 
     /**
      * Add a public enum to the types of this compilation unit
@@ -401,22 +409,26 @@ public final class CompilationUnit extends Node {
      * @param name the enum name
      * @return the newly created class
      */
+<<<<<<< /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/left.java
     public EnumDeclaration addEnum(String name) {
         return addEnum(name, Modifier.Keyword.PUBLIC);
     }
-
-    /**
-     * Add an enum to the types of this compilation unit
-     *
-     * @param name the enum name
-     * @param modifiers the modifiers (like Modifier.PUBLIC)
-     * @return the newly created class
-     */
     public EnumDeclaration addEnum(String name, Modifier.Keyword... modifiers) {
         EnumDeclaration enumDeclaration = new EnumDeclaration(createModifierList(modifiers), name);
         getTypes().add(enumDeclaration);
         return enumDeclaration;
     }
+||||||| /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/base.java
+=======
+>>>>>>> /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/right.java
+
+    /**
+ * Add an enum to the types of this compilation unit
+ *
+ * @param name the enum name
+ * @param modifiers the modifiers (like Modifier.PUBLIC)
+ * @return the newly created class
+ */
 
     /**
      * Add a public annotation declaration to the types of this compilation unit
@@ -424,22 +436,26 @@ public final class CompilationUnit extends Node {
      * @param name the annotation name
      * @return the newly created class
      */
+<<<<<<< /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/left.java
     public AnnotationDeclaration addAnnotationDeclaration(String name) {
         return addAnnotationDeclaration(name, Modifier.Keyword.PUBLIC);
     }
-
-    /**
-     * Add an annotation declaration to the types of this compilation unit
-     *
-     * @param name the annotation name
-     * @param modifiers the modifiers (like Modifier.PUBLIC)
-     * @return the newly created class
-     */
     public AnnotationDeclaration addAnnotationDeclaration(String name, Modifier.Keyword... modifiers) {
         AnnotationDeclaration annotationDeclaration = new AnnotationDeclaration(createModifierList(modifiers), name);
         getTypes().add(annotationDeclaration);
         return annotationDeclaration;
     }
+||||||| /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/base.java
+=======
+>>>>>>> /usr/src/app/output/javaparser/javaparser/cd9f929c5b0a9ae549c9845b9e2e6dcb7b182a86/javaparser-core/src/main/java/com/github/javaparser/ast/CompilationUnit.java/right.java
+
+    /**
+ * Add an annotation declaration to the types of this compilation unit
+ *
+ * @param name the annotation name
+ * @param modifiers the modifiers (like Modifier.PUBLIC)
+ * @return the newly created class
+ */
 
     /**
      * Try to get a top level class declaration by its name
