@@ -70,7 +70,13 @@ public class Synth {
                     "[ -count <number>G|M|K ] " +
                     "-schema schema-file " +
                     "[-quote DOUBLE_QUOTE|BACK_SLASH|OPTIMISTIC] " +
-                    "[-format JSON|TSV|CSV|XML|TEMPLATE ] " +
+<<<<<<< /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/left.java
+                    "[-format JSON|TSV|CSV|XML|TEMPLATE ]  " +
+||||||| /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/base.java
+                    "[-format JSON|TSV|CSV ]  " +
+=======
+                    "[-format JSON|TSV|CSV|TEMPLATE ]  " +
+>>>>>>> /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/right.java
                     "[-threads n] " +
                     "[-output output-directory-name] ");
             throw e;
@@ -186,6 +192,7 @@ public class Synth {
         final AtomicLong lastRowCount;
         final Template template;
 
+
         private static XmlMapper xmlMapper;
         private static XMLStreamWriter sw;
 
@@ -269,7 +276,7 @@ public class Synth {
             }
         }
 
-
+<<<<<<< /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/left.java
         public static int generateFile(Options opts, SchemaSampler s, Template template, PrintStream out, int count) throws IOException {
             if (template != null) {
                 PrintWriter writer = new PrintWriter(out);
@@ -281,6 +288,23 @@ public class Synth {
                 for (int i = 0; i < count; i++) {
                     format(opts.format, opts.quote, s.getFieldNames(), s.sample(), out);
                 }
+||||||| /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/base.java
+        public static int generateFile(Options opts, SchemaSampler s, PrintStream out, int count) {
+            for (int i = 0; i < count; i++) {
+                format(opts.format, opts.quote, s.getFieldNames(), s.sample(), out);
+=======
+        public static int generateFile(Options opts, SchemaSampler s, Template template, PrintStream out, int count) {
+            if (template != null) {
+                PrintWriter writer = new PrintWriter(out);
+
+                for (int i = 0; i < count; i++) {
+                    formatTemplate(opts.format, opts.quote, s.getFieldNames(), s.sample(), template, writer);
+                }
+            } else {
+                for (int i = 0; i < count; i++) {
+                    format(opts.format, opts.quote, s.getFieldNames(), s.sample(), out);
+                }
+>>>>>>> /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/right.java
             }
 
             return count;
@@ -415,7 +439,13 @@ public class Synth {
     }
 
     public static enum Format {
+<<<<<<< /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/left.java
         JSON, TSV, CSV, XML, TEMPLATE
+||||||| /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/base.java
+        JSON, TSV, CSV
+=======
+        JSON, TSV, CSV, TEMPLATE
+>>>>>>> /usr/src/app/output/tdunning/log-synth/83316ef849229d87b24ce5d0d6d54f1f76764759/src/main/java/com/mapr/synth/Synth.java/right.java
     }
 
 
