@@ -1,19 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.Assertions.catchThrowable;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -37,7 +23,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.concurrent.atomic.AtomicStampedReference;
-
 import org.assertj.core.util.CheckReturnValue;
 
 /**
@@ -48,16 +33,13 @@ import org.assertj.core.util.CheckReturnValue;
  * @since 2.5.0 / 3.5.0
  */
 public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
-  // then* methods duplicated from BDDAssertions
-
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public BigDecimalAssert then(BigDecimal actual) {
+  @CheckReturnValue public BigDecimalAssert then(BigDecimal actual) {
     return proxy(BigDecimalAssert.class, BigDecimal.class, actual);
   }
 
@@ -68,8 +50,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public BigIntegerAssert then(BigInteger actual) {
+  @CheckReturnValue public BigIntegerAssert then(BigInteger actual) {
     return proxy(BigIntegerAssert.class, BigInteger.class, actual);
   }
 
@@ -79,8 +60,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public BooleanAssert then(boolean actual) {
+  @CheckReturnValue public BooleanAssert then(boolean actual) {
     return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
@@ -90,8 +70,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public BooleanAssert then(Boolean actual) {
+  @CheckReturnValue public BooleanAssert then(Boolean actual) {
     return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
@@ -101,8 +80,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public BooleanArrayAssert then(boolean[] actual) {
+  @CheckReturnValue public BooleanArrayAssert then(boolean[] actual) {
     return proxy(BooleanArrayAssert.class, boolean[].class, actual);
   }
 
@@ -112,8 +90,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ByteAssert then(byte actual) {
+  @CheckReturnValue public ByteAssert then(byte actual) {
     return proxy(ByteAssert.class, Byte.class, actual);
   }
 
@@ -123,8 +100,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ByteAssert then(Byte actual) {
+  @CheckReturnValue public ByteAssert then(Byte actual) {
     return proxy(ByteAssert.class, Byte.class, actual);
   }
 
@@ -134,8 +110,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ByteArrayAssert then(byte[] actual) {
+  @CheckReturnValue public ByteArrayAssert then(byte[] actual) {
     return proxy(ByteArrayAssert.class, byte[].class, actual);
   }
 
@@ -145,8 +120,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public CharacterAssert then(char actual) {
+  @CheckReturnValue public CharacterAssert then(char actual) {
     return proxy(CharacterAssert.class, Character.class, actual);
   }
 
@@ -156,8 +130,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public CharArrayAssert then(char[] actual) {
+  @CheckReturnValue public CharArrayAssert then(char[] actual) {
     return proxy(CharArrayAssert.class, char[].class, actual);
   }
 
@@ -167,8 +140,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public CharacterAssert then(Character actual) {
+  @CheckReturnValue public CharacterAssert then(Character actual) {
     return proxy(CharacterAssert.class, Character.class, actual);
   }
 
@@ -180,8 +152,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public SoftAssertionClassAssert then(Class<?> actual) {
+  @CheckReturnValue public SoftAssertionClassAssert then(Class<?> actual) {
     return proxy(SoftAssertionClassAssert.class, Class.class, actual);
   }
 
@@ -192,9 +163,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return proxy(GenericComparableAssert.class, Comparable.class, actual);
   }
 
@@ -204,9 +173,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> SoftAssertionIterableAssert<T> then(Iterable<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends java.lang.Object> SoftAssertionIterableAssert<T> then(Iterable<? extends T> actual) {
     return proxy(SoftAssertionIterableAssert.class, Iterable.class, actual);
   }
 
@@ -218,9 +185,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> SoftAssertionIterableAssert<T> then(Iterator<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends java.lang.Object> SoftAssertionIterableAssert<T> then(Iterator<T> actual) {
     return proxy(SoftAssertionIterableAssert.class, Iterator.class, actual);
   }
 
@@ -230,8 +195,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public DoubleAssert then(double actual) {
+  @CheckReturnValue public DoubleAssert then(double actual) {
     return proxy(DoubleAssert.class, Double.class, actual);
   }
 
@@ -241,8 +205,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public DoubleAssert then(Double actual) {
+  @CheckReturnValue public DoubleAssert then(Double actual) {
     return proxy(DoubleAssert.class, Double.class, actual);
   }
 
@@ -252,8 +215,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public DoubleArrayAssert then(double[] actual) {
+  @CheckReturnValue public DoubleArrayAssert then(double[] actual) {
     return proxy(DoubleArrayAssert.class, double[].class, actual);
   }
 
@@ -263,8 +225,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public FileAssert then(File actual) {
+  @CheckReturnValue public FileAssert then(File actual) {
     return proxy(FileAssert.class, File.class, actual);
   }
 
@@ -275,9 +236,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <RESULT> FutureAssert<RESULT> then(Future<RESULT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <RESULT extends java.lang.Object> FutureAssert<RESULT> then(Future<RESULT> actual) {
     return proxy(FutureAssert.class, Future.class, actual);
   }
 
@@ -287,8 +246,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public InputStreamAssert then(InputStream actual) {
+  @CheckReturnValue public InputStreamAssert then(InputStream actual) {
     return proxy(InputStreamAssert.class, InputStream.class, actual);
   }
 
@@ -298,8 +256,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public FloatAssert then(float actual) {
+  @CheckReturnValue public FloatAssert then(float actual) {
     return proxy(FloatAssert.class, Float.class, actual);
   }
 
@@ -309,8 +266,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public FloatAssert then(Float actual) {
+  @CheckReturnValue public FloatAssert then(Float actual) {
     return proxy(FloatAssert.class, Float.class, actual);
   }
 
@@ -320,8 +276,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public FloatArrayAssert then(float[] actual) {
+  @CheckReturnValue public FloatArrayAssert then(float[] actual) {
     return proxy(FloatArrayAssert.class, float[].class, actual);
   }
 
@@ -331,8 +286,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public IntegerAssert then(int actual) {
+  @CheckReturnValue public IntegerAssert then(int actual) {
     return proxy(IntegerAssert.class, Integer.class, actual);
   }
 
@@ -342,8 +296,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public IntArrayAssert then(int[] actual) {
+  @CheckReturnValue public IntArrayAssert then(int[] actual) {
     return proxy(IntArrayAssert.class, int[].class, actual);
   }
 
@@ -353,8 +306,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public IntegerAssert then(Integer actual) {
+  @CheckReturnValue public IntegerAssert then(Integer actual) {
     return proxy(IntegerAssert.class, Integer.class, actual);
   }
 
@@ -364,9 +316,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> SoftAssertionListAssert<T> then(List<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends java.lang.Object> SoftAssertionListAssert<T> then(List<? extends T> actual) {
     return proxy(SoftAssertionListAssert.class, List.class, actual);
   }
 
@@ -376,8 +326,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public LongAssert then(long actual) {
+  @CheckReturnValue public LongAssert then(long actual) {
     return proxy(LongAssert.class, Long.class, actual);
   }
 
@@ -387,8 +336,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public LongAssert then(Long actual) {
+  @CheckReturnValue public LongAssert then(Long actual) {
     return proxy(LongAssert.class, Long.class, actual);
   }
 
@@ -398,8 +346,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public LongArrayAssert then(long[] actual) {
+  @CheckReturnValue public LongArrayAssert then(long[] actual) {
     return proxy(LongArrayAssert.class, long[].class, actual);
   }
 
@@ -409,9 +356,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> ObjectAssert<T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends java.lang.Object> ObjectAssert<T> then(T actual) {
     return proxy(ObjectAssert.class, Object.class, actual);
   }
 
@@ -421,9 +366,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> ObjectArrayAssert<T> then(T[] actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <T extends java.lang.Object> ObjectArrayAssert<T> then(T[] actual) {
     return proxy(ObjectArrayAssert.class, Object[].class, actual);
   }
 
@@ -435,9 +378,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <K, V> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <K extends java.lang.Object, V extends java.lang.Object> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
     return proxy(SoftAssertionMapAssert.class, Map.class, actual);
   }
 
@@ -447,8 +388,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ShortAssert then(short actual) {
+  @CheckReturnValue public ShortAssert then(short actual) {
     return proxy(ShortAssert.class, Short.class, actual);
   }
 
@@ -458,8 +398,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ShortAssert then(Short actual) {
+  @CheckReturnValue public ShortAssert then(Short actual) {
     return proxy(ShortAssert.class, Short.class, actual);
   }
 
@@ -469,8 +408,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public ShortArrayAssert then(short[] actual) {
+  @CheckReturnValue public ShortArrayAssert then(short[] actual) {
     return proxy(ShortArrayAssert.class, short[].class, actual);
   }
 
@@ -480,8 +418,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public CharSequenceAssert then(CharSequence actual) {
+  @CheckReturnValue public CharSequenceAssert then(CharSequence actual) {
     return proxy(CharSequenceAssert.class, CharSequence.class, actual);
   }
 
@@ -491,8 +428,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public StringAssert then(String actual) {
+  @CheckReturnValue public StringAssert then(String actual) {
     return proxy(StringAssert.class, String.class, actual);
   }
 
@@ -502,8 +438,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public DateAssert then(Date actual) {
+  @CheckReturnValue public DateAssert then(Date actual) {
     return proxy(DateAssert.class, Date.class, actual);
   }
 
@@ -511,11 +446,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicBoolean}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public AtomicBooleanAssert then(AtomicBoolean actual) {
+  @CheckReturnValue public AtomicBooleanAssert then(AtomicBoolean actual) {
     return proxy(AtomicBooleanAssert.class, AtomicBoolean.class, actual);
   }
 
@@ -523,11 +457,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicInteger}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public AtomicIntegerAssert then(AtomicInteger actual) {
+  @CheckReturnValue public AtomicIntegerAssert then(AtomicInteger actual) {
     return proxy(AtomicIntegerAssert.class, AtomicInteger.class, actual);
   }
 
@@ -535,11 +468,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicIntegerArray}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public AtomicIntegerArrayAssert then(AtomicIntegerArray actual) {
+  @CheckReturnValue public AtomicIntegerArrayAssert then(AtomicIntegerArray actual) {
     return proxy(AtomicIntegerArrayAssert.class, AtomicIntegerArray.class, actual);
   }
 
@@ -547,12 +479,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicIntegerFieldUpdater}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return proxy(AtomicIntegerFieldUpdaterAssert.class, AtomicIntegerFieldUpdater.class, actual);
   }
 
@@ -560,11 +490,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicLong}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public AtomicLongAssert then(AtomicLong actual) {
+  @CheckReturnValue public AtomicLongAssert then(AtomicLong actual) {
     return proxy(AtomicLongAssert.class, AtomicLong.class, actual);
   }
 
@@ -572,11 +501,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicLongArray}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @CheckReturnValue
-  public AtomicLongArrayAssert then(AtomicLongArray actual) {
+  @CheckReturnValue public AtomicLongArrayAssert then(AtomicLongArray actual) {
     return proxy(AtomicLongArrayAssert.class, AtomicLongArray.class, actual);
   }
 
@@ -584,12 +512,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicLongFieldUpdater}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
     return proxy(AtomicLongFieldUpdaterAssert.class, AtomicLongFieldUpdater.class, actual);
   }
 
@@ -597,12 +523,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicReference}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <VALUE> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
     return proxy(AtomicReferenceAssert.class, AtomicReference.class, actual);
   }
 
@@ -610,13 +534,11 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicReferenceArray}.
    *
    * @param actual the actual value.
+   *
    * @param <ELEMENT> the type of object referred to by the {@link AtomicReferenceArray}.
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
     return proxy(AtomicReferenceArrayAssert.class, AtomicReferenceArray.class, actual);
   }
 
@@ -624,12 +546,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicReferenceFieldUpdater}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return proxy(AtomicReferenceFieldUpdaterAssert.class, AtomicReferenceFieldUpdater.class, actual);
   }
 
@@ -637,12 +557,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicMarkableReference}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <VALUE> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
     return proxy(AtomicMarkableReferenceAssert.class, AtomicMarkableReference.class, actual);
   }
 
@@ -650,12 +568,10 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * Create assertion for {@link AtomicStampedReference}.
    *
    * @param actual the actual value.
+   *
    * @return the created assertion object.
-   * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <VALUE> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) @CheckReturnValue public <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
     return proxy(AtomicStampedReferenceAssert.class, AtomicStampedReference.class, actual);
   }
 
@@ -665,8 +581,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion Throwable.
    */
-  @CheckReturnValue
-  public ThrowableAssert then(Throwable actual) {
+  @CheckReturnValue public ThrowableAssert then(Throwable actual) {
     return proxy(ThrowableAssert.class, Throwable.class, actual);
   }
 
@@ -697,8 +612,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
    */
-  @CheckReturnValue
-  public AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
+  @CheckReturnValue public AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return then(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
 
@@ -743,8 +657,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return The captured exception or <code>null</code> if none was raised by the callable.
    * @since 3.7.0
    */
-  @CheckReturnValue
-  public AbstractThrowableAssert<?, ? extends Throwable> thenCode(ThrowingCallable shouldRaiseOrNotThrowable) {
+  @CheckReturnValue public AbstractThrowableAssert<?, ? extends Throwable> thenCode(ThrowingCallable shouldRaiseOrNotThrowable) {
     return then(catchThrowable(shouldRaiseOrNotThrowable));
   }
 
@@ -754,8 +667,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public UriAssert then(URI actual) {
+  @CheckReturnValue public UriAssert then(URI actual) {
     return proxy(UriAssert.class, URI.class, actual);
   }
 
@@ -765,8 +677,7 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public AbstractUrlAssert<?> then(URL actual) {
+  @CheckReturnValue public AbstractUrlAssert<?> then(URL actual) {
     return proxy(AbstractUrlAssert.class, URL.class, actual);
   }
 }

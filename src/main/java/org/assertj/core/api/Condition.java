@@ -1,21 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.Objects.requireNonNull;
-
 import java.util.function.Predicate;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.description.TextDescription;
 import org.assertj.core.util.VisibleForTesting;
@@ -28,12 +13,9 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Yvonne Wang
  * @author Alex Ruiz
  */
-public class Condition<T> implements Descriptable<Condition<T>> {
+public class Condition<T extends java.lang.Object> implements Descriptable<Condition<T>> {
+  @VisibleForTesting Description description;
 
-  @VisibleForTesting
-  Description description;
-
-  // might not be used
   private Predicate<T> predicate;
 
   /**
@@ -42,7 +24,7 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * condition's class.
    */
   public Condition() {
-	as(getClass().getSimpleName());
+    as(getClass().getSimpleName());
   }
 
   /**
@@ -52,7 +34,7 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * @throws NullPointerException if the given description is {@code null}.
    */
   public Condition(String description) {
-	as(description);
+    as(description);
   }
 
   /**
@@ -85,9 +67,9 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * @throws NullPointerException if the given description is {@code null}.
    */
   public Condition(Predicate<T> predicate, String description, Object... args) {
-	checkPredicate(predicate);
-	this.predicate = predicate;
-	this.description = new TextDescription(description, args);
+    checkPredicate(predicate);
+    this.predicate = predicate;
+    this.description = new TextDescription(description, args);
   }
 
   /**
@@ -97,31 +79,27 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * @throws NullPointerException if the given description is {@code null}.
    */
   public Condition(Description description) {
-	as(description);
+    as(description);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Condition<T> describedAs(String newDescription, Object... args) {
-	return as(newDescription, args);
+  @Override public Condition<T> describedAs(String newDescription, Object... args) {
+    return as(newDescription, args);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Condition<T> as(String newDescription, Object... args) {
+  @Override public Condition<T> as(String newDescription, Object... args) {
     description = new TextDescription(newDescription, args);
     return this;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Condition<T> describedAs(Description newDescription) {
-	return as(newDescription);
+  @Override public Condition<T> describedAs(Description newDescription) {
+    return as(newDescription);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Condition<T> as(Description newDescription) {
+  @Override public Condition<T> as(Description newDescription) {
     description = Description.emptyIfNull(newDescription);
     return this;
   }
@@ -132,7 +110,7 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * @return the description of this condition.
    */
   public Description description() {
-	return description;
+    return description;
   }
 
   /**
@@ -142,17 +120,15 @@ public class Condition<T> implements Descriptable<Condition<T>> {
    * @return {@code true} if the given value satisfies this condition; {@code false} otherwise.
    */
   public boolean matches(T value) {
-	checkPredicate(predicate);
-	return predicate.test(value);
+    checkPredicate(predicate);
+    return predicate.test(value);
   }
 
   private void checkPredicate(Predicate<T> predicate) {
-	requireNonNull(predicate,
-	               "Unless you subclass Condition and override matches, you need to pass a non null Predicate to build a Condition.");
+    requireNonNull(predicate, "Unless you subclass Condition and override matches, you need to pass a non null Predicate to build a Condition.");
   }
 
-  @Override
-  public String toString() {
-	return description.value();
+  @Override public String toString() {
+    return description.value();
   }
 }
