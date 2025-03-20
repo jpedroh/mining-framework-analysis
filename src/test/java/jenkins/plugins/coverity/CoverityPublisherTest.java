@@ -10,8 +10,12 @@
  *******************************************************************************/
 package jenkins.plugins.coverity;
 
-import com.thoughtworks.xstream.XStream;
 import hudson.FilePath;
+import hudson.model.BuildListener;
+import jenkins.plugins.coverity.Utils.CoverityPublisherBuilder;
+import jenkins.plugins.coverity.Utils.TestableConsoleLogger;
+import org.junit.Rule;
+import com.thoughtworks.xstream.XStream;
 import hudson.Launcher;
 import hudson.model.*;
 import hudson.model.listeners.SaveableListener;
@@ -19,40 +23,38 @@ import hudson.remoting.LocalChannel;
 import hudson.tools.ToolLocationNodeProperty;
 import hudson.util.XStream2;
 import jenkins.model.Jenkins;
-import jenkins.plugins.coverity.Utils.CoverityPublisherBuilder;
 import jenkins.plugins.coverity.Utils.InvocationAssistanceBuilder;
-import jenkins.plugins.coverity.Utils.TestableConsoleLogger;
-import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-
 import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 import jenkins.plugins.coverity.Utils.TestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.io.IOException;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Jenkins.class, Executor.class, ToolLocationNodeProperty.class, SaveableListener.class})
 public class CoverityPublisherTest {
 
+<<<<<<< /usr/src/app/output/jenkinsci/coverity-plugin/aa34ba78eb1e1bd9c61cc8311cf3552995c43fa2/src/test/java/jenkins/plugins/coverity/CoverityPublisherTest.java/left.java
     @Rule
     public TemporaryFolder idir = new TemporaryFolder();
+||||||| /usr/src/app/output/jenkinsci/coverity-plugin/aa34ba78eb1e1bd9c61cc8311cf3552995c43fa2/src/test/java/jenkins/plugins/coverity/CoverityPublisherTest.java/base.java
+=======
+    @Rule
+    private TemporaryFolder tempJenkinsRoot = new TemporaryFolder();
+>>>>>>> /usr/src/app/output/jenkinsci/coverity-plugin/aa34ba78eb1e1bd9c61cc8311cf3552995c43fa2/src/test/java/jenkins/plugins/coverity/CoverityPublisherTest.java/right.java
 
     @Mock
     private Jenkins jenkins;
-
-    @Rule
-    private TemporaryFolder tempJenkinsRoot = new TemporaryFolder();
 
     private CoverityPublisher.DescriptorImpl descriptor;
 
@@ -446,6 +448,7 @@ public class CoverityPublisherTest {
      * This test verifies running the CoverityPublisher perform method with no publisher invocation options configured does
      * not run throw exception and passes
      */
+
     @Test
     public void perform_runsToolHandlerWithoutExceptions() throws IOException, InterruptedException {
         final CoverityPublisherBuilder builder = new CoverityPublisherBuilder().withSkipFetchingDefects(true);
