@@ -1,6 +1,14 @@
 package com.moandjiezana.toml;
 
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
 import static org.junit.Assert.*;
+||||||| /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/base.java
+import static org.junit.Assert.assertEquals;
+=======
+import org.hamcrest.Matchers;
+import org.junit.*;
+import org.junit.rules.*;
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -24,11 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("unused")
 public class TomlWriterTest {
@@ -284,6 +288,23 @@ public class TomlWriterTest {
 
   @Test
   public void should_write_strings_to_toml_utf8() throws UnsupportedEncodingException {
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    Map<String, String> input = new HashMap<String, String>();
+    input.put("a", " é foo € \b \t \n \f \r \" \\ ");
+    input.put("b", " \uD801\uDC28 \uD840\uDC0B "); // Check unicode code points greater than 0XFFFF
+    
+    String expected = "a = \" \\u00E9 foo \\u20AC \\b \\t \\n \\f \\r \\\" \\\\ \"\n"
+        + "b = \" \\U00010428 \\U0002000B \"\n";
+    
+    assertEquals(expected, new TomlWriter().write(input));
+||||||| /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/base.java
+    String input = " é foo € \b \t \n \f \r \" \\ ";
+    assertEquals("\" \\u00E9 foo \\u20AC \\b \\t \\n \\f \\r \\\" \\\\ \"", new TomlWriter().write(input));
+
+    // Check unicode code points greater than 0XFFFF
+    input = " \uD801\uDC28 \uD840\uDC0B ";
+    assertEquals("\" \\U00010428 \\U0002000B \"", new TomlWriter().write(input));
+=======
     class Utf8Test {
       String input;
     }
@@ -295,6 +316,7 @@ public class TomlWriterTest {
     // Check unicode code points greater than 0XFFFF
     utf8Test.input = " \uD801\uDC28 \uD840\uDC0B ";
     assertEquals("input = \" \\U00010428 \\U0002000B \"\n", new TomlWriter().write(utf8Test));
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
   }
 
   @Test
@@ -451,30 +473,6 @@ public class TomlWriterTest {
     int a = 1;
   }
 
-  @Test
-  public void should_write_to_writer() throws IOException {
-    StringWriter output = new StringWriter();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", output.toString());
-  }
-
-  @Test
-  public void should_write_to_outputstream() throws IOException {
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", output.toString());
-  }
-
-  @Test
-  public void should_write_to_file() throws IOException {
-    File output = testDirectory.newFile();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", readFile(output));
-  }
-  
   @Test(expected = IllegalStateException.class)
   public void should_refuse_to_write_string_fragment() {
     new TomlWriter().write("fragment");
@@ -505,6 +503,45 @@ public class TomlWriterTest {
     new TomlWriter().write(new SimpleTestClass[2]);
   }
 
+  @Test
+  public void should_write_to_writer() throws IOException {
+    StringWriter output = new StringWriter();
+    new TomlWriter().write(new SimpleTestClass(), output);
+
+    assertEquals("a = 1\n", output.toString());
+  }
+
+  @Test
+  public void should_write_to_outputstream() throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    new TomlWriter().write(new SimpleTestClass(), output);
+
+    assertEquals("a = 1\n", output.toString());
+  }
+
+  @Test
+  public void should_write_to_file() throws IOException {
+    File output = testDirectory.newFile();
+    new TomlWriter().write(new SimpleTestClass(), output);
+
+    assertEquals("a = 1\n", readFile(output));
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void should_not_write_date() throws Exception {
+    new TomlWriter().write(new Date());
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void should_not_write_boolean() throws Exception {
+    new TomlWriter().write(Boolean.TRUE);
+  }
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void should_not_write_number() throws Exception {
+    new TomlWriter().write(Long.valueOf(1));
+  }
+  
   @Test(expected=IllegalArgumentException.class)
   public void should_not_write_list() throws Exception {
     new TomlWriter().write(Arrays.asList("a"));

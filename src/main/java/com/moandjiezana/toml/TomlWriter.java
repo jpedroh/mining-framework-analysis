@@ -2,7 +2,6 @@ package com.moandjiezana.toml;
 
 import static com.moandjiezana.toml.MapValueWriter.MAP_VALUE_WRITER;
 import static com.moandjiezana.toml.ObjectValueWriter.OBJECT_VALUE_WRITER;
-import static com.moandjiezana.toml.ValueWriters.WRITERS;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +13,10 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import static com.moandjiezana.toml.MapValueWriter.*;
+import static com.moandjiezana.toml.ObjectValueWriter.*;
+import static com.moandjiezana.toml.ValueWriters.WRITERS;
 
 /**
  * <p>Converts Objects to TOML</p>
@@ -150,10 +153,16 @@ public class TomlWriter {
    */
   public void write(Object from, Writer target) throws IOException {
     ValueWriter valueWriter = WRITERS.findWriterFor(from);
+    
+    if (valueWriter != MAP_VALUE_WRITER && valueWriter != OBJECT_VALUE_WRITER) {
+      throw new IllegalArgumentException("An object of type " + from.getClass().getSimpleName() + " cannot produce valid TOML.");
+    }
+    
+    WriterContext context = new WriterContext(indentationPolicy, datePolicy, target);
 
     ValueWriter writer = WRITERS.findWriterFor(from);
     if (writer == MAP_VALUE_WRITER || writer == OBJECT_VALUE_WRITER) {
-      WRITERS.findWriterFor(from).write(from, context);
+      valueWriter.write(from, context);
     } else {
       throw new IllegalStateException("Top-level value must not be a primitive or array.");
     }
