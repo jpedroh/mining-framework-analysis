@@ -475,8 +475,16 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * oneTwoThree.areAtMost(2, oddNumber);
    * oneTwoThree.areAtMost(3, oddNumber);
    * 
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/fa6ec362fba2e2077edc6d462c166df17bb42d27/src/main/java/org/assertj/core/api/ObjectEnumerableAssert.java/left.java
    * // assertion will fail
    * oneTwoThree.areAtMost(1, oddNumber);</code></pre>
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/fa6ec362fba2e2077edc6d462c166df17bb42d27/src/main/java/org/assertj/core/api/ObjectEnumerableAssert.java/base.java
+   * // assertions will fail
+   * oneTwoThree.areAtMost(1, odd);</code></pre>
+=======
+   * // assertion will fail
+   * oneTwoThree.areAtMost(1, odd);</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/fa6ec362fba2e2077edc6d462c166df17bb42d27/src/main/java/org/assertj/core/api/ObjectEnumerableAssert.java/right.java
    * 
    * @param n the number of times the condition should be at most verified.
    * @param condition the given condition.
