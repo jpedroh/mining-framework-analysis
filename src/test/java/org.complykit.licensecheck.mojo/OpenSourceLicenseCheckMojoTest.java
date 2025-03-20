@@ -1,3 +1,32 @@
+<<<<<<< /usr/src/app/output/mrice/license-check/df4be32c0a82130293069c4cb3c69fa9f176241d/src/test/java/org.complykit.licensecheck.mojo/OpenSourceLicenseCheckMojoTest.java/left.java
+fatal: path 'src/test/java/org.complykit.licensecheck.mojo/OpenSourceLicenseCheckMojoTest.java' exists on disk, but not in '6f1e7823726ea7d7b3113f534fa01982984ccc16'
+||||||| /usr/src/app/output/mrice/license-check/df4be32c0a82130293069c4cb3c69fa9f176241d/src/test/java/org.complykit.licensecheck.mojo/OpenSourceLicenseCheckMojoTest.java/base.java
+package org.complykit.licensecheck.mojo;
+
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
+
+public class OpenSourceLicenseCheckMojoTest {
+
+    @Test
+    public void testGetAsLowerCaseSet() {
+        String src[] = {"Test1", "Test2", "Test3"};
+        Set<String> expected = new HashSet<String>();
+        expected.add("test1");
+        expected.add("test2");
+        expected.add("test3");
+
+        Set<String> result = new OpenSourceLicenseCheckMojo().getAsLowerCaseSet(src);
+
+        assertTrue(result.containsAll(expected));
+    }
+
+}
+=======
 package org.complykit.licensecheck.mojo;
 
 import org.apache.maven.model.Model;
@@ -43,3 +72,4 @@ public class OpenSourceLicenseCheckMojoTest {
     }
 
 }
+>>>>>>> /usr/src/app/output/mrice/license-check/df4be32c0a82130293069c4cb3c69fa9f176241d/src/test/java/org.complykit.licensecheck.mojo/OpenSourceLicenseCheckMojoTest.java/right.java
