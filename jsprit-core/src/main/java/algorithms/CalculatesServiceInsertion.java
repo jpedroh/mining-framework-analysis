@@ -71,7 +71,6 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		logger.info("initialise neighborhood " + neighborhood);
 	}
 
-
 	public void setStates(StateManager activityStates2){
 		this.states = activityStates2;
 	}

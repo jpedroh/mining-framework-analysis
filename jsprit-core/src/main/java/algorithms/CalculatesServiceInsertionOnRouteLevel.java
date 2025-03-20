@@ -90,7 +90,6 @@ final class CalculatesServiceInsertionOnRouteLevel implements JobInsertionCalcul
 			logger.info("initialise " + this);
 		}
 
-
 	public void setStates(StateManager activityStates2){
 		this.states = activityStates2;
 	}
