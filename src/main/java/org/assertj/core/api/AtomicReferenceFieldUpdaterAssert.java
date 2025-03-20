@@ -1,18 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
-
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
@@ -24,10 +10,8 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  * @param <FIELD> the type of the field which gets updated by the {@link AtomicReferenceFieldUpdater}.
  * @param <OBJECT> the type of the object holding the updatable field.
  * @author epeee
- * @since 2.7.0 / 3.7.0
  */
-public class AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> extends AbstractAtomicFieldUpdaterAssert<AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT>, FIELD, AtomicReferenceFieldUpdater<OBJECT, FIELD>, OBJECT> {
-
+public class AtomicReferenceFieldUpdaterAssert<FIELD extends java.lang.Object, OBJECT extends java.lang.Object> extends AbstractAtomicFieldUpdaterAssert<AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT>, FIELD, AtomicReferenceFieldUpdater<OBJECT, FIELD>, OBJECT> {
   public AtomicReferenceFieldUpdaterAssert(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     super(actual, AtomicReferenceFieldUpdaterAssert.class, true);
   }
@@ -51,14 +35,12 @@ public class AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> extends AbstractAt
    * @param expectedValue the expected value inside the {@code OBJECT}.
    * @param obj the object holding the updatable field.
    * @return this assertion object.
-   * @since 2.7.0 / 3.7.0
    */
   public AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> hasValue(FIELD expectedValue, OBJECT obj) {
     return super.hasValue(expectedValue, obj);
   }
-  
-  @Override
-  protected FIELD getActualValue(OBJECT obj) {
+
+  @Override protected FIELD getActualValue(OBJECT obj) {
     return actual.get(obj);
   }
 }
