@@ -37,6 +37,7 @@ import org.la4j.vector.functor.VectorFunction;
 import org.la4j.vector.functor.VectorPredicate;
 import org.la4j.vector.functor.VectorProcedure;
 import org.la4j.vector.operation.VectorOperations;
+import org.la4j.vector.sparse.SparseVector;
 
 public abstract class AbstractVector implements Vector {
 
@@ -236,27 +237,6 @@ public abstract class AbstractVector implements Vector {
     @Override
     public double sum() {
         return fold(Vectors.asSumAccumulator(0.0));
-    }
-    
-    /**
-     * Helper class for performing a sparse / dense vector product
-     */
-    private static final class SparseDot implements VectorProcedure
-    {
-        public Vector other;
-        double result;
-
-        public SparseDot(Vector other)
-        {
-            this.other = other;
-            result = 0;
-        }
-
-        @Override
-        public void apply(int i, double value)
-        {
-            result += other.get(i)*value;
-        }
     }
 
     @Override
@@ -628,6 +608,28 @@ public abstract class AbstractVector implements Vector {
     protected void ensureVectorIsSimilar(Vector that) {
         if (length != that.length()) {
             fail("Wong vector length: " + that.length() + ". Should be: " + length + ".");
+        }
+    }
+
+    /**
+     * Helper class for performing a sparse / dense vector product
+     */
+
+    private static final class SparseDot implements VectorProcedure
+    {
+        public Vector other;
+        double result;
+
+        public SparseDot(Vector other)
+        {
+            this.other = other;
+            result = 0;
+        }
+
+        @Override
+        public void apply(int i, double value)
+        {
+            result += other.get(i)*value;
         }
     }
 
