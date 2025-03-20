@@ -1,36 +1,4 @@
-/*
- * Copyright (c) 2007-present, Stephen Colebourne & Michael Nascimento Santos
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- *  * Neither the name of JSR-310 nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package org.threeten.extra.chrono;
-
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.DateTimeException;
@@ -83,48 +51,48 @@ import java.util.Map;
  * This class is immutable and thread-safe.
  */
 public final class JulianChronology extends AbstractChronology implements Serializable {
-
-    /**
+  /**
      * Singleton instance for the Julian chronology.
      */
-    public static final JulianChronology INSTANCE = new JulianChronology();
+  public static final JulianChronology INSTANCE = new JulianChronology();
 
-    /**
+  /**
      * Serialization version.
      */
-    private static final long serialVersionUID = 7291205177830286973L;
-    /**
+  private static final long serialVersionUID = 7291205177830286973L;
+
+  /**
      * Range of proleptic-year.
      */
-    static final ValueRange YEAR_RANGE = ValueRange.of(-999_998, 999_999);
-    /**
+  static final ValueRange YEAR_RANGE = ValueRange.of(-999_998, 999_999);
+
+  /**
      * Range of year.
      */
-    static final ValueRange YOE_RANGE = ValueRange.of(1, 999_999);
-    /**
+  static final ValueRange YOE_RANGE = ValueRange.of(1, 999_999);
+
+  /**
      * Range of proleptic month.
      */
-    static final ValueRange PROLEPTIC_MONTH_RANGE = ValueRange.of(-999_998 * 12L, 999_999 * 12L + 11);
+  static final ValueRange PROLEPTIC_MONTH_RANGE = ValueRange.of(-999_998 * 12L, 999_999 * 12L + 11);
 
-    /**
+  /**
      * Private constructor, that is public to satisfy the {@code ServiceLoader}.
      * @deprecated Use the singleton {@link #INSTANCE} instead.
      */
-    @Deprecated
-    public JulianChronology() {
-    }
+  @Deprecated public JulianChronology() {
+  }
 
-    /**
+  /**
      * Resolve singleton.
      *
      * @return the singleton instance, not null
      */
-    private Object readResolve() {
-        return INSTANCE;
-    }
+  private Object readResolve() {
+    return INSTANCE;
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Gets the ID of the chronology - 'Julian'.
      * <p>
      * The ID uniquely identifies the {@code Chronology}.
@@ -133,12 +101,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the chronology ID - 'Julian'
      * @see #getCalendarType()
      */
-    @Override
-    public String getId() {
-        return "Julian";
-    }
+  @Override public String getId() {
+    return "Julian";
+  }
 
-    /**
+  /**
      * Gets the calendar type of the underlying calendar system - 'julian'.
      * <p>
      * The <em>Unicode Locale Data Markup Language (LDML)</em> specification
@@ -148,13 +115,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the calendar system type - 'julian'
      * @see #getId()
      */
-    @Override
-    public String getCalendarType() {
-        return "julian";
-    }
+  @Override public String getCalendarType() {
+    return "julian";
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Obtains a local date in Julian calendar system from the
      * era, year-of-era, month-of-year and day-of-month fields.
      *
@@ -166,12 +131,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @throws DateTimeException if unable to create the date
      * @throws ClassCastException if the {@code era} is not a {@code JulianEra}
      */
-    @Override
-    public JulianDate date(Era era, int yearOfEra, int month, int dayOfMonth) {
-        return date(prolepticYear(era, yearOfEra), month, dayOfMonth);
-    }
+  @Override public JulianDate date(Era era, int yearOfEra, int month, int dayOfMonth) {
+    return date(prolepticYear(era, yearOfEra), month, dayOfMonth);
+  }
 
-    /**
+  /**
      * Obtains a local date in Julian calendar system from the
      * proleptic-year, month-of-year and day-of-month fields.
      *
@@ -181,12 +145,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the Julian local date, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override
-    public JulianDate date(int prolepticYear, int month, int dayOfMonth) {
-        return JulianDate.of(prolepticYear, month, dayOfMonth);
-    }
+  @Override public JulianDate date(int prolepticYear, int month, int dayOfMonth) {
+    return JulianDate.of(prolepticYear, month, dayOfMonth);
+  }
 
-    /**
+  /**
      * Obtains a local date in Julian calendar system from the
      * era, year-of-era and day-of-year fields.
      *
@@ -197,12 +160,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @throws DateTimeException if unable to create the date
      * @throws ClassCastException if the {@code era} is not a {@code JulianEra}
      */
-    @Override
-    public JulianDate dateYearDay(Era era, int yearOfEra, int dayOfYear) {
-        return dateYearDay(prolepticYear(era, yearOfEra), dayOfYear);
-    }
+  @Override public JulianDate dateYearDay(Era era, int yearOfEra, int dayOfYear) {
+    return dateYearDay(prolepticYear(era, yearOfEra), dayOfYear);
+  }
 
-    /**
+  /**
      * Obtains a local date in Julian calendar system from the
      * proleptic-year and day-of-year fields.
      *
@@ -211,25 +173,22 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the Julian local date, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override
-    public JulianDate dateYearDay(int prolepticYear, int dayOfYear) {
-        return JulianDate.ofYearDay(prolepticYear, dayOfYear);
-    }
+  @Override public JulianDate dateYearDay(int prolepticYear, int dayOfYear) {
+    return JulianDate.ofYearDay(prolepticYear, dayOfYear);
+  }
 
-    /**
+  /**
      * Obtains a local date in the Julian calendar system from the epoch-day.
      *
      * @param epochDay  the epoch day
      * @return the Julian local date, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override  // override with covariant return type
-    public JulianDate dateEpochDay(long epochDay) {
-        return JulianDate.ofEpochDay(epochDay);
-    }
+  @Override public JulianDate dateEpochDay(long epochDay) {
+    return JulianDate.ofEpochDay(epochDay);
+  }
 
-    //-------------------------------------------------------------------------
-    /**
+  /**
      * Obtains the current Julian local date from the system clock in the default time-zone.
      * <p>
      * This will query the {@link Clock#systemDefaultZone() system clock} in the default
@@ -241,12 +200,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the current Julian local date using the system clock and default time-zone, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override  // override with covariant return type
-    public JulianDate dateNow() {
-        return JulianDate.now();
-    }
+  @Override public JulianDate dateNow() {
+    return JulianDate.now();
+  }
 
-    /**
+  /**
      * Obtains the current Julian local date from the system clock in the specified time-zone.
      * <p>
      * This will query the {@link Clock#system(ZoneId) system clock} to obtain the current date.
@@ -255,16 +213,14 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * Using this method will prevent the ability to use an alternate clock for testing
      * because the clock is hard-coded.
      *
-     * @param zone the zone ID to use, not null
      * @return the current Julian local date using the system clock, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override  // override with covariant return type
-    public JulianDate dateNow(ZoneId zone) {
-        return JulianDate.now(zone);
-    }
+  @Override public JulianDate dateNow(ZoneId zone) {
+    return JulianDate.now(zone);
+  }
 
-    /**
+  /**
      * Obtains the current Julian local date from the specified clock.
      * <p>
      * This will query the specified clock to obtain the current date - today.
@@ -275,51 +231,44 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the current Julian local date, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override  // override with covariant return type
-    public JulianDate dateNow(Clock clock) {
-        return JulianDate.now(clock);
-    }
+  @Override public JulianDate dateNow(Clock clock) {
+    return JulianDate.now(clock);
+  }
 
-    //-------------------------------------------------------------------------
-    /**
+  /**
      * Obtains a Julian local date from another date-time object.
      *
      * @param temporal  the date-time object to convert, not null
      * @return the Julian local date, not null
      * @throws DateTimeException if unable to create the date
      */
-    @Override
-    public JulianDate date(TemporalAccessor temporal) {
-        return JulianDate.from(temporal);
-    }
+  @Override public JulianDate date(TemporalAccessor temporal) {
+    return JulianDate.from(temporal);
+  }
 
-    /**
+  /**
      * Obtains a Julian local date-time from another date-time object.
      *
      * @param temporal  the date-time object to convert, not null
      * @return the Julian local date-time, not null
      * @throws DateTimeException if unable to create the date-time
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public ChronoLocalDateTime<JulianDate> localDateTime(TemporalAccessor temporal) {
-        return (ChronoLocalDateTime<JulianDate>) super.localDateTime(temporal);
-    }
+  @Override @SuppressWarnings(value = { "unchecked" }) public ChronoLocalDateTime<JulianDate> localDateTime(TemporalAccessor temporal) {
+    return (ChronoLocalDateTime<JulianDate>) super.localDateTime(temporal);
+  }
 
-    /**
+  /**
      * Obtains a Julian zoned date-time from another date-time object.
      *
      * @param temporal  the date-time object to convert, not null
      * @return the Julian zoned date-time, not null
      * @throws DateTimeException if unable to create the date-time
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public ChronoZonedDateTime<JulianDate> zonedDateTime(TemporalAccessor temporal) {
-        return (ChronoZonedDateTime<JulianDate>) super.zonedDateTime(temporal);
-    }
+  @Override @SuppressWarnings(value = { "unchecked" }) public ChronoZonedDateTime<JulianDate> zonedDateTime(TemporalAccessor temporal) {
+    return (ChronoZonedDateTime<JulianDate>) super.zonedDateTime(temporal);
+  }
 
-    /**
+  /**
      * Obtains a Julian zoned date-time in this chronology from an {@code Instant}.
      *
      * @param instant  the instant to create the date-time from, not null
@@ -327,14 +276,11 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @return the Julian zoned date-time, not null
      * @throws DateTimeException if the result exceeds the supported range
      */
-    @Override
-    @SuppressWarnings("unchecked")
-    public ChronoZonedDateTime<JulianDate> zonedDateTime(Instant instant, ZoneId zone) {
-        return (ChronoZonedDateTime<JulianDate>) super.zonedDateTime(instant, zone);
-    }
+  @Override @SuppressWarnings(value = { "unchecked" }) public ChronoZonedDateTime<JulianDate> zonedDateTime(Instant instant, ZoneId zone) {
+    return (ChronoZonedDateTime<JulianDate>) super.zonedDateTime(instant, zone);
+  }
 
-    //-----------------------------------------------------------------------
-    /**
+  /**
      * Checks if the specified year is a leap year.
      * <p>
      * A Julian proleptic-year is leap if the remainder after division by four equals zero.
@@ -344,49 +290,40 @@ public final class JulianChronology extends AbstractChronology implements Serial
      * @param prolepticYear  the proleptic-year to check, not validated for range
      * @return true if the year is a leap year
      */
-    @Override
-    public boolean isLeapYear(long prolepticYear) {
-        return Math.floorMod(prolepticYear, 4) == 0;
-    }
+  @Override public boolean isLeapYear(long prolepticYear) {
+    return Math.floorMod(prolepticYear, 4) == 0;
+  }
 
-    @Override
-    public int prolepticYear(Era era, int yearOfEra) {
-        if (era instanceof JulianEra == false) {
-            throw new ClassCastException("Era must be JulianEra");
-        }
-        return (era == JulianEra.AD ? yearOfEra : 1 - yearOfEra);
+  @Override public int prolepticYear(Era era, int yearOfEra) {
+    if (era instanceof JulianEra == false) {
+      throw new ClassCastException("Era must be JulianEra");
     }
+    return (era == JulianEra.AD ? yearOfEra : 1 - yearOfEra);
+  }
 
-    @Override
-    public JulianEra eraOf(int eraValue) {
-        return JulianEra.of(eraValue);
+  @Override public JulianEra eraOf(int eraValue) {
+    return JulianEra.of(eraValue);
+  }
+
+  @Override public List<Era> eras() {
+    return Arrays.<Era>asList(JulianEra.values());
+  }
+
+  @Override public ValueRange range(ChronoField field) {
+    switch (field) {
+      case PROLEPTIC_MONTH:
+      return PROLEPTIC_MONTH_RANGE;
+      case YEAR_OF_ERA:
+      return YOE_RANGE;
+      case YEAR:
+      return YEAR_RANGE;
+      default:
+      break;
     }
+    return field.range();
+  }
 
-    @Override
-    public List<Era> eras() {
-        return Arrays.<Era>asList(JulianEra.values());
-    }
-
-    //-----------------------------------------------------------------------
-    @Override
-    public ValueRange range(ChronoField field) {
-        switch (field) {
-            case PROLEPTIC_MONTH:
-                return PROLEPTIC_MONTH_RANGE;
-            case YEAR_OF_ERA:
-                return YOE_RANGE;
-            case YEAR:
-                return YEAR_RANGE;
-            default:
-                break;
-        }
-        return field.range();
-    }
-
-    //-----------------------------------------------------------------------
-    @Override  // override for return type
-    public JulianDate resolveDate(Map<TemporalField, Long> fieldValues, ResolverStyle resolverStyle) {
-        return (JulianDate) super.resolveDate(fieldValues, resolverStyle);
-    }
-
+  @Override public JulianDate resolveDate(Map<TemporalField, Long> fieldValues, ResolverStyle resolverStyle) {
+    return (JulianDate) super.resolveDate(fieldValues, resolverStyle);
+  }
 }
