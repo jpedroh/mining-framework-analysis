@@ -108,7 +108,7 @@ final class MkUsers implements Users {
     @Override
     @NotNull(message = "Iterable is never NULL")
     public Iterable<User> iterate(
-        @NotNull(message = "identifier is never NULL") final String identifier
+        @NotNull(message = "login can't be NULL") @NotNull(message = "identifier is never NULL") final String identifier
     ) {
         return new MkIterable<User>(
             this.storage,

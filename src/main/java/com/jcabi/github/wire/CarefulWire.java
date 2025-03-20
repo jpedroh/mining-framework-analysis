@@ -110,8 +110,7 @@ public final class CarefulWire implements Wire {
         @NotNull(message = "method can't be NULL")final String method,
         @NotNull(message = "headers can't be NULL")
         final Collection<Map.Entry<String, String>> headers,
-        @NotNull(message = "content can't be NULL")
-        final InputStream content
+        @NotNull(message = "content can't be NULL") final InputStream content
     ) throws IOException {
         final Response resp = this.origin
             .send(req, home, method, headers, content);
