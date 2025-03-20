@@ -28,7 +28,13 @@ import com.google.common.collect.Multiset;
 
 /**
  * Convenience tokenizer. Provides default implementation to tokenize to set and
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/cdabedae8e4518093e994e091aaa8664172d72e0/simmetrics-core/src/main/java/org/simmetrics/tokenizers/AbstractTokenizer.java/left.java
+ * multiset that calls {@link Tokenizer#tokenizeToList(String)}.
+||||||| /usr/src/app/output/simmetrics/simmetrics/cdabedae8e4518093e994e091aaa8664172d72e0/simmetrics-core/src/main/java/org/simmetrics/tokenizers/AbstractTokenizer.java/base.java
+ * multiset.
+=======
  * multiset by calling {@link Tokenizer#tokenizeToList(String)}.
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/cdabedae8e4518093e994e091aaa8664172d72e0/simmetrics-core/src/main/java/org/simmetrics/tokenizers/AbstractTokenizer.java/right.java
  */
 public abstract class AbstractTokenizer implements Tokenizer {
 
@@ -36,7 +42,6 @@ public abstract class AbstractTokenizer implements Tokenizer {
 	public Set<String> tokenizeToSet(final String input) {
 		return new HashSet<>(tokenizeToList(input));
 	}
-
 	@Override
 	public Multiset<String> tokenizeToMultiset(final String input) {
 		return HashMultiset.create(tokenizeToList(input));
