@@ -98,13 +98,15 @@ public class Pac4jPrincipal implements Principal, Serializable {
         return profiles != null ? profiles.hashCode() : 0;
     }
 
-    /**
-     * Returns a name for the principal based upon one of the attributes
-     * of the main CommonProfile.  The attribute name used to query the CommonProfile 
-     * is specified in the constructor. 
-     * 
-     * @return a name for the Principal or null if the attribute is not populated.
-     */
+<<<<<<< /usr/src/app/output/bujiio/buji-pac4j/1c7eb2acf1643212c399c9485bd30e3fdd5d88a8/src/main/java/io/buji/pac4j/subject/Pac4jPrincipal.java/left.java
+    @Override
+    public String getName() {
+        CommonProfile profile = this.getProfile();
+        return profile.getId();
+
+    }
+||||||| /usr/src/app/output/bujiio/buji-pac4j/1c7eb2acf1643212c399c9485bd30e3fdd5d88a8/src/main/java/io/buji/pac4j/subject/Pac4jPrincipal.java/base.java
+=======
     @Override
     public String getName() {
         CommonProfile profile = this.getProfile();
@@ -114,9 +116,18 @@ public class Pac4jPrincipal implements Principal, Serializable {
         Object attrValue = profile.getAttribute(principalNameAttribute);
         return (null == attrValue) ? null : String.valueOf(attrValue);
     }
+>>>>>>> /usr/src/app/output/bujiio/buji-pac4j/1c7eb2acf1643212c399c9485bd30e3fdd5d88a8/src/main/java/io/buji/pac4j/subject/Pac4jPrincipal.java/right.java
 
     @Override
     public String toString() {
         return CommonHelper.toString(this.getClass(), "profiles", getProfiles());
     }
+
+    /**
+     * Returns a name for the principal based upon one of the attributes
+     * of the main CommonProfile.  The attribute name used to query the CommonProfile 
+     * is specified in the constructor. 
+     * 
+     * @return a name for the Principal or null if the attribute is not populated.
+     */
 }
