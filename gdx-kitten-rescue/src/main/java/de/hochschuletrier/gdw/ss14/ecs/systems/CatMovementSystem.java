@@ -134,6 +134,18 @@ public class CatMovementSystem extends ECSystem
                         physicsComponent.setRotation(angle);
                     }
                 }
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/5baaebe74aa4c0ae73b4ed034d97db6eb5c46d65/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatMovementSystem.java/left.java
+                //positionVec not directionVec because sliding
+                physicsComponent.setVelocityX(movementComponent.positionVec.x * movementComponent.velocity);
+                physicsComponent.setVelocityY(movementComponent.positionVec.y * movementComponent.velocity);
+
+||||||| /usr/src/app/output/lusito/gamedevweek/5baaebe74aa4c0ae73b4ed034d97db6eb5c46d65/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatMovementSystem.java/base.java
+            
+                physicsComponent.setVelocityX(movementComponent.directionVec.x * movementComponent.velocity);
+                physicsComponent.setVelocityY(movementComponent.directionVec.y * movementComponent.velocity);
+
+=======
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/5baaebe74aa4c0ae73b4ed034d97db6eb5c46d65/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatMovementSystem.java/right.java
             } // end if (state check)
             else if (catPropertyComponent.state == CatStateEnum.JUMP)
             {
@@ -143,14 +155,17 @@ public class CatMovementSystem extends ECSystem
             {
                 movementComponent.velocity = 0.0f;
             }
-            //positionVec not directionVec because sliding
-            physicsComponent.setVelocityX(movementComponent.positionVec.x * movementComponent.velocity);
-            physicsComponent.setVelocityY(movementComponent.positionVec.y * movementComponent.velocity);
+
+            physicsComponent.setVelocityX(movementComponent.directionVec.x * movementComponent.velocity);
+            physicsComponent.setVelocityY(movementComponent.directionVec.y * movementComponent.velocity);
+
         }
+
     }
 
     @Override
-    public void render(){
+    public void render()
+    {
 
     }
 }
