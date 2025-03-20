@@ -29,8 +29,26 @@ import java.net.InetSocketAddress;
 
 /**
  * Class KafkaHttpMetricsServer
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
  * Author: arnobroekhof
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
  * Purpose: Class for starting a Embedded Jetty server with the codahale metrics servlets loaded
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
  * Interfaces: None
  */
 public class KafkaHttpMetricsServer {
@@ -41,12 +59,20 @@ public class KafkaHttpMetricsServer {
     private String bindAddress;
 
     /**
-     * Method: KafkaHttpMetricsServer
-     * Purpose: Method for constructing the metrics server.
-     *
-     * @param bindAddress the name or address to bind on ( defaults to localhost )
-     * @param port            the port to bind on ( defaults to 8080 )
-     */
+   * Method: KafkaHttpMetricsServer
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+   * &lt;p/&gt;
+   * Purpose: Method for constructing the the metrics server.
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+   * <p/>
+   * Purpose: Method for constructing the the metrics server.
+=======
+   * Purpose: Method for constructing the metrics server.
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
+   *
+   * @param bindAddress the name or address to bind on ( defaults to localhost )
+   * @param port            the port to bind on ( defaults to 8080 )
+   */
     public KafkaHttpMetricsServer(final String bindAddress, final int port) {
 
         this.port = port;
@@ -56,9 +82,15 @@ public class KafkaHttpMetricsServer {
     }
 
     /**
-     * Method: init
-     * Purpose: Initializes the embedded Jetty Server with including the metrics servlets.
-     */
+   * Method: init
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+   * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+   * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
+   * Purpose: Initializes the embedded Jetty Server with including the metrics servlets.
+   */
     private void init() {
         LOG.info("Initializing Kafka Http Metrics Reporter");
 
@@ -87,9 +119,15 @@ public class KafkaHttpMetricsServer {
     }
 
     /**
-     * Method: start
-     * Purpose: starting the metrics server
-     */
+   * Method: start
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+   * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+   * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
+   * Purpose: starting the metrics server
+   */
     public void start() {
         try {
             LOG.info("Starting Kafka Http Metrics Reporter");
@@ -103,9 +141,15 @@ public class KafkaHttpMetricsServer {
     }
 
     /**
-     * Method: stop
-     * Purpose: Stopping the metrics server
-     */
+   * Method: stop
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/left.java
+   * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/base.java
+   * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsServer.java/right.java
+   * Purpose: Stopping the metrics server
+   */
     public void stop() {
         try {
             LOG.info("Stopping Kafka Http Metrics Reporter");

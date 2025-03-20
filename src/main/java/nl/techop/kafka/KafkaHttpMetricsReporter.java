@@ -25,7 +25,19 @@ import org.apache.log4j.Logger;
 
 /**
  * Class KafkaHttpMetricsReporter
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/right.java
  * Author: arnobroekhof
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporter.java/right.java
  * Purpose: Main class that is being called by Kafka on startup. This Class is also repsonsible for looking up the
  * metric settings as configured in the kafka server.properties file en based on those settings it starts the
  * embedded Jetty Server with the CodaStale servlets attached to it.

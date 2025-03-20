@@ -22,7 +22,19 @@ import kafka.metrics.KafkaMetricsReporterMBean;
 
 /**
  * Interface: KafkaHttpMetricsReporterMBean
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/right.java
  * Author: arnobroekhof
+<<<<<<< /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/left.java
+ * &lt;p/&gt;
+||||||| /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/base.java
+ * <p/>
+=======
+>>>>>>> /usr/src/app/output/arnobroekhof/kafka-http-metrics-reporter/2def1e280114d209ed8a7314a8b236051b4c503b/src/main/java/nl/techop/kafka/KafkaHttpMetricsReporterMBean.java/right.java
  * Purpose: Extending the KafkaMetricsReporterMBean
  */
 public interface KafkaHttpMetricsReporterMBean extends
