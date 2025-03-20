@@ -39,7 +39,6 @@ import de.hochschuletrier.gdw.ss14.ecs.systems.ShadowSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.TileMapRenderingSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.WoolInfluenceSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.WorldObjectsSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.CatCooldownUpdateSystem;
 
 public class Game{
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
@@ -94,8 +93,12 @@ public class Game{
         engine.addSystem(new CatMovementSystem(entityManager));
         engine.addSystem(new CatJumpUpdateSystem(entityManager));
         engine.addSystem(new CatStateUpdateSystem(entityManager));
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/3ebcd938a325e2e0da71ea63d1e0e05342f999b4/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
         engine.addSystem(new CatCooldownUpdateSystem(entityManager));
+||||||| /usr/src/app/output/lusito/gamedevweek/3ebcd938a325e2e0da71ea63d1e0e05342f999b4/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+=======
         engine.addSystem(new WoolInfluenceSystem(entityManager));
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/3ebcd938a325e2e0da71ea63d1e0e05342f999b4/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
 
        // engine.addSystem(new DogInputSystem(entityManager));
         engine.addSystem(new DogMovementSystem(entityManager));
