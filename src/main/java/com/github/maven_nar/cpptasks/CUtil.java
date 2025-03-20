@@ -1,28 +1,7 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar.cpptasks;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Execute;
@@ -38,15 +17,10 @@ import org.apache.tools.ant.util.StringUtils;
  * @author Curt Arnold
  */
 public class CUtil {
-  /**
-   * A class that splits a white-space, comma-separated list into a String
-   * array. Used for task attributes.
-   */
   public static final class StringArrayBuilder {
     private final String[] _value;
 
     public StringArrayBuilder(final String value) {
-      // Split the defines up
       final StringTokenizer tokens = new StringTokenizer(value, ", ");
       final Vector vallist = new Vector();
       while (tokens.hasMoreTokens()) {
@@ -105,7 +79,6 @@ public class CUtil {
    */
   public static String getBasename(final File file) {
     final String path = file.getPath();
-    // Remove the extension
     String basename = file.getName();
     final int pos = basename.lastIndexOf('.');
     if (pos != -1) {
@@ -123,9 +96,6 @@ public class CUtil {
    * @return parent directory or null if not located
    */
   public static File getExecutableLocation(final String exeName) {
-    //
-    // must add current working directory to the
-    // from of the path from the "path" environment variable
     final File currentDir = new File(System.getProperty("user.dir"));
     if (new File(currentDir, exeName).exists()) {
       return currentDir;
@@ -162,13 +132,12 @@ public class CUtil {
    * @return array of File's for each part that is an existing directory
    */
   public static File[] getPathFromEnvironment(final String envVariable, final String delim) {
-    // OS/4000 does not support the env command.
     if (System.getProperty("os.name").equals("OS/400")) {
-      return new File[] {};
+      return new File[] {  };
     }
     final Vector osEnv = Execute.getProcEnvironment();
     final String match = envVariable.concat("=");
-    for (final Enumeration e = osEnv.elements(); e.hasMoreElements();) {
+    for (final Enumeration e = osEnv.elements(); e.hasMoreElements(); ) {
       final String entry = ((String) e.nextElement()).trim();
       if (entry.length() > match.length()) {
         final String entryFrag = entry.substring(0, match.length());
@@ -196,16 +165,10 @@ public class CUtil {
    */
   public static String getRelativePath(final String base, final File targetFile) {
     try {
-      //
-      // remove trailing file separator
-      //
       String canonicalBase = base;
       if (base.charAt(base.length() - 1) != File.separatorChar) {
         canonicalBase = base + File.separatorChar;
       }
-      //
-      // get canonical name of target
-      //
       String canonicalTarget;
       if (System.getProperty("os.name").equals("OS/400")) {
         canonicalTarget = targetFile.getPath();
@@ -218,13 +181,7 @@ public class CUtil {
       if (canonicalTarget.equals(canonicalBase)) {
         return ".";
       }
-      //
-      // see if the prefixes are the same
-      //
       if (substringMatch(canonicalBase, 0, 2, "\\\\")) {
-        //
-        // UNC file name, if target file doesn't also start with same
-        // server name, don't go there
         final int endPrefix = canonicalBase.indexOf('\\', 2);
         final String prefix1 = canonicalBase.substring(0, endPrefix);
         final String prefix2 = canonicalTarget.substring(0, endPrefix);
@@ -240,9 +197,9 @@ public class CUtil {
             return canonicalTarget;
           }
         } else {
-        	if (canonicalBase.charAt(0) == '/' && canonicalTarget.charAt(0) != '/') {
-        		return canonicalTarget;
-        	}
+          if (canonicalBase.charAt(0) == '/' && canonicalTarget.charAt(0) != '/') {
+            return canonicalTarget;
+          }
         }
       }
       final char separator = File.separatorChar;
@@ -251,9 +208,6 @@ public class CUtil {
       if (canonicalTarget.length() < minLength) {
         minLength = canonicalTarget.length();
       }
-      //
-      // walk to the shorter of the two paths
-      // finding the last separator they have in common
       for (int i = 0; i < minLength; i++) {
         if (canonicalTarget.charAt(i) == canonicalBase.charAt(i)) {
           if (canonicalTarget.charAt(i) == separator) {
@@ -264,10 +218,6 @@ public class CUtil {
         }
       }
       final StringBuffer relativePath = new StringBuffer(50);
-      //
-      // walk from the first difference to the end of the base
-      // adding "../" for each separator encountered
-      //
       for (int i = lastCommonSeparator + 1; i < canonicalBase.length(); i++) {
         if (canonicalBase.charAt(i) == separator) {
           if (relativePath.length() > 0) {
@@ -354,10 +304,7 @@ public class CUtil {
    */
   public static boolean isSystemPath(final File source) {
     final String lcPath = source.getAbsolutePath().toLowerCase(java.util.Locale.US);
-    return lcPath.contains("platformsdk") || lcPath.contains("windows kits") || lcPath.contains("microsoft")
-        || Objects.equals(lcPath, "/usr/include")
-        || Objects.equals(lcPath, "/usr/lib") || Objects.equals(lcPath, "/usr/local/include")
-        || Objects.equals(lcPath, "/usr/local/lib");
+    return lcPath.contains("platformsdk") || lcPath.contains("windows kits") || lcPath.contains("microsoft") || Objects.equals(lcPath, "/usr/include") || Objects.equals(lcPath, "/usr/lib") || Objects.equals(lcPath, "/usr/local/include") || Objects.equals(lcPath, "/usr/local/lib");
   }
 
   /**
@@ -376,9 +323,6 @@ public class CUtil {
       if (delimPos < 0) {
         delimPos = path.length();
       }
-      //
-      // don't add an entry for zero-length paths
-      //
       if (delimPos > startPos) {
         final String dirName = path.substring(startPos, delimPos);
         final File dir = new File(dirName);
@@ -396,8 +340,7 @@ public class CUtil {
    * This method is exposed so test classes can overload and test the
    * arguments without actually spawning the compiler
    */
-  public static int runCommand(final CCTask task, final File workingDir, final String[] cmdline,
-      final boolean newEnvironment, final Environment env) throws BuildException {
+  public static int runCommand(final CCTask task, final File workingDir, final String[] cmdline, final boolean newEnvironment, final Environment env) throws BuildException {
     try {
       task.log(Commandline.toString(cmdline), task.getCommandLogLevel());
       final Execute exe = new Execute(new LogStreamHandler(task, Project.MSG_INFO, Project.MSG_ERR));
@@ -465,7 +408,6 @@ public class CUtil {
     if (a.length == 0) {
       return true;
     }
-    // Convert the array into a set
     final Hashtable t = new Hashtable();
     for (final Object element : a) {
       t.put(element, element);
@@ -479,8 +421,7 @@ public class CUtil {
     return t.size() == 0;
   }
 
-  private static boolean
-      substringMatch(final String src, final int beginIndex, final int endIndex, final String target) {
+  private static boolean substringMatch(final String src, final int beginIndex, final int endIndex, final String target) {
     if (src.length() < endIndex) {
       return false;
     }
@@ -522,26 +463,21 @@ public class CUtil {
   public static String xmlAttribEncode(final String attrValue) {
     final StringBuffer buf = new StringBuffer(attrValue);
     int quotePos;
-
-    for (quotePos = -1; (quotePos = buf.indexOf("\"", quotePos + 1)) >= 0;) {
+    for (quotePos = -1; (quotePos = buf.indexOf("\"", quotePos + 1)) >= 0; ) {
       buf.deleteCharAt(quotePos);
       buf.insert(quotePos, "&quot;");
       quotePos += 5;
     }
-
-    for (quotePos = -1; (quotePos = buf.indexOf("<", quotePos + 1)) >= 0;) {
+    for (quotePos = -1; (quotePos = buf.indexOf("<", quotePos + 1)) >= 0; ) {
       buf.deleteCharAt(quotePos);
       buf.insert(quotePos, "&lt;");
       quotePos += 3;
     }
-
-    for (quotePos = -1; (quotePos = buf.indexOf(">", quotePos + 1)) >= 0;) {
+    for (quotePos = -1; (quotePos = buf.indexOf(">", quotePos + 1)) >= 0; ) {
       buf.deleteCharAt(quotePos);
       buf.insert(quotePos, "&gt;");
       quotePos += 3;
     }
-
     return buf.toString();
   }
-
 }

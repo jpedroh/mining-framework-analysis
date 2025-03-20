@@ -1,24 +1,4 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar.cpptasks;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -26,11 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FlexInteger;
-
 import com.github.maven_nar.cpptasks.compiler.CommandLineLinker;
 import com.github.maven_nar.cpptasks.compiler.LinkType;
 import com.github.maven_nar.cpptasks.compiler.Linker;
@@ -51,15 +29,25 @@ import com.github.maven_nar.cpptasks.types.SystemLibrarySet;
  */
 public class LinkerDef extends ProcessorDef {
   private long base;
+
   private String entry;
+
   private Boolean fixed;
+
   private Boolean incremental;
+
   private final Vector librarySets = new Vector();
+
   private Boolean map;
+
   private int stack;
+
   private final Vector sysLibrarySets = new Vector();
+
   private String toolPath;
+
   private String linkerPrefix;
+
   private Boolean skipDepLink;
 
   private final Set<File> libraryDirectories = new LinkedHashSet<>();
@@ -166,8 +154,7 @@ public class LinkerDef extends ProcessorDef {
    */
   public LibrarySet[] getActiveLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
-          .getActiveUserLibrarySets(defaultProviders, index);
+      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getActiveUserLibrarySets(defaultProviders, index);
     }
     final Project p = getProject();
     final Vector libsets = new Vector();
@@ -189,8 +176,7 @@ public class LinkerDef extends ProcessorDef {
    */
   public LibrarySet[] getActiveSystemLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
-          .getActiveUserLibrarySets(defaultProviders, index);
+      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getActiveUserLibrarySets(defaultProviders, index);
     }
     final Project p = getProject();
     final Vector libsets = new Vector();
@@ -208,8 +194,7 @@ public class LinkerDef extends ProcessorDef {
    */
   public LibrarySet[] getActiveUserLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
-          .getActiveUserLibrarySets(defaultProviders, index);
+      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getActiveUserLibrarySets(defaultProviders, index);
     }
     final Project p = getProject();
     final Vector libsets = new Vector();
@@ -227,7 +212,7 @@ public class LinkerDef extends ProcessorDef {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getBase(defaultProviders, index);
     }
     if (this.base <= 0 && defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getBase(defaultProviders, index + 1);
+      return defaultProviders[index].getBase(defaultProviders, index + 1);
     }
     return this.base;
   }
@@ -250,7 +235,7 @@ public class LinkerDef extends ProcessorDef {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getFixed(defaultProviders, index);
     }
     if (this.fixed == null && defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getFixed(defaultProviders, index + 1);
+      return defaultProviders[index].getFixed(defaultProviders, index + 1);
     }
     return this.fixed;
   }
@@ -285,8 +270,7 @@ public class LinkerDef extends ProcessorDef {
     return false;
   }
 
-  @Override
-  public Processor getProcessor() {
+  @Override public Processor getProcessor() {
     Linker linker = (Linker) super.getProcessor();
     if (linker == null) {
       linker = GccLinker.getInstance();
@@ -298,8 +282,7 @@ public class LinkerDef extends ProcessorDef {
     return linker;
   }
 
-  @Override
-  public Processor getProcessor(final LinkType linkType) {
+  @Override public Processor getProcessor(final LinkType linkType) {
     final Processor proc = getProcessor();
     return proc.getLinker(linkType);
   }
@@ -309,7 +292,7 @@ public class LinkerDef extends ProcessorDef {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getStack(defaultProviders, index);
     }
     if (this.stack < 0 && defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getStack(defaultProviders, index + 1);
+      return defaultProviders[index].getStack(defaultProviders, index + 1);
     }
     return this.stack;
   }
@@ -321,11 +304,11 @@ public class LinkerDef extends ProcessorDef {
   public String getLinkerPrefix() {
     return this.linkerPrefix;
   }
-  
- public boolean isSkipDepLink() {
+
+  public boolean isSkipDepLink() {
     return this.skipDepLink.booleanValue();
   }
-  
+
   /**
    * Sets the base address. May be specified in either decimal or hex.
    * 
@@ -481,8 +464,7 @@ public class LinkerDef extends ProcessorDef {
     super.setProcessor(linker);
   }
 
-  @Override
-  protected void setProcessor(final Processor proc) throws BuildException {
+  @Override protected void setProcessor(final Processor proc) throws BuildException {
     Linker linker = null;
     if (proc instanceof Linker) {
       linker = (Linker) proc;
@@ -510,7 +492,7 @@ public class LinkerDef extends ProcessorDef {
   public void setLinkerPrefix(final String prefix) {
     this.linkerPrefix = prefix;
   }
-  
+
   public void setSkipDepLink(final boolean skipDepLink) {
     this.skipDepLink = booleanValueOf(skipDepLink);
   }
@@ -524,10 +506,6 @@ public class LinkerDef extends ProcessorDef {
       final LinkerDef master = (LinkerDef) getCheckedRef(LinkerDef.class, "Linker");
       master.visitSystemLibraries(linker, libraryVisitor);
     } else {
-      //
-      // if this linker extends another,
-      // visit its libraries first
-      //
       final LinkerDef extendsDef = (LinkerDef) getExtends();
       if (extendsDef != null) {
         extendsDef.visitSystemLibraries(linker, libraryVisitor);
@@ -553,17 +531,10 @@ public class LinkerDef extends ProcessorDef {
       final LinkerDef master = (LinkerDef) getCheckedRef(LinkerDef.class, "Linker");
       master.visitUserLibraries(linker, libraryVisitor);
     } else {
-      //
-      // if this linker extends another,
-      // visit its libraries first
-      //
       final LinkerDef extendsDef = (LinkerDef) getExtends();
       if (extendsDef != null) {
         extendsDef.visitUserLibraries(linker, libraryVisitor);
       }
-      //
-      // visit the user libraries
-      //
       if (this.librarySets.size() > 0) {
         final File[] libpath = linker.getLibraryPath();
         for (int i = 0; i < this.librarySets.size(); i++) {

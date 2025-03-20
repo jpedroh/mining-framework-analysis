@@ -1,35 +1,13 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar.cpptasks;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Vector;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.DataType;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Reference;
-
 import com.github.maven_nar.cpptasks.compiler.LinkType;
 import com.github.maven_nar.cpptasks.compiler.Processor;
 import com.github.maven_nar.cpptasks.compiler.ProcessorConfiguration;
@@ -62,43 +40,55 @@ public abstract class ProcessorDef extends DataType {
    * if true, targets will be built for debugging
    */
   private Boolean debug;
+
   private Environment env = null;
+
   /**
    * Reference for "extends" processor definition
    */
   private Reference extendsRef = null;
+
   /**
    * Name of property that must be present or definition will be ignored. May
    * be null.
    */
   private String ifProp;
+
   /**
    * if true, processor definition inherits values from containing cc
    * element
    */
   private boolean inherit;
+
   private Boolean libtool = null;
+
   protected boolean newEnvironment = false;
+
   /**
    * Processor.
    */
   private Processor processor;
+
   /**
    * Collection of <compilerarg>or <linkerarg>contained by definition
    */
   private final Vector processorArgs = new Vector();
+
   /**
    * Collection of <compilerparam>or <linkerparam>contained by definition
    */
   private final Vector processorParams = new Vector();
+
   /**
    * if true, all targets will be unconditionally rebuilt
    */
   private Boolean rebuild;
+
   /**
    * Collection of <fileset>contained by definition
    */
   private final Vector srcSets = new Vector();
+
   /**
    * Name of property that if present will cause definition to be ignored.
    * May be null.
@@ -161,7 +151,6 @@ public abstract class ProcessorDef extends DataType {
       this.env = new Environment();
       this.newEnvironment = true;
       if (this.processor != null) {
-        // Change the environment in the processor
         setProcessor(this.processor);
       }
     }
@@ -196,11 +185,9 @@ public abstract class ProcessorDef extends DataType {
    * @return configuration
    * 
    */
-  public ProcessorConfiguration createConfiguration(final CCTask task, final LinkType linkType,
-      final ProcessorDef baseDef, final TargetDef targetPlatform, final VersionInfo versionInfo) {
+  public ProcessorConfiguration createConfiguration(final CCTask task, final LinkType linkType, final ProcessorDef baseDef, final TargetDef targetPlatform, final VersionInfo versionInfo) {
     if (isReference()) {
-      return ((ProcessorDef) getCheckedRef(ProcessorDef.class, "ProcessorDef")).createConfiguration(task, linkType,
-          baseDef, targetPlatform, versionInfo);
+      return ((ProcessorDef) getCheckedRef(ProcessorDef.class, "ProcessorDef")).createConfiguration(task, linkType, baseDef, targetPlatform, versionInfo);
     }
     final ProcessorDef[] defaultProviders = getDefaultProviders(baseDef);
     final Processor proc = getProcessor(linkType);
@@ -329,8 +316,7 @@ public abstract class ProcessorDef extends DataType {
     if (this.extendsRef != null) {
       final Object obj = this.extendsRef.getReferencedObject(getProject());
       if (!getClass().isInstance(obj)) {
-        throw new BuildException("Referenced object " + this.extendsRef.getRefId() + " not correct type, is "
-            + obj.getClass().getName() + " should be " + getClass().getName());
+        throw new BuildException("Referenced object " + this.extendsRef.getRefId() + " not correct type, is " + obj.getClass().getName() + " should be " + getClass().getName());
       }
       return (ProcessorDef) obj;
     }
@@ -371,9 +357,6 @@ public abstract class ProcessorDef extends DataType {
     if (isReference()) {
       return ((ProcessorDef) getCheckedRef(ProcessorDef.class, "ProcessorDef")).getProcessor();
     }
-    //
-    // if a processor has not been explicitly set
-    // then may be set by an extended definition
     if (this.processor == null) {
       final ProcessorDef extendsDef = getExtends();
       if (extendsDef != null) {
@@ -390,7 +373,6 @@ public abstract class ProcessorDef extends DataType {
    * @return processor
    */
   protected Processor getProcessor(final LinkType linkType) {
-    // by default ignore the linkType.
     return getProcessor();
   }
 
@@ -451,11 +433,8 @@ public abstract class ProcessorDef extends DataType {
       return false;
     }
     if (isReference() && !((ProcessorDef) getCheckedRef(ProcessorDef.class, "ProcessorDef")).isActive()) {
-        return false;
+      return false;
     }
-    //
-    // walk through any extended definitions
-    //
     final ProcessorDef[] defaultProviders = getDefaultProviders(null);
     for (final ProcessorDef defaultProvider : defaultProviders) {
       if (!defaultProvider.isActive()) {
@@ -507,8 +486,7 @@ public abstract class ProcessorDef extends DataType {
   /**
    * Sets a description of the current data type.
    */
-  @Override
-  public void setDescription(final String desc) {
+  @Override public void setDescription(final String desc) {
     super.setDescription(desc);
   }
 
@@ -537,10 +515,6 @@ public abstract class ProcessorDef extends DataType {
    *          id
    */
   public void setId(final String id) {
-    //
-    // this is actually accomplished by a different
-    // mechanism, but we can document it
-    //
   }
 
   /**
@@ -597,6 +571,7 @@ public abstract class ProcessorDef extends DataType {
   public void setNewenvironment(final boolean newenv) {
     this.newEnvironment = newenv;
   }
+
   public boolean isNewEnvironment() {
     return this.newEnvironment;
   }
@@ -650,8 +625,7 @@ public abstract class ProcessorDef extends DataType {
    *          Reference to other element
    * 
    */
-  @Override
-  public void setRefid(final org.apache.tools.ant.types.Reference ref) {
+  @Override public void setRefid(final org.apache.tools.ant.types.Reference ref) {
     super.setRefid(ref);
   }
 
@@ -686,21 +660,14 @@ public abstract class ProcessorDef extends DataType {
     if (isReference()) {
       ((ProcessorDef) getCheckedRef(ProcessorDef.class, "ProcessorDef")).visitFiles(visitor);
     }
-    //
-    // if this processor extends another,
-    // visit its files first
-    //
     final ProcessorDef extendsDef = getExtends();
     if (extendsDef != null) {
       extendsDef.visitFiles(visitor);
     }
-
     for (int i = 0; i < this.srcSets.size(); i++) {
       final ConditionalFileSet srcSet = (ConditionalFileSet) this.srcSets.elementAt(i);
       if (srcSet.isActive()) {
-        // Find matching source files
         final DirectoryScanner scanner = srcSet.getDirectoryScanner(p);
-        // Check each source file - see if it needs compilation
         final String[] fileNames = scanner.getIncludedFiles();
         final File parentDir = scanner.getBasedir();
         for (final String currentFile : fileNames) {
