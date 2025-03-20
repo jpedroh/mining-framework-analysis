@@ -55,12 +55,12 @@ import com.sforce.ws.parser.XmlInputStream;
 import com.sforce.ws.parser.XmlOutputStream;
 import com.sforce.ws.transport.Transport;
 import com.sforce.ws.util.FileUtil;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.*;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-
 
 /**
  * BulkConnection
@@ -176,6 +176,19 @@ public class BulkConnection {
 
     static void parseAndThrowException(InputStream in, ContentType type) throws AsyncApiException {
         try {
+<<<<<<< /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/left.java
+            AsyncApiException exception = new AsyncApiException();
+
+            XmlInputStream xin = new XmlInputStream();
+            xin.setInput(in, "UTF-8");
+
+            exception.load(xin, typeMapper);
+||||||| /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/base.java
+            XmlInputStream xin = new XmlInputStream();
+            xin.setInput(in, "UTF-8");
+            AsyncApiException exception = new AsyncApiException();
+            exception.load(xin, typeMapper);
+=======
             AsyncApiException exception;
             if (type == ContentType.XML || type == ContentType.ZIP_XML || type == ContentType.CSV || type == ContentType.ZIP_CSV) {
                 exception = new AsyncApiException();
@@ -190,6 +203,7 @@ public class BulkConnection {
             } else {
                 throw new AsyncApiException("Server error returned in unknown format", AsyncExceptionCode.ClientInputError);
             }
+>>>>>>> /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/right.java
             throw exception;
 
         } catch (PullParserException e) {
@@ -234,11 +248,21 @@ public class BulkConnection {
             FileUtil.copy(input, out);
 
             InputStream result = transport.getContent();
+<<<<<<< /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/left.java
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+            //xml/json content type
+            if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
+                return deserializeJsonToObject(result, BatchInfo.class);
+
+||||||| /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/base.java
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+=======
             if (!transport.isSuccessful()) parseAndThrowException(result, jobInfo.getContentType());
             //xml/json content type
             if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON)
                 return deserializeJsonToObject(result, BatchInfo.class);
 
+>>>>>>> /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/right.java
             return BatchRequest.loadBatchInfo(result);
 
         } catch (IOException e) {
@@ -299,6 +323,7 @@ public class BulkConnection {
      *            InputStream representing that file.
      * @return BatchInfo of uploaded batch.
      */
+
     public BatchInfo createBatchWithInputStreamAttachments(JobInfo jobInfo, InputStream batchContent,
             Map<String, InputStream> attachments) throws AsyncApiException {
 
@@ -329,6 +354,7 @@ public class BulkConnection {
             if (jobInfo.getContentType() == ContentType.JSON || jobInfo.getContentType() == ContentType.ZIP_JSON) {
                 return deserializeJsonToObject(result, BatchInfo.class);
             }
+
             return BatchRequest.loadBatchInfo(result);
         } catch (IOException e) {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
@@ -345,6 +371,34 @@ public class BulkConnection {
      * batch using the previously created transformation specification (a mapping of columns to fields). 
      * The stream is still limited according to the same limit rules as apply to normal batches.
      */
+
+<<<<<<< /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/left.java
+    public BatchInfo createBatchFromForeignCsvStream(JobInfo jobInfo, InputStream input, String charSet) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + jobInfo.getId() + "/batch";
+            String contentType = getContentTypeString(ContentType.CSV, false);
+            if (charSet != null) contentType = contentType + ";charset=" + charSet;
+            HashMap<String, String> httpHeaders = getHeaders(contentType);
+            final boolean allowZipToBeGzipped = false;
+            OutputStream out = transport.connect(endpoint, httpHeaders, allowZipToBeGzipped);
+
+            FileUtil.copy(input, out);
+
+            InputStream result = transport.getContent();
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+            return BatchRequest.loadBatchInfo(result);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (PullParserException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
+        }
+    }
+||||||| /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/base.java
+=======
     public BatchInfo createBatchFromForeignCsvStream(JobInfo jobInfo, InputStream input, String charSet) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
@@ -369,6 +423,7 @@ public class BulkConnection {
             throw new AsyncApiException("Failed to create batch", AsyncExceptionCode.ClientInputError, e);
         }
     }
+>>>>>>> /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/right.java
 
     /*
      * Creates a transformation specification for this job. Any subsequent batches that are submitted will
@@ -380,6 +435,30 @@ public class BulkConnection {
      * Birthdate,Birthday,,MM-dd-YYYY
      * </code> 
      */
+
+<<<<<<< /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/left.java
+    public void createTransformationSpecFromStream(JobInfo jobInfo, InputStream input) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + jobInfo.getId() + "/spec";
+            String contentType = getContentTypeString(ContentType.CSV, false);
+            HashMap<String, String> httpHeaders = getHeaders(contentType);
+            final boolean allowZipToBeGzipped = false;
+            OutputStream out = transport.connect(endpoint, httpHeaders, allowZipToBeGzipped);
+
+            FileUtil.copy(input, out);
+
+            InputStream result = transport.getContent();
+            if (!transport.isSuccessful()) parseAndThrowException(result);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
+        }
+    }
+||||||| /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/base.java
+=======
     public void createTransformationSpecFromStream(JobInfo jobInfo, InputStream input) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
@@ -400,6 +479,7 @@ public class BulkConnection {
             throw new AsyncApiException("Failed to create transformation specification", AsyncExceptionCode.ClientInputError, e);
         }
     }
+>>>>>>> /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/right.java
 
     private String getContentTypeString(ContentType contentType, boolean isZip) throws AsyncApiException {
         ContentType ct = contentType == null ? ContentType.XML : contentType;
@@ -502,6 +582,7 @@ public class BulkConnection {
 		}
     }
 
+<<<<<<< /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/left.java
     public TransformationSpecRequest createTransformationSpec(JobInfo job) throws AsyncApiException {
         try {
             String endpoint = getRestEndpoint();
@@ -510,6 +591,26 @@ public class BulkConnection {
             ContentType ct = job.getContentType();
             if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
                     "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
+
+            OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE));
+            return new TransformationSpecRequest(transport, out);
+        } catch (IOException e) {
+            throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
+        } catch (ConnectionException e) {
+            throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
+    		}
+    }
+||||||| /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/base.java
+=======
+    public TransformationSpecRequest createTransformationSpec(JobInfo job) throws AsyncApiException {
+        try {
+            String endpoint = getRestEndpoint();
+            Transport transport = config.createTransport();
+            endpoint = endpoint + "job/" + job.getId() + "/spec";
+            ContentType ct = job.getContentType();
+            if (ct != null && ct != ContentType.CSV) { throw new AsyncApiException(
+                    "This method can only be used with csv content type", AsyncExceptionCode.ClientInputError); }
+
             final boolean allowZipToBeGzipped = false;
             OutputStream out = transport.connect(endpoint, getHeaders(CSV_CONTENT_TYPE), allowZipToBeGzipped);
             return new TransformationSpecRequest(transport, out);
@@ -517,8 +618,27 @@ public class BulkConnection {
             throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
         } catch (ConnectionException e) {
             throw new AsyncApiException("Failed to create transformation spec", AsyncExceptionCode.ClientInputError, e);
-		}
+    		}
     }
+>>>>>>> /usr/src/app/output/forcedotcom/wsc/f617922ebb458d3e0df5769ad3792a1e683b05b1/src/main/java/com/sforce/async/BulkConnection.java/right.java
+
+    /*
+     * Creates a compliant Async Api batch from a stream containing an arbitrary CSV source (eg. Outlook contacts). 
+     * The stream does not have to be UTF-8, and it's contents are transformed into a compliant
+     * batch using the previously created transformation specification (a mapping of columns to fields). 
+     * The stream is still limited according to the same limit rules as apply to normal batches.
+     */
+
+    /*
+     * Creates a transformation specification for this job. Any subsequent batches that are submitted will
+     * be assumed to be non-compliant batches and will be transformed into compliant batches using this specification.
+     * An example spec for a Contact job might look like ...
+     * <code>
+     * Salesforce Field,Csv Header,Value,Hint
+     * LastName,Surname,#N/A,
+     * Birthdate,Birthday,,MM-dd-YYYY
+     * </code> 
+     */
 
     public BatchInfoList getBatchInfoList(String jobId) throws AsyncApiException {
         return getBatchInfoList(jobId, ContentType.XML);
