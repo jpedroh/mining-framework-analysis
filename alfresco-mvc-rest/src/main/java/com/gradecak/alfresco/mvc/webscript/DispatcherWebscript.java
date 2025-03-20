@@ -52,8 +52,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.util.JavaScriptUtils;
 import org.springframework.web.util.NestedServletException;
-
-import com.google.common.base.Throwables;
 import com.gradecak.alfresco.mvc.ResponseMapBuilder;
 import com.gradecak.alfresco.mvc.util.JsonUtils;
 
@@ -131,8 +129,7 @@ public class DispatcherWebscript extends AbstractWebScript implements Applicatio
     if (HttpServletResponse.SC_OK == status) {
       status = HttpServletResponse.SC_BAD_REQUEST;
     }
-    
-    // String errorMessage = ex.getLocalizedMessage();
+
     if (ex instanceof NestedServletException) {
       NestedServletException nestedServletException = (NestedServletException) ex;
       if (nestedServletException.getCause() != null) {
@@ -148,7 +145,7 @@ public class DispatcherWebscript extends AbstractWebScript implements Applicatio
     } else {
       mockHttpServletResponse.addHeader("error", ex.getClass().getCanonicalName());
     }
-    // mockHttpServletResponse.sendError(status, errorMessage);
+
     mockHttpServletResponse.setStatus(status);
     mockHttpServletResponse.setContentType("application/json");
     IOUtils.write(JsonUtils.mapToJsonString(builder.build()), mockHttpServletResponse.getOutputStream());
@@ -183,7 +180,7 @@ public class DispatcherWebscript extends AbstractWebScript implements Applicatio
       try {
         s.init(new DelegatingServletConfig(servletName));
       } catch (ServletException e) {
-        Throwables.propagate(e);
+        new IllegalStateException(e);
       }
     }
   }
