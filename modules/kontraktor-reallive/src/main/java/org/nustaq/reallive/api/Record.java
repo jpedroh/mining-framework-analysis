@@ -1,5 +1,4 @@
 package org.nustaq.reallive.api;
-
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.WriterConfig;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,20 +12,16 @@ import org.nustaq.reallive.query.StringValue;
 import org.nustaq.reallive.query.Value;
 import org.nustaq.reallive.records.MapRecord;
 import org.nustaq.reallive.server.storage.RecordJsonifier;
-
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by moelrue on 03.08.2015.
  */
-@JsonSerialize(using = RecordSerializer.class)
-@JsonDeserialize(using = RecordDeserializer.class)
-public interface Record extends Serializable, EvalContext {
+@JsonSerialize(using = RecordSerializer.class) @JsonDeserialize(using = RecordDeserializer.class) public interface Record extends Serializable, EvalContext {
+  public static final String _NULL_ = "_NULL_";
 
-    public static final String _NULL_ = "_NULL_";
-
-    /**
+  /**
      * create new json'ish record from key value array.
      *
      * some value types are transformed / replaced automatically to ensure
@@ -38,23 +33,24 @@ public interface Record extends Serializable, EvalContext {
      * @param keyVals
      * @return
      */
-    static Record from( Object ... keyVals ) {
-        MapRecord aNew = MapRecord.New(null);
-        for (int i = 0; i < keyVals.length; i+=2) {
-            String key = (String) keyVals[i];
-            Object val = keyVals[i+1];
-            if ( key.equals("key") ) {
-                aNew.key((String) val);
-            } else {
-                if (val == null)
-                    val = _NULL_;
-                aNew.internal_put(key, val);
-            }
+  static Record from(Object... keyVals) {
+    MapRecord aNew = MapRecord.New(null);
+    for (int i = 0; i < keyVals.length; i += 2) {
+      String key = (String) keyVals[i];
+      Object val = keyVals[i + 1];
+      if (key.equals("key")) {
+        aNew.key((String) val);
+      } else {
+        if (val == null) {
+          val = _NULL_;
         }
-        return aNew;
+        aNew.internal_put(key, val);
+      }
     }
+    return aNew;
+  }
 
-    /**
+  /**
      * transform map/collections into Record, Object[]
      *
      * - Map is transformed to Record
@@ -63,60 +59,65 @@ public interface Record extends Serializable, EvalContext {
      * @param val
      * @return
      */
-    static Object transform(Object val) {
-        if ( val instanceof Map ) {
-            return from((Map)val);
-        }
-        if ( val instanceof Collection ) {
-            return ((Collection) val).toArray(new Object[((Collection) val).size()]);
-        }
-        return val;
+  static Object transform(Object val) {
+    if (val instanceof Map) {
+      return from((Map) val);
     }
-
-    static Record from( JsonObject jsonObject ) {
-        return RecordJsonifier.get().toRecord(jsonObject);
+    if (val instanceof Collection) {
+      return ((Collection) val).toArray(new Object[((Collection) val).size()]);
     }
+    return val;
+  }
 
-    /**
+  static Record from(JsonObject jsonObject) {
+    return RecordJsonifier.get().toRecord(jsonObject);
+  }
+
+  /**
      * create a new record from given key and values
      *
      * @param map
      * @return
      */
-    static Record from( Map<String,?> map ) {
-        return RecordJsonifier.get().from(map);
-    }
+  static Record from(Map<String, ?> map) {
+    return RecordJsonifier.get().from(map);
+  }
 
-    String getKey();
-    long getLastModified();
-    void internal_setLastModified(long tim);
-    void internal_incSequence();
-    long getSequence(); // increments with each update of the record
-    Record internal_put(String key, Object value); // put without any prechecks / null processing
+  String getKey();
 
-    default void internal_updateLastModified() {
-        internal_setLastModified(System.currentTimeMillis());
-        internal_incSequence();
-    }
+  long getLastModified();
 
-    /**
+  void internal_setLastModified(long tim);
+
+  void internal_incSequence();
+
+  long getSequence();
+
+  Record internal_put(String key, Object value);
+
+  default void internal_updateLastModified() {
+    internal_setLastModified(System.currentTimeMillis());
+    internal_incSequence();
+  }
+
+  /**
      * take care, kind of dangerous
      * @param key
      */
-    Record key(String key);
+  Record key(String key);
 
-    String[] getFields();
+  String[] getFields();
 
-    default Set<String> getFieldSet() {
-        String[] fields = getFields();
-        HashSet res = new HashSet(fields.length);
-        for (int i = 0; i < fields.length; i++) {
-            res.add(fields[i]);
-        }
-        return res;
+  default Set<String> getFieldSet() {
+    String[] fields = getFields();
+    HashSet res = new HashSet(fields.length);
+    for (int i = 0; i < fields.length; i++) {
+      res.add(fields[i]);
     }
+    return res;
+  }
 
-    /**
+  /**
      * puts a key value pair. type checking is applied to ensure data is json compatible.
      * if value is null, the key is removed.
      *
@@ -124,257 +125,265 @@ public interface Record extends Serializable, EvalContext {
      * @param value
      * @return
      */
-    Record put( String field, Object value );
+  Record put(String field, Object value);
 
-    @Override
-    default Value getValue(String field) {
-        if ( "_key".equals(field))
-            return new StringValue( getKey(), null );
-        if ( "_lastModified".equals(field))
-            return new LongValue( getLastModified(), null );
-        return EvalContext.super.getValue(field);
+  @Override default Value getValue(String field) {
+    if ("_key".equals(field)) {
+      return new StringValue(getKey(), null);
     }
+    if ("_lastModified".equals(field)) {
+      return new LongValue(getLastModified(), null);
+    }
+    return EvalContext.super.getValue(field);
+  }
 
-    default Object mget( Object ... path ) {
-        if ( path.length == 0 )
-            return this;
-        Object current = this;
-        for( int i=0; i < path.length; i++) {
-            Object index = path[i];
-            if ( index instanceof String ) {
-                if ( current instanceof Record ) {
-                    current = ((Record) current).get((String) index);
-                } else {
-                    return null;
-                }
-            } else if ( index instanceof Number ) {
-                if ( current instanceof Object[] ) {
-                    current = ((Object[])current)[((Number) index).intValue()];
-                } else
-                    return null;
-            }
+  default Object mget(Object... path) {
+    if (path.length == 0) {
+      return this;
+    }
+    Object current = this;
+    for (int i = 0; i < path.length; i++) {
+      Object index = path[i];
+      if (index instanceof String) {
+        if (current instanceof Record) {
+          current = ((Record) current).get((String) index);
+        } else {
+          return null;
         }
-        return current;
+      } else {
+        if (index instanceof Number) {
+          if (current instanceof Object[]) {
+            current = ((Object[]) current)[((Number) index).intValue()];
+          } else {
+            return null;
+          }
+        }
+      }
     }
+    return current;
+  }
 
-    default Number mgetNum( Object ... path ) {
-        Object mget = mget(path);
-        if ( mget instanceof Number )
-            return (Number) mget;
-        return 0;
+  default Number mgetNum(Object... path) {
+    Object mget = mget(path);
+    if (mget instanceof Number) {
+      return (Number) mget;
     }
+    return 0;
+  }
 
-
-    default String mgetString( Object ... path ) {
-        Object mget = mget(path);
-        if ( mget == null )
-            return "";
-        return mget.toString();
+  default String mgetString(Object... path) {
+    Object mget = mget(path);
+    if (mget == null) {
+      return "";
     }
+    return mget.toString();
+  }
 
-    default int getInt(String field) {
-        Object val = get(field);
-        if ( val == null )
-            return 0;
-        return ((Number)val).intValue();
+  default int getInt(String field) {
+    Object val = get(field);
+    if (val == null) {
+      return 0;
     }
+    return ((Number) val).intValue();
+  }
 
-    default long getLong(String field) {
-        Object val = get(field);
-        if ( val == null )
-            return 0;
-        return ((Number)val).longValue();
+  default long getLong(String field) {
+    Object val = get(field);
+    if (val == null) {
+      return 0;
     }
+    return ((Number) val).longValue();
+  }
 
-    /**
+  /**
      * gets field and transforms Object[] to arraylist in case
-     * @deprecated use getAsList
      *
      * @param field
      * @return
      */
-    @Deprecated
-    default List asList( String field ) {
-        Object val = get(field);
-        if ( val instanceof Object[] ) {
-            return new ArrayList(Arrays.asList((Object[])val));
-        }
-        else
-            return null;
+  @Deprecated default List asList(String field) {
+    Object val = get(field);
+    if (val instanceof Object[]) {
+      return new ArrayList(Arrays.asList((Object[]) val));
+    } else {
+      return null;
     }
+  }
 
-    /**
+  /**
      * gets field and transforms Object[] to HashSet in case
      *
      * @param field
      * @return
      */
-    default Set<Object> asSet( String field ) {
-        Object val = get(field);
-        if ( val instanceof Object[] ) {
-            return new HashSet(Arrays.asList((Object[])val));
-        }
-        else
-            return null;
+  default Set<Object> asSet(String field) {
+    Object val = get(field);
+    if (val instanceof Object[]) {
+      return new HashSet(Arrays.asList((Object[]) val));
+    } else {
+      return null;
     }
+  }
 
-    default Record putTransforming( String field, Object value ) {
-        put(field,transform(value));
-        return this;
-    }
+  default Record putTransforming(String field, Object value) {
+    put(field, transform(value));
+    return this;
+  }
 
-    /**
+  /**
      * creates and sets an empty record in case
      * @param field
      * @return
      */
-    default Record haveRec(String field) {
-        Object val = get(field);
-        if ( val == null ) {
-            MapRecord aNew = MapRecord.New(null);
-            put(field,aNew);
-            return aNew;
-        }
-        return getRec(field);
+  default Record haveRec(String field) {
+    Object val = get(field);
+    if (val == null) {
+      MapRecord aNew = MapRecord.New(null);
+      put(field, aNew);
+      return aNew;
     }
+    return getRec(field);
+  }
 
-    /**
+  /**
      * return sub-record in case present
      *
      * @param field
      * @return
      */
-    default Record getRec(String field) {
-        Object val = get(field);
-        if ( val instanceof Record ) {
-            return (Record) val;
-        }
-        return null;
+  default Record getRec(String field) {
+    Object val = get(field);
+    if (val instanceof Record) {
+      return (Record) val;
     }
+    return null;
+  }
 
-    /**
+  /**
      * see asList
      * @param field
      * @return
      */
-    default <T> List<T> getAsList(String field ) {
-        return asList(field);
-    }
+  default <T extends java.lang.Object> List<T> getAsList(String field) {
+    return asList(field);
+  }
 
-    default double getDouble(String field) {
+  default double getDouble(String field) {
+    Object val = get(field);
+    if (val == null) {
+      return 0;
+    }
+    return ((Number) val).doubleValue();
+  }
+
+  default String getString(String field) {
+    Object val = get(field);
+    if (val == null) {
+      return null;
+    }
+    return val.toString();
+  }
+
+  default String getSafeString(String field) {
+    Object val = get(field);
+    if (val == null) {
+      return "";
+    }
+    return val.toString();
+  }
+
+  default String asLoggingString() {
+    String[] fields = getFields();
+    String res = "[  *" + getKey() + "  ";
+    for (int i = 0; i < fields.length; i++) {
+      String s = fields[i];
+      res += s + "=" + get(s) + ", ";
+    }
+    return res + "]";
+  }
+
+  default boolean getBool(String field) {
+    Object val = get(field);
+    if (val instanceof Boolean == false) {
+      return false;
+    }
+    return ((Boolean) val).booleanValue();
+  }
+
+  default Record reduced(String[] reducedFields) {
+    MapRecord rec = MapRecord.New(getKey());
+    for (int i = 0; i < reducedFields.length; i++) {
+      String reducedField = reducedFields[i];
+      Object val = get(reducedField);
+      if (val != null) {
+        rec.put(reducedField, val);
+      }
+    }
+    return rec;
+  }
+
+  default Record omit(String... fieldsToOmit) {
+    MapRecord rec = MapRecord.New(getKey());
+    HashSet<String> toOmit = new HashSet<>();
+    for (int i = 0; i < fieldsToOmit.length; i++) {
+      toOmit.add(fieldsToOmit[i]);
+    }
+    String[] fields = getFields();
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      if (!toOmit.contains(field)) {
         Object val = get(field);
-        if ( val == null )
-            return 0;
-        return ((Number)val).doubleValue();
-    }
-
-    default String getString(String field) {
-        Object val = get(field);
-        if ( val == null )
-            return null;
-        return val.toString();
-    }
-
-    default String getSafeString(String field) {
-        Object val = get(field);
-        if ( val == null )
-            return "";
-        return val.toString();
-    }
-
-    default String asLoggingString() {
-        String[] fields = getFields();
-        String res = "[  *"+getKey()+"  ";
-        for (int i = 0; i < fields.length; i++) {
-            String s = fields[i];
-            res += s+"="+get(s)+", ";
+        if (val != null) {
+          rec.put(field, val);
         }
-        return res+"]";
+      }
     }
+    return rec;
+  }
 
-    default boolean getBool(String field) {
-        Object val = get(field);
-        if ( val instanceof Boolean == false )
-            return false;
-        return ((Boolean) val).booleanValue();
+  default void omitRecursivelyInPlace(String... fieldNamesToOmit) {
+    omitRecursivelyInPlace(this, Set.of(fieldNamesToOmit));
+  }
+
+  static void omitRecursivelyInPlace(Record rec, Set<String> fieldNamesToOmit) {
+    String[] fieldNames = rec.getFields();
+    for (String fieldName : fieldNames) {
+      if (fieldNamesToOmit.contains(fieldName)) {
+        rec.put(fieldName, null);
+        continue;
+      }
+      final Object property = rec.get(fieldName);
+      omitRecursivelyInPlace(property, fieldNamesToOmit);
     }
+  }
 
-    default Record reduced(String[] reducedFields) {
-        MapRecord rec = MapRecord.New(getKey());
-        for (int i = 0; i < reducedFields.length; i++) {
-            String reducedField = reducedFields[i];
-            Object val = get(reducedField);
-            if ( val != null ) {
-                rec.put(reducedField,val);
-            }
-        }
-        return rec;
+  private static void omitRecursivelyInPlace(final Object obj, final Set<String> fieldNamesToOmit) {
+    if (obj == null) {
+      return;
     }
-
-    default Record omit(String ... fieldsToOmit) {
-        MapRecord rec = MapRecord.New(getKey());
-        HashSet<String> toOmit = new HashSet<>();
-        for (int i = 0; i < fieldsToOmit.length; i++) {
-            toOmit.add(fieldsToOmit[i]);
-        }
-        String[] fields = getFields();
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            if ( !toOmit.contains(field) ) {
-                Object val = get(field);
-                if ( val != null ) {
-                    rec.put(field,val);
-                }
-            }
-        }
-        return rec;
+    final Class<?> aClass = obj.getClass();
+    if (obj instanceof Record) {
+      omitRecursivelyInPlace((Record) obj, fieldNamesToOmit);
+      return;
     }
-
-    default void omitRecursivelyInPlace(String... fieldNamesToOmit) {
-        omitRecursivelyInPlace(this, Set.of(fieldNamesToOmit));
+    if (Object[].class.equals(aClass)) {
+      final Object[] arr = (Object[]) obj;
+      for (Object a : arr) {
+        omitRecursivelyInPlace(a, fieldNamesToOmit);
+      }
     }
+  }
 
-    static void omitRecursivelyInPlace(Record rec, Set<String> fieldNamesToOmit) {
-        String[] fieldNames = rec.getFields();
-        for (String fieldName : fieldNames) {
-            if (fieldNamesToOmit.contains(fieldName)) {
-                rec.put(fieldName, null);
-                continue;
-            }
-            final Object property = rec.get(fieldName);
-            omitRecursivelyInPlace(property, fieldNamesToOmit);
-        }
-    }
-
-    private static void omitRecursivelyInPlace(final Object obj, final Set<String> fieldNamesToOmit) {
-        if (obj == null) {
-            return;
-        }
-
-        final Class<?> aClass = obj.getClass();
-        if (obj instanceof Record) {
-            omitRecursivelyInPlace((Record) obj, fieldNamesToOmit);
-            return;
-        }
-
-        if (Object[].class.equals(aClass)) {
-            final Object[] arr = (Object[]) obj;
-            for (Object a : arr) {
-                omitRecursivelyInPlace(a, fieldNamesToOmit);
-            }
-        }
-    }
-
-    /**
+  /**
      * @return a shallow (!) copy of this record
      */
-    Record shallowCopy();
+  Record shallowCopy();
 
-    default Record deepCopy() {
-        return transformCopy( (k,i,v) -> v );
-    }
+  default Record deepCopy() {
+    return transformCopy((k, i, v) -> v);
+  }
 
-    /**
+  /**
      * copies recursively applying given function to each value.
      * if the transform returns v, its an identity copy
      * if the transform returns null, the given key is removed from outer record. (if outer container is array, its removed)
@@ -382,54 +391,56 @@ public interface Record extends Serializable, EvalContext {
      * @param transform
      * @return
      */
-    Record transformCopy(TransformFunction transform);
+  Record transformCopy(TransformFunction transform);
 
-    default Object[] getKeyVals() {
-        final String[] fields = getFields();
-        Object[] res = new Object[fields.length*2];
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            res[i*2] = field;
-            res[i*2+1] = get(field);
-        }
-        return res;
+  default Object[] getKeyVals() {
+    final String[] fields = getFields();
+    Object[] res = new Object[fields.length * 2];
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      res[i * 2] = field;
+      res[i * 2 + 1] = get(field);
     }
+    return res;
+  }
 
-    /**
+  /**
      * @return this record as a map
      */
-    default Map<String,?> asMap() {
-        HashMap<String,Object> res = new HashMap<>();
-        final String[] fields = getFields();
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            res.put(field,get(field));
-        }
-        return res;
+  default Map<String, ?> asMap() {
+    HashMap<String, Object> res = new HashMap<>();
+    final String[] fields = getFields();
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      res.put(field, get(field));
     }
+    return res;
+  }
 
-    default Record getRecord() {
-        return this;
-    }
+  default Record getRecord() {
+    return this;
+  }
 
-    /**
+  /**
      * remove special operators on this record attributes
      */
-    default void stripOps() {
-        String[] fields = getFields();
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            if ( field.endsWith("?+") ) {
-                put( field.substring(0,field.length()-2), get(field) );
-                put( field, null );
-            } else if ( field.endsWith("+") || field.endsWith("-") ) {
-                put( field.substring(0,field.length()-1), get(field) );
-                put( field, null );
-            }
+  default void stripOps() {
+    String[] fields = getFields();
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      if (field.endsWith("?+")) {
+        put(field.substring(0, field.length() - 2), get(field));
+        put(field, null);
+      } else {
+        if (field.endsWith("+") || field.endsWith("-")) {
+          put(field.substring(0, field.length() - 1), get(field));
+          put(field, null);
         }
+      }
     }
+  }
 
-    /**
+  /**
      * a simple tree merge (without any operators like deepMerge)
      * copies all fields of given record to this.
      * if this contains a record for a field e.g.
@@ -442,44 +453,50 @@ public interface Record extends Serializable, EvalContext {
      * @param that
      * @return
      */
-    default Record join( Record that ) {
-        final String[] fields = that.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            Object foreignValue = that.get(field);
-            Object selfValue = get(field);
-            if ( selfValue == null ) {
-                if ( foreignValue instanceof Record ) {
-                    put(field, Record.from().join((Record) foreignValue));
-                } else
-                    put(field, foreignValue);
-            } else if ( selfValue instanceof Object[] ) {
-                if ( foreignValue instanceof Object[] ) {
-                    // append foreign if not there
-                    List<?> foreignList = Arrays.asList((Object[]) foreignValue);
-                    List selfList = new ArrayList<>(Arrays.asList((Object[]) selfValue));
-                    for (int j = 0; j < foreignList.size(); j++) {
-                        Object o = foreignList.get(j);
-                        if ( !selfList.contains(o) )
-                            selfList.add(o);
-                    }
-                    put( field, selfList.toArray() );
-                } else {
-                    put( field, foreignValue );
-                }
-            } else if ( selfValue instanceof Record ) {
-                if ( foreignValue instanceof Record )
-                    put(field, ((Record) selfValue).deepMerge((Record) foreignValue));
-                else
-                    put( field, foreignValue );
-            } else {
-                put(field, foreignValue);
-            }
+  default Record join(Record that) {
+    final String[] fields = that.getFields();
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      Object foreignValue = that.get(field);
+      Object selfValue = get(field);
+      if (selfValue == null) {
+        if (foreignValue instanceof Record) {
+          put(field, Record.from().join((Record) foreignValue));
+        } else {
+          put(field, foreignValue);
         }
-        return this;
+      } else {
+        if (selfValue instanceof Object[]) {
+          if (foreignValue instanceof Object[]) {
+            List<?> foreignList = Arrays.asList((Object[]) foreignValue);
+            List selfList = new ArrayList<>(Arrays.asList((Object[]) selfValue));
+            for (int j = 0; j < foreignList.size(); j++) {
+              Object o = foreignList.get(j);
+              if (!selfList.contains(o)) {
+                selfList.add(o);
+              }
+            }
+            put(field, selfList.toArray());
+          } else {
+            put(field, foreignValue);
+          }
+        } else {
+          if (selfValue instanceof Record) {
+            if (foreignValue instanceof Record) {
+              put(field, ((Record) selfValue).deepMerge((Record) foreignValue));
+            } else {
+              put(field, foreignValue);
+            }
+          } else {
+            put(field, foreignValue);
+          }
+        }
+      }
     }
+    return this;
+  }
 
-    /**
+  /**
      * merge all fields from given record to this including nested structures.
      * Assumes pure json data types (String Number Boolean Object[] Record)
      *
@@ -490,257 +507,279 @@ public interface Record extends Serializable, EvalContext {
      *
      * @param record
      */
-    default Record deepMerge(Record record) {
-        final String[] fields = record.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            String op = "";
-            Object foreignValue = record.get(field);
-            if ( field.endsWith("?+") ) {
-                op = "?+"; // add if not exists
-                field = field.substring(0,field.length()-2);
-            } else if ( field.endsWith("+") ) {
-                op = "+"; // add
-                field = field.substring(0,field.length()-1);
-            } else if ( field.endsWith("-") ) {
-                op = "-"; // remove if exists
-                field = field.substring(0,field.length()-1);
-            }
-            Object selfValue = get(field);
-            if ( selfValue == null ) {
-                if ( foreignValue instanceof Record ) {
-                    put(field, Record.from().deepMerge((Record) foreignValue));
-                } else
-                    put(field, foreignValue);
-            } else if ( selfValue instanceof Object[] ) {
-                handleArrayOp(field, op, foreignValue, (Object[]) selfValue);
-            } else if ( selfValue instanceof Record ) {
-                if ( op.length() == 0 ) {
-                    // no op => plain put
-                    put(field, foreignValue);
-                } else {
-                    switch ( op ) {
-                        case "-": {
-                            throw new RuntimeException("inconsistent operator '"+op+" on type Record field "+field);
-                        }
-                        case "+": {
-                            if ( foreignValue instanceof Record )
-                                put(field, ((Record) selfValue).deepMerge((Record) foreignValue));
-                            else
-                                throw new RuntimeException("inconsistent operator '"+op+" on type Record field "+field);
-                        } break;
-                        case "?+": {
-                            throw new RuntimeException("inconsistent operator '"+op+"' field "+field);
-                        }
-                        default:
-                            throw new RuntimeException("unknown operator '"+op+"' on  type Record field "+field);
-                    }
-                }
+  default Record deepMerge(Record record) {
+    final String[] fields = record.getFields();
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      String op = "";
+      Object foreignValue = record.get(field);
+      if (field.endsWith("?+")) {
+        op = "?+";
+        field = field.substring(0, field.length() - 2);
+      } else {
+        if (field.endsWith("+")) {
+          op = "+";
+          field = field.substring(0, field.length() - 1);
+        } else {
+          if (field.endsWith("-")) {
+            op = "-";
+            field = field.substring(0, field.length() - 1);
+          }
+        }
+      }
+      Object selfValue = get(field);
+      if (selfValue == null) {
+        if (foreignValue instanceof Record) {
+          put(field, Record.from().deepMerge((Record) foreignValue));
+        } else {
+          put(field, foreignValue);
+        }
+      } else {
+        if (selfValue instanceof Object[]) {
+          handleArrayOp(field, op, foreignValue, (Object[]) selfValue);
+        } else {
+          if (selfValue instanceof Record) {
+            if (op.length() == 0) {
+              put(field, foreignValue);
             } else {
-                put(field, foreignValue);
+              switch (op) {
+                case "-":
+                {
+                  throw new RuntimeException("inconsistent operator \'" + op + " on type Record field " + field);
+                }
+                case "+":
+                {
+                  if (foreignValue instanceof Record) {
+                    put(field, ((Record) selfValue).deepMerge((Record) foreignValue));
+                  } else {
+                    throw new RuntimeException("inconsistent operator \'" + op + " on type Record field " + field);
+                  }
+                }
+                break;
+                case "?+":
+                {
+                  throw new RuntimeException("inconsistent operator \'" + op + "\' field " + field);
+                }
+                default:
+                throw new RuntimeException("unknown operator \'" + op + "\' on  type Record field " + field);
+              }
             }
+          } else {
+            put(field, foreignValue);
+          }
         }
-        return this;
+      }
     }
+    return this;
+  }
 
-    private void handleArrayOp(String field, String op, Object foreignValue, Object[] selfValue) {
-        // handle array ops
-        if ( op.length() > 0 && foreignValue instanceof Object[] == false ) {
-            // chosed operator, but did not provide array
-            foreignValue = new Object[] { foreignValue };
-        }
-        switch ( op ) {
-            case "-": {
-
-            } break;
-            case "+":
-            case "?+": {
-                // merge arrays
-                Object[] foreignArr = (Object[]) foreignValue;
-                Object[] selfArr = selfValue;
-                ArrayList unmatched = new ArrayList();
-                for (int jj = 0; jj < foreignArr.length; jj++) {
-                    Object toAdd = foreignArr[jj];
-                    boolean matched = false;
-                    if ("?+".equals(op)) {
-                        for (int j = 0; j < selfArr.length; j++) {
-                            Object o1 = selfArr[j];
-                            if (Objects.deepEquals(o1, toAdd)) {
-                                matched = true;
-                                selfArr[j] = toAdd;
-                                break;
-                            }
-                        }
-                    }
-                    if (!matched) {
-                        unmatched.add(toAdd);
-                    }
-                }
-                if ( unmatched.size() > 0 ) {
-                    List<?> objects = new ArrayList(Arrays.asList(selfArr));
-                    objects.addAll(unmatched);
-                    selfArr = objects.toArray();
-                    put( field,selfArr);
-                } else {
-                    put( field,selfArr);
-                }
-            } break;
-            case "": {
-                put(field, foreignValue);
-            } break;
-            default:
-                throw new RuntimeException("unknown operator '"+op+"'");
-        }
+  private void handleArrayOp(String field, String op, Object foreignValue, Object[] selfValue) {
+    if (op.length() > 0 && foreignValue instanceof Object[] == false) {
+      foreignValue = new Object[] { foreignValue };
     }
-
-    default String toPrettyString() {
-        return RecordJsonifier.get().fromRecord(this ).toString(WriterConfig.PRETTY_PRINT);
-    }
-
-    default JsonObject toJson() {
-        return RecordJsonifier.get().fromRecord(this);
-    }
-
-    default boolean validateForJsonability() {
-        String[] fields = getFields();
-        Class allowed[] = { Number.class, Boolean.class, Object[].class, String.class };
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            Object val = get(field);
-            if ( val != null ) {
-                boolean valid = false;
-                if ( val instanceof Record ) {
-                    valid = ((Record)val).validateForJsonability();
-                } else {
-                    for (int j = 0; j < allowed.length; j++) {
-                        Class aClass = allowed[j];
-                        if (aClass.isAssignableFrom(val.getClass())) {
-                            valid = true;
-                            break;
-                        }
-                    }
-                    if ( ! valid )
-                        System.err.println("invalid attribute value:"+val.getClass().getName()+" in field "+field);
-                }
-                if ( ! valid )
-                    return false;
+    switch (op) {
+      case "-":
+      {
+      }
+      break;
+      case "+":
+      case "?+":
+      {
+        Object[] foreignArr = (Object[]) foreignValue;
+        Object[] selfArr = selfValue;
+        ArrayList unmatched = new ArrayList();
+        for (int jj = 0; jj < foreignArr.length; jj++) {
+          Object toAdd = foreignArr[jj];
+          boolean matched = false;
+          if ("?+".equals(op)) {
+            for (int j = 0; j < selfArr.length; j++) {
+              Object o1 = selfArr[j];
+              if (Objects.deepEquals(o1, toAdd)) {
+                matched = true;
+                selfArr[j] = toAdd;
+                break;
+              }
             }
+          }
+          if (!matched) {
+            unmatched.add(toAdd);
+          }
         }
-        return true;
+        if (unmatched.size() > 0) {
+          List<?> objects = new ArrayList(Arrays.asList(selfArr));
+          objects.addAll(unmatched);
+          selfArr = objects.toArray();
+          put(field, selfArr);
+        } else {
+          put(field, selfArr);
+        }
+      }
+      break;
+      case "":
+      {
+        put(field, foreignValue);
+      }
+      break;
+      default:
+      throw new RuntimeException("unknown operator \'" + op + "\'");
     }
+  }
 
-    default boolean defaultEquals( Object other ) {
-        if ( other instanceof Record ) {
-            Record oRec = (Record) other;
-            if ( ! Objects.equals(getKey(),((Record) other).getKey()))
-                return false;
-            Set<String> fieldSet = getFieldSet();
-            Set<String> oFieldSet = oRec.getFieldSet();
-            if ( fieldSet.size()!=oFieldSet.size() )
-                return false;
-            for (Iterator<String> iterator = oFieldSet.iterator(); iterator.hasNext(); ) {
-                String field = iterator.next();
-                Object o = get(field);
-                Object oOther = oRec.get(field);
-                if ( o instanceof Number && oOther instanceof Number ) {
-                    if ( ((Number) o).doubleValue() != ((Number) oOther).doubleValue() )
-                        return false;
-                } else if ( !Objects.deepEquals(o,oOther) ) {
-                    return false;
-                }
+  default String toPrettyString() {
+    return RecordJsonifier.get().fromRecord(this).toString(WriterConfig.PRETTY_PRINT);
+  }
+
+  default JsonObject toJson() {
+    return RecordJsonifier.get().fromRecord(this);
+  }
+
+  default boolean validateForJsonability() {
+    String[] fields = getFields();
+    Class allowed[] = { Number.class, Boolean.class, Object[].class, String.class };
+    for (int i = 0; i < fields.length; i++) {
+      String field = fields[i];
+      Object val = get(field);
+      if (val != null) {
+        boolean valid = false;
+        if (val instanceof Record) {
+          valid = ((Record) val).validateForJsonability();
+        } else {
+          for (int j = 0; j < allowed.length; j++) {
+            Class aClass = allowed[j];
+            if (aClass.isAssignableFrom(val.getClass())) {
+              valid = true;
+              break;
             }
-            return true;
+          }
+          if (!valid) {
+            System.err.println("invalid attribute value:" + val.getClass().getName() + " in field " + field);
+          }
         }
+        if (!valid) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  default boolean defaultEquals(Object other) {
+    if (other instanceof Record) {
+      Record oRec = (Record) other;
+      if (!Objects.equals(getKey(), ((Record) other).getKey())) {
         return false;
+      }
+      Set<String> fieldSet = getFieldSet();
+      Set<String> oFieldSet = oRec.getFieldSet();
+      if (fieldSet.size() != oFieldSet.size()) {
+        return false;
+      }
+      for (Iterator<String> iterator = oFieldSet.iterator(); iterator.hasNext(); ) {
+        String field = iterator.next();
+        Object o = get(field);
+        Object oOther = oRec.get(field);
+        if (o instanceof Number && oOther instanceof Number) {
+          if (((Number) o).doubleValue() != ((Number) oOther).doubleValue()) {
+            return false;
+          }
+        } else {
+          if (!Objects.deepEquals(o, oOther)) {
+            return false;
+          }
+        }
+      }
+      return true;
     }
+    return false;
+  }
 
-    /**
+  /**
      * called by the persistance layer after a record has been loaded from disk. can be used for type migration of an existing
      * database.
      * return true if the record should be re-persisted
      */
-    default boolean _afterLoad() {
-        // do nothing
-        return false;
-    }
+  default boolean _afterLoad() {
+    return false;
+  }
 
-    /**
+  /**
      * tries to interpret the value as a long. In case its a string, its parsed.
      * @param key
      * @return
      */
-    default long asLong(String key) {
-        return getValue(key).getLongValue();
-    }
+  default long asLong(String key) {
+    return getValue(key).getLongValue();
+  }
 
-    /**
+  /**
      * tries to interpret the value as a double. In case its a string, its parsed.
      * @param key
      * @return
      */
-    default double asDouble(String key) {
-        return getValue(key).getDoubleValue();
-    }
+  default double asDouble(String key) {
+    return getValue(key).getDoubleValue();
+  }
 
-    default Object[] getArr(String z) {
-        return (Object[]) get(z);
-    }
+  default Object[] getArr(String z) {
+    return (Object[]) get(z);
+  }
 
-    boolean containsKey(String x);
+  boolean containsKey(String x);
 
-    /**
+  /**
      * example: r.replaceInValues( (field,index,value) => field != null && field.equals("pwd") ? "" : value );
      * @param objectMapper
      * @return
      */
-    default boolean replaceValues(TransformFunction objectMapper) {
-        try {
-            String[] fields = getFields();
-            boolean changed = false;
-            for (int i = 0; i < fields.length; i++) {
-                String field = fields[i];
-                Object val = get(field);
-                if (val != null) {
-                    if (val instanceof Record) {
-                        changed |= ((Record) val).replaceValues(objectMapper);
-                    } else if ( val instanceof Object[] ) {
-                        Object[] arr = (Object[]) val;
-                        changed |= replaceInArray(objectMapper, arr);
-                    } else {
-                        Object apply = objectMapper.apply(field,-1, val);
-                        if (apply != val) // change ?
-                        {
-                            put(field, apply);
-                            changed = true;
-                        }
-                    }
-                }
-            }
-            return changed;
-        } catch (Exception e) {
-            Log.Error(this, e);
-            return false;
-        }
-    }
-
-    private static boolean replaceInArray(TransformFunction objectMapper, Object[] arr) {
-        boolean changed = false;
-        for (int j = 0; j < arr.length; j++) {
-            Object o = arr[j];
-            if ( o instanceof Record) {
-                changed |= ((Record) o).replaceValues(objectMapper);
-            } else if ( o instanceof Object[] ) {
-                changed |= replaceInArray(objectMapper, (Object[]) o);
+  default boolean replaceValues(TransformFunction objectMapper) {
+    try {
+      String[] fields = getFields();
+      boolean changed = false;
+      for (int i = 0; i < fields.length; i++) {
+        String field = fields[i];
+        Object val = get(field);
+        if (val != null) {
+          if (val instanceof Record) {
+            changed |= ((Record) val).replaceValues(objectMapper);
+          } else {
+            if (val instanceof Object[]) {
+              Object[] arr = (Object[]) val;
+              changed |= replaceInArray(objectMapper, arr);
             } else {
-                Object apply = objectMapper.apply(null,j, o);
-                if (apply != o) // change ?
-                {
-                    arr[j] = o ;
-                    changed = true;
-                }
+              Object apply = objectMapper.apply(field, -1, val);
+              if (apply != val) {
+                put(field, apply);
+                changed = true;
+              }
             }
+          }
         }
-        return changed;
+      }
+      return changed;
+    } catch (Exception e) {
+      Log.Error(this, e);
+      return false;
     }
+  }
 
+  private static boolean replaceInArray(TransformFunction objectMapper, Object[] arr) {
+    boolean changed = false;
+    for (int j = 0; j < arr.length; j++) {
+      Object o = arr[j];
+      if (o instanceof Record) {
+        changed |= ((Record) o).replaceValues(objectMapper);
+      } else {
+        if (o instanceof Object[]) {
+          changed |= replaceInArray(objectMapper, (Object[]) o);
+        } else {
+          Object apply = objectMapper.apply(null, j, o);
+          if (apply != o) {
+            arr[j] = o;
+            changed = true;
+          }
+        }
+      }
+    }
+    return changed;
+  }
 }
