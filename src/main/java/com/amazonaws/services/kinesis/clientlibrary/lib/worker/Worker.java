@@ -1182,7 +1182,6 @@ public class Worker implements Runnable {
                 shardPrioritization = new ParentsFirstShardPrioritization(1);
             }
 
-
             return new Worker(config.getApplicationName(),
                     recordProcessorFactory,
                     new StreamConfig(new KinesisProxyFactory(config.getKinesisCredentialsProvider(),
