@@ -1,6 +1,4 @@
-/* See LICENSE for licensing and NOTICE for copyright. */
 package org.cryptacular.util;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,16 +34,13 @@ import org.cryptacular.decoder.PublicKeyDecoder;
  *
  * @author  Middleware Services
  */
-public final class KeyPairUtil
-{
-
+public final class KeyPairUtil {
   /** Data used to verify key pairs. */
   private static final byte[] SIGN_BYTES = ByteUtil.toBytes("Mr. Watson--come here--I want to see you.");
 
-
   /** Private constructor of utility class. */
-  private KeyPairUtil() {}
-
+  private KeyPairUtil() {
+  }
 
   /**
    * Gets the length in bits of a public key where key size is dependent on the particulars of the algorithm.
@@ -60,21 +55,23 @@ public final class KeyPairUtil
    *
    * @return  Size of the key in bits.
    */
-  public static int length(final PublicKey pubKey)
-  {
+  public static int length(final PublicKey pubKey) {
     final int size;
     if (pubKey instanceof DSAPublicKey) {
       size = ((DSAPublicKey) pubKey).getParams().getP().bitLength();
-    } else if (pubKey instanceof RSAPublicKey) {
-      size = ((RSAPublicKey) pubKey).getModulus().bitLength();
-    } else if (pubKey instanceof ECPublicKey) {
-      size = ((ECPublicKey) pubKey).getParams().getCurve().getField().getFieldSize();
     } else {
-      throw new IllegalArgumentException(pubKey + " not supported.");
+      if (pubKey instanceof RSAPublicKey) {
+        size = ((RSAPublicKey) pubKey).getModulus().bitLength();
+      } else {
+        if (pubKey instanceof ECPublicKey) {
+          size = ((ECPublicKey) pubKey).getParams().getCurve().getField().getFieldSize();
+        } else {
+          throw new IllegalArgumentException(pubKey + " not supported.");
+        }
+      }
     }
     return size;
   }
-
 
   /**
    * Gets the length in bits of a private key where key size is dependent on the particulars of the algorithm.
@@ -89,21 +86,23 @@ public final class KeyPairUtil
    *
    * @return  Size of the key in bits.
    */
-  public static int length(final PrivateKey privKey)
-  {
+  public static int length(final PrivateKey privKey) {
     final int size;
     if (privKey instanceof DSAPrivateKey) {
       size = ((DSAPrivateKey) privKey).getParams().getQ().bitLength();
-    } else if (privKey instanceof RSAPrivateKey) {
-      size = ((RSAPrivateKey) privKey).getModulus().bitLength();
-    } else if (privKey instanceof ECPrivateKey) {
-      size = ((ECPrivateKey) privKey).getParams().getCurve().getField().getFieldSize();
     } else {
-      throw new IllegalArgumentException(privKey + " not supported.");
+      if (privKey instanceof RSAPrivateKey) {
+        size = ((RSAPrivateKey) privKey).getModulus().bitLength();
+      } else {
+        if (privKey instanceof ECPrivateKey) {
+          size = ((ECPrivateKey) privKey).getParams().getCurve().getField().getFieldSize();
+        } else {
+          throw new IllegalArgumentException(privKey + " not supported.");
+        }
+      }
     }
     return size;
   }
-
 
   /**
    * Determines whether the given public and private keys form a proper key pair by computing and verifying a digital
@@ -117,36 +116,27 @@ public final class KeyPairUtil
    *
    * @throws  org.cryptacular.CryptoException  on key validation errors.
    */
-  public static boolean isKeyPair(final PublicKey pubKey, final PrivateKey privKey)
-      throws org.cryptacular.CryptoException
-  {
+  public static boolean isKeyPair(final PublicKey pubKey, final PrivateKey privKey) throws org.cryptacular.CryptoException {
     final String alg = pubKey.getAlgorithm();
     if (!alg.equals(privKey.getAlgorithm())) {
       return false;
     }
-
-    // Dispatch onto the algorithm-specific method
     final boolean result;
     switch (alg) {
-
-    case "DSA":
+      case "DSA":
       result = isKeyPair((DSAPublicKey) pubKey, (DSAPrivateKey) privKey);
       break;
-
-    case "RSA":
+      case "RSA":
       result = isKeyPair((RSAPublicKey) pubKey, (RSAPrivateKey) privKey);
       break;
-
-    case "EC":
+      case "EC":
       result = isKeyPair((ECPublicKey) pubKey, (ECPrivateKey) privKey);
       break;
-
-    default:
+      default:
       throw new IllegalArgumentException(alg + " not supported.");
     }
     return result;
   }
-
 
   /**
    * Determines whether the given DSA public and private keys form a proper key pair by computing and verifying a
@@ -160,15 +150,9 @@ public final class KeyPairUtil
    *
    * @throws  org.cryptacular.CryptoException  on key validation errors.
    */
-  public static boolean isKeyPair(final DSAPublicKey pubKey, final DSAPrivateKey privKey)
-      throws org.cryptacular.CryptoException
-  {
+  public static boolean isKeyPair(final DSAPublicKey pubKey, final DSAPrivateKey privKey) throws org.cryptacular.CryptoException {
     final DSASigner signer = new DSASigner();
-    final DSAParameters params = new DSAParameters(
-      privKey.getParams().getP(),
-      privKey.getParams().getQ(),
-      privKey.getParams().getG());
-
+    final DSAParameters params = new DSAParameters(privKey.getParams().getP(), privKey.getParams().getQ(), privKey.getParams().getG());
     try {
       signer.init(true, new DSAPrivateKeyParameters(privKey.getX(), params));
       final BigInteger[] sig = signer.generateSignature(SIGN_BYTES);
@@ -178,7 +162,6 @@ public final class KeyPairUtil
       throw new org.cryptacular.CryptoException("Signature computation error", e);
     }
   }
-
 
   /**
    * Determines whether the given RSA public and private keys form a proper key pair by computing and verifying a
@@ -192,9 +175,7 @@ public final class KeyPairUtil
    *
    * @throws  org.cryptacular.CryptoException  on key validation errors.
    */
-  public static boolean isKeyPair(final RSAPublicKey pubKey, final RSAPrivateKey privKey)
-      throws org.cryptacular.CryptoException
-  {
+  public static boolean isKeyPair(final RSAPublicKey pubKey, final RSAPrivateKey privKey) throws org.cryptacular.CryptoException {
     final RSADigestSigner signer = new RSADigestSigner(new SHA256Digest());
     try {
       signer.init(true, new RSAKeyParameters(true, privKey.getModulus(), privKey.getPrivateExponent()));
@@ -208,7 +189,6 @@ public final class KeyPairUtil
     }
   }
 
-
   /**
    * Determines whether the given EC public and private keys form a proper key pair by computing and verifying a digital
    * signature with the keys.
@@ -221,13 +201,10 @@ public final class KeyPairUtil
    *
    * @throws  org.cryptacular.CryptoException  on key validation errors.
    */
-  public static boolean isKeyPair(final ECPublicKey pubKey, final ECPrivateKey privKey)
-      throws org.cryptacular.CryptoException
-  {
+  public static boolean isKeyPair(final ECPublicKey pubKey, final ECPrivateKey privKey) throws org.cryptacular.CryptoException {
     final ECDSASigner signer = new ECDSASigner();
     try {
       signer.init(true, ECUtil.generatePrivateKeyParameter(privKey));
-
       final BigInteger[] sig = signer.generateSignature(SIGN_BYTES);
       signer.init(false, ECUtil.generatePublicKeyParameter(pubKey));
       return signer.verifySignature(SIGN_BYTES, sig[0], sig[1]);
@@ -235,7 +212,6 @@ public final class KeyPairUtil
       throw new org.cryptacular.CryptoException("Signature computation error", e);
     }
   }
-
 
   /**
    * Reads an encoded private key from a file at the given path. Both PKCS#8 and OpenSSL "traditional" formats are
@@ -248,11 +224,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors reading data from file.
    */
-  public static PrivateKey readPrivateKey(final String path) throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final String path) throws EncodingException, StreamException {
     return readPrivateKey(new File(path));
   }
-
 
   /**
    * Reads an encoded private key from a file. Both PKCS#8 and OpenSSL "traditional" formats are supported in DER or PEM
@@ -265,8 +239,7 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors reading data from file.
    */
-  public static PrivateKey readPrivateKey(final File file) throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final File file) throws EncodingException, StreamException {
     try {
       return readPrivateKey(new FileInputStream(file));
     } catch (FileNotFoundException e) {
@@ -274,11 +247,9 @@ public final class KeyPairUtil
     }
   }
 
-
   /**
    * Reads an encoded private key from an input stream. Both PKCS#8 and OpenSSL "traditional" formats are supported in
-   * DER or PEM encoding. See {@link #decodePrivateKey(byte[])} for supported asymmetric algorithms. The {@link
-   * InputStream} parameter is closed by this method.
+   * DER or PEM encoding. See {@link #decodePrivateKey(byte[])} for supported asymmetric algorithms.
    *
    * @param  in  Input stream containing private key data.
    *
@@ -287,11 +258,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors reading data from file.
    */
-  public static PrivateKey readPrivateKey(final InputStream in) throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final InputStream in) throws EncodingException, StreamException {
     return decodePrivateKey(StreamUtil.readAll(in));
   }
-
 
   /**
    * Reads an encrypted private key from a file at the given path. Both PKCS#8 and OpenSSL "traditional" formats are
@@ -305,12 +274,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PrivateKey readPrivateKey(final String path, final char[] password)
-      throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final String path, final char[] password) throws EncodingException, StreamException {
     return readPrivateKey(new File(path), password);
   }
-
 
   /**
    * Reads an encrypted private key from a file. Both PKCS#8 and OpenSSL "traditional" formats are supported in DER or
@@ -324,9 +290,7 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PrivateKey readPrivateKey(final File file, final char[] password)
-    throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final File file, final char[] password) throws EncodingException, StreamException {
     try {
       return readPrivateKey(new FileInputStream(file), password);
     } catch (FileNotFoundException e) {
@@ -334,11 +298,9 @@ public final class KeyPairUtil
     }
   }
 
-
   /**
    * Reads an encrypted private key from an input stream. Both PKCS#8 and OpenSSL "traditional" formats are supported in
-   * DER or PEM encoding. See {@link #decodePrivateKey(byte[])} for supported asymmetric algorithms. The {@link
-   * InputStream} parameter is closed by this method.
+   * DER or PEM encoding. See {@link #decodePrivateKey(byte[])} for supported asymmetric algorithms.
    *
    * @param  in  Input stream containing private key data.
    * @param  password  Password used to encrypt private key.
@@ -348,12 +310,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PrivateKey readPrivateKey(final InputStream in, final char[] password)
-    throws EncodingException, StreamException
-  {
+  public static PrivateKey readPrivateKey(final InputStream in, final char[] password) throws EncodingException, StreamException {
     return decodePrivateKey(StreamUtil.readAll(in), password);
   }
-
 
   /**
    * Decodes an encoded private key in either PKCS#8 or OpenSSL "traditional" format in either DER or PEM encoding. Keys
@@ -371,11 +330,9 @@ public final class KeyPairUtil
    *
    * @throws  EncodingException  on key encoding errors.
    */
-  public static PrivateKey decodePrivateKey(final byte[] encodedKey) throws EncodingException
-  {
+  public static PrivateKey decodePrivateKey(final byte[] encodedKey) throws EncodingException {
     return decodePrivateKey(encodedKey, null);
   }
-
 
   /**
    * Decodes an encrypted private key. The following formats are supported:
@@ -400,8 +357,7 @@ public final class KeyPairUtil
    *
    * @throws  EncodingException  on key encoding errors.
    */
-  public static PrivateKey decodePrivateKey(final byte[] encryptedKey, final char[] password) throws EncodingException
-  {
+  public static PrivateKey decodePrivateKey(final byte[] encryptedKey, final char[] password) throws EncodingException {
     AsymmetricKeyParameter key;
     try {
       final PKCS8PrivateKeyDecoder decoder = new PKCS8PrivateKeyDecoder();
@@ -413,7 +369,6 @@ public final class KeyPairUtil
     return Converter.convertPrivateKey(key);
   }
 
-
   /**
    * Reads a DER or PEM-encoded public key from a file.
    *
@@ -424,11 +379,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PublicKey readPublicKey(final String path) throws EncodingException, StreamException
-  {
+  public static PublicKey readPublicKey(final String path) throws EncodingException, StreamException {
     return readPublicKey(new File(path));
   }
-
 
   /**
    * Reads a DER or PEM-encoded public key from a file.
@@ -440,8 +393,7 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PublicKey readPublicKey(final File file) throws EncodingException, StreamException
-  {
+  public static PublicKey readPublicKey(final File file) throws EncodingException, StreamException {
     try {
       return readPublicKey(new FileInputStream(file));
     } catch (FileNotFoundException e) {
@@ -449,10 +401,8 @@ public final class KeyPairUtil
     }
   }
 
-
   /**
-   * Reads a DER or PEM-encoded public key from data in the given stream. The {@link InputStream} parameter is closed by
-   * this method.
+   * Reads a DER or PEM-encoded public key from data in the given stream.
    *
    * @param  in  Input stream containing an encoded key.
    *
@@ -461,11 +411,9 @@ public final class KeyPairUtil
    * @throws  EncodingException  on key encoding errors.
    * @throws  StreamException  on IO errors.
    */
-  public static PublicKey readPublicKey(final InputStream in) throws EncodingException, StreamException
-  {
+  public static PublicKey readPublicKey(final InputStream in) throws EncodingException, StreamException {
     return decodePublicKey(StreamUtil.readAll(in));
   }
-
 
   /**
    * Decodes public keys formatted in an X.509 SubjectPublicKeyInfo structure in either PEM or DER encoding.
@@ -476,8 +424,7 @@ public final class KeyPairUtil
    *
    * @throws  EncodingException  on key encoding errors.
    */
-  public static PublicKey decodePublicKey(final byte[] encoded) throws EncodingException
-  {
+  public static PublicKey decodePublicKey(final byte[] encoded) throws EncodingException {
     return Converter.convertPublicKey(new PublicKeyDecoder().decode(encoded));
   }
 }
