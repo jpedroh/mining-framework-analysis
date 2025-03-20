@@ -1,12 +1,7 @@
 package org.agilewiki.jactor2.core.impl.mtRequests;
-
-<<<<<<< HEAD
-import java.util.*;
-=======
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> origin/master
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.agilewiki.jactor2.core.impl.mtReactors.ReactorMtImpl;
 import org.agilewiki.jactor2.core.plant.impl.PlantImpl;
@@ -34,14 +29,16 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
         RequestMtImpl<RESPONSE_TYPE> implements
         AsyncNativeRequest<RESPONSE_TYPE> {
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
     private final static Boolean YO = true;
     private final ConcurrentHashMap<RequestImpl<?>, Boolean> pendingRequests =
             new ConcurrentHashMap<RequestImpl<?>, Boolean>();
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+    private final TreeSet<RequestImpl<?>> pendingRequests = new TreeSet<RequestImpl<?>>();
 =======
     private final ConcurrentHashMap<RequestImpl<?>, Boolean> pendingRequests = new ConcurrentHashMap<RequestImpl<?>, Boolean>(
             8, 0.75f, 4);
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
 
     private boolean noHungRequestCheck;
 
@@ -163,11 +160,13 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
         }
         final RequestMtImpl<RT> requestImpl = (RequestMtImpl<RT>) _requestImpl;
         if (_responseProcessor != OneWayResponseProcessor.SINGLETON) {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
             pendingRequests.put(requestImpl, YO);
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+            pendingRequests.add(requestImpl);
 =======
             pendingRequests.put(requestImpl, Boolean.TRUE);
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
         }
         requestImpl.doSend(targetReactorImpl, _responseProcessor);
     }
@@ -183,11 +182,13 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
                     "send called on inactive request");
         }
         final RequestMtImpl<RT> requestImpl = (RequestMtImpl<RT>) _requestImpl;
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
         pendingRequests.put(requestImpl, YO);
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+        pendingRequests.add(requestImpl);
 =======
         pendingRequests.put(requestImpl, Boolean.TRUE);
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
         requestImpl.doSend(targetReactorImpl, new AsyncResponseProcessor<RT>() {
             @Override
             public void processAsyncResponse(final RT _response)
@@ -237,9 +238,25 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
      *
      * @return A copy of pendingRequests.
      */
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
     private HashSet<RequestImpl<?>> copyPendingRequests() {
         return new HashSet<>(pendingRequests.keySet());
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+    private TreeSet<RequestImpl<?>> copyPendingRequests() {
+        TreeSet<RequestImpl<?>> prc = new TreeSet<RequestImpl<?>>();
+        if (pendingRequests.isEmpty())
+            return prc;
+        RequestImpl<?> pendingRequest;
+        try {
+            pendingRequest = pendingRequests.first();
+        } catch (NoSuchElementException nsee) {
+            return prc;
+        }
+        while (pendingRequest != null) {
+            prc.add(pendingRequest);
+            pendingRequest = pendingRequests.higher(pendingRequest);
+        }
+        return prc;
 =======
     private List<RequestImpl<?>> copyPendingRequests() {
         // Note: This will be called outside of our own reactor.
@@ -259,7 +276,7 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
             // Drop all nulls.
         }
         return result;
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
     }
 
     @Override
@@ -267,14 +284,19 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
         if (!incomplete) {
             return;
         }
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
         final HashSet<RequestImpl<?>> pr = copyPendingRequests();
+        final Iterator<RequestImpl<?>> it = pr.iterator();
+        while (it.hasNext()) {
+            RequestImpl<?> request = it.next();
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+        final TreeSet<RequestImpl<?>> pr = copyPendingRequests();
         final Iterator<RequestImpl<?>> it = pr.iterator();
         while (it.hasNext()) {
             RequestImpl<?> request = it.next();
 =======
         for (final RequestImpl<?> request : copyPendingRequests()) {
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
             ((RequestMtImpl<?>) request).cancel();
         }
         super.close();
@@ -303,14 +325,19 @@ public class AsyncRequestMtImpl<RESPONSE_TYPE> extends
      */
     @Override
     public void cancelAll() {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/left.java
         final HashSet<RequestImpl<?>> all = copyPendingRequests();
+        final Iterator<RequestImpl<?>> it = all.iterator();
+        while (it.hasNext()) {
+            RequestImpl<?> request = it.next();
+||||||| /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/base.java
+        final TreeSet<RequestImpl<?>> all = copyPendingRequests();
         final Iterator<RequestImpl<?>> it = all.iterator();
         while (it.hasNext()) {
             RequestImpl<?> request = it.next();
 =======
         for (final RequestImpl<?> request : copyPendingRequests()) {
->>>>>>> origin/master
+>>>>>>> /usr/src/app/output/laforge49/jactor2/191ab09f7d4f34ab1b208159b40ccc2b06557f6a/jactor2-coreMt/src/main/java/org/agilewiki/jactor2/core/impl/mtRequests/AsyncRequestMtImpl.java/right.java
             cancel(request);
         }
     }
