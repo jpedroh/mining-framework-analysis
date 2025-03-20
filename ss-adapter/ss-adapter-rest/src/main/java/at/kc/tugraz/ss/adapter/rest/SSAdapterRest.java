@@ -1,20 +1,4 @@
-/**
- * Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package at.kc.tugraz.ss.adapter.rest;
-
 import at.kc.tugraz.socialserver.utils.SSFileU;
 import at.kc.tugraz.socialserver.utils.SSMethU;
 import at.kc.tugraz.socialserver.utils.SSMimeTypeU;
@@ -46,878 +30,433 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.ArrayUtils;
 
-@Path("/SSAdapterRest")
-public class SSAdapterRest{
-  
-  private SSSocketCon     sSCon   = null;
-  private int             read    = -1;
-  private SSConf          conf    = null;
-  
-  public SSAdapterRest() throws Exception{
-    
-//    SSLogU.info("rest enter");
-    SSAdapterRestConf.instSet (SSFileU.dirCatalinaBase() + SSFileU.folderConf + "ss-adapter-rest-conf.yaml"); //"ss-adapter-rest-conf_domi.yaml" //"ss-adapter-rest-conf_newer.yaml"
-    
-    /**** utils ****/
+@Path(value = "/SSAdapterRest") public class SSAdapterRest {
+  private SSSocketCon sSCon = null;
+
+  private int read = -1;
+
+  private SSConf conf = null;
+
+  public SSAdapterRest() throws Exception {
+    SSAdapterRestConf.instSet(SSFileU.dirCatalinaBase() + SSFileU.folderConf + 
+<<<<<<< /usr/src/app/output/learning-layers/socialsemanticserver/52a878a7af5ab841fc42d9973ca8cdd3bd375b20/ss-adapter/ss-adapter-rest/src/main/java/at/kc/tugraz/ss/adapter/rest/SSAdapterRest.java/left.java
+    "ss-adapter-rest-conf-knowbrain2.0.yaml"
+=======
+    "ss-adapter-rest-conf.yaml"
+>>>>>>> /usr/src/app/output/learning-layers/socialsemanticserver/52a878a7af5ab841fc42d9973ca8cdd3bd375b20/ss-adapter/ss-adapter-rest/src/main/java/at/kc/tugraz/ss/adapter/rest/SSAdapterRest.java/right.java
+    );
     SSMimeTypeU.init();
-    SSJSONLDU.init  (SSAdapterRestConf.instGet().getJsonLDConf().uri);
-    
-    /**** json-ld ****/
-//    SSJSONLD.inst.initServ(SSAdapterRestConf.instGet().getJsonLDConf());
-    
+    SSJSONLDU.init(SSAdapterRestConf.instGet().getJsonLDConf().uri);
     conf = SSAdapterRestConf.instGet().getSsConf();
   }
-  
-  @GET
-  @Consumes(MediaType.TEXT_HTML)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "jsonLD" + SSStrU.slash + SSStrU.curlyBracketOpen + SSVarU.entityType + SSStrU.curlyBracketClose)
-  public String jsonLD(@PathParam(SSVarU.entityType) String entityType){
-    
+
+  @GET @Consumes(value = MediaType.TEXT_HTML) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "jsonLD" + SSStrU.slash + SSStrU.curlyBracketOpen + SSVarU.entityType + SSStrU.curlyBracketClose) public String jsonLD(@PathParam(value = SSVarU.entityType) String entityType) {
     String jsonRequ = "{\"op\":\"" + SSMethU.jsonLD + "\",\"user\":\"" + SSUserGlobals.systemUserURI + "/\",\"entityType\":\"" + entityType + "\",\"key\":\"681V454J1P3H4W3B367BB79615U184N22356I3E\"}";
-    
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.jsonLD);
-    
-    
-//    Map<String, Object> ret = new HashMap<String, Object>();
-//    
-//    try{
-//      ret.put(SSVarU.op,                  SSMethU.jsonLD);
-//      ret.put(SSVarU.error,               false);
-//      ret.put(SSVarU.jsonLD,              ((SSJSONLDImpl)SSJSONLD.inst.impl()).jsonLDDesc(entityType));
-//      
-//      ret.put(SSJSONLDU.context, SSJSONLDU.jsonLDContext());
-//      
-//      return Response.status(200).entity(SSJSONU.jsonStr(ret)).build();
-//      
-//    }catch (Exception error) {
-//      
-//      SSLogU.logError(error);
-//        
-//      try{
-//        return Response.serverError().build();
-//      }catch(Exception error1){
-//        SSLogU.logError(error1, "writing error to client didnt work");
-//      }
-//    }
-//    
-//    return Response.ok(null).build();
   }
 
-  @GET
-  @Consumes(MediaType.TEXT_HTML)
-  @Produces(SSMimeTypeU.imagePng)
-  @Path(SSStrU.slash + "fileThumbGet" + SSStrU.slash + SSStrU.curlyBracketOpen + SSVarU.id + SSStrU.curlyBracketClose)
-  public Response fileThumbGet(@PathParam(SSVarU.id) String fileID){
-    
-    String     jsonRequ       = "{\"op\":\"" + SSMethU.fileThumbGet + "\",\"user\":\"http://eval.bp/user/dt/\",\"fileId\":\"" + fileID + "\",\"key\":\"681V454J1P3H4W3B367BB79615U184N22356I3E\"}";
-    List<Byte> bytesFromSS   = new ArrayList<Byte>();
-    String     imageString   = null;
-    byte[]     bytes;
-    Byte[]     nonPrimBytes;
-    
-    try{
+  @GET @Consumes(value = MediaType.TEXT_HTML) @Produces(value = SSMimeTypeU.imagePng) @Path(value = SSStrU.slash + "fileThumbGet" + SSStrU.slash + SSStrU.curlyBracketOpen + SSVarU.id + SSStrU.curlyBracketClose) public Response fileThumbGet(@PathParam(value = SSVarU.id) String fileID) {
+    String jsonRequ = "{\"op\":\"" + SSMethU.fileThumbGet + "\",\"user\":\"http://eval.bp/user/dt/\",\"fileId\":\"" + fileID + "\",\"key\":\"681V454J1P3H4W3B367BB79615U184N22356I3E\"}";
+    List<Byte> bytesFromSS = new ArrayList<Byte>();
+    String imageString = null;
+    byte[] bytes;
+    Byte[] nonPrimBytes;
+    try {
       sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-      
-      sSCon.writeRequFullToSS   ();
-      sSCon.readMsgFullFromSS   ();
-      sSCon.writeRequFullToSS   ();
-      
-      while((bytes = sSCon.readFileChunkFromSS()).length > 0) {
-        
-        for(int counter = 0; counter < bytes.length; counter++){
+      sSCon.writeRequFullToSS();
+      sSCon.readMsgFullFromSS();
+      sSCon.writeRequFullToSS();
+      while ((bytes = sSCon.readFileChunkFromSS()).length > 0) {
+        for (int counter = 0; counter < bytes.length; counter++) {
           bytesFromSS.add(bytes[counter]);
         }
-        
-        sSCon.writeRequFullToSS ();
+        sSCon.writeRequFullToSS();
       }
-      
       nonPrimBytes = bytesFromSS.toArray(new Byte[bytesFromSS.size()]);
-      imageString  = "data:image/png;base64," + DatatypeConverter.printBase64Binary(ArrayUtils.toPrimitive(nonPrimBytes));
-
-    }catch(Exception error){
-      
-      try{
+      imageString = "data:image/png;base64," + DatatypeConverter.printBase64Binary(ArrayUtils.toPrimitive(nonPrimBytes));
+    } catch (Exception error) {
+      try {
         return Response.serverError().build();
-      }catch(Exception error1){
+      } catch (Exception error1) {
         SSServErrReg.regErr(error1, "writing error to client didnt work");
       }
-    }finally{
+    } finally {
       sSCon.closeCon();
     }
-
-    return Response.ok(imageString).build(); //non-streamed
-
-    // uncomment line below to send streamed
-    // return Response.ok(new ByteArrayInputStream(imageData)).build();
+    return Response.ok(imageString).build();
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "authCheckCred")
-  public String authCheckCred(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "authCheckCred") public String authCheckCred(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.authCheckCred);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserPublicSet")
-  public String entityUserPublicSet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserPublicSet") public String entityUserPublicSet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserPublicSet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserCircleCreate")
-  public String entityUserCircleCreate(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserCircleCreate") public String entityUserCircleCreate(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserCircleCreate);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserUsersToCircleAdd")
-  public String entityUserUsersToCircleAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserUsersToCircleAdd") public String entityUserUsersToCircleAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserUsersToCircleAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserEntitiesToCircleAdd")
-  public String entityUserEntitiesToCircleAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserEntitiesToCircleAdd") public String entityUserEntitiesToCircleAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserEntitiesToCircleAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserCirclesGet")
-  public String entityUserCirclesGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserCirclesGet") public String entityUserCirclesGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserCirclesGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collsUserEntityIsInGet")
-  public String collsUserEntityIsInGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collsUserEntityIsInGet") public String collsUserEntityIsInGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collsUserEntityIsInGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collsUserCouldSubscribeGet")
-  public String collsUserCouldSubscribeGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collsUserCouldSubscribeGet") public String collsUserCouldSubscribeGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collsUserCouldSubscribeGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserRootGet")
-  public String collUserRootGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserRootGet") public String collUserRootGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserRootGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserParentGet")
-  public String collUserParentGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserParentGet") public String collUserParentGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserParentGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserEntryAdd")
-  public String collUserEntryAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserEntryAdd") public String collUserEntryAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserEntryAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserEntriesAdd")
-  public String collUserEntriesAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserEntriesAdd") public String collUserEntriesAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserEntriesAdd);
-  }  
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserEntryChangePos")
-  public String collUserEntryChangePos(String jsonRequ){
+  }
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserEntryChangePos") public String collUserEntryChangePos(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserEntryChangePos);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserEntryDelete")
-  public String collUserEntryDelete(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserEntryDelete") public String collUserEntryDelete(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserEntryDelete);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserEntriesDelete")
-  public String collUserEntriesDelete(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserEntriesDelete") public String collUserEntriesDelete(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserEntriesDelete);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserShare")
-  public String entityUserShare(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserShare") public String entityUserShare(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserShare);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserWithEntries")
-  public String collUserWithEntries(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserWithEntries") public String collUserWithEntries(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserWithEntries);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collsUserWithEntries")
-  public String collsUserWithEntries(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collsUserWithEntries") public String collsUserWithEntries(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collsUserWithEntries);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserHierarchyGet")
-  public String collUserHierarchyGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserHierarchyGet") public String collUserHierarchyGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserHierarchyGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "collUserCumulatedTagsGet")
-  public String collUserCumulatedTagsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "collUserCumulatedTagsGet") public String collUserCumulatedTagsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.collUserCumulatedTagsGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "discUserEntryAdd")
-  public String discUserEntryAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "discUserEntryAdd") public String discUserEntryAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.discUserEntryAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "discUserWithEntriesGet")
-  public String discUserWithEntriesGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "discUserWithEntriesGet") public String discUserWithEntriesGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.discUserWithEntriesGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "discsUserAllGet")
-  public String discsUserAllGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "discsUserAllGet") public String discsUserAllGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.discsUserAllGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityTypeGet")
-  public String entityTypeGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityTypeGet") public String entityTypeGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityTypeGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityUserDirectlyAdjoinedEntitiesRemove")
-  public String entityUserDirectlyAdjoinedEntitiesRemove(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityUserDirectlyAdjoinedEntitiesRemove") public String entityUserDirectlyAdjoinedEntitiesRemove(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityUserDirectlyAdjoinedEntitiesRemove);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityDescGet")
-  public String entityDescGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityDescGet") public String entityDescGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityDescGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityLabelSet")
-  public String entityLabelSet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityLabelSet") public String entityLabelSet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityLabelSet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "entityLabelGet")
-  public String entityLabelGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "entityLabelGet") public String entityLabelGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.entityLabelGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "fileExtGet")
-  public String fileExtGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileExtGet") public String fileExtGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.fileExtGet);
   }
-    
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "fileCanWrite")
-  public String fileCanWrite(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileCanWrite") public String fileCanWrite(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.fileCanWrite);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "fileSetReaderOrWriter")
-  public String fileSetReaderOrWriter(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileSetReaderOrWriter") public String fileSetReaderOrWriter(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.fileSetReaderOrWriter);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "fileUserFileWrites")
-  public String fileUserFileWrites(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileUserFileWrites") public String fileUserFileWrites(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.fileUserFileWrites);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "fileWritingMinutesLeft")
-  public String fileWritingMinutesLeft(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileWritingMinutesLeft") public String fileWritingMinutesLeft(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.fileWritingMinutesLeft);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpsGet")
-  public String learnEpsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpsGet") public String learnEpsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpsGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionsGet")
-  public String learnEpVersionsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionsGet") public String learnEpVersionsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionsGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionGet")
-  public String learnEpVersionGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionGet") public String learnEpVersionGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionCurrentGet")
-  public String learnEpVersionCurrentGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionCurrentGet") public String learnEpVersionCurrentGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionCurrentGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionCurrentSet")
-  public String learnEpVersionCurrentSet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionCurrentSet") public String learnEpVersionCurrentSet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionCurrentSet);
   }
-    
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionCreate")
-  public String learnEpVersionCreate(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionCreate") public String learnEpVersionCreate(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionCreate);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionAddCircle")
-  public String learnEpVersionAddCircle(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionAddCircle") public String learnEpVersionAddCircle(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionAddCircle);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionAddEntity")
-  public String learnEpVersionAddEntity(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionAddEntity") public String learnEpVersionAddEntity(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionAddEntity);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpCreate")
-  public String learnEpCreate(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpCreate") public String learnEpCreate(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpCreate);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionUpdateCircle")
-  public String learnEpVersionUpdateCircle(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionUpdateCircle") public String learnEpVersionUpdateCircle(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionUpdateCircle);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionUpdateEntity")
-  public String learnEpVersionUpdateEntity(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionUpdateEntity") public String learnEpVersionUpdateEntity(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionUpdateEntity);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionSetTimelineState")
-  public String learnEpVersionSetTimelineState(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionSetTimelineState") public String learnEpVersionSetTimelineState(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionSetTimelineState);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionGetTimelineState")
-  public String learnEpVersionGetTimelineState(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionGetTimelineState") public String learnEpVersionGetTimelineState(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionGetTimelineState);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionRemoveCircle")
-  public String learnEpVersionRemoveCircle(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionRemoveCircle") public String learnEpVersionRemoveCircle(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionRemoveCircle);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "learnEpVersionRemoveEntity")
-  public String learnEpVersionRemoveEntity(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "learnEpVersionRemoveEntity") public String learnEpVersionRemoveEntity(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.learnEpVersionRemoveEntity);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "locationAdd")
-  public String locationAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "locationAdd") public String locationAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.locationAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "locationsGet")
-  public String locationsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "locationsGet") public String locationsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.locationsGet);
-  }  
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "modelUEResourceDetails")
-  public String modelUEResourceDetails(String jsonRequ){
+  }
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "modelUEResourceDetails") public String modelUEResourceDetails(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.modelUEResourceDetails);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "ratingOverallGet")
-  public String ratingOverallGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "ratingOverallGet") public String ratingOverallGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.ratingOverallGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "ratingUserSet")
-  public String ratingUserSet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "ratingUserSet") public String ratingUserSet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.ratingUserSet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTag")
-  public String scaffRecommTagsBasedOnUserEntityTag(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTag") public String scaffRecommTagsBasedOnUserEntityTag(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.scaffRecommTagsBasedOnUserEntityTag);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagTime")
-  public String scaffRecommTagsBasedOnUserEntityTagTime(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagTime") public String scaffRecommTagsBasedOnUserEntityTagTime(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.scaffRecommTagsBasedOnUserEntityTagTime);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagCategory")
-  public String scaffRecommTagsBasedOnUserEntityTagCategory(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagCategory") public String scaffRecommTagsBasedOnUserEntityTagCategory(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.scaffRecommTagsBasedOnUserEntityTagCategory);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagCategoryTime")
-  public String scaffRecommTagsBasedOnUserEntityTagCategoryTime(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "scaffRecommTagsBasedOnUserEntityTagCategoryTime") public String scaffRecommTagsBasedOnUserEntityTagCategoryTime(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.scaffRecommTagsBasedOnUserEntityTagCategoryTime);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "searchMIs")
-  public String searchMIs(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "searchMIs") public String searchMIs(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.searchMIs);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "searchSolr")
-  public String searchSolr(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "searchSolr") public String searchSolr(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.searchSolr);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "searchTags")
-  public String searchTags(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "searchTags") public String searchTags(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.searchTags);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "tagAdd")
-  public String tagAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "tagAdd") public String tagAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.tagAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "tagUserFrequsGet")
-  public String tagUserFrequsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "tagUserFrequsGet") public String tagUserFrequsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.tagUserFrequsGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "tagsUserRemove")
-  public String tagsUserRemove(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "tagsUserRemove") public String tagsUserRemove(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.tagsUserRemove);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "userLogin")
-  public String userLogin(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "userLogin") public String userLogin(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.userLogin);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "userAll")
-  public String userAll(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "userAll") public String userAll(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.userAll);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "uEAdd")
-  public String uEAdd(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "uEAdd") public String uEAdd(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.uEAdd);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "uEsGet")
-  public String uEsGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "uEsGet") public String uEsGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.uEsGet);
   }
-  
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path    (SSStrU.slash + "uEGet")
-  public String uEGet(String jsonRequ){
+
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "uEGet") public String uEGet(String jsonRequ) {
     return handleStandardJSONRESTCall(jsonRequ, SSMethU.uEGet);
   }
 
-//@POST
-//  @Consumes(MediaType.APPLICATION_JSON)
-//  @Produces(MediaType.APPLICATION_OCTET_STREAM)
-//  @Path(SSStrU.slash + "fileDownload")
-//  public StreamingOutput fileDownload(String jsonRequ) throws Exception{
-//  
-//        sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-//      
-//      sSCon.writeRequFullToSS   ();
-//      sSCon.readMsgFullFromSS   ();
-//      sSCon.writeRequFullToSS   ();
-//  
-//  return new StreamingOutput() {
-//    
-//    public void write(OutputStream output) throws IOException, WebApplicationException {
-//     
-//      try {
-//         byte[] bytes;
-//          FileOutputStream fileOutputStream = null;
-//          
-//          try{
-//            fileOutputStream = SSFileU.openFileForWrite("F:/daten/hugo.mp3");
-//          }catch(Exception ex){
-//            Logger.getLogger(SSAdapterRest.class.getName()).log(Level.SEVERE, null, ex);
-//          }
-//
-//          while((bytes = sSCon.readFileChunkFromSS()).length > 0) {
-//
-//            output.write               (bytes);
-//            output.flush               ();
-//            
-//            fileOutputStream.write(bytes);
-//            
-//            sSCon.writeRequFullToSS ();
-//          }
-//          
-//          output.close();
-//          fileOutputStream.close();
-//      } catch (Exception e) {
-//        throw new WebApplicationException(e);
-//      }
-//    }
-//  };
-
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @Path(SSStrU.slash + "fileDownload")
-  public Response fileDownload(String jsonRequ){
-    
-    StreamingOutput  stream           = null;
-    
-    try{
+  @POST @Consumes(value = MediaType.APPLICATION_JSON) @Produces(value = MediaType.APPLICATION_OCTET_STREAM) @Path(value = SSStrU.slash + "fileDownload") public Response fileDownload(String jsonRequ) {
+    StreamingOutput stream = null;
+    try {
       sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-      
-      sSCon.writeRequFullToSS   ();
-      sSCon.readMsgFullFromSS   ();
-      sSCon.writeRequFullToSS   ();
-
-      stream = new StreamingOutput(){
-
-        @Override
-        public void write(OutputStream out) throws IOException{
-          
+      sSCon.writeRequFullToSS();
+      sSCon.readMsgFullFromSS();
+      sSCon.writeRequFullToSS();
+      stream = new StreamingOutput() {
+        @Override public void write(OutputStream out) throws IOException {
           byte[] bytes;
-//          FileOutputStream fileOutputStream = null;
-          
-//          try{
-//            fileOutputStream = SSFileU.openFileForWrite("F:/daten/hugo.mp3");
-//          }catch(Exception ex){
-//            Logger.getLogger(SSAdapterRest.class.getName()).log(Level.SEVERE, null, ex);
-//          }
-
-          while((bytes = sSCon.readFileChunkFromSS()).length > 0) {
-
-            out.write               (bytes);
-            out.flush               ();
-            
-//            fileOutputStream.write(bytes);
-            
-//            sSCon.writeRequFullToSS ();
+          while ((bytes = sSCon.readFileChunkFromSS()).length > 0) {
+            out.write(bytes);
+            out.flush();
           }
-          
           out.close();
-//          fileOutputStream.close();
         }
       };
-    }catch(Exception error){
-      
-      try{
+    } catch (Exception error) {
+      try {
         return Response.serverError().build();
-      }catch(Exception error1){
+      } catch (Exception error1) {
         SSServErrReg.regErr(error1, "writing error to client didnt work");
       }
-    }finally{
-//      sSCon.closeCon();
+    } finally {
     }
-    
     return Response.ok(stream).build();
   }
-  
-  @POST
-  @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path(SSStrU.slash + "fileReplace")
-  public Response fileReplace(
-    @FormDataParam(SSVarU.jsonRequ) String      jsonRequ,
-    @FormDataParam(SSVarU.file)     InputStream file){
-    
+
+  @POST @Consumes(value = MediaType.MULTIPART_FORM_DATA) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileReplace") public Response fileReplace(@FormDataParam(value = SSVarU.jsonRequ) String jsonRequ, @FormDataParam(value = SSVarU.file) InputStream file) {
     Response result = null;
-    byte[]   bytes  = new byte[SSSocketU.socketTranmissionSize];
-    String   returnMsg;
-    
-    try{
-      
+    byte[] bytes = new byte[SSSocketU.socketTranmissionSize];
+    String returnMsg;
+    try {
       sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-      
-      sSCon.writeRequFullToSS ();
+      sSCon.writeRequFullToSS();
       sSCon.readMsgFullFromSS();
-      
-      while ((read = file.read(bytes)) != -1){
-        sSCon.writeFileChunkToSS  (bytes, read);
-//        sSCon.readMsgFullFromSS   ();
-      }
-      
-      sSCon.writeFileChunkToSS(new byte[0], -1);
-      
-      returnMsg = sSCon.readMsgFullFromSS();
-      
-      return Response.status(200).entity(returnMsg).build();
-      
-    }catch(Exception error){
-      
-      try{
-        return Response.serverError().build();
-      }catch(Exception error1){
-        SSServErrReg.regErr(error1, "writing error to client didnt work");
-      }
-    }finally{
-      sSCon.closeCon();
-    }
-    
-    return result;
-  }
-  
-  @POST
-  @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path(SSStrU.slash + "fileUpload")
-  public Response fileUpload(
-    @FormDataParam(SSVarU.jsonRequ) String      jsonRequ,
-    @FormDataParam(SSVarU.file)     InputStream file){
-    
-    Response result = null;
-    byte[]   bytes  = new byte[SSSocketU.socketTranmissionSize];
-    String   resultMsg;
-    
-    try{
-      
-      sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-      
-      sSCon.writeRequFullToSS  ();
-      sSCon.readMsgFullFromSS  ();
-
       while ((read = file.read(bytes)) != -1) {
-        sSCon.writeFileChunkToSS   (bytes, read);
-//        sSCon.readMsgFullFromSS    ();
+        sSCon.writeFileChunkToSS(bytes, read);
       }
-
       sSCon.writeFileChunkToSS(new byte[0], -1);
-
-      resultMsg = sSCon.readMsgFullFromSS();
-      
-      sSCon.closeCon();
-      
-      return Response.status(200).entity(resultMsg).build();
-      
-    }catch(Exception error){
-      
-      try{
+      returnMsg = sSCon.readMsgFullFromSS();
+      return Response.status(200).entity(returnMsg).build();
+    } catch (Exception error) {
+      try {
         return Response.serverError().build();
-      }catch(Exception error1){
+      } catch (Exception error1) {
         SSServErrReg.regErr(error1, "writing error to client didnt work");
       }
-    }finally{
+    } finally {
       sSCon.closeCon();
     }
-    
     return result;
   }
-  
-  private String handleStandardJSONRESTCall(String jsonRequ, SSMethU op){
-    
-    String readMsgFullFromSS;
-    
-    try{
+
+  @POST @Consumes(value = MediaType.MULTIPART_FORM_DATA) @Produces(value = MediaType.APPLICATION_JSON) @Path(value = SSStrU.slash + "fileUpload") public Response fileUpload(@FormDataParam(value = SSVarU.jsonRequ) String jsonRequ, @FormDataParam(value = SSVarU.file) InputStream file) {
+    Response result = null;
+    byte[] bytes = new byte[SSSocketU.socketTranmissionSize];
+    String resultMsg;
+    try {
       sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
-      
-      sSCon.writeRequFullToSS                     ();
-      
-      readMsgFullFromSS = sSCon.readMsgFullFromSS ();
-      
-      return readMsgFullFromSS;
-    
-    }catch(Exception error){
-      
-      final List<SSErrForClient> errors = new ArrayList<SSErrForClient>();
-      
-      try{
-        
-        errors.add(SSErrForClient.get(error));
-        
-        return sSCon.prepErrorToClient (errors, op);
-      }catch(Exception error1){
+      sSCon.writeRequFullToSS();
+      sSCon.readMsgFullFromSS();
+      while ((read = file.read(bytes)) != -1) {
+        sSCon.writeFileChunkToSS(bytes, read);
+      }
+      sSCon.writeFileChunkToSS(new byte[0], -1);
+      resultMsg = sSCon.readMsgFullFromSS();
+      sSCon.closeCon();
+      return Response.status(200).entity(resultMsg).build();
+    } catch (Exception error) {
+      try {
+        return Response.serverError().build();
+      } catch (Exception error1) {
         SSServErrReg.regErr(error1, "writing error to client didnt work");
       }
-    }finally{
+    } finally {
       sSCon.closeCon();
-      
-//      SSLogU.info("rest leave");
     }
-    
+    return result;
+  }
+
+  private String handleStandardJSONRESTCall(String jsonRequ, SSMethU op) {
+    String readMsgFullFromSS;
+    try {
+      sSCon = new SSSocketCon(conf.host, conf.port, jsonRequ);
+      sSCon.writeRequFullToSS();
+      readMsgFullFromSS = sSCon.readMsgFullFromSS();
+      return readMsgFullFromSS;
+    } catch (Exception error) {
+      final List<SSErrForClient> errors = new ArrayList<SSErrForClient>();
+      try {
+        errors.add(SSErrForClient.get(error));
+        return sSCon.prepErrorToClient(errors, op);
+      } catch (Exception error1) {
+        SSServErrReg.regErr(error1, "writing error to client didnt work");
+      }
+    } finally {
+      sSCon.closeCon();
+    }
     return null;
   }
 }

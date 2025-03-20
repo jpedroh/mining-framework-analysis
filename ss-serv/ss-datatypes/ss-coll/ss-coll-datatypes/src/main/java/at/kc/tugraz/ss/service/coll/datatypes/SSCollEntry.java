@@ -1,25 +1,4 @@
-/**
-* Code contributed to the Learning Layers project
-* http://www.learning-layers.eu
-* Development is partly funded by the FP7 Programme of the European Commission under
-* Grant Agreement FP7-ICT-318209.
-* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
-* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
- package at.kc.tugraz.ss.service.coll.datatypes;
-
+package at.kc.tugraz.ss.service.coll.datatypes;
 import at.kc.tugraz.socialserver.utils.SSStrU;
 import at.kc.tugraz.socialserver.utils.SSVarU;
 import at.kc.tugraz.ss.datatypes.datatypes.SSEntityEnum;
@@ -34,84 +13,67 @@ import java.util.List;
 import java.util.Map;
 
 public class SSCollEntry extends SSEntityA {
+  public SSUri uri = null;
 
-  public  SSUri                           uri         = null;
-  public  Integer                         pos         = -1;
-  public  List<SSEntityCircleTypeE> circleTypes = new ArrayList<SSEntityCircleTypeE>();
-  public  String                          label       = null;
-  public  SSEntityEnum                    entityType  = null;
+  public Integer pos = -1;
 
-  public static SSCollEntry get(
-    SSUri         uri,
-    String        label  ,
-    List<SSEntityCircleTypeE> circleTypes,
-    Integer       pos,
-    SSEntityEnum  entityType){
-    
+  public List<SSEntityCircleTypeE> circleTypes = new ArrayList<SSEntityCircleTypeE>();
+
+  public String label = null;
+
+  public SSEntityEnum entityType = null;
+
+  public static SSCollEntry get(SSUri uri, String label, List<SSEntityCircleTypeE> circleTypes, Integer pos, SSEntityEnum entityType) {
     return new SSCollEntry(uri, label, circleTypes, pos, entityType);
   }
-  
-  private SSCollEntry(
-    SSUri        uri,
-    String       label,
-    List<SSEntityCircleTypeE> circleTypes,
-    Integer      pos, 
-    SSEntityEnum entityType){
 
+  private SSCollEntry(SSUri uri, String label, List<SSEntityCircleTypeE> circleTypes, Integer pos, SSEntityEnum entityType) {
     super(uri);
-    
-    this.uri        = uri;
-    this.label      = label;
-    this.pos        = pos;
+    this.uri = uri;
+    this.label = label;
+    this.pos = pos;
     this.entityType = entityType;
-    
-    if(circleTypes != null){
+    if (circleTypes != null) {
       this.circleTypes.addAll(circleTypes);
     }
   }
-  
-  public SSCollEntry(){
+
+  public SSCollEntry() {
     super(SSStrU.empty);
   }
 
-  @Override
-  public Object jsonLDDesc(){
-    
-    final Map<String, Object> ld             = new HashMap<String, Object>();
+  @Override public Object jsonLDDesc() {
+    final Map<String, Object> ld = new HashMap<String, Object>();
     final Map<String, Object> circleTypesObj = new HashMap<String, Object>();
-    
-    circleTypesObj.put(SSJSONLDU.id,        SSVarU.sss + SSStrU.colon + SSEntityCircleTypeE.class.getName());
+    circleTypesObj.put(SSJSONLDU.id, SSVarU.sss + SSStrU.colon + SSEntityCircleTypeE.class.getName());
     circleTypesObj.put(SSJSONLDU.container, SSJSONLDU.set);
-    
     ld.put(SSVarU.circleTypes, circleTypesObj);
-    
-    ld.put(SSVarU.uri,        SSVarU.sss + SSStrU.colon + SSUri.class.getName());
-    ld.put(SSVarU.pos,        SSVarU.xsd + SSStrU.colon + SSStrU.valueInteger);
-    ld.put(SSVarU.space,      SSVarU.sss + SSStrU.colon + SSSpaceEnum.class.getName());
-    ld.put(SSVarU.label,      SSVarU.xsd + SSStrU.colon + SSStrU.valueString);
+    ld.put(SSVarU.uri, SSVarU.sss + SSStrU.colon + SSUri.class.getName());
+    ld.put(SSVarU.pos, SSVarU.xsd + SSStrU.colon + SSStrU.valueInteger);
+    ld.put(SSVarU.space, SSVarU.sss + SSStrU.colon + SSSpaceEnum.class.getName());
+    ld.put(SSVarU.label, SSVarU.xsd + SSStrU.colon + SSStrU.valueString);
     ld.put(SSVarU.entityType, SSVarU.sss + SSStrU.colon + SSEntityEnum.class.getName());
-    
     return ld;
   }
-  
-  /* getters to allow for jason enconding */
-  public String getUri() throws Exception{
+
+  /*************** getters to allow for jason enconding ********************/
+  public String getUri() throws Exception {
     return SSUri.toStrWithoutSlash(uri);
   }
 
-  public int getPos(){
+  public int getPos() {
     return pos;
   }
 
-  public List<SSEntityCircleTypeE> getCircleTypes(){
+  public List<SSEntityCircleTypeE> getCircleTypes() {
     return circleTypes;
   }
 
-  public String getLabel(){
+  public String getLabel() {
     return label;
   }
-  
-  public String getEntityType(){
+
+  public String getEntityType() {
     return SSEntityEnum.toStr(entityType);
   }
 }

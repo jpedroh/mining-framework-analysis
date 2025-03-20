@@ -1,25 +1,4 @@
-/**
-* Code contributed to the Learning Layers project
-* http://www.learning-layers.eu
-* Development is partly funded by the FP7 Programme of the European Commission under
-* Grant Agreement FP7-ICT-318209.
-* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
-* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
 package at.kc.tugraz.ss.conf.conf;
-
 import at.kc.tugraz.ss.serv.voc.conf.SSVocConf;
 import at.kc.tugraz.ss.serv.db.conf.SSDBGraphConf;
 import at.kc.tugraz.ss.serv.modeling.ue.conf.SSModelUEConf;
@@ -50,62 +29,85 @@ import at.kc.tugraz.ss.serv.ue.conf.SSUEConf;
 import at.kc.tugraz.ss.serv.user.conf.SSUserConf;
 import at.kc.tugraz.ss.service.filerepo.conf.SSFileRepoConf;
 
-public class SSCoreConf extends SSCoreConfA{
-
+public class SSCoreConf extends SSCoreConfA {
   private static SSCoreConf inst;
-  
-  private SSConf              ssConf             = null;
-  private SSJSONLDConf        jsonLDConf         = null;
-  private SSDBGraphConf       dbGraphConf        = null;
-  private SSDBSQLConf         dbSQLConf          = null;
-  private SSModelUEConf       modelConf          = null;
-  private SSLogConf           logConf            = null;
-  private SSFileRepoConf      filerepoConf       = null;
-  private SSFileRepoConf      solrConf           = null;
-  private SSFileRepoConf      localWorkConf      = null;
-  private SSVocConf           vocConf            = null;
-  private SSBroadcasterConf   broadcasterConf    = null;
-  private SSRecommConf        recommConf         = null;
-  private SSFileSysLocalConf  fileSysLocalConf   = null;
-  private SSEvernoteConf      evernoteConf       = null;
-  private SSI5CloudConf       i5CloudConf        = null;
-  private SSAuthConf          authConf           = null;
-  private SSScaffConf         scaffConf          = null;
-  private SSDataImportConf    dataImportConf     = null;
-  private SSDataExportConf    dataExportConf     = null;
-  private SSLOMExtractorConf  lomExtractorConf   = null;
-  private SSUserConf          userConf           = null;
-  private SSEntityConf        entityConf         = null;
-  private SSCollConf          collConf           = null;
-  private SSLocationConf      locationConf       = null;
-  private SSUEConf            ueConf             = null;
-  private SSRatingConf        ratingConf         = null;
-  private SSTagConf           tagConf            = null;
-  private SSSearchConf        searchConf         = null;
-  private SSDiscConf          discConf           = null;
-  private SSLearnEpConf       learnEpConf        = null;
 
-  public static synchronized SSCoreConf instSet(final String pathToFile) throws Exception{
-    
-    if(inst != null){
+  private SSConf ssConf = null;
+
+  private SSJSONLDConf jsonLDConf = null;
+
+  private SSDBGraphConf dbGraphConf = null;
+
+  private SSDBSQLConf dbSQLConf = null;
+
+  private SSModelUEConf modelConf = null;
+
+  private SSLogConf logConf = null;
+
+  private SSFileRepoConf filerepoConf = null;
+
+  private SSFileRepoConf solrConf = null;
+
+  private SSFileRepoConf localWorkConf = null;
+
+  private SSVocConf vocConf = null;
+
+  private SSBroadcasterConf broadcasterConf = null;
+
+  private SSRecommConf recommConf = null;
+
+  private SSFileSysLocalConf fileSysLocalConf = null;
+
+  private SSEvernoteConf evernoteConf = null;
+
+  private SSI5CloudConf i5CloudConf = null;
+
+  private SSAuthConf authConf = null;
+
+  private SSScaffConf scaffConf = null;
+
+  private SSDataImportConf dataImportConf = null;
+
+  private SSDataExportConf dataExportConf = null;
+
+  private SSLOMExtractorConf lomExtractorConf = null;
+
+  private SSUserConf userConf = null;
+
+  private SSEntityConf entityConf = null;
+
+  private SSCollConf collConf = null;
+
+  private SSLocationConf locationConf = null;
+
+  private SSUEConf ueConf = null;
+
+  private SSRatingConf ratingConf = null;
+
+  private SSTagConf tagConf = null;
+
+  private SSSearchConf searchConf = null;
+
+  private SSDiscConf discConf = null;
+
+  private SSLearnEpConf learnEpConf = null;
+
+  public static synchronized SSCoreConf instSet(final String pathToFile) throws Exception {
+    if (inst != null) {
       return inst;
     }
-    
     inst = (SSCoreConf) SSCoreConfA.instSet(pathToFile, SSCoreConf.class);
-
     return inst;
   }
-  
-  public static SSCoreConf instGet() throws Exception{
-    
-    if(inst == null){
+
+  public static SSCoreConf instGet() throws Exception {
+    if (inst == null) {
       SSServErrReg.regErrThrow(new Exception("conf not set"));
       return null;
     }
-    
     return inst;
   }
-  
+
   public SSFileRepoConf getFilerepoConf() {
     return filerepoConf;
   }
@@ -121,7 +123,7 @@ public class SSCoreConf extends SSCoreConfA{
   public void setSolrConf(SSFileRepoConf solrConf) {
     this.solrConf = solrConf;
   }
-  
+
   public SSFileRepoConf getLocalWorkConf() {
     return localWorkConf;
   }
@@ -133,19 +135,19 @@ public class SSCoreConf extends SSCoreConfA{
   public SSModelUEConf getModelConf() {
     return modelConf;
   }
-  
-  public void setLogConf(SSLogConf logConf){
+
+  public void setLogConf(SSLogConf logConf) {
     this.logConf = logConf;
   }
-    
-  public SSLogConf getLogConf(){
+
+  public SSLogConf getLogConf() {
     return logConf;
   }
 
   public void setModelConf(SSModelUEConf modelConf) {
     this.modelConf = modelConf;
   }
-  
+
   public SSVocConf getVocConf() {
     return vocConf;
   }
@@ -153,15 +155,15 @@ public class SSCoreConf extends SSCoreConfA{
   public void setVocConf(SSVocConf vocConf) {
     this.vocConf = vocConf;
   }
-  
-  public void setBroadcasterConf(SSBroadcasterConf broadcasterConf){
+
+  public void setBroadcasterConf(SSBroadcasterConf broadcasterConf) {
     this.broadcasterConf = broadcasterConf;
   }
-  
-  public SSBroadcasterConf getBroadcasterConf(){
+
+  public SSBroadcasterConf getBroadcasterConf() {
     return broadcasterConf;
   }
-  
+
   public SSDBGraphConf getDbGraphConf() {
     return dbGraphConf;
   }
@@ -169,7 +171,7 @@ public class SSCoreConf extends SSCoreConfA{
   public void setDbGraphConf(SSDBGraphConf dbGraphConf) {
     this.dbGraphConf = dbGraphConf;
   }
-  
+
   public SSDBSQLConf getDbSQLConf() {
     return dbSQLConf;
   }
@@ -177,63 +179,63 @@ public class SSCoreConf extends SSCoreConfA{
   public void setDbSQLConf(SSDBSQLConf dbSQLConf) {
     this.dbSQLConf = dbSQLConf;
   }
-  
-  public void setRecommConf(SSRecommConf recommConf){
+
+  public void setRecommConf(SSRecommConf recommConf) {
     this.recommConf = recommConf;
   }
-  
-  public SSRecommConf getRecommConf(){
+
+  public SSRecommConf getRecommConf() {
     return recommConf;
   }
-  
-  public void setFileSysLocalConf(SSFileSysLocalConf fileSysLocalConf){
+
+  public void setFileSysLocalConf(SSFileSysLocalConf fileSysLocalConf) {
     this.fileSysLocalConf = fileSysLocalConf;
   }
-  
-  public SSFileSysLocalConf getFileSysLocalConf(){
+
+  public SSFileSysLocalConf getFileSysLocalConf() {
     return fileSysLocalConf;
   }
-  
-  public void setEvernoteConf(SSEvernoteConf evernoteConf){
+
+  public void setEvernoteConf(SSEvernoteConf evernoteConf) {
     this.evernoteConf = evernoteConf;
   }
-  
-  public SSEvernoteConf getEvernoteConf(){
+
+  public SSEvernoteConf getEvernoteConf() {
     return this.evernoteConf;
   }
-  
-  public void setI5CloudConf(final SSI5CloudConf i5CloudConf){
+
+  public void setI5CloudConf(final SSI5CloudConf i5CloudConf) {
     this.i5CloudConf = i5CloudConf;
   }
-  
-  public SSI5CloudConf getI5CloudConf(){
+
+  public SSI5CloudConf getI5CloudConf() {
     return this.i5CloudConf;
   }
-  
-  public SSAuthConf getAuthConf(){
+
+  public SSAuthConf getAuthConf() {
     return authConf;
   }
-  
-  public void setAuthConf(SSAuthConf authConf){
+
+  public void setAuthConf(SSAuthConf authConf) {
     this.authConf = authConf;
   }
-  
-  public SSScaffConf getScaffConf(){
+
+  public SSScaffConf getScaffConf() {
     return scaffConf;
   }
-  
-  public void setScaffConf(SSScaffConf scaffConf){
+
+  public void setScaffConf(SSScaffConf scaffConf) {
     this.scaffConf = scaffConf;
   }
-  
-  public SSDataImportConf getDataImportConf(){
+
+  public SSDataImportConf getDataImportConf() {
     return dataImportConf;
   }
-  
-  public void setDataImportConf(SSDataImportConf dataImportConf){
+
+  public void setDataImportConf(SSDataImportConf dataImportConf) {
     this.dataImportConf = dataImportConf;
   }
-  
+
   public SSDataExportConf getDataExportConf() {
     return dataExportConf;
   }
@@ -241,39 +243,39 @@ public class SSCoreConf extends SSCoreConfA{
   public void setDataExportConf(SSDataExportConf dataExportConf) {
     this.dataExportConf = dataExportConf;
   }
-  
-  public SSLOMExtractorConf getLomExtractorConf(){
+
+  public SSLOMExtractorConf getLomExtractorConf() {
     return lomExtractorConf;
   }
-  
-  public void setLomExtractorConf(SSLOMExtractorConf lomExtractorConf){
+
+  public void setLomExtractorConf(SSLOMExtractorConf lomExtractorConf) {
     this.lomExtractorConf = lomExtractorConf;
   }
-  
-  public SSUserConf getUserConf(){
+
+  public SSUserConf getUserConf() {
     return userConf;
   }
-  
-  public void setUserConf(SSUserConf userConf){
+
+  public void setUserConf(SSUserConf userConf) {
     this.userConf = userConf;
   }
-  
-  public SSEntityConf getEntityConf(){
+
+  public SSEntityConf getEntityConf() {
     return entityConf;
   }
-  
-  public void setEntityConf(SSEntityConf entityConf){
+
+  public void setEntityConf(SSEntityConf entityConf) {
     this.entityConf = entityConf;
   }
-  
-  public SSCollConf getCollConf(){
+
+  public SSCollConf getCollConf() {
     return collConf;
   }
-  
-  public void setCollConf(SSCollConf collConf){
+
+  public void setCollConf(SSCollConf collConf) {
     this.collConf = collConf;
   }
-  
+
   public SSLocationConf getLocationConf() {
     return locationConf;
   }
@@ -281,55 +283,55 @@ public class SSCoreConf extends SSCoreConfA{
   public void setLocationConf(SSLocationConf locationConf) {
     this.locationConf = locationConf;
   }
-  
-  public SSUEConf getUeConf(){
+
+  public SSUEConf getUeConf() {
     return ueConf;
   }
-  
-  public void setUeConf(SSUEConf ueConf){
+
+  public void setUeConf(SSUEConf ueConf) {
     this.ueConf = ueConf;
   }
-  
-  public SSRatingConf getRatingConf(){
+
+  public SSRatingConf getRatingConf() {
     return ratingConf;
   }
-  
-  public void setRatingConf(SSRatingConf ratingConf){
+
+  public void setRatingConf(SSRatingConf ratingConf) {
     this.ratingConf = ratingConf;
   }
-  
-  public SSTagConf getTagConf(){
+
+  public SSTagConf getTagConf() {
     return tagConf;
   }
-  
-  public void setTagConf(SSTagConf tagConf){
+
+  public void setTagConf(SSTagConf tagConf) {
     this.tagConf = tagConf;
   }
-  
-  public SSSearchConf getSearchConf(){
+
+  public SSSearchConf getSearchConf() {
     return searchConf;
   }
-  
-  public void setSearchConf(SSSearchConf searchConf){
+
+  public void setSearchConf(SSSearchConf searchConf) {
     this.searchConf = searchConf;
   }
-  
-  public SSDiscConf getDiscConf(){
+
+  public SSDiscConf getDiscConf() {
     return discConf;
   }
-  
-  public void setLearnEpConf(SSLearnEpConf learnEpConf){
+
+  public void setLearnEpConf(SSLearnEpConf learnEpConf) {
     this.learnEpConf = learnEpConf;
   }
-  
-  public SSLearnEpConf getLearnEpConf(){
+
+  public SSLearnEpConf getLearnEpConf() {
     return learnEpConf;
   }
-  
-  public void setDiscConf(SSDiscConf discConf){
+
+  public void setDiscConf(SSDiscConf discConf) {
     this.discConf = discConf;
   }
-  
+
   public SSConf getSsConf() {
     return ssConf;
   }
@@ -346,14 +348,3 @@ public class SSCoreConf extends SSCoreConfA{
     this.jsonLDConf = jsonLDConf;
   }
 }
-
-//  private ExternalsrcConf   extsrcConf      = new ExternalsrcConf   ();
-
-
-//  public ExternalsrcConf getExtsrcConf() {
-//    return extsrcConf;
-//  }
-//
-//  public void setExtsrcConf(ExternalsrcConf extsrcConf) {
-//    this.extsrcConf = extsrcConf;
-//  }

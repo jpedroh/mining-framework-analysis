@@ -1,25 +1,4 @@
-/**
-* Code contributed to the Learning Layers project
-* http://www.learning-layers.eu
-* Development is partly funded by the FP7 Programme of the European Commission under
-* Grant Agreement FP7-ICT-318209.
-* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
-* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
 package at.kc.tugraz.ss.main;
-
 import at.kc.tugraz.socialserver.utils.SSLogU;
 import at.kc.tugraz.socialserver.utils.SSMimeTypeU;
 import at.kc.tugraz.ss.conf.conf.SSCoreConf;
@@ -55,79 +34,58 @@ import at.kc.tugraz.ss.service.tag.service.SSTagServ;
 import at.kc.tugraz.ss.service.user.service.SSUserServ;
 import at.kc.tugraz.ss.service.userevent.service.SSUEServ;
 
-public class SSSInitializer extends SSServImplStartA{
-  
-  public SSSInitializer() throws Exception{
+public class SSSInitializer extends SSServImplStartA {
+  public SSSInitializer() throws Exception {
     super(null);
   }
-  
-  @Override
-  public void run(){
-    
-    try{
-      
-      /**** utils ****/
+
+  @Override public void run() {
+    try {
       SSMimeTypeU.init();
-      SSJSONLDU.init                    (SSCoreConf.instGet().getJsonLDConf().uri);
-
-      /**** local work serv ****/
-      SSLocalWorkServ.inst.initServ     (SSCoreConf.instGet().getLocalWorkConf());
-      
-      /**** vocabulary ****/
-      SSVoc.inst.initServ               (SSCoreConf.instGet().getVocConf());
-      
-      /**** json-ld ****/
-      SSJSONLD.inst.initServ            (SSCoreConf.instGet().getJsonLDConf());
-      
-      /**** db ****/
-      SSDBGraph.inst.initServ           (SSCoreConf.instGet().getDbGraphConf());
-      SSDBSQL.inst.initServ             (SSCoreConf.instGet().getDbSQLConf());
-      
-      /**** entities ****/
-      SSEntityServ.inst.initServ        (SSCoreConf.instGet().getEntityConf());
-      SSUserServ.inst.initServ          (SSCoreConf.instGet().getUserConf());
-      SSCollServ.inst.initServ          (SSCoreConf.instGet().getCollConf());
-      SSUEServ.inst.initServ            (SSCoreConf.instGet().getUeConf());
-      SSRatingServ.inst.initServ        (SSCoreConf.instGet().getRatingConf());
-      SSTagServ.inst.initServ           (SSCoreConf.instGet().getTagConf());
-      SSDiscServ.inst.initServ          (SSCoreConf.instGet().getDiscConf());
-      SSLearnEpServ.inst.initServ       (SSCoreConf.instGet().getLearnEpConf());
-      SSLocationServ.inst.initServ      (SSCoreConf.instGet().getLocationConf());
-      
-      /**** jobs ****/
-      SSSearchServ.inst.initServ        (SSCoreConf.instGet().getSearchConf());
-      SSDataImportServ.inst.initServ    (SSCoreConf.instGet().getDataImportConf());
-      SSDataExportServ.inst.initServ    (SSCoreConf.instGet().getDataExportConf());
-      SSLOMExtractorServ.inst.initServ  (SSCoreConf.instGet().getLomExtractorConf());
-      SSScaffServ.inst.initServ         (SSCoreConf.instGet().getScaffConf());
-      SSAuthServ.inst.initServ          (SSCoreConf.instGet().getAuthConf());
-      SSSolrServ.inst.initServ          (SSCoreConf.instGet().getSolrConf());
-      SSModelUEServ.inst.initServ       (SSCoreConf.instGet().getModelConf());
-      SSBroadcasterServ.inst.initServ   (SSCoreConf.instGet().getBroadcasterConf());
-      SSRecommServ.inst.initServ        (SSCoreConf.instGet().getRecommConf());
-      SSFileSysLocalServ.inst.initServ  (SSCoreConf.instGet().getFileSysLocalConf());
-      SSFilerepoServ.inst.initServ      (SSCoreConf.instGet().getFilerepoConf());
-      SSEvernoteServ.inst.initServ      (SSCoreConf.instGet().getEvernoteConf());
-      SSI5CloudServ.inst.initServ       (SSCoreConf.instGet().getI5CloudConf());
-
-      /**** scheduling task ****/
-      SSModelUEServ.inst.schedule   ();
-      SSFilerepoServ.inst.schedule  ();
-      SSRecommServ.inst.schedule    ();
-      
-    }catch(Exception error1){
+      SSJSONLDU.init(SSCoreConf.instGet().getJsonLDConf().uri);
+      SSLocalWorkServ.inst.initServ(SSCoreConf.instGet().getLocalWorkConf());
+      SSVoc.inst.initServ(SSCoreConf.instGet().getVocConf());
+      SSJSONLD.inst.initServ(SSCoreConf.instGet().getJsonLDConf());
+      SSDBGraph.inst.initServ(SSCoreConf.instGet().getDbGraphConf());
+      SSDBSQL.inst.initServ(SSCoreConf.instGet().getDbSQLConf());
+      SSEntityServ.inst.initServ(SSCoreConf.instGet().getEntityConf());
+      SSUserServ.inst.initServ(SSCoreConf.instGet().getUserConf());
+      SSCollServ.inst.initServ(SSCoreConf.instGet().getCollConf());
+      SSUEServ.inst.initServ(SSCoreConf.instGet().getUeConf());
+      SSRatingServ.inst.initServ(SSCoreConf.instGet().getRatingConf());
+      SSTagServ.inst.initServ(SSCoreConf.instGet().getTagConf());
+      SSDiscServ.inst.initServ(SSCoreConf.instGet().getDiscConf());
+      SSLearnEpServ.inst.initServ(SSCoreConf.instGet().getLearnEpConf());
+      SSLocationServ.inst.initServ(SSCoreConf.instGet().getLocationConf());
+      SSSearchServ.inst.initServ(SSCoreConf.instGet().getSearchConf());
+      SSDataImportServ.inst.initServ(SSCoreConf.instGet().getDataImportConf());
+      SSDataExportServ.inst.initServ(SSCoreConf.instGet().getDataExportConf());
+      SSLOMExtractorServ.inst.initServ(SSCoreConf.instGet().getLomExtractorConf());
+      SSScaffServ.inst.initServ(SSCoreConf.instGet().getScaffConf());
+      SSAuthServ.inst.initServ(SSCoreConf.instGet().getAuthConf());
+      SSSolrServ.inst.initServ(SSCoreConf.instGet().getSolrConf());
+      SSModelUEServ.inst.initServ(SSCoreConf.instGet().getModelConf());
+      SSBroadcasterServ.inst.initServ(SSCoreConf.instGet().getBroadcasterConf());
+      SSRecommServ.inst.initServ(SSCoreConf.instGet().getRecommConf());
+      SSFileSysLocalServ.inst.initServ(SSCoreConf.instGet().getFileSysLocalConf());
+      SSFilerepoServ.inst.initServ(SSCoreConf.instGet().getFilerepoConf());
+      SSEvernoteServ.inst.initServ(SSCoreConf.instGet().getEvernoteConf());
+      SSI5CloudServ.inst.initServ(SSCoreConf.instGet().getI5CloudConf());
+      SSModelUEServ.inst.schedule();
+      SSFilerepoServ.inst.schedule();
+      SSRecommServ.inst.schedule();
+    } catch (Exception error1) {
       SSServErrReg.regErr(error1);
-    }finally{
-      try{
+    } finally {
+      try {
         finalizeImpl();
-      }catch(Exception error2){
+      } catch (Exception error2) {
         SSLogU.err(error2);
       }
     }
   }
-  
-  @Override
-  protected void finalizeImpl() throws Exception{
+
+  @Override protected void finalizeImpl() throws Exception {
     finalizeThread();
   }
 }
