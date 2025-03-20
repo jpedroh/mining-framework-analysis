@@ -59,8 +59,9 @@ public class SpecialCoordinateTransformTest extends BaseCoordinateTransformTest 
         double csNameDest_X = 5996378.71;
         double csNameDest_Y = 10671650.06;
         double tolerance = 0.01;
-        CoordinateReferenceSystem inputCRS = cRSFactory.getCRS("EPSG:4674");
-        CoordinateReferenceSystem outputCRS = cRSFactory.createFromPrj(
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/test/java/org/cts/op/SpecialCoordinateTransformTest.java/left.java
+        CoordinateReferenceSystem inputCRS = createCRS("EPSG:4674");
+        CoordinateReferenceSystem outputCRS = crsf.createFromPrj(
                 "PROJCS[\"SIRGAS 2000 / Brazil Polyconic\",\n"
                 + "    GEOGCS[\"SIRGAS 2000\",\n"
                 + "        DATUM[\"Sistema_de_Referencia_Geocentrico_para_America_del_Sur_2000\",\n"
@@ -80,6 +81,24 @@ public class SpecialCoordinateTransformTest extends BaseCoordinateTransformTest 
                 + "    PARAMETER[\"false_northing\",10000000],\n"
                 + "    UNIT[\"metre\",1,\n"
                 + "        AUTHORITY[\"EPSG\",\"9001\"]]]");
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/test/java/org/cts/op/SpecialCoordinateTransformTest.java/base.java
+        CoordinateReferenceSystem inputCRS = createCRS("EPSG:4674");
+        RegistryManager registryManager = new RegistryManager();
+        Registry registry = registryManager.getRegistry("epsg");
+        Map<String, String> crsParameters = registry.getParameters("29101");
+        // The output CRS is the same as the EPSG:29101, but it uses the ellipsoid
+        // GRS80 instead of the ellipsoid aust_SA. 
+        CoordinateReferenceSystem outputCRS = new ProjectedCRS(new Identifier(ProjectedCRS.class, "SIRGAS 2000 / Brazil Polyconic"),
+                (GeodeticDatum) inputCRS.getDatum(), CRSHelper.getProjection("poly", Ellipsoid.GRS80, crsParameters));
+=======
+        CoordinateReferenceSystem inputCRS = cRSFactory.getCRS("EPSG:4674");
+        Registry registry = cRSFactory.getRegistryManager().getRegistry("epsg");
+        Map<String, String> crsParameters = registry.getParameters("29101");
+        // The output CRS is the same as the EPSG:29101, but it uses the ellipsoid
+        // GRS80 instead of the ellipsoid aust_SA. 
+        CoordinateReferenceSystem outputCRS = new ProjectedCRS(new Identifier(ProjectedCRS.class, "SIRGAS 2000 / Brazil Polyconic"),
+                (GeodeticDatum) inputCRS.getDatum(), CRSHelper.getProjection("poly", Ellipsoid.GRS80, crsParameters));
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/test/java/org/cts/op/SpecialCoordinateTransformTest.java/right.java
         double[] pointSource = new double[]{csNameSrc_X, csNameSrc_Y, 0};
         double[] result = transform((GeodeticCRS) inputCRS, (GeodeticCRS) outputCRS, pointSource);
         double[] pointDest = new double[]{csNameDest_X, csNameDest_Y, 0};

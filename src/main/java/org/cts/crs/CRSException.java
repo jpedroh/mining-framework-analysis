@@ -38,16 +38,16 @@ package org.cts.crs;
 public class CRSException extends Exception {
 
     /**
-     * Build a coordinate reference system exception from a message.
+     * Build a coordinate reference system exception from a message
      *
-     * @param message precise description of this exception
+     * @param message
      */
     public CRSException(String message) {
         super(message);
     }
 
     /**
-     * Build a coordinate reference system exception based on an exception.
+     * Build a coordinate reference system exception based on an exception
      *
      * @param Exception
      */
@@ -56,12 +56,21 @@ public class CRSException extends Exception {
     }
     
     /**
-     * Build a coordinate reference system exception based on a message and
-     * an exception.
-     * 
-     * @param message
-     * @param ex 
-     */
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/crs/CRSException.java/left.java
+         * Build a coordinate reference system exception with a message
+         *
+         * @param message precise description of this exception
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/crs/CRSException.java/base.java
+         * Build a coordinate reference system exception with a message
+         * @param message 
+=======
+         * Build a coordinate reference system exception based on a message and
+         * an exception
+         * 
+         * @param message
+         * @param ex 
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/crs/CRSException.java/right.java
+         */
     public CRSException(String message, Exception ex){
         super(message, ex);
     }

@@ -42,6 +42,9 @@ import org.junit.Test;
  * @author Jules Party
  */
 public class PRJCoordinateTransformationTest extends BaseCoordinateTransformTest {
+    
+    
+    
     @Test
     public void testLAMBEtoLAMB93PRJ() throws Exception {
         //IGN data : POINT (931813.94 1786923.891 2525.68) ID5863
@@ -146,7 +149,7 @@ public class PRJCoordinateTransformationTest extends BaseCoordinateTransformTest
                 + "    UNIT[\"degree\",0.01745329251994328,\n"
                 + "        AUTHORITY[\"EPSG\",\"9122\"]],\n"
                 + "    AUTHORITY[\"EPSG\",\"4302\"]]";
-        CoordinateReferenceSystem srcCRS = cRSFactory.createFromPrj(srcprj);
+        CoordinateReferenceSystem srcCRS = crsf.createFromPrj(srcprj);
         String outprj = "PROJCS[\"Trinidad 1903 / Trinidad Grid\",\n"
                 + "    GEOGCS[\"Trinidad 1903\",\n"
                 + "        DATUM[\"Trinidad_1903\",\n"
@@ -168,7 +171,7 @@ public class PRJCoordinateTransformationTest extends BaseCoordinateTransformTest
                 + "    AUTHORITY[\"EPSG\",\"30200\"],\n"
                 + "    AXIS[\"Easting\",EAST],\n"
                 + "    AXIS[\"Northing\",NORTH]]";
-        CoordinateReferenceSystem outCRS = cRSFactory.createFromPrj(outprj);
+        CoordinateReferenceSystem outCRS = crsf.createFromPrj(outprj);
         double[] result = transform((GeodeticCRS) srcCRS, (GeodeticCRS) outCRS, srcPoint);
         assertTrue(checkEquals2D(srcCRS + " to " + outCRS, result, expectedPoint, 10E-2));
         double[] check = transform((GeodeticCRS) outCRS, (GeodeticCRS) srcCRS, expectedPoint);
@@ -190,7 +193,7 @@ public class PRJCoordinateTransformationTest extends BaseCoordinateTransformTest
                 + "    UNIT[\"degree\",0.01745329251994328,\n"
                 + "        AUTHORITY[\"EPSG\",\"9122\"]],\n"
                 + "    AUTHORITY[\"EPSG\",\"4150\"]]";
-        CoordinateReferenceSystem srcCRS = cRSFactory.createFromPrj(srcprj);
+        CoordinateReferenceSystem srcCRS = crsf.createFromPrj(srcprj);
         String outprj = "PROJCS[\"CH1903+ / LV95\",\n"
                 + "    GEOGCS[\"CH1903+\",\n"
                 + "        DATUM[\"CH1903\",\n"
@@ -216,7 +219,7 @@ public class PRJCoordinateTransformationTest extends BaseCoordinateTransformTest
                 + "    AUTHORITY[\"EPSG\",\"2056\"],\n"
                 + "    AXIS[\"Y\",EAST],\n"
                 + "    AXIS[\"X\",NORTH]]";
-        CoordinateReferenceSystem outCRS = cRSFactory.createFromPrj(outprj);
+        CoordinateReferenceSystem outCRS = crsf.createFromPrj(outprj);
         double[] result = transform((GeodeticCRS) srcCRS, (GeodeticCRS) outCRS, srcPoint);
         assertTrue(checkEquals2D(srcCRS + " to " + outCRS, result, expectedPoint, 10E-2));
         double[] check = transform((GeodeticCRS) outCRS, (GeodeticCRS) srcCRS, expectedPoint);

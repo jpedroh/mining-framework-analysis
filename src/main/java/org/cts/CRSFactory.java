@@ -136,10 +136,25 @@ public class CRSFactory {
     }
 
     /**
-     * Check if the registry name (ie EPSG, IGNF...) is
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/left.java
+     * Check if the registry name (ie EPSG, IGNF...) of the crsCode is
      * supported.
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/base.java
+     * Check if the registry name of the crsCode is supported.
+=======
+     * Check if the registry name is supported.
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/right.java
      *
-     * @param registryName (ex : ESPG, IGNF, ESRI)
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/left.java
+     * @param crsCode ie <code>authorityName:authorityKey</code> (ex
+     * : <code>EPSG:4326</code> or <code>IGNF:LAMBE</code>)
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/base.java
+     * @param crsCode
+     * @return
+=======
+     * @param registryName
+     * @return
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/right.java
      */
     public boolean isRegistrySupported(String registryName) throws RegistryException {
         if (getRegistryManager().contains(registryName.toLowerCase())) {
@@ -226,9 +241,20 @@ public class CRSFactory {
     }
 
     /**
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/left.java
      * Return a list of supported codes according an registryName.
      *
      * @param registryName (ex : EPSG, IGNF, ESRI)
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/base.java
+     * Return a list of supported codes according an registryName
+     * @param registryName
+     * @return 
+=======
+     * Return a list of supported codes according an registryName
+     *
+     * @param registryName
+     * @return
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/CRSFactory.java/right.java
      */
     public Set<String> getSupportedCodes(String registryName) throws RegistryException {
         return getRegistryManager().getRegistry(registryName).getSupportedCodes();

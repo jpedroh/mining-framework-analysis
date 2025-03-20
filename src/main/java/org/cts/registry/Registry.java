@@ -55,9 +55,16 @@ public interface Registry {
 
     /**
      * Return all supported codes for this registry
+<<<<<<< /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/registry/Registry.java/left.java
+     *
+     * @return 
+||||||| /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/registry/Registry.java/base.java
+     * @return  
+=======
      *
      * @return
-     * @throws RegistryException
+     * @throws RegistryException 
+>>>>>>> /usr/src/app/output/irstv/cts/aff9d4952b72683a6e6d25914ffa200148375d0c/src/main/java/org/cts/registry/Registry.java/right.java
      */
     public Set<String> getSupportedCodes() throws RegistryException;
 }
