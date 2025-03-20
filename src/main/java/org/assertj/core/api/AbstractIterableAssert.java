@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Map;
 
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
@@ -138,54 +138,54 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   }
 
   /**
-   * Verifies that the unique element of the {@link Iterable} satifies the given assertions expressed as a {@link Consumer},
-   * if it does not, only the first error is reported, use {@link SoftAssertions} to get all the errors.
+   * Verifies that the unique element of the {@link Iterable} satifies the given assertions expressed as a {@link Consumer}, 
+   * if it does not, only the first error is reported, use {@link SoftAssertions} to get all the errors. 
    * <p>
    * Example:
-   * <pre><code class='java'> List&lt;Jedi&gt; jedis = asList(new Jedi("Yoda", "red"));
-   *
+   * <pre><code class='java'> List&lt;Jedi&gt; jedis = asList(new Jedi("Yoda", "red")); 
+   *     
    * // assertions will pass
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Y"));
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Yoda");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("red");
    * });
-   *
+   * 
    * // assertions will fail
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Vad"));
-   *
-   * // fail as one the assertions is not satisfied
+   * 
+   * // fail as one the assertions is not satisfied  
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Yoda");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("purple");
    * });
-   *
-   * // fail but only report the first error
+   * 
+   * // fail but only report the first error 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Luke");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("green");
    * });
-   *
-   * // fail and reports the errors thanks to Soft assertions
+   * 
+   * // fail and reports the errors thanks to Soft assertions 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   SoftAssertions softly = new SoftAssertions();
    *   softly.assertThat(yoda.getName()).isEqualTo("Luke");
    *   softly.assertThat(yoda.getLightSaberColor()).isEqualTo("green");
    *   softly.assertAll();
    * });
-   *
+   * 
    * // even if the assertion is correct, there are too many jedis !
    * jedis.add(new Jedi("Luke", "green"));
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Yo"));</code></pre>
-   *
+   * 
    * @return {@code this} assertion object.
    * @param elementAssertions the assertions to perform on the unique element.
    * @throws AssertionError if the {@link Iterable} does not have a unique element.
    * @throws AssertionError if the {@link Iterable}'s unique element does not satifies the given assertions.
-   *
+   * 
    * @since 3.5.0
    */
   public void hasOnlyOneElementSatisfying(Consumer<ELEMENT> elementAssertions) {
@@ -912,10 +912,10 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Gimli&quot;, 139, DWARF));
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Aragorn&quot;, 87, MAN);
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Boromir&quot;, 37, MAN));
-   *
+   * 
    * // fellowship has hobbitses, right, my presioussss?
    * assertThat(fellowshipOfTheRing).extracting(TolkienCharacter::getRace).contains(HOBBIT);</code></pre>
-   *
+   * 
    * Note that the order of extracted property/field values is consistent with the iteration order of the Iterable under
    * test, for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted values
    * order.
@@ -944,15 +944,15 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * CartoonCharacter pebbles = new CartoonCharacter("Pebbles Flintstone");
    * CartoonCharacter fred = new CartoonCharacter("Fred Flintstone");
    * fred.getChildren().add(pebbles);
-   *
+   * 
    * List&lt;CartoonCharacter&gt; parents = newArrayList(homer, fred);
    * // check children
    * assertThat(parent).flatExtracting(CartoonCharacter::getChildren)
    *                   .containsOnly(bart, lisa, maggie, pebbles);</code></pre>
-   *
+   * 
    * The order of extracted values is consistent with both the order of the collection itself, as well as the extracted
    * collections.
-   *
+   * 
    * @param extractor the object transforming input object to an {@code Iterable} of desired ones
    * @return a new assertion object whose object under test is the list of values extracted
    * @throws NullPointerException if one of the {@code Iterable}'s element is null.
@@ -972,26 +972,26 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * Extract multiple values from each {@code Iterable}'s element according to the given {@code Extractor}s
    * and concatenate/flatten the extracted values in a list that is used as the new object under test.
    * <p>
-   * If extracted values were not flattened, instead of a simple list like (given 2 extractors) :
+   * If extracted values were not flattened, instead of a simple list like (given 2 extractors) : 
    * <pre>element1.value1, element1.value2, element2.value1, element2.value2, ...  </pre>
-   * we would get a list of list like :
+   * we would get a list of list like : 
    * <pre>list(element1.value1, element1.value2), list(element2.value1, element2.value2), ...  </pre>
    * <p>
    * Code example:
    * <pre><code class='java'> // fellowshipOfTheRing is a List&lt;TolkienCharacter&gt;
-   *
-   * // values are extracted in order and flattened : age1, name1, age2, name2, age3 ...
-   * assertThat(fellowshipOfTheRing).flatExtracting(TolkienCharacter::getAge,
+   * 
+   * // values are extracted in order and flattened : age1, name1, age2, name2, age3 ...  
+   * assertThat(fellowshipOfTheRing).flatExtracting(TolkienCharacter::getAge, 
    *                                                TolkienCharacter::getName)
-   *                                .contains(33 ,"Frodo",
+   *                                .contains(33 ,"Frodo", 
    *                                          1000, "Legolas",
    *                                          87, "Aragorn");</code></pre>
-   *
-   * The resulting extracted values list is ordered by {@code Iterable}'s element first and then extracted values,
+   * 
+   * The resulting extracted values list is ordered by {@code Iterable}'s element first and then extracted values, 
    * this is why is in the example that age values come before names.
-   *
+   * 
    * @param extractors all the extractors to apply on each actual {@code Iterable}'s elements
-   * @return a new assertion object whose object under test is a flattened list of all extracted values.
+   * @return a new assertion object whose object under test is a flattened list of all extracted values. 
    */
   @SafeVarargs
   public final ListAssert<Object> flatExtracting(Extractor<? super ELEMENT, ? extends Object>... extractors) {
@@ -1070,7 +1070,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
-   *
+   * 
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Frodo&quot;, 33, HOBBIT));
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Sam&quot;, 38, HOBBIT));
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Gandalf&quot;, 2020, MAIA));
@@ -1079,7 +1079,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Gimli&quot;, 139, DWARF));
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Aragorn&quot;, 87, MAN);
    * fellowshipOfTheRing.add(new TolkienCharacter(&quot;Boromir&quot;, 37, MAN));
-   *
+   * 
    * // let's verify 'name', 'age' and Race of some TolkienCharacter in fellowshipOfTheRing :
    * assertThat(fellowshipOfTheRing).extracting(TolkienCharacter::getName,
    *                                            character -> character.getAge(),
@@ -1098,7 +1098,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * <p>
    * Note that the order of the extracted tuples list is consistent with the iteration order of the Iterable under test,
    * for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted tuples order.
-   *
+   * 
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the list of Tuples containing the extracted values.
    */
@@ -1120,12 +1120,12 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   }
 
   /**
-   * Extract the given property/field values from each {@code Iterable}'s element and
+   * Extract the given property/field values from each {@code Iterable}'s element and 
    * flatten the extracted values in a list that is used as the new object under test.
    * <p>
-   * Given 2 properties, if the extracted values were not flattened, instead having a simple list like :
+   * Given 2 properties, if the extracted values were not flattened, instead having a simple list like : 
    * <pre>element1.value1, element1.value2, element2.value1, element2.value2, ...  </pre>
-   * ... we would get a list of list :
+   * ... we would get a list of list : 
    * <pre>list(element1.value1, element1.value2), list(element2.value1, element2.value2), ...  </pre>
    * <p>
    * Code example:
@@ -1572,9 +1572,9 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
    *                                .containsOnly(aragorn);</code></pre>
-   *
+   * 
    * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
-   *
+   * 
    * @param propertyOrFieldName the name of the property or field to read
    * @param expectedValue the value to compare element's property or field with
    * @return a new assertion object with the filtered iterable under test
@@ -1621,7 +1621,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * elements.
    * <p>
    * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
-   *
+   * 
    * @param propertyOrFieldName the name of the property or field to read
    * @return a new assertion object with the filtered iterable under test
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
@@ -1688,9 +1688,9 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
    *                                .containsOnly(aragorn);</code></pre>
-   *
+   * 
    * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
-   *
+   * 
    * @param propertyOrFieldName the name of the property or field to read
    * @param filterOperator the filter operator to apply
    * @return a new assertion object with the filtered iterable under test
@@ -1931,16 +1931,16 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * Filter the iterable under test keeping only elements matching the given {@link Predicate}.
    * <p>
    * Example : check old employees whose age > 100:
-   *
+   * 
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
-   *
+   * 
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan);
-   *
+   * 
    * assertThat(employees).filteredOn(employee -> employee.getAge() > 100)
    *                      .containsOnly(yoda, obiwan);</code></pre>
-   *
+   * 
    * @param predicate the filter predicate
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
@@ -2131,22 +2131,22 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * Return an {@code Assert} object that allows to perform assertions on the size of the {@link Iterable} under test.
    * <p>
-   * Once this method is called, the object under test is no more the initial {@link Iterable} but its size,
-   * to perform assertions on the initial {@link Iterable}, call {@link AbstractIterableSizeAssert#returnToIterable()}.
+   * Once this method is called, the object under test is no more the initial {@link Iterable} but its size, 
+   * to perform assertions on the initial {@link Iterable}, call {@link AbstractIterableSizeAssert#returnToIterable()}. 
    * <p>
    * Example:
    * <pre><code class='java'> Iterable&lt;Ring&gt; elvesRings = newArrayList(vilya, nenya, narya);
-   *
+   * 
    * // assertion will pass:
-   * assertThat(elvesRings).size().isGreaterThan(1)
-   *                              .isLessThanOrEqualTo(3)
-   *                       .returnToIterable().contains(narya)
+   * assertThat(elvesRings).size().isGreaterThan(1)                
+   *                              .isLessThanOrEqualTo(3)          
+   *                       .returnToIterable().contains(narya)       
    *                                          .doesNotContain(oneRing);
-   *
+   * 
    * // assertion will fail:
    * assertThat(elvesRings).size().isGreaterThan(3);</code></pre>
-   *
-   * @return AbstractIterableSizeAssert built with the {@code Iterable}'s size.
+   *   
+   * @return AbstractIterableSizeAssert built with the {@code Iterable}'s size. 
    * @throws NullPointerException if the given {@code Iterable} is {@code null}.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })

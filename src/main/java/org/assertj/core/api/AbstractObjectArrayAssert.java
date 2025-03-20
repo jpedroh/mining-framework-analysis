@@ -28,10 +28,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.Map;
 
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
@@ -78,7 +78,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   ObjectArrays arrays = ObjectArrays.instance();
   @VisibleForTesting
   Iterables iterables = Iterables.instance();
-
   private Map<String, Comparator<?>> comparatorsForElementPropertyOrFieldNames = new HashMap<>();
   private Map<Class<?>, Comparator<?>> comparatorsForElementPropertyOrFieldTypes = new HashMap<>();
 
@@ -251,54 +250,54 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /**
-   * Verifies that the unique element of the array satifies the given assertions expressed as a {@link Consumer},
-   * if it does not, only the first error is reported, use {@link SoftAssertions} to get all the errors.
+   * Verifies that the unique element of the array satifies the given assertions expressed as a {@link Consumer}, 
+   * if it does not, only the first error is reported, use {@link SoftAssertions} to get all the errors. 
    * <p>
    * Example:
-   * <pre><code class='java'> Jedi[] jedis = array(new Jedi("Yoda", "red"));
-   *
+   * <pre><code class='java'> Jedi[] jedis = array(new Jedi("Yoda", "red")); 
+   *     
    * // assertions will pass
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Y"));
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Yoda");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("red");
    * });
-   *
+   * 
    * // assertions will fail
-   *
+   * 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Vad"));
-   *
-   * // fail as one the assertions is not satisfied
+   * 
+   * // fail as one the assertions is not satisfied  
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Yoda");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("purple");
    * });
-   *
-   * // fail but only report the first error
+   * 
+   * // fail but only report the first error 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   assertThat(yoda.getName()).isEqualTo("Luke");
    *   assertThat(yoda.getLightSaberColor()).isEqualTo("green");
    * });
-   *
-   * // fail and reports the errors thanks to Soft assertions
+   * 
+   * // fail and reports the errors thanks to Soft assertions 
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> {
    *   SoftAssertions softly = new SoftAssertions();
    *   softly.assertThat(yoda.getName()).isEqualTo("Luke");
    *   softly.assertThat(yoda.getLightSaberColor()).isEqualTo("green");
    *   softly.assertAll();
    * });
-   *
+   * 
    * // even if the assertion is correct, there are too many jedis !
    * jedis = array(new Jedi("Yoda", "red"), new Jedi("Luke", "green"));
    * assertThat(jedis).hasOnlyOneElementSatisfying(yoda -> assertThat(yoda.getName()).startsWith("Yo"));</code></pre>
-   *
+   * 
    * @return {@code this} assertion object.
    * @param elementAssertions the assertions to perform on the unique element.
    * @throws AssertionError if the array does not have a unique element.
    * @throws AssertionError if the array's unique element does not satifies the given assertions.
-   *
+   * 
    * @since 3.5.0
    */
   public void hasOnlyOneElementSatisfying(Consumer<T> elementAssertions) {
@@ -1626,7 +1625,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * // fellowship has hobbitses, right, my presioussss?
    * assertThat(fellowshipOfTheRing).extracting(TolkienCharacter::getRace).contains(HOBBIT);</code></pre>
-   *
+   * 
    * Note that the order of extracted property/field values is consistent with the iteration order of the Iterable under
    * test, for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted values
    * order.
@@ -1666,7 +1665,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *   new TolkienCharacter(&quot;Aragorn&quot;, 87, MAN,
    *   new TolkienCharacter(&quot;Boromir&quot;, 37, MAN)
    * };
-   *
+   * 
    * // let's verify 'name', 'age' and Race of some TolkienCharacter in fellowshipOfTheRing :
    * assertThat(fellowshipOfTheRing).extracting(TolkienCharacter::getName,
    *                                            character -> character.getAge(),
@@ -1685,7 +1684,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * <p>
    * Note that the order of the extracted tuples list is consistent with the iteration order of the array under test,
    * for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted tuples order.
-   *
+   * 
    * @param extractors the extractor functions to extract a value from an element of the array under test.
    * @return a new assertion object whose object under test is the array of Tuples containing the extracted values.
    */
@@ -1703,7 +1702,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
     Tuple[] tuples = stream(actual).map(tupleExtractor).toArray(size -> new Tuple[size]);
     return new ObjectArrayAssert<Tuple>(tuples);
   }
-
+  
   /**
    * Extract the Iterable values from arrays elements under test by applying an Iterable extracting function on them
    * and concatenating the result lists into an array which becomes the new object under test.
@@ -1720,7 +1719,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * CartoonCharacter pebbles = new CartoonCharacter("Pebbles Flintstone");
    * CartoonCharacter fred = new CartoonCharacter("Fred Flintstone");
    * fred.getChildren().add(pebbles);
-   *
+   * 
    * CartoonCharacter[] parents = new CartoonCharacter[] { homer, fred };
    * // check children
    * assertThat(parents).flatExtracting(CartoonCharacter::getChildren)
@@ -2138,16 +2137,16 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * Filter the iterable under test keeping only elements matching the given {@link Predicate}.
    * <p>
    * Example : check old employees whose age > 100:
-   *
+   * 
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
-   *
+   * 
    * Employee[] employees = new Employee[] { yoda, luke, obiwan };
-   *
+   * 
    * assertThat(employees).filteredOn(employee -> employee.getAge() > 100)
    *                      .containsOnly(yoda, obiwan);</code></pre>
-   *
+   * 
    * @param predicate the filter predicate
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
@@ -2167,10 +2166,10 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * // assertion will pass
    * assertThat(abc).allMatch(s -&gt; s.length() == 1);
-   *
+   * 
    * // assertion will fail
    * assertThat(abcc).allMatch(s -&gt; s.length() == 1);</code></pre>
-   *
+   * 
    * Note that you can achieve the same result with {@link #are(Condition) are(Condition)} or {@link #have(Condition) have(Condition)}.
    *
    * @param predicate the given {@link Predicate}.
