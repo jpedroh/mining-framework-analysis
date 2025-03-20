@@ -33,14 +33,19 @@ public class TimeTracking {
 	private String timeSpent = null;
 	private Integer originalEstimateSeconds = null;
 	private Integer remainingEstimateSeconds = null;
+<<<<<<< /usr/src/app/output/rcarz/jira-client/b3dcbe8462805ea4fb8d7eee0a8cd312d69c50d3/src/main/java/net/rcarz/jiraclient/TimeTracking.java/left.java
 	private Integer timeSpentSeconds = null;
+||||||| /usr/src/app/output/rcarz/jira-client/b3dcbe8462805ea4fb8d7eee0a8cd312d69c50d3/src/main/java/net/rcarz/jiraclient/TimeTracking.java/base.java
+=======
+	private int timeSpentSeconds = 0;
+>>>>>>> /usr/src/app/output/rcarz/jira-client/b3dcbe8462805ea4fb8d7eee0a8cd312d69c50d3/src/main/java/net/rcarz/jiraclient/TimeTracking.java/right.java
 
-	/**
-	 * Creates a time tracking structure from a JSON payload.
-	 * 
-	 * @param json
-	 *            JSON payload
-	 */
+    /**
+ * Creates a time tracking structure from a JSON payload.
+ * 
+ * @param json
+ *            JSON payload
+ */
 	protected TimeTracking(JSONObject json) {
 		Map<?, ?> map = json;
 
