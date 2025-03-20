@@ -206,14 +206,41 @@ public class SubnetUtils {
         public boolean isInRange(String address) { return false; }
 
         /**
+<<<<<<< /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/left.java
          * Returns true if the parameter <code>address</code> is in the
          * range of usable endpoint addresses for this subnet. This excludes the
          * network and broadcast addresses if the address is IPv4 address.
          *
+||||||| /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/base.java
+         *
+=======
+         * Returns true if the parameter <code>address</code> is in the
+         * range of usable endpoint addresses for this subnet. This excludes the
+         * network and broadcast addresses.
+>>>>>>> /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/right.java
          * @param address the address to check
          * @return true if it is in range
          */
+<<<<<<< /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/left.java
         public boolean isInRange(int address) { return false; }
+||||||| /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/base.java
+        public boolean isInRange(int address) {
+            long addLong = address & UNSIGNED_INT_MASK;
+            long lowLong = low() & UNSIGNED_INT_MASK;
+            long highLong = high() & UNSIGNED_INT_MASK;
+            return addLong >= lowLong && addLong <= highLong;
+        }
+=======
+        public boolean isInRange(int address) {
+            if (address == 0) { // cannot ever be in range; rejecting now avoids problems with CIDR/31,32
+                return false;
+            }
+            long addLong = address & UNSIGNED_INT_MASK;
+            long lowLong = low() & UNSIGNED_INT_MASK;
+            long highLong = high() & UNSIGNED_INT_MASK;
+            return addLong >= lowLong && addLong <= highLong;
+        }
+>>>>>>> /usr/src/app/output/apache/commons-net/7d74f5a585f0f7ac528bb2b78d5cd499facf1da3/src/main/java/org/apache/commons/net/util/SubnetUtils.java/right.java
 
         /**
          * Returns true if the parameter <code>address</code> is in the
