@@ -3,6 +3,12 @@ package com.github.pires.obd.commands.control;
 import com.github.pires.obd.commands.PersistentCommand;
 import com.github.pires.obd.enums.AvailableCommandNames;
 
+/**
+ * <p>VinCommand class.</p>
+ *
+ * @author pires
+ * @version $Id: $Id
+ */
 public class VinCommand extends PersistentCommand {
 
     String vin = "";
@@ -23,9 +29,7 @@ public class VinCommand extends PersistentCommand {
         super(other);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void performCalculations() {
         final String result = getResult();
@@ -39,33 +43,25 @@ public class VinCommand extends PersistentCommand {
         vin = hexToString.replaceAll("[\u0000-\u001f]", "");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getFormattedResult() {
         return String.valueOf(vin);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getName() {
         return AvailableCommandNames.VIN.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getCalculatedResult() {
         return String.valueOf(vin);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void fillBuffer() {
     }
