@@ -1,25 +1,5 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy portugal (PT Pack).
- *
- * billy portugal (PT Pack) is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy portugal (PT Pack) is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy portugal (PT Pack). If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.portugal.util;
-
 import java.io.InputStream;
-
 import com.google.inject.Injector;
 import com.premiumminds.billy.core.services.UID;
 import com.premiumminds.billy.core.services.builders.impl.BuilderManager;
@@ -39,57 +19,51 @@ import com.premiumminds.billy.portugal.services.export.pdf.simpleinvoice.PTSimpl
 import com.premiumminds.billy.portugal.services.persistence.PTSimpleInvoicePersistenceService;
 
 public class SimpleInvoices {
+  private final Injector injector;
 
-    private final Injector injector;
-    private final PTSimpleInvoicePersistenceService persistenceService;
-    private final DocumentIssuingService issuingService;
-    private final ExportService exportService;
+  private final PTSimpleInvoicePersistenceService persistenceService;
 
-    public SimpleInvoices(Injector injector) {
-        this.injector = injector;
-        this.persistenceService = this.getInstance(PTSimpleInvoicePersistenceService.class);
-        this.issuingService = injector.getInstance(DocumentIssuingService.class);
-        this.issuingService.addHandler(PTSimpleInvoiceEntity.class,
-                this.injector.getInstance(PTSimpleInvoiceIssuingHandler.class));
-        this.exportService = this.getInstance(ExportService.class);
+  private final DocumentIssuingService issuingService;
 
-        this.exportService.addDataExtractor(PTSimpleInvoiceData.class,
-                this.getInstance(PTSimpleInvoiceDataExtractor.class));
-        this.exportService.addTransformerMapper(PTSimpleInvoicePDFExportRequest.class,
-                PTSimpleInvoicePDFFOPTransformer.class);
-    }
+  private final ExportService exportService;
 
-    public PTSimpleInvoice.Builder builder() {
-        return this.getInstance(PTSimpleInvoice.Builder.class);
-    }
+  public SimpleInvoices(Injector injector) {
+    this.injector = injector;
+    this.persistenceService = this.getInstance(PTSimpleInvoicePersistenceService.class);
+    this.issuingService = injector.getInstance(DocumentIssuingService.class);
+    this.issuingService.addHandler(PTSimpleInvoiceEntity.class, this.injector.getInstance(PTSimpleInvoiceIssuingHandler.class));
+    this.exportService = this.getInstance(ExportService.class);
+    this.exportService.addDataExtractor(PTSimpleInvoiceData.class, this.getInstance(PTSimpleInvoiceDataExtractor.class));
+    this.exportService.addTransformerMapper(PTSimpleInvoicePDFExportRequest.class, PTSimpleInvoicePDFFOPTransformer.class);
+  }
 
-    public PTSimpleInvoice.Builder builder(PTSimpleInvoice customer) {
-        PTSimpleInvoice.Builder builder = this.getInstance(PTSimpleInvoice.Builder.class);
-        BuilderManager.setTypeInstance(builder, customer);
-        return builder;
-    }
+  public PTSimpleInvoice.Builder builder() {
+    return this.getInstance(PTSimpleInvoice.Builder.class);
+  }
 
-    public PTSimpleInvoicePersistenceService persistence() {
-        return this.persistenceService;
-    }
+  public PTSimpleInvoice.Builder builder(PTSimpleInvoice customer) {
+    PTSimpleInvoice.Builder builder = this.getInstance(PTSimpleInvoice.Builder.class);
+    BuilderManager.setTypeInstance(builder, customer);
+    return builder;
+  }
 
-    public PTSimpleInvoice issue(PTSimpleInvoice.Builder builder, PTIssuingParams params)
-            throws DocumentIssuingException {
-        return this.issuingService.issue(builder, params);
-    }
+  public PTSimpleInvoicePersistenceService persistence() {
+    return this.persistenceService;
+  }
 
-    public InputStream pdfExport(PTSimpleInvoicePDFExportRequest request) throws ExportServiceException {
-        return this.exportService.exportToStream(request);
-    }
+  public PTSimpleInvoice issue(PTSimpleInvoice.Builder builder, PTIssuingParams params) throws DocumentIssuingException {
+    return this.issuingService.issue(builder, params);
+  }
 
-    public <O> void pdfExport(UID uidDoc, BillyExportTransformer<PTSimpleInvoiceData, O> dataTransformer, O output)
-            throws ExportServiceException {
+  public InputStream pdfExport(PTSimpleInvoicePDFExportRequest request) throws ExportServiceException {
+    return this.exportService.exportToStream(request);
+  }
 
-        this.exportService.export(uidDoc, dataTransformer, output);
-    }
+  public <O extends java.lang.Object> void pdfExport(UID uidDoc, BillyExportTransformer<PTSimpleInvoiceData, O> dataTransformer, O output) throws ExportServiceException {
+    this.exportService.export(uidDoc, dataTransformer, output);
+  }
 
-    private <T> T getInstance(Class<T> clazz) {
-        return this.injector.getInstance(clazz);
-    }
-
+  private <T extends java.lang.Object> T getInstance(Class<T> clazz) {
+    return this.injector.getInstance(clazz);
+  }
 }

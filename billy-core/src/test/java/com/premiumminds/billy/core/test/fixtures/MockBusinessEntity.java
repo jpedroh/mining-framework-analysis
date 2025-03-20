@@ -1,26 +1,6 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy core.
- *
- * billy core is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy core is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy core. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.core.test.fixtures;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import com.premiumminds.billy.core.persistence.entities.AddressEntity;
 import com.premiumminds.billy.core.persistence.entities.ApplicationEntity;
 import com.premiumminds.billy.core.persistence.entities.BusinessEntity;
@@ -31,128 +11,112 @@ import com.premiumminds.billy.core.services.entities.Contact;
 import com.premiumminds.billy.core.services.entities.Context;
 
 public class MockBusinessEntity extends MockBaseEntity implements BusinessEntity {
+  private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+  public ContextEntity operationalContext;
 
-    public ContextEntity operationalContext;
-    public String taxId;
-    public String name;
-    public String commercialName;
-    public AddressEntity address;
-    public AddressEntity billingAddress;
-    public AddressEntity shippingAddress;
-    public ContactEntity mainContact;
-    public List<ContactEntity> contacts;
-    public String website;
-    public List<ApplicationEntity> applications;
+  public String taxId;
 
-    public MockBusinessEntity() {
-        this.contacts = new ArrayList<>();
-        this.applications = new ArrayList<>();
-    }
+  public String name;
 
-    @Override
-    public Context getOperationalContext() {
-        return this.operationalContext;
-    }
+  public String commercialName;
 
-    @Override
-    public String getFinancialID() {
-        return this.taxId;
-    }
+  public AddressEntity address;
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+  public AddressEntity billingAddress;
 
-    @Override
-    public String getCommercialName() {
-        return this.commercialName;
-    }
+  public AddressEntity shippingAddress;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Address getAddress() {
-        return this.address;
-    }
+  public ContactEntity mainContact;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Address getBillingAddress() {
-        return this.billingAddress;
-    }
+  public List<ContactEntity> contacts;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Address getShippingAddress() {
-        return this.shippingAddress;
-    }
+  public String website;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Contact getMainContact() {
-        return this.mainContact;
-    }
+  public List<ApplicationEntity> applications;
 
-    @Override
-    public String getWebsiteAddress() {
-        return this.website;
-    }
+  public MockBusinessEntity() {
+    this.contacts = new ArrayList<>();
+    this.applications = new ArrayList<>();
+  }
 
-    @Override
-    public <T extends ContextEntity> void setOperationalContext(T context) {
-        this.operationalContext = context;
-    }
+  @Override public Context getOperationalContext() {
+    return this.operationalContext;
+  }
 
-    @Override
-    public void setFinancialID(String id) {
-        this.taxId = id;
-    }
+  @Override public String getFinancialID() {
+    return this.taxId;
+  }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Override public String getName() {
+    return this.name;
+  }
 
-    @Override
-    public void setCommercialName(String name) {
-        this.commercialName = name;
-    }
+  @Override public String getCommercialName() {
+    return this.commercialName;
+  }
 
-    @Override
-    public <T extends AddressEntity> void setAddress(T address) {
-        this.address = address;
-    }
+  @SuppressWarnings(value = { "unchecked" }) @Override public Address getAddress() {
+    return this.address;
+  }
 
-    @Override
-    public <T extends AddressEntity> void setBillingAddress(T address) {
-        this.billingAddress = address;
-    }
+  @SuppressWarnings(value = { "unchecked" }) @Override public Address getBillingAddress() {
+    return this.billingAddress;
+  }
 
-    @Override
-    public <T extends AddressEntity> void setShippingAddress(T address) {
-        this.shippingAddress = address;
-    }
+  @SuppressWarnings(value = { "unchecked" }) @Override public Address getShippingAddress() {
+    return this.shippingAddress;
+  }
 
-    @Override
-    public void setWebsiteAddress(String website) {
-        this.website = website;
-    }
+  @SuppressWarnings(value = { "unchecked" }) @Override public Contact getMainContact() {
+    return this.mainContact;
+  }
 
-    @Override
-    public List<ContactEntity> getContacts() {
-        return this.contacts;
-    }
+  @Override public String getWebsiteAddress() {
+    return this.website;
+  }
 
-    @Override
-    public <T extends ContactEntity> void setMainContact(T contact) {
-        this.mainContact = contact;
-    }
+  @Override public <T extends ContextEntity> void setOperationalContext(T context) {
+    this.operationalContext = context;
+  }
 
-    @Override
-    public List<ApplicationEntity> getApplications() {
-        return this.applications;
-    }
+  @Override public void setFinancialID(String id) {
+    this.taxId = id;
+  }
 
+  @Override public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override public void setCommercialName(String name) {
+    this.commercialName = name;
+  }
+
+  @Override public <T extends AddressEntity> void setAddress(T address) {
+    this.address = address;
+  }
+
+  @Override public <T extends AddressEntity> void setBillingAddress(T address) {
+    this.billingAddress = address;
+  }
+
+  @Override public <T extends AddressEntity> void setShippingAddress(T address) {
+    this.shippingAddress = address;
+  }
+
+  @Override public void setWebsiteAddress(String website) {
+    this.website = website;
+  }
+
+  @Override public List<ContactEntity> getContacts() {
+    return this.contacts;
+  }
+
+  @Override public <T extends ContactEntity> void setMainContact(T contact) {
+    this.mainContact = contact;
+  }
+
+  @Override public List<ApplicationEntity> getApplications() {
+    return this.applications;
+  }
 }

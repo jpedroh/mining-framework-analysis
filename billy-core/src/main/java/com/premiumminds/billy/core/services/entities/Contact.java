@@ -1,25 +1,5 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy core.
- *
- * billy core is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy core is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy core. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.core.services.entities;
-
 import javax.inject.Inject;
-
 import com.premiumminds.billy.core.persistence.dao.DAOContact;
 import com.premiumminds.billy.core.services.builders.impl.ContactBuilderImpl;
 
@@ -29,25 +9,21 @@ import com.premiumminds.billy.core.services.builders.impl.ContactBuilderImpl;
  *         The Billy services entity for a contact.
  */
 public interface Contact extends Entity {
-
-    public static class Builder extends ContactBuilderImpl<Builder, Contact> {
-
-        @Inject
-        public Builder(DAOContact daoContact) {
-            super(daoContact);
-        }
+  public static class Builder extends ContactBuilderImpl<Builder, Contact> {
+    @Inject public Builder(DAOContact daoContact) {
+      super(daoContact);
     }
+  }
 
-    public String getName();
+  public String getName();
 
-    public String getTelephone();
+  public String getTelephone();
 
-    public String getMobile();
+  public String getMobile();
 
-    public String getFax();
+  public String getFax();
 
-    public String getEmail();
+  public String getEmail();
 
-    public String getWebsite();
-
+  public String getWebsite();
 }

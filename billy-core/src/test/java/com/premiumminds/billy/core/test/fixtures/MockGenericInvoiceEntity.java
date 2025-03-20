@@ -1,29 +1,9 @@
-/**
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy core.
- *
- * billy core is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy core is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy core. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.core.test.fixtures;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-
 import com.premiumminds.billy.core.persistence.entities.CustomerEntity;
 import com.premiumminds.billy.core.persistence.entities.GenericInvoiceEntity;
 import com.premiumminds.billy.core.persistence.entities.ShippingPointEntity;
@@ -36,330 +16,301 @@ import com.premiumminds.billy.core.services.entities.Supplier;
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoiceEntry;
 
 public class MockGenericInvoiceEntity extends MockBaseEntity implements GenericInvoiceEntity {
+  private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+  public String number;
 
-    public String number;
-    public int scale;
-    public String series;
-    public Integer seriesNumber;
-    public Business business;
-    public CustomerEntity customer;
-    public SupplierEntity supplier;
-    public String officeNumber;
-    public Date date;
-    public BigDecimal amountWithTax;
-    public BigDecimal amountWithoutTax;
-    public BigDecimal taxAmount;
-    public BigDecimal discountsAmount;
-    public ShippingPointEntity shippingOrigin;
-    public ShippingPointEntity shippingDestination;
-    public String paymentTerms;
-    public Boolean selfBilled;
-    public Boolean cashVATEndorser;
-    public Boolean thirdPartyBilled;
-    public String sourceId;
-    public Date generalLedgerDate;
-    public String batchId;
-    public String transactionsId;
-    public List<String> receiptNumbers;
-    public List<GenericInvoiceEntry> entries;
-    public Currency currency;
-    public String settlementDescription;
-    public BigDecimal settlementDiscount;
-    public Date settlementDate;
-    public CreditOrDebit creditOrDebit;
-    public List<Payment> payments;
+  public int scale;
 
-    public MockGenericInvoiceEntity() {
-        this.entries = new ArrayList<>();
-        this.receiptNumbers = new ArrayList<>();
-        this.payments = new ArrayList<>();
-    }
+  public String series;
 
-    @Override
-    public String getNumber() {
-        return this.number;
-    }
+  public Integer seriesNumber;
 
-    @Override
-    public Business getBusiness() {
-        return this.business;
-    }
+  public Business business;
 
-    @Override
-    public Customer getCustomer() {
-        return this.customer;
-    }
+  public CustomerEntity customer;
 
-    @Override
-    public Supplier getSupplier() {
-        return this.supplier;
-    }
+  public SupplierEntity supplier;
 
-    @Override
-    public String getOfficeNumber() {
-        return this.officeNumber;
-    }
+  public String officeNumber;
 
-    @Override
-    public Date getDate() {
-        return this.date;
-    }
+  public Date date;
 
-    @Override
-    public BigDecimal getAmountWithTax() {
-        return this.amountWithTax;
-    }
+  public BigDecimal amountWithTax;
 
-    @Override
-    public BigDecimal getAmountWithoutTax() {
-        return this.amountWithoutTax;
-    }
+  public BigDecimal amountWithoutTax;
 
-    @Override
-    public BigDecimal getTaxAmount() {
-        return this.taxAmount;
-    }
+  public BigDecimal taxAmount;
 
-    @Override
-    public BigDecimal getDiscountsAmount() {
-        return this.discountsAmount;
-    }
+  public BigDecimal discountsAmount;
 
-    @Override
-    public ShippingPoint getShippingOrigin() {
-        return this.shippingOrigin;
-    }
+  public ShippingPointEntity shippingOrigin;
 
-    @Override
-    public ShippingPoint getShippingDestination() {
-        return this.shippingDestination;
-    }
+  public ShippingPointEntity shippingDestination;
 
-    @Override
-    public String getPaymentTerms() {
-        return this.paymentTerms;
-    }
+  public String paymentTerms;
 
-    @Override
-    public Boolean isSelfBilled() {
-        return this.selfBilled;
-    }
+  public Boolean selfBilled;
 
-    @Override
-    public String getSourceId() {
-        return this.sourceId;
-    }
+  public Boolean cashVATEndorser;
 
-    @Override
-    public Date getGeneralLedgerDate() {
-        return this.generalLedgerDate;
-    }
+  public Boolean thirdPartyBilled;
 
-    @Override
-    public String getBatchId() {
-        return this.batchId;
-    }
+  public String sourceId;
 
-    @Override
-    public String getTransactionId() {
-        return this.transactionsId;
-    }
+  public Date generalLedgerDate;
 
-    @Override
-    public Currency getCurrency() {
-        return this.currency;
-    }
+  public String batchId;
 
-    @Override
-    public String getSettlementDescription() {
-        return this.settlementDescription;
-    }
+  public String transactionsId;
 
-    @Override
-    public BigDecimal getSettlementDiscount() {
-        return this.settlementDiscount;
-    }
+  public List<String> receiptNumbers;
 
-    @Override
-    public Date getSettlementDate() {
-        return this.settlementDate;
-    }
+  public List<GenericInvoiceEntry> entries;
 
-    @Override
-    public CreditOrDebit getCreditOrDebit() {
-        return this.creditOrDebit;
-    }
+  public Currency currency;
 
-    @Override
-    public Integer getScale() {
-        return this.scale;
-    }
+  public String settlementDescription;
 
-    @Override
-    public void setScale(Integer scale) {
-        this.scale = scale;
-    }
+  public BigDecimal settlementDiscount;
 
-    @Override
-    public void setNumber(String number) {
-        this.number = number;
-    }
+  public Date settlementDate;
 
-    @Override
-    public <T extends Business> void setBusiness(T business) {
-        this.business = business;
-    }
+  public CreditOrDebit creditOrDebit;
 
-    @Override
-    public <T extends CustomerEntity> void setCustomer(T customer) {
-        this.customer = customer;
-    }
+  public List<Payment> payments;
 
-    @Override
-    public <T extends SupplierEntity> void setSupplier(T supplier) {
-        this.supplier = supplier;
-    }
+  public MockGenericInvoiceEntity() {
+    this.entries = new ArrayList<>();
+    this.receiptNumbers = new ArrayList<>();
+    this.payments = new ArrayList<>();
+  }
 
-    @Override
-    public void setOfficeNumber(String number) {
-        this.officeNumber = number;
-    }
+  @Override public String getNumber() {
+    return this.number;
+  }
 
-    @Override
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  @Override public Business getBusiness() {
+    return this.business;
+  }
 
-    @Override
-    public void setAmountWithTax(BigDecimal amount) {
-        this.amountWithTax = amount;
-    }
+  @Override public Customer getCustomer() {
+    return this.customer;
+  }
 
-    @Override
-    public void setAmountWithoutTax(BigDecimal amount) {
-        this.amountWithoutTax = amount;
-    }
+  @Override public Supplier getSupplier() {
+    return this.supplier;
+  }
 
-    @Override
-    public void setTaxAmount(BigDecimal amount) {
-        this.taxAmount = amount;
-    }
+  @Override public String getOfficeNumber() {
+    return this.officeNumber;
+  }
 
-    @Override
-    public void setDiscountsAmount(BigDecimal amount) {
-        this.discountsAmount = amount;
-    }
+  @Override public Date getDate() {
+    return this.date;
+  }
 
-    @Override
-    public <T extends ShippingPointEntity> void setShippingOrigin(T origin) {
-        this.shippingOrigin = origin;
-    }
+  @Override public BigDecimal getAmountWithTax() {
+    return this.amountWithTax;
+  }
 
-    @Override
-    public <T extends ShippingPointEntity> void setShippingDestination(T destination) {
-        this.shippingDestination = destination;
-    }
+  @Override public BigDecimal getAmountWithoutTax() {
+    return this.amountWithoutTax;
+  }
 
-    @Override
-    public void setPaymentTerms(String terms) {
-        this.paymentTerms = terms;
-    }
+  @Override public BigDecimal getTaxAmount() {
+    return this.taxAmount;
+  }
 
-    @Override
-    public void setSelfBilled(Boolean selfBilled) {
-        this.selfBilled = selfBilled;
-    }
+  @Override public BigDecimal getDiscountsAmount() {
+    return this.discountsAmount;
+  }
 
-    @Override
-    public void setSourceId(String source) {
-        this.sourceId = source;
-    }
+  @Override public ShippingPoint getShippingOrigin() {
+    return this.shippingOrigin;
+  }
 
-    @Override
-    public void setGeneralLedgerDate(Date date) {
-        this.generalLedgerDate = date;
-    }
+  @Override public ShippingPoint getShippingDestination() {
+    return this.shippingDestination;
+  }
 
-    @Override
-    public void setBatchId(String id) {
-        this.batchId = id;
-    }
+  @Override public String getPaymentTerms() {
+    return this.paymentTerms;
+  }
 
-    @Override
-    public void setTransactionId(String id) {
-        this.transactionsId = id;
-    }
+  @Override public Boolean isSelfBilled() {
+    return this.selfBilled;
+  }
 
-    @Override
-    public List<String> getReceiptNumbers() {
-        return this.receiptNumbers;
-    }
+  @Override public String getSourceId() {
+    return this.sourceId;
+  }
 
-    @Override
-    public <T extends GenericInvoiceEntry> List<T> getEntries() {
-        return (List<T>) this.entries;
-    }
+  @Override public Date getGeneralLedgerDate() {
+    return this.generalLedgerDate;
+  }
 
-    @Override
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
+  @Override public String getBatchId() {
+    return this.batchId;
+  }
 
-    @Override
-    public void setSettlementDescription(String description) {
-        this.settlementDescription = description;
-    }
+  @Override public String getTransactionId() {
+    return this.transactionsId;
+  }
 
-    @Override
-    public void setSettlementDiscount(BigDecimal discount) {
-        this.settlementDiscount = discount;
-    }
+  @Override public Currency getCurrency() {
+    return this.currency;
+  }
 
-    @Override
-    public void setSettlementDate(Date date) {
-        this.settlementDate = date;
-    }
+  @Override public String getSettlementDescription() {
+    return this.settlementDescription;
+  }
 
-    @Override
-    public void setCreditOrDebit(CreditOrDebit creditOrDebit) {
-        this.creditOrDebit = creditOrDebit;
-    }
+  @Override public BigDecimal getSettlementDiscount() {
+    return this.settlementDiscount;
+  }
 
-    @Override
-    public String getSeries() {
-        return this.series;
-    }
+  @Override public Date getSettlementDate() {
+    return this.settlementDate;
+  }
 
-    @Override
-    public void setSeries(String series) {
-        this.series = series;
-    }
+  @Override public CreditOrDebit getCreditOrDebit() {
+    return this.creditOrDebit;
+  }
 
-    @Override
-    public Integer getSeriesNumber() {
-        return this.seriesNumber;
-    }
+  @Override public Integer getScale() {
+    return this.scale;
+  }
 
-    @Override
-    public void setSeriesNumber(Integer seriesNumber) {
-        this.seriesNumber = seriesNumber;
-    }
+  @Override public void setScale(Integer scale) {
+    this.scale = scale;
+  }
 
-    @Override
-    public <T extends Payment> List<T> getPayments() {
-        return (List<T>) this.payments;
-    }
+  @Override public void setNumber(String number) {
+    this.number = number;
+  }
 
-    @Override
-    public Boolean isCashVATEndorser() {
-        return this.cashVATEndorser;
-    }
+  @Override public <T extends Business> void setBusiness(T business) {
+    this.business = business;
+  }
 
-    @Override
-    public Boolean isThirdPartyBilled() {
-        return this.thirdPartyBilled;
-    }
+  @Override public <T extends CustomerEntity> void setCustomer(T customer) {
+    this.customer = customer;
+  }
 
+  @Override public <T extends SupplierEntity> void setSupplier(T supplier) {
+    this.supplier = supplier;
+  }
+
+  @Override public void setOfficeNumber(String number) {
+    this.officeNumber = number;
+  }
+
+  @Override public void setDate(Date date) {
+    this.date = date;
+  }
+
+  @Override public void setAmountWithTax(BigDecimal amount) {
+    this.amountWithTax = amount;
+  }
+
+  @Override public void setAmountWithoutTax(BigDecimal amount) {
+    this.amountWithoutTax = amount;
+  }
+
+  @Override public void setTaxAmount(BigDecimal amount) {
+    this.taxAmount = amount;
+  }
+
+  @Override public void setDiscountsAmount(BigDecimal amount) {
+    this.discountsAmount = amount;
+  }
+
+  @Override public <T extends ShippingPointEntity> void setShippingOrigin(T origin) {
+    this.shippingOrigin = origin;
+  }
+
+  @Override public <T extends ShippingPointEntity> void setShippingDestination(T destination) {
+    this.shippingDestination = destination;
+  }
+
+  @Override public void setPaymentTerms(String terms) {
+    this.paymentTerms = terms;
+  }
+
+  @Override public void setSelfBilled(Boolean selfBilled) {
+    this.selfBilled = selfBilled;
+  }
+
+  @Override public void setSourceId(String source) {
+    this.sourceId = source;
+  }
+
+  @Override public void setGeneralLedgerDate(Date date) {
+    this.generalLedgerDate = date;
+  }
+
+  @Override public void setBatchId(String id) {
+    this.batchId = id;
+  }
+
+  @Override public void setTransactionId(String id) {
+    this.transactionsId = id;
+  }
+
+  @Override public List<String> getReceiptNumbers() {
+    return this.receiptNumbers;
+  }
+
+  @Override public <T extends GenericInvoiceEntry> List<T> getEntries() {
+    return (List<T>) this.entries;
+  }
+
+  @Override public void setCurrency(Currency currency) {
+    this.currency = currency;
+  }
+
+  @Override public void setSettlementDescription(String description) {
+    this.settlementDescription = description;
+  }
+
+  @Override public void setSettlementDiscount(BigDecimal discount) {
+    this.settlementDiscount = discount;
+  }
+
+  @Override public void setSettlementDate(Date date) {
+    this.settlementDate = date;
+  }
+
+  @Override public void setCreditOrDebit(CreditOrDebit creditOrDebit) {
+    this.creditOrDebit = creditOrDebit;
+  }
+
+  @Override public String getSeries() {
+    return this.series;
+  }
+
+  @Override public void setSeries(String series) {
+    this.series = series;
+  }
+
+  @Override public Integer getSeriesNumber() {
+    return this.seriesNumber;
+  }
+
+  @Override public void setSeriesNumber(Integer seriesNumber) {
+    this.seriesNumber = seriesNumber;
+  }
+
+  @Override public <T extends Payment> List<T> getPayments() {
+    return (List<T>) this.payments;
+  }
+
+  @Override public Boolean isCashVATEndorser() {
+    return this.cashVATEndorser;
+  }
+
+  @Override public Boolean isThirdPartyBilled() {
+    return this.thirdPartyBilled;
+  }
 }
