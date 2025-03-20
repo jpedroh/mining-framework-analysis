@@ -3,6 +3,7 @@ package org.openpnp.machine.reference;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -1239,11 +1240,10 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     }
 
     @Override
-    public void findIssues(Solutions solutions) {
-        super.findIssues(solutions);
-        ContactProbeNozzle.addConversionIssue(solutions, this);
+    public void findIssues(List<Solutions.Issue> issues) {
+        super.findIssues(issues);
+        ContactProbeNozzle.addConversionIssue(issues, this);
     }
-
     @Deprecated
     public void migrateSafeZ() {
         if (safeZ == null) {

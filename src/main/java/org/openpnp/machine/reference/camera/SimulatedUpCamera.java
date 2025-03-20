@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.util.ConcurrentModificationException;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.util.List;
 
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.ReferenceCamera;

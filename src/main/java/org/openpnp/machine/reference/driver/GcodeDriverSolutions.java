@@ -50,6 +50,11 @@ import org.openpnp.util.GcodeServer;
 import org.openpnp.util.XmlSerialize;
 import org.pmw.tinylog.Logger;
 import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.convert.AnnotationStrategy;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.stream.Format;
+import org.simpleframework.xml.stream.HyphenStyle;
+import org.simpleframework.xml.stream.Style;
 
 /**
  * This helper class implements the Issues & Solutions for the GcodeDriver and GcodeAsyncDriver. 
@@ -153,7 +158,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                         "Firmware was not dected ("+
                                 (machine.isEnabled() ? 
                                         (gcodeDriver.isSpeakingGcode() ? "failure, check log" : "controller may not speak Gcode") 
-                                        : "machine is disabled")+"). Only if the firmware is know, can Issues & Solutions generate suggested G-code for your machine configuration.", 
+                                        : "machine is disabled")+").", 
                                 "Retry the detection by connecting to the controller or assume a generic controller.", 
                                 Severity.Fundamental,
                         "https://www.reprap.org/wiki/G-code#M115:_Get_Firmware_Version_and_Capabilities") {
@@ -166,7 +171,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                                                 + "<p>The M115 command must be supported by the firmware. Make sure the controller "
                                                 + "is connected to the computer and accept the solution to perform the detection.</p><br/>"
                                                 + "<p>This might take a while!</p><br/>"
-                                                + "<p>If the firmware is known by OpenPnP, it will be able to automatically generate G-code "
+                                                + "<p>If the formware is known by OpenPnP, it will be able to automatically generate G-code "
                                                 + "configuration for you."
                                                 + "</html>",
                                                 Icons.powerOn),
@@ -259,7 +264,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                         }
                     }
                 }
-                else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Marlin")) {
+                else if (gcodeDriver.getDetectedFirmware().contains("Marlin")) {
                     isMarlin = true;
                     firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("AXIS_COUNT", "0"));
                     if (firmwareAxesCount > 3) { 
@@ -274,9 +279,25 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                                 "https://github.com/openpnp/openpnp/wiki/Motion-Controller-Firmwares#marlin-20"));
                     }
                 }
-                else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("TinyG")) {
+<<<<<<< /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/left.java
+                else if (gcodeDriver.getDetectedFirmware().contains("TinyG")) {
                     // Having a response already means we have a new firmware.
                     isTinyG = true;
+||||||| /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/base.java
+            }
+            else if (gcodeDriver.getDetectedFirmware().contains("Marlin")) {
+                isMarlin = true;
+                firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("AXIS_COUNT", "0"));
+                if (firmwareAxesCount > 3) { 
+                    firmwarePrimaryAxesCount = firmwareAxesCount;
+=======
+            }
+            else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("Marlin")) {
+                isMarlin = true;
+                firmwareAxesCount = Integer.valueOf(gcodeDriver.getFirmwareProperty("AXIS_COUNT", "0"));
+                if (firmwareAxesCount > 3) { 
+                    firmwarePrimaryAxesCount = firmwareAxesCount;
+>>>>>>> /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/right.java
                 }
                 else if (gcodeDriver.getDetectedFirmware().contains("GcodeServer")) {
                     // Built-in.
@@ -311,8 +332,32 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                     }
                 }
             }
+<<<<<<< /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/left.java
             if (gcodeDriver.isConnectionKeepAlive()) {
                 solutions.add(new Solutions.Issue(
+||||||| /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/base.java
+            else if (gcodeDriver.getDetectedFirmware().contains("TinyG")) {
+                // Having a response already means we have a new firmware.
+                isTinyG = true;
+            }
+            else if (gcodeDriver.getDetectedFirmware().contains("GcodeServer")) {
+                // Built-in.
+            }
+
+            else { 
+                issues.add(new Solutions.PlainIssue(
+=======
+            else if (gcodeDriver.getFirmwareProperty("FIRMWARE_NAME", "").contains("TinyG")) {
+                // Having a response already means we have a new firmware.
+                isTinyG = true;
+            }
+            else if (gcodeDriver.getDetectedFirmware().contains("GcodeServer")) {
+                // Built-in.
+            }
+
+            else { 
+                issues.add(new Solutions.PlainIssue(
+>>>>>>> /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/right.java
                         gcodeDriver, 
                         "Use Keep-Alive only when necessary. It may cause hard to diagnose problems.", 
                         "Disable Connection Keep-Alive.", 
@@ -827,8 +872,14 @@ public class GcodeDriverSolutions implements Solutions.Subject {
      * Add a solution for the given gcodeDriver to the issues, to suggest the given suggestedCommand instead of the currentCommand.
      *
      * @param gcodeDriver
-     * @param headMountable
+<<<<<<< /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/left.java
      * @param solutions
+||||||| /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/base.java
+     * @param issues
+=======
+     * @param headMountable
+     * @param issues
+>>>>>>> /usr/src/app/output/openpnp/openpnp/a9f99068197956007021fea9951f899a66d1865c/src/main/java/org/openpnp/machine/reference/driver/GcodeDriverSolutions.java/right.java
      * @param commandType
      * @param suggestedCommand
      * @param commandModified
@@ -879,6 +930,14 @@ public class GcodeDriverSolutions implements Solutions.Subject {
         }
     }
 
+    private static Serializer createSerializer() {
+        Style style = new HyphenStyle();
+        Format format = new Format(style);
+        AnnotationStrategy strategy = new AnnotationStrategy();
+        Serializer serializer = new Persister(strategy, format);
+        return serializer;
+    }
+
     /**
      * Convert an existing GcodeDriver to a GcodeAsyncDriver while keeping all settings and 
      * Axis/Actuator assignments. 
@@ -888,7 +947,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
      */
     public static void convertToAsync(GcodeDriver gcodeDriver) throws Exception {
         // Serialize the GcodeDriver
-        Serializer serOut = XmlSerialize.createSerializer();
+        Serializer serOut = createSerializer();
         StringWriter sw = new StringWriter();
         serOut.write(gcodeDriver, sw);
         String gcodeDriverSerialized = sw.toString();
@@ -897,7 +956,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
                 gcodeDriver.getClass().getCanonicalName(), 
                 GcodeAsyncDriver.class.getCanonicalName());
         // De-serialize it.
-        Serializer serIn = XmlSerialize.createSerializer();
+        Serializer serIn = createSerializer();
         StringReader sr = new StringReader(gcodeDriverSerialized);
         GcodeAsyncDriver asyncDriver = serIn.read(GcodeAsyncDriver.class, sr);
         // Triple the timeout as asynchronously executed move sequences can be longer than single moves.
@@ -914,7 +973,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
      */
     public static void convertToPlain(GcodeAsyncDriver asyncDriver) throws Exception {
         // Serialize the GcodeDriver
-        Serializer serOut = XmlSerialize.createSerializer();
+        Serializer serOut = createSerializer();
         StringWriter sw = new StringWriter();
         serOut.write(asyncDriver, sw);
         String gcodeDriverSerialized = sw.toString();
@@ -925,7 +984,7 @@ public class GcodeDriverSolutions implements Solutions.Subject {
         // Remove the sub-class properties. 
         gcodeDriverSerialized = XmlSerialize.purgeSubclassXml(GcodeAsyncDriver.class, gcodeDriverSerialized);
         // De-serialize it.
-        Serializer serIn = XmlSerialize.createSerializer();
+        Serializer serIn = createSerializer();
         StringReader sr = new StringReader(gcodeDriverSerialized);
         GcodeDriver gcodeDriver = serIn.read(GcodeDriver.class, sr);
         replaceDriver(gcodeDriver);
