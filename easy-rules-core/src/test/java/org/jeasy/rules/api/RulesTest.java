@@ -119,6 +119,16 @@ public class RulesTest {
     }
 
     @Test
+    public void rulesCount() {
+        assertThat(rules.rulesCount()).isEqualTo(0);
+
+        rules.register(new DummyRule());
+        assertThat(rules.rulesCount()).isEqualTo(1);
+
+        rules.unregister(new DummyRule());
+        assertThat(rules.rulesCount()).isEqualTo(0);
+    }
+    @Test
     public void size() {
         assertThat(rules.size()).isEqualTo(0);
 

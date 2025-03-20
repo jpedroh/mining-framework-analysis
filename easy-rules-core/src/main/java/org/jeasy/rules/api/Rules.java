@@ -120,6 +120,14 @@ public class Rules implements Iterable<Rule> {
     }
 
     /**
+     * Check how many rules are currently registered
+     *
+     * @return the number of rules currently registered
+     */
+    public int rulesCount() {
+        return rules.size();
+    }
+    /**
      * Return how many rules are currently registered.
      *
      * @return the number of rules currently registered
