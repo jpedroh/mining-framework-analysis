@@ -160,6 +160,10 @@ class Matrix {
         }
     }
 
+    void divideRow(Vector denoms) {
+        divideRow(denoms, 0, -1);
+    }
+
     /**
      * Divides values in rows of the matrix to values of `nums`.
      * nums should have a value for each row to be multiplied.
@@ -203,7 +207,14 @@ class Matrix {
     }
 
     /**
+<<<<<<< /usr/src/app/output/ahmetaa/zemberek-nlp/cba3cefdbf185e9a4c21dc668f9600023b260146/experiment/src/main/java/zemberek/embedding/fasttext/Matrix.java/left.java
+     * Fills the norm vector with l2 norm values of the rows.
+     *
+||||||| /usr/src/app/output/ahmetaa/zemberek-nlp/cba3cefdbf185e9a4c21dc668f9600023b260146/experiment/src/main/java/zemberek/embedding/fasttext/Matrix.java/base.java
+     * Fills the norm vector with l2 norm values of the rows.
+=======
      * Fills the `norms` vector with l2 norm values of the rows.
+>>>>>>> /usr/src/app/output/ahmetaa/zemberek-nlp/cba3cefdbf185e9a4c21dc668f9600023b260146/experiment/src/main/java/zemberek/embedding/fasttext/Matrix.java/right.java
      * @param norms norm vector to fill.
      */
     void l2NormRow(Vector norms) {
