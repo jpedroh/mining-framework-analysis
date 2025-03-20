@@ -1,23 +1,4 @@
-/*
- * Licensed to GraphHopper GmbH under one or more contributor
- * license agreements. See the NOTICE file distributed with this work for
- * additional information regarding copyright ownership.
- *
- * GraphHopper GmbH licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.graphhopper.jsprit.core.problem.vehicle;
-
-
 import com.graphhopper.jsprit.core.problem.SizeDimension;
 
 /**
@@ -28,133 +9,130 @@ import com.graphhopper.jsprit.core.problem.SizeDimension;
  * @author schroeder
  */
 public class VehicleTypeImpl implements VehicleType {
+  public static class VehicleCostParams {
+    public static VehicleTypeImpl.VehicleCostParams newInstance(double fix, double perTimeUnit, double perDistanceUnit) {
+      return new VehicleCostParams(fix, perTimeUnit, perDistanceUnit);
+    }
+
+    public final double fix;
+
+    @Deprecated public final double perTimeUnit;
+
+    public final double perTransportTimeUnit;
+
+    public final double perDistanceUnit;
+
+    public final double perWaitingTimeUnit;
+
+    public final double perServiceTimeUnit;
+
+    private VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit) {
+      super();
+      this.fix = fix;
+      this.perTimeUnit = perTimeUnit;
+      perTransportTimeUnit = perTimeUnit;
+      this.perDistanceUnit = perDistanceUnit;
+      perWaitingTimeUnit = 0.;
+      perServiceTimeUnit = 0.;
+    }
+
+    public VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit, double perWaitingTimeUnit) {
+      this.fix = fix;
+      this.perTimeUnit = perTimeUnit;
+      perTransportTimeUnit = perTimeUnit;
+      this.perDistanceUnit = perDistanceUnit;
+      this.perWaitingTimeUnit = perWaitingTimeUnit;
+      perServiceTimeUnit = 0.;
+    }
+
+    public VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit, double perWaitingTimeUnit, double perServiceTimeUnit) {
+      this.fix = fix;
+      this.perTimeUnit = perTimeUnit;
+      perTransportTimeUnit = perTimeUnit;
+      this.perDistanceUnit = perDistanceUnit;
+      this.perWaitingTimeUnit = perWaitingTimeUnit;
+      this.perServiceTimeUnit = perServiceTimeUnit;
+    }
+
+    @Override public String toString() {
+      return "[fixed=" + fix + "][perTime=" + perTransportTimeUnit + "][perDistance=" + perDistanceUnit + "][perWaitingTimeUnit=" + perWaitingTimeUnit + "]";
+    }
+  }
+
+  public static class Builder {
+    public static VehicleTypeImpl.Builder newInstance(String id) {
+      if (id == null) {
+        throw new IllegalArgumentException();
+      }
+      return new Builder(id);
+    }
+
+    private String id;
+
+    private int capacity = 0;
+
+    private double maxVelo = Double.MAX_VALUE;
+
+    private double avgVelocity = 1d;
 
     /**
-     * CostParameter consisting of fixed cost parameter, time-based cost parameter and distance-based cost parameter.
-     *
-     * @author schroeder
-     */
-    public static class VehicleCostParams {
+         * default cost values for default vehicle type
+         */
+    private double fixedCost = 0.0;
 
+    private double perDistance = 1.0;
 
-        public static VehicleTypeImpl.VehicleCostParams newInstance(double fix, double perTimeUnit, double perDistanceUnit) {
-            return new VehicleCostParams(fix, perTimeUnit, perDistanceUnit);
-        }
+    private double perTime = 0.0;
 
-        public final double fix;
-        @Deprecated
-        public final double perTimeUnit;
-        public final double perTransportTimeUnit;
-        public final double perDistanceUnit;
-        public final double perWaitingTimeUnit;
-        public final double perServiceTimeUnit;
+    private double perWaitingTime = 0.0;
 
-        private VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit) {
-            super();
-            this.fix = fix;
-            this.perTimeUnit = perTimeUnit;
-            perTransportTimeUnit = perTimeUnit;
-            this.perDistanceUnit = perDistanceUnit;
-            perWaitingTimeUnit = 0.;
-            perServiceTimeUnit = 0.;
-        }
+    private double perServiceTime = 0.0;
 
-        public VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit, double perWaitingTimeUnit) {
-            this.fix = fix;
-            this.perTimeUnit = perTimeUnit;
-            perTransportTimeUnit = perTimeUnit;
-            this.perDistanceUnit = perDistanceUnit;
-            this.perWaitingTimeUnit = perWaitingTimeUnit;
-            perServiceTimeUnit = 0.;
-        }
+    private String profile = "car";
 
-        public VehicleCostParams(double fix, double perTimeUnit, double perDistanceUnit, double perWaitingTimeUnit, double perServiceTimeUnit) {
-            this.fix = fix;
-            this.perTimeUnit = perTimeUnit;
-            perTransportTimeUnit = perTimeUnit;
-            this.perDistanceUnit = perDistanceUnit;
-            this.perWaitingTimeUnit = perWaitingTimeUnit;
-            this.perServiceTimeUnit = perServiceTimeUnit;
-        }
+    private SizeDimension.Builder capacityBuilder = SizeDimension.Builder.newInstance();
 
-        @Override
-        public String toString() {
-            return "[fixed=" + fix + "][perTime=" + perTransportTimeUnit + "][perDistance=" + perDistanceUnit + "][perWaitingTimeUnit=" + perWaitingTimeUnit + "]";
-        }
+    private SizeDimension capacityDimensions = null;
+
+    private boolean dimensionAdded = false;
+
+    private Builder(String id) {
+      this.id = id;
     }
 
     /**
-     * Builder that builds the vehicle-type.
-     *
-     * @author schroeder
-     */
-    public static class Builder {
-
-
-        public static VehicleTypeImpl.Builder newInstance(String id) {
-            if (id == null) {
-                throw new IllegalArgumentException();
-            }
-            return new Builder(id);
-        }
-
-        private String id;
-        private int capacity = 0;
-        private double maxVelo = Double.MAX_VALUE;
-        private double avgVelocity = 1d;
-        /**
-         * default cost values for default vehicle type
-         */
-        private double fixedCost = 0.0;
-        private double perDistance = 1.0;
-        private double perTime = 0.0;
-        private double perWaitingTime = 0.0;
-        private double perServiceTime = 0.0;
-
-        private String profile = "car";
-
-        private SizeDimension.Builder capacityBuilder = SizeDimension.Builder.newInstance();
-
-        private SizeDimension capacityDimensions = null;
-
-        private boolean dimensionAdded = false;
-
-        private Builder(String id) {
-            this.id = id;
-        }
-
-        /**
          * Sets the maximum velocity this vehicle-type can go [in meter per seconds].
          *
          * @param inMeterPerSeconds
          * @return this builder
          * @throws IllegalArgumentException if velocity is smaller than zero
          */
-        public VehicleTypeImpl.Builder setMaxVelocity(double inMeterPerSeconds) {
-            if (inMeterPerSeconds < 0.0) {
-                throw new IllegalArgumentException("velocity cannot be smaller than zero");
-            }
-            maxVelo = inMeterPerSeconds;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setMaxVelocity(double inMeterPerSeconds) {
+      if (inMeterPerSeconds < 0.0) {
+        throw new IllegalArgumentException("velocity cannot be smaller than zero");
+      }
+      maxVelo = inMeterPerSeconds;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the average velocity this vehicle-type can go [in meter per
          * seconds]. Used for travel time calculation.
          *
          * @param inMeterPerSeconds
          * @return this builder
-         * @throws IllegalArgumentException if velocity is smaller than zero
+         * @throws IllegalArgumentException
+         *             if velocity is smaller than zero
          */
-        public VehicleTypeImpl.Builder setAverageVelocity(double inMeterPerSeconds) {
-            if (inMeterPerSeconds < 0.0) {
-                throw new IllegalArgumentException("average speed cannot be smaller than zero");
-            }
-            avgVelocity = inMeterPerSeconds;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setAverageVelocity(double inMeterPerSeconds) {
+      if (inMeterPerSeconds < 0.0) {
+        throw new IllegalArgumentException("average speed cannot be smaller than zero");
+      }
+      avgVelocity = inMeterPerSeconds;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the fixed costs of the vehicle-type.
          * <p>
          * <p>
@@ -162,17 +140,18 @@ public class VehicleTypeImpl implements VehicleType {
          *
          * @param fixedCost
          * @return this builder
-         * @throws IllegalArgumentException if fixedCost is smaller than zero
+         * @throws IllegalArgumentException
+         *             if fixedCost is smaller than zero
          */
-        public VehicleTypeImpl.Builder setFixedCost(double fixedCost) {
-            if (fixedCost < 0.0) {
-                throw new IllegalArgumentException("fixed costs cannot be smaller than zero");
-            }
-            this.fixedCost = fixedCost;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setFixedCost(double fixedCost) {
+      if (fixedCost < 0.0) {
+        throw new IllegalArgumentException("fixed costs cannot be smaller than zero");
+      }
+      this.fixedCost = fixedCost;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the cost per distance unit, for instance € per meter.
          * <p>
          * <p>by default it is 1.0
@@ -181,15 +160,15 @@ public class VehicleTypeImpl implements VehicleType {
          * @return this builder
          * @throws IllegalArgumentException if perDistance is smaller than zero
          */
-        public VehicleTypeImpl.Builder setCostPerDistance(double perDistance) {
-            if (perDistance < 0.0) {
-                throw new IllegalArgumentException("cost per distance must not be smaller than zero");
-            }
-            this.perDistance = perDistance;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setCostPerDistance(double perDistance) {
+      if (perDistance < 0.0) {
+        throw new IllegalArgumentException("cost per distance must not be smaller than zero");
+      }
+      this.perDistance = perDistance;
+      return this;
+    }
 
-        /**
+    /**
          * Sets cost per time unit, for instance € per second.
          * <p>
          * <p>by default it is 0.0
@@ -199,16 +178,15 @@ public class VehicleTypeImpl implements VehicleType {
          * @throws IllegalArgumentException if costPerTime is smaller than zero
          * @deprecated use .setCostPerTransportTime(..) instead
          */
-        @Deprecated
-        public VehicleTypeImpl.Builder setCostPerTime(double perTime) {
-            if (perTime < 0.0) {
-                throw new IllegalArgumentException();
-            }
-            this.perTime = perTime;
-            return this;
-        }
+    @Deprecated public VehicleTypeImpl.Builder setCostPerTime(double perTime) {
+      if (perTime < 0.0) {
+        throw new IllegalArgumentException();
+      }
+      this.perTime = perTime;
+      return this;
+    }
 
-        /**
+    /**
          * Sets cost per time unit, for instance € per second.
          * <p>
          * <p>by default it is 0.0
@@ -217,15 +195,15 @@ public class VehicleTypeImpl implements VehicleType {
          * @return this builder
          * @throws IllegalArgumentException if costPerTime is smaller than zero
          */
-        public VehicleTypeImpl.Builder setCostPerTransportTime(double perTime) {
-            if (perTime < 0.0) {
-                throw new IllegalArgumentException();
-            }
-            this.perTime = perTime;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setCostPerTransportTime(double perTime) {
+      if (perTime < 0.0) {
+        throw new IllegalArgumentException();
+      }
+      this.perTime = perTime;
+      return this;
+    }
 
-        /**
+    /**
          * Sets cost per waiting time unit, for instance € per second.
          * <p>
          * <p>by default it is 0.0
@@ -234,55 +212,53 @@ public class VehicleTypeImpl implements VehicleType {
          * @return this builder
          * @throws IllegalArgumentException if costPerTime is smaller than zero
          */
-        public VehicleTypeImpl.Builder setCostPerWaitingTime(double perWaitingTime) {
-            if (perWaitingTime < 0.0) {
-                throw new IllegalArgumentException();
-            }
-            this.perWaitingTime = perWaitingTime;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setCostPerWaitingTime(double perWaitingTime) {
+      if (perWaitingTime < 0.0) {
+        throw new IllegalArgumentException();
+      }
+      this.perWaitingTime = perWaitingTime;
+      return this;
+    }
 
-        public VehicleTypeImpl.Builder setCostPerServiceTime(double perServiceTime) {
-            this.perServiceTime = perServiceTime;
-            return this;
-        }
+    public VehicleTypeImpl.Builder setCostPerServiceTime(double perServiceTime) {
+      this.perServiceTime = perServiceTime;
+      return this;
+    }
 
-        /**
+    /**
          * Builds the vehicle-type.
          *
          * @return VehicleTypeImpl
          */
-        public VehicleTypeImpl build() {
-            if (capacityDimensions == null) {
-                capacityDimensions = capacityBuilder.build();
-            }
-            return new VehicleTypeImpl(this);
-        }
+    public VehicleTypeImpl build() {
+      if (capacityDimensions == null) {
+        capacityDimensions = capacityBuilder.build();
+      }
+      return new VehicleTypeImpl(this);
+    }
 
-        /**
+    /**
          * Adds a capacity dimension.
          *
          * @param dimIndex
          * @param dimVal
          * @return the builder
          * @throws IllegalArgumentException if dimVal < 0
-         * @throws IllegalArgumentException if capacity dimension is already set
+         * @throws IllegalArgumentException    if capacity dimension is already set
          */
-        public Builder addCapacityDimension(int dimIndex, int dimVal) {
-            if (dimVal < 0) {
-                throw new IllegalArgumentException("capacity value cannot be negative");
-            }
-            if (capacityDimensions != null) {
-                throw new IllegalArgumentException("either build your dimension with build your dimensions with " +
-                    "addCapacityDimension(int dimIndex, int dimVal) or set the already built dimensions with .setCapacityDimensions(SizeDimension capacity)." +
-                    "You used both methods.");
-            }
-            dimensionAdded = true;
-            capacityBuilder.addDimension(dimIndex, dimVal);
-            return this;
-        }
+    public Builder addCapacityDimension(int dimIndex, int dimVal) {
+      if (dimVal < 0) {
+        throw new IllegalArgumentException("capacity value cannot be negative");
+      }
+      if (capacityDimensions != null) {
+        throw new IllegalArgumentException("either build your dimension with build your dimensions with " + "addCapacityDimension(int dimIndex, int dimVal) or set the already built dimensions with .setCapacityDimensions(SizeDimension capacity)." + "You used both methods.");
+      }
+      dimensionAdded = true;
+      capacityBuilder.addDimension(dimIndex, dimVal);
+      return this;
+    }
 
-        /**
+    /**
          * Sets capacity dimensions.
          * <p>
          * <p>Note if you use this you cannot use <code>addCapacityDimension(int dimIndex, int dimVal)</code> anymore. Thus either build
@@ -293,126 +269,107 @@ public class VehicleTypeImpl implements VehicleType {
          * @return this builder
          * @throws IllegalArgumentException if capacityDimension has already been added
          */
-        public Builder setCapacityDimensions(SizeDimension capacity) {
-            if (dimensionAdded) {
-                throw new IllegalArgumentException("either build your dimension with build your dimensions with " +
-                    "addCapacityDimension(int dimIndex, int dimVal) or set the already built dimensions with .setCapacityDimensions(SizeDimension capacity)." +
-                    "You used both methods.");
-            }
-            capacityDimensions = capacity;
-            return this;
-        }
-
-        public Builder setProfile(String profile) {
-            this.profile = profile;
-            return this;
-        }
+    public Builder setCapacityDimensions(SizeDimension capacity) {
+      if (dimensionAdded) {
+        throw new IllegalArgumentException("either build your dimension with build your dimensions with " + "addCapacityDimension(int dimIndex, int dimVal) or set the already built dimensions with .setCapacityDimensions(SizeDimension capacity)." + "You used both methods.");
+      }
+      capacityDimensions = capacity;
+      return this;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-            + ((typeId == null) ? 0 : typeId.hashCode());
-        return result;
+    public Builder setProfile(String profile) {
+      this.profile = profile;
+      return this;
     }
+  }
 
-    /**
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((typeId == null) ? 0 : typeId.hashCode());
+    return result;
+  }
+
+  /**
      * Two vehicle-types are equal if they have the same vehicleId.
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        VehicleTypeImpl other = (VehicleTypeImpl) obj;
-        if (typeId == null) {
-            if (other.typeId != null) {
-                return false;
-            }
-        } else if (!typeId.equals(other.typeId)) {
-            return false;
-        }
-        return true;
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    VehicleTypeImpl other = (VehicleTypeImpl) obj;
+    if (typeId == null) {
+      if (other.typeId != null) {
+        return false;
+      }
+    } else {
+      if (!typeId.equals(other.typeId)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-    private final String typeId;
+  private final String typeId;
 
-    private final int capacity;
+  private final int capacity;
 
-    private final String profile;
+  private final String profile;
 
-    private final VehicleTypeImpl.VehicleCostParams vehicleCostParams;
+  private final VehicleTypeImpl.VehicleCostParams vehicleCostParams;
 
-    private final SizeDimension capacityDimensions;
+  private final SizeDimension capacityDimensions;
 
-    private final double maxVelocity;
+  private final double maxVelocity;
 
-    private final double avgVelocity;
+  private final double avgVelocity;
 
-    /**
+  /**
      * priv constructor constructing vehicle-type
      *
      * @param builder
      */
-    private VehicleTypeImpl(VehicleTypeImpl.Builder builder) {
-        typeId = builder.id;
-        capacity = builder.capacity;
-        maxVelocity = builder.maxVelo;
-        avgVelocity = builder.avgVelocity;
-        vehicleCostParams = new VehicleCostParams(builder.fixedCost, builder.perTime, builder.perDistance, builder.perWaitingTime, builder.perServiceTime);
-        capacityDimensions = builder.capacityDimensions;
-        profile = builder.profile;
-    }
+  private VehicleTypeImpl(VehicleTypeImpl.Builder builder) {
+    typeId = builder.id;
+    capacity = builder.capacity;
+    maxVelocity = builder.maxVelo;
+    avgVelocity = builder.avgVelocity;
+    vehicleCostParams = new VehicleCostParams(builder.fixedCost, builder.perTime, builder.perDistance, builder.perWaitingTime, builder.perServiceTime);
+    capacityDimensions = builder.capacityDimensions;
+    profile = builder.profile;
+  }
 
-    /* (non-Javadoc)
-     * @see basics.route.VehicleType#getTypeId()
-     */
-    @Override
-    public String getTypeId() {
-        return typeId;
-    }
+  @Override public String getTypeId() {
+    return typeId;
+  }
 
-    /* (non-Javadoc)
-     * @see basics.route.VehicleType#getVehicleCostParams()
-     */
-    @Override
-    public VehicleTypeImpl.VehicleCostParams getVehicleCostParams() {
-        return vehicleCostParams;
-    }
+  @Override public VehicleTypeImpl.VehicleCostParams getVehicleCostParams() {
+    return vehicleCostParams;
+  }
 
-    @Override
-    public String toString() {
-        return "[typeId=" + typeId + "]" +
-            "[capacity=" + capacityDimensions + "]" +
-            "[costs=" + vehicleCostParams + "]";
-    }
+  @Override public String toString() {
+    return "[typeId=" + typeId + "]" + "[capacity=" + capacityDimensions + "]" + "[costs=" + vehicleCostParams + "]";
+  }
 
-    @Override
-    public double getMaxVelocity() {
-        return maxVelocity;
-    }
+  @Override public double getMaxVelocity() {
+    return maxVelocity;
+  }
 
-    @Override
-    public double getAvgVelocity() {
-        return avgVelocity;
-    }
+  @Override public double getAvgVelocity() {
+    return avgVelocity;
+  }
 
-    @Override
-    public SizeDimension getCapacityDimensions() {
-        return capacityDimensions;
-    }
+  @Override public SizeDimension getCapacityDimensions() {
+    return capacityDimensions;
+  }
 
-    @Override
-    public String getProfile() {
-        return profile;
-    }
-
+  @Override public String getProfile() {
+    return profile;
+  }
 }
