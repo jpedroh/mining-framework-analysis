@@ -137,6 +137,7 @@ public class PropertySupport {
   }
 
   /**
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/0543f2506b5a6557c338442fd00fd97439b40623/src/main/java/org/assertj/core/internal/PropertySupport.java/left.java
    * Return the value of a simple property from a target object.
    * <p>
    * This only works for simple property, nested property are not supported ! use
@@ -144,6 +145,16 @@ public class PropertySupport {
    * 
    * @param propertyName the name of the property. It may be a nested property. It is left to the clients to validate
    *          for {@code null} or empty.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/0543f2506b5a6557c338442fd00fd97439b40623/src/main/java/org/assertj/core/internal/PropertySupport.java/base.java
+   * Return the value of property from a target object.
+   * @param propertyName the name of the property. It may be a nested property. It is left to the clients to validate for
+   *          {@code null} or empty.
+=======
+   * Return the value of property from a target object.
+   * 
+   * @param propertyName the name of the property. It may be a nested property. It is left to the clients to validate
+   *          for {@code null} or empty.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/0543f2506b5a6557c338442fd00fd97439b40623/src/main/java/org/assertj/core/internal/PropertySupport.java/right.java
    * @param target the given object
    * @param clazz type of property
    * @return a the values of the given property name

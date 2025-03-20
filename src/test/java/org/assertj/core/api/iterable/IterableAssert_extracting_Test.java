@@ -56,6 +56,7 @@ public class IterableAssert_extracting_Test {
       return input.getAge();
     }
   };
+
   
   @Before
   public void setUp() {
