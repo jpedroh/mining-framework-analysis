@@ -125,12 +125,12 @@ public class KinesisClientLibConfiguration {
     /**
      * User agent set when Amazon Kinesis Client Library makes AWS requests.
      */
-    public static final String KINESIS_CLIENT_LIB_USER_AGENT = "amazon-kinesis-client-library-java-1.11.2-SNAPSHOT";
 
     /**
      * KCL will validate client provided sequence numbers with a call to Amazon Kinesis before checkpointing for calls
      * to {@link RecordProcessorCheckpointer#checkpoint(String)} by default.
      */
+
     public static final boolean DEFAULT_VALIDATE_SEQUENCE_NUMBER_BEFORE_CHECKPOINTING = true;
 
     /**
@@ -140,6 +140,7 @@ public class KinesisClientLibConfiguration {
      * NOTE: Setting this to a low value can cause data loss if workers are not able to pick up all shards in the
      * stream due to the max limit.
      */
+
     public static final int DEFAULT_MAX_LEASES_FOR_WORKER = Integer.MAX_VALUE;
 
     /**
@@ -147,16 +148,19 @@ public class KinesisClientLibConfiguration {
      * Setting this to a higher number can allow for faster load convergence (e.g. during deployments, cold starts),
      * but can cause higher churn in the system.
      */
+
     public static final int DEFAULT_MAX_LEASES_TO_STEAL_AT_ONE_TIME = 1;
 
     /**
      * The Amazon DynamoDB table used for tracking leases will be provisioned with this read capacity.
      */
+
     public static final int DEFAULT_INITIAL_LEASE_TABLE_READ_CAPACITY = 10;
 
     /**
      * The Amazon DynamoDB table used for tracking leases will be provisioned with this write capacity.
      */
+
     public static final int DEFAULT_INITIAL_LEASE_TABLE_WRITE_CAPACITY = 10;
 
     /**
@@ -164,76 +168,121 @@ public class KinesisClientLibConfiguration {
      * assumes that the shards and leases are in-sync. This enables customers to choose faster startup times (e.g.
      * during incremental deployments of an application).
      */
+
     public static final boolean DEFAULT_SKIP_SHARD_SYNC_AT_STARTUP_IF_LEASES_EXIST = false;
 
     /**
      * Default ShardSyncStrategy to be used for discovering new shards in the Stream.
      */
+
     public static final ShardSyncStrategyType DEFAULT_SHARD_SYNC_STRATEGY_TYPE = ShardSyncStrategyType.SHARD_END;
 
     /**
      * Default Shard prioritization strategy.
      */
+
     public static final ShardPrioritization DEFAULT_SHARD_PRIORITIZATION = new NoOpShardPrioritization();
 
     /**
      * The amount of milliseconds to wait before graceful shutdown forcefully terminates.
      */
+
     public static final long DEFAULT_SHUTDOWN_GRACE_MILLIS = 5000L;
 
     /**
      * The size of the thread pool to create for the lease renewer to use.
      */
+
     public static final int DEFAULT_MAX_LEASE_RENEWAL_THREADS = 20;
 
     /**
      * The sleep time between two listShards calls from the proxy when throttled.
      */
+
     public static final long DEFAULT_LIST_SHARDS_BACKOFF_TIME_IN_MILLIS = 1500;
 
     /**
      * The number of times the Proxy will retry listShards call when throttled.
      */
+
     public static final int DEFAULT_MAX_LIST_SHARDS_RETRY_ATTEMPTS = 50;
 
     private String applicationName;
+
     private String tableName;
+
     private String streamName;
+
     private String kinesisEndpoint;
+
     private String dynamoDBEndpoint;
+
     private InitialPositionInStream initialPositionInStream;
+
     private AWSCredentialsProvider kinesisCredentialsProvider;
+
     private AWSCredentialsProvider dynamoDBCredentialsProvider;
+
     private AWSCredentialsProvider cloudWatchCredentialsProvider;
+
     private long failoverTimeMillis;
+
     private String workerIdentifier;
+
     private long shardSyncIntervalMillis;
+
     private int maxRecords;
+
     private long idleTimeBetweenReadsInMillis;
+
     // Enables applications flush/checkpoint (if they have some data "in progress", but don't get new data for while)
+
     private boolean callProcessRecordsEvenForEmptyRecordList;
+
     private long parentShardPollIntervalMillis;
+
     private boolean cleanupLeasesUponShardCompletion;
+
     private boolean ignoreUnexpectedChildShards;
+
     private ClientConfiguration kinesisClientConfig;
+
     private ClientConfiguration dynamoDBClientConfig;
+
     private ClientConfiguration cloudWatchClientConfig;
+
     private long taskBackoffTimeMillis;
+
     private long metricsBufferTimeMillis;
+
     private int metricsMaxQueueSize;
+
     private MetricsLevel metricsLevel;
+
     private Set<String> metricsEnabledDimensions;
+
     private boolean validateSequenceNumberBeforeCheckpointing;
+
     private String regionName;
+
     private int maxLeasesForWorker;
+
     private int maxLeasesToStealAtOneTime;
+
     private int initialLeaseTableReadCapacity;
+
     private int initialLeaseTableWriteCapacity;
+
     private InitialPositionInStreamExtended initialPositionInStreamExtended;
+
     // This is useful for optimizing deployments to large fleets working on a stable stream.
+
     private boolean skipShardSyncAtWorkerInitializationIfLeasesExist;
+
     private ShardPrioritization shardPrioritization;
+
     private long shutdownGraceMillis;
+
     private ShardSyncStrategyType shardSyncStrategyType;
 
     @Getter
@@ -250,13 +299,13 @@ public class KinesisClientLibConfiguration {
 
     @Getter
     private RecordsFetcherFactory recordsFetcherFactory;
-    
+
     @Getter
     private Optional<Long> logWarningForTaskAfterMillis = Optional.empty();
-    
+
     @Getter
     private long listShardsBackoffTimeInMillis = DEFAULT_LIST_SHARDS_BACKOFF_TIME_IN_MILLIS;
-    
+
     @Getter
     private int maxListShardsRetryAttempts = DEFAULT_MAX_LIST_SHARDS_RETRY_ATTEMPTS;
 
@@ -270,6 +319,7 @@ public class KinesisClientLibConfiguration {
      * @param credentialsProvider Provides credentials used to sign AWS requests
      * @param workerId Used to distinguish different workers/processes of a Kinesis application
      */
+
     public KinesisClientLibConfiguration(String applicationName,
             String streamName,
             AWSCredentialsProvider credentialsProvider,
@@ -289,6 +339,7 @@ public class KinesisClientLibConfiguration {
      * @param cloudWatchCredentialsProvider Provides credentials used to access CloudWatch
      * @param workerId Used to distinguish different workers/processes of a Kinesis application
      */
+
     public KinesisClientLibConfiguration(String applicationName,
             String streamName,
             AWSCredentialsProvider kinesisCredentialsProvider,
@@ -356,8 +407,11 @@ public class KinesisClientLibConfiguration {
      * @param regionName The region name for the service
      * @param shutdownGraceMillis The number of milliseconds before graceful shutdown terminates forcefully
      */
+
     // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
     public KinesisClientLibConfiguration(String applicationName,
                                          String streamName,
                                          String kinesisEndpoint,
@@ -426,8 +480,11 @@ public class KinesisClientLibConfiguration {
      *        {@link RecordProcessorCheckpointer#checkpoint(String)}
      * @param regionName The region name for the service
      */
+
     // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
     public KinesisClientLibConfiguration(String applicationName,
                                          String streamName,
                                          String kinesisEndpoint,
@@ -536,8 +593,11 @@ public class KinesisClientLibConfiguration {
      *        {@link RecordProcessorCheckpointer#checkpoint(String)}
      * @param regionName The region name for the service
      */
+
     // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
     // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
     public KinesisClientLibConfiguration(String applicationName,
             String streamName,
             String kinesisEndpoint,
@@ -613,6 +673,7 @@ public class KinesisClientLibConfiguration {
     }
 
     // Check if value is positive, otherwise throw an exception
+
     private void checkIsValuePositive(String key, long value) {
         if (value <= 0) {
             throw new IllegalArgumentException("Value of " + key
@@ -621,8 +682,11 @@ public class KinesisClientLibConfiguration {
     }
 
     // Check if user agent in configuration is the default agent.
+
     // If so, replace it with application name plus KINESIS_CLIENT_LIB_USER_AGENT.
+
     // If not, append KINESIS_CLIENT_LIB_USER_AGENT to the end.
+
     private ClientConfiguration checkAndAppendKinesisClientLibUserAgent(ClientConfiguration config) {
         String existingUserAgent = config.getUserAgent();
         if (existingUserAgent.equals(ClientConfiguration.DEFAULT_USER_AGENT)) {
@@ -638,6 +702,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Name of the application
      */
+
     public String getApplicationName() {
         return applicationName;
     }
@@ -645,6 +710,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Name of the table to use in DynamoDB
      */
+
     public String getTableName() {
         return tableName;
     }
@@ -652,6 +718,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Time within which a worker should renew a lease (else it is assumed dead)
      */
+
     public long getFailoverTimeMillis() {
         return failoverTimeMillis;
     }
@@ -659,6 +726,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Credentials provider used to access Kinesis
      */
+
     public AWSCredentialsProvider getKinesisCredentialsProvider() {
         return kinesisCredentialsProvider;
     }
@@ -666,6 +734,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Credentials provider used to access DynamoDB
      */
+
     public AWSCredentialsProvider getDynamoDBCredentialsProvider() {
         return dynamoDBCredentialsProvider;
     }
@@ -673,6 +742,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Credentials provider used to access CloudWatch
      */
+
     public AWSCredentialsProvider getCloudWatchCredentialsProvider() {
         return cloudWatchCredentialsProvider;
     }
@@ -680,6 +750,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return workerIdentifier
      */
+
     public String getWorkerIdentifier() {
         return workerIdentifier;
     }
@@ -687,6 +758,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return the shardSyncIntervalMillis
      */
+
     public long getShardSyncIntervalMillis() {
         return shardSyncIntervalMillis;
     }
@@ -694,6 +766,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Max records to fetch per Kinesis getRecords call
      */
+
     public int getMaxRecords() {
         return maxRecords;
     }
@@ -701,6 +774,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Idle time between calls to fetch data from Kinesis
      */
+
     public long getIdleTimeBetweenReadsInMillis() {
         return idleTimeBetweenReadsInMillis;
     }
@@ -708,6 +782,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return true if processRecords() should be called even for empty record lists
      */
+
     public boolean shouldCallProcessRecordsEvenForEmptyRecordList() {
         return callProcessRecordsEvenForEmptyRecordList;
     }
@@ -715,6 +790,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Epsilon milliseconds (used for lease timing margins)
      */
+
     public long getEpsilonMillis() {
         return EPSILON_MS;
     }
@@ -722,6 +798,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return stream name
      */
+
     public String getStreamName() {
         return streamName;
     }
@@ -729,6 +806,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Kinesis endpoint
      */
+
     public String getKinesisEndpoint() {
         return kinesisEndpoint;
     }
@@ -736,6 +814,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return DynamoDB endpoint
      */
+
     public String getDynamoDBEndpoint() {
         return dynamoDBEndpoint;
     }
@@ -743,6 +822,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return the initialPositionInStream
      */
+
     public InitialPositionInStream getInitialPositionInStream() {
         return initialPositionInStream;
     }
@@ -750,6 +830,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return interval between polls for parent shard completion
      */
+
     public long getParentShardPollIntervalMillis() {
         return parentShardPollIntervalMillis;
     }
@@ -757,6 +838,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Kinesis client configuration
      */
+
     public ClientConfiguration getKinesisClientConfiguration() {
         return kinesisClientConfig;
     }
@@ -764,6 +846,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return DynamoDB client configuration
      */
+
     public ClientConfiguration getDynamoDBClientConfiguration() {
         return dynamoDBClientConfig;
     }
@@ -771,6 +854,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return CloudWatch client configuration
      */
+
     public ClientConfiguration getCloudWatchClientConfiguration() {
         return cloudWatchClientConfig;
     }
@@ -778,6 +862,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return backoff time when tasks encounter exceptions
      */
+
     public long getTaskBackoffTimeMillis() {
         return taskBackoffTimeMillis;
     }
@@ -785,6 +870,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Metrics are buffered for at most this long before publishing.
      */
+
     public long getMetricsBufferTimeMillis() {
         return metricsBufferTimeMillis;
     }
@@ -792,6 +878,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Max number of metrics to buffer before publishing.
      */
+
     public int getMetricsMaxQueueSize() {
         return metricsMaxQueueSize;
     }
@@ -799,6 +886,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Metrics level enabled for metrics.
      */
+
     public MetricsLevel getMetricsLevel() {
         return metricsLevel;
     }
@@ -806,6 +894,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Enabled dimensions for metrics.
      */
+
     public Set<String> getMetricsEnabledDimensions() {
         // Unmodifiable set.
         return metricsEnabledDimensions;
@@ -814,6 +903,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return true if we should clean up leases of shards after processing is complete (don't wait for expiration)
      */
+
     public boolean shouldCleanupLeasesUponShardCompletion() {
         return cleanupLeasesUponShardCompletion;
     }
@@ -821,6 +911,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return true if we should ignore child shards which have open parents
      */
+
     public boolean shouldIgnoreUnexpectedChildShards() {
         return ignoreUnexpectedChildShards;
     }
@@ -829,6 +920,7 @@ public class KinesisClientLibConfiguration {
      * @return true if KCL should validate client provided sequence numbers with a call to Amazon Kinesis before
      *         checkpointing for calls to {@link RecordProcessorCheckpointer#checkpoint(String)}
      */
+
     public boolean shouldValidateSequenceNumberBeforeCheckpointing() {
         return validateSequenceNumberBeforeCheckpointing;
     }
@@ -836,6 +928,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Region for the service
      */
+
     public String getRegionName() {
         return regionName;
     }
@@ -843,6 +936,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return true if Worker should skip syncing shards and leases at startup if leases are present
      */
+
     public boolean getSkipShardSyncAtWorkerInitializationIfLeasesExist() {
         return skipShardSyncAtWorkerInitializationIfLeasesExist;
     }
@@ -850,6 +944,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return ShardSyncStrategyType to be used by KCL to process the Stream.
      */
+
     public ShardSyncStrategyType getShardSyncStrategyType() {
         return shardSyncStrategyType;
     }
@@ -857,6 +952,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Max leases this Worker can handle at a time
      */
+
     public int getMaxLeasesForWorker() {
         return maxLeasesForWorker;
     }
@@ -864,6 +960,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Max leases to steal at one time (for load balancing)
      */
+
     public int getMaxLeasesToStealAtOneTime() {
         return maxLeasesToStealAtOneTime;
     }
@@ -871,6 +968,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Read capacity to provision when creating the lease table.
      */
+
     public int getInitialLeaseTableReadCapacity() {
         return initialLeaseTableReadCapacity;
     }
@@ -878,6 +976,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Write capacity to provision when creating the lease table.
      */
+
     public int getInitialLeaseTableWriteCapacity() {
         return initialLeaseTableWriteCapacity;
     }
@@ -886,6 +985,7 @@ public class KinesisClientLibConfiguration {
      * Keeping it protected to forbid outside callers from depending on this internal object.
      * @return The initialPositionInStreamExtended object.
      */
+
     protected InitialPositionInStreamExtended getInitialPositionInStreamExtended() {
         return initialPositionInStreamExtended;
     }
@@ -894,6 +994,7 @@ public class KinesisClientLibConfiguration {
      * @return The timestamp from where we need to start the application.
      * Valid only for initial position of type AT_TIMESTAMP, returns null for other positions.
      */
+
     public Date getTimestampAtInitialPositionInStream() {
         return initialPositionInStreamExtended.getTimestamp();
     }
@@ -901,6 +1002,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Shard prioritization strategy.
      */
+
     public ShardPrioritization getShardPrioritizationStrategy() {
         return shardPrioritization;
     }
@@ -908,6 +1010,7 @@ public class KinesisClientLibConfiguration {
     /**
      * @return Graceful shutdown timeout
      */
+
     public long getShutdownGraceMillis() {
         return shutdownGraceMillis;
     }
@@ -918,6 +1021,7 @@ public class KinesisClientLibConfiguration {
      * @param tableName name of the lease table in DynamoDB
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withTableName(String tableName) {
         this.tableName = tableName;
         return this;
@@ -927,6 +1031,7 @@ public class KinesisClientLibConfiguration {
      * @param kinesisEndpoint Kinesis endpoint
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withKinesisEndpoint(String kinesisEndpoint) {
         this.kinesisEndpoint = kinesisEndpoint;
         return this;
@@ -936,6 +1041,7 @@ public class KinesisClientLibConfiguration {
      * @param dynamoDBEndpoint DynamoDB endpoint
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withDynamoDBEndpoint(String dynamoDBEndpoint) {
         this.dynamoDBEndpoint = dynamoDBEndpoint;
         return this;
@@ -947,6 +1053,7 @@ public class KinesisClientLibConfiguration {
      *        If there are checkpoints, we will process records from the checkpoint position.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withInitialPositionInStream(InitialPositionInStream initialPositionInStream) {
         this.initialPositionInStream = initialPositionInStream;
         this.initialPositionInStreamExtended =
@@ -958,6 +1065,7 @@ public class KinesisClientLibConfiguration {
      * @param timestamp The timestamp to use with the AT_TIMESTAMP value for initialPositionInStream.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withTimestampAtInitialPositionInStream(Date timestamp) {
         this.initialPositionInStream = InitialPositionInStream.AT_TIMESTAMP;
         this.initialPositionInStreamExtended = InitialPositionInStreamExtended.newInitialPositionAtTimestamp(timestamp);
@@ -968,6 +1076,7 @@ public class KinesisClientLibConfiguration {
      * @param failoverTimeMillis Lease duration (leases not renewed within this period will be claimed by others)
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withFailoverTimeMillis(long failoverTimeMillis) {
         checkIsValuePositive("FailoverTimeMillis", failoverTimeMillis);
         this.failoverTimeMillis = failoverTimeMillis;
@@ -978,6 +1087,7 @@ public class KinesisClientLibConfiguration {
      * @param shardSyncIntervalMillis Time between tasks to sync leases and Kinesis shards
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withShardSyncIntervalMillis(long shardSyncIntervalMillis) {
         checkIsValuePositive("ShardSyncIntervalMillis", shardSyncIntervalMillis);
         this.shardSyncIntervalMillis = shardSyncIntervalMillis;
@@ -988,6 +1098,7 @@ public class KinesisClientLibConfiguration {
      * @param maxRecords Max records to fetch in a Kinesis getRecords() call
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMaxRecords(int maxRecords) {
         checkIsValuePositive("MaxRecords", (long) maxRecords);
         this.maxRecords = maxRecords;
@@ -1014,6 +1125,7 @@ public class KinesisClientLibConfiguration {
      *            how long to sleep between GetRecords calls when no records are returned.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withIdleTimeBetweenReadsInMillis(long idleTimeBetweenReadsInMillis) {
         checkIsValuePositive("IdleTimeBetweenReadsInMillis", idleTimeBetweenReadsInMillis);
         this.idleTimeBetweenReadsInMillis = idleTimeBetweenReadsInMillis;
@@ -1025,6 +1137,7 @@ public class KinesisClientLibConfiguration {
      *        GetRecords returned an empty record list
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withCallProcessRecordsEvenForEmptyRecordList(
             boolean callProcessRecordsEvenForEmptyRecordList) {
         this.callProcessRecordsEvenForEmptyRecordList = callProcessRecordsEvenForEmptyRecordList;
@@ -1035,6 +1148,7 @@ public class KinesisClientLibConfiguration {
      * @param parentShardPollIntervalMillis Wait for this long between polls to check if parent shards are done
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withParentShardPollIntervalMillis(long parentShardPollIntervalMillis) {
         checkIsValuePositive("ParentShardPollIntervalMillis", parentShardPollIntervalMillis);
         this.parentShardPollIntervalMillis = parentShardPollIntervalMillis;
@@ -1046,6 +1160,7 @@ public class KinesisClientLibConfiguration {
      *        in Kinesis)
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withCleanupLeasesUponShardCompletion(
             boolean cleanupLeasesUponShardCompletion) {
         this.cleanupLeasesUponShardCompletion = cleanupLeasesUponShardCompletion;
@@ -1056,6 +1171,7 @@ public class KinesisClientLibConfiguration {
      * @param ignoreUnexpectedChildShards Ignore child shards with open parents.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withIgnoreUnexpectedChildShards(
             boolean ignoreUnexpectedChildShards) {
         this.ignoreUnexpectedChildShards = ignoreUnexpectedChildShards;
@@ -1066,6 +1182,7 @@ public class KinesisClientLibConfiguration {
      * @param clientConfig Common client configuration used by Kinesis/DynamoDB/CloudWatch client
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withCommonClientConfig(ClientConfiguration clientConfig) {
         ClientConfiguration tempClientConfig = checkAndAppendKinesisClientLibUserAgent(clientConfig);
         this.kinesisClientConfig = tempClientConfig;
@@ -1078,6 +1195,7 @@ public class KinesisClientLibConfiguration {
      * @param kinesisClientConfig Client configuration used by Kinesis client
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withKinesisClientConfig(ClientConfiguration kinesisClientConfig) {
         this.kinesisClientConfig = checkAndAppendKinesisClientLibUserAgent(kinesisClientConfig);
         return this;
@@ -1087,6 +1205,7 @@ public class KinesisClientLibConfiguration {
      * @param dynamoDBClientConfig Client configuration used by DynamoDB client
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withDynamoDBClientConfig(ClientConfiguration dynamoDBClientConfig) {
         this.dynamoDBClientConfig = checkAndAppendKinesisClientLibUserAgent(dynamoDBClientConfig);
         return this;
@@ -1096,6 +1215,7 @@ public class KinesisClientLibConfiguration {
      * @param cloudWatchClientConfig Client configuration used by CloudWatch client
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withCloudWatchClientConfig(ClientConfiguration cloudWatchClientConfig) {
         this.cloudWatchClientConfig = checkAndAppendKinesisClientLibUserAgent(cloudWatchClientConfig);
         return this;
@@ -1107,6 +1227,7 @@ public class KinesisClientLibConfiguration {
      * @param userAgent User agent to use in AWS requests
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withUserAgent(String userAgent) {
         String customizedUserAgent = userAgent + "," + KINESIS_CLIENT_LIB_USER_AGENT;
         this.kinesisClientConfig.setUserAgent(customizedUserAgent);
@@ -1119,6 +1240,7 @@ public class KinesisClientLibConfiguration {
      * @param taskBackoffTimeMillis Backoff period when tasks encounter an exception
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withTaskBackoffTimeMillis(long taskBackoffTimeMillis) {
         checkIsValuePositive("TaskBackoffTimeMillis", taskBackoffTimeMillis);
         this.taskBackoffTimeMillis = taskBackoffTimeMillis;
@@ -1129,6 +1251,7 @@ public class KinesisClientLibConfiguration {
      * @param metricsBufferTimeMillis Metrics are buffered for at most this long before publishing to CloudWatch
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMetricsBufferTimeMillis(long metricsBufferTimeMillis) {
         checkIsValuePositive("MetricsBufferTimeMillis", metricsBufferTimeMillis);
         this.metricsBufferTimeMillis = metricsBufferTimeMillis;
@@ -1139,6 +1262,7 @@ public class KinesisClientLibConfiguration {
      * @param metricsMaxQueueSize Max number of metrics to buffer before publishing to CloudWatch
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMetricsMaxQueueSize(int metricsMaxQueueSize) {
         checkIsValuePositive("MetricsMaxQueueSize", (long) metricsMaxQueueSize);
         this.metricsMaxQueueSize = metricsMaxQueueSize;
@@ -1149,6 +1273,7 @@ public class KinesisClientLibConfiguration {
      * @param metricsLevel Metrics level to enable.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMetricsLevel(MetricsLevel metricsLevel) {
         this.metricsLevel = metricsLevel == null ? DEFAULT_METRICS_LEVEL : metricsLevel;
         return this;
@@ -1163,6 +1288,7 @@ public class KinesisClientLibConfiguration {
      * @param metricsLevel Metrics level to enable.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMetricsLevel(String metricsLevel) {
         this.metricsLevel = MetricsLevel.fromName(metricsLevel);
         return this;
@@ -1173,6 +1299,7 @@ public class KinesisClientLibConfiguration {
      * @param metricsEnabledDimensions Set of dimensions that are allowed.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withMetricsEnabledDimensions(Set<String> metricsEnabledDimensions) {
         if (metricsEnabledDimensions == null) {
             this.metricsEnabledDimensions = METRICS_ALWAYS_ENABLED_DIMENSIONS;
@@ -1192,6 +1319,7 @@ public class KinesisClientLibConfiguration {
      *        {@link RecordProcessorCheckpointer#checkpoint(String)}.
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withValidateSequenceNumberBeforeCheckpointing(
             boolean validateSequenceNumberBeforeCheckpointing) {
         this.validateSequenceNumberBeforeCheckpointing = validateSequenceNumberBeforeCheckpointing;
@@ -1207,6 +1335,7 @@ public class KinesisClientLibConfiguration {
      *        initialization).
      * @return KinesisClientLibConfiguration
      */
+
     public KinesisClientLibConfiguration withSkipShardSyncAtStartupIfLeasesExist(
             boolean skipShardSyncAtStartupIfLeasesExist) {
         this.skipShardSyncAtWorkerInitializationIfLeasesExist = skipShardSyncAtStartupIfLeasesExist;
@@ -1217,6 +1346,7 @@ public class KinesisClientLibConfiguration {
      * @param shardSyncStrategyType ShardSyncStrategy type for KCL.
      * @return {@link KinesisClientLibConfiguration}
      */
+
     public KinesisClientLibConfiguration withShardSyncStrategyType(ShardSyncStrategyType shardSyncStrategyType) {
         this.shardSyncStrategyType = shardSyncStrategyType;
         return this;
@@ -1227,6 +1357,118 @@ public class KinesisClientLibConfiguration {
      * @param regionName The region name for the service
      * @return KinesisClientLibConfiguration
      */
+
+    // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 2 LINES
+
+    public static final String KINESIS_CLIENT_LIB_USER_AGENT = "amazon-kinesis-client-library-java-1.11.2-SNAPSHOT";
+
+    /**
+     * Default ShardSyncStrategy to be used for discovering new shards in the Stream.
+     */
+
+    // Enables applications flush/checkpoint (if they have some data "in progress", but don't get new data for while)
+
+    // This is useful for optimizing deployments to large fleets working on a stable stream.
+
+    // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
+    // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
+    /**
+     * @param applicationName Name of the Kinesis application
+     *        By default the application name is included in the user agent string used to make AWS requests. This
+     *        can assist with troubleshooting (e.g. distinguish requests made by separate applications).
+     * @param streamName Name of the Kinesis stream
+     * @param kinesisEndpoint Kinesis endpoint
+     * @param dynamoDBEndpoint DynamoDB endpoint
+     * @param initialPositionInStream One of LATEST or TRIM_HORIZON. The KinesisClientLibrary will start fetching
+     *        records from that location in the stream when an application starts up for the first time and there
+     *        are no checkpoints. If there are checkpoints, then we start from the checkpoint position.
+     * @param kinesisCredentialsProvider Provides credentials used to access Kinesis
+     * @param dynamoDBCredentialsProvider Provides credentials used to access DynamoDB
+     * @param cloudWatchCredentialsProvider Provides credentials used to access CloudWatch
+     * @param failoverTimeMillis Lease duration (leases not renewed within this period will be claimed by others)
+     * @param workerId Used to distinguish different workers/processes of a Kinesis application
+     * @param maxRecords Max records to read per Kinesis getRecords() call
+     * @param idleTimeBetweenReadsInMillis Idle time between calls to fetch data from Kinesis
+     * @param callProcessRecordsEvenForEmptyRecordList Call the IRecordProcessor::processRecords() API even if
+     *        GetRecords returned an empty record list.
+     * @param parentShardPollIntervalMillis Wait for this long between polls to check if parent shards are done
+     * @param shardSyncIntervalMillis Time between tasks to sync leases and Kinesis shards
+     * @param cleanupTerminatedShardsBeforeExpiry Clean up shards we've finished processing (don't wait for expiration
+     *        in Kinesis)
+     * @param kinesisClientConfig Client Configuration used by Kinesis client
+     * @param dynamoDBClientConfig Client Configuration used by DynamoDB client
+     * @param cloudWatchClientConfig Client Configuration used by CloudWatch client
+     * @param taskBackoffTimeMillis Backoff period when tasks encounter an exception
+     * @param metricsBufferTimeMillis Metrics are buffered for at most this long before publishing to CloudWatch
+     * @param metricsMaxQueueSize Max number of metrics to buffer before publishing to CloudWatch
+     * @param validateSequenceNumberBeforeCheckpointing whether KCL should validate client provided sequence numbers
+     *        with a call to Amazon Kinesis before checkpointing for calls to
+     *        {@link RecordProcessorCheckpointer#checkpoint(String)}
+     * @param regionName The region name for the service
+     */
+
+    // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
+    // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
+    /**
+     * @param applicationName Name of the Kinesis application
+     *        By default the application name is included in the user agent string used to make AWS requests. This
+     *        can assist with troubleshooting (e.g. distinguish requests made by separate applications).
+     * @param streamName Name of the Kinesis stream
+     * @param kinesisEndpoint Kinesis endpoint
+     * @param dynamoDBEndpoint DynamoDB endpoint
+     * @param initialPositionInStream One of LATEST or TRIM_HORIZON. The KinesisClientLibrary will start fetching
+     *        records from that location in the stream when an application starts up for the first time and there
+     *        are no checkpoints. If there are checkpoints, then we start from the checkpoint position.
+     * @param kinesisCredentialsProvider Provides credentials used to access Kinesis
+     * @param dynamoDBCredentialsProvider Provides credentials used to access DynamoDB
+     * @param cloudWatchCredentialsProvider Provides credentials used to access CloudWatch
+     * @param failoverTimeMillis Lease duration (leases not renewed within this period will be claimed by others)
+     * @param workerId Used to distinguish different workers/processes of a Kinesis application
+     * @param maxRecords Max records to read per Kinesis getRecords() call
+     * @param idleTimeBetweenReadsInMillis Idle time between calls to fetch data from Kinesis
+     * @param callProcessRecordsEvenForEmptyRecordList Call the IRecordProcessor::processRecords() API even if
+     *        GetRecords returned an empty record list.
+     * @param parentShardPollIntervalMillis Wait for this long between polls to check if parent shards are done
+     * @param shardSyncIntervalMillis Time between tasks to sync leases and Kinesis shards
+     * @param cleanupTerminatedShardsBeforeExpiry Clean up shards we've finished processing (don't wait for expiration
+     *        in Kinesis)
+     * @param kinesisClientConfig Client Configuration used by Kinesis client
+     * @param dynamoDBClientConfig Client Configuration used by DynamoDB client
+     * @param cloudWatchClientConfig Client Configuration used by CloudWatch client
+     * @param taskBackoffTimeMillis Backoff period when tasks encounter an exception
+     * @param metricsBufferTimeMillis Metrics are buffered for at most this long before publishing to CloudWatch
+     * @param metricsMaxQueueSize Max number of metrics to buffer before publishing to CloudWatch
+     * @param validateSequenceNumberBeforeCheckpointing whether KCL should validate client provided sequence numbers
+     *        with a call to Amazon Kinesis before checkpointing for calls to
+     *        {@link RecordProcessorCheckpointer#checkpoint(String)}
+     * @param regionName The region name for the service
+     */
+
+    // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 26 LINES
+
+    // CHECKSTYLE:IGNORE ParameterNumber FOR NEXT 26 LINES
+
+    // Check if value is positive, otherwise throw an exception
+
+    // Check if user agent in configuration is the default agent.
+
+    // If so, replace it with application name plus KINESIS_CLIENT_LIB_USER_AGENT.
+
+    // If not, append KINESIS_CLIENT_LIB_USER_AGENT to the end.
+
+    /**
+     * @return ShardSyncStrategyType to be used by KCL to process the Stream.
+     */
+
+    /**
+     * @param shardSyncStrategyType ShardSyncStrategy type for KCL.
+     * @return {@link KinesisClientLibConfiguration}
+     */
+
     // CHECKSTYLE:IGNORE HiddenFieldCheck FOR NEXT 2 LINES
     public KinesisClientLibConfiguration withRegionName(String regionName) {
         this.regionName = regionName;
