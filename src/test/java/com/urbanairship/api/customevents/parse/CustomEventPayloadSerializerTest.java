@@ -92,11 +92,11 @@ public class CustomEventPayloadSerializerTest {
                 .setNamedUserId("hugh.manbeing")
                 .build();
 
-        Map<String, CustomEventPropValue> properties = new HashMap<>();
-        properties.put("category", CustomEventPropValue.of("mens shoes"));
-        properties.put("id", CustomEventPropValue.of("pid-11046546"));
-        properties.put("description", CustomEventPropValue.of("Sneaker purchase"));
-        properties.put("brand", CustomEventPropValue.of("Victory Sneakers"));
+        Map<String, String> properties = new HashMap<>();
+        properties.put("category", "mens shoes");
+        properties.put("id", "pid-11046546");
+        properties.put("description", "Sneaker purchase");
+        properties.put("brand", "Victory Sneakers");
 
         CustomEventBody customEventBody = CustomEventBody.newBuilder()
                 .setName("purchased")
