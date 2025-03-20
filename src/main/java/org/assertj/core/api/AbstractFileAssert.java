@@ -291,7 +291,13 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * assertThat(fileUTF8).usingCharset(StandardCharsets.UTF_8).hasSameContentAs(fileTurkischCharset, StandardCharsets.UTF_8);</code></pre>
    * </p>
    * @param expected the given {@code File} to compare the actual {@code File} to.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractFileAssert.java/left.java
    * @param expectedCharset the {@link Charset} used to read the content of the expected file.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractFileAssert.java/base.java
+   * @param expectedCharset the {@Charset} used to read the content of the expected file.
+=======
+   * @param expectedCharset the {@code Charset} used to read the content of the expected file.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractFileAssert.java/right.java
    * @return {@code this} assertion object.
    * @throws NullPointerException if the given {@code File} is {@code null}.
    * @throws IllegalArgumentException if the given {@code File} is not an existing file.

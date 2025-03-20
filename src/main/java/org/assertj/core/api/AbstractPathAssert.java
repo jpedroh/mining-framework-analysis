@@ -142,7 +142,13 @@ public abstract class AbstractPathAssert<S extends AbstractPathAssert<S>> extend
    * assertThat(fileUTF8Charset).usingCharset(StandardCharsets.UTF_8).hasSameContentAs(fileTurkischCharset, StandardCharsets.UTF_8);</code></pre>
    * 
    * @param expected the given {@code Path} to compare the actual {@code Path} to.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractPathAssert.java/left.java
    * @param expectedCharset the {@link Charset} used to read the content of the expected Path.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractPathAssert.java/base.java
+   * @param expectedCharset the {@Charset} used to read the content of the expected Path.
+=======
+   * @param expectedCharset the {@code Charset} used to read the content of the expected Path.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/8f273c4b38c167f6622e01618cf3831f976373b5/src/main/java/org/assertj/core/api/AbstractPathAssert.java/right.java
    * @return {@code this} assertion object.
    * @throws NullPointerException if the given {@code Path} is {@code null}.
    * @throws AssertionError if the actual or given {@code Path} is not an existing readable file.
