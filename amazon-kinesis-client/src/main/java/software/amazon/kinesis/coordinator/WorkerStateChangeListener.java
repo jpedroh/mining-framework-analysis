@@ -1,33 +1,25 @@
-/*
- *  Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- *  Licensed under the Amazon Software License (the "License").
- *  You may not use this file except in compliance with the License.
- *  A copy of the License is located at
- *
- *  http://aws.amazon.com/asl/
- *
- *  or in the "license" file accompanying this file. This file is distributed
- *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *  express or implied. See the License for the specific language governing
- *  permissions and limitations under the License.
- */
 package software.amazon.kinesis.coordinator;
 
 /**
  * A listener for callbacks on changes worker state
  */
-@FunctionalInterface
-public interface WorkerStateChangeListener {
-	enum WorkerState {
-		CREATED,
-		INITIALIZING,
-		STARTED,
-		SHUT_DOWN
-	}
+@FunctionalInterface public interface WorkerStateChangeListener {
+  enum WorkerState {
+    CREATED,
+    INITIALIZING,
+    STARTED,
+    SHUT_DOWN
+  }
 
-	void onWorkerStateChange(WorkerState newState);
+  void onWorkerStateChange(WorkerState newState);
 
-	default void onInitializationFailed(Throwable e) {
-	}
+  default void onInitializationFailed(Throwable e) {
+  }
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  default void onInitializationFailure(Throwable e) {
+  }
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/8f9f8b7033e8f195a8166628e1585484956756df/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/WorkerStateChangeListener.java/right.java
 }
