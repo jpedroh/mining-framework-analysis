@@ -1,38 +1,7 @@
-/*  
- *  Imixs-Workflow 
- *  
- *  Copyright (C) 2001-2020 Imixs Software Solutions GmbH,  
- *  http://www.imixs.com
- *  
- *  This program is free software; you can redistribute it and/or 
- *  modify it under the terms of the GNU General Public License 
- *  as published by the Free Software Foundation; either version 2 
- *  of the License, or (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- *  General Public License for more details.
- *  
- *  You can receive a copy of the GNU General Public
- *  License at http://www.gnu.org/licenses/gpl.html
- *  
- *  Project: 
- *      https://www.imixs.org
- *      https://github.com/imixs/imixs-workflow
- *  
- *  Contributors:  
- *      Imixs Software Solutions GmbH - Project Management
- *      Ralph Soika - Software Developer
- */
-
 package org.imixs.workflow.engine.index;
-
 import java.util.List;
-
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.exceptions.QueryException;
-
 import jakarta.ejb.Stateless;
 
 /**
@@ -42,15 +11,12 @@ import jakarta.ejb.Stateless;
  * @version 1.0
  * @author rsoika
  */
-//@Stateless
 public interface SearchService {
+  public static final int DEFAULT_MAX_SEARCH_RESULT = 9999;
 
-	public static final int DEFAULT_MAX_SEARCH_RESULT = 9999; // limiting the
-																// total
-	// number of hits
-	public static final int DEFAULT_PAGE_SIZE = 100; // default docs in one page
+  public static final int DEFAULT_PAGE_SIZE = 100;
 
-	/**
+  /**
 	 * Returns a collection of documents matching the provided search term. The term
 	 * will be extended with the current users roles to test the read access level
 	 * of each workitem matching the search term.
@@ -75,10 +41,9 @@ public interface SearchService {
 	 * 
 	 * @throws QueryException in case the searchtem is not understandable.
 	 */
-	public List<ItemCollection> search(String searchTerm, int pageSize, int pageIndex, SortOrder sortOrder,
-			DefaultOperator defaultOperator, boolean loadStubs) throws QueryException;
+  public List<ItemCollection> search(String searchTerm, int pageSize, int pageIndex, SortOrder sortOrder, DefaultOperator defaultOperator, boolean loadStubs) throws QueryException;
 
-	/**
+  /**
 	 * Returns the total hits for a given search term from the lucene index. The
 	 * method did not load any data. The provided search term will be extended with
 	 * a users roles to test the read access level of each workitem matching the
@@ -94,10 +59,9 @@ public interface SearchService {
 	 * @return total hits of search result
 	 * @throws QueryException in case the searchterm is not understandable.
 	 */
-	public int getTotalHits(final String _searchTerm, final int _maxResult, final DefaultOperator defaultOperator)
-			throws QueryException;
+  public int getTotalHits(final String _searchTerm, final int _maxResult, final DefaultOperator defaultOperator) throws QueryException;
 
-	/**
+  /**
 	 * Returns the total hits for a given set of categories from the lucene taxonomy
 	 * index. The method did not load any data.
 	 * 
@@ -106,9 +70,9 @@ public interface SearchService {
 	 * @return total hits of search result
 	 * @throws QueryException in case the searchterm is not understandable.
 	 */
-	public List<Category> getTaxonomy(String... categories);
-	
-	/**
+  public List<Category> getTaxonomy(String... categories);
+
+  /**
      * Returns the total hits for a given set of categories from the lucene taxonomy
      * index based on a search query. The method did not load any data.
      * 
@@ -117,5 +81,5 @@ public interface SearchService {
      * @return total hits of search result
      * @throws QueryException in case the searchterm is not understandable.
      */
-	public List<Category> getTaxonomyByQuery(String searchTerm, String... categories);
+  public List<Category> getTaxonomyByQuery(String searchTerm, String... categories);
 }
