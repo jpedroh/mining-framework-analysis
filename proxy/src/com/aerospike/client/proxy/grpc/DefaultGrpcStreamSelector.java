@@ -38,15 +38,14 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 	 * multiplexed on the same stream.
 	 */
 	private static final int LARGE_RESPONSE_CUTOFF = 10;
-
 	public DefaultGrpcStreamSelector(int maxConcurrentStreamsPerChannel, int maxConcurrentRequestsPerStream, int totalRequestsPerStream) {
 		this.maxConcurrentStreamsPerChannel = maxConcurrentStreamsPerChannel;
 		this.maxConcurrentRequestsPerStream = maxConcurrentRequestsPerStream;
 		this.totalRequestsPerStream = totalRequestsPerStream;
 	}
-
 	@Override
 	public SelectedStream select(List<GrpcStream> streams, GrpcStreamingCall call) {
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/left.java
 		final String fullMethodName =
 			call.getStreamingMethodDescriptor().getFullMethodName();
 
@@ -56,6 +55,17 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 			return new SelectedStream(1, 1);
 		}
 
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/base.java
+=======
+		final String fullMethodName =
+			call.getStreamingMethodDescriptor().getFullMethodName();
+
+		// Always use a dedicated new stream for a scan and a long query.
+		if (isScan(call) || isLongQuery(call)) {
+			return new SelectedStream(1, 1);
+		}
+
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/right.java
 		// Sort by stream id. Leave original list as it is.
 		List<GrpcStream> filteredStreams = streams.stream()
 			.filter(grpcStream ->
@@ -97,7 +107,6 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 		}
 		return new SelectedStream(selected);
 	}
-
 	private boolean isLargeBatch(GrpcStreamingCall call) {
 		String fullMethodName =
 			call.getStreamingMethodDescriptor().getFullMethodName();
@@ -114,7 +123,6 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 
 		return call.getNumExpectedResponses() < LARGE_RESPONSE_CUTOFF;
 	}
-
 	private boolean isScan(GrpcStreamingCall call) {
 		String fullMethodName =
 			call.getStreamingMethodDescriptor().getFullMethodName();
@@ -125,7 +133,7 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 		return scanFullMethodName.equals(fullMethodName) ||
 			scanStreamingFullMethodName.equals(fullMethodName);
 	}
-
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/left.java
 	private boolean isLongQuery(GrpcStreamingCall call) {
 		String fullMethodName =
 			call.getStreamingMethodDescriptor().getFullMethodName();
@@ -158,4 +166,40 @@ public class DefaultGrpcStreamSelector implements GrpcStreamSelector {
 
 		return true;
 	}
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/base.java
+	private boolean isLongQuery(GrpcStreamingCall call) 
+=======
+	private boolean isLongQuery(GrpcStreamingCall call) {
+		String fullMethodName =
+			call.getStreamingMethodDescriptor().getFullMethodName();
+		String queryFullMethodName =
+			QueryGrpc.getQueryMethod().getFullMethodName();
+		String queryStreamingFullMethodName =
+			QueryGrpc.getQueryStreamingMethod().getFullMethodName();
+
+		if (!queryFullMethodName.equals(fullMethodName) &&
+			!queryStreamingFullMethodName.equals(fullMethodName)) {
+			return false;  // Not a query request.
+		}
+
+		Kvs.QueryRequest queryRequest = call.getRequestBuilder().getQueryRequest();
+		if (queryRequest.getBackground()) {
+			return false; // Background queries send back a single response.
+		}
+
+		if (queryRequest.getStatement().getMaxRecords() < 10) {
+			return false; // Records returned in responses is small.
+		}
+
+		if (!queryRequest.getStatement().getFunctionName().isEmpty()) {
+			return false; // Is an aggregation statement.
+		}
+
+		if (queryRequest.hasQueryPolicy() && queryRequest.getQueryPolicy().getShortQuery()) {
+			return false; // Is a short query.
+		}
+
+		return true;
+	}
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/94db6c183ad87d64bc7a89f731e55f65018ceea0/proxy/src/com/aerospike/client/proxy/grpc/DefaultGrpcStreamSelector.java/right.java
 }
