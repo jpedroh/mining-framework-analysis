@@ -13,10 +13,17 @@ import com.google.common.primitives.Ints;
 
 
 /**
+<<<<<<< /usr/src/app/output/leveluplunch/levelup-java-examples/db0acd81d124fd8af863c20728e0afcf3adbbb0e/src/test/java/com/levelup/java/array/CombineTwoArrays.java/left.java
+ * This java example will demonstrate concating,  
+ * combining, joining or merging two arrays.
+||||||| /usr/src/app/output/leveluplunch/levelup-java-examples/db0acd81d124fd8af863c20728e0afcf3adbbb0e/src/test/java/com/levelup/java/array/CombineTwoArrays.java/base.java
+ * This java snippet will demonstrate combining or joining two arrays.
+=======
  * This java example will demonstrate combining or joining two arrays.
+>>>>>>> /usr/src/app/output/leveluplunch/levelup-java-examples/db0acd81d124fd8af863c20728e0afcf3adbbb0e/src/test/java/com/levelup/java/array/CombineTwoArrays.java/right.java
  * 
  * @author Justin Musgrove
- * @see <a href='http://www.leveluplunch.com/java/'></a>
+ * @see <a href='http://www.leveluplunch.com/java/examples/merge-two-arrays/'>Merge two arrays</a>
  * 
  */
 public class CombineTwoArrays {
