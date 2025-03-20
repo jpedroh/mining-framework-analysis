@@ -42,7 +42,8 @@ public class OpenPGPApplet extends Applet implements ISO7816 {
 	private static final byte[] HISTORICAL = { 0x00, 0x73, 0x00, 0x00,
 			(byte) 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00 };
-
+	
+	// returned by vendor specific command f1
 	// returned by vendor specific command f1
 	private static final byte[] VERSION = { 0x01, 0x00, 0x11 };
 
@@ -77,6 +78,7 @@ public class OpenPGPApplet extends Applet implements ISO7816 {
 	private static byte PW1_MIN_LENGTH = 6;
 	private static byte PW1_MAX_LENGTH = 127;
 	// Default PW1 '123456'
+	// Default PW1 '123456'
 	private static byte[] PW1_DEFAULT = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36 };
 	private static byte PW1_MODE_NO81 = 0;
 	private static byte PW1_MODE_NO82 = 1;
@@ -86,6 +88,7 @@ public class OpenPGPApplet extends Applet implements ISO7816 {
 
 	private static final byte PW3_MIN_LENGTH = 8;
 	private static final byte PW3_MAX_LENGTH = 127;
+	// Default PW3 '12345678'
 	// Default PW3 '12345678'
 	private static final byte[] PW3_DEFAULT = { 0x31, 0x32, 0x33, 0x34, 0x35,
 			0x36, 0x37, 0x38 };
