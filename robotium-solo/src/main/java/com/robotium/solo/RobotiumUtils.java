@@ -187,7 +187,7 @@ public class RobotiumUtils {
 		}
 		return filteredViews;
 	}
-	
+
 	/*
 	 * Turn on/off wifi
 	 * @solo reference
@@ -196,6 +196,7 @@ public class RobotiumUtils {
 	 *   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	 *   <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	 */
+
 	static void turnOnOffWifi(Solo solo, Boolean status){
 			WifiManager wifiManager = (WifiManager)solo.getCurrentActivity().getSystemService(Context.WIFI_SERVICE);
 			if (status == true && !wifiManager.isWifiEnabled()) {
@@ -204,7 +205,65 @@ public class RobotiumUtils {
 				wifiManager.setWifiEnabled(false);
 			}
 		}
-	
+
+	/*
+	 * check if connected device is tablet
+	 * @context
+	 * 
+	 * return true if device is tablet likewise
+	 *   
+	 */
+
+	static boolean isTablet(Context context){
+		boolean xlarge = true;
+		boolean large = true;
+	    try {
+			xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+			large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    return (xlarge || large);
+	}
+
+	/*
+	 * Prints memory stats of connected device
+	 *   
+	 */
+
+	static void checkMemory() {
+		double totalMem = Double.valueOf(Runtime.getRuntime().totalMemory());
+		double maxMem = Double.valueOf(Runtime.getRuntime().maxMemory());
+		double availableMem = Double
+				.valueOf(Runtime.getRuntime().freeMemory());
+		System.out.println("Runtime Memory info: TotalMem="
+				+ Math.round(totalMem / 1048576) + "mb. MaxMemory"
+				+ Math.round(maxMem / 1048576) + " mb. AvailableMemory="
+				+ Math.round(availableMem / 1048576) + " mb.");
+	}
+
+<<<<<<< /usr/src/app/output/robotiumtech/robotium/cf5465c6653b115f8a28582189859cb782f1a84a/robotium-solo/src/main/java/com/robotium/solo/RobotiumUtils.java/left.java
+	@UiThreadTest
+	@SuppressWarnings("deprecation")
+	/*
+	 * unlock/lock android device
+	 * @true or false
+	 * 
+	 * User should have following permissions in AUT(Application Under Test)'s menifest.xml file
+	 *   <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+	 *   
+	 */
+	void unlockDevice(Solo solo, String activityName){
+		KeyguardManager keyGuardManager;
+		KeyguardLock lock;
+		
+		keyGuardManager= (KeyguardManager) solo.getCurrentActivity().getSystemService(Context.KEYGUARD_SERVICE);
+		  lock =  keyGuardManager.newKeyguardLock(activityName);
+		  ((KeyguardLock) lock).disableKeyguard();
+	}
+||||||| /usr/src/app/output/robotiumtech/robotium/cf5465c6653b115f8a28582189859cb782f1a84a/robotium-solo/src/main/java/com/robotium/solo/RobotiumUtils.java/base.java
+=======
 	@UiThreadTest
 	/*
 	 * unlock android device
@@ -224,125 +283,24 @@ public class RobotiumUtils {
 		  ((KeyguardLock) locker).disableKeyguard();
 
 	}
-	
-	/*
-	 * check if connected device is tablet
-	 * @context
+>>>>>>> /usr/src/app/output/robotiumtech/robotium/cf5465c6653b115f8a28582189859cb782f1a84a/robotium-solo/src/main/java/com/robotium/solo/RobotiumUtils.java/right.java
+
+	/**
+	 * Filters a collection of Views and returns a list that contains only Views
+	 * with text that matches a specified regular expression.
 	 * 
-	 * return true if device is tablet likewise
-	 *   
+	 * @param views The collection of views to scan.
+	 * @param regex The text pattern to search for.
+	 * @return A list of views whose text matches the given regex.
 	 */
-	static boolean isTablet(Context context){
-		boolean xlarge = true;
-		boolean large = true;
-	    try {
-			xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
-			large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	    return (xlarge || large);
-	}
-	
-	/*
-	 * Prints memory stats of connected device
-	 *   
-	 */
-	static void checkMemory() {
-		double totalMem = Double.valueOf(Runtime.getRuntime().totalMemory());
-		double maxMem = Double.valueOf(Runtime.getRuntime().maxMemory());
-		double availableMem = Double
-				.valueOf(Runtime.getRuntime().freeMemory());
-		System.out.println("Runtime Memory info: TotalMem="
-<<<<<<< HEAD
-				+ Math.round(vTotalMem / 1048576) + "mb. MaxMemory"
-				+ Math.round(vMaxMem / 1048576) + " mb. AvailableMemory="
-				+ Math.round(vAvailableMem / 1048576) + " mb.");
-	}
-	
-	@UiThreadTest
-	@SuppressWarnings("deprecation")
-	/*
-	 * unlock/lock android device
-	 * @true or false
+
+	/**
+	 * Filters a collection of Views and returns a list that contains only Views
+	 * with text that matches a specified regular expression.
 	 * 
-	 * User should have following permissions in AUT(Application Under Test)'s menifest.xml file
-	 *   <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-	 *   
+	 * @param views The collection of views to scan.
+	 * @param regex The text pattern to search for.
+	 * @return A list of views whose text matches the given regex.
 	 */
-	void unlockDevice(Solo solo, String activityName){
-		KeyguardManager keyGuardManager;
-		KeyguardLock lock;
-		
-		keyGuardManager= (KeyguardManager) solo.getCurrentActivity().getSystemService(Context.KEYGUARD_SERVICE);
-		  lock =  keyGuardManager.newKeyguardLock(activityName);
-		  ((KeyguardLock) lock).disableKeyguard();
-	}
-	
-	
-	
-	/*
-	 * Prints details of all ImageViews on visible screen
-	 *   
-	 */
-	static void printAllImageViews(Solo solo) {
-		ArrayList<ImageView> allImageViews = solo
-				.getCurrentViews(ImageView.class);
-		System.out.println("Total ImageViews:" + allImageViews.size());
-		for (ImageView vImageView : allImageViews) {
-			if (vImageView.getVisibility() == View.VISIBLE) {
-				System.out.println("Image ID: "
-						+ vImageView.getId()
-						+ "Tag: "
-						+ (vImageView.getTag() != null ? vImageView.getTag()
-								.toString() : "null") + " Visibility:"
-						+ vImageView.getVisibility() + " View String :"
-						+ vImageView.toString());
-			}
-		}
-	}
-	
-	/*
-	 * Prints details of all ImageButtons on visible screen
-	 *   
-	 */
-	static void printAllImageButtons(Solo solo) {
-		ArrayList<ImageButton> allImageButton = solo
-				.getCurrentViews(ImageButton.class);
-		System.out.println("Total ImageButtons:" + allImageButton.size());
-		for (ImageView vImageButton : allImageButton) {
-			if (vImageButton.getVisibility() == View.VISIBLE) {
-				System.out.println("Image Button ID: " + vImageButton.getId() + "Tag: "
-						+ vImageButton.getTag().toString() + " Visibility:"
-						+ vImageButton.getVisibility() + "View String: "
-						+ vImageButton.toString());
-			}
-		}
-	}
-	
-	/*
-	 * Prints details of all Views on visible screen
-	 *   
-	 */
-	static void printAllViews(Solo solo) {
-		ArrayList<View> allViews = solo.getCurrentViews();
-		System.out.println("Total Views:" + allViews.size());
-		for (View vView : allViews) {
-			if (vView.getVisibility() == View.VISIBLE) {
-				System.out.println("View : " + vView.toString() + "View ID: "
-						+ vView.getId() + " Value:"
-						+ vView.getClass().getName().toString()
-						+ " Visibility:" + vView.getVisibility());
-			}
-		}
-=======
-				+ Math.round(totalMem / 1048576) + "mb. MaxMemory"
-				+ Math.round(maxMem / 1048576) + " mb. AvailableMemory="
-				+ Math.round(availableMem / 1048576) + " mb.");
->>>>>>> 5ad5c16a4b23ccbdb4dc774e783f0e52bc5954d6
-	}
-	
-	
 	
 }
