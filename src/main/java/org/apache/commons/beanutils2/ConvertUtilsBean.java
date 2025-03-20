@@ -490,8 +490,8 @@ public class ConvertUtilsBean {
      * </p>
      * This method registers the following converters:
      * <ul>
+<<<<<<< /usr/src/app/output/apache/commons-beanutils/fc721de2d9600f27fabb5ee05d1a0938b37fe3e5/src/main/java/org/apache/commons/beanutils2/ConvertUtilsBean.java/left.java
      *     <li>{@code Class.class} - {@link ClassConverter}</li>
-     *     <li>{@code Enum.class} - {@link EnumConverter}</li>
      *     <li>{@code java.util.Date.class} - {@link DateConverter}</li>
      *     <li>{@code java.util.Calendar.class} - {@link CalendarConverter}</li>
      *     <li>{@code File.class} - {@link FileConverter}</li>
@@ -515,6 +515,58 @@ public class ConvertUtilsBean {
      *     <li>{@code YearMonth.class} - {@link YearMonthConverter}</li>
      *     <li>{@code ZoneId.class} - {@link ZoneIdConverter}</li>
      *     <li>{@code ZoneOffset.class} - {@link ZoneOffsetConverter}</li>
+||||||| /usr/src/app/output/apache/commons-beanutils/fc721de2d9600f27fabb5ee05d1a0938b37fe3e5/src/main/java/org/apache/commons/beanutils2/ConvertUtilsBean.java/base.java
+     *     <li><code>Class.class</code> - {@link ClassConverter}</li>
+     *     <li><code>java.util.Date.class</code> - {@link DateConverter}</li>
+     *     <li><code>java.util.Calendar.class</code> - {@link CalendarConverter}</li>
+     *     <li><code>File.class</code> - {@link FileConverter}</li>
+     *     <li><code>Path.class</code> - {@link PathConverter}</li>
+     *     <li><code>java.sql.Date.class</code> - {@link SqlDateConverter}</li>
+     *     <li><code>java.sql.Time.class</code> - {@link SqlTimeConverter}</li>
+     *     <li><code>java.sql.Timestamp.class</code> - {@link SqlTimestampConverter}</li>
+     *     <li><code>URL.class</code> - {@link URLConverter}</li>
+     *     <li><code>URI.class</code> - {@link URIConverter}</li>
+     *     <li><code>UUID.class</code> - {@link UUIDConverter}</li>
+     *     <li><code>LocalDate.class</code> - {@link LocalDateConverter}</li>
+     *     <li><code>LocalDateTime.class</code> - {@link LocalDateTimeConverter}</li>
+     *     <li><code>LocalTime.class</code> - {@link LocalTimeConverter}</li>
+     *     <li><code>OffsetDateTime.class</code> - {@link OffsetDateTimeConverter}</li>
+     *     <li><code>OffsetTime.class</code> - {@link OffsetTimeConverter}</li>
+     *     <li><code>ZonedDateTime.class</code> - {@link ZonedDateTimeConverter}</li>
+     *     <li><code>Duration.class</code> - {@link DurationConverter}</li>
+     *     <li><code>MonthDay.class</code> - {@link MonthDayConverter}</li>
+     *     <li><code>Period.class</code> - {@link PeriodConverter}</li>
+     *     <li><code>Year.class</code> - {@link YearConverter}</li>
+     *     <li><code>YearMonth.class</code> - {@link YearMonthConverter}</li>
+     *     <li><code>ZoneId.class</code> - {@link ZoneIdConverter}</li>
+     *     <li><code>ZoneOffset.class</code> - {@link ZoneOffsetConverter}</li>
+=======
+     *     <li><code>Class.class</code> - {@link ClassConverter}</li>
+     *     <li><code>Enum.class</code> - {@link EnumConverter}</li>
+     *     <li><code>java.util.Date.class</code> - {@link DateConverter}</li>
+     *     <li><code>java.util.Calendar.class</code> - {@link CalendarConverter}</li>
+     *     <li><code>File.class</code> - {@link FileConverter}</li>
+     *     <li><code>Path.class</code> - {@link PathConverter}</li>
+     *     <li><code>java.sql.Date.class</code> - {@link SqlDateConverter}</li>
+     *     <li><code>java.sql.Time.class</code> - {@link SqlTimeConverter}</li>
+     *     <li><code>java.sql.Timestamp.class</code> - {@link SqlTimestampConverter}</li>
+     *     <li><code>URL.class</code> - {@link URLConverter}</li>
+     *     <li><code>URI.class</code> - {@link URIConverter}</li>
+     *     <li><code>UUID.class</code> - {@link UUIDConverter}</li>
+     *     <li><code>LocalDate.class</code> - {@link LocalDateConverter}</li>
+     *     <li><code>LocalDateTime.class</code> - {@link LocalDateTimeConverter}</li>
+     *     <li><code>LocalTime.class</code> - {@link LocalTimeConverter}</li>
+     *     <li><code>OffsetDateTime.class</code> - {@link OffsetDateTimeConverter}</li>
+     *     <li><code>OffsetTime.class</code> - {@link OffsetTimeConverter}</li>
+     *     <li><code>ZonedDateTime.class</code> - {@link ZonedDateTimeConverter}</li>
+     *     <li><code>Duration.class</code> - {@link DurationConverter}</li>
+     *     <li><code>MonthDay.class</code> - {@link MonthDayConverter}</li>
+     *     <li><code>Period.class</code> - {@link PeriodConverter}</li>
+     *     <li><code>Year.class</code> - {@link YearConverter}</li>
+     *     <li><code>YearMonth.class</code> - {@link YearMonthConverter}</li>
+     *     <li><code>ZoneId.class</code> - {@link ZoneIdConverter}</li>
+     *     <li><code>ZoneOffset.class</code> - {@link ZoneOffsetConverter}</li>
+>>>>>>> /usr/src/app/output/apache/commons-beanutils/fc721de2d9600f27fabb5ee05d1a0938b37fe3e5/src/main/java/org/apache/commons/beanutils2/ConvertUtilsBean.java/right.java
      * </ul>
      * @param throwException {@code true} if the converters should
      * throw an exception when a conversion error occurs, otherwise <code>
