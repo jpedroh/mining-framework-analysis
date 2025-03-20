@@ -1,4 +1,3 @@
-
 package de.micromata.opengis.kml.v_2_2_0;
 
 import de.micromata.opengis.kml.v_2_2_0.annotations.Obvious;
@@ -11,24 +10,64 @@ import java.util.List;
 /**
  * {@code <Icon>}see also {@code <icon>}.
  * <p>
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
  * {@code <Icon><href>Sunset.jpg</href> </Icon> }
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+ * <Icon> <href>Sunset.jpg</href> </Icon> 
+=======
+ * <Icon> <href>Sunset.jpg</href> </Icon>
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
  * </p>
  * <p>
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
  * A custom Icon. In {@code <IconStyle>}, the only child element of {@code <Icon>} is {@code <href>: <href>:}
  * An HTTP address or a local file specification used to load an icon. 
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+ * A custom Icon. In <IconStyle>, the only child element of <Icon> is <href>: <href>: 
+ * An HTTP address or a local file specification used to load an icon. 
+=======
+ * A custom Icon. In <IconStyle>, the only child element of <Icon> is <href>: <href>:
+ * An HTTP address or a local file specification used to load an icon.
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
  * </p>
  * <p>
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
  * Defines an image associated with an Icon style or overlay. {@code <Icon>}has the same child 
  * elements as {@code <Link>}. The required {@code <href>}child element defines the location of the 
  * image to be used as the overlay or as the icon for the placemark. This location 
  * can either be on a local file system or a remote web server. 
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+ * Defines an image associated with an Icon style or overlay. <Icon> has the same child 
+ * elements as <Link>. The required <href> child element defines the location of the 
+ * image to be used as the overlay or as the icon for the placemark. This location 
+ * can either be on a local file system or a remote web server. 
+=======
+ * Defines an image associated with an Icon style or overlay. <Icon> has the same child
+ * elements as <Link>. The required <href> child element defines the location of the
+ * image to be used as the overlay or as the icon for the placemark. This location
+ * can either be on a local file system or a remote web server.
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
  * </p>
  * <p>
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
  * Defines the image associated with the Overlay. The {@code <href>}element defines the location 
  * of the image to be used as the Overlay. This location can be either on a local file 
  * system or on a web server. If this element is omitted or contains no {@code <href>}, a rectangle
  * is drawn using the color and size defined by the ground or screen overlay. {@code <Icon>
  * <href>icon.jpg</href> </Icon>}
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+ * Defines the image associated with the Overlay. The <href> element defines the location 
+ * of the image to be used as the Overlay. This location can be either on a local file 
+ * system or on a web server. If this element is omitted or contains no <href>, a rectangle 
+ * is drawn using the color and size defined by the ground or screen overlay. <Icon> 
+ * <href>icon.jpg</href> </Icon> 
+=======
+ * Defines the image associated with the Overlay. The <href> element defines the location
+ * of the image to be used as the Overlay. This location can be either on a local file
+ * system or on a web server. If this element is omitted or contains no <href>, a rectangle
+ * is drawn using the color and size defined by the ground or screen overlay. <Icon>
+ * <href>icon.jpg</href> </Icon>
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
  * </p>
  *
  * Syntax:
@@ -45,6 +84,7 @@ import java.util.List;
  *   &lt;viewFormat&gt;...&lt;/viewFormat&gt;          &lt;!-- string --&gt;
  *   &lt;httpQuery&gt;...&lt;/httpQuery&gt;            &lt;!-- string --&gt;
  *   <strong>&lt;/Icon&gt;</strong></pre>
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
  * 
  * Contained By: 
  *
@@ -53,6 +93,25 @@ import java.util.List;
  * 
  * 
  * 
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+ * 
+ * Contained By: 
+ * @see: <GroundOverlay>
+ * @see: <IconStyle>
+ * @see: <ScreenOverlay>
+ * 
+ * 
+ * 
+=======
+ *
+ * Contained By:
+ * @see: <GroundOverlay>
+ * @see: <IconStyle>
+ * @see: <ScreenOverlay>
+ *
+ *
+ *
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Icon", namespace = "", propOrder = {
@@ -75,7 +134,7 @@ public class Icon
     /**
      * RefreshMode
      * <p>
-     * onChange, onInterval, onExpire
+     * onChange, onInterval, onExpire 
      * </p>
      * 
      * See Also: 
@@ -89,18 +148,26 @@ public class Icon
     /**
      * {@code {@code <refreshInterval>}}
      * <p>
-     * Indicates to refresh the file every n seconds.
+     * Indicates to refresh the file every n seconds. 
      * </p>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
+    @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
+    protected double refreshInterval;
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+    @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
+    protected double refreshInterval;
+=======
     @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
     protected Double refreshInterval;
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
     /**
      * ViewRefreshMode
      * <p>
-     * never, onRequest, onStop, onRegion
+     * never, onRequest, onStop, onRegion 
      * </p>
      * 
      * See Also: 
@@ -117,29 +184,37 @@ public class Icon
      * After camera movement stops, specifies the number of seconds to wait before refreshing 
      * the view. (See {@code {@code <viewRefreshMode>}} and onStop above.)
      * </p>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/left.java
+    @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
+    protected double viewRefreshTime;
+||||||| /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/base.java
+    @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
+    protected double viewRefreshTime;
+=======
     @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "4.0")
     protected Double viewRefreshTime;
+>>>>>>> /usr/src/app/output/micromata/javaapiforkml/c3c171b056ff1302482dddba02d6b49df4a15c3c/src/main/java/de/micromata/opengis/kml/v_2_2_0/Icon.java/right.java
     /**
      * {@code <viewboundscale>}
      * <p>
-     * Scales the BBOX parameters before sending them to the server. A value less than
-     *  1 specifies to use less than the full view (screen). A value greater than 1 specifies
-     * to fetch an area that extends beyond the edges of the current view.
+     * Scales the BBOX parameters before sending them to the server. A value less than 
+     *  1 specifies to use less than the full view (screen). A value greater than 1 specifies 
+     * to fetch an area that extends beyond the edges of the current view. 
      * </p>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
     @XmlElement(namespace = "http://www.opengis.net/kml/2.2", defaultValue = "1.0")
     protected Double viewBoundScale;
     /**
      * {@code <viewFormat>}
      * <p>
-     * BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]
+     * BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth] 
      * </p>
      * <p>
      * If you specify a {@code <viewRefreshMode>} of onStop and do not include the {@code <viewFormat>} 
@@ -155,13 +230,13 @@ public class Icon
      * the file is fetched.(If the {@code <href>}specifies a local file, this element is ignored.) 
      * </p>
      * <p>
-     * This information matches the Web Map Service (WMS) bounding box specification.
+     * This information matches the Web Map Service (WMS) bounding box specification. 
      * </p>
      * <p>
-     * You can also specify a custom set of viewing parameters to add to the query string.
-     * If you supply a format string, it is used instead of the BBOX information. If you
-     * also want the BBOX information, you need to add those parameters along with the
-     * custom parameters.
+     * You can also specify a custom set of viewing parameters to add to the query string. 
+     * If you supply a format string, it is used instead of the BBOX information. If you 
+     * also want the BBOX information, you need to add those parameters along with the 
+     * custom parameters. 
      * </p>
      * <p>
      * You can use any of the following parameters in your format string (and Google Earth 
@@ -175,23 +250,23 @@ public class Icon
      * of view for the camera [horizPixels], [vertPixels] - size in pixels of the 3D viewer 
      * [terrainEnabled] - indicates whether the 3D viewer is showing terrain 
      * </p>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
     @XmlElement(namespace = "http://www.opengis.net/kml/2.2")
     protected String viewFormat;
     /**
      * {@code <httpQuery>}
      * <p>
-     * Appends information to the query string, based on the parameters specified. (Google
-     * Earth substitutes the appropriate current value at the time it creates the query
-     * string.) The following parameters are supported: [clientVersion] [kmlVersion] [clientName]
-     * [language]
+     * Appends information to the query string, based on the parameters specified. (Google 
+     * Earth substitutes the appropriate current value at the time it creates the query 
+     * string.) The following parameters are supported: [clientVersion] [kmlVersion] [clientName] 
+     * [language] 
      * </p>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
     @XmlElement(namespace = "http://www.opengis.net/kml/2.2")
     protected String httpQuery;
@@ -207,190 +282,174 @@ public class Icon
      * Google Earth. The id attribute must be assigned if the Update mechanism is to 
      * be used. 
      * </p>
-     *
-     * Syntax:
+     * 
+     * Syntax: 
      * <pre>&lt;!-- abstract element; do not create --&gt;<strong>
      * &lt;!-- <em>Object</em> id="ID" targetId="NCName" --&gt;
      * &lt;!-- /<em>Object</em>&gt; --&gt;</strong></pre>
-     *
-     *
-     *
+     * 
+     * 
+     * 
      */
     @XmlElement(name = "LinkObjectExtensionGroup", namespace = "http://www.opengis.net/kml/2.2")
     protected List<AbstractObject> linkObjectExtension;
-
     public Icon() {
         super();
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link RefreshMode}
-     *
+     *     
      */
     public RefreshMode getRefreshMode() {
         return refreshMode;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link RefreshMode}
-     *
+     *     
      */
     public void setRefreshMode(RefreshMode value) {
         this.refreshMode = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link Double}
-     *
+     *     
      */
     public Double getRefreshInterval() {
         return refreshInterval;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link Double}
-     *
+     *     
      */
     public void setRefreshInterval(Double value) {
         this.refreshInterval = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link ViewRefreshMode}
-     *
+     *     
      */
     public ViewRefreshMode getViewRefreshMode() {
         return viewRefreshMode;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link ViewRefreshMode}
-     *
+     *     
      */
     public void setViewRefreshMode(ViewRefreshMode value) {
         this.viewRefreshMode = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link Double}
-     *
+     *     
      */
     public Double getViewRefreshTime() {
         return viewRefreshTime;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link Double}
-     *
+     *     
      */
     public void setViewRefreshTime(Double value) {
         this.viewRefreshTime = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link Double}
-     *
+     *     
      */
     public Double getViewBoundScale() {
         return viewBoundScale;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link Double}
-     *
+     *     
      */
     public void setViewBoundScale(Double value) {
         this.viewBoundScale = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link String}
-     *
+     *     
      */
     public String getViewFormat() {
         return viewFormat;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link String}
-     *
+     *     
      */
     public void setViewFormat(String value) {
         this.viewFormat = value;
     }
-
     /**
      *
      * 
      * @return
      *     possible object is
      *     {@link String}
-     *
+     *     
      */
     public String getHttpQuery() {
         return httpQuery;
     }
-
     /**
      *
      * 
      * @param value
      *     allowed object is
      *     {@link String}
-     *
+     *     
      */
     public void setHttpQuery(String value) {
         this.httpQuery = value;
     }
-
     /**
      *
      * 
@@ -401,7 +460,6 @@ public class Icon
         }
         return this.linkSimpleExtension;
     }
-
     /**
      *
      * 
@@ -412,7 +470,6 @@ public class Icon
         }
         return this.linkObjectExtension;
     }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -432,7 +489,6 @@ public class Icon
         result = ((prime*result)+((linkObjectExtension == null)? 0 :linkObjectExtension.hashCode()));
         return result;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -513,7 +569,6 @@ public class Icon
         }
         return true;
     }
-
     /**
      *
      * 
@@ -523,10 +578,9 @@ public class Icon
     public void setLinkSimpleExtension(final List<Object> linkSimpleExtension) {
         this.linkSimpleExtension = linkSimpleExtension;
     }
-
     /**
      * add a value to the linkSimpleExtension property collection
-     *
+     * 
      * @param linkSimpleExtension
      *     Objects of the following type are allowed in the list: {@link Object}
      * @return
@@ -536,7 +590,6 @@ public class Icon
         this.getLinkSimpleExtension().add(linkSimpleExtension);
         return this;
     }
-
     /**
      *
      * 
@@ -546,10 +599,9 @@ public class Icon
     public void setLinkObjectExtension(final List<AbstractObject> linkObjectExtension) {
         this.linkObjectExtension = linkObjectExtension;
     }
-
     /**
      * add a value to the linkObjectExtension property collection
-     *
+     * 
      * @param linkObjectExtension
      *     Objects of the following type are allowed in the list: {@link AbstractObject}
      * @return
@@ -559,7 +611,6 @@ public class Icon
         this.getLinkObjectExtension().add(linkObjectExtension);
         return this;
     }
-
     /**
      *
      * 
@@ -569,14 +620,12 @@ public class Icon
     public void setObjectSimpleExtension(final List<Object> objectSimpleExtension) {
         super.setObjectSimpleExtension(objectSimpleExtension);
     }
-
     @Obvious
     @Override
     public Icon addToObjectSimpleExtension(final Object objectSimpleExtension) {
         super.getObjectSimpleExtension().add(objectSimpleExtension);
         return this;
     }
-
     /**
      *
      * 
@@ -586,14 +635,12 @@ public class Icon
     public void setBasicLinkSimpleExtension(final List<Object> basicLinkSimpleExtension) {
         super.setBasicLinkSimpleExtension(basicLinkSimpleExtension);
     }
-
     @Obvious
     @Override
     public Icon addToBasicLinkSimpleExtension(final Object basicLinkSimpleExtension) {
         super.getBasicLinkSimpleExtension().add(basicLinkSimpleExtension);
         return this;
     }
-
     /**
      *
      * 
@@ -603,14 +650,12 @@ public class Icon
     public void setBasicLinkObjectExtension(final List<AbstractObject> basicLinkObjectExtension) {
         super.setBasicLinkObjectExtension(basicLinkObjectExtension);
     }
-
     @Obvious
     @Override
     public Icon addToBasicLinkObjectExtension(final AbstractObject basicLinkObjectExtension) {
         super.getBasicLinkObjectExtension().add(basicLinkObjectExtension);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -622,7 +667,6 @@ public class Icon
         this.setRefreshMode(refreshMode);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -634,7 +678,6 @@ public class Icon
         this.setRefreshInterval(refreshInterval);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -646,7 +689,6 @@ public class Icon
         this.setViewRefreshMode(viewRefreshMode);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -658,7 +700,6 @@ public class Icon
         this.setViewRefreshTime(viewRefreshTime);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -670,7 +711,6 @@ public class Icon
         this.setViewBoundScale(viewBoundScale);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -682,7 +722,6 @@ public class Icon
         this.setViewFormat(viewFormat);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -694,7 +733,6 @@ public class Icon
         this.setHttpQuery(httpQuery);
         return this;
     }
-
     /**
      * fluent setter
      *
@@ -706,11 +744,358 @@ public class Icon
         this.setLinkSimpleExtension(linkSimpleExtension);
         return this;
     }
-
     /**
      * fluent setter
      *
      * 
+     * @param linkObjectExtension
+     *     required parameter
+     */
+    /**
+     * RefreshMode
+     * <p>
+     * onChange, onInterval, onExpire
+     * </p>
+     *
+     * See Also:
+     * See <Link>
+     *
+     *
+     *
+     */
+    /**
+     * <refreshinterval>
+     * <p>
+     * Indicates to refresh the file every n seconds.
+     * </p>
+     *
+     *
+     *
+     */
+    /**
+     * ViewRefreshMode
+     * <p>
+     * never, onRequest, onStop, onRegion
+     * </p>
+     *
+     * See Also:
+     * See <Link>
+     *
+     *
+     *
+     */
+    /**
+     * <viewrefreshtime>
+     * <p>
+     * After camera movement stops, specifies the number of seconds to wait before refreshing
+     * the view. (See <viewRefreshMode> and onStop above.)
+     * </p>
+     *
+     *
+     *
+     */
+    /**
+     * <viewboundscale>
+     * <p>
+     * Scales the BBOX parameters before sending them to the server. A value less than
+     *  1 specifies to use less than the full view (screen). A value greater than 1 specifies
+     * to fetch an area that extends beyond the edges of the current view.
+     * </p>
+     *
+     *
+     *
+     */
+    /**
+     * <viewformat>
+     * <p>
+     * BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]
+     * </p>
+     * <p>
+     * If you specify a <viewRefreshMode> of onStop and do not include the <viewFormat>
+     * tag in the file, the following information is automatically appended to the query
+     * string:
+     * </p>
+     * <p>
+     * If you specify an empty <viewFormat> tag, no information is appended to the query
+     * string.
+     * </p>
+     * <p>
+     * Specifies the format of the query string that is appended to the Link's <href> before
+     * the file is fetched.(If the <href> specifies a local file, this element is ignored.)
+     * </p>
+     * <p>
+     * This information matches the Web Map Service (WMS) bounding box specification.
+     * </p>
+     * <p>
+     * You can also specify a custom set of viewing parameters to add to the query string.
+     * If you supply a format string, it is used instead of the BBOX information. If you
+     * also want the BBOX information, you need to add those parameters along with the
+     * custom parameters.
+     * </p>
+     * <p>
+     * You can use any of the following parameters in your format string (and Google Earth
+     * will substitute the appropriate current value at the time it creates the query string):
+     * [lookatLon], [lookatLat] - longitude and latitude of the point that <LookAt> is
+     * viewing [lookatRange], [lookatTilt], [lookatHeading] - values used by the <LookAt>
+     * element (see descriptions of <range>, <tilt>, and <heading> in <LookAt>) [lookatTerrainLon],
+     * [lookatTerrainLat], [lookatTerrainAlt] - point on the terrain in degrees/meters
+     * that <LookAt> is viewing [cameraLon], [cameraLat], [cameraAlt] - degrees/meters
+     * of the eyepoint for the camera [horizFov], [vertFov] - horizontal, vertical field
+     * of view for the camera [horizPixels], [vertPixels] - size in pixels of the 3D viewer
+     * [terrainEnabled] - indicates whether the 3D viewer is showing terrain
+     * </p>
+     *
+     *
+     *
+     */
+    /**
+     * <httpquery>
+     * <p>
+     * Appends information to the query string, based on the parameters specified. (Google
+     * Earth substitutes the appropriate current value at the time it creates the query
+     * string.) The following parameters are supported: [clientVersion] [kmlVersion] [clientName]
+     * [language]
+     * </p>
+     *
+     *
+     *
+     */
+    /**
+     * <Object>
+     * <p>
+     * This is an abstract base class and cannot be used directly in a KML file. It provides
+     * the id attribute, which allows unique identification of a KML element, and the targetId
+     * attribute, which is used to reference objects that have already been loaded into
+     * Google Earth. The id attribute must be assigned if the <Update> mechanism is to
+     * be used.
+     * </p>
+     *
+     * Syntax:
+     * <pre>&lt;!-- abstract element; do not create --&gt;<strong>
+     * &lt;!-- <em>Object</em> id="ID" targetId="NCName" --&gt;
+     * &lt;!-- /<em>Object</em>&gt; --&gt;</strong></pre>
+     *
+     *
+     *
+     */
+    /**
+     * @see refreshMode
+     *
+     * @return
+     *     possible object is
+     *     {@link RefreshMode}
+     *
+     */
+    /**
+     * @see refreshMode
+     *
+     * @param value
+     *     allowed object is
+     *     {@link RefreshMode}
+     *
+     */
+    /**
+     * @see refreshInterval
+     *
+     * @return
+     *     possible object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see refreshInterval
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see viewRefreshMode
+     *
+     * @return
+     *     possible object is
+     *     {@link ViewRefreshMode}
+     *
+     */
+    /**
+     * @see viewRefreshMode
+     *
+     * @param value
+     *     allowed object is
+     *     {@link ViewRefreshMode}
+     *
+     */
+    /**
+     * @see viewRefreshTime
+     *
+     * @return
+     *     possible object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see viewRefreshTime
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see viewBoundScale
+     *
+     * @return
+     *     possible object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see viewBoundScale
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Double}
+     *
+     */
+    /**
+     * @see viewFormat
+     *
+     * @return
+     *     possible object is
+     *     {@link String}
+     *
+     */
+    /**
+     * @see viewFormat
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String}
+     *
+     */
+    /**
+     * @see httpQuery
+     *
+     * @return
+     *     possible object is
+     *     {@link String}
+     *
+     */
+    /**
+     * @see httpQuery
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String}
+     *
+     */
+    /**
+     * @see linkSimpleExtension
+     *
+     */
+    /**
+     * @see linkObjectExtension
+     *
+     */
+    /**
+     * @see linkSimpleExtension
+     *
+     * @param linkSimpleExtension
+     */
+    /**
+     * add a value to the linkSimpleExtension property collection
+     *
+     * @param linkSimpleExtension
+     *     Objects of the following type are allowed in the list: {@link Object}
+     * @return
+     *     <tt>true</tt> (as general contract of <tt>Collection.add</tt>).
+     */
+    /**
+     * @see linkObjectExtension
+     *
+     * @param linkObjectExtension
+     */
+    /**
+     * add a value to the linkObjectExtension property collection
+     *
+     * @param linkObjectExtension
+     *     Objects of the following type are allowed in the list: {@link AbstractObject}
+     * @return
+     *     <tt>true</tt> (as general contract of <tt>Collection.add</tt>).
+     */
+    /**
+     * @see objectSimpleExtension
+     *
+     */
+    /**
+     * @see basicLinkSimpleExtension
+     *
+     */
+    /**
+     * @see basicLinkObjectExtension
+     *
+     */
+    /**
+     * fluent setter
+     * @see #setRefreshMode(RefreshMode)
+     *
+     * @param refreshMode
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setRefreshInterval(Double)
+     *
+     * @param refreshInterval
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setViewRefreshMode(ViewRefreshMode)
+     *
+     * @param viewRefreshMode
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setViewRefreshTime(Double)
+     *
+     * @param viewRefreshTime
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setViewBoundScale(Double)
+     *
+     * @param viewBoundScale
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setViewFormat(String)
+     *
+     * @param viewFormat
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setHttpQuery(String)
+     *
+     * @param httpQuery
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setLinkSimpleExtension(List<Object>)
+     *
+     * @param linkSimpleExtension
+     *     required parameter
+     */
+    /**
+     * fluent setter
+     * @see #setLinkObjectExtension(List<AbstractObject>)
+     *
      * @param linkObjectExtension
      *     required parameter
      */
