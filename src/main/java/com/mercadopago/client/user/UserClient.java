@@ -56,6 +56,7 @@ public class UserClient extends MercadoPagoClient {
    */
   public User get(MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get user request");
+
     MPResponse response = send("/users/me", HttpMethod.GET, null, null, requestOptions);
     User user = Serializer.deserializeFromJson(User.class, response.getContent());
     user.setResponse(response);
