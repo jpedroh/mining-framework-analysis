@@ -1,22 +1,6 @@
-/*
- * Created on Oct 26, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.fest.assertions.api;
-
 import java.util.Comparator;
 import java.util.List;
-
 import org.fest.assertions.core.Condition;
 import org.fest.assertions.core.IndexedObjectEnumerableAssert;
 import org.fest.assertions.data.Index;
@@ -36,12 +20,8 @@ import org.fest.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-// TODO inherits from IterableAssert and remove AbstractIterableAssert ?
-public class ListAssert<T> extends AbstractIterableAssert<ListAssert<T>, List<T>, T> implements
-    IndexedObjectEnumerableAssert<ListAssert<T>, T> {
-
-  @VisibleForTesting
-  Lists lists = Lists.instance();
+public class ListAssert<T extends java.lang.Object> extends AbstractIterableAssert<ListAssert<T>, List<T>, T> implements IndexedObjectEnumerableAssert<ListAssert<T>, T> {
+  @VisibleForTesting Lists lists = Lists.instance();
 
   protected ListAssert(List<T> actual) {
     super(actual, ListAssert.class);
@@ -119,15 +99,13 @@ public class ListAssert<T> extends AbstractIterableAssert<ListAssert<T>, List<T>
     return this;
   }
 
-  @Override
-  public ListAssert<T> usingElementComparator(Comparator<? super T> customComparator) {
+  @Override public ListAssert<T> usingElementComparator(Comparator<? super T> customComparator) {
     super.usingElementComparator(customComparator);
     this.lists = new Lists(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public ListAssert<T> usingDefaultElementComparator() {
+  @Override public ListAssert<T> usingDefaultElementComparator() {
     super.usingDefaultElementComparator();
     this.lists = Lists.instance();
     return myself;
