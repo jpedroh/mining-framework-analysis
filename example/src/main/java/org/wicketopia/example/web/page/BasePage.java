@@ -15,7 +15,12 @@
  */
 
 package org.wicketopia.example.web.page;
-
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.IPageMap;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -26,39 +31,59 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.resources.StyleSheetReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class BasePage extends WebPage implements IHeaderContributor
 {
+
+    private static final long serialVersionUID = 1L;
+    public BasePage(IModel<?> model)
+    {
+        super(model);
+        init();
+    }
+    public BasePage(PageParameters parameters)
+    {
+        super(parameters);
+        init();
+    }
+<<<<<<< /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/BasePage.java/left.java
+    public void renderHead(IHeaderResponse header)
+    {
+        header.renderCSSReference(new PackageResourceReference(getClass(), "style.css"));
+    }
+||||||| /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/BasePage.java/base.java
+    public void renderHead(IHeaderResponse header)
+    {
+        header.renderCSSReference(new ResourceReference(getClass(), "style.css"));
+    }
+=======
+    public void renderHead(IHeaderResponse header)
+    {
+        header.renderCSSReference(new ResourceReference(BasePage.class, "style.css"));
+    }
+>>>>>>> /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/BasePage.java/right.java
 //----------------------------------------------------------------------------------------------------------------------
 // Fields
 //----------------------------------------------------------------------------------------------------------------------
-
-    private static final long serialVersionUID = 1L;
-
     @SpringBean
     private AuthenticationManager authenticationManager;
-
 //----------------------------------------------------------------------------------------------------------------------
 // Constructors
 //----------------------------------------------------------------------------------------------------------------------
-
     public BasePage()
     {
         init();
     }
-
     private void init()
     {
         setOutputMarkupId(true);
@@ -67,7 +92,7 @@ public class BasePage extends WebPage implements IHeaderContributor
         add(new Label("copyrightLabel", resourceModel("page.copyright", new GregorianCalendar().get(
                 Calendar.YEAR))).setEscapeModelStrings(false));
 
-//        add(new StyleSheetReference("stylesheet", BasePage.class, "style.css"));
+        add(new StyleSheetReference("stylesheet", BasePage.class, "style.css"));
 
         add(new FeedbackPanel("feedback").setOutputMarkupPlaceholderTag(true));
         add(new BookmarkablePageLink<Void>("homeLink", HomePage.class));
@@ -80,6 +105,7 @@ public class BasePage extends WebPage implements IHeaderContributor
                 final UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken("admin", "admin");
                 SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(tok));
                 setResponsePage(BasePage.this.getClass());
+                setRedirect(true);
             }
 
             @Override
@@ -95,6 +121,7 @@ public class BasePage extends WebPage implements IHeaderContributor
             {
                 SecurityContextHolder.clearContext();
                 setResponsePage(BasePage.this.getClass());
+                setRedirect(true);
             }
 
             @Override
@@ -104,32 +131,12 @@ public class BasePage extends WebPage implements IHeaderContributor
             }
         });
     }
-
-    public BasePage(IModel<?> model)
-    {
-        super(model);
-        init();
-    }
-
-    public BasePage(PageParameters parameters)
-    {
-        super(parameters);
-        init();
-    }
-
 //----------------------------------------------------------------------------------------------------------------------
 // IHeaderContributor Implementation
 //----------------------------------------------------------------------------------------------------------------------
-
-    public void renderHead(IHeaderResponse header)
-    {
-        header.renderCSSReference(new PackageResourceReference(getClass(), "style.css"));
-    }
-
 //----------------------------------------------------------------------------------------------------------------------
 // Other Methods
 //----------------------------------------------------------------------------------------------------------------------
-
     /**
      * Returns a model which can be used to set the page's caption.  This implementation
      * merely returns a {@link org.apache.wicket.model.ResourceModel} which corresponds to the "page.caption" localized
@@ -141,7 +148,6 @@ public class BasePage extends WebPage implements IHeaderContributor
     {
         return resourceModel("page.caption");
     }
-
     /**
      * Returns a model which can be used to set the page's title.  This implementation
      * merely returns a {@link org.apache.wicket.model.ResourceModel} which corresponds to the "page.title" localized
@@ -153,7 +159,6 @@ public class BasePage extends WebPage implements IHeaderContributor
     {
         return resourceModel("page.title");
     }
-
     /**
      * Creates a resource model which corresponds to this page's <code>key</code> localized
      * resource string.

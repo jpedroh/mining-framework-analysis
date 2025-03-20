@@ -43,5 +43,79 @@ public class HomePage extends BasePage
 
     public HomePage()
     {
+<<<<<<< /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/HomePage.java/left.java
+        add(new Scaffold<Person>("scaffold", Person.class, persistenceProvider));
+        add(new Link("loginAdmin")
+        {
+            @Override
+            public void onClick()
+            {
+                final UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken("admin", "admin");
+                SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(tok));
+                setResponsePage(HomePage.class);
+    //                setRedirect(true);
+            }
+
+            @Override
+            public boolean isVisible()
+            {
+                return SecurityContextHolder.getContext().getAuthentication() == null;
+            }
+        });
+
+        add(new Link("logout")
+        {
+            @Override
+            public void onClick()
+            {
+                SecurityContextHolder.clearContext();
+                setResponsePage(HomePage.class);
+    //                setRedirect(true);
+            }
+
+            @Override
+            public boolean isVisible()
+            {
+                return SecurityContextHolder.getContext().getAuthentication() != null;
+            }
+        });
+||||||| /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/HomePage.java/base.java
+        add(new Scaffold<Person>("scaffold", Person.class, persistenceProvider));
+        add(new Link("loginAdmin")
+        {
+            @Override
+            public void onClick()
+            {
+                final UsernamePasswordAuthenticationToken tok = new UsernamePasswordAuthenticationToken("admin", "admin");
+                SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(tok));
+                setResponsePage(HomePage.class);
+                setRedirect(true);
+            }
+
+            @Override
+            public boolean isVisible()
+            {
+                return SecurityContextHolder.getContext().getAuthentication() == null;
+            }
+        });
+
+        add(new Link("logout")
+        {
+            @Override
+            public void onClick()
+            {
+                SecurityContextHolder.clearContext();
+                setResponsePage(HomePage.class);
+                setRedirect(true);
+            }
+
+            @Override
+            public boolean isVisible()
+            {
+                return SecurityContextHolder.getContext().getAuthentication() != null;
+            }
+        });
+=======
+>>>>>>> /usr/src/app/output/jwcarman/wicketopia/65dc57a69735d064d0c1c05fa67493b94c05b159/example/src/main/java/org/wicketopia/example/web/page/HomePage.java/right.java
     }
 }

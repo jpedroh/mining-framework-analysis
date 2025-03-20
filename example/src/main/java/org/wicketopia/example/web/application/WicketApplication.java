@@ -17,6 +17,8 @@
 package org.wicketopia.example.web.application;
 
 import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.ISpringContextLocator;
@@ -100,15 +102,21 @@ public class WicketApplication extends WebApplication implements
 		return HomePage.class;
 	}
 
-    protected void init()
-    {
-        super.init();
-        Wicketopia plugin = new Wicketopia();
-        plugin.addPropertyMetaDataDecorator(new HibernatePropertyDecorator(new PropertyModel<Configuration>(sessionFactoryBean, "configuration")));
-        plugin.addPropertyViewerProvider("image-boolean", ImageBooleanViewer.getProvider());
-        plugin.install(this);
+	protected void init() {
+		super.init();
+		Wicketopia plugin = new Wicketopia();
+		plugin.addPropertyMetaDataDecorator(new HibernatePropertyDecorator(new PropertyModel<Configuration>(sessionFactoryBean, "configuration")));
+	    plugin.addPropertyViewerProvider("image-boolean", ImageBooleanViewer.getProvider());
+	    plugin.install(this);
 		getComponentInstantiationListeners().add(
 				new SpringComponentInjector(this, getSpringContext(), true));
-		getAjaxRequestTargetListeners().add(new AutoFeedbackListener());
+	}
+
+    @Override
+    public AjaxRequestTarget newAjaxRequestTarget(Page page)
+    {
+        AjaxRequestTarget target = super.newAjaxRequestTarget(page);
+        target.addListener(new AutoFeedbackListener());
+        return target;
     }
 }
