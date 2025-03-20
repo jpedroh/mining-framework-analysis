@@ -1,31 +1,10 @@
-/*
- * SonarQube XML Plugin
- * Copyright (C) 2010-2017 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.plugins.xml.checks;
-
 import com.google.common.io.Files;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FileSystem;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -39,22 +18,26 @@ import org.sonar.plugins.xml.compat.CompatibleInputFile;
  * @author Matthijs Galesloot
  */
 public class XmlFile {
-
   private static final Logger LOG = LoggerFactory.getLogger(XmlFile.class);
+
   private static final String XML_PROLOG_START_TAG = "<?xml";
+
   public static final String BOM_CHAR = "\ufeff";
 
   private final CompatibleInputFile inputFile;
 
   private File noCharBeforePrologFile;
+
   /**
    * Number of lines removed before xml prolog if present
    */
   private int lineDeltaForIssue = 0;
+
   /**
    * Number of characters removed before xml prolog if present
    */
   private int characterDeltaForHighlight = 0;
+
   private boolean hasCharsBeforeProlog = false;
 
   public XmlFile(CompatibleInputFile inputFile, FileSystem fileSystem) {
@@ -75,17 +58,14 @@ public class XmlFile {
       int lineNb = 1;
       Pattern firstTagPattern = Pattern.compile("<[a-zA-Z?]+");
       boolean hasBOM = false;
-
       for (String line : FileUtils.readLines(inputFile)) {
         if (lineNb == 1 && line.startsWith(BOM_CHAR)) {
           hasBOM = true;
           characterDeltaForHighlight = -1;
         }
-
         Matcher m = firstTagPattern.matcher(line);
         if (m.find()) {
           int column = line.indexOf(m.group());
-
           if (XML_PROLOG_START_TAG.equals(m.group()) && !isFileBeginning(lineNb, column, hasBOM)) {
             hasCharsBeforeProlog = true;
           }
@@ -93,7 +73,6 @@ public class XmlFile {
         }
         lineNb++;
       }
-
       if (hasCharsBeforeProlog) {
         processCharBeforePrologInFile(fileSystem, lineNb);
       }
@@ -117,20 +96,15 @@ public class XmlFile {
     try {
       String content = inputFile.contents();
       File tempFile = new File(fileSystem.workDir(), inputFile.fileName());
-
       int index = content.indexOf(XML_PROLOG_START_TAG);
       Files.write(content.substring(index), tempFile, inputFile.charset());
-
       noCharBeforePrologFile = tempFile;
-
       if (index != -1) {
         characterDeltaForHighlight += index;
       }
-
       if (lineDelta > 1) {
         lineDeltaForIssue = lineDelta - 1;
       }
-
     } catch (IOException e) {
       LOG.warn("Unable to analyse file {}", inputFile.absolutePath(), e);
     }
