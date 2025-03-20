@@ -55,9 +55,14 @@ public class Game{
 
         mapManager.loadMap("Katzenklappentest");
         mapManager.setFloor(0);
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
+        InputManager.init();
         
         behaviourManager.activate();
-
+||||||| /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+        InputManager.init();
+=======
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
     }
 
     private void initializeSystems()
@@ -93,16 +98,23 @@ public class Game{
 
     private void initializeTestComponents()
     {
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
         //int dogEntity = EntityFactory.constructDog(new Vector2(0, 0), 60.0f, 40.0f, 0, 100f);
         //int dogEntity2 = EntityFactory.constructDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
         int dogEntity3 = EntityFactory.constructSmartDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
 
+||||||| /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+        int dogEntity = EntityFactory.constructDog(new Vector2(0, 0), 60.0f, 40.0f, 0, 100f);
+        int dogEntity2 = EntityFactory.constructDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
+=======
         EntityFactory.constructLaserPointer(new Vector2(300,0));
-        
-//        int dogEntity3 = EntityFactory.constructDog(new Vector2(40,200), 60.0f, 40.0f, 0, 100f);
-//        int dogEntity4 = EntityFactory.constructDog(new Vector2(100, 350), 60.0f, 40.0f, 0, 100f);
-//        int dogEntity5 = EntityFactory.constructDog(new Vector2(400, 200), 60.0f, 40.0f, 0, 100f);
-//        int dogEntity6 = EntityFactory.constructDog(new Vector2(100, 200), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity1 = EntityFactory.constructDog(new Vector2(200,200), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity2 = EntityFactory.constructDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity3 = EntityFactory.constructDog(new Vector2(40,200), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity4 = EntityFactory.constructDog(new Vector2(100, 350), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity5 = EntityFactory.constructDog(new Vector2(400, 200), 60.0f, 40.0f, 0, 100f);
+    //        int dogEntity6 = EntityFactory.constructDog(new Vector2(100, 200), 60.0f, 40.0f, 0, 100f);
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/a777b5bfa06179eda71bd883dac8fa4870765b2c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
     }
 
     public TiledMap loadMap(String filename){

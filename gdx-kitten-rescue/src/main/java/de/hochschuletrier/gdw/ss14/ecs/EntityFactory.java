@@ -155,8 +155,7 @@ public class EntityFactory{
         
     }
     
-    public static int constructDoor() {
-
+    public static int constructDoor(){
         int entity = manager.createEntity();
 
         return entity;
