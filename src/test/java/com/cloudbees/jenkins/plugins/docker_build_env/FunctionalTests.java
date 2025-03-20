@@ -33,7 +33,13 @@ public class FunctionalTests {
         project.getBuildWrappersList().add(
             new DockerBuildWrapper(
                 new PullDockerImageSelector("ubuntu:14.04"),
+<<<<<<< /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/left.java
                 "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null, "PATH", false)
+||||||| /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/base.java
+                "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null)
+=======
+                "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null, false)
+>>>>>>> /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/right.java
         );
         project.getBuildersList().add(new Shell("lsb_release  -a"));
 
@@ -51,8 +57,16 @@ public class FunctionalTests {
 
         project.getBuildWrappersList().add(
                 new DockerBuildWrapper(
+<<<<<<< /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/left.java
                         new DockerfileImageSelector(".", "$WORKSPACE/Dockerfile"),
                         "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null, "PATH", true)
+||||||| /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/base.java
+                        new DockerfileImageSelector(".", "$WORKSPACE/Dockerfile"),
+                        "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null)
+=======
+                        new DockerfileImageSelector(".", "Dockerfile"),
+                        "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null, true)
+>>>>>>> /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/right.java
         );
         project.getBuildersList().add(new Shell("lsb_release  -a"));
 
@@ -63,6 +77,7 @@ public class FunctionalTests {
         jenkins.buildAndAssertSuccess(project);
     }
 
+<<<<<<< /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/left.java
     @Test
     public void run_inside_built_python_pip_container() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
@@ -87,5 +102,32 @@ public class FunctionalTests {
         assertThat(s, containsString("Python 3.6.4"));
         jenkins.buildAndAssertSuccess(project);
     }
+||||||| /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/base.java
+=======
+    @Test
+    public void run_inside_built_python_pip_container() throws Exception {
+        FreeStyleProject project = jenkins.createFreeStyleProject();
+        String dockerfile = String.join(
+                                        "\n",
+                                        "FROM python:3.6.4-alpine3.4",
+                                        "RUN echo Successfully built THIS_STRING_SHOULD_NOT_BE_CAPTURED_AS_IMAGE_ID",
+                                        "RUN pip install simplejson==3.13.2"
+        );
+        project.setScm(new SingleFileSCM("Dockerfile", dockerfile));
+
+        project.getBuildWrappersList().add(
+                new DockerBuildWrapper(
+                        new DockerfileImageSelector(".", "Dockerfile"),
+                        "", new DockerServerEndpoint("", ""), "", true, false, Collections.<Volume>emptyList(), null, "cat", false, "bridge", null, null, true)
+        );
+        project.getBuildersList().add(new Shell("python -V"));
+
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+        jenkins.assertBuildStatus(Result.SUCCESS, build);
+        String s = FileUtils.readFileToString(build.getLogFile());
+        assertThat(s, containsString("Python 3.6.4"));
+        jenkins.buildAndAssertSuccess(project);
+    }
+>>>>>>> /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/test/java/com/cloudbees/jenkins/plugins/docker_build_env/FunctionalTests.java/right.java
 
 }

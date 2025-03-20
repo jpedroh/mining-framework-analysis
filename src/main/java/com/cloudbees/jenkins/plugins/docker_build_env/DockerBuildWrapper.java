@@ -81,7 +81,13 @@ public class DockerBuildWrapper extends BuildWrapper {
     public DockerBuildWrapper(DockerImageSelector selector, String dockerInstallation, DockerServerEndpoint dockerHost, String dockerRegistryCredentials, boolean verbose, boolean privileged,
                               List<Volume> volumes, String group, String command,
                               boolean forcePull,
+<<<<<<< /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/left.java
                               String net, String memory, String cpu, String filterEnvVariables, boolean noCache) {
+||||||| /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/base.java
+                              String net, String memory, String cpu) {
+=======
+                              String net, String memory, String cpu, boolean noCache) {
+>>>>>>> /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/right.java
         this.selector = selector;
         this.dockerInstallation = dockerInstallation;
         this.dockerHost = dockerHost;
@@ -95,8 +101,13 @@ public class DockerBuildWrapper extends BuildWrapper {
         this.net = net;
         this.memory = memory;
         this.cpu = cpu;
+<<<<<<< /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/left.java
         this.noCache = noCache;
         this.filterEnvVariables = filterEnvVariables;
+||||||| /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/base.java
+=======
+        this.noCache = noCache;
+>>>>>>> /usr/src/app/output/jenkinsci/oki-docki-plugin/1b83e76b9746823f89b48506efbc043c0b42646f/src/main/java/com/cloudbees/jenkins/plugins/docker_build_env/DockerBuildWrapper.java/right.java
     }
 
     public DockerImageSelector getSelector() {
@@ -148,7 +159,7 @@ public class DockerBuildWrapper extends BuildWrapper {
     public String getFilterEnvVariables() {
         return filterEnvVariables;
     }
-  
+
     public boolean isNoCache() {
         return noCache;
     }
