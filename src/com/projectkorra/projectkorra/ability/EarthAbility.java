@@ -558,7 +558,14 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 		}
 		}
-
+	public static void playLavaBendingSound(Location loc) {
+		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound")), volume, pitch);
+		}
+	}
 
 	public static void removeAllEarthbendedBlocks() {
 		for (Block block : MOVED_EARTH.keySet()) {
