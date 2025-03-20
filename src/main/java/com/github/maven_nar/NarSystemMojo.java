@@ -27,9 +27,9 @@ import java.util.Iterator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.plexus.build.incremental.BuildContext;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generates a NarSystem class with static methods to use inside the java part
@@ -40,9 +40,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * @author Mark Donszelmann
  */
 @Mojo(name = "nar-system-generate", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, requiresProject = true)
-public class NarSystemMojo
-    extends AbstractNarMojo
-{
+public class NarSystemMojo extends AbstractNarMojo {
 
 	/** @component */
 	private BuildContext buildContext;

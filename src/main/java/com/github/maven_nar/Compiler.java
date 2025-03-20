@@ -81,26 +81,50 @@ public abstract class Compiler
     /**
      * Include patterns for sources
      */
-    @Parameter(required = true)
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private Set<String> includes = new HashSet<String>();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private Set includes = new HashSet();
+=======
+    @Parameter(required = true)
+    private Set includes = new HashSet();
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Exclude patterns for sources
      */
-    @Parameter(required = true)
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private Set<String> excludes = new HashSet<String>();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private Set excludes = new HashSet();
+=======
+    @Parameter(required = true)
+    private Set excludes = new HashSet();
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Include patterns for test sources
      */
-    @Parameter(required = true)
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private Set<String> testIncludes = new HashSet<String>();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private Set testIncludes = new HashSet();
+=======
+    @Parameter(required = true)
+    private Set testIncludes = new HashSet();
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Exclude patterns for test sources
      */
-    @Parameter(required = true)
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private Set<String> testExcludes = new HashSet<String>();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private Set testExcludes = new HashSet();
+=======
+    @Parameter(required = true)
+    private Set testExcludes = new HashSet();
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Compile with debug information.
@@ -136,8 +160,14 @@ public abstract class Compiler
     /**
      * Defines
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<String> defines;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List defines;
+=======
+    @Parameter
+    private List defines;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Defines for the compiler as a comma separated list of name[=value] pairs, where the value is optional. Will work
@@ -155,8 +185,14 @@ public abstract class Compiler
     /**
      * Undefines
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<String> undefines;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List undefines;
+=======
+    @Parameter
+    private List undefines;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Undefines for the compiler as a comma separated list of name[=value] pairs where the value is optional. Will work
@@ -174,32 +210,62 @@ public abstract class Compiler
     /**
      * Include Paths. Defaults to "${sourceDirectory}/include"
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<IncludePath> includePaths;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List includePaths;
+=======
+    @Parameter
+    private List includePaths;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Test Include Paths. Defaults to "${testSourceDirectory}/include"
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<IncludePath> testIncludePaths;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List testIncludePaths;
+=======
+    @Parameter
+    private List testIncludePaths;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * System Include Paths, which are added at the end of all include paths
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<String> systemIncludePaths;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List systemIncludePaths;
+=======
+    @Parameter
+    private List systemIncludePaths;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Additional options for the C++ compiler Defaults to Architecture-OS-Linker specific values. FIXME table missing
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<String> options;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List options;
+=======
+    @Parameter
+    private List options;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Additional options for the compiler when running in the nar-testCompile phase.
      */
-    @Parameter
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/left.java
     private List<String> testOptions;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/base.java
+    private List testOptions;
+=======
+    @Parameter
+    private List testOptions;
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/825297386706f44faa2abf757a3998b352bb7ea3/src/main/java/com/github/maven_nar/Compiler.java/right.java
 
     /**
      * Options for the compiler as a whitespace separated list. Will work in combination with &lt;options&gt;.
