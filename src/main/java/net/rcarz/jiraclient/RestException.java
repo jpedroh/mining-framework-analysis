@@ -1,55 +1,41 @@
-/**
- * jira-client - a simple JIRA REST client
- * Copyright (c) 2013 Bob Carroll (bob.carroll@alum.rit.edu)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
-
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 package net.rcarz.jiraclient;
 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
 import org.apache.http.Header;
+
+>>>>>>> /usr/src/app/output/rcarz/jira-client/c21b43e1c57d79f088da3126cf22914f36904480/src/main/java/net/rcarz/jiraclient/RestException.java/right.java
+
 /**
  * An exception for JIRA REST errors.
  */
 public class RestException extends Exception {
+  private int status;
 
-    private int status;
-    private String result;
-    private Header[] headers;
+  private String result;
 
-    public RestException(String msg, int status, String result, Header[] headers) {
-        super(msg);
+  private Header[] headers;
 
-        this.status = status;
-        this.result = result;
-        this.headers = headers;
-    }
+  public RestException(String msg, int status, String result, Header[] headers) {
+    super(msg);
+    this.status = status;
+    this.result = result;
+    this.headers = headers;
+  }
 
-    public int getHttpStatusCode() {
-        return status;
-    }
+  public int getHttpStatusCode() {
+    return status;
+  }
 
-    public String getHttpResult() {
-        return result;
-    }
+  public String getHttpResult() {
+    return result;
+  }
 
-    public Header[] getHeaders() {
-        return headers;
-    }
+  public Header[] getHeaders() {
+    return headers;
+  }
 
-    public String getMessage() {
-        return String.format("%s %s: %s", Integer.toString(status), super.getMessage(), result);
-    }
+  public String getMessage() {
+    return String.format("%s %s: %s", Integer.toString(status), super.getMessage(), result);
+  }
 }
