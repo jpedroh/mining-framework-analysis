@@ -55,4 +55,5 @@ public class FeatureCollection extends GeoJsonObject implements Iterable<Feature
 	public String toString() {
 		return "FeatureCollection{" + "features=" + features + '}';
 	}
+
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Geometry<T> extends GeoJsonObject {
-
 	protected List<T> coordinates = new ArrayList<T>();
 
 	public Geometry() {
@@ -29,7 +28,6 @@ public abstract class Geometry<T> extends GeoJsonObject {
 		this.coordinates = coordinates;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -41,8 +39,11 @@ public abstract class Geometry<T> extends GeoJsonObject {
 		if (!super.equals(o)) {
 			return false;
 		}
-		Geometry geometry = (Geometry)o;
+
+		Geometry geometry = (Geometry) o;
+
 		return !(coordinates != null ? !coordinates.equals(geometry.coordinates) : geometry.coordinates != null);
+
 	}
 
 	@Override
@@ -54,6 +55,8 @@ public abstract class Geometry<T> extends GeoJsonObject {
 
 	@Override
 	public String toString() {
-		return "Geometry{" + "coordinates=" + coordinates + "} " + super.toString();
+		return "Geometry{" +
+			"coordinates=" + coordinates +
+			"} " + super.toString();
 	}
 }

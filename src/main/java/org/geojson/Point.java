@@ -56,6 +56,8 @@ public class Point extends GeoJsonObject {
 
 	@Override
 	public String toString() {
-		return "Point{" + "coordinates=" + coordinates + "} " + super.toString();
+		return "Point{" +
+			"coordinates=" + coordinates +
+			"} " + super.toString();
 	}
 }

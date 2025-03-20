@@ -28,11 +28,14 @@ public class Crs {
 		if (!(o instanceof Crs)) {
 			return false;
 		}
-		Crs crs = (Crs)o;
+
+		Crs crs = (Crs) o;
+
 		if (properties != null ? !properties.equals(crs.properties) : crs.properties != null) {
 			return false;
 		}
 		return !(type != null ? !type.equals(crs.type) : crs.type != null);
+
 	}
 
 	@Override
@@ -44,6 +47,9 @@ public class Crs {
 
 	@Override
 	public String toString() {
-		return "Crs{" + "type='" + type + '\'' + ", properties=" + properties + '}';
+		return "Crs{" +
+			"type='" + type + '\'' +
+			", properties=" + properties +
+			'}';
 	}
 }

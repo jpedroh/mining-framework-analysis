@@ -1,9 +1,9 @@
 package org.geojson;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Arrays;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Polygon extends Geometry<List<LngLatAlt>> {
 
@@ -55,12 +55,12 @@ public class Polygon extends Geometry<List<LngLatAlt>> {
 	}
 
 	@Override
-	public <T> T accept(GeoJsonObjectVisitor<T> geoJsonObjectVisitor) {
-		return geoJsonObjectVisitor.visit(this);
+	public String toString() {
+		return "Polygon{} " + super.toString();
 	}
 
 	@Override
-	public String toString() {
-		return "Polygon{} " + super.toString();
+	public <T> T accept(GeoJsonObjectVisitor<T> geoJsonObjectVisitor) {
+		return geoJsonObjectVisitor.visit(this);
 	}
 }
