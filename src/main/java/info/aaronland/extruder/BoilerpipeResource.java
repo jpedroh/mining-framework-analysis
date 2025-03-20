@@ -104,7 +104,25 @@ public class BoilerpipeResource {
 	    throw new RuntimeException(e);
 	}
 
-	return new Document(text);
+<<<<<<< /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/BoilerpipeResource.java/left.java
+	return text;
+    }
+
+    private String massageText(String text){
+	text = utils.text2html(text);
+	return text;
+||||||| /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/BoilerpipeResource.java/base.java
+	return text;
+    }
+
+    private String massageText(String text){
+	//text = utils.unwrap(text);
+	text = utils.text2html(text);
+	return text;
+=======
+	Document doc = new Document(text);
+	return doc;
+>>>>>>> /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/BoilerpipeResource.java/right.java
     }
 
 }

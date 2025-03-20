@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class JavaReadabilityResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaReadabilityResource.class);
+    private static final TextUtils utils = new TextUtils();
 
     @GET
     public Response extrudeThisURL(@QueryParam("url") String url){
@@ -45,15 +46,20 @@ public class JavaReadabilityResource {
 	DocumentView view;
 
 	try {
-	    doc = extrudeThis(url);
-	    view = new DocumentView(doc);
+        doc = extrudeThis(url);
+<<<<<<< /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/left.java
+        text = massageText(text);
+||||||| /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/base.java
+=======
+        view = new DocumentView(doc);
+>>>>>>> /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/right.java
 	}
 
-	// TODO: trap MalformedURLExceptions and return NOT_ACCEPTABLE here (20130901/straup)
+    // TODO: trap MalformedURLExceptions and return NOT_ACCEPTABLE here (20130901/straup)
 
-	catch (Exception e){
+    catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
-	}
+    }
 
 	return Response.status(Response.Status.OK).entity(view).build();
     }
@@ -71,14 +77,19 @@ public class JavaReadabilityResource {
 	DocumentView view;
 
 	try {
-	    doc = extrudeThis(uri);
-	    view = new DocumentView(doc);
+        doc = extrudeThis(uri);
+<<<<<<< /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/left.java
+        text = massageText(text);
+||||||| /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/base.java
+=======
+        view = new DocumentView(doc);
+>>>>>>> /usr/src/app/output/straup/dogeared-extruder/0176ca61e4bac5035afc89e56f3063a206c3a660/src/main/java/info/aaronland/extruder/JavaReadabilityResource.java/right.java
 	}
 
-	catch (Exception e){
-	    tmpfile.delete();
+    catch (Exception e){
+        tmpfile.delete();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
-	}
+    }
 
 	tmpfile.delete();
 
@@ -127,6 +138,11 @@ public class JavaReadabilityResource {
 	}
 	
 	return new Document(text);
+    }
+
+    private String massageText(String text){
+	text = utils.text2html(text);
+	return text;
     }
 
 }
