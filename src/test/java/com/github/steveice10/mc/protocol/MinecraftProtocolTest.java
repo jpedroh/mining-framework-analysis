@@ -51,7 +51,7 @@ public class MinecraftProtocolTest {
             null,
             false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, new String[]{"minecraft:world"}, loadLoginRegistry(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, new String[]{"minecraft:world"}, loadNetworkCodec(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
 
     private static Server server;
 
@@ -142,8 +142,14 @@ public class MinecraftProtocolTest {
         }
     }
 
-    public static CompoundTag loadLoginRegistry() {
+    public static CompoundTag loadNetworkCodec() {
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/3c88c3b07296a9d5de83c34d98f1809803677721/src/test/java/com/github/steveice10/mc/protocol/MinecraftProtocolTest.java/left.java
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("network_codec.nbt");
+||||||| /usr/src/app/output/steveice10/mcprotocollib/3c88c3b07296a9d5de83c34d98f1809803677721/src/test/java/com/github/steveice10/mc/protocol/MinecraftProtocolTest.java/base.java
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("login_registry.nbt");
+=======
         try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("networkCodec.nbt");
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/3c88c3b07296a9d5de83c34d98f1809803677721/src/test/java/com/github/steveice10/mc/protocol/MinecraftProtocolTest.java/right.java
             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
             return (CompoundTag) NBTIO.readTag((DataInput) stream);
         } catch (IOException e) {
