@@ -323,7 +323,7 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    *
    * @since 3.5.0
    */
-  public void hasOnlyOneElementSatisfying(Consumer<ELEMENT> elementAssertions) {
+  public void hasOnlyOneElementSatisfying(Consumer<T> elementAssertions) {
     arrays.assertHasSize(info, actual, 1);
     elementAssertions.accept(actual[0]);
   }
@@ -1721,11 +1721,11 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    * @return a new assertion object whose object under test is the array of Tuples containing the extracted values.
    */
   @SafeVarargs
-  public final ObjectArrayAssert<Tuple> extracting(Function<ELEMENT, ?>... extractors) {
+  public final ObjectArrayAssert<Tuple> extracting(Function<T, ?>... extractors) {
     // combine all extractors into one function
-    Function<ELEMENT, Tuple> tupleExtractor = objectToExtractValueFrom -> {
+    Function<T, Tuple> tupleExtractor = objectToExtractValueFrom -> {
       Tuple tuple = new Tuple();
-      for (Function<ELEMENT, ?> extractor : extractors) {
+      for (Function<T, ?> extractor : extractors) {
         // extract value one by one
         tuple.addData(extractor.apply(objectToExtractValueFrom));
       }
@@ -2184,9 +2184,9 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    * @throws IllegalArgumentException if the given predicate is {@code null}.
    */
   @SuppressWarnings("unchecked")
-  public SELF filteredOn(Predicate<? super ELEMENT> predicate) {
+  public S filteredOn(Predicate<? super T> predicate) {
     checkArgument(predicate != null, "The filter predicate should not be null");
-    return (SELF) new ObjectArrayAssert<>(stream(actual).filter(predicate).toArray());
+    return (S) new ObjectArrayAssert<>(stream(actual).filter(predicate).toArray());
   }
 
   /**
@@ -2211,7 +2211,7 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    */
   @Override
-  public SELF allMatch(Predicate<? super ELEMENT> predicate) {
+  public S allMatch(Predicate<? super T> predicate) {
     iterables.assertAllMatch(info, newArrayList(actual), predicate, PredicateDescription.GIVEN);
     return myself;
   }
@@ -2220,7 +2220,7 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    * {@inheritDoc}
    */
   @Override
-  public SELF allMatch(Predicate<? super ELEMENT> predicate, String predicateDescription) {
+  public S allMatch(Predicate<? super T> predicate, String predicateDescription) {
     iterables.assertAllMatch(info, newArrayList(actual), predicate, new PredicateDescription(predicateDescription));
     return myself;
   }
@@ -2229,7 +2229,7 @@ public abstract class AbstractObjectArrayAssert<SELF extends AbstractObjectArray
    * {@inheritDoc}
    */
   @Override
-  public SELF allSatisfy(Consumer<? super ELEMENT> requirements) {
+  public S allSatisfy(Consumer<? super T> requirements) {
     iterables.assertAllSatisfy(info, newArrayList(actual), requirements);
     return myself;
   }

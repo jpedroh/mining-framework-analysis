@@ -309,7 +309,7 @@ public interface Assert<SELF extends Assert<SELF, ACTUAL>, ACTUAL> extends Descr
    * @throws AssertionError if the actual value is {@code null}.
    * @throws AssertionError if the actual value is not an instance of the given type.
    */
-  <T> SELF isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
+  <T> S isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
   
   /**
    * Verifies that the actual value is an instance of any of the given types.

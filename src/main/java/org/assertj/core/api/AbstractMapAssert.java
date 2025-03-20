@@ -425,7 +425,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map contains the given key, but value not pass the given {@code valueRequirements}.
    * @since 3.6.0
    */
-  public SELF hasEntrySatisfying(K key, Consumer<? super V> valueRequirements) {
+  public S hasEntrySatisfying(K key, Consumer<? super V> valueRequirements) {
     maps.assertHasEntrySatisfying(info, actual, key, valueRequirements);
     return myself;
   }

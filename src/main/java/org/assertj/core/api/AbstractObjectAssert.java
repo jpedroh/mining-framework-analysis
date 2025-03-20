@@ -552,7 +552,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @return a new assertion object whose object under test is the array containing the extracted values
    */
   @SafeVarargs
-  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super ACTUAL, Object>... extractors) {
+  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
     Object[] values = Stream.of(extractors)
                             .map(extractor -> extractor.apply(actual))
                             .toArray();

@@ -791,7 +791,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    */
-  SELF allMatch(Predicate<? super ELEMENT> predicate);
+  S allMatch(Predicate<? super T> predicate);
 
   /**
    * Verifies that all the elements of actual match the given {@link Predicate}. The predicate description is used
@@ -822,7 +822,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    * @since 3.6.0
    */
-  SELF allMatch(Predicate<? super ELEMENT> predicate, String predicateDescription);
+  S allMatch(Predicate<? super T> predicate, String predicateDescription);
 
   /**
    * Verifies that all the elements satisfy given requirements expressed as a {@link Consumer}.
@@ -842,6 +842,6 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if one or more elements don't satisfy given requirements.
    * @since 3.6.0
    */
-  SELF allSatisfy(Consumer<? super ELEMENT> requirements);
+  S allSatisfy(Consumer<? super T> requirements);
 
 }

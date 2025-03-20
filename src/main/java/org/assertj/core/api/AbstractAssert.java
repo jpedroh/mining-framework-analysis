@@ -35,12 +35,28 @@ import org.assertj.core.util.VisibleForTesting;
 
 /**
  * Base class for all assertions.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/left.java
  *
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/base.java
+ * 
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+=======
+ * 
  * @param <SELF> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/right.java
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
- * @param <ACTUAL> the type of the "actual" value.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/left.java
+ * @param <A> the type of the "actual" value.
  *
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/base.java
+ * @param <A> the type of the "actual" value.
+ * 
+=======
+ * @param <ACTUAL> the type of the "actual" value.
+ * 
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/d7469cb5dabe8820a797fbb1fb8f7358aa120ff9/src/main/java/org/assertj/core/api/AbstractAssert.java/right.java
  * @author Alex Ruiz
  * @author Joel Costigliola
  * @author Mikhail Mazursky
@@ -314,7 +330,7 @@ public abstract class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, 
   /** {@inheritDoc} */
   @SuppressWarnings("unchecked")
   @Override
-  public <T> SELF isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements) {
+  public <T> S isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements) {
     objects.assertIsInstanceOf(info, actual, type);
     requireNonNull(requirements, "The Consumer<T> expressing the assertions requirements must not be null");
     requirements.accept((T) actual);
@@ -514,7 +530,7 @@ public abstract class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, 
    * @throws AssertionError if the actual does not match the given {@link Predicate}.
    * @throws NullPointerException if given {@link Predicate} is null.
    */
-  public SELF matches(Predicate<? super ACTUAL> predicate) {
+  public S matches(Predicate<? super A> predicate) {
     // use default PredicateDescription
     return matches(predicate, PredicateDescription.GIVEN);
   }
@@ -540,7 +556,7 @@ public abstract class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, 
    * @throws NullPointerException if given {@link Predicate} is null.
    * @throws NullPointerException if given predicateDescription is null.
    */
-  public SELF matches(Predicate<? super ACTUAL> predicate, String predicateDescription) {
+  public S matches(Predicate<? super A> predicate, String predicateDescription) {
     return matches(predicate, new PredicateDescription(predicateDescription));
   }
 
@@ -580,13 +596,13 @@ public abstract class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, 
    * 
    * @throws NullPointerException if given Consumer is null 
    */
-  public SELF satisfies(Consumer<ACTUAL> requirements) {
+  public S satisfies(Consumer<A> requirements) {
     requireNonNull(requirements, "The Consumer<T> expressing the assertions requirements must not be null");
     requirements.accept(actual);
     return myself;
   }
 
-  private SELF matches(Predicate<? super ACTUAL> predicate, PredicateDescription predicateDescription) {
+  private S matches(Predicate<? super A> predicate, PredicateDescription predicateDescription) {
     requireNonNull(predicate, "The predicate must not be null");
     if (predicate.test(actual)) return myself;
     throw Failures.instance().failure(info, shouldMatch(actual, predicate, predicateDescription));
