@@ -111,14 +111,34 @@ public class FormTest {
     }
     
     @Test
-    public void tableRowCount() {
+    public
+<<<<<<< /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/left.java
+    @Test void tableRowCount() {
     	Assert.assertEquals(4, testObject.table.getRowCount());
     }
+||||||| /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/base.java
+    @Test void tableRowCount() 
+=======
+    @Test void tableRowCount() {
+    	testObject.get();
+    	Assert.assertEquals(4, testObject.table.getRowCount());
+    }
+>>>>>>> /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/right.java
     
     @Test
-    public void tableColumnCount() {
+    public
+<<<<<<< /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/left.java
+    @Test void tableColumnCount() {
     	Assert.assertEquals(2, testObject.table.getColumnCount());
     }
+||||||| /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/base.java
+    @Test void tableColumnCount() 
+=======
+    @Test void tableColumnCount() {
+    	testObject.get();
+    	Assert.assertEquals(2, testObject.table.getColumnCount());
+    }
+>>>>>>> /usr/src/app/output/elisarver/selophane/5f1ad31005888993ca93522dd2b14f142d2004e3/src/test/java/org/selophane/elements/FormTest.java/right.java
     
     @Test
     public void tableGetHeaderCell() {
@@ -133,6 +153,12 @@ public class FormTest {
     @Test
     public void tableGetFooterCell() {
     	Assert.assertEquals("Sum", testObject.table.getCellAtIndex(3, 0).getText());
+    }
+    
+    @Test
+    public void tableGetCell() {
+	testObject.get();
+	Assert.assertEquals("January", testObject.table.getCellAtIndex(2, 0).getText());
     }
 
     @AfterClass
