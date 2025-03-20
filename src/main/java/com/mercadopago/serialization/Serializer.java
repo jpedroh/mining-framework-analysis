@@ -1,7 +1,5 @@
 package com.mercadopago.serialization;
-
 import static com.google.gson.stream.JsonToken.END_DOCUMENT;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,30 +28,11 @@ import java.util.List;
 
 /** Serializer class, responsible for objects serialization and deserialization. */
 public class Serializer {
+  private static final String DESERIALIZE_DATE_FORMAT_ISO8601 = "yyyy-MM-dd\'T\'HH:mm:ss.SSS[XXX][XX][X]";
 
-  private static final String DESERIALIZE_DATE_FORMAT_ISO8601 =
-      "yyyy-MM-dd'T'HH:mm:ss.SSS[XXX][XX][X]";
+  private static final String SERIALIZE_DATE_FORMAT_ISO8601 = "yyyy-MM-dd\'T\'HH:mm:ss.SSSXXX";
 
-  private static final String SERIALIZE_DATE_FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-
-  private static final Gson GSON =
-      new GsonBuilder()
-          .registerTypeAdapter(
-              OffsetDateTime.class,
-              (JsonDeserializer<OffsetDateTime>)
-                  (json, type, context) ->
-                      OffsetDateTime.parse(
-                          json.getAsString(),
-                          DateTimeFormatter.ofPattern(DESERIALIZE_DATE_FORMAT_ISO8601)))
-          .registerTypeAdapter(
-              OffsetDateTime.class,
-              (JsonSerializer<OffsetDateTime>)
-                  (offsetDateTime, type, context) ->
-                      new JsonPrimitive(
-                          DateTimeFormatter.ofPattern(SERIALIZE_DATE_FORMAT_ISO8601)
-                              .format(offsetDateTime)))
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create();
+  private static final Gson GSON = new GsonBuilder().registerTypeAdapter(OffsetDateTime.class, (JsonDeserializer<OffsetDateTime>) (json, type, context) -> OffsetDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern(DESERIALIZE_DATE_FORMAT_ISO8601))).registerTypeAdapter(OffsetDateTime.class, (JsonSerializer<OffsetDateTime>) (offsetDateTime, type, context) -> new JsonPrimitive(DateTimeFormatter.ofPattern(SERIALIZE_DATE_FORMAT_ISO8601).format(offsetDateTime))).setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
   /**
    * Method responsible for deserialize objects.
@@ -64,8 +43,7 @@ public class Serializer {
    * @return object.
    * @throws MPJsonParseException if json cannot be deserialized to an MPResource
    */
-  public static <T extends MPResource> T deserializeFromJson(Class<T> clazz, String jsonObject)
-      throws MPJsonParseException {
+  public static <T extends MPResource> T deserializeFromJson(Class<T> clazz, String jsonObject) throws MPJsonParseException {
     try {
       if (isJsonValid(jsonObject)) {
         return GSON.fromJson(jsonObject, clazz);
@@ -83,12 +61,10 @@ public class Serializer {
    * @param type type
    * @param jsonObject jsonObject
    * @param <T> generic type
-   * @return MPResultsResourcesPage deserialized MPResource
    * @throws MPJsonParseException if json cannot be parsed to ResultsResourcesPage
+   * @return MPResultsResourcesPage deserialized MPResource
    */
-  public static <T extends MPResource>
-      MPResultsResourcesPage<T> deserializeResultsResourcesPageFromJson(
-          Type type, String jsonObject) throws MPJsonParseException {
+  public static <T extends MPResource> MPResultsResourcesPage<T> deserializeResultsResourcesPageFromJson(Type type, String jsonObject) throws MPJsonParseException {
     try {
       if (isJsonValid(jsonObject)) {
         return GSON.fromJson(jsonObject, type);
@@ -106,12 +82,10 @@ public class Serializer {
    * @param type type
    * @param jsonObject jsonObject
    * @param <T> generic type
-   * @return MPElementsResourcesPage
    * @throws MPJsonParseException if json cannot be parsed to MPElementsResourcesPage
+   * @return MPElementsResourcesPage
    */
-  public static <T extends MPResource>
-      MPElementsResourcesPage<T> deserializeElementsResourcesPageFromJson(
-          Type type, String jsonObject) throws MPJsonParseException {
+  public static <T extends MPResource> MPElementsResourcesPage<T> deserializeElementsResourcesPageFromJson(Type type, String jsonObject) throws MPJsonParseException {
     try {
       if (isJsonValid(jsonObject)) {
         return GSON.fromJson(jsonObject, type);
@@ -129,11 +103,10 @@ public class Serializer {
    * @param clazz clazz
    * @param jsonObject jsonObject
    * @param <T> type
-   * @return MPResourceList
    * @throws MPJsonParseException if json cannot be parsed to ResultsResourcesPage
+   * @return MPResourceList
    */
-  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(
-      Class<T> clazz, String jsonObject) throws MPJsonParseException {
+  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(Class<T> clazz, String jsonObject) throws MPJsonParseException {
     try {
       if (isJsonValid(jsonObject)) {
         MPResourceList<T> resourceList = new MPResourceList<>();
@@ -144,7 +117,6 @@ public class Serializer {
           results.add(resource);
         }
         resourceList.setResults(results);
-
         return resourceList;
       } else {
         throw new MPJsonParseException(String.format("Could not parse json: %s", jsonObject));
@@ -155,7 +127,7 @@ public class Serializer {
   }
 
   /**
-   * Method for getting a json array from a json element.
+   * Method for getting a json array from a json element
    *
    * @param jsonElement the jsonElement to be analyzed
    * @return JsonArray
@@ -163,10 +135,10 @@ public class Serializer {
   static JsonArray getArrayFromJsonElement(JsonElement jsonElement) {
     if (jsonElement.isJsonArray()) {
       return jsonElement.getAsJsonArray();
-    } else if (jsonElement.isJsonObject()
-        && ((JsonObject) jsonElement).get("results") != null
-        && ((JsonObject) jsonElement).get("results").isJsonArray()) {
-      return ((JsonObject) jsonElement).get("results").getAsJsonArray();
+    } else {
+      if (jsonElement.isJsonObject() && ((JsonObject) jsonElement).get("results") != null && ((JsonObject) jsonElement).get("results").isJsonArray()) {
+        return ((JsonObject) jsonElement).get("results").getAsJsonArray();
+      }
     }
     return null;
   }
@@ -178,17 +150,10 @@ public class Serializer {
    * @param <T> class type.
    * @return JsonObject.
    */
-  public static <T> JsonObject serializeToJson(T resource) {
+  public static <T extends java.lang.Object> JsonObject serializeToJson(T resource) {
     return (JsonObject) GSON.toJsonTree(resource);
   }
 
-  /**
-   * Verify if json is valid.
-   *
-   * @param json json
-   * @return boolean
-   * @throws IOException exception
-   */
   public static boolean isJsonValid(String json) throws IOException {
     try {
       JsonReader jsonReader = new JsonReader(new StringReader(json));
@@ -197,30 +162,30 @@ public class Serializer {
       while ((token = jsonReader.peek()) != END_DOCUMENT && token != null) {
         switch (token) {
           case BEGIN_ARRAY:
-            jsonReader.beginArray();
-            break;
+          jsonReader.beginArray();
+          break;
           case END_ARRAY:
-            jsonReader.endArray();
-            break;
+          jsonReader.endArray();
+          break;
           case BEGIN_OBJECT:
-            jsonReader.beginObject();
-            break;
+          jsonReader.beginObject();
+          break;
           case END_OBJECT:
-            jsonReader.endObject();
-            break;
+          jsonReader.endObject();
+          break;
           case NAME:
-            jsonReader.nextName();
-            break;
+          jsonReader.nextName();
+          break;
           case STRING:
           case NUMBER:
           case BOOLEAN:
           case NULL:
-            jsonReader.skipValue();
-            break;
+          jsonReader.skipValue();
+          break;
           case END_DOCUMENT:
-            break loop;
+          break loop;
           default:
-            throw new AssertionError(token);
+          throw new AssertionError(token);
         }
       }
       return true;

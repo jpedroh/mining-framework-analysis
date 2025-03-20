@@ -1,5 +1,4 @@
 package com.mercadopago.net;
-
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +8,7 @@ import lombok.Setter;
  *
  * @param <T> Type of resource being returned
  */
-@Getter
-@Setter
-public class MPResourceList<T> extends MPResource {
+@Getter @Setter public class MPResourceList<T extends java.lang.Object> extends MPResource {
   /** List of results. */
   private List<T> results;
 }
