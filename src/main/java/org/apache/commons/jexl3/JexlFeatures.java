@@ -60,7 +60,13 @@ public final class JexlFeatures {
         "register", "reserved variable", "local variable", "assign/modify",
         "global assign/modify", "array reference", "create instance", "loop", "function",
         "method call", "set/map/array literal", "pragma", "annotation", "script", "lexical", "lexicalShade",
-        "thin-arrow", "fat-arrow", "namespace pragma", "import pragma", "extended relational operator"
+<<<<<<< /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/left.java
+        "thin-arrow", "fat-arrow", "extended relational operator"
+||||||| /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/base.java
+        "thin-arrow", "fat-arrow"
+=======
+        "thin-arrow", "fat-arrow", "namespace pragma", "import pragma"
+>>>>>>> /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/right.java
     };
     /** Registers feature ordinal. */
     private static final int REGISTER = 0;
@@ -98,12 +104,15 @@ public final class JexlFeatures {
     public static final int THIN_ARROW = 16;
     /** Fat-arrow lambda syntax. */
     public static final int FAT_ARROW = 17;
+<<<<<<< /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/left.java
+    /** Extended relational operator syntax. */
+    public static final int EXT_REL_OPER = 18;
+||||||| /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/base.java
+=======
     /** Namespace pragma feature ordinal. */
     public static final int NS_PRAGMA = 18;
     /** Import pragma feature ordinal. */
     public static final int IMPORT_PRAGMA = 19;
-    /** Extended relational operator syntax. */
-    public static final int EXT_REL_OPER = 20;
     /**
      * The default features flag mask.
      */
@@ -122,14 +131,45 @@ public final class JexlFeatures {
             | (1L << SCRIPT)
             | (1L << THIN_ARROW)
             | (1L << NS_PRAGMA)
-            | (1L << IMPORT_PRAGMA)
-            | (1L << EXT_REL_OPER);
+            | (1L << IMPORT_PRAGMA);
+>>>>>>> /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/right.java
 
     /**
      * Creates an all-features-enabled instance.
      */
     public JexlFeatures() {
+<<<<<<< /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/left.java
+        flags = (1L << LOCAL_VAR)
+                | (1L << SIDE_EFFECT)
+                | (1L << SIDE_EFFECT_GLOBAL)
+                | (1L << ARRAY_REF_EXPR)
+                | (1L << NEW_INSTANCE)
+                | (1L << LOOP)
+                | (1L << LAMBDA)
+                | (1L << METHOD_CALL)
+                | (1L << STRUCTURED_LITERAL)
+                | (1L << PRAGMA)
+                | (1L << ANNOTATION)
+                | (1L << SCRIPT)
+                | (1L << THIN_ARROW)
+                | (1L << EXT_REL_OPER);
+||||||| /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/base.java
+        flags = (1L << LOCAL_VAR)
+                | (1L << SIDE_EFFECT)
+                | (1L << SIDE_EFFECT_GLOBAL)
+                | (1L << ARRAY_REF_EXPR)
+                | (1L << NEW_INSTANCE)
+                | (1L << LOOP)
+                | (1L << LAMBDA)
+                | (1L << METHOD_CALL)
+                | (1L << STRUCTURED_LITERAL)
+                | (1L << PRAGMA)
+                | (1L << ANNOTATION)
+                | (1L << SCRIPT)
+                | (1L << THIN_ARROW);
+=======
         flags = DEFAULT_FEATURES;
+>>>>>>> /usr/src/app/output/apache/commons-jexl/e1f233ff4da530bd493455793d0afb3b1444c954/src/main/java/org/apache/commons/jexl3/JexlFeatures.java/right.java
         reservedNames = Collections.emptySet();
         nameSpaces = TEST_STR_FALSE;
     }
