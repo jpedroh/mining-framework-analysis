@@ -46,7 +46,13 @@ public abstract class DefinedPacket
         int len = readVarInt( buf );
         if ( len > maxLen * 4 )
         {
-            throw new FastOverflowPacketException( "Cannot receive string longer than "+maxLen * 4 +" (got " + len + " bytes)" );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/3d27f8f8f366d4adc020eb552970aa4ad597718c/protocol/src/main/java/net/md_5/bungee/protocol/DefinedPacket.java/left.java
+            throw new FastOverflowPacketException( String.format( "Cannot receive string longer than Short.MAX_VALUE (got " + len + " characters)" ) );
+||||||| /usr/src/app/output/spigotmc/bungeecord/3d27f8f8f366d4adc020eb552970aa4ad597718c/protocol/src/main/java/net/md_5/bungee/protocol/DefinedPacket.java/base.java
+            throw new FastOverflowPacketException( String.format( "Cannot receive string longer than Short.MAX_VALUE (got %s characters)", len ) );
+=======
+            throw new FastOverflowPacketException( String.format( "Cannot receive string longer than %d (got %d bytes)", maxLen * 4, len ) );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/3d27f8f8f366d4adc020eb552970aa4ad597718c/protocol/src/main/java/net/md_5/bungee/protocol/DefinedPacket.java/right.java
         }
 
         byte[] b = new byte[ len ];
@@ -55,7 +61,7 @@ public abstract class DefinedPacket
         String s = new String( b, Charsets.UTF_8 );
         if ( s.length() > maxLen )
         {
-            throw new FastOverflowPacketException( String.format( "Cannot receive string longer than %d (got %d characters)", maxLen, s.length() ) );
+            throw new OverflowPacketException( String.format( "Cannot receive string longer than %d (got %d characters)", maxLen, s.length() ) );
         }
 
         return s;
