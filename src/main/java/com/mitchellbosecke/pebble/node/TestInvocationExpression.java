@@ -1,13 +1,4 @@
-/*******************************************************************************
- * This file is part of Pebble.
- *
- * Copyright (c) 2014 by Mitchell Bösecke
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble.node;
-
 import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
@@ -20,39 +11,35 @@ import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
  *
  */
 public class TestInvocationExpression implements Expression<Object> {
+  private final String testName;
 
-    private final String testName;
+  private final ArgumentsNode args;
 
-    private final ArgumentsNode args;
+  private final int lineNumber;
 
-    private final int lineNumber;
+  @Override public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) {
-        throw new UnsupportedOperationException();
-    }
+  public TestInvocationExpression(int lineNumber, String testName, ArgumentsNode args) {
+    this.testName = testName;
+    this.args = args;
+    this.lineNumber = lineNumber;
+  }
 
-    public TestInvocationExpression(int lineNumber, String testName, ArgumentsNode args) {
-        this.testName = testName;
-        this.args = args;
-        this.lineNumber = lineNumber;
-    }
+  @Override public void accept(NodeVisitor visitor) {
+    visitor.visit(this);
+  }
 
-    @Override
-    public void accept(NodeVisitor visitor) {
-        visitor.visit(this);
-    }
+  public ArgumentsNode getArgs() {
+    return args;
+  }
 
-    public ArgumentsNode getArgs() {
-        return args;
-    }
+  public String getTestName() {
+    return testName;
+  }
 
-    public String getTestName() {
-        return testName;
-    }
-
-    @Override
-    public int getLineNumber() {
-        return this.lineNumber;
-    }
+  @Override public int getLineNumber() {
+    return this.lineNumber;
+  }
 }

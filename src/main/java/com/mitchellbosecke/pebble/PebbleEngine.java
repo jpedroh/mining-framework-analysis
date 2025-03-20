@@ -1,14 +1,4 @@
-/*******************************************************************************
- * This file is part of Pebble.
- * <p>
- * Copyright (c) 2014 by Mitchell Bösecke
- * <p>
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble;
-
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.mitchellbosecke.pebble.cache.CacheKey;
@@ -35,7 +25,6 @@ import com.mitchellbosecke.pebble.parser.Parser;
 import com.mitchellbosecke.pebble.parser.ParserImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
-
 import static java.util.Objects.isNull;
 
 /**
@@ -54,24 +42,23 @@ import static java.util.Objects.isNull;
  * @author Mitchell
  */
 public class PebbleEngine {
+  private final Loader<?> loader;
 
-    private final Loader<?> loader;
+  private final Syntax syntax;
 
-    private final Syntax syntax;
+  private final boolean strictVariables;
 
-    private final boolean strictVariables;
-
-    private final Locale defaultLocale;
+  private final Locale defaultLocale;
 
   private final Cache<CacheKey, Object> tagCache;
 
-    private final ExecutorService executorService;
+  private final ExecutorService executorService;
 
-    private final Cache<Object, PebbleTemplate> templateCache;
+  private final Cache<Object, PebbleTemplate> templateCache;
 
-    private final ExtensionRegistry extensionRegistry;
+  private final ExtensionRegistry extensionRegistry;
 
-    /**
+  /**
      * Constructor for the Pebble Engine given an instantiated Loader. This
      * method does only load those userProvidedExtensions listed here.
      *
@@ -79,97 +66,96 @@ public class PebbleEngine {
      * @param syntax     the syntax to use for parsing the templates.
      * @param extensions The userProvidedExtensions which should be loaded.
      */
-    private PebbleEngine(Loader<?> loader, Syntax syntax, boolean strictVariables, Locale defaultLocale,
-                         Cache<CacheKey, Object> tagCache, Cache<Object, PebbleTemplate> templateCache,
-                         ExecutorService executorService, Collection<? extends Extension> extensions) {
+  private PebbleEngine(Loader<?> loader, Syntax syntax, boolean strictVariables, Locale defaultLocale, Cache<CacheKey, Object> tagCache, Cache<Object, PebbleTemplate> templateCache, ExecutorService executorService, Collection<? extends Extension> extensions) {
+    this.loader = loader;
+    this.syntax = syntax;
+    this.strictVariables = strictVariables;
+    this.defaultLocale = defaultLocale;
+    this.tagCache = tagCache;
+    this.executorService = executorService;
+    this.templateCache = templateCache;
+    this.extensionRegistry = new ExtensionRegistry(extensions);
+  }
 
-        this.loader = loader;
-        this.syntax = syntax;
-        this.strictVariables = strictVariables;
-        this.defaultLocale = defaultLocale;
-        this.tagCache = tagCache;
-        this.executorService = executorService;
-        this.templateCache = templateCache;
-        this.extensionRegistry = new ExtensionRegistry(extensions);
-    }
-
-    /**
+  /**
      * Loads, parses, and compiles a template into an instance of PebbleTemplate
      * and returns this instance.
      *
      * @param templateName The name of the template
      * @return PebbleTemplate The compiled version of the template
+     * @throws PebbleException Thrown if an error occurs while parsing the template.
      */
-    public PebbleTemplate getTemplate(final String templateName) {
-
-        /*
-         * template name will be null if user uses the extends tag with an
-         * expression that evaluates to null
-         */
-        if (templateName == null) {
-            return null;
-        }
-
-        if (this.loader == null) {
-            throw new LoaderException(null, "Loader has not yet been specified.");
-        }
-
-        final PebbleEngine self = this;
-        PebbleTemplate result;
-
-        try {
-            final Object cacheKey = this.loader.createCacheKey(templateName);
-
-          if (isNull(this.templateCache)) {
-            result = this.getPebbleTemplate(self, templateName, cacheKey);
-            }
-            else {
-            result = this.templateCache.get(cacheKey, k -> {
-                    try {
-                      return this.getPebbleTemplate(self, templateName, cacheKey);
-                    } catch (PebbleException e) {
-                        throw new RuntimePebbleException(e);
-                    }
-                });
-            }
-        } catch (CompletionException e) {
-            /*
-             * The completion exception is probably caused by a PebbleException
-             * being thrown in the above function. We will unravel it and throw
-             * the original PebbleException which is more helpful to the end
-             * user.
-             */
-            if (e.getCause() != null && e.getCause() instanceof RuntimePebbleException) {
-                RuntimePebbleException runtimePebbleException = (RuntimePebbleException) e.getCause();
-                throw (PebbleException) runtimePebbleException.getCause();
-            } else {
-                throw new PebbleException(e, String.format("An error occurred while compiling %s", templateName));
-            }
-        }
-
-        return result;
+  public PebbleTemplate getTemplate(final String templateName) {
+    if (templateName == null) {
+      return null;
     }
+    if (this.loader == null) {
+      throw new LoaderException(null, "Loader has not yet been specified.");
+    }
+    final PebbleEngine self = this;
+    PebbleTemplate result;
+    try {
+      final Object cacheKey = this.loader.createCacheKey(templateName);
 
-    private PebbleTemplate getPebbleTemplate(final PebbleEngine self, final String templateName, final Object cacheKey) throws LoaderException, ParserException {
-      LexerImpl lexer = new LexerImpl(this.syntax, this.extensionRegistry.getUnaryOperators().values(),
-              this.extensionRegistry.getBinaryOperators().values());
-        Reader templateReader = self.retrieveReaderFromLoader(self.loader, cacheKey);
-        TokenStream tokenStream = lexer.tokenize(templateReader, templateName);
-
-      Parser parser = new ParserImpl(this.extensionRegistry.getUnaryOperators(),
-              this.extensionRegistry.getBinaryOperators(), this.extensionRegistry.getTokenParsers());
-        RootNode root = parser.parse(tokenStream);
-
-        PebbleTemplateImpl instance = new PebbleTemplateImpl(self, root, templateName);
-
-      for (NodeVisitorFactory visitorFactory : this.extensionRegistry.getNodeVisitors()) {
+<<<<<<< /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/left.java
+      if (isNull(this.templateCache)) {
+        result = this.getPebbleTemplate(self, templateName, cacheKey);
+      } else {
+        result = this.templateCache.get(cacheKey, (k) -> {
+          try {
+            return this.getPebbleTemplate(self, templateName, cacheKey);
+          } catch (PebbleException e) {
+            throw new RuntimePebbleException(e);
+          }
+        });
+      }
+=======
+      result = templateCache.get(cacheKey, new Callable<PebbleTemplate>() {
+        public PebbleTemplateImpl call() {
+          LexerImpl lexer = new LexerImpl(syntax, extensionRegistry.getUnaryOperators().values(), extensionRegistry.getBinaryOperators().values());
+          Reader templateReader = self.retrieveReaderFromLoader(self.loader, cacheKey);
+          TokenStream tokenStream = lexer.tokenize(templateReader, templateName);
+          Parser parser = new ParserImpl(extensionRegistry.getUnaryOperators(), extensionRegistry.getBinaryOperators(), extensionRegistry.getTokenParsers());
+          RootNode root = parser.parse(tokenStream);
+          PebbleTemplateImpl instance = new PebbleTemplateImpl(self, root, templateName);
+          for (NodeVisitorFactory visitorFactory : extensionRegistry.getNodeVisitors()) {
             visitorFactory.createVisitor(instance).visit(root);
+          }
+          return instance;
         }
-
-        return instance;
+      });
+>>>>>>> /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/right.java
+    } catch (
+<<<<<<< /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/left.java
+    CompletionException
+=======
+    Exception
+>>>>>>> /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/right.java
+     e) {
+      if (e.getCause() != null && e.getCause() instanceof RuntimePebbleException) {
+        RuntimePebbleException runtimePebbleException = (RuntimePebbleException) e.getCause();
+        throw (PebbleException) runtimePebbleException.getCause();
+      } else {
+        throw new PebbleException(e, String.format("An error occurred while compiling %s", templateName));
+      }
     }
+    return result;
+  }
 
-    /**
+  private PebbleTemplate getPebbleTemplate(final PebbleEngine self, final String templateName, final Object cacheKey) throws LoaderException, ParserException {
+    LexerImpl lexer = new LexerImpl(this.syntax, this.extensionRegistry.getUnaryOperators().values(), this.extensionRegistry.getBinaryOperators().values());
+    Reader templateReader = self.retrieveReaderFromLoader(self.loader, cacheKey);
+    TokenStream tokenStream = lexer.tokenize(templateReader, templateName);
+    Parser parser = new ParserImpl(this.extensionRegistry.getUnaryOperators(), this.extensionRegistry.getBinaryOperators(), this.extensionRegistry.getTokenParsers());
+    RootNode root = parser.parse(tokenStream);
+    PebbleTemplateImpl instance = new PebbleTemplateImpl(self, root, templateName);
+    for (NodeVisitorFactory visitorFactory : this.extensionRegistry.getNodeVisitors()) {
+      visitorFactory.createVisitor(instance).visit(root);
+    }
+    return instance;
+  }
+
+  /**
      * This method calls the loader and fetches the reader. We use this method
      * to handle the generic cast.
      *
@@ -178,156 +164,148 @@ public class PebbleEngine {
      * @return the reader object.
      * @throws LoaderException thrown when the template could not be loaded.
      */
-    private <T> Reader retrieveReaderFromLoader(Loader<T> loader, Object cacheKey) throws LoaderException {
-        // We make sure within getTemplate() that we use only the same key for
-        // the same loader and hence we can be sure that the cast is safe.
-        @SuppressWarnings("unchecked")
-        T casted = (T) cacheKey;
-        return loader.getReader(casted);
-    }
+  private <T extends java.lang.Object> Reader retrieveReaderFromLoader(Loader<T> loader, Object cacheKey) throws LoaderException {
+    @SuppressWarnings(value = { "unchecked" }) T casted = (T) cacheKey;
+    return loader.getReader(casted);
+  }
 
-    /**
+  /**
      * Returns the loader
      *
      * @return The loader
      */
-    public Loader<?> getLoader() {
-      return this.loader;
-    }
+  public Loader<?> getLoader() {
+    return this.loader;
+  }
 
-    /**
+  /**
      * Returns the template cache
      *
      * @return The template cache
      */
-    public Cache<Object, PebbleTemplate> getTemplateCache() {
-      return this.templateCache;
-    }
+  public Cache<Object, PebbleTemplate> getTemplateCache() {
+    return this.templateCache;
+  }
 
-    /**
+  /**
      * Returns the strict variables setting
      *
      * @return The strict variables setting
      */
-    public boolean isStrictVariables() {
-      return this.strictVariables;
-    }
+  public boolean isStrictVariables() {
+    return this.strictVariables;
+  }
 
-    /**
+  /**
      * Returns the default locale
      *
      * @return The default locale
      */
-    public Locale getDefaultLocale() {
-      return this.defaultLocale;
-    }
+  public Locale getDefaultLocale() {
+    return this.defaultLocale;
+  }
 
-    /**
+  /**
      * Returns the executor service
      *
      * @return The executor service
      */
-    public ExecutorService getExecutorService() {
-      return this.executorService;
-    }
+  public ExecutorService getExecutorService() {
+    return this.executorService;
+  }
 
-    /**
+  /**
      * Returns the syntax which is used by this PebbleEngine.
      *
      * @return the syntax used by the PebbleEngine.
      */
-    public Syntax getSyntax() {
-        return this.syntax;
-    }
+  public Syntax getSyntax() {
+    return this.syntax;
+  }
 
-    /**
+  /**
      * Returns the extension registry.
      *
      * @return The extension registry
      */
-    public ExtensionRegistry getExtensionRegistry() {
-      return this.extensionRegistry;
-    }
+  public ExtensionRegistry getExtensionRegistry() {
+    return this.extensionRegistry;
+  }
 
-    /**
+  /**
      * Returns the tag cache
      *
      * @return The tag cache
      */
-    public Cache<CacheKey, Object> getTagCache() {
-        return this.tagCache;
+  public Cache<CacheKey, Object> getTagCache() {
+    return this.tagCache;
+  }
+
+  public static class Builder {
+    private Loader<?> loader;
+
+    private List<Extension> userProvidedExtensions = new ArrayList<>();
+
+    private Syntax syntax;
+
+    private boolean strictVariables = false;
+
+    private boolean enableNewLineTrimming = true;
+
+    private Locale defaultLocale;
+
+    private ExecutorService executorService;
+
+    private Cache<Object, PebbleTemplate> templateCache;
+
+    private boolean cacheActive = true;
+
+    private Cache<CacheKey, Object> tagCache;
+
+    private EscaperExtension escaperExtension = new EscaperExtension();
+
+    /**
+         * Creates the builder.
+         */
+    public Builder() {
     }
 
     /**
-     * A builder to configure and construct an instance of a PebbleEngine.
-     */
-    public static class Builder {
-
-        private Loader<?> loader;
-
-        private List<Extension> userProvidedExtensions = new ArrayList<>();
-
-        private Syntax syntax;
-
-        private boolean strictVariables = false;
-
-        private boolean enableNewLineTrimming = true;
-
-        private Locale defaultLocale;
-
-        private ExecutorService executorService;
-
-        private Cache<Object, PebbleTemplate> templateCache;
-
-        private boolean cacheActive = true;
-
-      private Cache<CacheKey, Object> tagCache;
-
-        private EscaperExtension escaperExtension = new EscaperExtension();
-
-        /**
-         * Creates the builder.
-         */
-        public Builder() {
-
-        }
-
-        /**
          * Sets the loader used to find templates.
          *
          * @param loader A template loader
          * @return This builder object
          */
-        public Builder loader(Loader<?> loader) {
-            this.loader = loader;
-            return this;
-        }
+    public Builder loader(Loader<?> loader) {
+      this.loader = loader;
+      return this;
+    }
 
-        /**
+    /**
          * Adds an extension, can be safely invoked several times to add different extensions.
          *
          * @param extensions One or more extensions to add
          * @return This builder object
          */
-        public Builder extension(Extension... extensions) {
-            for (Extension extension : extensions) {
-                this.userProvidedExtensions.add(extension);
-            }
-            return this;
-        }
+    public Builder extension(Extension... extensions) {
+      for (Extension extension : extensions) {
+        this.userProvidedExtensions.add(extension);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Sets the syntax to be used.
          *
          * @param syntax The syntax to be used
          * @return This builder object
          */
-        public Builder syntax(Syntax syntax) {
-            this.syntax = syntax;
-            return this;
-        }
+    public Builder syntax(Syntax syntax) {
+      this.syntax = syntax;
+      return this;
+    }
 
-        /**
+    /**
          * Changes the <code>strictVariables</code> setting of the PebbleEngine.
          * The default value of this setting is "false".
          * <p>
@@ -344,12 +322,12 @@ public class PebbleEngine {
          * @param strictVariables Whether or not strict variables is used
          * @return This builder object
          */
-        public Builder strictVariables(boolean strictVariables) {
-            this.strictVariables = strictVariables;
-            return this;
-        }
+    public Builder strictVariables(boolean strictVariables) {
+      this.strictVariables = strictVariables;
+      return this;
+    }
 
-        /**
+    /**
          * Changes the <code>newLineTrimming</code> setting of the PebbleEngine.
          * The default value of this setting is "true".
          * <p>
@@ -366,12 +344,12 @@ public class PebbleEngine {
          * @param enableNewLineTrimming Whether or not the newline should be trimmed.
          * @return This builder object
          */
-        public Builder newLineTrimming(boolean enableNewLineTrimming) {
-            this.enableNewLineTrimming = enableNewLineTrimming;
-            return this;
-        }
+    public Builder newLineTrimming(boolean enableNewLineTrimming) {
+      this.enableNewLineTrimming = enableNewLineTrimming;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the Locale passed to all templates constructed by this PebbleEngine.
          * <p>
          * An individual template can always be given a new locale during evaluation.
@@ -379,139 +357,126 @@ public class PebbleEngine {
          * @param defaultLocale The default locale
          * @return This builder object
          */
-        public Builder defaultLocale(Locale defaultLocale) {
-            this.defaultLocale = defaultLocale;
-            return this;
-        }
+    public Builder defaultLocale(Locale defaultLocale) {
+      this.defaultLocale = defaultLocale;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the executor service which is required if using one of Pebble's multithreading features
          * such as the "parallel" tag.
          *
          * @param executorService The executor service
          * @return This builder object
          */
-        public Builder executorService(ExecutorService executorService) {
-            this.executorService = executorService;
-            return this;
-        }
+    public Builder executorService(ExecutorService executorService) {
+      this.executorService = executorService;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the cache used by the engine to store compiled PebbleTemplate instances.
          *
          * @param templateCache The template cache
          * @return This builder object
          */
-        public Builder templateCache(Cache<Object, PebbleTemplate> templateCache) {
-            this.templateCache = templateCache;
-            return this;
-        }
+    public Builder templateCache(Cache<Object, PebbleTemplate> templateCache) {
+      this.templateCache = templateCache;
+      return this;
+    }
 
-        /**
+    /**
          * Sets the cache used by the "cache" tag.
          *
          * @param tagCache The tag cache
          * @return This builder object
          */
-        public Builder tagCache(Cache<CacheKey, Object> tagCache) {
-            this.tagCache = tagCache;
-            return this;
-        }
+    public Builder tagCache(Cache<CacheKey, Object> tagCache) {
+      this.tagCache = tagCache;
+      return this;
+    }
 
-        /**
+    /**
          * Sets whether or not escaping should be performed automatically.
          *
          * @param autoEscaping The auto escaping setting
          * @return This builder object
          */
-        public Builder autoEscaping(boolean autoEscaping) {
-          this.escaperExtension.setAutoEscaping(autoEscaping);
-            return this;
-        }
+    public Builder autoEscaping(boolean autoEscaping) {
+      this.escaperExtension.setAutoEscaping(autoEscaping);
+      return this;
+    }
 
-        /**
+    /**
          * Sets the default escaping strategy of the built-in escaper extension.
          *
          * @param strategy The name of the default escaping strategy
          * @return This builder object
          */
-        public Builder defaultEscapingStrategy(String strategy) {
-          this.escaperExtension.setDefaultStrategy(strategy);
-            return this;
-        }
+    public Builder defaultEscapingStrategy(String strategy) {
+      this.escaperExtension.setDefaultStrategy(strategy);
+      return this;
+    }
 
-        /**
+    /**
          * Adds an escaping strategy to the built-in escaper extension.
          *
          * @param name     The name of the escaping strategy
          * @param strategy The strategy implementation
          * @return This builder object
          */
-        public Builder addEscapingStrategy(String name, EscapingStrategy strategy) {
-          this.escaperExtension.addEscapingStrategy(name, strategy);
-            return this;
-        }
+    public Builder addEscapingStrategy(String name, EscapingStrategy strategy) {
+      this.escaperExtension.addEscapingStrategy(name, strategy);
+      return this;
+    }
 
-        /**
+    /**
          * Enable/disable all caches, i.e. cache used by the engine to store compiled PebbleTemplate instances
          * and tags cache
          *
          * @param cacheActive toggle to enable/disable all caches
          * @return This builder object
          */
-        public Builder cacheActive(boolean cacheActive) {
-            this.cacheActive = cacheActive;
-            return this;
-        }
+    public Builder cacheActive(boolean cacheActive) {
+      this.cacheActive = cacheActive;
+      return this;
+    }
 
-        /**
+    /**
          * Creates the PebbleEngine instance.
          *
          * @return A PebbleEngine object that can be used to create PebbleTemplate objects.
          */
-        public PebbleEngine build() {
-
-            // core extensions
-            List<Extension> extensions = new ArrayList<>();
-            extensions.add(new CoreExtension());
-          extensions.add(this.escaperExtension);
-            extensions.add(new I18nExtension());
-            extensions.addAll(this.userProvidedExtensions);
-
-            // default loader
-          if (this.loader == null) {
-                List<Loader<?>> defaultLoadingStrategies = new ArrayList<>();
-                defaultLoadingStrategies.add(new ClasspathLoader());
-                defaultLoadingStrategies.add(new FileLoader());
-            this.loader = new DelegatingLoader(defaultLoadingStrategies);
-            }
-
-            // default locale
-          if (this.defaultLocale == null) {
-            this.defaultLocale = Locale.getDefault();
-            }
-
-
-          if (this.cacheActive) {
-                // default caches
-            if (this.templateCache == null) {
-              this.templateCache = Caffeine.newBuilder().maximumSize(200).build();
-                }
-
-            if (this.tagCache == null) {
-              this.tagCache = Caffeine.newBuilder().maximumSize(200).build();
-                }
-            } else {
-            this.templateCache = null;
-            this.tagCache = null;
-            }
-
-          if (this.syntax == null) {
-            this.syntax = new Syntax.Builder().setEnableNewLineTrimming(this.enableNewLineTrimming).build();
-            }
-
-          return new PebbleEngine(this.loader, this.syntax, this.strictVariables, this.defaultLocale, this.tagCache, this.templateCache,
-                  this.executorService, extensions);
+    public PebbleEngine build() {
+      List<Extension> extensions = new ArrayList<>();
+      extensions.add(new CoreExtension());
+      extensions.add(this.escaperExtension);
+      extensions.add(new I18nExtension());
+      extensions.addAll(this.userProvidedExtensions);
+      if (this.loader == null) {
+        List<Loader<?>> defaultLoadingStrategies = new ArrayList<>();
+        defaultLoadingStrategies.add(new ClasspathLoader());
+        defaultLoadingStrategies.add(new FileLoader());
+        this.loader = new DelegatingLoader(defaultLoadingStrategies);
+      }
+      if (this.defaultLocale == null) {
+        this.defaultLocale = Locale.getDefault();
+      }
+      if (this.cacheActive) {
+        if (this.templateCache == null) {
+          this.templateCache = Caffeine.newBuilder().maximumSize(200).build();
         }
+        if (this.tagCache == null) {
+          this.tagCache = Caffeine.newBuilder().maximumSize(200).build();
+        }
+      } else {
+        this.templateCache = null;
+        this.tagCache = null;
+      }
+      if (this.syntax == null) {
+        this.syntax = new Syntax.Builder().setEnableNewLineTrimming(this.enableNewLineTrimming).build();
+      }
+      return new PebbleEngine(this.loader, this.syntax, this.strictVariables, this.defaultLocale, this.tagCache, this.templateCache, this.executorService, extensions);
     }
+  }
 }
