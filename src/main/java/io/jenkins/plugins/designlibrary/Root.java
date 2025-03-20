@@ -8,7 +8,6 @@ import net.sf.json.JSONArray;
 import org.jenkins.ui.icon.IconSet;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.util.Collections;
 import java.util.List;
