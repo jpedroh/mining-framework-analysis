@@ -16,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.kinesis.common.InitialPositionInStreamExtended;
@@ -38,8 +37,8 @@ public class RetrievalConfigTest {
 
     @Before
     public void setUp() {
-        mockKinesisClient = MockObjectHelper.createKinesisClient(true);
         when(mockMultiStreamTracker.isMultiStream()).thenReturn(true);
+        mockKinesisClient = MockObjectHelper.createKinesisClient(true);
     }
 
     @Test

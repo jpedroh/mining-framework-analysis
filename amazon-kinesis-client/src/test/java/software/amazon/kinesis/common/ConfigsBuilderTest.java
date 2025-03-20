@@ -38,7 +38,7 @@ import software.amazon.kinesis.utils.MockObjectHelper;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigsBuilderTest {
 
-    private final KinesisAsyncClient mockKinesisClient = MockObjectHelper.createKinesisClient();
+    private KinesisAsyncClient mockKinesisClient;
 
     @Mock
     private DynamoDbAsyncClient mockDynamoClient;
@@ -52,6 +52,21 @@ public class ConfigsBuilderTest {
     private static final String APPLICATION_NAME = ConfigsBuilderTest.class.getSimpleName();
     private static final String WORKER_IDENTIFIER = "worker-id";
 
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/de77f36bc9ba3b63308721fa5ec6368672def561/amazon-kinesis-client/src/test/java/software/amazon/kinesis/common/ConfigsBuilderTest.java/left.java
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        mockKinesisClient = MockObjectHelper.createKinesisClient();
+    }
+
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/de77f36bc9ba3b63308721fa5ec6368672def561/amazon-kinesis-client/src/test/java/software/amazon/kinesis/common/ConfigsBuilderTest.java/base.java
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+=======
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/de77f36bc9ba3b63308721fa5ec6368672def561/amazon-kinesis-client/src/test/java/software/amazon/kinesis/common/ConfigsBuilderTest.java/right.java
     @Test
     public void testTrackerConstruction() {
         final String streamName = "single-stream";
