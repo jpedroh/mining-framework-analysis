@@ -2082,6 +2082,7 @@ public abstract class AbstractMatrixTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testSelect1() {
         // Throw exception when row indices are invalid
         Matrix a = matrixA();
@@ -2090,6 +2091,7 @@ public abstract class AbstractMatrixTest {
         a.select(rowInd, colInd);
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
     @Test(expected = IndexOutOfBoundsException.class)
     public void testSelect2() {
         // Throw exception when column indices are invalid
@@ -2398,6 +2400,7 @@ public abstract class AbstractMatrixTest {
     	 a.set(1, 1, 1.0);
     	 assertEquals(1.0, a.get(1, 1), 0.0);
     }
+    
     @Test
     public void testEqualsWithPrecision() throws Exception {
         Matrix a = factory().createMatrix();
@@ -2425,7 +2428,7 @@ public abstract class AbstractMatrixTest {
         assertTrue(e.equals(f, Matrices.EPS));
         
     }
-
+    
     @Test
     public void testEquals() throws Exception {
         Matrix a = factory().createMatrix();
@@ -2438,6 +2441,7 @@ public abstract class AbstractMatrixTest {
         assertTrue(c.equals(b));
         assertFalse(b.equals(a));
         assertFalse(c.equals(a));
+
         Matrix d = factory().createIdentityMatrix(2);
         assertFalse(d.equals(b));
         assertFalse(d.equals(a));
