@@ -1,13 +1,14 @@
 package com.fincatto.documentofiscal.utils;
 
 import com.fincatto.documentofiscal.DFConfig;
-import com.fincatto.documentofiscal.DFLog;
 import org.apache.commons.lang3.StringUtils;
+import com.fincatto.documentofiscal.DFLog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.xml.crypto.*;
 import javax.xml.crypto.dsig.*;
@@ -76,8 +77,21 @@ public class DFAssinaturaDigital implements DFLog {
 
     public void assinarDocumento(final Reader xmlReader, final Writer xmlAssinado, final String... elementosAssinaveis) throws Exception {
         final KeyStore.PrivateKeyEntry keyEntry = getPrivateKeyEntry();
-
-        final String dn = ((X509Certificate) keyEntry.getCertificate()).getSubjectX500Principal().getName();
+<<<<<<< /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/left.java
+        //Adiciona System.out p/ verificação do certificado que assina o documento
+        try {
+            String dn = ((X509Certificate)keyEntry.getCertificate()).getSubjectX500Principal().getName();
+            LdapName ldapDN = null;
+            ldapDN = new LdapName(dn);
+            String commonName = ldapDN.getRdns().stream()
+                    .filter(rdn -> StringUtils.equalsIgnoreCase(rdn.getType(), "CN")).map(val -> val.getValue() + "").findFirst()
+                    .orElse("");
+            System.out.println("CERTIFICADO ASSINANDO(CNPJ):" + commonName );
+        } catch (InvalidNameException e) {
+        }
+||||||| /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/base.java
+=======
+        String dn = ((X509Certificate)keyEntry.getCertificate()).getSubjectX500Principal().getName();
         this.getLogger().debug("DN: {}", dn);
 
         final String cn = new LdapName(dn).getRdns().stream()
@@ -86,8 +100,7 @@ public class DFAssinaturaDigital implements DFLog {
                 .findFirst()
                 .orElse("");
         this.getLogger().debug("CN: {}", cn);
-
-
+>>>>>>> /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/right.java
         final XMLSignatureFactory signatureFactory = XMLSignatureFactory.getInstance("DOM");
         final List<Transform> transforms = new ArrayList<>(2);
         transforms.add(signatureFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
@@ -120,6 +133,38 @@ public class DFAssinaturaDigital implements DFLog {
     }
 
     private KeyStore.PrivateKeyEntry getPrivateKeyEntry() throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException {
+<<<<<<< /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/left.java
+        final KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(this.config.getCertificadoSenha().toCharArray());
+        //verifica se há um Alias configurado
+        if(StringUtils.isNotEmpty(config.getCertificadoAlias())){
+            final String certificateAlias = config.getCertificadoAlias() != null ? config.getCertificadoAlias()
+                    : config.getCertificadoKeyStore().aliases().nextElement();
+            return (KeyStore.PrivateKeyEntry) config.getCertificadoKeyStore().getEntry(certificateAlias, passwordProtection);
+        }else{
+            KeyStore ks = config.getCertificadoKeyStore();
+            for (Enumeration<String> e = ks.aliases(); e.hasMoreElements();) {
+                String alias = e.nextElement();
+                if (ks.isKeyEntry(alias)) {
+                    return (KeyStore.PrivateKeyEntry) ks.getEntry(alias, passwordProtection);
+                }
+            }
+            throw new RuntimeException("Não foi possível encontrar a chave privada do certificado");
+        }
+    }
+||||||| /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/base.java
+    		final KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(this.config.getCertificadoSenha().toCharArray());
+
+    		KeyStore ks = config.getCertificadoKeyStore();
+    		for (Enumeration<String> e = ks.aliases(); e.hasMoreElements();) {
+    			String alias = e.nextElement();
+    			if (ks.isKeyEntry(alias)) {
+    				return (KeyStore.PrivateKeyEntry) ks.getEntry(alias, passwordProtection);
+    			}
+    		}
+
+    		throw new RuntimeException("Não foi possível encontrar a chave privada do certificado");
+    	}
+=======
         final KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(this.config.getCertificadoSenha().toCharArray());
         if (StringUtils.isNotBlank(config.getCertificadoAlias())) {
             this.getLogger().debug("Usando alias informado: '{}'", config.getCertificadoAlias());
@@ -136,6 +181,7 @@ public class DFAssinaturaDigital implements DFLog {
             throw new KeyStoreException("N\u00E3o foi poss\u00EDvel encontrar a chave privada do certificado!");
         }
     }
+>>>>>>> /usr/src/app/output/fincatto/nfe/a4be269d5dc77dafeedaa7986ce331f1dac5bfae/src/main/java/com/fincatto/documentofiscal/utils/DFAssinaturaDigital.java/right.java
 
     public String assinarString(final String string) throws Exception {
         final byte[] buffer = string.getBytes();
