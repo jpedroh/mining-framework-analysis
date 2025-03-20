@@ -378,7 +378,13 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                 case LITERAL:
                     if (objectMap.getLanguageTag() != null && !value.equals("")) {
                         valueList.add(new LiteralImpl(value, objectMap.getLanguageTag()));
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/left.java
+                    } else if (objectMap.getDataType() != null && !value.equals("")) {
+||||||| /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/base.java
+                    } else if (objectMap.getDataType() != null) {
+=======
                     } else if (value != null && !value.equals("") && objectMap.getDataType() != null) {
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/right.java
                         valueList.add(new LiteralImpl(value, objectMap.getDataType()));
                     } else if (value != null && !value.equals("")) {
                         valueList.add(new LiteralImpl(value.trim()));

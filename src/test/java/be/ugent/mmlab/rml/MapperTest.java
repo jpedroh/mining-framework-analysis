@@ -34,6 +34,27 @@ public class MapperTest
      */
     public MapperTest(String testName) {
         super(testName);
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
+    
+        RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+        RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+        RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
+        RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/example5/museum.json").getFile());
+        RMLEngine.getFileMap().put("moon-walkers7.csv", getClass().getResource("/example7/moon-walkers7.csv").getFile());
+||||||| /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/base.java
+    
+        RMLEngine.getFileMap().put("example.xml", getClass().getResource("/example1/example.xml").getFile());
+        RMLEngine.getFileMap().put("Airport.csv", getClass().getResource("/example3/Airport.csv").getFile());
+        RMLEngine.getFileMap().put("Venue.json", getClass().getResource("/example3/Venue.json").getFile());
+        RMLEngine.getFileMap().put("Transport.xml", getClass().getResource("/example3/Transport.xml").getFile());
+        RMLEngine.getFileMap().put("Venue4.json", getClass().getResource("/example4/Venue.json").getFile());
+        RMLEngine.getFileMap().put("moon-walkers.csv", getClass().getResource("/example5/moon-walkers.csv").getFile());
+        RMLEngine.getFileMap().put("museum.json", getClass().getResource("/example5/museum.json").getFile());
+=======
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/af76241328ee4072ccb1c5c9d4f7be49877f1a9c/src/test/java/be/ugent/mmlab/rml/MapperTest.java/right.java
     }
 
     /**
@@ -79,6 +100,12 @@ public class MapperTest
     public void testExample6() {
         URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example6/example.output.ttl");
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+    
+    public void testExample7() {
+        URL fileToRMLFile = getClass().getResource("/example7/moon-walkers.rml.ttl");
+        URL fileToOutputFile = getClass().getResource("/example7/moon-walkers.output.ttl");
         assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }
     
