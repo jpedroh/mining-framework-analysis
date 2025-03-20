@@ -389,6 +389,7 @@ public class AdaptiveMultilevelPlot {
 
       createTiles(shapes, subPyramid, tileWidth, tileHeight, plotter,
           histogram, threshold, canvasLayers, context);
+<<<<<<< /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/left.java
       
       
       java.awt.Rectangle overlaps = new java.awt.Rectangle();
@@ -417,7 +418,37 @@ public class AdaptiveMultilevelPlot {
              overlaps.height = updatedY2 - updatedY1 + 1;
            }
       
+||||||| /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/base.java
+=======
+    
+      // Close all the tiles to ensure that data tiles are flushed to disk and closed
+>>>>>>> /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/right.java
       context.setStatus("Writing " + canvasLayers.size() + " tiles");
+      java.awt.Rectangle overlaps = new java.awt.Rectangle();
+      overlaps.x = subPyramid.c1;
+      overlaps.y = subPyramid.r1;
+      overlaps.width = subPyramid.c2 - subPyramid.c1;
+      overlaps.height = subPyramid.r2 - subPyramid.r1;
+      for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel; z--) {
+        for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
+          for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
+            // Now, we should close the tile at (z,x,y)
+            long tileIDToClose = TileIndex.encode(z, x, y);
+            tileID.set(-tileIDToClose - 1); // This is how we signal a close tile command
+            context.write(tileID, null);
+          }
+        }
+        // Update overlappingCells for the higher z
+        int updatedX1 = overlaps.x / 2;
+        int updatedY1 = overlaps.y / 2;
+        int updatedX2 = (overlaps.x + overlaps.width - 1) / 2;
+        int updatedY2 = (overlaps.y + overlaps.height - 1) / 2;
+        overlaps.x = updatedX1;
+        overlaps.y = updatedY1;
+        overlaps.width = updatedX2 - updatedX1 + 1;
+        overlaps.height = updatedY2 - updatedY1 + 1;
+      }
+
       // Write all created layers to the output as images
       LongWritable outKey = new LongWritable();
       for (Map.Entry<Long, Canvas> entry : canvasLayers.entrySet()) {
@@ -443,14 +474,22 @@ public class AdaptiveMultilevelPlot {
     int x1 = (int) (x * histTileWidth);
     int y1 = (int) (y * histTileHeight);
     long size = h.getSumOrderOne(x1, y1, histTileWidth, histTileHeight);
-//    if(z==6&&x==6&&y==36)
-//    	System.out.println("tile-6-6-36="+size);
+  //    if(z==6&&x==6&&y==36)
+  //    	System.out.println("tile-6-6-36="+size);
     // If the size is larger than the threshold then it has to be an image tile
     if (size > threshold)
       return TileClass.ImageTile;
     // The code below is incorrect because the histogram is not 100% accurate
-//    if (size == 0)
-//      return TileClass.EmptyTile;
+<<<<<<< /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/left.java
+  //    if (size == 0)
+  //      return TileClass.EmptyTile;
+||||||| /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/base.java
+    //if (size == 0)
+    //  return TileClass.EmptyTile;
+=======
+    if (size == 0)
+      return TileClass.EmptyTile;
+>>>>>>> /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/right.java
 
     // It could be either a data tile or shallow/empty tile based on its parent size
     if (z == 0)
@@ -503,12 +542,12 @@ public class AdaptiveMultilevelPlot {
         for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
           for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
             // Process the tile according to its class
-            TileClass tileClass = h == null? null : classifyTile(h, threshold, z, x, y);
+            TileClass tileClass = h == null ? null : classifyTile(h, threshold, z, x, y);
 //            if(z==6&&x==6&&y==36)
 //            	System.out.println("tile-6-10-34="+tileClass);
             long tileID = TileIndex.encode(z, x, y);
             
-            if (plotter!= null && (tileClass == null || tileClass == TileClass.ImageTile)) {
+            if (plotter != null && (tileClass == null || tileClass == TileClass.ImageTile)) {
               // Plot the shape on the tile at (z,x,y)
               Canvas c = tiles.get(tileID);
               if (c == null) {

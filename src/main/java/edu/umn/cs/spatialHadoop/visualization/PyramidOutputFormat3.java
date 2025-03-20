@@ -21,6 +21,8 @@ import javax.imageio.ImageIO;
 
 import edu.umn.cs.spatialHadoop.core.Shape;
 import edu.umn.cs.spatialHadoop.io.Text2;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -36,8 +38,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.LineReader;
 import org.apache.pig.builtin.LOG;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import edu.umn.cs.spatialHadoop.OperationsParams;
 import edu.umn.cs.spatialHadoop.core.Rectangle;
 
@@ -47,7 +48,13 @@ import edu.umn.cs.spatialHadoop.core.Rectangle;
  *
  */
 public class PyramidOutputFormat3 extends FileOutputFormat<LongWritable, Writable> {
+<<<<<<< /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/left.java
   private static final Log LOG = LogFactory.getLog(AdaptiveMultilevelPlot.class);
+||||||| /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/base.java
+=======
+  private static final Log LOG = LogFactory.getLog(PyramidOutputFormat3.class);
+>>>>>>> /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/right.java
+
   public static final String DataExt = ".txt";
 
   static class ImageRecordWriter extends RecordWriter<LongWritable, Writable> {
@@ -95,35 +102,50 @@ public class PyramidOutputFormat3 extends FileOutputFormat<LongWritable, Writabl
 
     @Override
     public void write(LongWritable encodedTileID, Writable w) throws IOException {
+<<<<<<< /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/left.java
       if (encodedTileID.get() < 0) {	
-    	  long tileIDToClose = -encodedTileID.get() - 1;
-    	    FSDataOutputStream outFile = dataFiles.get(tileIDToClose);
-    	    if (outFile != null) {
-    	      outFile.close();
-    	      dataFiles.remove(tileIDToClose);
-    	    }
+          	  long tileIDToClose = -encodedTileID.get() - 1;
+          	    FSDataOutputStream outFile = dataFiles.get(tileIDToClose);
+          	    if (outFile != null) {
+          	      outFile.close();
+          	      dataFiles.remove(tileIDToClose);
+          	    }
       }else{
-      tempTileIndex = TileIndex.decode(encodedTileID.get(), tempTileIndex);
-      if (w instanceof Canvas) {
-        Path imagePath = getTilePath(tempTileIndex.z, tempTileIndex.x, tempTileIndex.y, imgExt);
-    	  // Write this tile to an image
-    	  FSDataOutputStream outFile = outFS.create(imagePath);
-    	  plotter.writeImage((Canvas) w, outFile, this.vflip);
-    	  outFile.close();
-      } else if (w instanceof Shape) {
-        // Write the shape to a text file
-        Shape s = (Shape) w;
-        FSDataOutputStream outFile = dataFiles.get(encodedTileID.get());
-        if (outFile == null) {
-          Path filePath = getTilePath(tempTileIndex.z, tempTileIndex.x, tempTileIndex.y, DataExt);
-          outFile = outFS.create(filePath);
-          dataFiles.put(encodedTileID.get(), outFile);
+||||||| /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/base.java
+      if (encodedTileID.get() < 0) else{
+=======
+      if (encodedTileID.get() < 0) {
+        // This is not really an object that I want to write, but it's an indicator that I should close and finalize the tile
+        long tileIDToClose = -encodedTileID.get() - 1;
+        FSDataOutputStream outFile = dataFiles.get(tileIDToClose);
+        if (outFile != null) {
+          LOG.info("Early Closing tile #"+tileIDToClose);
+          outFile.close();
+          dataFiles.remove(tileIDToClose);
         }
-        tempLine.clear();
-        s.toText(tempLine);
-        tempLine.append(NewLineChars, 0, NewLineChars.length);
-        outFile.write(tempLine.getBytes(), 0, tempLine.getLength());
-      }
+      }else{
+>>>>>>> /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/PyramidOutputFormat3.java/right.java
+        tempTileIndex = TileIndex.decode(encodedTileID.get(), tempTileIndex);
+        if (w instanceof Canvas) {
+          Path imagePath = getTilePath(tempTileIndex.z, tempTileIndex.x, tempTileIndex.y, imgExt);
+          // Write this tile to an image
+          FSDataOutputStream outFile = outFS.create(imagePath);
+          plotter.writeImage((Canvas) w, outFile, this.vflip);
+          outFile.close();
+        } else if (w instanceof Shape) {
+          // Write the shape to a text file
+          Shape s = (Shape) w;
+          FSDataOutputStream outFile = dataFiles.get(encodedTileID.get());
+          if (outFile == null) {
+            Path filePath = getTilePath(tempTileIndex.z, tempTileIndex.x, tempTileIndex.y, DataExt);
+            outFile = outFS.create(filePath);
+            dataFiles.put(encodedTileID.get(), outFile);
+          }
+          tempLine.clear();
+          s.toText(tempLine);
+          tempLine.append(NewLineChars, 0, NewLineChars.length);
+          outFile.write(tempLine.getBytes(), 0, tempLine.getLength());
+        }
       }
       task.progress();
     }

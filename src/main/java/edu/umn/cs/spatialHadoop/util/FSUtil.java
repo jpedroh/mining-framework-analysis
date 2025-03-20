@@ -46,10 +46,10 @@ public class FSUtil {
           fs.rename(file.getPath(), new Path(destinationPath, file.getPath().getName()));
         }
         // Now, since the path is empty, we can safely delete it
-        // We delete it with non-recursive option for safety
-        fs.delete(subdir.getPath(), true);
         // XXX We delete it with non-recursive option for safety
         // In HDFS, .crc files are not moved and hence we delete them recursively
+        fs.delete(subdir.getPath(), true);
+        
       }
     }
 
@@ -65,6 +65,7 @@ public class FSUtil {
     fs.rename(destinationPath, parentPath);
     System.out.println("DestinationPath="+destinationPath);
     fs.delete(renamedParent, true);
+
   }
 
 }
