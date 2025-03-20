@@ -876,7 +876,7 @@ public class MainFrame extends JFrame {
     
     public void setPlacementCompletionStatus(int totalPlacementsCompleted, int totalPlacements, int boardPlacementsCompleted, int boardPlacements) {
         SwingUtilities.invokeLater(() -> {
-            lblPlacements.setText(String.format(" Placements: %d / %d Total | %d / %d Selected Board ", totalPlacementsCompleted, totalPlacements, boardPlacementsCompleted, boardPlacements));
+        	lblPlacements.setText(" Placements: " + totalPlacementsCompleted + " / " + totalPlacements + " Total | " + boardPlacementsCompleted + " / " + boardPlacements + " Selected Board "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         	prgbrPlacements.setValue((int)(((float)totalPlacementsCompleted / (float)totalPlacements) * 100.0f));
         });
     }
