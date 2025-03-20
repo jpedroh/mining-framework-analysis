@@ -72,6 +72,47 @@ public class FilePrivateKeyStorage extends PrivateKeyStorage {
   }
 
   /**
+   * Create a new FilePrivateKeyStorage to connect to the given directory.
+   * @param keyStoreDirectoryPath The full path of the directory holding the
+   * private key data. This creates the directory if it doesn't exist.
+   * For example, you can get the default directory path from an Android files
+   * directory with getDefaultDirecoryPath(context.getFilesDir())
+   */
+  public FilePrivateKeyStorage(String keyStoreDirectoryPath)
+  {
+    keyStorePath_ = new File(keyStoreDirectoryPath);
+    keyStorePath_.mkdirs();
+  }
+
+  /**
+   * Get the default directory path for private keys based on the files root.
+   * This creates the directory if it doesn't exist. For example if
+   * filesRoot is "/data/data/org.example/files", this returns
+   * "/data/data/org.example/files/.ndn/ndnsec-tpm-file".
+   * @param filesRoot The root file directory. An Android app can use
+   * context.getFilesDir()
+   * @return The default directory path.
+   */
+  public static String
+  getDefaultDirecoryPath(File filesRoot)
+  {
+    return getDefaultDirecoryPath(filesRoot.getAbsolutePath());
+  }
+
+  /**
+   * Get the default directory path for private keys based on the files root.
+   * This creates the directory if it doesn't exist.
+   * @param filesRoot The root file directory.
+   * @return The default directory path.
+   */
+  public static String
+  getDefaultDirecoryPath(String filesRoot)
+  {
+    // NOTE: Use File because java.nio.file.Path is not available before Java 7.
+    return new File(new File(filesRoot, ".ndn"), "ndnsec-tpm-file").getAbsolutePath();
+  }
+
+  /**
    * Generate a pair of asymmetric keys.
    * @param keyName The name of the key pair.
    * @param params The parameters of the key.
