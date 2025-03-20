@@ -35,8 +35,13 @@ public class LogResultHandler implements ResultHandler {
 
 	}
 
-    public void startDocument() {
+    @Override
+    public void globalShutdown() {
+        // TODO Auto-generated method stub
+    }
 
+    @Override
+	public void startDocument() {
 		// TODO Auto-generated method stub
 
 	}
@@ -63,12 +68,6 @@ public class LogResultHandler implements ResultHandler {
 	public void newLine(boolean hyphenated) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void globalShutdown() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
