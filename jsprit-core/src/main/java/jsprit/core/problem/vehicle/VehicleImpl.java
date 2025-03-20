@@ -54,44 +54,44 @@ public class VehicleImpl extends AbstractVehicle{
 		}
 
         @Override
-        public double getEarliestDeparture() {
-            return 0;
-        }
+	public double getEarliestDeparture() {
+	    return 0;
+	}
 
         @Override
-        public double getLatestArrival() {
-            return 0;
-        }
+	public double getLatestArrival() {
+	    return 0;
+	}
 
         @Override
-        public VehicleType getType() {
-            return type;
-        }
+	public VehicleType getType() {
+	    return type;
+	}
 
         @Override
-        public String getId() {
-            return id;
-        }
+	public String getId() {
+	    return id;
+	}
 
         @Override
-        public boolean isReturnToDepot() {
-            return false;
-        }
+	public boolean isReturnToDepot() {
+	    return false;
+	}
 
         @Override
-        public Location getStartLocation() {
-            return null;
-        }
+	public Location getStartLocation() {
+	    return null;
+	}
 
         @Override
-        public Location getEndLocation() {
-            return null;
-        }
+	public Location getEndLocation() {
+	    return null;
+	}
 
         @Override
-        public Skills getSkills() {
-            return null;
-        }
+	public Skills getSkills() {
+	    return null;
+	}
 
 		@Override
 		public Break getBreak() { return null; }
@@ -148,7 +148,8 @@ public class VehicleImpl extends AbstractVehicle{
 			this.type = type;
 			return this;
 		}
-		
+
+
 		/**
 		 * Sets the flag whether the vehicle must return to depot or not.
 		 * 
@@ -167,19 +168,19 @@ public class VehicleImpl extends AbstractVehicle{
 		}
 
         /**
-         * Sets start location.
-         * @param startLocation start location
-         * @return start location
-         */
+	 * Sets start location.
+	 * @param startLocation start location
+	 * @return start location
+	 */
         public Builder setStartLocation(Location startLocation){
-            this.startLocation = startLocation;
-            return this;
-        }
+	    this.startLocation = startLocation;
+	    return this;
+	}
 
         public Builder setEndLocation(Location endLocation){
-            this.endLocation = endLocation;
-            return this;
-        }
+	    this.endLocation = endLocation;
+	    return this;
+	}
 		
 		/**
 		 * Sets earliest-start of vehicle which should be the lower bound of the vehicle's departure times.
@@ -204,9 +205,9 @@ public class VehicleImpl extends AbstractVehicle{
 		}
 
         public Builder addSkill(String skill){
-            skillBuilder.addSkill(skill);
-            return this;
-        }
+	    skillBuilder.addSkill(skill);
+	    return this;
+	}
 		
 		/**
 		 * Builds and returns the vehicle.
@@ -248,9 +249,9 @@ public class VehicleImpl extends AbstractVehicle{
 		public static Builder newInstance(String vehicleId){ return new Builder(vehicleId); }
 
         public Builder addSkills(Skills skills) {
-            this.skillBuilder.addAllSkills(skills.values());
-            return this;
-        }
+	    this.skillBuilder.addAllSkills(skills.values());
+	    return this;
+	}
 
 		public Builder setBreak(Break aBreak) {
 			this.aBreak = aBreak;
@@ -297,7 +298,6 @@ public class VehicleImpl extends AbstractVehicle{
         endLocation = builder.endLocation;
         startLocation = builder.startLocation;
 		aBreak = builder.aBreak;
-//        setVehicleIdentifier(new VehicleTypeKey(type.getTypeId(),startLocation.getId(),endLocation.getId(),earliestDeparture,latestArrival,skills));
         setVehicleIdentifier(new VehicleTypeKey(type.getTypeId(),startLocation.getId(),endLocation.getId(),earliestDeparture,latestArrival,skills, returnToDepot));
 	}
 	
