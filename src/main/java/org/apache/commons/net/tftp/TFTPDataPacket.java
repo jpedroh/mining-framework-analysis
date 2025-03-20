@@ -247,7 +247,19 @@ public final class TFTPDataPacket extends TFTPPacket
         this.offset = offset;
         this.length = length;
 
+<<<<<<< /usr/src/app/output/apache/commons-net/dcb63c3de215cccd34b808f7a4f8fa55be592226/src/main/java/org/apache/commons/net/tftp/TFTPDataPacket.java/left.java
+        if (length > MAX_DATA_LENGTH) {
+            this.length = MAX_DATA_LENGTH;
+        }
+||||||| /usr/src/app/output/apache/commons-net/dcb63c3de215cccd34b808f7a4f8fa55be592226/src/main/java/org/apache/commons/net/tftp/TFTPDataPacket.java/base.java
+        if (length > MAX_DATA_LENGTH) {
+            this.length = MAX_DATA_LENGTH;
+        } else {
+            this.length = length;
+        }
+=======
         this.length = Math.min(length, MAX_DATA_LENGTH);
+>>>>>>> /usr/src/app/output/apache/commons-net/dcb63c3de215cccd34b808f7a4f8fa55be592226/src/main/java/org/apache/commons/net/tftp/TFTPDataPacket.java/right.java
     }
 
     /**
