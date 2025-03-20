@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
@@ -21,8 +20,6 @@ public class PushoverResponseFactory {
 
     private static final Gson GSON = new Gson();
 
-    public static final String REQUEST_REMAINING_HEADER = "X-Limit-App-Remaining";
-
     public static Status createStatus(HttpResponse response) throws IOException {
 
         if (response == null || response.getEntity() == null) {
@@ -37,37 +34,6 @@ public class PushoverResponseFactory {
             toReturn = GSON.fromJson(body, Status.class);
         } catch (JsonSyntaxException e) {
             throw new IOException(e.getCause());
-        }
-
-        return toReturn;
-    }
-    
-    public static Response createResponse(HttpResponse response) throws IOException {
-          if (response == null || response.getEntity() == null) {
-            throw new IOException("unreadable response!");
-        }
-
-        final String body = EntityUtils.toString(response.getEntity());
-
-        final Response toReturn;
-
-        try {
-            toReturn = GSON.fromJson(body, Response.class);
-        } catch (JsonSyntaxException e) {
-            throw new IOException(e.getCause());
-        }
-        
-        final Header responseId = response.getFirstHeader(REQUEST_REMAINING_HEADER);
-
-        if (responseId != null) {
-              try
-              {
-                    toReturn.setRemaining(Integer.parseInt(responseId.getValue()));
-              }
-              catch (Exception ex)
-              {
-                    toReturn.setRemaining(Integer.MIN_VALUE);  //on failure to parse just set to minimum value. easy to check for. You should never be that far in the hole.
-              }
         }
 
         return toReturn;
@@ -113,6 +79,52 @@ public class PushoverResponseFactory {
         }
 
         return v;    
+    }
+    
+    // {"status":1}
+    
+    private static class ResponseModel {
+        int status;
+        String request;
+        String user;
+        List<String> errors = new ArrayList<String>();
+        List<String> devices = new ArrayList<String>();
+        String receipt;
+        int remaining_messages;
+    }
+    
+    public static final String REQUEST_REMAINING_HEADER = "X-Limit-App-Remaining";
+    
+    public static Response createResponse(HttpResponse response) throws IOException {
+          if (response == null || response.getEntity() == null) {
+            throw new IOException("unreadable response!");
+        }
+
+        final String body = EntityUtils.toString(response.getEntity());
+
+        final Response toReturn;
+
+        try {
+            toReturn = GSON.fromJson(body, Response.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException(e.getCause());
+        }
+        
+        final Header responseId = response.getFirstHeader(REQUEST_REMAINING_HEADER);
+
+        if (m.request != null) {
+              try
+              {
+                    toReturn.setRemaining(Integer.parseInt(m.request));
+              }
+              catch (Exception ex)
+              {
+                    toReturn.setRemaining(Integer.MIN_VALUE);  //on failure to parse just set to minimum value. easy to check for. You should never be that far in the hole.
+              }
+            
+        }
+
+        return toReturn;
     }
 
     // {"sounds":{"id":"name",...},"status":1}
