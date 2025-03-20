@@ -9,19 +9,19 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
-import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
-import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPongResponsePacket;
-import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
+import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPongResponsePacket;
+import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
@@ -174,9 +174,9 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void disconnecting(DisconnectingEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if (protocol.getSubProtocol() == SubProtocol.LOGIN) {
+        if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
             event.getSession().send(new ClientboundLoginDisconnectPacket(event.getReason()));
-        } else if (protocol.getSubProtocol() == SubProtocol.GAME) {
+        } else if(protocol.getSubProtocol() == SubProtocol.GAME) {
             event.getSession().send(new ClientboundDisconnectPacket(event.getReason()));
         }
     }
