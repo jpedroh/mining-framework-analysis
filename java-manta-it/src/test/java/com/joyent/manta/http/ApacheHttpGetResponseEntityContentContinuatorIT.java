@@ -1,12 +1,4 @@
-/*
- * Copyright (c) 2018-2020, Joyent, Inc. All rights reserved.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
 package com.joyent.manta.http;
-
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -39,7 +31,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +47,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import static java.lang.Math.floorDiv;
 import static java.util.Objects.requireNonNull;
 import static org.testng.Assert.assertEquals;
@@ -136,342 +126,227 @@ import static org.testng.Assert.fail;
  * HTTP it provides no way to terminate in-flight requests.
  * </p>
  */
-@Test(groups = {"range-downloads", "buckets"}, singleThreaded = true)
-public class ApacheHttpGetResponseEntityContentContinuatorIT {
+@Test(groups = { "range-downloads", "buckets" }, singleThreaded = true) public class ApacheHttpGetResponseEntityContentContinuatorIT {
+  private static final Logger LOG = LoggerFactory.getLogger(ApacheHttpGetResponseEntityContentContinuatorIT.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApacheHttpGetResponseEntityContentContinuatorIT.class);
+  private static final URL STUB_RESOURCE = requireNonNull(Thread.currentThread().getContextClassLoader().getResource("Master-Yoda.jpg"));
 
-    private static final URL STUB_RESOURCE = requireNonNull(Thread.currentThread()
-                                                                    .getContextClassLoader()
-                                                                    .getResource("Master-Yoda.jpg"));
+  private static final byte[] STUB_PLAINTEXT_OBJECT_CONTENT;
 
-    private static final byte[] STUB_PLAINTEXT_OBJECT_CONTENT;
+  private static final String METRIC_NAME = "get-continuations-recovered-exception-";
 
-    private static final String METRIC_NAME = "get-continuations-recovered-exception-";
-
-    static {
-        byte[] plaintextObjectContent = null;
-        try {
-            plaintextObjectContent = IOUtils.toByteArray(STUB_RESOURCE);
-        } catch (final IOException e) {
-            LOG.warn("Couldn't load test resource content");
-        }
-
-        STUB_PLAINTEXT_OBJECT_CONTENT = plaintextObjectContent;
+  static {
+    byte[] plaintextObjectContent = null;
+    try {
+      plaintextObjectContent = IOUtils.toByteArray(STUB_RESOURCE);
+    } catch (final IOException e) {
+      LOG.warn("Couldn\'t load test resource content");
     }
+    STUB_PLAINTEXT_OBJECT_CONTENT = plaintextObjectContent;
+  }
 
-    private final String testPathPrefix;
+  private final String testPathPrefix;
 
-    private final ConfigContext dummyConfig;
+  private final ConfigContext dummyConfig;
 
-    private final Map<SupportedCipherDetails, Pair<String, SecretKey>> cipherToObjectAndSecretKey;
+  private final Map<SupportedCipherDetails, Pair<String, SecretKey>> cipherToObjectAndSecretKey;
 
-    public ApacheHttpGetResponseEntityContentContinuatorIT(final @Optional String testType) throws IOException {
-        dummyConfig = new IntegrationTestConfigContext(false);
-        final String testName = this.getClass().getSimpleName();
-        final MantaClient mantaClient = new MantaClient(dummyConfig);
+  public ApacheHttpGetResponseEntityContentContinuatorIT(final @Optional String testType) throws IOException {
+    dummyConfig = new IntegrationTestConfigContext(false);
+    final String testName = this.getClass().getSimpleName();
+    final MantaClient mantaClient = new MantaClient(dummyConfig);
+    testPathPrefix = IntegrationTestHelper.setupTestPath(dummyConfig, mantaClient, testName, testType);
+    final HashMap<SupportedCipherDetails, Pair<String, SecretKey>> cipherToPathAndKey = new HashMap<>();
+    cipherToPathAndKey.put(null, ImmutablePair.of(generatePath(), null));
+    cipherToPathAndKey.put(AesCtrCipherDetails.INSTANCE_128_BIT, ImmutablePair.of(generatePath(), SecretKeyUtils.generate(AesCtrCipherDetails.INSTANCE_128_BIT)));
+    cipherToObjectAndSecretKey = Collections.unmodifiableMap(cipherToPathAndKey);
+  }
 
-        testPathPrefix = IntegrationTestHelper.setupTestPath(dummyConfig, mantaClient,
-                testName, testType);
+  @BeforeClass @Parameters(value = { "testType" }) public void prepare(final @Optional String testType) throws IOException {
+    verifyProxyInUse();
+    final MantaClient unencryptedClient = prepareClient(null, null, null);
+    final MantaClient encryptedClient = prepareClient(AesCtrCipherDetails.INSTANCE_128_BIT, null, null);
+    IntegrationTestHelper.createTestBucketOrDirectory(unencryptedClient, testPathPrefix, testType);
+    final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(null).getLeft();
+    final String encryptedObjectPath = cipherToObjectAndSecretKey.get(AesCtrCipherDetails.INSTANCE_128_BIT).getLeft();
+    unencryptedClient.put(unencryptedObjectPath, STUB_PLAINTEXT_OBJECT_CONTENT);
+    encryptedClient.put(encryptedObjectPath, STUB_PLAINTEXT_OBJECT_CONTENT);
+    unencryptedClient.existsAndIsAccessible(unencryptedObjectPath);
+    unencryptedClient.existsAndIsAccessible(encryptedObjectPath);
+    assertEquals(IOUtils.toByteArray(unencryptedClient.getAsInputStream(unencryptedObjectPath)), STUB_PLAINTEXT_OBJECT_CONTENT);
+    assertEquals(IOUtils.toByteArray(encryptedClient.getAsInputStream(encryptedObjectPath)), STUB_PLAINTEXT_OBJECT_CONTENT);
+    assertEquals(IOUtils.toByteArray(prepareClient(AesCtrCipherDetails.INSTANCE_128_BIT, null, null).getAsInputStream(encryptedObjectPath)), STUB_PLAINTEXT_OBJECT_CONTENT);
+  }
 
-        final HashMap<SupportedCipherDetails, Pair<String, SecretKey>> cipherToPathAndKey = new HashMap<>();
-        cipherToPathAndKey.put(null,
-                               ImmutablePair.of(generatePath(),
-                                                null));
-        cipherToPathAndKey.put(AesCtrCipherDetails.INSTANCE_128_BIT,
-                               ImmutablePair.of(generatePath(),
-                                                SecretKeyUtils.generate(AesCtrCipherDetails.INSTANCE_128_BIT)));
-
-        cipherToObjectAndSecretKey = Collections.unmodifiableMap(cipherToPathAndKey);
+  @BeforeMethod public void beforemethod() {
+    LOG.warn(" >>> Pausing for 15s to allow tester to enable throttling and prepare to terminate requests");
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 15; i++) {
+      try {
+        sb.append('.');
+        LOG.warn(" >>> Paused" + sb.toString());
+        TimeUnit.SECONDS.sleep(1);
+      } catch (final InterruptedException e) {
+        Thread.currentThread().interrupt();
+        LOG.warn("We were interrupted while waiting for throttling to be enabled, this test class may fail if " + "the human was not ready");
+      }
     }
+  }
 
-    @BeforeClass
-    @Parameters({"testType"})
-    public void prepare(final @Optional String testType) throws IOException {
-        // this only needs to be run once but since the constructor shouldn't throw it's placed here
-        verifyProxyInUse();
-
-        final MantaClient unencryptedClient = prepareClient(null, null, null);
-        final MantaClient encryptedClient = prepareClient(AesCtrCipherDetails.INSTANCE_128_BIT, null, null);
-
-        // we want to upload both encrypted and unencrypted copies of the same file
-        // the same parent directory is used for both
-        IntegrationTestHelper.createTestBucketOrDirectory(unencryptedClient, testPathPrefix, testType);
-        final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(null).getLeft();
-        final String encryptedObjectPath = cipherToObjectAndSecretKey.get(AesCtrCipherDetails.INSTANCE_128_BIT).getLeft();
-        unencryptedClient.put(unencryptedObjectPath, STUB_PLAINTEXT_OBJECT_CONTENT);
-        encryptedClient.put(encryptedObjectPath, STUB_PLAINTEXT_OBJECT_CONTENT);
-
-        unencryptedClient.existsAndIsAccessible(unencryptedObjectPath);
-        unencryptedClient.existsAndIsAccessible(encryptedObjectPath);
-
-        assertEquals(IOUtils.toByteArray(unencryptedClient.getAsInputStream(unencryptedObjectPath)),
-                     STUB_PLAINTEXT_OBJECT_CONTENT);
-        assertEquals(IOUtils.toByteArray(encryptedClient.getAsInputStream(encryptedObjectPath)),
-                     STUB_PLAINTEXT_OBJECT_CONTENT);
-
-        // make sure that it's possible to build a new encrypted client and still decrypt the file/metadata
-        // (i.e. prepareClient is generating and managing secret keys properly)
-        assertEquals(IOUtils.toByteArray(prepareClient(AesCtrCipherDetails.INSTANCE_128_BIT,
-                                                       null,
-                                                       null).getAsInputStream(encryptedObjectPath)),
-                     STUB_PLAINTEXT_OBJECT_CONTENT);
+  @AfterClass public void teardown() throws IOException {
+    LOG.warn(" <<< Finishing download continuation tests. You can stop manually terminating requests now.");
+    try (MantaClient cleanupClient = prepareClient(null, null, null)) {
+      IntegrationTestHelper.cleanupTestBucketOrDirectory(cleanupClient, testPathPrefix);
     }
+  }
 
-    @BeforeMethod
-    public void beforemethod() {
-        LOG.warn(" >>> Pausing for 15s to allow tester to enable throttling and prepare to terminate requests");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 15; i++) {
-            try {
-                sb.append('.');
-                LOG.warn(" >>> Paused" + sb.toString());
-                TimeUnit.SECONDS.sleep(1);
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.warn(
-                        "We were interrupted while waiting for throttling to be enabled, this test class may fail if "
-                                + "the human was not ready");
-            }
-        }
+  public void regularObjectDownloadUnencrypted() throws IOException {
+    final MetricRegistry metrics = new MetricRegistry();
+    final SupportedCipherDetails cipherDetails = null;
+    final MantaClient client = prepareClient(cipherDetails, -1, metrics);
+    final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
+    final Instant downloadStart = Instant.now();
+    LOG.info(" --- Starting plain unencrypted object download of {}", unencryptedObjectPath);
+    try (InputStream in = client.getAsInputStream(unencryptedObjectPath)) {
+      assertEquals(IOUtils.toByteArray(in), STUB_PLAINTEXT_OBJECT_CONTENT);
     }
+    LOG.info(" --- Finished plain unencrypted download, took: {}s", Duration.between(downloadStart, Instant.now()).getSeconds());
+    final Counter exceptions = extractExceptionCounter(metrics);
+    assertTrue(0 < exceptions.getCount());
+    client.delete(unencryptedObjectPath);
+    MantaAssert.assertResponseFailureCode(404, (MantaFunction<Object>) () -> client.get(unencryptedObjectPath));
+    client.close();
+  }
 
-    @AfterClass
-    public void teardown() throws IOException {
-        LOG.warn(" <<< Finishing download continuation tests. You can stop manually terminating requests now.");
-
-        try (final MantaClient cleanupClient = prepareClient(null, null, null)) {
-            IntegrationTestHelper.cleanupTestBucketOrDirectory(cleanupClient, testPathPrefix);
-        }
+  public void rangeObjectDownloadUnencrypted() throws IOException {
+    final MetricRegistry metrics = new MetricRegistry();
+    final SupportedCipherDetails cipherDetails = null;
+    final MantaClient client = prepareClient(cipherDetails, -1, metrics);
+    final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
+    final MantaHttpHeaders headers = new MantaHttpHeaders();
+    final int offset = floorDiv(STUB_PLAINTEXT_OBJECT_CONTENT.length, 2);
+    headers.setRange(new HttpRange.UnboundedRequest(offset).render());
+    LOG.info(" --- Starting range unencrypted object download of range {} of {}", headers.getRange(), unencryptedObjectPath);
+    final byte[] received;
+    final Instant downloadStart = Instant.now();
+    try (InputStream in = client.getAsInputStream(unencryptedObjectPath, headers)) {
+      received = IOUtils.toByteArray(in);
     }
+    LOG.info(" --- Finished plain encrypted download, took: {}s", Duration.between(downloadStart, Instant.now()).getSeconds());
+    assertEquals(received, ArrayUtils.subarray(STUB_PLAINTEXT_OBJECT_CONTENT, offset, STUB_PLAINTEXT_OBJECT_CONTENT.length));
+    final Counter exceptions = extractExceptionCounter(metrics);
+    assertTrue(0 < exceptions.getCount());
+    client.delete(unencryptedObjectPath);
+    MantaAssert.assertResponseFailureCode(404, (MantaFunction<Object>) () -> client.get(unencryptedObjectPath));
+    client.close();
+  }
 
-    public void regularObjectDownloadUnencrypted() throws IOException {
-        final MetricRegistry metrics = new MetricRegistry();
-        final SupportedCipherDetails cipherDetails = null;
-
-        final MantaClient client = prepareClient(cipherDetails, -1, metrics);
-        final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
-
-        final Instant downloadStart = Instant.now();
-        LOG.info(" --- Starting plain unencrypted object download of {}", unencryptedObjectPath);
-        try (final InputStream in = client.getAsInputStream(unencryptedObjectPath)) {
-            assertEquals(IOUtils.toByteArray(in), STUB_PLAINTEXT_OBJECT_CONTENT);
-        }
-        LOG.info(" --- Finished plain unencrypted download, took: {}s",
-                 Duration.between(downloadStart, Instant.now()).getSeconds());
-
-        final Counter exceptions = extractExceptionCounter(metrics);
-        assertTrue(0 < exceptions.getCount());
-
-        client.delete(unencryptedObjectPath);
-        MantaAssert.assertResponseFailureCode(404,
-                (MantaFunction<Object>) () -> client.get(unencryptedObjectPath));
-        client.close();
+  public void regularObjectDownloadEncrypted() throws IOException {
+    final MetricRegistry metrics = new MetricRegistry();
+    final SupportedCipherDetails cipherDetails = AesCtrCipherDetails.INSTANCE_128_BIT;
+    final String encryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
+    final MantaClient client = prepareClient(cipherDetails, -1, metrics);
+    final Instant downloadStart = Instant.now();
+    LOG.info(" --- Starting plain encrypted object download of {}", encryptedObjectPath);
+    try (InputStream in = client.getAsInputStream(encryptedObjectPath)) {
+      assertEquals(IOUtils.toByteArray(in), STUB_PLAINTEXT_OBJECT_CONTENT);
     }
+    LOG.info(" --- Finished plain encrypted download, took: {}s", Duration.between(downloadStart, Instant.now()).getSeconds());
+    final Counter exceptions = extractExceptionCounter(metrics);
+    assertTrue(0 < exceptions.getCount());
+    client.delete(encryptedObjectPath);
+    MantaAssert.assertResponseFailureCode(404, (MantaFunction<Object>) () -> client.get(encryptedObjectPath));
+    client.close();
+  }
 
-    public void rangeObjectDownloadUnencrypted() throws IOException {
-        final MetricRegistry metrics = new MetricRegistry();
-        final SupportedCipherDetails cipherDetails = null;
-
-        final MantaClient client = prepareClient(cipherDetails, -1, metrics);
-        final String unencryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
-
-        final MantaHttpHeaders headers = new MantaHttpHeaders();
-
-        // start haflway into the file
-        final int offset = floorDiv(STUB_PLAINTEXT_OBJECT_CONTENT.length, 2);
-        headers.setRange(new HttpRange.UnboundedRequest(offset).render());
-
-        LOG.info(" --- Starting range unencrypted object download of range {} of {}",
-                 headers.getRange(),
-                 unencryptedObjectPath);
-        final byte[] received;
-        final Instant downloadStart = Instant.now();
-        try (final InputStream in = client.getAsInputStream(unencryptedObjectPath, headers)) {
-            received = IOUtils.toByteArray(in);
-        }
-        LOG.info(" --- Finished plain encrypted download, took: {}s",
-                 Duration.between(downloadStart, Instant.now()).getSeconds());
-
-        assertEquals(received,
-                     ArrayUtils.subarray(STUB_PLAINTEXT_OBJECT_CONTENT, offset, STUB_PLAINTEXT_OBJECT_CONTENT.length));
-
-        final Counter exceptions = extractExceptionCounter(metrics);
-        assertTrue(0 < exceptions.getCount());
-
-        client.delete(unencryptedObjectPath);
-        MantaAssert.assertResponseFailureCode(404,
-                (MantaFunction<Object>) () -> client.get(unencryptedObjectPath));
-        client.close();
+  public void rangeObjectDownloadEncrypted() throws IOException {
+    final MetricRegistry metrics = new MetricRegistry();
+    final SupportedCipherDetails cipherDetails = AesCtrCipherDetails.INSTANCE_128_BIT;
+    final String encryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
+    final MantaClient client = prepareClient(cipherDetails, -1, metrics, EncryptionAuthenticationMode.Optional);
+    final MantaHttpHeaders headers = new MantaHttpHeaders();
+    final int offset = floorDiv(STUB_PLAINTEXT_OBJECT_CONTENT.length, 2);
+    headers.setRange(new HttpRange.BoundedRequest(offset, STUB_PLAINTEXT_OBJECT_CONTENT.length - 1).render());
+    LOG.info(" --- Starting range encrypted object download of range {} of {}", headers.getRange(), encryptedObjectPath);
+    final byte[] received;
+    final Instant downloadStart = Instant.now();
+    try (InputStream in = client.getAsInputStream(encryptedObjectPath, headers)) {
+      received = IOUtils.toByteArray(in);
     }
+    LOG.info(" --- Finished range encrypted download, took: {}s", Duration.between(downloadStart, Instant.now()).getSeconds());
+    assertEquals(received, ArrayUtils.subarray(STUB_PLAINTEXT_OBJECT_CONTENT, offset, STUB_PLAINTEXT_OBJECT_CONTENT.length));
+    client.delete(encryptedObjectPath);
+    MantaAssert.assertResponseFailureCode(404, (MantaFunction<Object>) () -> client.get(encryptedObjectPath));
+    client.close();
+  }
 
-    public void regularObjectDownloadEncrypted() throws IOException {
-        final MetricRegistry metrics = new MetricRegistry();
-        final SupportedCipherDetails cipherDetails = AesCtrCipherDetails.INSTANCE_128_BIT;
-        final String encryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
+  private String generatePath() {
+    return String.format("%s%s", this.testPathPrefix, UUID.randomUUID());
+  }
 
-        final MantaClient client = prepareClient(cipherDetails, -1, metrics);
-        final Instant downloadStart = Instant.now();
-        LOG.info(" --- Starting plain encrypted object download of {}", encryptedObjectPath);
-        try (final InputStream in = client.getAsInputStream(encryptedObjectPath)) {
-            assertEquals(IOUtils.toByteArray(in), STUB_PLAINTEXT_OBJECT_CONTENT);
-        }
-        LOG.info(" --- Finished plain encrypted download, took: {}s",
-                 Duration.between(downloadStart, Instant.now()).getSeconds());
+  private MantaClient prepareClient(final SupportedCipherDetails cipherDetails, final Integer continuations, final MetricRegistry metrics) {
+    return prepareClient(cipherDetails, continuations, metrics, EncryptionAuthenticationMode.Mandatory);
+  }
 
-        final Counter exceptions = extractExceptionCounter(metrics);
-        assertTrue(0 < exceptions.getCount());
-
-        client.delete(encryptedObjectPath);
-        MantaAssert.assertResponseFailureCode(404,
-                (MantaFunction<Object>) () -> client.get(encryptedObjectPath));
-        client.close();
+  private MantaClient prepareClient(final SupportedCipherDetails cipherDetails, final Integer continuations, final MetricRegistry metrics, final EncryptionAuthenticationMode encryptionAuthenticationMode) {
+    final ChainedConfigContext config = new ChainedConfigContext(dummyConfig);
+    if (cipherDetails != null) {
+      config.setClientEncryptionEnabled(true);
+      config.setEncryptionAlgorithm(cipherDetails.getCipherId());
+      config.setEncryptionKeyId("continuator-integration-test-encryption-key");
+      final SecretKey secretKey = cipherToObjectAndSecretKey.get(cipherDetails).getRight();
+      config.setEncryptionPrivateKeyBytes(secretKey.getEncoded());
+      if (encryptionAuthenticationMode != null) {
+        config.setEncryptionAuthenticationMode(encryptionAuthenticationMode);
+      } else {
+        config.setEncryptionAuthenticationMode(EncryptionAuthenticationMode.Mandatory);
+      }
+      LOG.info("Secret key used for continuator test (base64, cipher: {}): [{}]", cipherDetails.getCipherId(), Base64.getEncoder().encodeToString(secretKey.getEncoded()));
     }
-
-    public void rangeObjectDownloadEncrypted() throws IOException {
-        final MetricRegistry metrics = new MetricRegistry();
-        final SupportedCipherDetails cipherDetails = AesCtrCipherDetails.INSTANCE_128_BIT;
-        final String encryptedObjectPath = cipherToObjectAndSecretKey.get(cipherDetails).getLeft();
-
-        final MantaClient client = prepareClient(cipherDetails, -1, metrics, EncryptionAuthenticationMode.Optional);
-        // Avoid "HTTP range requests (random reads) aren't supported when using client-side encryption in mandatory authentication mode."
-        // The other tests don't need to set this because they use the HttpClient, not HttpHelper which enforces this
-
-        final MantaHttpHeaders headers = new MantaHttpHeaders();
-
-        // start haflway into the file
-        final int offset = floorDiv(STUB_PLAINTEXT_OBJECT_CONTENT.length, 2);
-        headers.setRange(new HttpRange.BoundedRequest(offset, STUB_PLAINTEXT_OBJECT_CONTENT.length - 1).render());
-
-        LOG.info(" --- Starting range encrypted object download of range {} of {}",
-                 headers.getRange(),
-                 encryptedObjectPath);
-
-        final byte[] received;
-        final Instant downloadStart = Instant.now();
-        try (final InputStream in = client.getAsInputStream(encryptedObjectPath, headers)) {
-            received = IOUtils.toByteArray(in);
-        }
-        LOG.info(" --- Finished range encrypted download, took: {}s",
-                 Duration.between(downloadStart, Instant.now()).getSeconds());
-
-        assertEquals(received,
-                     ArrayUtils.subarray(STUB_PLAINTEXT_OBJECT_CONTENT, offset, STUB_PLAINTEXT_OBJECT_CONTENT.length));
-
-        client.delete(encryptedObjectPath);
-        MantaAssert.assertResponseFailureCode(404,
-                (MantaFunction<Object>) () -> client.get(encryptedObjectPath));
-        client.close();
+    if (continuations != null) {
+      config.setDownloadContinuations(continuations);
     }
-
-    private String generatePath() {
-        return String.format("%s%s", this.testPathPrefix, UUID.randomUUID());
+    config.setHttpBufferSize(DefaultsConfigContext.DEFAULT_HTTP_BUFFER_SIZE);
+    final MantaClientMetricConfiguration metricConfig;
+    if (metrics != null) {
+      metricConfig = new MantaClientMetricConfiguration(UUID.randomUUID(), metrics, MetricReporterMode.JMX, null);
+    } else {
+      metricConfig = null;
     }
-
-    private MantaClient prepareClient(final SupportedCipherDetails cipherDetails,
-                                      final Integer continuations,
-                                      final MetricRegistry metrics) {
-        return prepareClient(cipherDetails, continuations, metrics, EncryptionAuthenticationMode.Mandatory);
+    final MantaClient mantaClient = new MantaClient(config, null, metricConfig);
+    if (!mantaClient.existsAndIsAccessible(config.getMantaHomeDirectory())) {
+      Assert.fail("Invalid credentials, cannot proceed with test suite");
     }
+    return mantaClient;
+  }
 
-    private MantaClient prepareClient(final SupportedCipherDetails cipherDetails,
-                                      final Integer continuations,
-                                      final MetricRegistry metrics,
-                                      final EncryptionAuthenticationMode encryptionAuthenticationMode) {
-        // we have to preserve the SecretKey created
-        final ChainedConfigContext config = new ChainedConfigContext(dummyConfig);
-
-        if (cipherDetails != null) {
-            config.setClientEncryptionEnabled(true);
-            config.setEncryptionAlgorithm(cipherDetails.getCipherId());
-            config.setEncryptionKeyId("continuator-integration-test-encryption-key");
-            final SecretKey secretKey = cipherToObjectAndSecretKey.get(cipherDetails).getRight();
-            config.setEncryptionPrivateKeyBytes(secretKey.getEncoded());
-
-            // we could actually
-            if (encryptionAuthenticationMode != null) {
-                config.setEncryptionAuthenticationMode(encryptionAuthenticationMode);
-            } else {
-                config.setEncryptionAuthenticationMode(EncryptionAuthenticationMode.Mandatory);
-            }
-
-            LOG.info("Secret key used for continuator test (base64, cipher: {}): [{}]",
-                     cipherDetails.getCipherId(),
-                     Base64.getEncoder().encodeToString(secretKey.getEncoded()));
-        }
-
-        if (continuations != null) {
-            config.setDownloadContinuations(continuations);
-        }
-
-        // just to be safe, explicitly set the buffer size to the 4K default
-        config.setHttpBufferSize(DefaultsConfigContext.DEFAULT_HTTP_BUFFER_SIZE);
-
-        final MantaClientMetricConfiguration metricConfig;
-        if (metrics != null) {
-            metricConfig = new MantaClientMetricConfiguration(UUID.randomUUID(),
-                                                              metrics,
-                                                              MetricReporterMode.JMX,
-                                                              null);
-        } else {
-            metricConfig = null;
-        }
-
-        final MantaClient mantaClient = new MantaClient(config,
-                                                        null,
-                                                        metricConfig);
-
-        if (!mantaClient.existsAndIsAccessible(config.getMantaHomeDirectory())) {
-            Assert.fail("Invalid credentials, cannot proceed with test suite");
-        }
-
-        return mantaClient;
+  private static void verifyProxyInUse() {
+    List<String> proxyProps = Arrays.asList("http.proxyHost", "http.proxyPort", "https.proxyHost", "https.proxyPort");
+    ArrayList<String> missingProps = new ArrayList<>();
+    for (String prop : proxyProps) {
+      if (null == System.getProperty(prop)) {
+        missingProps.add(prop);
+      }
     }
-
-    private static void verifyProxyInUse() {
-        List<String> proxyProps = Arrays.asList(
-                "http.proxyHost",
-                "http.proxyPort",
-                "https.proxyHost",
-                "https.proxyPort");
-
-        ArrayList<String> missingProps = new ArrayList<>();
-
-        for (String prop : proxyProps) {
-            if (null == System.getProperty(prop)) {
-                missingProps.add(prop);
-            }
-        }
-
-        if (missingProps.isEmpty()) {
-            return;
-        }
-
-        final String message =
-                "Skipping ApacheHttpGetResponseEntityContentContinuatorIT because proxy settings were missing: "
-                        + StringUtils.join(missingProps);
-
-        LOG.warn(message);
-
-        throw new SkipException(message);
+    if (missingProps.isEmpty()) {
+      return;
     }
+    final String message = "Skipping ApacheHttpGetResponseEntityContentContinuatorIT because proxy settings were missing: " + StringUtils.join(missingProps);
+    LOG.warn(message);
+    throw new SkipException(message);
+  }
 
-    private static final MetricFilter METRIC_FILTER_CONTINUATIONS_HISTOGRAM = MetricFilter.startsWith(METRIC_NAME);
+  private static final MetricFilter METRIC_FILTER_CONTINUATIONS_HISTOGRAM = MetricFilter.startsWith(METRIC_NAME);
 
-    private static Counter extractExceptionCounter(final MetricRegistry metrics) {
-        final SortedMap<String, Counter> counters = metrics.getCounters(METRIC_FILTER_CONTINUATIONS_HISTOGRAM);
-
-        if (counters.isEmpty()) {
-            fail("No continuations were recorded!");
-        }
-
-        // we can grab any relevant counter, they are never created without also being incremented
-        final Counter counter = counters.get(counters.firstKey());
-
-        if (counter == null) {
-            fail("No continuations were recorded (though it seemed like there would be)!");
-        }
-
-        return counter;
+  private static Counter extractExceptionCounter(final MetricRegistry metrics) {
+    final SortedMap<String, Counter> counters = metrics.getCounters(METRIC_FILTER_CONTINUATIONS_HISTOGRAM);
+    if (counters.isEmpty()) {
+      fail("No continuations were recorded!");
     }
+    final Counter counter = counters.get(counters.firstKey());
+    if (counter == null) {
+      fail("No continuations were recorded (though it seemed like there would be)!");
+    }
+    return counter;
+  }
 }

@@ -1,12 +1,4 @@
-/*
- * Copyright (c) 2015-2020, Joyent, Inc. All rights reserved.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
 package com.joyent.manta.client.jobs;
-
 import com.joyent.manta.client.MantaClient;
 import com.joyent.manta.client.helper.IntegrationTestHelper;
 import com.joyent.manta.config.ConfigContext;
@@ -22,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -33,197 +24,114 @@ import java.util.stream.Collectors;
 
 /**
  * Tests the execution of Manta compute jobs using the builder fluent interface.
- *
- * <p>
- * Since we want to make it possible to run this test without a code change, this test throws a {@link
- * org.testng.SkipException} if jobs are disabled for the "manta.user" account.
- * </p>
- *
- * @author <a href="https://github.com/nairashwin952013">Ashwin A Nair</a>
+ * <p>Note: Jobs are disabled for the Manta Buckets environment.</p>
  */
-@Test
-public class MantaJobBuilderIT {
-    private static final Logger LOG = LoggerFactory.getLogger(MantaJobBuilderIT.class);
+@Test public class MantaJobBuilderIT {
+  private static final Logger LOG = LoggerFactory.getLogger(MantaJobBuilderIT.class);
 
-    private static final String TEST_DATA =
-              "line 01 aa\n"
-            + "line 02 bb\n"
-            + "line 03 aa\n"
-            + "line 04 bb\n"
-            + "line 05 aa\n"
-            + "line 06 bb\n"
-            + "line 07 aa\n"
-            + "line 08 bb\n"
-            + "line 09 aa\n"
-            + "line 10 bb";
+  private static final String TEST_DATA = "line 01 aa\n" + "line 02 bb\n" + "line 03 aa\n" + "line 04 bb\n" + "line 05 aa\n" + "line 06 bb\n" + "line 07 aa\n" + "line 08 bb\n" + "line 09 aa\n" + "line 10 bb";
 
-    private String testPathPrefix;
+  private String testPathPrefix;
 
-    private MantaClient mantaClient;
+  private MantaClient mantaClient;
 
-    @BeforeClass
-    @Parameters({"testType"})
-    public void beforeClass(final @Optional String testType) throws IOException {
-        if ("buckets".equals(testType)) {
-            throw new SkipException("Skipping tests since jobs are disabled in Manta Buckets");
-        }
-
-        // Let TestNG configuration take precedence over environment variables
-        ConfigContext config = new IntegrationTestConfigContext();
-        final String testName = this.getClass().getSimpleName();
-
-        if (mantaClient.existsAndIsAccessible(config.getMantaJobsDirectory())) {
-            mantaClient = new MantaClient(config);                                                                                                                                          
-            testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,                                                                                                       
-                                    testName, testType);                                                                                                                                                    
-            IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType); 
-        } else {
-            final String message =
-                    "This integration-test class can't be run since Jobs" +
-                            "have been disabled for this account";
-            LOG.warn(message);
-            throw new SkipException(message);
-        }
+  @BeforeClass @Parameters(value = { "testType" }) public void beforeClass(final @Optional String testType) throws IOException {
+    if ("buckets".equals(testType)) {
+      throw new SkipException("Skipping tests since jobs are disabled in Manta Buckets");
     }
+    ConfigContext config = new IntegrationTestConfigContext();
 
-    @AfterClass
-    public void cleanup() throws IOException {
-        IntegrationTestHelper.cleanupTestBucketOrDirectory(mantaClient, testPathPrefix);
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+    final String testName = this.getClass().getSimpleName();
+=======
+    if (mantaClient.existsAndIsAccessible(config.getMantaJobsDirectory())) {
+      mantaClient = new MantaClient(config);
+      testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
+      mantaClient.putDirectory(testPathPrefix, true);
+    } else {
+      final String message = "This integration-test class can\'t be run since Jobs" + "have been disabled for this account";
+      LOG.warn(message);
+      throw new SkipException(message);
     }
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/right.java
 
-    @Test
-    public void canBuildTypicalJob() throws IOException {
-        final MantaJobBuilder builder = mantaClient.jobBuilder();
 
-        String jobName = String.format("job_%s", UUID.randomUUID());
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+    testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient, testName, testType);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-        String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
 
-        mantaClient.put(path1, TEST_DATA);
-        mantaClient.put(path2, TEST_DATA);
-        mantaClient.put(path3, TEST_DATA);
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+    IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+  }
 
-        MantaJobBuilder.Done finishedJob = builder.newJob(jobName)
-               .addPhase(new MantaJobPhase()
-                            .setExec("grep bb")
-                            .setType("map"))
-                .addPhase(new MantaJobPhase()
-                        .setExec("sort | uniq")
-                        .setType("reduce"))
-               .addInputs(path1, path2, path3)
-               .validateInputs()
-               .run()
-               .waitUntilDone();
+  @AfterClass public void cleanup() throws IOException {
+    IntegrationTestHelper.cleanupTestBucketOrDirectory(mantaClient, testPathPrefix);
+  }
 
-        List<String> outputs = finishedJob
-                .validateJobsSucceeded()
-                .outputs()
-                .collect(Collectors.toList());
-
-        Assert.assertEquals(outputs.size(), 1, "The job should have reduced to 1 output");
-
-        try (Reader reader = new StringReader(outputs.get(0));
-             BufferedReader br = new BufferedReader(reader)) {
-            List<String> lines = br.lines().collect(Collectors.toList());
-
-            Assert.assertEquals(lines.size(), 5, "The output should have 5 lines");
-            Assert.assertTrue(lines.contains("line 02 bb"));
-            Assert.assertTrue(lines.contains("line 04 bb"));
-            Assert.assertTrue(lines.contains("line 06 bb"));
-            Assert.assertTrue(lines.contains("line 08 bb"));
-            Assert.assertTrue(lines.contains("line 10 bb"));
-        }
+  @Test public void canBuildTypicalJob() throws IOException {
+    final MantaJobBuilder builder = mantaClient.jobBuilder();
+    String jobName = String.format("job_%s", UUID.randomUUID());
+    String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    mantaClient.put(path1, TEST_DATA);
+    mantaClient.put(path2, TEST_DATA);
+    mantaClient.put(path3, TEST_DATA);
+    MantaJobBuilder.Done finishedJob = builder.newJob(jobName).addPhase(new MantaJobPhase().setExec("grep bb").setType("map")).addPhase(new MantaJobPhase().setExec("sort | uniq").setType("reduce")).addInputs(path1, path2, path3).validateInputs().run().waitUntilDone();
+    List<String> outputs = finishedJob.validateJobsSucceeded().outputs().collect(Collectors.toList());
+    Assert.assertEquals(outputs.size(), 1, "The job should have reduced to 1 output");
+    try (Reader reader = new StringReader(outputs.get(0)); BufferedReader br = new BufferedReader(reader)) {
+      List<String> lines = br.lines().collect(Collectors.toList());
+      Assert.assertEquals(lines.size(), 5, "The output should have 5 lines");
+      Assert.assertTrue(lines.contains("line 02 bb"));
+      Assert.assertTrue(lines.contains("line 04 bb"));
+      Assert.assertTrue(lines.contains("line 06 bb"));
+      Assert.assertTrue(lines.contains("line 08 bb"));
+      Assert.assertTrue(lines.contains("line 10 bb"));
     }
+  }
 
-    @Test
-    public void cantRerunOldJob() throws IOException {
-        final MantaJobBuilder builder = mantaClient.jobBuilder();
-
-        String jobName = String.format("job_%s", UUID.randomUUID());
-
-        String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-
-        mantaClient.put(path1, TEST_DATA);
-        mantaClient.put(path2, TEST_DATA);
-        mantaClient.put(path3, TEST_DATA);
-
-        MantaJobBuilder.Done finishedJob = builder.newJob(jobName)
-                .addPhase(new MantaJobPhase()
-                        .setExec("grep bb")
-                        .setType("map"))
-                .addPhase(new MantaJobPhase()
-                        .setExec("sort | uniq")
-                        .setType("reduce"))
-                .addInputs(path1, path2, path3)
-                .validateInputs()
-                .run()
-                .waitUntilDone();
-
-        finishedJob.validateJobsSucceeded();
-
-        UUID jobId = finishedJob.getJob().getId();
-
-        boolean failed = false;
-
-        try {
-            mantaClient.endJobInput(jobId);
-        } catch (MantaClientHttpResponseException e) {
-            if (e.getServerCode().equals(MantaErrorCode.INVALID_JOB_STATE_ERROR)) {
-                failed = true;
-            }
-        }
-
-        Assert.assertTrue(failed, "Rerunning completed job worked for some reason");
+  @Test public void cantRerunOldJob() throws IOException {
+    final MantaJobBuilder builder = mantaClient.jobBuilder();
+    String jobName = String.format("job_%s", UUID.randomUUID());
+    String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    mantaClient.put(path1, TEST_DATA);
+    mantaClient.put(path2, TEST_DATA);
+    mantaClient.put(path3, TEST_DATA);
+    MantaJobBuilder.Done finishedJob = builder.newJob(jobName).addPhase(new MantaJobPhase().setExec("grep bb").setType("map")).addPhase(new MantaJobPhase().setExec("sort | uniq").setType("reduce")).addInputs(path1, path2, path3).validateInputs().run().waitUntilDone();
+    finishedJob.validateJobsSucceeded();
+    UUID jobId = finishedJob.getJob().getId();
+    boolean failed = false;
+    try {
+      mantaClient.endJobInput(jobId);
+    } catch (MantaClientHttpResponseException e) {
+      if (e.getServerCode().equals(MantaErrorCode.INVALID_JOB_STATE_ERROR)) {
+        failed = true;
+      }
     }
+    Assert.assertTrue(failed, "Rerunning completed job worked for some reason");
+  }
 
-    @Test
-    public void canCloneJob() throws IOException {
-        final MantaJobBuilder builder = mantaClient.jobBuilder();
-
-        String jobName = String.format("job_%s", UUID.randomUUID());
-
-        String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-        String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
-
-        mantaClient.put(path1, TEST_DATA);
-        mantaClient.put(path2, TEST_DATA);
-        mantaClient.put(path3, TEST_DATA);
-
-        MantaJobBuilder.Done finishedJob = builder.newJob(jobName)
-                .addPhase(new MantaJobPhase()
-                        .setExec("grep bb")
-                        .setType("map"))
-                .addPhase(new MantaJobPhase()
-                        .setExec("sort | uniq")
-                        .setType("reduce"))
-                .addInputs(path1, path2, path3)
-                .validateInputs()
-                .run()
-                .waitUntilDone();
-
-        List<String> outputs = finishedJob
-                .validateJobsSucceeded()
-                .outputs()
-                .collect(Collectors.toList());
-
-        MantaJob oldJob = finishedJob.getJob();
-
-        MantaJobBuilder.Done clonedJob = builder.cloneJob(oldJob)
-                .validateInputs()
-                .run()
-                .waitUntilDone();
-
-        List<String> clonedOutputs = clonedJob
-                .validateJobsSucceeded()
-                .outputs()
-                .collect(Collectors.toList());
-
-        Assert.assertEquals(clonedOutputs, outputs,
-                "Expected the same output as the original job");
-    }
+  @Test public void canCloneJob() throws IOException {
+    final MantaJobBuilder builder = mantaClient.jobBuilder();
+    String jobName = String.format("job_%s", UUID.randomUUID());
+    String path1 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path2 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    String path3 = String.format("%s%s", testPathPrefix, UUID.randomUUID());
+    mantaClient.put(path1, TEST_DATA);
+    mantaClient.put(path2, TEST_DATA);
+    mantaClient.put(path3, TEST_DATA);
+    MantaJobBuilder.Done finishedJob = builder.newJob(jobName).addPhase(new MantaJobPhase().setExec("grep bb").setType("map")).addPhase(new MantaJobPhase().setExec("sort | uniq").setType("reduce")).addInputs(path1, path2, path3).validateInputs().run().waitUntilDone();
+    List<String> outputs = finishedJob.validateJobsSucceeded().outputs().collect(Collectors.toList());
+    MantaJob oldJob = finishedJob.getJob();
+    MantaJobBuilder.Done clonedJob = builder.cloneJob(oldJob).validateInputs().run().waitUntilDone();
+    List<String> clonedOutputs = clonedJob.validateJobsSucceeded().outputs().collect(Collectors.toList());
+    Assert.assertEquals(clonedOutputs, outputs, "Expected the same output as the original job");
+  }
 }
