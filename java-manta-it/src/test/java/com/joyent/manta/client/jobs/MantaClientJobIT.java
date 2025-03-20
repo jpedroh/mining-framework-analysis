@@ -39,6 +39,10 @@ import static com.joyent.manta.exception.MantaErrorCode.RESOURCE_NOT_FOUND_ERROR
 
 /**
  * Tests the execution of Manta compute jobs.
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaClientJobIT.java/left.java
+ * <p>Note: Jobs are disabled for the Manta Buckets environment.</p>
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaClientJobIT.java/base.java
+=======
  *
  * <p>
  * Since we want to make it possible to run this test without a code change, this test throws a {@link
@@ -48,6 +52,7 @@ import static com.joyent.manta.exception.MantaErrorCode.RESOURCE_NOT_FOUND_ERROR
  * </p>
  *
  * @author <a href="https://github.com/nairashwin952013">Ashwin A Nair</a>
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaClientJobIT.java/right.java
  */
 @Test(groups = { "expensive" }, retryAnalyzer = ThreeTriesRetryAnalyzer.class)
 public class MantaClientJobIT {

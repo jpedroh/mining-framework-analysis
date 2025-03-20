@@ -82,13 +82,16 @@ public interface ConfigContext extends MantaMBeanable {
     }
 
     /**
-     * @retrn String of buckets directory based on Manta username.
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-client-unshaded/src/main/java/com/joyent/manta/config/ConfigContext.java/left.java
+     * @return String of buckets directory based on Manta username.
      */
     default String getMantaBucketsDirectory() {
         return deriveHomeDirectoryFromUser(getMantaUser()) + MantaClient.SEPARATOR + "buckets";
     }
 
     /**
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-client-unshaded/src/main/java/com/joyent/manta/config/ConfigContext.java/base.java
+=======
      * @return String of jobs directory based on Manta username.
      */
     default String getMantaJobsDirectory() {
@@ -96,6 +99,7 @@ public interface ConfigContext extends MantaMBeanable {
     }
 
     /**
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-client-unshaded/src/main/java/com/joyent/manta/config/ConfigContext.java/right.java
      * @return Number of HTTP retries to perform on failure.
      */
     Integer getRetries();

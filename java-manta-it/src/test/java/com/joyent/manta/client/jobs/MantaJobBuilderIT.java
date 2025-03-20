@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 
 /**
  * Tests the execution of Manta compute jobs using the builder fluent interface.
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+ * <p>Note: Jobs are disabled for the Manta Buckets environment.</p>
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/base.java
+=======
  *
  * <p>
  * Since we want to make it possible to run this test without a code change, this test throws a {@link
@@ -40,6 +44,7 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author <a href="https://github.com/nairashwin952013">Ashwin A Nair</a>
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/right.java
  */
 @Test
 public class MantaJobBuilderIT {
@@ -64,19 +69,37 @@ public class MantaJobBuilderIT {
     @BeforeClass
     @Parameters({"testType"})
     public void beforeClass(final @Optional String testType) throws IOException {
-        if ("buckets".equals(testType)) {
-            throw new SkipException("Skipping tests since jobs are disabled in Manta Buckets");
-        }
-
         // Let TestNG configuration take precedence over environment variables
         ConfigContext config = new IntegrationTestConfigContext();
-        final String testName = this.getClass().getSimpleName();
-
         if (mantaClient.existsAndIsAccessible(config.getMantaJobsDirectory())) {
-            mantaClient = new MantaClient(config);                                                                                                                                          
-            testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,                                                                                                       
-                                    testName, testType);                                                                                                                                                    
-            IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType); 
+            if ("buckets".equals(testType)) {
+                throw new SkipException("Skipping tests since jobs are disabled in Manta Buckets");
+            }
+
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+            // Let TestNG configuration take precedence over environment variables
+            ConfigContext config = new IntegrationTestConfigContext();
+            final String testName = this.getClass().getSimpleName();
+
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/base.java
+            // Let TestNG configuration take precedence over environment variables
+            ConfigContext config = new IntegrationTestConfigContext();
+
+=======
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/right.java
+            mantaClient = new MantaClient(config);
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/left.java
+            testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,
+                    testName, testType);
+            IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType);
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/base.java
+        
+            testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
+            mantaClient.putDirectory(testPathPrefix, true);
+=======
+            testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
+            mantaClient.putDirectory(testPathPrefix, true);
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/jobs/MantaJobBuilderIT.java/right.java
         } else {
             final String message =
                     "This integration-test class can't be run since Jobs" +

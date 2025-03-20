@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2020, Joyent, Inc. All rights reserved.
+ * Copyright (c) 2013-2019, Joyent, Inc. All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -159,7 +159,6 @@ public class MantaClientIT {
     }
 
     @Test
-    public final void testManyOperationsWithDirectories() throws IOException {
     public final void createMantaObjectStreamCloseInOneThreadAndAbortInAnother()
             throws Exception {
         final String name = UUID.randomUUID().toString();
@@ -192,8 +191,7 @@ public class MantaClientIT {
     }
 
     @Test
-    public final void testManyOperations() throws IOException {
->>>>>>> master
+    public final void testManyOperationsWithDirectories() throws IOException {
         String dir = testPathPrefix + "multiple";
         final boolean bucketsEnabled = testPathPrefix.contains(mantaClient.getContext().getMantaBucketsDirectory());
 

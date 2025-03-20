@@ -287,7 +287,15 @@ public class MantaClientSigningIT {
                 }
             }
 
+<<<<<<< /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientSigningIT.java/left.java
             Assert.assertNotNull(headers);
+||||||| /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientSigningIT.java/base.java
+            Assert.assertNotNull(headers);
+            Assert.assertEquals(headers.get("Server").get(0), "Manta");
+=======
+            String server = StringUtils.substringBefore(connection.getHeaderField("Server"), "/");
+            Assert.assertEquals(server, "Manta");
+>>>>>>> /usr/src/app/output/joyent/java-manta/5fb0fe7ba2f3107ca1ed1b26c8e6f2d30262db6d/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientSigningIT.java/right.java
         } finally {
             connection.disconnect();
         }
