@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.otter.canal.parse.inbound.mysql.tablemeta.TableMetaStorageFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -111,6 +112,9 @@ public class CanalParameter implements Serializable {
     private String                   standbyLogfileName                 = null;                      // standby起始位置
     private Long                     standbyLogfileOffest               = null;
     private Long                     standbyTimestamp                   = null;
+
+    // Ctrip Table Meta
+    TableMetaStorageFactory tableMetaStorageFactory;
 
     public static enum RunMode {
 
@@ -249,9 +253,17 @@ public class CanalParameter implements Serializable {
         /** 文件存储模式 */
         ZOOKEEPER,
         /** 混合模式，内存+文件 */
+<<<<<<< /usr/src/app/output/alibaba/canal/68d8afae3e9cb4c21c26b3f7c291759f0c9e7426/instance/manager/src/main/java/com/alibaba/otter/canal/instance/manager/model/CanalParameter.java/left.java
+        MIXED,
+        /** 本地文件存储模式*/
+        LOCAL_FILE;
+||||||| /usr/src/app/output/alibaba/canal/68d8afae3e9cb4c21c26b3f7c291759f0c9e7426/instance/manager/src/main/java/com/alibaba/otter/canal/instance/manager/model/CanalParameter.java/base.java
+        MIXED;
+=======
         MIXED,
         /** 本地文件存储模式 */
         LOCAL_FILE;
+>>>>>>> /usr/src/app/output/alibaba/canal/68d8afae3e9cb4c21c26b3f7c291759f0c9e7426/instance/manager/src/main/java/com/alibaba/otter/canal/instance/manager/model/CanalParameter.java/right.java
 
         public boolean isMemory() {
             return this.equals(MetaMode.MEMORY);
@@ -265,7 +277,7 @@ public class CanalParameter implements Serializable {
             return this.equals(MetaMode.MIXED);
         }
 
-        public boolean isLocalFile() {
+        public boolean isLocalFile(){
             return this.equals(MetaMode.LOCAL_FILE);
         }
     }
@@ -885,6 +897,14 @@ public class CanalParameter implements Serializable {
 
     public void setBlackFilter(String blackFilter) {
         this.blackFilter = blackFilter;
+    }
+
+    public TableMetaStorageFactory getTableMetaStorageFactory() {
+        return tableMetaStorageFactory;
+    }
+
+    public void setTableMetaStorageFactory(TableMetaStorageFactory tableMetaStorageFactory) {
+        this.tableMetaStorageFactory = tableMetaStorageFactory;
     }
 
     public Boolean getTsdbEnable() {
