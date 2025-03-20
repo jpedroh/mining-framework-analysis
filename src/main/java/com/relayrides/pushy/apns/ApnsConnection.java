@@ -411,19 +411,47 @@ public class ApnsConnection<T extends ApnsPushNotification> {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/left.java
 	 * <p>Waits for all pending write operations to finish. When this method exits normally (i.e. when it does
 	 * not throw an {@code InterruptedException}), All pending writes will have either finished successfully or failed
 	 * and passed to this connection's listener via the
 	 * {@link ApnsConnectionListener#handleWriteFailure(ApnsConnection, ApnsPushNotification, Throwable)} method.</p>
+||||||| /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/base.java
+	 * <p>Waits for all pending read and write operations to finish. When this method exits normally (i.e. when it does
+	 * not throw an {@code InterruptedException}), the following guarantees are made:</p>
+=======
+	 * <p>Waits for all pending write operations to finish. When this method exits normally (i.e. when it does not throw
+	 * an {@code InterruptedException}), all pending writes will have either finished successfully or been dispatched to
+	 * this connection's listener via the
+	 * {@link ApnsConnectionListener#handleWriteFailure(ApnsConnection, ApnsPushNotification, Throwable)} method.</p>
+>>>>>>> /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/right.java
 	 *
+<<<<<<< /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/left.java
 	 * <p>It is <em>not</em> guaranteed that all write operations will have finished by the time a connection has
 	 * closed. Applications that need to know when all writes have finished should call this method after a connection
 	 * closes, but must not do so in an IO thread (i.e. the thread that called the
 	 * {@link ApnsConnectionListener#handleConnectionClosure(ApnsConnection)} method.</p>
+||||||| /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/base.java
+	 * <ol>
+	 * 	<li>All pending writes will have either finished successfully or been dispatched to this connection's listener
+	 * 	via the {@link ApnsConnectionListener#handleWriteFailure(ApnsConnection, ApnsPushNotification, Throwable)}
+	 * 	method.</li>
+	 * 	<li>All pending reads will have completed, and rejected/unprocessed notifications will be dispatched to this
+	 * 	connection's listener via the {@link ApnsConnectionListener#handleRejectedNotification(ApnsConnection, ApnsPushNotification, RejectedNotificationReason)}
+	 * 	and {@link ApnsConnectionListener#handleUnprocessedNotifications(ApnsConnection, Collection)} methods.</li>
+	 * </ol>
+	 *
+	 * <p>It is advisable for listeners to call this method when a connection is closed (though they must do so in a
+	 * separate thread.</p>
+=======
+	 * <p>Pending write operations are <em>not</em> guaranteed to have finished by the time a connection closes. Callers
+	 * that need to know that all writes have completed should call this method after the channel has closed (but they
+	 * must do so in a separate thread).</p>
+>>>>>>> /usr/src/app/output/relayrides/pushy/e7635b0f10606fc9408255ce180cb009271c172b/src/main/java/com/relayrides/pushy/apns/ApnsConnection.java/right.java
 	 *
 	 * @throws InterruptedException if interrupted while waiting for pending read/write operations to finish
 	 */
-	public void waitForPendingWritesToFinish() throws InterruptedException {
+	protected void waitForPendingWritesToFinish() throws InterruptedException {
 		synchronized (this.pendingWriteMonitor) {
 			while (this.pendingWriteCount > 0) {
 				this.pendingWriteMonitor.wait();
