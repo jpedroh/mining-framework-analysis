@@ -144,6 +144,7 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         if (value.size() < (i + 1)) {
                             value.add(template);
                         }
+                        
                         String replacement = null;
                         if(replacements.get(i) != null)
                             replacement = replacements.get(i).trim();
