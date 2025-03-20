@@ -233,10 +233,19 @@ public abstract class AbstractVdmMainLaunchConfigurationTab extends
 					return syntaxCorrect;
 				} else if (project != null)
 				{
+<<<<<<< /usr/src/app/output/overturetool/overture/94dcf1b694c71a192741e14793263309cad9918e/ide/debug/src/main/java/org/overture/ide/debug/ui/launching/AbstractVdmMainLaunchConfigurationTab.java/left.java
 					String moduleText = fModuleNameText.getText().trim();
 					
 					defaultModule = moduleText.replace(MODULE_POST_FIX, "");
 					expression = getExpression(moduleText, fOperationText.getText().trim(), staticOperation);
+||||||| /usr/src/app/output/overturetool/overture/94dcf1b694c71a192741e14793263309cad9918e/ide/debug/src/main/java/org/overture/ide/debug/ui/launching/AbstractVdmMainLaunchConfigurationTab.java/base.java
+					expression = getExpression(fModuleNameText.getText().trim(), fOperationText.getText().trim(), staticOperation);
+=======
+					String moduleText = fModuleNameText.getText().trim();
+					
+					defaultModule = moduleText;
+					expression = getExpression(moduleText, fOperationText.getText().trim(), staticOperation);
+>>>>>>> /usr/src/app/output/overturetool/overture/94dcf1b694c71a192741e14793263309cad9918e/ide/debug/src/main/java/org/overture/ide/debug/ui/launching/AbstractVdmMainLaunchConfigurationTab.java/right.java
 					return validateTypes(project, expression);
 				}
 			}
