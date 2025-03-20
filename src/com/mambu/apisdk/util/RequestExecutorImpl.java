@@ -48,19 +48,17 @@ import com.mambu.apisdk.exception.MambuApiException;
 @Singleton
 public class RequestExecutorImpl implements RequestExecutor {
 
-
 	private static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
 	private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 	private static final String USER_AGENT_HEADER_NAME = "User-Agent";
-	private final static String UTF8_charset = StandardCharsets.UTF_8.name();
-	private final static String wwwFormUrlEncodedContentType = "application/x-www-form-urlencoded; charset=UTF-8";
-	// Added charset charset=UTF-8, MBU-4137 is now fixed
-	private final static String jsonContentType = "application/json; charset=UTF-8";
-	private static final String TLS_V1_2 = "TLSv1.2";
+	private URLHelper urlHelper;
+	private String encodedAuthorization;
 	private final static String UTF8_CHARSET = StandardCharsets.UTF_8.name();
 	private final static String WWW_FORM_URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded; charset=UTF-8";
-	private final static String JSON_CONTENT_TYPE = "application/json; charset=UTF-8"; 	// Added charset charset=UTF-8, MBU-4137 is now fixed
-
+	// Added charset charset=UTF-8, MBU-4137 is now fixed
+	private final static String JSON_CONTENT_TYPE = "application/json; charset=UTF-8";
+	private static final String TLS_V1_2 = "TLSv1.2";
+// Added charset charset=UTF-8, MBU-4137 is now fixed
 	private final static String APPLICATION_KEY = APIData.APPLICATION_KEY; // as per JIRA issue MBU-3236
 	private final static Logger LOGGER = Logger.getLogger(RequestExecutorImpl.class.getName());
 	// Specify Logger Levels to be used for logging API request, response details as well as Mambu exceptions
@@ -69,9 +67,6 @@ public class RequestExecutorImpl implements RequestExecutor {
 	private final static Level EXCEPTION_LOG_LEVEL = Level.WARNING; // Logging Mambu exceptions level
 	// Log curl template (equivalent to the actual API request) at FINEST level
 	private final static Level CURL_REQUEST_TEMPLATE_LOG_LEVEL = Level.FINEST;
-
-	private URLHelper urlHelper;
-	private String encodedAuthorization;
 	
 	@Inject
 	public RequestExecutorImpl(URLHelper urlHelper) {
