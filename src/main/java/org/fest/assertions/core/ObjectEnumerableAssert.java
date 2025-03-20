@@ -1,19 +1,4 @@
-/*
- * Created on Jul 26, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.fest.assertions.core;
-
 
 /**
  * Assertions methods applicable to groups of objects (e.g. arrays or collections.)
@@ -28,8 +13,7 @@ package org.fest.assertions.core;
  * @author Mikhail Mazursky
  * @author Joel Costigliola
  */
-public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T> extends EnumerableAssert<S, T> {
-
+public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T extends java.lang.Object> extends EnumerableAssert<S, T> {
   /**
    * Verifies that the actual group contains the given values, in any order.
    * @param values the given values.
@@ -292,5 +276,4 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain all the elements of given {@code Iterable}.
    */
   S containsAll(Iterable<? extends T> iterable);
-
 }

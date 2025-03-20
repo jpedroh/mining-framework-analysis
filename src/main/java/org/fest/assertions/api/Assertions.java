@@ -1,19 +1,4 @@
-/*
- * Created on Sep 30, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.fest.assertions.api;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -22,7 +7,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.fest.assertions.api.filter.Filters;
 import org.fest.assertions.condition.AllOf;
 import org.fest.assertions.condition.AnyOf;
@@ -60,7 +44,6 @@ import org.fest.assertions.util.ImageReader;
  * @author Nicolas François
  */
 public class Assertions {
-
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    * @param actual the actual value.
@@ -166,7 +149,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> IterableAssert<T> assertThat(Iterable<T> actual) {
+  public static <T extends java.lang.Object> IterableAssert<T> assertThat(Iterable<T> actual) {
     return new IterableAssert<T>(actual);
   }
 
@@ -274,7 +257,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ListAssert<T> assertThat(List<T> actual) {
+  public static <T extends java.lang.Object> ListAssert<T> assertThat(List<T> actual) {
     return new ListAssert<T>(actual);
   }
 
@@ -310,7 +293,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectAssert<T> assertThat(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> assertThat(T actual) {
     return new ObjectAssert<T>(actual);
   }
 
@@ -319,7 +302,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectArrayAssert<T> assertThat(T[] actual) {
+  public static <T extends java.lang.Object> ObjectArrayAssert<T> assertThat(T[] actual) {
     return new ObjectArrayAssert<T>(actual);
   }
 
@@ -328,7 +311,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> assertThat(Map<K, V> actual) {
     return new MapAssert<K, V>(actual);
   }
 
@@ -386,10 +369,6 @@ public class Assertions {
     return new ThrowableAssert(actual);
   }
 
-  // -------------------------------------------------------------------------------------------------
-  // fail methods : not assertions but here to have a single entry point to all Fest Assert features.
-  // -------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Fail#setRemoveFestRelatedElementsFromStackTrace(boolean)} so that Assertions offers a full
    * feature entry point to all Fest Assert features (but you can use {@link Fail} if you prefer).
@@ -422,10 +401,6 @@ public class Assertions {
     Fail.failBecauseExceptionWasNotThrown(exceptionClass);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // properties methods : not assertions but here to have a single entry point to all Fest Assert features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point to
    * all Fest Assert features (but you can use {@link Properties} if you prefer).
@@ -449,7 +424,7 @@ public class Assertions {
    *           .doesNotContain("Orc");
    * </pre>
    */
-  public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
+  public static <T extends java.lang.Object> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
 
@@ -477,10 +452,6 @@ public class Assertions {
   public static Properties<Object> extractProperty(String propertyName) {
     return Properties.extractProperty(propertyName);
   }
-  
-  // ------------------------------------------------------------------------------------------------------
-  // Data utility methods : not assertions but here to have a single entry point to all Fest Assert features.
-  // ------------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to all
@@ -538,12 +509,7 @@ public class Assertions {
   public static Offset<Float> offset(Float value) {
     return Offset.offset(value);
   }
-  
-  
-  // ------------------------------------------------------------------------------------------------------
-  // Condition methods : not assertions but here to have a single entry point to all Fest Assert features.
-  // ------------------------------------------------------------------------------------------------------
-  
+
   /**
    * Creates a new <code>{@link AllOf}</code>
    * @param <T> the type of object the given condition accept.
@@ -552,8 +518,8 @@ public class Assertions {
    * @throws NullPointerException if the given array is {@code null}.
    * @throws NullPointerException if any of the elements in the given array is {@code null}.
    */
-  public static <T> Condition<T> allOf(Condition<? super T>...conditions) {
-	  return AllOf.allOf(conditions);
+  public static <T extends java.lang.Object> Condition<T> allOf(Condition<? super T>... conditions) {
+    return AllOf.allOf(conditions);
   }
 
   /**
@@ -564,7 +530,7 @@ public class Assertions {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return AllOf.allOf(conditions);
   }
 
@@ -578,7 +544,7 @@ public class Assertions {
    * assertThat("Vader").is(anyOf(jedi, sith));
    * </pre>
    */
-  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
+  public static <T extends java.lang.Object> Condition<T> anyOf(Condition<? super T>... conditions) {
     return AnyOf.anyOf(conditions);
   }
 
@@ -587,12 +553,12 @@ public class Assertions {
    * @param <T> the type of object the given condition accept.
    * @param conditions the conditions to evaluate.
    * @return the created {@code AnyOf}.
-   * @throws NullPointerException if the given iterable is {@code null}.
-   * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
+   * @throws NullPointerException if the given collection is {@code null}.
+   * @throws NullPointerException if any of the elements in the given collection is {@code null}.
    */
-  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return AnyOf.anyOf(conditions);
-  }  
+  }
 
   /**
    * Creates a new </code>{@link DoesNotHave}</code>.
@@ -600,7 +566,7 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return DoesNotHave.doesNotHave(condition);
   }
 
@@ -610,13 +576,9 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  public static <T> Not<T> not(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> Not<T> not(Condition<? super T> condition) {
     return Not.not(condition);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a single entry point to all Fest Assert features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all Fest
@@ -634,10 +596,10 @@ public class Assertions {
    *                           .and("assistsPerGame").greaterThan(7)
    *                           .get()).containsOnly(james, rose);</pre>
    */
-  public static <E> Filters<E> filter(E[] array) {
+  public static <E extends java.lang.Object> Filters<E> filter(E[] array) {
     return Filters.filter(array);
   }
-  
+
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all Fest
    * Assert features (but you can use {@link Filters} if you prefer).
@@ -654,10 +616,11 @@ public class Assertions {
    *                           .and("assistsPerGame").greaterThan(7)
    *                           .get()).containsOnly(james, rose);</pre>
    */
-  public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
+  public static <E extends java.lang.Object> Filters<E> filter(Iterable<E> iterableToFilter) {
     return Filters.filter(iterableToFilter);
   }
-  
+
   /** Creates a new </code>{@link Assertions}</code>. */
-  protected Assertions() {}
+  protected Assertions() {
+  }
 }
