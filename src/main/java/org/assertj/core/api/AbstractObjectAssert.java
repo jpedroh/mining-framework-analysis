@@ -1,25 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.extractor.Extractors.byName;
-
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.groups.Tuple;
 import org.assertj.core.internal.TypeComparators;
@@ -43,12 +28,13 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Joel Costigliola
  * @author Libor Ondrusek
  */
-public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL> extends AbstractAssert<SELF, ACTUAL> {
-
+public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL extends java.lang.Object> extends AbstractAssert<SELF, ACTUAL> {
   private static final double DOUBLE_COMPARATOR_PRECISION = 1e-15;
+
   private static final float FLOAT_COMPARATOR_PRECISION = 1e-6f;
 
   private Map<String, Comparator<?>> comparatorByPropertyOrField = new HashMap<>();
+
   private TypeComparators comparatorByType = defaultTypeComparators();
 
   public AbstractObjectAssert(ACTUAL actual, Class<?> selfType) {
@@ -62,15 +48,11 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
     return comparatorByType;
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF as(Description description) {
+  @Override @CheckReturnValue public SELF as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF as(String description, Object... args) {
+  @Override @CheckReturnValue public SELF as(String description, Object... args) {
     return super.as(description, args);
   }
 
@@ -153,8 +135,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if a property/field does not exist in actual.
    */
   public SELF isEqualToComparingOnlyGivenFields(Object other, String... propertiesOrFieldsUsedInComparison) {
-    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                                    propertiesOrFieldsUsedInComparison);
+    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsUsedInComparison);
     return myself;
   }
 
@@ -192,8 +173,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if one of actual's property/field to compare can't be found in the other object.
    */
   public SELF isEqualToIgnoringGivenFields(Object other, String... propertiesOrFieldsToIgnore) {
-    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                               propertiesOrFieldsToIgnore);
+    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsToIgnore);
     return myself;
   }
 
@@ -342,8 +322,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param propertiesOrFields the names of the properties and/or fields the comparator should be used for
    * @return {@code this} assertions object
    */
-  @CheckReturnValue
-  public <T> SELF usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
+  @CheckReturnValue public <T extends java.lang.Object> SELF usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
     for (String propertyOrField : propertiesOrFields) {
       comparatorByPropertyOrField.put(propertyOrField, comparator);
     }
@@ -404,8 +383,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param type the {@link java.lang.Class} of the type the comparator should be used for
    * @return {@code this} assertions object
    */
-  @CheckReturnValue
-  public <T> SELF usingComparatorForType(Comparator<T> comparator, Class<T> type) {
+  @CheckReturnValue public <T extends java.lang.Object> SELF usingComparatorForType(Comparator<T> comparator, Class<T> type) {
     comparatorByType.put(type, comparator);
     return myself;
   }
@@ -511,8 +489,6 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * <p>
    * Private fields can be extracted unless you call {@link Assertions#setAllowExtractingPrivateFields(boolean) Assertions.setAllowExtractingPrivateFields(false)}.
    * <p>
-   * If the object under test is a {@link Map} with {@link String} keys, extracting will extract values matching the given fields/properties. 
-   * <p>
    * Example:
    * <pre><code class='java'> // Create frodo, setting its name, age and Race (Race having a name property)
    * TolkienCharacter frodo = new TolkienCharacter(&quot;Frodo&quot;, 33, HOBBIT);
@@ -527,12 +503,11 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * Note that the order of extracted property/field values is consistent with the iteration order of the array under
    * test.
    *
-   * @param propertiesOrFields the properties/fields to extract from the initial object under test
+   * @param propertiesOrFields the properties/fields to extract from the initial array under test
    * @return a new assertion object whose object under test is the array containing the extracted properties/fields values
    * @throws IntrospectionError if one of the given name does not match a field or property
    */
-  @CheckReturnValue
-  public AbstractObjectArrayAssert<?, Object> extracting(String... propertiesOrFields) {
+  @CheckReturnValue public AbstractObjectArrayAssert<?, Object> extracting(String... propertiesOrFields) {
     Tuple values = byName(propertiesOrFields).extract(actual);
     return new ObjectArrayAssert<>(values.toArray());
   }
@@ -559,12 +534,8 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the array containing the extracted values
    */
-  @CheckReturnValue
-  @SafeVarargs
-  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super ACTUAL, Object>... extractors) {
-    Object[] values = Stream.of(extractors)
-                            .map(extractor -> extractor.apply(actual))
-                            .toArray();
+  @CheckReturnValue @SafeVarargs public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super ACTUAL, Object>... extractors) {
+    Object[] values = Stream.of(extractors).map((extractor) -> extractor.apply(actual)).toArray();
     return new ObjectArrayAssert<Object>(values);
   }
 
@@ -638,8 +609,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if one property/field to compare can not be found.
    */
   public SELF isEqualToComparingFieldByFieldRecursively(Object other) {
-    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField,
-                                                            comparatorByType);
+    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField, comparatorByType);
     return myself;
   }
 }

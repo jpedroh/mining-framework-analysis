@@ -1,24 +1,9 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.data.MapEntry.entry;
 import static org.assertj.core.util.Arrays.array;
-
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Consumer;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.internal.Maps;
 import org.assertj.core.util.CheckReturnValue;
@@ -42,11 +27,8 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Nicolas François
  * @author dorzey
  */
-public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACTUAL, K, V>, ACTUAL extends Map<K, V>, K, V>
-    extends AbstractObjectAssert<SELF, ACTUAL> implements EnumerableAssert<SELF, Map.Entry<? extends K, ? extends V>> {
-
-  @VisibleForTesting
-  Maps maps = Maps.instance();
+public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACTUAL, K, V>, ACTUAL extends Map<K, V>, K extends java.lang.Object, V extends java.lang.Object> extends AbstractObjectAssert<SELF, ACTUAL> implements EnumerableAssert<SELF, Map.Entry<? extends K, ? extends V>> {
+  @VisibleForTesting Maps maps = Maps.instance();
 
   public AbstractMapAssert(ACTUAL actual, Class<?> selfType) {
     super(actual, selfType);
@@ -68,8 +50,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * </p>
    * @throws AssertionError if the {@link Map} is not {@code null} or not empty.
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     maps.assertNullOrEmpty(info, actual);
   }
 
@@ -87,8 +68,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * </p>
    * @throws AssertionError if the {@link Map} of values is not empty.
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     maps.assertEmpty(info, actual);
   }
 
@@ -108,8 +88,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @return {@code this} assertion object.
    * @throws AssertionError if the {@link Map} is empty.
    */
-  @Override
-  public SELF isNotEmpty() {
+  @Override public SELF isNotEmpty() {
     maps.assertNotEmpty(info, actual);
     return myself;
   }
@@ -133,8 +112,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @return {@code this} assertion object.
    * @throws AssertionError if the number of values of the {@link Map} is not equal to the given one.
    */
-  @Override
-  public SELF hasSize(int expected) {
+  @Override public SELF hasSize(int expected) {
     maps.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -165,8 +143,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual group and given array don't have the same size.
    */
-  @Override
-  public SELF hasSameSizeAs(Object other) {
+  @Override public SELF hasSameSizeAs(Object other) {
     maps.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -193,8 +170,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the other {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual map and the given {@code Iterable} don't have the same size
    */
-  @Override
-  public SELF hasSameSizeAs(Iterable<?> other) {
+  @Override public SELF hasSameSizeAs(Iterable<?> other) {
     maps.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -260,7 +236,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given entries.
    */
-  public SELF contains(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public SELF contains(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContains(info, actual, entries);
     return myself;
   }
@@ -291,7 +267,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map does not contain any of the given entries.
    * @since 3.6.0
    */
-  public SELF containsAnyOf(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public SELF containsAnyOf(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsAnyOf(info, actual, entries);
     return myself;
   }
@@ -325,8 +301,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map does not contain the given entries.
    */
   public SELF containsAllEntriesOf(Map<? extends K, ? extends V> other) {
-    @SuppressWarnings("unchecked")
-    Map.Entry<? extends K, ? extends V>[] entries = other.entrySet().toArray(new Map.Entry[other.size()]);
+    @SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>[] entries = other.entrySet().toArray(new Map.Entry[other.size()]);
     maps.assertContains(info, actual, entries);
     return myself;
   }
@@ -456,7 +431,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains any of the given entries.
    */
-  public SELF doesNotContain(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public SELF doesNotContain(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertDoesNotContain(info, actual, entries);
     return myself;
   }
@@ -509,8 +484,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given key.
    */
-  @SuppressWarnings("unchecked")
-  public SELF containsKey(K key) {
+  @SuppressWarnings(value = { "unchecked" }) public SELF containsKey(K key) {
     return containsKeys(key);
   }
 
@@ -535,8 +509,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map does not contain the given key.
    * @throws IllegalArgumentException if the given argument is an empty array.
    */
-
-  public SELF containsKeys(@SuppressWarnings("unchecked") K... keys) {
+  public SELF containsKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertContainsKeys(info, actual, keys);
     return myself;
   }
@@ -560,8 +533,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains the given key.
    */
-  @SuppressWarnings("unchecked")
-  public SELF doesNotContainKey(K key) {
+  @SuppressWarnings(value = { "unchecked" }) public SELF doesNotContainKey(K key) {
     return doesNotContainKeys(key);
   }
 
@@ -585,7 +557,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map contains the given key.
    */
-  public SELF doesNotContainKeys(@SuppressWarnings("unchecked") K... keys) {
+  public SELF doesNotContainKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertDoesNotContainKeys(info, actual, keys);
     return myself;
   }
@@ -613,8 +585,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    *           of the given keys, or the actual map contains more entries than the given ones.
    * @throws IllegalArgumentException if the given argument is an empty array.
    */
-
-  public SELF containsOnlyKeys(@SuppressWarnings("unchecked") K... keys) {
+  public SELF containsOnlyKeys(@SuppressWarnings(value = { "unchecked" }) K... keys) {
     maps.assertContainsOnlyKeys(info, actual, keys);
     return myself;
   }
@@ -665,8 +636,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map is {@code null}.
    * @throws AssertionError if the actual map does not contain the given values.
    */
-
-  public SELF containsValues(@SuppressWarnings("unchecked") V... values) {
+  public SELF containsValues(@SuppressWarnings(value = { "unchecked" }) V... values) {
     maps.assertContainsValues(info, actual, values);
     return myself;
   }
@@ -720,7 +690,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @throws AssertionError if the actual map does not contain the given entries, i.e. the actual map contains some or
    *           none of the given entries, or the actual map contains more entries than the given ones.
    */
-  public SELF containsOnly(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public SELF containsOnly(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsOnly(info, actual, entries);
     return myself;
   }
@@ -753,7 +723,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    *           contains some or none of the given entries, or the actual map contains more entries than the given ones
    *           or entries are the same but the order is not.
    */
-  public SELF containsExactly(@SuppressWarnings("unchecked") Map.Entry<? extends K, ? extends V>... entries) {
+  public SELF containsExactly(@SuppressWarnings(value = { "unchecked" }) Map.Entry<? extends K, ? extends V>... entries) {
     maps.assertContainsExactly(info, actual, entries);
     return myself;
   }
@@ -764,9 +734,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @deprecated Custom element Comparator is not supported for MapEntry comparison.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public SELF usingElementComparator(Comparator<? super Map.Entry<? extends K, ? extends V>> customComparator) {
+  @Override @Deprecated public SELF usingElementComparator(Comparator<? super Map.Entry<? extends K, ? extends V>> customComparator) {
     throw new UnsupportedOperationException("custom element Comparator is not supported for MapEntry comparison");
   }
 
@@ -776,186 +744,139 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @deprecated Custom element Comparator is not supported for MapEntry comparison.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public SELF usingDefaultElementComparator() {
+  @Override @Deprecated public SELF usingDefaultElementComparator() {
     throw new UnsupportedOperationException("custom element Comparator is not supported for MapEntry comparison");
   }
 
-  // override methods to avoid compilation error when chaining an AbstractAssert method with a AbstractMapAssert one
-  // this is pretty sad, a better fix for that would be welcome
-
-  @Override
-  @CheckReturnValue
-  public SELF as(String description, Object... args) {
+  @Override @CheckReturnValue public SELF as(String description, Object... args) {
     return super.as(description, args);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF as(Description description) {
+  @Override @CheckReturnValue public SELF as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF describedAs(Description description) {
+  @Override @CheckReturnValue public SELF describedAs(Description description) {
     return super.describedAs(description);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF describedAs(String description, Object... args) {
+  @Override @CheckReturnValue public SELF describedAs(String description, Object... args) {
     return super.describedAs(description, args);
   }
 
-  @Override
-  public SELF doesNotHave(Condition<? super ACTUAL> condition) {
+  @Override public SELF doesNotHave(Condition<? super ACTUAL> condition) {
     return super.doesNotHave(condition);
   }
 
-  @Override
-  public SELF doesNotHaveSameClassAs(Object other) {
+  @Override public SELF doesNotHaveSameClassAs(Object other) {
     return super.doesNotHaveSameClassAs(other);
   }
 
-  @Override
-  public SELF has(Condition<? super ACTUAL> condition) {
+  @Override public SELF has(Condition<? super ACTUAL> condition) {
     return super.has(condition);
   }
 
-  @Override
-  public SELF hasSameClassAs(Object other) {
+  @Override public SELF hasSameClassAs(Object other) {
     return super.hasSameClassAs(other);
   }
 
-  @Override
-  public SELF hasToString(String expectedToString) {
+  @Override public SELF hasToString(String expectedToString) {
     return super.hasToString(expectedToString);
   }
 
-  @Override
-  public SELF is(Condition<? super ACTUAL> condition) {
+  @Override public SELF is(Condition<? super ACTUAL> condition) {
     return super.is(condition);
   }
 
-  @Override
-  public SELF isEqualTo(Object expected) {
+  @Override public SELF isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
-  @Override
-  public SELF isExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isExactlyInstanceOf(Class<?> type) {
     return super.isExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isIn(Iterable<?> values) {
+  @Override public SELF isIn(Iterable<?> values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isIn(Object... values) {
+  @Override public SELF isIn(Object... values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isInstanceOf(Class<?> type) {
+  @Override public SELF isInstanceOf(Class<?> type) {
     return super.isInstanceOf(type);
   }
 
-  @Override
-  public SELF isInstanceOfAny(Class<?>... types) {
+  @Override public SELF isInstanceOfAny(Class<?>... types) {
     return super.isInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNot(Condition<? super ACTUAL> condition) {
+  @Override public SELF isNot(Condition<? super ACTUAL> condition) {
     return super.isNot(condition);
   }
 
-  @Override
-  public SELF isNotEqualTo(Object other) {
+  @Override public SELF isNotEqualTo(Object other) {
     return super.isNotEqualTo(other);
   }
 
-  @Override
-  public SELF isNotExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isNotExactlyInstanceOf(Class<?> type) {
     return super.isNotExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotIn(Iterable<?> values) {
+  @Override public SELF isNotIn(Iterable<?> values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotIn(Object... values) {
+  @Override public SELF isNotIn(Object... values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotInstanceOf(Class<?> type) {
+  @Override public SELF isNotInstanceOf(Class<?> type) {
     return super.isNotInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotInstanceOfAny(Class<?>... types) {
+  @Override public SELF isNotInstanceOfAny(Class<?>... types) {
     return super.isNotInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNotOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isNotOfAnyClassIn(Class<?>... types) {
     return super.isNotOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isNotNull() {
+  @Override public SELF isNotNull() {
     return super.isNotNull();
   }
 
-  @Override
-  public SELF isNotSameAs(Object other) {
+  @Override public SELF isNotSameAs(Object other) {
     return super.isNotSameAs(other);
   }
 
-  @Override
-  public SELF isOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isOfAnyClassIn(Class<?>... types) {
     return super.isOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isSameAs(Object expected) {
+  @Override public SELF isSameAs(Object expected) {
     return super.isSameAs(expected);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
+  @Override @CheckReturnValue public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
     return super.overridingErrorMessage(newErrorMessage, args);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF usingDefaultComparator() {
+  @Override @CheckReturnValue public SELF usingDefaultComparator() {
     return super.usingDefaultComparator();
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
+  @Override @CheckReturnValue public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
     return super.usingComparator(customComparator);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF withFailMessage(String newErrorMessage, Object... args) {
+  @Override @CheckReturnValue public SELF withFailMessage(String newErrorMessage, Object... args) {
     return super.withFailMessage(newErrorMessage, args);
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF withThreadDumpOnError() {
+  @Override @CheckReturnValue public SELF withThreadDumpOnError() {
     return super.withThreadDumpOnError();
   }
 
@@ -982,9 +903,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * 
    * @throws NullPointerException if the given map is {@code null}.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  @CheckReturnValue
-  public AbstractMapSizeAssert<SELF, ACTUAL, K, V> size() {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) @CheckReturnValue public AbstractMapSizeAssert<SELF, ACTUAL, K, V> size() {
     Preconditions.checkNotNull(actual, "Can not perform assertions on the size of a null map.");
     return new MapSizeAssert(this, actual.size());
   }
@@ -1014,9 +933,7 @@ public abstract class AbstractMapAssert<SELF extends AbstractMapAssert<SELF, ACT
    * @param keys the keys used to get values from the map under test
    * @return a new assertion object whose object under test is the array containing the extracted map values
    */
-  @CheckReturnValue
-  @Override
-  public AbstractObjectArrayAssert<?, Object> extracting(String... keys) {
+  @CheckReturnValue @Override public AbstractObjectArrayAssert<?, Object> extracting(String... keys) {
     return super.extracting(keys);
   }
 }
