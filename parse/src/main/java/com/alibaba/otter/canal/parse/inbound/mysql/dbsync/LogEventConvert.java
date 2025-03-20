@@ -160,6 +160,27 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
 
             String tableName = result.getTableName();
             EventType type = EventType.QUERY;
+
+            // 更新下table meta cache
+            if (tableMetaCache != null
+                && (result.getType() == EventType.ALTER || result.getType() == EventType.ERASE || result.getType() == EventType.RENAME)) {
+                for (DdlResult renameResult = result; renameResult != null; renameResult = renameResult.getRenameTableResult()) {
+                    String schemaName0 = event.getDbName(); // 防止rename语句后产生schema变更带来影响
+                    if (StringUtils.isNotEmpty(renameResult.getSchemaName())) {
+                        schemaName0 = renameResult.getSchemaName();
+                    }
+
+                    tableName = renameResult.getTableName();
+                    if (StringUtils.isNotEmpty(tableName)) {
+                        // 如果解析到了正确的表信息，则根据全名进行清除
+                        tableMetaCache.clearTableMeta(schemaName0, tableName);
+                    } else {
+                        // 如果无法解析正确的表信息，则根据schema进行清除
+                        tableMetaCache.clearTableMetaWithSchemaName(schemaName0);
+                    }
+                }
+            }
+
             // fixed issue https://github.com/alibaba/canal/issues/58
             if (result.getType() == EventType.ALTER || result.getType() == EventType.ERASE
                 || result.getType() == EventType.CREATE || result.getType() == EventType.TRUNCATE
@@ -216,6 +237,7 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
                 return null;
             }
 
+<<<<<<< /usr/src/app/output/alibaba/canal/676cf4798763d8e65c2e295bf28fc54cced16741/parse/src/main/java/com/alibaba/otter/canal/parse/inbound/mysql/dbsync/LogEventConvert.java/left.java
             // 更新下table meta cache
             //if (tableMetaCache != null
             //    && (result.getType() == EventType.ALTER || result.getType() == EventType.ERASE || result.getType() == EventType.RENAME)) {
@@ -240,6 +262,29 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
             BinlogPosition position = createPosition(event.getHeader());
             tableMetaCache.apply(position, event.getDbName(), queryString);
 
+||||||| /usr/src/app/output/alibaba/canal/676cf4798763d8e65c2e295bf28fc54cced16741/parse/src/main/java/com/alibaba/otter/canal/parse/inbound/mysql/dbsync/LogEventConvert.java/base.java
+            // 更新下table meta cache
+            if (tableMetaCache != null
+                && (result.getType() == EventType.ALTER || result.getType() == EventType.ERASE || result.getType() == EventType.RENAME)) {
+                for (DdlResult renameResult = result; renameResult != null; renameResult = renameResult.getRenameTableResult()) {
+                    String schemaName0 = event.getDbName(); // 防止rename语句后产生schema变更带来影响
+                    if (StringUtils.isNotEmpty(renameResult.getSchemaName())) {
+                        schemaName0 = renameResult.getSchemaName();
+                    }
+
+                    tableName = renameResult.getTableName();
+                    if (StringUtils.isNotEmpty(tableName)) {
+                        // 如果解析到了正确的表信息，则根据全名进行清除
+                        tableMetaCache.clearTableMeta(schemaName0, tableName);
+                    } else {
+                        // 如果无法解析正确的表信息，则根据schema进行清除
+                        tableMetaCache.clearTableMetaWithSchemaName(schemaName0);
+                    }
+                }
+            }
+
+=======
+>>>>>>> /usr/src/app/output/alibaba/canal/676cf4798763d8e65c2e295bf28fc54cced16741/parse/src/main/java/com/alibaba/otter/canal/parse/inbound/mysql/dbsync/LogEventConvert.java/right.java
             Header header = createHeader(binlogFileName, event.getHeader(), schemaName, tableName, type);
             RowChange.Builder rowChangeBuider = RowChange.newBuilder();
             if (result.getType() != EventType.QUERY) {
