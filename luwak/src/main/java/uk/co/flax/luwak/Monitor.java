@@ -161,6 +161,7 @@ public class Monitor implements Closeable {
     }
 
     // package-private for testing
+    // package-private for testing
     static IndexWriter defaultIndexWriter(Directory directory) throws IOException {
 
         IndexWriterConfig iwc = new IndexWriterConfig(new KeywordAnalyzer());
@@ -339,6 +340,12 @@ public class Monitor implements Closeable {
      * @throws IOException on IO errors
      * @throws UpdateException if any of the queries could not be added
      */
+    /**
+     * Add new queries to the monitor
+     * @param queries the MonitorQueries to add
+     * @throws IOException on IO errors
+     * @throws UpdateException if any of the queries could not be added
+     */
     public void update(Iterable<MonitorQuery> queries) throws IOException, UpdateException {
 
         List<QueryError> errors = new ArrayList<>();
@@ -387,6 +394,12 @@ public class Monitor implements Closeable {
      * @throws IOException on IO errors
      * @throws UpdateException if any of the queries could not be added
      */
+    /**
+     * Add new queries to the monitor
+     * @param queries the MonitorQueries to add
+     * @throws IOException on IO errors
+     * @throws UpdateException if any of the queries could not be added
+     */
     public void update(MonitorQuery... queries) throws IOException, UpdateException {
         update(Arrays.asList(queries));
     }
@@ -408,6 +421,11 @@ public class Monitor implements Closeable {
      * @param queryIds the IDs to delete
      * @throws IOException on IO errors
      */
+    /**
+     * Delete queries from the monitor by ID
+     * @param queryIds the IDs to delete
+     * @throws IOException on IO errors
+     */
     public void deleteById(Iterable<String> queryIds) throws IOException {
         for (String queryId : queryIds) {
             queryIndex.deleteDocuments(new Term(FIELDS.del, queryId));
@@ -415,6 +433,11 @@ public class Monitor implements Closeable {
         commit(null);
     }
 
+    /**
+     * Delete queries from the monitor by ID
+     * @param queryIds the IDs to delete
+     * @throws IOException on IO errors
+     */
     /**
      * Delete queries from the monitor by ID
      * @param queryIds the IDs to delete
@@ -544,6 +567,7 @@ public class Monitor implements Closeable {
     }
 
     // For each query selected by the presearcher, pass on to a CandidateMatcher
+    // For each query selected by the presearcher, pass on to a CandidateMatcher
     private static class StandardQueryCollector<T extends QueryMatch> implements QueryIndex.QueryCollector {
 
         final CandidateMatcher<T> matcher;
@@ -620,11 +644,6 @@ public class Monitor implements Closeable {
         }
 
         @Override
-        public boolean needsScores() {
-            return true;
-        }
-
-        @Override
         public void matchQuery(final String id, QueryCacheEntry query, QueryIndex.DataValues dataValues) throws IOException {
 
             SpanCollector collector = new SpanCollector() {
@@ -648,6 +667,10 @@ public class Monitor implements Closeable {
             super.matchQuery(id, query, dataValues);
         }
 
+        @Override
+        public boolean needsScores() {
+            return true;
+        }
     }
 
 }
