@@ -189,7 +189,8 @@ public class CommandSend extends Command implements TabExecutor
         sender.sendMessage( ProxyServer.getInstance().getTranslation( "command_send_attempting",
                 ( targets.size() == 1 ) ? targets.get( 0 ).getName() : targets.size() + " players",
                 server.getName() ) );
-
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/ce7aff581e036b15538c1bc1f0f2382c92b8df63/module/cmd-send/src/main/java/net/md_5/bungee/module/cmd/send/CommandSend.java/left.java
+    
         final SendCallback callback = new SendCallback( sender );
         Map<ProxiedPlayer, ServerConnectRequest> connections = new HashMap<>();
         for ( ProxiedPlayer player : targets )
@@ -205,6 +206,16 @@ public class CommandSend extends Command implements TabExecutor
         {
             entry.getKey().connect( entry.getValue() );
         }
+||||||| /usr/src/app/output/spigotmc/bungeecord/ce7aff581e036b15538c1bc1f0f2382c92b8df63/module/cmd-send/src/main/java/net/md_5/bungee/module/cmd/send/CommandSend.java/base.java
+=======
+    
+        final SendCallback callback = new SendCallback( sender );
+        targets.stream().map( player -> ServerConnectRequest.builder()
+                .target( server )
+                .reason( ServerConnectEvent.Reason.COMMAND )
+                .callback( new SendCallback.Entry( callback, player, server ) )
+                .build() ).forEach( request -> targets.forEach( player -> player.connect( request ) ) );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/ce7aff581e036b15538c1bc1f0f2382c92b8df63/module/cmd-send/src/main/java/net/md_5/bungee/module/cmd/send/CommandSend.java/right.java
     }
 
     @Override
