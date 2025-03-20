@@ -23,6 +23,6 @@ public interface EditConfig extends XmlElement {
 
 	public NameSpacedAttribute<Boolean> isInherit();
 
-	public NameSpacedAttribute<Boolean> isDisableTargeting();
+	public boolean isDisableTargeting();
 
 }

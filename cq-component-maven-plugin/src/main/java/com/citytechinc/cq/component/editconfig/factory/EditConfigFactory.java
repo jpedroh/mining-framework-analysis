@@ -60,7 +60,6 @@ public class EditConfigFactory {
 		parameters.setLayout(getLayoutForEditConfig(componentAnnotation));
 		parameters.setEmptyText(getEmptyTextForEditConfig(componentAnnotation));
 		parameters.setInherit(getInheritForEditConfig(componentAnnotation));
-		parameters.setDisableTargeting(getDisableTargingForEditConfig(componentAnnotation));
 
 		List<XmlElement> editConfigChildren = new ArrayList<XmlElement>();
 
@@ -90,11 +89,14 @@ public class EditConfigFactory {
 		}
 
 		parameters.setContainedElements(editConfigChildren);
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/editconfig/factory/EditConfigFactory.java/left.java
 		return new DefaultEditConfig(parameters);
-	}
-
-	private static Boolean getDisableTargingForEditConfig(Component componentAnnotation) {
-		return componentAnnotation.disableTargeting();
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/editconfig/factory/EditConfigFactory.java/base.java
+		return new DefaultEditConfig(title, actions, dialogMode, layout, "cq:EditConfig", listeners);
+=======
+		return new DefaultEditConfig(title, actions, dialogMode, layout, "cq:EditConfig", listeners,
+			componentAnnotation.disableTargeting());
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-maven-plugin/src/main/java/com/citytechinc/cq/component/editconfig/factory/EditConfigFactory.java/right.java
 	}
 
 	private static boolean getInheritForEditConfig(Component componentAnnotation) {

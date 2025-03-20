@@ -146,6 +146,7 @@ public @interface Component {
 	 */
 	int dialogHeight() default -1;
 
+<<<<<<< /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-annotations/src/main/java/com/citytechinc/cq/component/annotations/Component.java/left.java
 	/**
 	 * An array of ActionConfig's for the edit config file
 	 * 
@@ -162,9 +163,10 @@ public @interface Component {
 	FormParameter[] formParameters() default {};
 
 	DropTarget[] dropTargets() default {};
-
+||||||| /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-annotations/src/main/java/com/citytechinc/cq/component/annotations/Component.java/base.java
+=======
 	ContentProperty[] contentAdditionalProperties() default {};
 
 	boolean disableTargeting() default false;
-
+>>>>>>> /usr/src/app/output/citytechinc/cq-component-maven-plugin/7e2cd438ccf6917a3b68f889f2cd2d3fe3982ae7/cq-component-annotations/src/main/java/com/citytechinc/cq/component/annotations/Component.java/right.java
 }
