@@ -84,7 +84,13 @@ public class CoreExtension extends AbstractExtension {
     @Override
     public List<UnaryOperator> getUnaryOperators() {
         ArrayList<UnaryOperator> operators = new ArrayList<>();
+<<<<<<< /usr/src/app/output/mbosecke/pebble/7c76e0df7ab79cff4b7d39647df5e6cb50f47c86/src/main/java/com/mitchellbosecke/pebble/extension/core/CoreExtension.java/left.java
         operators.add(new UnaryOperatorImpl("not", 500, UnaryNotExpression.class));
+||||||| /usr/src/app/output/mbosecke/pebble/7c76e0df7ab79cff4b7d39647df5e6cb50f47c86/src/main/java/com/mitchellbosecke/pebble/extension/core/CoreExtension.java/base.java
+        operators.add(new UnaryOperatorImpl("not", 5, UnaryNotExpression.class));
+=======
+        operators.add(new UnaryOperatorImpl("not", 10, UnaryNotExpression.class));
+>>>>>>> /usr/src/app/output/mbosecke/pebble/7c76e0df7ab79cff4b7d39647df5e6cb50f47c86/src/main/java/com/mitchellbosecke/pebble/extension/core/CoreExtension.java/right.java
         operators.add(new UnaryOperatorImpl("+", 500, UnaryPlusExpression.class));
         operators.add(new UnaryOperatorImpl("-", 500, UnaryMinusExpression.class));
         return operators;
@@ -93,8 +99,8 @@ public class CoreExtension extends AbstractExtension {
     @Override
     public List<BinaryOperator> getBinaryOperators() {
         ArrayList<BinaryOperator> operators = new ArrayList<>();
-        operators.add(new BinaryOperatorImpl("or", 10, OrExpression.class, Associativity.LEFT));
-        operators.add(new BinaryOperatorImpl("and", 15, AndExpression.class, Associativity.LEFT));
+        operators.add(new BinaryOperatorImpl("or", 1, OrExpression.class, Associativity.LEFT));
+        operators.add(new BinaryOperatorImpl("and", 5, AndExpression.class, Associativity.LEFT));
         operators.add(new BinaryOperatorImpl("is", 20, PositiveTestExpression.class, Associativity.LEFT));
         operators.add(new BinaryOperatorImpl("is not", 20, NegativeTestExpression.class, Associativity.LEFT));
         operators.add(new BinaryOperatorImpl("contains", 20, ContainsExpression.class, Associativity.LEFT));
