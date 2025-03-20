@@ -1,26 +1,11 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 
 /**
@@ -32,8 +17,7 @@ import org.junit.Test;
  */
 public class Assertions_assertThat_with_List_Test {
   private static class Person {
-    @SuppressWarnings("unused")
-    private String name;
+    @SuppressWarnings(value = { "unused" }) private String name;
 
     public Person(String name) {
       this.name = name;
@@ -46,41 +30,40 @@ public class Assertions_assertThat_with_List_Test {
     }
   }
 
-  @Test
-  public void should_create_Assert() {
+  @Test public void should_create_Assert() {
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
     AbstractListAssert<?, ? extends List<? extends Object>, Object> assertions = Assertions.assertThat(emptyList());
-    assertNotNull(assertions);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_List_Test.java/right.java
+
+    assertNotNull(Assertions.assertThat(emptyList()));
   }
 
-  @Test
-  public void should_create_Assert_generics() {
+  @Test public void should_create_Assert_generics() {
     Employee bill = new Employee("bill");
     Person billou = bill;
     Assertions.assertThat(bill).isEqualTo(billou);
     Assertions.assertThat(billou).isEqualTo(bill);
   }
 
-  @Test
-  public void should_create_Assert_with_list_extended() {
+  @Test public void should_create_Assert_with_list_extended() {
     List<String> strings0 = new ArrayList<String>();
     List<? extends String> strings1 = new ArrayList<String>();
     Assertions.assertThat(strings0).isEqualTo(strings1);
     Assertions.assertThat(strings1).isEqualTo(strings0);
   }
 
-  @Test
-  public void should_create_Assert_with_extends() {
+  @Test public void should_create_Assert_with_extends() {
     Employee bill = new Employee("bill");
     Person billou = bill;
     List<Person> list1 = newArrayList(billou);
     List<Employee> list2 = newArrayList(bill);
-
     Assertions.assertThat(list1).isEqualTo(list2);
     Assertions.assertThat(list2).isEqualTo(list1);
   }
 
-  @Test
-  public void should_pass_actual() {
+  @Test public void should_pass_actual() {
     List<String> names = singletonList("Luke");
     AbstractListAssert<?, ? extends List<? extends String>, String> assertions = Assertions.assertThat(names);
     assertSame(names, assertions.actual);
