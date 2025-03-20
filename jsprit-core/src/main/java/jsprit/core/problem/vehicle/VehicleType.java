@@ -43,11 +43,6 @@ public interface VehicleType {
 	 */
 	public int getCapacity();
 	
-	/**
-	 * Returns capacity dimensions.
-	 * 
-	 * @return {@link Capacity}
-	 */
 	public Capacity getCapacityDimensions();
 	
 	/**

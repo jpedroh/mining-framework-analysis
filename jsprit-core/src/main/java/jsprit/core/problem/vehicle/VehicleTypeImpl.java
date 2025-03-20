@@ -16,9 +16,7 @@
  ******************************************************************************/
 package jsprit.core.problem.vehicle;
 
-
 import jsprit.core.problem.Capacity;
-
 /**
  * Implementation of {@link VehicleType}.
  * 
@@ -78,10 +76,14 @@ public class VehicleTypeImpl implements VehicleType {
 		 * @throws IllegalStateException if capacity is smaller than zero or id is null
 		 */
 		public static VehicleTypeImpl.Builder newInstance(String id, int capacity){
-			if(capacity < 0) throw new IllegalStateException("capacity cannot be smaller than zero");
-			if(id == null) throw new IllegalStateException("typeId must be null");
+<<<<<<< /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/left.java
 			Builder builder = new Builder(id,capacity);
 			builder.addCapacityDimension(0, capacity);
+||||||| /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/base.java
+=======
+			if(capacity < 0) throw new IllegalStateException("capacity cannot be smaller than zero");
+			if(id == null) throw new IllegalStateException("typeId must be null");
+>>>>>>> /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/right.java
 			return builder;
 		}
 		
@@ -230,10 +232,9 @@ public class VehicleTypeImpl implements VehicleType {
 	
 	private final VehicleTypeImpl.VehicleCostParams vehicleCostParams;
 	
-	private final Capacity capacityDimensions;
-
 	private final double maxVelocity;
-
+	
+	private Capacity capacityDimensions;
 
 	/**
 	 * @deprecated use builder instead
@@ -269,8 +270,12 @@ public class VehicleTypeImpl implements VehicleType {
 		this.typeId = typeId;
 		this.capacity = capacity;
 		this.vehicleCostParams = vehicleCostParams;
-		this.capacityDimensions = Capacity.Builder.newInstance().addDimension(0, capacity).build();
+<<<<<<< /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/left.java
+		capacityDimensions = Capacity.Builder.newInstance().addDimension(0, capacity).build();
+||||||| /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/base.java
+=======
 		this.maxVelocity = Double.MAX_VALUE;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/2993202d493211d11d623b175ee83bde2b32aff8/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleTypeImpl.java/right.java
 	}
 
 	/* (non-Javadoc)
