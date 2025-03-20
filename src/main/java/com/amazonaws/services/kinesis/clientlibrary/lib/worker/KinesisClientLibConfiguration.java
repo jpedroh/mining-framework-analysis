@@ -125,12 +125,17 @@ public class KinesisClientLibConfiguration {
     /**
      * User agent set when Amazon Kinesis Client Library makes AWS requests.
      */
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4ec77b1705f1f089a1c973cd3e61398a6a4a6294/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/KinesisClientLibConfiguration.java/left.java
+    public static final String KINESIS_CLIENT_LIB_USER_AGENT = "amazon-kinesis-client-library-java-1.11.0";
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4ec77b1705f1f089a1c973cd3e61398a6a4a6294/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/KinesisClientLibConfiguration.java/base.java
+=======
     public static final String KINESIS_CLIENT_LIB_USER_AGENT = "amazon-kinesis-client-library-java-1.11.1-SNAPSHOT";
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4ec77b1705f1f089a1c973cd3e61398a6a4a6294/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/KinesisClientLibConfiguration.java/right.java
 
     /**
-     * KCL will validate client provided sequence numbers with a call to Amazon Kinesis before checkpointing for calls
-     * to {@link RecordProcessorCheckpointer#checkpoint(String)} by default.
-     */
+ * KCL will validate client provided sequence numbers with a call to Amazon Kinesis before checkpointing for calls
+ * to {@link RecordProcessorCheckpointer#checkpoint(String)} by default.
+ */
     public static final boolean DEFAULT_VALIDATE_SEQUENCE_NUMBER_BEFORE_CHECKPOINTING = true;
 
     /**
