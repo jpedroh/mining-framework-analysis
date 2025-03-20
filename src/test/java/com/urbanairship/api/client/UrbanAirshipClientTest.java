@@ -206,7 +206,13 @@ public class UrbanAirshipClientTest {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/left.java
+    public void testSetEUBaseUri() throws IOException {
+||||||| /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/base.java
+    public void testSetEUBaseUri()  {
+=======
     public void testSetEUBaseUri() throws Exception {
+>>>>>>> /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/right.java
         UrbanAirshipClient client = UrbanAirshipClient.newBuilder()
                 .setBaseUri(UrbanAirshipClient.EU_URI)
                 .setKey("key")
@@ -221,7 +227,13 @@ public class UrbanAirshipClientTest {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/left.java
+    public void testDefaultBaseUri() throws IOException {
+||||||| /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/base.java
+    public void testDefaultBaseUri()  {
+=======
     public void testDefaultBaseUri() throws Exception {
+>>>>>>> /usr/src/app/output/urbanairship/java-library/4be3d18ac5d8d4f21dd63731ba9cf92aeadc16e5/src/test/java/com/urbanairship/api/client/UrbanAirshipClientTest.java/right.java
         UrbanAirshipClient client = UrbanAirshipClient.newBuilder()
                 .setKey("key")
                 .setSecret("secret")
