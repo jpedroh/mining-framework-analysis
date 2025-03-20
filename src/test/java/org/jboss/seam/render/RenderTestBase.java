@@ -44,7 +44,13 @@ public abstract class RenderTestBase
                .addPackages(true, Root.class.getPackage())
                .addPackages(true, Expressions.class.getPackage())
                .addManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
-               .addManifestResource("META-INF/services/org.jboss.seam.solder.beanManager.BeanManagerProvider");
+<<<<<<< /usr/src/app/output/seam/render/5371832457e9d1037dba8e7091513b6521e5af80/src/test/java/org/jboss/seam/render/RenderTestBase.java/left.java
+               .addPackages(false, Expressions.class.getPackage());
+||||||| /usr/src/app/output/seam/render/5371832457e9d1037dba8e7091513b6521e5af80/src/test/java/org/jboss/seam/render/RenderTestBase.java/base.java
+               .addPackages("META-INF/services/org.jboss.weld.extensions.beanManager.BeanManagerProvider");
+=======
+               .addPackages("META-INF/services/org.jboss.seam.solder.beanManager.BeanManagerProvider");
+>>>>>>> /usr/src/app/output/seam/render/5371832457e9d1037dba8e7091513b6521e5af80/src/test/java/org/jboss/seam/render/RenderTestBase.java/right.java
       return deployment;
    }
 }
