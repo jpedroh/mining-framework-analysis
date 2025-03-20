@@ -80,6 +80,7 @@ import javax.net.ssl.SSLContext;
  */
 @Immutable
 @SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods"})
+
 public interface Request {
 
     /**

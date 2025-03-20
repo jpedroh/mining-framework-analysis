@@ -747,8 +747,7 @@ public final class RequestTest {
                 hdrs.get(),
                 org.mockito.Matchers.any(InputStream.class),
                 org.mockito.Matchers.anyInt(),
-                org.mockito.Matchers.anyInt(),
-                org.mockito.Mockito.any(SSLContext.class)
+                org.mockito.Matchers.anyInt()
             )
         ).thenReturn(response);
         new BaseRequest(original, url).through(wire).fetch();
@@ -759,8 +758,7 @@ public final class RequestTest {
             hdrs.get(),
             org.mockito.Matchers.any(InputStream.class),
             org.mockito.Matchers.anyInt(),
-            org.mockito.Matchers.anyInt(),
-            org.mockito.Mockito.any(SSLContext.class)
+            org.mockito.Matchers.anyInt()
         );
         Mockito.verify(wire).send(
             org.mockito.Matchers.any(Request.class),
@@ -769,8 +767,7 @@ public final class RequestTest {
             hdrs.get(),
             org.mockito.Matchers.any(InputStream.class),
             org.mockito.Matchers.anyInt(),
-            org.mockito.Matchers.anyInt(),
-            org.mockito.Mockito.any(SSLContext.class)
+            org.mockito.Matchers.anyInt()
         );
     }
 

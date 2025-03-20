@@ -81,7 +81,13 @@ public final class RequestITCase {
      */
     @Test
     public void sendsHttpRequestAndProcessesHttpResponse() throws Exception {
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/left.java
+        this.request(new URI("https://http.jcabi.com"))
+||||||| /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/base.java
+        this.request(new URI("http://http.jcabi.com"))
+=======
         this.request(new URI("http://www.jare.io"))
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/right.java
             .fetch().as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_OK)
             .as(XmlResponse.class)
@@ -94,7 +100,13 @@ public final class RequestITCase {
      */
     @Test
     public void processesNotOkHttpResponse() throws Exception {
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/left.java
+        this.request(new URI("https://http.jcabi.com/file-not-found.txt"))
+||||||| /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/base.java
+        this.request(new URI("http://http.jcabi.com/file-not-found.txt"))
+=======
         this.request(new URI("http://www.jare.io/file-not-found.txt"))
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/c693112cf706413bb4c690b2706766db77111cb1/src/test/java/com/jcabi/http/RequestITCase.java/right.java
             .fetch().as(RestResponse.class)
             .assertStatus(HttpURLConnection.HTTP_NOT_FOUND);
     }
