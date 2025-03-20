@@ -27,11 +27,17 @@ public class SpringMavenDocumentSource extends AbstractDocumentSource {
         }
     }
 
-    @Override
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/d2e1b0994d1d9cfdfc412842519319406128f268/src/main/java/com/github/kongchen/swagger/docgen/mavenplugin/SpringMavenDocumentSource.java/left.java
     protected Set<Class<?>> getValidClasses() {
+||||||| /usr/src/app/output/kongchen/swagger-maven-plugin/d2e1b0994d1d9cfdfc412842519319406128f268/src/main/java/com/github/kongchen/swagger/docgen/mavenplugin/SpringMavenDocumentSource.java/base.java
+     Set<Class<?>> getValidClasses() {
+=======
+    @Override
+    public Set<Class<?>> getValidClasses() {
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/d2e1b0994d1d9cfdfc412842519319406128f268/src/main/java/com/github/kongchen/swagger/docgen/mavenplugin/SpringMavenDocumentSource.java/right.java
         return Sets.union(
-                super.getValidClasses(),
-                apiSource.getValidClasses(RestController.class));
+            super.getValidClasses(),
+            apiSource.getValidClasses(RestController.class));
     }
 
     @Override
