@@ -1,135 +1,87 @@
-/**
- * ORIPA - Origami Pattern Editor
- * Copyright (C) 2005-2009 Jun Mitani http://mitani.cs.tsukuba.ac.jp/
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package oripa.file;
 
-/**
- * data class for persistent init data
- *
- */
 public class InitData {
-	private String lastUsedFile = ""; // dead property, remaining for
-										// compatibility reasons with older init
-										// files
-	private String[] MRUFiles = new String[0];
+  private String lastUsedFile = "";
 
-	private boolean zeroLineWidth = false;
-	private boolean mvLineVisible = true;
-	private boolean auxLineVisible = true;
-	private boolean vertexVisible = true;
+  private String[] MRUFiles = new String[0];
 
-	public InitData() {
-	}
+  private boolean zeroLineWidth = false;
 
-	/**
-	 *
-	 * @param s
-	 *            set array of most recently used file paths
-	 */
-	public void setMRUFiles(final String[] s) {
-		MRUFiles = s;
-	}
+  private boolean mvLineVisible = true;
 
-	/**
-	 *
-	 * @return array of most recently used file paths
-	 */
-	public String[] getMRUFiles() {
-		return MRUFiles;
-	}
+  private boolean auxLineVisible = true;
 
-	/**
-	 *
-	 * @param s
-	 *            path string to file
-	 */
-	public void setLastUsedFile(final String s) {
-		lastUsedFile = s;
-	}
+  private boolean vertexVisible = true;
 
-	/**
-	 *
-	 * @return last used file
-	 */
-	public String getLastUsedFile() {
-		return lastUsedFile;
-	}
+  public InitData() {
+  }
 
-	/**
-	 *
-	 * @param zeroLineWidth
-	 *            sets zeroLineWidth
-	 */
-	public void setZeroLineWidth(final boolean zeroLineWidth) {
-		this.zeroLineWidth = zeroLineWidth;
-	}
+  public void setMRUFiles(final String[] s) {
+    MRUFiles = s;
+  }
 
-	/**
-	 *
-	 * @return zeroLineWidth
-	 */
-	public boolean isZeroLineWidth() {
-		return zeroLineWidth;
-	}
+  public String[] getMRUFiles() {
+    return MRUFiles;
+  }
 
-	/**
+  public void setLastUsedFile(final String s) {
+    lastUsedFile = s;
+  }
+
+  public String getLastUsedFile() {
+    return lastUsedFile;
+  }
+
+  public void setZeroLineWidth(final boolean zeroLineWidth) {
+    this.zeroLineWidth = zeroLineWidth;
+  }
+
+  public boolean isZeroLineWidth() {
+    return zeroLineWidth;
+  }
+
+  /**
 	 * @return mvLineVisible
 	 */
-	public boolean isMvLineVisible() {
-		return mvLineVisible;
-	}
+  public boolean isMvLineVisible() {
+    return mvLineVisible;
+  }
 
-	/**
+  /**
 	 * @param mvLineVisible
 	 *            Sets mvLineVisible
 	 */
-	public void setMvLineVisible(final boolean mvLineVisible) {
-		this.mvLineVisible = mvLineVisible;
-	}
+  public void setMvLineVisible(final boolean mvLineVisible) {
+    this.mvLineVisible = mvLineVisible;
+  }
 
-	/**
+  /**
 	 * @return auxLineVisible
 	 */
-	public boolean isAuxLineVisible() {
-		return auxLineVisible;
-	}
+  public boolean isAuxLineVisible() {
+    return auxLineVisible;
+  }
 
-	/**
+  /**
 	 * @param auxLineVisible
 	 *            Sets auxLineVisible
 	 */
-	public void setAuxLineVisible(final boolean auxLineVisible) {
-		this.auxLineVisible = auxLineVisible;
-	}
+  public void setAuxLineVisible(final boolean auxLineVisible) {
+    this.auxLineVisible = auxLineVisible;
+  }
 
-	/**
+  /**
 	 * @return vertexVisible
 	 */
-	public boolean isVertexVisible() {
-		return vertexVisible;
-	}
+  public boolean isVertexVisible() {
+    return vertexVisible;
+  }
 
-	/**
+  /**
 	 * @param vertexVisible
 	 *            Sets vertexVisible
 	 */
-	public void setVertexVisible(final boolean vertexVisible) {
-		this.vertexVisible = vertexVisible;
-	}
-
+  public void setVertexVisible(final boolean vertexVisible) {
+    this.vertexVisible = vertexVisible;
+  }
 }
