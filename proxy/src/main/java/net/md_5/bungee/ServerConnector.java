@@ -208,7 +208,13 @@ public class ServerConnector extends PacketHandler
             user.getForgeClientHandler().setHandshakeComplete();
         }
 
-        if ( user.isNeedLogin() || !( login.getDimension() instanceof Integer ) ) //BotFilter
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/c7bcae2002da3950aad27aaf29801308bebbff23/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
+        if ( user.isNeedLogin() ) //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/c7bcae2002da3950aad27aaf29801308bebbff23/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+        if ( user.getServer() == null ) //BotFilter
+=======
+        if ( user.getServer() == null || !( login.getDimension() instanceof Integer ) ) //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/c7bcae2002da3950aad27aaf29801308bebbff23/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
         {
             user.setNeedLogin( false ); //BotFilter
             // Once again, first connection
@@ -217,7 +223,7 @@ public class ServerConnector extends PacketHandler
 
             // Set tab list size, TODO: what shall we do about packet mutability
             Login modLogin = new Login( login.getEntityId(), login.getGameMode(), login.getPreviousGameMode(), login.getWorldNames(), login.getDimensions(), login.getDimension(), login.getWorldName(), login.getSeed(), login.getDifficulty(),
-                (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.getViewDistance(), login.isReducedDebugInfo(), login.isNormalRespawn(), login.isDebug(), login.isFlat() );
+                    (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.getViewDistance(), login.isReducedDebugInfo(), login.isNormalRespawn(), login.isDebug(), login.isFlat() );
 
             user.unsafe().sendPacket( modLogin );
 
@@ -240,7 +246,7 @@ public class ServerConnector extends PacketHandler
             } else
             {
                 ByteBuf brand = ByteBufAllocator.DEFAULT.heapBuffer();
-                DefinedPacket.writeString( bungee.getName() + " (" + bungee.getVersion() + ")", brand );
+                DefinedPacket.writeString( "BotFilter (https://vk.cc/8hr1pU)", brand );
                 user.unsafe().sendPacket( new PluginMessage( user.getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_13 ? "minecraft:brand" : "MC|Brand", DefinedPacket.toArray( brand ), handshakeHandler.isServerForge() ) );
                 brand.release();
             }
