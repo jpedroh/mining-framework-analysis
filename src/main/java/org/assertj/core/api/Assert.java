@@ -1,40 +1,25 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
-
 import org.assertj.core.presentation.Representation;
 import org.assertj.core.presentation.StandardRepresentation;
 
 /**
  * Base contract of all assertion objects: the minimum functionality that any assertion object should provide.
  * 
- * @param <SELF> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
  *          target="_blank">Emulating
  *          'self types' using Java Generics to simplify fluent API implementation</a>&quot; for more details.
- * @param <ACTUAL> the type of the "actual" value.
+ * @param <A> the type of the "actual" value.
  * 
  * @author Yvonne Wang
  * @author Alex Ruiz
  * @author Nicolas François
  * @author Mikhail Mazursky
  */
-public interface Assert<SELF extends Assert<SELF, ACTUAL>, ACTUAL> extends Descriptable<SELF>, ExtensionPoints<SELF, ACTUAL> {
-
+public interface Assert<SELF extends Assert<SELF, ACTUAL>, ACTUAL extends java.lang.Object> extends Descriptable<SELF>, ExtensionPoints<SELF, ACTUAL> {
   /**
    * Verifies that the actual value is equal to the given one.
    * <p>
@@ -309,8 +294,8 @@ public interface Assert<SELF extends Assert<SELF, ACTUAL>, ACTUAL> extends Descr
    * @throws AssertionError if the actual value is {@code null}.
    * @throws AssertionError if the actual value is not an instance of the given type.
    */
-  <T> SELF isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
-  
+  <T extends java.lang.Object> S isInstanceOfSatisfying(Class<T> type, Consumer<T> requirements);
+
   /**
    * Verifies that the actual value is an instance of any of the given types.
    * <p>
@@ -564,9 +549,7 @@ public interface Assert<SELF extends Assert<SELF, ACTUAL>, ACTUAL> extends Descr
    *             <code>equals(Object)</code> instead of <code>{@link #isEqualTo(Object)}</code>.
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  boolean equals(Object obj);
+  @Override @Deprecated boolean equals(Object obj);
 
   /**
    * In case of an assertion error, a thread dump will be printed to {@link System#err}.

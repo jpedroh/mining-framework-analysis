@@ -1,25 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.extractor.Extractors.byName;
-
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.groups.Tuple;
 import org.assertj.core.internal.TypeComparators;
@@ -30,10 +15,10 @@ import org.assertj.core.util.introspection.IntrospectionError;
 /**
  * Base class for all implementations of assertions for {@link Object}s.
  *
- * @param <SELF> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
- * @param <ACTUAL> the type of the "actual" value.
+ * @param <A> the type of the "actual" value.
  *
  * @author Yvonne Wang
  * @author Alex Ruiz
@@ -42,12 +27,13 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Joel Costigliola
  * @author Libor Ondrusek
  */
-public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL> extends AbstractAssert<SELF, ACTUAL> {
-
+public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SELF, ACTUAL>, ACTUAL extends java.lang.Object> extends AbstractAssert<SELF, ACTUAL> {
   private static final double DOUBLE_COMPARATOR_PRECISION = 1e-15;
+
   private static final float FLOAT_COMPARATOR_PRECISION = 1e-6f;
 
   private Map<String, Comparator<?>> comparatorByPropertyOrField = new HashMap<>();
+
   private TypeComparators comparatorByType = defaultTypeComparators();
 
   public AbstractObjectAssert(ACTUAL actual, Class<?> selfType) {
@@ -61,13 +47,11 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
     return comparatorByType;
   }
 
-  @Override
-  public SELF as(Description description) {
+  @Override public SELF as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public SELF as(String description, Object... args) {
+  @Override public SELF as(String description, Object... args) {
     return super.as(description, args);
   }
 
@@ -150,8 +134,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if a property/field does not exist in actual.
    */
   public SELF isEqualToComparingOnlyGivenFields(Object other, String... propertiesOrFieldsUsedInComparison) {
-    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                                    propertiesOrFieldsUsedInComparison);
+    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsUsedInComparison);
     return myself;
   }
 
@@ -189,8 +172,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if one of actual's property/field to compare can't be found in the other object.
    */
   public SELF isEqualToIgnoringGivenFields(Object other, String... propertiesOrFieldsToIgnore) {
-    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                               propertiesOrFieldsToIgnore);
+    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsToIgnore);
     return myself;
   }
 
@@ -339,7 +321,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param propertiesOrFields the names of the properties and/or fields the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> SELF usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
+  public <T extends java.lang.Object> SELF usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
     for (String propertyOrField : propertiesOrFields) {
       comparatorByPropertyOrField.put(propertyOrField, comparator);
     }
@@ -400,7 +382,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param type the {@link java.lang.Class} of the type the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> SELF usingComparatorForType(Comparator<T> comparator, Class<T> type) {
+  public <T extends java.lang.Object> SELF usingComparatorForType(Comparator<T> comparator, Class<T> type) {
     comparatorByType.put(type, comparator);
     return myself;
   }
@@ -551,11 +533,8 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the array containing the extracted values
    */
-  @SafeVarargs
-  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super ACTUAL, Object>... extractors) {
-    Object[] values = Stream.of(extractors)
-                            .map(extractor -> extractor.apply(actual))
-                            .toArray();
+  @SafeVarargs public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
+    Object[] values = Stream.of(extractors).map((extractor) -> extractor.apply(actual)).toArray();
     return new ObjectArrayAssert<Object>(values);
   }
 
@@ -629,8 +608,7 @@ public abstract class AbstractObjectAssert<SELF extends AbstractObjectAssert<SEL
    * @throws IntrospectionError if one property/field to compare can not be found.
    */
   public SELF isEqualToComparingFieldByFieldRecursively(Object other) {
-    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField,
-                                                            comparatorByType);
+    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField, comparatorByType);
     return myself;
   }
 }
