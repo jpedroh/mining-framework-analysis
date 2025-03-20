@@ -127,15 +127,26 @@ public class ShutdownTaskTest {
      */
     @Test
     public final void testCallWhenSyncingShardsThrows() throws Exception {
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/left.java
+        List<Shard> shards = constructShardListGraphA();
+        when(shardDetector.listShards()).thenReturn(shards);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/base.java
+=======
         List<Shard> latestShards = constructShardListGraphA();
         when(shardDetector.listShards()).thenReturn(latestShards);
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/right.java
         when(recordProcessorCheckpointer.lastCheckpointValue()).thenReturn(ExtendedSequenceNumber.SHARD_END);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/left.java
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/base.java
+        when(shardDetector.listShards()).thenReturn(null);
+=======
         when(leaseCoordinator.leaseRefresher()).thenReturn(leaseRefresher);
 
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/right.java
         doAnswer((invocation) -> {
             throw new KinesisClientLibIOException("KinesisClientLibIOException");
         }).when(hierarchicalShardSyncer)
-                .checkAndCreateLeaseForNewShards(shardDetector, leaseRefresher, INITIAL_POSITION_TRIM_HORIZON,
+                .checkAndCreateLeaseForNewShards(shards, shardDetector, leaseRefresher, INITIAL_POSITION_TRIM_HORIZON,
                         cleanupLeasesOfCompletedShards, ignoreUnexpectedChildShards,
                         NULL_METRICS_FACTORY.createMetrics(), latestShards);
 
@@ -149,8 +160,29 @@ public class ShutdownTaskTest {
 
     /**
      * Test method for {@link ShutdownTask#call()}.
-     * This test is for the scenario that ShutdownTask is created for ShardConsumer reaching the Shard End.
      */
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/left.java
+    @Test
+    public final void testCallWhenTrueShardEnd() {
+        shardInfo = new ShardInfo("shardId-0", concurrencyToken, Collections.emptySet(),
+                                  ExtendedSequenceNumber.LATEST);
+        task = new ShutdownTask(shardInfo, shardDetector, shardRecordProcessor, recordProcessorCheckpointer,
+                                SHARD_END_SHUTDOWN_REASON, INITIAL_POSITION_TRIM_HORIZON, cleanupLeasesOfCompletedShards,
+                                ignoreUnexpectedChildShards, leaseRefresher, TASK_BACKOFF_TIME_MILLIS, recordsPublisher,
+                                hierarchicalShardSyncer, NULL_METRICS_FACTORY);
+
+        when(shardDetector.listShards()).thenReturn(constructShardListGraphA());
+        when(recordProcessorCheckpointer.lastCheckpointValue()).thenReturn(ExtendedSequenceNumber.SHARD_END);
+
+        final TaskResult result = task.call();
+        assertNull(result.getException());
+        verify(recordsPublisher).shutdown();
+        verify(shardRecordProcessor).shardEnded(ShardEndedInput.builder().checkpointer(recordProcessorCheckpointer).build());
+        verify(shardRecordProcessor, never()).leaseLost(LeaseLostInput.builder().build());
+        verify(shardDetector, times(1)).listShards();
+    }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/base.java
+=======
     @Test
     public final void testCallWhenTrueShardEnd() {
         shardInfo = new ShardInfo("shardId-0", concurrencyToken, Collections.emptySet(),
@@ -171,11 +203,31 @@ public class ShutdownTaskTest {
         verify(shardDetector, times(1)).listShards();
         verify(leaseCoordinator, never()).getAssignments();
     }
-
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/right.java
     /**
      * Test method for {@link ShutdownTask#call()}.
-     * This test is for the scenario that a ShutdownTask is created for detecting a false Shard End.
      */
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/left.java
+    @Test
+    public final void testCallWhenFalseShardEnd() {
+        shardInfo = new ShardInfo("shardId-4", concurrencyToken, Collections.emptySet(),
+                                  ExtendedSequenceNumber.LATEST);
+        task = new ShutdownTask(shardInfo, shardDetector, shardRecordProcessor, recordProcessorCheckpointer,
+                                SHARD_END_SHUTDOWN_REASON, INITIAL_POSITION_TRIM_HORIZON, cleanupLeasesOfCompletedShards,
+                                ignoreUnexpectedChildShards, leaseRefresher, TASK_BACKOFF_TIME_MILLIS, recordsPublisher,
+                                hierarchicalShardSyncer, NULL_METRICS_FACTORY);
+
+        when(shardDetector.listShards()).thenReturn(constructShardListGraphA());
+
+        final TaskResult result = task.call();
+        assertNull(result.getException());
+        verify(recordsPublisher).shutdown();
+        verify(shardRecordProcessor, never()).shardEnded(ShardEndedInput.builder().checkpointer(recordProcessorCheckpointer).build());
+        verify(shardRecordProcessor).leaseLost(LeaseLostInput.builder().build());
+        verify(shardDetector, times(1)).listShards();
+    }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/base.java
+=======
     @Test
     public final void testCallWhenFalseShardEnd() {
         shardInfo = new ShardInfo("shardId-4", concurrencyToken, Collections.emptySet(),
@@ -195,11 +247,31 @@ public class ShutdownTaskTest {
         verify(shardDetector, times(1)).listShards();
         verify(leaseCoordinator).getCurrentlyHeldLease(shardInfo.shardId());
     }
-
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/right.java
     /**
      * Test method for {@link ShutdownTask#call()}.
-     * This test is for the scenario that a ShutdownTask is created for the ShardConsumer losing the lease.
      */
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/left.java
+    @Test
+    public final void testCallWhenLeaseLost() {
+        shardInfo = new ShardInfo("shardId-4", concurrencyToken, Collections.emptySet(),
+                                  ExtendedSequenceNumber.LATEST);
+        task = new ShutdownTask(shardInfo, shardDetector, shardRecordProcessor, recordProcessorCheckpointer,
+                                LEASE_LOST_SHUTDOWN_REASON, INITIAL_POSITION_TRIM_HORIZON, cleanupLeasesOfCompletedShards,
+                                ignoreUnexpectedChildShards, leaseRefresher, TASK_BACKOFF_TIME_MILLIS, recordsPublisher,
+                                hierarchicalShardSyncer, NULL_METRICS_FACTORY);
+
+        when(shardDetector.listShards()).thenReturn(constructShardListGraphA());
+
+        final TaskResult result = task.call();
+        assertNull(result.getException());
+        verify(recordsPublisher).shutdown();
+        verify(shardRecordProcessor, never()).shardEnded(ShardEndedInput.builder().checkpointer(recordProcessorCheckpointer).build());
+        verify(shardRecordProcessor).leaseLost(LeaseLostInput.builder().build());
+        verify(shardDetector, never()).listShards();
+    }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/base.java
+=======
     @Test
     public final void testCallWhenLeaseLost() {
         shardInfo = new ShardInfo("shardId-4", concurrencyToken, Collections.emptySet(),
@@ -219,6 +291,19 @@ public class ShutdownTaskTest {
         verify(shardDetector, never()).listShards();
         verify(leaseCoordinator, never()).getAssignments();
     }
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/test/java/software/amazon/kinesis/lifecycle/ShutdownTaskTest.java/right.java
+    /**
+     * Test method for {@link ShutdownTask#call()}.
+     * This test is for the scenario that ShutdownTask is created for ShardConsumer reaching the Shard End.
+     */
+    /**
+     * Test method for {@link ShutdownTask#call()}.
+     * This test is for the scenario that a ShutdownTask is created for detecting a false Shard End.
+     */
+    /**
+     * Test method for {@link ShutdownTask#call()}.
+     * This test is for the scenario that a ShutdownTask is created for the ShardConsumer losing the lease.
+     */
 
     /**
      * Test method for {@link ShutdownTask#taskType()}.

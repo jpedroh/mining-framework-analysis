@@ -20,8 +20,8 @@ import com.sun.org.apache.bcel.internal.generic.LUSHR;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.kinesis.model.Shard;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.utils.CollectionUtils;
 import software.amazon.kinesis.annotations.KinesisClientInternalApi;
 import software.amazon.kinesis.checkpoint.ShardRecordProcessorCheckpointer;
@@ -43,8 +43,8 @@ import software.amazon.kinesis.retrieval.RecordsPublisher;
 import software.amazon.kinesis.retrieval.kpl.ExtendedSequenceNumber;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * Task for invoking the ShardRecordProcessor shutdown() callback.
@@ -65,7 +65,7 @@ public class ShutdownTask implements ConsumerTask {
     @NonNull
     private final ShardRecordProcessorCheckpointer recordProcessorCheckpointer;
     @NonNull
-    private final ShutdownReason reason;
+    private ShutdownReason reason;
     @NonNull
     private final InitialPositionInStreamExtended initialPositionInStream;
     private final boolean cleanupLeasesOfCompletedShards;
@@ -98,6 +98,17 @@ public class ShutdownTask implements ConsumerTask {
 
         try {
             try {
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShutdownTask.java/left.java
+                List<Shard> allShards = new ArrayList<>();
+                if(reason == ShutdownReason.SHARD_END) {
+                    allShards = shardDetector.listShards();
+
+                    if(!isRealShardEnd(allShards)) {
+                        reason = ShutdownReason.LEASE_LOST;
+                    }
+                }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShutdownTask.java/base.java
+=======
                 ShutdownReason localReason = reason;
                 List<Shard> latestShards = null;
                 /*
@@ -115,7 +126,7 @@ public class ShutdownTask implements ConsumerTask {
                         log.info("Forcing the lease to be lost before shutting down the consumer for Shard: " + shardInfo.shardId());
                     }
                 }
-
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/4a5a42f8359123d49e1752a7a488564c578671a9/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShutdownTask.java/right.java
                 // If we reached end of the shard, set sequence number to SHARD_END.
                 if (localReason == ShutdownReason.SHARD_END) {
                     recordProcessorCheckpointer
@@ -154,7 +165,7 @@ public class ShutdownTask implements ConsumerTask {
                 if (localReason == ShutdownReason.SHARD_END) {
                     log.debug("Looking for child shards of shard {}", shardInfo.shardId());
                     // create leases for the child shards
-                    hierarchicalShardSyncer.checkAndCreateLeaseForNewShards(shardDetector, leaseCoordinator.leaseRefresher(),
+                    hierarchicalShardSyncer.checkAndCreateLeaseForNewShards(allShards, shardDetector, leaseCoordinator.leaseRefresher(),
                             initialPositionInStream, cleanupLeasesOfCompletedShards, ignoreUnexpectedChildShards, scope, latestShards);
                     log.debug("Finished checking for child shards of shard {}", shardInfo.shardId());
                 }
@@ -195,6 +206,19 @@ public class ShutdownTask implements ConsumerTask {
     @VisibleForTesting
     public ShutdownReason getReason() {
         return reason;
+    }
+
+    private boolean isRealShardEnd(List<Shard> shards) {
+        boolean realShardEnd = false;
+
+        for(Shard shard : shards) {
+            if(shard.parentShardId() != null && shard.parentShardId().equals(shardInfo.shardId())
+                    || shard.adjacentParentShardId() != null && shard.adjacentParentShardId().equals(shardInfo.shardId())) {
+                realShardEnd = true;
+                break;
+            }
+        }
+        return realShardEnd;
     }
 
     private boolean isShardInContextParentOfAny(List<Shard> shards) {
