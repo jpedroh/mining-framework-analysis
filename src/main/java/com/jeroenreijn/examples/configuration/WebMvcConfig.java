@@ -297,6 +297,25 @@ public class WebMvcConfig implements ApplicationContextAware, WebMvcConfigurer {
 		return viewResolver;
 	}
 
+<<<<<<< /usr/src/app/output/jreijn/spring-comparing-template-engines/89bd8bbc91c308af280811d25d63e2bfed0d2532/src/main/java/com/jeroenreijn/examples/configuration/WebMvcConfig.java/left.java
+	@Bean
+	public LiqpViewResolver liqpViewResolver() {
+		LiqpViewResolver viewResolver = new LiqpViewResolver();
+//		viewResolver.setOrder(0);
+		viewResolver.setViewClass(LiqpView.class);
+		viewResolver.setPrefix("classpath:./templates/liqp/");
+        viewResolver.setSuffix(".liqp");
+		viewResolver.setViewNames("*-liqp");
+//		viewResolver.setRequestContextAttribute("rc");
+		viewResolver.setCache(false);
+//		viewResolver.setApplicationContext(this.applicationContext);
+		viewResolver.setContentType("text/html;charset=UTF-8");
+
+
+		return viewResolver;
+	}
+||||||| /usr/src/app/output/jreijn/spring-comparing-template-engines/89bd8bbc91c308af280811d25d63e2bfed0d2532/src/main/java/com/jeroenreijn/examples/configuration/WebMvcConfig.java/base.java
+=======
 	@Bean
 	public LiqpViewResolver liqpViewResolver() {
 		LiqpViewResolver viewResolver = new LiqpViewResolver(applicationContext.getBean(MessageSource.class));
@@ -309,6 +328,7 @@ public class WebMvcConfig implements ApplicationContextAware, WebMvcConfigurer {
 
 		return viewResolver;
 	}
+>>>>>>> /usr/src/app/output/jreijn/spring-comparing-template-engines/89bd8bbc91c308af280811d25d63e2bfed0d2532/src/main/java/com/jeroenreijn/examples/configuration/WebMvcConfig.java/right.java
 
 	@Bean
 	public ViewResolver kotlinxHtmlViewResolver() {
@@ -318,6 +338,7 @@ public class WebMvcConfig implements ApplicationContextAware, WebMvcConfigurer {
 
 		return viewResolver;
 	}
+
 
 	@Controller
 	static class FaviconController {
