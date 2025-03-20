@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -38,7 +37,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
@@ -70,7 +68,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
@@ -105,6 +102,7 @@ import com.projectkorra.projectkorra.chiblocking.RapidPunch;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.chiblocking.SwiftKick;
 import com.projectkorra.projectkorra.chiblocking.WarriorStance;
+import com.projectkorra.projectkorra.chiblocking.combo.Immobilize;
 import com.projectkorra.projectkorra.chiblocking.passive.Acrobatics;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
@@ -157,7 +155,6 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.MovementHandler;
 import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -178,6 +175,8 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 import com.projectkorra.projectkorra.waterbending.passive.Hydrosink;
 import com.projectkorra.projectkorra.waterbending.passive.WaterPassive;
 import com.projectkorra.rpg.RPGMethods;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import com.projectkorra.projectkorra.util.MovementHandler;
 
 public class PKListener implements Listener {
 
@@ -916,8 +915,50 @@ public class PKListener implements Listener {
 				return;
 			}
 
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/PKListener.java/left.java
 			String boundAbil = sourceBPlayer.getBoundAbilityName();
+			if (sourceBPlayer.getBoundAbility() != null && !sourceBPlayer.isOnCooldown(boundAbil)) {
+				if (sourceBPlayer.canBendPassive(Element.CHI)) {
+					if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
+						if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
+							if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
+								if (sourceBPlayer.isElementToggled(Element.CHI) == true) {
+									if (boundAbil.equalsIgnoreCase("Paralyze")) {
+										new Paralyze(sourcePlayer, entity);
+									} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
+										new QuickStrike(sourcePlayer, entity);
+										e.setCancelled(true);
+									} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
+										new SwiftKick(sourcePlayer, entity);
+										e.setCancelled(true);
+									} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
+										new RapidPunch(sourcePlayer, entity);
+										e.setCancelled(true);
+||||||| /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/PKListener.java/base.java
+				String boundAbil = sourceBPlayer.getBoundAbilityName();
 
+				if (sourceBPlayer.canBendPassive(Element.CHI)) {
+					if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
+						if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
+							if (sourceBPlayer.canCurrentlyBendWithWeapons()) {
+								if (sourceBPlayer.isElementToggled(Element.CHI) == true) {
+									if (boundAbil.equalsIgnoreCase("Paralyze")) {
+										new Paralyze(sourcePlayer, targetPlayer);
+									} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
+										new QuickStrike(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
+									} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
+										new SwiftKick(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
+									} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
+										new RapidPunch(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
+									} else {
+										if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
+											ChiPassive.blockChi(targetPlayer);
+										}
+=======
+			String boundAbil = sourceBPlayer.getBoundAbilityName();
 			if (sourceBPlayer.getBoundAbility() != null) {
 				if (!sourceBPlayer.isOnCooldown(boundAbil)) {
 					if (sourceBPlayer.canBendPassive(Element.CHI)) {
@@ -937,6 +978,7 @@ public class PKListener implements Listener {
 											new RapidPunch(sourcePlayer, entity);
 											e.setCancelled(true);
 										}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/PKListener.java/right.java
 									}
 								}
 							}
@@ -954,6 +996,13 @@ public class PKListener implements Listener {
 								}
 							}
 						}
+					}
+				}
+			} else {
+				if (entity instanceof Player) {
+					Player targetPlayer = (Player) entity;
+					if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
+						ChiPassive.blockChi(targetPlayer);
 					}
 				}
 			}

@@ -32,9 +32,16 @@ public class RapidPunch extends ChiAbility {
 		this.damage = getConfig().getDouble("Abilities.Chi.RapidPunch.Damage");
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/chiblocking/RapidPunch.java/left.java
+		this.target = targetentity;
+		bPlayer.addCooldown(this);
+||||||| /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/chiblocking/RapidPunch.java/base.java
+		this.target = GeneralMethods.getTargetedEntity(player, distance);
+=======
 		this.interval = getConfig().getLong("Abilities.Chi.RapidPunch.Interval");
 		this.target = targetentity;
 		bPlayer.addCooldown(this);
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/b1b7a8cbc8604b820af0cf21013908f0f5053301/src/com/projectkorra/projectkorra/chiblocking/RapidPunch.java/right.java
 		start();
 	}
 
