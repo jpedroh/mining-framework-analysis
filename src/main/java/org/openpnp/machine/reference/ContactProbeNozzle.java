@@ -566,13 +566,13 @@ public class ContactProbeNozzle extends ReferenceNozzle {
         if (assumeNozzleTipLoaded 
                 || !nt.getzCalibrationTrigger().isPerNozzleTip()) {
             // We assume the nozzle tip is (in the course of being) loaded or we don't have per nozzle tip calibration.
-        if (zCalibratedNozzleTip == nt 
-                || (zCalibratedNozzleTip != null && nt.getzCalibrationTrigger() == ZCalibrationTrigger.MachineHome)) {
-            // Already calibrated.
-            return;
+            if (zCalibratedNozzleTip == nt 
+                    || (zCalibratedNozzleTip != null && nt.getzCalibrationTrigger() == ZCalibrationTrigger.MachineHome)) {
+                // Already calibrated.
+                return;
+            }
+            calibrateZ(nt);
         }
-        calibrateZ(nt);
-    }
         else {
             // We assume the nozzle tip is (in the course of being) unloaded and this is per nozzle tip calibration.
             // Take the "naked" nozzle Z offset for the unloading process.
@@ -670,7 +670,7 @@ public class ContactProbeNozzle extends ReferenceNozzle {
         if (getNozzleTip() == null) {
             // Store the special "naked" nozzle Z offset. 
             setUnloadedCalibrationOffsetZ(calibrationOffsetZ);
-    }
+        }
     }
 
     public void resetZCalibration() {
@@ -678,7 +678,7 @@ public class ContactProbeNozzle extends ReferenceNozzle {
         zCalibratedNozzleTip = null;
         if (getNozzleTip() == null) {
             setUnloadedCalibrationOffsetZ(null);
-    }
+        }
     }
 
     public static void referenceAllTouchLocationsZ() throws Exception {
