@@ -1,26 +1,8 @@
-/*
- * Copyright 2012-2023 Aerospike, Inc.
- *
- * Portions may be licensed to Aerospike, Inc. under one or more contributor
- * license agreements WHICH ARE COMPATIBLE WITH THE APACHE LICENSE, VERSION 2.0.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.aerospike.test;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Host;
 import com.aerospike.client.IAerospikeClient;
@@ -67,80 +49,29 @@ import com.aerospike.test.sync.query.TestQueryString;
 import com.aerospike.test.sync.query.TestQuerySum;
 import com.aerospike.test.util.Args;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	TestAdd.class,
-	TestAppend.class,
-	TestBatch.class,
-	TestBitExp.class,
-	TestDeleteBin.class,
-	TestExpire.class,
-	TestExpOperation.class,
-	TestFilterExp.class,
-	TestGeneration.class,
-	TestHLLExp.class,
-	TestListExp.class,
-	TestListMap.class,
-	TestMapExp.class,
-	TestOperate.class,
-	TestOperateBit.class,
-	TestOperateHll.class,
-	TestOperateList.class,
-	TestOperateMap.class,
-	TestPutGet.class,
-	TestReplace.class,
-	TestScan.class,
-	TestServerInfo.class,
-	TestTouch.class,
-	TestUDF.class,
-	TestIndex.class,
-	TestQueryAverage.class,
-	TestQueryCollection.class,
-	TestQueryContext.class,
-	TestQueryExecute.class,
-	TestQueryFilter.class,
-	TestQueryFilterExp.class,
-	TestQueryFilterSet.class,
-	TestQueryGeo.class,
-	TestQueryInteger.class,
-	TestQueryKey.class,
-	TestQueryRPS.class,
-	TestQueryString.class,
-	TestQuerySum.class
-})
-public class SuiteSync {
-	public static IAerospikeClient client = null;
+@RunWith(value = Suite.class) @Suite.SuiteClasses(value = { TestAdd.class, TestAppend.class, TestBatch.class, TestBitExp.class, TestDeleteBin.class, TestExpire.class, TestExpOperation.class, TestFilterExp.class, TestGeneration.class, TestHLLExp.class, TestListExp.class, TestListMap.class, TestMapExp.class, TestOperate.class, TestOperateBit.class, TestOperateHll.class, TestOperateList.class, TestOperateMap.class, TestPutGet.class, TestReplace.class, TestScan.class, TestServerInfo.class, TestTouch.class, TestUDF.class, TestIndex.class, TestQueryAverage.class, TestQueryCollection.class, TestQueryContext.class, TestQueryExecute.class, TestQueryFilter.class, TestQueryFilterExp.class, TestQueryFilterSet.class, TestQueryGeo.class, TestQueryInteger.class, TestQueryKey.class, TestQueryRPS.class, TestQueryString.class, TestQuerySum.class }) public class SuiteSync {
+  public static IAerospikeClient client = null;
 
-	@BeforeClass
-	public static void init() {
-		Log.setCallback(null);
+  @BeforeClass public static void init() {
+    Log.setCallback(null);
+    System.out.println("Begin AerospikeClient");
+    Args args = Args.Instance;
+    ClientPolicy policy = new ClientPolicy();
+    args.setClientPolicy(policy);
+    Host[] hosts = Host.parseHosts(args.host, args.port);
+    client = args.useProxyClient ? new AerospikeClientProxy(policy, hosts) : new AerospikeClient(policy, hosts);
+    try {
+      args.setServerSpecific(client);
+    } catch (RuntimeException re) {
+      client.close();
+      throw re;
+    }
+  }
 
-		System.out.println("Begin AerospikeClient");
-		Args args = Args.Instance;
-
-		ClientPolicy policy = new ClientPolicy();
-		args.setClientPolicy(policy);
-
-		Host[] hosts = Host.parseHosts(args.host, args.port);
-
-		client = args.useProxyClient?
-			new AerospikeClientProxy(policy, hosts) :
-			new AerospikeClient(policy, hosts);
-
-		try {
-			args.setServerSpecific(client);
-		}
-		catch (RuntimeException re) {
-			client.close();
-			throw re;
-		}
-	}
-
-	@AfterClass
-	public static void destroy() {
-		System.out.println("End AerospikeClient");
-		if (client != null) {
-			client.close();
-		}
-	}
+  @AfterClass public static void destroy() {
+    System.out.println("End AerospikeClient");
+    if (client != null) {
+      client.close();
+    }
+  }
 }

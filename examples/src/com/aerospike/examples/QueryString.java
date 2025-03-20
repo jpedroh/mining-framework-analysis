@@ -1,21 +1,4 @@
-/*
- * Copyright 2012-2023 Aerospike, Inc.
- *
- * Portions may be licensed to Aerospike, Inc. under one or more contributor
- * license agreements WHICH ARE COMPATIBLE WITH THE APACHE LICENSE, VERSION 2.0.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.aerospike.examples;
-
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
@@ -31,115 +14,75 @@ import com.aerospike.client.query.Statement;
 import com.aerospike.client.task.IndexTask;
 
 public class QueryString extends Example {
+  public QueryString(Console console) {
+    super(console);
+  }
 
-	public QueryString(Console console) {
-		super(console);
-	}
-
-	/**
+  /**
 	 * Create secondary index on a string bin and query on it.
 	 */
-	@Override
-	public void runExample(IAerospikeClient client, Parameters params) throws Exception {
-		String indexName = "queryindex";
-		String keyPrefix = "querykey";
-		String valuePrefix = "queryvalue";
-		String binName = "querybin";
-		int size = 5;
+  @Override public void runExample(IAerospikeClient client, Parameters params) throws Exception {
+    String indexName = "queryindex";
+    String keyPrefix = "querykey";
+    String valuePrefix = "queryvalue";
+    String binName = "querybin";
+    int size = 5;
+    createIndex(client, params, indexName, binName);
+    writeRecords(client, params, keyPrefix, binName, valuePrefix, size);
+    runQuery(client, params, indexName, binName, valuePrefix);
+    client.dropIndex(params.policy, params.namespace, params.set, indexName);
+  }
 
-		createIndex(client, params, indexName, binName);
-		writeRecords(client, params, keyPrefix, binName, valuePrefix, size);
-		runQuery(client, params, indexName, binName, valuePrefix);
-		client.dropIndex(params.policy, params.namespace, params.set, indexName);
-	}
+  private void createIndex(IAerospikeClient client, Parameters params, String indexName, String binName) throws Exception {
+    console.info("Create index: ns=%s set=%s index=%s bin=%s", params.namespace, params.set, indexName, binName);
+    Policy policy = new Policy();
+    policy.socketTimeout = 0;
+    try {
+      IndexTask task = client.createIndex(policy, params.namespace, params.set, indexName, binName, IndexType.STRING);
+      task.waitTillComplete();
+    } catch (AerospikeException ae) {
+      if (ae.getResultCode() != ResultCode.INDEX_ALREADY_EXISTS) {
+        throw ae;
+      }
+    }
+  }
 
-	private void createIndex(
-		IAerospikeClient client,
-		Parameters params,
-		String indexName,
-		String binName
-	) throws Exception {
-		console.info("Create index: ns=%s set=%s index=%s bin=%s",
-			params.namespace, params.set, indexName, binName);
+  private void writeRecords(IAerospikeClient client, Parameters params, String keyPrefix, String binName, String valuePrefix, int size) throws Exception {
+    for (int i = 1; i <= size; i++) {
+      Key key = new Key(params.namespace, params.set, keyPrefix + i);
+      Bin bin = new Bin(binName, valuePrefix + i);
+      console.info("Put: ns=%s set=%s key=%s bin=%s value=%s", key.namespace, key.setName, key.userKey, bin.name, bin.value);
+      client.put(params.writePolicy, key, bin);
+    }
+  }
 
-		Policy policy = new Policy();
-		policy.socketTimeout = 0; // Do not timeout on index create.
-
-		try {
-			IndexTask task = client.createIndex(policy, params.namespace, params.set, indexName, binName, IndexType.STRING);
-			task.waitTillComplete();
-		}
-		catch (AerospikeException ae) {
-			if (ae.getResultCode() != ResultCode.INDEX_ALREADY_EXISTS) {
-				throw ae;
-			}
-		}
-	}
-
-	private void writeRecords(
-		IAerospikeClient client,
-		Parameters params,
-		String keyPrefix,
-		String binName,
-		String valuePrefix,
-		int size
-	) throws Exception {
-		for (int i = 1; i <= size; i++) {
-			Key key = new Key(params.namespace, params.set, keyPrefix + i);
-			Bin bin = new Bin(binName, valuePrefix + i);
-
-			console.info("Put: ns=%s set=%s key=%s bin=%s value=%s",
-				key.namespace, key.setName, key.userKey, bin.name, bin.value);
-
-			client.put(params.writePolicy, key, bin);
-		}
-	}
-
-	private void runQuery(
-		IAerospikeClient client,
-		Parameters params,
-		String indexName,
-		String binName,
-		String valuePrefix
-	) throws Exception {
-
-		String filter = valuePrefix + 3;
-
-		console.info("Query for: ns=%s set=%s index=%s bin=%s filter=%s",
-			params.namespace, params.set, indexName, binName, filter);
-
-		Statement stmt = new Statement();
-		stmt.setNamespace(params.namespace);
-		stmt.setSetName(params.set);
-		stmt.setBinNames(binName);
-		stmt.setFilter(Filter.equal(binName, filter));
-
-		RecordSet rs = client.query(null, stmt);
-
-		try {
-			int count = 0;
-
-			while (rs.next()) {
-				Key key = rs.getKey();
-				Record record = rs.getRecord();
-				String result = record.getString(binName);
-
-				if (result.equals(filter)) {
-					console.info("Record found: ns=%s set=%s bin=%s key=%s value=%s",
-						key.namespace, key.setName, binName, Buffer.bytesToHexString(key.digest), result);
-				}
-				else {
-					console.error("Query mismatch: Expected %s. Received %s.", filter, result);
-				}
-				count++;
-			}
-
-			if (count == 0) {
-				console.error("Query failed. No records returned.");
-			}
-		}
-		finally {
-			rs.close();
-		}
-	}
+  private void runQuery(IAerospikeClient client, Parameters params, String indexName, String binName, String valuePrefix) throws Exception {
+    String filter = valuePrefix + 3;
+    console.info("Query for: ns=%s set=%s index=%s bin=%s filter=%s", params.namespace, params.set, indexName, binName, filter);
+    Statement stmt = new Statement();
+    stmt.setNamespace(params.namespace);
+    stmt.setSetName(params.set);
+    stmt.setBinNames(binName);
+    stmt.setFilter(Filter.equal(binName, filter));
+    RecordSet rs = client.query(null, stmt);
+    try {
+      int count = 0;
+      while (rs.next()) {
+        Key key = rs.getKey();
+        Record record = rs.getRecord();
+        String result = record.getString(binName);
+        if (result.equals(filter)) {
+          console.info("Record found: ns=%s set=%s bin=%s key=%s value=%s", key.namespace, key.setName, binName, Buffer.bytesToHexString(key.digest), result);
+        } else {
+          console.error("Query mismatch: Expected %s. Received %s.", filter, result);
+        }
+        count++;
+      }
+      if (count == 0) {
+        console.error("Query failed. No records returned.");
+      }
+    }  finally {
+      rs.close();
+    }
+  }
 }

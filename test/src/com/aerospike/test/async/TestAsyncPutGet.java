@@ -1,26 +1,7 @@
-/*
- * Copyright 2012-2023 Aerospike, Inc.
- *
- * Portions may be licensed to Aerospike, Inc. under one or more contributor
- * license agreements WHICH ARE COMPATIBLE WITH THE APACHE LICENSE, VERSION 2.0.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.aerospike.test.async;
-
 import java.io.IOException;
 import java.net.ConnectException;
-
 import org.junit.Test;
-
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
@@ -32,140 +13,125 @@ import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.WritePolicy;
 
 public class TestAsyncPutGet extends TestAsync {
-	private static final String binName = "putgetbin";
+  private static final String binName = "putgetbin";
 
-	@Test
-	public void asyncPutGetInline() {
-		final Key key = new Key(args.namespace, args.set, "putgetkey1");
-		final Bin bin = new Bin(binName, "value");
+  @Test public void asyncPutGetInline() {
+    final Key key = new Key(args.namespace, args.set, "putgetkey1");
+    final Bin bin = new Bin(binName, "value");
+    client.put(eventLoop, new WriteListener() {
+      public void onSuccess(final Key key) {
+        try {
+          client.get(eventLoop, new RecordListener() {
+            public void onSuccess(final Key key, final Record record) {
+              assertBinEqual(key, record, bin);
+              notifyComplete();
+            }
 
-		client.put(eventLoop, new WriteListener() {
-			public void onSuccess(final Key key) {
-				try {
-					// Write succeeded.  Now call read.
-					client.get(eventLoop, new RecordListener() {
-						public void onSuccess(final Key key, final Record record) {
-							assertBinEqual(key, record, bin);
-							notifyComplete();
-						}
+            public void onFailure(AerospikeException e) {
+              setError(e);
+              notifyComplete();
+            }
+          }, null, key);
+        } catch (Exception e) {
+          setError(e);
+          notifyComplete();
+        }
+      }
 
-						public void onFailure(AerospikeException e) {
-							setError(e);
-							notifyComplete();
-						}
-					}, null, key);
-				}
-				catch (Exception e) {
-					setError(e);
-					notifyComplete();
-				}
-			}
+      public void onFailure(AerospikeException e) {
+        setError(e);
+        notifyComplete();
+      }
+    }, null, key, bin);
+    waitTillComplete();
+  }
 
-			public void onFailure(AerospikeException e) {
-				setError(e);
-				notifyComplete();
-			}
-		}, null, key, bin);
+  @Test public void asyncPutGetWithRetry() {
+    final Key key = new Key(args.namespace, args.set, "putgetkey2");
+    final Bin bin = new Bin(binName, "value");
+    client.put(eventLoop, new WriteHandler(client, null, key, bin), null, key, bin);
+    waitTillComplete();
+  }
 
-		waitTillComplete();
-	}
+  private class WriteHandler implements WriteListener {
+    private final IAerospikeClient client;
 
-	@Test
-	public void asyncPutGetWithRetry() {
-		final Key key = new Key(args.namespace, args.set, "putgetkey2");
-		final Bin bin = new Bin(binName, "value");
-		client.put(eventLoop, new WriteHandler(client, null, key, bin), null, key, bin);
-		waitTillComplete();
-	}
+    private final WritePolicy policy;
 
-	private class WriteHandler implements WriteListener {
-		private final IAerospikeClient client;
-		private final WritePolicy policy;
-		private final Key key;
-		private final Bin bin;
-		private int failCount = 0;
+    private final Key key;
 
-		public WriteHandler(IAerospikeClient client, WritePolicy policy, Key key, Bin bin) {
-			this.client = client;
-			this.policy = policy;
-			this.key = key;
-			this.bin = bin;
-		}
+    private final Bin bin;
 
-		// Write success callback.
-		public void onSuccess(Key key) {
-			try {
-				// Write succeeded.  Now call read.
-				client.get(eventLoop, new ReadHandler(client, policy, key, bin), policy, key);
-			}
-			catch (Exception e) {
-				setError(e);
-				notifyComplete();
-			}
-		}
+    private int failCount = 0;
 
-		// Error callback.
-		public void onFailure(AerospikeException e) {
-			// Retry up to 2 more times.
-			if (++failCount <= 2) {
-				Throwable t = e.getCause();
+    public WriteHandler(IAerospikeClient client, WritePolicy policy, Key key, Bin bin) {
+      this.client = client;
+      this.policy = policy;
+      this.key = key;
+      this.bin = bin;
+    }
 
-				// Check for common socket errors.
-				if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
-					try {
-						client.put(eventLoop, this, policy, key, bin);
-						return;
-					}
-					catch (Exception ex) {
-						// Fall through to error case.
-					}
-				}
-			}
-			setError(e);
-			notifyComplete();
-		}
-	}
+    public void onSuccess(Key key) {
+      try {
+        client.get(eventLoop, new ReadHandler(client, policy, key, bin), policy, key);
+      } catch (Exception e) {
+        setError(e);
+        notifyComplete();
+      }
+    }
 
-	private class ReadHandler implements RecordListener {
-		private final IAerospikeClient client;
-		private final Policy policy;
-		private final Key key;
-		private final Bin bin;
-		private int failCount = 0;
+    public void onFailure(AerospikeException e) {
+      if (++failCount <= 2) {
+        Throwable t = e.getCause();
+        if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
+          try {
+            client.put(eventLoop, this, policy, key, bin);
+            return;
+          } catch (Exception ex) {
+          }
+        }
+      }
+      setError(e);
+      notifyComplete();
+    }
+  }
 
-		public ReadHandler(IAerospikeClient client, Policy policy, Key key, Bin bin) {
-			this.client = client;
-			this.policy = policy;
-			this.key = key;
-			this.bin = bin;
-		}
+  private class ReadHandler implements RecordListener {
+    private final IAerospikeClient client;
 
-		// Read success callback.
-		public void onSuccess(Key key, Record record) {
-			// Verify received bin value is what was written.
-			assertBinEqual(key, record, bin);
-			notifyComplete();
-		}
+    private final Policy policy;
 
-		// Error callback.
-		public void onFailure(AerospikeException e) {
-			// Retry up to 2 more times.
-			if (++failCount <= 2) {
-				Throwable t = e.getCause();
+    private final Key key;
 
-				// Check for common socket errors.
-				if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
-					try {
-						client.get(eventLoop, this, policy, key);
-						return;
-					}
-					catch (Exception ex) {
-						// Fall through to error case.
-					}
-				}
-			}
-			setError(e);
-			notifyComplete();
-		}
-	}
+    private final Bin bin;
+
+    private int failCount = 0;
+
+    public ReadHandler(IAerospikeClient client, Policy policy, Key key, Bin bin) {
+      this.client = client;
+      this.policy = policy;
+      this.key = key;
+      this.bin = bin;
+    }
+
+    public void onSuccess(Key key, Record record) {
+      assertBinEqual(key, record, bin);
+      notifyComplete();
+    }
+
+    public void onFailure(AerospikeException e) {
+      if (++failCount <= 2) {
+        Throwable t = e.getCause();
+        if (t != null && (t instanceof ConnectException || t instanceof IOException)) {
+          try {
+            client.get(eventLoop, this, policy, key);
+            return;
+          } catch (Exception ex) {
+          }
+        }
+      }
+      setError(e);
+      notifyComplete();
+    }
+  }
 }
