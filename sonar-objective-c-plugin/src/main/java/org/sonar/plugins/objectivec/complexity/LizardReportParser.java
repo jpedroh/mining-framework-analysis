@@ -156,6 +156,12 @@ public class LizardReportParser {
         list.add(new Measure(CoreMetrics.FILE_COMPLEXITY, fileComplexity));
         RangeDistributionBuilder complexityDistribution = new RangeDistributionBuilder(CoreMetrics.FILE_COMPLEXITY_DISTRIBUTION, FILES_DISTRIB_BOTTOM_LIMITS);
         complexityDistribution.add(fileComplexity);
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/left.java
+||||||| /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/base.java
+        list.add(complexityDistribution.build().setPersistenceMode(PersistenceMode.MEMORY));
+=======
+        list.add(complexityDistribution.build());
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/right.java
         return list;
     }
 
@@ -223,6 +229,12 @@ public class LizardReportParser {
         List<Measure> list = new ArrayList<Measure>();
         list.add(new Measure(CoreMetrics.FUNCTION_COMPLEXITY, complexMean));
         list.add(new Measure(CoreMetrics.COMPLEXITY_IN_FUNCTIONS).setIntValue(complexityInFunctions));
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/left.java
+||||||| /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/base.java
+        list.add(builder.build().setPersistenceMode(PersistenceMode.MEMORY));
+=======
+        list.add(builder.build());
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/b836820b107cd3bc5b7501fbccec5233804e39fb/sonar-objective-c-plugin/src/main/java/org/sonar/plugins/objectivec/complexity/LizardReportParser.java/right.java
         return list;
     }
 
