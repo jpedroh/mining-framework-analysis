@@ -69,61 +69,69 @@ public final class NetworkHandler {
 
     @SuppressWarnings("rawtypes")
     public final void send(PacketType var1, Object... var2) {
-	if (this.connected) {
-	    this.out.put(var1.opcode);
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/net/NetworkHandler.java/left.java
+||||||| /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/net/NetworkHandler.java/base.java
+    	if (var1.opcode != 8 && var1.opcode != 2 && var1.opcode != 3)
+    	    System.out.println("Sending Packet: " + var1.opcode);
+=======
+    	//if (var1.opcode != 8 && var1.opcode != 2 && var1.opcode != 3)
+    	    //System.out.println("Sending Packet: " + var1.opcode);
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/net/NetworkHandler.java/right.java
+    	if (this.connected) {
+    	    this.out.put(var1.opcode);
 
-	    for (int var3 = 0; var3 < var2.length; ++var3) {
-		Class var10001 = var1.params[var3];
-		Object var4 = var2[var3];
-		Class var5 = var10001;
-		NetworkHandler var6 = this;
-		if (this.connected) {
-		    try {
-			if (var5 == Long.TYPE) {
-			    var6.out.putLong(((Long) var4).longValue());
-			} else if (var5 == Integer.TYPE) {
-			    var6.out.putInt(((Number) var4).intValue());
-			} else if (var5 == Short.TYPE) {
-			    var6.out.putShort(((Number) var4).shortValue());
-			} else if (var5 == Byte.TYPE) {
-			    var6.out.put(((Number) var4).byteValue());
-			} else if (var5 == Double.TYPE) {
-			    var6.out.putDouble(((Double) var4).doubleValue());
-			} else if (var5 == Float.TYPE) {
-			    var6.out.putFloat(((Float) var4).floatValue());
-			} else {
-			    byte[] var9;
-			    if (var5 != String.class) {
-				if (var5 == byte[].class) {
-				    if ((var9 = (byte[]) ((byte[]) var4)).length < 1024) {
-					var9 = Arrays.copyOf(var9, 1024);
-				    }
+    	    for (int var3 = 0; var3 < var2.length; ++var3) {
+    		Class var10001 = var1.params[var3];
+    		Object var4 = var2[var3];
+    		Class var5 = var10001;
+    		NetworkHandler var6 = this;
+    		if (this.connected) {
+    		    try {
+    			if (var5 == Long.TYPE) {
+    			    var6.out.putLong(((Long) var4).longValue());
+    			} else if (var5 == Integer.TYPE) {
+    			    var6.out.putInt(((Number) var4).intValue());
+    			} else if (var5 == Short.TYPE) {
+    			    var6.out.putShort(((Number) var4).shortValue());
+    			} else if (var5 == Byte.TYPE) {
+    			    var6.out.put(((Number) var4).byteValue());
+    			} else if (var5 == Double.TYPE) {
+    			    var6.out.putDouble(((Double) var4).doubleValue());
+    			} else if (var5 == Float.TYPE) {
+    			    var6.out.putFloat(((Float) var4).floatValue());
+    			} else {
+    			    byte[] var9;
+    			    if (var5 != String.class) {
+    				if (var5 == byte[].class) {
+    				    if ((var9 = (byte[]) ((byte[]) var4)).length < 1024) {
+    					var9 = Arrays.copyOf(var9, 1024);
+    				    }
 
-				    var6.out.put(var9);
-				}
-			    } else {
-				var9 = ((String) var4).getBytes("UTF-8");
-				Arrays.fill(var6.stringBytes, (byte) 32);
+    				    var6.out.put(var9);
+    				}
+    			    } else {
+    				var9 = ((String) var4).getBytes("UTF-8");
+    				Arrays.fill(var6.stringBytes, (byte) 32);
 
-				int var8;
-				for (var8 = 0; var8 < 64 && var8 < var9.length; ++var8) {
-				    var6.stringBytes[var8] = var9[var8];
-				}
+    				int var8;
+    				for (var8 = 0; var8 < 64 && var8 < var9.length; ++var8) {
+    				    var6.stringBytes[var8] = var9[var8];
+    				}
 
-				for (var8 = var9.length; var8 < 64; ++var8) {
-				    var6.stringBytes[var8] = 32;
-				}
+    				for (var8 = var9.length; var8 < 64; ++var8) {
+    				    var6.stringBytes[var8] = 32;
+    				}
 
-				var6.out.put(var6.stringBytes);
-			    }
-			}
-		    } catch (Exception var7) {
-			this.netManager.error(var7);
-		    }
-		}
-	    }
+    				var6.out.put(var6.stringBytes);
+    			    }
+    			}
+    		    } catch (Exception var7) {
+    			this.netManager.error(var7);
+    		    }
+    		}
+    	    }
 
-	}
+    	}
     }
 
     @SuppressWarnings("rawtypes")

@@ -2001,14 +2001,14 @@ public final class Minecraft implements Runnable {
 
     private void tick() {
 	if (this.soundPlayer != null) {
-	    SoundPlayer var1 = this.soundPlayer;
-	    SoundManager var2 = this.sound;
-	    if (System.currentTimeMillis() > var2.lastMusic
-		    && var2.playMusic(var1, "calm")) {
-		var2.lastMusic = System.currentTimeMillis()
-			+ var2.random.nextInt(900000) + 300000L;
-	    }
-	}
+        SoundPlayer var1 = this.soundPlayer;
+        SoundManager var2 = this.sound;
+        if (System.currentTimeMillis() > var2.lastMusic
+    	    && var2.playMusic(var1, "calm")) {
+    	var2.lastMusic = System.currentTimeMillis()
+    		+ var2.random.nextInt(900000) + 300000L;
+        }
+    }
 
 	this.gamemode.spawnMob();
 	HUDScreen var17 = this.hud;
@@ -2016,23 +2016,23 @@ public final class Minecraft implements Runnable {
 
 	int var16;
 	for (var16 = 0; var16 < var17.chat.size(); ++var16) {
-	    ++((ChatLine) var17.chat.get(var16)).time;
-	}
+        ++((ChatLine) var17.chat.get(var16)).time;
+    }
 
 	GL11.glBindTexture(3553, this.textureManager.load("/terrain.png"));
 	TextureManager var19 = this.textureManager;
 
 	for (var16 = 0; var16 < var19.animations.size(); ++var16) {
-	    TextureFX var3;
-	    (var3 = var19.animations.get(var16)).anaglyph = var19.settings.anaglyph;
-	    var3.animate();
-	    var19.textureBuffer.clear();
-	    var19.textureBuffer.put(var3.textureData);
-	    var19.textureBuffer.position(0).limit(var3.textureData.length);
-	    GL11.glTexSubImage2D(3553, 0, var3.textureId % 16 << 4,
-		    var3.textureId / 16 << 4, 16, 16, 6408, 5121,
-		    var19.textureBuffer);
-	}
+        TextureFX var3;
+        (var3 = var19.animations.get(var16)).anaglyph = var19.settings.anaglyph;
+        var3.animate();
+        var19.textureBuffer.clear();
+        var19.textureBuffer.put(var3.textureData);
+        var19.textureBuffer.position(0).limit(var3.textureData.length);
+        GL11.glTexSubImage2D(3553, 0, var3.textureId % 16 << 4,
+    	    var3.textureId / 16 << 4, 16, 16, 6408, 5121,
+    	    var19.textureBuffer);
+    }
 
 	int var4;
 	int i;
@@ -2040,868 +2040,905 @@ public final class Minecraft implements Runnable {
 	int var46;
 	int var45;
 	if (this.networkManager != null
-		&& !(this.currentScreen instanceof ErrorScreen)) {
-	    if (!this.networkManager.isConnected()) {
+    	&& !(this.currentScreen instanceof ErrorScreen)) {
+        if (!this.networkManager.isConnected()) {
 		this.progressBar.setTitle("Connecting..");
 		this.progressBar.setProgress(0);
-	    } else {
+        } else {
 		NetworkManager var20 = this.networkManager;
 		if (this.networkManager.successful) {
-		    if (var20.netHandler.connected) {
+            if (var20.netHandler.connected) {
 			try {
-			    NetworkHandler networkHandler = var20.netHandler;
-			    var20.netHandler.channel.read(networkHandler.in);
-			    var4 = 0;
-			    while (networkHandler.in.position() > 0
+                NetworkHandler networkHandler = var20.netHandler;
+                var20.netHandler.channel.read(networkHandler.in);
+                var4 = 0;
+                while (networkHandler.in.position() > 0
 				    && var4++ != 100) {
-				networkHandler.in.flip();
-				byte id = networkHandler.in.get(0);
-				PacketType packetType;
-				if ((packetType = PacketType.packets[id]) == null) {
-				    throw new IOException("Bad command: " + id);
-				}
-				if (networkHandler.in.remaining() < packetType.length + 1) {
-				    networkHandler.in.compact();
-				    break;
-				}
-				networkHandler.in.get();
-				Object[] packetParams = new Object[packetType.params.length];
+                				networkHandler.in.flip();
+                				byte id = networkHandler.in.get(0);
+                				PacketType packetType;
+                				if ((packetType = PacketType.packets[id]) == null) {
+                				    throw new IOException("Bad command: " + id);
+                				}
+                				if (networkHandler.in.remaining() < packetType.length + 1) {
+                				    networkHandler.in.compact();
+                				    break;
+                				}
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+||||||| /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                				if (packetType.opcode != 8
+                					&& packetType.opcode != 2) {
+                				    System.out.println("Reading Packet: "
+                					    + packetType.opcode);
+                				}
+=======
+                				if (packetType.opcode != 8
+                					&& packetType.opcode != 2) {
+                				    //System.out.println("Reading Packet: "
+                					//    + packetType.opcode);
+                				}
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
+                				networkHandler.in.get();
+                				Object[] packetParams = new Object[packetType.params.length];
 
-				for (i = 0; i < packetParams.length; ++i) {
-				    packetParams[i] = networkHandler
-					    .readObject(packetType.params[i]);
-				}
+                				for (i = 0; i < packetParams.length; ++i) {
+                				    packetParams[i] = networkHandler
+                					    .readObject(packetType.params[i]);
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+||||||| /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                				    if (packetType.opcode != 8
+                					    && packetType.opcode != 2) {
+                					System.out.println("Reading object: "
+                						+ packetParams[i]);
+                				    }
+=======
+                				    if (packetType.opcode != 8
+                					    && packetType.opcode != 2) {
+                					//System.out.println("Reading object: "
+                					//	+ packetParams[i]);
+                				    }
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
+                				}
 
-				NetworkManager networkManager = networkHandler.netManager;
-				if (networkHandler.netManager.successful) {
-				    if (packetType == PacketType.EXT_INFO) {
-					String AppName = (String) packetParams[0];
-					short ExtensionCount = (Short) packetParams[1];
-					System.out
-						.println("Connecting to AppName: "
-							+ AppName
-							+ " with extension count: "
-							+ ExtensionCount);
-					recievedExtensionLength = ExtensionCount;
-				    } else if (packetType == PacketType.EXT_ENTRY) {
-					String ExtName = ((String) packetParams[0]);
-					Integer Version = ((Integer) packetParams[1])
-						.intValue();
-					com.oyasunadev.mcraft.client.util.Constants.ServerSupportedExtensions
-						.add(new ExtData(ExtName,
-							Version));
+                				NetworkManager networkManager = networkHandler.netManager;
+                				if (networkHandler.netManager.successful) {
+                				    if (packetType == PacketType.EXT_INFO) {
+                					String AppName = (String) packetParams[0];
+                					short ExtensionCount = (Short) packetParams[1];
+                					//System.out
+                					//	.println("Connecting to AppName: "
+                					//		+ AppName
+                					//		+ " with extension count: "
+                					//		+ ExtensionCount);
+                					recievedExtensionLength = ExtensionCount;
+                				    } else if (packetType == PacketType.EXT_ENTRY) {
+                					String ExtName = ((String) packetParams[0]);
+                					Integer Version = ((Integer) packetParams[1])
+                						.intValue();
+                					com.oyasunadev.mcraft.client.util.Constants.ServerSupportedExtensions
+                						.add(new ExtData(ExtName,
+                							Version));
 
-					if (recievedExtensionLength == com.oyasunadev.mcraft.client.util.Constants.ServerSupportedExtensions
-						.size()) {
-					    List<ExtData> temp = new ArrayList<ExtData>();
-					    for (int j = 0; j < PacketType.packets.length - 1; j++) {
-						if (PacketType.packets[j] != null) {
-						    if (PacketType.packets[j].extName != "") {
-							temp.add(new ExtData(
-								PacketType.packets[j].extName,
-								PacketType.packets[j].Version));
-						    }
-						}
-					    }
-					    String AppName = "ClassiCube Client";
-					    Object[] toSendParams = new Object[] {
-						    AppName, temp.size() };
-					    networkManager.netHandler.send(
-						    PacketType.EXT_INFO,
-						    toSendParams);
-					    for (int k = 0; k < temp.size(); k++) {
-						toSendParams = new Object[] {
-							temp.get(k).Name,
-							temp.get(k).Version };
-						networkManager.netHandler.send(
-							PacketType.EXT_ENTRY,
-							toSendParams);
-					    }
-					}
-				    } else if (packetType == PacketType.SELECTION_CUBOID) {
-					byte ID = ((Byte) packetParams[0])
-						.byteValue();
-					String Name = ((String) packetParams[1]);
-					Short X1 = ((Short) packetParams[2]);
-					Short Y1 = ((Short) packetParams[3]);
-					Short Z1 = ((Short) packetParams[4]);
-					Short X2 = ((Short) packetParams[5]);
-					Short Y2 = ((Short) packetParams[6]);
-					Short Z2 = ((Short) packetParams[7]);
-					byte r = ((Byte) packetParams[8])
-						.byteValue();
-					byte g = ((Byte) packetParams[9])
-						.byteValue();
-					byte b = ((Byte) packetParams[10])
-						.byteValue();
-					byte a = ((Byte) packetParams[11])
-						.byteValue();
-					SelectionBoxData data = new SelectionBoxData(
-						ID, Name,
-						new ColorCache(r / 255.0F,
-							g / 255.0F, b / 255.0F,
-							a / 255.0F),
-						new CustomAABB(X1, Y1, Z1, X2,
-							Y2, Z2));
-					this.selectionBoxes.add(data);
-				    } else if (packetType == PacketType.REMOVE_SELECTION_CUBOID) {
-					byte ID = ((Byte) packetParams[0])
-						.byteValue();
-					List<SelectionBoxData> cache = this.selectionBoxes;
-					for (int q = 0; q < this.selectionBoxes
-						.size(); q++) {
-					    if (this.selectionBoxes.get(q).ID == ID) {
-						cache.remove(q);
-					    }
-					}
-					this.selectionBoxes = cache;
-				    } else if (packetType == PacketType.ENV_SET_COLOR) {
-					byte Variable = ((Byte) packetParams[0])
-						.byteValue();
-					byte r = ((Byte) packetParams[1])
-						.byteValue();
-					byte g = ((Byte) packetParams[2])
-						.byteValue();
-					byte b = ((Byte) packetParams[3])
-						.byteValue();
-					int dec = 256 * 256 * r + 256 * g + b;
-					switch (Variable) {
-					case 0: // sky
-					    this.level.skyColor = dec;
-					    break;
-					case 1: // cloud
-					    this.level.cloudColor = dec;
-					    break;
-					case 2: // fog
-					    this.level.fogColor = dec;
-					    break;
-					case 3: // ambient light
-					    this.level.customShadowColour = new ColorCache(
-						    r / 255.0F, g / 255.0F,
-						    b / 255.0F);
-					    break;
-					case 4: // diffuse color
-					    this.level.customLightColour = new ColorCache(
-						    r / 255.0F, g / 255.0F,
-						    b / 255.0F);
-					    break;
-					}
-					this.levelRenderer.refresh();
-				    } else if (packetType == PacketType.CLICK_DISTANCE) {
-					short Distance = (Short) packetParams[0];
-					this.gamemode.reachDistance = Distance / 32;
-				    } else if (packetType == PacketType.HOLDTHIS) {
-					byte BlockToHold = ((Byte) packetParams[0])
-						.byteValue();
-					byte PreventChange = ((Byte) packetParams[1])
-						.byteValue();
-					boolean CanPreventChange = PreventChange > 0;
+                					if (recievedExtensionLength == com.oyasunadev.mcraft.client.util.Constants.ServerSupportedExtensions
+                						.size()) {
+                					    List<ExtData> temp = new ArrayList<ExtData>();
+                					    for (int j = 0; j < PacketType.packets.length - 1; j++) {
+                						if (PacketType.packets[j] != null) {
+                						    if (PacketType.packets[j].extName != "") {
+                							temp.add(new ExtData(
+                								PacketType.packets[j].extName,
+                								PacketType.packets[j].Version));
+                						    }
+                						}
+                					    }
+                					    String AppName = "ClassiCube Client";
+                					    Object[] toSendParams = new Object[] {
+                						    AppName, temp.size() };
+                					    networkManager.netHandler.send(
+                						    PacketType.EXT_INFO,
+                						    toSendParams);
+                					    for (int k = 0; k < temp.size(); k++) {
+                						toSendParams = new Object[] {
+                							temp.get(k).Name,
+                							temp.get(k).Version };
+                						networkManager.netHandler.send(
+                							PacketType.EXT_ENTRY,
+                							toSendParams);
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/left.java
+||||||| /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/base.java
+                						System.out.println("Sent: "
+                							+ temp.get(k).Name);
+=======
+                						//System.out.println("Sent: "
+                						//	+ temp.get(k).Name);
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/022163f0262d8e0fe327261ab7e63d374edf0495/src/main/java/com/mojang/minecraft/Minecraft.java/right.java
+                					    }
+                					    //System.out.println("Done");
+                					}
+                				    } else if (packetType == PacketType.SELECTION_CUBOID) {
+                					byte ID = ((Byte) packetParams[0])
+                						.byteValue();
+                					String Name = ((String) packetParams[1]);
+                					Short X1 = ((Short) packetParams[2]);
+                					Short Y1 = ((Short) packetParams[3]);
+                					Short Z1 = ((Short) packetParams[4]);
+                					Short X2 = ((Short) packetParams[5]);
+                					Short Y2 = ((Short) packetParams[6]);
+                					Short Z2 = ((Short) packetParams[7]);
+                					byte r = ((Byte) packetParams[8])
+                						.byteValue();
+                					byte g = ((Byte) packetParams[9])
+                						.byteValue();
+                					byte b = ((Byte) packetParams[10])
+                						.byteValue();
+                					byte a = ((Byte) packetParams[11])
+                						.byteValue();
+                					SelectionBoxData data = new SelectionBoxData(
+                						ID, Name,
+                						new ColorCache(r / 255.0F,
+                							g / 255.0F, b / 255.0F,
+                							a / 255.0F),
+                						new CustomAABB(X1, Y1, Z1, X2,
+                							Y2, Z2));
+                					this.selectionBoxes.add(data);
+                				    } else if (packetType == PacketType.REMOVE_SELECTION_CUBOID) {
+                					byte ID = ((Byte) packetParams[0])
+                						.byteValue();
+                					List<SelectionBoxData> cache = this.selectionBoxes;
+                					for (int q = 0; q < this.selectionBoxes
+                						.size(); q++) {
+                					    if (this.selectionBoxes.get(q).ID == ID) {
+                						cache.remove(q);
+                					    }
+                					}
+                					this.selectionBoxes = cache;
+                				    } else if (packetType == PacketType.ENV_SET_COLOR) {
+                					byte Variable = ((Byte) packetParams[0])
+                						.byteValue();
+                					byte r = ((Byte) packetParams[1])
+                						.byteValue();
+                					byte g = ((Byte) packetParams[2])
+                						.byteValue();
+                					byte b = ((Byte) packetParams[3])
+                						.byteValue();
+                					int dec = 256 * 256 * r + 256 * g + b;
+                					switch (Variable) {
+                					case 0: // sky
+                					    this.level.skyColor = dec;
+                					    break;
+                					case 1: // cloud
+                					    this.level.cloudColor = dec;
+                					    break;
+                					case 2: // fog
+                					    this.level.fogColor = dec;
+                					    break;
+                					case 3: // ambient light
+                					    this.level.customShadowColour = new ColorCache(
+                						    r / 255.0F, g / 255.0F,
+                						    b / 255.0F);
+                					    break;
+                					case 4: // diffuse color
+                					    this.level.customLightColour = new ColorCache(
+                						    r / 255.0F, g / 255.0F,
+                						    b / 255.0F);
+                					    break;
+                					}
+                					this.levelRenderer.refresh();
+                				    } else if (packetType == PacketType.CLICK_DISTANCE) {
+                					short Distance = (Short) packetParams[0];
+                					this.gamemode.reachDistance = Distance / 32;
+                				    } else if (packetType == PacketType.HOLDTHIS) {
+                					byte BlockToHold = ((Byte) packetParams[0])
+                						.byteValue();
+                					byte PreventChange = ((Byte) packetParams[1])
+                						.byteValue();
+                					boolean CanPreventChange = PreventChange > 0;
 
-					if (CanPreventChange == true)
-					    GameSettings.CanReplaceSlot = false;
+                					if (CanPreventChange == true)
+                					    GameSettings.CanReplaceSlot = false;
 
-					this.player.inventory.selected = 0;
-					this.player.inventory
-						.replaceSlot(Block.blocks[BlockToHold]);
+                					this.player.inventory.selected = 0;
+                					this.player.inventory
+                						.replaceSlot(Block.blocks[BlockToHold]);
 
-					if (CanPreventChange == false)
-					    GameSettings.CanReplaceSlot = true;
-				    } else if (packetType == PacketType.SET_TEXT_HOTKEY) {
-					String Label = (String) packetParams[0];
-					String Action = (String) packetParams[1];
-					int keyCode = (Integer) packetParams[2];
-					byte KeyMods = ((Byte) packetParams[3])
-						.byteValue();
-					HotKeyData data = new HotKeyData(Label,
-						Action, keyCode, KeyMods);
-					this.hotKeys.add(data);
+                					if (CanPreventChange == false)
+                					    GameSettings.CanReplaceSlot = true;
+                				    } else if (packetType == PacketType.SET_TEXT_HOTKEY) {
+                					String Label = (String) packetParams[0];
+                					String Action = (String) packetParams[1];
+                					int keyCode = (Integer) packetParams[2];
+                					byte KeyMods = ((Byte) packetParams[3])
+                						.byteValue();
+                					HotKeyData data = new HotKeyData(Label,
+                						Action, keyCode, KeyMods);
+                					this.hotKeys.add(data);
 
-				    } else if (packetType == PacketType.EXT_ADD_PLAYER_NAME) {
-					Short NameId = (Short) packetParams[0];
-					String playerName = (String) packetParams[1];
-					String listName = (String) packetParams[2];
-					String groupName = (String) packetParams[3];
-					byte unusedRank = ((Byte) packetParams[4])
-						.byteValue();
-					this.playerListNameData
-						.add(new PlayerListNameData(
-							NameId, playerName,
-							listName, groupName,
-							unusedRank));
-					Collections.sort(playerListNameData,
-						new PlayerListComparator());
-				    } else if (packetType == PacketType.EXT_ADD_ENTITY) {
-					byte playerID = ((Byte) packetParams[0])
-						.byteValue();
-					String playerName = (String) packetParams[1];
-					String skinName = (String) packetParams[2];
+                				    } else if (packetType == PacketType.EXT_ADD_PLAYER_NAME) {
+                					Short NameId = (Short) packetParams[0];
+                					String playerName = (String) packetParams[1];
+                					String listName = (String) packetParams[2];
+                					String groupName = (String) packetParams[3];
+                					byte unusedRank = ((Byte) packetParams[4])
+                						.byteValue();
+                					this.playerListNameData
+                						.add(new PlayerListNameData(
+                							NameId, playerName,
+                							listName, groupName,
+                							unusedRank));
+                					Collections.sort(playerListNameData,
+                						new PlayerListComparator());
+                				    } else if (packetType == PacketType.EXT_ADD_ENTITY) {
+                					byte playerID = ((Byte) packetParams[0])
+                						.byteValue();
+                					String playerName = (String) packetParams[1];
+                					String skinName = (String) packetParams[2];
 
-					NetworkPlayer player = networkManager.players
-						.get(playerID);
-					if (player != null) {
-					    player.SkinName = skinName;
-					    player.downloadSkin();
-					}
-				    } else if (packetType == PacketType.EXT_REMOVE_PLAYER_NAME) {
-					Short NameId = (Short) packetParams[0];
-					List<PlayerListNameData> cache = this.playerListNameData;
-					for (int q = 0; q < this.playerListNameData
-						.size(); q++) {
-					    if (this.playerListNameData.get(q).nameID == NameId) {
-						cache.remove(q);
-					    }
-					}
-					this.playerListNameData = cache;
-				    } else if (packetType == PacketType.CUSTOM_BLOCK_SUPPORT_LEVEL) {
-					//System.out
-					//	.println("Custom block packet");
-					byte SupportLevel = ((Byte) packetParams[0])
-						.byteValue();
-					networkManager.netHandler
-						.send(PacketType.CUSTOM_BLOCK_SUPPORT_LEVEL,
-							com.oyasunadev.mcraft.client.util.Constants.SupportLevel);
-					SessionData
-						.SetAllowedBlocks(SupportLevel);
-				    }
+                					NetworkPlayer player = networkManager.players
+                						.get(playerID);
+                					if (player != null) {
+                					    player.SkinName = skinName;
+                					    player.downloadSkin();
+                					}
+                				    } else if (packetType == PacketType.EXT_REMOVE_PLAYER_NAME) {
+                					Short NameId = (Short) packetParams[0];
+                					List<PlayerListNameData> cache = this.playerListNameData;
+                					for (int q = 0; q < this.playerListNameData
+                						.size(); q++) {
+                					    if (this.playerListNameData.get(q).nameID == NameId) {
+                						cache.remove(q);
+                					    }
+                					}
+                					this.playerListNameData = cache;
+                				    } else if (packetType == PacketType.CUSTOM_BLOCK_SUPPORT_LEVEL) {
+                					//System.out
+                					//	.println("Custom block packet");
+                					byte SupportLevel = ((Byte) packetParams[0])
+                						.byteValue();
+                					networkManager.netHandler
+                						.send(PacketType.CUSTOM_BLOCK_SUPPORT_LEVEL,
+                							com.oyasunadev.mcraft.client.util.Constants.SupportLevel);
+                					SessionData
+                						.SetAllowedBlocks(SupportLevel);
+                				    }
 
-				    else if (packetType == PacketType.IDENTIFICATION) {
-					networkManager.minecraft.progressBar
-						.setTitle(packetParams[1]
-							.toString());
-					networkManager.minecraft.progressBar
-						.setText(packetParams[2]
-							.toString());
-					networkManager.minecraft.player.userType = ((Byte) packetParams[3])
-						.byteValue();
-				    } else if (packetType == PacketType.LEVEL_INIT) {
-					networkManager.minecraft
-						.setLevel((Level) null);
-					networkManager.levelData = new ByteArrayOutputStream();
-				    } else if (packetType == PacketType.LEVEL_DATA) {
-					short chunkLength = ((Short) packetParams[0])
-						.shortValue();
-					byte[] chunkData = ((byte[]) packetParams[1]);
-					byte percentComplete = ((Byte) packetParams[2])
-						.byteValue();
-					networkManager.minecraft.progressBar
-						.setProgress(percentComplete);
-					networkManager.levelData.write(
-						chunkData, 0, chunkLength);
-				    } else if (packetType == PacketType.LEVEL_FINALIZE) {
-					try {
-					    networkManager.levelData.close();
-					} catch (IOException e) {
-					    e.printStackTrace();
-					}
+                				    else if (packetType == PacketType.IDENTIFICATION) {
+                					networkManager.minecraft.progressBar
+                						.setTitle(packetParams[1]
+                							.toString());
+                					networkManager.minecraft.progressBar
+                						.setText(packetParams[2]
+                							.toString());
+                					networkManager.minecraft.player.userType = ((Byte) packetParams[3])
+                						.byteValue();
+                				    } else if (packetType == PacketType.LEVEL_INIT) {
+                					networkManager.minecraft
+                						.setLevel((Level) null);
+                					networkManager.levelData = new ByteArrayOutputStream();
+                				    } else if (packetType == PacketType.LEVEL_DATA) {
+                					short chunkLength = ((Short) packetParams[0])
+                						.shortValue();
+                					byte[] chunkData = ((byte[]) packetParams[1]);
+                					byte percentComplete = ((Byte) packetParams[2])
+                						.byteValue();
+                					networkManager.minecraft.progressBar
+                						.setProgress(percentComplete);
+                					networkManager.levelData.write(
+                						chunkData, 0, chunkLength);
+                				    } else if (packetType == PacketType.LEVEL_FINALIZE) {
+                					try {
+                					    networkManager.levelData.close();
+                					} catch (IOException e) {
+                					    e.printStackTrace();
+                					}
 
-					byte[] decompressedStream = LevelIO
-						.decompress(new ByteArrayInputStream(
-							networkManager.levelData
-								.toByteArray()));
-					networkManager.levelData = null;
-					short xSize = ((Short) packetParams[0])
-						.shortValue();
-					short ySize = ((Short) packetParams[1])
-						.shortValue();
-					short zSize = ((Short) packetParams[2])
-						.shortValue();
-					Level level;
-					(level = new Level())
-						.setNetworkMode(true);
-					level.setData(xSize, ySize, zSize,
-						decompressedStream);
-					networkManager.minecraft
-						.setLevel(level);
-					networkManager.minecraft.online = false;
-					networkManager.levelLoaded = true;
-					// ProgressBarDisplay.InitEnv(this);
-					// this.levelRenderer.refresh();
-				    } else if (packetType == PacketType.BLOCK_CHANGE) {
-					if (networkManager.minecraft.level != null) {
-					    networkManager.minecraft.level
-						    .netSetTile(
-							    ((Short) packetParams[0])
-								    .shortValue(),
-							    ((Short) packetParams[1])
-								    .shortValue(),
-							    ((Short) packetParams[2])
-								    .shortValue(),
-							    ((Byte) packetParams[3])
-								    .byteValue());
-					}
-				    } else {
-					byte var9;
-					String var34;
-					NetworkPlayer var33;
-					short var36;
-					short var10004;
-					byte var10001;
-					short var47;
-					short var10003;
-					if (packetType == PacketType.SPAWN_PLAYER) {
-					    var10001 = ((Byte) packetParams[0])
-						    .byteValue();
-					    String var10002 = (String) packetParams[1];
-					    var10003 = ((Short) packetParams[2])
-						    .shortValue();
-					    var10004 = ((Short) packetParams[3])
-						    .shortValue();
-					    short var10005 = ((Short) packetParams[4])
-						    .shortValue();
-					    byte var10006 = ((Byte) packetParams[5])
-						    .byteValue();
-					    byte var58 = ((Byte) packetParams[6])
-						    .byteValue();
-					    var9 = var10006;
-					    short var10 = var10005;
-					    var47 = var10004;
-					    var36 = var10003;
-					    var34 = var10002;
-					    byte var5 = var10001;
-					    if (var5 >= 0) {
-						var9 = (byte) (var9 + 128);
-						var47 = (short) (var47 - 22);
-						var33 = new NetworkPlayer(
-							networkManager.minecraft,
-							var5, var34, var36,
-							var47, var10,
-							var9 * 360 / 256.0F,
-							var58 * 360 / 256.0F);
-						networkManager.players.put(
-							Byte.valueOf(var5),
-							var33);
-						networkManager.minecraft.level
-							.addEntity(var33);
-					    } else {
-						networkManager.minecraft.level
-							.setSpawnPos(
-								var36 / 32,
-								var47 / 32,
-								var10 / 32,
-								var9 * 320 / 256);
-						networkManager.minecraft.player
-							.moveTo(var36 / 32.0F,
-								var47 / 32.0F,
-								var10 / 32.0F,
-								var9 * 360 / 256.0F,
-								var58 * 360 / 256.0F);
-					    }
-					} else {
-					    byte var53;
-					    NetworkPlayer var61;
-					    byte var69;
-					    if (packetType == PacketType.POSITION_ROTATION) {
-						var10001 = ((Byte) packetParams[0])
-							.byteValue();
-						short var66 = ((Short) packetParams[1])
-							.shortValue();
-						var10003 = ((Short) packetParams[2])
-							.shortValue();
-						var10004 = ((Short) packetParams[3])
-							.shortValue();
-						var69 = ((Byte) packetParams[4])
-							.byteValue();
-						var9 = ((Byte) packetParams[5])
-							.byteValue();
-						var53 = var69;
-						var47 = var10004;
-						var36 = var10003;
-						short var38 = var66;
-						byte var5 = var10001;
-						if (var5 < 0) {
-						    networkManager.minecraft.player
-							    .moveTo(var38 / 32.0F,
-								    var36 / 32.0F,
-								    var47 / 32.0F,
-								    var53 * 360 / 256.0F,
-								    var9 * 360 / 256.0F);
-						} else {
-						    var53 = (byte) (var53 + 128);
-						    var36 = (short) (var36 - 22);
-						    if ((var61 = networkManager.players
-							    .get(Byte
-								    .valueOf(var5))) != null) {
-							var61.teleport(
-								var38,
-								var36,
-								var47,
-								var53 * 360 / 256.0F,
-								var9 * 360 / 256.0F);
-						    }
-						}
-					    } else {
-						byte var37;
-						byte var44;
-						byte var49;
-						byte var65;
-						byte var67;
-						if (packetType == PacketType.POSITION_ROTATION_UPDATE) {
-						    var10001 = ((Byte) packetParams[0])
-							    .byteValue();
-						    var67 = ((Byte) packetParams[1])
-							    .byteValue();
-						    var65 = ((Byte) packetParams[2])
-							    .byteValue();
-						    byte var64 = ((Byte) packetParams[3])
-							    .byteValue();
-						    var69 = ((Byte) packetParams[4])
-							    .byteValue();
-						    var9 = ((Byte) packetParams[5])
-							    .byteValue();
-						    var53 = var69;
-						    var49 = var64;
-						    var44 = var65;
-						    var37 = var67;
-						    byte var5 = var10001;
-						    if (var5 >= 0) {
-							var53 = (byte) (var53 + 128);
-							if ((var61 = networkManager.players
-								.get(Byte
-									.valueOf(var5))) != null) {
-							    var61.queue(
-								    var37,
-								    var44,
-								    var49,
-								    var53 * 360 / 256.0F,
-								    var9 * 360 / 256.0F);
-							}
-						    }
-						} else if (packetType == PacketType.ROTATION_UPDATE) {
-						    var10001 = ((Byte) packetParams[0])
-							    .byteValue();
-						    var67 = ((Byte) packetParams[1])
-							    .byteValue();
-						    var44 = ((Byte) packetParams[2])
-							    .byteValue();
-						    var37 = var67;
-						    byte var5 = var10001;
-						    if (var5 >= 0) {
-							var37 = (byte) (var37 + 128);
-							NetworkPlayer var54;
-							if ((var54 = networkManager.players
-								.get(Byte
-									.valueOf(var5))) != null) {
-							    var54.queue(
-								    var37 * 360 / 256.0F,
-								    var44 * 360 / 256.0F);
-							}
-						    }
-						} else if (packetType == PacketType.POSITION_UPDATE) {
-						    var10001 = ((Byte) packetParams[0])
-							    .byteValue();
-						    var67 = ((Byte) packetParams[1])
-							    .byteValue();
-						    var65 = ((Byte) packetParams[2])
-							    .byteValue();
-						    var49 = ((Byte) packetParams[3])
-							    .byteValue();
-						    var44 = var65;
-						    var37 = var67;
-						    byte var5 = var10001;
-						    NetworkPlayer var59;
-						    if (var5 >= 0
-							    && (var59 = networkManager.players
-								    .get(Byte
-									    .valueOf(var5))) != null) {
-							var59.queue(var37,
-								var44, var49);
-						    }
-						} else if (packetType == PacketType.DESPAWN_PLAYER) {
-						    byte var5 = ((Byte) packetParams[0])
-							    .byteValue();
-						    if (var5 >= 0
-							    && (var33 = networkManager.players
-								    .remove(Byte
-									    .valueOf(var5))) != null) {
-							var33.clear();
-							networkManager.minecraft.level
-								.removeEntity(var33);
-						    }
-						} else if (packetType == PacketType.CHAT_MESSAGE) {
-						    var10001 = ((Byte) packetParams[0])
-							    .byteValue();
-						    var34 = (String) packetParams[1];
-						    byte var5 = var10001;
-						    if (var5 < 0) {
-							networkManager.minecraft.hud
-								.addChat("&e"
-									+ var34);
-						    } else {
-							networkManager.players
-								.get(Byte
-									.valueOf(var5));
-							networkManager.minecraft.hud
-								.addChat(var34);
-						    }
-						} else if (packetType == PacketType.DISCONNECT) {
-						    networkManager.netHandler
-							    .close();
-						    networkManager.minecraft
-							    .setCurrentScreen(new ErrorScreen(
-								    "Connection lost",
-								    (String) packetParams[0]));
-						} else if (packetType == PacketType.UPDATE_PLAYER_TYPE) {
-						    networkManager.minecraft.player.userType = ((Byte) packetParams[0])
-							    .byteValue();
-						}
-					    }
-					}
-				    }
-				}
+                					byte[] decompressedStream = LevelIO
+                						.decompress(new ByteArrayInputStream(
+                							networkManager.levelData
+                								.toByteArray()));
+                					networkManager.levelData = null;
+                					short xSize = ((Short) packetParams[0])
+                						.shortValue();
+                					short ySize = ((Short) packetParams[1])
+                						.shortValue();
+                					short zSize = ((Short) packetParams[2])
+                						.shortValue();
+                					Level level;
+                					(level = new Level())
+                						.setNetworkMode(true);
+                					level.setData(xSize, ySize, zSize,
+                						decompressedStream);
+                					networkManager.minecraft
+                						.setLevel(level);
+                					networkManager.minecraft.online = false;
+                					networkManager.levelLoaded = true;
+                					// ProgressBarDisplay.InitEnv(this);
+                					// this.levelRenderer.refresh();
+                				    } else if (packetType == PacketType.BLOCK_CHANGE) {
+                					if (networkManager.minecraft.level != null) {
+                					    networkManager.minecraft.level
+                						    .netSetTile(
+                							    ((Short) packetParams[0])
+                								    .shortValue(),
+                							    ((Short) packetParams[1])
+                								    .shortValue(),
+                							    ((Short) packetParams[2])
+                								    .shortValue(),
+                							    ((Byte) packetParams[3])
+                								    .byteValue());
+                					}
+                				    } else {
+                					byte var9;
+                					String var34;
+                					NetworkPlayer var33;
+                					short var36;
+                					short var10004;
+                					byte var10001;
+                					short var47;
+                					short var10003;
+                					if (packetType == PacketType.SPAWN_PLAYER) {
+                					    var10001 = ((Byte) packetParams[0])
+                						    .byteValue();
+                					    String var10002 = (String) packetParams[1];
+                					    var10003 = ((Short) packetParams[2])
+                						    .shortValue();
+                					    var10004 = ((Short) packetParams[3])
+                						    .shortValue();
+                					    short var10005 = ((Short) packetParams[4])
+                						    .shortValue();
+                					    byte var10006 = ((Byte) packetParams[5])
+                						    .byteValue();
+                					    byte var58 = ((Byte) packetParams[6])
+                						    .byteValue();
+                					    var9 = var10006;
+                					    short var10 = var10005;
+                					    var47 = var10004;
+                					    var36 = var10003;
+                					    var34 = var10002;
+                					    byte var5 = var10001;
+                					    if (var5 >= 0) {
+                						var9 = (byte) (var9 + 128);
+                						var47 = (short) (var47 - 22);
+                						var33 = new NetworkPlayer(
+                							networkManager.minecraft,
+                							var5, var34, var36,
+                							var47, var10,
+                							var9 * 360 / 256.0F,
+                							var58 * 360 / 256.0F);
+                						networkManager.players.put(
+                							Byte.valueOf(var5),
+                							var33);
+                						networkManager.minecraft.level
+                							.addEntity(var33);
+                					    } else {
+                						networkManager.minecraft.level
+                							.setSpawnPos(
+                								var36 / 32,
+                								var47 / 32,
+                								var10 / 32,
+                								var9 * 320 / 256);
+                						networkManager.minecraft.player
+                							.moveTo(var36 / 32.0F,
+                								var47 / 32.0F,
+                								var10 / 32.0F,
+                								var9 * 360 / 256.0F,
+                								var58 * 360 / 256.0F);
+                					    }
+                					} else {
+                					    byte var53;
+                					    NetworkPlayer var61;
+                					    byte var69;
+                					    if (packetType == PacketType.POSITION_ROTATION) {
+                						var10001 = ((Byte) packetParams[0])
+                							.byteValue();
+                						short var66 = ((Short) packetParams[1])
+                							.shortValue();
+                						var10003 = ((Short) packetParams[2])
+                							.shortValue();
+                						var10004 = ((Short) packetParams[3])
+                							.shortValue();
+                						var69 = ((Byte) packetParams[4])
+                							.byteValue();
+                						var9 = ((Byte) packetParams[5])
+                							.byteValue();
+                						var53 = var69;
+                						var47 = var10004;
+                						var36 = var10003;
+                						short var38 = var66;
+                						byte var5 = var10001;
+                						if (var5 < 0) {
+                						    networkManager.minecraft.player
+                							    .moveTo(var38 / 32.0F,
+                								    var36 / 32.0F,
+                								    var47 / 32.0F,
+                								    var53 * 360 / 256.0F,
+                								    var9 * 360 / 256.0F);
+                						} else {
+                						    var53 = (byte) (var53 + 128);
+                						    var36 = (short) (var36 - 22);
+                						    if ((var61 = networkManager.players
+                							    .get(Byte
+                								    .valueOf(var5))) != null) {
+                							var61.teleport(
+                								var38,
+                								var36,
+                								var47,
+                								var53 * 360 / 256.0F,
+                								var9 * 360 / 256.0F);
+                						    }
+                						}
+                					    } else {
+                						byte var37;
+                						byte var44;
+                						byte var49;
+                						byte var65;
+                						byte var67;
+                						if (packetType == PacketType.POSITION_ROTATION_UPDATE) {
+                						    var10001 = ((Byte) packetParams[0])
+                							    .byteValue();
+                						    var67 = ((Byte) packetParams[1])
+                							    .byteValue();
+                						    var65 = ((Byte) packetParams[2])
+                							    .byteValue();
+                						    byte var64 = ((Byte) packetParams[3])
+                							    .byteValue();
+                						    var69 = ((Byte) packetParams[4])
+                							    .byteValue();
+                						    var9 = ((Byte) packetParams[5])
+                							    .byteValue();
+                						    var53 = var69;
+                						    var49 = var64;
+                						    var44 = var65;
+                						    var37 = var67;
+                						    byte var5 = var10001;
+                						    if (var5 >= 0) {
+                							var53 = (byte) (var53 + 128);
+                							if ((var61 = networkManager.players
+                								.get(Byte
+                									.valueOf(var5))) != null) {
+                							    var61.queue(
+                								    var37,
+                								    var44,
+                								    var49,
+                								    var53 * 360 / 256.0F,
+                								    var9 * 360 / 256.0F);
+                							}
+                						    }
+                						} else if (packetType == PacketType.ROTATION_UPDATE) {
+                						    var10001 = ((Byte) packetParams[0])
+                							    .byteValue();
+                						    var67 = ((Byte) packetParams[1])
+                							    .byteValue();
+                						    var44 = ((Byte) packetParams[2])
+                							    .byteValue();
+                						    var37 = var67;
+                						    byte var5 = var10001;
+                						    if (var5 >= 0) {
+                							var37 = (byte) (var37 + 128);
+                							NetworkPlayer var54;
+                							if ((var54 = networkManager.players
+                								.get(Byte
+                									.valueOf(var5))) != null) {
+                							    var54.queue(
+                								    var37 * 360 / 256.0F,
+                								    var44 * 360 / 256.0F);
+                							}
+                						    }
+                						} else if (packetType == PacketType.POSITION_UPDATE) {
+                						    var10001 = ((Byte) packetParams[0])
+                							    .byteValue();
+                						    var67 = ((Byte) packetParams[1])
+                							    .byteValue();
+                						    var65 = ((Byte) packetParams[2])
+                							    .byteValue();
+                						    var49 = ((Byte) packetParams[3])
+                							    .byteValue();
+                						    var44 = var65;
+                						    var37 = var67;
+                						    byte var5 = var10001;
+                						    NetworkPlayer var59;
+                						    if (var5 >= 0
+                							    && (var59 = networkManager.players
+                								    .get(Byte
+                									    .valueOf(var5))) != null) {
+                							var59.queue(var37,
+                								var44, var49);
+                						    }
+                						} else if (packetType == PacketType.DESPAWN_PLAYER) {
+                						    byte var5 = ((Byte) packetParams[0])
+                							    .byteValue();
+                						    if (var5 >= 0
+                							    && (var33 = networkManager.players
+                								    .remove(Byte
+                									    .valueOf(var5))) != null) {
+                							var33.clear();
+                							networkManager.minecraft.level
+                								.removeEntity(var33);
+                						    }
+                						} else if (packetType == PacketType.CHAT_MESSAGE) {
+                						    var10001 = ((Byte) packetParams[0])
+                							    .byteValue();
+                						    var34 = (String) packetParams[1];
+                						    byte var5 = var10001;
+                						    if (var5 < 0) {
+                							networkManager.minecraft.hud
+                								.addChat("&e"
+                									+ var34);
+                						    } else {
+                							networkManager.players
+                								.get(Byte
+                									.valueOf(var5));
+                							networkManager.minecraft.hud
+                								.addChat(var34);
+                						    }
+                						} else if (packetType == PacketType.DISCONNECT) {
+                						    networkManager.netHandler
+                							    .close();
+                						    networkManager.minecraft
+                							    .setCurrentScreen(new ErrorScreen(
+                								    "Connection lost",
+                								    (String) packetParams[0]));
+                						} else if (packetType == PacketType.UPDATE_PLAYER_TYPE) {
+                						    networkManager.minecraft.player.userType = ((Byte) packetParams[0])
+                							    .byteValue();
+                						}
+                					    }
+                					}
+                				    }
+                				}
 
-				if (!networkHandler.connected) {
-				    break;
-				}
+                				if (!networkHandler.connected) {
+                				    break;
+                				}
 
-				networkHandler.in.compact();
-			    }
+                				networkHandler.in.compact();
+                }
 
-			    if (networkHandler.out.position() > 0) {
+                if (networkHandler.out.position() > 0) {
 				networkHandler.out.flip();
 				networkHandler.channel
 					.write(networkHandler.out);
 				networkHandler.out.compact();
-			    }
-			} catch (Exception var15) {
-			    var20.minecraft.setCurrentScreen(new ErrorScreen(
-				    "Disconnected!",
-				    "You\'ve lost connection to the server"));
-			    var20.minecraft.online = false;
-			    var15.printStackTrace();
-			    var20.netHandler.close();
-			    var20.minecraft.networkManager = null;
-			}
-		    }
-		}
+                }
+            } catch (Exception var15) {
+                var20.minecraft.setCurrentScreen(new ErrorScreen(
+            	    "Disconnected!",
+            	    "You\'ve lost connection to the server"));
+                var20.minecraft.online = false;
+                var15.printStackTrace();
+                var20.netHandler.close();
+                var20.minecraft.networkManager = null;
+            }
+            }
+        }
 
 		Player var28 = this.player;
 		var20 = this.networkManager;
 		if (this.networkManager.levelLoaded) {
-		    int var24 = (int) (var28.x * 32.0F);
-		    var4 = (int) (var28.y * 32.0F);
-		    var40 = (int) (var28.z * 32.0F);
-		    var46 = (int) (var28.yRot * 256.0F / 360.0F) & 255;
-		    var45 = (int) (var28.xRot * 256.0F / 360.0F) & 255;
-		    var20.netHandler.send(
-			    PacketType.POSITION_ROTATION,
-			    new Object[] { Integer.valueOf(-1),
-				    Integer.valueOf(var24),
-				    Integer.valueOf(var4),
-				    Integer.valueOf(var40),
-				    Integer.valueOf(var46),
-				    Integer.valueOf(var45) });
-		}
-	    }
-	}
+            int var24 = (int) (var28.x * 32.0F);
+            var4 = (int) (var28.y * 32.0F);
+            var40 = (int) (var28.z * 32.0F);
+            var46 = (int) (var28.yRot * 256.0F / 360.0F) & 255;
+            var45 = (int) (var28.xRot * 256.0F / 360.0F) & 255;
+            var20.netHandler.send(
+        	    PacketType.POSITION_ROTATION,
+        	    new Object[] { Integer.valueOf(-1),
+        		    Integer.valueOf(var24),
+        		    Integer.valueOf(var4),
+        		    Integer.valueOf(var40),
+        		    Integer.valueOf(var46),
+        		    Integer.valueOf(var45) });
+        }
+        }
+    }
 
 	if (this.currentScreen == null && this.player != null
-		&& this.player.health <= 0) {
-	    this.setCurrentScreen((GuiScreen) null);
-	}
+    	&& this.player.health <= 0) {
+        this.setCurrentScreen((GuiScreen) null);
+    }
 
 	if (this.currentScreen == null) {
-	    int var25;
-	    while (Mouse.next()) {
-		if ((var25 = Mouse.getEventDWheel()) != 0) {
-		    this.player.inventory.swapPaint(var25);
-		}
+        int var25;
+        while (Mouse.next()) {
+    	if ((var25 = Mouse.getEventDWheel()) != 0) {
+    	    this.player.inventory.swapPaint(var25);
+    	}
 
-		if (this.currentScreen == null) {
-		    if (!this.hasMouse && Mouse.getEventButtonState()) {
-			this.grabMouse();
-		    } else {
-			if (Mouse.getEventButton() == 0
-				&& Mouse.getEventButtonState()) {
-			    this.onMouseClick(0);
-			    this.lastClick = this.ticks;
-			}
+    	if (this.currentScreen == null) {
+    	    if (!this.hasMouse && Mouse.getEventButtonState()) {
+    		this.grabMouse();
+    	    } else {
+    		if (Mouse.getEventButton() == 0
+    			&& Mouse.getEventButtonState()) {
+    		    this.onMouseClick(0);
+    		    this.lastClick = this.ticks;
+    		}
 
-			if (Mouse.getEventButton() == 1
-				&& Mouse.getEventButtonState()) {
-			    this.onMouseClick(1);
-			    this.lastClick = this.ticks;
-			}
+    		if (Mouse.getEventButton() == 1
+    			&& Mouse.getEventButtonState()) {
+    		    this.onMouseClick(1);
+    		    this.lastClick = this.ticks;
+    		}
 
-			if (Mouse.getEventButton() == 2
-				&& Mouse.getEventButtonState()
-				&& this.selected != null) {
-			    var16 = this.level.getTile(this.selected.x,
-				    this.selected.y, this.selected.z);
-			    this.player.inventory.grabTexture(var16,
-				    this.gamemode instanceof CreativeGameMode);
-			}
-		    }
-		}
+    		if (Mouse.getEventButton() == 2
+    			&& Mouse.getEventButtonState()
+    			&& this.selected != null) {
+    		    var16 = this.level.getTile(this.selected.x,
+    			    this.selected.y, this.selected.z);
+    		    this.player.inventory.grabTexture(var16,
+    			    this.gamemode instanceof CreativeGameMode);
+    		}
+    	    }
+    	}
 
-		if (this.currentScreen != null) {
-		    this.currentScreen.mouseEvent();
-		}
-	    }
+    	if (this.currentScreen != null) {
+    	    this.currentScreen.mouseEvent();
+    	}
+        }
 
-	    if (this.blockHitTime > 0) {
-		--this.blockHitTime;
-	    }
+        if (this.blockHitTime > 0) {
+    	--this.blockHitTime;
+        }
 
-	    while (Keyboard.next()) {
-		this.player.setKey(Keyboard.getEventKey(),
-			Keyboard.getEventKeyState());
-		if (Keyboard.getEventKeyState()) {
-		    if (this.currentScreen != null) {
-			this.currentScreen.keyboardEvent();
-		    }
+        while (Keyboard.next()) {
+    	this.player.setKey(Keyboard.getEventKey(),
+    		Keyboard.getEventKeyState());
+    	if (Keyboard.getEventKeyState()) {
+    	    if (this.currentScreen != null) {
+    		this.currentScreen.keyboardEvent();
+    	    }
 
-		    if (this.currentScreen == null) {
-			for (int j = 0; j < this.hotKeys.size(); j++) { // check
-									// through
-									// all
-									// stored
-									// hotkeys
-			    HotKeyData hkData = this.hotKeys.get(j);
-			    String label = hkData.label;
-			    String action = hkData.action;
-			    int keyCode = hkData.keyCode;
-			    byte keyMods = hkData.keyMods;
+    	    if (this.currentScreen == null) {
+    		for (int j = 0; j < this.hotKeys.size(); j++) { // check
+    								// through
+    								// all
+    								// stored
+    								// hotkeys
+    		    HotKeyData hkData = this.hotKeys.get(j);
+    		    String label = hkData.label;
+    		    String action = hkData.action;
+    		    int keyCode = hkData.keyCode;
+    		    byte keyMods = hkData.keyMods;
 
-			    List<Integer> heldKeys = new ArrayList<Integer>();
-			    if ((keyMods & 1) != 0)
-				heldKeys.add(29); // ctrl (left)
-			    if ((keyMods & 2) != 0)
-				heldKeys.add(42); // shift (left)
-			    if ((keyMods & 4) != 0)
-				heldKeys.add(56); // alt (left)
+    		    List<Integer> heldKeys = new ArrayList<Integer>();
+    		    if ((keyMods & 1) != 0)
+    			heldKeys.add(29); // ctrl (left)
+    		    if ((keyMods & 2) != 0)
+    			heldKeys.add(42); // shift (left)
+    		    if ((keyMods & 4) != 0)
+    			heldKeys.add(56); // alt (left)
 
-			    // Check if the key(s) are pressed
-			    if (Keyboard.getEventKey() == keyCode) {
-				boolean canSendHotkey = true;
-				for (int k = 0; k < heldKeys.size(); k++) {
-				    if (!Keyboard.isKeyDown(heldKeys.get(k)))
-					canSendHotkey = false;
-				}
-				if (action.endsWith("\n")) { // check whether to
-							     // send message or
-							     // open window
-				    this.hud.addChat("Sending HotKey: " + label);
-				    action = action.replace("\n", "");
-				    this.networkManager.netHandler.send(
-					    PacketType.CHAT_MESSAGE,
-					    new Object[] { Integer.valueOf(-1),
-						    action });
-				} else { // open window
-				    this.hud.addChat("Opening HotKey: " + label);
-				    ChatInputScreenExtension cisExt = new ChatInputScreenExtension();
-				    cisExt.inputLine = action;
-				    this.setCurrentScreen(cisExt);
-				}
-			    }
-			}
-		    }
+    		    // Check if the key(s) are pressed
+    		    if (Keyboard.getEventKey() == keyCode) {
+    			boolean canSendHotkey = true;
+    			for (int k = 0; k < heldKeys.size(); k++) {
+    			    if (!Keyboard.isKeyDown(heldKeys.get(k)))
+    				canSendHotkey = false;
+    			}
+    			if (action.endsWith("\n")) { // check whether to
+    						     // send message or
+    						     // open window
+    			    this.hud.addChat("Sending HotKey: " + label);
+    			    action = action.replace("\n", "");
+    			    this.networkManager.netHandler.send(
+    				    PacketType.CHAT_MESSAGE,
+    				    new Object[] { Integer.valueOf(-1),
+    					    action });
+    			} else { // open window
+    			    this.hud.addChat("Opening HotKey: " + label);
+    			    ChatInputScreenExtension cisExt = new ChatInputScreenExtension();
+    			    cisExt.inputLine = action;
+    			    this.setCurrentScreen(cisExt);
+    			}
+    		    }
+    		}
+    	    }
 
-		    if (this.currentScreen == null) {
-			if (Keyboard.getEventKey() == 1) {
-			    this.pause();
-			}
+    	    if (this.currentScreen == null) {
+    		if (Keyboard.getEventKey() == 1) {
+    		    this.pause();
+    		}
 
-			if (this.gamemode instanceof CreativeGameMode) {
-			    if (Keyboard.getEventKey() == this.settings.loadLocationKey.key) {
-				this.player.resetPos();
-			    }
+    		if (this.gamemode instanceof CreativeGameMode) {
+    		    if (Keyboard.getEventKey() == this.settings.loadLocationKey.key) {
+    			this.player.resetPos();
+    		    }
 
-			    if (Keyboard.getEventKey() == this.settings.saveLocationKey.key) {
-				this.level.setSpawnPos((int) this.player.x,
-					(int) this.player.y,
-					(int) this.player.z, this.player.yRot);
-				this.player.resetPos();
-			    }
-			}
+    		    if (Keyboard.getEventKey() == this.settings.saveLocationKey.key) {
+    			this.level.setSpawnPos((int) this.player.x,
+    				(int) this.player.y,
+    				(int) this.player.z, this.player.yRot);
+    			this.player.resetPos();
+    		    }
+    		}
 
-			Keyboard.getEventKey();
-			if (Keyboard.getEventKey() == 63) {
-			    this.raining = !this.raining;
-			}
-			if (Keyboard.getEventKey() == 53
-				&& this.networkManager != null
-				&& this.networkManager.isConnected()) {
-			    this.player.releaseAllKeys();
-			    ChatInputScreenExtension s = new ChatInputScreenExtension();
-			    this.setCurrentScreen(s);
-			    s.inputLine = "/";
-			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_X) {
-			    if (HackState == com.mojang.minecraft.HackState.HacksTagEnabled
-				    || HackState == com.mojang.minecraft.HackState.OpHacks
-				    && this.player.userType >= 100) {
-				this.player.noPhysics = !this.player.noPhysics;
-				this.player.hovered = !this.player.hovered;
-			    }
-			}
+    		Keyboard.getEventKey();
+    		if (Keyboard.getEventKey() == 63) {
+    		    this.raining = !this.raining;
+    		}
+    		if (Keyboard.getEventKey() == 53
+    			&& this.networkManager != null
+    			&& this.networkManager.isConnected()) {
+    		    this.player.releaseAllKeys();
+    		    ChatInputScreenExtension s = new ChatInputScreenExtension();
+    		    this.setCurrentScreen(s);
+    		    s.inputLine = "/";
+    		}
+    		if (Keyboard.getEventKey() == Keyboard.KEY_X) {
+    		    if (HackState == com.mojang.minecraft.HackState.HacksTagEnabled
+    			    || HackState == com.mojang.minecraft.HackState.OpHacks
+    			    && this.player.userType >= 100) {
+    			this.player.noPhysics = !this.player.noPhysics;
+    			this.player.hovered = !this.player.hovered;
+    		    }
+    		}
 
-			if (Keyboard.getEventKey() == Keyboard.KEY_Z) {
-			    if (HackState == com.mojang.minecraft.HackState.HacksTagEnabled
-				    || HackState == com.mojang.minecraft.HackState.NoHacksTagShown
-				    || HackState == com.mojang.minecraft.HackState.OpHacks
-				    && this.player.userType >= 100) {
-				this.player.flyingMode = !this.player.flyingMode;
-			    }
-			}
+    		if (Keyboard.getEventKey() == Keyboard.KEY_Z) {
+    		    if (HackState == com.mojang.minecraft.HackState.HacksTagEnabled
+    			    || HackState == com.mojang.minecraft.HackState.NoHacksTagShown
+    			    || HackState == com.mojang.minecraft.HackState.OpHacks
+    			    && this.player.userType >= 100) {
+    			this.player.flyingMode = !this.player.flyingMode;
+    		    }
+    		}
 
-			if (Keyboard.getEventKey() == 15
-				&& this.gamemode instanceof SurvivalGameMode
-				&& this.player.arrows > 0) {
-			    this.level.addEntity(new Arrow(this.level,
-				    this.player, this.player.x, this.player.y,
-				    this.player.z, this.player.yRot,
-				    this.player.xRot, 1.2F));
-			    --this.player.arrows;
-			}
+    		if (Keyboard.getEventKey() == 15
+    			&& this.gamemode instanceof SurvivalGameMode
+    			&& this.player.arrows > 0) {
+    		    this.level.addEntity(new Arrow(this.level,
+    			    this.player, this.player.x, this.player.y,
+    			    this.player.z, this.player.yRot,
+    			    this.player.xRot, 1.2F));
+    		    --this.player.arrows;
+    		}
 
-			if (Keyboard.getEventKey() == this.settings.inventoryKey.key) {
-			    // this.player.inventory.selected = 0;
-			    // this.player.inventory.replaceSlot(Block.blocks[6]);
-			    // GameSettings.CanReplaceSlot = false;
+    		if (Keyboard.getEventKey() == this.settings.inventoryKey.key) {
+    		    // this.player.inventory.selected = 0;
+    		    // this.player.inventory.replaceSlot(Block.blocks[6]);
+    		    // GameSettings.CanReplaceSlot = false;
 
-			    this.gamemode.openInventory();
+    		    this.gamemode.openInventory();
 
-			    // this.selectionBoxes.add(new
-			    // SelectionBoxData((byte) 1,"",new
-			    // ColorCache(0F,0F,0F,0.6F), new
-			    // CustomAABB(12,45,30, 20, 30, 40)));
+    		    // this.selectionBoxes.add(new
+    		    // SelectionBoxData((byte) 1,"",new
+    		    // ColorCache(0F,0F,0F,0.6F), new
+    		    // CustomAABB(12,45,30, 20, 30, 40)));
 
-			}
+    		}
 
-			if (Keyboard.getEventKey() == this.settings.chatKey.key
-				&& this.networkManager != null
-				&& this.networkManager.isConnected()) {
-			    this.player.releaseAllKeys();
-			    this.setCurrentScreen(new ChatInputScreenExtension());
-			}
-		    }
+    		if (Keyboard.getEventKey() == this.settings.chatKey.key
+    			&& this.networkManager != null
+    			&& this.networkManager.isConnected()) {
+    		    this.player.releaseAllKeys();
+    		    this.setCurrentScreen(new ChatInputScreenExtension());
+    		}
+    	    }
 
-		    for (var25 = 0; var25 < 9; ++var25) {
-			if (Keyboard.getEventKey() == var25 + 2) {
-			    if (Keyboard.isKeyDown(Keyboard.KEY_TAB))
-				return;
-			    else if (GameSettings.CanReplaceSlot)
-				this.player.inventory.selected = var25;
-			}
-		    }
+    	    for (var25 = 0; var25 < 9; ++var25) {
+    		if (Keyboard.getEventKey() == var25 + 2) {
+    		    if (Keyboard.isKeyDown(Keyboard.KEY_TAB))
+    			return;
+    		    else if (GameSettings.CanReplaceSlot)
+    			this.player.inventory.selected = var25;
+    		}
+    	    }
 
-		    if (Keyboard.getEventKey() == this.settings.toggleFogKey.key) {
-			this.settings.toggleSetting(4, !Keyboard.isKeyDown(42)
-				&& !Keyboard.isKeyDown(54) ? 1 : -1);
-		    }
-		}
-	    }
+    	    if (Keyboard.getEventKey() == this.settings.toggleFogKey.key) {
+    		this.settings.toggleSetting(4, !Keyboard.isKeyDown(42)
+    			&& !Keyboard.isKeyDown(54) ? 1 : -1);
+    	    }
+    	}
+        }
 
-	    if (this.currentScreen == null) {
-		if (Mouse.isButtonDown(0)
-			&& this.ticks - this.lastClick >= this.timer.tps / 4.0F
-			&& this.hasMouse) {
-		    this.onMouseClick(0);
-		    this.lastClick = this.ticks;
-		}
+        if (this.currentScreen == null) {
+    	if (Mouse.isButtonDown(0)
+    		&& this.ticks - this.lastClick >= this.timer.tps / 4.0F
+    		&& this.hasMouse) {
+    	    this.onMouseClick(0);
+    	    this.lastClick = this.ticks;
+    	}
 
-		if (Mouse.isButtonDown(1)
-			&& this.ticks - this.lastClick >= this.timer.tps / 4.0F
-			&& this.hasMouse) {
-		    this.onMouseClick(1);
-		    this.lastClick = this.ticks;
-		}
-	    }
+    	if (Mouse.isButtonDown(1)
+    		&& this.ticks - this.lastClick >= this.timer.tps / 4.0F
+    		&& this.hasMouse) {
+    	    this.onMouseClick(1);
+    	    this.lastClick = this.ticks;
+    	}
+        }
 
-	    boolean var26 = this.currentScreen == null && Mouse.isButtonDown(0)
-		    && this.hasMouse;
-	    if (!this.gamemode.instantBreak && this.blockHitTime <= 0) {
-		if (var26 && this.selected != null
-			&& this.selected.entityPos == 0) {
-		    var4 = this.selected.x;
-		    var40 = this.selected.y;
-		    var46 = this.selected.z;
-		    this.gamemode.hitBlock(var4, var40, var46,
-			    this.selected.face);
-		} else {
-		    this.gamemode.resetHits();
-		}
-	    }
-	}
-
-	if (this.currentScreen != null) {
-	    this.lastClick = this.ticks + 10000;
-	}
+        boolean var26 = this.currentScreen == null && Mouse.isButtonDown(0)
+    	    && this.hasMouse;
+        if (!this.gamemode.instantBreak && this.blockHitTime <= 0) {
+    	if (var26 && this.selected != null
+    		&& this.selected.entityPos == 0) {
+    	    var4 = this.selected.x;
+    	    var40 = this.selected.y;
+    	    var46 = this.selected.z;
+    	    this.gamemode.hitBlock(var4, var40, var46,
+    		    this.selected.face);
+    	} else {
+    	    this.gamemode.resetHits();
+    	}
+        }
+    }
 
 	if (this.currentScreen != null) {
-	    this.currentScreen.doInput();
-	    if (this.currentScreen != null) {
-		this.currentScreen.tick();
-	    }
-	}
+        this.lastClick = this.ticks + 10000;
+    }
+
+	if (this.currentScreen != null) {
+        this.currentScreen.doInput();
+        if (this.currentScreen != null) {
+    	this.currentScreen.tick();
+        }
+    }
 
 	if (this.level != null) {
-	    com.mojang.minecraft.render.Renderer var29 = this.renderer;
-	    ++this.renderer.levelTicks;
-	    HeldBlock var41 = var29.heldBlock;
-	    var29.heldBlock.lastPos = var41.pos;
-	    if (var41.moving) {
-		++var41.offset;
-		if (var41.offset == 7) {
-		    var41.offset = 0;
-		    var41.moving = false;
-		}
-	    }
+        com.mojang.minecraft.render.Renderer var29 = this.renderer;
+        ++this.renderer.levelTicks;
+        HeldBlock var41 = var29.heldBlock;
+        var29.heldBlock.lastPos = var41.pos;
+        if (var41.moving) {
+    	++var41.offset;
+    	if (var41.offset == 7) {
+    	    var41.offset = 0;
+    	    var41.moving = false;
+    	}
+        }
 
-	    Player var27 = var41.minecraft.player;
-	    var4 = var41.minecraft.player.inventory.getSelected();
-	    Block var43 = null;
-	    if (var4 > 0) {
-		var43 = Block.blocks[var4];
-	    }
+        Player var27 = var41.minecraft.player;
+        var4 = var41.minecraft.player.inventory.getSelected();
+        Block var43 = null;
+        if (var4 > 0) {
+    	var43 = Block.blocks[var4];
+        }
 
-	    float var48 = 0.4F;
-	    float var50;
-	    if ((var50 = (var43 == var41.block ? 1.0F : 0.0F) - var41.pos) < -var48) {
-		var50 = -var48;
-	    }
+        float var48 = 0.4F;
+        float var50;
+        if ((var50 = (var43 == var41.block ? 1.0F : 0.0F) - var41.pos) < -var48) {
+    	var50 = -var48;
+        }
 
-	    if (var50 > var48) {
-		var50 = var48;
-	    }
+        if (var50 > var48) {
+    	var50 = var48;
+        }
 
-	    var41.pos += var50;
-	    if (var41.pos < 0.1F) {
-		var41.block = var43;
-	    }
+        var41.pos += var50;
+        if (var41.pos < 0.1F) {
+    	var41.block = var43;
+        }
 
-	    if (var29.minecraft.raining) {
-		com.mojang.minecraft.render.Renderer var39 = var29;
-		var27 = var29.minecraft.player;
-		Level var32 = var29.minecraft.level;
-		var40 = (int) var27.x;
-		var46 = (int) var27.y;
-		var45 = (int) var27.z;
+        if (var29.minecraft.raining) {
+    	com.mojang.minecraft.render.Renderer var39 = var29;
+    	var27 = var29.minecraft.player;
+    	Level var32 = var29.minecraft.level;
+    	var40 = (int) var27.x;
+    	var46 = (int) var27.y;
+    	var45 = (int) var27.z;
 
-		for (i = 0; i < 50; ++i) {
-		    int var60 = var40 + var39.random.nextInt(9) - 4;
-		    int var52 = var45 + var39.random.nextInt(9) - 4;
-		    int var57;
-		    if ((var57 = var32.getHighestTile(var60, var52)) <= var46 + 4
-			    && var57 >= var46 - 4) {
-			float var56 = var39.random.nextFloat();
-			float var62 = var39.random.nextFloat();
-			var39.minecraft.particleManager
-				.spawnParticle(new WaterDropParticle(var32,
-					var60 + var56, var57 + 0.1F, var52
-						+ var62));
-		    }
-		}
-	    }
+    	for (i = 0; i < 50; ++i) {
+    	    int var60 = var40 + var39.random.nextInt(9) - 4;
+    	    int var52 = var45 + var39.random.nextInt(9) - 4;
+    	    int var57;
+    	    if ((var57 = var32.getHighestTile(var60, var52)) <= var46 + 4
+    		    && var57 >= var46 - 4) {
+    		float var56 = var39.random.nextFloat();
+    		float var62 = var39.random.nextFloat();
+    		var39.minecraft.particleManager
+    			.spawnParticle(new WaterDropParticle(var32,
+    				var60 + var56, var57 + 0.1F, var52
+    					+ var62));
+    	    }
+    	}
+        }
 
-	    ++this.levelRenderer.ticks;
-	    this.level.tickEntities();
-	    if (!this.isOnline()) {
-		this.level.tick();
-	    }
+        ++this.levelRenderer.ticks;
+        this.level.tickEntities();
+        if (!this.isOnline()) {
+    	this.level.tick();
+        }
 
-	    this.particleManager.tick();
-	}
+        this.particleManager.tick();
+    }
 
     }
 
