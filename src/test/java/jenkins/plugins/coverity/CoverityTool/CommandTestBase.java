@@ -1,15 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2018 Synopsys, Inc
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Synopsys, Inc - initial implementation and documentation
- *******************************************************************************/
 package jenkins.plugins.coverity.CoverityTool;
-
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import hudson.EnvVars;
@@ -29,128 +18,98 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({CoverityUtils.class, Secret.class, CredentialsMatchers.class, CredentialsProvider.class})
-public abstract class CommandTestBase {
+@RunWith(value = PowerMockRunner.class) @PrepareForTest(value = { CoverityUtils.class, Secret.class, CredentialsMatchers.class, CredentialsProvider.class }) public abstract class CommandTestBase {
+  @Mock protected AbstractBuild build;
 
-    @Mock
-    protected AbstractBuild build;
+  @Mock protected Launcher launcher;
 
-    @Mock
-    protected Launcher launcher;
+  @Mock protected TaskListener listener;
 
-    @Mock
-    protected TaskListener listener;
+  protected EnvVars envVars;
 
-    protected EnvVars envVars;
-    protected String[] expectedArguments;
-    protected List<String> actualArguments;
-    protected TestableConsoleLogger consoleLogger;
-    private int noExecutedCommands;
+  protected String[] expectedArguments;
 
-    @Before
-    public void setup() throws IOException, InterruptedException {
-        MockitoAnnotations.initMocks(this);
-        envVars = new EnvVars();
-        envVars.put("COV_IDIR", "TestDir");
+  protected List<String> actualArguments;
 
-        actualArguments = new ArrayList<String>();
-        expectedArguments = null;
+  protected TestableConsoleLogger consoleLogger;
 
-        setUpListener();
-        setUpCoverityUtils();
-        noExecutedCommands = 0;
-    }
+  private int noExecutedCommands;
 
-    protected void setExpectedArguments(String[] args) {
-        expectedArguments = args;
-    }
+  @Before public void setup() throws IOException, InterruptedException {
+    MockitoAnnotations.initMocks(this);
+    envVars = new EnvVars();
+    envVars.put("COV_IDIR", "TestDir");
+    actualArguments = new ArrayList<String>();
+    expectedArguments = null;
+    setUpListener();
+    setUpCoverityUtils();
+    noExecutedCommands = 0;
+  }
 
-    private void checkCommandLineArguments() {
-        assertArrayEquals(expectedArguments, actualArguments.toArray());
-    }
+  protected void setExpectedArguments(String[] args) {
+    expectedArguments = args;
+  }
 
-    private void setUpListener() {
-        consoleLogger = new TestableConsoleLogger();
-        when(listener.getLogger()).thenReturn(consoleLogger.getPrintStream());
-    }
+  private void checkCommandLineArguments() {
+    assertArrayEquals(expectedArguments, actualArguments.toArray());
+  }
 
-    private void setUpCoverityUtils() throws IOException, InterruptedException {
-        PowerMockito.mockStatic(CoverityUtils.class);
-        setCoverityUtils_runCmd();
-        setCoverityUtils_evaluateEnvVars();
-        setCoverityUtils_doubleQuote();
-    }
+  private void setUpListener() {
+    consoleLogger = new TestableConsoleLogger();
+    when(listener.getLogger()).thenReturn(consoleLogger.getPrintStream());
+  }
 
-    private void setCoverityUtils_runCmd() throws IOException, InterruptedException {
-        Answer<Integer> runCmd = new Answer<Integer>() {
-            public Integer answer(InvocationOnMock mock) throws Throwable {
-                actualArguments = (ArrayList<String>)mock.getArguments()[0];
-                checkCommandLineArguments();
-                noExecutedCommands++;
-                return 0;
-            }
-        };
+  private void setUpCoverityUtils() throws IOException, InterruptedException {
+    PowerMockito.mockStatic(CoverityUtils.class);
+    setCoverityUtils_runCmd();
+    setCoverityUtils_evaluateEnvVars();
+    setCoverityUtils_doubleQuote();
+  }
 
-        when(
-                CoverityUtils.runCmd(
-                        Matchers.anyList(),
-                        Matchers.any(AbstractBuild.class),
-                        Matchers.any(Launcher.class),
-                        Matchers.any(TaskListener.class),
-                        Matchers.same(envVars),
-                        Matchers.anyBoolean())).thenAnswer(runCmd);
-    }
+  private void setCoverityUtils_runCmd() throws IOException, InterruptedException {
+    Answer<Integer> runCmd = new Answer<Integer>() {
+      public Integer answer(InvocationOnMock mock) throws Throwable {
+        actualArguments = (ArrayList<String>) mock.getArguments()[0];
+        checkCommandLineArguments();
+        noExecutedCommands++;
+        return 0;
+      }
+    };
+    when(CoverityUtils.runCmd(Matchers.anyList(), Matchers.any(AbstractBuild.class), Matchers.any(Launcher.class), Matchers.any(TaskListener.class), Matchers.same(envVars), Matchers.anyBoolean())).thenAnswer(runCmd);
+  }
 
-    private void setCoverityUtils_evaluateEnvVars() {
-        Answer<String> evaluateEnvVars = new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return (String) invocationOnMock.getArguments()[0];
-            }
-        };
+  private void setCoverityUtils_evaluateEnvVars() {
+    Answer<String> evaluateEnvVars = new Answer<String>() {
+      @Override public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+        return (String) invocationOnMock.getArguments()[0];
+      }
+    };
+    when(CoverityUtils.evaluateEnvVars(Matchers.anyString(), Matchers.any(EnvVars.class), Matchers.anyBoolean())).thenAnswer(evaluateEnvVars);
+  }
 
-        when(
-                CoverityUtils.evaluateEnvVars(
-                        Matchers.anyString(),
-                        Matchers.any(EnvVars.class),
-                        Matchers.anyBoolean())).thenAnswer(evaluateEnvVars);
-    }
+  private void setCoverityUtils_doubleQuote() {
+    Answer<String> doubleQuote = new Answer<String>() {
+      @Override public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+        return (String) invocationOnMock.getArguments()[0];
+      }
+    };
+    when(CoverityUtils.doubleQuote(Matchers.anyString(), Matchers.anyBoolean())).thenAnswer(doubleQuote);
+  }
 
-    private void setCoverityUtils_doubleQuote() {
-        Answer<String> doubleQuote = new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return (String) invocationOnMock.getArguments()[0];
-            }
-        };
+  protected void setCoverityUtils_listFiles(Collection<File> expectedFiles) {
+    when(CoverityUtils.listFiles(Matchers.any(File.class), Matchers.any(FilenameFilter.class), Matchers.anyBoolean())).thenReturn(expectedFiles);
+  }
 
-        when(
-                CoverityUtils.doubleQuote(
-                        Matchers.anyString(),
-                        Matchers.anyBoolean())).thenAnswer(doubleQuote);
-    }
-
-    protected void setCoverityUtils_listFiles(Collection<File> expectedFiles) {
-        when(
-                CoverityUtils.listFiles(
-                        Matchers.any(File.class),
-                        Matchers.any(FilenameFilter.class),
-                        Matchers.anyBoolean())).thenReturn(expectedFiles);
-    }
-
-    protected boolean verifyNumberOfExecutedCommands(int expectedNum) {
-        return expectedNum == noExecutedCommands;
-    }
+  protected boolean verifyNumberOfExecutedCommands(int expectedNum) {
+    return expectedNum == noExecutedCommands;
+  }
 }
