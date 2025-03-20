@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarValidateMojo.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarValidateMojo.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarValidateMojo.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,16 +52,16 @@ public class NarValidateMojo extends AbstractCompileMojo {
   private File gnuSourceDirectory;
 
   @Override
-  protected List/* <Artifact> */getArtifacts() {
+  protected List/* <Artifact> */ getArtifacts() {
     return null;// getMavenProject().getCompileArtifacts(); //
-                // Artifact.SCOPE_COMPILE
-  }
+                // Artifact.SCOPE_COMPILE 
+	}
 
-  @Override
+  @Override @Override
   public final void narExecute() throws MojoExecutionException, MojoFailureException {
     // super.narExecute();
 
-    // check aol
+    	// check aol
     final AOL aol = getAOL();
     getLog().info("Using AOL: " + aol);
 
@@ -61,7 +71,7 @@ public class NarValidateMojo extends AbstractCompileMojo {
 
     // check compilers
     int noOfCompilers = 0;
-    if (this.onlySpecifiedCompilers) {
+    if (this.onlySpecifiedCompilers ) {
       if (getCpp() != null && getCpp().getName() != null) {
         noOfCompilers++;
         // need includes

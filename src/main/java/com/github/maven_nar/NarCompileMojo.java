@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +63,7 @@ import com.github.maven_nar.cpptasks.types.SystemLibrarySet;
 
 /**
  * Compiles native source files.
- *
+ * 
  * @requiresSession
  * @author Mark Donszelmann
  */
@@ -198,6 +208,7 @@ public class NarCompileMojo extends AbstractCompileMojo {
       task.createIncludePath().setPath(jniDirectory.getPath());
     }
 
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/left.java
     // add java include paths
     getJava().addIncludePaths(task, type);
 
@@ -252,6 +263,69 @@ public class NarCompileMojo extends AbstractCompileMojo {
               tmp.add(dep);
               j.remove();
             }
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/base.java
+      // IDL, MC, RC compilations should probably be 'generate source' type actions, seperate from main build.
+      // Needs resolution of handling for generate sources.
+      // Order is somewhat important here, IDL and MC generate outputs that are (often) included in the RC compilation
+      if (getIdl() != null) {
+          CompilerDef idl = getIdl().getCompiler( Compiler.MAIN, null );
+          if ( idl != null )
+          {
+              task.addConfiguredCompiler( idl );
+=======
+    // add java include paths
+    getJava().addIncludePaths(task, type);
+
+    final List<NarArtifact> dependencies = getNarArtifacts();
+    // add dependency include paths
+    for (final Object element : dependencies) {
+      // FIXME, handle multiple includes from one NAR
+      final NarArtifact narDependency = (NarArtifact) element;
+      final String binding = narDependency.getNarInfo().getBinding(getAOL(), Library.STATIC);
+      getLog().debug("Looking for " + narDependency + " found binding " + binding);
+      if (!binding.equals(Library.JNI)) {
+        final File unpackDirectory = getUnpackDirectory();
+        final File include = getLayout().getIncludeDirectory(unpackDirectory, narDependency.getArtifactId(),
+            narDependency.getBaseVersion());
+        getLog().debug("Looking for include directory: " + include);
+        if (include.exists()) {
+          task.createIncludePath().setPath(include.getPath());
+        } else {
+          throw new MojoExecutionException("NAR: unable to locate include path: " + include);
+        }
+      }
+    }
+
+    // add linker
+    final LinkerDef linkerDefinition = getLinker().getLinker(this, antProject, getOS(), getAOL().getKey() + ".linker.",
+        type);
+    task.addConfiguredLinker(linkerDefinition);
+
+    // add dependency libraries
+    // FIXME: what about PLUGIN and STATIC, depending on STATIC, should we
+    // not add all libraries, see NARPLUGIN-96
+    if (type.equals(Library.SHARED) || type.equals(Library.JNI) || type.equals(Library.EXECUTABLE)) {
+
+      final List depLibOrder = getDependencyLibOrder();
+      List depLibs = dependencies;
+
+      // reorder the libraries that come from the nar dependencies
+      // to comply with the order specified by the user
+      if (depLibOrder != null && !depLibOrder.isEmpty()) {
+        final List tmp = new LinkedList();
+
+        for (final Iterator i = depLibOrder.iterator(); i.hasNext();) {
+          final String depToOrderName = (String) i.next();
+
+          for (final Iterator j = depLibs.iterator(); j.hasNext();) {
+            final NarArtifact dep = (NarArtifact) j.next();
+            final String depName = dep.getGroupId() + ":" + dep.getArtifactId();
+
+            if (depName.equals(depToOrderName)) {
+              tmp.add(dep);
+              j.remove();
+            }
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/right.java
           }
         }
 
@@ -315,6 +389,7 @@ public class NarCompileMojo extends AbstractCompileMojo {
           }
         }
       }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/left.java
     }
 
     // Add JVM to linker
@@ -354,12 +429,51 @@ public class NarCompileMojo extends AbstractCompileMojo {
         }
       }
     }
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/base.java
+=======
+    }
+
+    // Add JVM to linker
+    getJava().addRuntime(task, getJavaHome(getAOL()), getOS(), getAOL().getKey() + ".java.");
+
+    // execute
+    try {
+      task.execute();
+    } catch (final BuildException e) {
+      throw new MojoExecutionException("NAR: Compile failed", e);
+    }
+
+    // FIXME, this should be done in CPPTasks at some point
+    if (getRuntime(getAOL()).equals("dynamic") && getOS().equals(OS.WINDOWS)
+        && getLinker().getName(null, null).equals("msvc") && !getLinker().getVersion().startsWith("6.")) {
+      final String libType = library.getType();
+      if (libType.equals(Library.JNI) || libType.equals(Library.SHARED)) {
+        final String dll = outFile.getPath() + ".dll";
+        final String manifest = dll + ".manifest";
+        final int result = NarUtil.runCommand("mt.exe", new String[] {
+            "/manifest", manifest, "/outputresource:" + dll + ";#2"
+        }, null, null, getLog());
+        if (result != 0) {
+          throw new MojoFailureException("MT.EXE failed with exit code: " + result);
+        }
+      } else if (libType.equals(Library.EXECUTABLE)) {
+        final String exe = outFile.getPath() + ".exe";
+        final String manifest = exe + ".manifest";
+        final int result = NarUtil.runCommand("mt.exe", new String[] {
+            "/manifest", manifest, "/outputresource:" + exe + ";#1"
+        }, null, null, getLog());
+        if (result != 0) {
+          throw new MojoFailureException("MT.EXE failed with exit code: " + result);
+        }
+      }
+    }
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/NarCompileMojo.java/right.java
   }
 
   /**
    * List the dependencies needed for compilation, those dependencies are used
    * to get the include paths needed for
-   * compilation and to get the libraries paths and names needed for linking.
+	 * compilation and to get the libraries paths and names needed for linking.
    */
   @Override
   protected List<Artifact> getArtifacts() {
@@ -368,9 +482,9 @@ public class NarCompileMojo extends AbstractCompileMojo {
       scopes.add(Artifact.SCOPE_COMPILE);
       scopes.add(Artifact.SCOPE_PROVIDED);
       // scopes.add(Artifact.SCOPE_RUNTIME);
-      scopes.add(Artifact.SCOPE_SYSTEM);
+    		scopes.add(Artifact.SCOPE_SYSTEM);
       // scopes.add(Artifact.SCOPE_TEST);
-      return getNarManager().getDependencies(scopes);
+    		return getNarManager().getDependencies(scopes);
     } catch (final MojoExecutionException e) {
       e.printStackTrace();
     } catch (final MojoFailureException e) {
@@ -399,7 +513,7 @@ public class NarCompileMojo extends AbstractCompileMojo {
     }
   }
 
-  @Override
+  @Override @Override
   public final void narExecute() throws MojoExecutionException, MojoFailureException {
 
     // make sure destination is there
@@ -428,6 +542,6 @@ public class NarCompileMojo extends AbstractCompileMojo {
       throw new MojoExecutionException("NAR: could not copy include files", e);
     }
 
-    getNarInfo().writeToDirectory(this.classesDirectory);
+    getNarInfo().writeToDirectory(this.classesDirectory );
   }
 }

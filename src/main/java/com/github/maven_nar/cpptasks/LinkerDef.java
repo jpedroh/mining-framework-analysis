@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/LinkerDef.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/LinkerDef.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/LinkerDef.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,20 +77,21 @@ public class LinkerDef extends ProcessorDef {
    *
    * @see java.lang.Object#Object()
    */
-  public LinkerDef() {
-    this.base = -1;
-    this.stack = -1;
-  }
 
-  private void addActiveLibrarySet(final Project project, final Vector libsets, final Vector srcSets) {
-    final Enumeration srcenum = srcSets.elements();
-    while (srcenum.hasMoreElements()) {
-      final LibrarySet set = (LibrarySet) srcenum.nextElement();
-      if (set.isActive(project)) {
-        libsets.addElement(set);
+    public LinkerDef() {
+      this.base = -1;
+      this.stack = -1;
+    }
+
+    private void addActiveLibrarySet(final Project project, final Vector libsets, final Vector srcSets) {
+      final Enumeration srcenum = srcSets.elements();
+      while (srcenum.hasMoreElements()) {
+        final LibrarySet set = (LibrarySet) srcenum.nextElement();
+        if (set.isActive(project)) {
+          libsets.addElement(set);
+        }
       }
     }
-  }
 
   private void addActiveSystemLibrarySets(final Project project, final Vector libsets) {
     addActiveLibrarySet(project, libsets, this.sysLibrarySets);
@@ -90,22 +101,24 @@ public class LinkerDef extends ProcessorDef {
     addActiveLibrarySet(project, libsets, this.librarySets);
   }
 
-  /**
-   * Adds a linker command-line arg.
-   */
-  public void addConfiguredLinkerArg(final LinkerArgument arg) {
-    addConfiguredProcessorArg(arg);
-  }
+    /**
+     * Adds a linker command-line arg.
+     */
 
-  /**
-   * Adds a compiler command-line arg.
-   */
-  public void addConfiguredLinkerParam(final LinkerParam param) {
-    if (isReference()) {
-      throw noChildrenAllowed();
+    public void addConfiguredLinkerArg(final LinkerArgument arg) {
+      addConfiguredProcessorArg(arg);
     }
-    addConfiguredProcessorParam(param);
-  }
+
+    /**
+     * Adds a compiler command-line arg.
+     */
+
+    public void addConfiguredLinkerParam(final LinkerParam param) {
+      if (isReference()) {
+        throw noChildrenAllowed();
+      }
+      addConfiguredProcessorParam(param);
+    }
 
   public boolean addLibraryDirectory(final File directory) {
     if (directory == null || !directory.exists()) {
@@ -224,6 +237,7 @@ public class LinkerDef extends ProcessorDef {
    * /**
    * Adds a system library set.
    */
+
   public void addLibset(final LibrarySet libset) {
     if (isReference()) {
       throw super.noChildrenAllowed();
@@ -237,6 +251,7 @@ public class LinkerDef extends ProcessorDef {
   /**
    * Adds a system library set.
    */
+
   public void addSyslibset(final SystemLibrarySet libset) {
     if (isReference()) {
       throw super.noChildrenAllowed();
@@ -247,13 +262,14 @@ public class LinkerDef extends ProcessorDef {
     this.sysLibrarySets.addElement(libset);
   }
 
-  public void execute() throws org.apache.tools.ant.BuildException {
-    throw new org.apache.tools.ant.BuildException("Not an actual task, but looks like one for documentation purposes");
-  }
+    public void execute() throws org.apache.tools.ant.BuildException {
+      throw new org.apache.tools.ant.BuildException("Not an actual task, but looks like one for documentation purposes");
+    }
 
   /**
    * Returns an array of active library sets for this linker definition.
    */
+
   public LibrarySet[] getActiveLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
@@ -277,6 +293,7 @@ public class LinkerDef extends ProcessorDef {
   /**
    * Returns an array of active library sets for this linker definition.
    */
+
   public LibrarySet[] getActiveSystemLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
@@ -296,6 +313,7 @@ public class LinkerDef extends ProcessorDef {
   /**
    * Returns an array of active library sets for this linker definition.
    */
+
   public LibrarySet[] getActiveUserLibrarySets(final LinkerDef[] defaultProviders, final int index) {
     if (isReference()) {
       return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef"))
@@ -312,103 +330,103 @@ public class LinkerDef extends ProcessorDef {
     return sets;
   }
 
-  public long getBase(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getBase(defaultProviders, index);
-    }
-    if (this.base <= 0) {
-      if (defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getBase(defaultProviders, index + 1);
+    public long getBase(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getBase(defaultProviders, index);
       }
-    }
-    return this.base;
-  }
-
-  public String getEntry(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getEntry(defaultProviders, index);
-    }
-    if (this.entry != null) {
-      return this.entry;
-    }
-    if (defaultProviders != null && index < defaultProviders.length) {
-      return defaultProviders[index].getEntry(defaultProviders, index + 1);
-    }
-    return null;
-  }
-
-  public Boolean getFixed(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getFixed(defaultProviders, index);
-    }
-    if (this.fixed == null) {
-      if (defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getFixed(defaultProviders, index + 1);
+      if (this.base <= 0) {
+        if (defaultProviders != null && index < defaultProviders.length) {
+          return defaultProviders[index].getBase(defaultProviders, index + 1);
+        }
       }
+      return this.base;
     }
-    return this.fixed;
-  }
 
-  public boolean getIncremental(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getIncremental(defaultProviders, index);
+    public String getEntry(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getEntry(defaultProviders, index);
+      }
+      if (this.entry != null) {
+        return this.entry;
+      }
+      if (defaultProviders != null && index < defaultProviders.length) {
+        return defaultProviders[index].getEntry(defaultProviders, index + 1);
+      }
+      return null;
     }
-    if (this.incremental != null) {
-      return this.incremental.booleanValue();
+
+    public Boolean getFixed(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getFixed(defaultProviders, index);
+      }
+      if (this.fixed == null) {
+        if (defaultProviders != null && index < defaultProviders.length) {
+          return defaultProviders[index].getFixed(defaultProviders, index + 1);
+        }
+      }
+      return this.fixed;
     }
-    if (defaultProviders != null && index < defaultProviders.length) {
-      return defaultProviders[index].getIncremental(defaultProviders, index + 1);
+
+    public boolean getIncremental(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getIncremental(defaultProviders, index);
+      }
+      if (this.incremental != null) {
+        return this.incremental.booleanValue();
+      }
+      if (defaultProviders != null && index < defaultProviders.length) {
+        return defaultProviders[index].getIncremental(defaultProviders, index + 1);
+      }
+      return false;
     }
-    return false;
-  }
 
   public List<File> getLibraryDirectories() {
     return new ArrayList<File>(this.libraryDirectories);
   }
 
-  public boolean getMap(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getMap(defaultProviders, index);
-    }
-    if (this.map != null) {
-      return this.map.booleanValue();
-    }
-    if (defaultProviders != null && index < defaultProviders.length) {
-      return defaultProviders[index].getMap(defaultProviders, index + 1);
-    }
-    return false;
-  }
-
-  @Override
-  public Processor getProcessor() {
-    Linker linker = (Linker) super.getProcessor();
-    if (linker == null) {
-      linker = GccLinker.getInstance();
-    }
-    if (getLibtool() && linker instanceof CommandLineLinker) {
-      final CommandLineLinker cmdLineLinker = (CommandLineLinker) linker;
-      linker = cmdLineLinker.getLibtoolLinker();
-    }
-    return linker;
-  }
-
-  @Override
-  public Processor getProcessor(final LinkType linkType) {
-    final Processor proc = getProcessor();
-    return proc.getLinker(linkType);
-  }
-
-  public int getStack(final LinkerDef[] defaultProviders, final int index) {
-    if (isReference()) {
-      return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getStack(defaultProviders, index);
-    }
-    if (this.stack < 0) {
-      if (defaultProviders != null && index < defaultProviders.length) {
-        return defaultProviders[index].getStack(defaultProviders, index + 1);
+    public boolean getMap(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getMap(defaultProviders, index);
       }
+      if (this.map != null) {
+        return this.map.booleanValue();
+      }
+      if (defaultProviders != null && index < defaultProviders.length) {
+        return defaultProviders[index].getMap(defaultProviders, index + 1);
+      }
+      return false;
     }
-    return this.stack;
-  }
+
+    @Override @Override
+    public Processor getProcessor() {
+      Linker linker = (Linker) super.getProcessor();
+      if (linker == null) {
+        linker = GccLinker.getInstance();
+      }
+      if (getLibtool() && linker instanceof CommandLineLinker) {
+        final CommandLineLinker cmdLineLinker = (CommandLineLinker) linker;
+        linker = cmdLineLinker.getLibtoolLinker();
+      }
+      return linker;
+    }
+
+    @Override @Override
+    public Processor getProcessor(final LinkType linkType) {
+      final Processor proc = getProcessor();
+      return proc.getLinker(linkType);
+    }
+
+    public int getStack(final LinkerDef[] defaultProviders, final int index) {
+      if (isReference()) {
+        return ((LinkerDef) getCheckedRef(LinkerDef.class, "LinkerDef")).getStack(defaultProviders, index);
+      }
+      if (this.stack < 0) {
+        if (defaultProviders != null && index < defaultProviders.length) {
+          return defaultProviders[index].getStack(defaultProviders, index + 1);
+        }
+      }
+      return this.stack;
+    }
 
   public String getToolPath() {
     return this.toolPath;
@@ -421,12 +439,13 @@ public class LinkerDef extends ProcessorDef {
    *          base address
    *
    */
-  public void setBase(final FlexLong base) {
-    if (isReference()) {
-      throw tooManyAttributes();
+
+    public void setBase(final FlexLong base) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.base = base.longValue();
     }
-    this.base = base.longValue();
-  }
 
   /**
    * Sets the starting address.
@@ -434,43 +453,47 @@ public class LinkerDef extends ProcessorDef {
    * @param entry
    *          function name
    */
-  public void setEntry(final String entry) {
-    if (isReference()) {
-      throw tooManyAttributes();
-    }
-    this.entry = entry;
-  }
 
-  /**
-   * If true, marks the file to be loaded only at its preferred address.
-   */
-  public void setFixed(final boolean fixed) {
-    if (isReference()) {
-      throw tooManyAttributes();
+    public void setEntry(final String entry) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.entry = entry;
     }
-    this.fixed = booleanValueOf(fixed);
-  }
+
+    /**
+     * If true, marks the file to be loaded only at its preferred address.
+     */
+
+    public void setFixed(final boolean fixed) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.fixed = booleanValueOf(fixed);
+    }
 
   /**
    * If true, allows incremental linking.
    *
    */
-  public void setIncremental(final boolean incremental) {
-    if (isReference()) {
-      throw tooManyAttributes();
-    }
-    this.incremental = booleanValueOf(incremental);
-  }
 
-  /**
-   * If set to true, a map file will be produced.
-   */
-  public void setMap(final boolean map) {
-    if (isReference()) {
-      throw tooManyAttributes();
+    public void setIncremental(final boolean incremental) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.incremental = booleanValueOf(incremental);
     }
-    this.map = booleanValueOf(map);
-  }
+
+    /**
+     * If set to true, a map file will be produced.
+     */
+
+    public void setMap(final boolean map) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.map = booleanValueOf(map);
+    }
 
   /**
    * Sets linker type.
@@ -562,35 +585,37 @@ public class LinkerDef extends ProcessorDef {
    *
    * >>>>>>> refs/remotes/origin/master
    */
-  public void setName(final LinkerEnum name) throws BuildException {
-    if (isReference()) {
-      throw tooManyAttributes();
-    }
-    final Linker linker = name.getLinker();
-    super.setProcessor(linker);
-  }
 
-  @Override
-  protected void setProcessor(final Processor proc) throws BuildException {
-    Linker linker = null;
-    if (proc instanceof Linker) {
-      linker = (Linker) proc;
-    } else {
-      final LinkType linkType = new LinkType();
-      linker = proc.getLinker(linkType);
+    public void setName(final LinkerEnum name) throws BuildException {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      final Linker linker = name.getLinker();
+      super.setProcessor(linker);
     }
-    super.setProcessor(linker);
-  }
 
-  /**
-   * Sets stack size in bytes.
-   */
-  public void setStack(final FlexInteger stack) {
-    if (isReference()) {
-      throw tooManyAttributes();
+    @Override @Override
+    protected void setProcessor(final Processor proc) throws BuildException {
+      Linker linker = null;
+      if (proc instanceof Linker) {
+        linker = (Linker) proc;
+      } else {
+        final LinkType linkType = new LinkType();
+        linker = proc.getLinker(linkType);
+      }
+      super.setProcessor(linker);
     }
-    this.stack = stack.intValue();
-  }
+
+    /**
+     * Sets stack size in bytes.
+     */
+
+    public void setStack(final FlexInteger stack) {
+      if (isReference()) {
+        throw tooManyAttributes();
+      }
+      this.stack = stack.intValue();
+    }
 
   public void setToolPath(final String path) {
     this.toolPath = path;
@@ -656,4 +681,134 @@ public class LinkerDef extends ProcessorDef {
       }
     }
   }
+
+  /**
+   * Adds a system library set.
+   */
+
+  /**
+   * Adds a system library set.
+   */
+
+  /**
+   * Returns an array of active library sets for this linker definition.
+   */
+
+  /**
+   * Returns an array of active library sets for this linker definition.
+   */
+
+  /**
+   * Returns an array of active library sets for this linker definition.
+   */
+
+  /**
+   * Sets the base address. May be specified in either decimal or hex.
+   * 
+   * @param base
+   *          base address
+   * 
+   */
+
+  /**
+   * Sets the starting address.
+   * 
+   * @param entry
+   *          function name
+   */
+
+  /**
+   * If true, allows incremental linking.
+   * 
+   */
+
+  /**
+   * Sets linker type.
+   * 
+   * 
+   * <table width="100%" border="1">
+   * <thead>Supported linkers </thead>
+   * <tr>
+   * <td>gcc</td>
+   * <td>Gcc Linker</td>
+   * </tr>
+   * <tr>
+   * <td>g++</td>
+   * <td>G++ Linker</td>
+   * </tr>
+   * <tr>
+   * <td>ld</td>
+   * <td>Ld Linker</td>
+   * </tr>
+   * <tr>
+   * <td>ar</td>
+   * <td>Gcc Librarian</td>
+   * </tr>
+   * <tr>
+   * <td>msvc</td>
+   * <td>Microsoft Linker</td>
+   * </tr>
+   * <tr>
+   * <td>bcc</td>
+   * <td>Borland Linker</td>
+   * </tr>
+   * <tr>
+   * <td>df</td>
+   * <td>Compaq Visual Fortran Linker</td>
+   * </tr>
+   * <tr>
+   * <td>icl</td>
+   * <td>Intel Linker for Windows (IA-32)</td>
+   * </tr>
+   * <tr>
+   * <td>ecl</td>
+   * <td>Intel Linker for Windows (IA-64)</td>
+   * </tr>
+   * <tr>
+   * <td>icc</td>
+   * <td>Intel Linker for Linux (IA-32)</td>
+   * </tr>
+   * <tr>
+   * <td>ecc</td>
+   * <td>Intel Linker for Linux (IA-64)</td>
+   * </tr>
+   * <tr>
+   * <td>CC</td>
+   * <td>Sun ONE Linker</td>
+   * </tr>
+   * <tr>
+   * <td>aCC</td>
+   * <td>HP aC++ Linker</td>
+   * </tr>
+   * <tr>
+   * <td>os390</td>
+   * <td>OS390 Linker</td>
+   * </tr>
+   * <tr>
+   * <td>os390batch</td>
+   * <td>OS390 Linker</td>
+   * </tr>
+   * <tr>
+   * <td>os400</td>
+   * <td>IccLinker</td>
+   * </tr>
+   * <tr>
+   * <td>sunc89</td>
+   * <td>C89 Linker</td>
+   * </tr>
+   * <tr>
+   * <td>xlC</td>
+   * <td>VisualAge Linker</td>
+   * </tr>
+   * <tr>
+   * <td>wcl</td>
+   * <td>OpenWatcom C/C++ linker</td>
+   * </tr>
+   * <tr>
+   * <td>wfl</td>
+   * <td>OpenWatcom FORTRAN linker</td>
+   * </tr>
+   * </table>
+   * 
+   */
 }

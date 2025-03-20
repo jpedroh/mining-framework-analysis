@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,28 +69,30 @@ public abstract class CommandLineLinker extends AbstractLinker {
 
   private final boolean isLibtool;
 
-  private String[] librarySets;
+    private String[] librarySets;
 
   private final CommandLineLinker libtoolLinker;
 
-  private final boolean newEnvironment = false;
+    private final boolean newEnvironment = false;
 
   private final String outputSuffix;
 
   // FREEHEP
+
   private final int maxPathLength = 250;
 
   /** Creates a comand line linker invocation */
-  public CommandLineLinker(final String command, final String identifierArg, final String[] extensions,
-      final String[] ignoredExtensions, final String outputSuffix, final boolean isLibtool,
-      final CommandLineLinker libtoolLinker) {
-    super(extensions, ignoredExtensions);
-    this.command = command;
-    this.identifierArg = identifierArg;
-    this.outputSuffix = outputSuffix;
-    this.isLibtool = isLibtool;
-    this.libtoolLinker = libtoolLinker;
-  }
+
+    public CommandLineLinker(final String command, final String identifierArg, final String[] extensions,
+        final String[] ignoredExtensions, final String outputSuffix, final boolean isLibtool,
+        final CommandLineLinker libtoolLinker) {
+      super(extensions, ignoredExtensions);
+      this.command = command;
+      this.identifierArg = identifierArg;
+      this.outputSuffix = outputSuffix;
+      this.isLibtool = isLibtool;
+      this.libtoolLinker = libtoolLinker;
+    }
 
   protected void addBase(final CCTask task, final long base, final Vector<String> args) {
     // NB: Do nothing by default.
@@ -123,8 +135,11 @@ public abstract class CommandLineLinker extends AbstractLinker {
   }
 
   //
+
   // Windows processors handle these through file list
+
   //
+
   protected String[] addLibrarySets(final CCTask task, final LibrarySet[] libsets, final Vector<String> preargs,
       final Vector<String> midargs, final Vector<String> endargs) {
     return null;
@@ -138,117 +153,203 @@ public abstract class CommandLineLinker extends AbstractLinker {
     // NB: Do nothing by default.
   }
 
-  @Override
-  protected LinkerConfiguration createConfiguration(final CCTask task, final LinkType linkType,
-      final ProcessorDef[] baseDefs, final LinkerDef specificDef, final TargetDef targetPlatform,
-      final VersionInfo versionInfo) {
+    @Override @Override
+    protected LinkerConfiguration createConfiguration(final CCTask task, final LinkType linkType,
+        final ProcessorDef[] baseDefs, final LinkerDef specificDef, final TargetDef targetPlatform,
+        final VersionInfo versionInfo) {
 
-    final Vector<String> preargs = new Vector<String>();
-    final Vector<String> midargs = new Vector<String>();
-    final Vector<String> endargs = new Vector<String>();
-    final Vector<String>[] args = new Vector[] {
-        preargs, midargs, endargs
-    };
+      final Vector<String> preargs = new Vector<String>();
+      final Vector<String> midargs = new Vector<String>();
+      final Vector<String> endargs = new Vector<String>();
+      final Vector<String>[] args = new Vector[] {
+          preargs, midargs, endargs
+      };
 
-    final LinkerDef[] defaultProviders = new LinkerDef[baseDefs.length + 1];
-    defaultProviders[0] = specificDef;
-    for (int i = 0; i < baseDefs.length; i++) {
-      defaultProviders[i + 1] = (LinkerDef) baseDefs[i];
-    }
-    //
-    // add command line arguments inherited from <cc> element
-    // any "extends" and finally the specific CompilerDef
-    CommandLineArgument[] commandArgs;
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      final LinkerDef linkerDef = defaultProviders[i];
-      commandArgs = linkerDef.getActiveProcessorArgs();
-      for (final CommandLineArgument commandArg : commandArgs) {
-        args[commandArg.getLocation()].addElement(commandArg.getValue());
+      final LinkerDef[] defaultProviders = new LinkerDef[baseDefs.length + 1];
+      defaultProviders[0] = specificDef;
+      for (int i = 0; i < baseDefs.length; i++) {
+        defaultProviders[i + 1] = (LinkerDef) baseDefs[i];
       }
-    }
-
-    final Set<File> libraryDirectories = new LinkedHashSet<File>();
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      final LinkerDef linkerDef = defaultProviders[i];
-      for (final File libraryDirectory : linkerDef.getLibraryDirectories()) {
-        if (libraryDirectories.add(libraryDirectory)) {
-          addLibraryDirectory(libraryDirectory, preargs);
+      //
+      // add command line arguments inherited from <cc> element
+      // any "extends" and finally the specific CompilerDef
+      CommandLineArgument[] commandArgs;
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        final LinkerDef linkerDef = defaultProviders[i];
+        commandArgs = linkerDef.getActiveProcessorArgs();
+        for (final CommandLineArgument commandArg : commandArgs) {
+          args[commandArg.getLocation()].addElement(commandArg.getValue());
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+      for(int i = defaultProviders.length-1; i >= 0; i--) {
+        commandArgs = defaultProviders[i].getActiveProcessorArgs();
+        for(int j = 0; j < commandArgs.length; j++) {
+          args[commandArgs[j].getLocation()].
+                addElement(commandArgs[j].getValue());
+=======
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        commandArgs = defaultProviders[i].getActiveProcessorArgs();
+        for (final CommandLineArgument commandArg : commandArgs) {
+          args[commandArg.getLocation()].addElement(commandArg.getValue());
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
         }
       }
-    }
 
-    final Vector<ProcessorParam> params = new Vector<ProcessorParam>();
-    //
-    // add command line arguments inherited from <cc> element
-    // any "extends" and finally the specific CompilerDef
-    ProcessorParam[] paramArray;
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      paramArray = defaultProviders[i].getActiveProcessorParams();
-      for (final ProcessorParam element : paramArray) {
-        params.add(element);
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      final Set<File> libraryDirectories = new LinkedHashSet<File>();
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        final LinkerDef linkerDef = defaultProviders[i];
+        for (final File libraryDirectory : linkerDef.getLibraryDirectories()) {
+          if (libraryDirectories.add(libraryDirectory)) {
+            addLibraryDirectory(libraryDirectory, preargs);
+          }
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+        Vector<ProcessorParam> params = new Vector<ProcessorParam>();
+        //
+        //   add command line arguments inherited from <cc> element
+        //     any "extends" and finally the specific CompilerDef
+        ProcessorParam[] paramArray;
+        for (int i = defaultProviders.length - 1; i >= 0; i--) {
+            paramArray = defaultProviders[i].getActiveProcessorParams();
+            for (int j = 0; j < paramArray.length; j++) {
+                params.add(paramArray[j]);
+            }
+=======
+      final Vector<ProcessorParam> params = new Vector<ProcessorParam>();
+      //
+      // add command line arguments inherited from <cc> element
+      // any "extends" and finally the specific CompilerDef
+      ProcessorParam[] paramArray;
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        paramArray = defaultProviders[i].getActiveProcessorParams();
+        for (final ProcessorParam element : paramArray) {
+          params.add(element);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
+        }
       }
-    }
 
-    paramArray = params.toArray(new ProcessorParam[params.size()]);
-
-    final boolean debug = specificDef.getDebug(baseDefs, 0);
-
-    final String startupObject = getStartupObject(linkType);
-
-    addImpliedArgs(task, debug, linkType, preargs);
-    addIncremental(task, specificDef.getIncremental(defaultProviders, 1), preargs);
-    addFixed(task, specificDef.getFixed(defaultProviders, 1), preargs);
-    addMap(task, specificDef.getMap(defaultProviders, 1), preargs);
-    addBase(task, specificDef.getBase(defaultProviders, 1), preargs);
-    addStack(task, specificDef.getStack(defaultProviders, 1), preargs);
-    addEntry(task, specificDef.getEntry(defaultProviders, 1), preargs);
-
-    String[] libnames = null;
-    final LibrarySet[] libsets = specificDef.getActiveLibrarySets(defaultProviders, 1);
-    // FREEHEP call at all times
-    // if (libsets.length > 0) {
-    libnames = addLibrarySets(task, libsets, preargs, midargs, endargs);
-    // }
-
-    final StringBuffer buf = new StringBuffer(getIdentifier());
-    for (int i = 0; i < 3; i++) {
-      final Enumeration<String> argenum = args[i].elements();
-      while (argenum.hasMoreElements()) {
-        buf.append(' ');
-        buf.append(argenum.nextElement());
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      final Vector<ProcessorParam> params = new Vector<ProcessorParam>();
+      //
+      // add command line arguments inherited from <cc> element
+      // any "extends" and finally the specific CompilerDef
+      ProcessorParam[] paramArray;
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        paramArray = defaultProviders[i].getActiveProcessorParams();
+        for (final ProcessorParam element : paramArray) {
+          params.add(element);
+        }
       }
-    }
-    final String configId = buf.toString();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+        paramArray = params.toArray(new ProcessorParam[params.size()]);
+=======
+      paramArray = params.toArray(new ProcessorParam[params.size()]);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
 
-    final String[][] options = new String[][] {
-        new String[args[0].size() + args[1].size()], new String[args[2].size()]
-    };
-    args[0].copyInto(options[0]);
-    final int offset = args[0].size();
-    for (int i = 0; i < args[1].size(); i++) {
-      options[0][i + offset] = args[1].elementAt(i);
-    }
-    args[2].copyInto(options[1]);
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      paramArray = params.toArray(new ProcessorParam[params.size()]);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+        boolean debug = specificDef.getDebug(baseDefs,0);
+=======
+      final boolean debug = specificDef.getDebug(baseDefs, 0);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
 
-    // if this linker doesn't have an env, and there is a more generically
-    // definition for environment, use it.
-    if (null != specificDef.getEnv() && null == this.env) {
-      this.env = specificDef.getEnv();
-    }
-    for (final ProcessorDef processorDef : baseDefs) {
-      final Environment environment = processorDef.getEnv();
-      if (null != environment && null == this.env) {
-        this.env = environment;
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      final boolean debug = specificDef.getDebug(baseDefs, 0);
+
+      final String startupObject = getStartupObject(linkType);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+    
+      String startupObject = getStartupObject(linkType);
+=======
+      final String startupObject = getStartupObject(linkType);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
+
+      addImpliedArgs(task, debug, linkType, preargs);
+      addIncremental(task, specificDef.getIncremental(defaultProviders, 1), preargs);
+      addFixed(task, specificDef.getFixed(defaultProviders, 1), preargs);
+      addMap(task, specificDef.getMap(defaultProviders, 1), preargs);
+      addBase(task, specificDef.getBase(defaultProviders, 1), preargs);
+      addStack(task, specificDef.getStack(defaultProviders, 1), preargs);
+      addEntry(task, specificDef.getEntry(defaultProviders, 1), preargs);
+
+      String[] libnames = null;
+      final LibrarySet[] libsets = specificDef.getActiveLibrarySets(defaultProviders, 1);
+      // FREEHEP call at all times
+      // if (libsets.length > 0) {
+      libnames = addLibrarySets(task, libsets, preargs, midargs, endargs);
+      // }
+
+      final StringBuffer buf = new StringBuffer(getIdentifier());
+      for (int i = 0; i < 3; i++) {
+        final Enumeration<String> argenum = args[i].elements();
+        while (argenum.hasMoreElements()) {
+          buf.append(' ');
+          buf.append(argenum.nextElement());
+        }
       }
-    }
-    final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
-    final boolean map = specificDef.getMap(defaultProviders, 1);
-    final String toolPath = specificDef.getToolPath();
+      final String configId = buf.toString();
 
-    // task.log("libnames:"+libnames.length, Project.MSG_VERBOSE);
-    return new CommandLineLinkerConfiguration(this, configId, options, paramArray, rebuild, map, debug, libnames,
-        startupObject, toolPath);
-  }
+      final String[][] options = new String[][] {
+          new String[args[0].size() + args[1].size()], new String[args[2].size()]
+      };
+      args[0].copyInto(options[0]);
+      final int offset = args[0].size();
+      for (int i = 0; i < args[1].size(); i++) {
+        options[0][i + offset] = args[1].elementAt(i);
+      }
+      args[2].copyInto(options[1]);
+
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      // if this linker doesn't have an env, and there is a more generically
+      // definition for environment, use it.
+      if (null != specificDef.getEnv() && null == this.env) {
+        this.env = specificDef.getEnv();
+      }
+      for (final ProcessorDef processorDef : baseDefs) {
+        final Environment environment = processorDef.getEnv();
+        if (null != environment && null == this.env) {
+          this.env = environment;
+        }
+      }
+      final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
+      final boolean map = specificDef.getMap(defaultProviders, 1);
+      final String toolPath = specificDef.getToolPath();
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+      // if this linker doesn't have an env, and there is a more generically definition for environment, use it.
+      if( null != specificDef.getEnv() && null == this.env )
+          this.env = specificDef.getEnv();
+=======
+      // if this linker doesn't have an env, and there is a more generically
+      // definition for environment, use it.
+      if (null != specificDef.getEnv() && null == this.env) {
+        this.env = specificDef.getEnv();
+      }
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
+
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      // task.log("libnames:"+libnames.length, Project.MSG_VERBOSE);
+      return new CommandLineLinkerConfiguration(this, configId, options, paramArray, rebuild, map, debug, libnames,
+          startupObject, toolPath);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+      boolean rebuild = specificDef.getRebuild(baseDefs,0);
+      boolean map = specificDef.getMap(defaultProviders,1);
+      String toolPath = specificDef.getToolPath();
+
+      //task.log("libnames:"+libnames.length, Project.MSG_VERBOSE);
+      return new CommandLineLinkerConfiguration(this,configId,options,
+              paramArray,
+              rebuild,map, debug,libnames, startupObject, toolPath);
+=======
+      final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
+      final boolean map = specificDef.getMap(defaultProviders, 1);
+      final String toolPath = specificDef.getToolPath();
+
+      // task.log("libnames:"+libnames.length, Project.MSG_VERBOSE);
+      return new CommandLineLinkerConfiguration(this, configId, options, paramArray, rebuild, map, debug, libnames,
+          startupObject, toolPath);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
+    }
 
   /**
    * Allows drived linker to decorate linker option.
@@ -261,6 +362,7 @@ public abstract class CommandLineLinker extends AbstractLinker {
    * @param arg
    *          linker argument
    */
+
   protected String decorateLinkerOption(final StringBuffer buf, final String arg) {
     return arg;
   }
@@ -269,21 +371,21 @@ public abstract class CommandLineLinker extends AbstractLinker {
     return this.command;
   }
 
-  protected abstract String getCommandFileSwitch(String commandFile);
+    protected abstract String getCommandFileSwitch(String commandFile);
 
-  public String getCommandWithPath(final CommandLineLinkerConfiguration config) {
-    if (config.getCommandPath() != null) {
-      final File command = new File(config.getCommandPath(), this.getCommand());
-      try {
-        return command.getCanonicalPath();
-      } catch (final IOException e) {
-        e.printStackTrace();
-        return command.getAbsolutePath();
+    public String getCommandWithPath(final CommandLineLinkerConfiguration config) {
+      if (config.getCommandPath() != null) {
+        final File command = new File(config.getCommandPath(), this.getCommand());
+        try {
+          return command.getCanonicalPath();
+        } catch (final IOException e) {
+          e.printStackTrace();
+          return command.getAbsolutePath();
+        }
+      } else {
+        return this.getCommand();
       }
-    } else {
-      return this.getCommand();
     }
-  }
 
   @Override
   public String getIdentifier() {
@@ -308,7 +410,7 @@ public abstract class CommandLineLinker extends AbstractLinker {
     return this;
   }
 
-  protected abstract int getMaximumCommandLength();
+    protected abstract int getMaximumCommandLength();
 
   @Override
   public String[] getOutputFileNames(final String baseName, final VersionInfo versionInfo) {
@@ -317,66 +419,67 @@ public abstract class CommandLineLinker extends AbstractLinker {
     };
   }
 
-  protected String[] getOutputFileSwitch(final CCTask task, final String outputFile) {
-    // FREEHEP BEGIN
-    if (isWindows() && outputFile.length() > this.maxPathLength) {
-      throw new BuildException("Absolute path too long, " + outputFile.length() + " > " + this.maxPathLength + ": '"
-          + outputFile);
+    protected String[] getOutputFileSwitch(final CCTask task, final String outputFile) {
+      // FREEHEP BEGIN
+      if (isWindows() && outputFile.length() > this.maxPathLength) {
+        throw new BuildException("Absolute path too long, " + outputFile.length() + " > " + this.maxPathLength + ": '"
+            + outputFile);
+      }
+      // FREEHEP END
+      return getOutputFileSwitch(outputFile);
     }
-    // FREEHEP END
-    return getOutputFileSwitch(outputFile);
-  }
 
-  protected abstract String[] getOutputFileSwitch(String outputFile);
+    protected abstract String[] getOutputFileSwitch(String outputFile);
 
   protected String getStartupObject(final LinkType linkType) {
     return null;
   }
 
-  /**
-   * Performs a link using a command line linker
-   *
-   */
-  public void link(final CCTask task, final File outputFile, final String[] sourceFiles,
-      final CommandLineLinkerConfiguration config) throws BuildException {
-    final File parentDir = new File(outputFile.getParent());
-    String parentPath;
-    try {
-      parentPath = parentDir.getCanonicalPath();
-    } catch (final IOException ex) {
-      parentPath = parentDir.getAbsolutePath();
-    }
-    String[] execArgs = prepareArguments(task, parentPath, outputFile.getName(), sourceFiles, config);
-    int commandLength = 0;
-    for (final String execArg : execArgs) {
-      commandLength += execArg.length() + 1;
-    }
+    /**
+     * Performs a link using a command line linker
+     *
+     */
 
-    //
-    // if command length exceeds maximum
-    // then create a temporary
-    // file containing everything but the command name
-    if (commandLength >= this.getMaximumCommandLength()) {
+    public void link(final CCTask task, final File outputFile, final String[] sourceFiles,
+        final CommandLineLinkerConfiguration config) throws BuildException {
+      final File parentDir = new File(outputFile.getParent());
+      String parentPath;
       try {
-        execArgs = prepareResponseFile(outputFile, execArgs);
+        parentPath = parentDir.getCanonicalPath();
       } catch (final IOException ex) {
-        throw new BuildException(ex);
+        parentPath = parentDir.getAbsolutePath();
       }
-    }
+      String[] execArgs = prepareArguments(task, parentPath, outputFile.getName(), sourceFiles, config);
+      int commandLength = 0;
+      for (final String execArg : execArgs) {
+        commandLength += execArg.length() + 1;
+      }
 
-    final int retval = runCommand(task, parentDir, execArgs);
-    //
-    // if the process returned a failure code then
-    // throw an BuildException
-    //
-    if (retval != 0) {
       //
-      // construct the exception
-      //
-      throw new BuildException(getCommandWithPath(config) + " failed with return code " + retval, task.getLocation());
-    }
+      // if command length exceeds maximum
+      // then create a temporary
+      // file containing everything but the command name
+      if (commandLength >= this.getMaximumCommandLength()) {
+        try {
+          execArgs = prepareResponseFile(outputFile, execArgs);
+        } catch (final IOException ex) {
+          throw new BuildException(ex);
+        }
+      }
 
-  }
+      final int retval = runCommand(task, parentDir, execArgs);
+      //
+      // if the process returned a failure code then
+      // throw an BuildException
+      //
+      if (retval != 0) {
+        //
+        // construct the exception
+        //
+        throw new BuildException(getCommandWithPath(config) + " failed with return code " + retval, task.getLocation());
+      }
+
+    }
 
   /**
    * Prepares argument list for exec command. Will return null
@@ -392,6 +495,7 @@ public abstract class CommandLineLinker extends AbstractLinker {
    *          linker configuration
    * @return arguments for runTask
    */
+
   protected String[] prepareArguments(final CCTask task, final String outputDir, final String outputFile,
       final String[] sourceFiles, final CommandLineLinkerConfiguration config) {
 
@@ -434,20 +538,28 @@ public abstract class CommandLineLinker extends AbstractLinker {
     return allArgs;
   }
 
-  /**
-   * Processes filename into argument form
-   *
-   */
-  protected String prepareFilename(final StringBuffer buf, final String outputDir, final String sourceFile) {
-    // FREEHEP BEGIN exit if absolute path is too long. Max length on
+    /**
+     * Processes filename into argument form
+     *
+     */
+
+    protected String prepareFilename(final StringBuffer buf, final String outputDir, final String sourceFile) {
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/left.java
+      // FREEHEP BEGIN exit if absolute path is too long. Max length on
     // relative paths in windows is even shorter.
-    if (isWindows() && sourceFile.length() > this.maxPathLength) {
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/base.java
+      // FREEHEP BEGIN exit if absolute path is too long. Max length on relative paths in windows is even shorter.
+=======
+      // FREEHEP BEGIN exit if absolute path is too long. Max length on relative
+    // paths in windows is even shorter.
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineLinker.java/right.java
+      if (isWindows() && sourceFile.length() > this.maxPathLength) {
       throw new BuildException("Absolute path too long, " + sourceFile.length() + " > " + this.maxPathLength + ": '"
           + sourceFile);
     }
-    // FREEHEP END
-    return quoteFilename(buf, sourceFile);
-  }
+      // FREEHEP END 
+      return quoteFilename(buf, sourceFile);
+    }
 
   /**
    * Prepares argument list to execute the linker using a
@@ -459,58 +571,108 @@ public abstract class CommandLineLinker extends AbstractLinker {
    *          output of prepareArguments
    * @return arguments for runTask
    */
-  protected String[] prepareResponseFile(final File outputFile, final String[] args) throws IOException {
-    final String baseName = outputFile.getName();
-    final File commandFile = new File(outputFile.getParent(), baseName + ".rsp");
-    final FileWriter writer = new FileWriter(commandFile);
-    int execArgCount = 1;
-    if (this.isLibtool) {
-      execArgCount++;
-    }
-    final String[] execArgs = new String[execArgCount + 1];
-    for (int i = 0; i < execArgCount; i++) {
-      execArgs[i] = args[i];
-    }
-    execArgs[execArgCount] = getCommandFileSwitch(commandFile.toString());
-    for (int i = execArgCount; i < args.length; i++) {
-      //
-      // if embedded space and not quoted then
-      // quote argument
-      if (args[i].indexOf(" ") >= 0 && args[i].charAt(0) != '\"') {
-        writer.write('\"');
-        writer.write(args[i]);
-        writer.write("\"\n");
-      } else {
-        writer.write(args[i]);
-        writer.write('\n');
+
+    protected String[] prepareResponseFile(final File outputFile, final String[] args) throws IOException {
+      final String baseName = outputFile.getName();
+      final File commandFile = new File(outputFile.getParent(), baseName + ".rsp");
+      final FileWriter writer = new FileWriter(commandFile);
+      int execArgCount = 1;
+      if (this.isLibtool) {
+        execArgCount++;
       }
+      final String[] execArgs = new String[execArgCount + 1];
+      for (int i = 0; i < execArgCount; i++) {
+        execArgs[i] = args[i];
+      }
+      execArgs[execArgCount] = getCommandFileSwitch(commandFile.toString());
+      for (int i = execArgCount; i < args.length; i++) {
+        //
+        // if embedded space and not quoted then
+        // quote argument
+        if (args[i].indexOf(" ") >= 0 && args[i].charAt(0) != '\"') {
+          writer.write('\"');
+          writer.write(args[i]);
+          writer.write("\"\n");
+        } else {
+          writer.write(args[i]);
+          writer.write('\n');
+        }
+      }
+      writer.close();
+      return execArgs;
     }
-    writer.close();
-    return execArgs;
-  }
 
-  protected String quoteFilename(final StringBuffer buf, final String filename) {
-    if (filename.indexOf(' ') >= 0) {
-      buf.setLength(0);
-      buf.append('\"');
-      buf.append(filename);
-      buf.append('\"');
-      return buf.toString();
+    protected String quoteFilename(final StringBuffer buf, final String filename) {
+      if (filename.indexOf(' ') >= 0) {
+        buf.setLength(0);
+        buf.append('\"');
+        buf.append(filename);
+        buf.append('\"');
+        return buf.toString();
+      }
+      return filename;
     }
-    return filename;
-  }
 
-  /**
-   * This method is exposed so test classes can overload
-   * and test the arguments without actually spawning the
-   * compiler
-   */
+    /**
+     * This method is exposed so test classes can overload
+     * and test the arguments without actually spawning the
+     * compiler
+     */
+
   protected int runCommand(final CCTask task, final File workingDir, final String[] cmdline) throws BuildException {
     return CUtil.runCommand(task, workingDir, cmdline, this.newEnvironment, this.env);
   }
 
-  protected final void setCommand(final String command) {
-    this.command = command;
-  }
+  // FREEHEP
+
+  /** Creates a comand line linker invocation */
+
+  //
+
+  // Windows processors handle these through file list
+
+  //
+
+  /**
+   * Allows drived linker to decorate linker option.
+   * Override by GccLinker to prepend a "-Wl," to
+   * pass option to through gcc to linker.
+   *
+   * @param buf
+   *          buffer that may be used and abused in the decoration process,
+   *          must not be null.
+   * @param arg
+   *          linker argument
+   */
+
+  /**
+   * Prepares argument list for exec command. Will return null
+   * if command line would exceed allowable command line buffer.
+   *
+   * @param task
+   *          compilation task.
+   * @param outputFile
+   *          linker output file
+   * @param sourceFiles
+   *          linker input files (.obj, .o, .res)
+   * @param config
+   *          linker configuration
+   * @return arguments for runTask
+   */
+
+  /**
+   * Prepares argument list to execute the linker using a
+   * response file.
+   *
+   * @param outputFile
+   *          linker output file
+   * @param args
+   *          output of prepareArguments
+   * @return arguments for runTask
+   */
+
+    protected final void setCommand(final String command) {
+      this.command = command;
+    }
 
 }

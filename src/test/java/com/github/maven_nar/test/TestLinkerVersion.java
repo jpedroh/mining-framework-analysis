@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ public class TestLinkerVersion extends TestCase {
 
   /*
    * (non-Javadoc)
-   *
+   * 
    * @see junit.framework.TestCase#setUp()
    */
   @Override
@@ -54,8 +54,14 @@ public class TestLinkerVersion extends TestCase {
       // Skip testing the MSVC linker on Win if vsvars32.bat has not run
       return;
     }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/test/java/com/github/maven_nar/test/TestLinkerVersion.java/left.java
     final String version = this.linker.getVersion(new NarCompileMojo());
     Assert.assertNotNull(version);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/test/java/com/github/maven_nar/test/TestLinkerVersion.java/base.java
+=======
+    final String version = this.linker.getVersion();
+    Assert.assertNotNull(version);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/test/java/com/github/maven_nar/test/TestLinkerVersion.java/right.java
   }
 
 }

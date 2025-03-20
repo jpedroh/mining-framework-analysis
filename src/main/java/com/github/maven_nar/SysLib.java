@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/SysLib.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/SysLib.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/SysLib.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +67,6 @@ public class SysLib {
     sysLibSet.setType(sysLibType);
     return sysLibSet;
   }
-
   @Override
   public String toString() {
     return this.name + " (" + this.type + ")";

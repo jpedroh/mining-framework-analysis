@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -82,6 +92,7 @@ public abstract class AbstractLdLinker extends CommandLineLinker {
           // args.addElement("-prebind");
           args.addElement("-dynamiclib");
         }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/left.java
       }
     } else {
       if (linkType.isStaticRuntime()) {
@@ -140,6 +151,77 @@ public abstract class AbstractLdLinker extends CommandLineLinker {
         }
         if (set.getType() != null && "framework".equals(set.getType().getValue()) && isDarwin()) {
           endargs.addElement("-F" + relPath);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/base.java
+        if (isDarwin()) {
+        	if (linkType.isPluginModule()) {
+                args.addElement("-bundle");
+// BEGINFREEHEP
+            } else if (linkType.isJNIModule()) {
+                args.addElement("-dynamic");
+                args.addElement("-bundle");
+// ENDFREEHEP               
+            } else {
+                if (linkType.isSharedLibrary()) {
+// FREEHEP no longer needed for 10.4+
+//                    args.addElement("-prebind");
+                    args.addElement("-dynamiclib");
+                }
+            }
+=======
+      }
+    } else {
+      if (linkType.isStaticRuntime()) {
+        args.addElement("-static");
+      }
+      if (linkType.isPluginModule()) {
+        args.addElement("-shared");
+      } else {
+        if (linkType.isSharedLibrary()) {
+          args.addElement("-shared");
+        }
+      }
+    }
+  }
+
+  @Override
+  protected void addIncremental(final CCTask task, final boolean incremental, final Vector<String> args) {
+    if (incremental) {
+      args.addElement("-i");
+    }
+  }
+
+  protected int addLibraryPatterns(final String[] libnames, final StringBuffer buf, final String prefix,
+      final String extension, final String[] patterns, final int offset) {
+    for (int i = 0; i < libnames.length; i++) {
+      buf.setLength(0);
+      buf.append(prefix);
+      buf.append(libnames[i]);
+      buf.append(extension);
+      patterns[offset + i] = buf.toString();
+    }
+    return offset + libnames.length;
+  }
+
+  @Override
+  protected String[] addLibrarySets(final CCTask task, final LibrarySet[] libsets, final Vector<String> preargs,
+      final Vector<String> midargs, final Vector<String> endargs) {
+    final Vector<String> libnames = new Vector<String>();
+    super.addLibrarySets(task, libsets, preargs, midargs, endargs);
+    LibraryTypeEnum previousLibraryType = null;
+    for (final LibrarySet libset : libsets) {
+      final LibrarySet set = libset;
+      final File libdir = set.getDir(null);
+      final String[] libs = set.getLibs();
+      if (libdir != null) {
+        String relPath = libdir.getAbsolutePath();
+        // File outputFile = task.getOutfile();
+        final File currentDir = new File(".");
+        if (currentDir.getParentFile() != null) {
+          relPath = CUtil.getRelativePath(currentDir.getParentFile().getAbsolutePath(), libdir);
+        }
+        if (set.getType() != null && "framework".equals(set.getType().getValue()) && isDarwin()) {
+          endargs.addElement("-F" + relPath);
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/right.java
         } else {
           endargs.addElement("-L" + relPath);
         }
@@ -185,10 +267,20 @@ public abstract class AbstractLdLinker extends CommandLineLinker {
       }
     }
 
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/left.java
     // BEGINFREEHEP if last was -Bstatic reset it to -Bdynamic so that libc
     // and libm can be found as shareables
     if (previousLibraryType != null && previousLibraryType.getValue().equals("static") && !isDarwin()) {
       endargs.addElement(getDynamicLibFlag());
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/base.java
+    public String getCommandFileSwitch(String commandFile) {
+        throw new IllegalStateException("ld does not support command files");
+=======
+    // BEGINFREEHEP if last was -Bstatic reset it to -Bdynamic so that libc and
+    // libm can be found as shareables
+    if (previousLibraryType != null && previousLibraryType.getValue().equals("static") && !isDarwin()) {
+      endargs.addElement(getDynamicLibFlag());
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/gcc/AbstractLdLinker.java/right.java
     }
     // ENDFREEHEP
 

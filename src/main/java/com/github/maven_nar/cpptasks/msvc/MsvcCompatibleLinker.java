@@ -7,9 +7,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/left.java
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/base.java
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+=======
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/right.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +46,7 @@ import com.github.maven_nar.cpptasks.types.LibraryTypeEnum;
 /**
  * Abstract base class for linkers that try to mimic the command line arguments
  * for the Microsoft (r) Incremental Linker
- *
+ * 
  * @author Curt Arnold
  */
 public abstract class MsvcCompatibleLinker extends CommandLineLinker {
@@ -48,7 +58,7 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     }, outputSuffix, false, null);
   }
 
-  @Override
+  @Override @Override
   protected void addBase(final CCTask task, final long base, final Vector<String> args) {
     if (base >= 0) {
       final String baseAddr = Long.toHexString(base);
@@ -56,14 +66,14 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     }
   }
 
-  @Override
+  @Override @Override
   protected void addEntry(final CCTask task, final String entry, final Vector<String> args) {
     if (entry != null) {
       args.addElement("/ENTRY:" + entry);
     }
   }
 
-  @Override
+  @Override @Override
   protected void addFixed(final CCTask task, final Boolean fixed, final Vector<String> args) {
     if (fixed != null) {
       if (fixed.booleanValue()) {
@@ -74,7 +84,7 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     }
   }
 
-  @Override
+  @Override @Override
   protected void addImpliedArgs(final CCTask task, final boolean debug, final LinkType linkType,
       final Vector<String> args) {
     args.addElement("/NOLOGO");
@@ -97,7 +107,7 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     }
   }
 
-  @Override
+  @Override @Override
   protected void addIncremental(final CCTask task, final boolean incremental, final Vector<String> args) {
     if (incremental) {
       args.addElement("/INCREMENTAL:YES");
@@ -126,14 +136,14 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     return null;
   }
 
-  @Override
+  @Override @Override
   protected void addMap(final CCTask task, final boolean map, final Vector<String> args) {
     if (map) {
       args.addElement("/MAP");
     }
   }
 
-  @Override
+  @Override @Override
   protected void addStack(final CCTask task, final int stack, final Vector<String> args) {
     if (stack >= 0) {
       final String stackStr = Integer.toHexString(stack);
@@ -142,39 +152,63 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
   }
 
   /**
-   * Adds source or object files to the bidded fileset to
-   * support version information.
-   *
-   * @param versionInfo
-   *          version information
-   * @param linkType
-   *          link type
-   * @param isDebug
-   *          true if debug build
-   * @param outputFile
-   *          name of generated executable
-   * @param objDir
-   *          directory for generated files
-   * @param matcher
-   *          bidded fileset
-   */
-  @Override
+     * Adds source or object files to the bidded fileset to
+     * support version information.
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/left.java
+     *
+     * @param versionInfo
+     *          version information
+     * @param linkType
+     *          link type
+     * @param isDebug
+     *          true if debug build
+     * @param outputFile
+     *          name of generated executable
+     * @param objDir
+     *          directory for generated files
+     * @param matcher
+     *          bidded fileset
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/base.java
+     * 
+     * @param versionInfo version information
+     * @param linkType link type
+     * @param isDebug true if debug build
+     * @param outputFile name of generated executable
+     * @param objDir directory for generated files
+     * @param matcher bidded fileset
+=======
+     * 
+     * @param versionInfo
+     *          version information
+     * @param linkType
+     *          link type
+     * @param isDebug
+     *          true if debug build
+     * @param outputFile
+     *          name of generated executable
+     * @param objDir
+     *          directory for generated files
+     * @param matcher
+     *          bidded fileset
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/msvc/MsvcCompatibleLinker.java/right.java
+     */
+  @Override @Override
   public void addVersionFiles(final VersionInfo versionInfo, final LinkType linkType, final File outputFile,
       final boolean isDebug, final File objDir, final TargetMatcher matcher) throws IOException {
     WindowsPlatform.addVersionFiles(versionInfo, linkType, outputFile, isDebug, objDir, matcher);
   }
 
-  @Override
+  @Override @Override
   public String getCommandFileSwitch(final String commandFile) {
     return "@" + commandFile;
   }
 
-  @Override
+  @Override @Override
   public File[] getLibraryPath() {
     return CUtil.getPathFromEnvironment("LIB", ";");
   }
 
-  @Override
+  @Override @Override
   public String[] getLibraryPatterns(final String[] libnames, final LibraryTypeEnum libType) {
     final StringBuffer buf = new StringBuffer();
     final String[] patterns = new String[libnames.length];
@@ -187,20 +221,20 @@ public abstract class MsvcCompatibleLinker extends CommandLineLinker {
     return patterns;
   }
 
-  @Override
+  @Override @Override
   public int getMaximumCommandLength() {
     // FREEHEP stay on the safe side
     return 32000; // 32767;
   }
 
-  @Override
+  @Override @Override
   public String[] getOutputFileSwitch(final String outputFile) {
     return new String[] {
       "/OUT:" + outputFile
     };
   }
 
-  @Override
+  @Override @Override
   public boolean isCaseSensitive() {
     return false;
   }

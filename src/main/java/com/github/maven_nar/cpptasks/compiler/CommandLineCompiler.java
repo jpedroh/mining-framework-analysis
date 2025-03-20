@@ -44,45 +44,36 @@ import com.google.common.collect.ObjectArrays;
 /**
  * An abstract Compiler implementation which uses an external program to
  * perform the compile.
- *
+ * 
  * @author Adam Murdoch
  */
 public abstract class CommandLineCompiler extends AbstractCompiler {
   /** Command used when invoking ccache */
   private static final String CCACHE_CMD = "ccache";
-
-  private String command;
-
-  private final Environment env;
-
-  private String identifier;
-
+    private String command;
+    private final Environment env;
+    private String identifier;
   private final String identifierArg;
-
   private final boolean libtool;
-
   private final CommandLineCompiler libtoolCompiler;
-
-  private final boolean newEnvironment;
-
-  protected CommandLineCompiler(final String command, final String identifierArg, final String[] sourceExtensions,
-      final String[] headerExtensions, final String outputSuffix, final boolean libtool,
-      final CommandLineCompiler libtoolCompiler, final boolean newEnvironment, final Environment env) {
-    super(sourceExtensions, headerExtensions, outputSuffix);
-    this.command = command;
-    if (libtool && libtoolCompiler != null) {
-      throw new java.lang.IllegalArgumentException("libtoolCompiler should be null when libtool is true");
+    private final boolean newEnvironment;
+    protected CommandLineCompiler(final String command, final String identifierArg, final String[] sourceExtensions,
+        final String[] headerExtensions, final String outputSuffix, final boolean libtool,
+        final CommandLineCompiler libtoolCompiler,
+        final boolean newEnvironment, final Environment env) {
+      super(sourceExtensions, headerExtensions, outputSuffix);
+      this.command = command;
+      if (libtool && libtoolCompiler != null) {
+        throw new java.lang.IllegalArgumentException("libtoolCompiler should be null when libtool is true");
+      }
+      this.libtool = libtool;
+      this.libtoolCompiler = libtoolCompiler;
+      this.identifierArg = identifierArg;
+      this.newEnvironment = newEnvironment;
+      this.env = env;
     }
-    this.libtool = libtool;
-    this.libtoolCompiler = libtoolCompiler;
-    this.identifierArg = identifierArg;
-    this.newEnvironment = newEnvironment;
-    this.env = env;
-  }
-
-  abstract protected void addImpliedArgs(Vector<String> args, boolean debug, boolean multithreaded, boolean exceptions,
-      LinkType linkType, Boolean rtti, OptimizationEnum optimization);
-
+    abstract protected void addImpliedArgs(Vector<String> args, boolean debug, boolean multithreaded, boolean exceptions,
+        LinkType linkType, Boolean rtti, OptimizationEnum optimization);
   /**
    * Adds command-line arguments for include directories.
    *
@@ -100,341 +91,468 @@ public abstract class CommandLineCompiler extends AbstractCompiler {
    *          Vector of command line arguments used to build the
    *          configuration identifier
    */
-  protected void addIncludes(final String baseDirPath, final File[] includeDirs, final Vector<String> args,
-      final Vector<String> relativeArgs, final StringBuffer includePathId, final boolean isSystem) {
-    for (final File includeDir : includeDirs) {
-      args.addElement(getIncludeDirSwitch(includeDir.getAbsolutePath(), isSystem));
-      if (relativeArgs != null) {
-        final String relative = CUtil.getRelativePath(baseDirPath, includeDir);
-        relativeArgs.addElement(getIncludeDirSwitch(relative, isSystem));
-        if (includePathId != null) {
-          if (includePathId.length() == 0) {
-            includePathId.append("/I");
-          } else {
-            includePathId.append(" /I");
+    protected void addIncludes(final String baseDirPath, final File[] includeDirs, final Vector<String> args,
+        final Vector<String> relativeArgs, final StringBuffer includePathId, final boolean isSystem) {
+      for (final File includeDir : includeDirs) {
+        args.addElement(getIncludeDirSwitch(includeDir.getAbsolutePath(), isSystem));
+        if (relativeArgs != null) {
+          final String relative = CUtil.getRelativePath(baseDirPath, includeDir);
+          relativeArgs.addElement(getIncludeDirSwitch(relative, isSystem));
+          if (includePathId != null) {
+            if (includePathId.length() == 0) {
+              includePathId.append("/I");
+            } else {
+              includePathId.append(" /I");
+            }
+            includePathId.append(relative);
           }
-          includePathId.append(relative);
         }
       }
     }
-  }
-
-  abstract protected void addWarningSwitch(Vector<String> args, int warnings);
-
-  protected void buildDefineArguments(final CompilerDef[] defs, final Vector<String> args) {
-    //
-    // assume that we aren't inheriting defines from containing <cc>
-    //
-    UndefineArgument[] merged = defs[0].getActiveDefines();
-    for (int i = 1; i < defs.length; i++) {
+    abstract protected void addWarningSwitch(Vector<String> args, int warnings);
+    protected void buildDefineArguments(final CompilerDef[] defs, final Vector<String> args) {
       //
-      // if we are inheriting, merge the specific defines with the
-      // containing defines
-      merged = UndefineArgument.merge(defs[i].getActiveDefines(), merged);
-    }
-    final StringBuffer buf = new StringBuffer(30);
-    for (final UndefineArgument current : merged) {
-      buf.setLength(0);
-      if (current.isDefine()) {
-        getDefineSwitch(buf, current.getName(), current.getValue());
-      } else {
-        getUndefineSwitch(buf, current.getName());
+      // assume that we aren't inheriting defines from containing <cc>
+        //
+      UndefineArgument[] merged = defs[0].getActiveDefines();
+      for (int i = 1; i < defs.length; i++) {
+        //
+        // if we are inheriting, merge the specific defines with the
+        // containing defines
+        merged = UndefineArgument.merge(defs[i].getActiveDefines(), merged);
       }
-      args.addElement(buf.toString());
+      final StringBuffer buf = new StringBuffer(30);
+      for (final UndefineArgument current : merged) {
+        buf.setLength(0);
+        if (current.isDefine()) {
+          getDefineSwitch(buf, current.getName(), current.getValue());
+        } else {
+          getUndefineSwitch(buf, current.getName());
+        }
+        args.addElement(buf.toString());
+      }
     }
-  }
-
   /**
    * Compiles a source file.
    *
    */
-  public void compile(final CCTask task, final File outputDir, final String[] sourceFiles, String[] args,
-      final String[] endArgs, final boolean relentless, final CommandLineCompilerConfiguration config,
-      final ProgressMonitor monitor) throws BuildException {
-    BuildException exc = null;
-    //
-    // determine length of executable name and args
-    //
-    String command = getCommandWithPath(config);
-    if (config.isUseCcache()) {
-      // Replace the command with "ccache" and push the old compiler
-      // command into the args.
-      final String compilerCommand = command;
-      command = CCACHE_CMD;
-      args = ObjectArrays.concat(compilerCommand, args);
-    }
-    int baseLength = command.length() + args.length + endArgs.length;
-    if (this.libtool) {
-      baseLength += 8;
-    }
-    for (final String arg : args) {
-      baseLength += arg.length();
-    }
-    for (final String endArg : endArgs) {
-      baseLength += endArg.length();
-    }
-    if (baseLength > getMaximumCommandLength()) {
-      throw new BuildException("Command line is over maximum length without specifying source file");
-    }
-    //
-    // typically either 1 or Integer.MAX_VALUE
-    //
-    final int maxInputFilesPerCommand = getMaximumInputFilesPerCommand();
-    final int argumentCountPerInputFile = getArgumentCountPerInputFile();
-    for (int sourceIndex = 0; sourceIndex < sourceFiles.length;) {
-      int cmdLength = baseLength;
-      int firstFileNextExec;
-      for (firstFileNextExec = sourceIndex; firstFileNextExec < sourceFiles.length
-          && firstFileNextExec - sourceIndex < maxInputFilesPerCommand; firstFileNextExec++) {
-        cmdLength += getTotalArgumentLengthForInputFile(outputDir, sourceFiles[firstFileNextExec]);
-        if (cmdLength >= getMaximumCommandLength()) {
-          break;
-        }
+    public void compile(final CCTask task, final File outputDir, final String[] sourceFiles, String[] args,
+        final String[] endArgs, final boolean relentless, final CommandLineCompilerConfiguration config,
+        final ProgressMonitor monitor) throws BuildException {
+      BuildException exc = null;
+      //
+      // determine length of executable name and args
+      //
+      String command = getCommandWithPath(config);
+      if (config.isUseCcache()) {
+        // Replace the command with "ccache" and push the old compiler
+        // command into the args.
+        final String compilerCommand = command;
+        command = CCACHE_CMD;
+        args = ObjectArrays.concat(compilerCommand, args);
       }
-      if (firstFileNextExec == sourceIndex) {
-        throw new BuildException("Extremely long file name, can't fit on command line");
-      }
-      int argCount = args.length + 1 + endArgs.length + (firstFileNextExec - sourceIndex) * argumentCountPerInputFile;
+      int baseLength = command.length() + args.length + endArgs.length;
       if (this.libtool) {
-        argCount++;
+        baseLength += 8;
       }
-      if (OS.WINDOWS.equals(NarUtil.getOS(null))) {
-        argCount += 2;
-      }
-      final String[] commandline = new String[argCount];
-      int index = 0;
-      if (OS.WINDOWS.equals(NarUtil.getOS(null))) {
-        commandline[index++] = "cmd";
-        commandline[index++] = "/c";
-      }
-      if (this.libtool) {
-        commandline[index++] = "libtool";
-      }
-      commandline[index++] = command;
       for (final String arg : args) {
-        commandline[index++] = arg;
-      }
-      for (int j = sourceIndex; j < firstFileNextExec; j++) {
-        for (int k = 0; k < argumentCountPerInputFile; k++) {
-          commandline[index++] = getInputFileArgument(outputDir, sourceFiles[j], k);
-        }
+        baseLength += arg.length();
       }
       for (final String endArg : endArgs) {
-        commandline[index++] = endArg;
+        baseLength += endArg.length();
       }
-      final int retval = runCommand(task, outputDir, commandline);
-      if (monitor != null) {
-        final String[] fileNames = new String[firstFileNextExec - sourceIndex];
-
-        for (int j = 0; j < fileNames.length; j++) {
-          fileNames[j] = sourceFiles[sourceIndex + j];
-        }
-        monitor.progress(fileNames);
+      if (baseLength > getMaximumCommandLength()) {
+        throw new BuildException("Command line is over maximum length without specifying source file");
       }
       //
-      // if the process returned a failure code and
-      // we aren't holding an exception from an earlier
-      // interation
-      if (retval != 0 && exc == null) {
-        //
-        // construct the exception
-        //
-        exc = new BuildException(getCommandWithPath(config) + " failed with return code " + retval, task.getLocation());
-
-        //
-        // and throw it now unless we are relentless
-        //
-        if (!relentless) {
-          throw exc;
-        }
-      }
-      sourceIndex = firstFileNextExec;
-    }
-    //
-    // if the compiler returned a failure value earlier
-    // then throw an exception
-    if (exc != null) {
-      throw exc;
-    }
-  }
-
-  @Override
-  protected CompilerConfiguration createConfiguration(final CCTask task, final LinkType linkType,
-      final ProcessorDef[] baseDefs, final CompilerDef specificDef, final TargetDef targetPlatform,
-      final VersionInfo versionInfo) {
-    final Vector<String> args = new Vector<String>();
-    final CompilerDef[] defaultProviders = new CompilerDef[baseDefs.length + 1];
-    for (int i = 0; i < baseDefs.length; i++) {
-      defaultProviders[i + 1] = (CompilerDef) baseDefs[i];
-    }
-    defaultProviders[0] = specificDef;
-    final Vector<CommandLineArgument> cmdArgs = new Vector<CommandLineArgument>();
-    //
-    // add command line arguments inherited from <cc> element
-    // any "extends" and finally the specific CompilerDef
-    CommandLineArgument[] commandArgs;
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      commandArgs = defaultProviders[i].getActiveProcessorArgs();
-      for (final CommandLineArgument commandArg : commandArgs) {
-        if (commandArg.getLocation() == 0) {
-          String arg = commandArg.getValue();
-          if (isWindows() && arg.matches(".*[ \"].*")) {
-            // Work around inconsistent quoting by Ant
-            arg = "\"" + arg.replaceAll("[\\\\\"]", "\\\\$0") + "\"";
+      // typically either 1 or Integer.MAX_VALUE
+      //
+      final int maxInputFilesPerCommand = getMaximumInputFilesPerCommand();
+      final int argumentCountPerInputFile = getArgumentCountPerInputFile();
+      for (int sourceIndex = 0; sourceIndex < sourceFiles.length;) {
+        int cmdLength = baseLength;
+        int firstFileNextExec;
+        for (firstFileNextExec = sourceIndex; firstFileNextExec < sourceFiles.length
+            && firstFileNextExec - sourceIndex < maxInputFilesPerCommand; firstFileNextExec++) {
+          cmdLength += getTotalArgumentLengthForInputFile(outputDir, sourceFiles[firstFileNextExec]);
+          if (cmdLength >= getMaximumCommandLength()) {
+            break;
           }
-          args.addElement(arg);
-        } else {
-          cmdArgs.addElement(commandArg);
+        }
+        if (firstFileNextExec == sourceIndex) {
+          throw new BuildException("Extremely long file name, can't fit on command line");
+        }
+        int argCount = args.length + 1 + endArgs.length + (firstFileNextExec - sourceIndex) * argumentCountPerInputFile;
+        if (this.libtool) {
+          argCount++;
+        }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/left.java
+        if (OS.WINDOWS.equals(NarUtil.getOS(null))) {
+          argCount += 2;
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/base.java
+        if (baseLength > getMaximumCommandLength()) {
+            throw new BuildException(
+                    "Command line is over maximum length without specifying source file");
+=======
+        final String[] commandline = new String[argCount];
+        int index = 0;
+        if (this.libtool) {
+          commandline[index++] = "libtool";
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/right.java
+        }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/left.java
+        final String[] commandline = new String[argCount];
+        int index = 0;
+        if (OS.WINDOWS.equals(NarUtil.getOS(null))) {
+          commandline[index++] = "cmd";
+          commandline[index++] = "/c";
+        }
+        if (this.libtool) {
+          commandline[index++] = "libtool";
+        }
+        commandline[index++] = command;
+        for (final String arg : args) {
+          commandline[index++] = arg;
+        }
+        for (int j = sourceIndex; j < firstFileNextExec; j++) {
+          for (int k = 0; k < argumentCountPerInputFile; k++) {
+            commandline[index++] = getInputFileArgument(outputDir, sourceFiles[j], k);
+          }
+        }
+        for (final String endArg : endArgs) {
+          commandline[index++] = endArg;
+        }
+        final int retval = runCommand(task, outputDir, commandline);
+        if (monitor != null) {
+          final String[] fileNames = new String[firstFileNextExec - sourceIndex];
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/base.java
+        //
+        //  typically either 1 or Integer.MAX_VALUE
+        //
+        int maxInputFilesPerCommand = getMaximumInputFilesPerCommand();
+        int argumentCountPerInputFile = getArgumentCountPerInputFile();
+        for (int sourceIndex = 0; sourceIndex < sourceFiles.length;) {
+            int cmdLength = baseLength;
+            int firstFileNextExec;
+            for (firstFileNextExec = sourceIndex; firstFileNextExec < sourceFiles.length
+                    && (firstFileNextExec - sourceIndex) < maxInputFilesPerCommand; firstFileNextExec++) {
+                cmdLength += getTotalArgumentLengthForInputFile(outputDir,
+                        sourceFiles[firstFileNextExec]);
+                if (cmdLength >= getMaximumCommandLength())
+                    break;
+            }
+            if (firstFileNextExec == sourceIndex) {
+                throw new BuildException(
+                        "Extremely long file name, can't fit on command line");
+            }
+            int argCount = args.length + 1 + endArgs.length
+                    + (firstFileNextExec - sourceIndex)
+                    * argumentCountPerInputFile;
+            if (libtool) {
+                argCount++;
+            }
+            String[] commandline = new String[argCount];
+            int index = 0;
+            if (libtool) {
+                commandline[index++] = "libtool";
+            }
+            commandline[index++] = command;
+            for (int j = 0; j < args.length; j++) {
+                commandline[index++] = args[j];
+            }
+            for (int j = sourceIndex; j < firstFileNextExec; j++) {
+                for (int k = 0; k < argumentCountPerInputFile; k++) {
+                    commandline[index++] = getInputFileArgument(outputDir,
+                            sourceFiles[j], k);
+                }
+            }
+            for (int j = 0; j < endArgs.length; j++) {
+                commandline[index++] = endArgs[j];
+            }
+            int retval = runCommand(task, outputDir, commandline);
+            if (monitor != null) {
+                String[] fileNames = new String[firstFileNextExec - sourceIndex];
+=======
+        commandline[index++] = command;
+        for (final String arg : args) {
+          commandline[index++] = arg;
+        }
+        for (int j = sourceIndex; j < firstFileNextExec; j++) {
+          for (int k = 0; k < argumentCountPerInputFile; k++) {
+            commandline[index++] = getInputFileArgument(outputDir, sourceFiles[j], k);
+          }
+        }
+        for (final String endArg : endArgs) {
+          commandline[index++] = endArg;
+        }
+        final int retval = runCommand(task, outputDir, commandline);
+        if (monitor != null) {
+          final String[] fileNames = new String[firstFileNextExec - sourceIndex];
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/right.java
+
+          for (int j = 0; j < fileNames.length; j++) {
+            fileNames[j] = sourceFiles[sourceIndex + j];
+          }
+          monitor.progress(fileNames);
+        }
+        //
+        // if the process returned a failure code and
+        // we aren't holding an exception from an earlier
+        // interation
+        if (retval != 0 && exc == null) {
+          //
+          // construct the exception
+          //
+          exc = new BuildException(getCommandWithPath(config) + " failed with return code " + retval, task.getLocation());
+
+          //
+          // and throw it now unless we are relentless
+          //
+          if (!relentless) {
+            throw exc;
+          }
+        }
+        sourceIndex = firstFileNextExec;
+      }
+      //
+      // if the compiler returned a failure value earlier
+      // then throw an exception
+      if (exc != null) {
+        throw exc;
+      }
+    }
+    @Override @Override
+    protected CompilerConfiguration createConfiguration(final CCTask task, final LinkType linkType,
+        final ProcessorDef[] baseDefs, final CompilerDef specificDef, final TargetDef targetPlatform,
+        final VersionInfo versionInfo) {
+      final Vector<String> args = new Vector<String>();
+      final CompilerDef[] defaultProviders = new CompilerDef[baseDefs.length + 1];
+      for (int i = 0; i < baseDefs.length; i++) {
+        defaultProviders[i + 1] = (CompilerDef) baseDefs[i];
+      }
+      defaultProviders[0] = specificDef;
+      final Vector<CommandLineArgument> cmdArgs = new Vector<CommandLineArgument>();
+      //
+      // add command line arguments inherited from <cc> element
+      // any "extends" and finally the specific CompilerDef
+      CommandLineArgument[] commandArgs;
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        commandArgs = defaultProviders[i].getActiveProcessorArgs();
+        for (final CommandLineArgument commandArg : commandArgs) {
+          if (commandArg.getLocation() == 0) {
+            String arg = commandArg.getValue();
+            if (isWindows() && arg.matches(".*[ \"].*")) {
+              // Work around inconsistent quoting by Ant
+              arg = "\"" + arg.replaceAll("[\\\\\"]", "\\\\$0") + "\"";
+            }
+            args.addElement(arg);
+          } else {
+            cmdArgs.addElement(commandArg);
+          }
         }
       }
-    }
-    final Vector<ProcessorParam> params = new Vector<ProcessorParam>();
-    //
-    // add command line arguments inherited from <cc> element
-    // any "extends" and finally the specific CompilerDef
-    ProcessorParam[] paramArray;
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      paramArray = defaultProviders[i].getActiveProcessorParams();
-      for (final ProcessorParam element : paramArray) {
-        params.add(element);
-      }
-    }
-    paramArray = params.toArray(new ProcessorParam[params.size()]);
-
-    if (specificDef.isClearDefaultOptions() == false) {
-      final boolean multithreaded = specificDef.getMultithreaded(defaultProviders, 1);
-      final boolean debug = specificDef.getDebug(baseDefs, 0);
-      final boolean exceptions = specificDef.getExceptions(defaultProviders, 1);
-      final Boolean rtti = specificDef.getRtti(defaultProviders, 1);
-      final OptimizationEnum optimization = specificDef.getOptimization(defaultProviders, 1);
-      this.addImpliedArgs(args, debug, multithreaded, exceptions, linkType, rtti, optimization);
-    }
-
-    //
-    // add all appropriate defines and undefines
-    //
-    buildDefineArguments(defaultProviders, args);
-    final int warnings = specificDef.getWarnings(defaultProviders, 0);
-    addWarningSwitch(args, warnings);
-    Enumeration<CommandLineArgument> argEnum = cmdArgs.elements();
-    int endCount = 0;
-    while (argEnum.hasMoreElements()) {
-      final CommandLineArgument arg = argEnum.nextElement();
-      switch (arg.getLocation()) {
-        case 1:
-          args.addElement(arg.getValue());
-          break;
-        case 2:
-          endCount++;
-          break;
-      }
-    }
-    final String[] endArgs = new String[endCount];
-    argEnum = cmdArgs.elements();
-    int index = 0;
-    while (argEnum.hasMoreElements()) {
-      final CommandLineArgument arg = argEnum.nextElement();
-      if (arg.getLocation() == 2) {
-        endArgs[index++] = arg.getValue();
-      }
-    }
-    //
-    // Want to have distinct set of arguments with relative
-    // path names for includes that are used to build
-    // the configuration identifier
-    //
-    final Vector<String> relativeArgs = (Vector) args.clone();
-    //
-    // add all active include and sysincludes
-    //
-    final StringBuffer includePathIdentifier = new StringBuffer();
-    final File baseDir = specificDef.getProject().getBaseDir();
-    String baseDirPath;
-    try {
-      baseDirPath = baseDir.getCanonicalPath();
-    } catch (final IOException ex) {
-      baseDirPath = baseDir.toString();
-    }
-    final Vector<String> includePath = new Vector<String>();
-    final Vector<String> sysIncludePath = new Vector<String>();
-    for (int i = defaultProviders.length - 1; i >= 0; i--) {
-      String[] incPath = defaultProviders[i].getActiveIncludePaths();
-      for (final String element : incPath) {
-        includePath.addElement(element);
-      }
-      incPath = defaultProviders[i].getActiveSysIncludePaths();
-      for (final String element : incPath) {
-        sysIncludePath.addElement(element);
-      }
-    }
-    final File[] incPath = new File[includePath.size()];
-    for (int i = 0; i < includePath.size(); i++) {
-      incPath[i] = new File(includePath.elementAt(i));
-    }
-    final File[] sysIncPath = new File[sysIncludePath.size()];
-    for (int i = 0; i < sysIncludePath.size(); i++) {
-      sysIncPath[i] = new File(sysIncludePath.elementAt(i));
-    }
-    addIncludes(baseDirPath, incPath, args, relativeArgs, includePathIdentifier, false);
-    addIncludes(baseDirPath, sysIncPath, args, null, null, true);
-    final StringBuffer buf = new StringBuffer(getIdentifier());
-    for (int i = 0; i < relativeArgs.size(); i++) {
-      buf.append(' ');
-      buf.append(relativeArgs.elementAt(i));
-    }
-    for (final String endArg : endArgs) {
-      buf.append(' ');
-      buf.append(endArg);
-    }
-    final String configId = buf.toString();
-    final String[] argArray = new String[args.size()];
-    args.copyInto(argArray);
-    final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
-    final File[] envIncludePath = getEnvironmentIncludePath();
-    final String path = specificDef.getToolPath();
-
-    CommandLineCompiler compiler = this;
-    Environment environment = specificDef.getEnv();
-    if (environment == null) {
-      for (final ProcessorDef baseDef : baseDefs) {
-        environment = baseDef.getEnv();
-        if (environment != null) {
-          compiler = (CommandLineCompiler) compiler.changeEnvironment(true, environment);
+      final Vector<ProcessorParam> params = new Vector<ProcessorParam>();
+      //
+      // add command line arguments inherited from <cc> element
+      // any "extends" and finally the specific CompilerDef
+      ProcessorParam[] paramArray;
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        paramArray = defaultProviders[i].getActiveProcessorParams();
+        for (final ProcessorParam element : paramArray) {
+          params.add(element);
         }
       }
-    } else {
-      compiler = (CommandLineCompiler) compiler.changeEnvironment(true, environment);
+      paramArray = params.toArray(new ProcessorParam[params.size()]);
+
+      if (specificDef.isClearDefaultOptions() == false) {
+        final boolean multithreaded = specificDef.getMultithreaded(defaultProviders, 1);
+        final boolean debug = specificDef.getDebug(baseDefs, 0);
+        final boolean exceptions = specificDef.getExceptions(defaultProviders, 1);
+        final Boolean rtti = specificDef.getRtti(defaultProviders, 1);
+        final OptimizationEnum optimization = specificDef.getOptimization(defaultProviders, 1);
+        this.addImpliedArgs(args, debug, multithreaded, exceptions, linkType, rtti, optimization);
+      }
+
+      //
+      // add all appropriate defines and undefines
+      //
+      buildDefineArguments(defaultProviders, args);
+      final int warnings = specificDef.getWarnings(defaultProviders, 0);
+      addWarningSwitch(args, warnings);
+      Enumeration<CommandLineArgument> argEnum = cmdArgs.elements();
+      int endCount = 0;
+      while (argEnum.hasMoreElements()) {
+        final CommandLineArgument arg = argEnum.nextElement();
+        switch (arg.getLocation()) {
+          case 1:
+            args.addElement(arg.getValue());
+            break;
+          case 2:
+            endCount++;
+            break;
+        }
+      }
+      final String[] endArgs = new String[endCount];
+      argEnum = cmdArgs.elements();
+      int index = 0;
+      while (argEnum.hasMoreElements()) {
+        final CommandLineArgument arg = argEnum.nextElement();
+        if (arg.getLocation() == 2) {
+          endArgs[index++] = arg.getValue();
+        }
+      }
+      //
+      // Want to have distinct set of arguments with relative
+      // path names for includes that are used to build
+      // the configuration identifier
+      //
+      final Vector<String> relativeArgs = (Vector) args.clone();
+      //
+      // add all active include and sysincludes
+      //
+      final StringBuffer includePathIdentifier = new StringBuffer();
+      final File baseDir = specificDef.getProject().getBaseDir();
+      String baseDirPath;
+      try {
+        baseDirPath = baseDir.getCanonicalPath();
+      } catch (final IOException ex) {
+        baseDirPath = baseDir.toString();
+      }
+      final Vector<String> includePath = new Vector<String>();
+      final Vector<String> sysIncludePath = new Vector<String>();
+      for (int i = defaultProviders.length - 1; i >= 0; i--) {
+        String[] incPath = defaultProviders[i].getActiveIncludePaths();
+        for (final String element : incPath) {
+          includePath.addElement(element);
+        }
+        incPath = defaultProviders[i].getActiveSysIncludePaths();
+        for (final String element : incPath) {
+          sysIncludePath.addElement(element);
+        }
+<<<<<<< /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/left.java
+      }
+      final File[] incPath = new File[includePath.size()];
+      for (int i = 0; i < includePath.size(); i++) {
+        incPath[i] = new File(includePath.elementAt(i));
+      }
+      final File[] sysIncPath = new File[sysIncludePath.size()];
+      for (int i = 0; i < sysIncludePath.size(); i++) {
+        sysIncPath[i] = new File(sysIncludePath.elementAt(i));
+      }
+      addIncludes(baseDirPath, incPath, args, relativeArgs, includePathIdentifier, false);
+      addIncludes(baseDirPath, sysIncPath, args, null, null, true);
+      final StringBuffer buf = new StringBuffer(getIdentifier());
+      for (int i = 0; i < relativeArgs.size(); i++) {
+        buf.append(' ');
+        buf.append(relativeArgs.elementAt(i));
+      }
+      for (final String endArg : endArgs) {
+        buf.append(' ');
+        buf.append(endArg);
+      }
+      final String configId = buf.toString();
+      final String[] argArray = new String[args.size()];
+      args.copyInto(argArray);
+      final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
+      final File[] envIncludePath = getEnvironmentIncludePath();
+      final String path = specificDef.getToolPath();
+
+      CommandLineCompiler compiler = this;
+      Environment environment = specificDef.getEnv();
+      if (environment == null) {
+        for (final ProcessorDef baseDef : baseDefs) {
+          environment = baseDef.getEnv();
+          if (environment != null) {
+            compiler = (CommandLineCompiler) compiler.changeEnvironment(true, environment);
+          }
+        }
+      } else {
+        compiler = (CommandLineCompiler) compiler.changeEnvironment(true, environment);
+      }
+      return new CommandLineCompilerConfiguration(compiler, configId, incPath, sysIncPath, envIncludePath,
+          includePathIdentifier.toString(), argArray, paramArray, rebuild, endArgs, path);
+||||||| /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/base.java
+        File[] incPath = new File[includePath.size()];
+        for (int i = 0; i < includePath.size(); i++) {
+            incPath[i] = new File((String) includePath.elementAt(i));
+        }
+        File[] sysIncPath = new File[sysIncludePath.size()];
+        for (int i = 0; i < sysIncludePath.size(); i++) {
+            sysIncPath[i] = new File((String) sysIncludePath.elementAt(i));
+        }
+        addIncludes(baseDirPath, incPath, args, relativeArgs,
+    				includePathIdentifier, false);
+    		addIncludes(baseDirPath, sysIncPath, args, null, null, true);
+        StringBuffer buf = new StringBuffer(getIdentifier());
+        for (int i = 0; i < relativeArgs.size(); i++) {
+            buf.append(' ');
+            buf.append(relativeArgs.elementAt(i));
+        }
+        for (int i = 0; i < endArgs.length; i++) {
+            buf.append(' ');
+            buf.append(endArgs[i]);
+        }
+        String configId = buf.toString();
+        String[] argArray = new String[args.size()];
+        args.copyInto(argArray);
+        boolean rebuild = specificDef.getRebuild(baseDefs, 0);
+        File[] envIncludePath = getEnvironmentIncludePath();
+        String path = specificDef.getToolPath();
+        return new CommandLineCompilerConfiguration(this, configId, incPath,
+                sysIncPath, envIncludePath, includePathIdentifier.toString(),
+                argArray, paramArray, rebuild, endArgs, path);
+=======
+      }
+      final File[] incPath = new File[includePath.size()];
+      for (int i = 0; i < includePath.size(); i++) {
+        incPath[i] = new File(includePath.elementAt(i));
+      }
+      final File[] sysIncPath = new File[sysIncludePath.size()];
+      for (int i = 0; i < sysIncludePath.size(); i++) {
+        sysIncPath[i] = new File(sysIncludePath.elementAt(i));
+      }
+      addIncludes(baseDirPath, incPath, args, relativeArgs, includePathIdentifier, false);
+      addIncludes(baseDirPath, sysIncPath, args, null, null, true);
+      final StringBuffer buf = new StringBuffer(getIdentifier());
+      for (int i = 0; i < relativeArgs.size(); i++) {
+        buf.append(' ');
+        buf.append(relativeArgs.elementAt(i));
+      }
+      for (final String endArg : endArgs) {
+        buf.append(' ');
+        buf.append(endArg);
+      }
+      final String configId = buf.toString();
+      final String[] argArray = new String[args.size()];
+      args.copyInto(argArray);
+      final boolean rebuild = specificDef.getRebuild(baseDefs, 0);
+      final File[] envIncludePath = getEnvironmentIncludePath();
+      final String path = specificDef.getToolPath();
+      return new CommandLineCompilerConfiguration(this, configId, incPath, sysIncPath, envIncludePath,
+          includePathIdentifier.toString(), argArray, paramArray, rebuild, endArgs, path, specificDef.getCcache());
+>>>>>>> /usr/src/app/output/maven-nar/nar-maven-plugin/cb61e829410f4f86501ba652f1a211fc264121df/src/main/java/com/github/maven_nar/cpptasks/compiler/CommandLineCompiler.java/right.java
     }
-    return new CommandLineCompilerConfiguration(compiler, configId, incPath, sysIncPath, envIncludePath,
-        includePathIdentifier.toString(), argArray, paramArray, rebuild, endArgs, path);
-  }
-
-  protected int getArgumentCountPerInputFile() {
-    return 1;
-  }
-
+    protected int getArgumentCountPerInputFile() {
+      return 1;
+    }
   protected final String getCommand() {
     return this.command;
   }
-
-  public String getCommandWithPath(final CommandLineCompilerConfiguration config) {
-    if (config.getCommandPath() != null) {
-      final File command = new File(config.getCommandPath(), this.getCommand());
-      try {
-        return command.getCanonicalPath();
-      } catch (final IOException e) {
-        e.printStackTrace();
-        return command.getAbsolutePath();
+    public String getCommandWithPath(final CommandLineCompilerConfiguration config) {
+      if (config.getCommandPath() != null) {
+        final File command = new File(config.getCommandPath(), this.getCommand());
+        try {
+          return command.getCanonicalPath();
+        } catch (final IOException e) {
+          e.printStackTrace();
+          return command.getAbsolutePath();
+        }
+      } else {
+        return this.getCommand();
       }
-    } else {
-      return this.getCommand();
     }
-  }
-
-  abstract protected void getDefineSwitch(StringBuffer buffer, String define, String value);
-
-  protected abstract File[] getEnvironmentIncludePath();
-
+    abstract protected void getDefineSwitch(StringBuffer buffer, String define, String value);
+    protected abstract File[] getEnvironmentIncludePath();
   @Override
   public String getIdentifier() {
     if (this.identifier == null) {
@@ -450,9 +568,7 @@ public abstract class CommandLineCompiler extends AbstractCompiler {
     }
     return this.identifier;
   }
-
-  abstract protected String getIncludeDirSwitch(String source);
-
+    abstract protected String getIncludeDirSwitch(String source);
   /**
    * Added by Darren Sargent 22Oct2008 Returns the include dir switch value.
    * Default implementation doesn't treat system includes specially, for
@@ -465,27 +581,24 @@ public abstract class CommandLineCompiler extends AbstractCompiler {
    *
    * @return the include dir switch value.
    */
-  protected String getIncludeDirSwitch(final String source, final boolean isSystem) {
-    return getIncludeDirSwitch(source);
-  }
-
-  protected String getInputFileArgument(final File outputDir, final String filename, final int index) {
-    //
-    // if there is an embedded space,
-    // must enclose in quotes
-    if (filename.indexOf(' ') >= 0) {
-      final StringBuffer buf = new StringBuffer("\"");
-      buf.append(filename);
-      buf.append("\"");
-      return buf.toString();
-    }
-    return filename;
-  }
-
+	protected String getIncludeDirSwitch(final String source, final boolean isSystem) {
+	  return getIncludeDirSwitch(source);
+	}
+	protected String getInputFileArgument(final File outputDir, final String filename, final int index) {
+	  //
+	  // if there is an embedded space,
+	  // must enclose in quotes
+	  if (filename.indexOf(' ') >= 0) {
+	    final StringBuffer buf = new StringBuffer("\"");
+	    buf.append(filename);
+	    buf.append("\"");
+	    return buf.toString();
+	  }
+	  return filename;
+	}
   protected final boolean getLibtool() {
     return this.libtool;
   }
-
   /**
    * Obtains the same compiler, but with libtool set
    *
@@ -497,28 +610,52 @@ public abstract class CommandLineCompiler extends AbstractCompiler {
     }
     return this;
   }
-
-  abstract public int getMaximumCommandLength();
-
-  protected int getMaximumInputFilesPerCommand() {
-    return Integer.MAX_VALUE;
-  }
-
-  protected int getTotalArgumentLengthForInputFile(final File outputDir, final String inputFile) {
-    return inputFile.length() + 1;
-  }
-
-  abstract protected void getUndefineSwitch(StringBuffer buffer, String define);
-
-  /**
-   * This method is exposed so test classes can overload and test the
-   * arguments without actually spawning the compiler
-   */
+    abstract public int getMaximumCommandLength();
+    protected int getMaximumInputFilesPerCommand() {
+      return Integer.MAX_VALUE;
+    }
+    protected int getTotalArgumentLengthForInputFile(final File outputDir, final String inputFile) {
+      return inputFile.length() + 1;
+    }
+    abstract protected void getUndefineSwitch(StringBuffer buffer, String define);
+    /**
+     * This method is exposed so test classes can overload and test the
+     * arguments without actually spawning the compiler
+     */
   protected int runCommand(final CCTask task, final File workingDir, final String[] cmdline) throws BuildException {
     return CUtil.runCommand(task, workingDir, cmdline, this.newEnvironment, this.env);
   }
-
-  protected final void setCommand(final String command) {
-    this.command = command;
-  }
+  /** Command used when invoking ccache */
+  /**
+   * Adds command-line arguments for include directories.
+   * 
+   * If relativeArgs is not null will add corresponding relative paths
+   * include switches to that vector (for use in building a configuration
+   * identifier that is consistent between machines).
+   * 
+   * @param baseDirPath
+   *          Base directory path.
+   * @param includeDirs
+   *          Array of include directory paths
+   * @param args
+   *          Vector of command line arguments used to execute the task
+   * @param relativeArgs
+   *          Vector of command line arguments used to build the
+   *          configuration identifier
+   */
+  /**
+   * Added by Darren Sargent 22Oct2008 Returns the include dir switch value.
+   * Default implementation doesn't treat system includes specially, for
+   * compilers which don't care.
+   * 
+   * @param source
+   *          the given source value.
+   * @param isSystem
+   *          "true" if this is a system include path
+   * 
+   * @return the include dir switch value.
+   */
+    protected final void setCommand(final String command) {
+      this.command = command;
+    }
 }
