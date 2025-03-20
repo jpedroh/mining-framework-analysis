@@ -19,15 +19,20 @@ package de.devland.esperandro.generation;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
+import de.devland.esperandro.Constants;
+import de.devland.esperandro.Utils;
 import de.devland.esperandro.annotations.Cached;
 import de.devland.esperandro.base.preferences.EsperandroType;
 import de.devland.esperandro.base.preferences.MethodInformation;
-import de.devland.esperandro.base.preferences.MethodOperation;
 import de.devland.esperandro.base.preferences.TypeInformation;
+import de.devland.esperandro.base.preferences.MethodOperation;
 import de.devland.esperandro.base.processing.Environment;
 
 public class CollectionActionGenerator implements MethodGenerator {
@@ -41,6 +46,12 @@ public class CollectionActionGenerator implements MethodGenerator {
     @Override
     public void generateMethod(TypeSpec.Builder type, MethodInformation methodInformation, Cached cacheAnnotation) {
         String prefName = methodInformation.associatedPreference;
+<<<<<<< /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/left.java
+        TypeInformation preferenceType = Environment.currentPreferenceInterface.getTypeOfPreference(prefName);
+        MethodSpec.Builder adder = MethodSpec.methodBuilder(methodInformation.getMethodName())
+||||||| /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/base.java
+        MethodSpec.Builder adder = MethodSpec.methodBuilder(methodInformation.getMethodName())
+=======
         String setterName = null;
         String getterName = null;
 
@@ -56,10 +67,28 @@ public class CollectionActionGenerator implements MethodGenerator {
 
         TypeInformation preferenceType = Environment.currentPreferenceInterface.getTypeOfPreference(prefName);
         MethodSpec.Builder action = MethodSpec.methodBuilder(methodInformation.getMethodName())
+>>>>>>> /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/right.java
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(methodInformation.returnType.getType())
                 .addParameter(methodInformation.parameterType.getType(), "value")
+<<<<<<< /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/left.java
+                .addStatement("$T __pref = this.$L()", preferenceType.getObjectType(), prefName);
+
+        if (preferenceType.getEsperandroType() == EsperandroType.STRINGSET) {
+            // special handling for Set<String> since you shouldn't edit the returned object itself as per
+            // official documentation
+            adder.addStatement("__pref = new java.util.HashSet<String>(__pref)");
+        }
+        adder.addStatement("__pref.$L(value)", action)
+                .addStatement("this.$L(__pref)", prefName);
+        type.addMethod(adder.build());
+||||||| /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/base.java
+                .addStatement("$T __pref = this.$L()", Environment.currentPreferenceInterface.getTypeOfPreference(prefName).getObjectType(), prefName)
+                .addStatement("__pref.$L(value)", action)
+                .addStatement("this.$L(__pref)", prefName);
+        type.addMethod(adder.build());
+=======
                 .addStatement("$T __pref = this.$L()", preferenceType.getObjectType(), getterName);
 
         if (preferenceType.getEsperandroType() == EsperandroType.STRINGSET) {
@@ -74,5 +103,6 @@ public class CollectionActionGenerator implements MethodGenerator {
             action.addStatement("return result");
         }
         type.addMethod(action.build());
+>>>>>>> /usr/src/app/output/dkunzler/esperandro/a504784178f32a425ca7bd38f97b9a77a2eb6dfa/preference-processor/src/main/java/de/devland/esperandro/generation/CollectionActionGenerator.java/right.java
     }
 }
