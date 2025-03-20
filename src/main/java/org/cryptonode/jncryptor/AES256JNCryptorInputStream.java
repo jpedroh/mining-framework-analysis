@@ -1,19 +1,4 @@
-/*    Copyright 2014 Duncan Jones
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.cryptonode.jncryptor;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,32 +6,37 @@ import java.io.FilterInputStream;
 import java.io.PushbackInputStream;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-
 import org.apache.commons.io.IOUtils;
 
 /**
  * Reads RNCryptor-format data in a stream fashion.
  */
 public class AES256JNCryptorInputStream extends InputStream {
-
   private static final int END_OF_STREAM = -1;
+
   private final boolean isPasswordEncrypted;
+
   private final InputStream in;
 
   private char[] password;
+
   private SecretKey decryptionKey;
+
   private SecretKey hmacKey;
+
   private boolean endOfStreamHandled = false;
 
   private PushbackInputStream pushbackInputStream;
+
   private TrailerInputStream trailerIn;
+
   private CipherInputStream decryptionStream;
+
   private Mac mac;
 
   /**
@@ -73,8 +63,7 @@ public class AES256JNCryptorInputStream extends InputStream {
    * @param hmacKey
    *          the key to calculate the HMAC with
    */
-  AES256JNCryptorInputStream(InputStream in, SecretKey decryptionKey,
-      SecretKey hmacKey) {
+  AES256JNCryptorInputStream(InputStream in, SecretKey decryptionKey, SecretKey hmacKey) {
     isPasswordEncrypted = false;
     this.decryptionKey = decryptionKey;
     this.hmacKey = hmacKey;
@@ -86,8 +75,7 @@ public class AES256JNCryptorInputStream extends InputStream {
    * 
    * @return <code>false</code>
    */
-  @Override
-  public boolean markSupported() {
+  @Override public boolean markSupported() {
     return false;
   }
 
@@ -103,43 +91,28 @@ public class AES256JNCryptorInputStream extends InputStream {
   private void initializeStream() throws IOException {
     int headerDataSize;
     if (isPasswordEncrypted) {
-      headerDataSize = AES256v3Ciphertext.HEADER_SIZE
-          + AES256v3Ciphertext.ENCRYPTION_SALT_LENGTH
-          + AES256v3Ciphertext.HMAC_SALT_LENGTH
-          + AES256v3Ciphertext.AES_BLOCK_SIZE;
+      headerDataSize = AES256v3Ciphertext.HEADER_SIZE + AES256v3Ciphertext.ENCRYPTION_SALT_LENGTH + AES256v3Ciphertext.HMAC_SALT_LENGTH + AES256v3Ciphertext.AES_BLOCK_SIZE;
     } else {
-      headerDataSize = AES256v3Ciphertext.HEADER_SIZE
-          + AES256v3Ciphertext.AES_BLOCK_SIZE;
+      headerDataSize = AES256v3Ciphertext.HEADER_SIZE + AES256v3Ciphertext.AES_BLOCK_SIZE;
     }
-
     byte[] headerData = new byte[headerDataSize];
-    IOUtils.readFully(in, headerData); // throws EOF if insufficient data
-
+    IOUtils.readFully(in, headerData);
     int offset = 0;
     byte version = headerData[offset++];
-
     if (version != AES256v3Ciphertext.EXPECTED_VERSION) {
-      throw new IOException(String.format("Expected version %d but found %d.",
-          AES256v3Ciphertext.EXPECTED_VERSION, version));
+      throw new IOException(String.format("Expected version %d but found %d.", AES256v3Ciphertext.EXPECTED_VERSION, version));
     }
-
     byte options = headerData[offset++];
-
     if (isPasswordEncrypted) {
       if (options != AES256v3Ciphertext.FLAG_PASSWORD) {
         throw new IOException("Expected password flag missing.");
       }
-
       byte[] decryptionSalt = new byte[AES256v3Ciphertext.ENCRYPTION_SALT_LENGTH];
-      System.arraycopy(headerData, offset, decryptionSalt, 0,
-          decryptionSalt.length);
+      System.arraycopy(headerData, offset, decryptionSalt, 0, decryptionSalt.length);
       offset += decryptionSalt.length;
-
       byte[] hmacSalt = new byte[AES256v3Ciphertext.HMAC_SALT_LENGTH];
       System.arraycopy(headerData, offset, hmacSalt, 0, hmacSalt.length);
       offset += hmacSalt.length;
-
-      // Derive keys
       JNCryptor cryptor = new AES256JNCryptor();
       try {
         decryptionKey = cryptor.keyForPassword(password, decryptionSalt);
@@ -147,37 +120,22 @@ public class AES256JNCryptorInputStream extends InputStream {
       } catch (CryptorException e) {
         throw new IOException("Failed to derive keys from password.", e);
       }
-
     } else {
       if (options != 0) {
         throw new IOException("Expected options byte to be zero.");
       }
     }
-
     byte[] iv = new byte[AES256v3Ciphertext.AES_BLOCK_SIZE];
     System.arraycopy(headerData, offset, iv, 0, iv.length);
-
     trailerIn = new TrailerInputStream(in, AES256v3Ciphertext.HMAC_SIZE);
-
     try {
-      Cipher decryptCipher = Cipher
-          .getInstance(AES256JNCryptor.AES_CIPHER_ALGORITHM);
-      decryptCipher.init(Cipher.DECRYPT_MODE, decryptionKey,
-          new IvParameterSpec(iv));
-
+      Cipher decryptCipher = Cipher.getInstance(AES256JNCryptor.AES_CIPHER_ALGORITHM);
+      decryptCipher.init(Cipher.DECRYPT_MODE, decryptionKey, new IvParameterSpec(iv));
       mac = Mac.getInstance(AES256JNCryptor.HMAC_ALGORITHM);
       mac.init(hmacKey);
-
-      // MAC the header
       mac.update(headerData);
-
-      // The decryption stream will write the non-decrypted bytes to the mac
-      // stream
       decryptionStream = new CipherInputStream(new MacUpdateInputStream(trailerIn, mac), decryptCipher);
-
       pushbackInputStream = new PushbackInputStream(decryptionStream, 1);
-
-
     } catch (GeneralSecurityException e) {
       throw new IOException("Failed to initiate cipher.", e);
     }
@@ -195,12 +153,10 @@ public class AES256JNCryptorInputStream extends InputStream {
    * @throws StreamIntegrityException
    *           if the final byte has been read and the HMAC fails validation
    */
-  @Override
-  public int read() throws IOException, StreamIntegrityException {
+  @Override public int read() throws IOException, StreamIntegrityException {
     if (trailerIn == null) {
       initializeStream();
     }
-
     int result = pushbackInputStream.read();
     return completeRead(result);
   }
@@ -222,10 +178,8 @@ public class AES256JNCryptorInputStream extends InputStream {
    * @throws StreamIntegrityException
    *           if the final byte has been read and the HMAC fails validation
    */
-  @Override
-  public int read(byte[] b) throws IOException, StreamIntegrityException {
+  @Override public int read(byte[] b) throws IOException, StreamIntegrityException {
     Validate.notNull(b, "Array cannot be null.");
-
     return read(b, 0, b.length);
   }
 
@@ -256,23 +210,17 @@ public class AES256JNCryptorInputStream extends InputStream {
    * @throws StreamIntegrityException
    *           if the final byte has been read and the HMAC fails validation
    */
-  @Override
-  public int read(byte[] b, int off, int len) throws IOException {
+  @Override public int read(byte[] b, int off, int len) throws IOException {
     Validate.notNull(b, "Byte array cannot be null.");
-
     Validate.isTrue(off >= 0, "Offset cannot be negative.");
     Validate.isTrue(len >= 0, "Length cannot be negative.");
-    Validate.isTrue(len + off <= b.length,
-        "Length plus offset cannot be longer than byte array.");
-
+    Validate.isTrue(len + off <= b.length, "Length plus offset cannot be longer than byte array.");
     if (len == 0) {
       return 0;
     }
-
     if (trailerIn == null) {
       initializeStream();
     }
-
     int result = pushbackInputStream.read(b, off, len);
     return completeRead(result);
   }
@@ -290,7 +238,6 @@ public class AES256JNCryptorInputStream extends InputStream {
     if (b == END_OF_STREAM) {
       handleEndOfStream();
     } else {
-      // Have we reached the end of the stream?
       int c = pushbackInputStream.read();
       if (c == END_OF_STREAM) {
         handleEndOfStream();
@@ -298,7 +245,6 @@ public class AES256JNCryptorInputStream extends InputStream {
         pushbackInputStream.unread(c);
       }
     }
-
     return b;
   }
 
@@ -312,12 +258,9 @@ public class AES256JNCryptorInputStream extends InputStream {
     if (endOfStreamHandled) {
       return;
     }
-
     endOfStreamHandled = true;
-
     byte[] originalHMAC = trailerIn.getTrailer();
     byte[] calculateHMAC = mac.doFinal();
-
     if (!Arrays.equals(originalHMAC, calculateHMAC)) {
       throw new StreamIntegrityException("MAC validation failed.");
     }
@@ -326,14 +269,13 @@ public class AES256JNCryptorInputStream extends InputStream {
   /**
    * Closes the underlying input stream.
    */
-  @Override
-  public void close() throws IOException {
+  @Override public void close() throws IOException {
     try {
       closeIfNotNull(pushbackInputStream);
-    } finally {
+    }  finally {
       try {
         closeIfNotNull(decryptionStream);
-      } finally {
+      }  finally {
         closeIfNotNull(trailerIn);
       }
     }
@@ -345,9 +287,9 @@ public class AES256JNCryptorInputStream extends InputStream {
     }
   }
 
-  private static class MacUpdateInputStream extends FilterInputStream
-  {
+  private static class MacUpdateInputStream extends FilterInputStream {
     Mac mac;
+
     private MacUpdateInputStream(InputStream in, Mac mac) {
       super(in);
       this.mac = mac;
@@ -355,17 +297,18 @@ public class AES256JNCryptorInputStream extends InputStream {
 
     public int read() throws IOException {
       int b = super.read();
-      if (b >= 0)
-        mac.update((byte)b);
+      if (b >= 0) {
+        mac.update((byte) b);
+      }
       return b;
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
       int n = super.read(b, off, len);
-      if (n > 0)
+      if (n > 0) {
         mac.update(b, off, n);
+      }
       return n;
     }
   }
-
 }
