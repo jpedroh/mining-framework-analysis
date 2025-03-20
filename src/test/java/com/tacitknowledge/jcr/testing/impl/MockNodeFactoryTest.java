@@ -6,12 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
+import javax.jcr.*;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -302,24 +297,6 @@ public class MockNodeFactoryTest {
     }
 
     @Test
-    public void callToGetPathShouldReturnAbsolutePath() throws RepositoryException
-    {
-        NodeFactory myNodeFactory = new MockNodeFactory();
-        Node rootNode = myNodeFactory.createNode(StringUtils.EMPTY);
-
-        Node firstLevelNode = myNodeFactory.createNode(rootNode, "firstLevel");
-        Node secondLevelNode = myNodeFactory.createNode(firstLevelNode, "secondLevel");
-
-        myNodeFactory.createProperty(secondLevelNode, "thirdLevelProp", "some value", PropertyTypeEnum.STRING.getPropertyType());
-        Property thirdLevelProp = secondLevelNode.getProperty("thirdLevelProp");
-
-        assertEquals("Expected path to be /", "/", rootNode.getPath());
-        assertEquals("Expected path to be /firstLevel", "/firstLevel", firstLevelNode.getPath());
-        assertEquals("Expected path to be /firstLevel/secondLevel", "/firstLevel/secondLevel", secondLevelNode.getPath());
-        assertEquals("Expected path to be /firstLevel/secondLevel/thirdLevelProp", "/firstLevel/secondLevel/thirdLevelProp", thirdLevelProp.getPath());
-    }
-
-    @Test
     public void shouldRetrievePropertyFromAllAscendantNodes() throws RepositoryException
     {
         Node rootNode = nodeFactory.createNode(StringUtils.EMPTY);
@@ -338,5 +315,24 @@ public class MockNodeFactoryTest {
         assertNotNull("Expected property to be not null", propertyFromRootNode);
         assertEquals("Expected property value to be 'some value'", "some value", propertyFromRootNode.getString());
         assertEquals("Expected property value to be 'some value'", "some value", propertyFromRootNode.getValue().getString());
+
+    }
+
+    @Test
+    public void callToGetPathShouldReturnAbsolutePath() throws RepositoryException
+    {
+        NodeFactory myNodeFactory = new MockNodeFactory();
+        Node rootNode = myNodeFactory.createNode(StringUtils.EMPTY);
+
+        Node firstLevelNode = myNodeFactory.createNode(rootNode, "firstLevel");
+        Node secondLevelNode = myNodeFactory.createNode(firstLevelNode, "secondLevel");
+
+        myNodeFactory.createProperty(secondLevelNode, "thirdLevelProp", "some value", PropertyTypeEnum.STRING.getPropertyType());
+        Property thirdLevelProp = secondLevelNode.getProperty("thirdLevelProp");
+
+        assertEquals("Expected path to be /", "/", rootNode.getPath());
+        assertEquals("Expected path to be /firstLevel", "/firstLevel", firstLevelNode.getPath());
+        assertEquals("Expected path to be /firstLevel/secondLevel", "/firstLevel/secondLevel", secondLevelNode.getPath());
+        assertEquals("Expected path to be /firstLevel/secondLevel/thirdLevelProp", "/firstLevel/secondLevel/thirdLevelProp", thirdLevelProp.getPath());
     }
 }

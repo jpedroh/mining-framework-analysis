@@ -1,19 +1,12 @@
 package com.tacitknowledge.jcr.testing.impl;
 
 import com.tacitknowledge.jcr.testing.NodeFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import javax.jcr.Binary;
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.jcr.*;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import java.io.InputStream;
@@ -67,10 +60,13 @@ public class MockNodeFactory implements NodeFactory {
         when(parent.getSession()).thenReturn(session);
         when(parent.hasProperty(name)).thenReturn(true);
         when(parent.hasProperties()).thenReturn(true);
-
+<<<<<<< /usr/src/app/output/tacitknowledge/jcr-mock/c73aee7bfb9d5c3488412b84d8f83961f57abcd2/src/main/java/com/tacitknowledge/jcr/testing/impl/MockNodeFactory.java/left.java
         String parentPath = parent.getPath();
         when(property.getPath()).thenReturn(parentPath + "/" + name);
+||||||| /usr/src/app/output/tacitknowledge/jcr-mock/c73aee7bfb9d5c3488412b84d8f83961f57abcd2/src/main/java/com/tacitknowledge/jcr/testing/impl/MockNodeFactory.java/base.java
+=======
         buildParentHierarchy(parent, property, name);
+>>>>>>> /usr/src/app/output/tacitknowledge/jcr-mock/c73aee7bfb9d5c3488412b84d8f83961f57abcd2/src/main/java/com/tacitknowledge/jcr/testing/impl/MockNodeFactory.java/right.java
     }
 
     @Override
@@ -117,7 +113,10 @@ public class MockNodeFactory implements NodeFactory {
         {
             when(childNode.getPath()).thenReturn("/");
         }
+        else
+        {
 
+        }
         when(childNode.isNode()).thenReturn(true);
         return childNode;
     }
