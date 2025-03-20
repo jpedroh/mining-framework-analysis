@@ -1,24 +1,26 @@
 package com.twilio.starter;
-
 import com.twilio.Twilio;
 import com.twilio.starter.controller.CallController;
 import com.twilio.starter.controller.MessageController;
 import com.twilio.starter.controller.TwimlController;
-
 import static spark.Spark.*;
 
 public class Application {
+  private static final String ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
 
-    private static final String ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
-    private static final String AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
+  private static final String AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
 
-    public static void main(String[] args) {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-
-        staticFileLocation("/public");
-
-        post("/call", CallController.handlePost);
-        post("/message", MessageController.handlePost);
-        post("/hello", TwimlController.handlePost);
-    }
+  public static void main(String[] args) {
+    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+    staticFileLocation("/public");
+    post("/call", CallController.handlePost);
+    post("/message", MessageController.handlePost);
+    post("/hello", TwimlController.
+<<<<<<< /usr/src/app/output/twilio/starter-java/01cc9db061b3d98083e4e49d56aaa052434a1f2a/src/main/java/com/twilio/starter/Application.java/left.java
+    handlePost
+=======
+    handleGet
+>>>>>>> /usr/src/app/output/twilio/starter-java/01cc9db061b3d98083e4e49d56aaa052434a1f2a/src/main/java/com/twilio/starter/Application.java/right.java
+    );
+  }
 }
