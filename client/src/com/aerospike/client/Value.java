@@ -48,32 +48,36 @@ public abstract class Value {
 	 * versions less than 5.6 which do not support boolean bins. Can set to true for
 	 * server 5.6+.
 	 */
-	public static boolean UseBoolBin = true;
 
 	/**
 	 * Should the client return a map when {@link com.aerospike.client.cdt.MapReturnType#KEY_VALUE}
 	 * is specified in a map read operation and the server returns a list of key/value pairs.
 	 */
+
 	public static boolean ReturnMapForKeyValue = false;
 
 	/**
 	 * Null value.
 	 */
+
 	public static final Value NULL = NullValue.INSTANCE;
 
 	/**
 	 * Infinity value to be used in CDT range comparisons only.
 	 */
+
 	public static final Value INFINITY = new InfinityValue();
 
 	/**
 	 * Wildcard value to be used in CDT range comparisons only.
 	 */
+
 	public static final Value WILDCARD = new WildcardValue();
 
 	/**
 	 * Get string or null value instance.
 	 */
+
 	public static Value get(String value) {
 		return (value == null)? NullValue.INSTANCE : new StringValue(value);
 	}
@@ -81,6 +85,7 @@ public abstract class Value {
 	/**
 	 * Get byte array or null value instance.
 	 */
+
 	public static Value get(byte[] value) {
 		return (value == null)? NullValue.INSTANCE : new BytesValue(value);
 	}
@@ -88,6 +93,7 @@ public abstract class Value {
 	/**
 	 * Get byte array with type or null value instance.
 	 */
+
 	public static Value get(byte[] value, int type) {
 		return (value == null)? NullValue.INSTANCE : new BytesValue(value, type);
 	}
@@ -95,6 +101,7 @@ public abstract class Value {
 	/**
 	 * Get byte segment or null value instance.
 	 */
+
 	public static Value get(byte[] value, int offset, int length) {
 		return (value == null)? NullValue.INSTANCE : new ByteSegmentValue(value, offset, length);
 	}
@@ -102,6 +109,7 @@ public abstract class Value {
 	/**
 	 * Get byte segment or null value instance.
 	 */
+
 	public static Value get(ByteBuffer bb) {
 		return (bb == null)? NullValue.INSTANCE : new BytesValue(bb.array());
 	}
@@ -109,6 +117,7 @@ public abstract class Value {
 	/**
 	 * Get byte value instance.
 	 */
+
 	public static Value get(byte value) {
 		return new ByteValue(value);
 	}
@@ -116,6 +125,7 @@ public abstract class Value {
 	/**
 	 * Get short value instance.
 	 */
+
 	public static Value get(short value) {
 		return new ShortValue(value);
 	}
@@ -123,6 +133,7 @@ public abstract class Value {
 	/**
 	 * Get integer value instance.
 	 */
+
 	public static Value get(int value) {
 		return new IntegerValue(value);
 	}
@@ -130,6 +141,7 @@ public abstract class Value {
 	/**
 	 * Get long value instance.
 	 */
+
 	public static Value get(long value) {
 		return new LongValue(value);
 	}
@@ -137,6 +149,7 @@ public abstract class Value {
 	/**
 	 * Get double value instance.
 	 */
+
 	public static Value get(double value) {
 		return new DoubleValue(value);
 	}
@@ -144,6 +157,7 @@ public abstract class Value {
 	/**
 	 * Get float value instance.
 	 */
+
 	public static Value get(float value) {
 		return new FloatValue(value);
 	}
@@ -151,6 +165,7 @@ public abstract class Value {
 	/**
 	 * Get boolean value instance.
 	 */
+
 	public static Value get(boolean value) {
 		if (UseBoolBin) {
 			return new BooleanValue(value);
@@ -163,6 +178,7 @@ public abstract class Value {
 	/**
 	 * Get enum value string instance.
 	 */
+
 	public static Value get(Enum<?> value) {
 		return (value == null)? NullValue.INSTANCE : new StringValue(value.toString());
 	}
@@ -170,6 +186,7 @@ public abstract class Value {
 	/**
 	 * Get UUID value string instance.
 	 */
+
 	public static Value get(UUID value) {
 		return (value == null)? NullValue.INSTANCE : new StringValue(value.toString());
 	}
@@ -177,6 +194,7 @@ public abstract class Value {
 	/**
 	 * Get list or null value instance.
 	 */
+
 	public static Value get(List<?> value) {
 		return (value == null)? NullValue.INSTANCE : new ListValue(value);
 	}
@@ -184,6 +202,7 @@ public abstract class Value {
 	/**
 	 * Get map or null value instance.
 	 */
+
 	public static Value get(Map<?,?> value) {
 		return (value == null)? NullValue.INSTANCE : new MapValue(value);
 	}
@@ -191,6 +210,7 @@ public abstract class Value {
 	/**
 	 * Get sorted map or null value instance.
 	 */
+
 	public static Value get(SortedMap<?,?> value) {
 		return (value == null)? NullValue.INSTANCE : new MapValue(value, MapOrder.KEY_ORDERED);
 	}
@@ -202,6 +222,7 @@ public abstract class Value {
 	 * <p>
 	 * Get map or null value instance.
 	 */
+
 	@Deprecated
 	public static Value get(Map<?,?> value, MapOrder order) {
 		return (value == null)? NullValue.INSTANCE : new MapValue(value, order);
@@ -210,6 +231,7 @@ public abstract class Value {
 	/**
 	 * Get sorted map or null value instance.
 	 */
+
 	public static Value get(List<? extends Entry<?,?>> value, MapOrder mapOrder) {
 		return (value == null)? NullValue.INSTANCE : new SortedMapValue(value, mapOrder);
 	}
@@ -217,6 +239,7 @@ public abstract class Value {
 	/**
 	 * Get value array instance.
 	 */
+
 	public static Value get(Value[] value) {
 		return (value == null)? NullValue.INSTANCE : new ValueArray(value);
 	}
@@ -224,6 +247,7 @@ public abstract class Value {
 	/**
 	 * Get GeoJSON or null value instance.
 	 */
+
 	public static Value getAsGeoJSON(String value) {
 		return (value == null)? NullValue.INSTANCE : new GeoJSONValue(value);
 	}
@@ -231,6 +255,7 @@ public abstract class Value {
 	/**
 	 * Get HyperLogLog or null value instance.
 	 */
+
 	public static Value getAsHLL(byte[] value) {
 		return (value == null)? NullValue.INSTANCE : new HLLValue(value);
 	}
@@ -238,6 +263,7 @@ public abstract class Value {
 	/**
 	 * Get null value instance.
 	 */
+
 	public static Value getAsNull() {
 		return NullValue.INSTANCE;
 	}
@@ -247,6 +273,7 @@ public abstract class Value {
 	 * This is the slowest of the Value get() methods.
 	 * Useful when copying records from one cluster to another.
 	 */
+
 	public static Value get(Object value) {
 		if (value == null) {
 			return NullValue.INSTANCE;
@@ -330,6 +357,7 @@ public abstract class Value {
 	 * @deprecated
 	 * <p> Use {@link Value#get(Object)} instead.
 	 */
+
 	@Deprecated
 	public static Value getFromRecordObject(Object value) {
 		return Value.get(value);
@@ -338,43 +366,51 @@ public abstract class Value {
 	/**
 	 * Calculate number of bytes necessary to serialize the value in the wire protocol.
 	 */
+
 	public abstract int estimateSize() throws AerospikeException;
 
 	/**
 	 * Serialize the value in the wire protocol.
 	 */
+
 	public abstract int write(byte[] buffer, int offset) throws AerospikeException;
 
 	/**
 	 * Serialize the value using MessagePack.
 	 */
+
 	public abstract void pack(Packer packer);
 
 	/**
 	 * Validate if value type can be used as a key.
 	 * @throws AerospikeException	if type can't be used as a key.
 	 */
+
 	public void validateKeyType() throws AerospikeException {
 	}
 
 	/**
 	 * Get wire protocol value type.
 	 */
+
 	public abstract int getType();
 
 	/**
 	 * Return original value as an Object.
 	 */
+
 	public abstract Object getObject();
 
 	/**
 	 * Return value as an Object.
 	 */
+
 	public abstract LuaValue getLuaValue(LuaInstance instance);
 
 	/**
 	 * Return value as an integer.
 	 */
+
 	public int toInteger() {
 		return 0;
 	}
@@ -382,6 +418,7 @@ public abstract class Value {
 	/**
 	 * Return value as a long.
 	 */
+
 	public long toLong() {
 		return 0;
 	}
@@ -389,6 +426,7 @@ public abstract class Value {
 	/**
 	 * Empty value.
 	 */
+
 	public static final class NullValue extends Value {
 		public static final NullValue INSTANCE = new NullValue();
 
@@ -449,6 +487,7 @@ public abstract class Value {
 	/**
 	 * Byte array value.
 	 */
+
 	public static final class BytesValue extends Value {
 		private final byte[] bytes;
 		private final int type;
@@ -515,6 +554,7 @@ public abstract class Value {
 	/**
 	 * Byte segment value.
 	 */
+
 	public static final class ByteSegmentValue extends Value {
 		private final byte[] bytes;
 		private final int offset;
@@ -611,6 +651,7 @@ public abstract class Value {
 	/**
 	 * Byte value.
 	 */
+
 	public static final class ByteValue extends Value {
 		private final byte value;
 
@@ -681,6 +722,7 @@ public abstract class Value {
 	/**
 	 * String value.
 	 */
+
 	public static final class StringValue extends Value {
 		private final String value;
 
@@ -739,6 +781,7 @@ public abstract class Value {
 	/**
 	 * Short value.
 	 */
+
 	public static final class ShortValue extends Value {
 		private final short value;
 
@@ -808,6 +851,7 @@ public abstract class Value {
 	/**
 	 * Integer value.
 	 */
+
 	public static final class IntegerValue extends Value {
 		private final int value;
 
@@ -877,6 +921,7 @@ public abstract class Value {
 	/**
 	 * Long value.
 	 */
+
 	public static final class LongValue extends Value {
 		private final long value;
 
@@ -946,6 +991,7 @@ public abstract class Value {
 	/**
 	 * Double value.
 	 */
+
 	public static final class DoubleValue extends Value {
 		private final double value;
 
@@ -1016,6 +1062,7 @@ public abstract class Value {
 	/**
 	 * Float value.
 	 */
+
 	public static final class FloatValue extends Value {
 		private final float value;
 
@@ -1085,6 +1132,7 @@ public abstract class Value {
 	/**
 	 * Boolean value.
 	 */
+
 	public static final class BooleanValue extends Value {
 		private final boolean value;
 
@@ -1161,6 +1209,7 @@ public abstract class Value {
 	 * This class will be deleted once full conversion to boolean particle type
 	 * is complete.
 	 */
+
 	public static final class BoolIntValue extends Value {
 		private final boolean value;
 
@@ -1232,6 +1281,8 @@ public abstract class Value {
 			return value? 1L : 0L;
 		}
 	}
+
+	public static boolean UseBoolBin = true;
 
 	/**
 	 * GeoJSON value.

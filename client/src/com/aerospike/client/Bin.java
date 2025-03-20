@@ -47,7 +47,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and byte array value.
 	 *
@@ -58,7 +57,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name, byte array value and particle type.
 	 * For internal use only.
@@ -71,7 +69,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value, type);
 	}
-
 	/**
 	 * Constructor, specifying bin name and byte array segment value.
 	 *
@@ -84,7 +81,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value, offset, length);
 	}
-
 	/**
 	 * Constructor, specifying bin name and byte value.
 	 *
@@ -95,7 +91,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and short value.
 	 * The server will convert all shorts to longs.
@@ -107,7 +102,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and integer value.
 	 * The server will convert all integers to longs.
@@ -119,7 +113,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and long value.
 	 *
@@ -130,7 +123,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and double value.
 	 *
@@ -141,7 +133,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and float value.
 	 *
@@ -152,7 +143,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Constructor, specifying bin name and boolean value.
 	 * Either a boolean or integer bin is sent to the server, depending
@@ -165,7 +155,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Create bin with a list value.  The list value will be serialized as a server list type.
 	 *
@@ -176,7 +165,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Create bin with a map value.  The map value will be serialized as a server map type.
 	 *
@@ -187,7 +175,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * Create bin with a sorted map value.  The map value will be serialized as a server ordered map type.
 	 *
@@ -198,7 +185,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value);
 	}
-
 	/**
 	 * This constructor is deprecated.
 	 * Use {@link Bin#Bin(String, Map)} if the map is unsorted (like HashMap).
@@ -215,7 +201,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value, mapOrder);
 	}
-
 	/**
 	 * Create a map bin from a list of key/value entries.  The value will be serialized as a
 	 * server map type with specified mapOrder.
@@ -228,7 +213,6 @@ public final class Bin {
 		this.name = name;
 		this.value = Value.get(value, mapOrder);
 	}
-
 	/**
 	 * Constructor, specifying bin name and value.
 	 *
@@ -239,7 +223,148 @@ public final class Bin {
 		this.name = name;
 		this.value = value;
 	}
-
+	/**
+	 * Create bin with a null value. This is useful for bin deletions within a record.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 */
+	/**
+	 * Constructor, specifying bin name and string value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and byte array value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name, byte array value and particle type.
+	 * For internal use only.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 * @param type		bin type, see {@link com.aerospike.client.command.ParticleType}
+	 */
+	/**
+	 * Constructor, specifying bin name and byte array segment value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		byte array value
+	 * @param offset	byte array segment offset
+	 * @param length	byte array segment length
+	 */
+	/**
+	 * Constructor, specifying bin name and byte value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and short value.
+	 * The server will convert all shorts to longs.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and integer value.
+	 * The server will convert all integers to longs.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and long value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and double value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and float value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Constructor, specifying bin name and boolean value.
+	 * Either a boolean or integer bin is sent to the server, depending
+	 * on configuration {@link com.aerospike.client.Value#UseBoolBin}.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Create bin with a list value.  The list value will be serialized as a server list type.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Create bin with a map value.  The map value will be serialized as a server map type.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Create bin with a sorted map value.  The map value will be serialized as a server ordered map type.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * This constructor is deprecated.
+	 * Use {@link Bin#Bin(String, Map)} if the map is unsorted (like HashMap).
+	 * Use {@link Bin#Bin(String, SortedMap)} if the map is sorted (like TreeMap).
+	 * <p>
+	 * Create bin with a map value and order.  The map value will be serialized as a server map type.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value, pass in a {@link java.util.SortedMap} instance if map order is sorted.
+	 * @param mapOrder	map sorted order.
+	 */
+	/**
+	 * Create a map bin from a list of key/value entries.  The value will be serialized as a
+	 * server map type with specified mapOrder.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		list of key/value entries already in desired sorted order
+	 * @param mapOrder	map sorted order
+	 */
+	/**
+	 * Constructor, specifying bin name and value.
+	 *
+	 * @param name		bin name, current limit is 15 characters
+	 * @param value		bin value
+	 */
+	/**
+	 * Create bin with an object value. This is the slowest of the Bin constructors because the type
+	 * must be determined using multiple "instanceof" checks. If the object type is unrecognized,
+	 * the default java serializer is used.
+	 * <p>
+	 * To disable this constructor, set {@link com.aerospike.client.Value#DisableSerializer} to true.
+	 *
+	 * @param name		bin name, current limit is 15 characters.
+	 * @param value		bin value
+	 */
+	/**
+	 * Create bin with a blob value.  The value will be java serialized.
+	 * This method is faster than the bin object constructor because the blob is converted
+	 * directly instead of using multiple "instanceof" type checks with a blob default.
+	 * <p>
+	 * To disable this method, set {@link com.aerospike.client.Value#DisableSerializer} to true.
+	 *
+	 * @param name		bin name, current limit is 15 characters.
+	 * @param value		bin value
+	 */
 	/**
 	 * Create bin with a null value. This is useful for bin deletions within a record.
 	 *

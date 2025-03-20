@@ -292,6 +292,48 @@ public final class Buffer {
 		return sb.toString();
 	}
 
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/command/Buffer.java/left.java
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/command/Buffer.java/base.java
+	public static Object bytesToObject(byte[] buf, int offset, int length) {
+		if (length <= 0) {
+			return null;
+		}
+
+		if (Value.DisableDeserializer) {
+			throw new AerospikeException.Serialize("Object deserializer has been disabled");
+		}
+
+		try (ByteArrayInputStream bastream = new ByteArrayInputStream(buf, offset, length)) {
+			try (ObjectInputStream oistream = new ObjectInputStream(bastream)) {
+				return oistream.readObject();
+			}
+		}
+		catch (Exception e) {
+			throw new AerospikeException.Serialize(e);
+		}
+	}
+
+=======
+	public static Object bytesToObject(byte[] buf, int offset, int length) {
+		if (length <= 0) {
+			return null;
+		}
+
+		if (Value.DisableDeserializer) {
+			throw new AerospikeException.Serialize("Object deserializer has been disabled");
+		}
+
+		try (ByteArrayInputStream bastream = new ByteArrayInputStream(buf, offset, length)) {
+			try (ObjectInputStream oistream = new ObjectInputStream(bastream)) {
+				return oistream.readObject();
+			}
+		}
+		catch (Throwable e) {
+			throw new AerospikeException.Serialize(e);
+		}
+	}
+
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/command/Buffer.java/right.java
 	public static Value bytesToLongValue(byte[] buf, int offset, int len) {
 		long val = 0;
 

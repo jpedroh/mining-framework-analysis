@@ -232,6 +232,40 @@ public abstract class Unpacker<T> {
 			val = getString(Buffer.utf8ToString(buffer, offset, count));
 			break;
 
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/util/Unpacker.java/left.java
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/util/Unpacker.java/base.java
+		case ParticleType.JBLOB:
+			if (Value.DisableDeserializer) {
+				throw new AerospikeException.Serialize("Object deserializer has been disabled");
+			}
+
+			try (ByteArrayInputStream bastream = new ByteArrayInputStream(buffer, offset, count)) {
+				try (ObjectInputStream oistream = new ObjectInputStream(bastream)) {
+					val = getJavaBlob(oistream.readObject());
+				}
+			}
+			catch (Exception e) {
+				throw new AerospikeException.Serialize(e);
+			}
+			break;
+
+=======
+		case ParticleType.JBLOB:
+			if (Value.DisableDeserializer) {
+				throw new AerospikeException.Serialize("Object deserializer has been disabled");
+			}
+
+			try (ByteArrayInputStream bastream = new ByteArrayInputStream(buffer, offset, count)) {
+				try (ObjectInputStream oistream = new ObjectInputStream(bastream)) {
+					val = getJavaBlob(oistream.readObject());
+				}
+			}
+			catch (Throwable e) {
+				throw new AerospikeException.Serialize(e);
+			}
+			break;
+
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/924fe34da0c425c1587a7edfff62947ecd8307d7/client/src/com/aerospike/client/util/Unpacker.java/right.java
 		case ParticleType.GEOJSON:
 			val = getGeoJSON(Buffer.utf8ToString(buffer, offset, count));
 			break;
