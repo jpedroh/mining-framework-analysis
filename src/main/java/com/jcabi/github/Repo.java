@@ -41,6 +41,14 @@ import lombok.ToString;
  * Github repository.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @todo #1:1hr Assignees API should be implemented. Let's add a method
+ *  assignees() to this class returning an instance of interface Assignees.
+ *  This interface should have at least two methods: 1) iterate() returning
+ *  a list of Users and 2) check(String) returning TRUE if provided
+ *  login can be used as an assignee in repository. New interface should
+ *  be implemented by GhAssignees class and tested in unit and integration
+ *  tests. Moreover, we should implement MkAssignees class. See
+ *  http://developer.github.com/v3/issues/assignees/
  * @since 0.1
  */
 @Immutable
@@ -119,6 +127,7 @@ public interface Repo extends JsonReadable, JsonPatchable {
          * Encapsulated Repo.
          */
         private final transient Repo repo;
+
         /**
          * Public ctor.
          * @param rep Repo
@@ -126,6 +135,7 @@ public interface Repo extends JsonReadable, JsonPatchable {
         public Smart(final Repo rep) {
             this.repo = rep;
         }
+
         /**
          * Get its description.
          * @return Description
@@ -134,30 +144,37 @@ public interface Repo extends JsonReadable, JsonPatchable {
         public String description() throws IOException {
             return new SmartJson(this).text("description");
         }
+
         @Override
         public Github github() {
             return this.repo.github();
         }
+
         @Override
         public Coordinates coordinates() {
             return this.repo.coordinates();
         }
+
         @Override
         public Issues issues() {
             return this.repo.issues();
         }
+
         @Override
         public Milestones milestones() {
             return this.repo.milestones();
         }
+
         @Override
         public Pulls pulls() {
             return this.repo.pulls();
         }
+
         @Override
         public Iterable<Event> events() {
             return this.repo.events();
         }
+
         @Override
         public Labels labels() {
             return this.repo.labels();
@@ -166,10 +183,12 @@ public interface Repo extends JsonReadable, JsonPatchable {
         public Assignees assignees() {
             return this.repo.assignees();
         }
+
         @Override
         public void patch(final JsonObject json) throws IOException {
             this.repo.patch(json);
         }
+
         @Override
         public JsonObject json() throws IOException {
             return this.repo.json();

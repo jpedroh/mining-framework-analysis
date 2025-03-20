@@ -43,6 +43,17 @@ import lombok.EqualsAndHashCode;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/6fffc8a4eb6c480a1ce771a58df1d54f783beb45/src/main/java/com/jcabi/github/RtRepo.java/left.java
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @todo #1 Unit test for RtRepo is required. Let's mock
+ *  request using Mockito or com.rexsl.test.request.FakeRequest, and make
+ *  sure that the class can do its key operations.
+||||||| /usr/src/app/output/jcabi/jcabi-github/6fffc8a4eb6c480a1ce771a58df1d54f783beb45/src/main/java/com/jcabi/github/RtRepo.java/base.java
+ * @todo #1 Unit test for RtRepo is required. Let's mock
+ *  request using Mockito or com.rexsl.test.request.FakeRequest, and make
+ *  sure that the class can do its key operations.
+=======
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/6fffc8a4eb6c480a1ce771a58df1d54f783beb45/src/main/java/com/jcabi/github/RtRepo.java/right.java
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -154,4 +165,5 @@ final class RtRepo implements Repo {
     public JsonObject json() throws IOException {
         return new RtJson(this.request).fetch();
     }
+
 }
