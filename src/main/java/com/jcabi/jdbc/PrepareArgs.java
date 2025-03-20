@@ -73,8 +73,14 @@ final class PrepareArgs implements Preparation {
                 stmt.setInt(pos, Integer.class.cast(arg));
             } else if (arg instanceof Utc) {
                 Utc.class.cast(arg).setTimestamp(stmt, pos);
+<<<<<<< /usr/src/app/output/jcabi/jcabi-jdbc/40e95d792465ff63e698273a475a8b256cf11a5b/src/main/java/com/jcabi/jdbc/PrepareArgs.java/left.java
             } else if (arg instanceof byte[]) {
                 stmt.setBytes(pos, byte[].class.cast(arg));
+||||||| /usr/src/app/output/jcabi/jcabi-jdbc/40e95d792465ff63e698273a475a8b256cf11a5b/src/main/java/com/jcabi/jdbc/PrepareArgs.java/base.java
+=======
+            } else if (arg instanceof byte[]) {
+                stmt.setBytes(pos,(byte[])arg);
+>>>>>>> /usr/src/app/output/jcabi/jcabi-jdbc/40e95d792465ff63e698273a475a8b256cf11a5b/src/main/java/com/jcabi/jdbc/PrepareArgs.java/right.java
             } else {
                 stmt.setString(pos, arg.toString());
             }
