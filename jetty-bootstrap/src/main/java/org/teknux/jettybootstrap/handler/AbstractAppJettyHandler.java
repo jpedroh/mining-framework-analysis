@@ -23,52 +23,51 @@ package org.teknux.jettybootstrap.handler;
 
 import java.io.File;
 import java.text.MessageFormat;
-
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.teknux.jettybootstrap.JettyBootstrapException;
 import org.teknux.jettybootstrap.configuration.IJettyConfiguration;
 import org.teknux.jettybootstrap.handler.util.AdditionalWebAppJettyConfigurationUtil;
 import org.teknux.jettybootstrap.handler.util.JettyConstraintUtil;
 
-
 abstract public class AbstractAppJettyHandler extends AbstractJettyHandler<WebAppContext> {
     private static final String APP_DIRECTORY_NAME = "apps";
-    
+
     private IJettyConfiguration iJettyConfiguration;
-	private String contextPath = null;
+    private String contextPath = null;
 
-	public AbstractAppJettyHandler(IJettyConfiguration iJettyConfiguration) {
-	    this.iJettyConfiguration = iJettyConfiguration;
-	}
-	
-	protected IJettyConfiguration getJettyConfiguration() {
-	    return iJettyConfiguration;
-	}
-	
-	public String getContextPath() {
-		return contextPath;
-	}
+    public AbstractAppJettyHandler(IJettyConfiguration iJettyConfiguration) {
+        this.iJettyConfiguration = iJettyConfiguration;
+    }
 
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
-	}
-	
-	@Override
-	protected WebAppContext createHandler() throws JettyBootstrapException {
-	    WebAppContext webAppContext = new WebAppContext();
-	    
-	    //Init WebAppContext from Jetty Configuration
+    protected IJettyConfiguration getJettyConfiguration() {
+        return iJettyConfiguration;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/17deab171882d57f5d02052ea6e631cb11aa0d55/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/left.java
+    @Override
+    protected WebAppContext createHandler() throws JettyBootstrapException {
+        WebAppContext webAppContext = new WebAppContext();
+
+        // Init WebAppContext from Jetty Configuration
         webAppContext.setParentLoaderPriority(iJettyConfiguration.isParentLoaderPriority());
         webAppContext.setPersistTempDirectory(iJettyConfiguration.isPersistAppTempDirectories());
         webAppContext.setThrowUnavailableOnStartupException(iJettyConfiguration.isThrowIfStartupException());
         webAppContext.getSessionHandler().getSessionManager().setMaxInactiveInterval(iJettyConfiguration.getMaxInactiveInterval());
-        
+
         // Add redirect to SSL if necessary
         if (iJettyConfiguration.isRedirectWebAppsOnHttpsConnector()) {
             webAppContext.setSecurityHandler(JettyConstraintUtil.getConstraintSecurityHandlerConfidential());
         }
-        
-        //Init temp directory
+
+        // Init temp directory
         File appsTempDirectory = new File(iJettyConfiguration.getTempDirectory() + File.separator + APP_DIRECTORY_NAME);
         if (!appsTempDirectory.exists() && !appsTempDirectory.mkdir()) {
             throw new JettyBootstrapException("Can't create temporary applications directory");
@@ -76,24 +75,59 @@ abstract public class AbstractAppJettyHandler extends AbstractJettyHandler<WebAp
         File appTempDirectory = new File(appsTempDirectory.getPath() + File.separator + getAppTempDirName());
         webAppContext.setTempDirectory(appTempDirectory);
 
-        //Adds extra classes if necessary
-        webAppContext.setConfigurationClasses(AdditionalWebAppJettyConfigurationUtil.addOptionalConfigurationClasses(WebAppContext.getDefaultConfigurationClasses()));
-        
-        //Set Context Path
-        webAppContext.setContextPath(contextPath);
-        
-        return webAppContext;
-	}
-	
-	/**
-	 * The name of Temporary Application directory
-	 * 
-	 * @return name
-	 */
-	abstract protected String getAppTempDirName();
+        // Adds extra classes if necessary
+        webAppContext.setConfigurationClasses(AdditionalWebAppJettyConfigurationUtil.addOptionalConfigurationClasses(WebAppContext
+                .getDefaultConfigurationClasses()));
 
-	@Override
-	public String toString() {
-		return MessageFormat.format("{0} on contextPath [{1}]", super.toString(), getContextPath());
-	}
+        // Set Context Path
+        webAppContext.setContextPath(contextPath);
+
+        return webAppContext;
+    }
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/17deab171882d57f5d02052ea6e631cb11aa0d55/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/base.java
+=======
+    @Override
+    protected WebAppContext createHandler() throws JettyBootstrapException {
+        WebAppContext webAppContext = new WebAppContext();
+        
+        //Init WebAppContext from Jetty Configuration
+            webAppContext.setParentLoaderPriority(iJettyConfiguration.isParentLoaderPriority());
+            webAppContext.setPersistTempDirectory(iJettyConfiguration.isPersistAppTempDirectories());
+            webAppContext.setThrowUnavailableOnStartupException(iJettyConfiguration.isThrowIfStartupException());
+            webAppContext.getSessionHandler().getSessionManager().setMaxInactiveInterval(iJettyConfiguration.getMaxInactiveInterval());
+            
+            // Add redirect to SSL if necessary
+            if (iJettyConfiguration.isRedirectWebAppsOnHttpsConnector()) {
+                webAppContext.setSecurityHandler(JettyConstraintUtil.getConstraintSecurityHandlerConfidential());
+            }
+            
+            //Init temp directory
+            File appsTempDirectory = new File(iJettyConfiguration.getTempDirectory() + File.separator + APP_DIRECTORY_NAME);
+            if (!appsTempDirectory.exists() && !appsTempDirectory.mkdir()) {
+                throw new JettyBootstrapException("Can't create temporary applications directory");
+            }
+            File appTempDirectory = new File(appsTempDirectory.getPath() + File.separator + getAppTempDirName());
+            webAppContext.setTempDirectory(appTempDirectory);
+
+            //Adds extra classes if necessary
+            webAppContext.setConfigurationClasses(AdditionalWebAppJettyConfigurationUtil.addOptionalConfigurationClasses(WebAppContext.getDefaultConfigurationClasses()));
+            
+            //Set Context Path
+            webAppContext.setContextPath(contextPath);
+            
+            return webAppContext;
+    }
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/17deab171882d57f5d02052ea6e631cb11aa0d55/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/right.java
+
+    /**
+     * The name of Temporary Application directory
+     * 
+     * @return name
+     */
+    abstract protected String getAppTempDirName();
+
+    @Override
+    public String toString() {
+        return MessageFormat.format("{0} on contextPath [{1}]", super.toString(), getContextPath());
+    }
 }
