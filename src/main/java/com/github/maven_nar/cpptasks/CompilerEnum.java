@@ -1,26 +1,5 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar.cpptasks;
-
 import org.apache.tools.ant.types.EnumeratedAttribute;
-
 import com.github.maven_nar.cpptasks.arm.ADSCCompiler;
 import com.github.maven_nar.cpptasks.borland.BorlandCCompiler;
 import com.github.maven_nar.cpptasks.borland.BorlandResourceCompiler;
@@ -56,7 +35,6 @@ import com.github.maven_nar.cpptasks.sun.ForteF77Compiler;
 import com.github.maven_nar.cpptasks.ti.ClxxCCompiler;
 import com.github.maven_nar.cpptasks.trolltech.MetaObjectCompiler;
 import com.github.maven_nar.cpptasks.trolltech.UserInterfaceCompiler;
-
 
 /**
  * Enumeration of supported compilers
@@ -215,78 +193,13 @@ import com.github.maven_nar.cpptasks.trolltech.UserInterfaceCompiler;
  * 
  */
 public class CompilerEnum extends EnumeratedAttribute {
-  private final static ProcessorEnumValue[] compilers = new ProcessorEnumValue[] {
-      new ProcessorEnumValue("gcc", GccCCompiler.getInstance()),
-      new ProcessorEnumValue("g++", GccCCompiler.getGppInstance()),
-      new ProcessorEnumValue("clang", GccCCompiler.getCLangInstance()),
-      new ProcessorEnumValue("clang++", GccCCompiler.getCLangppInstance()),
-      new ProcessorEnumValue("c++", GccCCompiler.getCppInstance()),
-      new ProcessorEnumValue("g77", GccCCompiler.getG77Instance()),
-      // FREEHEP
-      new ProcessorEnumValue("gfortran", GccCCompiler.getGFortranInstance()),
-      new ProcessorEnumValue("msvc", MsvcCCompiler.getInstance()),
-      new ProcessorEnumValue("msvc8", Msvc2005CCompiler.getInstance()),
-      new ProcessorEnumValue("bcc", BorlandCCompiler.getInstance()),
-      new ProcessorEnumValue("msrc", MsvcResourceCompiler.getInstance()),
-	  new ProcessorEnumValue("ml64", Assembler64bitCompiler.getInstance()),
-      new ProcessorEnumValue("msmc", MsvcMessageCompiler.getInstance()),
-      new ProcessorEnumValue("brc", BorlandResourceCompiler.getInstance()),
-      new ProcessorEnumValue("df", CompaqVisualFortranCompiler.getInstance()),
-      new ProcessorEnumValue("midl", MsvcMIDLCompiler.getInstance()),
-      new ProcessorEnumValue("icl", IntelWin32CCompiler.getInstance()),
-      new ProcessorEnumValue("ecl", IntelWin64CCompiler.getInstance()),
-      // BEGINFREEHEP
-      new ProcessorEnumValue("icc", IntelLinux32CCompiler.getInstance()),
-      new ProcessorEnumValue("ecc", IntelLinux64CCompiler.getInstance()),
-      new ProcessorEnumValue("icpc", IntelLinux32Compiler.getInstance()),
-      new ProcessorEnumValue("ecpc", IntelLinux64Compiler.getInstance()),
-      new ProcessorEnumValue("ifort", IntelLinuxFortranCompiler.getInstance()),
-      // ENDFREEHEP
-      new ProcessorEnumValue("CC", ForteCCCompiler.getInstance()),
-      // BEGINFREEHEP
-      new ProcessorEnumValue("suncc", ForteCCompiler.getInstance()),
-      new ProcessorEnumValue("sunf77", ForteF77Compiler.getInstance()),
-      // ENDFREEHEP
-      new ProcessorEnumValue("aCC", aCCCompiler.getInstance()),
-      new ProcessorEnumValue("os390", OS390CCompiler.getInstance()),
-      new ProcessorEnumValue("os400", IccCompiler.getInstance()),
-      new ProcessorEnumValue("sunc89", C89CCompiler.getInstance()),
-      new ProcessorEnumValue("xlC", VisualAgeCCompiler.getInstance()),
-	  new ProcessorEnumValue("xlC_r", xlC_rCompiler.getInstance()),
-      new ProcessorEnumValue("cl6x", ClxxCCompiler.getCl6xInstance()),
-      new ProcessorEnumValue("cl55", ClxxCCompiler.getCl55Instance()),
-      new ProcessorEnumValue("armcc", ADSCCompiler.getArmCC()),
-      new ProcessorEnumValue("armcpp", ADSCCompiler.getArmCpp()),
-      new ProcessorEnumValue("tcc", ADSCCompiler.getThumbCC()),
-      new ProcessorEnumValue("tcpp", ADSCCompiler.getThumbCpp()),
-      // GCC Cross Compilers
-      new ProcessorEnumValue("sparc-sun-solaris2-gcc",
-          com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getInstance()),
-      new ProcessorEnumValue("sparc-sun-solaris2-g++",
-          com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getGppInstance()),
-      new ProcessorEnumValue("sparc-sun-solaris2-c++",
-          com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getCppInstance()),
-      new ProcessorEnumValue("sparc-sun-solaris2-g77",
-          com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getG77Instance()),
-      // GCC Cross Compilers
-      new ProcessorEnumValue("gcc-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getInstance()),
-      new ProcessorEnumValue("g++-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getGppInstance()),
-      new ProcessorEnumValue("c++-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getCppInstance()),
-      new ProcessorEnumValue("g77-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getG77Instance()),
-      new ProcessorEnumValue("uic", UserInterfaceCompiler.getInstance()),
-      new ProcessorEnumValue("moc", MetaObjectCompiler.getInstance()),
-      new ProcessorEnumValue("xpidl", XpidlCompiler.getInstance()),
-      new ProcessorEnumValue("wcl", OpenWatcomCCompiler.getInstance()),
-      new ProcessorEnumValue("wfl", OpenWatcomFortranCompiler.getInstance()),
-      new ProcessorEnumValue("windres", WindresResourceCompiler.getInstance())
-  };
+  private final static ProcessorEnumValue[] compilers = new ProcessorEnumValue[] { new ProcessorEnumValue("gcc", GccCCompiler.getInstance()), new ProcessorEnumValue("g++", GccCCompiler.getGppInstance()), new ProcessorEnumValue("clang", GccCCompiler.getCLangInstance()), new ProcessorEnumValue("clang++", GccCCompiler.getCLangppInstance()), new ProcessorEnumValue("c++", GccCCompiler.getCppInstance()), new ProcessorEnumValue("g77", GccCCompiler.getG77Instance()), new ProcessorEnumValue("gfortran", GccCCompiler.getGFortranInstance()), new ProcessorEnumValue("msvc", MsvcCCompiler.getInstance()), new ProcessorEnumValue("msvc8", Msvc2005CCompiler.getInstance()), new ProcessorEnumValue("bcc", BorlandCCompiler.getInstance()), new ProcessorEnumValue("msrc", MsvcResourceCompiler.getInstance()), new ProcessorEnumValue("ml64", Assembler64bitCompiler.getInstance()), new ProcessorEnumValue("msmc", MsvcMessageCompiler.getInstance()), new ProcessorEnumValue("brc", BorlandResourceCompiler.getInstance()), new ProcessorEnumValue("df", CompaqVisualFortranCompiler.getInstance()), new ProcessorEnumValue("midl", MsvcMIDLCompiler.getInstance()), new ProcessorEnumValue("icl", IntelWin32CCompiler.getInstance()), new ProcessorEnumValue("ecl", IntelWin64CCompiler.getInstance()), new ProcessorEnumValue("icc", IntelLinux32CCompiler.getInstance()), new ProcessorEnumValue("ecc", IntelLinux64CCompiler.getInstance()), new ProcessorEnumValue("icpc", IntelLinux32Compiler.getInstance()), new ProcessorEnumValue("ecpc", IntelLinux64Compiler.getInstance()), new ProcessorEnumValue("ifort", IntelLinuxFortranCompiler.getInstance()), new ProcessorEnumValue("CC", ForteCCCompiler.getInstance()), new ProcessorEnumValue("suncc", ForteCCompiler.getInstance()), new ProcessorEnumValue("sunf77", ForteF77Compiler.getInstance()), new ProcessorEnumValue("aCC", aCCCompiler.getInstance()), new ProcessorEnumValue("os390", OS390CCompiler.getInstance()), new ProcessorEnumValue("os400", IccCompiler.getInstance()), new ProcessorEnumValue("sunc89", C89CCompiler.getInstance()), new ProcessorEnumValue("xlC", VisualAgeCCompiler.getInstance()), new ProcessorEnumValue("xlC_r", xlC_rCompiler.getInstance()), new ProcessorEnumValue("cl6x", ClxxCCompiler.getCl6xInstance()), new ProcessorEnumValue("cl55", ClxxCCompiler.getCl55Instance()), new ProcessorEnumValue("armcc", ADSCCompiler.getArmCC()), new ProcessorEnumValue("armcpp", ADSCCompiler.getArmCpp()), new ProcessorEnumValue("tcc", ADSCCompiler.getThumbCC()), new ProcessorEnumValue("tcpp", ADSCCompiler.getThumbCpp()), new ProcessorEnumValue("sparc-sun-solaris2-gcc", com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getInstance()), new ProcessorEnumValue("sparc-sun-solaris2-g++", com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getGppInstance()), new ProcessorEnumValue("sparc-sun-solaris2-c++", com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getCppInstance()), new ProcessorEnumValue("sparc-sun-solaris2-g77", com.github.maven_nar.cpptasks.gcc.cross.sparc_sun_solaris2.GccCCompiler.getG77Instance()), new ProcessorEnumValue("gcc-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getInstance()), new ProcessorEnumValue("g++-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getGppInstance()), new ProcessorEnumValue("c++-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getCppInstance()), new ProcessorEnumValue("g77-cross", com.github.maven_nar.cpptasks.gcc.cross.GccCCompiler.getG77Instance()), new ProcessorEnumValue("uic", UserInterfaceCompiler.getInstance()), new ProcessorEnumValue("moc", MetaObjectCompiler.getInstance()), new ProcessorEnumValue("xpidl", XpidlCompiler.getInstance()), new ProcessorEnumValue("wcl", OpenWatcomCCompiler.getInstance()), new ProcessorEnumValue("wfl", OpenWatcomFortranCompiler.getInstance()), new ProcessorEnumValue("windres", WindresResourceCompiler.getInstance()) };
 
   public Compiler getCompiler() {
     return (Compiler) compilers[getIndex()].getProcessor();
   }
 
-  @Override
-  public String[] getValues() {
+  @Override public String[] getValues() {
     return ProcessorEnumValue.getValues(compilers);
   }
 }
