@@ -63,12 +63,252 @@ public class GetAttributeExpression implements Expression<Object> {
         final String attributeName = String.valueOf(attributeNameValue);
         final Object[] argumentValues = this.getArgumentValues(self, context);
 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/aa932204dedbe24bdefeb75593385eb0c091e7f7/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
         if (object == null && context.isStrictVariables()) {
             if (this.node instanceof ContextVariableExpression) {
                 final String rootPropertyName = ((ContextVariableExpression) this.node).getName();
                 throw new RootAttributeNotFoundException(null, String.format(
                         "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
                         rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+||||||| /usr/src/app/output/mbosecke/pebble/aa932204dedbe24bdefeb75593385eb0c091e7f7/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+        Object result = null;
+
+        Object[] argumentValues = this.getArgumentValues(self, context);
+
+        Member member = object == null ? null : this.memberCache.get(new MemberCacheKey(object.getClass(), attributeName));
+        if (object != null && member == null) {
+
+            /*
+             * If, and only if, no arguments were provided does it make sense to
+             * check maps/arrays/lists
+             */
+            if (this.args == null) {
+
+                // first we check maps
+                if (object instanceof Map) {
+                    return this.getObjectFromMap((Map<?, ?>) object, attributeNameValue);
+                }
+
+                try {
+
+                    // then we check arrays
+                    if (object.getClass().isArray()) {
+                        int index = Integer.parseInt(attributeName);
+                        int length = Array.getLength(object);
+                        if (index < 0 || index >= length) {
+                            if (context.isStrictVariables()) {
+                                throw new AttributeNotFoundException(null,
+                                        "Index out of bounds while accessing array with strict variables on.",
+                                        attributeName, this.lineNumber, this.filename);
+                            } else {
+                                return null;
+                            }
+                        }
+                        return Array.get(object, index);
+                    }
+
+                    // then lists
+                    if (object instanceof List) {
+
+                        @SuppressWarnings("unchecked")
+                        List<Object> list = (List<Object>) object;
+
+                        int index = Integer.parseInt(attributeName);
+                        int length = list.size();
+
+                        if (index < 0 || index >= length) {
+                            if (context.isStrictVariables()) {
+                                throw new AttributeNotFoundException(null,
+                                        "Index out of bounds while accessing array with strict variables on.",
+                                        attributeName, this.lineNumber, this.filename);
+                            } else {
+                                return null;
+                            }
+                        }
+
+                        return list.get(index);
+                    }
+                } catch (NumberFormatException ex) {
+                    // do nothing
+                }
+
+            }
+
+            // check if the object is able to provide the attribute dynamically
+            if(object instanceof DynamicAttributeProvider) {
+                DynamicAttributeProvider dynamicAttributeProvider = (DynamicAttributeProvider) object;
+                if(dynamicAttributeProvider.canProvideDynamicAttribute(attributeName)) {
+                    return dynamicAttributeProvider.getDynamicAttribute(attributeNameValue, argumentValues);
+                }
+            }
+            
+            // check if the object should provide the attribute by macro invocation
+            if (object instanceof MacroAttributeProvider) {
+                MacroAttributeProvider macroAttributeProvider = (MacroAttributeProvider) object;
+                return macroAttributeProvider.macro(context, attributeName, args, false, this.lineNumber);
+            }
+
+            /*
+             * turn args into an array of types and an array of values in order
+             * to use them for our reflection calls
+             */
+            Class<?>[] argumentTypes = new Class<?>[argumentValues.length];
+
+            for (int i = 0; i < argumentValues.length; i++) {
+                Object o = argumentValues[i];
+                if (o == null) {
+                    argumentTypes[i] = null;
+                } else {
+                    argumentTypes[i] = o.getClass();
+                }
+            }
+
+            member = this.reflect(object, attributeName, argumentTypes, context.getEvaluationOptions());
+            if (member != null) {
+                this.memberCache.put(new MemberCacheKey(object.getClass(), attributeName), member);
+            }
+
+        }
+
+        if (object != null && member != null) {
+            result = this.invokeMember(object, member, argumentValues);
+        } else if (context.isStrictVariables()) {
+            if (object == null) {
+
+                if (this.node instanceof ContextVariableExpression) {
+                    final String rootPropertyName = ((ContextVariableExpression) this.node).getName();
+                    throw new RootAttributeNotFoundException(null, String.format(
+                            "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
+                            rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+                } else {
+                    throw new RootAttributeNotFoundException(null,
+                            "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
+                }
+
+=======
+        Object result = null;
+
+        Object[] argumentValues = this.getArgumentValues(self, context);
+
+        Member member = object == null ? null : this.memberCache.get(new MemberCacheKey(object.getClass(), attributeName));
+        if (object != null && member == null) {
+
+            /*
+             * If, and only if, no arguments were provided does it make sense to
+             * check maps/arrays/lists
+             */
+            if (this.args == null) {
+
+                // first we check maps
+                if (object instanceof Map) {
+                    Object objectFromMap = this.getObjectFromMap((Map<?, ?>) object, attributeNameValue);
+
+                    if (context.isStrictVariables() && objectFromMap == null) {
+                        throw new AttributeNotFoundException(null, String.format(
+                                "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
+                                attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
+                    }
+
+                    return objectFromMap;
+                }
+
+                try {
+
+                    // then we check arrays
+                    if (object.getClass().isArray()) {
+                        int index = Integer.parseInt(attributeName);
+                        int length = Array.getLength(object);
+                        if (index < 0 || index >= length) {
+                            if (context.isStrictVariables()) {
+                                throw new AttributeNotFoundException(null,
+                                        "Index out of bounds while accessing array with strict variables on.",
+                                        attributeName, this.lineNumber, this.filename);
+                            } else {
+                                return null;
+                            }
+                        }
+                        return Array.get(object, index);
+                    }
+
+                    // then lists
+                    if (object instanceof List) {
+
+                        @SuppressWarnings("unchecked")
+                        List<Object> list = (List<Object>) object;
+
+                        int index = Integer.parseInt(attributeName);
+                        int length = list.size();
+
+                        if (index < 0 || index >= length) {
+                            if (context.isStrictVariables()) {
+                                throw new AttributeNotFoundException(null,
+                                        "Index out of bounds while accessing array with strict variables on.",
+                                        attributeName, this.lineNumber, this.filename);
+                            } else {
+                                return null;
+                            }
+                        }
+
+                        return list.get(index);
+                    }
+                } catch (NumberFormatException ex) {
+                    // do nothing
+                }
+
+            }
+
+            // check if the object is able to provide the attribute dynamically
+            if(object instanceof DynamicAttributeProvider) {
+                DynamicAttributeProvider dynamicAttributeProvider = (DynamicAttributeProvider) object;
+                if(dynamicAttributeProvider.canProvideDynamicAttribute(attributeName)) {
+                    return dynamicAttributeProvider.getDynamicAttribute(attributeNameValue, argumentValues);
+                }
+            }
+            
+            // check if the object should provide the attribute by macro invocation
+            if (object instanceof MacroAttributeProvider) {
+                MacroAttributeProvider macroAttributeProvider = (MacroAttributeProvider) object;
+                return macroAttributeProvider.macro(context, attributeName, args, false, this.lineNumber);
+            }
+
+            /*
+             * turn args into an array of types and an array of values in order
+             * to use them for our reflection calls
+             */
+            Class<?>[] argumentTypes = new Class<?>[argumentValues.length];
+
+            for (int i = 0; i < argumentValues.length; i++) {
+                Object o = argumentValues[i];
+                if (o == null) {
+                    argumentTypes[i] = null;
+                } else {
+                    argumentTypes[i] = o.getClass();
+                }
+            }
+
+            member = this.reflect(object, attributeName, argumentTypes, context.getEvaluationOptions());
+            if (member != null) {
+                this.memberCache.put(new MemberCacheKey(object.getClass(), attributeName), member);
+            }
+
+        }
+
+        if (object != null && member != null) {
+            result = this.invokeMember(object, member, argumentValues);
+        } else if (context.isStrictVariables()) {
+            if (object == null) {
+
+                if (this.node instanceof ContextVariableExpression) {
+                    final String rootPropertyName = ((ContextVariableExpression) this.node).getName();
+                    throw new RootAttributeNotFoundException(null, String.format(
+                            "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
+                            rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+                } else {
+                    throw new RootAttributeNotFoundException(null,
+                            "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
+                }
+
+>>>>>>> /usr/src/app/output/mbosecke/pebble/aa932204dedbe24bdefeb75593385eb0c091e7f7/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
             } else {
                 throw new RootAttributeNotFoundException(null,
                         "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
