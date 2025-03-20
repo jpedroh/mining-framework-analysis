@@ -113,6 +113,30 @@ class HttpTemplate {
 
         int httpStatus = connection.getResponseCode();
         log.debug("Request http status = {}", httpStatus);
+<<<<<<< /usr/src/app/output/mmazi/rescu/aa57149a68d9810ab14bab6f46d0add4f3fdf1d5/src/main/java/si/mazi/rescu/HttpTemplate.java/left.java
+    
+        if (httpStatus / 100 != 2) {
+            // not a 2xx response code
+            String httpBody = readInputStreamAsEncodedString(connection.getErrorStream(), connection);
+            log.trace("Http call returned {}; response body:\n{}", httpStatus, httpBody);
+            if (exceptionType != null) {
+                RuntimeException exception = null;
+                try {
+                    exception = objectMapper.readValue(httpBody, exceptionType);
+                } catch (IOException e) {
+                    log.warn("Error parsing error output: " + e.toString());
+||||||| /usr/src/app/output/mmazi/rescu/aa57149a68d9810ab14bab6f46d0add4f3fdf1d5/src/main/java/si/mazi/rescu/HttpTemplate.java/base.java
+    
+        if (httpStatus != 200) {
+            String httpBody = readInputStreamAsEncodedString(connection.getErrorStream(), connection);
+            log.trace("Http call returned {}; response body:\n{}", httpStatus, httpBody);
+            if (exceptionType != null) {
+                RuntimeException exception = null;
+                try {
+                    exception = objectMapper.readValue(httpBody, exceptionType);
+                } catch (IOException e) {
+                    log.warn("Error parsing error output: " + e.toString());
+=======
        
         switch(httpStatus) {
         case 200:
@@ -136,6 +160,7 @@ class HttpTemplate {
                     if (exception != null) {
                         throw exception;
                     }
+>>>>>>> /usr/src/app/output/mmazi/rescu/aa57149a68d9810ab14bab6f46d0add4f3fdf1d5/src/main/java/si/mazi/rescu/HttpTemplate.java/right.java
                 }
                 throw new IOException(String.format("HTTP status code was %d; response body: %s", httpStatus, httpBody));    	
         }
