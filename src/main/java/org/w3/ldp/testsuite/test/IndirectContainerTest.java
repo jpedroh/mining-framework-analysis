@@ -19,8 +19,8 @@ import org.w3.ldp.testsuite.annotations.SpecTest;
 import org.w3.ldp.testsuite.annotations.SpecTest.METHOD;
 import org.w3.ldp.testsuite.annotations.SpecTest.STATUS;
 import org.w3.ldp.testsuite.exception.SkipException;
-import org.w3.ldp.testsuite.http.LdpPreferences;
 import org.w3.ldp.testsuite.mapper.RdfObjectMapper;
+import org.w3.ldp.testsuite.http.LdpPreferences;
 import org.w3.ldp.testsuite.vocab.LDP;
 
 import java.io.IOException;
@@ -30,6 +30,7 @@ import static org.w3.ldp.testsuite.http.HttpHeaders.ACCEPT;
 import static org.w3.ldp.testsuite.http.HttpHeaders.LINK_REL_TYPE;
 import static org.w3.ldp.testsuite.http.HttpHeaders.PREFER;
 import static org.w3.ldp.testsuite.http.LdpPreferences.PREFER_MINIMAL_CONTAINER;
+import static org.w3.ldp.testsuite.http.LdpPreferences.PREFER_MEMBERSHIP;
 import static org.w3.ldp.testsuite.http.MediaTypes.TEXT_TURTLE;
 
 public class IndirectContainerTest extends CommonContainerTest {
