@@ -6,12 +6,13 @@ import org.slf4j.LoggerFactory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 
+import de.hochschuletrier.gdw.commons.devcon.DevConsole;
 import de.hochschuletrier.gdw.ss14.ecs.EntityManager;
-import de.hochschuletrier.gdw.ss14.ecs.components.CatPropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.DogPropertyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.InputComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.MovementComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.PhysicsComponent;
+import de.hochschuletrier.gdw.ss14.ecs.components.CatPropertyComponent;
+import de.hochschuletrier.gdw.ss14.ecs.components.DogPropertyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.PlayerComponent;
 import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
 import de.hochschuletrier.gdw.ss14.states.DogStateEnum;
@@ -19,7 +20,6 @@ import de.hochschuletrier.gdw.ss14.states.DogStateEnum;
 public class MovementSystem extends ECSystem{
     
     private static final Logger logger = LoggerFactory.getLogger(MovementSystem.class);
-
     public int minDistance = 50;
 
     public MovementSystem(EntityManager entityManager) {
@@ -66,6 +66,7 @@ public class MovementSystem extends ECSystem{
             moveCompo.directionVec = inputCompo.whereToGo.sub(phyCompo.getPosition());
 
             float distance = moveCompo.directionVec.len();
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/1e9a7e9e0f39ef81673becdf2931b53375b5319e/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/MovementSystem.java/left.java
             
             logger.debug
                     ( "\n"
@@ -74,17 +75,24 @@ public class MovementSystem extends ECSystem{
                         + "DISTANCE: " +  distance + "\nVELOCITY: " + moveCompo.velocity + "\n"
                     );
             
+||||||| /usr/src/app/output/lusito/gamedevweek/1e9a7e9e0f39ef81673becdf2931b53375b5319e/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/MovementSystem.java/base.java
+            
+            System.out.println("DISTANCE: " +  distance + " VELOCITY: " + moveCompo.velocity);
+            
+=======
+        
             System.out.println(this.getClass().getName()+": "+"DISTANCE: " +  distance + " VELOCITY: " + moveCompo.velocity);
 
 
-//            if(distance <= minDistance){
-//                if(playerCompo != null)
-//                    catStateCompo.state = CatStateEnum.SPRINGEN;
-//                else
-//                    dogStateCompo.state = DogStateEnum.KILLING;
-//            }
+        //            if(distance <= minDistance){
+        //                if(playerCompo != null)
+        //                    catStateCompo.state = CatStateEnum.SPRINGEN;
+        //                else
+        //                    dogStateCompo.state = DogStateEnum.KILLING;
+        //            }
 
 
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/1e9a7e9e0f39ef81673becdf2931b53375b5319e/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/MovementSystem.java/right.java
             if(distance >= 200){
 
                 moveCompo.velocity += moveCompo.ACCELERATION * delta;
