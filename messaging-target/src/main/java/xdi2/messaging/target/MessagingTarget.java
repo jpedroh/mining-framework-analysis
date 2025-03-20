@@ -34,7 +34,13 @@ public interface MessagingTarget {
 	public void execute(MessageEnvelope messageEnvelope, ExecutionContext executionContext, ExecutionResult executionResult) throws Xdi2MessagingException;
 
 	/**
+<<<<<<< /usr/src/app/output/projectdanube/xdi2/18402a3963837f0348650eea9f7c3801c5a4f313/messaging-target/src/main/java/xdi2/messaging/target/MessagingTarget.java/left.java
+	 * Returns the owner peer root arc of the messaging target.
+||||||| /usr/src/app/output/projectdanube/xdi2/18402a3963837f0348650eea9f7c3801c5a4f313/messaging-target/src/main/java/xdi2/messaging/target/MessagingTarget.java/base.java
+	 * Returns the owner peer root XRI of the messaging target.
+=======
 	 * Returns the owner peer root XDI arc of the messaging target.
+>>>>>>> /usr/src/app/output/projectdanube/xdi2/18402a3963837f0348650eea9f7c3801c5a4f313/messaging-target/src/main/java/xdi2/messaging/target/MessagingTarget.java/right.java
 	 * This may be null.
 	 */
 	public XDIArc getOwnerPeerRootXDIArc();
