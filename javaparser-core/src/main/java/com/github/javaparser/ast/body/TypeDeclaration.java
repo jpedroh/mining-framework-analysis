@@ -23,6 +23,8 @@ package com.github.javaparser.ast.body;
 
 import com.github.javaparser.ast.DocumentableNode;
 import com.github.javaparser.ast.NamedNode;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.NodeWithModifiers;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
