@@ -166,6 +166,9 @@ public class Utils {
         }
         return builder;
     }
+    /**
+     * Make an indent by appending indentLevel tab characters to the builder.
+     */
 
     /**
      * Capitalizes the first character in the string.

@@ -226,7 +226,12 @@ public class PropertyMetaModel {
     public boolean isAttribute() {
         return !isNode();
     }
-
+    /**
+     * @return how many times can this property appear?
+     */
+    public Multiplicity getMultiplicity() {
+        return isNodeList() || isEnumSet() ? MANY : ONE;
+    }
     /**
      * Introspects the node to get the value from this field.
      * Note that an optional empty field will return null here.
@@ -250,35 +255,9 @@ public class PropertyMetaModel {
     /**
      * @return is this property an attribute, meaning: not a node?
      */
-    public boolean isAttribute() {
-        return !isNode();
-    }
-
-    /**
-     * @return how many times can this property appear?
-     */
-    public Multiplicity getMultiplicity() {
-        return isNodeList() || isEnumSet() ? MANY : ONE;
-    }
-
     /**
      * Introspects the node to get the value from this field.
      * Note that an optional empty field will return null here.
      */
-    public Object getValue(Node node) {
-        try {
-            for (Class<?> c = node.getClass(); c != null; c = c.getSuperclass()) {
-                Field[] fields = c.getDeclaredFields();
-                for (Field classField : fields) {
-                    if (classField.getName().equals(getName())) {
-                        classField.setAccessible(true);
-                        return classField.get(node);
-                    }
-                }
-            }
-            throw new NoSuchFieldError(getName());
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
