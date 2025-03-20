@@ -203,10 +203,21 @@ public class EtlMultiOutputFormat extends FileOutputFormat<EtlKey, Object> {
     public static Partitioner getPartitioner(JobContext job, String topicName) throws IOException {
         String customPartitionerProperty = ETL_DEFAULT_PARTITIONER_CLASS + "." + topicName;
         if (partitionersByTopic.get(customPartitionerProperty) == null) {
+<<<<<<< /usr/src/app/output/linkedin/camus/dda4c8ce2560199c305853915a625b74c170d3aa/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputFormat.java/left.java
             Configuration conf = job.getConfiguration();
             Partitioner partitioner = ReflectionUtils.newInstance(
                     conf.getClass(customPartitionerProperty, getDefaultPartitionerClass(job), Partitioner.class), conf);
             partitionersByTopic.put(customPartitionerProperty, partitioner);
+||||||| /usr/src/app/output/linkedin/camus/dda4c8ce2560199c305853915a625b74c170d3aa/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputFormat.java/base.java
+            List<Partitioner> partitioners = new ArrayList<Partitioner>();
+            if(partitioners.isEmpty()) {
+                return getDefaultPartitioner(job);
+            } else {
+                partitionersByTopic.put(customPartitionerProperty, partitioners.get(0));
+            }
+=======
+            partitionersByTopic.put(customPartitionerProperty, getDefaultPartitioner(job));
+>>>>>>> /usr/src/app/output/linkedin/camus/dda4c8ce2560199c305853915a625b74c170d3aa/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlMultiOutputFormat.java/right.java
         }
         return partitionersByTopic.get(customPartitionerProperty);
     }
