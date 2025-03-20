@@ -15,9 +15,6 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RuntimePebbleException;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -206,10 +203,10 @@ public class CoreTagsTest extends AbstractTest {
             @Override
             public Iterator<User> iterator() {
                 return new Iterator<User>() {
-
+                    
                     User[] fixture = new User[]{ new User("Alex"), new User("Bob"), new User("John") };
                     int pos = 0;
-
+                    
                     @Override
                     public boolean hasNext() {
                         return pos < fixture.length;
@@ -227,16 +224,16 @@ public class CoreTagsTest extends AbstractTest {
                 };
             }
         };
-
-        Map<String, Object> context = new HashMap<>();
+        
+        Map<String, Object> context = new HashMap<>();        
         context.put("users", users);
 
         Writer writer = new StringWriter();
         template.evaluate(writer, context);
         assertEquals("[first]0Alex1Bob[last]2John", writer.toString());
     }
-
-
+    
+    
     @Test
     public void testForWithMap() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
