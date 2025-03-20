@@ -61,7 +61,13 @@ public class RankUtilsTest {
     assertTrue(ranks.contains(Rank.INFRACOHORT));
     assertFalse(ranks.contains(Rank.SUBGENUS));
     assertFalse(ranks.contains(Rank.SPECIES));
+<<<<<<< /usr/src/app/output/gbif/name-parser/3c1d815c087b4201c84f5bae97c9760487776e06/name-parser-api/src/test/java/org/gbif/nameparser/util/RankUtilsTest.java/left.java
+    assertEquals(62, ranks.size());
+||||||| /usr/src/app/output/gbif/name-parser/3c1d815c087b4201c84f5bae97c9760487776e06/name-parser-api/src/test/java/org/gbif/nameparser/util/RankUtilsTest.java/base.java
+    assertEquals(60, ranks.size());
+=======
     assertEquals(63, ranks.size());
+>>>>>>> /usr/src/app/output/gbif/name-parser/3c1d815c087b4201c84f5bae97c9760487776e06/name-parser-api/src/test/java/org/gbif/nameparser/util/RankUtilsTest.java/right.java
   }
 
   @Test

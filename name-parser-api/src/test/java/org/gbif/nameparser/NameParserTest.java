@@ -2931,6 +2931,9 @@ public abstract class NameParserTest {
     assertName("Acacia sp. Mount Hilditch (M.E. Trudgen 19134)", "Acacia sp. Mount Hilditch (M.E. Trudgen 19134)")
         .phraseName("Acacia", "Mount Hilditch", SPECIES, "M.E. Trudgen 19134", null)
         .nothingElse();
+    assertName("Acacia sp. Mount Hilditch (M.E. Trudgen 19134)", "Acacia sp. Mount Hilditch (M.E. Trudgen 19134)")
+        .phraseName("Acacia", "Mount Hilditch", SPECIES, "M.E. Trudgen 19134", null)
+        .nothingElse();
   }
   
   @Test
