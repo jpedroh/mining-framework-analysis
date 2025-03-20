@@ -1,15 +1,1 @@
-package com.googlecode.greysanatomy.console.command.parameter;
-
-/**
- * watch命令
- * 观测点参数枚举类
- *
- * @author jiangyi
- */
-public enum WatchPointEnum {
-
-    before(),
-
-    finish();
-
-}
+  fatal : path  'src/main/java/com/googlecode/greysanatomy/console/command/parameter/WatchPointEnum.java' does not exist in '0bee9a9d50380719ed4e8fe485a1bf1988fa4bf5'   public enum WatchPointEnum  {  before  ( ) ,  finish  ( )  ; }
