@@ -133,4 +133,5 @@ public class Mail extends AbstractEntity implements Serializable
     {
         return Ebean.find(Mail.class).where().eq("mailbox_id", mailboxId).order("receiveTime").findList();
     }
+
 }
