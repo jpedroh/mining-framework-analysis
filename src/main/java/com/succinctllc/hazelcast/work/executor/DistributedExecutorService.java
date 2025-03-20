@@ -219,6 +219,100 @@ public class DistributedExecutorService implements ExecutorService {
              */
             int tries = 0;
             while(++tries <= MAX_SUBMIT_TRIES) {
+<<<<<<< /usr/src/app/output/jclawson/hazeltask/9f9809f46cd73b80f333774d552565e5ca89f302/src/main/java/com/succinctllc/hazelcast/work/executor/DistributedExecutorService.java/left.java
+            	    		if(isResubmitting) {
+            	    		    wrapper.setSubmissionCount(wrapper.getSubmissionCount()+1);
+            	    		    topology.getPendingWork().put(workKey.getId(), wrapper);
+            	    		} else {
+            	    		    executeTask = topology.getPendingWork().putIfAbsent(workKey.getId(), wrapper) == null;
+            	    		}
+            	    		
+            	    		if(executeTask) {
+            	    		    Member m = memberRouter.next();
+            	    	        if(m == null) {
+            	    	            LOGGER.log(Level.WARNING, "Work submitted to writeAheadLog but no members are online to do the work.");
+            	    	            return;
+            	    	        }
+            	    	        
+            	    	        DistributedTask<Boolean> task = new DistributedTask<Boolean>(new SubmitWorkTask(wrapper, topology.getName()), m);
+            	    	        workDistributor.execute(task);
+            	    	        
+            	    	        if(this.acknowledgeWorkSubmittion) {
+            	        	        try {
+            	                        if(task.get()) {
+            	                        	if(worksAdded != null)
+            	                        		worksAdded.mark();
+            	                        	return;
+            	                        } else {
+            	                            LOGGER.log(Level.INFO, "The member "+m+" did not accept the work.  Trying to resubmit to another node");
+            	                            isResubmitting = true;
+            	                        }
+            	                    } catch (InterruptedException e) {
+            	                        Thread.currentThread().interrupt();
+            	                        LOGGER.log(Level.WARNING, "Thread was interrupted waiting for work to be submitted", e);
+            	                        return;
+            	                    } catch (MemberLeftException e) {
+            	                        //resubmit the work to another node
+            	                        LOGGER.log(Level.WARNING, "Member left, trying to resubmit work to another node");
+            	                        isResubmitting = true;
+            	                    } catch (ExecutionException e) {
+            	                        //TODO: improve this - we may need to retry here... for example if a node indicated it doesn't want to do the work
+            	                        throw new RuntimeException("An error ocurred while distributing work", e);
+            	                    }
+            	    	        } else {
+            	    	        	if(worksAdded != null)
+            	    	        		worksAdded.mark();
+            	    	        	return;
+            	    	        }
+            	    		} else {
+            	    		    LOGGER.log(Level.FINE, workKey.getId()+" is already in the system to be worked on. I will not resubmit it");
+            	    		    return;
+            	    		}
+||||||| /usr/src/app/output/jclawson/hazeltask/9f9809f46cd73b80f333774d552565e5ca89f302/src/main/java/com/succinctllc/hazelcast/work/executor/DistributedExecutorService.java/base.java
+            	    		if(isResubmitting) {
+            	    		    wrapper.setSubmissionCount(wrapper.getSubmissionCount()+1);
+            	    		    topology.getPendingWork().put(workKey.getId(), wrapper);
+            	    		} else {
+            	    		    executeTask = topology.getPendingWork().putIfAbsent(workKey.getId(), wrapper) == null;
+            	    		}
+            	    		
+            	    		if(executeTask) {
+            	    		    Member m = memberRouter.next();
+            	    	        if(m == null) {
+            	    	            LOGGER.log(Level.WARNING, "Work submitted to writeAheadLog but no members are online to do the work.");
+            	    	            return;
+            	    	        }
+            	    	        
+            	    	        DistributedTask<Boolean> task = new DistributedTask<Boolean>(new SubmitWorkTask(wrapper, topology.getName()), m);
+            	    	        workDistributor.execute(task);
+            	    	        
+            	    	        if(this.acknowledgeWorkSubmittion) {
+            	        	        try {
+            	                        if(task.get()) {
+            	                        	if(worksAdded != null)
+            	                        		worksAdded.mark();
+            	                        	return;
+            	                        } else {
+            	                            isResubmitting = true;
+            	                        }
+            	                    } catch (InterruptedException e) {
+            	                        Thread.currentThread().interrupt();
+            	                        LOGGER.log(Level.WARNING, "Thread was interrupted waiting for work to be submitted", e);
+            	                        return;
+            	                    } catch (MemberLeftException e) {
+            	                        //resubmit the work to another node
+            	                        isResubmitting = true;
+            	                    } catch (ExecutionException e) {
+            	                        //TODO: improve this - we may need to retry here... for example if a node indicated it doesn't want to do the work
+            	                        throw new RuntimeException("An error ocurred while distributing work", e);
+            	                    }
+            	    	        } else {
+            	    	        	if(worksAdded != null)
+            	    	        		worksAdded.mark();
+            	    	        	return;
+            	    	        }
+            	    		}
+=======
                 if(isResubmitting) {
                     wrapper.setSubmissionCount(wrapper.getSubmissionCount()+1);
                     topology.getPendingWork().put(workKey.getId(), wrapper);
@@ -244,6 +338,7 @@ public class DistributedExecutorService implements ExecutorService {
                     //do not submit
                     return;
                 }
+>>>>>>> /usr/src/app/output/jclawson/hazeltask/9f9809f46cd73b80f333774d552565e5ca89f302/src/main/java/com/succinctllc/hazelcast/work/executor/DistributedExecutorService.java/right.java
             }
             
             if(tries > MAX_SUBMIT_TRIES) {
