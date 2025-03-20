@@ -162,18 +162,71 @@ public class UIPanel extends JPanel {
 
 	private final JCheckBox dispMVLinesCheckBox = new JCheckBox(
 			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_MV_ID),
-			true);
+			false);
+
 	private final JCheckBox dispAuxLinesCheckBox = new JCheckBox(
-			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_AUX_ID),
-			true);
+			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_AUX_ID));
+
 	private final JCheckBox dispVertexCheckBox = new JCheckBox(
-			resources
-					.getString(ResourceKey.LABEL, StringID.UI.SHOW_VERTICES_ID),
-			false);
+			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_VERTICES_ID));
+
 	private final JCheckBox doFullEstimationCheckBox = new JCheckBox(
+			resources.getString(ResourceKey.LABEL, StringID.UI.FULL_ESTIMATION_ID));
+
+	private final JCheckBox dispGridCheckBox = new JCheckBox(
+			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_GRID_ID),
+			true);
+
+	private final JButton gridSmallButton = new JButton("x2");
+
+	private final JButton gridLargeButton = new JButton("x1/2");
+
+	private final JButton gridChangeButton = new JButton(
 			resources.getString(ResourceKey.LABEL,
-					StringID.UI.FULL_ESTIMATION_ID),
-			false);
+					StringID.UI.GRID_SIZE_CHANGE_ID));
+
+	private final JPanel gridPanel = new JPanel();
+
+	// AlterLineType
+
+	private final JPanel alterLineTypePanel = new JPanel();
+
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/left.java
+	private final TypeForChange[] alterLine_comboData_from = {
+			TypeForChange.EMPTY, TypeForChange.RIDGE, TypeForChange.VALLEY };
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/base.java
+	private final TypeForChange[] alterLine_comboData_from = {
+			TypeForChange.EMPTY, TypeForChange.RIDGE, TypeForChange.VALLEY };
+=======
+	private final TypeForChange[] alterLine_comboData_from = {
+			TypeForChange.EMPTY, TypeForChange.MOUNTAIN, TypeForChange.VALLEY,
+			TypeForChange.AUX, TypeForChange.CUT };
+	private final TypeForChange[] alterLine_comboData_from = {
+			TypeForChange.EMPTY, TypeForChange.RIDGE, TypeForChange.VALLEY };
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/right.java
+
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/left.java
+	private final TypeForChange[] alterLine_comboData_to = {
+			TypeForChange.RIDGE, TypeForChange.VALLEY, TypeForChange.AUX,
+			TypeForChange.CUT, TypeForChange.DELETE, TypeForChange.FLIP };
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/base.java
+	private final TypeForChange[] alterLine_comboData_to = {
+			TypeForChange.RIDGE, TypeForChange.VALLEY, TypeForChange.AUX,
+			TypeForChange.CUT, TypeForChange.DELETE, TypeForChange.FLIP };
+=======
+	private final TypeForChange[] alterLine_comboData_to = {
+			TypeForChange.MOUNTAIN, TypeForChange.VALLEY, TypeForChange.AUX,
+			TypeForChange.CUT, TypeForChange.DELETE, TypeForChange.FLIP };
+	private final TypeForChange[] alterLine_comboData_to = {
+			TypeForChange.RIDGE, TypeForChange.VALLEY, TypeForChange.AUX,
+			TypeForChange.CUT, TypeForChange.DELETE, TypeForChange.FLIP };
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/UIPanel.java/right.java
+
+	private final JComboBox<TypeForChange> alterLine_combo_from = new JComboBox<>(
+			alterLine_comboData_from);
+
+	private final JComboBox<TypeForChange> alterLine_combo_to = new JComboBox<>(
+			alterLine_comboData_to);
 
 	// byValuePanel for length and angle
 	private final JPanel byValuePanel = new JPanel();
@@ -185,16 +238,7 @@ public class UIPanel extends JPanel {
 			resources.getString(ResourceKey.LABEL, StringID.UI.MEASURE_ID));
 
 	// gridPanel
-	private final JPanel gridPanel = new JPanel();
-	private final JCheckBox dispGridCheckBox = new JCheckBox(
-			resources.getString(ResourceKey.LABEL, StringID.UI.SHOW_GRID_ID),
-			true);
 	private JFormattedTextField textFieldGrid;
-	private final JButton gridSmallButton = new JButton("x2");
-	private final JButton gridLargeButton = new JButton("x1/2");
-	private final JButton gridChangeButton = new JButton(
-			resources.getString(ResourceKey.LABEL,
-					StringID.UI.GRID_SIZE_CHANGE_ID));
 
 	// view Panel
 	private final JPanel viewPanel = new JPanel();
@@ -202,18 +246,6 @@ public class UIPanel extends JPanel {
 			resources.getString(ResourceKey.LABEL, StringID.UI.ZERO_LINE_WIDTH_ID));
 
 	// AlterLineTypePanel
-	private final JPanel alterLineTypePanel = new JPanel();
-
-	private final TypeForChange[] alterLine_comboData_from = {
-			TypeForChange.EMPTY, TypeForChange.MOUNTAIN, TypeForChange.VALLEY };
-	private final TypeForChange[] alterLine_comboData_to = {
-			TypeForChange.MOUNTAIN, TypeForChange.VALLEY, TypeForChange.AUX,
-			TypeForChange.CUT, TypeForChange.DELETE, TypeForChange.FLIP };
-
-	private final JComboBox<TypeForChange> alterLine_combo_from = new JComboBox<>(
-			alterLine_comboData_from);
-	private final JComboBox<TypeForChange> alterLine_combo_to = new JComboBox<>(
-			alterLine_comboData_to);
 
 	// Angle Step Panel
 	private final JPanel angleStepComboPanel = new JPanel();
@@ -759,12 +791,10 @@ public class UIPanel extends JPanel {
 
 		zeroLineWidthCheckBox.addActionListener(e -> {
 			mainScreenSetting.setZeroLineWidth(zeroLineWidthCheckBox.isSelected());
-			screenUpdater.updateScreen();
 		});
 
 		dispGridCheckBox.addActionListener(e -> {
 			mainScreenSetting.setGridVisible(dispGridCheckBox.isSelected());
-			screenUpdater.updateScreen();
 		});
 
 		gridSmallButton.addActionListener(e -> makeGridSizeHalf());

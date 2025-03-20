@@ -82,17 +82,24 @@ public class ORIPA {
 
 			mainFrame.setBounds(originX + uiPanelWidth, originY, mainFrameWidth, mainFrameHeight);
 			mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/ORIPA.java/left.java
+			mainFrame.updateTitleText();
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/ORIPA.java/base.java
+			mainFrame.updateTitleText();
 			mainFrame.initialize();
+=======
+			mainFrame.initialize();
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/ORIPA.java/right.java
 			mainFrame.setVisible(true);
 
-//			if (Config.FOR_STUDY) {
-//				int modelFrameWidth = 400;
-//				int modelFrameHeight = 400;
-//				modelFrame3D = new ModelViewFrame3D();
-//				modelFrame3D.setBounds(0, 0,
-//						modelFrameWidth * 2, modelFrameHeight * 2);
-//				modelFrame3D.setVisible(true);
-//			}
+		//			if (Config.FOR_STUDY) {
+		//				int modelFrameWidth = 400;
+		//				int modelFrameHeight = 400;
+		//				modelFrame3D = new ModelViewFrame3D();
+		//				modelFrame3D.setBounds(0, 0,
+		//						modelFrameWidth * 2, modelFrameHeight * 2);
+		//				modelFrame3D.setVisible(true);
+		//			}
 		});
 	}
 

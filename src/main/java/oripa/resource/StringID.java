@@ -9,7 +9,6 @@ public class StringID {
 
 	public static class Main {
 		public static final String TITLE_ID = "Title";
-		public static final String FILE_ID = "File";
 		public static final String EDIT_ID = "Edit";
 		public static final String HELP_ID = "Help";
 		public static final String NEW_ID = "New";
@@ -27,9 +26,17 @@ public class StringID {
 		public static final String UNDO_ID = "Undo";
 		public static final String REDO_ID = "Redo";
 		public static final String ABOUT_ID = "About";
-		public static final String ARRAY_COPY_ID = "ArrayCopy";
+		public static final String REPEAT_COPY_ID = "RepeatCopy";
 		public static final String CIRCLE_COPY_ID = "CircleCopy";
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/resource/StringID.java/left.java
+		public static final String UNSELECT_ALL_ID = "unSelectAll";
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/resource/StringID.java/base.java
+=======
 		public static final String UNSELECT_ALL_ID = "UnselectAll";
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/resource/StringID.java/right.java
+		public static final String DELETE_SELECTED_LINES_ID = "deleteSelectedLines";
+		public static final String FILE_ID = "File";
+		public static final String ARRAY_COPY_ID = "ArrayCopy";
 		public static final String DELETE_SELECTED_ID = "DeleteSelected";
 
 		public static final String DIALOG_TITLE_SAVE_ID = "DialogTitle_FileSave";

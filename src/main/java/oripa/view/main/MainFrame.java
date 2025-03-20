@@ -88,33 +88,29 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 
 	private static final long serialVersionUID = 272369294032419950L;
 
-	// shared objects
 	private final ResourceHolder resourceHolder = ResourceHolder.getInstance();
 
+	// shared objects
 	private final MainFrameSetting setting = new MainFrameSetting();
 	private final MainScreenSetting screenSetting;
 
 	private final ViewScreenUpdater screenUpdater;
-
 	private final ChildFrameManager childFrameManager = new ChildFrameManager();
-
 	private final FileHistory fileHistory = new FileHistory(Config.MRUFILE_NUM);
-
 	private final DocFilterSelector filterSelector = new DocFilterSelector();
-
 	private final Doc document = new Doc();
-
+	private final IniFileAccess iniFileAccess = new IniFileAccess(
+			new InitDataFileReader(), new InitDataFileWriter());
+	private final DataFileAccess dataFileAccess = new DataFileAccess(new DocDAO());
+	private final PaintContextModification paintContextModification = new PaintContextModification();
 	// Create UI Factories
 	private final PaintContextFactory contextFactory = new PaintContextFactory();
 	private final PaintContextInterface paintContext = contextFactory.createContext();
 	private final MouseActionHolder actionHolder = new MouseActionHolder();
-
 	private final ButtonFactory buttonFactory;
-
-	private RepeatCopyDialog arrayCopyDialog;
-	private CircleCopyDialog circleCopyDialog;
+	private final RepeatCopyDialog arrayCopyDialog;
+	private final CircleCopyDialog circleCopyDialog;
 	public static JLabel hintLabel = new JLabel();
-
 	// setup Menu Bars
 	private final JMenu menuFile = new JMenu(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.FILE_ID));
@@ -122,20 +118,17 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.EDIT_ID));
 	private final JMenu menuHelp = new JMenu(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.HELP_ID));
-
-	// file menu items
+	// setup Menu Items
 	private final JMenuItem menuItemClear = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.NEW_ID));
 	private final JMenuItem menuItemOpen = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.OPEN_ID));
-
 	private final JMenuItem menuItemSave = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.SAVE_ID));
 	private final JMenuItem menuItemSaveAs = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.SAVE_AS_ID));
 	private final JMenuItem menuItemSaveAsImage = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.SAVE_AS_IMAGE_ID));
-
 	private final JMenuItem menuItemExportFOLD = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.EXPORT_FOLD_ID));
 	private final JMenuItem menuItemExportDXF = new JMenuItem(
@@ -148,63 +141,51 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.EXPORT_SVG_ID));
 	private final JMenuItem menuItemExit = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.EXIT_ID));
-
-	private final JMenuItem[] MRUFilesMenuItem = new JMenuItem[Config.MRUFILE_NUM];
-
+	private JMenuItem menuItemChangeOutline;
+	private JMenuItem menuItemSelectAll;
+	private JMenuItem menuItemCopyAndPaste;
+	private JMenuItem menuItemCutAndPaste;
 	private final JMenuItem menuItemProperty = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL,
 					StringID.Main.PROPERTY_ID));
-
-	// edit menu items
-	/**
-	 * For changing outline
-	 */
-	private JMenuItem menuItemChangeOutline;
-
-	/**
-	 * For selecting all lines
-	 */
-	private JMenuItem menuItemSelectAll;
-
-	/**
-	 * For starting copy-and-paste
-	 */
-	private JMenuItem menuItemCopyAndPaste;
-
-	/**
-	 * For starting cut-and-paste
-	 */
-	private JMenuItem menuItemCutAndPaste;
-
 	private final JMenuItem menuItemUndo = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.UNDO_ID));
 	private final JMenuItem menuItemRedo = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.REDO_ID));
+	private final JMenuItem menuItemAbout = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.ABOUT_ID));
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/left.java
+	private final JMenuItem menuItemRepeatCopy = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.REPEAT_COPY_ID));
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/base.java
+	private final JMenuItem menuItemRepeatCopy = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.REPEAT_COPY_ID));
+=======
+	private final JMenuItem menuItemRepeatCopy = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.REPEAT_COPY_ID));
 
 	private final JMenuItem menuItemRepeatCopy = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.ARRAY_COPY_ID));
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/right.java
 	private final JMenuItem menuItemCircleCopy = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.CIRCLE_COPY_ID));
-
 	private final JMenuItem menuItemUnSelectAll = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.UNSELECT_ALL_ID));
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/left.java
+	private final JMenuItem menuItemDeleteSelectedLines = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.DELETE_SELECTED_LINES_ID));
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/base.java
+	private final JMenuItem menuItemDeleteSelectedLines = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.DELETE_SELECTED_LINES_ID));
+=======
+	private final JMenuItem menuItemDeleteSelectedLines = new JMenuItem(
+			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.DELETE_SELECTED_LINES_ID));
 
 	private final JMenuItem menuItemDeleteSelectedLines = new JMenuItem(
 			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.DELETE_SELECTED_ID));
-
-	// help menu items
-
-	private final JMenuItem menuItemAbout = new JMenuItem(
-			resourceHolder.getString(ResourceKey.LABEL, StringID.Main.ABOUT_ID));
-
-	// -----------------------------------------------------------------------------------------------------------
-	// Create paint button
-
-	private final IniFileAccess iniFileAccess = new IniFileAccess(
-			new InitDataFileReader(), new InitDataFileWriter());
-	private final DataFileAccess dataFileAccess = new DataFileAccess(new DocDAO());
-	private final PaintContextModification paintContextModification = new PaintContextModification();
-
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/right.java
+	// Most recently used files list
+	private final JMenuItem[] MRUFilesMenuItem = new JMenuItem[Config.MRUFILE_NUM];
 	public MainFrame() {
 		logger.info("frame construction starts.");
 
@@ -290,43 +271,23 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 
 		modifySavingActions();
 	}
-
-	public void initialize() {
-		arrayCopyDialog = new RepeatCopyDialog(this, paintContext);
-		circleCopyDialog = new CircleCopyDialog(this, paintContext);
-		updateTitleText();
-	}
-
 	private void createPaintMenuItems() {
-		/*
-		 * For changing outline
-		 */
 		menuItemChangeOutline = (JMenuItem) buttonFactory
 				.create(this, JMenuItem.class,
 						StringID.EDIT_CONTOUR_ID, null);
 
-		/*
-		 * For selecting all lines
-		 */
 		menuItemSelectAll = (JMenuItem) buttonFactory
 				.create(this, JMenuItem.class,
 						StringID.SELECT_ALL_LINE_ID, null);
 
-		/*
-		 * For starting copy-and-paste
-		 */
 		menuItemCopyAndPaste = (JMenuItem) buttonFactory
 				.create(this, JMenuItem.class,
 						StringID.COPY_PASTE_ID, null);
 
-		/*
-		 * For starting cut-and-paste
-		 */
 		menuItemCutAndPaste = (JMenuItem) buttonFactory
 				.create(this, JMenuItem.class,
 						StringID.CUT_PASTE_ID, null);
 	}
-
 	private void addActionListenersToComponents() {
 		menuItemOpen.addActionListener(e -> {
 			String path = loadFile(null);
@@ -334,9 +295,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			updateMenu(path);
 			updateTitleText();
 		});
-
-		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-				InputEvent.CTRL_DOWN_MASK));
 
 		menuItemSave.addActionListener(e -> {
 			var filePath = document.getDataFilePath();
@@ -444,13 +402,21 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		}
 
 	}
+	/**
+	 * for changing Tooltips
+	 */
+	private void addHintPropertyChangeListenersToSetting() {
+		setting.addPropertyChangeListener(MainFrameSetting.HINT, e -> {
+			hintLabel.setText("    " + (String) e.getNewValue());
+			hintLabel.repaint();
+		});
 
+	}
 	private void modifySavingActions() {
 		// overwrite the action to update GUI after saving.
 		setProjectSavingAction(CreasePatternFileTypeKey.OPX);
 		setProjectSavingAction(CreasePatternFileTypeKey.FOLD);
 	}
-
 	private void setProjectSavingAction(final CreasePatternFileTypeKey fileType) {
 		filterSelector.getFilter(fileType).setSavingAction(
 				new AbstractSavingAction<Doc>() {
@@ -468,7 +434,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 				});
 
 	}
-
 	private void loadFileFromMRUFileMenuItem(final ActionEvent e) {
 
 		var menuItem = (JMenuItem) (e.getSource());
@@ -478,12 +443,18 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			updateTitleText();
 		} catch (Exception ex) {
 			logger.error("error when loading: ", ex);
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/left.java
+			Dialogs.showErrorDialog(this, resourceHolder.getString(ResourceKey.LABEL, "Error_FileLoadFailed"),
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/base.java
+			Dialogs.showErrorDialog(this, resourceHolder.getString("Error_FileLoadFailed"),
+=======
 			Dialogs.showErrorDialog(this, resourceHolder.getString(
-					ResourceKey.ERROR, StringID.Error.LOAD_FAILED_ID), ex);
+					ResourceKey.ERROR, StringID.Error.LOAD_FAILED_ID),
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/right.java
+					ex);
 		}
 		screenUpdater.updateScreen();
 	}
-
 	private void saveAnyTypeUsingGUI() {
 		String lastDirectory = fileHistory.getLastDirectory();
 
@@ -493,12 +464,10 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		updateMenu(path);
 		updateTitleText();
 	}
-
 	private void exit() {
 		saveIniFile();
 		System.exit(0);
 	}
-
 	private void clear() {
 		document.set(new Doc(Constants.DEFAULT_PAPER_SIZE));
 
@@ -512,7 +481,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		screenUpdater.updateScreen();
 		updateTitleText();
 	}
-
 	private void showPropertyDialog() {
 		AbstractPropertyDialog dialog = new PropertyDialog(this, document);
 
@@ -524,7 +492,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		dialog.setModal(true);
 		dialog.setVisible(true);
 	}
-
 	private void showArrayCopyDialog() {
 		Painter painter = paintContext.getPainter();
 		if (painter.countSelectedLines() == 0) {
@@ -538,7 +505,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			arrayCopyDialog.setVisible(true);
 		}
 	}
-
 	private void showCircleCopyDialog() {
 		Painter painter = paintContext.getPainter();
 		if (painter.countSelectedLines() == 0) {
@@ -552,11 +518,16 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			circleCopyDialog.setVisible(true);
 		}
 	}
-
 	private void updateTitleText() {
 		String fileName;
 		if (document.getDataFilePath().isEmpty()) {
+<<<<<<< /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/left.java
+			fileName = resourceHolder.getString(ResourceKey.LABEL, StringID.Default.FILE_NAME_ID);
+||||||| /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/base.java
+			fileName = resourceHolder.getString("DefaultFileName");
+=======
 			fileName = resourceHolder.getString(ResourceKey.DEFAULT, StringID.Default.FILE_NAME_ID);
+>>>>>>> /usr/src/app/output/oripa/oripa/c7a747856cefa97fa45aa389c08f0eabb471efff/src/main/java/oripa/view/main/MainFrame.java/right.java
 		} else {
 			fileName = document.getDataFileName();
 		}
@@ -564,7 +535,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		setTitle(fileName + " - "
 				+ resourceHolder.getString(ResourceKey.LABEL, StringID.Main.TITLE_ID));
 	}
-
 	/**
 	 * saves project without opening a dialog
 	 *
@@ -587,7 +557,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		updateMenu(filePath);
 		updateTitleText();
 	}
-
 	/**
 	 * save file without origami model check
 	 *
@@ -615,7 +584,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 			return document.getDataFilePath();
 		}
 	}
-
 	/**
 	 * Open Save File As Dialogue for specific file types {@code type}. Runs a
 	 * model check before saving.
@@ -638,7 +606,6 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 					ResourceKey.ERROR, StringID.Error.SAVE_FAILED_ID), e);
 		}
 	}
-
 	private void buildFileMenu() {
 		menuFile.removeAll();
 
@@ -671,7 +638,27 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 		menuFile.addSeparator();
 		menuFile.add(menuItemExit);
 	}
-
+	/**
+	 * changes in MRU list
+	 *
+	 * @param filePath
+	 *            for fileHistory
+	 */
+	// -----------------------------------------------------------------------------------------------------------
+	// menu bar items
+	// file menu items
+//	private final JMenuItem menuItemExportOBJ = new JMenuItem("Export OBJ");
+	// edit menu items
+	// help menu items
+	// -----------------------------------------------------------------------------------------------------------
+	// Create paint button
+	// ---------------------------------------------------------------------------------------------
+	// Data classes
+	public void initialize() {
+		arrayCopyDialog = new RepeatCopyDialog(this, paintContext);
+		circleCopyDialog = new CircleCopyDialog(this, paintContext);
+		updateTitleText();
+	}
 	/**
 	 * Update file menu. Do nothing if the given {@code filePath} is null or
 	 * wrong.
@@ -815,13 +802,5 @@ public class MainFrame extends JFrame implements ComponentListener, WindowListen
 
 	@Override
 	public void windowDeactivated(final WindowEvent arg0) {
-	}
-
-	private void addHintPropertyChangeListenersToSetting() {
-		setting.addPropertyChangeListener(MainFrameSetting.HINT, e -> {
-			hintLabel.setText("    " + (String) e.getNewValue());
-			hintLabel.repaint();
-		});
-
 	}
 }
