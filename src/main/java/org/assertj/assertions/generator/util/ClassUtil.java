@@ -1,8 +1,6 @@
 package org.assertj.assertions.generator.util;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.WildcardType;
-
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -11,7 +9,6 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,7 +22,6 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
-
 import static java.lang.Character.isUpperCase;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
@@ -39,9 +35,10 @@ import static org.reflections.util.FilterBuilder.prefix;
  * @author Joel Costigliola
  */
 public class ClassUtil {
-
   public static final String IS_PREFIX = "is";
+
   public static final String GET_PREFIX = "get";
+
   private static final String CLASS_SUFFIX = ".class";
 
   /**
@@ -71,7 +68,6 @@ public class ClassUtil {
       if (clazz != null) {
         classes.add(clazz);
       } else {
-        // should be a package
         classes.addAll(getClassesInPackage(classOrPackageName, classLoader));
       }
     }
@@ -90,9 +86,7 @@ public class ClassUtil {
     if (classLoader == null) {
       throw new IllegalArgumentException("Null class loader.");
     }
-    // load classes from classpath file system, this won't load classes in jars
     Set<Class<?>> packageClasses = getPackageClassesFromClasspathFiles(packageName, classLoader);
-    // load classes from classpath jars
     Set<Class<?>> packageClassesFromClasspathJars = getPackageClassesFromClasspathJars(packageName, classLoader);
     packageClasses.addAll(packageClassesFromClasspathJars);
     return packageClasses;
@@ -103,14 +97,7 @@ public class ClassUtil {
     classLoadersList.add(ClasspathHelper.contextClassLoader());
     classLoadersList.add(ClasspathHelper.staticClassLoader());
     classLoadersList.add(classLoader);
-
-    final ConfigurationBuilder configuration = new ConfigurationBuilder()
-                                                 .setScanners(new SubTypesScanner(false /* don't exclude Object
-                                                                                            class */),
-                                                              new ResourcesScanner())
-                                                 .setUrls(forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-                                                 .filterInputsBy(new FilterBuilder().include(prefix(packageName)));
-
+    final ConfigurationBuilder configuration = new ConfigurationBuilder().setScanners(new SubTypesScanner(false), new ResourcesScanner()).setUrls(forClassLoader(classLoadersList.toArray(new ClassLoader[0]))).filterInputsBy(new FilterBuilder().include(prefix(packageName)));
     Reflections reflections = new Reflections(configuration);
     Set<Class<?>> classesInPackage = reflections.getSubTypesOf(Object.class);
     Set<Class<?>> filteredClassesInPackage = new HashSet<Class<?>>();
@@ -125,7 +112,6 @@ public class ClassUtil {
   private static Set<Class<?>> getPackageClassesFromClasspathFiles(String packageName, ClassLoader classLoader) {
     try {
       String packagePath = packageName.replace('.', File.separatorChar);
-      // Ask for all resources for the path
       Enumeration<URL> resources = classLoader.getResources(packagePath);
       Set<Class<?>> classes = new HashSet<Class<?>>();
       while (resources.hasMoreElements()) {
@@ -153,36 +139,28 @@ public class ClassUtil {
    * @return
    * @throws UnsupportedEncodingException
    */
-  private static List<Class<?>> getClassesInDirectory(File directory, String packageName, ClassLoader classLoader)
-    throws UnsupportedEncodingException {
+  private static List<Class<?>> getClassesInDirectory(File directory, String packageName, ClassLoader classLoader) throws UnsupportedEncodingException {
     List<Class<?>> classes = new ArrayList<Class<?>>();
-    // Capture all the .class files in this directory
-    // Get the list of the files contained in the package
     File[] files = directory.listFiles();
     for (File currentFile : files) {
       String currentFileName = currentFile.getName();
       if (isClass(currentFileName)) {
-        // CHECKSTYLE:OFF
         try {
-          // removes the .class extension
           String className = packageName + '.' + StringUtils.remove(currentFileName, CLASS_SUFFIX);
           Class<?> loadedClass = loadClass(className, classLoader);
-          // we are only interested in public classes that are neither anonymous nor local
           if (isClassCandidateToAssertionsGeneration(loadedClass)) {
             classes.add(loadedClass);
           }
         } catch (Throwable e) {
-          // do nothing. this class hasn't been found by the loader, and we don't care.
         }
-        // CHECKSTYLE:ON
-      } else if (currentFile.isDirectory()) {
-        // It's another package
-        String subPackageName = packageName + ClassUtils.PACKAGE_SEPARATOR + currentFileName;
-        // Ask for all resources for the path
-        URL resource = classLoader.getResource(subPackageName.replace('.', File.separatorChar));
-        File subDirectory = new File(URLDecoder.decode(resource.getPath(), "UTF-8"));
-        List<Class<?>> classesForSubPackage = getClassesInDirectory(subDirectory, subPackageName, classLoader);
-        classes.addAll(classesForSubPackage);
+      } else {
+        if (currentFile.isDirectory()) {
+          String subPackageName = packageName + ClassUtils.PACKAGE_SEPARATOR + currentFileName;
+          URL resource = classLoader.getResource(subPackageName.replace('.', File.separatorChar));
+          File subDirectory = new File(URLDecoder.decode(resource.getPath(), "UTF-8"));
+          List<Class<?>> classesForSubPackage = getClassesInDirectory(subDirectory, subPackageName, classLoader);
+          classes.addAll(classesForSubPackage);
+        }
       }
     }
     return classes;
@@ -193,8 +171,7 @@ public class ClassUtil {
    * @return
    */
   private static boolean isClassCandidateToAssertionsGeneration(Class<?> loadedClass) {
-    return loadedClass != null && isPublic(loadedClass.getModifiers()) && !loadedClass.isAnonymousClass()
-           && !loadedClass.isLocalClass();
+    return loadedClass != null && isPublic(loadedClass.getModifiers()) && !loadedClass.isAnonymousClass() && !loadedClass.isLocalClass();
   }
 
   private static boolean isClass(String fileName) {
@@ -242,15 +219,11 @@ public class ClassUtil {
   }
 
   public static boolean isStandardGetter(Method method) {
-    return isValidStandardGetterName(method.getName())
-           && !Void.TYPE.equals(method.getReturnType())
-           && method.getParameterTypes().length == 0;
+    return isValidStandardGetterName(method.getName()) && !Void.TYPE.equals(method.getReturnType()) && method.getParameterTypes().length == 0;
   }
 
   public static boolean isBooleanGetter(Method method) {
-    return isValidBooleanGetterName(method.getName())
-           && Boolean.TYPE.equals(method.getReturnType())
-           && method.getParameterTypes().length == 0;
+    return isValidBooleanGetterName(method.getName()) && Boolean.TYPE.equals(method.getReturnType()) && method.getParameterTypes().length == 0;
   }
 
   public static boolean isValidGetterName(String methodName) {
@@ -258,15 +231,11 @@ public class ClassUtil {
   }
 
   private static boolean isValidStandardGetterName(String name) {
-    return name.length() >= GET_PREFIX.length() + 1
-           && isUpperCase(name.charAt(GET_PREFIX.length()))
-           && name.startsWith(GET_PREFIX);
+    return name.length() >= GET_PREFIX.length() + 1 && isUpperCase(name.charAt(GET_PREFIX.length())) && name.startsWith(GET_PREFIX);
   }
 
   private static boolean isValidBooleanGetterName(String name) {
-    return name.length() >= IS_PREFIX.length() + 1
-           && isUpperCase(name.charAt(IS_PREFIX.length()))
-           && name.startsWith(IS_PREFIX);
+    return name.length() >= IS_PREFIX.length() + 1 && isUpperCase(name.charAt(IS_PREFIX.length())) && name.startsWith(IS_PREFIX);
   }
 
   public static List<Method> declaredGetterMethodsOf(Class<?> clazz) {
@@ -275,17 +244,6 @@ public class ClassUtil {
 
   public static List<Method> getterMethodsOf(Class<?> clazz) {
     return filterGetterMethods(clazz.getMethods());
-  }
-
-  private static List<Method> filterGetterMethods(Method[] methods) {
-    List<Method> getters = new ArrayList<Method>(methods.length);
-    for (int i = 0; i < methods.length; i++) {
-      Method method = methods[i];
-      if (isPublic(method.getModifiers()) && isNotDefinedInObjectClass(method) && (isStandardGetter(method) || isBooleanGetter(method))) {
-        getters.add(method);
-      }
-    }
-    return getters;
   }
 
   public static List<Field> nonStaticPublicFieldsOf(Class<?> clazz) {
@@ -299,6 +257,16 @@ public class ClassUtil {
     return nonStaticPublicFields;
   }
 
+  private static List<Method> filterGetterMethods(Method[] methods) {
+    List<Method> getters = new ArrayList<Method>(methods.length);
+    for (int i = 0; i < methods.length; i++) {
+      Method method = methods[i];
+      if (isPublic(method.getModifiers()) && isNotDefinedInObjectClass(method) && (isStandardGetter(method) || isBooleanGetter(method))) {
+        getters.add(method);
+      }
+    }
+    return getters;
+  }
 
   public static List<Member> getterMethodsAndNonStaticPublicFieldsOf(Class<?> clazz) {
     List<Member> methodsAndNonStaticPublicFields = new ArrayList<Member>();
@@ -306,19 +274,18 @@ public class ClassUtil {
     methodsAndNonStaticPublicFields.addAll(nonStaticPublicFieldsOf(clazz));
     return methodsAndNonStaticPublicFields;
   }
-  
-  
+
   public static List<Field> declaredPublicFieldsOf(Class<?> clazz) {
     Field[] fields = clazz.getDeclaredFields();
     List<Field> nonStaticPublicFields = new ArrayList<Field>();
     for (Field field : fields) {
       if (isNotStaticPublicField(field)) {
-       nonStaticPublicFields.add(field);
+        nonStaticPublicFields.add(field);
       }
     }
     return nonStaticPublicFields;
   }
-  
+
   private static boolean isNotStaticPublicField(Field field) {
     final int modifiers = field.getModifiers();
     return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
@@ -330,23 +297,23 @@ public class ClassUtil {
 
   public static Set<Class<?>> getClassesRelatedTo(Type type) {
     Set<Class<?>> classes = new HashSet<Class<?>>();
-
-    // non generic type : just add current type.
     if (type instanceof Class) {
       classes.add((Class<?>) type);
       return classes;
     }
-
-    // generic type : add current type and its parameter types
     if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
       for (Type actualTypeArgument : parameterizedType.getActualTypeArguments()) {
         if (actualTypeArgument instanceof ParameterizedType) {
           classes.addAll(getClassesRelatedTo(actualTypeArgument));
-        } else if (actualTypeArgument instanceof Class) {
-          classes.add((Class<?>) actualTypeArgument);
-        } else if (actualTypeArgument instanceof GenericArrayType) {
-          classes.addAll(getClassesRelatedTo(actualTypeArgument));
+        } else {
+          if (actualTypeArgument instanceof Class) {
+            classes.add((Class<?>) actualTypeArgument);
+          } else {
+            if (actualTypeArgument instanceof GenericArrayType) {
+              classes.addAll(getClassesRelatedTo(actualTypeArgument));
+            }
+          }
         }
       }
       Type rawType = parameterizedType.getRawType();
@@ -374,7 +341,7 @@ public class ClassUtil {
     nestedClassName = nestedClassName.replace('$', '.');
     return nestedClassName;
   }
-  
+
   /**
    * Gets the simple name of the class but, unlike {@link Class#getSimpleName()}, it includes the name of the outer
    * class when <code>clazz</code> is an inner class, both class names are concatenated.
@@ -409,19 +376,22 @@ public class ClassUtil {
    * @return the underlying class
    */
   public static Class<?> getClass(final Type type) {
-    if (type instanceof Class) return (Class<?>) type;
-    if (type instanceof ParameterizedType) return getClass(((ParameterizedType) type).getRawType());
-
+    if (type instanceof Class) {
+      return (Class<?>) type;
+    }
+    if (type instanceof ParameterizedType) {
+      return getClass(((ParameterizedType) type).getRawType());
+    }
     if (type instanceof GenericArrayType) {
       final Type componentType = ((GenericArrayType) type).getGenericComponentType();
       final Class<?> componentClass = getClass(componentType);
       return componentClass == null ? null : Array.newInstance(componentClass, 0).getClass();
-    } else if (type instanceof WildcardType) {
-      final WildcardType wildcardType = (WildcardType) type;
-      return wildcardType.getUpperBounds() != null ? getClass(wildcardType.getUpperBounds()[0])
-               : wildcardType.getLowerBounds() != null ? getClass(wildcardType.getLowerBounds()[0]) : null;
+    } else {
+      if (type instanceof WildcardType) {
+        final WildcardType wildcardType = (WildcardType) type;
+        return wildcardType.getUpperBounds() != null ? getClass(wildcardType.getUpperBounds()[0]) : wildcardType.getLowerBounds() != null ? getClass(wildcardType.getLowerBounds()[0]) : null;
+      }
     }
     return null;
   }
-
 }

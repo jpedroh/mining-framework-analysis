@@ -1,26 +1,13 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.assertj.assertions.generator;
-
 import static java.lang.Thread.currentThread;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.io.IOUtils.copy;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLDecoder;
-
 import org.apache.commons.lang3.CharEncoding;
 
 /**
@@ -49,8 +36,8 @@ import org.apache.commons.lang3.CharEncoding;
  * @author Joel Costigliola
  */
 public class Template {
-
   private String content;
+
   private final Type type;
 
   /**
@@ -76,7 +63,6 @@ public class Template {
       if (!urlFile.isFile()) {
         throw new RuntimeException("Failed to read template from an URL which is not a file, URL was :" + url);
       }
-      // TODO : read from file directly ?
       content = readContentThenClose(url.openStream());
     } catch (IOException e) {
       throw new RuntimeException("Failed to read template from " + url, e);
@@ -91,15 +77,10 @@ public class Template {
    */
   public Template(Type type, File file) {
     this.type = type;
-    // don't use file.toURI().toURL() to call Template based URL constructor :
-    // it does not load resources from classpath.
     String path = file.getPath();
     try {
-      // TODO see if we can get rid of this and only call readTemplateFile(file, path.replace('\\', '/'));
       this.content = readTemplateFile(file, file.getPath());
     } catch (RuntimeException e) {
-      // try to read file again but from assert-assertions-generator jar
-      // => need to replace file system separator by '/' because it relies o
       this.content = readTemplateFile(file, path.replace('\\', '/'));
     }
   }
@@ -127,14 +108,27 @@ public class Template {
       writer = new StringWriter();
       copy(input, writer);
       return writer.toString();
-    } finally {
+    }  finally {
       closeQuietly(input);
       closeQuietly(writer);
     }
   }
 
   public enum Type {
-    IS, HAS_FOR_ARRAY, HAS_FOR_ITERABLE, HAS, HAS_FOR_PRIMITIVE, ASSERT_CLASS, HIERARCHICAL_ASSERT_CLASS, ABSTRACT_ASSERT_CLASS, ASSERTIONS_ENTRY_POINT_CLASS, ASSERTION_ENTRY_POINT, SOFT_ASSERTIONS_ENTRY_POINT_CLASS, SOFT_ENTRY_POINT_METHOD_ASSERTION, BDD_ASSERTIONS_ENTRY_POINT_CLASS, BDD_ENTRY_POINT_METHOD_ASSERTION, HAS_FOR_REAL_NUMBER;
+    IS,
+    HAS_FOR_ARRAY,
+    HAS_FOR_ITERABLE,
+    HAS,
+    HAS_FOR_PRIMITIVE,
+    ASSERT_CLASS,
+    HIERARCHICAL_ASSERT_CLASS,
+    ABSTRACT_ASSERT_CLASS,
+    ASSERTIONS_ENTRY_POINT_CLASS,
+    ASSERTION_ENTRY_POINT,
+    SOFT_ASSERTIONS_ENTRY_POINT_CLASS,
+    SOFT_ENTRY_POINT_METHOD_ASSERTION,
+    BDD_ASSERTIONS_ENTRY_POINT_CLASS,
+    BDD_ENTRY_POINT_METHOD_ASSERTION,
+    HAS_FOR_REAL_NUMBER
   }
-
 }
