@@ -1,9 +1,10 @@
 package alma.fr.strategychoicecomponents;
 
 import java.math.BigInteger;
-import java.util.BitSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import alma.fr.basecomponents.IBase;
@@ -17,10 +18,8 @@ public class RandomStrategyChoice implements IStrategyChoice {
 	private HashMap<Positions, FakeListNode> spectrum = new HashMap<Positions, FakeListNode>();
 
 	private Integer date = 0;
-
-	BitSet strategies;
-
-	static final Random r = new Random();
+	
+	Map<Integer, IIdProviderStrategy> strategies ;
 
 	@Inject
 	IBase base;
@@ -35,7 +34,7 @@ public class RandomStrategyChoice implements IStrategyChoice {
 		this.base = base;
 		this.strategy1 = strategy1;
 		this.strategy2 = strategy2;
-		strategies = new BitSet(0);
+		strategies = new HashMap<Integer, IIdProviderStrategy>(0);
 	}
 
 	/** add the new id in the structure **/
@@ -72,19 +71,22 @@ public class RandomStrategyChoice implements IStrategyChoice {
 		spectrum.remove(id);
 	}
 
-	public Iterator<Positions> generateIdentifiers(Positions p, Positions q,
-			Integer N, Replica rep) {
+	public Iterator<Positions> generateLineIdentifiers(Positions p,
+			Positions q, Integer N, Replica rep) {
+		ArrayList<BigInteger> qprefix = q.prefix(q.size());
+		ArrayList<BigInteger> pprefix = p.prefix(p.size());
 
-		// #1 count interval between p and q, until itz enough
-		BigInteger interval = BigInteger.ZERO;
-		int index = 0;
-		while (BigInteger.valueOf(N).compareTo(interval) > 0) {
-			// #1 a: obtain index value
+		Integer index = 0;
+		BigInteger interval = new BigInteger("0");
+		BigInteger nBigInteger = new BigInteger(N.toString());
+		while (interval.compareTo(nBigInteger) == -1) {
 			++index;
-			// #1 b: obtain interval value
-			interval = base.interval(p.getD(), q.getD(), index);
+
+			interval = base.count(qprefix, index).subtract(
+					base.count(pprefix, index)).subtract(new BigInteger("1"));
 		}
 
+<<<<<<< /usr/src/app/output/chat-wane/lseq/916d8a5efc2654df3f31715ed05eea52f7d09957/src/main/java/alma/fr/strategychoicecomponents/RandomStrategyChoice.java/left.java
 		// #2 if not already setted value in strategies
 		// random a full 64 bits of strategies, bitsize.size limitation
 		if (index >= strategies.size()) {
@@ -96,14 +98,26 @@ public class RandomStrategyChoice implements IStrategyChoice {
 				} else {
 					strategies.clear(j);
 				}
+||||||| /usr/src/app/output/chat-wane/lseq/916d8a5efc2654df3f31715ed05eea52f7d09957/src/main/java/alma/fr/strategychoicecomponents/RandomStrategyChoice.java/base.java
+		// #2 if already setted value in strategies
+		while (strategies.size() < index) {
+			// #2b else random & use strategy
+			if (r.nextBoolean()) {
+				strategies.set(strategies.size());
+			} else {
+				strategies.clear(strategies.size());
+=======
+		Random r = new Random();
+		if (!strategies.containsKey(index)) {
+			if (r.nextInt(2) == 0) {
+				strategies.put(index, strategy1);
+			} else {
+				strategies.put(index, strategy2);
+>>>>>>> /usr/src/app/output/chat-wane/lseq/916d8a5efc2654df3f31715ed05eea52f7d09957/src/main/java/alma/fr/strategychoicecomponents/RandomStrategyChoice.java/right.java
 			}
 		}
-		// #3 chose the strategy
-		if (strategies.get(index)) {
-			return strategy1.generateIdentifiers(p, q, N, rep, interval, index);
-		} else {
-			return strategy2.generateIdentifiers(p, q, N, rep, interval, index);
-		}
+
+		return strategies.get(index).generateLineIdentifiers(p, q, N, rep);
 	}
 
 	public void incDate() {
