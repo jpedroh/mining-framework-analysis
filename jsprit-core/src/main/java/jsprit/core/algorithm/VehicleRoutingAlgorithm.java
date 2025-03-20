@@ -1,34 +1,15 @@
-/*******************************************************************************
- * Copyright (C) 2013  Stefan Schroeder
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either 
- * version 3.0 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package jsprit.core.algorithm;
-
 import jsprit.core.algorithm.SearchStrategy.DiscoveredSolution;
+import java.util.ArrayList;
 import jsprit.core.algorithm.listener.*;
 import jsprit.core.algorithm.termination.PrematureAlgorithmTermination;
+import java.util.Collection;
 import jsprit.core.problem.VehicleRoutingProblem;
 import jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import jsprit.core.problem.solution.route.VehicleRoute;
 import jsprit.core.problem.solution.route.activity.TourActivity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
 
 /**
  * Algorithm that solves a {@link VehicleRoutingProblem}.
@@ -37,123 +18,117 @@ import java.util.Collection;
  *
  */
 public class VehicleRoutingAlgorithm {
-	
-	private static class Counter {
-		private final String name;
-		private long counter = 0;
-		private long nextCounter = 1;
-		private static final Logger log = LogManager.getLogger(Counter.class);
+  private static class Counter {
+    private final String name;
 
-		public Counter(final String name) {
-			this.name = name;
-		}
+    private long counter = 0;
 
-		public void incCounter() {
-			long i = counter++;
-			long n = nextCounter;
-			if (i >= n) {
-				if (nextCounter==n) {
-					nextCounter=n*2;
-					log.info(this.name + n);
-				}
-			}
-		}
+    private long nextCounter = 1;
 
-		public void reset() {
-			counter=0;
-			nextCounter=1;
-		}
-	}
+    private static final Logger log = LogManager.getLogger(Counter.class);
 
-	private static Logger logger = LogManager.getLogger(VehicleRoutingAlgorithm.class);
-	
-	private VehicleRoutingProblem problem;
-	
-	private int nOfIterations = 100;
-	
-	private Counter counter = new Counter("iterations ");
-	
-	private SearchStrategyManager searchStrategyManager;
-	
-	private VehicleRoutingAlgorithmListeners algoListeners = new VehicleRoutingAlgorithmListeners();
-	
-	private Collection<VehicleRoutingProblemSolution> initialSolutions;
-	
-	private PrematureAlgorithmTermination prematureAlgorithmTermination = new PrematureAlgorithmTermination() {
-		
-		@Override
-		public boolean isPrematureBreak(DiscoveredSolution discoveredSolution) {
-			return false;
-		}
-		
-	};
-	
-	public VehicleRoutingAlgorithm(VehicleRoutingProblem problem, SearchStrategyManager searchStrategyManager) {
-		super();
-		this.problem = problem;
-		this.searchStrategyManager = searchStrategyManager;
-		initialSolutions = new ArrayList<VehicleRoutingProblemSolution>();
-	}
+    public Counter(final String name) {
+      this.name = name;
+    }
 
-	public VehicleRoutingAlgorithm(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> initialSolutions, SearchStrategyManager searchStrategyManager) {
-		super();
-		this.problem = problem;
-		this.searchStrategyManager = searchStrategyManager;
-		this.initialSolutions = initialSolutions;
-	}
+    public void incCounter() {
+      long i = counter++;
+      long n = nextCounter;
+      if (i >= n) {
+        if (nextCounter == n) {
+          nextCounter = n * 2;
+          log.info(this.name + n);
+        }
+      }
+    }
 
-	/**
+    public void reset() {
+      counter = 0;
+      nextCounter = 1;
+    }
+  }
+
+  private static Logger logger = LogManager.getLogger(VehicleRoutingAlgorithm.class);
+
+  private VehicleRoutingProblem problem;
+
+  private int nOfIterations = 100;
+
+  private Counter counter = new Counter("iterations ");
+
+  private SearchStrategyManager searchStrategyManager;
+
+  private VehicleRoutingAlgorithmListeners algoListeners = new VehicleRoutingAlgorithmListeners();
+
+  private Collection<VehicleRoutingProblemSolution> initialSolutions;
+
+  private PrematureAlgorithmTermination prematureAlgorithmTermination = new PrematureAlgorithmTermination() {
+    @Override public boolean isPrematureBreak(DiscoveredSolution discoveredSolution) {
+      return false;
+    }
+  };
+
+  public VehicleRoutingAlgorithm(VehicleRoutingProblem problem, SearchStrategyManager searchStrategyManager) {
+    super();
+    this.problem = problem;
+    this.searchStrategyManager = searchStrategyManager;
+    initialSolutions = new ArrayList<VehicleRoutingProblemSolution>();
+  }
+
+  public VehicleRoutingAlgorithm(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> initialSolutions, SearchStrategyManager searchStrategyManager) {
+    super();
+    this.problem = problem;
+    this.searchStrategyManager = searchStrategyManager;
+    this.initialSolutions = initialSolutions;
+  }
+
+  /**
 	 * Adds solution to the collection of initial solutions.
 	 * 
 	 * @param solution the solution to be added
 	 */
-	public void addInitialSolution(VehicleRoutingProblemSolution solution){
-        verify(solution);
-        initialSolutions.add(solution);
-	}
+  public void addInitialSolution(VehicleRoutingProblemSolution solution) {
+    verify(solution);
+    initialSolutions.add(solution);
+  }
 
-
-    private void verify(VehicleRoutingProblemSolution solution) {
-        int nuJobs = 0;
-        for(VehicleRoute route : solution.getRoutes()){
-            nuJobs += route.getTourActivities().getJobs().size();
-            if(route.getVehicle().getIndex() == 0)
-                throw new IllegalStateException("vehicle used in initial solution has no index. probably a vehicle is used that has not been added to the " +
-                        " the VehicleRoutingProblem. only use vehicles that have already been added to the problem.");
-            for(TourActivity act : route.getActivities()) {
-                if (act.getIndex() == 0) {
-                    throw new IllegalStateException("act in initial solution has no index. activities are created and associated to their job in VehicleRoutingProblem\n." +
-                            " thus if you build vehicle-routes use the jobActivityFactory from vehicle routing problem like that \n" +
-                            " VehicleRoute.Builder.newInstance(knownVehicle).setJobActivityFactory(vrp.getJobActivityFactory).addService(..)....build() \n" +
-                            " then the activities that are created to build the route are identical to the ones used in VehicleRoutingProblem");
-                }
-            }
+  private void verify(VehicleRoutingProblemSolution solution) {
+    int nuJobs = 0;
+    for (VehicleRoute route : solution.getRoutes()) {
+      nuJobs += route.getTourActivities().getJobs().size();
+      if (route.getVehicle().getIndex() == 0) {
+        throw new IllegalStateException("vehicle used in initial solution has no index. probably a vehicle is used that has not been added to the " + " the VehicleRoutingProblem. only use vehicles that have already been added to the problem.");
+      }
+      for (TourActivity act : route.getActivities()) {
+        if (act.getIndex() == 0) {
+          throw new IllegalStateException("act in initial solution has no index. activities are created and associated to their job in VehicleRoutingProblem\n." + " thus if you build vehicle-routes use the jobActivityFactory from vehicle routing problem like that \n" + " VehicleRoute.Builder.newInstance(knownVehicle).setJobActivityFactory(vrp.getJobActivityFactory).addService(..)....build() \n" + " then the activities that are created to build the route are identical to the ones used in VehicleRoutingProblem");
         }
-        if(nuJobs != problem.getJobs().values().size()){
-            logger.warn("number of jobs in initial solution (" + nuJobs + ") is not equal nuJobs in vehicle routing problem (" + problem.getJobs().values().size() + ")" +
-                    "\n this might yield unintended effects, e.g. initial solution cannot be improved anymore.");
-        }
+      }
     }
+    if (nuJobs != problem.getJobs().values().size()) {
+      logger.warn("number of jobs in initial solution (" + nuJobs + ") is not equal nuJobs in vehicle routing problem (" + problem.getJobs().values().size() + ")" + "\n this might yield unintended effects, e.g. initial solution cannot be improved anymore.");
+    }
+  }
 
-    /**
+  /**
 	 * Sets premature termination.
 	 *
 	 * @param prematureAlgorithmTermination the termination criterion
 	 */
-	public void setPrematureAlgorithmTermination(PrematureAlgorithmTermination prematureAlgorithmTermination){
-		this.prematureAlgorithmTermination = prematureAlgorithmTermination;
-	}
+  public void setPrematureAlgorithmTermination(PrematureAlgorithmTermination prematureAlgorithmTermination) {
+    this.prematureAlgorithmTermination = prematureAlgorithmTermination;
+  }
 
-	/**
+  /**
 	 * Gets the {@link SearchStrategyManager}.
 	 * 
 	 * @return SearchStrategyManager
 	 */
-	public SearchStrategyManager getSearchStrategyManager() {
-		return searchStrategyManager;
-	}
+  public SearchStrategyManager getSearchStrategyManager() {
+    return searchStrategyManager;
+  }
 
-	/**
+  /**
 	 * Runs the vehicle routing algorithm and returns a number of generated solutions.
 	 * 
 	 * <p>The algorithm runs as long as it is specified in nuOfIterations and prematureBreak. In each iteration it selects a searchStrategy according
@@ -163,91 +138,95 @@ public class VehicleRoutingAlgorithm {
 	 * @return Collection<VehicleRoutingProblemSolution> the solutions 
 	 * @see {@link SearchStrategyManager}, {@link VehicleRoutingAlgorithmListener}, {@link AlgorithmStartsListener}, {@link AlgorithmEndsListener}, {@link IterationStartsListener}, {@link IterationEndsListener}
 	 */
-	public Collection<VehicleRoutingProblemSolution> searchSolutions(){
-		logger.info("------------------------------------------------");
-		logger.info("algorithm starts");
-		double now = System.currentTimeMillis();
-		verify();
-		int nuOfIterationsThisAlgoIsRunning = nOfIterations;
-		counter.reset();
-		Collection<VehicleRoutingProblemSolution> solutions = new ArrayList<VehicleRoutingProblemSolution>(initialSolutions);
-		algorithmStarts(problem,solutions);
-		logger.info("iterations start");
-		for(int i=0;i<nOfIterations;i++){
-			iterationStarts(i+1,problem,solutions);
-			counter.incCounter();
-			SearchStrategy strategy = searchStrategyManager.getRandomStrategy();
-			DiscoveredSolution discoveredSolution = strategy.run(problem, solutions);
-			selectedStrategy(strategy.getName(),problem, solutions);
-			if(prematureAlgorithmTermination.isPrematureBreak(discoveredSolution)){
-				logger.info("premature break at iteration "+ (i+1));
-				nuOfIterationsThisAlgoIsRunning = (i+1);
-				break;
-			}
-			iterationEnds(i+1,problem,solutions);
-		}
-		logger.info("iterations end at " + nuOfIterationsThisAlgoIsRunning + " iterations");
-		algorithmEnds(problem,solutions);
-		logger.info("total time: " + ((System.currentTimeMillis()-now)/1000.0) + "s");
-		logger.info("done");
-		logger.info("------------------------------------------------");
-		return solutions;
-	}
-	
-	
-	private void selectedStrategy(String name, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
-		algoListeners.selectedStrategy(name,problem, solutions);
-	}
+  public Collection<VehicleRoutingProblemSolution> searchSolutions() {
+    logger.info("------------------------------------------------");
+    logger.info("algorithm starts");
+    double now = System.currentTimeMillis();
+    verify();
+    int nuOfIterationsThisAlgoIsRunning = nOfIterations;
+    counter.reset();
+    Collection<VehicleRoutingProblemSolution> solutions = new ArrayList<VehicleRoutingProblemSolution>(initialSolutions);
+    algorithmStarts(problem, solutions);
+    logger.info("iterations start");
+    for (int i = 0; i < nOfIterations; i++) {
+      iterationStarts(i + 1, problem, solutions);
+      counter.incCounter();
+      SearchStrategy strategy = searchStrategyManager.getRandomStrategy();
+      DiscoveredSolution discoveredSolution = strategy.run(problem, solutions);
+      selectedStrategy(strategy.getName(), problem, solutions);
+      if (prematureAlgorithmTermination.isPrematureBreak(discoveredSolution)) {
+        logger.info("premature break at iteration " + (i + 1));
+        nuOfIterationsThisAlgoIsRunning = (i + 1);
+        break;
+      }
+      iterationEnds(i + 1, problem, solutions);
+    }
+    logger.info("iterations end at " + nuOfIterationsThisAlgoIsRunning + " iterations");
+    algorithmEnds(problem, solutions);
+    logger.info("total time: " + ((System.currentTimeMillis() - now) / 1000.0) + "s");
+    logger.info("done");
+    logger.info("------------------------------------------------");
+    return solutions;
+  }
 
-	/**
+  private void selectedStrategy(String name, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
+    algoListeners.selectedStrategy(name, problem, solutions);
+  }
+
+  /**
 	 * Returns the number of iterations.
 	 * 
 	 * @return iterations
 	 */
-	public int getNuOfIterations(){
-		return nOfIterations;
-	}
-	
-	/**
+  public int getNuOfIterations() {
+    return nOfIterations;
+  }
+
+  /**
 	 * Asserts that the sum of probabilities of the searchStrategies is equal to 1.0.
 	 */
-	private void verify() {
-		double sum = 0.0;
-		for(Double prob : searchStrategyManager.getProbabilities()){
-			sum += prob;
-		}
-		if(sum < 1.0*0.99 || sum > 1.0*1.01) throw new IllegalStateException("sum of probabilities is not 1.0, but is "+ sum + ". make sure that the sum of the probability of each searchStrategy is 1.0");
-	}
+  private void verify() {
+    double sum = 0.0;
+    for (Double prob : searchStrategyManager.getProbabilities()) {
+      sum += prob;
+    }
+    if (sum < 1.0 * 0.99 || sum > 1.0 * 1.01) {
+      throw new IllegalStateException("sum of probabilities is not 1.0, but is " + sum + ". make sure that the sum of the probability of each searchStrategy is 1.0");
+    }
+  }
 
-	private void algorithmEnds(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
-		algoListeners.algorithmEnds(problem, solutions);
-	}
+  private void algorithmEnds(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
+    algoListeners.algorithmEnds(problem, solutions);
+  }
 
-	public VehicleRoutingAlgorithmListeners getAlgorithmListeners() {
-		return algoListeners;
-	}
-	
-	public void addListener(VehicleRoutingAlgorithmListener l){
-		algoListeners.addListener(l);
-		if(l instanceof SearchStrategyListener) searchStrategyManager.addSearchStrategyListener((SearchStrategyListener) l);
-		if(l instanceof SearchStrategyModuleListener) searchStrategyManager.addSearchStrategyModuleListener((SearchStrategyModuleListener) l);
-	}
+  public VehicleRoutingAlgorithmListeners getAlgorithmListeners() {
+    return algoListeners;
+  }
 
-	private void iterationEnds(int i, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
-		algoListeners.iterationEnds(i,problem, solutions);
-	}
+  public void addListener(VehicleRoutingAlgorithmListener l) {
+    algoListeners.addListener(l);
+    if (l instanceof SearchStrategyListener) {
+      searchStrategyManager.addSearchStrategyListener((SearchStrategyListener) l);
+    }
+    if (l instanceof SearchStrategyModuleListener) {
+      searchStrategyManager.addSearchStrategyModuleListener((SearchStrategyModuleListener) l);
+    }
+  }
 
-	private void iterationStarts(int i, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
-		algoListeners.iterationStarts(i, problem, solutions);
-	}
+  private void iterationEnds(int i, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
+    algoListeners.iterationEnds(i, problem, solutions);
+  }
 
-	private void algorithmStarts(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
-		algoListeners.algorithmStarts(problem, this, solutions);
-	}
+  private void iterationStarts(int i, VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
+    algoListeners.iterationStarts(i, problem, solutions);
+  }
 
-	public void setNuOfIterations(int nOfIterations) {
-		this.nOfIterations = nOfIterations;
-		logger.info("set nuOfIterations to " + nOfIterations);
-	}
+  private void algorithmStarts(VehicleRoutingProblem problem, Collection<VehicleRoutingProblemSolution> solutions) {
+    algoListeners.algorithmStarts(problem, this, solutions);
+  }
 
+  public void setNuOfIterations(int nOfIterations) {
+    this.nOfIterations = nOfIterations;
+    logger.info("set nuOfIterations to " + nOfIterations);
+  }
 }
