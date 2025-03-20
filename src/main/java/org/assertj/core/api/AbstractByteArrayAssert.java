@@ -1,50 +1,30 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2020 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.ByteArrays;
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import org.assertj.core.util.CheckReturnValue;
 import org.assertj.core.util.VisibleForTesting;
 
-public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAssert<SELF>>
-    extends AbstractArrayAssert<SELF, byte[], Byte> {
-
-  @VisibleForTesting
-  protected ByteArrays arrays = ByteArrays.instance();
+public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAssert<SELF>> extends AbstractArrayAssert<SELF, byte[], Byte> {
+  @VisibleForTesting protected ByteArrays arrays = ByteArrays.instance();
 
   public AbstractByteArrayAssert(byte[] actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF isNotEmpty() {
+  @Override public SELF isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -59,8 +39,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * // assertion will fail
    * assertThat(new byte[] { 1, 2, 3, 4 }).hasSize(3);</code></pre>
    */
-  @Override
-  public SELF hasSize(int expected) {
+  @Override public SELF hasSize(int expected) {
     arrays.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -80,8 +59,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the number of values of the actual array is not greater than the boundary.
    * @since 3.12.0
    */
-  @Override
-  public SELF hasSizeGreaterThan(int boundary) {
+  @Override public SELF hasSizeGreaterThan(int boundary) {
     arrays.assertHasSizeGreaterThan(info, actual, boundary);
     return myself;
   }
@@ -102,8 +80,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the number of values of the actual array is not greater than or equal to the boundary.
    * @since 3.12.0
    */
-  @Override
-  public SELF hasSizeGreaterThanOrEqualTo(int boundary) {
+  @Override public SELF hasSizeGreaterThanOrEqualTo(int boundary) {
     arrays.assertHasSizeGreaterThanOrEqualTo(info, actual, boundary);
     return myself;
   }
@@ -123,8 +100,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the number of values of the actual array is not less than the boundary.
    * @since 3.12.0
    */
-  @Override
-  public SELF hasSizeLessThan(int boundary) {
+  @Override public SELF hasSizeLessThan(int boundary) {
     arrays.assertHasSizeLessThan(info, actual, boundary);
     return myself;
   }
@@ -145,8 +121,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the number of values of the actual array is not less than or equal to the boundary.
    * @since 3.12.0
    */
-  @Override
-  public SELF hasSizeLessThanOrEqualTo(int boundary) {
+  @Override public SELF hasSizeLessThanOrEqualTo(int boundary) {
     arrays.assertHasSizeLessThanOrEqualTo(info, actual, boundary);
     return myself;
   }
@@ -168,8 +143,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the number of values of the actual array is not between the boundaries.
    * @since 3.12.0
    */
-  @Override
-  public SELF hasSizeBetween(int lowerBoundary, int higherBoundary) {
+  @Override public SELF hasSizeBetween(int lowerBoundary, int higherBoundary) {
     arrays.assertHasSizeBetween(info, actual, lowerBoundary, higherBoundary);
     return myself;
   }
@@ -184,8 +158,7 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * // assertion will fail
    * assertThat(new byte[] { 126, 127 }).hasSameSizeAs(Arrays.asList(1, 2, 3));</code></pre>
    */
-  @Override
-  public SELF hasSameSizeAs(Iterable<?> other) {
+  @Override public SELF hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -718,31 +691,25 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF isSorted() {
+  @Override public SELF isSorted() {
     arrays.assertIsSorted(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF isSortedAccordingTo(Comparator<? super Byte> comparator) {
+  @Override public SELF isSortedAccordingTo(Comparator<? super Byte> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  @CheckReturnValue
-  public SELF usingElementComparator(Comparator<? super Byte> customComparator) {
+  @Override @CheckReturnValue public SELF usingElementComparator(Comparator<? super Byte> customComparator) {
     this.arrays = new ByteArrays(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  @CheckReturnValue
-  public SELF usingDefaultElementComparator() {
+  @Override @CheckReturnValue public SELF usingDefaultElementComparator() {
     this.arrays = ByteArrays.instance();
     return myself;
   }
@@ -909,5 +876,4 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsAnyOf(info, actual, arrays.toByteArray(values));
     return myself;
   }
-
 }
