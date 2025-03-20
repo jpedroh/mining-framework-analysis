@@ -69,7 +69,6 @@ import ru.leymooo.botfilter.caching.PacketUtils.KickType;
 import ru.leymooo.botfilter.utils.ManyChecksUtils;
 import ru.leymooo.botfilter.utils.PingLimiter;
 import ru.leymooo.botfilter.utils.ServerPingUtils;
-import net.md_5.bungee.util.BufUtil;
 import net.md_5.bungee.util.QuietException;
 
 @RequiredArgsConstructor
@@ -142,9 +141,14 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     {
         if ( packet.packet == null )
         {
-            this.ch.getHandle().close(); //BotFilter
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/2d9d3d351318fa36f0fac2ce09dfe868e21de293/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
+            this.ch.getHandle().close();
             //throw new IllegalArgumentException( "Unexpected packet received during login process!\n" + BufUtil.dump( packet.buf, 64 ) );
-            //throw new QuietException( "Unexpected packet received during login process! " + BufUtil.dump( packet.buf, 16 ) );
+||||||| /usr/src/app/output/spigotmc/bungeecord/2d9d3d351318fa36f0fac2ce09dfe868e21de293/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+            throw new IllegalArgumentException( "Unexpected packet received during login process!\n" + BufUtil.dump( packet.buf, 64 ) );
+=======
+            throw new QuietException( "Unexpected packet received during login process! " + BufUtil.dump( packet.buf, 16 ) );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/2d9d3d351318fa36f0fac2ce09dfe868e21de293/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
         }
     }
 

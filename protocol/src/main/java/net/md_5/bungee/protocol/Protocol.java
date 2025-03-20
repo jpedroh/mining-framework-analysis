@@ -189,7 +189,7 @@ public enum Protocol
                     map( ProtocolConstants.MINECRAFT_1_12_1, 0x4A ),
                     map( ProtocolConstants.MINECRAFT_1_13, 0x4E )
             );
-            TO_CLIENT.registerPacket( //TODO: Dont handle in no-entity-rewrite branch
+            TO_CLIENT.registerPacket(
                     EntityStatus.class,
                     map( ProtocolConstants.MINECRAFT_1_8, 0x1A ),
                     map( ProtocolConstants.MINECRAFT_1_9, 0x1B ),
