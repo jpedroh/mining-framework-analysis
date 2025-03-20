@@ -123,7 +123,13 @@ public class Florence extends Joiner.Base {
           ts.add(b.build());
         }
       } finally {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/left.java
+        System.out.println("hg:" + ts.content().size() + ":" + π.size() + ":" + (System.currentTimeMillis() - beforeHg));
+||||||| /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/base.java
+        System.out.println("hg:" + (System.currentTimeMillis() - beforeHg));
+=======
         System.out.println("hg:" + π.size() + "<-" + sizeOfπBeforeHd + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeHg));
+>>>>>>> /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/right.java
       }
       ////
       // vg
@@ -141,11 +147,17 @@ public class Florence extends Joiner.Base {
             π.removeAll(TupleUtils.subtuplesOf(n, t));
             ts.add(n);
           } finally {
-            System.out.println("vg[i]:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg_i));
+            System.out.println("vg[i]:" + ts.content().size() + ":" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg_i));
           }
         }
       } finally {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/left.java
+        System.out.println("vg:" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg));
+||||||| /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/base.java
+        System.out.println("vg:" + (System.currentTimeMillis() - beforeVg));
+=======
         System.out.println("vg:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg));
+>>>>>>> /usr/src/app/output/dakusui/jcunit/88eae2b925400637d772e23991bd28e1391bd665/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/right.java
       }
       alreadyProcessedFactors = involvedFactors;
     }
