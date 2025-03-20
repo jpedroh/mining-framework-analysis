@@ -10,13 +10,14 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import java.lang.reflect.Type;
 import java.util.Set;
-import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.KeybindComponent;
 import net.md_5.bungee.api.chat.ScoreComponent;
 import net.md_5.bungee.api.chat.SelectorComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
+import java.util.HashSet;
+import lombok.Getter;
 
 public class ComponentSerializer implements JsonDeserializer<BaseComponent>
 {
@@ -31,7 +32,6 @@ public class ComponentSerializer implements JsonDeserializer<BaseComponent>
             registerTypeAdapter( ScoreComponent.class, new ScoreComponentSerializer() ).
             registerTypeAdapter( SelectorComponent.class, new SelectorComponentSerializer() ).
             create();
-
 
     public static final ThreadLocal<Set<BaseComponent>> serializedComponents = new ThreadLocal<Set<BaseComponent>>();
 

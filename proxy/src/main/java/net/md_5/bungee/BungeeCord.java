@@ -179,6 +179,7 @@ public class BungeeCord extends ProxyServer
     @Setter
     private BotFilter botFilter; //BotFilter
 
+    
     {
         registerChannel( "BungeeCord" );
     }

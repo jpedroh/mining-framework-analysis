@@ -31,13 +31,13 @@ import net.md_5.bungee.protocol.packet.StatusRequest;
 import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteRequest;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
+import ru.leymooo.botfilter.packets.TeleportConfirm;
 import net.md_5.bungee.protocol.packet.Team;
 import net.md_5.bungee.protocol.packet.Title;
-import net.md_5.bungee.protocol.packet.ViewDistance;
-import ru.leymooo.botfilter.packets.TeleportConfirm;
 import ru.leymooo.botfilter.packets.Player;
 import ru.leymooo.botfilter.packets.PlayerPosition;
 import ru.leymooo.botfilter.packets.PlayerPositionAndLook;
+import net.md_5.bungee.protocol.packet.ViewDistance;
 
 public abstract class AbstractPacketHandler
 {
