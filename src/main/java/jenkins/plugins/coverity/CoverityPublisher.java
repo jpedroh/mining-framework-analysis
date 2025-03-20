@@ -38,8 +38,8 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.xml.ws.WebServiceException;
+import javax.servlet.ServletOutputStream;
 
 import java.io.File;
 import java.io.IOException;
