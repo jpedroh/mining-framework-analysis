@@ -36,8 +36,14 @@ import org.fest.util.VisibleForTesting;
  * @author Mathieu Baechler
  * @author Joel Costigliola
  * @author Maciej Jaskowski
- * @author Nicolas François
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/38e8b3974a8ab360ac4084711632778aafd2e4d7/src/main/java/org/fest/assertions/api/AbstractIterableAssert.java/left.java
+ * @author Nicolas François 
  * @author Mikhail Mazursky
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/38e8b3974a8ab360ac4084711632778aafd2e4d7/src/main/java/org/fest/assertions/api/AbstractIterableAssert.java/base.java
+ * @author Nicolas François 
+=======
+ * @author Nicolas François
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/38e8b3974a8ab360ac4084711632778aafd2e4d7/src/main/java/org/fest/assertions/api/AbstractIterableAssert.java/right.java
  */
 public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S, A>, A extends Iterable<?>> extends
     AbstractAssert<S, A> implements ObjectEnumerableAssert<S> {
