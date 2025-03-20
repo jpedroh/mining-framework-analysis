@@ -16,7 +16,6 @@ public class EnhancementMultipleParams2Test extends AbstractInvalidExtensionPara
     @Deployment
     public static WebArchive createTestArchive() {
         return prepareArchiveBuilder().withBuildCompatibleExtension(EnhancementMultipleParamsExtension2.class)
-                .withClass(EnhancementMultipleParamsExtension2.class)
                 .build();
     }
 

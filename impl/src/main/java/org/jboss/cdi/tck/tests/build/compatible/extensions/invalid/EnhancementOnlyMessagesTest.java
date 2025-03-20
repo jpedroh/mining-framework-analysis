@@ -16,7 +16,6 @@ public class EnhancementOnlyMessagesTest extends AbstractInvalidExtensionParamTe
     @Deployment
     public static WebArchive createTestArchive() {
         return prepareArchiveBuilder().withBuildCompatibleExtension(EnhancementOnlyMessagesExtension.class)
-                .withClass(EnhancementOnlyMessagesExtension.class)
                 .build();
     }
 

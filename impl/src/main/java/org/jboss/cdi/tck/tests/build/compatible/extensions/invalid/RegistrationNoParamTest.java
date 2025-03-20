@@ -16,7 +16,6 @@ public class RegistrationNoParamTest extends AbstractInvalidExtensionParamTest {
     @Deployment
     public static WebArchive createTestArchive() {
         return prepareArchiveBuilder().withBuildCompatibleExtension(RegistrationNoParamExtension.class)
-                .withClass(RegistrationNoParamExtension.class)
                 .build();
     }
 
