@@ -1,7 +1,6 @@
 package com.wordnik.jaxrs;
-
+import javax.ws.rs.QueryParam;
 import io.swagger.annotations.ApiParam;
-
 import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import java.util.List;
