@@ -1,17 +1,4 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.taghandler;
-
 import static java.util.logging.Level.SEVERE;
 import static javax.faces.event.PhaseId.PROCESS_VALIDATIONS;
 import static javax.faces.event.PhaseId.RESTORE_VIEW;
@@ -37,7 +24,6 @@ import static org.omnifaces.util.Reflection.setProperties;
 import static org.omnifaces.util.Reflection.toClass;
 import static org.omnifaces.util.Utils.csvToList;
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javax.el.ValueExpression;
 import javax.el.ValueReference;
 import javax.faces.FacesException;
@@ -66,9 +51,9 @@ import javax.faces.view.facelets.FaceletContext;
 import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
 import javax.validation.ConstraintViolation;
-
 import org.omnifaces.eventlistener.BeanValidationEventListener;
 import org.omnifaces.util.Callback;
+import org.omnifaces.util.Components;
 import org.omnifaces.util.Platform;
 import org.omnifaces.util.copier.CloneCopier;
 import org.omnifaces.util.copier.Copier;
@@ -99,25 +84,32 @@ import org.omnifaces.util.copier.SerializationCopier;
  * <b>Control bean validation per component</b>
  * <pre>
  * &lt;h:commandButton value="submit" action="#{bean.submit}"&gt;
- *     &lt;o:validateBean validationGroups="javax.validation.groups.Default,com.example.MyGroup" /&gt;
+ *     &lt;o:validateBean validationGroups="javax.validation.groups.Default,com.example.MyGroup"/&gt;
  * &lt;/h:commandButton&gt;
  * </pre>
  * <pre>
  * &lt;h:selectOneMenu value="#{bean.selectedItem}"&gt;
- *     &lt;f:selectItems value="#{bean.availableItems}" /&gt;
+ *     &lt;f:selectItems value="#{bean.availableItems}"
  *     &lt;o:validateBean disabled="true" /&gt;
  *     &lt;f:ajax execute="@form" listener="#{bean.itemChanged}" render="@form" /&gt;
- * &lt;/h:selectOneMenu&gt;
+ * &lt;/h:commandButton&gt;
  * </pre>
  *
  * <p>
  * <b>Validate a bean at the class level</b>
  * <pre>
- * &lt;h:inputText value="#{bean.product.item}" /&gt;
- * &lt;h:inputText value="#{bean.product.order}" /&gt;
+ *  &lt;h:inputText value="#{bean.product.item}" / &gt;
+ *  &lt;h:inputText value="#{bean.product.order}" / &gt;
  *
- * &lt;o:validateBean value="#{bean.product}" validationGroups="com.example.MyGroup" /&gt;
+ *  &lt;o:validateBean value="#{bean.product}" validationGroups="com.example.MyGroup" / &gt;
  * </pre>
+ * 
+ *<p>
+ * It is possible to specify a <code>for</code> attribute to choose where to show the validation messages.
+ * <pre>
+ * &lt;o:validateBean value="#{bean.product}" validationGroups="com.example.MyGroup" for="form:component" / &gt;
+ * </pre>
+ * <p>
  *
  * <h3>Class level validation details</h3>
  * <p>
@@ -149,310 +141,400 @@ import org.omnifaces.util.copier.SerializationCopier;
  * @see BeanValidationEventListener
  */
 public class ValidateBean extends TagHandler {
+  private static final String ERROR_INVALID_PARENT = "o:validateBean parent must be an instance of UIInput or UICommand.";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final Logger logger = Logger.getLogger(ValidateBean.class.getName());
 
-	private static final Logger logger = Logger.getLogger(ValidateBean.class.getName());
+  private static final String ERROR_MISSING_FORM = "o:validateBean must be nested in an UIForm.";
 
-	private static final String ERROR_MISSING_FORM =
-		"o:validateBean must be nested in an UIForm.";
-	private static final String ERROR_INVALID_PARENT =
-		"o:validateBean parent must be an instance of UIInput or UICommand.";
+  private static enum ValidateMethod {
+    validateCopy,
+    validateActual
+    ;
 
-	// Enums ----------------------------------------------------------------------------------------------------------
+    public static ValidateMethod of(String name) {
+      if (isEmpty(name)) {
+        return validateCopy;
+      }
+      return valueOf(name);
+    }
+  }
 
-	private static enum ValidateMethod {
-		validateCopy, validateActual;
+  private boolean disabled;
 
-		public static ValidateMethod of(String name) {
-			if (isEmpty(name)) {
-				return validateCopy;
-			}
+  private ValueExpression value;
 
-			return valueOf(name);
-		}
-	}
+  private ValidateMethod method;
 
-	// Variables ------------------------------------------------------------------------------------------------------
+  private String groups;
 
-	private ValueExpression value;
-	private boolean disabled;
-	private ValidateMethod method;
-	private String groups;
-	private String copier;
+  private String copier;
 
-	// Constructors ---------------------------------------------------------------------------------------------------
+  private TagAttribute forAttribute;
 
-	/**
+  /**
 	 * The tag constructor.
 	 * @param config The tag config.
 	 */
-	public ValidateBean(TagConfig config) {
-		super(config);
-	}
+  public ValidateBean(TagConfig config) {
+    super(config);
 
-	// Actions --------------------------------------------------------------------------------------------------------
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    validationGroupsAttribute = getAttribute("validationGroups");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-	/**
-	 * If the parent component has the <code>value</code> attribute or is an instance of {@link UICommand} or
-	 * {@link UIInput} and is new and we're in the restore view phase of a postback, then delegate to
-	 * {@link #processValidateBean(UIComponent)}.
-	 * @throws IllegalArgumentException When the <code>value</code> attribute is absent and the parent component is not
-	 * an instance of {@link UICommand} or {@link UIInput}.
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    disabledAttribute = getAttribute("disabled");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    copierAttribute = getAttribute("copier");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    methodAttribute = getAttribute("method");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    valueAttribute = getAttribute("value");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    forAttribute = getAttribute("for");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+  }
+
+  /**
+	 *
 	 */
-	@Override
-	public void apply(FaceletContext context, final UIComponent parent) throws IOException {
-		if (getAttribute("value") == null && (!(parent instanceof UICommand || parent instanceof UIInput))) {
-			throw new IllegalArgumentException(ERROR_INVALID_PARENT);
-		}
+  @Override public void apply(FaceletContext context, final UIComponent parent) throws IOException {
+    if (getAttribute("value") == null && (!(parent instanceof UICommand || parent instanceof UIInput))) {
+      throw new IllegalArgumentException(ERROR_INVALID_PARENT);
+    }
+    final 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    String
+=======
+    FacesContext
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/right.java
+     
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+    forAttr = getString(forAttribute, context)
+=======
+    facesContext = context.getFacesContext()
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/right.java
+    ;
+    if (!(ComponentHandler.isNew(parent) && facesContext.isPostback() && facesContext.getCurrentPhaseId() == RESTORE_VIEW)) {
+      return;
 
-		FacesContext facesContext = context.getFacesContext();
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/09b6889452b815e6a6819589fb2746315acc3c64/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+      switch (getMethod(method)) {
+        case validateActual:
+        Callback.Void validateTargetBase = new TargetFormInvoker(parent, new WithArgument<UIForm>() {
+          private static final long serialVersionUID = 1L;
 
-		if (!(ComponentHandler.isNew(parent) && facesContext.isPostback() && facesContext.getCurrentPhaseId() == RESTORE_VIEW)) {
-			return;
-		}
+          @Override public void invoke(UIForm targetForm) {
+            final FacesContext context = FacesContext.getCurrentInstance();
+            Set<ConstraintViolation<?>> violations = validate(targetBase, groups);
+            if (!violations.isEmpty()) {
+              context.validationFailed();
+              String clientId = getClientId(forAttr, targetForm, context);
+              for (ConstraintViolation<?> violation : violations) {
+                context.addMessage(clientId, createError(violation.getMessage()));
+              }
+              setComponentToInvalidState(clientId);
+            }
+          }
+        });
+        subscribeToViewAfterPhase(UPDATE_MODEL_VALUES, validateTargetBase);
+        break;
+        case validateCopy:
+        final Map<String, Object> properties = new HashMap<>();
+        Callback.Void collectPropertyValues = new TargetFormInvoker(parent, new WithArgument<UIForm>() {
+          private static final long serialVersionUID = 1L;
 
-		value = getValueExpression(context, getAttribute("value"), Object.class);
-		disabled = getBoolean(context, getAttribute("disabled"));
-		method = ValidateMethod.of(getString(context, getAttribute("method")));
-		groups = getString(context, getAttribute("validationGroups"));
-		copier = getString(context, getAttribute("copier"));
+          @Override public void invoke(UIForm targetForm) {
+            final FacesContext context = FacesContext.getCurrentInstance();
+            forEachInputWithMatchingBase(context, targetForm, targetBase, new Operation() {
+              private static final long serialVersionUID = 1L;
 
-		// We can't use getCurrentForm() or hasInvokedSubmit() before the component is added to view, because the client ID isn't available.
-		// Hence, we subscribe this check to after phase of restore view.
-		subscribeToRequestAfterPhase(RESTORE_VIEW, new Callback.Void() { @Override public void invoke() {
-			processValidateBean(parent);
-		}});
-	}
+              @Override public void invoke(EditableValueHolder v, ValueReference vr) {
+                addCollectingValidator(v, vr, properties);
+              }
+            });
+          }
+        });
+        Callback.Void checkConstraints = new TargetFormInvoker(parent, new WithArgument<UIForm>() {
+          private static final long serialVersionUID = 1L;
 
-	/**
+          @Override public void invoke(UIForm targetForm) {
+            final FacesContext context = FacesContext.getCurrentInstance();
+            forEachInputWithMatchingBase(context, targetForm, targetBase, new Operation() {
+              private static final long serialVersionUID = 1L;
+
+              @Override public void invoke(EditableValueHolder v, ValueReference vr) {
+                removeCollectingValidator(v);
+              }
+            });
+            Object targetBaseCopy = getCopier(context, copierName).copy(targetBase);
+            setProperties(targetBaseCopy, properties);
+            Set<ConstraintViolation<?>> violations = validate(targetBaseCopy, groups);
+            if (!violations.isEmpty()) {
+              context.validationFailed();
+              context.renderResponse();
+              String clientId = getClientId(forAttr, targetForm, context);
+              for (ConstraintViolation<?> violation : violations) {
+                context.addMessage(clientId, createError(violation.getMessage()));
+              }
+              setComponentToInvalidState(clientId);
+            }
+          }
+        });
+        subscribeToViewBeforePhase(PROCESS_VALIDATIONS, collectPropertyValues);
+        subscribeToViewAfterPhase(PROCESS_VALIDATIONS, checkConstraints);
+        break;
+      }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+    }
+    value = getValueExpression(context, getAttribute("value"), Object.class);
+    disabled = getBoolean(context, getAttribute("disabled"));
+    method = ValidateMethod.of(getString(context, getAttribute("method")));
+    groups = getString(context, getAttribute("validationGroups"));
+    copier = getString(context, getAttribute("copier"));
+    subscribeToRequestAfterPhase(RESTORE_VIEW, new Callback.Void() {
+      @Override public void invoke() {
+        processValidateBean(parent);
+      }
+    });
+  }
+
+  private String getClientId(final String forAttr, UIForm targetForm, final FacesContext context) {
+    if (forAttr == null) {
+      return targetForm.getClientId(context);
+    } else {
+      return forAttr;
+    }
+  }
+
+  /**
 	 * Check if the given component has participated in submitting the current form or action and if so, then perform
 	 * the bean validation depending on the attributes set.
 	 * @param component The involved component.
 	 * @throws IllegalArgumentException When the parent form is missing.
 	 */
-	protected void processValidateBean(UIComponent component) {
-		UIForm form = (component instanceof UIForm) ? ((UIForm) component) : getClosestParent(component, UIForm.class);
+  protected void processValidateBean(UIComponent component) {
+    UIForm form = (component instanceof UIForm) ? ((UIForm) component) : getClosestParent(component, UIForm.class);
+    if (form == null) {
+      throw new IllegalArgumentException(ERROR_MISSING_FORM);
+    }
+    if (!form.equals(getCurrentForm()) || (component instanceof UICommand && !hasInvokedSubmit(component))) {
+      return;
+    }
+    Object bean = (value != null) ? value.getValue(getELContext()) : null;
+    if (bean == null) {
+      validateForm(groups, disabled);
+      return;
+    }
+    if (disabled) {
+      return;
+    }
+    switch (method) {
+      case validateActual:
+      validateActualBean(form, bean, groups);
+      break;
+      case validateCopy:
+      validateCopiedBean(form, bean, copier, groups);
+      break;
+    }
+  }
 
-		if (form == null) {
-			throw new IllegalArgumentException(ERROR_MISSING_FORM);
-		}
-
-		if (!form.equals(getCurrentForm()) || (component instanceof UICommand && !hasInvokedSubmit(component))) {
-			return;
-		}
-
-		Object bean = (value != null) ? value.getValue(getELContext()) : null;
-
-		if (bean == null) {
-			validateForm(groups, disabled);
-			return;
-		}
-
-		if (disabled) {
-			return;
-		}
-
-		switch (method) {
-			case validateActual: validateActualBean(form, bean, groups); break;
-			case validateCopy: validateCopiedBean(form, bean, copier, groups); break;
-		}
-	}
-
-	/**
+  /**
 	 * After update model values phase, validate actual bean. But don't proceed to render response on fail.
 	 */
-	private void validateActualBean(final UIForm form, final Object bean, final String groups) {
-		ValidateBeanCallback validateActualBean = new ValidateBeanCallback() { @Override public void run() {
-			FacesContext context = FacesContext.getCurrentInstance();
-			validate(context, form, bean, groups, false);
-		}};
+  private void validateActualBean(final UIForm form, final Object bean, final String groups) {
+    ValidateBeanCallback validateActualBean = new ValidateBeanCallback() {
+      @Override public void run() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        validate(context, form, bean, groups, false);
+      }
+    };
+    subscribeToRequestAfterPhase(UPDATE_MODEL_VALUES, validateActualBean);
+  }
 
-		subscribeToRequestAfterPhase(UPDATE_MODEL_VALUES, validateActualBean);
-	}
-
-	/**
+  /**
 	 * Before validations phase of current request, collect all bean properties.
 	 *
 	 * After validations phase of current request, create a copy of the bean, set all collected properties there,
 	 * then validate copied bean and proceed to render response on fail.
 	 */
-	private void validateCopiedBean(final UIForm form, final Object bean, final String copier, final String groups) {
-		final Map<String, Object> properties = new HashMap<>();
+  private void validateCopiedBean(final UIForm form, final Object bean, final String copier, final String groups) {
+    final Map<String, Object> properties = new HashMap<>();
+    ValidateBeanCallback collectBeanProperties = new ValidateBeanCallback() {
+      @Override public void run() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        forEachInputWithMatchingBase(context, form, bean, new Operation() {
+          @Override public void run(EditableValueHolder v, ValueReference vr) {
+            addCollectingValidator(v, vr, properties);
+          }
+        });
+      }
+    };
+    ValidateBeanCallback checkConstraints = new ValidateBeanCallback() {
+      @Override public void run() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        forEachInputWithMatchingBase(context, form, bean, new Operation() {
+          @Override public void run(EditableValueHolder v, ValueReference vr) {
+            removeCollectingValidator(v);
+          }
+        });
+        Object copiedBean = getCopier(context, copier).copy(bean);
+        setProperties(copiedBean, properties);
+        validate(context, form, copiedBean, groups, true);
+      }
+    };
+    subscribeToRequestBeforePhase(PROCESS_VALIDATIONS, collectBeanProperties);
+    subscribeToRequestAfterPhase(PROCESS_VALIDATIONS, checkConstraints);
+  }
 
-		ValidateBeanCallback collectBeanProperties = new ValidateBeanCallback() { @Override public void run() {
-			FacesContext context = FacesContext.getCurrentInstance();
-
-			forEachInputWithMatchingBase(context, form, bean, new Operation() { @Override public void run(EditableValueHolder v, ValueReference vr) {
-				addCollectingValidator(v, vr, properties);
-			}});
-		}};
-
-		ValidateBeanCallback checkConstraints = new ValidateBeanCallback() { @Override public void run() {
-			FacesContext context = FacesContext.getCurrentInstance();
-
-			forEachInputWithMatchingBase(context, form, bean, new Operation() { @Override public void run(EditableValueHolder v, ValueReference vr) {
-				removeCollectingValidator(v);
-			}});
-
-			Object copiedBean = getCopier(context, copier).copy(bean);
-			setProperties(copiedBean, properties);
-			validate(context, form, copiedBean, groups, true);
-		}};
-
-		subscribeToRequestBeforePhase(PROCESS_VALIDATIONS, collectBeanProperties);
-		subscribeToRequestAfterPhase(PROCESS_VALIDATIONS, checkConstraints);
-	}
-
-	/**
+  /**
 	 * Before validations phase of current request, subscribe the {@link BeanValidationEventListener} to validate the form based on groups.
 	 */
-	private void validateForm(final String validationGroups, final boolean disabled) {
-		ValidateBeanCallback validateForm = new ValidateBeanCallback() { @Override public void run() {
-			SystemEventListener listener = new BeanValidationEventListener(validationGroups, disabled);
-			subscribeToViewEvent(PreValidateEvent.class, listener);
-			subscribeToViewEvent(PostValidateEvent.class, listener);
-		}};
+  private void validateForm(final String validationGroups, final boolean disabled) {
+    ValidateBeanCallback validateForm = new ValidateBeanCallback() {
+      @Override public void run() {
+        SystemEventListener listener = new BeanValidationEventListener(validationGroups, disabled);
+        subscribeToViewEvent(PreValidateEvent.class, listener);
+        subscribeToViewEvent(PostValidateEvent.class, listener);
+      }
+    };
+    subscribeToRequestBeforePhase(PROCESS_VALIDATIONS, validateForm);
+  }
 
-		subscribeToRequestBeforePhase(PROCESS_VALIDATIONS, validateForm);
-	}
+  private static void forEachInputWithMatchingBase(final FacesContext context, UIComponent form, final Object base, final Operation operation) {
+    forEachComponent(context).fromRoot(form).ofTypes(EditableValueHolder.class).invoke(new Callback.WithArgument<UIComponent>() {
+      @Override public void invoke(UIComponent component) {
+        ValueExpression valueExpression = component.getValueExpression("value");
+        if (valueExpression != null) {
+          ValueReference valueReference = getValueReference(context.getELContext(), valueExpression);
+          if (valueReference.getBase().equals(base)) {
+            operation.run((EditableValueHolder) component, valueReference);
+          }
+        }
+      }
+    });
+  }
 
-	// Helpers --------------------------------------------------------------------------------------------------------
+  public static final class CollectingValidator implements Validator {
+    private final Map<String, Object> propertyValues;
 
-	private static void forEachInputWithMatchingBase(final FacesContext context, UIComponent form, final Object base, final Operation operation) {
-		forEachComponent(context)
-			.fromRoot(form)
-			.ofTypes(EditableValueHolder.class)
-			.invoke(new Callback.WithArgument<UIComponent>() { @Override public void invoke(UIComponent component) {
+    private final String property;
 
-				ValueExpression valueExpression = component.getValueExpression("value");
+    public CollectingValidator(Map<String, Object> propertyValues, String property) {
+      this.propertyValues = propertyValues;
+      this.property = property;
+    }
 
-				if (valueExpression != null) {
-					ValueReference valueReference = getValueReference(context.getELContext(), valueExpression);
+    @Override public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+      propertyValues.put(property, value);
+    }
+  }
 
-					if (valueReference.getBase().equals(base)) {
-						operation.run((EditableValueHolder) component, valueReference);
-					}
-				}
-			}});
-	}
+  private static void addCollectingValidator(EditableValueHolder valueHolder, ValueReference valueReference, Map<String, Object> propertyValues) {
+    valueHolder.addValidator(new CollectingValidator(propertyValues, valueReference.getProperty().toString()));
+  }
 
-	private static void addCollectingValidator(EditableValueHolder valueHolder, ValueReference valueReference,  Map<String, Object> propertyValues) {
-		valueHolder.addValidator(new CollectingValidator(propertyValues, valueReference.getProperty().toString()));
-	}
+  private abstract static class ValidateBeanCallback implements Callback.Void {
+    @Override public void invoke() {
+      try {
+        run();
+      } catch (Exception e) {
+        logger.log(SEVERE, "Exception occured while doing validation.", e);
+        validationFailed();
+        renderResponse();
+        throw new FacesException(e);
+      }
+    }
 
-	private static void removeCollectingValidator(EditableValueHolder valueHolder) {
-		Validator collectingValidator = null;
+    public abstract void run();
+  }
 
-		for (Validator validator : valueHolder.getValidators()) {
-			if (validator instanceof CollectingValidator) {
-				collectingValidator = validator;
-				break;
-			}
-		}
+  private static void removeCollectingValidator(EditableValueHolder valueHolder) {
+    Validator collectingValidator = null;
+    for (Validator validator : valueHolder.getValidators()) {
+      if (validator instanceof CollectingValidator) {
+        collectingValidator = validator;
+        break;
+      }
+    }
+    if (collectingValidator != null) {
+      valueHolder.removeValidator(collectingValidator);
+    }
+  }
 
-		if (collectingValidator != null) {
-			valueHolder.removeValidator(collectingValidator);
-		}
-	}
+  private abstract static class Operation implements Callback.WithArgument<Object[]> {
+    @Override public void invoke(Object[] args) {
+      run((EditableValueHolder) args[0], (ValueReference) args[1]);
+    }
 
-	private static Copier getCopier(FacesContext context, String copierName) {
-		Copier copier = null;
+    public abstract void run(EditableValueHolder valueHolder, ValueReference valueReference);
+  }
 
-		if (!isEmpty(copierName)) {
-			Object expressionResult = evaluateExpressionGet(context, copierName);
+  private static Copier getCopier(FacesContext context, String copierName) {
+    Copier copier = null;
+    if (!isEmpty(copierName)) {
+      Object expressionResult = evaluateExpressionGet(context, copierName);
+      if (expressionResult instanceof Copier) {
+        copier = (Copier) expressionResult;
+      } else {
+        if (expressionResult instanceof String) {
+          copier = instance((String) expressionResult);
+        }
+      }
+    }
+    if (copier == null) {
+      copier = new MultiStrategyCopier();
+    }
+    return copier;
+  }
 
-			if (expressionResult instanceof Copier) {
-				copier = (Copier) expressionResult;
-			}
-			else if (expressionResult instanceof String) {
-				copier = instance((String) expressionResult);
-			}
-		}
+  @SuppressWarnings(value = { "unchecked", "rawtypes" }) private static void validate(FacesContext context, UIForm form, Object bean, String groups, boolean renderResponseOnFail) {
+    List<Class> groupClasses = new ArrayList<>();
+    for (String group : csvToList(groups)) {
+      groupClasses.add(toClass(group));
+    }
+    Set violationsRaw = Platform.getBeanValidator().validate(bean, groupClasses.toArray(new Class[groupClasses.size()]));
+    Set<ConstraintViolation<?>> violations = violationsRaw;
+    if (!violations.isEmpty()) {
+      context.validationFailed();
+      String formId = form.getClientId(context);
+      for (ConstraintViolation<?> violation : violations) {
+        context.addMessage(formId, createError(violation.getMessage()));
+      }
+      if (renderResponseOnFail) {
+        context.renderResponse();
+      }
+    }
+  }
 
-		if (copier == null) {
-			copier = new MultiStrategyCopier();
-		}
-
-		return copier;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void validate(FacesContext context, UIForm form, Object bean, String groups, boolean renderResponseOnFail) {
-		List<Class> groupClasses = new ArrayList<>();
-
-		for (String group : csvToList(groups)) {
-			groupClasses.add(toClass(group));
-		}
-
-		Set violationsRaw = Platform.getBeanValidator().validate(bean, groupClasses.toArray(new Class[groupClasses.size()]));
-		Set<ConstraintViolation<?>> violations = violationsRaw;
-
-		if (!violations.isEmpty()) {
-			context.validationFailed();
-			String formId = form.getClientId(context);
-
-			for (ConstraintViolation<?> violation : violations) {
-				context.addMessage(formId, createError(violation.getMessage()));
-			}
-
-			if (renderResponseOnFail) {
-				context.renderResponse();
-			}
-		}
-	}
-
-	// Nested classes -------------------------------------------------------------------------------------------------
-
-	public static final class CollectingValidator implements Validator {
-
-		private final Map<String, Object> propertyValues;
-		private final String property;
-
-		public CollectingValidator(Map<String, Object> propertyValues, String property) {
-			this.propertyValues = propertyValues;
-			this.property = property;
-		}
-
-		@Override
-		public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-			propertyValues.put(property, value);
-		}
-	}
-
-	// Callbacks ------------------------------------------------------------------------------------------------------
-
-	private abstract static class ValidateBeanCallback implements Callback.Void {
-
-		@Override
-		public void invoke() {
-			try {
-				run();
-			}
-			catch (Exception e) {
-				// Explicitly log since exceptions in PhaseListeners will be largely swallowed and ignored by JSF runtime.
-				logger.log(SEVERE, "Exception occured while doing validation.", e);
-
-				// Set validation failed and proceed to render response.
-				validationFailed();
-				renderResponse();
-
-				throw new FacesException(e); // Rethrow, but JSF runtime will do little with it.
-			}
-
-		}
-
-		public abstract void run();
-	}
-
-	private abstract static class Operation implements Callback.WithArgument<Object[]> {
-
-		@Override
-		public void invoke(Object[] args) {
-			run((EditableValueHolder) args[0], (ValueReference) args[1]);
-		}
-
-		public abstract void run(EditableValueHolder valueHolder, ValueReference valueReference);
-	}
-
+  private void setComponentToInvalidState(String clientId) {
+    if (forAttribute == null) {
+      return;
+    }
+    UIComponent component = Components.findComponent(clientId);
+    if (component instanceof UIInput) {
+      ((UIInput) component).setValid(false);
+    }
+  }
 }
