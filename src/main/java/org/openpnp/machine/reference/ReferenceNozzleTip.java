@@ -1,11 +1,8 @@
 package org.openpnp.machine.reference;
-
 import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import org.openpnp.gui.MainFrame;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
@@ -27,284 +24,266 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 
 public class ReferenceNozzleTip extends AbstractNozzleTip {
-    @Attribute(required = false)
-    private int pickDwellMilliseconds;
+  @Attribute(required = false) private int pickDwellMilliseconds;
 
-    @Attribute(required = false)
-    private int placeDwellMilliseconds;
+  @Attribute(required = false) private int placeDwellMilliseconds;
 
-    @Element(required = false)
-    private Location changerStartLocation = new Location(LengthUnit.Millimeters);
+  @Element(required = false) private Location changerStartLocation = new Location(LengthUnit.Millimeters);
 
-    @Element(required = false)
-    private double changerStartToMidSpeed = 1D;
-    
-    @Element(required = false)
-    private Location changerMidLocation = new Location(LengthUnit.Millimeters);
-    
-    @Element(required = false)
-    private double changerMidToMid2Speed = 1D;
-    
-    @Element(required = false)
-    private Location changerMidLocation2 = new Location(LengthUnit.Millimeters);
-    
-    @Element(required = false)
-    private double changerMid2ToEndSpeed = 1D;
-    
-    @Element(required = false)
-    private Location changerEndLocation = new Location(LengthUnit.Millimeters);
-    
-    
-    @Element(required = false)
-    private ReferenceNozzleTipCalibration calibration = new ReferenceNozzleTipCalibration();
-    
-    @Element(required = false)
-    private double vacuumLevelPartOnLow;
+  @Element(required = false) private double changerStartToMidSpeed = 1D;
 
-    @Element(required = false)
-    private double vacuumLevelPartOnHigh;
+  @Element(required = false) private Location changerMidLocation = new Location(LengthUnit.Millimeters);
 
-    @Element(required = false)
-    private double vacuumLevelPartOffLow;
-    
-    @Element(required = false)
-    private double vacuumLevelPartOffHigh;
+  @Element(required = false) private double changerMidToMid2Speed = 1D;
 
-    @Element(required = false)
-    private Length diameterLow = new Length(0, LengthUnit.Millimeters);
+  @Element(required = false) private Location changerMidLocation2 = new Location(LengthUnit.Millimeters);
 
-    @Element(required = false)
-    private Length diameterHigh = new Length(0, LengthUnit.Millimeters);
+  @Element(required = false) private double changerMid2ToEndSpeed = 1D;
 
-    public ReferenceNozzleTip() {
+  @Element(required = false) private Location changerEndLocation = new Location(LengthUnit.Millimeters);
+
+  @Element(required = false) private ReferenceNozzleTipCalibration calibration = new ReferenceNozzleTipCalibration();
+
+  @Element(required = false) private double vacuumLevelPartOnLow;
+
+  @Element(required = false) private double vacuumLevelPartOnHigh;
+
+  @Element(required = false) private double vacuumLevelPartOffLow;
+
+  @Element(required = false) private double vacuumLevelPartOffHigh;
+
+  @Element(required = false) public private 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/left.java
+  Length
+=======
+  Action
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/right.java
+   
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/left.java
+  diameterLow = new Length(0, LengthUnit.Millimeters)
+=======
+  unloadAction = new AbstractAction("Unload") {
+    {
+      putValue(SMALL_ICON, Icons.nozzleTipUnload);
+      putValue(NAME, "Unload");
+      putValue(SHORT_DESCRIPTION, "Unload the currently loaded nozzle tip.");
     }
 
-    @Override
-    public String toString() {
-        return getName() + " " + getId();
+    @Override public void actionPerformed(final ActionEvent arg0) {
+      UiUtils.submitUiMachineTask(() -> {
+        MainFrame.get().getMachineControls().getSelectedNozzle().unloadNozzleTip();
+      });
+    }
+  }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/right.java
+  ;
+
+  public ReferenceNozzleTip() {
+  }
+
+  @Element(required = false) public private 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/left.java
+  Length
+=======
+  Action
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/right.java
+   
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/left.java
+  diameterHigh = new Length(0, LengthUnit.Millimeters)
+=======
+  loadAction = new AbstractAction("Load") {
+    {
+      putValue(SMALL_ICON, Icons.nozzleTipLoad);
+      putValue(NAME, "Load");
+      putValue(SHORT_DESCRIPTION, "Load the currently selected nozzle tip.");
     }
 
-    @Override
-    public Wizard getConfigurationWizard() {
-        return new ReferenceNozzleTipConfigurationWizard(this);
+    @Override public void actionPerformed(final ActionEvent arg0) {
+      UiUtils.submitUiMachineTask(() -> {
+        MainFrame.get().getMachineControls().getSelectedNozzle().loadNozzleTip(ReferenceNozzleTip.this);
+      });
     }
+  }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzleTip.java/right.java
+  ;
 
-    @Override
-    public String getPropertySheetHolderTitle() {
-        return getClass().getSimpleName() + " " + getName();
-    }
+  @Override public String toString() {
+    return getName() + " " + getId();
+  }
 
-    @Override
-    public PropertySheetHolder[] getChildPropertySheetHolders() {
-        return null;
-    }
+  @Override public Wizard getConfigurationWizard() {
+    return new ReferenceNozzleTipConfigurationWizard(this);
+  }
 
-    @Override
-    public Action[] getPropertySheetHolderActions() {
-        return new Action[] {unloadAction, loadAction, deleteAction};
-    }
+  @Override public String getPropertySheetHolderTitle() {
+    return getClass().getSimpleName() + " " + getName();
+  }
 
-    @Override
-    public PropertySheet[] getPropertySheets() {
-        return new PropertySheet[] {
-                new PropertySheetWizardAdapter(getConfigurationWizard()),
-                new PropertySheetWizardAdapter(new ReferenceNozzleTipPartDetectionWizard(this), "Part Detection"),
-                new PropertySheetWizardAdapter(new ReferenceNozzleTipToolChangerWizard(this), "Tool Changer"),
-                new PropertySheetWizardAdapter(new ReferenceNozzleTipCalibrationWizard(this), "Calibration")
-                };
-    }
+  @Override public PropertySheetHolder[] getChildPropertySheetHolders() {
+    return null;
+  }
 
-    public int getPickDwellMilliseconds() {
-        return pickDwellMilliseconds;
-    }
+  @Override public Action[] getPropertySheetHolderActions() {
+    return new Action[] { unloadAction, loadAction, deleteAction };
+  }
 
-    public void setPickDwellMilliseconds(int pickDwellMilliseconds) {
-        this.pickDwellMilliseconds = pickDwellMilliseconds;
-    }
+  @Override public PropertySheet[] getPropertySheets() {
+    return new PropertySheet[] { new PropertySheetWizardAdapter(getConfigurationWizard()), new PropertySheetWizardAdapter(new ReferenceNozzleTipPartDetectionWizard(this), "Part Detection"), new PropertySheetWizardAdapter(new ReferenceNozzleTipToolChangerWizard(this), "Tool Changer"), new PropertySheetWizardAdapter(new ReferenceNozzleTipCalibrationWizard(this), "Calibration") };
+  }
 
-    public int getPlaceDwellMilliseconds() {
-        return placeDwellMilliseconds;
-    }
+  public int getPickDwellMilliseconds() {
+    return pickDwellMilliseconds;
+  }
 
-    public void setPlaceDwellMilliseconds(int placeDwellMilliseconds) {
-        this.placeDwellMilliseconds = placeDwellMilliseconds;
-    }
+  public void setPickDwellMilliseconds(int pickDwellMilliseconds) {
+    this.pickDwellMilliseconds = pickDwellMilliseconds;
+  }
 
-    public Location getChangerStartLocation() {
-        return changerStartLocation;
-    }
+  public int getPlaceDwellMilliseconds() {
+    return placeDwellMilliseconds;
+  }
 
-    public void setChangerStartLocation(Location changerStartLocation) {
-        this.changerStartLocation = changerStartLocation;
-    }
+  public void setPlaceDwellMilliseconds(int placeDwellMilliseconds) {
+    this.placeDwellMilliseconds = placeDwellMilliseconds;
+  }
 
-    public Location getChangerMidLocation() {
-        return changerMidLocation;
-    }
+  public Location getChangerStartLocation() {
+    return changerStartLocation;
+  }
 
-    public void setChangerMidLocation(Location changerMidLocation) {
-        this.changerMidLocation = changerMidLocation;
-    }
+  public void setChangerStartLocation(Location changerStartLocation) {
+    this.changerStartLocation = changerStartLocation;
+  }
 
-    public Location getChangerMidLocation2() {
-        return changerMidLocation2;
-    }
+  public Location getChangerMidLocation() {
+    return changerMidLocation;
+  }
 
-    public void setChangerMidLocation2(Location changerMidLocation2) {
-        this.changerMidLocation2 = changerMidLocation2;
-    }
+  public void setChangerMidLocation(Location changerMidLocation) {
+    this.changerMidLocation = changerMidLocation;
+  }
 
-    public Location getChangerEndLocation() {
-        return changerEndLocation;
-    }
+  public Location getChangerMidLocation2() {
+    return changerMidLocation2;
+  }
 
-    public void setChangerEndLocation(Location changerEndLocation) {
-        this.changerEndLocation = changerEndLocation;
-    }
-    
-    public double getChangerStartToMidSpeed() {
-        return changerStartToMidSpeed;
-    }
+  public void setChangerMidLocation2(Location changerMidLocation2) {
+    this.changerMidLocation2 = changerMidLocation2;
+  }
 
-    public void setChangerStartToMidSpeed(double changerStartToMidSpeed) {
-        this.changerStartToMidSpeed = changerStartToMidSpeed;
-    }
+  public Location getChangerEndLocation() {
+    return changerEndLocation;
+  }
 
-    public double getChangerMidToMid2Speed() {
-        return changerMidToMid2Speed;
-    }
+  public void setChangerEndLocation(Location changerEndLocation) {
+    this.changerEndLocation = changerEndLocation;
+  }
 
-    public void setChangerMidToMid2Speed(double changerMidToMid2Speed) {
-        this.changerMidToMid2Speed = changerMidToMid2Speed;
-    }
+  public double getChangerStartToMidSpeed() {
+    return changerStartToMidSpeed;
+  }
 
-    public double getChangerMid2ToEndSpeed() {
-        return changerMid2ToEndSpeed;
-    }
+  public void setChangerStartToMidSpeed(double changerStartToMidSpeed) {
+    this.changerStartToMidSpeed = changerStartToMidSpeed;
+  }
 
-    public void setChangerMid2ToEndSpeed(double changerMid2ToEndSpeed) {
-        this.changerMid2ToEndSpeed = changerMid2ToEndSpeed;
-    }
+  public double getChangerMidToMid2Speed() {
+    return changerMidToMid2Speed;
+  }
 
-    public ReferenceNozzle getNozzleAttachedTo() {
-        for (Head head : Configuration.get().getMachine().getHeads()) {
-            for (Nozzle nozzle : head.getNozzles()) {
-                if (nozzle instanceof ReferenceNozzle) {
-                    // Note this also includes support for the "unloaded" nozzle tip stand-in to calibrate the
-                    // naked nozzle. But it will default to the first naked nozzle
-                    // See also: ReferenceNozzleTipCalibration.getUiCalibrationNozzle().
-                    if (this == ((ReferenceNozzle)nozzle).getCalibrationNozzleTip()) {
-                        return ((ReferenceNozzle)nozzle);
-                    }
-                }
-            }
+  public void setChangerMidToMid2Speed(double changerMidToMid2Speed) {
+    this.changerMidToMid2Speed = changerMidToMid2Speed;
+  }
+
+  public double getChangerMid2ToEndSpeed() {
+    return changerMid2ToEndSpeed;
+  }
+
+  public void setChangerMid2ToEndSpeed(double changerMid2ToEndSpeed) {
+    this.changerMid2ToEndSpeed = changerMid2ToEndSpeed;
+  }
+
+  public ReferenceNozzle getNozzleAttachedTo() {
+    for (Head head : Configuration.get().getMachine().getHeads()) {
+      for (Nozzle nozzle : head.getNozzles()) {
+        if (nozzle instanceof ReferenceNozzle) {
+          if (this == ((ReferenceNozzle) nozzle).getCalibrationNozzleTip()) {
+            return ((ReferenceNozzle) nozzle);
+          }
         }
-        return null;
+      }
+    }
+    return null;
+  }
+
+  public double getVacuumLevelPartOnLow() {
+    return vacuumLevelPartOnLow;
+  }
+
+  public void setVacuumLevelPartOnLow(double vacuumLevelPartOnLow) {
+    this.vacuumLevelPartOnLow = vacuumLevelPartOnLow;
+  }
+
+  public double getVacuumLevelPartOnHigh() {
+    return vacuumLevelPartOnHigh;
+  }
+
+  public void setVacuumLevelPartOnHigh(double vacuumLevelPartOnHigh) {
+    this.vacuumLevelPartOnHigh = vacuumLevelPartOnHigh;
+  }
+
+  public double getVacuumLevelPartOffLow() {
+    return vacuumLevelPartOffLow;
+  }
+
+  public void setVacuumLevelPartOffLow(double vacuumLevelPartOffLow) {
+    this.vacuumLevelPartOffLow = vacuumLevelPartOffLow;
+  }
+
+  public double getVacuumLevelPartOffHigh() {
+    return vacuumLevelPartOffHigh;
+  }
+
+  public void setVacuumLevelPartOffHigh(double vacuumLevelPartOffHigh) {
+    this.vacuumLevelPartOffHigh = vacuumLevelPartOffHigh;
+  }
+
+  @Override public Length getDiameterLow() {
+    return diameterLow;
+  }
+
+  public void setDiameterLow(Length diameterLow) {
+    this.diameterLow = diameterLow;
+  }
+
+  @Override public Length getDiameterHigh() {
+    return diameterHigh;
+  }
+
+  public void setDiameterHigh(Length diameterHigh) {
+    this.diameterHigh = diameterHigh;
+  }
+
+  public boolean isUnloadedNozzleTipStandin() {
+    return getName().startsWith("unloaded");
+  }
+
+  public ReferenceNozzleTipCalibration getCalibration() {
+    return calibration;
+  }
+
+  public Action deleteAction = new AbstractAction("Delete Nozzle Tip") {
+    {
+      putValue(SMALL_ICON, Icons.nozzleTipRemove);
+      putValue(NAME, "Delete Nozzle Tip");
+      putValue(SHORT_DESCRIPTION, "Delete the currently selected nozzle tip.");
     }
 
-    public double getVacuumLevelPartOnLow() {
-        return vacuumLevelPartOnLow;
+    @Override public void actionPerformed(ActionEvent arg0) {
+      int ret = JOptionPane.showConfirmDialog(MainFrame.get(), "Are you sure you want to delete " + getName() + "?", "Delete " + getName() + "?", JOptionPane.YES_NO_OPTION);
+      if (ret == JOptionPane.YES_OPTION) {
+        Configuration.get().getMachine().removeNozzleTip(ReferenceNozzleTip.this);
+      }
     }
-
-    public void setVacuumLevelPartOnLow(double vacuumLevelPartOnLow) {
-        this.vacuumLevelPartOnLow = vacuumLevelPartOnLow;
-    }
-
-    public double getVacuumLevelPartOnHigh() {
-        return vacuumLevelPartOnHigh;
-    }
-
-    public void setVacuumLevelPartOnHigh(double vacuumLevelPartOnHigh) {
-        this.vacuumLevelPartOnHigh = vacuumLevelPartOnHigh;
-    }
-
-    public double getVacuumLevelPartOffLow() {
-        return vacuumLevelPartOffLow;
-    }
-
-    public void setVacuumLevelPartOffLow(double vacuumLevelPartOffLow) {
-        this.vacuumLevelPartOffLow = vacuumLevelPartOffLow;
-    }
-
-    public double getVacuumLevelPartOffHigh() {
-        return vacuumLevelPartOffHigh;
-    }
-
-    public void setVacuumLevelPartOffHigh(double vacuumLevelPartOffHigh) {
-        this.vacuumLevelPartOffHigh = vacuumLevelPartOffHigh;
-    }
-
-    @Override
-    public Length getDiameterLow() {
-        return diameterLow;
-    }
-
-    public void setDiameterLow(Length diameterLow) {
-        this.diameterLow = diameterLow;
-    }
-
-    @Override
-    public Length getDiameterHigh() {
-        return diameterHigh;
-    }
-
-    public void setDiameterHigh(Length diameterHigh) {
-        this.diameterHigh = diameterHigh;
-    }
-
-    public boolean isUnloadedNozzleTipStandin() {
-        return getName().startsWith("unloaded");
-    }
-
-    public ReferenceNozzleTipCalibration getCalibration() {
-        return calibration;
-    }
-    
-
-    public Action loadAction = new AbstractAction("Load") {
-        {
-            putValue(SMALL_ICON, Icons.nozzleTipLoad);
-            putValue(NAME, "Load");
-            putValue(SHORT_DESCRIPTION, "Load the currently selected nozzle tip.");
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent arg0) {
-            UiUtils.submitUiMachineTask(() -> {
-                MainFrame.get().getMachineControls().getSelectedNozzle().loadNozzleTip(ReferenceNozzleTip.this);
-            });
-        }
-    };
-
-    public Action unloadAction = new AbstractAction("Unload") {
-        {
-            putValue(SMALL_ICON, Icons.nozzleTipUnload);
-            putValue(NAME, "Unload");
-            putValue(SHORT_DESCRIPTION, "Unload the currently loaded nozzle tip.");
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent arg0) {
-            UiUtils.submitUiMachineTask(() -> {
-                MainFrame.get().getMachineControls().getSelectedNozzle().unloadNozzleTip();
-            });
-        }
-    };
-    public Action deleteAction = new AbstractAction("Delete Nozzle Tip") {
-        {
-            putValue(SMALL_ICON, Icons.nozzleTipRemove);
-            putValue(NAME, "Delete Nozzle Tip");
-            putValue(SHORT_DESCRIPTION, "Delete the currently selected nozzle tip.");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            int ret = JOptionPane.showConfirmDialog(MainFrame.get(),
-                    "Are you sure you want to delete " + getName() + "?",
-                    "Delete " + getName() + "?", JOptionPane.YES_NO_OPTION);
-            if (ret == JOptionPane.YES_OPTION) {
-                Configuration.get().getMachine().removeNozzleTip(ReferenceNozzleTip.this);
-            }
-        }
-    };
+  };
 }
