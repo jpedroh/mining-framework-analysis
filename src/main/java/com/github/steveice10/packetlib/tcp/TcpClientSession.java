@@ -41,9 +41,9 @@ import java.net.*;
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
     private static Class<? extends Channel> CHANNEL_CLASS;
-    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
     private static EventLoopGroup EVENT_LOOP_GROUP;
     private static DefaultEventLoopGroup DEFAULT_EVENT_LOOP_GROUP;
+    private static final Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
 
     private final String bindAddress;
     private final int bindPort;
@@ -375,15 +375,12 @@ public class TcpClientSession extends TcpSession {
 
         if (!disableNative && Epoll.isAvailable()) {
             CHANNEL_CLASS = EpollSocketChannel.class;
-            DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
             EVENT_LOOP_GROUP = new EpollEventLoopGroup();
         } else if (!disableNative && KQueue.isAvailable()) {
             CHANNEL_CLASS = KQueueSocketChannel.class;
-            DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
             EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
         } else {
             CHANNEL_CLASS = NioSocketChannel.class;
-            DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
             EVENT_LOOP_GROUP = new NioEventLoopGroup();
         }
     }
