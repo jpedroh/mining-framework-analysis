@@ -1,25 +1,4 @@
-/*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
- * Copyright (C) 2011, 2013-2016 The JavaParser Team.
- *
- * This file is part of JavaParser.
- *
- * JavaParser can be used either under the terms of
- * a) the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- * b) the terms of the Apache License
- *
- * You should have received a copy of both licenses in LICENCE.LGPL and
- * LICENCE.APACHE. Please refer to those files for details.
- *
- * JavaParser is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- */
 package com.github.javaparser.ast;
-
 import com.github.javaparser.HasParentNode;
 import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
@@ -90,235 +69,207 @@ import com.github.javaparser.ast.Node;
  * @author Julio Vilmar Gesser
  */
 public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable, NodeWithRange<Node>, NodeWithTokenRange<Node> {
+  public enum ObserverRegistrationMode {
+    JUST_THIS_NODE,
+    THIS_NODE_AND_EXISTING_DESCENDANTS,
+    SELF_PROPAGATING
+  }
 
-    /**
-     * Different registration mode for observers on nodes.
-     */
-    public enum ObserverRegistrationMode {
+  public enum Parsedness {
+    PARSED,
+    UNPARSABLE
+  }
 
-        /**
-         * Notify exclusively for changes happening on this node alone.
-         */
-        JUST_THIS_NODE, /**
-         * Notify for changes happening on this node and all its descendants existing at the moment in
-         * which the observer was registered. Nodes attached later will not be observed.
-         */
-        THIS_NODE_AND_EXISTING_DESCENDANTS, /**
-         * Notify for changes happening on this node and all its descendants. The descendants existing at the moment in
-         * which the observer was registered will be observed immediately. As new nodes are attached later they are
-         * automatically registered to be observed.
-         */
-        SELF_PROPAGATING
-    }
-
-    public enum Parsedness {
-
-        PARSED, UNPARSABLE
-    }
-
-    /**
+  /**
      * This can be used to sort nodes on position.
      */
-    public static Comparator<NodeWithRange<?>> NODE_BY_BEGIN_POSITION = (a, b) -> {
-        if (a.getRange().isPresent() && b.getRange().isPresent()) {
-            return a.getRange().get().begin.compareTo(b.getRange().get().begin);
-        }
-        if (a.getRange().isPresent() || b.getRange().isPresent()) {
-            if (a.getRange().isPresent()) {
-                return 1;
-            }
-            return -1;
-        }
-        return 0;
-    };
-
-    private static final PrettyPrinter toStringPrinter = new PrettyPrinter(new PrettyPrinterConfiguration());
-
-    protected static final PrettyPrinterConfiguration prettyPrinterNoCommentsConfiguration = new PrettyPrinterConfiguration().setPrintComments(false);
-
-    @InternalProperty
-    private Range range;
-
-    @InternalProperty
-    private TokenRange tokenRange;
-
-    @InternalProperty
-    private Node parentNode;
-
-    @InternalProperty
-    private List<Node> childNodes = new LinkedList<>();
-
-    @InternalProperty
-    private List<Comment> orphanComments = new LinkedList<>();
-
-    @InternalProperty
-    private IdentityHashMap<DataKey<?>, Object> data = null;
-
-    private Comment comment;
-
-    @InternalProperty
-    private List<AstObserver> observers = new ArrayList<>();
-
-    @InternalProperty
-    private Parsedness parsed = PARSED;
-
-    protected Node(TokenRange tokenRange) {
-        setTokenRange(tokenRange);
+  public static Comparator<NodeWithRange<?>> NODE_BY_BEGIN_POSITION = (a, b) -> {
+    if (a.getRange().isPresent() && b.getRange().isPresent()) {
+      return a.getRange().get().begin.compareTo(b.getRange().get().begin);
     }
+    if (a.getRange().isPresent() || b.getRange().isPresent()) {
+      if (a.getRange().isPresent()) {
+        return 1;
+      }
+      return -1;
+    }
+    return 0;
+  };
 
-    /**
+  private static final PrettyPrinter toStringPrinter = new PrettyPrinter(new PrettyPrinterConfiguration());
+
+  protected static final PrettyPrinterConfiguration prettyPrinterNoCommentsConfiguration = new PrettyPrinterConfiguration().setPrintComments(false);
+
+  @InternalProperty private Range range;
+
+  @InternalProperty private TokenRange tokenRange;
+
+  @InternalProperty private Node parentNode;
+
+  @InternalProperty private List<Node> childNodes = new LinkedList<>();
+
+  @InternalProperty private List<Comment> orphanComments = new LinkedList<>();
+
+  @InternalProperty private IdentityHashMap<DataKey<?>, Object> data = null;
+
+  private Comment comment;
+
+  @InternalProperty private List<AstObserver> observers = new ArrayList<>();
+
+  @InternalProperty private Parsedness parsed = PARSED;
+
+  protected Node(TokenRange tokenRange) {
+    setTokenRange(tokenRange);
+  }
+
+  /**
      * Called in every constructor for node specific code.
      * It can't be written in the constructor itself because it will
      * be overwritten during code generation.
      */
-    protected void customInitialization() {
-    }
+  protected void customInitialization() {
+  }
 
-    /**
+  /**
      * This is a comment associated with this node.
      *
      * @return comment property
      */
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
-    public Optional<Comment> getComment() {
-        return Optional.ofNullable(comment);
-    }
+  @Generated(value = { "com.github.javaparser.generator.core.node.PropertyGenerator" }) public Optional<Comment> getComment() {
+    return Optional.ofNullable(comment);
+  }
 
-    /**
+  /**
      * @return the range of characters in the source code that this node covers.
      */
-    public Optional<Range> getRange() {
-        return Optional.ofNullable(range);
-    }
+  public Optional<Range> getRange() {
+    return Optional.ofNullable(range);
+  }
 
-    /**
+  /**
      * @return the range of tokens that this node covers.
      */
-    public Optional<TokenRange> getTokenRange() {
-        return Optional.ofNullable(tokenRange);
-    }
+  public Optional<TokenRange> getTokenRange() {
+    return Optional.ofNullable(tokenRange);
+  }
 
-    public Node setTokenRange(TokenRange tokenRange) {
-        this.tokenRange = tokenRange;
-        if (tokenRange == null) {
-            range = null;
-        } else {
-            range = new Range(tokenRange.getBegin().getRange().get().begin, tokenRange.getEnd().getRange().get().end);
-        }
-        return this;
+  public Node setTokenRange(TokenRange tokenRange) {
+    this.tokenRange = tokenRange;
+    if (tokenRange == null) {
+      range = null;
+    } else {
+      range = new Range(tokenRange.getBegin().getRange().get().begin, tokenRange.getEnd().getRange().get().end);
     }
+    return this;
+  }
 
-    /**
+  /**
      * @param range the range of characters in the source code that this node covers. null can be used to indicate that
      * no range information is known, or that it is not of interest.
      */
-    public Node setRange(Range range) {
-        if (this.range == range) {
-            return this;
-        }
-        notifyPropertyChange(ObservableProperty.RANGE, this.range, range);
-        this.range = range;
-        return this;
+  public Node setRange(Range range) {
+    if (this.range == range) {
+      return this;
     }
+    notifyPropertyChange(ObservableProperty.RANGE, this.range, range);
+    this.range = range;
+    return this;
+  }
 
-    /**
+  /**
      * Use this to store additional information to this node.
      *
      * @param comment to be set
      */
-    public final Node setComment(final Comment comment) {
-        if (this.comment == comment) {
-            return this;
-        }
-        if (comment != null && (this instanceof Comment)) {
-            throw new RuntimeException("A comment can not be commented");
-        }
-        notifyPropertyChange(ObservableProperty.COMMENT, this.comment, comment);
-        if (this.comment != null) {
-            this.comment.setCommentedNode(null);
-        }
-        this.comment = comment;
-        if (comment != null) {
-            this.comment.setCommentedNode(this);
-        }
-        return this;
+  public final Node setComment(final Comment comment) {
+    if (this.comment == comment) {
+      return this;
     }
+    if (comment != null && (this instanceof Comment)) {
+      throw new RuntimeException("A comment can not be commented");
+    }
+    notifyPropertyChange(ObservableProperty.COMMENT, this.comment, comment);
+    if (this.comment != null) {
+      this.comment.setCommentedNode(null);
+    }
+    this.comment = comment;
+    if (comment != null) {
+      this.comment.setCommentedNode(this);
+    }
+    return this;
+  }
 
-    /**
+  /**
      * Use this to store additional information to this node.
      *
      * @param comment to be set
      */
-    public final Node setLineComment(String comment) {
-        return setComment(new LineComment(comment));
-    }
+  public final Node setLineComment(String comment) {
+    return setComment(new LineComment(comment));
+  }
 
-    /**
+  /**
      * Use this to store additional information to this node.
      *
      * @param comment to be set
      */
-    public final Node setBlockComment(String comment) {
-        return setComment(new BlockComment(comment));
-    }
+  public final Node setBlockComment(String comment) {
+    return setComment(new BlockComment(comment));
+  }
 
-    /**
+  /**
      * Return the String representation of this node.
      *
      * @return the String representation of this node
      */
-    @Override
-    public final String toString() {
-        return toStringPrinter.print(this);
-    }
+  @Override public final String toString() {
+    return toStringPrinter.print(this);
+  }
 
-    public final String toString(PrettyPrinterConfiguration prettyPrinterConfiguration) {
-        return new PrettyPrinter(prettyPrinterConfiguration).print(this);
-    }
+  public final String toString(PrettyPrinterConfiguration prettyPrinterConfiguration) {
+    return new PrettyPrinter(prettyPrinterConfiguration).print(this);
+  }
 
-    @Override
-    public final int hashCode() {
-        return HashCodeVisitor.hashCode(this);
-    }
+  @Override public final int hashCode() {
+    return HashCodeVisitor.hashCode(this);
+  }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Node)) {
-            return false;
-        }
-        return EqualsVisitor.equals(this, (Node) obj);
+  @Override public boolean equals(final Object obj) {
+    if (obj == null || !(obj instanceof Node)) {
+      return false;
     }
+    return EqualsVisitor.equals(this, (Node) obj);
+  }
 
-    @Override
-    public Optional<Node> getParentNode() {
-        return Optional.ofNullable(parentNode);
-    }
+  @Override public Optional<Node> getParentNode() {
+    return Optional.ofNullable(parentNode);
+  }
 
-    /**
+  /**
      * Contains all nodes that have this node set as their parent.
      * You can add nodes to it by setting a node's parent to this node.
      * You can remove nodes from it by setting a child node's parent to something other than this node.
      *
      * @return all nodes that have this node as their parent.
      */
-    public List<Node> getChildNodes() {
-        return unmodifiableList(childNodes);
-    }
+  public List<Node> getChildNodes() {
+    return unmodifiableList(childNodes);
+  }
 
-    public void addOrphanComment(Comment comment) {
-        orphanComments.add(comment);
-        comment.setParentNode(this);
-    }
+  public void addOrphanComment(Comment comment) {
+    orphanComments.add(comment);
+    comment.setParentNode(this);
+  }
 
-    public boolean removeOrphanComment(Comment comment) {
-        boolean removed = orphanComments.remove(comment);
-        if (removed) {
-            comment.setParentNode(null);
-        }
-        return removed;
+  public boolean removeOrphanComment(Comment comment) {
+    boolean removed = orphanComments.remove(comment);
+    if (removed) {
+      comment.setParentNode(null);
     }
+    return removed;
+  }
 
-    /**
+  /**
      * This is a list of Comment which are inside the node and are not associated
      * with any meaningful AST Node.
      * <p>
@@ -332,103 +283,98 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      *
      * @return all comments that cannot be attributed to a concept
      */
-    public List<Comment> getOrphanComments() {
-        return new LinkedList<>(orphanComments);
-    }
+  public List<Comment> getOrphanComments() {
+    return new LinkedList<>(orphanComments);
+  }
 
-    /**
+  /**
      * This is the list of Comment which are contained in the Node either because
      * they are properly associated to one of its children or because they are floating
      * around inside the Node
      *
      * @return all Comments within the node as a list
      */
-    public List<Comment> getAllContainedComments() {
-        List<Comment> comments = new LinkedList<>();
-        comments.addAll(getOrphanComments());
-        for (Node child : getChildNodes()) {
-            child.getComment().ifPresent(comments::add);
-            comments.addAll(child.getAllContainedComments());
-        }
-        return comments;
+  public List<Comment> getAllContainedComments() {
+    List<Comment> comments = new LinkedList<>();
+    comments.addAll(getOrphanComments());
+    for (Node child : getChildNodes()) {
+      child.getComment().ifPresent(comments::add);
+      comments.addAll(child.getAllContainedComments());
     }
+    return comments;
+  }
 
-    /**
+  /**
      * Assign a new parent to this node, removing it
      * from the list of children of the previous parent, if any.
      *
      * @param newParentNode node to be set as parent
      */
-    @Override
-    public Node setParentNode(Node newParentNode) {
-        if (newParentNode == parentNode) {
-            return this;
-        }
-        observers.forEach(o -> o.parentChange(this, parentNode, newParentNode));
-        // remove from old parent, if any
-        if (parentNode != null) {
-            final List<Node> parentChildNodes = parentNode.childNodes;
-            for (int i = 0; i < parentChildNodes.size(); i++) {
-                if (parentChildNodes.get(i) == this) {
-                    parentChildNodes.remove(i);
-                }
-            }
-        }
-        parentNode = newParentNode;
-        // add to new parent, if any
-        if (parentNode != null) {
-            parentNode.childNodes.add(this);
-        }
-        return this;
+  @Override public Node setParentNode(Node newParentNode) {
+    if (newParentNode == parentNode) {
+      return this;
     }
-
-    protected void setAsParentNodeOf(Node childNode) {
-        if (childNode != null) {
-            childNode.setParentNode(getParentNodeForChildren());
+    observers.forEach((o) -> o.parentChange(this, parentNode, newParentNode));
+    if (parentNode != null) {
+      final List<Node> parentChildNodes = parentNode.childNodes;
+      for (int i = 0; i < parentChildNodes.size(); i++) {
+        if (parentChildNodes.get(i) == this) {
+          parentChildNodes.remove(i);
         }
+      }
     }
+    parentNode = newParentNode;
+    if (parentNode != null) {
+      parentNode.childNodes.add(this);
+    }
+    return this;
+  }
 
-    public static final int ABSOLUTE_BEGIN_LINE = -1;
+  protected void setAsParentNodeOf(Node childNode) {
+    if (childNode != null) {
+      childNode.setParentNode(getParentNodeForChildren());
+    }
+  }
 
-    public static final int ABSOLUTE_END_LINE = -2;
+  public static final int ABSOLUTE_BEGIN_LINE = -1;
 
-    /**
+  public static final int ABSOLUTE_END_LINE = -2;
+
+  /**
      * @deprecated use getComment().isPresent()
      */
-    @Deprecated
-    public boolean hasComment() {
-        return comment != null;
-    }
+  @Deprecated public boolean hasComment() {
+    return comment != null;
+  }
 
-    public void tryAddImportToParentCompilationUnit(Class<?> clazz) {
-        getAncestorOfType(CompilationUnit.class).ifPresent(p -> p.addImport(clazz));
-    }
+  public void tryAddImportToParentCompilationUnit(Class<?> clazz) {
+    getAncestorOfType(CompilationUnit.class).ifPresent((p) -> p.addImport(clazz));
+  }
 
-    /**
+  /**
      * Recursively finds all nodes of a certain type.
      *
      * @param clazz the type of node to find.
      */
-    public <N extends Node> List<N> getChildNodesByType(Class<N> clazz) {
-        List<N> nodes = new ArrayList<>();
-        for (Node child : getChildNodes()) {
-            if (clazz.isInstance(child)) {
-                nodes.add(clazz.cast(child));
-            }
-            nodes.addAll(child.getChildNodesByType(clazz));
-        }
-        return nodes;
+  public <N extends Node> List<N> getChildNodesByType(Class<N> clazz) {
+    List<N> nodes = new ArrayList<>();
+    for (Node child : getChildNodes()) {
+      if (clazz.isInstance(child)) {
+        nodes.add(clazz.cast(child));
+      }
+      nodes.addAll(child.getChildNodesByType(clazz));
     }
+    return nodes;
+  }
 
-    /**
+  /**
      * @deprecated use getChildNodesByType
      */
-    @Deprecated
-    public <N extends Node> List<N> getNodesByType(Class<N> clazz) {
-        return getChildNodesByType(clazz);
-    }
+  @Deprecated public <N extends Node> List<N> getNodesByType(Class<N> clazz) {
+    return getChildNodesByType(clazz);
+  }
 
-    /**
+  /**
      * Gets data for this component using the given key.
      *
      * @param <M> The type of the data.
@@ -436,15 +382,14 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * @return The data or null of no data was found for the given key
      * @see DataKey
      */
-    @SuppressWarnings("unchecked")
-    public <M> M getData(final DataKey<M> key) {
-        if (data == null) {
-            return null;
-        }
-        return (M) data.get(key);
+  @SuppressWarnings(value = { "unchecked" }) public <M extends java.lang.Object> M getData(final DataKey<M> key) {
+    if (data == null) {
+      return null;
     }
+    return (M) data.get(key);
+  }
 
-    /**
+  /**
      * Sets data for this component using the given key.
      * For information on creating DataKey, see {@link DataKey}.
      *
@@ -453,27 +398,27 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * @param object The data object
      * @see DataKey
      */
-    public <M> void setData(DataKey<M> key, M object) {
-        if (data == null) {
-            data = new IdentityHashMap<>();
-        }
-        data.put(key, object);
+  public <M extends java.lang.Object> void setData(DataKey<M> key, M object) {
+    if (data == null) {
+      data = new IdentityHashMap<>();
     }
+    data.put(key, object);
+  }
 
-    /**
+  /**
      * Try to remove this node from the parent
      *
      * @return true if removed, false if it is a required property of the parent, or if the parent isn't set.
      * @throws RuntimeException if it fails in an unexpected way
      */
-    public boolean remove() {
-        if (parentNode == null) {
-            return false;
-        }
-        return parentNode.remove(this);
+  public boolean remove() {
+    if (parentNode == null) {
+      return false;
     }
+    return parentNode.remove(this);
+  }
 
-    /**
+  /**
      * Forcibly removes this node from the AST.
      * If it cannot be removed from the parent with remove(),
      * it will try to remove its parent instead,
@@ -483,139 +428,132 @@ public abstract class Node implements Cloneable, HasParentNode<Node>, Visitable,
      * Since everything at CompilationUnit level is removable,
      * this method will only (silently) fail when the node is in a detached AST fragment.
      */
-    public void removeForced() {
-        if (!remove()) {
-            getParentNode().ifPresent(Node::remove);
-        }
+  public void removeForced() {
+    if (!remove()) {
+      getParentNode().ifPresent(Node::remove);
     }
+  }
 
-    @Override
-    public Node getParentNodeForChildren() {
-        return this;
+  @Override public Node getParentNodeForChildren() {
+    return this;
+  }
+
+  protected void setAsParentNodeOf(NodeList<? extends Node> list) {
+    if (list != null) {
+      list.setParentNode(getParentNodeForChildren());
     }
+  }
 
-    protected void setAsParentNodeOf(NodeList<? extends Node> list) {
-        if (list != null) {
-            list.setParentNode(getParentNodeForChildren());
-        }
-    }
+  public <P extends java.lang.Object> void notifyPropertyChange(ObservableProperty property, P oldValue, P newValue) {
+    this.observers.forEach((o) -> o.propertyChange(this, property, oldValue, newValue));
+  }
 
-    public <P> void notifyPropertyChange(ObservableProperty property, P oldValue, P newValue) {
-        this.observers.forEach(o -> o.propertyChange(this, property, oldValue, newValue));
-    }
+  @Override public void unregister(AstObserver observer) {
+    this.observers.remove(observer);
+  }
 
-    @Override
-    public void unregister(AstObserver observer) {
-        this.observers.remove(observer);
-    }
+  @Override public void register(AstObserver observer) {
+    this.observers.add(observer);
+  }
 
-    @Override
-    public void register(AstObserver observer) {
-        this.observers.add(observer);
-    }
-
-    /**
+  /**
      * Register a new observer for the given node. Depending on the mode specified also descendants, existing
      * and new, could be observed. For more details see <i>ObserverRegistrationMode</i>.
      */
-    public void register(AstObserver observer, ObserverRegistrationMode mode) {
-        if (mode == null) {
-            throw new IllegalArgumentException("Mode should be not null");
-        }
-        switch(mode) {
-            case JUST_THIS_NODE:
-                register(observer);
-                break;
-            case THIS_NODE_AND_EXISTING_DESCENDANTS:
-                registerForSubtree(observer);
-                break;
-            case SELF_PROPAGATING:
-                registerForSubtree(PropagatingAstObserver.transformInPropagatingObserver(observer));
-                break;
-            default:
-                throw new UnsupportedOperationException("This mode is not supported: " + mode);
-        }
+  public void register(AstObserver observer, ObserverRegistrationMode mode) {
+    if (mode == null) {
+      throw new IllegalArgumentException("Mode should be not null");
     }
+    switch (mode) {
+      case JUST_THIS_NODE:
+      register(observer);
+      break;
+      case THIS_NODE_AND_EXISTING_DESCENDANTS:
+      registerForSubtree(observer);
+      break;
+      case SELF_PROPAGATING:
+      registerForSubtree(PropagatingAstObserver.transformInPropagatingObserver(observer));
+      break;
+      default:
+      throw new UnsupportedOperationException("This mode is not supported: " + mode);
+    }
+  }
 
-    /**
+  /**
      * Register the observer for the current node and all the contained node and nodelists, recursively.
      */
-    public void registerForSubtree(AstObserver observer) {
-        register(observer);
-        this.getChildNodes().forEach(c -> c.registerForSubtree(observer));
-        this.getNodeLists().forEach(nl -> {
-            if (nl != null)
-                nl.register(observer);
-        });
-    }
+  public void registerForSubtree(AstObserver observer) {
+    register(observer);
+    this.getChildNodes().forEach((c) -> c.registerForSubtree(observer));
+    this.getNodeLists().forEach((nl) -> {
+      if (nl != null) {
+        nl.register(observer);
+      }
+    });
+  }
 
-    @Override
-    public boolean isRegistered(AstObserver observer) {
-        return this.observers.contains(observer);
-    }
+  @Override public boolean isRegistered(AstObserver observer) {
+    return this.observers.contains(observer);
+  }
 
-    /**
+  /**
      * The list of NodeLists owned by this node.
      */
-    public List<NodeList<?>> getNodeLists() {
-        return Collections.emptyList();
-    }
+  public List<NodeList<?>> getNodeLists() {
+    return Collections.emptyList();
+  }
 
-    @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
-    public boolean remove(Node node) {
-        if (node == null)
-            return false;
-        if (comment != null) {
-            if (node == comment) {
-                removeComment();
-                return true;
-            }
-        }
-        return false;
+  @Generated(value = { "com.github.javaparser.generator.core.node.RemoveMethodGenerator" }) public boolean remove(Node node) {
+    if (node == null) {
+      return false;
     }
-
-    @Generated("com.github.javaparser.generator.core.node.RemoveMethodGenerator")
-    public Node removeComment() {
-        return setComment((Comment) null);
+    if (comment != null) {
+      if (node == comment) {
+        removeComment();
+        return true;
+      }
     }
+    return false;
+  }
 
-    @Override
-    @Generated("com.github.javaparser.generator.core.node.CloneGenerator")
-    public Node clone() {
-        return (Node) accept(new CloneVisitor(), null);
-    }
+  @Generated(value = { "com.github.javaparser.generator.core.node.RemoveMethodGenerator" }) public Node removeComment() {
+    return setComment((Comment) null);
+  }
 
-    @Generated("com.github.javaparser.generator.core.node.GetMetaModelGenerator")
-    public NodeMetaModel getMetaModel() {
-        return JavaParserMetaModel.nodeMetaModel;
-    }
+  @Override @Generated(value = { "com.github.javaparser.generator.core.node.CloneGenerator" }) public Node clone() {
+    return (Node) accept(new CloneVisitor(), null);
+  }
 
-    /**
+  @Generated(value = { "com.github.javaparser.generator.core.node.GetMetaModelGenerator" }) public NodeMetaModel getMetaModel() {
+    return JavaParserMetaModel.nodeMetaModel;
+  }
+
+  /**
      * @return whether this node was successfully parsed or not.
      * If it was not, only the range and tokenRange fields will be valid. 
      */
-    public Parsedness getParsed() {
-        return parsed;
-    }
+  public Parsedness getParsed() {
+    return parsed;
+  }
 
-    /**
+  /**
      * Used by the parser to flag unparsable nodes.
      */
-    public Node setParsed(Parsedness parsed) {
-        this.parsed = parsed;
-        return this;
-    }
+  public Node setParsed(Parsedness parsed) {
+    this.parsed = parsed;
+    return this;
+  }
 
-    @Generated("com.github.javaparser.generator.core.node.ReplaceMethodGenerator")
-    public boolean replace(Node node, Node replacementNode) {
-        if (node == null)
-            return false;
-        if (comment != null) {
-            if (node == comment) {
-                setComment((Comment) replacementNode);
-                return true;
-            }
-        }
-        return false;
+  @Generated(value = { "com.github.javaparser.generator.core.node.ReplaceMethodGenerator" }) public boolean replace(Node node, Node replacementNode) {
+    if (node == null) {
+      return false;
     }
+    if (comment != null) {
+      if (node == comment) {
+        setComment((Comment) replacementNode);
+        return true;
+      }
+    }
+    return false;
+  }
 }
