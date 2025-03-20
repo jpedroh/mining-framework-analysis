@@ -73,7 +73,6 @@ public final class MkQueryMatchers {
     ) {
         return new MkQueryHeaderMatcher(header, matcher);
     }
-
     /**
      * Matches the path of the MkQuery.
      *
@@ -85,27 +84,29 @@ public final class MkQueryMatchers {
             Matchers.<URI>hasProperty("rawPath", path)
         );
     }
-
     /**
      * Matches the query of the MkQuery.
      *
      * @param path The path to check.
      * @return Matcher for checking the query part of MkQuery
      */
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/left.java
     public static Matcher<MkQuery> hasQuery(final Matcher<String> path) {
         return new MkQueryUriMatcher(
             Matchers.<URI>hasProperty("rawQuery", path)
         );
     }
-
+||||||| /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/base.java
+=======
+    public static Matcher<MkQuery> hasQuery(final Matcher<String> query) {
+        return new MkQueryQueryMatcher(query);
+    }
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/right.java
     /**
      * Matches the query of the MkQuery.
      *
      * @param query The query to check.
      * @return Matcher for checking the query of MkQuery
      */
-    public static Matcher<MkQuery> hasQuery(final Matcher<String> query) {
-        return new MkQueryQueryMatcher(query);
-    }
 
 }
