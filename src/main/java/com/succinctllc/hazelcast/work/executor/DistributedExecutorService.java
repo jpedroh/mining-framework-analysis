@@ -1,5 +1,4 @@
 package com.succinctllc.hazelcast.work.executor;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +14,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
-
 import com.hazelcast.core.Member;
 import com.hazelcast.core.MultiTask;
 import com.hazelcast.logging.ILogger;
@@ -59,355 +57,318 @@ import com.yammer.metrics.core.TimerContext;
  *
  */
 public class DistributedExecutorService implements ExecutorService {
-    private static ConcurrentMap<String, DistributedExecutorService> servicesByTopology = new ConcurrentHashMap<String, DistributedExecutorService>();
+  private static ConcurrentMap<String, DistributedExecutorService> servicesByTopology = new ConcurrentHashMap<String, DistributedExecutorService>();
 
-    public static DistributedExecutorService get(String topology) {
-        return (DistributedExecutorService) servicesByTopology.get(topology);
-    }
-    
-    private static ILogger LOGGER = Logger.getLogger(DistributedExecutorService.class.getName());
-    //private DistributedExecutorServiceManager distributedExecutorServiceManager;
-    
-    private volatile boolean         isReady  = false;
-    private final ListRouter<Member> memberRouter;
-    private final WorkIdAdapter     partitionAdapter;
-    private final LocalWorkExecutorService                                  localExecutorService;
-    private final HazelcastWorkTopology topology;
-    private final ExecutorService                                           workDistributor;
-    private final DistributedFutureTracker futureTracker;
-    private final boolean acknowledgeWorkSubmittion;
-    private final boolean disableWorkers;
-    private final MetricNamer metricNamer;
-    private final boolean statisticsEnabled;
-    private final MetricsRegistry metrics;
-    
-    private com.yammer.metrics.core.Timer workAddedTimer;
-    private Meter worksAdded;
-    
-    //max number of times to try and submit a work before giving up
-    private final int MAX_SUBMIT_TRIES = 10; 
-    
-    public static interface RunnablePartitionable extends Runnable, Groupable {
-        
-    }
-    
-    protected DistributedExecutorService(InternalBuilderStep2<?> internalBuilderStep1){
-        this.topology = internalBuilderStep1.topology;
-        this.partitionAdapter = internalBuilderStep1.partitionAdapter;
-        this.acknowledgeWorkSubmittion = internalBuilderStep1.acknowlegeWorkSubmission;
-        this.disableWorkers = internalBuilderStep1.disableWorkers;
-        this.metricNamer = internalBuilderStep1.metricNamer;
-        this.statisticsEnabled = internalBuilderStep1.metricsRegistry != null;
-        this.metrics = internalBuilderStep1.metricsRegistry;
-        
-        workDistributor = topology.getWorkDistributor();
-        
-        if (servicesByTopology.putIfAbsent(topology.getName(), this) != null) { 
-            throw new IllegalArgumentException(
-                "A DistributedExecutorService already exists for the topology "
-                        + topology.getName()); 
-        }
-        
-        
-        this.localExecutorService = new LocalWorkExecutorService(topology, internalBuilderStep1.threadCount, metrics, metricNamer);     
-        memberRouter = new RoundRobinRouter<Member>(new Callable<List<Member>>() {
-            public List<Member> call() throws Exception {
-                return topology.getReadyMembers();
-            }
-        });
-        
-        futureTracker = new DistributedFutureTracker(this);
-        
-        //TODO: move stats tracking to separate generic class
-        if(statisticsEnabled) {
-            workAddedTimer = metrics.newTimer(createName("[submit] Call timer"), TimeUnit.MILLISECONDS, TimeUnit.MINUTES);
-            worksAdded     = metrics.newMeter(createName("[submit] Work submitted"), "work added", TimeUnit.MINUTES);
-            metrics.newGauge(createName("[submit] Percent duplicate rate"), new PercentDuplicateRateGuage(worksAdded, workAddedTimer));
-            metrics.newGauge(createName("Pending futures count"), new LocalFuturesWaitingGauge(futureTracker));
-            metrics.newGauge(createName("Pending work map size (local)"), new LocalIMapSizeGauge(topology.getPendingWork()));
-        }
-        
-    }
-    
-    private MetricName createName(String name) {
-        return metricNamer.createMetricName(
-            "hazelcast-work", 
-            topology.getName(), 
-            "DistributedExecutorService", 
-            name
-        );
-    }
-    
-    public void startup() {
-        if(!disableWorkers) {
-            localExecutorService.start();
-            isReady = true;
-            topology.localExecutorServiceReady();
-            new Timer(topology.createName("rebalance-timer"), true)
-                .schedule(new WorkRebalanceTimerTask(this), 10000, 120000);
-        }
-        
-        //flush items that got left behind in the local map
-        //this must always be started on every single node!
-        //new Timer(topology.createName("flush-timer"), true)
-        //    .schedule(new StaleWorkFlushTimerTask(this), 6000, 6000);
-        
-        //using the backoff timer instead from 1 second - 30 seconds
-        //typical usage patterns will note that it will recover more items
-        //after the first execution so a backoff makes sense
-        BackoffTimer timer = new BackoffTimer(topology.createName("flush-timer"));
-        timer.schedule(new StaleWorkFlushTimerTask(this), 1000, 30000, 2);
-        timer.start();
-        
-    }
-    
-    public HazelcastWorkTopology getTopology(){
-        return this.topology;
-    }
+  public static DistributedExecutorService get(String topology) {
+    return (DistributedExecutorService) servicesByTopology.get(topology);
+  }
 
-    public LocalWorkExecutorService getLocalExecutorService() {
-        return localExecutorService;
-    }
-    
-    
+  private static ILogger LOGGER = Logger.getLogger(DistributedExecutorService.class.getName());
 
-    public boolean isReady() {
-        return isReady;
-    }
+  private volatile boolean isReady = false;
 
-    public void execute(Runnable command) {
-        execute(command, false);
+  private final ListRouter<Member> memberRouter;
+
+  private final WorkIdAdapter partitionAdapter;
+
+  private final LocalWorkExecutorService localExecutorService;
+
+  private final HazelcastWorkTopology topology;
+
+  private final ExecutorService workDistributor;
+
+  private final DistributedFutureTracker futureTracker;
+
+  private final boolean acknowledgeWorkSubmittion;
+
+  private final boolean disableWorkers;
+
+  private final MetricNamer metricNamer;
+
+  private final boolean statisticsEnabled;
+
+  private final MetricsRegistry metrics;
+
+  private com.yammer.metrics.core.Timer workAddedTimer;
+
+  private Meter worksAdded;
+
+  private final int MAX_SUBMIT_TRIES = 10;
+
+  public static interface RunnablePartitionable extends Runnable, Groupable {
+  }
+
+  protected DistributedExecutorService(InternalBuilderStep2<?> internalBuilderStep1) {
+    this.topology = internalBuilderStep1.topology;
+    this.partitionAdapter = internalBuilderStep1.partitionAdapter;
+    this.acknowledgeWorkSubmittion = internalBuilderStep1.acknowlegeWorkSubmission;
+    this.disableWorkers = internalBuilderStep1.disableWorkers;
+    this.metricNamer = internalBuilderStep1.metricNamer;
+    this.statisticsEnabled = internalBuilderStep1.metricsRegistry != null;
+    this.metrics = internalBuilderStep1.metricsRegistry;
+    workDistributor = topology.getWorkDistributor();
+    if (servicesByTopology.putIfAbsent(topology.getName(), this) != null) {
+      throw new IllegalArgumentException("A DistributedExecutorService already exists for the topology " + topology.getName());
     }
-    
-    protected void execute(Runnable command, boolean isResubmitting) {
-        doExecute(createHazelcastWorkWrapper(command), isResubmitting);
+    this.localExecutorService = new LocalWorkExecutorService(topology, internalBuilderStep1.threadCount, metrics, metricNamer);
+    memberRouter = new RoundRobinRouter<Member>(new Callable<List<Member>>() {
+      public List<Member> call() throws Exception {
+        return topology.getReadyMembers();
+      }
+    });
+    futureTracker = new DistributedFutureTracker(this);
+    if (statisticsEnabled) {
+      workAddedTimer = metrics.newTimer(createName("[submit] Call timer"), TimeUnit.MILLISECONDS, TimeUnit.MINUTES);
+      worksAdded = metrics.newMeter(createName("[submit] Work submitted"), "work added", TimeUnit.MINUTES);
+      metrics.newGauge(createName("[submit] Percent duplicate rate"), new PercentDuplicateRateGuage(worksAdded, workAddedTimer));
+      metrics.newGauge(createName("Pending futures count"), new LocalFuturesWaitingGauge(futureTracker));
+      metrics.newGauge(createName("Pending work map size (local)"), new LocalIMapSizeGauge(topology.getPendingWork()));
     }
-    
-    private HazelcastWork createHazelcastWorkWrapper(Runnable task){
-        if(task instanceof HazelcastWork) {
-            ((HazelcastWork) task).updateCreatedTime();
-            return (HazelcastWork) task;
+  }
+
+  private MetricName createName(String name) {
+    return metricNamer.createMetricName("hazelcast-work", topology.getName(), "DistributedExecutorService", name);
+  }
+
+  public void startup() {
+    if (!disableWorkers) {
+      localExecutorService.start();
+      isReady = true;
+      topology.localExecutorServiceReady();
+      new Timer(topology.createName("rebalance-timer"), true).schedule(new WorkRebalanceTimerTask(this), 10000, 120000);
+    }
+    BackoffTimer timer = new BackoffTimer(topology.createName("flush-timer"));
+    timer.schedule(new StaleWorkFlushTimerTask(this), 1000, 30000, 2);
+    timer.start();
+  }
+
+  public HazelcastWorkTopology getTopology() {
+    return this.topology;
+  }
+
+  public LocalWorkExecutorService getLocalExecutorService() {
+    return localExecutorService;
+  }
+
+  public boolean isReady() {
+    return isReady;
+  }
+
+  public void execute(Runnable command) {
+    execute(command, false);
+  }
+
+  protected void execute(Runnable command, boolean isResubmitting) {
+    doExecute(createHazelcastWorkWrapper(command), isResubmitting);
+  }
+
+  private HazelcastWork createHazelcastWorkWrapper(Runnable task) {
+    if (task instanceof HazelcastWork) {
+      ((HazelcastWork) task).updateCreatedTime();
+      return (HazelcastWork) task;
+    } else {
+      return new HazelcastWork(topology.getName(), partitionAdapter.createWorkId(task), task);
+    }
+  }
+
+  private HazelcastWork createHazelcastWorkWrapper(Callable<?> task) {
+    if (task instanceof HazelcastWork) {
+      ((HazelcastWork) task).updateCreatedTime();
+      return (HazelcastWork) task;
+    } else {
+      return new HazelcastWork(topology.getName(), partitionAdapter.createWorkId(task), task);
+    }
+  }
+
+  protected void doExecute(HazelcastWork wrapper, boolean isResubmitting) {
+    TimerContext ctx = null;
+    if (statisticsEnabled) {
+      ctx = workAddedTimer.time();
+    }
+    try {
+      WorkId workKey = wrapper.getWorkId();
+      boolean executeTask = true;
+      int tries = 0;
+      while (++tries <= MAX_SUBMIT_TRIES) {
+        if (isResubmitting) {
+          wrapper.setSubmissionCount(wrapper.getSubmissionCount() + 1);
+          topology.getPendingWork().put(workKey.getId(), wrapper);
         } else {
-            return new HazelcastWork(topology.getName(), partitionAdapter.createWorkId(task), task);
+          executeTask = topology.getPendingWork().putIfAbsent(workKey.getId(), wrapper) == null;
         }
-    }
-    
-    private HazelcastWork createHazelcastWorkWrapper(Callable<?> task){
-        if(task instanceof HazelcastWork) {
-            ((HazelcastWork) task).updateCreatedTime();
-            return (HazelcastWork) task;
+        if (executeTask) {
+          Member m = memberRouter.next();
+          if (m == null) {
+            LOGGER.log(Level.WARNING, "Work submitted to writeAheadLog but no members are online to do the work.");
+            return;
+          }
+          if (topology.getClusterServices().submitWork(wrapper, m, acknowledgeWorkSubmittion)) {
+
+<<<<<<< /usr/src/app/output/jclawson/hazeltask/9f9809f46cd73b80f333774d552565e5ca89f302/src/main/java/com/succinctllc/hazelcast/work/executor/DistributedExecutorService.java/left.java
+            try {
+              if (task.get()) {
+                if (worksAdded != null) {
+                  worksAdded.mark();
+                }
+                return;
+              } else {
+                LOGGER.log(Level.INFO, "The member " + m + " did not accept the work.  Trying to resubmit to another node");
+                isResubmitting = true;
+              }
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              LOGGER.log(Level.WARNING, "Thread was interrupted waiting for work to be submitted", e);
+              return;
+            } catch (MemberLeftException e) {
+              LOGGER.log(Level.WARNING, "Member left, trying to resubmit work to another node");
+              isResubmitting = true;
+            } catch (ExecutionException e) {
+              throw new RuntimeException("An error ocurred while distributing work", e);
+            }
+=======
+            if (worksAdded != null) {
+              worksAdded.mark();
+            }
+>>>>>>> /usr/src/app/output/jclawson/hazeltask/9f9809f46cd73b80f333774d552565e5ca89f302/src/main/java/com/succinctllc/hazelcast/work/executor/DistributedExecutorService.java/right.java
+
+            return;
+          } else {
+            isResubmitting = true;
+          }
         } else {
-            return new HazelcastWork(topology.getName(), partitionAdapter.createWorkId(task), task);
+          LOGGER.log(Level.FINE, workKey.getId() + " is already in the system to be worked on. I will not resubmit it");
+          return;
         }
+      }
+      if (tries > MAX_SUBMIT_TRIES) {
+        throw new RuntimeException("Unable to submit work to nodes. I tried " + MAX_SUBMIT_TRIES + " times.");
+      }
+    }  finally {
+      if (ctx != null) {
+        ctx.stop();
+      }
     }
-    
-    //TODO: make HazelcastWork package protected, detect if we are resubmitting if command instanceof HazelcastWork
-    protected void doExecute(HazelcastWork wrapper, boolean isResubmitting) {
-        TimerContext ctx = null;
-        if(statisticsEnabled) {
-            ctx = workAddedTimer.time();
-        }
-        
-        try {       
-            WorkId workKey = wrapper.getWorkId();
-            boolean executeTask = true;
-            
-            /*
-             * with acknowledgeWorkSubmition, we will sit in this loop until a 
-             * node accepts our work item.  Currently, a node will accept as long as
-             * a MemberLeftException is not thrown
-             */
-            int tries = 0;
-            while(++tries <= MAX_SUBMIT_TRIES) {
-                if(isResubmitting) {
-                    wrapper.setSubmissionCount(wrapper.getSubmissionCount()+1);
-                    topology.getPendingWork().put(workKey.getId(), wrapper);
-                } else {
-                    executeTask = topology.getPendingWork().putIfAbsent(workKey.getId(), wrapper) == null;
-                }
-                
-                if(executeTask) {
-                    Member m = memberRouter.next();
-                    if(m == null) {
-                        LOGGER.log(Level.WARNING, "Work submitted to writeAheadLog but no members are online to do the work.");
-                        return;
-                    }
-                    
-                    if(topology.getClusterServices().submitWork(wrapper, m, acknowledgeWorkSubmittion)) {
-                        if(worksAdded != null)
-                            worksAdded.mark();
-                        return;
-                    } else {
-                        isResubmitting = true;
-                    }
-                } else {
-                    //do not submit
-                    return;
-                }
-            }
-            
-            if(tries > MAX_SUBMIT_TRIES) {
-                throw new RuntimeException("Unable to submit work to nodes. I tried "+MAX_SUBMIT_TRIES+" times.");
-            }
-        
-        } finally {
-            if(ctx != null)
-                ctx.stop();
-        }
+  }
+
+  public <T extends java.lang.Object> Future<T> submit(Callable<T> task) {
+    HazelcastWork work = createHazelcastWorkWrapper(task);
+    DistributedFuture<T> future = new DistributedFuture<T>();
+    futureTracker.add(work.getUniqueIdentifier(), future);
+    doExecute(work, false);
+    return future;
+  }
+
+  public void shutdown() {
+    MultiTask<List<Runnable>> task = new MultiTask<List<Runnable>>(new ShutdownEvent(topology.getName(), ShutdownEvent.ShutdownType.WAIT_AND_SHUTDOWN), topology.getHazelcast().getCluster().getMembers());
+    topology.getHazelcast().getExecutorService().execute(task);
+  }
+
+  public List<Runnable> shutdownNow() {
+    MultiTask<List<Runnable>> task = new MultiTask<List<Runnable>>(new ShutdownEvent(topology.getName(), ShutdownEvent.ShutdownType.SHUTDOWN_NOW), topology.getHazelcast().getCluster().getMembers());
+    topology.getHazelcast().getExecutorService().execute(task);
+    try {
+      LinkedList<Runnable> allRunnables = new LinkedList<Runnable>();
+      for (List<Runnable> list : task.get()) {
+        allRunnables.addAll(list);
+      }
+      return allRunnables;
+    } catch (ExecutionException e) {
+      throw new RuntimeException("Execution exception while shutting down the executor services", e);
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Thread interrupted while shutting down the executor services", e);
     }
+  }
 
-    public <T> Future<T> submit(Callable<T> task) {
-        HazelcastWork work = createHazelcastWorkWrapper(task);
-        DistributedFuture<T> future = new DistributedFuture<T>();
-        futureTracker.add(work.getUniqueIdentifier(), future);
-        doExecute(work, false);
-        return future;
-    }
+  public Future<?> submit(Runnable task) {
+    HazelcastWork work = createHazelcastWorkWrapper(task);
+    DistributedFuture future = new DistributedFuture();
+    futureTracker.add(work.getUniqueIdentifier(), future);
+    doExecute(work, false);
+    return future;
+  }
 
-    public void shutdown() {
-        MultiTask<List<Runnable>> task = new MultiTask<List<Runnable>>(
-                new ShutdownEvent(topology.getName(), 
-                        ShutdownEvent.ShutdownType.WAIT_AND_SHUTDOWN
-                    ), 
-                    topology.getHazelcast().getCluster().getMembers());
-        
-        topology.getHazelcast().getExecutorService().execute(task);
-    }
+  public <T extends java.lang.Object> Future<T> submit(Runnable task, T result) {
+    throw new RuntimeException("Not Implemented Yet");
+  }
 
-    public List<Runnable> shutdownNow() {
-        MultiTask<List<Runnable>> task = new MultiTask<List<Runnable>>(
-                new ShutdownEvent(topology.getName(), 
-                        ShutdownEvent.ShutdownType.SHUTDOWN_NOW
-                    ), 
-                    topology.getHazelcast().getCluster().getMembers());
-        
-        topology.getHazelcast().getExecutorService().execute(task);
-        try {
-            LinkedList<Runnable> allRunnables = new LinkedList<Runnable>();         
-            for(List<Runnable> list : task.get()) {
-                allRunnables.addAll(list);
-            }
-            return allRunnables;
-        } catch (ExecutionException e) {
-            throw new RuntimeException("Execution exception while shutting down the executor services", e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Thread interrupted while shutting down the executor services", e);
-        }
-    }
+  public boolean isShutdown() {
+    throw new RuntimeException("Not Implemented Yet");
+  }
 
-    
+  public boolean isTerminated() {
+    throw new RuntimeException("Not Implemented Yet");
+  }
 
-    public Future<?> submit(Runnable task) {
-        HazelcastWork work = createHazelcastWorkWrapper(task);
-        DistributedFuture future = new DistributedFuture();
-        futureTracker.add(work.getUniqueIdentifier(), future);
-        doExecute(work, false);
-        return future;
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    throw new RuntimeException("Not Implemented Yet");
+  }
+
+  public <T extends java.lang.Object> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    throw new RuntimeException("Not Implemented Yet");
+  }
+
+  public <T extends java.lang.Object> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+    throw new RuntimeException("Not Implemented Yet");
+  }
+
+  public <T extends java.lang.Object> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+    throw new RuntimeException("Not Implemented Yet");
+  }
+
+  public <T extends java.lang.Object> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    throw new RuntimeException("Not Implemented Yet");
+  }
+
+  protected MetricNamer getMetricNamer() {
+    return metricNamer;
+  }
+
+  protected boolean isStatisticsEnabled() {
+    return statisticsEnabled;
+  }
+
+  protected MetricsRegistry getMetrics() {
+    return metrics;
+  }
+
+  public DistributedFutureTracker getFutureTracker() {
+    return futureTracker;
+  }
+
+  private static class ShutdownEvent implements Callable<List<Runnable>>, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private static enum ShutdownType {
+      WAIT_AND_SHUTDOWN,
+      SHUTDOWN_NOW
     }
 
-    public <T> Future<T> submit(Runnable task, T result) {
-        //TODO: make sure this task is hazelcast serializable
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-    
-    
-    public boolean isShutdown() {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
+    private final ShutdownType type;
+
+    private String topology;
+
+    private ShutdownEvent(String topology, ShutdownType type) {
+      this.type = type;
+      this.topology = topology;
     }
 
-    public boolean isTerminated() {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
+    public List<Runnable> call() throws Exception {
+      DistributedExecutorService dsvc = HazelcastWorkManager.getDistributedExecutorService(topology);
+      if (dsvc == null) {
+        return Collections.emptyList();
+      }
+      LocalWorkExecutorService svc = dsvc.getLocalExecutorService();
+      if (svc == null) {
+        return Collections.emptyList();
+      }
+      switch (this.type) {
+        case SHUTDOWN_NOW:
+        return svc.shutdownNow();
+        case WAIT_AND_SHUTDOWN:
+        default:
+        svc.shutdown();
+      }
+      return null;
     }
-
-    public boolean awaitTermination(long timeout, TimeUnit unit)
-            throws InterruptedException {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-    
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-            throws InterruptedException {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-
-    public <T> List<Future<T>> invokeAll(
-            Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-            throws InterruptedException, ExecutionException {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks,
-            long timeout, TimeUnit unit) throws InterruptedException,
-            ExecutionException, TimeoutException {
-        // FIXME Implement this method
-        throw new RuntimeException("Not Implemented Yet");
-    }
-    
-    
-    
-    protected MetricNamer getMetricNamer() {
-        return metricNamer;
-    }
-
-    protected boolean isStatisticsEnabled() {
-        return statisticsEnabled;
-    }
-
-    protected MetricsRegistry getMetrics() {
-        return metrics;
-    }
-
-    public DistributedFutureTracker getFutureTracker() {
-        return futureTracker;
-    }
-
-    private static class ShutdownEvent implements Callable<List<Runnable>>, Serializable {
-        private static final long serialVersionUID = 1L;
-
-
-        private static enum ShutdownType {
-            WAIT_AND_SHUTDOWN,
-            SHUTDOWN_NOW
-        }
-        
-        private final ShutdownType type;
-        private String topology;
-        
-        private ShutdownEvent(String topology, ShutdownType type){
-            this.type = type;
-            this.topology = topology;
-        }
-        
-        public List<Runnable> call() throws Exception {
-            DistributedExecutorService dsvc = HazelcastWorkManager
-                    .getDistributedExecutorService(topology);
-            
-            if(dsvc == null) return Collections.emptyList();            
-            LocalWorkExecutorService svc = dsvc.getLocalExecutorService();
-            if(svc == null) return Collections.emptyList();         
-            
-            switch(this.type) {
-            case SHUTDOWN_NOW:
-                return svc.shutdownNow();
-            case WAIT_AND_SHUTDOWN:
-            default:
-                svc.shutdown();
-            }
-            return null;
-        }
-    }
-
-
-
+  }
 }
