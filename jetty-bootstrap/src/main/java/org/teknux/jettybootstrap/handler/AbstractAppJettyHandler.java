@@ -45,12 +45,13 @@ abstract public class AbstractAppJettyHandler extends AbstractJettyHandler {
 
 		return initWebAppContext(webAppContext);
 	}
-	
+
 	/**
 	 * The name of Temporary Application directory
 	 * 
 	 * @return name
 	 */
+
 	abstract public String getAppTempDirName();
 
 	abstract protected WebAppContext initWebAppContext(WebAppContext webAppContext);

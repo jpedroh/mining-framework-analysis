@@ -40,7 +40,21 @@ public class WebAppWarJettyHandlerTest {
 
 		WarAppJettyHandler webAppWarJettyHandler = new WarAppJettyHandler();
 		webAppWarJettyHandler.setContextPath("myContext");
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/left.java
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/base.java
+		webAppWarJettyHandler.setTempDirectory(tempDir);
+=======
+	//		webAppWarJettyHandler.setTempDirectory(tempDir);
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/right.java
 		webAppWarJettyHandler.setWar("/tmp/myWarFile.war");
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/left.java
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/base.java
+		webAppWarJettyHandler.setPersistTempDirectory(false);
+		webAppWarJettyHandler.setParentLoaderPriority(true);
+=======
+	//		webAppWarJettyHandler.setPersistTempDirectory(false);
+	//		webAppWarJettyHandler.setParentLoaderPriority(true);
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/test/java/org/teknux/jettybootstrap/test/handler/WebAppWarJettyHandlerTest.java/right.java
 
 		Handler handler = webAppWarJettyHandler.getHandler();
 

@@ -49,6 +49,8 @@ import org.teknux.jettybootstrap.handler.JettyHandler;
 import org.teknux.jettybootstrap.handler.WarAppFromClasspathJettyHandler;
 import org.teknux.jettybootstrap.handler.WarAppJettyHandler;
 import org.teknux.jettybootstrap.handler.listener.JettyLifeCycleLogListener;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.teknux.jettybootstrap.configuration.AdditionalWebAppJettyConfigurationClass;
 import org.teknux.jettybootstrap.keystore.JettyKeystore;
 import org.teknux.jettybootstrap.keystore.JettyKeystoreException;
 
@@ -64,20 +66,15 @@ public class JettyBootstrap {
 	private static final String DEFAULT_KEYSTORE_DOMAINNAME = "unknown";
 	private static final String DEFAULT_KEYSTORE_ALIAS = "jettybootstrap";
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "jettybootstrap";
-
 	private static final String TEMP_DIRECTORY_NAME = ".temp";
 	public static final File TEMP_DIRECTORY_JARDIR = new File(getJarDir().getPath() + File.separator + TEMP_DIRECTORY_NAME);
 	public static final File TEMP_DIRECTORY_SYSTEMP = new File(System.getProperty("java.io.tmpdir") + File.separator + TEMP_DIRECTORY_NAME);
 	protected static final File TEMP_DIRECTORY_DEFAULT = TEMP_DIRECTORY_JARDIR;
-
 	private static final String RESOURCE_WEBAPP = "/webapp";
 	private static final String CONTEXT_PATH_ROOT = "/";
-
 	private IJettyConfiguration iJettyConfiguration;
-
 	private Server server = null;
 	private HandlerList handlers = new HandlerList();
-
 	/**
 	 * Shortcut to start Jetty when called within a JAR file
 	 * containing the WEB-INF folder and needed libraries.
@@ -94,7 +91,6 @@ public class JettyBootstrap {
 	    jettyBootstrap.addSelf();
 		return jettyBootstrap.startServer();
 	}
-
 	/**
 	 * Default constructor using the default
 	 * {@link PropertiesJettyConfiguration} configuration.
@@ -102,7 +98,6 @@ public class JettyBootstrap {
 	public JettyBootstrap() {
 		this(new PropertiesJettyConfiguration());
 	}
-
 	/**
 	 * Constructor specifiying the configuration properties.
 	 * 
@@ -113,7 +108,6 @@ public class JettyBootstrap {
 	public JettyBootstrap(IJettyConfiguration configuration) {
 		this.iJettyConfiguration = configuration;
 	}
-
 	/**
 	 * Starts the Jetty Server and join the calling thread
 	 * according to
@@ -128,7 +122,6 @@ public class JettyBootstrap {
 	public JettyBootstrap startServer() throws JettyBootstrapException {
 		return startServer(iJettyConfiguration.isAutoJoinOnStart());
 	}
-
 	/**
 	 * Starts the Jetty Server and join the calling thread.
 	 * 
@@ -169,7 +162,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Blocks the calling thread until the server stops.
 	 * 
@@ -193,7 +185,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-	
 	/**
 	 * Return if server is started
 	 * 
@@ -202,7 +193,6 @@ public class JettyBootstrap {
 	public boolean isServerStarted() {
 	    return (server != null && server.isStarted());
 	}
-
 	/**
 	 * Stops the Jetty server.
 	 * 
@@ -229,7 +219,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Add a War application the default context path
 	 * {@value #CONTEXT_PATH_ROOT}
@@ -242,7 +231,6 @@ public class JettyBootstrap {
 	public Handler addWarApp(String war) throws JettyBootstrapException {
 		return addWarApp(war, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add a War application specifying the context path.
 	 * 
@@ -261,7 +249,6 @@ public class JettyBootstrap {
 
 		return addJettyHandler(warAppJettyHandler);
 	}
-
 	/**
 	 * Add a War application from the current classpath on
 	 * the default context path {@value #CONTEXT_PATH_ROOT}
@@ -274,7 +261,6 @@ public class JettyBootstrap {
 	public Handler addWarAppFromClasspath(String warFromClasspath) throws JettyBootstrapException {
 		return addWarAppFromClasspath(warFromClasspath, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add a War application from the current classpath
 	 * specifying the context path.
@@ -291,11 +277,15 @@ public class JettyBootstrap {
 		WarAppFromClasspathJettyHandler warAppFromClasspathJettyHandler = new WarAppFromClasspathJettyHandler();
 		warAppFromClasspathJettyHandler.setWarFromClasspath(warFromClasspath);
 		warAppFromClasspathJettyHandler.setContextPath(contextPath);
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/left.java
         warAppFromClasspathJettyHandler.setTempDirectory(iJettyConfiguration.getTempDirectory());
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/base.java
+=======
+        abstractAppJettyHandler.setTempDirectory(jettyConfiguration.getTempDirectory());
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/right.java
 
 		return addJettyHandler(warAppFromClasspathJettyHandler);
 	}
-
 	/**
 	 * Add an exploded (not packaged) War application on the
 	 * default context path {@value #CONTEXT_PATH_ROOT}
@@ -310,7 +300,6 @@ public class JettyBootstrap {
 	public Handler addExplodedWarApp(String explodedWar, String descriptor) throws JettyBootstrapException {
 		return addExplodedWarApp(explodedWar, descriptor, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add an exploded (not packaged) War application
 	 * specifying the context path.
@@ -333,7 +322,6 @@ public class JettyBootstrap {
 
 		return addJettyHandler(explodedWarAppJettyHandler);
 	}
-
 	/**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, on the default context path
@@ -347,7 +335,6 @@ public class JettyBootstrap {
 	public Handler addExplodedWarAppFromClasspath(String explodedWar) throws JettyBootstrapException {
 		return addExplodedWarAppFromClasspath(explodedWar, null);
 	}
-
 	/**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, on the default context path
@@ -363,7 +350,6 @@ public class JettyBootstrap {
 	public Handler addExplodedWarAppFromClasspath(String explodedWar, String descriptor) throws JettyBootstrapException {
 		return addExplodedWarAppFromClasspath(explodedWar, descriptor, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, specifying the context path.
@@ -386,7 +372,6 @@ public class JettyBootstrap {
 
 		return addJettyHandler(explodedWarAppJettyHandler);
 	}
-
 	/**
 	 * Add an exploded War application found from
 	 * {@value #RESOURCE_WEBAPP} in the current classpath on
@@ -399,7 +384,6 @@ public class JettyBootstrap {
 	public Handler addSelf() throws JettyBootstrapException {
 		return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null);
 	}
-
 	/**
 	 * Add an exploded War application found from
 	 * {@value #RESOURCE_WEBAPP} in the current classpath
@@ -416,7 +400,6 @@ public class JettyBootstrap {
 	public Handler addSelf(String contextPath) throws JettyBootstrapException {
 		return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null, contextPath);
 	}
-
 	/**
 	 * Add Handler
 	 * 
@@ -428,11 +411,15 @@ public class JettyBootstrap {
 		JettyHandler jettyHandler = new JettyHandler();
 		jettyHandler.setHandler(handler);
 
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/left.java
         handler.addLifeCycleListener(JettyLifeCycleLogListener.getLogListener(handler));
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/base.java
+=======
+        //      handler.addLifeCycleListener(JettyLifeCycleListenerUtil.getBindedListener(this, JettyLifeCycleListenerUtil.getDefaultJettyLifeCycleListener()));
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/right.java
 
 		return addJettyHandler(jettyHandler);
 	}
-
 	/**
 	 * Add Handler
 	 * 
@@ -440,6 +427,7 @@ public class JettyBootstrap {
 	 * @return Handler
 	 * @throws JettyBootstrapException 
 	 */
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/left.java
 	public Handler addJettyHandler(IJettyHandler iJettyHandler) throws JettyBootstrapException {
         if (server == null) {
             init(iJettyConfiguration);
@@ -451,7 +439,46 @@ public class JettyBootstrap {
 
 		return handler;
 	}
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/base.java
+=======
+	public JettyBootstrap addJettyHandler(IJettyHandler iJettyHandler) throws JettyBootstrapException {
+	       if (server == null) {
+	            init(jettyConfiguration);
+	        }
+	       
+	    Handler handler = iJettyHandler.getHandler();
+	    if (iJettyHandler instanceof AbstractAppJettyHandler) {
+	        WebAppContext webAppContext = (WebAppContext) handler;
+	           webAppContext.setParentLoaderPriority(jettyConfiguration.isParentLoaderPriority());
+	           webAppContext.setPersistTempDirectory(jettyConfiguration.isPersistAppTempDirectories());
+	            webAppContext.setConfigurationClasses(AbstractAppJettyHandler.addConfigurationClasses(WebAppContext.getDefaultConfigurationClasses(), AdditionalWebAppJettyConfigurationClass.getAdditionalsWebAppJettyConfigurationClasses()));
+	            webAppContext.setThrowUnavailableOnStartupException(jettyConfiguration.isThrowIfStartupException());
+	            webAppContext.getSessionHandler().getSessionManager().setMaxInactiveInterval(jettyConfiguration.getMaxInactiveInterval());
 
+	            if (jettyConfiguration.isRedirectWebAppsOnHttpsConnector()) {
+	                webAppContext.setSecurityHandler(AbstractAppJettyHandler.getConstraintSecurityHandlerConfidential());
+	            }
+	        
+	        AbstractAppJettyHandler abstractAppJettyHandler = (AbstractAppJettyHandler)iJettyHandler;	        
+	        webAppContext.setContextPath(abstractAppJettyHandler.getContextPath());
+
+            File appsTempDirectory = new File(jettyConfiguration.getTempDirectory() + File.separator + APP_DIRECTORY_NAME);
+            if (!appsTempDirectory.exists() && !appsTempDirectory.mkdir()) {
+                throw new JettyBootstrapException("Can't create temporary applications directory");
+            }
+            File appTempDirectory = new File(appsTempDirectory.getPath() + File.separator + abstractAppJettyHandler.getAppTempDirName());
+            webAppContext.setTempDirectory(appTempDirectory);
+
+	        if (iJettyHandler instanceof ExplodedWarAppJettyHandler) {
+	            ExplodedWarAppJettyHandler explodedWarAppJettyHandler = (ExplodedWarAppJettyHandler)iJettyHandler;
+	            webAppContext.setDescriptor(explodedWarAppJettyHandler.getDescriptor());
+	        }
+	    }
+		handlers.addHandler(handler);
+
+		return this;
+	}
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/right.java
 	/**
 	 * Get the jetty {@link Server} Object. Calls
 	 * {@link #init(IJettyConfiguration)} if not initialized
@@ -468,7 +495,6 @@ public class JettyBootstrap {
 		}
 		return server;
 	}
-
 	/**
 	 * Initialize Jetty server using the given
 	 * {@link IJettyConfiguration}. Basically creates the
@@ -488,7 +514,6 @@ public class JettyBootstrap {
 
 		createShutdownHook(iJettyConfiguration);
 	}
-
 	/**
 	 * Parse the given {@link IJettyConfiguration} object,
 	 * validate the configuration and initialize it. Clean
@@ -549,7 +574,6 @@ public class JettyBootstrap {
 
 		return iJettyConfiguration;
 	}
-
 	/**
 	 * Convenient method used to build and return a new
 	 * {@link Server}.
@@ -566,7 +590,6 @@ public class JettyBootstrap {
 
 		return server;
 	}
-
 	/**
 	 * Creates and returns the necessary
 	 * {@link ServerConnector} based on the given
@@ -620,7 +643,6 @@ public class JettyBootstrap {
 
 		return connectors.toArray(new Connector[connectors.size()]);
 	}
-
 	/**
 	 * Convenient method used to gracefully stop Jetty
 	 * server. Invoked by the registered shutdown hook.
@@ -637,17 +659,183 @@ public class JettyBootstrap {
 			logger.error("Shutdown", e);
 		}
 	}
-
 	/**
 	 * Init Handlers
 	 * 
 	 * @throws JettyBootstrapException
 	 */
+<<<<<<< /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/left.java
 	private void initHandlers() throws JettyBootstrapException {
 		for (Handler handler : handlers.getHandlers()) {
 			logger.debug("Deploying {}...", handler);
 		}
 	}
+||||||| /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/base.java
+=======
+	private void initHandlers() throws JettyBootstrapException {
+		for (Handler handler : handlers.getHandlers()) {
+//		    if (handler instanceof WebAppContext) {
+//
+//	        WebAppContext webAppContext = new WebAppContext();
+//	        webAppContext.setParentLoaderPriority(jettyConfiguration.isParentLoaderPriority());
+//	        webAppContext.setPersistTempDirectory(jettyConfiguration.isPersistAppTempDirectories());
+//	        webAppContext.setConfigurationClasses(AbstractAppJettyHandler.addConfigurationClasses(WebAppContext.getDefaultConfigurationClasses(), AdditionalWebAppJettyConfigurationClass.getAdditionalsWebAppJettyConfigurationClasses()));
+//	        webAppContext.setThrowUnavailableOnStartupException(jettyConfiguration.isThrowIfStartupException());
+//	        webAppContext.getSessionHandler().getSessionManager().setMaxInactiveInterval(jettyConfiguration.getMaxInactiveInterval());
+//
+//	        if (jettyConfiguration.isRedirectWebAppsOnHttpsConnector()) {
+//	            webAppContext.setSecurityHandler(AbstractAppJettyHandler.getConstraintSecurityHandlerConfidential());
+//	        }
+//	        handler.addLifeCycleListener(JettyLifeCycleListenerUtil.getBindedListener(this, JettyLifeCycleListenerUtil.getDefaultJettyLifeCycleListener()));
+//		    }
+			logger.debug("Deploying {}...", handler);
+		}
+	}
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/JettyBootstrap.java/right.java
+	   private static final String APP_DIRECTORY_NAME = "apps";
+	/**
+	 * Add a War application the default context path
+	 * {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @param war
+	 *            the path to a war file
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add a War application specifying the context path.
+	 * 
+	 * @param war
+	 *            the path to a war file
+	 * @param contextPath
+	 *            the path (base URL) to make the war
+	 *            available
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add a War application from the current classpath on
+	 * the default context path {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @param warFromClasspath
+	 *            the path to a war file in the classpath
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add a War application from the current classpath
+	 * specifying the context path.
+	 * 
+	 * @param warFromClasspath
+	 *            the path to a war file in the classpath
+	 * @param contextPath
+	 *            the path (base URL) to make the war
+	 *            available
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded (not packaged) War application on the
+	 * default context path {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @param explodedWar
+	 *            the exploded war path
+	 * @param descriptor
+	 *            the web.xml descriptor path
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded (not packaged) War application
+	 * specifying the context path.
+	 * 
+	 * @param explodedWar
+	 *            the exploded war path
+	 * @param descriptor
+	 *            the web.xml descriptor path
+	 * @param contextPath
+	 *            the path (base URL) to make the resource
+	 *            available
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded (not packaged) War application from
+	 * the current classpath, on the default context path
+	 * {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @param explodedWar
+	 *            the exploded war path
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded (not packaged) War application from
+	 * the current classpath, on the default context path
+	 * {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @param explodedWar
+	 *            the exploded war path
+	 * @param descriptor
+	 *            the web.xml descriptor path
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded (not packaged) War application from
+	 * the current classpath, specifying the context path.
+	 * 
+	 * @param explodedWar
+	 *            the exploded war path
+	 * @param descriptor
+	 *            the web.xml descriptor path
+	 * @param contextPath
+	 *            the path (base URL) to make the resource
+	 *            available
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded War application found from
+	 * {@value #RESOURCE_WEBAPP} in the current classpath on
+	 * the default context path {@value #CONTEXT_PATH_ROOT}
+	 * 
+	 * @see #addExplodedWarAppFromClasspath(String, String)
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add an exploded War application found from
+	 * {@value #RESOURCE_WEBAPP} in the current classpath
+	 * specifying the context path.
+	 * 
+	 * @see #addExplodedWarAppFromClasspath(String, String,
+	 *      String)
+	 * @param contextPath
+	 *            the path (base URL) to make the resource
+	 *            available
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add Handler
+	 * 
+	 * @param handler
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Add Handler
+	 * 
+	 * @param iJettyHandler
+	 * @return this instance
+	 * @throws JettyBootstrapException 
+	 */
+	/**
+	 * Init Handlers
+	 * 
+	 * @throws JettyBootstrapException
+	 */
 
 	/**
 	 * Create Shutdown Hook.
