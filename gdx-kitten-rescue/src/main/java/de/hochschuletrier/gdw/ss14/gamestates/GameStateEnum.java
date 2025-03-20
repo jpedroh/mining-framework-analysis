@@ -6,6 +6,7 @@ import de.hochschuletrier.gdw.commons.gdx.assets.AssetManagerX;
 import de.hochschuletrier.gdw.commons.gdx.state.transition.FadeTransition;
 import de.hochschuletrier.gdw.commons.gdx.state.transition.Transition;
 import de.hochschuletrier.gdw.ss14.Main;
+import de.hochschuletrier.gdw.ss14.ui.StartScreen;
 
 public enum GameStateEnum {
 
@@ -16,9 +17,15 @@ public enum GameStateEnum {
     SANDBOX(new SandboxState()),
     PAUSEGAME(new PauseGameState()),
     CREDITS(new CreditsGameState()),
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/8703de5d0c54283a51afb0081ffd6b5271ed14b2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/gamestates/GameStateEnum.java/left.java
     OPTIONSMENU(new OptionsMenuState()),
-    FINISH(new FinishGameState()),
+    FINISH(new FinishGameState());
+||||||| /usr/src/app/output/lusito/gamedevweek/8703de5d0c54283a51afb0081ffd6b5271ed14b2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/gamestates/GameStateEnum.java/base.java
+    OPTIONSMENU(new OptionsMenuState());
+=======
+    OPTIONSMENU(new OptionsMenuState()), 
     STARTSCREEN (new StartScreenState());
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/8703de5d0c54283a51afb0081ffd6b5271ed14b2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/gamestates/GameStateEnum.java/right.java
     private final KittenGameState state;
 
     GameStateEnum(KittenGameState state) {
