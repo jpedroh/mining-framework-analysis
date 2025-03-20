@@ -1,5 +1,4 @@
 package net.md_5.bungee.api.chat;
-
 import com.google.common.base.Preconditions;
 import net.md_5.bungee.api.ChatColor;
 import java.util.ArrayList;
@@ -23,48 +22,43 @@ import java.util.List;
  * part's formatting
  * </p>
  */
-public class ComponentBuilder
-{
+public class ComponentBuilder {
+  private BaseComponent current;
 
-    private BaseComponent current;
-    private final List<BaseComponent> parts = new ArrayList<BaseComponent>();
+  private final List<BaseComponent> parts = new ArrayList<BaseComponent>();
 
-    /**
+  /**
      * Creates a ComponentBuilder from the other given ComponentBuilder to clone
      * it.
      *
      * @param original the original for the new ComponentBuilder.
      */
-    public ComponentBuilder(ComponentBuilder original)
-    {
-        current = original.current.duplicate();
-        for ( BaseComponent baseComponent : original.parts )
-        {
-            parts.add( baseComponent.duplicate() );
-        }
+  public ComponentBuilder(ComponentBuilder original) {
+    current = original.current.duplicate();
+    for (BaseComponent baseComponent : original.parts) {
+      parts.add(baseComponent.duplicate());
     }
+  }
 
-    /**
+  /**
      * Creates a ComponentBuilder with the given text as the first part.
      *
      * @param text the first text element
      */
-    public ComponentBuilder(String text)
-    {
-        current = new TextComponent( text );
-    }
+  public ComponentBuilder(String text) {
+    current = new TextComponent(text);
+  }
 
-    /**
+  /**
      * Creates a ComponentBuilder with the given component as the first part.
      *
      * @param component the first component element
      */
-    public ComponentBuilder(BaseComponent component)
-    {
-        current = component.duplicate();
-    }
+  public ComponentBuilder(BaseComponent component) {
+    current = component.duplicate();
+  }
 
-    /**
+  /**
      * Appends a component to the builder and makes it the current target for
      * formatting. The component will have all the formatting from previous
      * part.
@@ -72,12 +66,11 @@ public class ComponentBuilder
      * @param component the component to append
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(BaseComponent component)
-    {
-        return append( component, FormatRetention.ALL );
-    }
+  public ComponentBuilder append(BaseComponent component) {
+    return append(component, FormatRetention.ALL);
+  }
 
-    /**
+  /**
      * Appends a component to the builder and makes it the current target for
      * formatting. You can specify the amount of formatting retained from
      * previous part.
@@ -86,250 +79,206 @@ public class ComponentBuilder
      * @param retention the formatting to retain
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(BaseComponent component, FormatRetention retention)
-    {
-        parts.add( current );
+  public ComponentBuilder append(BaseComponent component, FormatRetention retention) {
+    parts.add(current);
+    BaseComponent previous = current;
+    current = component.duplicate();
+    current.copyFormatting(previous, retention, false);
+    return this;
+  }
 
-        BaseComponent previous = current;
-        current = component.duplicate();
-        current.copyFormatting( previous, retention, false );
-        return this;
-    }
-
-    /**
-     * Appends the components to the builder and makes the last element the
-     * current target for formatting. The components will have all the
-     * formatting from previous part.
+  /**
+     * Appends the components to the builder and makes it the current target for
+     * formatting. The text will have all the formatting from the previous part.
      *
      * @param components the components to append
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(BaseComponent[] components)
-    {
-        return append( components, FormatRetention.ALL );
-    }
+  public ComponentBuilder append(BaseComponent[] components) {
+    return append(components, FormatRetention.ALL);
+  }
 
-    /**
-     * Appends the components to the builder and makes the last element the
-     * current target for formatting. You can specify the amount of formatting
-     * retained from previous part.
+  /**
+     * Appends the components to the builder and makes it the current target for
+     * formatting. You can specify the amount of formatting retained.
      *
      * @param components the components to append
      * @param retention the formatting to retain
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(BaseComponent[] components, FormatRetention retention)
-    {
-        Preconditions.checkArgument( components.length != 0, "No components to append" );
-
-        BaseComponent previous = current;
-        for ( BaseComponent component : components )
-        {
-            parts.add( current );
-
-            current = component.duplicate();
-            current.copyFormatting( previous, retention, false );
-        }
-
-        return this;
+  public ComponentBuilder append(BaseComponent[] components, FormatRetention retention) {
+    Preconditions.checkArgument(components.length != 0, "No components to append");
+    BaseComponent previous = current;
+    for (BaseComponent component : components) {
+      parts.add(current);
+      current = component.duplicate();
+      current.copyFormatting(previous, retention, false);
     }
+    return this;
+  }
 
-    /**
+  /**
      * Appends the text to the builder and makes it the current target for
-     * formatting. The text will have all the formatting from previous part.
+     * formatting. The text will have all the formatting from the previous part.
      *
      * @param text the text to append
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(String text)
-    {
-        return append( text, FormatRetention.ALL );
-    }
+  public ComponentBuilder append(String text) {
+    return append(text, FormatRetention.ALL);
+  }
 
-    /**
+  /**
      * Appends the text to the builder and makes it the current target for
-     * formatting. You can specify the amount of formatting retained from
-     * previous part.
+     * formatting. You can specify the amount of formatting retained.
      *
      * @param text the text to append
      * @param retention the formatting to retain
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder append(String text, FormatRetention retention)
-    {
-        parts.add( current );
+  public ComponentBuilder append(String text, FormatRetention retention) {
+    parts.add(current);
+    BaseComponent old = current;
+    current = new TextComponent(text);
+    current.copyFormatting(old, retention, false);
+    return this;
+  }
 
-        BaseComponent old = current;
-        current = new TextComponent( text );
-        current.copyFormatting( old, retention, false );
-
-        return this;
-    }
-
-    /**
+  /**
      * Sets the color of the current part.
      *
      * @param color the new color
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder color(ChatColor color)
-    {
-        current.setColor( color );
-        return this;
-    }
+  public ComponentBuilder color(ChatColor color) {
+    current.setColor(color);
+    return this;
+  }
 
-    /**
+  /**
      * Sets whether the current part is bold.
      *
      * @param bold whether this part is bold
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder bold(boolean bold)
-    {
-        current.setBold( bold );
-        return this;
-    }
+  public ComponentBuilder bold(boolean bold) {
+    current.setBold(bold);
+    return this;
+  }
 
-    /**
+  /**
      * Sets whether the current part is italic.
      *
      * @param italic whether this part is italic
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder italic(boolean italic)
-    {
-        current.setItalic( italic );
-        return this;
-    }
+  public ComponentBuilder italic(boolean italic) {
+    current.setItalic(italic);
+    return this;
+  }
 
-    /**
+  /**
      * Sets whether the current part is underlined.
      *
      * @param underlined whether this part is underlined
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder underlined(boolean underlined)
-    {
-        current.setUnderlined( underlined );
-        return this;
-    }
+  public ComponentBuilder underlined(boolean underlined) {
+    current.setUnderlined(underlined);
+    return this;
+  }
 
-    /**
+  /**
      * Sets whether the current part is strikethrough.
      *
      * @param strikethrough whether this part is strikethrough
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder strikethrough(boolean strikethrough)
-    {
-        current.setStrikethrough( strikethrough );
-        return this;
-    }
+  public ComponentBuilder strikethrough(boolean strikethrough) {
+    current.setStrikethrough(strikethrough);
+    return this;
+  }
 
-    /**
+  /**
      * Sets whether the current part is obfuscated.
      *
      * @param obfuscated whether this part is obfuscated
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder obfuscated(boolean obfuscated)
-    {
-        current.setObfuscated( obfuscated );
-        return this;
-    }
+  public ComponentBuilder obfuscated(boolean obfuscated) {
+    current.setObfuscated(obfuscated);
+    return this;
+  }
 
-    /**
+  /**
      * Sets the insertion text for the current part.
      *
      * @param insertion the insertion text
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder insertion(String insertion)
-    {
-        current.setInsertion( insertion );
-        return this;
-    }
+  public ComponentBuilder insertion(String insertion) {
+    current.setInsertion(insertion);
+    return this;
+  }
 
-    /**
+  /**
      * Sets the click event for the current part.
      *
      * @param clickEvent the click event
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder event(ClickEvent clickEvent)
-    {
-        current.setClickEvent( clickEvent );
-        return this;
-    }
+  public ComponentBuilder event(ClickEvent clickEvent) {
+    current.setClickEvent(clickEvent);
+    return this;
+  }
 
-    /**
+  /**
      * Sets the hover event for the current part.
      *
      * @param hoverEvent the hover event
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder event(HoverEvent hoverEvent)
-    {
-        current.setHoverEvent( hoverEvent );
-        return this;
-    }
+  public ComponentBuilder event(HoverEvent hoverEvent) {
+    current.setHoverEvent(hoverEvent);
+    return this;
+  }
 
-    /**
+  /**
      * Sets the current part back to normal settings. Only text is kept.
      *
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder reset()
-    {
-        return retain( FormatRetention.NONE );
-    }
+  public ComponentBuilder reset() {
+    return retain(FormatRetention.NONE);
+  }
 
-    /**
+  /**
      * Retains only the specified formatting. Text is not modified.
      *
      * @param retention the formatting to retain
      * @return this ComponentBuilder for chaining
      */
-    public ComponentBuilder retain(FormatRetention retention)
-    {
-        current.retain( retention );
-        return this;
-    }
+  public ComponentBuilder retain(FormatRetention retention) {
+    current.retain(retention);
+    return this;
+  }
 
-    /**
+  /**
      * Returns the components needed to display the message created by this
      * builder.
      *
      * @return the created components
      */
-    public BaseComponent[] create()
-    {
-        BaseComponent[] result = parts.toArray( new BaseComponent[ parts.size() + 1 ] );
-        result[parts.size()] = current;
-        return result;
-    }
+  public BaseComponent[] create() {
+    BaseComponent[] result = parts.toArray(new BaseComponent[parts.size() + 1]);
+    result[parts.size()] = current;
+    return result;
+  }
 
-    public static enum FormatRetention
-    {
-
-        /**
-         * Specify that we do not want to retain anything from the previous
-         * component.
-         */
-        NONE,
-        /**
-         * Specify that we want the formatting retained from the previous
-         * component.
-         */
-        FORMATTING,
-        /**
-         * Specify that we want the events retained from the previous component.
-         */
-        EVENTS,
-        /**
-         * Specify that we want to retain everything from the previous
-         * component.
-         */
-        ALL
-    }
+  public static enum FormatRetention {
+    NONE,
+    FORMATTING,
+    EVENTS,
+    ALL
+  }
 }
