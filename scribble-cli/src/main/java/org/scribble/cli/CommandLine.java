@@ -46,12 +46,12 @@ public class CommandLine
 {
 	protected //final
 	Map<CLArgFlag, String[]> args;  // Maps each flag to list of associated argument values
-
+	
 	protected CommandLine()
 	{
-
+		
 	}
-
+	
 	public CommandLine(String... args) throws CommandLineException
 	{
 		this.args = new CLArgParser(args).getArgs();
@@ -60,11 +60,11 @@ public class CommandLine
 			throw new CommandLineException("No main module has been specified\r\n");
 		}
 	}
-
+	
 	// A Scribble extension should override newMainContext as appropriate.
 	protected MainContext newMainContext() throws ScribParserException, ScribbleException
 	{
-		//boolean jUnit = this.args.containsKey(ArgFlag.JUNIT);
+		//boolean jUnit = this.args.containsKey(ArgFlag.JUNIT); 
 		boolean debug = this.args.containsKey(CLArgFlag.VERBOSE);  // TODO: factor out (cf. MainContext fields)
 		boolean useOldWF = this.args.containsKey(CLArgFlag.OLD_WF);
 		boolean noLiveness = this.args.containsKey(CLArgFlag.NO_LIVENESS);
@@ -135,6 +135,7 @@ public class CommandLine
 	}
 
 	protected void tryRun() throws ScribParserException, ScribbleException, CommandLineException
+<<<<<<< /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/left.java
 	{
 		MainContext mc = newMainContext();
 		Job job = mc.newJob();
@@ -158,9 +159,56 @@ public class CommandLine
 		{
 			fail = x;
 		}
-
+		
 		// Attempt certain "output tasks" even if above failed, in case can still do useful output (hacky)
+		try 
+		{
+			tryOutputTask(job);
+		}
+		catch (ScribbleException x)
+		{
+			if (fail == null)
+			{
+				fail = x;
+			}
+		}
+
+		if (fail != null)  // Well-formedness check and/or an "attemptable output task" failed
+		{
+			throw fail;
+		}
+
+		// "Non-attemptable" output tasks
+		doNonAttemptableOutputTasks(job);
+	}
+||||||| /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/base.java
+=======
+	{
+		MainContext mc = newMainContext();
+		Job job = mc.newJob();
+		ScribbleException fail = null;
 		try
+		{
+			/*// Scribble extensions (custom Job passes)
+			if (this.args.containsKey(ArgFlag.F17))
+			{
+				GProtocolName simpname = new GProtocolName(this.args.get(ArgFlag.F17)[0]);
+				F17Main.parseAndCheckWF(job, simpname);  // Includes base passes
+			}
+
+			// Base Scribble
+			else*/
+			{
+				job.checkWellFormedness();
+			}
+		}
+		catch (ScribbleException x)
+		{
+			fail = x;
+		}
+		
+		// Attempt certain "output tasks" even if above failed, in case can still do useful output (hacky)
+		try 
 		{
 			tryOutputTasks(job);
 		}
@@ -180,8 +228,15 @@ public class CommandLine
 		// "Non-attemptable" output tasks
 		doNonAttemptableOutputTasks(job);
 	}
-
+>>>>>>> /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/right.java
+	
+<<<<<<< /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/left.java
+	protected void tryOutputTask(Job job) throws CommandLineException, ScribbleException
+||||||| /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/base.java
+	protected void tryRun() throws ScribParserException, ScribbleException, CommandLineException
+=======
 	protected void tryOutputTasks(Job job) throws CommandLineException, ScribbleException
+>>>>>>> /usr/src/app/output/scribble/scribble-java/39cd920f8b8bf4a99d9c47a8ec198fba0ba0c29e/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/right.java
 	{
 		// Following must be ordered appropriately -- ?
 		if (this.args.containsKey(CLArgFlag.PROJECT))
@@ -237,7 +292,7 @@ public class CommandLine
 			}
 		}
 	}
-
+	
 	protected void doNonAttemptableOutputTasks(Job job) throws ScribbleException, CommandLineException
 	{
 		if (this.args.containsKey(CLArgFlag.SESS_API_GEN))
@@ -253,7 +308,7 @@ public class CommandLine
 			outputEndpointApi(job);
 		}
 	}
-
+	
 	// FIXME: option to write to file, like classes
 	private void outputProjections(Job job) throws CommandLineException, ScribbleException
 	{
@@ -393,7 +448,7 @@ public class CommandLine
 			outputClasses(classes);
 		}
 	}
-
+	
 	private void outputStateChannelApi(Job job) throws ScribbleException, CommandLineException
 	{
 		JobContext jcontext = job.getContext();
@@ -422,7 +477,7 @@ public class CommandLine
 								{
 									System.out.println("[DEBUG] Writing to: " + tmp);
 								}
-								ScribUtil.writeToFile(tmp, classes.get(path)); return null;
+								ScribUtil.writeToFile(tmp, classes.get(path)); return null; 
 							}); };
 		}
 		else
@@ -431,7 +486,7 @@ public class CommandLine
 		}
 		classes.keySet().stream().forEach(f);
 	}
-
+	
 	private static void runDot(String dot, String png) throws ScribbleException, CommandLineException
 	{
 		String tmpName = png + ".tmp";
@@ -451,17 +506,17 @@ public class CommandLine
 			tmp.delete();
 		}
 	}
-
+	
 	protected static Path parseMainPath(String path)
 	{
 		return Paths.get(path);
 	}
-
+	
 	protected static List<Path> parseImportPaths(String paths)
 	{
 		return Arrays.stream(paths.split(File.pathSeparator)).map((s) -> Paths.get(s)).collect(Collectors.toList());
 	}
-
+	
 	protected static GProtocolName checkGlobalProtocolArg(JobContext jcontext, String simpname) throws CommandLineException
 	{
 		GProtocolName simpgpn = new GProtocolName(simpname);
