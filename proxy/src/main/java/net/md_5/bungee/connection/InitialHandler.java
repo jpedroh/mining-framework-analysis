@@ -299,13 +299,18 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         }
 
         this.virtualHost = InetSocketAddress.createUnresolved( handshake.getHost(), handshake.getPort() );
-
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
+||||||| /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+        bungee.getLogger().log( Level.INFO, "{0} has connected", this );
+=======
         if ( bungee.getConfig().isLogPings() )
         {
             bungee.getLogger().log( Level.INFO, "{0} has connected", this );
         }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
 
         bungee.getPluginManager().callEvent( new PlayerHandshakeEvent( InitialHandler.this, handshake ) );
+        //BotFilter Я тут гдето убрал строку которая выводит InitialHandler has connected
         switch ( handshake.getRequestedProtocol() )
         {
             case 1:

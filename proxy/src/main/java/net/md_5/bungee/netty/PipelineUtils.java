@@ -57,7 +57,13 @@ public class PipelineUtils
             ch.pipeline().addBefore( FRAME_DECODER, LEGACY_DECODER, new LegacyDecoder() );
             ch.pipeline().addAfter( FRAME_DECODER, PACKET_DECODER, new MinecraftDecoder( Protocol.HANDSHAKE, true, ProxyServer.getInstance().getProtocolVersion() ) );
             ch.pipeline().addAfter( FRAME_PREPENDER, PACKET_ENCODER, new MinecraftEncoder( Protocol.HANDSHAKE, true, ProxyServer.getInstance().getProtocolVersion() ) );
-            ch.pipeline().addBefore( FRAME_PREPENDER, LEGACY_KICKER, legacyKicker );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/netty/PipelineUtils.java/left.java
+            ch.pipeline().addBefore( FRAME_PREPENDER, LEGACY_KICKER, PipelineUtils.KICK_STRING_WRITER );  //BotFilter //WaterFall backport
+||||||| /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/netty/PipelineUtils.java/base.java
+            ch.pipeline().addBefore( FRAME_PREPENDER, LEGACY_KICKER, new KickStringWriter() );  //BotFilter //WaterFall backport
+=======
+            ch.pipeline().addBefore( FRAME_PREPENDER, LEGACY_KICKER, legacyKicker );  //BotFilter //WaterFall backport
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/3c8bdedc27c6e7e1e4a8df2747f49bbc0a379dc1/proxy/src/main/java/net/md_5/bungee/netty/PipelineUtils.java/right.java
             ch.pipeline().get( HandlerBoss.class ).setHandler( new InitialHandler( BungeeCord.getInstance(), listener ) );
 
             if ( listener.isProxyProtocol() )
@@ -79,6 +85,7 @@ public class PipelineUtils
     public static final String FRAME_PREPENDER = "frame-prepender";
     public static final String LEGACY_DECODER = "legacy-decoder";
     public static final String LEGACY_KICKER = "legacy-kick";
+    private static final KickStringWriter KICK_STRING_WRITER = new KickStringWriter(); //BotFilter //WaterFall backport
 
     private static boolean epoll;
 

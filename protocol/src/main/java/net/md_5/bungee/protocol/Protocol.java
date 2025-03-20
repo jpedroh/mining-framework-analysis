@@ -513,6 +513,9 @@ public enum Protocol
             linkedProtocols.put( ProtocolConstants.MINECRAFT_1_13, Arrays.asList(
                     ProtocolConstants.MINECRAFT_1_13_1
             ) );
+            linkedProtocols.put( ProtocolConstants.MINECRAFT_1_13, Arrays.asList(
+                    ProtocolConstants.MINECRAFT_1_13_1
+            ) );
         }
 
         @Getter
