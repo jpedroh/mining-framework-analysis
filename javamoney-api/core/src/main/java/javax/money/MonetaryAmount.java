@@ -1,34 +1,3 @@
-/*
- * Copyright (c) 2012-2013, Credit Suisse
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- *  * Neither the name of JSR-354 nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package javax.money;
 
 /**
@@ -42,26 +11,23 @@ package javax.money;
  * @author Anatole Tresch
  */
 public interface MonetaryAmount extends Comparable<MonetaryAmount> {
-
-	/**
+  /**
 	 * Gets the currency.
 	 * 
 	 * @return the currency, never null
 	 */
-	public CurrencyUnit getCurrency();
+  public CurrencyUnit getCurrency();
 
-	// -------------------- calculation methods
-
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is the absolute value of
 	 * this {@code MonetaryAmount}, and whose scale is
 	 * {@code this.getgetScale()}.
 	 * 
 	 * @return {@code abs(this)}
 	 */
-	public MonetaryAmount abs();
+  public MonetaryAmount abs();
 
-	/**
+  /**
 	 * Returns the minimum of this {@code MonetaryAmount} and {@code amount}.
 	 * 
 	 * @param amount
@@ -72,9 +38,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *         method, {@code this} is returned.
 	 * @see #compareTo(java.math.MonetaryAmount)
 	 */
-	public MonetaryAmount min(MonetaryAmount amount);
+  public MonetaryAmount min(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Returns the maximum of this {@code MonetaryAmount} and {@code amount}.
 	 * 
 	 * @param amount
@@ -85,9 +51,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *         method, {@code this} is returned.
 	 * @see #compareTo(MonetaryAmount)
 	 */
-	public MonetaryAmount max(MonetaryAmount amount);
+  public MonetaryAmount max(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this +
 	 * augend)}, and whose scale is {@code max(this.getScale(),
 	 * augend.getScale())}.
@@ -96,9 +62,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be added to this {@code MonetaryAmount}.
 	 * @return {@code this + augend}
 	 */
-	public MonetaryAmount add(MonetaryAmount augend);
+  public MonetaryAmount add(MonetaryAmount augend);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this +
 	 * augend)}, and whose scale is {@code max(this.getScale(),
 	 * augend.getScale())}.
@@ -107,9 +73,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be added to this {@code MonetaryAmount}.
 	 * @return {@code this + augend}
 	 */
-	public MonetaryAmount add(Number augend);
+  public MonetaryAmount add(Number augend);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this /
 	 * divisor)}, and whose preferred scale is {@code (this.getScale() -
 	 * divisor.getScale())}; if the exact quotient cannot be represented
@@ -123,9 +89,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             expansion
 	 * @return {@code this / divisor}
 	 */
-	public MonetaryAmount divide(MonetaryAmount divisor);
+  public MonetaryAmount divide(MonetaryAmount divisor);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this /
 	 * divisor)}, and whose preferred scale is {@code (this.getScale() -
 	 * divisor.getScale())}; if the exact quotient cannot be represented
@@ -139,9 +105,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             expansion
 	 * @return {@code this / divisor}
 	 */
-	public MonetaryAmount divide(Number divisor);
+  public MonetaryAmount divide(Number divisor);
 
-	/**
+  /**
 	 * Returns a two-element {@code MonetaryAmount} array containing the result
 	 * of {@code divideToIntegralValue} followed by the result of
 	 * {@code remainder} on the two operands.
@@ -163,9 +129,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @see #divideToIntegralValue(MonetaryAmount)
 	 * @see #remainder(MonetaryAmount)
 	 */
-	public MonetaryAmount[] divideAndRemainder(MonetaryAmount divisor);
+  public MonetaryAmount[] divideAndRemainder(MonetaryAmount divisor);
 
-	/**
+  /**
 	 * Returns a two-element {@code MonetaryAmount} array containing the result
 	 * of {@code divideToIntegralValue} followed by the result of
 	 * {@code remainder} on the two operands.
@@ -187,9 +153,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @see #divideToIntegralValue(MonetaryAmount)
 	 * @see #remainder(MonetaryAmount)
 	 */
-	public MonetaryAmount[] divideAndRemainder(Number divisor);
+  public MonetaryAmount[] divideAndRemainder(Number divisor);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is the integer part of the
 	 * quotient {@code (this / divisor)} rounded down. The preferred scale of
 	 * the result is {@code (this.getScale() -
@@ -201,9 +167,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0}
 	 */
-	public MonetaryAmount divideToIntegralValue(MonetaryAmount divisor);
+  public MonetaryAmount divideToIntegralValue(MonetaryAmount divisor);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is the integer part of the
 	 * quotient {@code (this / divisor)} rounded down. The preferred scale of
 	 * the result is {@code (this.getScale() -
@@ -215,9 +181,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0}
 	 */
-	public MonetaryAmount divideToIntegralValue(Number divisor);
+  public MonetaryAmount divideToIntegralValue(Number divisor);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is <tt>(this &times;
 	 * multiplicand)</tt>, and whose scale is {@code (this.getScale() +
 	 * multiplicand.getScale())}.
@@ -226,9 +192,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be multiplied by this {@code MonetaryAmount}.
 	 * @return {@code this * multiplicand}
 	 */
-	public MonetaryAmount multiply(MonetaryAmount multiplicand);
+  public MonetaryAmount multiply(MonetaryAmount multiplicand);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is <tt>(this &times;
 	 * multiplicand)</tt>, and whose scale is {@code (this.getScale() +
 	 * multiplicand.getScale())}.
@@ -237,17 +203,17 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be multiplied by this {@code MonetaryAmount}.
 	 * @return {@code this * multiplicand}
 	 */
-	public MonetaryAmount multiply(Number multiplicand);
+  public MonetaryAmount multiply(Number multiplicand);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (-this)}, and
 	 * whose scale is {@code this.getScale()}.
 	 * 
 	 * @return {@code -this}.
 	 */
-	public MonetaryAmount negate();
+  public MonetaryAmount negate();
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (+this)}, and
 	 * whose scale is {@code this.getScale()}.
 	 * 
@@ -258,9 +224,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return {@code this}.
 	 * @see #negate()
 	 */
-	public MonetaryAmount plus();
+  public MonetaryAmount plus();
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this -
 	 * subtrahend)}, and whose scale is {@code max(this.getScale(),
 	 * subtrahend.getScale())}.
@@ -269,9 +235,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be subtracted from this {@code MonetaryAmount}.
 	 * @return {@code this - subtrahend}
 	 */
-	public MonetaryAmount subtract(MonetaryAmount subtrahend);
+  public MonetaryAmount subtract(MonetaryAmount subtrahend);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this -
 	 * subtrahend)}, and whose scale is {@code max(this.getScale(),
 	 * subtrahend.getScale())}.
@@ -280,9 +246,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *            value to be subtracted from this {@code MonetaryAmount}.
 	 * @return {@code this - subtrahend}
 	 */
-	public MonetaryAmount subtract(Number subtrahend);
+  public MonetaryAmount subtract(Number subtrahend);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is
 	 * <tt>(this<sup>n</sup>)</tt>, The power is computed exactly, to unlimited
 	 * precision.
@@ -301,9 +267,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             if {@code n} is out of range.
 	 * @since 1.5
 	 */
-	public MonetaryAmount pow(int n);
+  public MonetaryAmount pow(int n);
 
-	/**
+  /**
 	 * Returns the size of an ulp, a unit in the last place, of this
 	 * {@code MonetaryAmount}. An ulp of a nonzero {@code MonetaryAmount} value
 	 * is the positive distance between this value and the
@@ -316,9 +282,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * 
 	 * @return the size of an ulp of {@code this}
 	 */
-	public MonetaryAmount ulp();
+  public MonetaryAmount ulp();
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this % divisor)}.
 	 * 
 	 * <p>
@@ -333,9 +299,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0}
 	 */
-	public MonetaryAmount remainder(MonetaryAmount divisor);
+  public MonetaryAmount remainder(MonetaryAmount divisor);
 
-	/**
+  /**
 	 * Returns a {@code MonetaryAmount} whose value is {@code (this % divisor)}.
 	 * 
 	 * <p>
@@ -350,9 +316,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0}
 	 */
-	public MonetaryAmount remainder(Number divisor);
+  public MonetaryAmount remainder(Number divisor);
 
-	/**
+  /**
 	 * Returns a Amount whose numerical value is equal to ({@code this} *
 	 * 10<sup>n</sup>). The scale of the result is {@code (this.getScale() - n)}
 	 * .
@@ -360,9 +326,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if the scale would be outside the range supported.
 	 */
-	public MonetaryAmount scaleByPowerOfTen(int n);
+  public MonetaryAmount scaleByPowerOfTen(int n);
 
-	/**
+  /**
 	 * Returns a copy of this amount adjusted by the {@link AmountAdjuster},
 	 * e.g. a {@link Rounding}.
 	 * <p>
@@ -374,9 +340,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if the adjustment fails
 	 */
-	public MonetaryAmount with(AmountAdjuster... adjusters);
+  public MonetaryAmount with(AmountAdjuster... adjusters);
 
-	/**
+  /**
 	 * Gets the amount in major units as a {@code MonetaryAmount} with scale 0.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -390,9 +356,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * 
 	 * @return the major units part of the amount, never null
 	 */
-	public MonetaryAmount getMajorPart();
+  public MonetaryAmount getMajorPart();
 
-	/**
+  /**
 	 * Gets the amount in major units as a {@code long}.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -402,12 +368,10 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return the major units part of the amount
 	 * @throws ArithmeticException
 	 *             if the amount is too large for a {@code long}
-	 *             
-	 *             FIXME isn't this same as getMajorPart().longValue()?
 	 */
-	public long getMajorLong();
+  public long getMajorLong();
 
-	/**
+  /**
 	 * Gets the amount in major units as an {@code int}.
 	 * <p>
 	 * This returns the monetary amount in terms of the major units of the
@@ -417,12 +381,10 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return the major units part of the amount
 	 * @throws ArithmeticException
 	 *             if the amount is too large for an {@code int}
-	 *             
-	 *             FIXME isn't this same as getMajorPart().intValue()?
 	 */
-	public int getMajorInt();
+  public int getMajorInt();
 
-	/**
+  /**
 	 * Gets the amount in minor units as a {@code MonetaryAmount} with scale 0.
 	 * <p>
 	 * This returns the monetary amount in terms of the minor units of the
@@ -436,9 +398,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * 
 	 * @return the minor units part of the amount, never null
 	 */
-	public MonetaryAmount getMinorPart();
+  public MonetaryAmount getMinorPart();
 
-	/**
+  /**
 	 * Gets the amount in minor units as a {@code long}.
 	 * <p>
 	 * This returns the monetary amount in terms of the minor units of the
@@ -448,12 +410,10 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return the minor units part of the amount
 	 * @throws ArithmeticException
 	 *             if the amount is too large for a {@code long}
-	 *             
-	 *             FIXME isn't this same as getMinorPart().longValue()?
 	 */
-	public long getMinorLong();
+  public long getMinorLong();
 
-	/**
+  /**
 	 * Gets the amount in minor units as an {@code int}.
 	 * <p>
 	 * This returns the monetary amount in terms of the minor units of the
@@ -463,48 +423,45 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return the minor units part of the amount
 	 * @throws ArithmeticException
 	 *             if the amount is too large for an {@code int}
-	 *             
-	 *             FIXME isn't this same as getMinorPart().intValue()?
 	 */
-	public int getMinorInt();
+  public int getMinorInt();
 
-	/**
+  /**
 	 * Checks if the amount is zero.
 	 * 
 	 * @return true if the amount is zero
 	 */
-	public boolean isZero();
+  public boolean isZero();
 
-	/**
+  /**
 	 * Checks if the amount is greater than zero.
 	 * 
 	 * @return true if the amount is greater than zero
 	 */
-	public boolean isPositive();
+  public boolean isPositive();
 
-	/**
+  /**
 	 * Checks if the amount is zero or greater.
 	 * 
 	 * @return true if the amount is zero or greater
 	 */
-	public boolean isPositiveOrZero();
+  public boolean isPositiveOrZero();
 
-	/**
+  /**
 	 * Checks if the amount is less than zero.
 	 * 
 	 * @return true if the amount is less than zero
 	 */
-	public boolean isNegative();
+  public boolean isNegative();
 
-	/**
+  /**
 	 * Checks if the amount is zero or less.
 	 * 
 	 * @return true if the amount is zero or less
 	 */
-	public boolean isNegativeOrZero();
+  public boolean isNegativeOrZero();
 
-	// -----------------------------------------------------------------------
-	/**
+  /**
 	 * Returns a copy of this monetary value with the specified amount.
 	 * <p>
 	 * The returned instance will have this currency and the new amount. No
@@ -519,12 +476,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws ArithmeticException
 	 *             if the scale of the amount is too large
 	 */
-	public MonetaryAmount with(Number amount);
+  public MonetaryAmount with(Number amount);
 
-	// -------------------- Introspection and value methods, similar to
-	// java.lang.Number; java.lang.BigDecimal
-
-	/**
+  /**
 	 * * Gets the scale of the amount.
 	 * <p>
 	 * The scale has the same meaning as in {@link java.math.BigDecimal}. Positive
@@ -537,9 +491,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * 
 	 * @return the scale in use, typically 2 but could be 0, 1 and 3
 	 */
-	public int getScale();
+  public int getScale();
 
-	/**
+  /**
 	 * Returns the <i>internal precision</i> of this {@code MonetaryAmount}.
 	 * (The precision is the number of digits in the unscaled value.)
 	 * 
@@ -548,18 +502,18 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * 
 	 * @return the precision of this {@code MonetaryAmount}.
 	 */
-	public int getPrecision();
+  public int getPrecision();
 
-	/**
+  /**
 	 * Returns the value of the specified number as an <code>int</code>. This
 	 * may involve rounding or truncation.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>int</code>.
 	 */
-	public int intValue();
+  public int intValue();
 
-	/**
+  /**
 	 * Converts this {@code MonetaryAmount} to an {@code int}, checking for lost
 	 * information. If this {@code MonetaryAmount} has a nonzero fractional part
 	 * or is out of the possible range for an {@code int} result then an
@@ -570,18 +524,18 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             if {@code this} has a nonzero fractional part, or will not
 	 *             fit in an {@code int}.
 	 */
-	public int intValueExact();
+  public int intValueExact();
 
-	/**
+  /**
 	 * Returns the value of the specified number as a <code>long</code>. This
 	 * may involve rounding or truncation.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>long</code>.
 	 */
-	public long longValue();
+  public long longValue();
 
-	/**
+  /**
 	 * Converts this {@code MonetaryAmount} to a {@code long}, checking for lost
 	 * information. If this {@code MonetaryAmount} has a nonzero fractional part
 	 * or is out of the possible range for a {@code long} result then an
@@ -592,45 +546,45 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             if {@code this} has a nonzero fractional part, or will not
 	 *             fit in a {@code long}.
 	 */
-	public long longValueExact();
+  public long longValueExact();
 
-	/**
+  /**
 	 * Returns the value of the specified number as a <code>float</code>. This
 	 * may involve rounding.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>float</code>.
 	 */
-	public float floatValue();
+  public float floatValue();
 
-	/**
+  /**
 	 * Returns the value of the specified number as a <code>double</code>. This
 	 * may involve rounding.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>double</code>.
 	 */
-	public double doubleValue();
+  public double doubleValue();
 
-	/**
+  /**
 	 * Returns the value of the specified number as a <code>byte</code>. This
 	 * may involve rounding or truncation.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>byte</code>.
 	 */
-	public byte byteValue();
+  public byte byteValue();
 
-	/**
+  /**
 	 * Returns the value of the specified number as a <code>short</code>. This
 	 * may involve rounding or truncation.
 	 * 
 	 * @return the numeric value represented by this object after conversion to
 	 *         type <code>short</code>.
 	 */
-	public short shortValue();
+  public short shortValue();
 
-	/**
+  /**
 	 * Converts this {@code MonetaryAmount} to a {@code short}, checking for
 	 * lost information. If this {@code MonetaryAmount} has a nonzero fractional
 	 * part or is out of the possible range for a {@code short} result then an
@@ -641,26 +595,26 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *             if {@code this} has a nonzero fractional part, or will not
 	 *             fit in a {@code short} .
 	 */
-	public short shortValueExact();
+  public short shortValueExact();
 
-	/**
+  /**
 	 * Returns the signum function of this {@code MonetaryAmount}.
 	 * 
 	 * @return -1, 0, or 1 as the value of this {@code MonetaryAmount} is
 	 *         negative, zero, or positive.
 	 */
-	public int signum();
+  public int signum();
 
-	/**
+  /**
 	 * Checks if this amount is less compared to the amount passed.
 	 * 
 	 * @param amount
 	 *            The amount to compare to.
 	 * @return TRUE, if this amount is less compared to the amount passed.
 	 */
-	public boolean lessThan(MonetaryAmount amount);
+  public boolean lessThan(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is less compared to the number passed.
 	 * 
 	 * @param number
@@ -668,9 +622,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is less compared to the number
 	 *         passed.
 	 */
-	public boolean lessThan(Number number);
+  public boolean lessThan(Number number);
 
-	/**
+  /**
 	 * Checks if this amount is less or the same compared to the amount passed.
 	 * 
 	 * @param amount
@@ -678,9 +632,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount is less or the same compared to the amount
 	 *         passed.
 	 */
-	public boolean lessThanOrEqualTo(MonetaryAmount amount);
+  public boolean lessThanOrEqualTo(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is less or the same compared to the number
 	 * passed.
 	 * 
@@ -689,18 +643,18 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is less or the same compared to the
 	 *         number passed.
 	 */
-	public boolean lessThanOrEqualTo(Number number);
+  public boolean lessThanOrEqualTo(Number number);
 
-	/**
+  /**
 	 * Checks if this amount is greater compared to the amount passed.
 	 * 
 	 * @param amount
 	 *            The amount to compare to.
 	 * @return TRUE, if this amount is greater compared to the amount passed.
 	 */
-	public boolean greaterThan(MonetaryAmount amount);
+  public boolean greaterThan(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is greater compared to the number passed.
 	 * 
 	 * @param number
@@ -708,9 +662,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is greater compared to the number
 	 *         passed.
 	 */
-	public boolean greaterThan(Number number);
+  public boolean greaterThan(Number number);
 
-	/**
+  /**
 	 * Checks if this amount is greater or the same compared to the amount
 	 * passed.
 	 * 
@@ -719,9 +673,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount is greater or the same compared to the
 	 *         amount passed.
 	 */
-	public boolean greaterThanOrEqualTo(MonetaryAmount amount);
+  public boolean greaterThanOrEqualTo(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is greater or the same compared to the
 	 * number passed.
 	 * 
@@ -730,9 +684,20 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is greater or the same compared to
 	 *         the number passed.
 	 */
-	public boolean greaterThanOrEqualTo(Number number);
+  public boolean greaterThanOrEqualTo(Number number);
 
-	/**
+  /**
+	 * Allows to check, if the currency of the two amounts are the same. This
+	 * means that corresponding currency's namespace and code must match.
+	 * 
+	 * @param amount
+	 *            The amount to comapre to, not {@code null}.
+	 * @return true, if the {@link CurrencyUnit} of this instance has the same
+	 *         namespace and code.
+	 */
+  public boolean isSameCurrencyAs(MonetaryAmount amount);
+
+  /**
 	 * Checks if this amount is the same compared to the amount passed. This is
 	 * a convenience method to reflect {@link #same(Number)} also for amounts,
 	 * but basically should behave similarly as {@link #equals(Object)}.
@@ -742,20 +707,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is the same compared to the number
 	 *         passed.
 	 */
-	public boolean isEqualTo(MonetaryAmount amount);
-	
-	/**
-	 * Allows to check, if the currency of the two amounts are the same. This
-	 * means that corresponding currency's namespace and code must match.
-	 * 
-	 * @param amount
-	 *            The amount to comapre to, not {@code null}.
-	 * @return true, if the {@link CurrencyUnit} of this instance has the same
-	 *         namespace and code.
-	 */
-	public boolean isSameCurrencyAs(MonetaryAmount amount);
+  public boolean isEqualTo(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is the same compared to the number passed.
 	 * 
 	 * @param number
@@ -763,9 +717,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is the same compared to the number
 	 *         passed.
 	 */
-	public boolean isEqualTo(Number number);
+  public boolean isEqualTo(Number number);
 
-	/**
+  /**
 	 * Checks if this amount is not the same compared to the amount passed.
 	 * 
 	 * @param amount
@@ -773,9 +727,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is not the same compared to the
 	 *         number passed.
 	 */
-	public boolean isNotEqualTo(MonetaryAmount amount);
+  public boolean isNotEqualTo(MonetaryAmount amount);
 
-	/**
+  /**
 	 * Checks if this amount's value is not the same compared to the number
 	 * passed.
 	 * 
@@ -784,11 +738,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return TRUE, if this amount's value is not the same compared to the
 	 *         number passed.
 	 */
-	public boolean isNotEqualTo(Number number);
+  public boolean isNotEqualTo(Number number);
 
-	// -------------------------------------------- Misc
-
-	/**
+  /**
 	 * Returns a string representation of this {@code MonetaryAmount}, using
 	 * engineering notation if an exponent is needed.
 	 * 
@@ -810,9 +762,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return string representation of this {@code MonetaryAmount}, using
 	 *         engineering notation if an exponent is needed.
 	 */
-	public String toEngineeringString();
+  public String toEngineeringString();
 
-	/**
+  /**
 	 * Returns a string representation of this {@code MonetaryAmount} without an
 	 * exponent field. For values with a positive scale, the number of digits to
 	 * the right of the decimal point is used to indicate scale. For values with
@@ -838,22 +790,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @see #toString()
 	 * @see #toEngineeringString()
 	 */
-	public String toPlainString();
+  public String toPlainString();
 
-	/**
-	 * Returns an {@code MonetaryAmount} rounded according to the
-	 * {@code Rounding} settings accessible from the
-	 * {@link RoundingProvider#getRounding(CurrencyUnit)}.
-	 * 
-	 * @return a {@code MonetaryAmount} rounded according to the
-	 *         {@code Rounding}.
-	 * @throws ArithmeticException
-	 *             if rounding fails.
-	 */
-	// public MonetaryAmount getAdjusted(); // FIXME should probably be called
-	// getRounded
-
-	/**
+  /**
 	 * * Gets the monetary amount using the passed target type. This method
 	 * allows to support different return types, depending of the concrete
 	 * implementation. E.g. {@link BigDecimal}, {@link java.lang.Number} and the
@@ -868,9 +807,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws IllegalArgumentException
 	 *             if the representation type is not supported.
 	 */
-	public <T> T asType(Class<T> type);
+  public <T extends java.lang.Object> T asType(Class<T> type);
 
-	/**
+  /**
 	 * * Gets the monetary amount using the passed target type. This method
 	 * allows to support different return types, depending of the concrete
 	 * implementation. E.g. {@link BigDecimal} should be supported within SE
@@ -891,9 +830,9 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @throws IllegalArgumentException
 	 *             if the representation type is not supported.
 	 */
-	public <T> T asType(Class<T> type, boolean performRounding);
+  public <T extends java.lang.Object> T asType(Class<T> type, boolean performRounding);
 
-	/**
+  /**
 	 * Get the amount's value, without any modification. By default, a numeric
 	 * value of an Amount will be rounded as defined by
 	 * {@link CurrencyUnit#getDefaultFractionDigits()}.
@@ -907,18 +846,18 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 * @return the representation of this amount, adjusted using the given
 	 *         adjustment.
 	 */
-	public <T> T asType(Class<T> type, AmountAdjuster... adjustments);
+  public <T extends java.lang.Object> T asType(Class<T> type, AmountAdjuster... adjustments);
 
-	/**
+  /**
 	 * Access the class that models the representation of the numeric part of
 	 * the amount. The internal value can be accessed by calling
 	 * {@link #valueOf(Class)} passing the result of this method.
 	 * 
 	 * @return The class that represents the numeric representation, never null.
 	 */
-	public Class<?> getNumberType();
+  public Class<?> getNumberType();
 
-	/**
+  /**
 	 * This method divides this amount into a number of sub-amounts determined
 	 * by the divisor passed.
 	 * 
@@ -939,6 +878,5 @@ public interface MonetaryAmount extends Comparable<MonetaryAmount> {
 	 *         addDifferenceToLastValue is false, an additional amount instance
 	 *         containing the rounding difference.
 	 */
-	public MonetaryAmount[] divideAndSeparate(Number divisor,
-			boolean addDifferenceToLastValue);
+  public MonetaryAmount[] divideAndSeparate(Number divisor, boolean addDifferenceToLastValue);
 }
