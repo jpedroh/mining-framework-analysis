@@ -1,26 +1,5 @@
-/*
- * Sonar Objective-C Plugin
- * Copyright (C) 2012 OCTO Technology
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.objectivec;
-
 import java.util.List;
-
 import org.sonar.api.Extension;
 import org.sonar.api.Properties;
 import org.sonar.api.Property;
@@ -29,45 +8,64 @@ import org.sonar.plugins.objectivec.colorizer.ObjectiveCColorizerFormat;
 import org.sonar.plugins.objectivec.core.ObjectiveC;
 import org.sonar.plugins.objectivec.core.ObjectiveCSourceImporter;
 import org.sonar.plugins.objectivec.cpd.ObjectiveCCpdMapping;
-
 import com.google.common.collect.ImmutableList;
 
-@Properties({
-        @Property(key = OCLintSensor.REPORT_PATH_KEY, defaultValue = OCLintSensor.DEFAULT_REPORT_PATH, name = "Path to oclint pmd formatted report", description = "Relative to projects' root.", global = false, project = true), })
-public class ObjectiveCPlugin extends SonarPlugin {
+@Properties(value = { @Property(key = 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+OCLintSensor
+=======
+ObjectiveCCoverageSensor
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+.
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+REPORT_PATH_KEY
+=======
+REPORT_PATTERN_KEY
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+, defaultValue = 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+OCLintSensor
+=======
+ObjectiveCCoverageSensor
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+.
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+DEFAULT_REPORT_PATH
+=======
+DEFAULT_REPORT_PATTERN
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+, name = 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+"Path to oclint pmd formatted report"
+=======
+"Path to unit test coverage report(s)"
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+, description = 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+"Relative to projects\' root."
+=======
+"Relative to projects\' root. Ant patterns are accepted"
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+, global = false, project = true) }) public class ObjectiveCPlugin extends SonarPlugin {
+  public List<Class<? extends Extension>> getExtensions() {
+    return ImmutableList.of(ObjectiveC.class, ObjectiveCSourceImporter.class, ObjectiveCColorizerFormat.class, ObjectiveCCpdMapping.class, ObjectiveCSquidSensor.class, ObjectiveCProfile.class, OCLintRuleRepository.class, OCLintSensor.class, OCLintProfile.class, 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
+    OCLintProfileImporter
+=======
+    ObjectiveCCoverageSensor
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
+    .class);
+  }
 
-    public List<Class<? extends Extension>> getExtensions() {
-        return ImmutableList.of(ObjectiveC.class,
-                ObjectiveCSourceImporter.class,
-                ObjectiveCColorizerFormat.class, ObjectiveCCpdMapping.class,
+  public static final String FALSE = "false";
 
-                ObjectiveCSquidSensor.class, ObjectiveCProfile.class,
-                OCLintRuleRepository.class,
-                OCLintSensor.class, OCLintProfile.class,
-                OCLintProfileImporter.class
-        // ObjectiveCRuleRepository.class,
-        // ObjectiveCProfile.class,
-        //
-        // OCTestDriverSurefireSensor.class,
-        // OCTestDriverCoverageSensor.class,
-        //
-        // OCTestMavenInitializer.class,
-        // OCTestMavenPluginHandler.class,
-        // OCTestCoverageSensor.class,
-        // OCTestSurefireSensor.class
-                );
-    }
+  public static final String FILE_SUFFIXES_KEY = "sonar.objectivec.file.suffixes";
 
-    // Global Objective C constants
-    public static final String FALSE = "false";
+  public static final String FILE_SUFFIXES_DEFVALUE = "h,m";
 
-    public static final String FILE_SUFFIXES_KEY = "sonar.objectivec.file.suffixes";
-    public static final String FILE_SUFFIXES_DEFVALUE = "h,m";
+  public static final String PROPERTY_PREFIX = "sonar.objectivec";
 
-    public static final String PROPERTY_PREFIX = "sonar.objectivec";
+  public static final String TEST_FRAMEWORK_KEY = PROPERTY_PREFIX + ".testframework";
 
-    public static final String TEST_FRAMEWORK_KEY = PROPERTY_PREFIX
-            + ".testframework";
-    public static final String TEST_FRAMEWORK_DEFAULT = "ghunit";
-
+  public static final String TEST_FRAMEWORK_DEFAULT = "ghunit";
 }
