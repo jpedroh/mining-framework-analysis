@@ -36,19 +36,21 @@ public final class ConstantUtf8 extends Constant {
 
     private final String bytes;
 
-    // TODO these should perhaps be AtomicInt?
     private static volatile int considered = 0;
+
     private static volatile int hits = 0;
+
     private static volatile int skipped = 0;
+
     private static volatile int created = 0;
 
     static final String CONSTANT_UTF8_MAX_CACHED_SIZE_KEY = "bcel.maxcached.size";
-    // Set the size to 0 or below to skip caching entirely
+
     private static final int MAX_CACHED_SIZE =
             Integer.getInteger(
-                CONSTANT_UTF8_MAX_CACHED_SIZE_KEY, 200).intValue();// CHECKSTYLE IGNORE MagicNumber
-    private static final boolean BCEL_STATISTICS = Boolean.getBoolean("bcel.statistics");
+                CONSTANT_UTF8_MAX_CACHED_SIZE_KEY, 200).intValue();
 
+    private static final boolean BCEL_STATISTICS = Boolean.getBoolean("bcel.statistics");
 
     private static class CACHE_HOLDER {
 
@@ -67,13 +69,11 @@ public final class ConstantUtf8 extends Constant {
 
     }
 
-    // for accesss by test code
     static void printStats() {
         System.err.println("Cache hit " + hits + "/" + considered +", " + skipped + " skipped");
         System.err.println("Total of " + created + " ConstantUtf8 objects created");
     }
 
-    // for accesss by test code
     static void clearStats() {
         hits = considered = skipped = created = 0;
     }
@@ -92,6 +92,7 @@ public final class ConstantUtf8 extends Constant {
     /**
      * @since 6.0
      */
+
     public static ConstantUtf8 getCachedInstance(final String s) {
         if (s.length() > MAX_CACHED_SIZE) {
             skipped++;
@@ -113,16 +114,38 @@ public final class ConstantUtf8 extends Constant {
     /**
      * @since 6.0
      */
+
     public static ConstantUtf8 getInstance(final String s) {
         return new ConstantUtf8(s);
     }
 
-    /**
-     * @since 6.0
-     */
     public static ConstantUtf8 getInstance (final DataInput input)  throws IOException {
         return getInstance(input.readUTF());
     }
+
+    // TODO these should perhaps be AtomicInt?
+
+    // Set the size to 0 or below to skip caching entirely
+
+// CHECKSTYLE IGNORE MagicNumber
+
+    /**
+     * Clears the cache.
+     * 
+     * @since 6.4.0
+     */
+
+    public static void clearCache() {
+        CACHE_HOLDER.CACHE.clear();
+    }
+
+    // for accesss by test code
+
+    /**
+     * @since 6.0
+     */
+
+    // for accesss by test code
 
     /**
      * Initialize from another object.
