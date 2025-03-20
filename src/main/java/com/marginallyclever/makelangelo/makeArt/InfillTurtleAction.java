@@ -20,6 +20,8 @@ public class InfillTurtleAction extends TurtleModifierAction {
 		Turtle result = new Turtle(t);
 		try {
 			result.add(infill.run(t));
+			// PPAC : to indirectly update the slider last max limit (or else max limit is not updated and no view update on infill menu item clic)
+			myMakelangelo.setTurtle(t);
 		} catch (Exception ex) {
 			logger.error("Failed to infill", ex);
 		}
