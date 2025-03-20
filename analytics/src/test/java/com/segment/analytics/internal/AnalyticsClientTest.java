@@ -15,12 +15,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-
 import com.segment.analytics.Callback;
 import com.segment.analytics.Log;
 import com.segment.analytics.TestUtils.MessageBuilderTest;
 import com.segment.analytics.http.SegmentService;
-import com.segment.analytics.http.UploadResponse;
 import com.segment.analytics.internal.AnalyticsClient.BatchUploadTask;
 import com.segment.analytics.messages.Batch;
 import com.segment.analytics.messages.Message;
@@ -28,10 +26,7 @@ import com.segment.analytics.messages.TrackMessage;
 import com.segment.backo.Backo;
 import com.squareup.burst.BurstJUnit4;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -39,17 +34,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import okhttp3.ResponseBody;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import com.segment.analytics.http.UploadResponse;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import okhttp3.ResponseBody;
+import org.mockito.ArgumentMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import retrofit2.Call;
@@ -58,199 +54,175 @@ import retrofit2.mock.Calls;
 
 @RunWith(BurstJUnit4.class) //
 public class AnalyticsClientTest {
-	// Backo instance for testing which trims down the wait times.
-	private static final Backo BACKO = Backo.builder().base(TimeUnit.NANOSECONDS, 1).factor(1).build();
-
-	Log log = Log.NONE;
-	ThreadFactory threadFactory;
-	BlockingQueue<Message> messageQueue;
-	@Mock
-	SegmentService segmentService;
-	@Mock
-	ExecutorService networkExecutor;
-	@Mock
-	Callback callback;
-	@Mock
-	UploadResponse response;
-
-	AtomicBoolean isShutDown;
-
-	@Before
-	public void setUp() {
-		initMocks(this);
-
-		isShutDown = new AtomicBoolean(false);
+  // Backo instance for testing which trims down the wait times.
+  private static final Backo BACKO =
+          Backo.builder().base(TimeUnit.NANOSECONDS, 1).factor(1).build();
+  Log log = Log.NONE;
+  ThreadFactory threadFactory;
+   BlockingQueue<Message> messageQueue;
+  @Mock
+  SegmentService segmentService;
+  @Mock
+  ExecutorService networkExecutor;
+  @Mock
+  Callback callback;
+  AtomicBoolean isShutDown;
+  @Before
+  public void setUp() {
+  	initMocks(this);
+    isShutDown = new AtomicBoolean(false);
     messageQueue = spy(new LinkedBlockingQueue<Message>());
-		threadFactory = Executors.defaultThreadFactory();
-	}
+    threadFactory = Executors.defaultThreadFactory();
+  }
+  // Defers loading the client until tests can initialize all required dependencies.
+  AnalyticsClient newClient() {
+  	return new AnalyticsClient(
+  	        messageQueue,
+  	        segmentService,
+  	        50,
+  	        TimeUnit.HOURS.toMillis(1),
+  	        log,
+  	        threadFactory,
+  	        networkExecutor,
+  	        Collections.singletonList(callback),
+  	        isShutDown);
+  }
+  @Test
+  public void enqueueAddsToQueue(MessageBuilderTest builder) throws InterruptedException {
+  	AnalyticsClient client = newClient();
 
-	// Defers loading the client until tests can initialize all required
-	// dependencies.
-	AnalyticsClient newClient() {
-		return new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), log, threadFactory,
-				networkExecutor, Collections.singletonList(callback), isShutDown);
-	}
+  	Message message = builder.get().userId("prateek").build();
+  	client.enqueue(message);
 
-	@Test
-	public void enqueueAddsToQueue(MessageBuilderTest builder) throws InterruptedException {
-		AnalyticsClient client = newClient();
+  	verify(messageQueue).put(message);
+  }
+  @Test
+  public void shutdown() throws InterruptedException {
+    messageQueue = new LinkedBlockingQueue<>();
+    AnalyticsClient client = newClient();
 
-		Message message = builder.get().userId("prateek").build();
-		client.enqueue(message);
+    client.shutdown();
 
-		verify(messageQueue).put(message);
-	}
+    verify(networkExecutor).shutdown();
+    verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
+  }
+  @Test
+  public void flushInsertsPoison() throws InterruptedException {
+  	AnalyticsClient client = newClient();
 
-	@Test
-	public void shutdown() throws InterruptedException {
-		messageQueue = new LinkedBlockingQueue<>();
-		AnalyticsClient client = newClient();
+  	client.flush();
 
-		client.shutdown();
+  	verify(messageQueue).put(FlushMessage.POISON);
+  }
+  /** Wait until the queue is drained. */
+  static void wait(Queue<?> queue) {
+  	// noinspection StatementWithEmptyBody
+  	while (queue.size() > 0) {
+  	}
+  }
+  static Batch captureBatch(ExecutorService executor) {
+  	final ArgumentCaptor<Runnable> runnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
+  	verify(executor, timeout(1000)).submit(runnableArgumentCaptor.capture());
+  	final BatchUploadTask task = (BatchUploadTask) runnableArgumentCaptor.getValue();
+  	return task.batch;
+  }
+  @Test
+  public void flushSubmitsToExecutor() {
+  	messageQueue = new LinkedBlockingQueue<>();
+  	AnalyticsClient client = newClient();
 
-		verify(networkExecutor).shutdown();
-		verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
-	}
+  	TrackMessage first = TrackMessage.builder("foo").userId("bar").build();
+  	TrackMessage second = TrackMessage.builder("qaz").userId("qux").build();
+  	client.enqueue(first);
+  	client.enqueue(second);
+  	client.flush();
+  	wait(messageQueue);
 
-	@Test
-	public void flushInsertsPoison() throws InterruptedException {
-		AnalyticsClient client = newClient();
+  	assertThat(captureBatch(networkExecutor).batch()).containsExactly(first, second);
+  }
+  @Test
+  public void enqueueMaxTriggersFlush() {
+  	messageQueue = new LinkedBlockingQueue<>();
+  	AnalyticsClient client = newClient();
 
-		client.flush();
+  	// Enqueuing 51 messages (> 50) should trigger flush.
+  	for (int i = 0; i < 51; i++) {
+  		client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
+  	}
+  	wait(messageQueue);
 
-		verify(messageQueue).put(FlushMessage.POISON);
-	}
+  	// Verify that the executor saw the batch.
+  	assertThat(captureBatch(networkExecutor).batch()).hasSize(50);
+  }
+  @Test
+  public void enqueueBeforeMaxDoesNotTriggerFlush() {
+  	messageQueue = new LinkedBlockingQueue<>();
+  	AnalyticsClient client = newClient();
 
-	/** Wait until the queue is drained. */
-	static void wait(Queue<?> queue) {
-		// noinspection StatementWithEmptyBody
-		while (queue.size() > 0) {
-		}
-	}
+  	// Enqueuing 5 messages (< 50) should not trigger flush.
+  	for (int i = 0; i < 5; i++) {
+  		client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
+  	}
+  	wait(messageQueue);
 
-	/**
-	 * Verify that a {@link BatchUploadTask} was submitted to the executor, and
-	 * return the {@link BatchUploadTask#batch} it was uploading..
-	 */
-	static Batch captureBatch(ExecutorService executor) {
-		final ArgumentCaptor<Runnable> runnableArgumentCaptor = ArgumentCaptor.forClass(Runnable.class);
-		verify(executor, timeout(1000)).submit(runnableArgumentCaptor.capture());
-		final BatchUploadTask task = (BatchUploadTask) runnableArgumentCaptor.getValue();
-		return task.batch;
-	}
+  	// Verify that the executor didn't see anything.
+  	verify(networkExecutor, never()).submit(any(Runnable.class));
+  }
+  static Batch batchFor(Message message) {
+  	return Batch.create(Collections.<String, Object>emptyMap(), Collections.singletonList(message));
+  }
+<<<<<<< /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/left.java
+  @Test
+  public void batchRetriesForHTTP5xxErrors() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
 
-	@Test
-	public void flushSubmitsToExecutor() {
-		messageQueue = new LinkedBlockingQueue<>();
-		AnalyticsClient client = newClient();
+    // Throw a HTTP error 3 times.
+    Response response =
+            new Response(
+                    "https://api.segment.io", 500, "Server Error", Collections.<Header>emptyList(), null);
+    RetrofitError retrofitError = RetrofitError.httpError(null, response, null, null);
+    when(segmentService.upload(batch))
+            .thenThrow(retrofitError)
+            .thenThrow(retrofitError)
+            .thenThrow(retrofitError)
+            .thenReturn(null);
 
-		TrackMessage first = TrackMessage.builder("foo").userId("bar").build();
-		TrackMessage second = TrackMessage.builder("qaz").userId("qux").build();
-		client.enqueue(first);
-		client.enqueue(second);
-		client.flush();
-		wait(messageQueue);
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
 
-		assertThat(captureBatch(networkExecutor).batch()).containsExactly(first, second);
-	}
+    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
+    verify(segmentService, times(4)).upload(batch);
+    verify(callback).success(trackMessage);
+  }
+||||||| /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/base.java
+  @Test
+  public void batchRetriesForHTTP5xxErrors() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
 
-	@Test
-	public void enqueueMaxTriggersFlush() {
-		messageQueue = new LinkedBlockingQueue<>();
-		AnalyticsClient client = newClient();
+    // Throw a HTTP error 3 times.
+    Response response =
+        new Response(
+            "https://api.segment.io", 500, "Server Error", Collections.<Header>emptyList(), null);
+    RetrofitError retrofitError = RetrofitError.httpError(null, response, null, null);
+    when(segmentService.upload(batch))
+        .thenThrow(retrofitError)
+        .thenThrow(retrofitError)
+        .thenThrow(retrofitError)
+        .thenReturn(null);
 
-		// Enqueuing 51 messages (> 50) should trigger flush.
-		for (int i = 0; i < 51; i++) {
-			client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
-		}
-		wait(messageQueue);
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
 
-		// Verify that the executor saw the batch.
-		assertThat(captureBatch(networkExecutor).batch()).hasSize(50);
-	}
-
-	private static String createDataSize(int msgSize) {
-		char[] chars = new char[msgSize];
-		Arrays.fill(chars, 'a');
-
-		return new String(chars);
-	}
-
-	@Test
-	public void calculatesMessageByteSize() {
-		AnalyticsClient client = newClient();
-		Map<String, String> properties = new HashMap<String, String>();
-
-		properties.put("dummy-property", createDataSize(1024 * 33));
-
-		TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
-		client.enqueue(bigMessage);
-
-		// can't test for exact size cause other attributes come in play
-		assertThat(client.messageSizeInBytes(bigMessage)).isGreaterThan(1024 * 33);
-	}
-
-	@Test
-	public void dontEnqueueWhenReachesMaxSize() throws InterruptedException {
-		AnalyticsClient client = newClient();
-		Map<String, String> properties = new HashMap<String, String>();
-
-		properties.put("dummy-property", createDataSize(1024 * 33));
-
-		TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
-		client.enqueue(bigMessage);
-
-		// assertThat(client.messageSizeInBytes(bigMessage)).isEqualTo(30);
-
-		Message tinyMessage = TrackMessage.builder("Tinny Event").userId("bar").build();
-		client.enqueue(tinyMessage);
-		wait(messageQueue);
-
-		verify(messageQueue, times(2)).put(any(Message.class));
-	}
-
-	@Test
-	public void enqueueBeforeMaxDoesNotTriggerFlush() {
-		messageQueue = new LinkedBlockingQueue<>();
-		AnalyticsClient client = newClient();
-
-		// Enqueuing 5 messages (< 50) should not trigger flush.
-		for (int i = 0; i < 5; i++) {
-			client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
-		}
-		wait(messageQueue);
-
-		// Verify that the executor didn't see anything.
-		verify(networkExecutor, never()).submit(any(Runnable.class));
-	}
-
-	static Batch batchFor(Message message) {
-		return Batch.create(Collections.<String, Object>emptyMap(), Collections.singletonList(message));
-	}
-
-	@Test
-	public void batchRetriesForNetworkErrors() {
-		AnalyticsClient client = newClient();
-		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
-		Batch batch = batchFor(trackMessage);
-
-		Response<UploadResponse> successResponse = Response.success(200, response);
-		Response<UploadResponse> failureResponse = Response.error(429, ResponseBody.create(null, ""));
-
-		// Throw a network error 3 times.
-		when(segmentService.upload(batch)).thenReturn(Calls.response(failureResponse))
-				.thenReturn(Calls.response(failureResponse)).thenReturn(Calls.response(failureResponse))
-				.thenReturn(Calls.response(successResponse));
-
-		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
-		batchUploadTask.run();
-
-		// Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
-		verify(segmentService, times(4)).upload(batch);
-		verify(callback).success(trackMessage);
-	}
-
-	@Test
+    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
+    verify(segmentService, times(4)).upload(batch);
+    verify(callback).success(trackMessage);
+  }
+=======
+  @Test
 	public void batchRetriesForHTTP5xxErrors() {
 		AnalyticsClient client = newClient();
 		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
@@ -271,8 +243,59 @@ public class AnalyticsClientTest {
 		verify(segmentService, times(4)).upload(batch);
 		verify(callback).success(trackMessage);
 	}
+>>>>>>> /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/right.java
+<<<<<<< /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/left.java
+  @Test
+  public void batchRetriesForHTTP429Errors() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
 
-	@Test
+    // Throw a HTTP error 3 times.
+    Response response =
+            new Response(
+                    "https://api.segment.io", 429, "Rate Limited", Collections.<Header>emptyList(), null);
+    RetrofitError retrofitError = RetrofitError.httpError(null, response, null, null);
+    when(segmentService.upload(batch))
+            .thenThrow(retrofitError)
+            .thenThrow(retrofitError)
+            .thenThrow(retrofitError)
+            .thenReturn(null);
+
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
+
+    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
+    verify(segmentService, times(4)).upload(batch);
+    verify(callback).success(trackMessage);
+  }
+||||||| /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/base.java
+  @Test
+  public void batchRetriesForHTTP429Errors() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
+
+    // Throw a HTTP error 3 times.
+    Response response =
+        new Response(
+            "https://api.segment.io", 429, "Rate Limited", Collections.<Header>emptyList(), null);
+    RetrofitError retrofitError = RetrofitError.httpError(null, response, null, null);
+    when(segmentService.upload(batch))
+        .thenThrow(retrofitError)
+        .thenThrow(retrofitError)
+        .thenThrow(retrofitError)
+        .thenReturn(null);
+
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
+
+    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
+    verify(segmentService, times(4)).upload(batch);
+    verify(callback).success(trackMessage);
+  }
+=======
+  @Test
 	public void batchRetriesForHTTP429Errors() {
 		AnalyticsClient client = newClient();
 		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
@@ -292,43 +315,71 @@ public class AnalyticsClientTest {
 		verify(segmentService, times(4)).upload(batch);
 		verify(callback).success(trackMessage);
 	}
+>>>>>>> /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/right.java
+<<<<<<< /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/left.java
+  @Test
+  public void givesUpAfterMaxRetries() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
+    RetrofitError retrofitError = RetrofitError.networkError(null, new IOException());
+    when(segmentService.upload(batch)).thenThrow(retrofitError);
 
-	@Test
-	public void batchDoesNotRetryForNon5xxAndNon429HTTPErrors() {
-		AnalyticsClient client = newClient();
-		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
-		Batch batch = batchFor(trackMessage);
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
 
-		// Throw a HTTP error that should not be retried.
-		Response<UploadResponse> failResponse = Response.error(404, ResponseBody.create(null, "Not Found"));
-		when(segmentService.upload(batch)).thenReturn(Calls.response(failResponse));
+    // 50 == MAX_ATTEMPTS in AnalyticsClient.java
+    verify(segmentService, times(50)).upload(batch);
+    verify(callback)
+            .failure(
+                    eq(trackMessage),
+                    argThat(
+                            new TypeSafeMatcher<Throwable>() {
+                              @Override
+                              public void describeTo(Description description) {
+                                description.appendText("expected IOException");
+                              }
 
-		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
-		batchUploadTask.run();
+                              @Override
+                              protected boolean matchesSafely(Throwable item) {
+                                IOException exception = (IOException) item;
+                                return exception.getMessage().equals("50 retries exhausted");
+                              }
+                            }));
+  }
+||||||| /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/base.java
+  @Test
+  public void givesUpAfterMaxRetries() {
+    AnalyticsClient client = newClient();
+    TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+    Batch batch = batchFor(trackMessage);
+    RetrofitError retrofitError = RetrofitError.networkError(null, new IOException());
+    when(segmentService.upload(batch)).thenThrow(retrofitError);
 
-		// Verify we only tried to upload once.
-		verify(segmentService).upload(batch);
-		verify(callback).failure(eq(trackMessage), any(IOException.class));
-	}
+    BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+    batchUploadTask.run();
 
-	@Test
-	public void batchDoesNotRetryForNonNetworkErrors() {
-		AnalyticsClient client = newClient();
-		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
-		Batch batch = batchFor(trackMessage);
+    // 50 == MAX_ATTEMPTS in AnalyticsClient.java
+    verify(segmentService, times(50)).upload(batch);
+    verify(callback)
+        .failure(
+            eq(trackMessage),
+            argThat(
+                new TypeSafeMatcher<Throwable>() {
+                  @Override
+                  public void describeTo(Description description) {
+                    description.appendText("expected IOException");
+                  }
 
-		Call<UploadResponse> networkFailure = Calls.failure(new RuntimeException());
-		when(segmentService.upload(batch)).thenReturn(networkFailure);
-
-		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
-		batchUploadTask.run();
-
-		// Verify we only tried to upload once.
-		verify(segmentService).upload(batch);
-		verify(callback).failure(eq(trackMessage), any(RuntimeException.class));
-	}
-
-	@Test
+                  @Override
+                  protected boolean matchesSafely(Throwable item) {
+                    IOException exception = (IOException) item;
+                    return exception.getMessage().equals("50 retries exhausted");
+                  }
+                }));
+  }
+=======
+  @Test
 	public void givesUpAfterMaxRetries() {
 		AnalyticsClient client = newClient();
 		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
@@ -353,15 +404,14 @@ public class AnalyticsClientTest {
 			}
 		}));
 	}
-
-	@Test
+>>>>>>> /usr/src/app/output/segmentio/analytics-java/b5a96236e473740ea83e5d1ab0548deea21a5656/analytics/src/test/java/com/segment/analytics/internal/AnalyticsClientTest.java/right.java
+  @Test
   public void flushWhenNotShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
 
     client.flush();
     verify(messageQueue).put(POISON);
   }
-
   @Test
   public void flushWhenShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -371,7 +421,6 @@ public class AnalyticsClientTest {
 
     verify(messageQueue, times(0)).put(any(Message.class));
   }
-
   @Test
   public void enqueueWithRegularMessageWhenNotShutdown(MessageBuilderTest builder)
           throws InterruptedException {
@@ -383,7 +432,6 @@ public class AnalyticsClientTest {
 
     verify(messageQueue).put(message);
   }
-
   @Test
   public void enqueueWithRegularMessageWhenShutdown(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -393,7 +441,6 @@ public class AnalyticsClientTest {
 
     verify(messageQueue, times(0)).put(any(Message.class));
   }
-
   @Test
   public void enqueueWithStopMessageWhenShutdown() throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -403,7 +450,6 @@ public class AnalyticsClientTest {
 
     verify(messageQueue).put(STOP);
   }
-
   @Test
   public void shutdownWhenAlreadyShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -414,7 +460,6 @@ public class AnalyticsClientTest {
     verify(messageQueue, times(0)).put(any(Message.class));
     verifyZeroInteractions(networkExecutor, callback, segmentService);
   }
-
   @Test
   public void shutdownWithNoMessageInTheQueue() throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -425,7 +470,6 @@ public class AnalyticsClientTest {
     verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
     verifyNoMoreInteractions(networkExecutor);
   }
-
   @Test
   public void shutdownWithMessagesInTheQueue(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
@@ -438,4 +482,105 @@ public class AnalyticsClientTest {
     verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
     verify(networkExecutor).submit(any(AnalyticsClient.BatchUploadTask.class));
   }
+	// Backo instance for testing which trims down the wait times.
+	@Mock
+	UploadResponse response;
+	// Defers loading the client until tests can initialize all required
+	// dependencies.
+	/** Wait until the queue is drained. */
+	/**
+	 * Verify that a {@link BatchUploadTask} was submitted to the executor, and
+	 * return the {@link BatchUploadTask#batch} it was uploading..
+	 */
+	private static String createDataSize(int msgSize) {
+		char[] chars = new char[msgSize];
+		Arrays.fill(chars, 'a');
+
+		return new String(chars);
+	}
+	@Test
+	public void calculatesMessageByteSize() {
+		AnalyticsClient client = newClient();
+		Map<String, String> properties = new HashMap<String, String>();
+
+		properties.put("dummy-property", createDataSize(1024 * 33));
+
+		TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+		client.enqueue(bigMessage);
+
+		// can't test for exact size cause other attributes come in play
+		assertThat(client.messageSizeInBytes(bigMessage)).isGreaterThan(1024 * 33);
+	}
+	@Test
+	public void dontEnqueueWhenReachesMaxSize() throws InterruptedException {
+		AnalyticsClient client = newClient();
+		Map<String, String> properties = new HashMap<String, String>();
+
+		properties.put("dummy-property", createDataSize(1024 * 33));
+
+		TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+		client.enqueue(bigMessage);
+
+		// assertThat(client.messageSizeInBytes(bigMessage)).isEqualTo(30);
+
+		Message tinyMessage = TrackMessage.builder("Tinny Event").userId("bar").build();
+		client.enqueue(tinyMessage);
+		wait(messageQueue);
+
+		verify(messageQueue, times(2)).put(any(Message.class));
+	}
+	@Test
+	public void batchRetriesForNetworkErrors() {
+		AnalyticsClient client = newClient();
+		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+		Batch batch = batchFor(trackMessage);
+
+		Response<UploadResponse> successResponse = Response.success(200, response);
+		Response<UploadResponse> failureResponse = Response.error(429, ResponseBody.create(null, ""));
+
+		// Throw a network error 3 times.
+		when(segmentService.upload(batch)).thenReturn(Calls.response(failureResponse))
+				.thenReturn(Calls.response(failureResponse)).thenReturn(Calls.response(failureResponse))
+				.thenReturn(Calls.response(successResponse));
+
+		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+		batchUploadTask.run();
+
+		// Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
+		verify(segmentService, times(4)).upload(batch);
+		verify(callback).success(trackMessage);
+	}
+	@Test
+	public void batchDoesNotRetryForNon5xxAndNon429HTTPErrors() {
+		AnalyticsClient client = newClient();
+		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+		Batch batch = batchFor(trackMessage);
+
+		// Throw a HTTP error that should not be retried.
+		Response<UploadResponse> failResponse = Response.error(404, ResponseBody.create(null, "Not Found"));
+		when(segmentService.upload(batch)).thenReturn(Calls.response(failResponse));
+
+		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+		batchUploadTask.run();
+
+		// Verify we only tried to upload once.
+		verify(segmentService).upload(batch);
+		verify(callback).failure(eq(trackMessage), any(IOException.class));
+	}
+	@Test
+	public void batchDoesNotRetryForNonNetworkErrors() {
+		AnalyticsClient client = newClient();
+		TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
+		Batch batch = batchFor(trackMessage);
+
+		Call<UploadResponse> networkFailure = Calls.failure(new RuntimeException());
+		when(segmentService.upload(batch)).thenReturn(networkFailure);
+
+		BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch);
+		batchUploadTask.run();
+
+		// Verify we only tried to upload once.
+		verify(segmentService).upload(batch);
+		verify(callback).failure(eq(trackMessage), any(RuntimeException.class));
+	}
 }

@@ -26,11 +26,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.lang.instrument.Instrumentation;
-
 import retrofit2.Call;
 import retrofit2.Response;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AnalyticsClient {
   private static final Map<String, ?> CONTEXT;
@@ -296,7 +295,8 @@ public class AnalyticsClient {
 
         return false;
       } catch (IOException error) {
-        client.log.print(DEBUG, error, "Could not upload batch %s. Retrying.", batch.sequence());
+        client.log.print(
+                DEBUG, error, "Could not upload batch %s. Retrying.", batch.sequence());
 
         return true;
       } catch (Exception exception) {
