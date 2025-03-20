@@ -27,7 +27,6 @@ import com.amazonaws.services.kinesis.metrics.interfaces.IMetricsScope;
 import com.amazonaws.services.kinesis.metrics.interfaces.MetricsLevel;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-
 import lombok.Getter;
 
 /**
@@ -213,12 +212,10 @@ public class KinesisClientLibConfiguration {
     // This is useful for optimizing deployments to large fleets working on a stable stream.
     private boolean skipShardSyncAtWorkerInitializationIfLeasesExist;
     private ShardPrioritization shardPrioritization;
-
     @Getter
     private Optional<Boolean> timeoutEnabled = Optional.absent();
     @Getter
     private Optional<Integer> timeoutInSeconds = Optional.absent();
-
     @Getter
     private int maxLeaseRenewalThreads = DEFAULT_MAX_LEASE_RENEWAL_THREADS;
 
@@ -1098,7 +1095,7 @@ public class KinesisClientLibConfiguration {
      * Sets the size of the thread pool that will be used to renew leases.
      *
      * Setting this to low may starve the lease renewal process, and cause the worker to lose leases at a higher rate.
-     *
+     * 
      * @param maxLeaseRenewalThreads
      *            the maximum size of the lease renewal thread pool
      * @throws IllegalArgumentException
