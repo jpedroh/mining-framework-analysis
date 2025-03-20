@@ -73,9 +73,16 @@ public class MapperTest
     /*public void testExample5() {
         URL fileToRMLFile = getClass().getResource("/example5/museum-model.rml.ttl");
         URL fileToOutputFile = getClass().getResource("/example5/museum.output.ttl");
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/707510e3a9c3a799e38a2933cd54e4688c0ad7aa/src/test/java/be/ugent/mmlab/rml/MapperTest.java/left.java
         assertTrue(desiredOutput(fileToOutputFile).isEqualTo(assertMap(fileToRMLFile)));
     }
+||||||| /usr/src/app/output/mmlab/rmlprocessor/707510e3a9c3a799e38a2933cd54e4688c0ad7aa/src/test/java/be/ugent/mmlab/rml/MapperTest.java/base.java
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
+    }
+=======
+        assertTrue(assertMap(fileToRMLFile, fileToOutputFile));
     }*/
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/707510e3a9c3a799e38a2933cd54e4688c0ad7aa/src/test/java/be/ugent/mmlab/rml/MapperTest.java/right.java
     
     public void testExample6() {
         URL fileToRMLFile = getClass().getResource("/example6/example.rml.ttl");
