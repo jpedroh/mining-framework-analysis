@@ -1,28 +1,11 @@
-/*
- * Created on Jul 26, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.extractor.Extractors.*;
 import static org.assertj.core.util.Lists.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-
 import org.assertj.core.api.iterable.Extractor;
 import org.assertj.core.data.Index;
 import org.assertj.core.groups.FieldsOrPropertiesExtractor;
@@ -48,12 +31,8 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Mikhail Mazursky
  * @author Mateusz Haligowski
  */
-public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T> extends
-    AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>,
-    ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
-
-  @VisibleForTesting
-  ObjectArrays arrays = ObjectArrays.instance();
+public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T extends java.lang.Object> extends AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>, ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
+  @VisibleForTesting ObjectArrays arrays = ObjectArrays.instance();
 
   protected AbstractObjectArrayAssert(T[] actual, Class<?> selfType) {
     super(actual, selfType);
@@ -64,8 +43,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
@@ -74,8 +52,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, actual);
   }
 
@@ -84,8 +61,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -95,8 +71,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     arrays.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -104,223 +79,190 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSameSizeAs(Object other) {
-    // TODO same implementation as in AbstractArrayAssert, but can't inherit from it due to generics problem ...
+  @Override public S hasSameSizeAs(Object other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S contains(T... values) {
+  @Override public S contains(T... values) {
     arrays.assertContains(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsOnly(T... values) {
+  @Override public S containsOnly(T... values) {
     arrays.assertContainsOnly(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsOnlyOnce(T... values) {
+  @Override public S containsOnlyOnce(T... values) {
     arrays.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsExactly(T... values) {
+  @Override public S containsExactly(T... values) {
     objects.assertEqual(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsSequence(T... sequence) {
+  @Override public S containsSequence(T... sequence) {
     arrays.assertContainsSequence(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsSubsequence(T... subsequence) {
+  @Override public S containsSubsequence(T... subsequence) {
     arrays.assertContainsSubsequence(info, actual, subsequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S contains(T value, Index index) {
+  @Override public S contains(T value, Index index) {
     arrays.assertContains(info, actual, value, index);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContain(T value, Index index) {
+  @Override public S doesNotContain(T value, Index index) {
     arrays.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContain(T... values) {
+  @Override public S doesNotContain(T... values) {
     arrays.assertDoesNotContain(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotHaveDuplicates() {
+  @Override public S doesNotHaveDuplicates() {
     arrays.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S startsWith(T... sequence) {
+  @Override public S startsWith(T... sequence) {
     arrays.assertStartsWith(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S endsWith(T... sequence) {
+  @Override public S endsWith(T... sequence) {
     arrays.assertEndsWith(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsNull() {
+  @Override public S containsNull() {
     arrays.assertContainsNull(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContainNull() {
+  @Override public S doesNotContainNull() {
     arrays.assertDoesNotContainNull(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S are(Condition<? super T> condition) {
+  @Override public S are(Condition<? super T> condition) {
     arrays.assertAre(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areNot(Condition<? super T> condition) {
+  @Override public S areNot(Condition<? super T> condition) {
     arrays.assertAreNot(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S have(Condition<? super T> condition) {
+  @Override public S have(Condition<? super T> condition) {
     arrays.assertHave(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doNotHave(Condition<? super T> condition) {
+  @Override public S doNotHave(Condition<? super T> condition) {
     arrays.assertDoNotHave(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areAtLeast(int times, Condition<? super T> condition) {
+  @Override public S areAtLeast(int times, Condition<? super T> condition) {
     arrays.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areAtMost(int times, Condition<? super T> condition) {
+  @Override public S areAtMost(int times, Condition<? super T> condition) {
     arrays.assertAreAtMost(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areExactly(int times, Condition<? super T> condition) {
+  @Override public S areExactly(int times, Condition<? super T> condition) {
     arrays.assertAreExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtLeastOne(Condition<? super T> condition) {
+  @Override public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtLeast(int times, Condition<? super T> condition) {
+  @Override public S haveAtLeast(int times, Condition<? super T> condition) {
     arrays.assertHaveAtLeast(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtMost(int times, Condition<? super T> condition) {
+  @Override public S haveAtMost(int times, Condition<? super T> condition) {
     arrays.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveExactly(int times, Condition<? super T> condition) {
+  @Override public S haveExactly(int times, Condition<? super T> condition) {
     arrays.assertHaveExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSorted() {
+  @Override public S isSorted() {
     arrays.assertIsSorted(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSortedAccordingTo(Comparator<? super T> comparator) {
+  @Override public S isSortedAccordingTo(Comparator<? super T> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsAll(Iterable<? extends T> iterable) {
+  @Override public S containsAll(Iterable<? extends T> iterable) {
     arrays.assertContainsAll(info, actual, iterable);
     return myself;
   }
 
-  @Override
-  public S usingElementComparator(Comparator<? super T> customComparator) {
+  @Override public S usingElementComparator(Comparator<? super T> customComparator) {
     this.arrays = new ObjectArrays(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     this.arrays = ObjectArrays.instance();
     return myself;
   }
@@ -427,9 +369,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object whose object under test is the array of extracted field/property values.
    * @throws IntrospectionError if no field or property exists with the given name (or field exists but is not public)
    */
-  public <P> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
     return new ObjectArrayAssert<P>(values);
   }
 
@@ -494,7 +435,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   public ObjectArrayAssert<Tuple> extracting(String... propertiesOrFields) {
     Object[] values = FieldsOrPropertiesExtractor.extract(actual, byName(propertiesOrFields));
     Tuple[] result = Arrays.copyOf(values, values.length, Tuple[].class);
-
     return new ObjectArrayAssert<Tuple>(result);
   }
 
@@ -540,20 +480,17 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractor the object transforming input object to desired one
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <U> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
+  public <U extends java.lang.Object> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
     U[] extracted = FieldsOrPropertiesExtractor.extract(actual, extractor);
-
     return new ObjectArrayAssert<U>(extracted);
   }
 
-  public <U, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
+  public <U extends java.lang.Object, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
     final List<C> extractedValues = FieldsOrPropertiesExtractor.extract(Arrays.asList(actual), extractor);
-
     final List<U> result = newArrayList();
     for (C e : extractedValues) {
       result.addAll(e);
     }
-
     return new ObjectArrayAssert<U>(Iterables.toArray(result));
   }
 
@@ -643,9 +580,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IllegalArgumentException if no method exists with the given name, or method is not public, or method does
    *           return void, or method accepts arguments.
    */
-  public <P> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
     return new ObjectArrayAssert<P>(values);
   }
 
@@ -685,14 +621,11 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public S inHexadecimal() {
+  @Override public S inHexadecimal() {
     return super.inHexadecimal();
   }
 
-  @Override
-  public S inBinary() {
+  @Override public S inBinary() {
     return super.inBinary();
   }
-
 }
