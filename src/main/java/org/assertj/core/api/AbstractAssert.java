@@ -1,25 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.error.ShouldMatch.shouldMatch;
 import static org.assertj.core.util.Strings.formatIfArgs;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.error.BasicErrorMessageFactory;
 import org.assertj.core.error.MessageFormatter;
@@ -33,7 +18,7 @@ import org.assertj.core.util.VisibleForTesting;
 /**
  * Base class for all assertions.
  * 
- * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
  * @param <A> the type of the "actual" value.
@@ -43,27 +28,18 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Mikhail Mazursky
  * @author Nicolas François
  */
-public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implements Assert<S, A> {
+public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A extends java.lang.Object> implements Assert<S, A> {
+  @VisibleForTesting Objects objects = Objects.instance();
 
-  @VisibleForTesting
-  Objects objects = Objects.instance();
+  @VisibleForTesting Conditions conditions = Conditions.instance();
 
-  @VisibleForTesting
-  Conditions conditions = Conditions.instance();
+  @VisibleForTesting protected final WritableAssertionInfo info;
 
-  @VisibleForTesting
-  protected final WritableAssertionInfo info;
+  @VisibleForTesting protected final A actual;
 
-  // visibility is protected to allow us write custom assertions that need access to actual
-  @VisibleForTesting
-  protected final A actual;
   protected final S myself;
 
-  // we prefer not to use Class<? extends S> selfType because it would force inherited
-  // constructor to cast with a compiler warning
-  // let's keep compiler warning internal (when we can) and not expose them to our end users.
-  @SuppressWarnings("unchecked")
-  protected AbstractAssert(A actual, Class<?> selfType) {
+  @SuppressWarnings(value = { "unchecked" }) protected AbstractAssert(A actual, Class<?> selfType) {
     myself = (S) selfType.cast(this);
     this.actual = actual;
     info = new WritableAssertionInfo();
@@ -88,7 +64,9 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * defined by the user with {@link #overridingErrorMessage(String, Object...)}.
    * <p>
    * Example :
-   * <pre><code class='java'> public TolkienCharacterAssert hasName(String name) {
+   * 
+   * <pre><code class='java'>
+   * public TolkienCharacterAssert hasName(String name) {
    *   // check that actual TolkienCharacter we want to make assertions on is not null.
    *   isNotNull();
    * 
@@ -99,14 +77,17 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * 
    *   // return the current assertion for method chaining
    *   return this;
-   * }</code></pre>
+   * }
+   * </code></pre>
    * 
    * @param errorMessage the error message to format
    * @param arguments the arguments referenced by the format specifiers in the errorMessage string.
    */
   protected void failWithMessage(String errorMessage, Object... arguments) {
     AssertionError failureWithOverriddenErrorMessage = Failures.instance().failureIfErrorMessageIsOverridden(info);
-    if (failureWithOverriddenErrorMessage != null) throw failureWithOverriddenErrorMessage;
+    if (failureWithOverriddenErrorMessage != null) {
+      throw failureWithOverriddenErrorMessage;
+    }
     String description = MessageFormatter.instance().format(info.description(), info.representation(), "");
     throw new AssertionError(description + String.format(errorMessage, arguments));
   }
@@ -130,18 +111,16 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * @return an {@link AssertionError} with a message corresponding to the given {@link BasicErrorMessageFactory}.
    */
   protected AssertionError failure(BasicErrorMessageFactory errorMessageFactory) {
-	return Failures.instance().failure(info, errorMessageFactory);
+    return Failures.instance().failure(info, errorMessageFactory);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S as(String description, Object... args) {
+  @Override public S as(String description, Object... args) {
     return describedAs(description, args);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S as(Description description) {
+  @Override public S as(Description description) {
     return describedAs(description);
   }
 
@@ -152,22 +131,28 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * thus impossible to find differences from the standard error message:
    * <p/>
    * With standard message:
-   * <pre><code class='java'> assertThat("µµµ").contains("μμμ");
+   * 
+   * <pre><code class='java'>
+   * assertThat("µµµ").contains("μμμ");
    *
    * java.lang.AssertionError:
    * Expecting:
    *   <"µµµ">
    * to contain:
-   *   <"μμμ"></code></pre>
+   *   <"μμμ">
+   * </code></pre>
    *
    * With Hexadecimal message:
-   * <pre><code class='java'> assertThat("µµµ").inHexadecimal().contains("μμμ");
+   * 
+   * <pre><code class='java'>
+   * assertThat("µµµ").inHexadecimal().contains("μμμ");
    *
    * java.lang.AssertionError:
    * Expecting:
    *   <"['00B5', '00B5', '00B5']">
    * to contain:
-   *   <"['03BC', '03BC', '03BC']"></code></pre>
+   *   <"['03BC', '03BC', '03BC']">
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -180,11 +165,14 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * Use binary object representation instead of standard representation in error messages.
    * <p/>
    * Example:
-   * <pre><code class='java'> assertThat(1).inBinary().isEqualTo(2);
+   * 
+   * <pre><code class='java'>
+   * assertThat(1).inBinary().isEqualTo(2);
    *
    * org.junit.ComparisonFailure:
    * Expected :0b00000000_00000000_00000000_00000010
-   * Actual   :0b00000000_00000000_00000000_00000001</code></pre>
+   * Actual   :0b00000000_00000000_00000000_00000001
+   * </code></pre>
    * 
    * @return {@code this} assertion object.
    */
@@ -194,204 +182,174 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S describedAs(String description, Object... args) {
+  @Override public S describedAs(String description, Object... args) {
     info.description(description, args);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S describedAs(Description description) {
+  @Override public S describedAs(Description description) {
     info.description(description);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isEqualTo(Object expected) {
+  @Override public S isEqualTo(Object expected) {
     objects.assertEqual(info, actual, expected);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotEqualTo(Object other) {
+  @Override public S isNotEqualTo(Object other) {
     objects.assertNotEqual(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isNull() {
+  @Override public void isNull() {
     objects.assertNull(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotNull() {
+  @Override public S isNotNull() {
     objects.assertNotNull(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSameAs(Object expected) {
+  @Override public S isSameAs(Object expected) {
     objects.assertSame(info, actual, expected);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotSameAs(Object other) {
+  @Override public S isNotSameAs(Object other) {
     objects.assertNotSame(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isIn(Object... values) {
+  @Override public S isIn(Object... values) {
     objects.assertIsIn(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotIn(Object... values) {
+  @Override public S isNotIn(Object... values) {
     objects.assertIsNotIn(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isIn(Iterable<?> values) {
+  @Override public S isIn(Iterable<?> values) {
     objects.assertIsIn(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotIn(Iterable<?> values) {
+  @Override public S isNotIn(Iterable<?> values) {
     objects.assertIsNotIn(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S is(Condition<? super A> condition) {
+  @Override public S is(Condition<? super A> condition) {
     conditions.assertIs(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNot(Condition<? super A> condition) {
+  @Override public S isNot(Condition<? super A> condition) {
     conditions.assertIsNot(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S has(Condition<? super A> condition) {
+  @Override public S has(Condition<? super A> condition) {
     conditions.assertHas(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotHave(Condition<? super A> condition) {
+  @Override public S doesNotHave(Condition<? super A> condition) {
     conditions.assertDoesNotHave(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isInstanceOf(Class<?> type) {
+  @Override public S isInstanceOf(Class<?> type) {
     objects.assertIsInstanceOf(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isInstanceOfAny(Class<?>... types) {
+  @Override public S isInstanceOfAny(Class<?>... types) {
     objects.assertIsInstanceOfAny(info, actual, types);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotInstanceOf(Class<?> type) {
+  @Override public S isNotInstanceOf(Class<?> type) {
     objects.assertIsNotInstanceOf(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotInstanceOfAny(Class<?>... types) {
+  @Override public S isNotInstanceOfAny(Class<?>... types) {
     objects.assertIsNotInstanceOfAny(info, actual, types);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSameClassAs(Object other) {
+  @Override public S hasSameClassAs(Object other) {
     objects.assertHasSameClassAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasToString(String expectedToString) {
+  @Override public S hasToString(String expectedToString) {
     objects.assertHasToString(info, actual, expectedToString);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotHaveSameClassAs(Object other) {
+  @Override public S doesNotHaveSameClassAs(Object other) {
     objects.assertDoesNotHaveSameClassAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isExactlyInstanceOf(Class<?> type) {
+  @Override public S isExactlyInstanceOf(Class<?> type) {
     objects.assertIsExactlyInstanceOf(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotExactlyInstanceOf(Class<?> type) {
+  @Override public S isNotExactlyInstanceOf(Class<?> type) {
     objects.assertIsNotExactlyInstanceOf(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isOfAnyClassIn(Class<?>... types) {
+  @Override public S isOfAnyClassIn(Class<?>... types) {
     objects.assertIsOfAnyClassIn(info, actual, types);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotOfAnyClassIn(Class<?>... types) {
+  @Override public S isNotOfAnyClassIn(Class<?>... types) {
     objects.assertIsNotOfAnyClassIn(info, actual, types);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @SuppressWarnings("unchecked")
-  @Override
-  public AbstractListAssert<?, ?, Object> asList() {
+  @SuppressWarnings(value = { "unchecked" }) @Override public AbstractListAssert<?, ?, Object> asList() {
     objects.assertIsInstanceOf(info, actual, List.class);
     return new ListAssert<>((List<Object>) actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public AbstractCharSequenceAssert<?, String> asString() {
+  @Override public AbstractCharSequenceAssert<?, String> asString() {
     objects.assertIsInstanceOf(info, actual, String.class);
     return Assertions.assertThat((String) actual);
   }
@@ -413,8 +371,11 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * don't, the error message is taken as it is).
    * <p>
    * Example :
-   * <pre><code class='java'>assertThat(player.isRookie()).overridingErrorMessage(&quot;Expecting Player &lt;%s&gt; to be a rookie but was not.&quot;, player)
-   *                              .isTrue();</code></pre>
+   * 
+   * <pre><code class='java'>
+   * assertThat(player.isRookie()).overridingErrorMessage(&quot;Expecting Player &lt;%s&gt; to be a rookie but was not.&quot;, player)
+   *                              .isTrue();
+   * </code></pre>
    * 
    * @param newErrorMessage the error message that will replace the default one provided by Assertj.
    * @param args the args used to fill error message as in {@link String#format(String, Object...)}.
@@ -440,23 +401,18 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S usingComparator(Comparator<? super A> customComparator) {
-    // using a specific strategy to compare actual with other objects.
+  @Override public S usingComparator(Comparator<? super A> customComparator) {
     this.objects = new Objects(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S usingDefaultComparator() {
-    // fall back to default strategy to compare actual with other objects.
+  @Override public S usingDefaultComparator() {
     this.objects = Objects.instance();
     return myself;
   }
 
-  @Override
-  public S withThreadDumpOnError() {
+  @Override public S withThreadDumpOnError() {
     Failures.instance().enablePrintThreadDump();
     return myself;
   }
@@ -466,10 +422,8 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * 
    * @throws UnsupportedOperationException if this method is called.
    */
-  @Override
-  @Deprecated
-  public boolean equals(Object obj) {
-    throw new UnsupportedOperationException("'equals' is not supported...maybe you intended to call 'isEqualTo'");
+  @Override @Deprecated public boolean equals(Object obj) {
+    throw new UnsupportedOperationException("\'equals\' is not supported...maybe you intended to call \'isEqualTo\'");
   }
 
   /**
@@ -477,8 +431,7 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * 
    * @return 1.
    */
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return 1;
   }
 
@@ -497,8 +450,7 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * @throws NullPointerException if given {@link Predicate} is null.
    */
   public S matches(Predicate<? super A> predicate) {
-	// use default PredicateDescription
-	return matches(predicate, PredicateDescription.GIVEN);
+    return matches(predicate, PredicateDescription.GIVEN);
   }
 
   /**
@@ -527,13 +479,14 @@ public abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> implemen
    * @throws NullPointerException if given predicateDescription is null.
    */
   public S matches(Predicate<? super A> predicate, String predicateDescription) {
-	return matches(predicate, new PredicateDescription(predicateDescription));
+    return matches(predicate, new PredicateDescription(predicateDescription));
   }
 
   private S matches(Predicate<? super A> predicate, PredicateDescription predicateDescription) {
-	requireNonNull(predicate, "The predicate must not be null");
-	if (predicate.test(actual)) return myself;
-	throw Failures.instance().failure(info, shouldMatch(actual, predicate, predicateDescription));
+    requireNonNull(predicate, "The predicate must not be null");
+    if (predicate.test(actual)) {
+      return myself;
+    }
+    throw Failures.instance().failure(info, shouldMatch(actual, predicate, predicateDescription));
   }
-
 }

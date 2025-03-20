@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -31,7 +18,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 /**
@@ -42,7 +28,9 @@ import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
  * <code>assertThat</code>.
  * <p>
  * For example:
- * <pre><code class='java'> {@literal @}Test
+ * 
+ * <pre><code class='java'>
+ * {@literal @}Test
  * public void bdd_assertions_examples() {
  *
  *   //given
@@ -53,7 +41,8 @@ import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
  *   bulls.add(noah);
  *
  *   then(bulls).contains(rose, noah).doesNotContain(james);
- * }</code></pre>
+ * }
+ * </code></pre>
  *
  * @author Alex Ruiz
  * @author Yvonne Wang
@@ -68,7 +57,6 @@ import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
  * @author Mariusz Smykula
  */
 public class BDDAssertions extends Assertions {
-
   /**
    * Create assertion for {@link java.util.Optional}.
    *
@@ -77,7 +65,7 @@ public class BDDAssertions extends Assertions {
    *
    * @return the created assertion object.
    */
-  public static <T> OptionalAssert<T> then(Optional<T> optional) {
+  public static <T extends java.lang.Object> OptionalAssert<T> then(Optional<T> optional) {
     return assertThat(optional);
   }
 
@@ -241,7 +229,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterable<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterable<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
 
@@ -254,7 +242,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterator<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterator<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
 
@@ -374,7 +362,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractListAssert<?, ? extends List<? extends T>, T> then(List<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractListAssert<?, ? extends List<? extends T>, T> then(List<? extends T> actual) {
     return new ListAssert<>(actual);
   }
 
@@ -414,7 +402,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> then(T actual) {
+  public static <T extends java.lang.Object> AbstractObjectAssert<?, T> then(T actual) {
     return assertThat(actual);
   }
 
@@ -424,7 +412,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectArrayAssert<?, T> then(T[] actual) {
+  public static <T extends java.lang.Object> AbstractObjectArrayAssert<?, T> then(T[] actual) {
     return assertThat(actual);
   }
 
@@ -434,7 +422,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <K, V> AbstractMapAssert<?, ? extends Map<K, V>, K, V> then(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> AbstractMapAssert<?, ? extends Map<K, V>, K, V> then(Map<K, V> actual) {
     return assertThat(actual);
   }
 
@@ -513,14 +501,22 @@ public class BDDAssertions extends Assertions {
    * 
    * <p>
    * Java 8 example :
-   * <pre><code class='java'> {@literal @}Test
+   * </p>
+   * 
+   * <pre><code class='java'>
+   *  {@literal @}Test
    *  public void testException() {
    *    thenThrownBy(() -> { throw new Exception("boom!") }).isInstanceOf(Exception.class)
    *                                                        .hasMessageContaining("boom");
-   *  }</code></pre>
+   *  }
+   * </code></pre>
    * 
+   * <p>
    * Java 7 example :
-   * <pre><code class='java'> thenThrownBy(new ThrowingCallable() {
+   * </p>
+   * 
+   * <pre><code class='java'>
+   * thenThrownBy(new ThrowingCallable()
    * 
    *   {@literal @}Override
    *   public Void call() throws Exception {
@@ -528,7 +524,8 @@ public class BDDAssertions extends Assertions {
    *   }
    *   
    * }).isInstanceOf(Exception.class)
-   *   .hasMessageContaining("boom");</code></pre>
+   *   .hasMessageContaining("boom");
+   * </code></pre>
    *
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
@@ -620,5 +617,6 @@ public class BDDAssertions extends Assertions {
   /**
    * Creates a new </code>{@link org.assertj.core.api.BDDAssertions}</code>.
    */
-  protected BDDAssertions() {}
+  protected BDDAssertions() {
+  }
 }

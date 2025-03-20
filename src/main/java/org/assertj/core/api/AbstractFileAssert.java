@@ -1,27 +1,14 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
-import java.nio.charset.Charset;
 import org.assertj.core.api.exception.RuntimeIOException;
+import java.nio.charset.Charset;
 import org.assertj.core.internal.Files;
 import org.assertj.core.util.VisibleForTesting;
 
 /**
  * Base class for all implementations of assertions for {@link File}s.
  * 
- * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
  * 
@@ -34,12 +21,9 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Jean-Christophe Gay
  */
 public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extends AbstractAssert<S, File> {
+  @VisibleForTesting Files files = Files.instance();
 
-  @VisibleForTesting
-  Files files = Files.instance();
-
-  @VisibleForTesting
-  Charset charset = Charset.defaultCharset();
+  @VisibleForTesting Charset charset = Charset.defaultCharset();
 
   protected AbstractFileAssert(File actual, Class<?> selfType) {
     super(actual, selfType);
@@ -131,8 +115,7 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    *
    * @deprecated use hasSameContentAs
    */
-  @Deprecated
-  public S hasContentEqualTo(File expected) {
+  @Deprecated public S hasContentEqualTo(File expected) {
     files.assertSameContentAs(info, actual, expected);
     return myself;
   }
@@ -150,8 +133,8 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * @throws AssertionError if the content of the actual {@code File} is not equal to the content of the given one.
    */
   public S hasSameContentAs(File expected) {
-      files.assertSameContentAs(info, actual, expected);
-      return myself;
+    files.assertSameContentAs(info, actual, expected);
+    return myself;
   }
 
   /**
@@ -178,8 +161,9 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * @throws IllegalArgumentException if the given encoding is not supported on this platform.
    */
   public S usingCharset(String charsetName) {
-    if (!Charset.isSupported(charsetName))
-      throw new IllegalArgumentException(String.format("Charset:<'%s'> is not supported on this system", charsetName));
+    if (!Charset.isSupported(charsetName)) {
+      throw new IllegalArgumentException(String.format("Charset:<\'%s\'> is not supported on this system", charsetName));
+    }
     return usingCharset(Charset.forName(charsetName));
   }
 
@@ -191,8 +175,9 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * @throws NullPointerException if the given charset is {@code null}.
    */
   public S usingCharset(Charset charset) {
-    if (charset == null)
+    if (charset == null) {
       throw new NullPointerException("The charset should not be null");
+    }
     this.charset = charset;
     return myself;
   }
@@ -247,13 +232,16 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    *
    * <p>
    * Example:
-   * <pre><code class='java'> File xFile = new File(&quot;mulder/xFile&quot;);
+   * 
+   * <pre><code class='java'>
+   * File xFile = new File(&quot;mulder/xFile&quot;);
    * 
    * // assertion will pass
    * assertThat(xFile).hasParent(new File(&quot;mulder&quot;));
    *
    * // assertion will fail
-   * assertThat(xFile).hasParent(new File(&quot;scully&quot;));</code></pre>
+   * assertThat(xFile).hasParent(new File(&quot;scully&quot;));
+   * </code></pre>
    * 
    * </p>
    * 
@@ -276,13 +264,16 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * 
    * <p>
    * Example:
-   * <pre><code class='java'> File xFile = new File(&quot;mulder/xFile&quot;);
+   * 
+   * <pre><code class='java'>
+   * File xFile = new File(&quot;mulder/xFile&quot;);
    * 
    * // assertion will pass
    * assertThat(xFile).hasParent(&quot;mulder&quot;);
    *
    * // assertion will fail
-   * assertThat(xFile).hasParent(&quot;scully&quot;);</code></pre>
+   * assertThat(xFile).hasParent(&quot;scully&quot;);
+   * </code></pre>
    * 
    * </p>
    */
@@ -296,13 +287,16 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * 
    * <p>
    * Example:
-   * <pre><code class='java'> File xFile = new File(&quot;xFile.java&quot;);
+   * 
+   * <pre><code class='java'>
+   * File xFile = new File(&quot;xFile.java&quot;);
    * 
    * // assertion will pass
    * assertThat(xFile).hasExtension(&quot;java&quot;);
    * 
    * // assertion will fail
-   * assertThat(xFile).hasExtension(&quot;png&quot;);</code></pre>
+   * assertThat(xFile).hasExtension(&quot;png&quot;);
+   * </code></pre>
    * 
    * </p>
    * 
@@ -325,7 +319,9 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * 
    * <p>
    * Example:
-   * <pre><code class='java'> File xFile = new File(&quot;somewhere/xFile.java&quot;);
+   * 
+   * <pre><code class='java'>
+   * File xFile = new File(&quot;somewhere/xFile.java&quot;);
    * File xDirectory = new File(&quot;somewhere/xDirectory&quot;);
    * 
    * // assertion will pass
@@ -334,7 +330,8 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * 
    * // assertion will fail
    * assertThat(xFile).hasName(&quot;xFile&quot;);
-   * assertThat(xDirectory).hasName(&quot;somewhere&quot;);</code></pre>
+   * assertThat(xDirectory).hasName(&quot;somewhere&quot;);
+   * </code></pre>
    * 
    * </p>
    * 
@@ -356,14 +353,17 @@ public abstract class AbstractFileAssert<S extends AbstractFileAssert<S>> extend
    * 
    * <p>
    * Example:
-   * <pre><code class='java'> File xFile = new File(&quot;somewhere/xFile.java&quot;);
+   * 
+   * <pre><code class='java'>
+   * File xFile = new File(&quot;somewhere/xFile.java&quot;);
    * File xDirectory = new File(&quot;xDirectory&quot;);
    * 
    * // assertion will pass
    * assertThat(xDirectory).hasNoParent();
    * 
    * // assertion will fail
-   * assertThat(xFile).hasNoParent();</code></pre>
+   * assertThat(xFile).hasNoParent();
+   * </code></pre>
    * 
    * </p>
    * 

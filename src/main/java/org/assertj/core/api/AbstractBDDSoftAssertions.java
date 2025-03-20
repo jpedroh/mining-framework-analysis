@@ -1,19 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.Assertions.catchThrowable;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -33,13 +19,9 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
-
-  // then* methods duplicated from BDDAssertions
-  
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
@@ -47,7 +29,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public BigDecimalAssert then(BigDecimal actual) {
-	return proxy(BigDecimalAssert.class, BigDecimal.class, actual);
+    return proxy(BigDecimalAssert.class, BigDecimal.class, actual);
   }
 
   /**
@@ -57,7 +39,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public BooleanAssert then(boolean actual) {
-	return proxy(BooleanAssert.class, Boolean.class, actual);
+    return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
   /**
@@ -67,7 +49,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public BooleanAssert then(Boolean actual) {
-	return proxy(BooleanAssert.class, Boolean.class, actual);
+    return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
   /**
@@ -77,7 +59,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public BooleanArrayAssert then(boolean[] actual) {
-	return proxy(BooleanArrayAssert.class, boolean[].class, actual);
+    return proxy(BooleanArrayAssert.class, boolean[].class, actual);
   }
 
   /**
@@ -87,7 +69,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ByteAssert then(byte actual) {
-	return proxy(ByteAssert.class, Byte.class, actual);
+    return proxy(ByteAssert.class, Byte.class, actual);
   }
 
   /**
@@ -97,7 +79,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ByteAssert then(Byte actual) {
-	return proxy(ByteAssert.class, Byte.class, actual);
+    return proxy(ByteAssert.class, Byte.class, actual);
   }
 
   /**
@@ -107,7 +89,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ByteArrayAssert then(byte[] actual) {
-	return proxy(ByteArrayAssert.class, byte[].class, actual);
+    return proxy(ByteArrayAssert.class, byte[].class, actual);
   }
 
   /**
@@ -117,7 +99,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public CharacterAssert then(char actual) {
-	return proxy(CharacterAssert.class, Character.class, actual);
+    return proxy(CharacterAssert.class, Character.class, actual);
   }
 
   /**
@@ -127,7 +109,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public CharArrayAssert then(char[] actual) {
-	return proxy(CharArrayAssert.class, char[].class, actual);
+    return proxy(CharArrayAssert.class, char[].class, actual);
   }
 
   /**
@@ -137,7 +119,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public CharacterAssert then(Character actual) {
-	return proxy(CharacterAssert.class, Character.class, actual);
+    return proxy(CharacterAssert.class, Character.class, actual);
   }
 
   /**
@@ -149,7 +131,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public SoftAssertionClassAssert then(Class<?> actual) {
-	return proxy(SoftAssertionClassAssert.class, Class.class, actual);
+    return proxy(SoftAssertionClassAssert.class, Class.class, actual);
   }
 
   /**
@@ -158,8 +140,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <T> IterableAssert<T> then(Iterable<? extends T> actual) {
-	return proxy(IterableAssert.class, Iterable.class, actual);
+  public <T extends java.lang.Object> IterableAssert<T> then(Iterable<? extends T> actual) {
+    return proxy(IterableAssert.class, Iterable.class, actual);
   }
 
   /**
@@ -170,8 +152,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <T> IterableAssert<T> then(Iterator<T> actual) {
-	return proxy(IterableAssert.class, Iterator.class, actual);
+  public <T extends java.lang.Object> IterableAssert<T> then(Iterator<T> actual) {
+    return proxy(IterableAssert.class, Iterator.class, actual);
   }
 
   /**
@@ -181,7 +163,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public DoubleAssert then(double actual) {
-	return proxy(DoubleAssert.class, Double.class, actual);
+    return proxy(DoubleAssert.class, Double.class, actual);
   }
 
   /**
@@ -191,7 +173,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public DoubleAssert then(Double actual) {
-	return proxy(DoubleAssert.class, Double.class, actual);
+    return proxy(DoubleAssert.class, Double.class, actual);
   }
 
   /**
@@ -201,7 +183,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public DoubleArrayAssert then(double[] actual) {
-	return proxy(DoubleArrayAssert.class, double[].class, actual);
+    return proxy(DoubleArrayAssert.class, double[].class, actual);
   }
 
   /**
@@ -211,7 +193,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public FileAssert then(File actual) {
-	return proxy(FileAssert.class, File.class, actual);
+    return proxy(FileAssert.class, File.class, actual);
   }
 
   /**
@@ -231,7 +213,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public InputStreamAssert then(InputStream actual) {
-	return proxy(InputStreamAssert.class, InputStream.class, actual);
+    return proxy(InputStreamAssert.class, InputStream.class, actual);
   }
 
   /**
@@ -241,7 +223,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public FloatAssert then(float actual) {
-	return proxy(FloatAssert.class, Float.class, actual);
+    return proxy(FloatAssert.class, Float.class, actual);
   }
 
   /**
@@ -251,7 +233,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public FloatAssert then(Float actual) {
-	return proxy(FloatAssert.class, Float.class, actual);
+    return proxy(FloatAssert.class, Float.class, actual);
   }
 
   /**
@@ -261,7 +243,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public FloatArrayAssert then(float[] actual) {
-	return proxy(FloatArrayAssert.class, float[].class, actual);
+    return proxy(FloatArrayAssert.class, float[].class, actual);
   }
 
   /**
@@ -271,7 +253,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public IntegerAssert then(int actual) {
-	return proxy(IntegerAssert.class, Integer.class, actual);
+    return proxy(IntegerAssert.class, Integer.class, actual);
   }
 
   /**
@@ -281,7 +263,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public IntArrayAssert then(int[] actual) {
-	return proxy(IntArrayAssert.class, int[].class, actual);
+    return proxy(IntArrayAssert.class, int[].class, actual);
   }
 
   /**
@@ -291,7 +273,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public IntegerAssert then(Integer actual) {
-	return proxy(IntegerAssert.class, Integer.class, actual);
+    return proxy(IntegerAssert.class, Integer.class, actual);
   }
 
   /**
@@ -300,8 +282,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <T> ListAssert<T> then(List<? extends T> actual) {
-	return proxy(ListAssert.class, List.class, actual);
+  public <T extends java.lang.Object> ListAssert<T> then(List<? extends T> actual) {
+    return proxy(ListAssert.class, List.class, actual);
   }
 
   /**
@@ -311,7 +293,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public LongAssert then(long actual) {
-	return proxy(LongAssert.class, Long.class, actual);
+    return proxy(LongAssert.class, Long.class, actual);
   }
 
   /**
@@ -321,7 +303,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public LongAssert then(Long actual) {
-	return proxy(LongAssert.class, Long.class, actual);
+    return proxy(LongAssert.class, Long.class, actual);
   }
 
   /**
@@ -331,7 +313,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public LongArrayAssert then(long[] actual) {
-	return proxy(LongArrayAssert.class, long[].class, actual);
+    return proxy(LongArrayAssert.class, long[].class, actual);
   }
 
   /**
@@ -340,8 +322,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <T> ObjectAssert<T> then(T actual) {
-	return proxy(ObjectAssert.class, Object.class, actual);
+  public <T extends java.lang.Object> ObjectAssert<T> then(T actual) {
+    return proxy(ObjectAssert.class, Object.class, actual);
   }
 
   /**
@@ -350,8 +332,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <T> ObjectArrayAssert<T> then(T[] actual) {
-	return proxy(ObjectArrayAssert.class, Object[].class, actual);
+  public <T extends java.lang.Object> ObjectArrayAssert<T> then(T[] actual) {
+    return proxy(ObjectArrayAssert.class, Object[].class, actual);
   }
 
   /**
@@ -362,8 +344,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public <K, V> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
-	return proxy(SoftAssertionMapAssert.class, Map.class, actual);
+  public <K extends java.lang.Object, V extends java.lang.Object> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
+    return proxy(SoftAssertionMapAssert.class, Map.class, actual);
   }
 
   /**
@@ -373,7 +355,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ShortAssert then(short actual) {
-	return proxy(ShortAssert.class, Short.class, actual);
+    return proxy(ShortAssert.class, Short.class, actual);
   }
 
   /**
@@ -383,7 +365,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ShortAssert then(Short actual) {
-	return proxy(ShortAssert.class, Short.class, actual);
+    return proxy(ShortAssert.class, Short.class, actual);
   }
 
   /**
@@ -393,7 +375,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public ShortArrayAssert then(short[] actual) {
-	return proxy(ShortArrayAssert.class, short[].class, actual);
+    return proxy(ShortArrayAssert.class, short[].class, actual);
   }
 
   /**
@@ -403,7 +385,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public CharSequenceAssert then(CharSequence actual) {
-	return proxy(CharSequenceAssert.class, CharSequence.class, actual);
+    return proxy(CharSequenceAssert.class, CharSequence.class, actual);
   }
 
   /**
@@ -413,7 +395,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public StringAssert then(String actual) {
-	return proxy(StringAssert.class, String.class, actual);
+    return proxy(StringAssert.class, String.class, actual);
   }
 
   /**
@@ -423,7 +405,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public DateAssert then(Date actual) {
-	return proxy(DateAssert.class, Date.class, actual);
+    return proxy(DateAssert.class, Date.class, actual);
   }
 
   /**
@@ -433,7 +415,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion Throwable.
    */
   public ThrowableAssert then(Throwable actual) {
-	return proxy(ThrowableAssert.class, Throwable.class, actual);
+    return proxy(ThrowableAssert.class, Throwable.class, actual);
   }
 
   /**
@@ -441,16 +423,24 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * 
    * <p>
    * Java 8 example :
-   * <pre><code class='java'> {@literal @}Test
+   * </p>
+   * 
+   * <pre><code class='java'>
+   *  {@literal @}Test
    *  public void testException() {
    *    BDDSoftAssertions softly = new BDDSoftAssertions();
    *    softly.thenThrownBy(() -> { throw new Exception("boom!") }).isInstanceOf(Exception.class)
    *                                                               .hasMessageContaining("boom");
-   *  }</code></pre>
+   *  }
+   * </code></pre>
    * 
+   * <p>
    * Java 7 example :
-   * <pre><code class='java'> BDDSoftAssertions softly = new BDDSoftAssertions();
-   * softly.thenThrownBy(new ThrowingCallable() {
+   * </p>
+   * 
+   * <pre><code class='java'>
+   * BDDSoftAssertions softly = new BDDSoftAssertions();
+   * softly.thenThrownBy(new ThrowingCallable()
    * 
    *   {@literal @}Override
    *   public Void call() throws Exception {
@@ -458,7 +448,8 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    *   }
    *   
    * }).isInstanceOf(Exception.class)
-   *   .hasMessageContaining("boom");</code></pre>
+   *   .hasMessageContaining("boom");
+   * </code></pre>
    *
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
@@ -466,7 +457,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
   public AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return then(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
-  
+
   /**
    * Create assertion for {@link java.util.Optional}.
    *
@@ -475,7 +466,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    *
    * @return the created assertion object.
    */
-  public <T> OptionalAssert<T> then(Optional<T> actual) {
+  public <T extends java.lang.Object> OptionalAssert<T> then(Optional<T> actual) {
     return proxy(OptionalAssert.class, Optional.class, actual);
   }
 
@@ -487,7 +478,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public OptionalDoubleAssert then(OptionalDouble actual) {
-        return proxy(OptionalDoubleAssert.class, OptionalDouble.class, actual);
+    return proxy(OptionalDoubleAssert.class, OptionalDouble.class, actual);
   }
 
   /**
@@ -498,7 +489,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public OptionalIntAssert then(OptionalInt actual) {
-      return proxy(OptionalIntAssert.class, OptionalInt.class, actual);
+    return proxy(OptionalIntAssert.class, OptionalInt.class, actual);
   }
 
   /**
@@ -509,10 +500,10 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public OptionalLongAssert then(OptionalLong actual) {
-      return proxy(OptionalLongAssert.class, OptionalLong.class, actual);
+    return proxy(OptionalLongAssert.class, OptionalLong.class, actual);
   }
 
-    /**
+  /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
    * @param actual the actual value.
@@ -531,7 +522,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
   public LocalDateTimeAssert then(LocalDateTime actual) {
     return proxy(LocalDateTimeAssert.class, LocalDateTime.class, actual);
   }
-  
+
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
@@ -541,7 +532,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
   public ZonedDateTimeAssert then(ZonedDateTime actual) {
     return proxy(ZonedDateTimeAssert.class, ZonedDateTime.class, actual);
   }
-  
+
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -559,9 +550,9 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public OffsetTimeAssert then(OffsetTime actual) {
-        return proxy(OffsetTimeAssert.class, OffsetTime.class, actual);
-    }
-  
+    return proxy(OffsetTimeAssert.class, OffsetTime.class, actual);
+  }
+
   /**
    * Creates a new instance of <code>{@link UriAssert}</code>.
    *
@@ -579,6 +570,6 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @return the created assertion object.
    */
   public OffsetDateTimeAssert then(OffsetDateTime actual) {
-      return proxy(OffsetDateTimeAssert.class, OffsetDateTime.class, actual);
+    return proxy(OffsetDateTimeAssert.class, OffsetDateTime.class, actual);
   }
 }

@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.assertj.core.api.filter.Filters.filter;
@@ -21,7 +8,6 @@ import static org.assertj.core.util.Arrays.isArray;
 import static org.assertj.core.util.IterableUtil.toArray;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.api.iterable.Extractor;
@@ -53,7 +38,7 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * Base class for implementations of <code>{@link ObjectEnumerableAssert}</code> whose actual value type is
  * <code>{@link Collection}</code>.
  *
- * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
  * @param <A> the type of the "actual" value.
@@ -67,11 +52,8 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Mikhail Mazursky
  * @author Mateusz Haligowski
  */
-public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S, A, T>, A extends Iterable<? extends T>, T>
-    extends AbstractAssert<S, A> implements ObjectEnumerableAssert<S, T> {
-
-  @VisibleForTesting
-  Iterables iterables = Iterables.instance();
+public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S, A, T>, A extends Iterable<? extends T>, T extends java.lang.Object> extends AbstractAssert<S, A> implements ObjectEnumerableAssert<S, T> {
+  @VisibleForTesting Iterables iterables = Iterables.instance();
 
   protected AbstractIterableAssert(A actual, Class<?> selfType) {
     super(actual, selfType);
@@ -80,24 +62,21 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     iterables.assertNullOrEmpty(info, actual);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     iterables.assertEmpty(info, actual);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     iterables.assertNotEmpty(info, actual);
     return myself;
   }
@@ -105,8 +84,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     iterables.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -114,8 +92,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSameSizeAs(Object other) {
+  @Override public S hasSameSizeAs(Object other) {
     iterables.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -123,8 +100,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     iterables.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -132,8 +108,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S contains(@SuppressWarnings("unchecked") T... values) {
+  @Override public S contains(@SuppressWarnings(value = { "unchecked" }) T... values) {
     iterables.assertContains(info, actual, values);
     return myself;
   }
@@ -141,8 +116,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsOnly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     iterables.assertContainsOnly(info, actual, values);
     return myself;
   }
@@ -150,8 +124,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsOnlyOnce(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values) {
     iterables.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
@@ -159,8 +132,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsExactly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     iterables.assertContainsExactly(info, actual, values);
     return myself;
   }
@@ -168,8 +140,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S isSubsetOf(Iterable<? extends T> values) {
+  @Override public S isSubsetOf(Iterable<? extends T> values) {
     iterables.assertIsSubsetOf(info, actual, values);
     return myself;
   }
@@ -177,8 +148,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsSequence(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     iterables.assertContainsSequence(info, actual, sequence);
     return myself;
   }
@@ -186,20 +156,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsSubsequence(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     iterables.assertContainsSubsequence(info, actual, sequence);
     return myself;
   }
 
-  @Override
-  public S doesNotContain(@SuppressWarnings("unchecked") T... values) {
+  @Override public S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values) {
     iterables.assertDoesNotContain(info, actual, values);
     return myself;
   }
 
-  @Override
-  public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
     iterables.assertDoesNotContainAnyElementsOf(info, actual, iterable);
     return myself;
   }
@@ -207,8 +174,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S doesNotHaveDuplicates() {
+  @Override public S doesNotHaveDuplicates() {
     iterables.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
@@ -216,8 +182,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S startsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     iterables.assertStartsWith(info, actual, sequence);
     return myself;
   }
@@ -225,8 +190,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S endsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     iterables.assertEndsWith(info, actual, sequence);
     return myself;
   }
@@ -234,8 +198,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsNull() {
+  @Override public S containsNull() {
     iterables.assertContainsNull(info, actual);
     return myself;
   }
@@ -243,8 +206,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S doesNotContainNull() {
+  @Override public S doesNotContainNull() {
     iterables.assertDoesNotContainNull(info, actual);
     return myself;
   }
@@ -252,8 +214,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S are(Condition<? super T> condition) {
+  @Override public S are(Condition<? super T> condition) {
     iterables.assertAre(info, actual, condition);
     return myself;
   }
@@ -261,8 +222,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S areNot(Condition<? super T> condition) {
+  @Override public S areNot(Condition<? super T> condition) {
     iterables.assertAreNot(info, actual, condition);
     return myself;
   }
@@ -270,8 +230,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S have(Condition<? super T> condition) {
+  @Override public S have(Condition<? super T> condition) {
     iterables.assertHave(info, actual, condition);
     return myself;
   }
@@ -279,8 +238,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S doNotHave(Condition<? super T> condition) {
+  @Override public S doNotHave(Condition<? super T> condition) {
     iterables.assertDoNotHave(info, actual, condition);
     return myself;
   }
@@ -288,8 +246,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S areAtLeastOne(Condition<? super T> condition) {
+  @Override public S areAtLeastOne(Condition<? super T> condition) {
     areAtLeast(1, condition);
     return myself;
   }
@@ -297,8 +254,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S areAtLeast(int times, Condition<? super T> condition) {
+  @Override public S areAtLeast(int times, Condition<? super T> condition) {
     iterables.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -306,8 +262,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S areAtMost(int times, Condition<? super T> condition) {
+  @Override public S areAtMost(int times, Condition<? super T> condition) {
     iterables.assertAreAtMost(info, actual, times, condition);
     return myself;
   }
@@ -315,23 +270,20 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S areExactly(int times, Condition<? super T> condition) {
+  @Override public S areExactly(int times, Condition<? super T> condition) {
     iterables.assertAreExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtLeastOne(Condition<? super T> condition) {
+  @Override public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S haveAtLeast(int times, Condition<? super T> condition) {
+  @Override public S haveAtLeast(int times, Condition<? super T> condition) {
     iterables.assertHaveAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -339,8 +291,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S haveAtMost(int times, Condition<? super T> condition) {
+  @Override public S haveAtMost(int times, Condition<? super T> condition) {
     iterables.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
@@ -348,8 +299,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S haveExactly(int times, Condition<? super T> condition) {
+  @Override public S haveExactly(int times, Condition<? super T> condition) {
     iterables.assertHaveExactly(info, actual, times, condition);
     return myself;
   }
@@ -359,7 +309,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * subclasses of the given type).
    * <p/>
    * Example:
-   * <pre><code class='java'> List&lt;Number&gt; numbers = new ArrayList&lt;Number&gt;();
+   * 
+   * <pre><code class='java'>
+   * List&lt;Number&gt; numbers = new ArrayList&lt;Number&gt;();
    * numbers.add(1);
    * numbers.add(2L);
    * 
@@ -367,17 +319,15 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(numbers).hasAtLeastOneElementOfType(Long.class);
    * 
    * // assertion failure:
-   * assertThat(numbers).hasAtLeastOneElementOfType(Float.class);</code></pre>
+   * assertThat(numbers).hasAtLeastOneElementOfType(Float.class);
+   * </code></pre>
    *
    * @param expectedType the expected type.
    * @return this assertion object.
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if the actual {@code Object} group does not have any elements of the given type.
    */
-  @Override
-  public S hasAtLeastOneElementOfType(Class<?> expectedType) {
-    // reuse code from object arrays as the logic is the same
-    // (ok since this assertion don't rely on comparison strategy)
+  @Override public S hasAtLeastOneElementOfType(Class<?> expectedType) {
     ObjectArrays.instance().assertHasAtLeastOneElementOfType(info, toArray(actual), expectedType);
     return myself;
   }
@@ -387,7 +337,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * subclasses of the given type).
    * <p/>
    * Example:
-   * <pre><code class='java'> List&lt;Number&gt; numbers = new ArrayList&lt;Number&gt;();
+   * 
+   * <pre><code class='java'>
+   * List&lt;Number&gt; numbers = new ArrayList&lt;Number&gt;();
    * numbers.add(1);
    * numbers.add(2);
    * numbers.add(3);
@@ -397,17 +349,15 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(numbers).hasOnlyElementsOfType(Integer.class);
    * 
    * // assertion failure:
-   * assertThat(numbers).hasOnlyElementsOfType(Long.class);</code></pre>
+   * assertThat(numbers).hasOnlyElementsOfType(Long.class);
+   * </code></pre>
    *
    * @param expectedType the expected type.
    * @return this assertion object.
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if one element is not of the expected type.
    */
-  @Override
-  public S hasOnlyElementsOfType(Class<?> expectedType) {
-    // reuse code from object arrays as the logic is the same
-    // (ok since this assertion don't rely on comparison strategy)
+  @Override public S hasOnlyElementsOfType(Class<?> expectedType) {
     ObjectArrays.instance().assertHasOnlyElementsOfType(info, toArray(actual), expectedType);
     return myself;
   }
@@ -415,8 +365,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsAll(Iterable<? extends T> iterable) {
+  @Override public S containsAll(Iterable<? extends T> iterable) {
     iterables.assertContainsAll(info, actual, iterable);
     return myself;
   }
@@ -424,11 +373,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S usingElementComparator(Comparator<? super T> elementComparator) {
+  @Override public S usingElementComparator(Comparator<? super T> elementComparator) {
     this.iterables = new Iterables(new ComparatorBasedComparisonStrategy(elementComparator));
-    // to have the same semantics on base assertions like isEqualTo, we need to use an iterable comparator comparing
-    // elements with elementComparator parameter
     objects = new Objects(new IterableElementComparisonStrategy<>(elementComparator));
     return myself;
   }
@@ -436,8 +382,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     usingDefaultComparator();
     this.iterables = Iterables.instance();
     return myself;
@@ -451,7 +396,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * it can be sometimes much less work !
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
+   * 
+   * <pre><code class='java'>
+   * // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
    * 
@@ -474,7 +421,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * 
    * assertThat(fellowshipOfTheRing).extracting(&quot;race.name&quot;)
    *                                .contains(&quot;Hobbit&quot;, &quot;Elf&quot;)
-   *                                .doesNotContain(&quot;Orc&quot;);</code></pre>
+   *                                .doesNotContain(&quot;Orc&quot;);
+   * </code></pre>
    * <p/>
    * A property with the given name is looked for first, if it doesn't exist then a field with the given name is looked
    * for, if the field does not exist an {@link IntrospectionError} is thrown, by default private fields are read but
@@ -493,7 +441,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * corresponding to the given keys.
    * <p/>
    * Example:
-   * <pre><code class='java'> Employee yoda = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'>
+   * Employee yoda = new Employee(1L, new Name("Yoda"), 800);
    * Employee luke = new Employee(2L, new Name("Luke"), 22);
    * Employee han = new Employee(3L, new Name("Han"), 31);
    * 
@@ -520,7 +470,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(maps).extracting("key1", "key2").containsExactly(tuple(yoda, luke), tuple(yoda, han));
    * 
    * // unknown keys leads to null (map behavior)
-   * assertThat(maps).extracting("bad key").containsExactly(null, null);</code></pre>
+   * assertThat(maps).extracting("bad key").containsExactly(null, null);
+   * </code></pre>
    *
    * @param propertyOrField the property/field to extract from the elements of the Iterable under test
    * @return a new assertion object whose object under test is the list of extracted property/field values.
@@ -541,7 +492,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * toString() or public String status() instead of public String getStatus()).
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
+   * 
+   * <pre><code class='java'>
+   * // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
    * 
    * List&lt;WesterosHouse&gt; greatHouses = new ArrayList&lt;WesterosHouse&gt;();
    * greatHouses.add(new WesterosHouse(&quot;Stark&quot;, &quot;Winter is Coming&quot;));
@@ -555,7 +508,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * 
    * assertThat(greatHouses).extractingResultOf(&quot;sayTheWords&quot;)
    *                        .contains(&quot;Winter is Coming&quot;, &quot;We Do Not Sow&quot;, &quot;Hear Me Roar&quot;)
-   *                        .doesNotContain(&quot;Lannisters always pay their debts&quot;);</code></pre>
+   *                        .doesNotContain(&quot;Lannisters always pay their debts&quot;);
+   * </code></pre>
    * 
    * Following requirements have to be met to extract method results:
    * <ul>
@@ -586,7 +540,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * toString() or public String status() instead of public String getStatus()).
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
+   * 
+   * <pre><code class='java'>
+   * // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
    * List&lt;WesterosHouse&gt; greatHouses = new ArrayList&lt;WesterosHouse&gt;();
    * greatHouses.add(new WesterosHouse(&quot;Stark&quot;, &quot;Winter is Coming&quot;));
    * greatHouses.add(new WesterosHouse(&quot;Lannister&quot;, &quot;Hear Me Roar!&quot;));
@@ -599,7 +555,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * 
    * assertThat(greatHouses).extractingResultOf(&quot;sayTheWords&quot;, String.class)
    *                        .contains(&quot;Winter is Coming&quot;, &quot;We Do Not Sow&quot;, &quot;Hear Me Roar&quot;)
-   *                        .doesNotContain(&quot;Lannisters always pay their debts&quot;);</code></pre>
+   *                        .doesNotContain(&quot;Lannisters always pay their debts&quot;);
+   * </code></pre>
    * 
    * Following requirements have to be met to extract method results:
    * <ul>
@@ -618,9 +575,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @throws IllegalArgumentException if no method exists with the given name, or method is not public, or method does
    *           return void or method accepts arguments.
    */
-  public <P> ListAssert<P> extractingResultOf(String method, Class<P> extractedType) {
-    @SuppressWarnings("unchecked")
-    List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
+  public <P extends java.lang.Object> ListAssert<P> extractingResultOf(String method, Class<P> extractedType) {
+    @SuppressWarnings(value = { "unchecked" }) List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
     return new ListAssert<>(values);
   }
 
@@ -632,7 +588,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * it can be sometimes much less work !
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
+   * 
+   * <pre><code class='java'>
+   * // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
    * 
@@ -655,7 +613,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * 
    * assertThat(fellowshipOfTheRing).extracting(&quot;race.name&quot;, String.class)
    *                                .contains(&quot;Hobbit&quot;, &quot;Elf&quot;)
-   *                                .doesNotContain(&quot;Orc&quot;);</code></pre>
+   *                                .doesNotContain(&quot;Orc&quot;);
+   * </code></pre>
    * 
    * A property with the given name is looked for first, if it doesn't exist then a field with the given name is looked
    * for, if the field does not exist an {@link IntrospectionError} is thrown, by default private fields are read but
@@ -674,7 +633,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * corresponding to the given keys.
    * <p/>
    * Example:
-   * <pre><code class='java'> Employee yoda = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'>
+   * Employee yoda = new Employee(1L, new Name("Yoda"), 800);
    * Employee luke = new Employee(2L, new Name("Luke"), 22);
    * Employee han = new Employee(3L, new Name("Han"), 31);
    * 
@@ -701,7 +662,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(maps).extracting("key1", "key2").containsExactly(tuple(yoda, luke), tuple(yoda, han));
    * 
    * // unknown keys leads to null (map behavior)
-   * assertThat(maps).extracting("bad key").containsExactly(null, null);</code></pre>
+   * assertThat(maps).extracting("bad key").containsExactly(null, null);
+   * </code></pre>
    *
    * @param propertyOrField the property/field to extract from the Iterable under test
    * @param extractingType type to return
@@ -709,9 +671,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @throws IntrospectionError if no field or property exists with the given name (or field exists but is not public)
    *           in one of the initial Iterable's element.
    */
-  public <P> ListAssert<P> extracting(String propertyOrField, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, byName(propertyOrField));
+  public <P extends java.lang.Object> ListAssert<P> extracting(String propertyOrField, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, byName(propertyOrField));
     return new ListAssert<>(values);
   }
 
@@ -727,7 +688,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * element of the initial Iterable (the Tuple's data order is the same as the given fields/properties order).
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
+   * 
+   * <pre><code class='java'>
+   * // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
    * 
@@ -753,7 +716,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(fellowshipOfTheRing).extracting(&quot;name&quot;, &quot;age&quot;, &quot;race.name&quot;)
    *                                .contains(tuple(&quot;Boromir&quot;, 37, &quot;Man&quot;),
    *                                          tuple(&quot;Sam&quot;, 38, &quot;Hobbit&quot;),
-   *                                          tuple(&quot;Legolas&quot;, 1000, &quot;Elf&quot;));</code></pre>
+   *                                          tuple(&quot;Legolas&quot;, 1000, &quot;Elf&quot;));
+   * </code></pre>
    * 
    * A property with the given name is looked for first, if it doesn't exist then a field with the given name is looked
    * for, if the field does not exist an {@link IntrospectionError} is thrown, by default private fields are read but
@@ -772,7 +736,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * corresponding to the given keys.
    * <p/>
    * Example:
-   * <pre><code class='java'> Employee yoda = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'>
+   * Employee yoda = new Employee(1L, new Name("Yoda"), 800);
    * Employee luke = new Employee(2L, new Name("Luke"), 22);
    * Employee han = new Employee(3L, new Name("Han"), 31);
    * 
@@ -796,7 +762,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * assertThat(maps).extracting("key1", "key2").containsExactly(tuple(yoda, luke), tuple(yoda, han));
    * 
    * // unknown keys leads to null (map behavior)
-   * assertThat(maps).extracting("bad key").containsExactly(null, null);</code></pre>
+   * assertThat(maps).extracting("bad key").containsExactly(null, null);
+   * </code></pre>
    *
    * @param propertiesOrFields the properties/fields to extract from the elements of the Iterable under test
    * @return a new assertion object whose object under test is the list of Tuple with extracted properties/fields values
@@ -817,7 +784,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * doesn't utilize introspection.
    * <p/>
    * Let's have a look at an example :
-   * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
+   * 
+   * <pre><code class='java'>
+   * // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
    * 
@@ -839,7 +808,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * }
    * 
    * // fellowship has hobbitses, right, my presioussss?
-   * assertThat(fellowshipOfTheRing).extracting(race).contains(HOBBIT);</code></pre>
+   * assertThat(fellowshipOfTheRing).extracting(race).contains(HOBBIT);
+   * </code></pre>
    * 
    * Note that the order of extracted property/field values is consistent with the iteration order of the Iterable under
    * test, for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted values
@@ -848,7 +818,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @param extractor the object transforming input object to desired one
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <V> ListAssert<V> extracting(Extractor<? super T, V> extractor) {
+  public <V extends java.lang.Object> ListAssert<V> extracting(Extractor<? super T, V> extractor) {
     List<V> values = FieldsOrPropertiesExtractor.extract(actual, extractor);
     return new ListAssert<>(values);
   }
@@ -860,7 +830,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * It allows testing the results of extracting values that are represented by Iterables.
    * <p/>
    * For example:
-   * <pre><code class='java'> CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
+   * 
+   * <pre><code class='java'>
+   * CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
    * CartoonCharacter lisa = new CartoonCharacter("Lisa Simpson");
    * CartoonCharacter maggie = new CartoonCharacter("Maggie Simpson");
    * CartoonCharacter homer = new CartoonCharacter("Homer Simpson");
@@ -880,7 +852,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * List&lt;CartoonCharacter&gt; parents = newArrayList(homer, fred);
    * // check children
    * assertThat(parent).flatExtracting(childrenOf)
-   *                   .containsOnly(bart, lisa, maggie, pebbles);</code></pre>
+   *                   .containsOnly(bart, lisa, maggie, pebbles);
+   * </code></pre>
    * 
    * The order of extracted values is consisted with both the order of the collection itself, as well as the extracted
    * collections.
@@ -888,14 +861,12 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @param extractor the object transforming input object to an Iterable of desired ones
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <V> ListAssert<V> flatExtracting(Extractor<? super T, ? extends Collection<V>> extractor) {
+  public <V extends java.lang.Object> ListAssert<V> flatExtracting(Extractor<? super T, ? extends Collection<V>> extractor) {
     List<V> result = newArrayList();
     final List<? extends Collection<V>> extractedValues = FieldsOrPropertiesExtractor.extract(actual, extractor);
-
     for (Collection<? extends V> iterable : extractedValues) {
       result.addAll(iterable);
     }
-
     return new ListAssert<>(result);
   }
 
@@ -906,7 +877,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * It allows testing the elements of extracting values that are represented by iterables or arrays.
    * <p/>
    * For example:
-   * <pre><code class='java'> CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
+   *
+   * <pre><code class='java'>
+   * CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
    * CartoonCharacter lisa = new CartoonCharacter("Lisa Simpson");
    * CartoonCharacter maggie = new CartoonCharacter("Maggie Simpson");
    * CartoonCharacter homer = new CartoonCharacter("Homer Simpson");
@@ -919,7 +892,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * List&lt;CartoonCharacter&gt; parents = newArrayList(homer, fred);
    * // check children
    * assertThat(parents).flatExtracting("children")
-   *                    .containsOnly(bart, lisa, maggie, pebbles);</code></pre>
+   *                    .containsOnly(bart, lisa, maggie, pebbles);
+   * </code></pre>
    *
    * The order of extracted values is consisted with both the order of the collection itself, as well as the extracted
    * collections.
@@ -932,19 +906,20 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
     List<Object> extractedValues = newArrayList();
     List<?> extractedGroups = FieldsOrPropertiesExtractor.extract(actual, byName(propertyName));
     for (Object group : extractedGroups) {
-      // expecting group to be an iterable or an array
       if (isArray(group)) {
         int size = Array.getLength(group);
         for (int i = 0; i < size; i++) {
           extractedValues.add(Array.get(group, i));
         }
-      } else if (group instanceof Iterable) {
-        Iterable<?> iterable = (Iterable<?>) group;
-        for (Object value : iterable) {
-          extractedValues.add(value);
-        }
       } else {
-        CommonErrors.wrongElementTypeForFlatExtracting(group);
+        if (group instanceof Iterable) {
+          Iterable<?> iterable = (Iterable<?>) group;
+          for (Object value : iterable) {
+            extractedValues.add(value);
+          }
+        } else {
+          CommonErrors.wrongElementTypeForFlatExtracting(group);
+        }
       }
     }
     return new ListAssert<>(extractedValues);
@@ -1003,20 +978,15 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the list of Tuple containing the extracted values.
    */
-  @SafeVarargs
-  public final ListAssert<Tuple> extracting(Function<T, ?>... extractors) {
-    // combine all extractors into one function
-    Function<T, Tuple> tupleExtractor = objectToExtractValueFrom -> {
+  @SafeVarargs public final ListAssert<Tuple> extracting(Function<T, ?>... extractors) {
+    Function<T, Tuple> tupleExtractor = (objectToExtractValueFrom) -> {
       Tuple tuple = new Tuple();
       for (Function<T, ?> extractor : extractors) {
-        // extract value one by one
         tuple.addData(extractor.apply(objectToExtractValueFrom));
       }
       return tuple;
     };
-
-    List<Tuple> tuples = stream(actual.spliterator(), false).map(tupleExtractor)
-                                                            .collect(toList());
+    List<Tuple> tuples = stream(actual.spliterator(), false).map(tupleExtractor).collect(toList());
     return new ListAssert<Tuple>(tuples);
   }
 
@@ -1039,24 +1009,21 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    *
    * @param iterable the given {@code Iterable} we will get elements from.
    */
-  @Override
-  public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSameElementsAs(Iterable<? extends T> iterable) {
+  @Override public S hasSameElementsAs(Iterable<? extends T> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
@@ -1071,14 +1038,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter frodoClone = new TolkienCharacter("Frodo", 33, HOBBIT);
    * 
    * // Fail if equals has not been overridden in TolkienCharacter as equals default implementation only compares references
    * assertThat(newArrayList(frodo)).contains(frodoClone);
    * 
    * // frodo and frodoClone are equals when doing a field by field comparison.
-   * assertThat(newArrayList(frodo)).usingFieldByFieldElementComparator().contains(frodoClone);</code></pre>
+   * assertThat(newArrayList(frodo)).usingFieldByFieldElementComparator().contains(frodoClone);
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -1098,14 +1068,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter sam = new TolkienCharacter("Sam", 38, HOBBIT);
    * 
    * // frodo and sam both are hobbits, so they are equals when comparing only race
    * assertThat(newArrayList(frodo)).usingElementComparatorOnFields("race").contains(sam); // OK
    * 
    * // ... but not when comparing both name and race
-   * assertThat(newArrayList(frodo)).usingElementComparatorOnFields("name", "race").contains(sam); // FAIL</code></pre>
+   * assertThat(newArrayList(frodo)).usingElementComparatorOnFields("name", "race").contains(sam); // FAIL
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -1130,14 +1103,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter sam = new TolkienCharacter("Sam", 38, HOBBIT);
    * 
    * // frodo and sam both are hobbits, so they are equals when comparing only race (i.e. ignoring all other fields)
    * assertThat(newArrayList(frodo)).usingElementComparatorIgnoringFields("name", "age").contains(sam); // OK
    * 
    * // ... but not when comparing both name and race
-   * assertThat(newArrayList(frodo)).usingElementComparatorIgnoringFields("age").contains(sam); // FAIL</code></pre>
+   * assertThat(newArrayList(frodo)).usingElementComparatorIgnoringFields("age").contains(sam); // FAIL
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -1151,32 +1127,40 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * It can be useful to better understand what the error was with a more meaningful error message.
    * <p/>
    * Example
-   * <pre><code class='java'> final List&lt;Byte&gt; bytes = newArrayList((byte) 0x10, (byte) 0x20);</code></pre>
+   * 
+   * <pre><code class='java'>
+   * final List&lt;Byte&gt; bytes = newArrayList((byte) 0x10, (byte) 0x20);
+   * </code></pre>
    *
    * With standard error message:
-   * <pre><code class='java'> assertThat(bytes).contains((byte)0x30);
+   * 
+   * <pre><code class='java'>
+   * assertThat(bytes).contains((byte)0x30);
    * 
    * Expecting:
    *  <[16, 32]>
    * to contain:
    *  <[48]>
    * but could not find:
-   *  <[48]></code></pre>
+   *  <[48]>
+   * </code></pre>
    *
    * With Hexadecimal error message:
-   * <pre><code class='java'> assertThat(bytes).inHexadecimal().contains((byte)0x30);
+   * 
+   * <pre><code class='java'>
+   * assertThat(bytes).inHexadecimal().contains((byte)0x30);
    * 
    * Expecting:
    *  <[0x10, 0x20]>
    * to contain:
    *  <[0x30]>
    * but could not find:
-   *  <[0x30]></code></pre>
+   *  <[0x30]>
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public S inHexadecimal() {
+  @Override public S inHexadecimal() {
     return super.inHexadecimal();
   }
 
@@ -1184,32 +1168,40 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * Enable binary representation of Iterable elements instead of standard representation in error messages.
    * <p/>
    * Example:
-   * <pre><code class='java'> final List&lt;Byte&gt; bytes = newArrayList((byte) 0x10, (byte) 0x20);</code></pre>
+   * 
+   * <pre><code class='java'>
+   * final List&lt;Byte&gt; bytes = newArrayList((byte) 0x10, (byte) 0x20);
+   * </code></pre>
    *
    * With standard error message:
-   * <pre><code class='java'> assertThat(bytes).contains((byte)0x30);
+   * 
+   * <pre><code class='java'>
+   * assertThat(bytes).contains((byte)0x30);
    * 
    * Expecting:
    *  <[16, 32]>
    * to contain:
    *  <[48]>
    * but could not find:
-   *  <[48]></code></pre>
+   *  <[48]>
+   * </code></pre>
    *
    * With binary error message:
-   * <pre><code class='java'> assertThat(bytes).inBinary().contains((byte)0x30);
+   * 
+   * <pre><code class='java'>
+   * assertThat(bytes).inBinary().contains((byte)0x30);
    * 
    * Expecting:
    *  <[0b00010000, 0b00100000]>
    * to contain:
    *  <[0b00110000]>
    * but could not find:
-   *  <[0b00110000]></code></pre>
+   *  <[0b00110000]>
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public S inBinary() {
+  @Override public S inBinary() {
     return super.inBinary();
   }
 
@@ -1227,7 +1219,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * <p>
    * 
    * As an example, let's check all employees 800 years old (yes, special employees):
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -1235,17 +1229,20 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
    *
    * assertThat(employees).filteredOn("age", 800)
-   *                      .containsOnly(yoda, obiwan);</code></pre>
-   *                      
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
    * Nested properties/fields are supported:
-   * <pre><code class='java'> // Name is bean class with 'first' and 'last' String properties
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
    *
    * // name is null for noname => it does not match the filter on "name.first" 
    * assertThat(employees).filteredOn("name.first", "Luke")
    *                      .containsOnly(luke);
    * 
    * assertThat(employees).filteredOn("name.last", "Vader")
-   *                      .isEmpty();</code></pre>
+   *                      .isEmpty();
+   * </code></pre>
    * <p>
    * If you want to filter on null value, use {@link #filteredOnNull(String)} as Java will resolve the call to
    * {@link #filteredOn(String, FilterOperator)} instead of this method.
@@ -1254,13 +1251,15 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * elements.
    * <p>
    * You can chain filters:
-   * <pre><code class='java'> // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
    * // 'not' filter is statically imported from Assertions.not 
    * 
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
-   *                                .containsOnly(aragorn);</code></pre>
-   * 
+   *                                .containsOnly(aragorn);
+   * </code></pre>
    * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
    * 
    * @param propertyOrFieldName the name of the property or field to read
@@ -1269,8 +1268,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, Object expectedValue) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, Object expectedValue) {
     Filters<? extends T> filter = filter((Iterable<? extends T>) actual);
     Iterable<? extends T> filteredIterable = filter.with(propertyOrFieldName, expectedValue).get();
     return (S) new ListAssert<>(newArrayList(filteredIterable));
@@ -1289,7 +1287,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * considered to be null, thus reading "address.street.name" value will return null if "street" value is null.
    * <p>
    * As an example, let's check all employees 800 years old (yes, special employees):
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -1297,14 +1297,16 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
    *
    * assertThat(employees).filteredOnNull("name")
-   *                      .containsOnly(noname);</code></pre>
-   * 
+   *                      .containsOnly(noname);
+   * </code></pre>
    * Nested properties/fields are supported:
-   * <pre><code class='java'> // Name is bean class with 'first' and 'last' String properties
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
    *
    * assertThat(employees).filteredOnNull("name.last")
-   *                      .containsOnly(yoda, obiwan, noname);</code></pre>
-   * 
+   *                      .containsOnly(yoda, obiwan, noname);
+   * </code></pre>
    * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
    * elements.
    * <p>
@@ -1315,8 +1317,6 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
    */
   public S filteredOnNull(String propertyOrFieldName) {
-    // need to cast nulll to Object otherwise it calls :
-    // filteredOn(String propertyOrFieldName, FilterOperation<?> filterOperation)
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
@@ -1341,7 +1341,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * <p>
    * 
    * As an example, let's check stuff on some special employees :
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * 
@@ -1358,25 +1360,30 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * 
    * // 'notIn' filter is statically imported from Assertions.notIn
    * assertThat(employees).filteredOn("name.first", notIn("Yoda", "Luke"))
-   *                      .containsOnly(obiwan);</code></pre>
-   * 
+   *                      .containsOnly(obiwan);
+   * </code></pre>
    * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
    * elements.
    * <p>
    * Note that combining filter operators is not supported, thus the following code is not correct:
-   * <pre><code class='java'> // Combining filter operators like not(in(800)) is NOT supported
+   * 
+   * <pre><code class='java'>
+   * // Combining filter operators like not(in(800)) is NOT supported
    * // -&gt; throws UnsupportedOperationException
    * assertThat(employees).filteredOn("age", not(in(800)))
-   *                      .contains(luke);</code></pre>
+   *                      .contains(luke);
+   * </code></pre>
    * <p>
    * You can chain filters:
-   * <pre><code class='java'> // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
    * // 'not' filter is statically imported from Assertions.not 
    * 
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
-   *                                .containsOnly(aragorn);</code></pre>
-   * 
+   *                                .containsOnly(aragorn);
+   * </code></pre>
    * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
    * 
    * @param propertyOrFieldName the name of the property or field to read
@@ -1384,8 +1391,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
     checkNotNull(filterOperator);
     Filters<? extends T> filter = filter((Iterable<? extends T>) actual).with(propertyOrFieldName);
     filterOperator.applyOn(filter);
@@ -1398,7 +1404,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * If you prefer {@link Predicate} over {@link Condition}, use {@link #filteredOn(Predicate)}.
    * <p>
    * Example : check old employees whose age > 100:
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -1415,19 +1423,21 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    *     };
    *   }
    * assertThat(employees).filteredOn(oldEmployees)
-   *                      .containsOnly(yoda, obiwan);</code></pre>
-   * 
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
    * You can combine {@link Condition} with condition operator like {@link Not}:
-   * <pre><code class='java'> // 'not' filter is statically imported from Assertions.not
+   * 
+   * <pre><code class='java'>
+   * // 'not' filter is statically imported from Assertions.not 
    * assertThat(employees).filteredOn(not(oldEmployees))
-   *                      .contains(luke, noname);</code></pre>
+   *                      .contains(luke, noname);
+   * </code></pre>
    * 
    * @param condition the filter condition / predicate
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given condition is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Condition<? super T> condition) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Condition<? super T> condition) {
     Filters<? extends T> filter = filter((Iterable<? extends T>) actual);
     Iterable<? extends T> filteredIterable = filter.being(condition).get();
     return (S) new ListAssert<>(newArrayList(filteredIterable));
@@ -1453,10 +1463,10 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Predicate<? super T> predicate) {
-    if (predicate == null) throw new IllegalArgumentException("The filter predicate should not be null");
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Predicate<? super T> predicate) {
+    if (predicate == null) {
+      throw new IllegalArgumentException("The filter predicate should not be null");
+    }
     return (S) new ListAssert<>(stream(actual.spliterator(), false).filter(predicate).collect(toList()));
   }
-
 }

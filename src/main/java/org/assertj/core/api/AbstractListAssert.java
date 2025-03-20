@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
 import java.util.List;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import org.assertj.core.internal.ComparisonStrategy;
@@ -23,7 +9,8 @@ import org.assertj.core.util.VisibleForTesting;
 
 /**
  * Base class for all implementations of assertions for {@link List}s.
- * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+ * 
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
  * @param <A> the type of the "actual" value.
@@ -34,32 +21,25 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-public abstract class AbstractListAssert<S extends AbstractListAssert<S, A, T>, A extends List<? extends T>, T> extends
-    AbstractIterableAssert<S, A, T> implements
-    IndexedObjectEnumerableAssert<S, T> {
-
-  @VisibleForTesting
-  Lists lists = Lists.instance();
+public abstract class AbstractListAssert<S extends AbstractListAssert<S, A, T>, A extends List<? extends T>, T extends java.lang.Object> extends AbstractIterableAssert<S, A, T> implements IndexedObjectEnumerableAssert<S, T> {
+  @VisibleForTesting Lists lists = Lists.instance();
 
   protected AbstractListAssert(A actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S contains(T value, Index index) {
+  @Override public S contains(T value, Index index) {
     lists.assertContains(info, actual, value, index);
     return myself;
   }
 
-  @Override
-  public S contains(@SuppressWarnings("unchecked") T... values) {
+  @Override public S contains(@SuppressWarnings(value = { "unchecked" }) T... values) {
     return super.contains(values);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContain(T value, Index index) {
+  @Override public S doesNotContain(T value, Index index) {
     lists.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
@@ -148,23 +128,19 @@ public abstract class AbstractListAssert<S extends AbstractListAssert<S, A, T>, 
     return myself;
   }
 
-  @Override
-  public S usingElementComparator(Comparator<? super T> customComparator) {
+  @Override public S usingElementComparator(Comparator<? super T> customComparator) {
     super.usingElementComparator(customComparator);
     lists = new Lists(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     super.usingDefaultElementComparator();
     lists = Lists.instance();
     return myself;
   }
 
-  // can't really honor basic assertion consistently with this comparisonStrategy
-  @Override
-  protected S usingComparisonStrategy(ComparisonStrategy comparisonStrategy) {
+  @Override protected S usingComparisonStrategy(ComparisonStrategy comparisonStrategy) {
     super.usingComparisonStrategy(comparisonStrategy);
     lists = new Lists(comparisonStrategy);
     return myself;

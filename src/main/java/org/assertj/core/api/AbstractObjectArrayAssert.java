@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.filter.Filters.filter;
 import static org.assertj.core.extractor.Extractors.byName;
@@ -20,7 +7,6 @@ import static org.assertj.core.util.Arrays.isArray;
 import static org.assertj.core.util.IterableUtil.toArray;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.api.iterable.Extractor;
@@ -63,12 +48,8 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Mikhail Mazursky
  * @author Mateusz Haligowski
  */
-public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T> extends
-    AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>,
-    ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
-
-  @VisibleForTesting
-  ObjectArrays arrays = ObjectArrays.instance();
+public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T extends java.lang.Object> extends AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>, ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
+  @VisibleForTesting ObjectArrays arrays = ObjectArrays.instance();
 
   protected AbstractObjectArrayAssert(T[] actual, Class<?> selfType) {
     super(actual, selfType);
@@ -79,8 +60,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
@@ -89,8 +69,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, actual);
   }
 
@@ -99,8 +78,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -110,8 +88,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     arrays.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -119,279 +96,236 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S hasSameSizeAs(Object other) {
-    // TODO same implementation as in AbstractArrayAssert, but can't inherit from it due to generics problem ...
+  @Override public S hasSameSizeAs(Object other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S contains(@SuppressWarnings("unchecked") T... values) {
+  @Override public S contains(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContains(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsOnly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnly(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSameElementsAs(Iterable<? extends T> iterable) {
+  @Override public S hasSameElementsAs(Iterable<? extends T> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsOnlyOnce(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsExactly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsExactly(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsSequence(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertContainsSequence(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsSubsequence(@SuppressWarnings("unchecked") T... subsequence) {
+  @Override public S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... subsequence) {
     arrays.assertContainsSubsequence(info, actual, subsequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S contains(T value, Index index) {
+  @Override public S contains(T value, Index index) {
     arrays.assertContains(info, actual, value, index);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContain(T value, Index index) {
+  @Override public S doesNotContain(T value, Index index) {
     arrays.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContain(@SuppressWarnings("unchecked") T... values) {
+  @Override public S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertDoesNotContain(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
     arrays.assertDoesNotContainAnyElementsOf(info, actual, iterable);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotHaveDuplicates() {
+  @Override public S doesNotHaveDuplicates() {
     arrays.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S startsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertStartsWith(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S endsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertEndsWith(info, actual, sequence);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSubsetOf(Iterable<? extends T> values) {
+  @Override public S isSubsetOf(Iterable<? extends T> values) {
     arrays.assertIsSubsetOf(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsNull() {
+  @Override public S containsNull() {
     arrays.assertContainsNull(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doesNotContainNull() {
+  @Override public S doesNotContainNull() {
     arrays.assertDoesNotContainNull(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S are(Condition<? super T> condition) {
+  @Override public S are(Condition<? super T> condition) {
     arrays.assertAre(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areNot(Condition<? super T> condition) {
+  @Override public S areNot(Condition<? super T> condition) {
     arrays.assertAreNot(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S have(Condition<? super T> condition) {
+  @Override public S have(Condition<? super T> condition) {
     arrays.assertHave(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S doNotHave(Condition<? super T> condition) {
+  @Override public S doNotHave(Condition<? super T> condition) {
     arrays.assertDoNotHave(info, actual, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areAtLeast(int times, Condition<? super T> condition) {
+  @Override public S areAtLeast(int times, Condition<? super T> condition) {
     arrays.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areAtLeastOne(Condition<? super T> condition) {
+  @Override public S areAtLeastOne(Condition<? super T> condition) {
     areAtLeast(1, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areAtMost(int times, Condition<? super T> condition) {
+  @Override public S areAtMost(int times, Condition<? super T> condition) {
     arrays.assertAreAtMost(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S areExactly(int times, Condition<? super T> condition) {
+  @Override public S areExactly(int times, Condition<? super T> condition) {
     arrays.assertAreExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtLeastOne(Condition<? super T> condition) {
+  @Override public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtLeast(int times, Condition<? super T> condition) {
+  @Override public S haveAtLeast(int times, Condition<? super T> condition) {
     arrays.assertHaveAtLeast(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveAtMost(int times, Condition<? super T> condition) {
+  @Override public S haveAtMost(int times, Condition<? super T> condition) {
     arrays.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S haveExactly(int times, Condition<? super T> condition) {
+  @Override public S haveExactly(int times, Condition<? super T> condition) {
     arrays.assertHaveExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasAtLeastOneElementOfType(Class<?> type) {
+  @Override public S hasAtLeastOneElementOfType(Class<?> type) {
     arrays.assertHasAtLeastOneElementOfType(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasOnlyElementsOfType(Class<?> type) {
+  @Override public S hasOnlyElementsOfType(Class<?> type) {
     arrays.assertHasOnlyElementsOfType(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSorted() {
+  @Override public S isSorted() {
     arrays.assertIsSorted(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSortedAccordingTo(Comparator<? super T> comparator) {
+  @Override public S isSortedAccordingTo(Comparator<? super T> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S containsAll(Iterable<? extends T> iterable) {
+  @Override public S containsAll(Iterable<? extends T> iterable) {
     arrays.assertContainsAll(info, actual, iterable);
     return myself;
   }
 
-  @Override
-  public S usingElementComparator(Comparator<? super T> elementComparator) {
+  @Override public S usingElementComparator(Comparator<? super T> elementComparator) {
     this.arrays = new ObjectArrays(new ComparatorBasedComparisonStrategy(elementComparator));
-    // to have the same semantics on base assertions like isEqualTo, we need to use an iterable comparator comparing
-    // elements with elementComparator parameter
     objects = new Objects(new ObjectArrayElementComparisonStrategy<>(elementComparator));
     return myself;
   }
 
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     this.arrays = ObjectArrays.instance();
     return myself;
   }
@@ -407,14 +341,17 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter frodoClone = new TolkienCharacter("Frodo", 33, HOBBIT);
    * 
    * // Fail if equals has not been overridden in TolkienCharacter as equals default implementation only compares references
    * assertThat(array(frodo)).contains(frodoClone);
    * 
    * // frodo and frodoClone are equals when doing a field by field comparison.
-   * assertThat(array(frodo)).usingFieldByFieldElementComparator().contains(frodoClone);</code></pre>
+   * assertThat(array(frodo)).usingFieldByFieldElementComparator().contains(frodoClone);
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -434,14 +371,17 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter sam = new TolkienCharacter("Sam", 38, HOBBIT);
    * 
    * // frodo and sam both are hobbits, so they are equals when comparing only race
    * assertThat(array(frodo)).usingElementComparatorOnFields("race").contains(sam); // OK
    * 
    * // ... but not when comparing both name and race
-   * assertThat(array(frodo)).usingElementComparatorOnFields("name", "race").contains(sam); // FAIL</code></pre>
+   * assertThat(array(frodo)).usingElementComparatorOnFields("name", "race").contains(sam); // FAIL
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -461,14 +401,17 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * to the other field/property using its <code>equals</code> method.
    * </p>
    * Example:
-   * <pre><code class='java'> TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
+   *
+   * <pre><code class='java'>
+   * TolkienCharacter frodo = new TolkienCharacter("Frodo", 33, HOBBIT);
    * TolkienCharacter sam = new TolkienCharacter("Sam", 38, HOBBIT);
    * 
    * // frodo and sam both are hobbits, so they are equals when comparing only race (i.e. ignoring all other fields)
    * assertThat(array(frodo)).usingElementComparatorIgnoringFields("name", "age").contains(sam); // OK
    * 
    * // ... but not when comparing both name and race
-   * assertThat(array(frodo)).usingElementComparatorIgnoringFields("age").contains(sam); // FAIL</code></pre>
+   * assertThat(array(frodo)).usingElementComparatorIgnoringFields("age").contains(sam); // FAIL
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
@@ -484,7 +427,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * be sometimes much less work !
    * <p>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
+   * 
+   * <pre><code class='java'>
+   * // Build a array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
    * // they can be public field or properties, both works when extracting their values.
    * TolkienCharacter[] fellowshipOfTheRing = new TolkienCharacter[] {
    *   new TolkienCharacter(&quot;Frodo&quot;, 33, HOBBIT),
@@ -507,7 +452,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * assertThat(fellowshipOfTheRing).extracting(&quot;race.name&quot;)
    *                                .contains(&quot;Hobbit&quot;, &quot;Elf&quot;)
-   *                                .doesNotContain(&quot;Orc&quot;);</code></pre>
+   *                                .doesNotContain(&quot;Orc&quot;);
+   * </code></pre>
    * 
    * A field with the given name is looked for first, if it is not accessible (ie. does not exist or is not public) then
    * a property with the given name is looked for.
@@ -534,7 +480,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * be sometimes much less work !
    * <p>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build an array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
+   * 
+   * <pre><code class='java'>
+   * // Build an array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
    * // they can be public field or properties, both works when extracting their values.
    * TolkienCharacter[] fellowshipOfTheRing = new TolkienCharacter[] {
    *   new TolkienCharacter(&quot;Frodo&quot;, 33, HOBBIT),
@@ -557,7 +505,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * assertThat(fellowshipOfTheRing).extracting(&quot;race.name&quot;, String.class)
    *                                .contains(&quot;Hobbit&quot;, &quot;Elf&quot;)
-   *                                .doesNotContain(&quot;Orc&quot;);</code></pre>
+   *                                .doesNotContain(&quot;Orc&quot;);
+   * </code></pre>
    * 
    * A field with the given name is looked for first, if it is not accessible (ie. does not exist or is not public) then
    * a property with the given name is looked for.
@@ -572,9 +521,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object whose object under test is the array of extracted field/property values.
    * @throws IntrospectionError if no field or property exists with the given name (or field exists but is not public)
    */
-  public <P> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -590,7 +538,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * element of the initial array (the Tuple's data order is the same as the given fields/properties order).
    * <p/>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build an array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
+   * 
+   * <pre><code class='java'>
+   * // Build an array of TolkienCharacter, a TolkienCharacter has a name (String) and a Race (a class)
    * // they can be public field or properties, both works when extracting their values.
    * TolkienCharacter[] fellowshipOfTheRing = new TolkienCharacter[] {
    *   new TolkienCharacter(&quot;Frodo&quot;, 33, HOBBIT),
@@ -616,7 +566,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * assertThat(fellowshipOfTheRing).extracting(&quot;name&quot;, &quot;age&quot;, &quot;race.name&quot;)
    *                                .contains(tuple(&quot;Boromir&quot;, 37, &quot;Man&quot;),
    *                                          tuple(&quot;Sam&quot;, 38, &quot;Hobbit&quot;),
-   *                                          tuple(&quot;Legolas&quot;, 1000, &quot;Elf&quot;));</code></pre>
+   *                                          tuple(&quot;Legolas&quot;, 1000, &quot;Elf&quot;));
+   * </code></pre>
    * 
    * A property with the given name is looked for first, if it doesn't exist then a field with the given name is looked
    * for, if no field accessible (ie. does not exist or is not public) an IntrospectionError is thrown.
@@ -636,7 +587,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   public ObjectArrayAssert<Tuple> extracting(String... propertiesOrFields) {
     Object[] values = FieldsOrPropertiesExtractor.extract(actual, byName(propertiesOrFields));
     Tuple[] result = Arrays.copyOf(values, values.length, Tuple[].class);
-
     return new ObjectArrayAssert<>(result);
   }
 
@@ -648,7 +598,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * doesn't utilize introspection.
    * <p/>
    * Let's take a look an example
-   * <pre><code class='java'> // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
+   * 
+   * <pre><code class='java'>
+   * // Build a list of TolkienCharacter, a TolkienCharacter has a name, and age and a Race (a specific class)
    * // they can be public field or properties, both can be extracted.
    * List&lt;TolkienCharacter&gt; fellowshipOfTheRing = new ArrayList&lt;TolkienCharacter&gt;();
    * 
@@ -670,7 +622,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * }
    * 
    * // fellowship has hobbitses, right, my presioussss?
-   * assertThat(fellowshipOfTheRing).extracting(race).contains(HOBBIT);</code></pre>
+   * assertThat(fellowshipOfTheRing).extracting(race).contains(HOBBIT);
+   * </code></pre>
    * 
    * Note that the order of extracted property/field values is consistent with the iteration order of the Iterable under
    * test, for example if it's a {@link HashSet}, you won't be able to make any assumptions on the extracted values
@@ -679,9 +632,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractor the object transforming input object to desired one
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <U> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
+  public <U extends java.lang.Object> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
     U[] extracted = FieldsOrPropertiesExtractor.extract(actual, extractor);
-
     return new ObjectArrayAssert<>(extracted);
   }
 
@@ -692,7 +644,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * It allows testing the results of extracting values that are represented by Iterables.
    * <p/>
    * For example:
-   * <pre><code class='java'> CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
+   * 
+   * <pre><code class='java'>
+   * CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
    * CartoonCharacter lisa = new CartoonCharacter("Lisa Simpson");
    * CartoonCharacter maggie = new CartoonCharacter("Maggie Simpson");
    * CartoonCharacter homer = new CartoonCharacter("Homer Simpson");
@@ -712,7 +666,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * CartoonCharacter[] parents = new CartoonCharacter[] { homer, fred };
    * // check children
    * assertThat(parents).flatExtracting(childrenOf)
-   *                    .containsOnly(bart, lisa, maggie, pebbles);</code></pre>
+   *                    .containsOnly(bart, lisa, maggie, pebbles);
+   * </code></pre>
    * 
    * The order of extracted values is consisted with both the order of the collection itself, as well as the extracted
    * collections.
@@ -720,14 +675,12 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractor the object transforming input object to an Iterable of desired ones
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <U, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
+  public <U extends java.lang.Object, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
     final List<C> extractedValues = FieldsOrPropertiesExtractor.extract(Arrays.asList(actual), extractor);
-
     final List<U> result = newArrayList();
     for (C e : extractedValues) {
       result.addAll(e);
     }
-
     return new ObjectArrayAssert<>(IterableUtil.toArray(result));
   }
 
@@ -738,7 +691,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * It allows testing the elements of extracting values that are represented by iterables or arrays.
    * <p/>
    * For example:
-   * <pre><code class='java'> CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
+   *
+   * <pre><code class='java'>
+   * CartoonCharacter bart = new CartoonCharacter("Bart Simpson");
    * CartoonCharacter lisa = new CartoonCharacter("Lisa Simpson");
    * CartoonCharacter maggie = new CartoonCharacter("Maggie Simpson");
    * CartoonCharacter homer = new CartoonCharacter("Homer Simpson");
@@ -751,7 +706,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * CartoonCharacter[] parents = new CartoonCharacter[] { homer, fred };
    * // check children
    * assertThat(parents).flatExtracting("children")
-   *                    .containsOnly(bart, lisa, maggie, pebbles);</code></pre>
+   *                    .containsOnly(bart, lisa, maggie, pebbles);
+   * </code></pre>
    *
    * The order of extracted values is consisted with both the order of the collection itself, as well as the extracted
    * collections.
@@ -764,19 +720,20 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
     List<Object> extractedValues = newArrayList();
     List<?> extractedGroups = FieldsOrPropertiesExtractor.extract(Arrays.asList(actual), byName(propertyName));
     for (Object group : extractedGroups) {
-      // expecting group to be an iterable or an array
       if (isArray(group)) {
         int size = Array.getLength(group);
         for (int i = 0; i < size; i++) {
           extractedValues.add(Array.get(group, i));
         }
-      } else if (group instanceof Iterable) {
-        Iterable<?> iterable = (Iterable<?>) group;
-        for (Object value : iterable) {
-          extractedValues.add(value);
-        }
       } else {
-        CommonErrors.wrongElementTypeForFlatExtracting(group);
+        if (group instanceof Iterable) {
+          Iterable<?> iterable = (Iterable<?>) group;
+          for (Object value : iterable) {
+            extractedValues.add(value);
+          }
+        } else {
+          CommonErrors.wrongElementTypeForFlatExtracting(group);
+        }
       }
     }
     return new ObjectArrayAssert<>(extractedValues.toArray());
@@ -793,7 +750,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * toString() or public String status() instead of public String getStatus()).
    * <p>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
+   * 
+   * <pre><code class='java'>
+   * // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
    * WesterosHouse[] greatHousesOfWesteros = new WesterosHouse[] { new WesterosHouse(&quot;Stark&quot;, &quot;Winter is Coming&quot;),
    *     new WesterosHouse(&quot;Lannister&quot;, &quot;Hear Me Roar!&quot;), new WesterosHouse(&quot;Greyjoy&quot;, &quot;We Do Not Sow&quot;),
    *     new WesterosHouse(&quot;Baratheon&quot;, &quot;Our is the Fury&quot;), new WesterosHouse(&quot;Martell&quot;, &quot;Unbowed, Unbent, Unbroken&quot;),
@@ -803,7 +762,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * assertThat(greatHousesOfWesteros).extractingResultOf(&quot;sayTheWords&quot;)
    *                                  .contains(&quot;Winter is Coming&quot;, &quot;We Do Not Sow&quot;, &quot;Hear Me Roar&quot;)
-   *                                  .doesNotContain(&quot;Lannisters always pay their debts&quot;);</code></pre>
+   *                                  .doesNotContain(&quot;Lannisters always pay their debts&quot;);
+   * </code></pre>
    * 
    * <p>
    * Following requirements have to be met to extract method results:
@@ -836,7 +796,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * toString() or public String status() instead of public String getStatus()).
    * <p>
    * Let's take an example to make things clearer :
-   * <pre><code class='java'> // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
+   * 
+   * <pre><code class='java'>
+   * // Build a array of WesterosHouse, a WesterosHouse has a method: public String sayTheWords()
    * WesterosHouse[] greatHousesOfWesteros = new WesterosHouse[] { new WesterosHouse(&quot;Stark&quot;, &quot;Winter is Coming&quot;),
    *     new WesterosHouse(&quot;Lannister&quot;, &quot;Hear Me Roar!&quot;), new WesterosHouse(&quot;Greyjoy&quot;, &quot;We Do Not Sow&quot;),
    *     new WesterosHouse(&quot;Baratheon&quot;, &quot;Our is the Fury&quot;), new WesterosHouse(&quot;Martell&quot;, &quot;Unbowed, Unbent, Unbroken&quot;),
@@ -846,7 +808,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * assertThat(greatHousesOfWesteros).extractingResultOf(&quot;sayTheWords&quot;, String.class)
    *                                  .contains(&quot;Winter is Coming&quot;, &quot;We Do Not Sow&quot;, &quot;Hear Me Roar&quot;)
-   *                                  .doesNotContain(&quot;Lannisters always pay their debts&quot;);</code></pre>
+   *                                  .doesNotContain(&quot;Lannisters always pay their debts&quot;);
+   * </code></pre>
    * 
    * <p>
    * Following requirements have to be met to extract method results:
@@ -864,9 +827,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IllegalArgumentException if no method exists with the given name, or method is not public, or method does
    *           return void, or method accepts arguments.
    */
-  public <P> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -877,33 +839,40 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * It can be useful to better understand what the error was with a more meaningful error message.
    * <p/>
    * Example
-   * <pre><code class='java'> assertThat(new Byte[] { 0x10, 0x20 }).inHexadecimal().contains(new Byte[] { 0x30 });</code></pre>
+   * 
+   * <pre><code class='java'>
+   * assertThat(new Byte[] { 0x10, 0x20 }).inHexadecimal().contains(new Byte[] { 0x30 });
+   * </code></pre>
    *
    * With standard error message:
-   * <pre><code class='java'> Expecting:
+   * 
+   * <pre><code class='java'>
+   * Expecting:
    *  <[16, 32]>
    * to contain:
    *  <[48]>
    * but could not find:
-   *  <[48]></code></pre>
+   *  <[48]>
+   * </code></pre>
    *
    * With Hexadecimal error message:
-   * <pre><code class='java'> Expecting:
+   * 
+   * <pre><code class='java'>
+   * Expecting:
    *  <[0x10, 0x20]>
    * to contain:
    *  <[0x30]>
    * but could not find:
-   *  <[0x30]></code></pre>
+   *  <[0x30]>
+   * </code></pre>
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public S inHexadecimal() {
+  @Override public S inHexadecimal() {
     return super.inHexadecimal();
   }
 
-  @Override
-  public S inBinary() {
+  @Override public S inBinary() {
     return super.inBinary();
   }
 
@@ -921,7 +890,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * <p>
    * 
    * As an example, let's check all employees 800 years old (yes, special employees):
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -929,17 +900,20 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * Employee[] employees = new Employee[] { yoda, luke, obiwan, noname };
    *
    * assertThat(employees).filteredOn("age", 800)
-   *                      .containsOnly(yoda, obiwan);</code></pre>
-   *                      
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
    * Nested properties/fields are supported:
-   * <pre><code class='java'> // Name is bean class with 'first' and 'last' String properties
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
    *
    * // name is null for noname => it does not match the filter on "name.first" 
    * assertThat(employees).filteredOn("name.first", "Luke")
    *                      .containsOnly(luke);
    * 
    * assertThat(employees).filteredOn("name.last", "Vader")
-   *                      .isEmpty();</code></pre>
+   *                      .isEmpty();
+   * </code></pre>
    * <p>
    * If you want to filter on null value, use {@link #filteredOnNull(String)} as Java will resolve the call to
    * {@link #filteredOn(String, FilterOperator)} instead of this method.
@@ -948,12 +922,15 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * elements.
    * <p>
    * You can chain filters:
-   * <pre><code class='java'> // fellowshipOfTheRing is an array of TolkienCharacter having race and name fields
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is an array of TolkienCharacter having race and name fields
    * // 'not' filter is statically imported from Assertions.not 
    * 
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
-   *                                .containsOnly(aragorn);</code></pre>
+   *                                .containsOnly(aragorn);
+   * </code></pre>
    * If you need more complex filter, use {@link #filteredOn(Condition)} and provide a {@link Condition} to specify the
    * filter to apply.
    * 
@@ -963,8 +940,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the array elements.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, Object expectedValue) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, Object expectedValue) {
     Iterable<? extends T> filteredIterable = filter(actual).with(propertyOrFieldName, expectedValue).get();
     return (S) new ObjectArrayAssert<>(toArray(filteredIterable));
   }
@@ -981,7 +957,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * considered to be null, thus reading "address.street.name" value will return null if "street" value is null.
    * <p>
    * As an example, let's check all employees 800 years old (yes, special employees):
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -989,14 +967,16 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * Employee[] employees = new Employee[] { yoda, luke, obiwan, noname };
    *
    * assertThat(employees).filteredOnNull("name")
-   *                      .containsOnly(noname);</code></pre>
-   *                      
+   *                      .containsOnly(noname);
+   * </code></pre>
    * Nested properties/fields are supported:
-   * <pre><code class='java'> // Name is bean class with 'first' and 'last' String properties
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
    *
    * assertThat(employees).filteredOnNull("name.last")
-   *                      .containsOnly(yoda, obiwan, noname);</code></pre>
-   * 
+   *                      .containsOnly(yoda, obiwan, noname);
+   * </code></pre>
    * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the array
    * elements.
    * <p>
@@ -1008,8 +988,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the array elements.
    */
   public S filteredOnNull(String propertyOrFieldName) {
-    // need to cast nulll to Object otherwise it calls :
-    // filteredOn(String propertyOrFieldName, FilterOperation<?> filterOperation)
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
@@ -1034,7 +1012,9 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * <p>
    * 
    * As an example, let's check stuff on some special employees :
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * 
@@ -1051,25 +1031,30 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * // 'notIn' filter is statically imported from Assertions.notIn
    * assertThat(employees).filteredOn("name.first", notIn("Yoda", "Luke"))
-   *                      .containsOnly(obiwan);</code></pre>
-   *                      
+   *                      .containsOnly(obiwan);
+   * </code></pre>
    * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the array
    * elements.
    * <p>
    * Note that combining filter operators is not supported, thus the following code is not correct:
-   * <pre><code class='java'> // Combining filter operators like not(in(800)) is NOT supported
+   * 
+   * <pre><code class='java'>
+   * // Combining filter operators like not(in(800)) is NOT supported
    * // -&gt; throws UnsupportedOperationException
    * assertThat(employees).filteredOn("age", not(in(800)))
-   *                      .contains(luke);</code></pre>
+   *                      .contains(luke);
+   * </code></pre>
    * <p>
    * You can chain filters:
-   * <pre><code class='java'> // fellowshipOfTheRing is an array of TolkienCharacter having race and name fields
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is an array of TolkienCharacter having race and name fields
    * // 'not' filter is statically imported from Assertions.not 
    * 
    * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
    *                                .filteredOn("name", not("Boromir"))
-   *                                .containsOnly(aragorn);</code></pre>
-   * 
+   *                                .containsOnly(aragorn);
+   * </code></pre>
    * If you need more complex filter, use {@link #filteredOn(Condition)} and provide a {@link Condition} to specify the
    * filter to apply.
    * 
@@ -1078,8 +1063,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
     checkNotNull(filterOperator);
     Filters<? extends T> filter = filter(actual).with(propertyOrFieldName);
     filterOperator.applyOn(filter);
@@ -1089,8 +1073,10 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   /**
    * Filter the array under test keeping only elements matching the given {@link Condition}.
    * <p>
-   * Let's check old employees whose age > 100:
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Example : check old employees whose age > 100:
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
@@ -1107,19 +1093,21 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *     };
    *   }
    * assertThat(employees).filteredOn(oldEmployees)
-   *                      .containsOnly(yoda, obiwan);</code></pre>
-   *                      
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
    * You can combine {@link Condition} with condition operator like {@link Not}:
-   * <pre><code class='java'> // 'not' filter is statically imported from Assertions.not
+   * 
+   * <pre><code class='java'>
+   * // 'not' filter is statically imported from Assertions.not 
    * assertThat(employees).filteredOn(not(oldEmployees))
-   *                      .contains(luke, noname);</code></pre>
+   *                      .contains(luke, noname);
+   * </code></pre>
    * 
    * @param condition the filter condition / predicate
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given condition is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Condition<? super T> condition) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Condition<? super T> condition) {
     Iterable<? extends T> filteredIterable = filter(actual).being(condition).get();
     return (S) new ObjectArrayAssert<>(toArray(filteredIterable));
   }
@@ -1144,10 +1132,10 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Predicate<? super T> predicate) {
-    if (predicate == null) throw new IllegalArgumentException("The filter predicate should not be null");
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Predicate<? super T> predicate) {
+    if (predicate == null) {
+      throw new IllegalArgumentException("The filter predicate should not be null");
+    }
     return (S) new ObjectArrayAssert<>(stream(actual).filter(predicate).toArray());
   }
-
 }
