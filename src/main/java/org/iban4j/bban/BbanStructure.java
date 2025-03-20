@@ -94,16 +94,25 @@ public class BbanStructure {
                         BbanStructureEntry.accountType(2, 'n'),
                         BbanStructureEntry.accountNumber(8, 'c')));
         
+<<<<<<< /usr/src/app/output/arturmkrtchyan/iban4j/ee807e0a05fc291337dc0b8d5753265f55fed104/src/main/java/org/iban4j/bban/BbanStructure.java/left.java
+        structures.put(CountryCode.BY,
+                new BbanStructure(
+                        BbanStructureEntry.bankCode(4, 'c'),
+                        BbanStructureEntry.branchCode(4, 'n'),
+                        BbanStructureEntry.accountNumber(16, 'c')));
+||||||| /usr/src/app/output/arturmkrtchyan/iban4j/ee807e0a05fc291337dc0b8d5753265f55fed104/src/main/java/org/iban4j/bban/BbanStructure.java/base.java
+=======
         structures.put(CountryCode.BY,
                 new BbanStructure(
                         BbanStructureEntry.bankCode(4, 'c'),
                         BbanStructureEntry.accountType(4, 'n'),
                         BbanStructureEntry.accountNumber(16, 'c')));
+>>>>>>> /usr/src/app/output/arturmkrtchyan/iban4j/ee807e0a05fc291337dc0b8d5753265f55fed104/src/main/java/org/iban4j/bban/BbanStructure.java/right.java
 
         structures.put(CountryCode.CR,
-                new BbanStructure(
-                        BbanStructureEntry.bankCode(4, 'n'),
-                        BbanStructureEntry.accountNumber(14, 'n')));
+            new BbanStructure(
+                    BbanStructureEntry.bankCode(4, 'n'),
+                    BbanStructureEntry.accountNumber(14, 'n')));
 
         structures.put(CountryCode.DE,
                 new BbanStructure(
