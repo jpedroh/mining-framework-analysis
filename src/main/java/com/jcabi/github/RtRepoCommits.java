@@ -40,9 +40,6 @@ import lombok.EqualsAndHashCode;
  * Commits of a Github repository.
  * @author Alexander Sinyagin (sinyagin.alexander@gmail.com)
  * @version $Id$
- * @todo #117 RtRepoCommits should be able to fetch commits. Let's
- *  implement this method. When done, remove this puzzle and
- *  Ignore annotation from a test for the method.
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -50,42 +47,43 @@ import lombok.EqualsAndHashCode;
 final class RtRepoCommits implements RepoCommits {
 
     /**
-     * RESTful API entry point.
-     */
-    private final transient Request entry;
-
-    /**
      * RESTful request for the commits.
      */
     private final transient Request request;
-
     /**
-     * Parent repository.
+     * RESTful request, an entry point to the Github API.
      */
-    private final transient Repo owner;
-
+    private final transient Request entry;
     /**
      * Github.
      */
     private final transient Github github;
-
+    /**
+     * Repository.
+     */
+    private final transient Repo repo;
     /**
      * Public ctor.
      * @param req Entry point of API
      * @param repo Repository
      */
     RtRepoCommits(final Request req, final Repo repo) {
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/3af65704843d882e9e391f5b19f9e7f8f404a3e5/src/main/java/com/jcabi/github/RtRepoCommits.java/left.java
+        this.entry = req;
+||||||| /usr/src/app/output/jcabi/jcabi-github/3af65704843d882e9e391f5b19f9e7f8f404a3e5/src/main/java/com/jcabi/github/RtRepoCommits.java/base.java
+=======
         this.entry = req;
         this.owner = repo;
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/3af65704843d882e9e391f5b19f9e7f8f404a3e5/src/main/java/com/jcabi/github/RtRepoCommits.java/right.java
         this.request = req.uri()
             .path("/repos")
             .path(repo.coordinates().user())
             .path(repo.coordinates().repo())
             .path("/commits")
             .back();
-        this.github = new RtGithub(this.req);
+        this.github = new RtGithub(this.request);
+        this.repo = new RtRepo(this.github, this.request, repo);
     }
-
     @Override
     public Iterable<Commit> iterate() {
         return new RtPagination<Commit>(
@@ -98,11 +96,17 @@ final class RtRepoCommits implements RepoCommits {
             }
         );
     }
-
     @Override
     public Commit get(final String sha) {
-        return new RtCommit(this.entry, this.owner, sha);
+        return new RtCommit(this.entry, this.repo, sha);
     }
+    /**
+     * RESTful API entry point.
+     */
+    /**
+     * Parent repository.
+     */
+    private final transient Repo owner;
 
     @Override
     public String toString() {
