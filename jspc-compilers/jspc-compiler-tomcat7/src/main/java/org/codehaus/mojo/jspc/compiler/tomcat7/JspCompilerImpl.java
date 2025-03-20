@@ -1,28 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.codehaus.mojo.jspc.compiler.tomcat7;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.mojo.jspc.compiler.JspCompiler;
 
@@ -32,125 +11,122 @@ import org.codehaus.mojo.jspc.compiler.JspCompiler;
  * @version $Id$
  */
 public class JspCompilerImpl implements JspCompiler {
-    private final MultiThreadedJspC jspc;
-    private boolean showSuccess = false;
-    private boolean listErrors = false;
-    
-    public JspCompilerImpl() {
-        jspc = new MultiThreadedJspC();
-        jspc.setFailOnError(true);
-    }
+  private final MultiThreadedJspC jspc;
 
-    public void setWebappDirectory(String webappDir) {
-        jspc.setUriroot(webappDir);
-    }
+  private boolean showSuccess = false;
 
-    public void setOutputDirectory(File outputDirectory) {
-        jspc.setOutputDir(outputDirectory.getAbsolutePath());
-    }
+  private boolean listErrors = false;
 
-    public void setEncoding(String encoding) {
-        jspc.setJavaEncoding(encoding);
-    }
+  public JspCompilerImpl() {
+    jspc = new MultiThreadedJspC();
+    jspc.setFailOnError(true);
+  }
 
-    public void setShowSuccess(boolean showSuccess) {
-        this.showSuccess = showSuccess;
-    }
+  public void setWebappDirectory(String webappDir) {
+    jspc.setUriroot(webappDir);
+  }
 
-    public void setListErrors(boolean listErrors) {
-        this.listErrors = listErrors;
-    }
+  public void setOutputDirectory(File outputDirectory) {
+    jspc.setOutputDir(outputDirectory.getAbsolutePath());
+  }
 
-    public void setWebFragmentFile(File webFragmentFile) {
-        jspc.setWebXmlFragment(webFragmentFile.getAbsolutePath());
-    }
+  public void setEncoding(String encoding) {
+    jspc.setJavaEncoding(encoding);
+  }
 
-    public void setPackageName(String packageName) {
-        jspc.setPackage(packageName);
-    }
+  public void setShowSuccess(boolean showSuccess) {
+    this.showSuccess = showSuccess;
+  }
 
-    public void setClasspath(Iterable<String> classpathElements) {
-        final String classpath = StringUtils.join(classpathElements.iterator(), File.pathSeparator);
-        jspc.setClassPath(classpath);
-    }
+  public void setListErrors(boolean listErrors) {
+    this.listErrors = listErrors;
+  }
 
-    public void setSmapDumped(final boolean smapDumped) {
-        jspc.setSmapDumped(smapDumped);
-    }
+  public void setWebFragmentFile(File webFragmentFile) {
+    jspc.setWebXmlFragment(webFragmentFile.getAbsolutePath());
+  }
 
-    public void setSmapSuppressed(final boolean smapSuppressed) {
-        jspc.setSmapSuppressed(smapSuppressed);
-    }
+  public void setPackageName(String packageName) {
+    jspc.setPackage(packageName);
+  }
 
-    public void setCompile(final boolean compile) {
-        jspc.setCompile(compile);
-    }
+  public void setClasspath(Iterable<String> classpathElements) {
+    final String classpath = StringUtils.join(classpathElements.iterator(), File.pathSeparator);
+    jspc.setClassPath(classpath);
+  }
 
-    public void setValidateXml(final boolean validateXml) {
-        jspc.setValidateXml(validateXml);
-    }
+  public void setSmapDumped(final boolean smapDumped) {
+    jspc.setSmapDumped(smapDumped);
+  }
 
-    public void setTrimSpaces(final boolean trimSpaces) {
-        jspc.setTrimSpaces(trimSpaces);
-    }
+  public void setSmapSuppressed(final boolean smapSuppressed) {
+    jspc.setSmapSuppressed(smapSuppressed);
+  }
 
-    public void setErrorOnUseBeanInvalidClassAttribute(boolean error) {
-        jspc.setErrorOnUseBeanInvalidClassAttribute(error);
-    }
+  public void setCompile(final boolean compile) {
+    jspc.setCompile(compile);
+  }
 
-    public void setVerbose(final int verbose) {
-        jspc.setVerbose(verbose);
-    }
+  public void setValidateXml(final boolean validateXml) {
+    jspc.setValidateXml(validateXml);
+  }
 
-    public void setCompilerSourceVM(final String source) {
-        jspc.setCompilerSourceVM(source);
-    }
+  public void setTrimSpaces(final boolean trimSpaces) {
+    jspc.setTrimSpaces(trimSpaces);
+  }
 
-    public void setCompilerTargetVM(final String target) {
-        jspc.setCompilerTargetVM(target);
-    }
+  public void setErrorOnUseBeanInvalidClassAttribute(boolean error) {
+    jspc.setErrorOnUseBeanInvalidClassAttribute(error);
+  }
 
-    public void setCaching(boolean caching) {
-        jspc.setCaching(caching);
-    }
+  public void setVerbose(final int verbose) {
+    jspc.setVerbose(verbose);
+  }
 
-    public void setGenStringAsCharArray(boolean genStringAsCharArray) {
-        jspc.setGenStringAsCharArray(genStringAsCharArray);
-    }
+  public void setCompilerSourceVM(final String source) {
+    jspc.setCompilerSourceVM(source);
+  }
 
-    public void setPoolingEnabled(boolean poolingEnabled) {
-        jspc.setPoolingEnabled(poolingEnabled);
-    }
+  public void setCompilerTargetVM(final String target) {
+    jspc.setCompilerTargetVM(target);
+  }
 
-    public void setClassDebugInfo(boolean classDebugInfo) {
-        jspc.setClassDebugInfo(classDebugInfo);
-    }
+  public void setCaching(boolean caching) {
+    jspc.setCaching(caching);
+  }
 
-    public void compile(Iterable<File> jspFiles) throws Exception {
-        final List<String> args = new ArrayList<String>();
-        
-        if (showSuccess) {
-            args.add("-s");
-        }
-        
-        if (listErrors) {
-            args.add("-l");
-        }
-        
-        for (final File jspFile : jspFiles) {
-            args.add(jspFile.getAbsolutePath());
-        }
-        
-        jspc.setArgs(args.toArray(new String[args.size()]));
+  public void setGenStringAsCharArray(boolean genStringAsCharArray) {
+    jspc.setGenStringAsCharArray(genStringAsCharArray);
+  }
 
-        jspc.execute();
-    }
+  public void setPoolingEnabled(boolean poolingEnabled) {
+    jspc.setPoolingEnabled(poolingEnabled);
+  }
 
-    public void setCompileThreads(int threads) {
-        jspc.setThreads(threads);
-    }
+  public void setClassDebugInfo(boolean classDebugInfo) {
+    jspc.setClassDebugInfo(classDebugInfo);
+  }
 
-    public void setCompileTimeout(long timeout) {
-        jspc.setCompilationTimeout(timeout);
+  public void compile(Iterable<File> jspFiles) throws Exception {
+    final List<String> args = new ArrayList<String>();
+    if (showSuccess) {
+      args.add("-s");
     }
+    if (listErrors) {
+      args.add("-l");
+    }
+    for (final File jspFile : jspFiles) {
+      args.add(jspFile.getAbsolutePath());
+    }
+    jspc.setArgs(args.toArray(new String[args.size()]));
+    jspc.execute();
+  }
+
+  public void setCompileThreads(int threads) {
+    jspc.setThreads(threads);
+  }
+
+  public void setCompileTimeout(long timeout) {
+    jspc.setCompilationTimeout(timeout);
+  }
 }

@@ -1,24 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.codehaus.mojo.jspc.compiler;
-
 import java.io.File;
 
 /**
@@ -27,51 +7,51 @@ import java.io.File;
  * @version $Id$
  */
 public interface JspCompiler {
-    void setWebappDirectory(String webappDir);
-    
-    void setOutputDirectory(File outputDirectory);
-    
-    void setEncoding(String encoding);
-    
-    void setShowSuccess(boolean showSuccesses);
-    
-    void setListErrors(boolean listErrors);
-    
-    void setWebFragmentFile(File webFragmentFile);
-    
-    void setPackageName(String packageName);
-    
-    void setClasspath(Iterable<String> classpathElements);
+  void setWebappDirectory(String webappDir);
 
-    void setSmapDumped(boolean setSmapDumped);
+  void setOutputDirectory(File outputDirectory);
 
-    void setSmapSuppressed(boolean setSmapSuppressed);
+  void setEncoding(String encoding);
 
-    void setCompile(boolean setCompile);
+  void setShowSuccess(boolean showSuccesses);
 
-    void setValidateXml(boolean validateXml);
+  void setListErrors(boolean listErrors);
 
-    void setTrimSpaces(boolean trimSpaces);
+  void setWebFragmentFile(File webFragmentFile);
 
-    void setErrorOnUseBeanInvalidClassAttribute(boolean error);
+  void setPackageName(String packageName);
 
-    void setVerbose(int verbose);
+  void setClasspath(Iterable<String> classpathElements);
 
-    void setCompilerSourceVM(String source);
+  void setSmapDumped(boolean setSmapDumped);
 
-    void setCompilerTargetVM(String target);
+  void setSmapSuppressed(boolean setSmapSuppressed);
 
-    void setCaching(boolean caching);
+  void setCompile(boolean setCompile);
 
-    void setGenStringAsCharArray(boolean genStringAsCharArray);
+  void setValidateXml(boolean validateXml);
 
-    void setPoolingEnabled(boolean poolingEnabled);
+  void setTrimSpaces(boolean trimSpaces);
 
-    void setClassDebugInfo(boolean classDebugInfo);
-    
-    void setCompileThreads(int threads);
-    
-    void setCompileTimeout(long timeout);
-    
-    void compile(Iterable<File> jspFiles) throws Exception;
+  void setErrorOnUseBeanInvalidClassAttribute(boolean error);
+
+  void setVerbose(int verbose);
+
+  void setCompilerSourceVM(String source);
+
+  void setCompilerTargetVM(String target);
+
+  void setCompileThreads(int threads);
+
+  void setCaching(boolean caching);
+
+  void setCompileTimeout(long timeout);
+
+  void setGenStringAsCharArray(boolean genStringAsCharArray);
+
+  void setPoolingEnabled(boolean poolingEnabled);
+
+  void setClassDebugInfo(boolean classDebugInfo);
+
+  void compile(Iterable<File> jspFiles) throws Exception;
 }
