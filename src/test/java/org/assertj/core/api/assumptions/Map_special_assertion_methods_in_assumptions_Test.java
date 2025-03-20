@@ -93,6 +93,7 @@ public class Map_special_assertion_methods_in_assumptions_Test extends BaseAssum
         run(map,
             value -> assumeThat(value).size().isPositive().returnToMap().size().isPositive(),
             value -> assumeThat(value).size().isPositive().returnToMap().size().isNegative()),
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/30d3049359fc8a4cbd2932bebc3b238a7338b8ca/src/test/java/org/assertj/core/api/assumptions/Map_special_assertion_methods_in_assumptions_Test.java/left.java
         run(map,
             value -> assumeThat(value).containsExactlyEntriesOf(mapOf(entry("a", "1"), entry("b", "2"), entry("c", "3"))),
             value -> assumeThat(value).containsExactlyEntriesOf(mapOf(entry("b", "2"), entry("a", "1"), entry("c", "3")))),
@@ -101,6 +102,14 @@ public class Map_special_assertion_methods_in_assumptions_Test extends BaseAssum
                                       .containsExactlyInAnyOrder(tuple("a","1"), tuple("b","2"), tuple("c","3")),
             value -> assumeThat(value).extractingFromEntries(Map.Entry::getKey, Map.Entry::getValue)
                                       .containsExactlyInAnyOrder(tuple("a","1"), tuple("b","2"), tuple("c","2")))
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/30d3049359fc8a4cbd2932bebc3b238a7338b8ca/src/test/java/org/assertj/core/api/assumptions/Map_special_assertion_methods_in_assumptions_Test.java/base.java
+=======
+        run(map,
+            value -> assumeThat(value).extractingFromEntries(Map.Entry::getKey, Map.Entry::getValue)
+                                      .containsExactlyInAnyOrder(tuple("a","1"), tuple("b","2"), tuple("c","3")),
+            value -> assumeThat(value).extractingFromEntries(Map.Entry::getKey, Map.Entry::getValue)
+                                      .containsExactlyInAnyOrder(tuple("a","1"), tuple("b","2"), tuple("c","2")))
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/30d3049359fc8a4cbd2932bebc3b238a7338b8ca/src/test/java/org/assertj/core/api/assumptions/Map_special_assertion_methods_in_assumptions_Test.java/right.java
     };
   }
 

@@ -111,7 +111,6 @@ public class Throwables {
     if (!compareThrowable(actualRootCause, expectedRootCause))
       throw failures.failure(info, shouldHaveRootCause(actualRootCause, expectedRootCause));
   }
-
   /**
    * Asserts that the actual {@code Throwable} does not have a cause.
    *
@@ -126,7 +125,6 @@ public class Throwables {
     if (actualCause == null) return;
     throw failures.failure(info, shouldHaveNoCause(actual));
   }
-
   /**
    * Asserts that the message of the actual {@code Throwable} starts with the given description.
    *
@@ -141,7 +139,6 @@ public class Throwables {
     if (actual.getMessage() != null && actual.getMessage().startsWith(description)) return;
     throw failures.failure(info, shouldStartWith(actual.getMessage(), description));
   }
-
   /**
    * Asserts that the message of the actual {@code Throwable} contains with the given description.
    *
@@ -156,13 +153,11 @@ public class Throwables {
     if (actual.getMessage() != null && actual.getMessage().contains(description)) return;
     throw failures.failure(info, shouldContain(actual.getMessage(), description));
   }
-
   public void assertHasMessageNotContaining(AssertionInfo info, Throwable actual, String content) {
     assertNotNull(info, actual);
     if (actual.getMessage() == null || !actual.getMessage().contains(content)) return;
     throw failures.failure(info, shouldNotContain(actual.getMessage(), content), actual.getMessage(), content);
   }
-
   /**
    * Asserts that the stack trace of the actual {@code Throwable} contains with the given description.
    *
@@ -178,7 +173,6 @@ public class Throwables {
     if (stackTrace != null && stackTrace.contains(description)) return;
     throw failures.failure(info, shouldContain(stackTrace, description));
   }
-
   /**
    * Asserts that the message of the actual {@code Throwable} matches with the given regular expression.
    *
@@ -195,8 +189,6 @@ public class Throwables {
     if (actual.getMessage() != null && actual.getMessage().matches(regex)) return;
     throw failures.failure(info, shouldHaveMessageMatchingRegex(actual, regex));
   }
-
-
   /**
    * Asserts that a sequence of the message of the actual {@code Throwable} matches with the given regular expression (see {@link java.util.regex.Matcher#find()}).
    * The Pattern used under the hood enables the {@link Pattern#DOTALL} mode.
@@ -216,6 +208,17 @@ public class Throwables {
                                               .test(actual.getMessage())) return;
     throw failures.failure(info, shouldHaveMessageFindingMatchRegex(actual, regex));
   }
+  /**
+   * Asserts that a sequence of the message of the actual {@code Throwable} matches with the given regular expression (see {@link java.util.regex.Matcher#find()}).
+   * The Pattern used under the hood enables the {@link Pattern#DOTALL} mode.
+   *
+   * @param info contains information about the assertion.
+   * @param actual the given {@code Throwable}.
+   * @param regex the regular expression expected to be found in the actual {@code Throwable}'s message.
+   * @throws AssertionError if the actual {@code Throwable} is {@code null}.
+   * @throws AssertionError if the message of the actual {@code Throwable} doesn't contain any sequence matching with the given regular expression
+   * @throws NullPointerException if the regex is null
+   */
 
   /**
    * Asserts that the message of the actual {@code Throwable} ends with the given description.

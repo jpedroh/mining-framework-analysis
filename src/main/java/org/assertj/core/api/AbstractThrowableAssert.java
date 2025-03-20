@@ -118,7 +118,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasCause(info, actual, cause);
     return myself;
   }
-
   /**
    * Verifies that the actual {@code Throwable} does not have a cause.
    *
@@ -130,7 +129,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasNoCause(info, actual);
     return myself;
   }
-
   /**
    * Verifies that the message of the actual {@code Throwable} starts with the given description.
    *
@@ -143,7 +141,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageStartingWith(info, actual, description);
     return myself;
   }
-
   /**
    * Verifies that the message of the actual {@code Throwable} contains the given description.
    * <p>
@@ -167,7 +164,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageContaining(info, actual, description);
     return myself;
   }
-
   /**
    * Verifies that the message of the actual {@code Throwable} does not contain the given content or is {@code null}.
    * <p>
@@ -191,7 +187,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageNotContaining(info, actual, content);
     return myself;
   }
-
   /**
    * Verifies that the stack trace of the actual {@code Throwable} contains the given description.
    *
@@ -204,7 +199,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasStackTraceContaining(info, actual, description);
     return myself;
   }
-
   /**
    * Verifies that the message of the actual {@code Throwable} matches the given regular expression.
    * <p>
@@ -227,7 +221,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageMatching(info, actual, regex);
     return myself;
   }
-
   /**
    * Verifies that a sequence of the message of the actual {@code Throwable} matches with
    * the given regular expression (see {@link java.util.regex.Matcher#find()}).
@@ -257,7 +250,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageFindingMatch(info, actual, regex);
     return myself;
   }
-
   /**
    * Verifies that the message of the actual {@code Throwable} ends with the given description.
    *
@@ -270,7 +262,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasMessageEndingWith(info, actual, description);
     return myself;
   }
-
   /**
    * Verifies that the cause of the actual {@code Throwable} is an instance of the given type.
    * <p>
@@ -295,7 +286,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasCauseInstanceOf(info, actual, type);
     return myself;
   }
-
   /**
    * Verifies that the cause of the actual {@code Throwable} is <b>exactly</b> an instance of the given type.
    * <p>
@@ -321,7 +311,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasCauseExactlyInstanceOf(info, actual, type);
     return myself;
   }
-
   /**
    * Verifies that the actual {@code Throwable} has a root cause similar to the given one, that is with the same type and message
    * (it does not use the {@link Throwable#equals(Object) equals} method for comparison).
@@ -347,7 +336,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasRootCause(info, actual, cause);
     return myself;
   }
-
   /**
    * Verifies that the root cause of the actual {@code Throwable} is an instance of the given type.
    * <p>
@@ -372,7 +360,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasRootCauseInstanceOf(info, actual, type);
     return myself;
   }
-
   /**
    * Verifies that the root cause of the actual {@code Throwable} is <b>exactly</b> an instance of the given type.
    * <p>
@@ -398,7 +385,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasRootCauseExactlyInstanceOf(info, actual, type);
     return myself;
   }
-
   /**
    * Verifies that the actual {@code Throwable} has no suppressed exceptions.
    * <p>
@@ -420,7 +406,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
     throwables.assertHasNoSuppressedExceptions(info, actual);
     return myself;
   }
-
   /**
    * Verifies that the actual {@code Throwable} has a suppressed exception similar to the given one, that is with the same type and message
    * (it does not use the {@link Throwable#equals(Object) equals} method for comparison).
@@ -443,6 +428,31 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
    * @throws AssertionError if the actual {@code Throwable} is {@code null}.
    * @throws AssertionError if the actual {@code Throwable} does not have the given suppressed exception.
    * @since 2.6.0 / 3.6.0
+   */
+  /**
+   * Verifies that a sequence of the message of the actual {@code Throwable} matches with
+   * the given regular expression (see {@link java.util.regex.Matcher#find()}).
+   * The Pattern used under the hood enables the {@link Pattern#DOTALL} mode.
+   *
+   * <p>
+   * Examples:
+   * <pre><code class='java'>
+   * Throwable throwable = new IllegalArgumentException(&quot;Dear John,\n&quot; +
+   *                                                    &quot;it' s a wrong amount&quot;);
+   * // assertion will pass
+   * assertThat(throwable).hasMessageFindingMatch(&quot;wrong amount&quot;);
+   * assertThat(throwable).hasMessageFindingMatch(&quot;Dear John&quot;);
+   * assertThat(throwable).hasMessageFindingMatch(&quot;wrong amount$&quot;);
+   * // assertion will fail
+   * assertThat(throwable).hasMessageFindingMatch(&quot;Dear John$&quot;);
+   *
+   * </code></pre>
+   *
+   * @param regex the regular expression expected to be found in the actual {@code Throwable}'s message.
+   * @return this assertion object.
+   * @throws AssertionError if the actual {@code Throwable} is {@code null}.
+   * @throws AssertionError if the message of the actual {@code Throwable} doesn't contain any sequence matching with the given regular expression
+   * @throws NullPointerException if the regex is null
    */
   public SELF hasSuppressedException(Throwable suppressedException) {
     throwables.assertHasSuppressedException(info, actual, suppressedException);
