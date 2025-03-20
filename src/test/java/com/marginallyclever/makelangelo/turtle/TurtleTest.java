@@ -271,6 +271,20 @@ class TurtleTest {
     }
 
 
+<<<<<<< /usr/src/app/output/marginallyclever/makelangelo/d6e3211669ba394144ef7ab68373cc63abf5eb46/src/test/java/com/marginallyclever/makelangelo/turtle/TurtleTest.java/left.java
+    @Test
+    public void testInterpolate() {
+        Turtle turtle = new Turtle();
+        turtle.penDown();
+        turtle.forward(1000);
+        double d = turtle.getDrawDistance();
+        assertEquals(1000,d);
+        assertTrue(new Point2D(0,0).distance(turtle.interpolate(0))<1e-6);
+        assertTrue(new Point2D(1000,0).distance(turtle.interpolate(d))<1e-6);
+        assertTrue(new Point2D(500,0).distance(turtle.interpolate(d/2))<1e-6);
+    }
+||||||| /usr/src/app/output/marginallyclever/makelangelo/d6e3211669ba394144ef7ab68373cc63abf5eb46/src/test/java/com/marginallyclever/makelangelo/turtle/TurtleTest.java/base.java
+=======
     @Test
     public void testInterpolate() {
         final double EPSILON = 1e-6;
@@ -284,4 +298,6 @@ class TurtleTest {
             assertTrue(new Point2D(i * 100, 0).distance(turtle.interpolate(d*(double)i/10.0)) < EPSILON);
         }
     }
+>>>>>>> /usr/src/app/output/marginallyclever/makelangelo/d6e3211669ba394144ef7ab68373cc63abf5eb46/src/test/java/com/marginallyclever/makelangelo/turtle/TurtleTest.java/right.java
+
 }
