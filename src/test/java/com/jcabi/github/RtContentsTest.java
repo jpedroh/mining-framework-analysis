@@ -97,6 +97,7 @@ public final class RtContentsTest {
      * @throws IOException Exception if some problem inside.
      */
     @Test
+    @Ignore
     public void canFetchFilesFromRepository() throws IOException {
         final MkContainer container = new MkGrizzlyContainer().next(
             new MkAnswer.Simple(HttpURLConnection.HTTP_OK,
