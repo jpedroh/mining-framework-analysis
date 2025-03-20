@@ -35,7 +35,18 @@ public class Msvc {
   private AbstractNarMojo mojo;
 
   private final Set<String> paths = new LinkedHashSet<>();
-
+  
+  /**
+     * VisualStudio Linker version required, the values should be-
+     *      7.1 for VS 2003
+     *      8.0 for VS 2005
+     *      9.0  for VS 2008
+     *     10.0   for VS 2010
+     *     11.0   for VS 2012
+     *      12.00  for VS 2013
+     *     14.0  for VS 2015
+     *     15.0 for VS 2017
+     */
   /**
    * VisualStudio Linker version. Required. The values should be:
    * <ul>
