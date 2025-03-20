@@ -589,11 +589,38 @@ public class Application
         return config;
     }
 
+<<<<<<< /usr/src/app/output/threerings/getdown/ad32699ca3156b8423fe198b0486c346f18cafbc/core/src/main/java/com/threerings/getdown/data/Application.java/left.java
+        // if we failed to read our config file, check for an appbase specified via a system
+        // property; we can use that to bootstrap ourselves back into operation
+        if (config == null) {
+            String appbase = _envc.appBase;
+            log.info("Using 'appbase' from bootstrap config", "appbase", appbase);
+            Map<String, Object> cdata = new HashMap<>();
+            cdata.put("appbase", appbase);
+            config = new Config(cdata);
+        }
+
+        // extract our version information
+        _version = config.getLong("version", -1L);
+
+||||||| /usr/src/app/output/threerings/getdown/ad32699ca3156b8423fe198b0486c346f18cafbc/core/src/main/java/com/threerings/getdown/data/Application.java/base.java
+        // if we failed to read our config file, check for an appbase specified via a system
+        // property; we can use that to bootstrap ourselves back into operation
+        if (config == null) {
+            String appbase = _envc.appBase;
+            log.info("Using 'appbase' from bootstrap config", "appbase", appbase);
+            Map<String, Object> cdata = new HashMap<>();
+            cdata.put("appbase", appbase);
+            config = new Config(cdata);
+        }
+
+=======
     /**
      * Reads the basic config info from {@code config} into this instance. This includes things
      * like the appbase and version.
      */
     public void initBase (Config config) throws IOException {
+>>>>>>> /usr/src/app/output/threerings/getdown/ad32699ca3156b8423fe198b0486c346f18cafbc/core/src/main/java/com/threerings/getdown/data/Application.java/right.java
         // first determine our application base, this way if anything goes wrong later in the
         // process, our caller can use the appbase to download a new configuration file
         _appbase = config.getString("appbase");
@@ -608,9 +635,6 @@ public class Application
         if (!_appbase.endsWith("/")) {
             _appbase += "/";
         }
-
-        // extract our version information
-        _version = config.getLong("version", -1L);
 
         // if we are a versioned deployment, create a versioned appbase
         try {
