@@ -39,8 +39,8 @@ import java.net.HttpURLConnection;
 import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonStructure;
 import javax.validation.constraints.NotNull;
+import javax.json.JsonStructure;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -125,14 +125,26 @@ public final class RtPullComments implements PullComments {
         throw new UnsupportedOperationException("Iterate not yet implemented.");
     }
     // @checkstyle ParameterNumberCheck (7 lines)
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/b185caea93ab186beb776ff10d21c0a5ae0ecf5b/src/main/java/com/jcabi/github/RtPullComments.java/left.java
     @Override
     @NotNull(message = "PullComment is never NULL")
     public PullComment post(
         @NotNull(message = "body can't be NULL") final String body,
         @NotNull(message = "commit can't be NULL") final String commit,
         @NotNull(message = "path can't be NULL") final String path,
-        final int position
+        @NotNull(message = "position can't be NULL") final int position
     ) throws IOException {
+        throw new UnsupportedOperationException("Post not yet implemented.");
+    }
+||||||| /usr/src/app/output/jcabi/jcabi-github/b185caea93ab186beb776ff10d21c0a5ae0ecf5b/src/main/java/com/jcabi/github/RtPullComments.java/base.java
+=======
+    @Override
+    public PullComment post(
+        @NotNull(message = "body can't be NULL") final String body,
+        @NotNull(message = "commit can't be NULL") final String commit,
+        @NotNull(message = "path can't be NULL") final String path,
+        @NotNull(message = "position can't be NULL") final int position)
+        throws IOException {
         final JsonStructure json = Json.createObjectBuilder()
             .add("body", body)
             .add("commit_id", commit)
@@ -150,15 +162,16 @@ public final class RtPullComments implements PullComments {
                 .json().readObject().getInt("id")
         );
     }
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/b185caea93ab186beb776ff10d21c0a5ae0ecf5b/src/main/java/com/jcabi/github/RtPullComments.java/right.java
 
     @Override
-    @NotNull(message = "pull comment is never NULL")
-    public PullComment reply(
-        @NotNull(message = "text can't be NULL") final String text,
-        @NotNull(message = "comment can't be NULL") final int comment
-    ) throws IOException {
-        throw new UnsupportedOperationException("Reply not yet implemented.");
-    }
+@NotNull(message = "pull comment is never NULL")
+public PullComment reply(
+    @NotNull(message = "text can't be NULL") final String text,
+    @NotNull(message = "comment can't be NULL") final int comment
+) throws IOException {
+    throw new UnsupportedOperationException("Reply not yet implemented.");
+}
 
     @Override
     public void remove(final int number) throws IOException {
