@@ -36,17 +36,17 @@ public interface TourActivity extends HasIndex {
 
     /**
      * Basic interface of job-activies.
-     * <p/>
-     * <p>A job activity is related to a {@link Job}.
-     *
-     * @author schroeder
+     * <p/> 
+	 * <p>A job activity is related to a {@link Job}.
+     * 
+	 * @author schroeder
      */
     public interface JobActivity extends TourActivity {
 
         /**
          * Returns the job that is involved with this activity.
-         *
-         * @return job
+         * 
+		 * @return job
          */
         public Job getJob();
 
@@ -54,15 +54,15 @@ public interface TourActivity extends HasIndex {
 
     /**
      * Returns the name of this activity.
-     *
-     * @return name
+     * 
+	 * @return name
      */
     public abstract String getName();
 
     /**
      * Returns the activity's locationId.
-     *
-     * @return locationId
+     * 
+	 * @return locationId
      * @deprecated use location
      */
     @Deprecated

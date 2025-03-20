@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
+ * You should have received a copy of the GNU Lesser General Public 
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package jsprit.core.algorithm.recreate;
@@ -139,6 +139,51 @@ final class ShipmentInsertionCalculator implements JobInsertionCostsCalculator {
 
             boolean pickupInsertionNotFulfilledBreak = true;
             for(TimeWindow pickupTimeWindow : shipment.getPickupTimeWindows()) {
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/left.java
+                TourActivity nextAct;
+                if (i < activities.size()) {
+                    nextAct = activities.get(i);
+                } else {
+                    nextAct = end;
+                    tourEnd = true;
+                }
+            //			logger.info("activity: {}, act-size: {}", i, activities.size());
+                ConstraintsStatus pickupShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+                if (pickupShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED)) {
+                    double nextActArrTime = prevActEndTime + transportCosts.getTransportTime(prevAct.getLocation(), nextAct.getLocation(), prevActEndTime, newDriver, newVehicle);
+                    prevActEndTime = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct);
+                    prevAct = nextAct;
+                    i++;
+                    continue;
+                } else if (pickupShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED_BREAK)) {
+                    break;
+                }
+                double additionalPickupICosts = softActivityConstraint.getCosts(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+                double pickupAIC = calculate(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/base.java
+            	TourActivity nextAct;
+            	if(i < activities.size()){
+            		nextAct = activities.get(i);
+            	}
+            	else{
+            		nextAct = end;
+            		tourEnd = true;
+            	}
+            //			logger.info("activity: " + i + ", act-size: " + activities.size());
+            	ConstraintsStatus pickupShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+            	if(pickupShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED)){
+            		double nextActArrTime = prevActEndTime + transportCosts.getTransportTime(prevAct.getLocation(), nextAct.getLocation(), prevActEndTime, newDriver, newVehicle);
+            		prevActEndTime = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct);
+            		prevAct = nextAct;
+            		i++;
+            		continue;
+            	}
+            	else if(pickupShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED_BREAK)){
+            		break;
+            	}
+            	double additionalPickupICosts = softActivityConstraint.getCosts(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+            	double pickupAIC = calculate(insertionContext,prevAct,pickupShipment, nextAct,prevActEndTime);
+=======
                 pickupShipment.setTheoreticalEarliestOperationStartTime(pickupTimeWindow.getStart());
                 pickupShipment.setTheoreticalLatestOperationStartTime(pickupTimeWindow.getEnd());
                 ConstraintsStatus pickupShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
@@ -153,6 +198,7 @@ final class ShipmentInsertionCalculator implements JobInsertionCostsCalculator {
                 }
                 double additionalPickupICosts = softActivityConstraint.getCosts(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
                 double pickupAIC = calculate(insertionContext, prevAct, pickupShipment, nextAct, prevActEndTime);
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/right.java
 
                 TourActivity prevAct_deliveryLoop = pickupShipment;
                 double shipmentPickupArrTime = prevActEndTime + transportCosts.getTransportTime(prevAct.getLocation(), pickupShipment.getLocation(), prevActEndTime, newDriver, newVehicle);
@@ -165,9 +211,26 @@ final class ShipmentInsertionCalculator implements JobInsertionCostsCalculator {
 
                 double prevActEndTime_deliveryLoop = shipmentPickupEndTime;
 
-			/*
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/left.java
+            			/*
+                --------------------------------
+            			 */
+                //deliverShipmentLoop
+                int j = i;
+                boolean tourEnd_deliveryLoop = false;
+                while (!tourEnd_deliveryLoop) {
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/base.java
+            	/*
+            	--------------------------------
+            	 */
+            	//deliverShipmentLoop
+            	int j = i;
+            	boolean tourEnd_deliveryLoop = false;
+            	while(!tourEnd_deliveryLoop){
+=======
+            			/*
             --------------------------------
-			 */
+            			 */
                 //deliverShipmentLoop
                 int j = i;
                 boolean tourEnd_deliveryLoop = false;
@@ -179,12 +242,88 @@ final class ShipmentInsertionCalculator implements JobInsertionCostsCalculator {
                         nextAct_deliveryLoop = end;
                         tourEnd_deliveryLoop = true;
                     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/left.java
+            //			for(int j=i;j<activities.size();j++){
+                    TourActivity nextAct_deliveryLoop;
+                    if (j < activities.size()) {
+                        nextAct_deliveryLoop = activities.get(j);
+                    } else {
+                        nextAct_deliveryLoop = end;
+                        tourEnd_deliveryLoop = true;
+                    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/base.java
+            //			for(int j=i;j<activities.size();j++){
+            		TourActivity nextAct_deliveryLoop;
+            		if(j < activities.size()) {
+            			nextAct_deliveryLoop = activities.get(j);
+            		}
+            		else{
+            			nextAct_deliveryLoop = end;
+            			tourEnd_deliveryLoop = true;
+            		}
+=======
                     boolean deliveryInsertionNotFulfilledBreak = true;
                     for (TimeWindow deliveryTimeWindow : shipment.getDeliveryTimeWindows()) {
                         deliverShipment.setTheoreticalEarliestOperationStartTime(deliveryTimeWindow.getStart());
                         deliverShipment.setTheoreticalLatestOperationStartTime(deliveryTimeWindow.getEnd());
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/left.java
+                    ConstraintsStatus deliverShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
+                    if (deliverShipmentConstraintStatus.equals(ConstraintsStatus.FULFILLED)) {
+                        double additionalDeliveryICosts = softActivityConstraint.getCosts(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
+                        double deliveryAIC = calculate(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
+                        double totalActivityInsertionCosts = pickupAIC + deliveryAIC
+                            + additionalICostsAtRouteLevel + additionalPickupICosts + additionalDeliveryICosts;
+                        if (totalActivityInsertionCosts < bestCost) {
+                            bestCost = totalActivityInsertionCosts;
+                            pickupInsertionIndex = i;
+                            deliveryInsertionIndex = j;
+                        }
+                    } else if (deliverShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED_BREAK)) {
+                        break;
+                    }
+                    //update prevAct and endTime
+                    double nextActArrTime = prevActEndTime_deliveryLoop + transportCosts.getTransportTime(prevAct_deliveryLoop.getLocation(), nextAct_deliveryLoop.getLocation(), prevActEndTime_deliveryLoop, newDriver, newVehicle);
+                    prevActEndTime_deliveryLoop = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct_deliveryLoop);
+                    prevAct_deliveryLoop = nextAct_deliveryLoop;
+                    j++;
+                }
+                //update prevAct and endTime
+                double nextActArrTime = prevActEndTime + transportCosts.getTransportTime(prevAct.getLocation(), nextAct.getLocation(), prevActEndTime, newDriver, newVehicle);
+                prevActEndTime = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct);
+                prevAct = nextAct;
+                i++;
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/base.java
+            		ConstraintsStatus deliverShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
+            		if(deliverShipmentConstraintStatus.equals(ConstraintsStatus.FULFILLED)){
+            			double additionalDeliveryICosts = softActivityConstraint.getCosts(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
+            			double deliveryAIC = calculate(insertionContext,prevAct_deliveryLoop,deliverShipment, nextAct_deliveryLoop,prevActEndTime_deliveryLoop);
+            			double totalActivityInsertionCosts = pickupAIC + deliveryAIC
+            					+ additionalICostsAtRouteLevel + additionalPickupICosts + additionalDeliveryICosts;
+            			if(totalActivityInsertionCosts < bestCost){
+            				bestCost = totalActivityInsertionCosts;
+            				pickupInsertionIndex = i;
+            				deliveryInsertionIndex = j;
+            			}
+            		}
+            		else if(deliverShipmentConstraintStatus.equals(ConstraintsStatus.NOT_FULFILLED_BREAK)){
+            			break;
+            		}	
+            		//update prevAct and endTime
+            		double nextActArrTime = prevActEndTime_deliveryLoop + transportCosts.getTransportTime(prevAct_deliveryLoop.getLocation(), nextAct_deliveryLoop.getLocation(), prevActEndTime_deliveryLoop, newDriver, newVehicle);
+            		prevActEndTime_deliveryLoop = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct_deliveryLoop);
+            		prevAct_deliveryLoop = nextAct_deliveryLoop;
+            		j++;
+            	}
+            	//update prevAct and endTime
+            	double nextActArrTime = prevActEndTime + transportCosts.getTransportTime(prevAct.getLocation(), nextAct.getLocation(), prevActEndTime, newDriver, newVehicle);
+            	prevActEndTime = CalculationUtils.getActivityEndTime(nextActArrTime, nextAct);
+            	prevAct = nextAct;
+            	i++;
+=======
                         ConstraintsStatus deliverShipmentConstraintStatus = hardActivityLevelConstraint.fulfilled(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
                         if (deliverShipmentConstraintStatus.equals(ConstraintsStatus.FULFILLED)) {
                             double additionalDeliveryICosts = softActivityConstraint.getCosts(insertionContext, prevAct_deliveryLoop, deliverShipment, nextAct_deliveryLoop, prevActEndTime_deliveryLoop);
@@ -210,6 +349,7 @@ final class ShipmentInsertionCalculator implements JobInsertionCostsCalculator {
                     prevAct_deliveryLoop = nextAct_deliveryLoop;
                     j++;
                 }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/recreate/ShipmentInsertionCalculator.java/right.java
             }
             if(pickupInsertionNotFulfilledBreak){
                 break;

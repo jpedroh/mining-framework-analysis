@@ -98,10 +98,17 @@ public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor,
             double potentialLatestArrivalTimeAtCurrAct = latestArrTimeAtPrevAct - transportCosts.getBackwardTransportTime(activity.getLocation(), prevLocation,
                 latestArrTimeAtPrevAct, route.getDriver(), vehicle) - activity.getOperationTime();
             double latestArrivalTime = Math.min(activity.getTheoreticalLatestOperationStartTime(), potentialLatestArrivalTimeAtCurrAct);
-//                getLatestArrivalTime(activity.getTimeWindows(), potentialLatestArrivalTimeAtCurrAct);
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/state/UpdateVehicleDependentPracticalTimeWindows.java/left.java
             if (latestArrivalTime < activity.getTheoreticalEarliestOperationStartTime()) {
                 stateManager.putTypedInternalRouteState(route, vehicle, InternalStates.SWITCH_NOT_FEASIBLE, true);
             }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/state/UpdateVehicleDependentPracticalTimeWindows.java/base.java
+=======
+        //                getLatestArrivalTime(activity.getTimeWindows(), potentialLatestArrivalTimeAtCurrAct);
+            if (latestArrivalTime < activity.getTheoreticalEarliestOperationStartTime()) {
+                stateManager.putTypedInternalRouteState(route, vehicle, InternalStates.SWITCH_NOT_FEASIBLE, true);
+            }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/algorithm/state/UpdateVehicleDependentPracticalTimeWindows.java/right.java
             stateManager.putInternalTypedActivityState(activity, vehicle, InternalStates.LATEST_OPERATION_START_TIME, latestArrivalTime);
             latest_arrTimes_at_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()] = latestArrivalTime;
             location_of_prevAct[vehicle.getVehicleTypeIdentifier().getIndex()] = activity.getLocation();
@@ -109,8 +116,25 @@ public class UpdateVehicleDependentPracticalTimeWindows implements RouteVisitor,
     }
 
 
-    public void finish() {}
+    public void finish() {
+    }
 
+    private double getLatestArrivalTime(Collection<TimeWindow> timeWindows, double potentialLatestArrivalTimeAtCurrAct) {
+        TimeWindow last = null;
+        for(TimeWindow tw : timeWindows){
+            if(tw.getStart() <= potentialLatestArrivalTimeAtCurrAct && tw.getEnd() >= potentialLatestArrivalTimeAtCurrAct){
+                return potentialLatestArrivalTimeAtCurrAct;
+            }
+            else if(tw.getStart() > potentialLatestArrivalTimeAtCurrAct){
+                if(last == null){
+                    return potentialLatestArrivalTimeAtCurrAct;
+                }
+                else return last.getEnd();
+            }
+            last = tw;
+        }
+        return last.getEnd();
+    }
 
 }
 

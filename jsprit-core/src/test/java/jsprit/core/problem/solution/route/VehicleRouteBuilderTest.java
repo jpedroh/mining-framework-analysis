@@ -21,7 +21,6 @@ import jsprit.core.problem.Location;
 import jsprit.core.problem.driver.Driver;
 import jsprit.core.problem.job.Shipment;
 import jsprit.core.problem.solution.route.activity.TimeWindow;
-import jsprit.core.problem.solution.route.activity.TimeWindow;
 import jsprit.core.problem.vehicle.Vehicle;
 import jsprit.core.problem.vehicle.VehicleImpl;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class VehicleRouteBuilderTest {
     public void whenPickupIsAddedTwice_throwsException() {
         Shipment s = mock(Shipment.class);
         when(s.getSize()).thenReturn(Capacity.Builder.newInstance().build());
-        when(s.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0., 10.));
+        when(s.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         VehicleRoute.Builder builder = VehicleRoute.Builder.newInstance(mock(Vehicle.class), mock(Driver.class));
         builder.addPickup(s);
         builder.addPickup(s);
@@ -162,7 +161,7 @@ public class VehicleRouteBuilderTest {
         when(s2.getDeliveryLocation()).thenReturn(Location.Builder.newInstance().setId("delLoc").build());
         when(s.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         when(s.getDeliveryTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
-        when(s2.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0., 10.));
+        when(s2.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         when(s2.getDeliveryTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.isReturnToDepot()).thenReturn(false);
@@ -189,7 +188,7 @@ public class VehicleRouteBuilderTest {
         when(s2.getDeliveryLocation()).thenReturn(Location.Builder.newInstance().setId("delLoc").build());
         when(s2.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         when(s2.getDeliveryTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
-        when(s.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0., 10.));
+        when(s.getPickupTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         when(s.getDeliveryTimeWindow()).thenReturn(TimeWindow.newInstance(0.,10.));
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.isReturnToDepot()).thenReturn(false);

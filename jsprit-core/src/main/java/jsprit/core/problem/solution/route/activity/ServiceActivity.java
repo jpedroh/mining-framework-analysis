@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
+ * You should have received a copy of the GNU Lesser General Public 
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package jsprit.core.problem.solution.route.activity;
@@ -77,9 +77,12 @@ public class ServiceActivity extends AbstractActivity implements JobActivity {
 
     private final Service service;
 
+    private List<TimeWindow> timeWindows;
+
     protected ServiceActivity(Service service) {
         counter++;
         this.service = service;
+        timeWindows = new ArrayList<TimeWindow>(service.getTimeWindows());
     }
 
     protected ServiceActivity(ServiceActivity serviceActivity) {

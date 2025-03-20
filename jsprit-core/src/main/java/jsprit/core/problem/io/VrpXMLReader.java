@@ -136,6 +136,56 @@ public class VrpXMLReader {
 
     public void read(String filename) {
         logger.debug("read vrp: {}", filename);
+        XMLConfiguration xmlConfig = createXMLConfiguration();
+        try {
+            xmlConfig.load(filename);
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        read(xmlConfig);
+    }
+
+    public void read(InputStream fileContents) {
+        XMLConfiguration xmlConfig = createXMLConfiguration();
+        try {
+            xmlConfig.load(fileContents);
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        read(xmlConfig);
+    }
+
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/io/VrpXMLReader.java/left.java
+    private XMLConfiguration createXMLConfiguration() {
+        XMLConfiguration xmlConfig = new XMLConfiguration();
+        xmlConfig.setAttributeSplittingDisabled(true);
+        xmlConfig.setDelimiterParsingDisabled(true);
+
+        if (schemaValidation) {
+            final InputStream resource = Resource.getAsInputStream("vrp_xml_schema.xsd");
+            if (resource != null) {
+                EntityResolver resolver = new EntityResolver() {
+
+                    @Override
+                    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                        {
+                            InputSource is = new InputSource(resource);
+                            return is;
+                        }
+                    }
+                };
+                xmlConfig.setEntityResolver(resolver);
+                xmlConfig.setSchemaValidation(true);
+            } else {
+                logger.debug("cannot find schema-xsd file (vrp_xml_schema.xsd). try to read xml without xml-file-validation.");
+            }
+        }
+        return xmlConfig;
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/io/VrpXMLReader.java/base.java
+=======
+    public void read(String filename) {
+        logger.debug("read vrp: {}", filename);
         XMLConfiguration xmlConfig = new XMLConfiguration();
         xmlConfig.setFileName(filename);
         xmlConfig.setAttributeSplittingDisabled(true);
@@ -176,179 +226,7 @@ public class VrpXMLReader {
 
         addJobsAndTheirLocationsToVrp();
     }
-
-    private void addJobsAndTheirLocationsToVrp() {
-        for (Service service : serviceMap.values()) {
-            if (!freezedJobIds.contains(service.getId())) {
-                vrpBuilder.addJob(service);
-            }
-        }
-        for (Shipment shipment : shipmentMap.values()) {
-            if (!freezedJobIds.contains(shipment.getId())) {
-                vrpBuilder.addJob(shipment);
-            }
-        }
-    }
-
-    private void readInitialRoutes(XMLConfiguration xmlConfig) {
-        List<HierarchicalConfiguration> initialRouteConfigs = xmlConfig.configurationsAt("initialRoutes.route");
-        for (HierarchicalConfiguration routeConfig : initialRouteConfigs) {
-            Driver driver = DriverImpl.noDriver();
-            String vehicleId = routeConfig.getString("vehicleId");
-            Vehicle vehicle = getVehicle(vehicleId);
-            if (vehicle == null) throw new IllegalStateException("vehicle is missing.");
-            String start = routeConfig.getString("start");
-            if (start == null) throw new IllegalStateException("route start-time is missing.");
-            double departureTime = Double.parseDouble(start);
-
-            VehicleRoute.Builder routeBuilder = VehicleRoute.Builder.newInstance(vehicle, driver);
-            routeBuilder.setDepartureTime(departureTime);
-
-            List<HierarchicalConfiguration> actConfigs = routeConfig.configurationsAt("act");
-            for (HierarchicalConfiguration actConfig : actConfigs) {
-                String type = actConfig.getString("[@type]");
-                if (type == null) throw new IllegalStateException("act[@type] is missing.");
-                double arrTime = 0.;
-                double endTime = 0.;
-                String arrTimeS = actConfig.getString("arrTime");
-                if (arrTimeS != null) arrTime = Double.parseDouble(arrTimeS);
-                String endTimeS = actConfig.getString("endTime");
-                if (endTimeS != null) endTime = Double.parseDouble(endTimeS);
-
-                String serviceId = actConfig.getString("serviceId");
-                if (serviceId != null) {
-                    Service service = getService(serviceId);
-                    if (service == null)
-                        throw new IllegalStateException("service to serviceId " + serviceId + " is missing (reference in one of your initial routes). make sure you define the service you refer to here in <services> </services>.");
-                    //!!!since job is part of initial route, it does not belong to jobs in problem, i.e. variable jobs that can be assigned/scheduled
-                    freezedJobIds.add(serviceId);
-                    routeBuilder.addService(service);
-                } else {
-                    String shipmentId = actConfig.getString("shipmentId");
-                    if (shipmentId == null)
-                        throw new IllegalStateException("either serviceId or shipmentId is missing");
-                    Shipment shipment = getShipment(shipmentId);
-                    if (shipment == null)
-                        throw new IllegalStateException("shipment to shipmentId " + shipmentId + " is missing (reference in one of your initial routes). make sure you define the shipment you refer to here in <shipments> </shipments>.");
-                    freezedJobIds.add(shipmentId);
-                    if (type.equals("pickupShipment")) {
-                        routeBuilder.addPickup(shipment);
-                    } else if (type.equals("deliverShipment")) {
-                        routeBuilder.addDelivery(shipment);
-                    } else
-                        throw new IllegalStateException("type " + type + " is not supported. Use 'pickupShipment' or 'deliverShipment' here");
-                }
-            }
-            VehicleRoute route = routeBuilder.build();
-            vrpBuilder.addInitialVehicleRoute(route);
-        }
-
-    }
-
-    private void readSolutions(XMLConfiguration vrpProblem) {
-        if (solutions == null) return;
-        List<HierarchicalConfiguration> solutionConfigs = vrpProblem.configurationsAt("solutions.solution");
-        for (HierarchicalConfiguration solutionConfig : solutionConfigs) {
-            String totalCost = solutionConfig.getString("cost");
-            double cost = -1;
-            if (totalCost != null) cost = Double.parseDouble(totalCost);
-            List<HierarchicalConfiguration> routeConfigs = solutionConfig.configurationsAt("routes.route");
-            List<VehicleRoute> routes = new ArrayList<VehicleRoute>();
-            for (HierarchicalConfiguration routeConfig : routeConfigs) {
-                //! here, driverId is set to noDriver, no matter whats in driverId.
-                Driver driver = DriverImpl.noDriver();
-                String vehicleId = routeConfig.getString("vehicleId");
-                Vehicle vehicle = getVehicle(vehicleId);
-                if (vehicle == null) throw new IllegalStateException("vehicle is missing.");
-                String start = routeConfig.getString("start");
-                if (start == null) throw new IllegalStateException("route start-time is missing.");
-                double departureTime = Double.parseDouble(start);
-
-                String end = routeConfig.getString("end");
-                if (end == null) throw new IllegalStateException("route end-time is missing.");
-
-                VehicleRoute.Builder routeBuilder = VehicleRoute.Builder.newInstance(vehicle, driver);
-                routeBuilder.setDepartureTime(departureTime);
-                routeBuilder.setRouteEndArrivalTime(Double.parseDouble(end));
-                List<HierarchicalConfiguration> actConfigs = routeConfig.configurationsAt("act");
-                for (HierarchicalConfiguration actConfig : actConfigs) {
-                    String type = actConfig.getString("[@type]");
-                    if (type == null) throw new IllegalStateException("act[@type] is missing.");
-                    double arrTime = 0.;
-                    double endTime = 0.;
-                    String arrTimeS = actConfig.getString("arrTime");
-                    if (arrTimeS != null) arrTime = Double.parseDouble(arrTimeS);
-                    String endTimeS = actConfig.getString("endTime");
-                    if (endTimeS != null) endTime = Double.parseDouble(endTimeS);
-
-                    String serviceId = actConfig.getString("serviceId");
-                    if (serviceId != null) {
-                        Service service = getService(serviceId);
-                        routeBuilder.addService(service);
-                    } else {
-                        String shipmentId = actConfig.getString("shipmentId");
-                        if (shipmentId == null)
-                            throw new IllegalStateException("either serviceId or shipmentId is missing");
-                        Shipment shipment = getShipment(shipmentId);
-                        if (shipment == null)
-                            throw new IllegalStateException("shipment with id " + shipmentId + " does not exist.");
-                        if (type.equals("pickupShipment")) {
-                            routeBuilder.addPickup(shipment);
-                        } else if (type.equals("deliverShipment")) {
-                            routeBuilder.addDelivery(shipment);
-                        } else
-                            throw new IllegalStateException("type " + type + " is not supported. Use 'pickupShipment' or 'deliverShipment' here");
-                    }
-                }
-                routes.add(routeBuilder.build());
-            }
-    public void read(String filename) {
-        logger.debug("read vrp: {}", filename);
-        XMLConfiguration xmlConfig = createXMLConfiguration();
-        try {
-            xmlConfig.load(filename);
-        } catch (ConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        read(xmlConfig);
-    }
-
-    public void read(InputStream fileContents) {
-        XMLConfiguration xmlConfig = createXMLConfiguration();
-        try {
-            xmlConfig.load(fileContents);
-        } catch (ConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        read(xmlConfig);
-    }
-
-    private XMLConfiguration createXMLConfiguration() {
-        XMLConfiguration xmlConfig = new XMLConfiguration();
-        xmlConfig.setAttributeSplittingDisabled(true);
-        xmlConfig.setDelimiterParsingDisabled(true);
-
-        if (schemaValidation) {
-            final InputStream resource = Resource.getAsInputStream("vrp_xml_schema.xsd");
-            if (resource != null) {
-                EntityResolver resolver = new EntityResolver() {
-
-                    @Override
-                    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                        {
-                            InputSource is = new InputSource(resource);
-                            return is;
-                        }
-                    }
-                };
-                xmlConfig.setEntityResolver(resolver);
-                xmlConfig.setSchemaValidation(true);
-            } else {
-                logger.debug("cannot find schema-xsd file (vrp_xml_schema.xsd). try to read xml without xml-file-validation.");
-            }
-        }
-        return xmlConfig;
-    }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/io/VrpXMLReader.java/right.java
 
     private void read(XMLConfiguration xmlConfig) {
         readProblemType(xmlConfig);

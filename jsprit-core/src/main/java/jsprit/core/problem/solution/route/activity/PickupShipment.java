@@ -22,7 +22,7 @@ import jsprit.core.problem.Location;
 import jsprit.core.problem.job.Job;
 import jsprit.core.problem.job.Shipment;
 
-public final class PickupShipment extends AbstractActivity implements PickupActivity{
+public final class PickupShipment extends AbstractActivity implements PickupActivity {
 
     private Shipment shipment;
 

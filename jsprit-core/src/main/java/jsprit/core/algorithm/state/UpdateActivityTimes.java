@@ -37,14 +37,14 @@ public class UpdateActivityTimes implements ActivityVisitor, StateUpdater {
     private VehicleRoute route;
 
     /**
-     * Updates arrival and end times of activities.
-     * <p/>
-     * <p>Note that this modifies arrTime and endTime of each activity in a route.
-     * <p/>
-     * <p>ArrTimes and EndTimes can be retrieved by <br>
-     * <code>activity.getArrTime()</code> and
-     * <code>activity.getEndTime()</code>
-     */
+	 * Updates arrival and end times of activities.
+	 * <p/>
+	 * <p>Note that this modifies arrTime and endTime of each activity in a route.
+	 * <p/>
+	 * <p>ArrTimes and EndTimes can be retrieved by <br>
+	 * <code>activity.getArrTime()</code> and
+	 * <code>activity.getEndTime()</code>
+	 */
     public UpdateActivityTimes(ForwardTransportTime transportTime) {
         super();
         timeTracker = new ActivityTimeTracker(transportTime);
@@ -66,6 +66,10 @@ public class UpdateActivityTimes implements ActivityVisitor, StateUpdater {
         timeTracker.visit(activity);
         activity.setArrTime(timeTracker.getActArrTime());
         activity.setEndTime(timeTracker.getActEndTime());
+//        double theoreticalLatestOperationStartTime = activity.getTheoreticalLatestOperationStartTime();
+//        if(activity.getArrTime() > theoreticalLatestOperationStartTime){
+//            throw new IllegalStateException("arrTime > latestArrTime");
+//        }
     }
 
     @Override

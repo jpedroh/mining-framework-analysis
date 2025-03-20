@@ -82,6 +82,41 @@ public class Service extends AbstractJob {
 
         protected Location location;
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+        Builder(String id) {
+            this.id = id;
+        }
+
+        /**
+         * Protected method to set the type-name of the service.
+         * <p/>
+         * <p>Currently there are {@link Service}, {@link Pickup} and {@link Delivery}.
+         *
+         * @param name the name of service
+         * @return the builder
+         */
+        protected Builder<T> setType(String name) {
+            this.type = name;
+            return this;
+        }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+		Builder(String id){
+			this.id = id;
+		}
+		
+		/**
+		 * Protected method to set the type-name of the service.
+		 * 
+		 * <p>Currently there are {@link Service}, {@link Pickup} and {@link Delivery}.
+		 * 
+		 * @param name the name of service
+		 * @return the builder
+		 */
+		protected Builder setType(String name){
+			this.type = name;
+			return this;
+		}
+=======
         protected TimeWindowsImpl timeWindows;
 
 		private boolean twAdded = false;
@@ -104,6 +139,7 @@ public class Service extends AbstractJob {
             this.type = name;
             return this;
         }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
 
         /**
          * Sets location
@@ -133,6 +169,54 @@ public class Service extends AbstractJob {
             return this;
         }
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+        /**
+         * Adds capacity dimension.
+         *
+         * @param dimensionIndex the dimension index of the capacity value
+         * @param dimensionValue the capacity value
+         * @return the builder
+         * @throws IllegalArgumentException if dimensionValue < 0
+         */
+        public Builder<T> addSizeDimension(int dimensionIndex, int dimensionValue) {
+            if (dimensionValue < 0) throw new IllegalArgumentException("capacity value cannot be negative");
+            capacityBuilder.addDimension(dimensionIndex, dimensionValue);
+            return this;
+        }
+
+        /**
+         * Sets the time-window of this service.
+         * <p/>
+         * <p>The time-window indicates the time period a service/activity/operation is allowed to start.
+         *
+         * @param tw the time-window to be set
+         * @return builder
+         * @throws IllegalArgumentException if timeWindow is null
+         */
+        public Builder<T> setTimeWindow(TimeWindow tw) {
+            if (tw == null) throw new IllegalArgumentException("time-window arg must not be null");
+            this.timeWindow = tw;
+            return this;
+        }
+
+        /**
+         * Builds the service.
+         *
+         * @return {@link Service}
+         * @throws IllegalStateException if neither locationId nor coordinate is set.
+         */
+        public T build() {
+            if (location == null) throw new IllegalStateException("location is missing");
+            this.setType("service");
+            capacity = capacityBuilder.build();
+            skills = skillBuilder.build();
+            return (T) new Service(this);
+        }
+
+        public Builder<T> addRequiredSkill(String skill) {
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+        public Builder addRequiredSkill(String skill) {
+=======
         /**
          * Adds capacity dimension.
          *
@@ -184,6 +268,7 @@ public class Service extends AbstractJob {
         }
 
         public Builder<T> addRequiredSkill(String skill) {
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
             skillBuilder.addSkill(skill);
             return this;
         }
@@ -208,6 +293,14 @@ public class Service extends AbstractJob {
         }
     }
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	private final double serviceTime;
+=======
+    private final String id;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
+
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
     private final String id;
 
     private final String type;
@@ -217,6 +310,19 @@ public class Service extends AbstractJob {
     private final TimeWindow timeWindow;
 
     private final Capacity size;
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	private final TimeWindow timeWindow;
+	
+	private final Capacity size;
+=======
+    private final String type;
+
+    private final double serviceTime;
+
+    private final TimeWindow timeWindow;
+
+    private final Capacity size;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
 
     private final Skills skills;
 
@@ -224,10 +330,18 @@ public class Service extends AbstractJob {
 
     private final Location location;
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+    Service(Builder builder) {
+        id = builder.id;
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	Service(Builder builder){
+		id = builder.id;
+=======
     private final TimeWindows timeWindowManager;
 
     Service(Builder builder) {
         id = builder.id;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
         serviceTime = builder.serviceTime;
         timeWindow = builder.timeWindow;
         type = builder.type;
@@ -235,19 +349,43 @@ public class Service extends AbstractJob {
         skills = builder.skills;
         name = builder.name;
         location = builder.location;
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	}
+=======
 		timeWindowManager = builder.timeWindows;
 	}
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+    @Override
+    public String getId() {
+        return id;
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	@Override
+	public String getId() {
+		return id;
+	}
+=======
 	public Collection<TimeWindow> getTimeWindows(){
 		return timeWindowManager.getTimeWindows();
 	}
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+    /**
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	/**
+=======
     @Override
     public String getId() {
         return id;
     }
 
     /**
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
      * Returns location.
      *
      * @return location
@@ -266,6 +404,32 @@ public class Service extends AbstractJob {
         return serviceTime;
     }
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/left.java
+    /**
+     * Returns the time-window a service(-operation) is allowed to start.
+     *
+     * @return time window
+     */
+    public TimeWindow getTimeWindow() {
+        return timeWindow;
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/base.java
+	/**
+	 * Returns the time-window a service(-operation) is allowed to start.
+	 * 
+	 * @return time window
+	 */
+	public TimeWindow getTimeWindow(){
+		return timeWindow;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getType() {
+		return type;
+	}
+=======
     /**
      * Returns the time-window a service(-operation) is allowed to start.
      * It is recommended to use getTimeWindows() instead. If you still use this, it returns the first time window of getTimeWindows() collection.
@@ -276,6 +440,7 @@ public class Service extends AbstractJob {
     public TimeWindow getTimeWindow() {
         return timeWindowManager.getTimeWindows().iterator().next();
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Service.java/right.java
 
     /**
      * @return the name

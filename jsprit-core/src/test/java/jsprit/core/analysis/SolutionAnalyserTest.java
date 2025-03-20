@@ -90,9 +90,7 @@ public class SolutionAnalyserTest {
         Service s3 = Service.Builder.newInstance("s3")
             .setTimeWindow(TimeWindow.newInstance(10, 20))
             .setLocation(TestUtils.loc(Coordinate.newInstance(10, 1))).addSizeDimension(0, 2).build();
-
         Service s4 = Service.Builder.newInstance("s4").setLocation(TestUtils.loc(Coordinate.newInstance(10, 10))).addSizeDimension(0, 3).build();
-
         Shipment shipment2 = Shipment.Builder.newInstance("ship2").setPickupLocation(TestUtils.loc(Coordinate.newInstance(15, 2)))
             .setPickupServiceTime(20.).setDeliveryServiceTime(20.)
             .setDeliveryLocation(TestUtils.loc(Coordinate.newInstance(16, 5))).addSizeDimension(0, 10).build();

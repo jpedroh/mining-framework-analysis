@@ -45,7 +45,6 @@ import java.util.Collection;
 public class Shipment extends AbstractJob {
 
 
-
     /**
      * Builder that builds the shipment.
      *
@@ -77,44 +76,33 @@ public class Shipment extends AbstractJob {
 
         private Location deliveryLocation_;
 
-        protected TimeWindowsImpl deliveryTimeWindows;
-
-        private boolean deliveryTimeWindowAdded = false;
-
-        private boolean pickupTimeWindowAdded = false;
-
-        private TimeWindowsImpl pickupTimeWindows;
-
         /**
          * Returns new instance of this builder.
          *
          * @param id the id of the shipment which must be a unique identifier among all jobs
          * @return the builder
          */
-        public static Builder newInstance(String id) {
-            return new Builder(id);
-        }
-
-        Builder(String id) {
-            if (id == null) throw new IllegalArgumentException("id must not be null");
-            this.id = id;
-            pickupTimeWindows = new TimeWindowsImpl();
-            pickupTimeWindows.add(pickupTimeWindow);
-            deliveryTimeWindows = new TimeWindowsImpl();
-            deliveryTimeWindows.add(deliveryTimeWindow);
-        }
-
-        /**
-         * Sets pickup location.
-         *
-         * @param pickupLocation pickup location
-         * @return builder
-         */
+    	public static Builder newInstance(String id) {
+    	    return new Builder(id);
+    	}
+    	Builder(String id) {
+    	    if (id == null) throw new IllegalArgumentException("id must not be null");
+    	    this.id = id;
+    	    pickupTimeWindows = new TimeWindowsImpl();
+    	    pickupTimeWindows.add(pickupTimeWindow);
+    	    deliveryTimeWindows = new TimeWindowsImpl();
+    	    deliveryTimeWindows.add(deliveryTimeWindow);
+    	}
+    	/**
+    	 * Sets pickup location.
+    	 *
+    	 * @param pickupLocation pickup location
+    	 * @return builder
+    	 */
         public Builder setPickupLocation(Location pickupLocation) {
             this.pickupLocation_ = pickupLocation;
             return this;
         }
-
         /**
          * Sets pickupServiceTime.
          * <p/>
@@ -124,12 +112,11 @@ public class Shipment extends AbstractJob {
          * @return builder
          * @throws IllegalArgumentException if servicTime < 0.0
          */
-        public Builder setPickupServiceTime(double serviceTime) {
-            if (serviceTime < 0.0) throw new IllegalArgumentException("serviceTime must not be < 0.0");
-            this.pickupServiceTime = serviceTime;
-            return this;
-        }
-
+    	public Builder setPickupServiceTime(double serviceTime) {
+    	    if (serviceTime < 0.0) throw new IllegalArgumentException("serviceTime must not be < 0.0");
+    	    this.pickupServiceTime = serviceTime;
+    	    return this;
+    	}
         /**
          * Sets the timeWindow for the pickup, i.e. the time-period in which a pickup operation is
          * allowed to START.
@@ -140,16 +127,27 @@ public class Shipment extends AbstractJob {
          * @return builder
          * @throws IllegalArgumentException if timeWindow is null
          */
-        public Builder setPickupTimeWindow(TimeWindow timeWindow) {
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/left.java
+    	public Builder setPickupTimeWindow(TimeWindow timeWindow) {
+            if (timeWindow == null) throw new IllegalArgumentException("timeWindow cannot be null");
+            this.pickupTimeWindow = timeWindow;
+            return this;
+        }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/base.java
+    	public Builder setPickupTimeWindow(TimeWindow timeWindow){
+			if(timeWindow == null) throw new IllegalArgumentException("timeWindow cannot be null");
+			this.pickupTimeWindow = timeWindow;
+			return this;
+		}
+=======
+    	public Builder setPickupTimeWindow(TimeWindow timeWindow) {
             if (timeWindow == null) throw new IllegalArgumentException("delivery time-window must not be null");
             this.pickupTimeWindow = timeWindow;
             this.pickupTimeWindows = new TimeWindowsImpl();
             this.pickupTimeWindows.add(timeWindow);
             return this;
         }
-
-
-
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/right.java
         /**
          * Sets delivery location.
          *
@@ -160,7 +158,6 @@ public class Shipment extends AbstractJob {
             this.deliveryLocation_ = deliveryLocation;
             return this;
         }
-
         /**
          * Sets the delivery service-time.
          * <p/>
@@ -175,7 +172,6 @@ public class Shipment extends AbstractJob {
             this.deliveryServiceTime = deliveryServiceTime;
             return this;
         }
-
         /**
          * Sets the timeWindow for the delivery, i.e. the time-period in which a delivery operation is
          * allowed to start.
@@ -186,6 +182,14 @@ public class Shipment extends AbstractJob {
          * @return builder
          * @throws IllegalArgumentException if timeWindow is null
          */
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/left.java
+        public Builder setDeliveryTimeWindow(TimeWindow timeWindow) {
+            if (timeWindow == null) throw new IllegalArgumentException("delivery time-window must not be null");
+            this.deliveryTimeWindow = timeWindow;
+            return this;
+        }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/base.java
+=======
         public Builder setDeliveryTimeWindow(TimeWindow timeWindow) {
             if (timeWindow == null) throw new IllegalArgumentException("delivery time-window must not be null");
             this.deliveryTimeWindow = timeWindow;
@@ -193,7 +197,7 @@ public class Shipment extends AbstractJob {
             this.deliveryTimeWindows.add(timeWindow);
             return this;
         }
-
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/right.java
         /**
          * Adds capacity dimension.
          *
@@ -207,8 +211,60 @@ public class Shipment extends AbstractJob {
             capacityBuilder.addDimension(dimensionIndex, dimensionValue);
             return this;
         }
-
-
+        /**
+         * Builds the shipment.
+         *
+         * @return shipment
+         * @throws IllegalStateException if neither pickup-location nor pickup-coord is set or if neither delivery-location nor delivery-coord
+         *                               is set
+         */
+        protected TimeWindowsImpl deliveryTimeWindows;
+        private boolean deliveryTimeWindowAdded = false;
+        private boolean pickupTimeWindowAdded = false;
+        private TimeWindowsImpl pickupTimeWindows;
+        /**
+         * Returns new instance of this builder.
+         *
+         * @param id the id of the shipment which must be a unique identifier among all jobs
+         * @return the builder
+         */
+        /**
+         * Sets pickupServiceTime.
+         * <p/>
+         * <p>ServiceTime is intended to be the time the implied activity takes at the pickup-location.
+         *
+         * @param serviceTime the service time / duration the pickup of the associated shipment takes
+         * @return builder
+         * @throws IllegalArgumentException if servicTime < 0.0
+         */
+        /**
+         * Sets the timeWindow for the pickup, i.e. the time-period in which a pickup operation is
+         * allowed to START.
+         * <p/>
+         * <p>By default timeWindow is [0.0, Double.MAX_VALUE}
+         *
+         * @param timeWindow the time window within the pickup operation/activity can START
+         * @return builder
+         * @throws IllegalArgumentException if timeWindow is null
+         */
+        /**
+         * Sets the timeWindow for the delivery, i.e. the time-period in which a delivery operation is
+         * allowed to start.
+         * <p/>
+         * <p>By default timeWindow is [0.0, Double.MAX_VALUE}
+         *
+         * @param timeWindow the time window within the associated delivery is allowed to START
+         * @return builder
+         * @throws IllegalArgumentException if timeWindow is null
+         */
+        /**
+         * Adds capacity dimension.
+         *
+         * @param dimensionIndex the dimension index of the corresponding capacity value
+         * @param dimensionValue the capacity value
+         * @return builder
+         * @throws IllegalArgumentException if dimVal < 0
+         */
         /**
          * Builds the shipment.
          *
@@ -285,10 +341,6 @@ public class Shipment extends AbstractJob {
 
     private final Location deliveryLocation_;
 
-    private final TimeWindowsImpl deliveryTimeWindows;
-
-    private final TimeWindowsImpl pickupTimeWindows;
-
     Shipment(Builder builder) {
         this.id = builder.id;
         this.pickupServiceTime = builder.pickupServiceTime;
@@ -320,6 +372,7 @@ public class Shipment extends AbstractJob {
      *
      * @return service-time
      */
+
     public double getPickupServiceTime() {
         return pickupServiceTime;
     }
@@ -333,6 +386,7 @@ public class Shipment extends AbstractJob {
      *
      * @return service-time of delivery
      */
+
     public double getDeliveryServiceTime() {
         return deliveryServiceTime;
     }
@@ -342,9 +396,47 @@ public class Shipment extends AbstractJob {
      *
      * @return time-window of delivery
      */
+
+<<<<<<< /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/left.java
+    public TimeWindow getDeliveryTimeWindow() {
+        return deliveryTimeWindow;
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/base.java
+=======
     public TimeWindow getDeliveryTimeWindow() {
         return deliveryTimeWindows.getTimeWindows().iterator().next();
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/26d03f15e3185ced0ee3383e04c5088ff29b6837/jsprit-core/src/main/java/jsprit/core/problem/job/Shipment.java/right.java
+
+	/**
+	 * Returns the time-window of pickup.
+	 *
+	 * @return time-window of pickup
+	 */
+
+	@Override
+	public int hashCode() {
+	    final int prime = 31;
+	    int result = 1;
+	    result = prime * result + ((id == null) ? 0 : id.hashCode());
+	    return result;
+	}
+
+	/**
+	 * Two shipments are equal if they have the same id.
+	 *
+	 * @return true if shipments are equal (have the same id)
+	 */
+
+    private final TimeWindowsImpl deliveryTimeWindows;
+
+    private final TimeWindowsImpl pickupTimeWindows;
+
+    /**
+     * Returns the time-window of delivery.
+     *
+     * @return time-window of delivery
+     */
 
     public Collection<TimeWindow> getDeliveryTimeWindows() {
         return deliveryTimeWindows.getTimeWindows();
@@ -355,21 +447,13 @@ public class Shipment extends AbstractJob {
      *
      * @return time-window of pickup
      */
+
     public TimeWindow getPickupTimeWindow() {
         return pickupTimeWindows.getTimeWindows().iterator().next();
     }
 
     public Collection<TimeWindow> getPickupTimeWindows() {
         return pickupTimeWindows.getTimeWindows();
-    }
-
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
     }
 
     /**

@@ -84,12 +84,15 @@ public class ActivityTimeTracker implements ActivityVisitor {
 
     @Override
     public void visit(TourActivity activity) {
-        if(!beginFirst) throw new IllegalStateException("never called begin. this however is essential here");
+        if (!beginFirst) throw new IllegalStateException("never called begin. this however is essential here");
         double transportTime = this.transportTime.getTransportTime(prevAct.getLocation(), activity.getLocation(), startAtPrevAct, route.getDriver(), route.getVehicle());
         double arrivalTimeAtCurrAct = startAtPrevAct + transportTime;
+
         actArrTime = arrivalTimeAtCurrAct;
         double operationEndTime = startStrategy.getActivityStartTime(activity,arrivalTimeAtCurrAct) + activity.getOperationTime();
+
         actEndTime = operationEndTime;
+
         prevAct = activity;
         startAtPrevAct = operationEndTime;
     }
@@ -98,8 +101,10 @@ public class ActivityTimeTracker implements ActivityVisitor {
     public void finish() {
         double transportTime = this.transportTime.getTransportTime(prevAct.getLocation(), route.getEnd().getLocation(), startAtPrevAct, route.getDriver(), route.getVehicle());
         double arrivalTimeAtCurrAct = startAtPrevAct + transportTime;
+
         actArrTime = arrivalTimeAtCurrAct;
         actEndTime = arrivalTimeAtCurrAct;
+
         beginFirst = false;
     }
 
