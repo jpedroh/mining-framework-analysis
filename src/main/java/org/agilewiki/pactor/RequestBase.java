@@ -33,6 +33,7 @@ public abstract class RequestBase<RESPONSE_TYPE> implements
         mailbox.send(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void send(final Mailbox source) throws Exception {
         mailbox.send(this, source);

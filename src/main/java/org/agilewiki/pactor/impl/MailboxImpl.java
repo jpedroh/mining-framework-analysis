@@ -29,6 +29,21 @@ public final class MailboxImpl implements Mailbox, Runnable, MessageSource {
     }
 
     @Override
+    public Mailbox createMailbox() {
+        return mailboxFactory.createMailbox();
+    }
+
+    @Override
+    public void addAutoClosable(final AutoCloseable closeable) {
+        mailboxFactory.addAutoClosable(closeable);
+    }
+
+    @Override
+    public void shutdown() {
+        mailboxFactory.shutdown();
+    }
+
+    @Override
     public boolean isEmpty() {
         return !inbox.isNonEmpty();
     }
@@ -52,8 +67,7 @@ public final class MailboxImpl implements Mailbox, Runnable, MessageSource {
      * Same as send(Request) until buffered message are implemented.
      */
     @Override
-    public void send(final Request<?> request, final Mailbox source)
-            throws Exception {
+    public void send(final Request<?> request, final Mailbox source) throws Exception {
         //todo Buffer events the same way reply buffers requests.
         final Message message = inbox.createMessage(null, null, request, null,
                 EventResponseProcessor.SINGLETON);
@@ -210,10 +224,5 @@ public final class MailboxImpl implements Mailbox, Runnable, MessageSource {
         } catch (final Throwable t) {
             LOG.error("unable to add response message", t);
         }
-    }
-
-    @Override
-    public MailboxFactory getMailboxFactory() {
-        return mailboxFactory;
     }
 }
