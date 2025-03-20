@@ -1,41 +1,29 @@
 package com.adobe.epubcheck.messages;
-
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * A container for handling the default mapping of message id to severity.
  */
-class DefaultSeverities implements Severities
-{
-
+class DefaultSeverities implements Severities {
   private static final Map<MessageId, Severity> severities = new EnumMap<MessageId, Severity>(MessageId.class);
 
-  public DefaultSeverities()
-  {
+  public DefaultSeverities() {
     initialize();
   }
 
-  @Override
-  public Severity get(MessageId id)
-  {
+  @Override public Severity get(MessageId id) {
     Severity severity = severities.get(id);
-    if (severity == null)
-    {
-      //Indicates a programmer error
+    if (severity == null) {
       throw new IllegalArgumentException("Severity " + id.name() + " is invalid.");
     }
     return severity;
   }
 
-  private void initialize()
-  {
-    if (severities.isEmpty() == false)
-    {
+  private void initialize() {
+    if (severities.isEmpty() == false) {
       return;
     }
-
-    // Accessibility
     severities.put(MessageId.ACC_001, Severity.USAGE);
     severities.put(MessageId.ACC_002, Severity.USAGE);
     severities.put(MessageId.ACC_003, Severity.SUPPRESSED);
@@ -53,8 +41,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.ACC_015, Severity.USAGE);
     severities.put(MessageId.ACC_016, Severity.USAGE);
     severities.put(MessageId.ACC_017, Severity.USAGE);
-
-    // CHK
     severities.put(MessageId.CHK_001, Severity.ERROR);
     severities.put(MessageId.CHK_002, Severity.ERROR);
     severities.put(MessageId.CHK_003, Severity.ERROR);
@@ -63,8 +49,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.CHK_006, Severity.ERROR);
     severities.put(MessageId.CHK_007, Severity.ERROR);
     severities.put(MessageId.CHK_008, Severity.ERROR);
-
-    // CSS
     severities.put(MessageId.CSS_001, Severity.ERROR);
     severities.put(MessageId.CSS_002, Severity.ERROR);
     severities.put(MessageId.CSS_003, Severity.ERROR);
@@ -90,8 +74,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.CSS_025, Severity.USAGE);
     severities.put(MessageId.CSS_027, Severity.USAGE);
     severities.put(MessageId.CSS_028, Severity.USAGE);
-
-    // HTML
     severities.put(MessageId.HTM_001, Severity.ERROR);
     severities.put(MessageId.HTM_002, Severity.WARNING);
     severities.put(MessageId.HTM_003, Severity.ERROR);
@@ -135,16 +117,12 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.HTM_051, Severity.WARNING);
     severities.put(MessageId.HTM_052, Severity.ERROR);
     severities.put(MessageId.HTM_053, Severity.INFO);
-
-    // Media
     severities.put(MessageId.MED_001, Severity.ERROR);
     severities.put(MessageId.MED_002, Severity.ERROR);
     severities.put(MessageId.MED_003, Severity.ERROR);
     severities.put(MessageId.MED_004, Severity.ERROR);
     severities.put(MessageId.MED_005, Severity.ERROR);
     severities.put(MessageId.MED_006, Severity.USAGE);
-
-    // NAV
     severities.put(MessageId.NAV_001, Severity.ERROR);
     severities.put(MessageId.NAV_002, Severity.USAGE);
     severities.put(MessageId.NAV_003, Severity.ERROR);
@@ -154,16 +132,12 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.NAV_007, Severity.USAGE);
     severities.put(MessageId.NAV_008, Severity.USAGE);
     severities.put(MessageId.NAV_009, Severity.ERROR);
-
-    // NCX
     severities.put(MessageId.NCX_001, Severity.ERROR);
     severities.put(MessageId.NCX_002, Severity.ERROR);
     severities.put(MessageId.NCX_003, Severity.USAGE);
     severities.put(MessageId.NCX_004, Severity.USAGE);
     severities.put(MessageId.NCX_005, Severity.USAGE);
     severities.put(MessageId.NCX_006, Severity.USAGE);
-
-    // OPF
     severities.put(MessageId.OPF_001, Severity.ERROR);
     severities.put(MessageId.OPF_002, Severity.FATAL);
     severities.put(MessageId.OPF_003, Severity.WARNING);
@@ -254,8 +228,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.OPF_083, Severity.ERROR);
     severities.put(MessageId.OPF_084, Severity.ERROR);
     severities.put(MessageId.OPF_085, Severity.WARNING);
-
-    // PKG
     severities.put(MessageId.PKG_001, Severity.WARNING);
     severities.put(MessageId.PKG_003, Severity.ERROR);
     severities.put(MessageId.PKG_004, Severity.FATAL);
@@ -278,8 +250,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.PKG_022, Severity.WARNING);
     severities.put(MessageId.PKG_023, Severity.USAGE);
     severities.put(MessageId.PKG_024, Severity.INFO);
-
-    // Resources
     severities.put(MessageId.RSC_001, Severity.ERROR);
     severities.put(MessageId.RSC_002, Severity.FATAL);
     severities.put(MessageId.RSC_003, Severity.ERROR);
@@ -304,8 +274,6 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.RSC_021, Severity.ERROR);
     severities.put(MessageId.RSC_022, Severity.INFO);
     severities.put(MessageId.RSC_023, Severity.WARNING);
-
-    // Scripting
     severities.put(MessageId.SCP_001, Severity.USAGE);
     severities.put(MessageId.SCP_002, Severity.USAGE);
     severities.put(MessageId.SCP_003, Severity.USAGE);
@@ -317,5 +285,4 @@ class DefaultSeverities implements Severities
     severities.put(MessageId.SCP_009, Severity.USAGE);
     severities.put(MessageId.SCP_010, Severity.USAGE);
   }
-
 }
