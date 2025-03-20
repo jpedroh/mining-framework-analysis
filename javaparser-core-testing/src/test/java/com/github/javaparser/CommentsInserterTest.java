@@ -27,10 +27,6 @@ import com.github.javaparser.utils.TestParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
-
-import static com.github.javaparser.StaticJavaParser.parse;
-import static com.github.javaparser.StaticJavaParser.parseResource;
 import static com.github.javaparser.utils.TestUtils.assertEqualToTextResource;
 import static com.github.javaparser.utils.TestUtils.assertEqualsNoEol;
 import static com.github.javaparser.utils.Utils.EOL;
