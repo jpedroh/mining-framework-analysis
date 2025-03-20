@@ -1,11 +1,8 @@
 package org.gwtbootstrap3.client.ui.base.form;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.gwtbootstrap3.client.ui.constants.Attributes;
 import org.gwtbootstrap3.client.ui.form.validator.HasValidators;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -28,74 +25,46 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.FormPanelImpl;
 import com.google.gwt.user.client.ui.impl.FormPanelImplHost;
 
-/*
- * #%L
- * GwtBootstrap3
- * %%
- * Copyright (C) 2013 GwtBootstrap3
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * @author Sven Jacobs
  * @author Steven Jardine
  */
-public abstract class AbstractForm extends FormElementContainer implements
-        FormPanelImplHost {
-
+public abstract class AbstractForm extends FormElementContainer implements FormPanelImplHost {
+  public static class SubmitCompleteEvent extends GwtEvent<SubmitCompleteHandler> {
     /**
-     * Fired when a form has been submitted successfully.
-     */
-    public static class SubmitCompleteEvent extends
-            GwtEvent<SubmitCompleteHandler> {
-
-        /**
          * The event type.
          */
-        private static Type<SubmitCompleteHandler> TYPE;
+    private static Type<SubmitCompleteHandler> TYPE;
 
-        /**
+    /**
          * Handler hook.
          *
          * @return the handler hook
          */
-        public static Type<SubmitCompleteHandler> getType() {
-            if (TYPE == null) {
-                TYPE = new Type<SubmitCompleteHandler>();
-            }
-            return TYPE;
-        }
+    public static Type<SubmitCompleteHandler> getType() {
+      if (TYPE == null) {
+        TYPE = new Type<SubmitCompleteHandler>();
+      }
+      return TYPE;
+    }
 
-        private final String resultHtml;
+    private final String resultHtml;
 
-        /**
+    /**
          * Create a submit complete event.
          *
          * @param resultsHtml
          *            the results from submitting the form
          */
-        protected SubmitCompleteEvent(String resultsHtml) {
-            this.resultHtml = resultsHtml;
-        }
+    protected SubmitCompleteEvent(String resultsHtml) {
+      this.resultHtml = resultsHtml;
+    }
 
-        @Override
-        public final Type<SubmitCompleteHandler> getAssociatedType() {
-            return getType();
-        }
+    @Override public final Type<SubmitCompleteHandler> getAssociatedType() {
+      return getType();
+    }
 
-        /**
+    /**
          * Gets the result text of the form submission.
          *
          * @return the result html, or <code>null</code> if there was an error
@@ -103,56 +72,51 @@ public abstract class AbstractForm extends FormElementContainer implements
          * @tip The result html can be <code>null</code> as a result of
          *      submitting a form to a different domain.
          */
-        public String getResults() {
-            return resultHtml;
-        }
-
-        @Override
-        protected void dispatch(SubmitCompleteHandler handler) {
-            handler.onSubmitComplete(this);
-        }
+    public String getResults() {
+      return resultHtml;
     }
 
-    /**
-     * Handler for {@link SubmitCompleteEvent} events.
-     */
-    public interface SubmitCompleteHandler extends EventHandler {
+    @Override protected void dispatch(SubmitCompleteHandler handler) {
+      handler.onSubmitComplete(this);
+    }
+  }
 
-        /**
+  public interface SubmitCompleteHandler extends EventHandler {
+    /**
          * Fired when a form has been submitted successfully.
          *
          * @param event
          *            the event
          */
-        void onSubmitComplete(SubmitCompleteEvent event);
-    }
+    void onSubmitComplete(SubmitCompleteEvent event);
+  }
 
-    interface IFrameTemplate extends SafeHtmlTemplates {
+  interface IFrameTemplate extends SafeHtmlTemplates {
+    static final IFrameTemplate INSTANCE = GWT.create(IFrameTemplate.class);
 
-        static final IFrameTemplate INSTANCE = GWT.create(IFrameTemplate.class);
+    @Template(value = "<iframe src=\"javascript:\'\'\" name=\'{0}\' tabindex=\'-1\' " + "style=\'position:absolute;width:0;height:0;border:0\'>") SafeHtml get(String name);
+  }
 
-        @Template("<iframe src=\"javascript:''\" name='{0}' tabindex='-1' "
-                + "style='position:absolute;width:0;height:0;border:0'>")
-        SafeHtml get(String name);
-    }
+  private static final String FORM = "form";
 
-    private static final String FORM = "form";
-    private static int formId = 0;
-    private static final FormPanelImpl impl = GWT.create(FormPanelImpl.class);
+  private static int formId = 0;
 
-    private String frameName;
-    private Element synthesizedFrame;
+  private static final FormPanelImpl impl = GWT.create(FormPanelImpl.class);
 
-    public AbstractForm() {
-        this(true);
-    }
+  private String frameName;
 
-    public AbstractForm(boolean createIFrame) {
-        this(Document.get().createFormElement(), createIFrame);
-        getElement().setAttribute(Attributes.ROLE, FORM);
-    }
+  private Element synthesizedFrame;
 
-    /**
+  public AbstractForm() {
+    this(true);
+  }
+
+  public AbstractForm(boolean createIFrame) {
+    this(Document.get().createFormElement(), createIFrame);
+    getElement().setAttribute(Attributes.ROLE, FORM);
+  }
+
+  /**
      * This constructor may be used by subclasses to explicitly use an existing
      * element. This element must be a &lt;form&gt; element.
      * <p>
@@ -168,290 +132,249 @@ public abstract class AbstractForm extends FormElementContainer implements
      *            <code>true</code> to create an &lt;iframe&gt; element that
      *            will be targeted by this form
      */
-    protected AbstractForm(Element element, boolean createIFrame) {
-        setElement(element);
-        FormElement.as(element);
-
-        if (createIFrame) {
-            assert getTarget() == null || getTarget().trim().length() == 0 : "Cannot create target iframe if the form's target is already set.";
-
-            // We use the module name as part of the unique ID to ensure that
-            // ids are
-            // unique across modules.
-            frameName = "FormPanel_" + GWT.getModuleName() + "_" + (++formId);
-            setTarget(frameName);
-
-            sinkEvents(Event.ONLOAD);
-        }
+  protected AbstractForm(Element element, boolean createIFrame) {
+    setElement(element);
+    FormElement.as(element);
+    if (createIFrame) {
+      assert getTarget() == null || getTarget().trim().length() == 0 : "Cannot create target iframe if the form\'s target is already set.";
+      frameName = "FormPanel_" + GWT.getModuleName() + "_" + (++formId);
+      setTarget(frameName);
+      sinkEvents(Event.ONLOAD);
     }
+  }
 
-    @Override
-    protected void onAttach() {
-        super.onAttach();
-
-        if (frameName != null) {
-            // Create and attach a hidden iframe to the body element.
-            createFrame();
-            Document.get().getBody().appendChild(synthesizedFrame);
-        }
-        // Hook up the underlying iframe's onLoad event when attached to the
-        // DOM.
-        // Making this connection only when attached avoids memory-leak issues.
-        // The FormPanel cannot use the built-in GWT event-handling mechanism
-        // because there is no standard onLoad event on iframes that works
-        // across
-        // browsers.
-        impl.hookEvents(synthesizedFrame, getElement(), this);
+  @Override protected void onAttach() {
+    super.onAttach();
+    if (frameName != null) {
+      createFrame();
+      Document.get().getBody().appendChild(synthesizedFrame);
     }
+    impl.hookEvents(synthesizedFrame, getElement(), this);
+  }
 
-    @Override
-    protected void onDetach() {
-        super.onDetach();
-
-        // Unhook the iframe's onLoad when detached.
-        impl.unhookEvents(synthesizedFrame, getElement());
-
-        if (synthesizedFrame != null) {
-            // And remove it from the document.
-            Document.get().getBody().removeChild(synthesizedFrame);
-            synthesizedFrame = null;
-        }
+  @Override protected void onDetach() {
+    super.onDetach();
+    impl.unhookEvents(synthesizedFrame, getElement());
+    if (synthesizedFrame != null) {
+      Document.get().getBody().removeChild(synthesizedFrame);
+      synthesizedFrame = null;
     }
+  }
 
-    @Override
-    public boolean onFormSubmit() {
-        return onFormSubmitImpl();
-    }
+  @Override public boolean onFormSubmit() {
+    return onFormSubmitImpl();
+  }
 
-    @Override
-    public void onFrameLoad() {
-        onFrameLoadImpl();
-    }
+  @Override public void onFrameLoad() {
+    onFrameLoadImpl();
+  }
 
-    /**
+  /**
      * Adds a {@link SubmitCompleteEvent} handler.
      *
      * @param handler
      *            the handler
      * @return the handler registration used to remove the handler
      */
-    public HandlerRegistration addSubmitCompleteHandler(
-            SubmitCompleteHandler handler) {
-        return addHandler(handler, SubmitCompleteEvent.getType());
-    }
+  public HandlerRegistration addSubmitCompleteHandler(SubmitCompleteHandler handler) {
+    return addHandler(handler, SubmitCompleteEvent.getType());
+  }
 
-    /**
-     * Adds a {@link FormPanel.SubmitEvent} handler.
+  /**
+     * Adds a {@link SubmitEvent} handler.
      *
      * @param handler
      *            the handler
      * @return the handler registration used to remove the handler
      */
-    public HandlerRegistration addSubmitHandler(FormPanel.SubmitHandler handler) {
-        return addHandler(handler, FormPanel.SubmitEvent.getType());
-    }
+  public HandlerRegistration addSubmitHandler(FormPanel.SubmitHandler handler) {
+    return addHandler(handler, FormPanel.SubmitEvent.getType());
+  }
 
-    /**
+  /**
      * Gets the 'action' associated with this form. This is the URL to which it
      * will be submitted.
      *
      * @return the form's action
      */
-    public String getAction() {
-        return getFormElement().getAction();
-    }
+  public String getAction() {
+    return getFormElement().getAction();
+  }
 
-    /**
-     * Sets the 'action' associated with this form. This is the URL to which it
-     * will be submitted.
-     *
-     * @param action
-     *            the form's action
-     */
-    public void setAction(final String action) {
-        getFormElement().setAction(action);
-    }
-
-    /**
+  /**
      * Sets the 'action' associated with this form. This is the URL to which it
      * will be submitted.
      *
      * @param url
      *            the form's action
      */
-    public void setAction(SafeUri url) {
-        getFormElement().setAction(url);
-    }
+  public void setAction(final String action) {
+    getFormElement().setAction(action);
+  }
 
-    /**
+  /**
+     * Sets the 'action' associated with this form. This is the URL to which it
+     * will be submitted.
+     *
+     * @param url
+     *            the form's action
+     */
+  public void setAction(SafeUri url) {
+    getFormElement().setAction(url);
+  }
+
+  /**
      * Gets the HTTP method used for submitting this form. This should be either
      * {@link #METHOD_GET} or {@link #METHOD_POST}.
      *
      * @return the form's method
      */
-    public String getMethod() {
-        return getFormElement().getMethod();
-    }
+  public String getMethod() {
+    return getFormElement().getMethod();
+  }
 
-    /**
+  /**
      * Sets the HTTP method used for submitting this form. This should be either
      * {@link #METHOD_GET} or {@link #METHOD_POST}.
      *
      * @param method
      *            the form's method
      */
-    public void setMethod(final String method) {
-        getFormElement().setMethod(method);
-    }
+  public void setMethod(final String method) {
+    getFormElement().setMethod(method);
+  }
 
-    /**
+  /**
      * Gets the form's 'target'. This is the name of the {@link NamedFrame} that
      * will receive the results of submission, or <code>null</code> if none has
      * been specified.
      *
      * @return the form's target.
      */
-    public String getTarget() {
-        return getFormElement().getTarget();
-    }
+  public String getTarget() {
+    return getFormElement().getTarget();
+  }
 
-    /**
+  /**
      * Gets the encoding used for submitting this form. This should be either
      * {@link #ENCODING_MULTIPART} or {@link #ENCODING_URLENCODED}.
      *
      * @return the form's encoding
      */
-    public String getEncoding() {
-        return impl.getEncoding(getElement());
-    }
+  public String getEncoding() {
+    return impl.getEncoding(getElement());
+  }
 
-    /**
+  /**
      * Sets the encoding used for submitting this form. This should be either
      * {@link #ENCODING_MULTIPART} or {@link #ENCODING_URLENCODED}.
      *
      * @param encodingType
      *            the form's encoding
      */
-    public void setEncoding(String encodingType) {
-        impl.setEncoding(getElement(), encodingType);
-    }
+  public void setEncoding(String encodingType) {
+    impl.setEncoding(getElement(), encodingType);
+  }
 
-    /**
+  /**
      * Submits form
      */
-    public void submit() {
-        // Fire the onSubmit event, because javascript's form.submit() does not
-        // fire the built-in onsubmit event.
-        if (!fireSubmitEvent()) {
-            return;
-        }
-
-        impl.submit(getElement(), synthesizedFrame);
+  public void submit() {
+    if (!fireSubmitEvent()) {
+      return;
     }
+    impl.submit(getElement(), synthesizedFrame);
+  }
 
-    /**
+  /**
      * Resets form
      */
-    public void reset() {
-        impl.reset(getElement());
-        for (HasValidators<?> child : getChildrenWithValidators(this)) {
-            child.reset();
-        }
+  public void reset() {
+    impl.reset(getElement());
+    for (HasValidators<?> child : getChildrenWithValidators(this)) {
+      child.reset();
     }
+  }
 
+  private void createFrame() {
+    Element dummy = Document.get().createDivElement();
+    dummy.setInnerSafeHtml(IFrameTemplate.INSTANCE.get(frameName));
+    synthesizedFrame = dummy.getFirstChildElement();
+  }
 
-    private void createFrame() {
-        // Attach a hidden IFrame to the form. This is the target iframe to
-        // which the form will be submitted. We have to create the iframe using
-        // innerHTML, because setting an iframe's 'name' property dynamically
-        // doesn't work on most browsers.
-        Element dummy = Document.get().createDivElement();
-        dummy.setInnerSafeHtml(IFrameTemplate.INSTANCE.get(frameName));
-
-        synthesizedFrame = dummy.getFirstChildElement();
-    }
-
-    /**
-     * Fire a {@link AbstractForm.SubmitEvent}.
+  /**
+     * Fire a {@link FormPanel.SubmitEvent}.
      *
      * @return true to continue, false if canceled
      */
-    private boolean fireSubmitEvent() {
-        FormPanel.SubmitEvent event = new FormPanel.SubmitEvent();
-        fireEvent(event);
-        return !event.isCanceled();
-    }
+  private boolean fireSubmitEvent() {
+    FormPanel.SubmitEvent event = new FormPanel.SubmitEvent();
+    fireEvent(event);
+    return !event.isCanceled();
+  }
 
-    FormElement getFormElement() {
-        return FormElement.as(getElement());
-    }
+  FormElement getFormElement() {
+    return FormElement.as(getElement());
+  }
 
-    /**
+  /**
      * Returns true if the form is submitted, false if canceled.
      */
-    private boolean onFormSubmitImpl() {
-        return fireSubmitEvent();
-    }
+  private boolean onFormSubmitImpl() {
+    return fireSubmitEvent();
+  }
 
-    private void onFrameLoadImpl() {
-        // Fire onComplete events in a deferred command. This is necessary
-        // because clients that detach the form panel when submission is
-        // complete can cause some browsers (i.e. Mozilla) to go into an
-        // 'infinite loading' state. See issue 916.
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+  private void onFrameLoadImpl() {
+    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+      @Override public void execute() {
+        fireEvent(new SubmitCompleteEvent(impl.getContents(synthesizedFrame)));
+      }
+    });
+  }
 
-            @Override
-            public void execute() {
-                fireEvent(new SubmitCompleteEvent(impl
-                        .getContents(synthesizedFrame)));
-            }
-        });
-    }
+  private void setTarget(String target) {
+    getFormElement().setTarget(target);
+  }
 
-    private void setTarget(String target) {
-        getFormElement().setTarget(target);
-    }
-
-    /**
+  /**
      * @return true if the child input elements are all valid.
      */
-    public boolean validate() {
-        return validate(true);
-    }
+  public boolean validate() {
+    return validate(true);
+  }
 
-    /**
+  /**
      * @return true if the child input elements are all valid.
      */
-    public boolean validate(boolean show) {
-        boolean result = true;
-        for (HasValidators<?> child : getChildrenWithValidators(this)) {
-            result &= child.validate(show);
-        }
-        return result;
-    }    
+  public boolean validate(boolean show) {
+    boolean result = true;
+    for (HasValidators<?> child : getChildrenWithValidators(this)) {
+      result &= child.validate(show);
+    }
+    return result;
+  }
 
-    /**
+  /**
      * Get this forms child input elements with validators.
      *
      * @param widget the widget
      * @return the children with validators
      */
-    protected List<HasValidators<?>> getChildrenWithValidators(Widget widget) {
-        List<HasValidators<?>> result = new ArrayList<HasValidators<?>>();
-        if (widget != null) {
-            if (widget instanceof HasValidators<?>) {
-                result.add((HasValidators<?>) widget);
-            }
-            if (widget instanceof HasOneWidget) {
-                result.addAll(getChildrenWithValidators(((HasOneWidget) widget).getWidget()));
-            }
-            if (widget instanceof HasWidgets) {
-                for (Widget child : (HasWidgets) widget) {
-                    result.addAll(getChildrenWithValidators(child));
-                }
-            }
+  protected List<HasValidators<?>> getChildrenWithValidators(Widget widget) {
+    List<HasValidators<?>> result = new ArrayList<HasValidators<?>>();
+    if (widget != null) {
+      if (widget instanceof HasValidators<?>) {
+        result.add((HasValidators<?>) widget);
+      }
+      if (widget instanceof HasOneWidget) {
+        result.addAll(getChildrenWithValidators(((HasOneWidget) widget).getWidget()));
+      }
+      if (widget instanceof HasWidgets) {
+        for (Widget child : (HasWidgets) widget) {
+          result.addAll(getChildrenWithValidators(child));
         }
-        return result;
+      }
     }
-
+    return result;
+  }
 }
