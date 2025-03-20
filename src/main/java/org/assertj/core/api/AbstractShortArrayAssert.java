@@ -1,80 +1,48 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import org.assertj.core.internal.ShortArrays;
 import org.assertj.core.util.VisibleForTesting;
 
-public abstract class AbstractShortArrayAssert<S extends AbstractShortArrayAssert<S>>
-  extends AbstractArrayAssert<S, short[], Short> {
-
-  @VisibleForTesting
-  protected ShortArrays arrays = ShortArrays.instance();
+public abstract class AbstractShortArrayAssert<S extends AbstractShortArrayAssert<S>> extends AbstractArrayAssert<S, short[], Short> {
+  @VisibleForTesting protected ShortArrays arrays = ShortArrays.instance();
 
   public AbstractShortArrayAssert(short[] actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     arrays.assertHasSize(info, actual, expected);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
   /**
    * Verifies that the actual array contains the given values, in any order.
-   * <p>
-   * Example:
-   * <pre><code class='java'> // assertions will pass
-   * assertThat(new short[] { 1, 2, 3 }).contains((short) 1, (short) 2);
-   * assertThat(new short[] { 1, 2, 3 }).contains((short) 3, (short) 1);
-   * assertThat(new short[] { 1, 2, 3 }).contains((short) 1, (short) 3, (short) 2);
-   *
-   * // assertions will fail
-   * assertThat(new short[] { 1, 2, 3 }).contains((short) 1, (short) 4);
-   * assertThat(new short[] { 1, 2, 3 }).contains((short) 4, (short) 7);</code></pre>
-   * </p>
+   * 
    * @param values the given values.
    * @return {@code this} assertion object.
    * @throws NullPointerException if the given argument is {@code null}.
@@ -89,16 +57,7 @@ public abstract class AbstractShortArrayAssert<S extends AbstractShortArrayAsser
 
   /**
    * Verifies that the actual array contains only the given values and nothing else, in any order.
-   * <p>
-   * Example:
-   * <pre><code class='java'> // assertions will pass
-   * assertThat(new short[] { 1, 2, 3 }).containsOnly((short) 1, (short) 2, (short) 3);
-   * assertThat(new short[] { 1, 2, 3 }).containsOnly((short) 2, (short) 3, (short) 1);
-   *
-   * // assertions will fail
-   * assertThat(new short[] { 1, 2, 3 }).containsOnly((short) 1, (short) 2, (short) 3, (short) 4);
-   * assertThat(new short[] { 1, 2, 3 }).containsOnly((short) 4, (short) 7);</code></pre>
-   * </p>
+   * 
    * @param values the given values.
    * @return {@code this} assertion object.
    * @throws NullPointerException if the given argument is {@code null}.
@@ -325,29 +284,25 @@ public abstract class AbstractShortArrayAssert<S extends AbstractShortArrayAsser
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSorted() {
+  @Override public S isSorted() {
     arrays.assertIsSorted(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSortedAccordingTo(Comparator<? super Short> comparator) {
+  @Override public S isSortedAccordingTo(Comparator<? super Short> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S usingElementComparator(Comparator<? super Short> customComparator) {
+  @Override public S usingElementComparator(Comparator<? super Short> customComparator) {
     this.arrays = new ShortArrays(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     this.arrays = ShortArrays.instance();
     return myself;
   }
@@ -376,5 +331,4 @@ public abstract class AbstractShortArrayAssert<S extends AbstractShortArrayAsser
     objects.assertEqual(info, actual, values);
     return myself;
   }
-
 }
