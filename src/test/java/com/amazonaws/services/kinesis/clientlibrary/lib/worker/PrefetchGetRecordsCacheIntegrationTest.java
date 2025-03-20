@@ -30,13 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-<<<<<<< HEAD
-import com.amazonaws.services.kinesis.clientlibrary.types.ProcessRecordsInput;
 import com.amazonaws.services.kinesis.metrics.impl.NullMetricsFactory;
-import com.amazonaws.services.kinesis.model.Record;
-=======
->>>>>>> upstream/prefetch
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,12 +81,15 @@ public class PrefetchGetRecordsCacheIntegrationTest {
                 MAX_RECORDS_COUNT,
                 MAX_RECORDS_PER_CALL,
                 getRecordsRetrievalStrategy,
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/left.java
                 executorService,
-<<<<<<< HEAD
                 new NullMetricsFactory());
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/base.java
+                executorService);
 =======
+                executorService,
                 IDLE_MILLIS_BETWEEN_CALLS);
->>>>>>> upstream/prefetch
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/right.java
     }
     
     @Test
@@ -135,13 +132,16 @@ public class PrefetchGetRecordsCacheIntegrationTest {
                 MAX_RECORDS_COUNT,
                 MAX_RECORDS_PER_CALL,
                 getRecordsRetrievalStrategy2,
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/left.java
                 executorService2,
-<<<<<<< HEAD
                 new NullMetricsFactory()
-        );
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/base.java
+                executorService2
 =======
-                IDLE_MILLIS_BETWEEN_CALLS);
->>>>>>> upstream/prefetch
+                executorService2,
+                IDLE_MILLIS_BETWEEN_CALLS
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheIntegrationTest.java/right.java
+        );
         
         getRecordsCache.start();
         sleep(IDLE_MILLIS_BETWEEN_CALLS);

@@ -37,9 +37,12 @@ public interface RecordsFetcherFactory {
     void setMaxRecordsCount(int maxRecordsCount);
 
     void setDataFetchingStrategy(DataFetchingStrategy dataFetchingStrategy);
-    
-    void setIdleMillisBetweenCalls(long idleMillisBetweenCalls);
 
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/RecordsFetcherFactory.java/left.java
     void setMetricsFactory(IMetricsFactory metricsFactory);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/RecordsFetcherFactory.java/base.java
+=======
+    void setIdleMillisBetweenCalls(long idleMillisBetweenCalls);
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/RecordsFetcherFactory.java/right.java
 
 }

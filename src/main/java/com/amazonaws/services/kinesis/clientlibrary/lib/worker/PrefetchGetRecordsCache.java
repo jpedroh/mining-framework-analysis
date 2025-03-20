@@ -57,9 +57,15 @@ public class PrefetchGetRecordsCache implements GetRecordsCache {
     public PrefetchGetRecordsCache(final int maxSize, final int maxByteSize, final int maxRecordsCount,
                                    final int maxRecordsPerCall,
                                    @NonNull final GetRecordsRetrievalStrategy getRecordsRetrievalStrategy,
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/left.java
                                    @NonNull final ExecutorService executorService,
-                                   @NonNull final IMetricsFactory metricsFactory,
+                                   @NonNull final IMetricsFactory metricsFactory) {
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/base.java
+                                   @NonNull final ExecutorService executorService) {
+=======
+                                   @NonNull final ExecutorService executorService,
                                    long idleMillisBetweenCalls) {
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/right.java
         this.getRecordsRetrievalStrategy = getRecordsRetrievalStrategy;
         this.maxRecordsPerCall = maxRecordsPerCall;
         this.maxSize = maxSize;
@@ -68,8 +74,12 @@ public class PrefetchGetRecordsCache implements GetRecordsCache {
         this.getRecordsResultQueue = new LinkedBlockingQueue<>(this.maxSize);
         this.prefetchCounters = new PrefetchCounters();
         this.executorService = executorService;
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/left.java
         this.metricsFactory = new ThreadSafeMetricsDelegatingFactory(metricsFactory);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/base.java
+=======
         this.idleMillisBetweenCalls = idleMillisBetweenCalls;
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/right.java
     }
 
     @Override
@@ -137,13 +147,19 @@ public class PrefetchGetRecordsCache implements GetRecordsCache {
                         getRecordsResultQueue.put(processRecordsInput);
                         prefetchCounters.added(processRecordsInput);
                     } catch (InterruptedException e) {
-                        log.info("Thread was interrupted, indicating shutdown was called on the cache");
+                        log.info("Thread was interrupted, indicating shutdown was called on the cache.");
                         callShutdownOnStrategy();
-                    } catch (Error e) {
-                        log.error("Error was thrown while getting records, please check for the error", e);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/left.java
                     } finally {
                         MetricsHelper.endScope();
                     }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/base.java
+                    } 
+=======
+                    } catch (Error e) {
+                        log.error("Error was thrown while getting records, please check for the error", e);
+                    }
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/right.java
                 }
             }
         }

@@ -81,12 +81,15 @@ public class PrefetchGetRecordsCacheTest {
                 MAX_RECORDS_COUNT,
                 MAX_RECORDS_PER_CALL,
                 getRecordsRetrievalStrategy,
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheTest.java/left.java
                 executorService,
-<<<<<<< HEAD
                 new NullMetricsFactory());
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheTest.java/base.java
+                executorService);
 =======
+                executorService,
                 IDLE_MILLIS_BETWEEN_CALLS);
->>>>>>> upstream/prefetch
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCacheTest.java/right.java
         spyQueue = spy(getRecordsCache.getRecordsResultQueue);
         records = spy(new ArrayList<>());
 

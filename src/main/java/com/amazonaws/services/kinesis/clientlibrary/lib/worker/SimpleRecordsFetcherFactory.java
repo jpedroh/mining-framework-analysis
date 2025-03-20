@@ -39,7 +39,13 @@ public class SimpleRecordsFetcherFactory implements RecordsFetcherFactory {
             return new BlockingGetRecordsCache(maxRecords, getRecordsRetrievalStrategy, idleMillisBetweenCalls);
         } else {
             return new PrefetchGetRecordsCache(maxSize, maxByteSize, maxRecordsCount, maxRecords,
-                    getRecordsRetrievalStrategy, Executors.newFixedThreadPool(1), metricsFactory, idleMillisBetweenCalls);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/left.java
+                    getRecordsRetrievalStrategy, Executors.newFixedThreadPool(1), metricsFactory);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/base.java
+                    getRecordsRetrievalStrategy, Executors.newFixedThreadPool(1));
+=======
+                    getRecordsRetrievalStrategy, Executors.newFixedThreadPool(1), idleMillisBetweenCalls);
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/2fc4267b832ae2088fe8f2f84187b9e3ec73677d/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/right.java
         }
     }
 
@@ -63,10 +69,11 @@ public class SimpleRecordsFetcherFactory implements RecordsFetcherFactory {
         this.dataFetchingStrategy = dataFetchingStrategy;
     }
 
+    @Override
     public void setMetricsFactory(IMetricsFactory metricsFactory) {
         this.metricsFactory = metricsFactory;
     }
-
+    @Override
     public void setIdleMillisBetweenCalls(final long idleMillisBetweenCalls) {
         this.idleMillisBetweenCalls = idleMillisBetweenCalls;
     }
