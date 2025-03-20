@@ -86,6 +86,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see Application#subscribeToEvent(Class, SystemEventListener)
 	 */
+
 	public static void subscribeToApplicationEvent(Class<? extends SystemEvent> type, SystemEventListener listener) {
 		getApplication().subscribeToEvent(type, listener);
 	}
@@ -98,6 +99,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #subscribeToApplicationEvent(Class, SystemEventListener)
 	 */
+
 	public static void subscribeToApplicationEvent(Class<? extends SystemEvent> type, Callback.SerializableVoid callback) {
 		subscribeToApplicationEvent(type, createSystemEventListener(Events.<SystemEvent>wrap(callback)));
 	}
@@ -110,7 +112,8 @@ public final class Events {
 	 * @since 2.0
 	 * @see #subscribeToApplicationEvent(Class, SystemEventListener)
 	 */
-	public static void subscribeToApplicationEvent(Class<? extends SystemEvent> type, Callback.SerializableWithArgument<SystemEvent> callback) {
+
+	public static void subscribeToApplicationEvent(Class<? extends SystemEvent> type, Callback.WithArgument<SystemEvent> callback) {
 		subscribeToApplicationEvent(type, createSystemEventListener(callback));
 	}
 
@@ -124,6 +127,7 @@ public final class Events {
 	 * @since 1.2
 	 * @see UIViewRoot#subscribeToViewEvent(Class, SystemEventListener)
 	 */
+
 	public static void subscribeToViewEvent(Class<? extends SystemEvent> type, SystemEventListener listener) {
 		getViewRoot().subscribeToViewEvent(type, listener);
 	}
@@ -136,6 +140,7 @@ public final class Events {
 	 * @since 1.2
 	 * @see #subscribeToViewEvent(Class, SystemEventListener)
 	 */
+
 	public static void subscribeToViewEvent(Class<? extends SystemEvent> type, Callback.SerializableVoid callback) {
 		subscribeToViewEvent(type, createSystemEventListener(Events.<SystemEvent>wrap(callback)));
 	}
@@ -148,7 +153,8 @@ public final class Events {
 	 * @since 2.0
 	 * @see #subscribeToViewEvent(Class, SystemEventListener)
 	 */
-	public static void subscribeToViewEvent(Class<? extends SystemEvent> type, Callback.SerializableWithArgument<SystemEvent> callback) {
+
+	public static void subscribeToViewEvent(Class<? extends SystemEvent> type, Callback.WithArgument<SystemEvent> callback) {
 		subscribeToViewEvent(type, createSystemEventListener(callback));
 	}
 
@@ -162,6 +168,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see UIViewRoot#addPhaseListener(PhaseListener)
 	 */
+
 	public static void addViewPhaseListener(PhaseListener listener) {
 		getViewRoot().addPhaseListener(listener);
 	}
@@ -173,6 +180,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addViewPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToViewBeforePhase(PhaseId phaseId, Callback.Void callback) {
 		addViewPhaseListener(createBeforePhaseListener(phaseId, Events.<PhaseEvent>wrap(callback)));
 	}
@@ -184,6 +192,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addViewPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToViewBeforePhase(PhaseId phaseId, Callback.WithArgument<PhaseEvent> callback) {
 		addViewPhaseListener(createBeforePhaseListener(phaseId, callback));
 	}
@@ -195,6 +204,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addViewPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToViewAfterPhase(PhaseId phaseId, Callback.Void callback) {
 		addViewPhaseListener(createAfterPhaseListener(phaseId, Events.<PhaseEvent>wrap(callback)));
 	}
@@ -206,6 +216,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addViewPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToViewAfterPhase(PhaseId phaseId, Callback.WithArgument<PhaseEvent> callback) {
 		addViewPhaseListener(createAfterPhaseListener(phaseId, callback));
 	}
@@ -220,6 +231,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see CallbackPhaseListener
 	 */
+
 	public static void addRequestPhaseListener(PhaseListener listener) {
 		CallbackPhaseListener.add(listener);
 	}
@@ -231,6 +243,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addRequestPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToRequestBeforePhase(PhaseId phaseId, Callback.Void callback) {
 		addRequestPhaseListener(createBeforePhaseListener(phaseId, Events.<PhaseEvent>wrap(callback)));
 	}
@@ -242,6 +255,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addRequestPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToRequestBeforePhase(PhaseId phaseId, Callback.WithArgument<PhaseEvent> callback) {
 		addRequestPhaseListener(createBeforePhaseListener(phaseId, callback));
 	}
@@ -253,6 +267,7 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addRequestPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToRequestAfterPhase(PhaseId phaseId, Callback.Void callback) {
 		addRequestPhaseListener(createAfterPhaseListener(phaseId, Events.<PhaseEvent>wrap(callback)));
 	}
@@ -264,9 +279,138 @@ public final class Events {
 	 * @since 2.0
 	 * @see #addRequestPhaseListener(PhaseListener)
 	 */
+
 	public static void subscribeToRequestAfterPhase(PhaseId phaseId, Callback.WithArgument<PhaseEvent> callback) {
 		addRequestPhaseListener(createAfterPhaseListener(phaseId, callback));
 	}
+
+	// Helpers --------------------------------------------------------------------------------------------------------
+
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	private static final String ERROR_UNSUBSCRIBE_TOO_LATE =
+		"The render response phase is too late to unsubscribe the view event listener. Do it in an earlier phase.";
+
+	// Constructors ---------------------------------------------------------------------------------------------------
+
+	// Application scoped event listeners -----------------------------------------------------------------------------
+
+	/**
+	 * Subscribe the given callback to the current application that get invoked every time when the given
+	 * system event type is published in the current application.
+	 * @param type The system event type to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #subscribeToApplicationEvent(Class, SystemEventListener)
+	 */
+
+	/**
+	 * Subscribe the given callback to the current application that get invoked every time when the given
+	 * system event type is published in the current application.
+	 * @param type The system event type to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #subscribeToApplicationEvent(Class, SystemEventListener)
+	 */
+
+	public static void subscribeToApplicationEvent(Class<? extends SystemEvent> type, Callback.SerializableWithArgument<SystemEvent> callback) {
+		subscribeToApplicationEvent(type, createSystemEventListener(callback));
+	}
+
+	// View scoped event listeners ------------------------------------------------------------------------------------
+
+	public static void subscribeToViewEvent(Class<? extends SystemEvent> type, Callback.SerializableWithArgument<SystemEvent> callback) {
+		subscribeToViewEvent(type, createSystemEventListener(callback));
+	}
+
+	// View scoped phase listeners ------------------------------------------------------------------------------------
+
+	/**
+	 * Subscribe the given callback instance to the current view that get invoked every time before given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addViewPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current view that get invoked every time before given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addViewPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current view that get invoked every time after given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addViewPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current view that get invoked every time after given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addViewPhaseListener(PhaseListener)
+	 */
+
+	// Request scoped component event listeners -----------------------------------------------------------------------
+
+	// Request scoped phase listeners ---------------------------------------------------------------------------------
+
+	/**
+	 * Subscribe the given callback instance to the current request that get invoked before given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addRequestPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current request that get invoked before given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addRequestPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current request that get invoked after given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addRequestPhaseListener(PhaseListener)
+	 */
+
+	/**
+	 * Subscribe the given callback instance to the current request that get invoked after given phase ID.
+	 * @param phaseId The phase ID to be observed.
+	 * @param callback The callback to be invoked.
+	 * @since 2.0
+	 * @see #addRequestPhaseListener(PhaseListener)
+	 */
+
+	// Component scoped event listeners -------------------------------------------------------------------------------
+
+	/**
+	 * Unsubscribe the given event listener on the given event from the given component. Normally, you would use
+	 * {@link UIComponent#unsubscribeFromEvent(Class, ComponentSystemEventListener)} for this, but this wouldn't work
+	 * when executed inside {@link ComponentSystemEventListener#processEvent(javax.faces.event.ComponentSystemEvent)},
+	 * as it would otherwise end up in a <code>ConcurrentModificationException</code> while JSF is iterating over all
+	 * system event listeners. The trick is to perform the unsubscribe during the after phase of the current request
+	 * phase {@link #subscribeToRequestAfterPhase(PhaseId, org.omnifaces.util.Callback.Void)}.
+	 * @param component The component to unsubscribe the given event listener from.
+	 * @param event The event associated with the given event listener.
+	 * @param listener The event listener to be unsubscribed from the given component.
+	 * @throws IllegalStateException When this method is invoked during render response phase, because it would be too
+	 * late to remove it from the view state.
+	 * @since 2.1
+	 * @see #subscribeToRequestAfterPhase(PhaseId, org.omnifaces.util.Callback.Void)
+	 * @see UIComponent#unsubscribeFromEvent(Class, ComponentSystemEventListener)
+	 */
 
 	// Helpers --------------------------------------------------------------------------------------------------------
 
