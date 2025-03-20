@@ -52,7 +52,6 @@ import net.md_5.bungee.protocol.packet.SetCompression;
 import net.md_5.bungee.util.BufUtil;
 import net.md_5.bungee.util.QuietException;
 
-
 @RequiredArgsConstructor
 public class ServerConnector extends PacketHandler
 {
@@ -223,6 +222,8 @@ public class ServerConnector extends PacketHandler
         if (user.getServer() == null)
         {
             // Once again, first connection
+            user.setClientEntityId(login.getEntityId());
+            user.setServerEntityId(login.getEntityId());
             
             // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
             // Forge allows dimension ID's > 127
@@ -249,6 +250,30 @@ public class ServerConnector extends PacketHandler
             }
             else
             {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
+||||||| /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+                // Once again, first connection
+                user.setClientEntityId( login.getEntityId() );
+                user.setServerEntityId( login.getEntityId() );
+
+                // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
+                Login modLogin = new Login( login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(),
+                        (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.isReducedDebugInfo() );
+
+                user.unsafe().sendPacket( modLogin );
+
+=======
+                // Once again, first connection
+                user.setClientEntityId( login.getEntityId() );
+                user.setServerEntityId( login.getEntityId() );
+
+                // Set tab list size, TODO: what shall we do about packet mutability
+                Login modLogin = new Login( login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(),
+                        (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.isReducedDebugInfo() );
+
+                user.unsafe().sendPacket( modLogin );
+
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
                 ByteBuf brand = ByteBufAllocator.DEFAULT.heapBuffer();
                 DefinedPacket.writeString( bungee.getName() + " (" + bungee.getVersion() + ")", brand );
                 user.unsafe().sendPacket( new PluginMessage( user.getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_13 ? "minecraft:brand" : "MC|Brand", DefinedPacket.toArray( brand ), handshakeHandler.isServerForge() ) );
@@ -327,7 +352,7 @@ public class ServerConnector extends PacketHandler
     @Override
     public void handle(EncryptionRequest encryptionRequest) throws Exception
     {
-        throw new QuietException( "Server is online mode!" );
+        throw new QuietException("Server is online mode!");
     }
     
     @Override

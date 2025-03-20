@@ -54,8 +54,6 @@ import net.md_5.bungee.protocol.packet.SetCompression;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import net.md_5.bungee.tab.TabList;
 
-import net.md_5.bungee.protocol.ProtocolConstants;
-
 
 @RequiredArgsConstructor
 public class DownstreamBridge extends PacketHandler
@@ -447,7 +445,7 @@ public class DownstreamBridge extends PacketHandler
             }
             if (subChannel.equals("ServerIP"))
             {
-                ServerInfo info = bungee.getServerInfo( in.readUTF() );
+                ServerInfo info = bungee.getServerInfo(in.readUTF());
                 if ( info != null && !info.getAddress().isUnresolved() )
                 {
                     out.writeUTF("ServerIP");

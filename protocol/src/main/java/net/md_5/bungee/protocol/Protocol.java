@@ -173,12 +173,15 @@ public enum Protocol
                     map( ProtocolConstants.MINECRAFT_1_12_1, 0x4A ),
                     map( ProtocolConstants.MINECRAFT_1_13, 0x4E )
             );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/left.java
             TO_CLIENT.registerPacket(
                     SetCompression.class,
                     map( ProtocolConstants.MINECRAFT_1_7_2, 0x46 , false ),
                     map( ProtocolConstants.MINECRAFT_1_7_6, 0x46 , false ),
                     map( ProtocolConstants.MINECRAFT_1_8, 0x46 , false )
             );
+||||||| /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/base.java
+=======
             TO_CLIENT.registerPacket(
                     EntityStatus.class,
                     map( ProtocolConstants.MINECRAFT_1_8, 0x1A ),
@@ -193,15 +196,16 @@ public enum Protocol
                         map( ProtocolConstants.MINECRAFT_1_13, 0x11 )
                 );
             }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/c59a4d6924eae52c8de81c2a1427ec9df0735d4f/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/right.java
 
             TO_SERVER.registerPacket(
-                    KeepAlive.class,
-                    map( ProtocolConstants.MINECRAFT_1_8, 0x00 ),
-                    map( ProtocolConstants.MINECRAFT_1_9, 0x0B ),
-                    map( ProtocolConstants.MINECRAFT_1_12, 0x0C ),
-                    map( ProtocolConstants.MINECRAFT_1_12_1, 0x0B ),
-                    map( ProtocolConstants.MINECRAFT_1_13, 0x0E )
-            );
+                KeepAlive.class,
+                map( ProtocolConstants.MINECRAFT_1_8, 0x00 ),
+                map( ProtocolConstants.MINECRAFT_1_9, 0x0B ),
+                map( ProtocolConstants.MINECRAFT_1_12, 0x0C ),
+                map( ProtocolConstants.MINECRAFT_1_12_1, 0x0B ),
+                map( ProtocolConstants.MINECRAFT_1_13, 0x0E )
+        );
             TO_SERVER.registerPacket(
                     Chat.class,
                     map( ProtocolConstants.MINECRAFT_1_8, 0x01 ),
