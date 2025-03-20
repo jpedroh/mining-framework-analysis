@@ -1,25 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.extractor.Extractors.byName;
-
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.assertj.core.groups.Tuple;
 import org.assertj.core.util.DoubleComparator;
 import org.assertj.core.util.FloatComparator;
@@ -40,12 +25,13 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Joel Costigliola
  * @author Libor Ondrusek
  */
-public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>, A> extends AbstractAssert<S, A> {
-
+public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>, A extends java.lang.Object> extends AbstractAssert<S, A> {
   private static final double DOUBLE_COMPARATOR_PRECISION = 1e-15;
+
   private static final float FLOAT_COMPARATOR_PRECISION = 1e-6f;
 
   private Map<String, Comparator<?>> comparatorByPropertyOrField = new HashMap<>();
+
   private Map<Class<?>, Comparator<?>> comparatorByType = defaultTypeComparators();
 
   public AbstractObjectAssert(A actual, Class<?> selfType) {
@@ -138,8 +124,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if a property/field does not exist in actual.
    */
   public S isEqualToComparingOnlyGivenFields(Object other, String... propertiesOrFieldsUsedInComparison) {
-    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                                    propertiesOrFieldsUsedInComparison);
+    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsUsedInComparison);
     return myself;
   }
 
@@ -177,8 +162,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if one of actual's property/field to compare can't be found in the other object.
    */
   public S isEqualToIgnoringGivenFields(Object other, String... propertiesOrFieldsToIgnore) {
-    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                               propertiesOrFieldsToIgnore);
+    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsToIgnore);
     return myself;
   }
 
@@ -204,12 +188,10 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    *
    * @throws AssertionError if the actual object is {@code null}.
    * @throws AssertionError if some fields or properties of the actual object are null.
-   * 
-   * @since 2.5.0 / 3.5.0
    */
   public S hasNoNullFieldsOrProperties() {
-      objects.assertHasNoNullFieldsOrPropertiesExcept(info, actual);
-      return myself;
+    objects.assertHasNoNullFieldsOrPropertiesExcept(info, actual);
+    return myself;
   }
 
   /**
@@ -234,8 +216,6 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @param propertiesOrFieldsToIgnore properties/fields that won't be chekecd for null.
    * @throws AssertionError if the actual object is {@code null}.
    * @throws AssertionError if some (non ignored) fields or properties of the actual object are null.
-   * 
-   * @since 2.5.0 / 3.5.0
    */
   public S hasNoNullFieldsOrPropertiesExcept(String... propertiesOrFieldsToIgnore) {
     objects.assertHasNoNullFieldsOrPropertiesExcept(info, actual, propertiesOrFieldsToIgnore);
@@ -322,10 +302,10 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    *                  .isEqualToComparingFieldByField(reallyTallFrodo);</code></pre>
    * </p>
    * @param comparator the {@link java.util.Comparator} to use
-   * @param propertiesOrFields the names of the properties and/or fields the comparator should be used for
+   * @param comparator the names of the properties and/or fields the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> S usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
+  public <T extends java.lang.Object> S usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
     for (String propertyOrField : propertiesOrFields) {
       comparatorByPropertyOrField.put(propertyOrField, comparator);
     }
@@ -373,10 +353,10 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    *                  .isEqualToComparingFieldByField(reallyTallFrodo);</code></pre>
    * </p>
    * @param comparator the {@link java.util.Comparator} to use
-   * @param type the {@link java.lang.Class} of the type the comparator should be used for
+   * @param comparator the {@link java.lang.Class} of the type the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> S usingComparatorForType(Comparator<T> comparator, Class<T> type) {
+  public <T extends java.lang.Object> S usingComparatorForType(Comparator<T> comparator, Class<T> type) {
     comparatorByType.put(type, comparator);
     return myself;
   }
@@ -527,11 +507,8 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the array containing the extracted values
    */
-  @SafeVarargs
-  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
-    Object[] values = Stream.of(extractors)
-                            .map(extractor -> extractor.apply(actual))
-                            .toArray();
+  @SafeVarargs public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
+    Object[] values = Stream.of(extractors).map((extractor) -> extractor.apply(actual)).toArray();
     return new ObjectArrayAssert<Object>(values);
   }
 
@@ -541,7 +518,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * The recursive property/field comparison is <b>not</b> applied on fields having a custom {@code equals} implementation, i.e.
    * the overriden {@code equals} method will be used instead of a field by field comparison.
    * <p>
-   * The recursive comparison handles cycles. By default {@code floats} are compared with a precision of 1.0E-6 and {@code doubles} with 1.0E-15.
+   * The recursive comparison handles cycle. By default {@code floats} are compared with a precision of 1.0E-6 and {@code doubles} with 1.0E-15.
    * <p>
    * You can specify a custom comparator per (nested) fields or type with respectively {@link #usingComparatorForFields(Comparator, String...) usingComparatorForFields(Comparator, String...)}
    * and {@link #usingComparatorForType(Comparator, Class)}.
@@ -605,8 +582,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if one property/field to compare can not be found.
    */
   public S isEqualToComparingFieldByFieldRecursively(Object other) {
-    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField,
-                                                            comparatorByType);
+    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField, comparatorByType);
     return myself;
   }
 }
