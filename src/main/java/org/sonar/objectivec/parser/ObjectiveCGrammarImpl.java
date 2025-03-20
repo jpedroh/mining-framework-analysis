@@ -37,11 +37,6 @@ public class ObjectiveCGrammarImpl extends ObjectiveCGrammar {
 
     public ObjectiveCGrammarImpl() {
 
-<<<<<<< HEAD
-         program.is(o2n(LITERAL), EOF);
-
-    }
-=======
         messageReceiver.is(IDENTIFIER);
         messageSent.is(IDENTIFIER);
 
@@ -50,6 +45,7 @@ public class ObjectiveCGrammarImpl extends ObjectiveCGrammar {
         statement.is(or(sendMessageExpression));
 
         program.is(statement);
->>>>>>> FETCH_HEAD
+
+    }
 
 }

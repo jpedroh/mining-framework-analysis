@@ -30,8 +30,24 @@ import org.sonar.objectivec.api.ObjectiveCMetric;
 import org.sonar.squidbridge.api.SourceFile;
 
 public class ObjectiveCAstScannerTest {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/left.java
+||||||| /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/base.java
+	 
+	  @Test
+	  public void lines() {
+	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+	    assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
+	  }
+=======
+	/* 
+	  @Test
+	  public void lines() {
+	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+	    assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
+	  }
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/right.java
 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/left.java
     @Test
     public void lines() {
         SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
@@ -52,14 +68,22 @@ public class ObjectiveCAstScannerTest {
         assertThat(file.getNoSonarTagLines().size(), is(1));
     }
 
-=======
-	/* 
+||||||| /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/base.java
 	  @Test
-	  public void lines() {
+	  public void lines_of_code() {
 	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
-	    assertThat(file.getInt(ObjectiveCMetric.LINES), is(18));
+	    assertThat(file.getInt(ObjectiveCMetric.LINES_OF_CODE), is(5));
 	  }
-
+	  
+	  @Test
+	  public void comments() {
+	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
+	    assertThat(file.getInt(ObjectiveCMetric.COMMENT_BLANK_LINES), is(3));
+	    assertThat(file.getInt(ObjectiveCMetric.COMMENT_LINES), is(4));
+	    assertThat(file.getNoSonarTagLines(), hasItem(10));
+	    assertThat(file.getNoSonarTagLines().size(), is(1));
+	  }
+=======
 	  @Test
 	  public void lines_of_code() {
 	    SourceFile file = ObjectiveCAstScanner.scanSingleFile(new File("src/test/resources/objcSample.h"));
@@ -75,5 +99,5 @@ public class ObjectiveCAstScannerTest {
 	    assertThat(file.getNoSonarTagLines().size(), is(1));
 	  }
       */
->>>>>>> FETCH_HEAD
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/9e1766fa33eb3709a94ff91b3b140964cf1416d1/src/test/java/org/sonar/objectivec/ObjectiveCAstScannerTest.java/right.java
 }

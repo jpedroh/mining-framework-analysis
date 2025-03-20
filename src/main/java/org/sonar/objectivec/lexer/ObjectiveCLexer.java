@@ -44,28 +44,15 @@ public class ObjectiveCLexer {
     }
 
     public static Lexer create(ObjectiveCConfiguration conf) {
-        return Lexer.builder()
+        return  Lexer.builder()
                 .withCharset(conf.getCharset())
 
-<<<<<<< HEAD
-                .withFailIfNoChannelToConsumeOneCharacter(false)
-=======
-        .withFailIfNoChannelToConsumeOneCharacter(true)
->>>>>>> FETCH_HEAD
+                .withFailIfNoChannelToConsumeOneCharacter(true)
 
                 // Comments
                 .withChannel(commentRegexp("//[^\\n\\r]*+"))
                 .withChannel(commentRegexp("/\\*[\\s\\S]*?\\*/"))
 
-<<<<<<< HEAD
-                // All other tokens
-                .withChannel(regexp(LITERAL, "[^\r\n\\s/]+"))
-
-                .withChannel(new BlackHoleChannel("[\\s]"))
-
-                .build();
-    }
-=======
         // string literals
         .withChannel(regexp(ObjectiveCTokenType.STRING_LITERAL, "\"([^\"\\\\]*+(\\\\[\\s\\S])?+)*+\""))
 
@@ -89,6 +76,8 @@ public class ObjectiveCLexer {
 
         // skip all whitespace chars
         .withChannel(new BlackHoleChannel("[\\s]"))
->>>>>>> FETCH_HEAD
+
+                .build();
+    }
 
 }

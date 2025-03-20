@@ -65,27 +65,9 @@ public class ObjectiveCLexerTest {
     }
 
     @Test
-<<<<<<< HEAD
-    public void lexLineOfCode() {
-        assertThat(lexer.lex("[self init];"), hasToken("[self", GenericTokenType.LITERAL));
-    }
-
-    @Test
     public void lexEmptyLine() {
         List<Token> tokens = lexer.lex("\n");
         assertThat(tokens.size(), equalTo(1));
-        assertThat(tokens, hasToken(GenericTokenType.EOF));
-    }
-
-    @Test
-    public void lexSampleFile() {
-        List<Token> tokens = lexer.lex(new File("src/test/resources/objcSample.h"));
-        assertThat(tokens.size(), equalTo(16));
-        assertThat(tokens, hasToken(GenericTokenType.EOF));
-=======
-    public void lexEmptyLine() {
-    	List<Token> tokens = lexer.lex("\n");
-    	assertThat(tokens.size(), equalTo(1));
         assertThat(tokens, hasToken(GenericTokenType.EOF));
     }
     
@@ -94,7 +76,6 @@ public class ObjectiveCLexerTest {
         assertThat(tokens.size(), equalTo(2));
         assertThat(tokens, hasToken(ObjectiveCKeyword.HASH_INCLUDE));
         assertThat(tokens, hasToken(ObjectiveCTokenType.STRING_LITERAL));
->>>>>>> FETCH_HEAD
     }
 
 }
