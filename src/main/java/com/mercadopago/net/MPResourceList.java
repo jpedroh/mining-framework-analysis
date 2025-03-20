@@ -13,5 +13,6 @@ import lombok.Setter;
 @Setter
 public class MPResourceList<T> extends MPResource {
   /** List of results. */
+  /** Api response details. */
   private List<T> results;
 }
