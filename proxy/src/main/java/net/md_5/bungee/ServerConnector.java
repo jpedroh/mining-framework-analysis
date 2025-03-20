@@ -127,8 +127,7 @@ public class ServerConnector extends PacketHandler
             }
 
             copiedHandshake.setHost(newHost);
-        }
-        else if (!user.getExtraDataInHandshake().isEmpty()) {
+        }else if (!user.getExtraDataInHandshake().isEmpty()) {
             // Restore the extra data
             copiedHandshake.setHost(copiedHandshake.getHost() + user.getExtraDataInHandshake());
         }
