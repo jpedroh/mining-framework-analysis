@@ -73,8 +73,6 @@ public class InsertionData {
 
     private List<Event> events = new ArrayList<>();
 
-    private List<String> reasons = new ArrayList<>();
-
     List<Event> getEvents() {
         return events;
     }
@@ -92,6 +90,8 @@ public class InsertionData {
         }
         return events;
     }
+
+    private List<String> reasons = new ArrayList<>();
 
     /**
      * @return the additionalTime

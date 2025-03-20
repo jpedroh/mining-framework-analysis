@@ -233,6 +233,13 @@ public class ServiceTest {
         assertEquals(2, s.getActivity().getTimeWindows().size());
     }
 
+    @Test
+    public void whenSettingPriorities_itShouldBeSetCorrectly3() {
+        Service s = Service.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
+            .setPriority(10).build();
+        Assert.assertEquals(10, s.getPriority());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void whenMultipleTWOverlap_throwEx() {
         new Service.Builder("s").setLocation(Location.newInstance("loc"))
@@ -261,13 +268,6 @@ public class ServiceTest {
         Service s = new Service.Builder("s").setLocation(Location.newInstance("loc"))
                         .setPriority(3).build();
         assertEquals(3, s.getPriority());
-    }
-
-    @Test
-    public void whenSettingPriorities_itShouldBeSetCorrectly3() {
-        Service s = Service.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
-            .setPriority(10).build();
-        Assert.assertEquals(10, s.getPriority());
     }
 
     @Test

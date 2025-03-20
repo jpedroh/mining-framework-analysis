@@ -18,6 +18,12 @@
 
 package com.graphhopper.jsprit.core.algorithm.box;
 
+import java.util.Collection;
+import java.util.Properties;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.graphhopper.jsprit.core.algorithm.PrettyAlgorithmBuilder;
 import com.graphhopper.jsprit.core.algorithm.SearchStrategy;
 import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
@@ -26,8 +32,24 @@ import com.graphhopper.jsprit.core.algorithm.acceptor.SolutionAcceptor;
 import com.graphhopper.jsprit.core.algorithm.listener.AlgorithmEndsListener;
 import com.graphhopper.jsprit.core.algorithm.listener.IterationStartsListener;
 import com.graphhopper.jsprit.core.algorithm.module.RuinAndRecreateModule;
-import com.graphhopper.jsprit.core.algorithm.recreate.*;
-import com.graphhopper.jsprit.core.algorithm.ruin.*;
+import com.graphhopper.jsprit.core.algorithm.recreate.AbstractInsertionStrategy;
+import com.graphhopper.jsprit.core.algorithm.recreate.ActivityInsertionCostsCalculator;
+import com.graphhopper.jsprit.core.algorithm.recreate.BestInsertion;
+import com.graphhopper.jsprit.core.algorithm.recreate.BestInsertionConcurrent;
+import com.graphhopper.jsprit.core.algorithm.recreate.BreakScheduling;
+import com.graphhopper.jsprit.core.algorithm.recreate.DefaultScorer;
+import com.graphhopper.jsprit.core.algorithm.recreate.InsertionBuilder;
+import com.graphhopper.jsprit.core.algorithm.recreate.RegretInsertion;
+import com.graphhopper.jsprit.core.algorithm.recreate.RegretInsertionConcurrent;
+import com.graphhopper.jsprit.core.algorithm.recreate.RegretInsertionConcurrentFast;
+import com.graphhopper.jsprit.core.algorithm.recreate.RegretInsertionFast;
+import com.graphhopper.jsprit.core.algorithm.ruin.JobNeighborhoods;
+import com.graphhopper.jsprit.core.algorithm.ruin.JobNeighborhoodsFactory;
+import com.graphhopper.jsprit.core.algorithm.ruin.RuinClusters;
+import com.graphhopper.jsprit.core.algorithm.ruin.RuinRadial;
+import com.graphhopper.jsprit.core.algorithm.ruin.RuinRandom;
+import com.graphhopper.jsprit.core.algorithm.ruin.RuinShareFactory;
+import com.graphhopper.jsprit.core.algorithm.ruin.RuinWorst;
 import com.graphhopper.jsprit.core.algorithm.ruin.distance.DefaultJobDistance;
 import com.graphhopper.jsprit.core.algorithm.selector.SelectBest;
 import com.graphhopper.jsprit.core.algorithm.state.StateManager;
@@ -45,12 +67,6 @@ import com.graphhopper.jsprit.core.problem.vehicle.VehicleFleetManager;
 import com.graphhopper.jsprit.core.util.NoiseMaker;
 import com.graphhopper.jsprit.core.util.RandomNumberGeneration;
 import com.graphhopper.jsprit.core.util.Solutions;
-
-import java.util.Collection;
-import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class Jsprit {
@@ -343,16 +359,16 @@ public class Jsprit {
     private ScoringFunction regretScorer;
 
     private Jsprit(Builder builder) {
-        this.stateManager = builder.stateManager;
-        this.constraintManager = builder.constraintManager;
-        this.es = builder.es;
-        this.noThreads = builder.noThreads;
-        this.addCoreConstraints = builder.addConstraints;
-        this.properties = builder.properties;
-        this.objectiveFunction = builder.objectiveFunction;
-        this.random = builder.random;
-        this.activityInsertion = builder.activityInsertionCalculator;
-        this.acceptor = builder.solutionAcceptor;
+        stateManager = builder.stateManager;
+        constraintManager = builder.constraintManager;
+        es = builder.es;
+        noThreads = builder.noThreads;
+        addCoreConstraints = builder.addConstraints;
+        properties = builder.properties;
+        objectiveFunction = builder.objectiveFunction;
+        random = builder.random;
+        activityInsertion = builder.activityInsertionCalculator;
+        acceptor = builder.solutionAcceptor;
         regretScorer = builder.regretScorer;
     }
 
@@ -486,25 +502,25 @@ public class Jsprit {
         if (es != null) {
             if (fastRegret) {
                 RegretInsertionConcurrentFast regretInsertion = (RegretInsertionConcurrentFast) new InsertionBuilder(vrp, fm, stateManager, constraintManager)
-                    .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
-                    .setConcurrentMode(es, noThreads)
-                    .setFastRegret(true)
-                    .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
-                    .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
-                    .setActivityInsertionCostCalculator(activityInsertion)
-                    .build();
+                                .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
+                                .setConcurrentMode(es, noThreads)
+                                .setFastRegret(true)
+                                .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
+                                .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
+                                .setActivityInsertionCostCalculator(activityInsertion)
+                                .build();
                 scorer = regretScorer;
                 regretInsertion.setScoringFunction(scorer);
                 regretInsertion.setDependencyTypes(constraintManager.getDependencyTypes());
                 regret = regretInsertion;
             } else {
                 RegretInsertionConcurrent regretInsertion = (RegretInsertionConcurrent) new InsertionBuilder(vrp, fm, stateManager, constraintManager)
-                    .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
-                    .setConcurrentMode(es, noThreads)
-                    .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
-                    .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
-                    .setActivityInsertionCostCalculator(activityInsertion)
-                    .build();
+                                .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
+                                .setConcurrentMode(es, noThreads)
+                                .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
+                                .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
+                                .setActivityInsertionCostCalculator(activityInsertion)
+                                .build();
                 scorer = regretScorer;
                 regretInsertion.setScoringFunction(scorer);
                 regret = regretInsertion;
@@ -512,23 +528,23 @@ public class Jsprit {
         } else {
             if (fastRegret) {
                 RegretInsertionFast regretInsertion = (RegretInsertionFast) new InsertionBuilder(vrp, fm, stateManager, constraintManager)
-                    .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
-                    .setFastRegret(true)
-                    .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
-                    .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
-                    .setActivityInsertionCostCalculator(activityInsertion)
-                    .build();
+                                .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
+                                .setFastRegret(true)
+                                .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
+                                .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
+                                .setActivityInsertionCostCalculator(activityInsertion)
+                                .build();
                 scorer = regretScorer;
                 regretInsertion.setScoringFunction(scorer);
                 regretInsertion.setDependencyTypes(constraintManager.getDependencyTypes());
                 regret = regretInsertion;
             } else {
                 RegretInsertion regretInsertion = (RegretInsertion) new InsertionBuilder(vrp, fm, stateManager, constraintManager)
-                    .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
-                    .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
-                    .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
-                    .setActivityInsertionCostCalculator(activityInsertion)
-                    .build();
+                                .setInsertionStrategy(InsertionBuilder.Strategy.REGRET)
+                                .setAllowVehicleSwitch(toBoolean(getProperty(Parameter.VEHICLE_SWITCH.toString())))
+                                .considerFixedCosts(toDouble(getProperty(Parameter.FIXED_COST_PARAM.toString())))
+                                .setActivityInsertionCostCalculator(activityInsertion)
+                                .build();
                 scorer = regretScorer;
                 regretInsertion.setScoringFunction(scorer);
                 regret = regretInsertion;
@@ -734,7 +750,7 @@ public class Jsprit {
                         }
                     }
                 }
-                for(Job j : solution.getUnassignedJobs()){
+                for (Job j : solution.getUnassignedJobs()) {
                     costs += maxCosts * 2 * (11 - j.getPriority());
                 }
                 return costs;
