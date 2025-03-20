@@ -543,7 +543,7 @@ public class DownstreamBridge extends PacketHandler
             if ( event.getCancelServer().equals( server.getInfo() ) )
             {
                 // Just in case a plugin tries to do this. No point trying to reconnect to same server.
-                // This also prevents the code setting the connection to obsolete from reoccurring.
+                // Also prevent the code setting the connection to obsolete from reoccurring.
                 throw CancelSendSignal.INSTANCE;
             }
             Callback<ServerConnectRequest.Result> callback = new Callback<ServerConnectRequest.Result>() {
