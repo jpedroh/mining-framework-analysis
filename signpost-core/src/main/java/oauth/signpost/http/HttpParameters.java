@@ -1,19 +1,4 @@
-/* Copyright (c) 2008, 2009 Netflix, Matthias Kaeppler
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package oauth.signpost.http;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,7 +8,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import oauth.signpost.OAuth;
 
 /**
@@ -37,28 +21,26 @@ import oauth.signpost.OAuth;
  * 
  * @author Matthias Kaeppler
  */
-@SuppressWarnings("serial")
-public class HttpParameters implements Map<String, SortedSet<String>>, Serializable {
+@SuppressWarnings(value = { "serial" }) public class HttpParameters implements Map<String, SortedSet<String>>, Serializable {
+  private TreeMap<String, SortedSet<String>> wrappedMap = new TreeMap<String, SortedSet<String>>();
 
-    private TreeMap<String, SortedSet<String>> wrappedMap = new TreeMap<String, SortedSet<String>>();
+  public SortedSet<String> put(String key, SortedSet<String> value) {
+    return wrappedMap.put(key, value);
+  }
 
-    public SortedSet<String> put(String key, SortedSet<String> value) {
-        return wrappedMap.put(key, value);
+  public SortedSet<String> put(String key, SortedSet<String> values, boolean percentEncode) {
+    if (percentEncode) {
+      remove(key);
+      for (String v : values) {
+        put(key, v, true);
+      }
+      return get(key);
+    } else {
+      return wrappedMap.put(key, values);
     }
+  }
 
-    public SortedSet<String> put(String key, SortedSet<String> values, boolean percentEncode) {
-        if (percentEncode) {
-            remove(key);
-            for (String v : values) {
-                put(key, v, true);
-            }
-            return get(key);
-        } else {
-            return wrappedMap.put(key, values);
-        }
-    }
-
-    /**
+  /**
      * Convenience method to add a single value for the parameter specified by
      * 'key'.
      * 
@@ -68,11 +50,11 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        the parameter value
      * @return the value
      */
-    public String put(String key, String value) {
-        return put(key, value, false);
-    }
+  public String put(String key, String value) {
+    return put(key, value, false);
+  }
 
-    /**
+  /**
      * Convenience method to add a single value for the parameter specified by
      * 'key'.
      * 
@@ -85,23 +67,21 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        inserted into the map
      * @return the value
      */
-    public String put(String key, String value, boolean percentEncode) {
-         // fix contributed by Bjorn Roche - key should be encoded before wrappedMap.get
-         key = percentEncode ? OAuth.percentEncode(key) : key;
-         SortedSet<String> values = wrappedMap.get(key);
-         if (values == null) {
-             values = new TreeSet<String>();
-             wrappedMap.put( key, values);
-         }
-         if (value != null) {
-             value = percentEncode ? OAuth.percentEncode(value) : value;
-             values.add(value);
-         }
+  public String put(String key, String value, boolean percentEncode) {
+    key = percentEncode ? OAuth.percentEncode(key) : key;
+    SortedSet<String> values = wrappedMap.get(key);
+    if (values == null) {
+      values = new TreeSet<String>();
+      wrappedMap.put(key, values);
+    }
+    if (value != null) {
+      value = percentEncode ? OAuth.percentEncode(value) : value;
+      values.add(value);
+    }
+    return value;
+  }
 
-         return value;
-     }
-
-    /**
+  /**
      * Convenience method to allow for storing null values. {@link #put} doesn't
      * allow null values, because that would be ambiguous.
      * 
@@ -111,52 +91,52 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        can be anything, but probably... null?
      * @return null
      */
-    public String putNull(String key, String nullString) {
-        return put(key, nullString);
-    }
+  public String putNull(String key, String nullString) {
+    return put(key, nullString);
+  }
 
-    public void putAll(Map<? extends String, ? extends SortedSet<String>> m) {
-        wrappedMap.putAll(m);
-    }
+  public void putAll(Map<? extends String, ? extends SortedSet<String>> m) {
+    wrappedMap.putAll(m);
+  }
 
-    public void putAll(Map<? extends String, ? extends SortedSet<String>> m, boolean percentEncode) {
-        if (percentEncode) {
-            for (String key : m.keySet()) {
-                put(key, m.get(key), true);
-            }
-        } else {
-            wrappedMap.putAll(m);
-        }
+  public void putAll(Map<? extends String, ? extends SortedSet<String>> m, boolean percentEncode) {
+    if (percentEncode) {
+      for (String key : m.keySet()) {
+        put(key, m.get(key), true);
+      }
+    } else {
+      wrappedMap.putAll(m);
     }
+  }
 
-    public void putAll(String[] keyValuePairs, boolean percentEncode) {
-        for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
-            this.put(keyValuePairs[i], keyValuePairs[i + 1], percentEncode);
-        }
+  public void putAll(String[] keyValuePairs, boolean percentEncode) {
+    for (int i = 0; i < keyValuePairs.length - 1; i += 2) {
+      this.put(keyValuePairs[i], keyValuePairs[i + 1], percentEncode);
     }
+  }
 
-    /**
+  /**
      * Convenience method to merge a Map<String, List<String>>.
      * 
      * @param m
      *        the map
      */
-    public void putMap(Map<String, List<String>> m) {
-        for (String key : m.keySet()) {
-            SortedSet<String> vals = get(key);
-            if (vals == null) {
-                vals = new TreeSet<String>();
-                put(key, vals);
-            }
-            vals.addAll(m.get(key));
-        }
+  public void putMap(Map<String, List<String>> m) {
+    for (String key : m.keySet()) {
+      SortedSet<String> vals = get(key);
+      if (vals == null) {
+        vals = new TreeSet<String>();
+        put(key, vals);
+      }
+      vals.addAll(m.get(key));
     }
+  }
 
-    public SortedSet<String> get(Object key) {
-        return wrappedMap.get(key);
-    }
+  public SortedSet<String> get(Object key) {
+    return wrappedMap.get(key);
+  }
 
-    /**
+  /**
      * Convenience method for {@link #getFirst(key, false)}.
      * 
      * @param key
@@ -164,11 +144,11 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        characters!)
      * @return the first value found for this parameter
      */
-    public String getFirst(Object key) {
-        return getFirst(key, false);
-    }
+  public String getFirst(Object key) {
+    return getFirst(key, false);
+  }
 
-    /**
+  /**
      * Returns the first value from the set of all values for the given
      * parameter name. If the key passed to this method contains special
      * characters, you MUST first percent encode it using
@@ -183,16 +163,16 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        whether the value being retrieved should be percent decoded
      * @return the first value found for this parameter
      */
-    public String getFirst(Object key, boolean percentDecode) {
-        SortedSet<String> values = wrappedMap.get(key);
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        String value = values.first();
-        return percentDecode ? OAuth.percentDecode(value) : value;
+  public String getFirst(Object key, boolean percentDecode) {
+    SortedSet<String> values = wrappedMap.get(key);
+    if (values == null || values.isEmpty()) {
+      return null;
     }
+    String value = values.first();
+    return percentDecode ? OAuth.percentDecode(value) : value;
+  }
 
-    /**
+  /**
      * Concatenates all values for the given key to a list of key/value pairs
      * suitable for use in a URL query string.
      * 
@@ -200,11 +180,11 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        the parameter name
      * @return the query string
      */
-    public String getAsQueryString(Object key) {
-    	return getAsQueryString(key, true);
-    }
+  public String getAsQueryString(Object key) {
+    return getAsQueryString(key, true);
+  }
 
-    /**
+  /**
      * Concatenates all values for the given key to a list of key/value pairs
      * suitable for use in a URL query string.
      * 
@@ -215,91 +195,86 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      *        used with the map
      * @return the query string
      */
-     public String getAsQueryString(Object key, boolean percentEncode) {
-        // fix contributed by Stjepan Rajko - we need the percentEncode parameter
-        // because some places (like SignatureBaseString.normalizeRequestParameters)
-        // need to supply the parameter percent encoded
-
-        StringBuilder sb = new StringBuilder();
-        if(percentEncode)
-        	key = OAuth.percentEncode((String) key);
-        Set<String> values = wrappedMap.get(key);
-        if (values == null) {
-            return key + "=";
-        }
-        Iterator<String> iter = values.iterator();
-        while (iter.hasNext()) {
-            sb.append(key + "=" + iter.next());
-            if (iter.hasNext()) {
-                sb.append("&");
-            }
-        }
-        return sb.toString();
+  public String getAsQueryString(Object key, boolean percentEncode) {
+    StringBuilder sb = new StringBuilder();
+    if (percentEncode) {
+      key = OAuth.percentEncode((String) key);
     }
-    
-    public String getAsHeaderElement(String key) {
-        String value = getFirst(key);
-        if (value == null) {
-            return null;
-        }
-        return key + "=\"" + value + "\"";
+    Set<String> values = wrappedMap.get(key);
+    if (values == null) {
+      return key + "=";
     }
-
-    public boolean containsKey(Object key) {
-        return wrappedMap.containsKey(key);
+    Iterator<String> iter = values.iterator();
+    while (iter.hasNext()) {
+      sb.append(key + "=" + iter.next());
+      if (iter.hasNext()) {
+        sb.append("&");
+      }
     }
+    return sb.toString();
+  }
 
-    public boolean containsValue(Object value) {
-        for (Set<String> values : wrappedMap.values()) {
-            if (values.contains(value)) {
-                return true;
-            }
-        }
-        return false;
+  public String getAsHeaderElement(String key) {
+    String value = getFirst(key);
+    if (value == null) {
+      return null;
     }
+    return key + "=\"" + value + "\"";
+  }
 
-    public int size() {
-        int count = 0;
-        for (String key : wrappedMap.keySet()) {
-            count += wrappedMap.get(key).size();
-        }
-        return count;
+  public boolean containsKey(Object key) {
+    return wrappedMap.containsKey(key);
+  }
+
+  public boolean containsValue(Object value) {
+    for (Set<String> values : wrappedMap.values()) {
+      if (values.contains(value)) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    public boolean isEmpty() {
-        return wrappedMap.isEmpty();
+  public int size() {
+    int count = 0;
+    for (String key : wrappedMap.keySet()) {
+      count += wrappedMap.get(key).size();
     }
+    return count;
+  }
 
-    public void clear() {
-        wrappedMap.clear();
+  public boolean isEmpty() {
+    return wrappedMap.isEmpty();
+  }
+
+  public void clear() {
+    wrappedMap.clear();
+  }
+
+  public SortedSet<String> remove(Object key) {
+    return wrappedMap.remove(key);
+  }
+
+  public Set<String> keySet() {
+    return wrappedMap.keySet();
+  }
+
+  public Collection<SortedSet<String>> values() {
+    return wrappedMap.values();
+  }
+
+  public Set<Entry<String, SortedSet<String>>> entrySet() {
+    return wrappedMap.entrySet();
+  }
+
+  public HttpParameters getOAuthParameters() {
+    HttpParameters oauthParams = new HttpParameters();
+    for (Entry<String, SortedSet<String>> param : this.entrySet()) {
+      String key = param.getKey();
+      if (key.startsWith("oauth_") || key.startsWith("x_oauth_")) {
+        oauthParams.put(key, param.getValue());
+      }
     }
-
-    public SortedSet<String> remove(Object key) {
-        return wrappedMap.remove(key);
-    }
-
-    public Set<String> keySet() {
-        return wrappedMap.keySet();
-    }
-
-    public Collection<SortedSet<String>> values() {
-        return wrappedMap.values();
-    }
-
-    public Set<Entry<String, SortedSet<String>>> entrySet() {
-        return wrappedMap.entrySet();
-    }
-
-    public HttpParameters getOAuthParameters() {
-        HttpParameters oauthParams = new HttpParameters();
-
-        for (Entry<String, SortedSet<String>> param : this.entrySet()) {
-            String key = param.getKey();
-            if (key.startsWith("oauth_") || key.startsWith("x_oauth_")) {
-                oauthParams.put(key, param.getValue());
-            }
-        }
-
-        return oauthParams;
-    }
+    return oauthParams;
+  }
 }
