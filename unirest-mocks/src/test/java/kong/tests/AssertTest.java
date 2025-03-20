@@ -27,12 +27,11 @@ package kong.tests;
 
 import kong.unirest.core.*;
 import org.junit.jupiter.api.Test;
-
 import java.util.function.Supplier;
-
 import static kong.unirest.core.HttpMethod.GET;
 import static kong.unirest.core.HttpMethod.POST;
 import static org.junit.jupiter.api.Assertions.*;
+import kong.unirest.*;
 
 class AssertTest extends Base {
 
