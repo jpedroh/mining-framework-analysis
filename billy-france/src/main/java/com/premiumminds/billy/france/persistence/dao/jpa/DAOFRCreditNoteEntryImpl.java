@@ -21,7 +21,6 @@ package com.premiumminds.billy.france.persistence.dao.jpa;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-
 import com.premiumminds.billy.france.persistence.dao.DAOFRCreditNoteEntry;
 import com.premiumminds.billy.france.persistence.entities.FRCreditNoteEntity;
 import com.premiumminds.billy.france.persistence.entities.FRCreditNoteEntryEntity;
@@ -30,8 +29,8 @@ import com.premiumminds.billy.france.persistence.entities.jpa.JPAFRCreditNoteEnt
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditNoteEntity;
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditNoteEntryEntity;
 import com.premiumminds.billy.france.services.entities.FRInvoice;
-import com.querydsl.core.types.dsl.PathInits;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.dsl.PathInits;
 
 public class DAOFRCreditNoteEntryImpl
         extends AbstractDAOFRGenericInvoiceEntryImpl<FRCreditNoteEntryEntity, JPAFRCreditNoteEntryEntity>

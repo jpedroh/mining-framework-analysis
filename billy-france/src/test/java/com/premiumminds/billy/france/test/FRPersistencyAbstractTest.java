@@ -18,12 +18,14 @@
  */
 package com.premiumminds.billy.france.test;
 
+import com.google.inject.Guice;
 import java.util.UUID;
-
+import com.premiumminds.billy.france.persistence.entities.FRCreditReceiptEntity;
+import com.premiumminds.billy.france.services.entities.FRReceipt;
+import com.premiumminds.billy.france.test.util.FRCreditReceiptTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import com.google.inject.Guice;
 import com.premiumminds.billy.core.exceptions.SeriesUniqueCodeNotFilled;
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.StringID;
@@ -34,16 +36,13 @@ import com.premiumminds.billy.core.services.exceptions.DocumentSeriesDoesNotExis
 import com.premiumminds.billy.france.FranceBootstrap;
 import com.premiumminds.billy.france.FranceDependencyModule;
 import com.premiumminds.billy.france.persistence.entities.FRCreditNoteEntity;
-import com.premiumminds.billy.france.persistence.entities.FRCreditReceiptEntity;
 import com.premiumminds.billy.france.persistence.entities.FRInvoiceEntity;
 import com.premiumminds.billy.france.persistence.entities.FRReceiptEntity;
 import com.premiumminds.billy.france.services.documents.util.FRIssuingParams;
 import com.premiumminds.billy.france.services.documents.util.FRIssuingParamsImpl;
 import com.premiumminds.billy.france.services.entities.FRInvoice;
-import com.premiumminds.billy.france.services.entities.FRReceipt;
 import com.premiumminds.billy.france.test.util.FRBusinessTestUtil;
 import com.premiumminds.billy.france.test.util.FRCreditNoteTestUtil;
-import com.premiumminds.billy.france.test.util.FRCreditReceiptTestUtil;
 import com.premiumminds.billy.france.test.util.FRInvoiceTestUtil;
 import com.premiumminds.billy.france.test.util.FRReceiptTestUtil;
 import com.premiumminds.billy.france.util.Services;

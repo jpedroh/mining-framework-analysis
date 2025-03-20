@@ -21,7 +21,6 @@ package com.premiumminds.billy.france.persistence.dao.jpa;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-
 import com.premiumminds.billy.france.persistence.dao.DAOFRCreditReceiptEntry;
 import com.premiumminds.billy.france.persistence.entities.FRCreditReceiptEntity;
 import com.premiumminds.billy.france.persistence.entities.FRCreditReceiptEntryEntity;
@@ -30,8 +29,8 @@ import com.premiumminds.billy.france.persistence.entities.jpa.JPAFRCreditReceipt
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditReceiptEntity;
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditReceiptEntryEntity;
 import com.premiumminds.billy.france.services.entities.FRReceipt;
-import com.querydsl.core.types.dsl.PathInits;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.types.dsl.PathInits;
 
 public class DAOFRCreditReceiptEntryImpl
         extends AbstractDAOFRGenericInvoiceEntryImpl<FRCreditReceiptEntryEntity, JPAFRCreditReceiptEntryEntity>

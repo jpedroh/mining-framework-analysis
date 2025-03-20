@@ -18,12 +18,14 @@
  */
 package com.premiumminds.billy.spain.test;
 
+import com.google.inject.Guice;
 import java.util.UUID;
-
+import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntity;
+import com.premiumminds.billy.spain.services.entities.ESReceipt;
+import com.premiumminds.billy.spain.test.util.ESCreditReceiptTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import com.google.inject.Guice;
 import com.premiumminds.billy.core.exceptions.SeriesUniqueCodeNotFilled;
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.services.StringID;
@@ -35,16 +37,13 @@ import com.premiumminds.billy.persistence.entities.jpa.JPAInvoiceSeriesEntity;
 import com.premiumminds.billy.spain.SpainBootstrap;
 import com.premiumminds.billy.spain.SpainDependencyModule;
 import com.premiumminds.billy.spain.persistence.entities.ESCreditNoteEntity;
-import com.premiumminds.billy.spain.persistence.entities.ESCreditReceiptEntity;
 import com.premiumminds.billy.spain.persistence.entities.ESInvoiceEntity;
 import com.premiumminds.billy.spain.persistence.entities.ESReceiptEntity;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParams;
 import com.premiumminds.billy.spain.services.documents.util.ESIssuingParamsImpl;
 import com.premiumminds.billy.spain.services.entities.ESInvoice;
-import com.premiumminds.billy.spain.services.entities.ESReceipt;
 import com.premiumminds.billy.spain.test.util.ESBusinessTestUtil;
 import com.premiumminds.billy.spain.test.util.ESCreditNoteTestUtil;
-import com.premiumminds.billy.spain.test.util.ESCreditReceiptTestUtil;
 import com.premiumminds.billy.spain.test.util.ESInvoiceTestUtil;
 import com.premiumminds.billy.spain.test.util.ESReceiptTestUtil;
 import com.premiumminds.billy.spain.util.Services;
