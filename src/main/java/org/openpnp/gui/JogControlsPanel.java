@@ -598,6 +598,14 @@ public class JogControlsPanel extends JPanel {
         public void actionPerformed(ActionEvent arg0) {
             UiUtils.submitUiMachineTask(() -> {
                 Nozzle nozzle = machineControlsPanel.getSelectedNozzle();
+<<<<<<< /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/left.java
+||||||| /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/base.java
+                // move to the discard location
+                MovableUtils.moveToLocationAtSafeZ(nozzle, Configuration.get()
+                                                                        .getMachine()
+                                                                        .getDiscardLocation());
+=======
+                // move to the discard location
                 try {
                     Map<String, Object> globals = new HashMap<>();
                     globals.put("nozzle", nozzle);
@@ -606,8 +614,19 @@ public class JogControlsPanel extends JPanel {
                 catch (Exception e) {
                     Logger.warn(e);
                 }
+                MovableUtils.moveToLocationAtSafeZ(nozzle, Configuration.get()
+                                                                        .getMachine()
+                                                                        .getDiscardLocation());
+>>>>>>> /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/right.java
                 // discard the part
+<<<<<<< /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/left.java
                 nozzle.place(Configuration.get().getMachine().getDiscardLocation());
+||||||| /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/base.java
+                nozzle.place();
+                nozzle.moveToSafeZ();
+=======
+                nozzle.place();
+                nozzle.moveToSafeZ();
                 try {
                     Map<String, Object> globals = new HashMap<>();
                     globals.put("nozzle", nozzle);
@@ -616,6 +635,7 @@ public class JogControlsPanel extends JPanel {
                 catch (Exception e) {
                     Logger.warn(e);
                 }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/63afd82f031806ec03686a45844037d16df77c70/src/main/java/org/openpnp/gui/JogControlsPanel.java/right.java
             });
         }
     };
