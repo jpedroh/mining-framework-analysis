@@ -1,27 +1,9 @@
-/*
- * Copyright 2013 Xi CHEN
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.seanchenxi.gwt.storage.client.serializer;
-
 import com.google.gwt.core.client.GWT;
+import java.util.HashMap;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.ClientSerializationStreamReader;
 import com.google.gwt.user.client.rpc.impl.Serializer;
-
-import java.util.HashMap;
 
 /**
  * Default implementation of {@link StorageSerializer}
@@ -30,14 +12,13 @@ import java.util.HashMap;
  *
  */
 final class StorageRPCSerializerImpl implements StorageSerializer {
-
   private static final Serializer TYPE_SERIALIZER;
+
   private static final HashMap<Class<?>, StorageValueType> TYPE_MAP;
 
-  static{
+  static {
     TYPE_SERIALIZER = GWT.create(StorageTypeSerializer.class);
     TYPE_MAP = new HashMap<Class<?>, StorageValueType>();
-
     TYPE_MAP.put(boolean[].class, StorageValueType.BOOLEAN_VECTOR);
     TYPE_MAP.put(byte[].class, StorageValueType.BYTE_VECTOR);
     TYPE_MAP.put(char[].class, StorageValueType.CHAR_VECTOR);
@@ -47,7 +28,6 @@ final class StorageRPCSerializerImpl implements StorageSerializer {
     TYPE_MAP.put(long[].class, StorageValueType.LONG_VECTOR);
     TYPE_MAP.put(short[].class, StorageValueType.SHORT_VECTOR);
     TYPE_MAP.put(String[].class, StorageValueType.STRING_VECTOR);
-
     TYPE_MAP.put(boolean.class, StorageValueType.BOOLEAN);
     TYPE_MAP.put(byte.class, StorageValueType.BYTE);
     TYPE_MAP.put(char.class, StorageValueType.CHAR);
@@ -59,13 +39,13 @@ final class StorageRPCSerializerImpl implements StorageSerializer {
     TYPE_MAP.put(String.class, StorageValueType.STRING);
   }
 
-  @Override 
-  @SuppressWarnings("unchecked")
-  public <T> T deserialize(Class<? super T> clazz, String serializedString) throws SerializationException {
+  @Override @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> T deserialize(Class<? super T> clazz, String serializedString) throws SerializationException {
     if (serializedString == null) {
       return null;
-    }else if(String.class.equals(clazz)){
-      return (T) serializedString;
+    } else {
+      if (String.class.equals(clazz)) {
+        return (T) serializedString;
+      }
     }
     ClientSerializationStreamReader reader = new ClientSerializationStreamReader(TYPE_SERIALIZER);
     reader.prepareToRead(serializedString);
@@ -73,16 +53,17 @@ final class StorageRPCSerializerImpl implements StorageSerializer {
     return obj != null ? (T) obj : null;
   }
 
-  @Override
-  public <T> String serialize(Class<? super T> clazz, T instance) throws SerializationException {
+  @Override public <T extends java.lang.Object> String serialize(Class<? super T> clazz, T instance) throws SerializationException {
     if (instance == null) {
       return null;
-    }else if(String.class.equals(clazz)){
-      return (String) instance;
+    } else {
+      if (String.class.equals(clazz)) {
+        return (String) instance;
+      }
     }
     StorageSerializationStreamWriter writer = new StorageSerializationStreamWriter(TYPE_SERIALIZER);
     writer.prepareToWrite();
-    if(clazz.isArray()){ // for array type, must write its type name at first
+    if (clazz.isArray()) {
       writer.writeString(TYPE_SERIALIZER.getSerializationSignature(clazz));
     }
     findType(clazz).write(writer, instance);
@@ -91,10 +72,9 @@ final class StorageRPCSerializerImpl implements StorageSerializer {
 
   private StorageValueType findType(Class<?> clazz) {
     StorageValueType type = TYPE_MAP.get(clazz);
-    if (type == null) { // for primitive array, use object writer
+    if (type == null) {
       type = clazz.isArray() ? StorageValueType.OBJECT_VECTOR : StorageValueType.OBJECT;
     }
     return type;
   }
-
 }

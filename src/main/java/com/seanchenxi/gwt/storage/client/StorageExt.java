@@ -1,33 +1,15 @@
-/*
- * Copyright 2013 Xi CHEN
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.seanchenxi.gwt.storage.client;
-
 import com.google.gwt.core.client.GWT;
+import java.io.Serializable;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
+import java.util.HashSet;
 import com.google.gwt.core.client.JavaScriptException;
+import java.util.Set;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.seanchenxi.gwt.storage.client.cache.StorageCache;
 import com.seanchenxi.gwt.storage.client.serializer.StorageSerializer;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Extends the GWT HTML5 Storage API, by adding <b>Object Value</b> Support.
@@ -64,9 +46,10 @@ import java.util.Set;
  *      com.google.gwt.storage.client.Storage</a>
  */
 public final class StorageExt {
-
   private static StorageExt localStorage;
+
   private static StorageExt sessionStorage;
+
   private static final StorageSerializer TYPE_SERIALIZER = GWT.create(StorageSerializer.class);
 
   /**
@@ -94,8 +77,11 @@ public final class StorageExt {
   }
 
   private StorageChangeEvent.Level eventLevel;
+
   private Set<StorageChangeEvent.Handler> handlers;
+
   private final StorageCache cache;
+
   private final Storage storage;
 
   /**
@@ -104,7 +90,7 @@ public final class StorageExt {
    * {@link #getSessionStorage()} ()} instead.
    */
   private StorageExt(Storage storage) {
-    assert storage != null : "Storage can not be null, check your browser's HTML 5 support state.";
+    assert storage != null : "Storage can not be null, check your browser\'s HTML 5 support state.";
     this.storage = storage;
     this.cache = GWT.create(StorageCache.class);
     this.eventLevel = StorageChangeEvent.Level.STRING;
@@ -117,12 +103,12 @@ public final class StorageExt {
    * @return {@link HandlerRegistration} used to remove this handler
    */
   public HandlerRegistration addStorageChangeHandler(final StorageChangeEvent.Handler handler) {
-    if(handler == null)
+    if (handler == null) {
       throw new IllegalArgumentException("Handler can not be null");
+    }
     ensureHandlerSet().add(handler);
     return new HandlerRegistration() {
-      @Override
-      public void removeHandler() {
+      @Override public void removeHandler() {
         if (handlers != null) {
           handlers.remove(handler);
           if (handlers.isEmpty()) {
@@ -163,7 +149,7 @@ public final class StorageExt {
    * @param <T> the type of stored value
    * @return <tt>true</tt> if this storage contains a value for the specified key.
    */
-  public <T> boolean containsKey(StorageKey<T> key) {
+  public <T extends java.lang.Object> boolean containsKey(StorageKey<T> key) {
     return storage.getItem(key.name()) != null;
   }
 
@@ -182,7 +168,7 @@ public final class StorageExt {
    * @see <a href="http://www.w3.org/TR/webstorage/#dom-storage-getitem">W3C Web
    *      Storage - Storage.getItem(k)</a>
    */
-  public <T> T get(StorageKey<T> key) throws SerializationException {
+  public <T extends java.lang.Object> T get(StorageKey<T> key) throws SerializationException {
     T item = cache.get(key);
     if (item == null) {
       item = TYPE_SERIALIZER.deserialize(key.getClazz(), storage.getItem(key.name()));
@@ -234,13 +220,12 @@ public final class StorageExt {
    * @throws SerializationException 
    * @throws StorageQuotaExceededException
    */
-  public <T> void put(StorageKey<T> key, T value) throws SerializationException, StorageQuotaExceededException {
-    if(value == null){
+  public <T extends java.lang.Object> void put(StorageKey<T> key, T value) throws SerializationException, StorageQuotaExceededException {
+    if (value == null) {
       throw new NullPointerException();
     }
     try {
       String data = TYPE_SERIALIZER.serialize(key.getClazz(), value);
-      // Update store and cache
       String oldData = storage.getItem(key.name());
       storage.setItem(key.name(), data);
       T oldValue = cache.put(key, value);
@@ -311,31 +296,30 @@ public final class StorageExt {
   /**
    * Fire {@link StorageChangeEvent}
    */
-  private <T> void fireEvent(StorageChangeEvent.ChangeType changeType, StorageKey<T> key, T value, T oldVal, String data, String oldData) {
+  private <T extends java.lang.Object> void fireEvent(StorageChangeEvent.ChangeType changeType, StorageKey<T> key, T value, T oldVal, String data, String oldData) {
     UncaughtExceptionHandler ueh = GWT.getUncaughtExceptionHandler();
     if (handlers != null && !handlers.isEmpty()) {
       T oldValue = oldVal;
-      if (oldValue == null && oldData != null && StorageChangeEvent.Level.OBJECT.equals(eventLevel)) {    
+      if (oldValue == null && oldData != null && StorageChangeEvent.Level.OBJECT.equals(eventLevel)) {
         try {
           oldValue = TYPE_SERIALIZER.deserialize(key.getClazz(), data);
         } catch (SerializationException e) {
-          if (ueh != null)
+          if (ueh != null) {
             ueh.onUncaughtException(e);
+          }
           oldValue = null;
         }
       }
-
       final StorageChangeEvent event = new StorageChangeEvent(changeType, key, value, oldValue, data, oldData);
       for (StorageChangeEvent.Handler handler : handlers) {
-        try{
+        try {
           handler.onStorageChange(event);
-        }catch(Exception e){
-          if(ueh != null){
+        } catch (Exception e) {
+          if (ueh != null) {
             ueh.onUncaughtException(e);
           }
         }
       }
     }
   }
-
 }
