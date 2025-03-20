@@ -72,7 +72,14 @@ public class PlotterControls extends JPanel {
 		this.add(getButtonsPanels(), BorderLayout.NORTH);
 		this.add(progress, BorderLayout.SOUTH);
 
-		marlinInterface.addListener(e -> onMarlinEvent(e));	
+		marlinInterface.addListener(e -> onMarlinEvent(e));
+		
+		chooseConnection.addListener(e -> {
+			switch (e.flag) {
+				case NetworkSessionEvent.CONNECTION_OPENED -> onConnect();
+				case NetworkSessionEvent.CONNECTION_CLOSED -> onDisconnect();
+			}
+		});
 
 		myPlotter.addPlotterEventListener((e)-> {
 			if (e.type == PlotterEvent.HOME_FOUND) {
@@ -80,7 +87,7 @@ public class PlotterControls extends JPanel {
 			}
 		});
 	}
-  
+	
 	private void onMarlinEvent(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case MarlinInterface.IDLE ->
@@ -108,12 +115,6 @@ public class PlotterControls extends JPanel {
 		Border border = BorderFactory.createTitledBorder(Translator.get("PlotterControls.ConnectControls"));
 		panel.setBorder(border);
 		panel.add(chooseConnection);
-		chooseConnection.addListener(e -> {
-			switch (e.flag) {
-				case NetworkSessionEvent.CONNECTION_OPENED -> onConnect();
-				case NetworkSessionEvent.CONNECTION_CLOSED -> onDisconnect();
-			}
-		});
 
 		return panel;
 	}
