@@ -48,18 +48,18 @@ public class ComponentMojo extends AbstractMojo {
 	@Parameter(defaultValue = "camel-case")
 	private String transformerName;
 
-	@Parameter(required = false)
-	private List<Dependency> excludeDependencies;
+	@Parameter ( required = false )
+    private List<Dependency> excludeDependencies;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		LogSingleton.getInstance().setLogger(getLog());
 
 		try {
-			List<String> classpathElements = getClasspathElements();
+		    List<String> classpathElements = getClasspathElements();
 
-			ClassLoader classLoader = ComponentMojoUtil.getClassLoader(classpathElements, this.getClass()
-				.getClassLoader());
+			ClassLoader classLoader = ComponentMojoUtil.getClassLoader(classpathElements, this
+				.getClass().getClassLoader());
 
 			ClassPool classPool = ComponentMojoUtil.getClassPool(classLoader);
 
@@ -90,58 +90,61 @@ public class ComponentMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Returns a list of paths to elements of the classpath for the project. If
-	 * dependencies are specified for exclusion via the excludeDependencies POM
-	 * configuration, the classpath elements related to the excluded
-	 * dependencies are not included in the resultant list.
-	 * 
+	 * Returns a list of paths to elements of the classpath for the project.  If
+	 * dependencies are specified for exclusion via the excludeDependencies POM configuration,
+	 * the classpath elements related to the excluded dependencies are not included in
+	 * the resultant list.
+	 *
 	 * @return
 	 * @throws DependencyResolutionRequiredException
 	 */
-	@SuppressWarnings("unchecked")
-	private List<String> getClasspathElements() throws DependencyResolutionRequiredException {
+    @SuppressWarnings("unchecked")
+    private List<String> getClasspathElements() throws DependencyResolutionRequiredException {
 
-		if (excludeDependencies != null && !excludeDependencies.isEmpty()) {
-			List<Artifact> compileArtifacts = project.getCompileArtifacts();
+        if (excludeDependencies != null && !excludeDependencies.isEmpty()) {
+            List<Artifact> compileArtifacts = project.getCompileArtifacts();
 
-			List<String> classpathElements = new ArrayList<String>();
+            List<String> classpathElements = new ArrayList<String>();
 
-			classpathElements.add(project.getBuild().getOutputDirectory());
+            classpathElements.add(project.getBuild().getOutputDirectory());
 
-			/*
-			 * Construct a set representation of the dependency exclusions
-			 * mapped by group id and artifact id for easy lookup
-			 */
-			Set<String> excludedArtifactIdentifiers = new HashSet<String>();
+            /*
+             * Construct a set representation of the dependency exclusions mapped by
+             * group id and artifact id for easy lookup
+             */
+            Set<String> excludedArtifactIdentifiers = new HashSet<String>();
 
-			for (Dependency curDependency : excludeDependencies) {
-				excludedArtifactIdentifiers.add(curDependency.getGroupId() + ":" + curDependency.getArtifactId());
-			}
+            for (Dependency curDependency : excludeDependencies) {
+                excludedArtifactIdentifiers.add(curDependency.getGroupId() + ":" + curDependency.getArtifactId());
+            }
 
-			for (Artifact curArtifact : compileArtifacts) {
-				String referenceIdentifier = curArtifact.getGroupId() + ":" + curArtifact.getArtifactId();
+            for (Artifact curArtifact : compileArtifacts) {
+                String referenceIdentifier = curArtifact.getGroupId() + ":" + curArtifact.getArtifactId();
 
-				if (!excludedArtifactIdentifiers.contains(referenceIdentifier)) {
-					MavenProject identifiedProject = (MavenProject) project.getProjectReferences().get(
-						referenceIdentifier);
-					if (identifiedProject != null) {
-						classpathElements.add(identifiedProject.getBuild().getOutputDirectory());
-					} else {
-						File file = curArtifact.getFile();
-						if (file == null) {
-							throw new DependencyResolutionRequiredException(curArtifact);
-						}
-						classpathElements.add(file.getPath());
-					}
-				}
-			}
+                if (!excludedArtifactIdentifiers.contains(referenceIdentifier)) {
+                    MavenProject identifiedProject = (MavenProject) project.getProjectReferences().get(referenceIdentifier);
+                    if (identifiedProject != null)
+                    {
+                        classpathElements.add(identifiedProject.getBuild().getOutputDirectory());
+                    }
+                    else
+                    {
+                        File file = curArtifact.getFile();
+                        if (file == null)
+                        {
+                            throw new DependencyResolutionRequiredException(curArtifact);
+                        }
+                        classpathElements.add(file.getPath());
+                    }
+                }
+            }
 
-			return classpathElements;
-		}
+            return classpathElements;
+        }
 
-		return project.getCompileClasspathElements();
+        return project.getCompileClasspathElements();
 
-	}
+    }
 
 	private File getArchiveFileForProject() {
 		File buildDirectory = new File(project.getBuild().getDirectory());
