@@ -1,16 +1,48 @@
 /*
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/left.java
  * Copyright 2019 Amazon.com, Inc. or its affiliates.
  * Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/base.java
+ *  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+=======
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/right.java
  *
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/left.java
  *     http://www.apache.org/licenses/LICENSE-2.0
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/base.java
+ *  Licensed under the Amazon Software License (the "License").
+ *  You may not use this file except in compliance with the License.
+ *  A copy of the License is located at
+=======
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/right.java
  *
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/left.java
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/base.java
+ *  http://aws.amazon.com/asl/
+ *
+ *  or in the "license" file accompanying this file. This file is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ *  express or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+=======
+ * http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/c889b92d8419224074e3ebfdde312084e8806970/amazon-kinesis-client/src/main/java/software/amazon/kinesis/lifecycle/ShardConsumerSubscriber.java/right.java
  */
 package software.amazon.kinesis.lifecycle;
 
