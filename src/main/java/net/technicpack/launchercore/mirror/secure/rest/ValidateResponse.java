@@ -1,3 +1,6 @@
+package net.technicpack.launchercore.mirror.secure.rest;
+import net.technicpack.rest.RestObject;
+
 /**
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,43 +19,42 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.technicpack.launchercore.mirror.secure.rest;
-
-import net.technicpack.rest.RestObject;
-
 public class ValidateResponse extends RestObject {
-    private boolean valid;
-    private String message; //error message
-    private String clientToken;
-    private String accessToken;
-    private String downloadToken;
+  private boolean valid;
 
-    public ValidateResponse() {
-    }
+  private String message;
 
-    public ValidateResponse(String errorMessage) {
-        this.valid = false;
-        this.message = errorMessage;
-    }
+  private String clientToken;
 
-    public boolean wasValid() {
-        return valid;
-    }
+  private String accessToken;
 
-    public String getErrorMessage() {
-        return message;
-    }
+  private String downloadToken;
 
-    public String getClientToken() {
-        return clientToken;
-    }
+  public ValidateResponse() {
+  }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+  public ValidateResponse(String errorMessage) {
+    this.valid = false;
+    this.message = errorMessage;
+  }
 
-    public String getDownloadToken() {
-        return downloadToken;
-    }
+  public boolean wasValid() {
+    return valid;
+  }
+
+  public String getErrorMessage() {
+    return message;
+  }
+
+  public String getClientToken() {
+    return clientToken;
+  }
+
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  public String getDownloadToken() {
+    return downloadToken;
+  }
 }

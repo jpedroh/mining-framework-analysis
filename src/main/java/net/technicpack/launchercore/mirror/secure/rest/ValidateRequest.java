@@ -1,3 +1,6 @@
+package net.technicpack.launchercore.mirror.secure.rest;
+import net.technicpack.rest.RestObject;
+
 /**
  * This file is part of Technic Launcher Core.
  * Copyright (C) 2013 Syndicate, LLC
@@ -16,25 +19,21 @@
  * as well as a copy of the GNU Lesser General Public License,
  * along with Technic Launcher Core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package net.technicpack.launchercore.mirror.secure.rest;
-
-import net.technicpack.rest.RestObject;
-
 public class ValidateRequest extends RestObject {
-    private String accessToken;
-    private String clientToken;
+  private String accessToken;
 
-    public ValidateRequest(String clientToken, String accessToken) {
-        this.clientToken = clientToken;
-        this.accessToken = accessToken;
-    }
+  private String clientToken;
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+  public ValidateRequest(String clientToken, String accessToken) {
+    this.clientToken = clientToken;
+    this.accessToken = accessToken;
+  }
 
-    public String getClientToken() {
-        return clientToken;
-    }
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  public String getClientToken() {
+    return clientToken;
+  }
 }
