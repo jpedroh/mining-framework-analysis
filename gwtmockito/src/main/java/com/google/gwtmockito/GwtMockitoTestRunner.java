@@ -1,20 +1,4 @@
-/*
- * Copyright 2013 Google Inc.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.google.gwtmockito;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -23,7 +7,6 @@ import javassist.CtMethod;
 import javassist.Loader;
 import javassist.NotFoundException;
 import javassist.Translator;
-
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.DataGrid;
@@ -55,7 +38,6 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.impl.StubGenerator;
-
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.ParentRunner;
@@ -63,7 +45,6 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -101,9 +82,10 @@ import java.util.List;
  * @author ekuefler@google.com (Erik Kuefler)
  */
 public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
-
   private final Class<?> unitTestClass;
+
   private final ClassLoader gwtMockitoClassLoader;
+
   private final Class<?> customLoadedGwtMockito;
 
   /**
@@ -113,9 +95,6 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
   public GwtMockitoTestRunner(Class<?> unitTestClass) throws InitializationError {
     super(unitTestClass);
     this.unitTestClass = unitTestClass;
-
-    // Build a fresh class pool with the system path and any user-specified paths and use it to
-    // create the custom classloader
     ClassPool classPool = new ClassPool();
     classPool.appendSystemPath();
     for (String path : getAdditionalClasspaths()) {
@@ -126,23 +105,11 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
       }
     }
     gwtMockitoClassLoader = new GwtMockitoClassLoader(getParentClassloader(), classPool);
-
-    // Use this custom classloader as the context classloader during the rest of the initialization
-    // process so that classes loaded via the context classloader will be compatible with the ones
-    // used during test.
     ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
     Thread.currentThread().setContextClassLoader(gwtMockitoClassLoader);
-
     try {
-      // Reload the test class with our own custom class loader that does things like remove
-      // final modifiers, allowing GWT Elements to be mocked. Also load GwtMockito itself so we can
-      // invoke initMocks on it later.
       Class<?> customLoadedTestClass = gwtMockitoClassLoader.loadClass(unitTestClass.getName());
       customLoadedGwtMockito = gwtMockitoClassLoader.loadClass(GwtMockito.class.getName());
-
-      // Overwrite the private "fTestClass" field in ParentRunner (superclass of
-      // BlockJUnit4ClassRunner). This refers to the test class being run, so replace it with our
-      // custom-loaded class.
       Field testClassField = ParentRunner.class.getDeclaredField("fTestClass");
       testClassField.setAccessible(true);
       testClassField.set(this, new TestClass(customLoadedTestClass));
@@ -183,10 +150,8 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
     classes.add(DOM.class);
     classes.add(UIObject.class);
     classes.add(Widget.class);
-
     classes.add(DataGrid.class);
     classes.add(Image.class);
-
     classes.add(AbsolutePanel.class);
     classes.add(CellList.class);
     classes.add(CellPanel.class);
@@ -211,12 +176,10 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
     classes.add(SplitLayoutPanel.class);
     classes.add(StackPanel.class);
     classes.add(VerticalPanel.class);
-
     WithClassesToStub annotation = unitTestClass.getAnnotation(WithClassesToStub.class);
     if (annotation != null) {
       classes.addAll(Arrays.asList(annotation.value()));
     }
-
     return classes;
   }
 
@@ -242,10 +205,10 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
    */
   protected Collection<String> getPackagesToLoadViaStandardClassloader() {
     Collection<String> packages = new LinkedList<String>();
-    packages.add("com.vladium"); // To support EMMA code coverage tools
-    packages.add("net.sourceforge.cobertura"); // To support Cobertura code coverage tools
-    packages.add("org.hamcrest"); // Since this package is referenced directly from org.junit
-    packages.add("org.junit"); // Make sure the ParentRunner can recognize annotations like @Test
+    packages.add("com.vladium");
+    packages.add("net.sourceforge.cobertura");
+    packages.add("org.hamcrest");
+    packages.add("org.junit");
     return packages;
   }
 
@@ -280,18 +243,12 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
    * Runs the tests in this runner, ensuring that the custom GwtMockito classloader is installed as
    * the context classloader.
    */
-  @Override
-  public void run(RunNotifier notifier) {
-    // When running the test, we want to be sure to use our custom classloader as the context
-    // classloader. This is important because Mockito will create mocks using the context
-    // classloader. Things that can go wrong if this isn't set include not being able to mock
-    // package-private classes, since the mock implementation would be created by a different
-    // classloader than the class being mocked.
+  @Override public void run(RunNotifier notifier) {
     ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
     Thread.currentThread().setContextClassLoader(gwtMockitoClassLoader);
     try {
       super.run(notifier);
-    } finally {
+    }  finally {
       Thread.currentThread().setContextClassLoader(originalClassLoader);
     }
   }
@@ -299,14 +256,8 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
   /**
    * Overridden to invoke GwtMockito.initMocks before starting each test.
    */
-  @Override
-  @SuppressWarnings("deprecation") // Currently the only way to support befores
-  protected final Statement withBefores(FrameworkMethod method, Object target,
-      Statement statement) {
+  @Override @SuppressWarnings(value = { "deprecation" }) protected final Statement withBefores(FrameworkMethod method, Object target, Statement statement) {
     try {
-      // Invoke initMocks on the version of GwtMockito that was loaded via our custom classloader.
-      // This is necessary to ensure that it uses the same set of classes as the unit test class,
-      // which we loaded through the custom classloader above.
       customLoadedGwtMockito.getMethod("initMocks", Object.class).invoke(null, target);
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -314,9 +265,7 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
     return super.withBefores(method, target, statement);
   }
 
-  /** Custom classloader that performs additional modifications to loaded classes. */
   private final class GwtMockitoClassLoader extends Loader implements Translator {
-
     GwtMockitoClassLoader(ClassLoader classLoader, ClassPool classPool) {
       super(classLoader, classPool);
       try {
@@ -328,9 +277,7 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
       }
     }
 
-    @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-      // If the class is in a blacklisted package, load it with the default classloader.
+    @Override protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
       for (String blacklistedPackage : getPackagesToLoadViaStandardClassloader()) {
         if (name.startsWith(blacklistedPackage)) {
           Class<?> clazz = GwtMockitoTestRunner.class.getClassLoader().loadClass(name);
@@ -340,50 +287,34 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
           return clazz;
         }
       }
-
-      // Otherwise load it with our custom classloader.
       return super.loadClass(name, resolve);
     }
 
-    @Override
-    public void onLoad(ClassPool pool, String name)
-        throws NotFoundException, CannotCompileException {
+    @Override public void onLoad(ClassPool pool, String name) throws NotFoundException, CannotCompileException {
       CtClass clazz = pool.get(name);
-
-      // Strip final modifiers from the class and all methods to allow them to be mocked
       clazz.setModifiers(clazz.getModifiers() & ~Modifier.FINAL);
       for (CtMethod method : clazz.getDeclaredMethods()) {
         method.setModifiers(method.getModifiers() & ~Modifier.FINAL);
       }
-
-      // Create stub implementations for certain methods
       for (CtMethod method : clazz.getDeclaredMethods()) {
         if (StubGenerator.shouldStub(method, getClassesToStub())) {
           method.setModifiers(method.getModifiers() & ~Modifier.NATIVE);
           CtClass returnType = method.getReturnType();
-          // TODO(ekuefler): Handle primitives, voids, and enums in StubGenerator
           if (returnType.isPrimitive() || returnType.getName().equals("void")) {
             method.setBody(null);
-          } else if (returnType.isEnum()) {
-            method.setBody(String.format("return %s.values()[0];", returnType.getName()));
           } else {
-            method.setBody(String.format(
-                "return (%s) com.google.gwtmockito.impl.StubGenerator.invoke("
-                    + "Class.forName(\"%s\"), \"%s\", \"%s\");",
-                method.getReturnType().getName(),
-                method.getReturnType().getName(),
-                clazz.getName(),
-                method.getName()));
+            if (returnType.isEnum()) {
+              method.setBody(String.format("return %s.values()[0];", returnType.getName()));
+            } else {
+              method.setBody(String.format("return (%s) com.google.gwtmockito.impl.StubGenerator.invoke(" + "Class.forName(\"%s\"), \"%s\", \"%s\");", method.getReturnType().getName(), method.getReturnType().getName(), clazz.getName(), method.getName()));
+            }
           }
         }
       }
-
-      // Also stub certain constructors
       for (Class<?> classToStub : getClassesToStub()) {
         if (classToStub.getName().equals(clazz.getName())) {
           for (CtConstructor constructor : clazz.getConstructors()) {
-            String parameters = makeNullParameters(
-                clazz.getSuperclass().getConstructors()[0].getParameterTypes());
+            String parameters = makeNullParameters(clazz.getSuperclass().getConstructors()[0].getParameterTypes());
             constructor.setBody("super(" + parameters + ");");
           }
         }
@@ -400,35 +331,46 @@ public class GwtMockitoTestRunner extends BlockJUnit4ClassRunner {
         String className = paramClass.getName();
         if (className.equals("boolean")) {
           params.append("false");
-        } else if (className.equals("byte")) {
-          params.append("(byte) 0");
-        } else if (className.equals("char")) {
-          params.append("(char) 0");
-        } else if (className.equals("double")) {
-          params.append("(double) 0");
-        } else if (className.equals("int")) {
-          params.append("(int) 0");
-        } else if (className.equals("float")) {
-          params.append("(float) 0");
-        } else if (className.equals("long")) {
-          params.append("(long) 0");
-        } else if (className.equals("short")) {
-          params.append("(short) 0");
         } else {
-          params.append(newMockForClassSnippet(paramClass));
+          if (className.equals("byte")) {
+            params.append("(byte) 0");
+          } else {
+            if (className.equals("char")) {
+              params.append("(char) 0");
+            } else {
+              if (className.equals("double")) {
+                params.append("(double) 0");
+              } else {
+                if (className.equals("int")) {
+                  params.append("(int) 0");
+                } else {
+                  if (className.equals("float")) {
+                    params.append("(float) 0");
+                  } else {
+                    if (className.equals("long")) {
+                      params.append("(long) 0");
+                    } else {
+                      if (className.equals("short")) {
+                        params.append("(short) 0");
+                      } else {
+                        params.append(newMockForClassSnippet(paramClass));
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
       return params.substring(1).toString();
     }
 
     private String newMockForClassSnippet(CtClass paramClass) {
-      return String.format(
-          "(%1$s) org.mockito.Mockito.mock("
-              + "%1$s.class, new com.google.gwtmockito.impl.ReturnsCustomMocks())",
-          paramClass.getName());
+      return String.format("(%1$s) org.mockito.Mockito.mock(" + "%1$s.class, new com.google.gwtmockito.impl.ReturnsCustomMocks())", paramClass.getName());
     }
 
-    @Override
-    public void start(ClassPool pool) {}
+    @Override public void start(ClassPool pool) {
+    }
   }
 }
