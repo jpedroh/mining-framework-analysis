@@ -59,8 +59,7 @@ public final class Syntax {
     public Syntax(final String delimiterCommentOpen, final String delimiterCommentClose,
             final String delimiterExecuteOpen, final String delimiterExecuteClose, final String delimiterPrintOpen,
             final String delimiterPrintClose, final String delimiterInterpolationOpen,
-            final String delimiterInterpolationClose, final String whitespaceTrim,
-            final boolean enableNewLineTrimming) {
+            final String delimiterInterpolationClose, final String whitespaceTrim, final boolean enableNewLineTrimming) {
         this.delimiterCommentClose = delimiterCommentClose;
         this.delimiterCommentOpen = delimiterCommentOpen;
         this.delimiterExecuteOpen = delimiterExecuteOpen;
@@ -68,16 +67,19 @@ public final class Syntax {
         this.delimiterPrintOpen = delimiterPrintOpen;
         this.delimiterPrintClose = delimiterPrintClose;
         this.whitespaceTrim = whitespaceTrim;
+<<<<<<< /usr/src/app/output/mbosecke/pebble/48ab05076e92d1280bc8c3797717a3f020a2eca2/src/main/java/com/mitchellbosecke/pebble/lexer/Syntax.java/left.java
         this.delimiterInterpolationClose = delimiterInterpolationClose;
         this.delimiterInterpolationOpen = delimiterInterpolationOpen;
-
+||||||| /usr/src/app/output/mbosecke/pebble/48ab05076e92d1280bc8c3797717a3f020a2eca2/src/main/java/com/mitchellbosecke/pebble/lexer/Syntax.java/base.java
+=======
         // Do we trim the newline following a tag?
         String newlineRegexSuffix = enableNewLineTrimming ? POSSIBLE_NEW_LINE : "";
+>>>>>>> /usr/src/app/output/mbosecke/pebble/48ab05076e92d1280bc8c3797717a3f020a2eca2/src/main/java/com/mitchellbosecke/pebble/lexer/Syntax.java/right.java
 
         // regexes used to find the individual delimiters
         this.regexPrintClose = Pattern.compile("^\\s*" + Pattern.quote(whitespaceTrim) + "?"
                 + Pattern.quote(delimiterPrintClose) + newlineRegexSuffix);
-
+        
         this.regexExecuteClose = Pattern.compile("^\\s*" + Pattern.quote(whitespaceTrim) + "?"
                 + Pattern.quote(delimiterExecuteClose) + newlineRegexSuffix);
         this.regexCommentClose = Pattern.compile(Pattern.quote(delimiterCommentClose) + newlineRegexSuffix);
@@ -220,7 +222,7 @@ public final class Syntax {
         private String delimiterInterpolationClose = "}";
 
         private String whitespaceTrim = "-";
-
+        
         private boolean enableNewLineTrimming = true;
 
         /**
@@ -320,6 +322,15 @@ public final class Syntax {
         public void setWhitespaceTrim(String whitespaceTrim) {
             this.whitespaceTrim = whitespaceTrim;
         }
+        
+        public boolean isEnableNewLineTrimming() {
+            return enableNewLineTrimming;
+        }
+        
+        public Builder setEnableNewLineTrimming(boolean enableNewLineTrimming) {
+            this.enableNewLineTrimming = enableNewLineTrimming;
+            return this;
+        }
 
         public String getInterpolationOpenDelimiter() {
             return delimiterInterpolationOpen;
@@ -335,15 +346,6 @@ public final class Syntax {
 
         public void setInterpolationCloseDelimiter(String delimiterInterpolationClose) {
             this.delimiterInterpolationClose = delimiterInterpolationClose;
-        }
-
-        public boolean isEnableNewLineTrimming() {
-            return enableNewLineTrimming;
-        }
-
-        public Builder setEnableNewLineTrimming(boolean enableNewLineTrimming) {
-            this.enableNewLineTrimming = enableNewLineTrimming;
-            return this;
         }
 
         public Syntax build() {
