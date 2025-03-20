@@ -64,10 +64,10 @@ abstract class NodeTaskExecutor {
                     environment).executeAndRedirectOutput(logger);
             if (result != 0) {
                 throw new TaskRunnerException(
-                        taskToString(taskName, arguments) + " failed. (error code " + result + ")", result);
+                        taskToString(taskName, arguments) + " failed. (error code " + result + ")");
             }
         } catch (ProcessExecutionException e) {
-            throw new TaskRunnerException(taskToString(taskName, arguments) + " failed.", e, e.getExitCode());
+            throw new TaskRunnerException(taskToString(taskName, arguments) + " failed.", e);
         }
     }
 
