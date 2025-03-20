@@ -65,7 +65,13 @@ import com.thoughtworks.qdox.model.JavaType;
  *
  * @see org.apache.maven.plugin.descriptor.MojoDescriptor
  */
-@Named( JavaJavadocMojoDescriptorExtractor.NAME )
+<<<<<<< /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-java/src/main/java/org/apache/maven/tools/plugin/extractor/javadoc/JavaJavadocMojoDescriptorExtractor.java/left.java
+@Named( role = MojoDescriptorExtractor.class, hint = JavaJavadocMojoDescriptorExtractor.NAME )
+||||||| /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-java/src/main/java/org/apache/maven/tools/plugin/extractor/javadoc/JavaJavadocMojoDescriptorExtractor.java/base.java
+@Named( role = MojoDescriptorExtractor.class, hint = "java-javadoc" )
+=======
+@Named( "java-javadoc" )
+>>>>>>> /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-java/src/main/java/org/apache/maven/tools/plugin/extractor/javadoc/JavaJavadocMojoDescriptorExtractor.java/right.java
 @Singleton
 public class JavaJavadocMojoDescriptorExtractor
     extends AbstractLogEnabled

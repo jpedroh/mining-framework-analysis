@@ -46,7 +46,7 @@ import java.util.Set;
  * @deprecated Scripting support for mojos is deprecated and is planned tp be removed in maven 4.0
  */
 @Deprecated
-@Named( BeanshellMojoDescriptorExtractor.NAME )
+@Named( "bsh" )
 @Singleton
 public class BeanshellMojoDescriptorExtractor
     extends AbstractScriptedMojoDescriptorExtractor

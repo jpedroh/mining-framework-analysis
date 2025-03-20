@@ -84,7 +84,13 @@ import com.thoughtworks.qdox.model.JavaField;
  * @author Olivier Lamy
  * @since 3.0
  */
-@Named( JavaAnnotationsMojoDescriptorExtractor.NAME )
+<<<<<<< /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-annotations/src/main/java/org/apache/maven/tools/plugin/extractor/annotations/JavaAnnotationsMojoDescriptorExtractor.java/left.java
+@Named( role = MojoDescriptorExtractor.class, hint = JavaAnnotationsMojoDescriptorExtractor.NAME )
+||||||| /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-annotations/src/main/java/org/apache/maven/tools/plugin/extractor/annotations/JavaAnnotationsMojoDescriptorExtractor.java/base.java
+@Named( role = MojoDescriptorExtractor.class, hint = "java-annotations" )
+=======
+@Named( "java-annotations" )
+>>>>>>> /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-plugin-tools-annotations/src/main/java/org/apache/maven/tools/plugin/extractor/annotations/JavaAnnotationsMojoDescriptorExtractor.java/right.java
 @Singleton
 public class JavaAnnotationsMojoDescriptorExtractor
     extends AbstractLogEnabled

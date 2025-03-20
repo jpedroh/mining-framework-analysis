@@ -49,7 +49,13 @@ import org.codehaus.plexus.util.StringUtils;
  * @deprecated Scripting support for mojos is deprecated and is planned tp be removed in maven 4.0
  */
 @Deprecated
-@Named( AntMojoDescriptorExtractor.NAME )
+<<<<<<< /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-script/maven-plugin-tools-ant/src/main/java/org/apache/maven/tools/plugin/extractor/ant/AntMojoDescriptorExtractor.java/left.java
+@Named( role = MojoDescriptorExtractor.class, hint = AntMojoDescriptorExtractor.NAME )
+||||||| /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-script/maven-plugin-tools-ant/src/main/java/org/apache/maven/tools/plugin/extractor/ant/AntMojoDescriptorExtractor.java/base.java
+@Named( role = MojoDescriptorExtractor.class, hint = "ant" )
+=======
+@Named( "ant" )
+>>>>>>> /usr/src/app/output/apache/maven-plugin-tools/5fe527d2614d39b64e81881e52ff4fb88a0c6111/maven-script/maven-plugin-tools-ant/src/main/java/org/apache/maven/tools/plugin/extractor/ant/AntMojoDescriptorExtractor.java/right.java
 @Singleton
 public class AntMojoDescriptorExtractor
     extends AbstractScriptedMojoDescriptorExtractor
