@@ -47,7 +47,7 @@ abstract class NodeTaskExecutor {
         this.config = config;
         this.taskName = taskName;
         this.taskLocation = taskLocation;
-        this.additionalArguments = additionalArguments;
+        this.argumentsParser = new ArgumentsParser(additionalArguments);
         this.proxy = proxy;
     }
 
