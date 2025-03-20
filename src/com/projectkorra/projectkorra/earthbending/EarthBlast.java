@@ -132,6 +132,18 @@ public class EarthBlast extends EarthAbility {
 			trans[j] = getTransparentMaterials()[j];
 			i++;
 		}
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/0201e572c8b869b1755a46e3079ba4c7712bdace/src/com/projectkorra/projectkorra/earthbending/EarthBlast.java/left.java
+		for (int j = 0; j < getEarthbendableBlocks().size(); j++) {
+			try {
+				trans[i] = Material.valueOf(getEarthbendableBlocks().get(j));
+			} catch (IllegalArgumentException e) {
+				continue;
+			}
+			i++;
+		}
+||||||| /usr/src/app/output/projectkorra/projectkorra/0201e572c8b869b1755a46e3079ba4c7712bdace/src/com/projectkorra/projectkorra/earthbending/EarthBlast.java/base.java
+		for (int j = 0; j < getEarthbendableBlocks().size(); j++) 
+=======
 		for (int j = 0; j < getEarthbendableBlocks().size(); j++) {
 			try {
 				trans[i] = Material.valueOf(getEarthbendableBlocks().get(j));
@@ -139,6 +151,7 @@ public class EarthBlast extends EarthAbility {
 				continue;
 			}
 		}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/0201e572c8b869b1755a46e3079ba4c7712bdace/src/com/projectkorra/projectkorra/earthbending/EarthBlast.java/right.java
 
 		if (target == null) {
 			location = GeneralMethods.getTargetedLocation(player, range, trans);

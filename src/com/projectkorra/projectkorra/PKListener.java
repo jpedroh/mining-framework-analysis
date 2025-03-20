@@ -370,6 +370,21 @@ public class PKListener implements Listener {
 				}
 			}
 			return;
+		}
+		
+		if (TempBlock.isTempBlock(event.getBlock())) {
+			TempBlock tb = TempBlock.get(event.getBlock());
+			tb.revertBlock();
+			event.getBlock().setType(event.getItemInHand().getType());
+			if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+				if (event.getItemInHand().getAmount() <= 0) {
+					event.getItemInHand().setType(Material.AIR);
+					event.getItemInHand().setAmount(1);
+				} else {
+					event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
+				}
+			}
+			return;
 		} 
 	}
 
