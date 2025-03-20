@@ -133,9 +133,15 @@ public class DFRegistryMatcher extends RegistryMatcher {
         super.bind(com.fincatto.documentofiscal.nfe400.classes.nota.NFTipoAtoConcessorio.class, new com.fincatto.documentofiscal.nfe400.transformers.NFTipoAtoConcessorioTransformer());
         super.bind(com.fincatto.documentofiscal.nfe400.classes.nota.NFIndicadorSomaCofinsST.class, new com.fincatto.documentofiscal.nfe400.transformers.NFIndicadorSomaCofinsSTTransformer());
         super.bind(com.fincatto.documentofiscal.nfe400.classes.nota.NFIndicadorSomaPISST.class, new com.fincatto.documentofiscal.nfe400.transformers.NFIndicadorSomaPISSTTransformer());
+<<<<<<< /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/transformers/DFRegistryMatcher.java/left.java
         super.bind(com.fincatto.documentofiscal.nfe400.classes.NFNotaMotivoReducaoADREM.class, new com.fincatto.documentofiscal.nfe400.transformers.NFNotaMotivoReducaoADREMTransformer());
         super.bind(com.fincatto.documentofiscal.nfe400.classes.nota.NFIndicadorImportacao.class, new com.fincatto.documentofiscal.nfe400.transformers.NFIndicadorImportacaoTransformer());
+||||||| /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/transformers/DFRegistryMatcher.java/base.java
+=======
+        super.bind(com.fincatto.documentofiscal.nfe400.classes.NFNotaMotivoReducaoADREM.class, new com.fincatto.documentofiscal.nfe400.transformers.NFNotaMotivoReducaoADREMTransformer());
 
+>>>>>>> /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/transformers/DFRegistryMatcher.java/right.java
+        
         // CTe
         super.bind(CTModal.class, new CTModalTransformer());
         super.bind(CTTipoCte.class, new CTTipoCteTransformer());

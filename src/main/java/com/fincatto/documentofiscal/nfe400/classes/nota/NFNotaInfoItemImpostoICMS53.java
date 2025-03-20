@@ -13,7 +13,7 @@ public class NFNotaInfoItemImpostoICMS53 extends DFBase {
 
     @Element(name = "orig")
     private NFOrigem origem;
-
+    
     @Element(name = "CST")
     private NFNotaInfoImpostoTributacaoICMS situacaoTributaria;
 
@@ -54,9 +54,16 @@ public class NFNotaInfoItemImpostoICMS53 extends DFBase {
         this.percentualAliquota = DFBigDecimalValidador.tamanho7ComAte4CasasDecimais(percentualAliquota, "Alíquota ad rem do imposto diferido");
     }
 
+<<<<<<< /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/left.java
     public void setValorOperacao(BigDecimal valorOperacao) {
         this.valorOperacao = DFBigDecimalValidador.tamanho15Com2CasasDecimais(valorOperacao, "ICMS da operação");
     }
+||||||| /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/base.java
+=======
+    public void setValorOperacao(BigDecimal valorOperacao) {
+        this.valorOperacao = DFBigDecimalValidador.tamanho15Com2CasasDecimais(valorOperacao, "Valor do ICMS da operação");
+    }
+>>>>>>> /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/right.java
 
     public void setPercentualDiferimento(BigDecimal percentualDiferimento) {
         this.percentualDiferimento = DFBigDecimalValidador.tamanho7ComAte4CasasDecimais(percentualDiferimento, "Percentual do diferiment");
@@ -66,9 +73,16 @@ public class NFNotaInfoItemImpostoICMS53 extends DFBase {
         this.valorTributoDiferido = DFBigDecimalValidador.tamanho15Com2CasasDecimais(valorTributoDiferido, "ICMS diferido");
     }
 
+<<<<<<< /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/left.java
     public void setValorTributo(BigDecimal valorTributo) {
         this.valorTributo = DFBigDecimalValidador.tamanho15Com2CasasDecimais(valorTributo, "ICMS próprio devido");
     }
+||||||| /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/base.java
+=======
+    public void setValorTributo(BigDecimal valorTributo) {
+        this.valorTributo = DFBigDecimalValidador.tamanho15Com2CasasDecimais(valorTributo, "Valor do ICMS próprio devido");
+    }
+>>>>>>> /usr/src/app/output/fincatto/nfe/4c7a76dd73a0d77147d11304ddf788c0f1b55abe/src/main/java/com/fincatto/documentofiscal/nfe400/classes/nota/NFNotaInfoItemImpostoICMS53.java/right.java
 
     public NFOrigem getOrigem() {
         return origem;
@@ -101,5 +115,4 @@ public class NFNotaInfoItemImpostoICMS53 extends DFBase {
     public String getValorTributo() {
         return valorTributo;
     }
-
 }
