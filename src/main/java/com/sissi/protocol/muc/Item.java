@@ -1,9 +1,7 @@
 package com.sissi.protocol.muc;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import com.sissi.context.JID;
 import com.sissi.ucenter.MucGroupConfig;
 import com.sissi.ucenter.MucGroupContext;
@@ -13,83 +11,83 @@ import com.sissi.ucenter.RelationMuc;
 /**
  * @author kim 2014年2月11日
  */
-@XmlType(namespace = XMuc.XMLNS)
-@XmlRootElement(name = Item.NAME)
-public class Item implements MucStatusJudge {
+@XmlType(namespace = XMuc.XMLNS) @XmlRootElement(name = Item.NAME) public class Item implements MucStatusJudge {
+  public final static String NAME = "item";
 
-	public final static String NAME = "item";
+  private MucGroupConfig config;
 
-	private MucGroupConfig config;
+  private String affiliation;
 
-	private String affiliation;
+  private String role;
 
-	private String role;
+  private String jid;
 
-	private String jid;
+  private JID group;
 
-	private JID group;
+  public Item() {
+  }
 
-	public Item() {
-	}
+  public Item(JID group, RelationMuc muc, MucGroupContext mucGroupContext) {
+    super();
+    this.group = group;
+    this.role = muc.getRole();
+    this.affiliation = muc.getAffiliaion();
+    this.config = mucGroupContext.find(this.group);
+  }
 
-	public Item(JID group, RelationMuc muc, MucGroupContext mucGroupContext) {
-		super();
-		this.group = group;
-		this.role = muc.getRole();
-		this.affiliation = muc.getAffiliaion();
-		this.config = mucGroupContext.find(this.group);
-	}
+  private boolean hidden() {
+    return this.config.allowed(MucGroupConfig.HIDDEN, this.group);
+  }
 
-	private boolean hidden() {
-		return this.config.allowed(MucGroupConfig.HIDDEN, this.group);
-	}
+  public boolean equals(String jid) {
+    return this.jid.equals(jid);
+  }
 
-	public boolean equals(String jid) {
-		return this.jid.equals(jid);
-	}
+  public boolean jid(String jid) {
+    return this.jid != null && this.jid.equals(jid) ? true : false;
+  }
 
-	public boolean jid(String jid) {
-		return this.jid != null && this.jid.equals(jid) ? true : false;
-	}
+  @XmlAttribute public String getJid() {
+    return 
+<<<<<<< /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/protocol/muc/Item.java/left.java
+    this.hidden()
+=======
+    this.config.allowed(MucGroupConfig.HIDDEN, this.group)
+>>>>>>> /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/protocol/muc/Item.java/right.java
+     ? null : this.jid;
+  }
 
-	@XmlAttribute
-	public String getJid() {
-		return this.hidden() ? null : this.jid;
-	}
+  public Item setJid(JID jid) {
+    this.setJid(jid.asString());
+    return this;
+  }
 
-	public Item setJid(JID jid) {
-		this.setJid(jid.asString());
-		return this;
-	}
+  public Item setJid(String jid) {
+    this.jid = jid;
+    return this;
+  }
 
-	public Item setJid(String jid) {
-		this.jid = jid;
-		return this;
-	}
+  @XmlAttribute public String getAffiliation() {
+    return this.affiliation;
+  }
 
-	@XmlAttribute
-	public String getAffiliation() {
-		return this.affiliation;
-	}
+  @XmlAttribute public String getRole() {
+    return ItemRole.NONE.equals(this.role) ? this.config.mapping(this.getAffiliation()) : this.role;
+  }
 
-	@XmlAttribute
-	public String getRole() {
-		return ItemRole.NONE.equals(this.role) ? this.config.mapping(this.getAffiliation()) : this.role;
-	}
+  public Object supply(String key) {
+    switch (key) {
+      case MucStatusJudge.JUDEGE_JID:
+      return this.jid;
+    }
+    return null;
+  }
 
-	public Object supply(String key) {
-		switch (key) {
-		case MucStatusJudge.JUDEGE_JID:
-			return this.jid;
-		}
-		return null;
-	}
-
-	public boolean judge(String key, Object value) {
-		switch (key) {
-		case MucStatusJudge.JUDEGE_HIDDEN:
-			return this.hidden();
-		}
-		return false;
-	}
+  public boolean judge(String key, Object value) {
+    switch (key) {
+      case MucStatusJudge.JUDEGE_HIDDEN:
+      return this.hidden();
+    }
+    return false;
+  }
 }

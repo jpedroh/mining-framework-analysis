@@ -1,5 +1,4 @@
 package com.sissi.pipeline.in.presence.muc;
-
 import com.sissi.context.JID;
 import com.sissi.context.JIDContext;
 import com.sissi.pipeline.in.ProxyProcessor;
@@ -17,26 +16,30 @@ import com.sissi.ucenter.RelationMuc;
  * @author kim 2014年2月11日
  */
 public class PresenceMucLeave2AllProcessor extends ProxyProcessor {
+  private final MucGroupContext mucGroupContext;
 
-	private final MucGroupContext mucGroupContext;
+  private final MucStatusCollector mucStatusCollector;
 
-	private final MucStatusCollector mucStatusCollector;
+  public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext, MucStatusCollector mucStatusCollector) {
+    super();
+    this.mucGroupContext = mucGroupContext;
+    this.mucStatusCollector = mucStatusCollector;
+  }
 
-	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext, MucStatusCollector mucStatusCollector) {
-		super();
-		this.mucGroupContext = mucGroupContext;
-		this.mucStatusCollector = mucStatusCollector;
-	}
-
-	@Override
-	public boolean input(JIDContext context, Protocol protocol) {
-		JID group = super.build(protocol.getTo());
-		RelationMuc ourRelation = RelationMuc.class.cast(super.ourRelation(context.jid(), group));
-		Presence presence = new Presence();
-		for (Relation each : super.myRelations(group)) {
-			RelationMuc relation = RelationMuc.class.cast(each);
-			super.findOne(super.build(relation.getJID()), true).write(presence.clear().add(new XUser().setItem(new Item(group, ourRelation, this.mucGroupContext), this.mucStatusCollector)).setType(PresenceType.UNAVAILABLE).setFrom(protocol.getTo()));
-		}
-		return true;
-	}
+  @Override public boolean input(JIDContext context, Protocol protocol) {
+    JID group = super.build(protocol.getTo());
+    RelationMuc ourRelation = RelationMuc.class.cast(super.ourRelation(context.jid(), group));
+    Presence presence = new Presence();
+    for (Relation each : super.myRelations(group)) {
+      RelationMuc relation = RelationMuc.class.cast(each);
+      super.findOne(super.build(relation.getJID()), true).write(presence.clear().add(new XUser().
+<<<<<<< /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/left.java
+      setItem(new Item(group, ourRelation, this.mucGroupContext), this.mucStatusCollector)
+=======
+      add(new Item(group, ourRelation, this.mucGroupContext))
+>>>>>>> /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/right.java
+      ).setType(PresenceType.UNAVAILABLE).setFrom(protocol.getTo()));
+    }
+    return true;
+  }
 }
