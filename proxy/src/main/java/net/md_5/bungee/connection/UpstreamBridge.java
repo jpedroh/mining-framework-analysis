@@ -7,6 +7,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnection.KeepAliveData;
 import net.md_5.bungee.UserConnection;
@@ -160,10 +161,23 @@ public class UpstreamBridge extends PacketHandler
         }
         //BotFilter end
 
-        KeepAliveData keepAliveData = con.getServer().getKeepAlives().peek();
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/left.java
+        Queue<KeepAliveData> keepAliveDataQueue =con.getServer().getKeepAlives();
+||||||| /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/base.java
+        Queue<KeepAliveData> keepAliveDataQueue =con.getServer().getKeepAlives().poll();
+=======
+        Queue<KeepAliveData> keepAliveDataQueue =con.getServer().getKeepAlives().peek();
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/right.java
+        KeepAliveData keepAliveData = keepAliveDataQueue.peek();
+
         if ( keepAliveData != null && alive.getRandomId() == keepAliveData.getId() )
         {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/left.java
+            keepAliveDataQueue.remove();
+||||||| /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/base.java
+=======
             Preconditions.checkState( keepAliveData == con.getServer().getKeepAlives().poll(), "keepalive queue mismatch" );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/b3d6817bd1ccf7158cc025096e6baeb7f2842c48/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java/right.java
             int newPing = (int) ( System.currentTimeMillis() - keepAliveData.getTime() );
             con.getTabListHandler().onPingChange( newPing );
             con.setPing( newPing );
