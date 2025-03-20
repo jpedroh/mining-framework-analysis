@@ -1,5 +1,4 @@
 package net.md_5.bungee.protocol.packet;
-
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,82 +7,61 @@ import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.ProtocolConstants;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-public class TabCompleteRequest extends DefinedPacket
-{
+@Data @NoArgsConstructor @EqualsAndHashCode(callSuper = false) public class TabCompleteRequest extends DefinedPacket {
+  private int transactionId;
 
-    private int transactionId;
-    private String cursor;
-    private boolean assumeCommand;
-    private boolean hasPositon;
-    private long position;
+  private String cursor;
 
-    public TabCompleteRequest(int transactionId, String cursor)
-    {
-        this.transactionId = transactionId;
-        this.cursor = cursor;
+  private boolean assumeCommand;
+
+  private boolean hasPositon;
+
+  private long position;
+
+  public TabCompleteRequest(int transactionId, String cursor) {
+    this.transactionId = transactionId;
+    this.cursor = cursor;
+  }
+
+  public TabCompleteRequest(String cursor, boolean assumeCommand, boolean hasPosition, long position) {
+    this.cursor = cursor;
+    this.assumeCommand = assumeCommand;
+    this.hasPositon = hasPosition;
+    this.position = position;
+  }
+
+  @Override public void read(ByteBuf buf, ProtocolConstants.Direction direction, int protocolVersion) {
+    if (protocolVersion >= ProtocolConstants.MINECRAFT_1_13) {
+      transactionId = readVarInt(buf);
     }
-
-    public TabCompleteRequest(String cursor, boolean assumeCommand, boolean hasPosition, long position)
-    {
-        this.cursor = cursor;
-        this.assumeCommand = assumeCommand;
-        this.hasPositon = hasPosition;
-        this.position = position;
+    cursor = readString(buf, 32500);
+    if (protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13) {
+      if (protocolVersion >= ProtocolConstants.MINECRAFT_1_9) {
+        assumeCommand = buf.readBoolean();
+      }
+      if (hasPositon = buf.readBoolean()) {
+        position = buf.readLong();
+      }
     }
+  }
 
-    @Override
-    public void read(ByteBuf buf, ProtocolConstants.Direction direction, int protocolVersion)
-    {
-        if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_13 )
-        {
-            transactionId = readVarInt( buf );
-        }
-        cursor = readString( buf, 32500 );
-
-        if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13 )
-        {
-            if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_9 )
-            {
-                assumeCommand = buf.readBoolean();
-            }
-
-            if ( hasPositon = buf.readBoolean() )
-            {
-                position = buf.readLong();
-            }
-        }
+  @Override public void write(ByteBuf buf, ProtocolConstants.Direction direction, int protocolVersion) {
+    if (protocolVersion >= ProtocolConstants.MINECRAFT_1_13) {
+      writeVarInt(transactionId, buf);
     }
-
-    @Override
-    public void write(ByteBuf buf, ProtocolConstants.Direction direction, int protocolVersion)
-    {
-        if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_13 )
-        {
-            writeVarInt( transactionId, buf );
-        }
-        writeString( cursor, buf );
-
-        if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13 )
-        {
-            if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_9 )
-            {
-                buf.writeBoolean( assumeCommand );
-            }
-
-            buf.writeBoolean( hasPositon );
-            if ( hasPositon )
-            {
-                buf.writeLong( position );
-            }
-        }
+    writeString(cursor, buf);
+    if (protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13) {
+      if (protocolVersion >= ProtocolConstants.MINECRAFT_1_9) {
+        buf.writeBoolean(assumeCommand);
+      }
+      buf.writeBoolean(hasPositon);
+      if (hasPositon) {
+        buf.writeLong(position);
+      }
     }
+  }
 
-    @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
-    }
+  @Override public void handle(AbstractPacketHandler handler) throws Exception {
+    handler.handle(this);
+  }
 }
