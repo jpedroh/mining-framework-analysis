@@ -1,24 +1,17 @@
 package org.assertj.assertions.generator;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.apache.commons.io.FileUtils.readFileToString;
-import static org.assertj.assertions.generator.BaseAssertionGenerator.ABSTRACT_ASSERT_CLASS_PREFIX;
 import static org.assertj.assertions.generator.BaseAssertionGenerator.ASSERT_CLASS_FILE_SUFFIX;
 import static org.assertj.assertions.generator.util.ClassUtil.collectClasses;
 import static org.assertj.assertions.generator.util.ClassUtil.getSimpleNameWithOuterClass;
 import static org.assertj.assertions.generator.util.ClassUtil.getSimpleNameWithOuterClassNotSeparatedByDots;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
-
-import org.assertj.assertions.generator.data.ArtWork;
-import org.assertj.assertions.generator.data.Movie;
 import org.assertj.assertions.generator.data.Team;
 import org.assertj.assertions.generator.data.nba.Player;
 import org.assertj.assertions.generator.description.ClassDescription;
@@ -30,6 +23,13 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.assertj.assertions.generator.BaseAssertionGenerator.ABSTRACT_ASSERT_CLASS_PREFIX;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import org.assertj.assertions.generator.data.ArtWork;
+import org.assertj.assertions.generator.data.Movie;
+import org.assertj.assertions.generator.data.Player;
 
 @RunWith(Theories.class)
 public class AssertionGeneratorTest implements NestedClassesTest, BeanWithExceptionsTest {
@@ -38,7 +38,7 @@ public class AssertionGeneratorTest implements NestedClassesTest, BeanWithExcept
   private static final Logger logger = LoggerFactory.getLogger(AssertionGeneratorTest.class);
   private ClassToClassDescriptionConverter converter;
   private AssertionGenerator assertionGenerator;
-  private static final Set<Class<?>> allClasses = newHashSet(new Class<?>[] {Movie.class, ArtWork.class});
+  private static final Set<Class<?>> allClasses = new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {Movie.class, ArtWork.class}));
   
   @Before
   public void beforeEachTest() throws IOException {
@@ -70,7 +70,7 @@ public class AssertionGeneratorTest implements NestedClassesTest, BeanWithExcept
     abstractFileGeneratedFor(Movie.class).delete();
     assertionGenerator.generateCustomAssertionFor(converter.convertToClassDescription(Movie.class));
     assertThat(fileGeneratedFor(Movie.class)).hasContentEqualTo(
-        new File("src/test/resources/MovieAssert.flat.expected.txt").getAbsoluteFile());
+        new File("src/test/resources/MovieAssert.flat.expected" + ".txt").getAbsoluteFile());
     assertThat(abstractFileGeneratedFor(Movie.class)).doesNotExist();
   }
 
@@ -78,18 +78,18 @@ public class AssertionGeneratorTest implements NestedClassesTest, BeanWithExcept
   public void should_generate_hierarchical_assertion_for_movie_class() throws Exception {
     assertionGenerator.generateHierarchicalCustomAssertionFor(converter.convertToClassDescription(Movie.class), allClasses);
     assertThat(fileGeneratedFor(Movie.class)).hasContentEqualTo(
-        new File("src/test/resources/MovieAssert.expected.txt").getAbsoluteFile());
+        new File("src/test/resources/MovieAssert.expected" + ".txt").getAbsoluteFile());
     assertThat(abstractFileGeneratedFor(Movie.class)).hasContentEqualTo(
-        new File("src/test/resources/AbstractMovieAssert.expected.txt").getAbsoluteFile());
+        new File("src/test/resources/AbstractMovieAssert.expected" + ".txt").getAbsoluteFile());
   }
 
   @Test
   public void should_generate_hierarchical_assertion_for_artwork_class() throws Exception {
     assertionGenerator.generateHierarchicalCustomAssertionFor(converter.convertToClassDescription(ArtWork.class), allClasses);
     assertThat(fileGeneratedFor(ArtWork.class)).hasContentEqualTo(
-        new File("src/test/resources/ArtWorkAssert.expected.txt").getAbsoluteFile());
+        new File("src/test/resources/ArtWorkAssert.expected" + ".txt").getAbsoluteFile());
     assertThat(abstractFileGeneratedFor(ArtWork.class)).hasContentEqualTo(
-        new File("src/test/resources/AbstractArtWorkAssert.expected.txt").getAbsoluteFile());
+        new File("src/test/resources/AbstractArtWorkAssert.expected" + ".txt").getAbsoluteFile());
   }
 
   @Theory

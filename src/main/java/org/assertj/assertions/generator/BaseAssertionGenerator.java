@@ -110,12 +110,9 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
    */
   public BaseAssertionGenerator(String templatesDirectory) throws IOException {
     this(
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/left.java
          new Template(Template.Type.ASSERT_CLASS,
                       new File(templatesDirectory, DEFAULT_CUSTOM_ASSERTION_CLASS_TEMPLATE)),
-         new Template(Template.Type.HIERARCHICAL_ASSERT_CLASS,
-                      new File(templatesDirectory, DEFAULT_CUSTOM_HIERARCHICAL_ASSERTION_CLASS_TEMPLATE)),
-         new Template(Template.Type.ABSTRACT_ASSERT_CLASS,
-                      new File(templatesDirectory, DEFAULT_CUSTOM_ABSTRACT_ASSERTION_CLASS_TEMPLATE)),
          new Template(Template.Type.HAS,
                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE)),
          new Template(Template.Type.HAS_FOR_PRIMITIVE,
@@ -140,6 +137,63 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
                       new File(templatesDirectory, DEFAULT_BDD_ENTRY_POINT_ASSERTION_METHOD_TEMPLATE)),
          new Template(Type.HAS_FOR_REAL_NUMBER,
                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE_FOR_REAL_NUMBER)));
+||||||| /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/base.java
+          new Template(Template.Type.ASSERT_CLASS,
+                       new File(templatesDirectory, DEFAULT_CUSTOM_ASSERTION_CLASS_TEMPLATE)),
+          new Template(Template.Type.HAS,
+                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE)),
+          new Template(Template.Type.HAS_FOR_PRIMITIVE,
+                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE_FOR_PRIMITIVE)),
+          new Template(Template.Type.HAS_FOR_ITERABLE,
+                       new File(templatesDirectory, DEFAULT_HAS_ELEMENTS_ASSERTION_TEMPLATE_FOR_ITERABLE)),
+          new Template(Template.Type.HAS_FOR_ARRAY,
+                       new File(templatesDirectory, DEFAULT_HAS_ELEMENTS_ASSERTION_TEMPLATE_FOR_ARRAY)),
+          new Template(Template.Type.IS,
+                       new File(templatesDirectory, DEFAULT_IS_ASSERTION_TEMPLATE)),
+          new Template(Type.ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_ASSERTIONS_ENTRY_POINT_CLASS_TEMPLATE)),
+          new Template(Type.ASSERTION_ENTRY_POINT,
+                       new File(templatesDirectory, DEFAULT_ASSERTION_ENTRY_POINT_METHOD_TEMPLATE)),
+          new Template(Type.SOFT_ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_SOFT_ENTRY_POINT_ASSERTIONS_CLASS_TEMPLATE)),
+          new Template(Type.SOFT_ENTRY_POINT_METHOD_ASSERTION,
+                       new File(templatesDirectory, DEFAULT_SOFT_ENTRY_POINT_ASSERTION_METHOD_TEMPLATE)),
+          new Template(Type.BDD_ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_BDD_ENTRY_POINT_ASSERTIONS_CLASS_TEMPLATE)),
+          new Template(Type.BDD_ENTRY_POINT_METHOD_ASSERTION,
+                       new File(templatesDirectory, DEFAULT_BDD_ENTRY_POINT_ASSERTION_METHOD_TEMPLATE))
+    );
+=======
+          new Template(Template.Type.ASSERT_CLASS,
+                       new File(templatesDirectory, DEFAULT_CUSTOM_ASSERTION_CLASS_TEMPLATE)),
+          new Template(Template.Type.HIERARCHICAL_ASSERT_CLASS,
+                       new File(templatesDirectory, DEFAULT_CUSTOM_HIERARCHICAL_ASSERTION_CLASS_TEMPLATE)),
+          new Template(Template.Type.ABSTRACT_ASSERT_CLASS,
+                       new File(templatesDirectory, DEFAULT_CUSTOM_ABSTRACT_ASSERTION_CLASS_TEMPLATE)),
+          new Template(Template.Type.HAS,
+                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE)),
+          new Template(Template.Type.HAS_FOR_PRIMITIVE,
+                       new File(templatesDirectory, DEFAULT_HAS_ASSERTION_TEMPLATE_FOR_PRIMITIVE)),
+          new Template(Template.Type.HAS_FOR_ITERABLE,
+                       new File(templatesDirectory, DEFAULT_HAS_ELEMENTS_ASSERTION_TEMPLATE_FOR_ITERABLE)),
+          new Template(Template.Type.HAS_FOR_ARRAY,
+                       new File(templatesDirectory, DEFAULT_HAS_ELEMENTS_ASSERTION_TEMPLATE_FOR_ARRAY)),
+          new Template(Template.Type.IS,
+                       new File(templatesDirectory, DEFAULT_IS_ASSERTION_TEMPLATE)),
+          new Template(Type.ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_ASSERTIONS_ENTRY_POINT_CLASS_TEMPLATE)),
+          new Template(Type.ASSERTION_ENTRY_POINT,
+                       new File(templatesDirectory, DEFAULT_ASSERTION_ENTRY_POINT_METHOD_TEMPLATE)),
+          new Template(Type.SOFT_ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_SOFT_ENTRY_POINT_ASSERTIONS_CLASS_TEMPLATE)),
+          new Template(Type.SOFT_ENTRY_POINT_METHOD_ASSERTION,
+                       new File(templatesDirectory, DEFAULT_SOFT_ENTRY_POINT_ASSERTION_METHOD_TEMPLATE)),
+          new Template(Type.BDD_ASSERTIONS_ENTRY_POINT_CLASS,
+                       new File(templatesDirectory, DEFAULT_BDD_ENTRY_POINT_ASSERTIONS_CLASS_TEMPLATE)),
+          new Template(Type.BDD_ENTRY_POINT_METHOD_ASSERTION,
+                       new File(templatesDirectory, DEFAULT_BDD_ENTRY_POINT_ASSERTION_METHOD_TEMPLATE))
+    );
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/right.java
   }
 
   public BaseAssertionGenerator(Template classAssertionTemplate,
@@ -265,7 +319,8 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
     String targetDirectory = getDirectoryPathCorrespondingToPackage(classDescription.getPackageName());
     // build any needed directories
     new File(targetDirectory).mkdirs();
-    return createFile(assertionFileContent, assertClassNameOf(classDescription) + ".java", targetDirectory);
+    return createFile(assertionFileContent,
+                      assertClassNameOf(classDescription) + ".java", targetDirectory);
   }
 
   @Override
@@ -277,78 +332,81 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
     String targetDirectory = getDirectoryPathCorrespondingToPackage(classDescription.getPackageName());
     // build any needed directories
     new File(targetDirectory).mkdirs();
-    File[] assertionClassesFile = new File[2];
-    final String concreteAsserClassFileName = assertClassNameOf(classDescription) + ".java";
-    final String abstractAsserClassFileName = abstractAssertClassNameOf(classDescription) + ".java";
-    assertionClassesFile[0] = createFile(assertionFileContent[0], abstractAsserClassFileName, targetDirectory);
-    assertionClassesFile[1] = createFile(assertionFileContent[1], concreteAsserClassFileName, targetDirectory);
-    return assertionClassesFile;
+    File[] retval = new File[2];
+    final String fileName = assertClassNameOf(classDescription) + ".java";
+    final String abstractFileName = abstractAssertClassNameOf(classDescription) + ".java";
+    retval[0] = createFile(assertionFileContent[0], abstractFileName, targetDirectory);
+    retval[1] = createFile(assertionFileContent[1], fileName, targetDirectory);
+    return retval;
   }
-  
   @Override
-  public String[] generateHierarchicalCustomAssertionContentFor(ClassDescription classDescription, Set<Class<?>> allClasses) {
+  public String[] generateHierarchicalCustomAssertionContentFor(ClassDescription classDescription, Set<Class<?>> allClasses) throws IOException {
     // use class template first
-    StringBuilder abstractAssertClassContentBuilder = new StringBuilder(abstractClassAssertionTemplate.getContent());
+    StringBuilder assertionFileContentBuilder = new StringBuilder(abstractClassAssertionTemplate.getContent());
 
     // generate assertion method for each property with a public getter
-    abstractAssertClassContentBuilder.append(generateAssertionsForGetters(classDescription.getDeclaredGettersDescriptions()));
-    abstractAssertClassContentBuilder.append(generateAssertionsForPublicFields(classDescription.getDeclaredFieldsDescriptions()));
+    assertionFileContentBuilder.append(generateAssertionsForGetters(classDescription.getDeclaredGettersDescriptions()));
+    assertionFileContentBuilder.append(generateAssertionsForPublicFields(classDescription.getDeclaredFieldsDescriptions()));
 
     // close class with }
-    abstractAssertClassContentBuilder.append(LINE_SEPARATOR).append("}").append(LINE_SEPARATOR);
+    assertionFileContentBuilder.append(LINE_SEPARATOR).append("}").append(LINE_SEPARATOR);
 
     // use class template first
-    StringBuilder concreteAssertClassContentBuilder = new StringBuilder(hierarchicalClassAssertionTemplate.getContent());
+    StringBuilder concreteAssertionFileContentBuilder = new StringBuilder(hierarchicalClassAssertionTemplate.getContent());
 
-    String[] assertionClassesContent = new String[2];
-    assertionClassesContent[0] = fillAssertClassTemplate(abstractAssertClassContentBuilder.toString(), classDescription, allClasses, false);
-    assertionClassesContent[1] = fillAssertClassTemplate(concreteAssertClassContentBuilder.toString(), classDescription, null, true);
-    return assertionClassesContent;
+    String[] retval = new String[2];
+    retval[0] = fillClassTemplate(assertionFileContentBuilder.toString(), classDescription, allClasses, false);
+    retval[1] = fillClassTemplate(concreteAssertionFileContentBuilder.toString(), classDescription, null, true);
+    
+    return retval;
   }
   
-  private String fillAssertClassTemplate(String template, ClassDescription classDescription,
-                                   Set<Class<?>> classesHierarchy, boolean concrete) {
+  private String fillClassTemplate(String template, ClassDescription classDescription,
+                                   Set<Class<?>> allClasses, boolean concrete) {
     // Add o.a.c.a.Assertions if needed
     TreeSet<TypeName> imports = new TreeSet<TypeName>(classDescription.getImports());
     if (template.contains("Assertions")) {
       imports.add(new TypeName("org.assertj.core.api.Assertions"));
     }
 
+    // Add assertion supertype to imports if needed
     final Class<?> superType = classDescription.getSuperType();
     final TypeName superTypeName = new TypeName(superType);
     final TypeName superAssertionClass;
 
-    // Add assertion supertype to imports if needed
-    if (classesHierarchy == null || !classesHierarchy.contains(superType)) {
+    if (allClasses == null || !allClasses.contains(superType)) {
       superAssertionClass = new TypeName("org.assertj.core.api.AbstractAssert");
     } else {
       superAssertionClass = new TypeName(abstractAssertClassNameOf(superTypeName), superTypeName.getPackageName());
     }
     imports.add(superAssertionClass);
 
-    final String customAssertionClass = concrete ? assertClassNameOf(classDescription) :
-        abstractAssertClassNameOf(classDescription);
-    final String selfType = concrete ? customAssertionClass : "S";
-    final String myself = concrete ? "this" : "myself";
+    final String selfType, myself, customAssertionClass;
+    
+    if (concrete) {
+      customAssertionClass = assertClassNameOf(classDescription);
+      selfType = customAssertionClass;
+      myself = "this";
+    } else {
+      customAssertionClass = abstractAssertClassNameOf(classDescription);
+      selfType = "S";
+      myself = "myself";
+    }
 
-    return template.replaceAll(PACKAGE_REGEXP, classDescription.getPackageName())
-                   .replaceAll(CUSTOM_ASSERTION_CLASS_REGEXP, customAssertionClass)
-                   // className could be a nested class like "OuterClass.NestedClass",
-                   // in that case assert class will be OuterClassNestedClass
-                   .replaceAll(SUPER_ASSERTION_CLASS_REGEXP,
-                               superAssertionClass.getSimpleNameWithOuterClassNotSeparatedByDots())
-                   .replaceAll(CLASS_TO_ASSERT_REGEXP, classDescription.getClassNameWithOuterClass())
-                   .replaceAll(SELF_TYPE_REGEXP, selfType)
-                   .replaceAll(MYSELF_REGEXP, myself)
-                   .replace(IMPORTS, listImports(imports, classDescription.getPackageName()));
-  }
-
-  private String fillAssertClassTemplate(String template, ClassDescription classDescription) {
-    return fillAssertClassTemplate(template, classDescription, null, true);
+    return template
+        .replaceAll(PACKAGE_REGEXP, classDescription.getPackageName())
+        // className could be a nested class like "OuterClass.NestedClass", in that case assert class will be OuterClassNestedClass
+        .replaceAll(CUSTOM_ASSERTION_CLASS_REGEXP, customAssertionClass)
+        .replaceAll(SUPER_ASSERTION_CLASS_REGEXP, superAssertionClass.getSimpleNameWithOuterClassNotSeparatedByDots())
+        .replaceAll(CLASS_TO_ASSERT_REGEXP,
+                    classDescription.getClassNameWithOuterClass())
+        .replaceAll(SELF_TYPE_REGEXP, selfType)
+        .replaceAll(MYSELF_REGEXP, myself)
+        .replace(IMPORTS, listImports(imports, classDescription.getPackageName()));    
   }
   
   @Override
-  public String generateCustomAssertionContentFor(ClassDescription classDescription) {
+  public String generateCustomAssertionContentFor(ClassDescription classDescription) throws IOException {
 
     // use class template first
     StringBuilder assertionFileContentBuilder = new StringBuilder(classAssertionTemplate.getContent());
@@ -358,9 +416,10 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
     assertionFileContentBuilder.append(generateAssertionsForPublicFields(classDescription.getFieldsDescriptions()));
     
     // close class with }
+
     assertionFileContentBuilder.append(LINE_SEPARATOR).append("}").append(LINE_SEPARATOR);
 
-    return fillAssertClassTemplate(assertionFileContentBuilder.toString(), classDescription);
+    return fillClassTemplate(assertionFileContentBuilder.toString(), classDescription, null, true);
   }
 
   private static String assertClassNameOf(ClassDescription classDescription) {
@@ -447,8 +506,16 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
   /**
    * create the assertions entry point file, located in its package directory starting from targetBaseDirectory.
    * <p>
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/left.java
    * If assertionsClassPackage is not set, we use the common base package of the given classes, if some classe are in
    * a.b.c package and others in a.b.c.d, then entry point class will be in a.b.c.
+||||||| /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/base.java
+   * If assertionsClassPackage is not set, we use the common base package of the given classes,
+   * if some classe are in a.b.c package and others in a.b.c.d, then entry point class will be in a.b.c.
+=======
+   * If assertionsClassPackage is not set, we use the common base package of the given classes,
+   * if some classes are in a.b.c package and others in a.b.c.d, then entry point class will be in a.b.c.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-assertions-generator/e9c59be58d0f5f8598375f4031f5f06ac0f1cdcc/src/main/java/org/assertj/assertions/generator/BaseAssertionGenerator.java/right.java
    * </p>
    *
    * @param classDescriptionSet used to determine the assertions class package
@@ -563,7 +630,7 @@ public class BaseAssertionGenerator implements AssertionGenerator, AssertionsEnt
 
   protected String generateAssertionsForPublicFields(Set<FieldDescription> fields) {
     StringBuilder assertionsForPublicFields = new StringBuilder();
-    for (FieldDescription field : fields) {
+    for (DataDescription field : fields) {
       String assertionContent = assertionContentFor(field);
       assertionsForPublicFields.append(assertionContent).append(LINE_SEPARATOR);
     }

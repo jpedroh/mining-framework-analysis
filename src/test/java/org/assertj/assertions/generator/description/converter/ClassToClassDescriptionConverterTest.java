@@ -10,6 +10,7 @@ import org.assertj.assertions.generator.BeanWithExceptionsTest;
 import org.assertj.assertions.generator.NestedClassesTest;
 import org.assertj.assertions.generator.data.ArtWork;
 import org.assertj.assertions.generator.data.Movie;
+import org.assertj.assertions.generator.data.Movie.PublicCategory;
 import org.assertj.assertions.generator.data.Name;
 import org.assertj.assertions.generator.data.Team;
 import org.assertj.assertions.generator.data.TreeEnum;
@@ -40,6 +41,7 @@ public class ClassToClassDescriptionConverterTest implements NestedClassesTest, 
     assertThat(classDescription.getClassNameWithOuterClass()).isEqualTo("Player");
     assertThat(classDescription.getPackageName()).isEqualTo("org.assertj.assertions.generator.data.nba");
     assertThat(classDescription.getGettersDescriptions()).hasSize(10);
+    assertThat(classDescription.getDeclaredGettersDescriptions()).hasSize(9);
     assertThat(classDescription.getImports()).containsOnly(new TypeName(Name.class));
   }
 
@@ -54,7 +56,7 @@ public class ClassToClassDescriptionConverterTest implements NestedClassesTest, 
     assertThat(classDescription.getDeclaredGettersDescriptions()).hasSize(2);
 //    assertThat(classDescription.getDeclaredFieldsDescriptions()).hasSize(1);
     assertThat(classDescription.getSuperType()).isEqualTo(ArtWork.class);
-    assertThat(classDescription.getImports()).containsOnly(new TypeName(Date.class));
+    assertThat(classDescription.getImports()).containsOnly(new TypeName(PublicCategory.class), new TypeName(Date.class));
   }
 
   @Theory

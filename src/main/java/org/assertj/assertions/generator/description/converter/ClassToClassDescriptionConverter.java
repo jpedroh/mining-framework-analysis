@@ -69,7 +69,7 @@ public class ClassToClassDescriptionConverter implements ClassDescriptionConvert
 
   private Set<GetterDescription> doGetterDescriptionsOf(List<Method> getters, Class<?> clazz) {
     Set<GetterDescription> getterDescriptions = new TreeSet<GetterDescription>();
-    for (Method getter : getters) {
+    for (Method getter : getterMethodsOf(clazz)) {
       // ignore getDeclaringClass if Enum
       if (isGetDeclaringClassEnumGetter(getter, clazz)) continue;
       final TypeDescription typeDescription = getTypeDescription(getter);
@@ -87,12 +87,12 @@ public class ClassToClassDescriptionConverter implements ClassDescriptionConvert
 
   @VisibleForTesting
   protected Set<FieldDescription> fieldDescriptionsOf(Class<?> clazz) {
-    return doFieldDescriptionsOf(nonStaticPublicFieldsOf(clazz));
+    return doFieldDescriptionsOf(publicFieldsOf(clazz));
   }
 
   private Set<FieldDescription> doFieldDescriptionsOf(List<Field> fields) {
     Set<FieldDescription> fieldDescriptions = new TreeSet<FieldDescription>();
-    for (Field field : fields) {
+    for (Field field : nonStaticPublicFieldsOf(clazz)) {
       fieldDescriptions.add(new FieldDescription(field.getName(), getTypeDescription(field)));
     }
     return fieldDescriptions;
