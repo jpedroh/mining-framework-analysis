@@ -1,84 +1,79 @@
 package org.mybatis.jpetstore.domain;
-
 import java.io.Serializable;
 import java.util.Date;
 
 public class Review implements Serializable {
+  private String reviewId;
 
-    private String reviewId;
-    private String productId;
-    private String userId;
-    private String title;
-    private String content;
-    private String pictureUrl;
-    private Date createdAt;
+  private String productId;
 
-    public String getReviewId() {
-        return reviewId;
-    }
+  private String userId;
 
-    public void setReviewId(String reviewId) {
-        this.reviewId = reviewId;
-    }
+  private String title;
 
-    public String getProductId() {
-        return productId;
-    }
+  private String content;
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+  private String pictureUrl;
 
-    public String getUserId() {
-        return userId;
-    }
+  private Date createdAt;
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+  public String getReviewId() {
+    return reviewId;
+  }
 
-    public String getTitle() {
-        return this.title;
-    }
+  public void setReviewId(String reviewId) {
+    this.reviewId = reviewId;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getProductId() {
+    return productId;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public void setProductId(String productId) {
+    this.productId = productId;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public String getUserId() {
+    return userId;
+  }
 
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
+  public String getTitle() {
+    return this.title;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    @Override
-    public String toString() {
-        return "Review{" +
-                "reviewId='" + reviewId + '\'' +
-                ", productId='" + productId + '\'' +
-                ", userId='" + userId + '\'' +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", pictureUrl='" + pictureUrl + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
+
+  public String getPictureUrl() {
+    return pictureUrl;
+  }
+
+  public void setPictureUrl(String pictureUrl) {
+    this.pictureUrl = pictureUrl;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  @Override public String toString() {
+    return "Review{" + "reviewId=\'" + reviewId + '\'' + ", productId=\'" + productId + '\'' + ", userId=\'" + userId + '\'' + ", title=\'" + title + '\'' + ", content=\'" + content + '\'' + ", pictureUrl=\'" + pictureUrl + '\'' + ", createdAt=" + createdAt + '}';
+  }
 }
