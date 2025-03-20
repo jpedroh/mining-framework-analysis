@@ -226,4 +226,5 @@ public class CatMovementSystem extends ECSystem{
             physicsComponent.setVelocityY(movementComponent.positionVec.y*movementComponent.velocity);
         }
     }
+
 }
