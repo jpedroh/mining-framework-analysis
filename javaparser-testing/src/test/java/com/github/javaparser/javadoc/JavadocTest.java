@@ -24,13 +24,12 @@ package com.github.javaparser.javadoc;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.javadoc.description.JavadocDescription;
-import com.github.javaparser.javadoc.description.JavadocDescriptionElement;
-import com.github.javaparser.javadoc.description.JavadocInlineTag;
 import org.junit.Test;
-
 import static com.github.javaparser.utils.Utils.EOL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import com.github.javaparser.javadoc.description.JavadocDescriptionElement;
+import com.github.javaparser.javadoc.description.JavadocInlineTag;
 
 public class JavadocTest {
 
@@ -75,7 +74,13 @@ public class JavadocTest {
     @Test
     public void descriptionAndBlockTagsAreRetrievable() {
         Javadoc javadoc = JavaParser.parseJavadoc("first line" + EOL + "second line" + EOL + EOL + "@param node a node" + EOL + "@return result the result");
+<<<<<<< /usr/src/app/output/javaparser/javaparser/2dfcfbf8118865639d2e2cafe1223d592804b470/javaparser-testing/src/test/java/com/github/javaparser/javadoc/JavadocTest.java/left.java
         assertEquals("first line" + EOL + "second line", javadoc.getDescription().toText());
+||||||| /usr/src/app/output/javaparser/javaparser/2dfcfbf8118865639d2e2cafe1223d592804b470/javaparser-testing/src/test/java/com/github/javaparser/javadoc/JavadocTest.java/base.java
+        assertEquals(javadoc.getDescription().toText(), "first line\nsecond line");
+=======
+        assertEquals("first line\nsecond line", javadoc.getDescription().toText());
+>>>>>>> /usr/src/app/output/javaparser/javaparser/2dfcfbf8118865639d2e2cafe1223d592804b470/javaparser-testing/src/test/java/com/github/javaparser/javadoc/JavadocTest.java/right.java
         assertEquals(2, javadoc.getBlockTags().size());
     }
 
@@ -135,4 +140,5 @@ public class JavadocTest {
         assertEquals(inlineTag, description.getElements().remove(0));
         assertEquals(0, description.getElements().size());
     }
+
 }
