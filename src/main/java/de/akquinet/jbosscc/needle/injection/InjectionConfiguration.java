@@ -130,10 +130,8 @@ public final class InjectionConfiguration {
     }
 
     private void initGlobalInjectionProvider() {
-
-        final Set<Class<InjectionProvider<?>>> customInjectionProviders = needleConfiguration
-                .getCustomInjectionProviderClasses();
-        for (final Class<InjectionProvider<?>> injectionProviderClass : customInjectionProviders) {
+        for (final Class<InjectionProvider<?>> injectionProviderClass : needleConfiguration
+                .getCustomInjectionProviderClasses()) {
             try {
                 final InjectionProvider<?> injection = ReflectionUtil.createInstance(injectionProviderClass);
                 globalInjectionProviderList.add(0, injection);

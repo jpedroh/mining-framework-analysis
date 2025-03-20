@@ -4,14 +4,15 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
-import de.akquinet.jbosscc.needle.injection.InjectionProviderInstancesSupplier;
+
 import de.akquinet.jbosscc.needle.mock.MockProvider;
+
+import de.akquinet.jbosscc.needle.injection.InjectionProviderInstancesSupplier;
 
 public final class NeedleConfiguration {
 
     private Set<Class<Annotation>> customInjectionAnnotations;
     private Set<Class<InjectionProvider<?>>> customInjectionProviderClasses;
-    private Set<Class<InjectionProviderInstancesSupplier>> customInjectionProviderInstancesSupplierClasses;
     private String persistenceunitName;
     private String hibernateCfgFilename;
     private Class<? extends MockProvider> mockProviderClass;
@@ -20,7 +21,6 @@ public final class NeedleConfiguration {
     private String jdbcDriver;
     private String jdbcUser;
     private String jdbcPassword;
-
     /**
      * Returns the configured custom {@link Annotation} classes for default mock
      * injections.
@@ -30,11 +30,9 @@ public final class NeedleConfiguration {
     public Set<Class<Annotation>> getCustomInjectionAnnotations() {
         return customInjectionAnnotations;
     }
-
     public void setCustomInjectionAnnotations(final Set<Class<Annotation>> customInjectionAnnotations) {
         this.customInjectionAnnotations = customInjectionAnnotations;
     }
-
     /**
      * Returns the configured custom {@link InjectionProvider} classes.
      * 
@@ -43,11 +41,15 @@ public final class NeedleConfiguration {
     public Set<Class<InjectionProvider<?>>> getCustomInjectionProviderClasses() {
         return customInjectionProviderClasses;
     }
-
     public void setCustomInjectionProviderClasses(final Set<Class<InjectionProvider<?>>> customInjectionProviderClasses) {
+<<<<<<< /usr/src/app/output/needle4j/needle4j/93f886c3493bba1e2bc216c583c83bee71c6c747/src/main/java/de/akquinet/jbosscc/needle/configuration/NeedleConfiguration.java/left.java
         this.customInjectionProviderClasses = customInjectionProviderClasses;
+||||||| /usr/src/app/output/needle4j/needle4j/93f886c3493bba1e2bc216c583c83bee71c6c747/src/main/java/de/akquinet/jbosscc/needle/configuration/NeedleConfiguration.java/base.java
+        this.customInjectionProviderClasses = lookupClasses(CUSTOM_INJECTION_PROVIDER_CLASSES_KEY);
+=======
+        this.customInjectionProviderClasses = lookupCustomClasses.apply(CUSTOM_INJECTION_PROVIDER_CLASSES_KEY);
+>>>>>>> /usr/src/app/output/needle4j/needle4j/93f886c3493bba1e2bc216c583c83bee71c6c747/src/main/java/de/akquinet/jbosscc/needle/configuration/NeedleConfiguration.java/right.java
     }
-
     /**
      * Returns the configured database operation class name.
      * 
@@ -56,43 +58,33 @@ public final class NeedleConfiguration {
     public String getDBOperationClassName() {
         return dbOperationClassName;
     }
-
     public void setDBOperationClassName(final String dbOperationClassName) {
         this.dbOperationClassName = dbOperationClassName;
     }
-
     public String getJdbcUrl() {
         return jdbcUrl;
     }
-
     public void setJdbcUrl(final String jdbcUrl) {
         this.jdbcUrl = jdbcUrl;
     }
-
     public String getJdbcDriver() {
         return jdbcDriver;
     }
-    
     public void setJdbcDriver(final String jdbcDriver) {
         this.jdbcDriver =jdbcDriver;
     }
-
     public String getJdbcUser() {
         return jdbcUser;
     }
-    
     public void setJdbcUser(final String jdbcUser) {
         this.jdbcUser = jdbcUser;
     }
-
     public String getJdbcPassword() {
         return jdbcPassword;
     }
-    
     public void setJdbcPassword(final String jdbcPassword) {
         this.jdbcPassword = jdbcPassword;
     }
-
     /**
      * Returns the configured mock provider class
      * 
@@ -101,11 +93,9 @@ public final class NeedleConfiguration {
     public Class<? extends MockProvider> getMockProviderClass() {
         return mockProviderClass;
     }
-
     public void setMockProviderClass(final Class<? extends MockProvider> mockProviderClass) {
         this.mockProviderClass = mockProviderClass;
     }
-
     /**
      * Returns the configured jpa persistence unit name.
      * 
@@ -114,11 +104,9 @@ public final class NeedleConfiguration {
     public String getPersistenceunitName() {
         return persistenceunitName;
     }
-
     public void setPersistenceunitName(final String persistenceunitName) {
         this.persistenceunitName = persistenceunitName;
     }
-
     /**
      * Returns the name of the configured hibernate.cfg file
      * 
@@ -127,18 +115,15 @@ public final class NeedleConfiguration {
     public String getHibernateCfgFilename() {
         return hibernateCfgFilename;
     }
-
     public void setHibernateCfgFilename(final String hibernateCfgFilename) {
         this.hibernateCfgFilename = hibernateCfgFilename;
     }
-    
+    public static final String CUSTOM_INSTANCES_SUPPLIER_CLASSES_KEY = "custom.instances.supplier.classes";
+    private final Set<Class<InjectionProviderInstancesSupplier>> customInjectionProviderInstancesSupplierClasses;
     public Set<Class<InjectionProviderInstancesSupplier>> getCustomInjectionProviderInstancesSupplierClasses() {
         return customInjectionProviderInstancesSupplierClasses;
     }
-    
-    public void setCustomInjectionProviderInstancesSupplierClasses(final Set<Class<InjectionProviderInstancesSupplier>> supplier){
-        this.customInjectionProviderInstancesSupplierClasses = supplier;
-    } 
+
 
     @Override
     public String toString() {
@@ -146,10 +131,8 @@ public final class NeedleConfiguration {
         builder.append("\nPU_NAME=").append(getPersistenceunitName());
         builder.append("\nCFG_FILE=").append(getHibernateCfgFilename());
         builder.append("\nDB_OPERATION=").append(getDBOperationClassName());
-        builder.append("\nMOCK_PROVIDER=").append(getMockProviderClass());
+        builder.append("\nMOCK_PROVIDER=").append(mockProviderClass != null ? mockProviderClass.getName() : null);
 
         return builder.toString();
     }
-
-    
 }
