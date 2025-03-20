@@ -183,6 +183,21 @@ public class ServerConnector extends PacketHandler
 
         if ( user.isNeedLogin() ) //BotFilter
         {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/fb72d43cc0853bc171cf9f74bb3f19dee1e80b22/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
+            user.setNeedLogin( false ); //BotFilter
+            // Once again, first connection
+            user.setClientEntityId( login.getEntityId() );
+            user.setServerEntityId( login.getEntityId() );
+
+            // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
+||||||| /usr/src/app/output/spigotmc/bungeecord/fb72d43cc0853bc171cf9f74bb3f19dee1e80b22/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+            // Once again, first connection
+            user.setClientEntityId( login.getEntityId() );
+            user.setServerEntityId( login.getEntityId() );
+
+            // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
+=======
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/fb72d43cc0853bc171cf9f74bb3f19dee1e80b22/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
             Login modLogin = new Login( login.getEntityId(), login.getGameMode(), (byte) login.getDimension(), login.getDifficulty(),
                     (byte) user.getPendingConnection().getListener().getTabListSize(), login.getLevelType(), login.isReducedDebugInfo() );
 
