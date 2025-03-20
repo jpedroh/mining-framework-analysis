@@ -24,11 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jasper.JspC;
 import org.codehaus.mojo.jspc.compiler.JspCompiler;
 
 /**
+<<<<<<< /usr/src/app/output/jasig/jspc-maven-plugin/6a1f4e7b3fb61c8c2e25b2618b3da025a4d5fee4/jspc-compilers/jspc-compiler-tomcat7/src/main/java/org/codehaus/mojo/jspc/compiler/tomcat7/JspCompilerImpl.java/left.java
  * JSP compiler for Tomcat 7. Supports multi-threaded compilation.
+||||||| /usr/src/app/output/jasig/jspc-maven-plugin/6a1f4e7b3fb61c8c2e25b2618b3da025a4d5fee4/jspc-compilers/jspc-compiler-tomcat7/src/main/java/org/codehaus/mojo/jspc/compiler/tomcat7/JspCompilerImpl.java/base.java
+ * JSP compiler for Tomcat 6.
+=======
+ * JSP compiler for Tomcat 7.
+>>>>>>> /usr/src/app/output/jasig/jspc-maven-plugin/6a1f4e7b3fb61c8c2e25b2618b3da025a4d5fee4/jspc-compilers/jspc-compiler-tomcat7/src/main/java/org/codehaus/mojo/jspc/compiler/tomcat7/JspCompilerImpl.java/right.java
  *
  * @version $Id$
  */
