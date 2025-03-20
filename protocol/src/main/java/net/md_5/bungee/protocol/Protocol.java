@@ -259,6 +259,18 @@ public enum Protocol
 
         {
             TO_CLIENT.registerPacket(
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/left.java
+                    LoginPayloadRequest.class,
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x04 )
+            );
+            TO_CLIENT.registerPacket(
+||||||| /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/base.java
+                    LoginPayloadRequest.class,
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x00 )
+            );
+            TO_CLIENT.registerPacket(
+=======
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/right.java
                     Kick.class,
                     map( ProtocolConstants.MINECRAFT_1_8, 0x00 )
             );
@@ -272,23 +284,66 @@ public enum Protocol
             );
             TO_CLIENT.registerPacket(
                     SetCompression.class,
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/left.java
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x03 )
+||||||| /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/base.java
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x03 ),
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x04 )
+=======
                     map( ProtocolConstants.MINECRAFT_1_8, 0x03 )
             );
             TO_CLIENT.registerPacket(
                     LoginPayloadRequest.class,
                     map( ProtocolConstants.MINECRAFT_1_13, 0x04 )
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/right.java
             );
+
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/left.java
+            TO_SERVER.registerPacket(
+                    LoginPayloadResponse.class,
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x02 )
+            );
+||||||| /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/base.java
+            TO_SERVER.registerPacket(
+                    LoginPayloadResponse.class,
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x00 )
+            );
+=======
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/right.java
             TO_SERVER.registerPacket(
                     LoginRequest.class,
                     map( ProtocolConstants.MINECRAFT_1_8, 0x00 )
             );
             TO_SERVER.registerPacket(
                     EncryptionResponse.class,
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/left.java
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x01 )
+||||||| /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/base.java
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x01 ),
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x02 )
+            );
+            TO_SERVER.registerPacket(
+                    PluginMessage.class,
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x17 ),
+                    map( ProtocolConstants.MINECRAFT_1_9, 0x09 ),
+                    map( ProtocolConstants.MINECRAFT_1_12, 0x0A ),
+                    map( ProtocolConstants.MINECRAFT_1_12_1, 0x09 ),
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x0A )
+=======
                     map( ProtocolConstants.MINECRAFT_1_8, 0x01 )
             );
             TO_SERVER.registerPacket(
                     LoginPayloadResponse.class,
                     map( ProtocolConstants.MINECRAFT_1_13, 0x02 )
+            );
+            TO_SERVER.registerPacket(
+                    PluginMessage.class,
+                    map( ProtocolConstants.MINECRAFT_1_8, 0x17 ),
+                    map( ProtocolConstants.MINECRAFT_1_9, 0x09 ),
+                    map( ProtocolConstants.MINECRAFT_1_12, 0x0A ),
+                    map( ProtocolConstants.MINECRAFT_1_12_1, 0x09 ),
+                    map( ProtocolConstants.MINECRAFT_1_13, 0x0A )
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/11abb1318902749563661c87e0cd41a30ed5b150/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java/right.java
             );
         }
     },
