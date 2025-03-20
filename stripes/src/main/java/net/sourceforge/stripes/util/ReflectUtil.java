@@ -56,32 +56,14 @@ public class ReflectUtil {
 
     private static final Log log = Log.getInstance(ReflectUtil.class);
 
-    /**
-     * A cache of property descriptors by class and property name
-     */
+    /** A cache of property descriptors by class and property name */
     private static Map<Class<?>, Map<String, PropertyDescriptor>> propertyDescriptors
             = new ConcurrentHashMap<Class<?>, Map<String, PropertyDescriptor>>();
-
-    /**
-     * Static helper class, shouldn't be constructed.
-     */
+    /** Static helper class, shouldn't be constructed. */
     private ReflectUtil() {
     }
-
-    /**
-     * Holds a map of commonly used interface types (mostly collections) to a
-     * class that implements the interface and will, by default, be instantiated
-     * when an instance of the interface is needed.
-     */
     protected static final Map<Class<?>, Class<?>> interfaceImplementations = new HashMap<Class<?>, Class<?>>();
-
-    /**
-     * Holds a map of primitive type to the default value for that primitive
-     * type. Isn't it odd that there's no way to get this programmatically from
-     * the Class objects?
-     */
     protected static final Map<Class<?>, Object> primitiveDefaults = new HashMap<Class<?>, Object>();
-
     static {
         interfaceImplementations.put(Collection.class, ArrayList.class);
         interfaceImplementations.put(List.class, ArrayList.class);
@@ -100,67 +82,12 @@ public class ReflectUtil {
         primitiveDefaults.put(Float.TYPE, Float.valueOf(0f));
         primitiveDefaults.put(Double.TYPE, Double.valueOf(0.0));
     }
-
-    /**
-     * The set of method that annotation classes inherit, and should be avoided
-     * when toString()ing an annotation class.
-     */
     private static final Set<String> INHERITED_ANNOTATION_METHODS
             = Literal.set("toString", "equals", "hashCode", "annotationType");
-
-   /**
-     * This method will return whether or not the passed method is a Java 8
-     * default method. This method allows for JDKs less than Java 8 to be supported
-     * by Stripes.
-     * 
-     * @param method - Method to check to see if it is default.
-     * @return Whether or not the method is a Java 8 default method
-     */
-    public static boolean isDefault(Method method) {
-        // Default methods are public non-abstract instance methods
-        // declared in an interface.
-        return ((method.getModifiers() & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) == Modifier.PUBLIC) && method.getDeclaringClass().isInterface();
-    }        
-
-    /**
-     * Utility method used to load a class. Any time that Stripes needs to load
-     * of find a class by name it uses this method. As a result any time the
-     * classloading strategy needs to change it can be done in one place!
-     * Currently uses
-     * {@code Thread.currentThread().getContextClassLoader().loadClass(String)}.
-     *
-     * @param name the fully qualified (binary) name of the class to find or
-     * load
-     * @return the Class object representing the class
-     * @throws ClassNotFoundException if the class cannot be loaded
-     */
     @SuppressWarnings("rawtypes") // this allows us to assign without casting
     public static Class findClass(String name) throws ClassNotFoundException {
         return Thread.currentThread().getContextClassLoader().loadClass(name);
     }
-
-    /**
-     * <p>
-     * A better (more concise) toString method for annotation types that yields
-     * a String that should look more like the actual usage of the annotation in
-     * a class. The String produced is similar to that produced by calling
-     * toString() on the annotation directly, with the following
-     * differences:</p>
-     *
-     * <ul>
-     * <li>Uses the classes simple name instead of its fully qualified
-     * name.</li>
-     * <li>Only outputs attributes that are set to non-default values.</li>
-     * </ul>
-     *
-     * <p>
-     * If, for some unforseen reason, an exception is thrown within this method
-     * it will be caught and the return value will be
-     * {@code ann.toString()}.</p>
-     *
-     * @param ann the annotation to convert to a human readable String
-     * @return a human readable String form of the annotation and its attributes
-     */
     public static String toString(Annotation ann) {
         try {
             Class<? extends Annotation> type = ann.annotationType();
@@ -215,15 +142,6 @@ public class ReflectUtil {
             return ann.toString();
         }
     }
-
-    /**
-     * Fetches all methods of all access types from the supplied class and super
-     * classes. Methods that have been overridden in the inheritance hierarchy
-     * are only returned once, using the instance lowest down the hierarchy.
-     *
-     * @param clazz the class to inspect
-     * @return a collection of methods
-     */
     public static Collection<Method> getMethods(Class<?> clazz) {
         Collection<Method> found = new ArrayList<Method>();
         while (clazz != null) {
@@ -248,14 +166,6 @@ public class ReflectUtil {
 
         return found;
     }
-
-    /**
-     * Fetches all fields of all access types from the supplied class and super
-     * classes.
-     *
-     * @param clazz the class to inspect
-     * @return a collection of fields
-     */
     public static Collection<Field> getFields(Class<?> clazz) {
         List<Field> fields = new ArrayList<Field>();
         while (clazz != null) {
@@ -268,50 +178,12 @@ public class ReflectUtil {
 
         return fields;
     }
-
-    /**
-     * Fetches the property descriptor for the named property of the supplied
-     * class. To speed things up a cache is maintained of propertyName to
-     * PropertyDescriptor for each class used with this method. If there is no
-     * property with the specified name, returns null.
-     *
-     * @param clazz the class who's properties to examine
-     * @param property the String name of the property to look for
-     * @return the PropertyDescriptor or null if none is found with a matching
-     * name
-     */
     public static PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String property) {
         if (!propertyDescriptors.containsKey(clazz)) {
             getPropertyDescriptors(clazz);
         }
         return propertyDescriptors.get(clazz).get(property);
     }
-
-    /**
-     * <p>
-     * Attempts to find an accessible version of the method passed in, where
-     * accessible is defined as the method itself being public and the declaring
-     * class being public. Mostly useful as a workaround to the situation when
-     * {@link PropertyDescriptor#getReadMethod()} and/or
-     * {@link java.beans.PropertyDescriptor#getWriteMethod()} returns methods
-     * that are not accessible (usually due to public implementations of
-     * interface methods in private classes).</p>
-     *
-     * <p>
-     * Checks the method passed in and if it already meets these criteria it is
-     * returned immediately. In general this leads to very little performance
-     * overhead</p>
-     *
-     * <p>
-     * If the method does not meet the criteria then the class' interfaces are
-     * scanned for a matching method. If one is not found, then the class'
-     * superclass hierarchy is searched. Finally, if no matching method can be
-     * found the original method is returned.</p>
-     *
-     * @param m a method that may or may not be accessible
-     * @return either an accessible version of the same method, or the method
-     * passed in if an accessible version cannot be found
-     */
     public static Method findAccessibleMethod(final Method m) {
         // If the passed in method is accessible, then just give it back.
         if (isPublic(m.getModifiers()) && isPublic(m.getDeclaringClass().getModifiers())) {
@@ -360,15 +232,6 @@ public class ReflectUtil {
         // If we haven't found anything at this point, just give up!
         return m;
     }
-
-    /**
-     * Looks for an instance (i.e. non-static) public field with the matching
-     * name and returns it if one exists. If no such field exists, returns null.
-     *
-     * @param clazz the clazz who's fields to examine
-     * @param property the name of the property/field to look for
-     * @return the Field object or null if no matching field exists
-     */
     public static Field getField(Class<?> clazz, String property) {
         try {
             Field field = clazz.getField(property);
@@ -377,15 +240,6 @@ public class ReflectUtil {
             return null;
         }
     }
-
-    /**
-     * Returns an appropriate default value for the class supplied. Mirrors the
-     * defaults used when the JVM initializes instance variables.
-     *
-     * @param clazz the class for which to find the default value
-     * @return null for non-primitive types and an appropriate wrapper instance
-     * for primitives
-     */
     public static Object getDefaultValue(Class<?> clazz) {
         if (clazz.isPrimitive()) {
             return primitiveDefaults.get(clazz);
@@ -393,15 +247,6 @@ public class ReflectUtil {
             return null;
         }
     }
-
-    /**
-     * Returns a set of all interfaces implemented by class supplied. This
-     * includes all interfaces directly implemented by this class as well as
-     * those implemented by superclasses or interface superclasses.
-     *
-     * @param clazz
-     * @return all interfaces implemented by this class
-     */
     public static Set<Class<?>> getImplementedInterfaces(Class<?> clazz) {
         Set<Class<?>> interfaces = new HashSet<Class<?>>();
 
@@ -418,19 +263,9 @@ public class ReflectUtil {
 
         return interfaces;
     }
-
-    /**
-     * Returns an array of Type objects representing the actual type arguments
-     * to targetType used by clazz.
-     *
-     * @param clazz the implementing class (or subclass)
-     * @param targetType the implemented generic class or interface
-     * @return an array of Type objects or null
-     */
     public static Type[] getActualTypeArguments(Class<?> clazz, Class<?> targetType) {
         return getActualTypeArguments(clazz, targetType, null);
     }
-
     private static Type[] getActualTypeArguments(Type type, Class<?> targetType,
             Type[] typeArgs) {
         Class<?> clazz = null;
@@ -439,7 +274,6 @@ public class ReflectUtil {
         } else if (type instanceof ParameterizedType) {
             clazz = (Class<?>) ((ParameterizedType)type).getRawType();
         }
-
         Type[] ifaces = clazz.getGenericInterfaces();
         for (Type iface : ifaces) {
             if (iface instanceof Class && targetType.isAssignableFrom((Class<?>) iface)) {
@@ -475,7 +309,6 @@ public class ReflectUtil {
         }
         return null;
     }
-
     private static Type[] resolvedTypeArguments(Class<?> clazz, ParameterizedType parent,
             Type[] raisedTypeArgs) {
         TypeVariable<?>[] declaredTypeVars = clazz.getTypeParameters();
@@ -491,19 +324,6 @@ public class ReflectUtil {
         }
         return parentTypeArgs;
     }
-
-    /**
-     * Get the {@link PropertyDescriptor}s for a bean class. This is normally
-     * easy enough to do except that Java versions 6 and earlier have a bug that
-     * can return bridge methods for property getters and/or setters. That can
-     * mess up validation and binding and possibly other areas. This method
-     * accounts for that bug and attempts to work around it, ensuring the
-     * property descriptors contain the true getter and setter methods.
-     *
-     * @param clazz The bean class to introspect
-     * @return The property descriptors for the bean class, as returned by
-     * {@link BeanInfo#getPropertyDescriptors()}.
-     */
     public static PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) {
         // Look in the cache first
         if (propertyDescriptors.containsKey(clazz)) {
@@ -593,14 +413,6 @@ public class ReflectUtil {
                     + "' using Introspector.getBeanInfo() to determine property information.", ie);
         }
     }
-
-    /**
-     * Locate and return the bridged read method for a bean property.
-     *
-     * @param pd The bean property descriptor
-     * @return The bridged method or the property descriptor's read method, if
-     * it is not a bridge method.
-     */
     public static Method resolveBridgedReadMethod(PropertyDescriptor pd) {
         Method getter = pd.getReadMethod();
 
@@ -616,14 +428,6 @@ public class ReflectUtil {
 
         return getter;
     }
-
-    /**
-     * Locate and return the bridged write method for a bean property.
-     *
-     * @param pd The bean property descriptor
-     * @return The bridged method or the property descriptor's write method, if
-     * it is not a bridge method.
-     */
     public static Method resolveBridgedWriteMethod(PropertyDescriptor pd) {
         Method setter = pd.getWriteMethod();
 
@@ -689,7 +493,182 @@ public class ReflectUtil {
 
         return setter;
     }
-
+    /**
+     * A cache of property descriptors by class and property name
+     */
+    /**
+     * Static helper class, shouldn't be constructed.
+     */
+    /**
+     * Holds a map of commonly used interface types (mostly collections) to a
+     * class that implements the interface and will, by default, be instantiated
+     * when an instance of the interface is needed.
+     */
+    /**
+     * Holds a map of primitive type to the default value for that primitive
+     * type. Isn't it odd that there's no way to get this programmatically from
+     * the Class objects?
+     */
+    /**
+     * The set of method that annotation classes inherit, and should be avoided
+     * when toString()ing an annotation class.
+     */
+   /**
+     * This method will return whether or not the passed method is a Java 8
+     * default method. This method allows for JDKs less than Java 8 to be supported
+     * by Stripes.
+     * 
+     * @param method - Method to check to see if it is default.
+     * @return Whether or not the method is a Java 8 default method
+     */
+    public static boolean isDefault(Method method) {
+        // Default methods are public non-abstract instance methods
+        // declared in an interface.
+        return ((method.getModifiers() & (Modifier.ABSTRACT | Modifier.PUBLIC | Modifier.STATIC)) == Modifier.PUBLIC) && method.getDeclaringClass().isInterface();
+    }
+    /**
+     * Utility method used to load a class. Any time that Stripes needs to load
+     * of find a class by name it uses this method. As a result any time the
+     * classloading strategy needs to change it can be done in one place!
+     * Currently uses
+     * {@code Thread.currentThread().getContextClassLoader().loadClass(String)}.
+     *
+     * @param name the fully qualified (binary) name of the class to find or
+     * load
+     * @return the Class object representing the class
+     * @throws ClassNotFoundException if the class cannot be loaded
+     */
+    /**
+     * <p>
+     * A better (more concise) toString method for annotation types that yields
+     * a String that should look more like the actual usage of the annotation in
+     * a class. The String produced is similar to that produced by calling
+     * toString() on the annotation directly, with the following
+     * differences:</p>
+     *
+     * <ul>
+     * <li>Uses the classes simple name instead of its fully qualified
+     * name.</li>
+     * <li>Only outputs attributes that are set to non-default values.</li>
+     * </ul>
+     *
+     * <p>
+     * If, for some unforseen reason, an exception is thrown within this method
+     * it will be caught and the return value will be
+     * {@code ann.toString()}.</p>
+     *
+     * @param ann the annotation to convert to a human readable String
+     * @return a human readable String form of the annotation and its attributes
+     */
+    /**
+     * Fetches all methods of all access types from the supplied class and super
+     * classes. Methods that have been overridden in the inheritance hierarchy
+     * are only returned once, using the instance lowest down the hierarchy.
+     *
+     * @param clazz the class to inspect
+     * @return a collection of methods
+     */
+    /**
+     * Fetches all fields of all access types from the supplied class and super
+     * classes.
+     *
+     * @param clazz the class to inspect
+     * @return a collection of fields
+     */
+    /**
+     * Fetches the property descriptor for the named property of the supplied
+     * class. To speed things up a cache is maintained of propertyName to
+     * PropertyDescriptor for each class used with this method. If there is no
+     * property with the specified name, returns null.
+     *
+     * @param clazz the class who's properties to examine
+     * @param property the String name of the property to look for
+     * @return the PropertyDescriptor or null if none is found with a matching
+     * name
+     */
+    /**
+     * <p>
+     * Attempts to find an accessible version of the method passed in, where
+     * accessible is defined as the method itself being public and the declaring
+     * class being public. Mostly useful as a workaround to the situation when
+     * {@link PropertyDescriptor#getReadMethod()} and/or
+     * {@link java.beans.PropertyDescriptor#getWriteMethod()} returns methods
+     * that are not accessible (usually due to public implementations of
+     * interface methods in private classes).</p>
+     *
+     * <p>
+     * Checks the method passed in and if it already meets these criteria it is
+     * returned immediately. In general this leads to very little performance
+     * overhead</p>
+     *
+     * <p>
+     * If the method does not meet the criteria then the class' interfaces are
+     * scanned for a matching method. If one is not found, then the class'
+     * superclass hierarchy is searched. Finally, if no matching method can be
+     * found the original method is returned.</p>
+     *
+     * @param m a method that may or may not be accessible
+     * @return either an accessible version of the same method, or the method
+     * passed in if an accessible version cannot be found
+     */
+    /**
+     * Looks for an instance (i.e. non-static) public field with the matching
+     * name and returns it if one exists. If no such field exists, returns null.
+     *
+     * @param clazz the clazz who's fields to examine
+     * @param property the name of the property/field to look for
+     * @return the Field object or null if no matching field exists
+     */
+    /**
+     * Returns an appropriate default value for the class supplied. Mirrors the
+     * defaults used when the JVM initializes instance variables.
+     *
+     * @param clazz the class for which to find the default value
+     * @return null for non-primitive types and an appropriate wrapper instance
+     * for primitives
+     */
+    /**
+     * Returns a set of all interfaces implemented by class supplied. This
+     * includes all interfaces directly implemented by this class as well as
+     * those implemented by superclasses or interface superclasses.
+     *
+     * @param clazz
+     * @return all interfaces implemented by this class
+     */
+    /**
+     * Returns an array of Type objects representing the actual type arguments
+     * to targetType used by clazz.
+     *
+     * @param clazz the implementing class (or subclass)
+     * @param targetType the implemented generic class or interface
+     * @return an array of Type objects or null
+     */
+    /**
+     * Get the {@link PropertyDescriptor}s for a bean class. This is normally
+     * easy enough to do except that Java versions 6 and earlier have a bug that
+     * can return bridge methods for property getters and/or setters. That can
+     * mess up validation and binding and possibly other areas. This method
+     * accounts for that bug and attempts to work around it, ensuring the
+     * property descriptors contain the true getter and setter methods.
+     *
+     * @param clazz The bean class to introspect
+     * @return The property descriptors for the bean class, as returned by
+     * {@link BeanInfo#getPropertyDescriptors()}.
+     */
+    /**
+     * Locate and return the bridged read method for a bean property.
+     *
+     * @param pd The bean property descriptor
+     * @return The bridged method or the property descriptor's read method, if
+     * it is not a bridge method.
+     */
+    /**
+     * Locate and return the bridged write method for a bean property.
+     *
+     * @param pd The bean property descriptor
+     * @return The bridged method or the property descriptor's write method, if
+     * it is not a bridge method.
+     */
     /**
      * Under normal circumstances, a property's getter will return exactly the
      * same type as its setter accepts as a parameter. However, because we have
