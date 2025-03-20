@@ -44,7 +44,12 @@ import lombok.EqualsAndHashCode;
  * @version $Id$
  * @since 0.1
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/5604b1696dd843b01ebab7616f853ee1347a6c9b/src/main/java/com/jcabi/github/RtRepo.java/left.java
+ * @checkstyle ClassFanOutComplexity (500 lines)
+||||||| /usr/src/app/output/jcabi/jcabi-github/5604b1696dd843b01ebab7616f853ee1347a6c9b/src/main/java/com/jcabi/github/RtRepo.java/base.java
+=======
  * @checkstyle ClassFanOutComplexity (5 lines)
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/5604b1696dd843b01ebab7616f853ee1347a6c9b/src/main/java/com/jcabi/github/RtRepo.java/right.java
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
