@@ -218,6 +218,12 @@ public class XPathProcessor extends AbstractRMLProcessor {
             }
         }
         else{
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/d46b8c445cac62835aeffc0b74b41f69283fd31d/src/main/java/be/ugent/mmlab/rml/processor/concrete/XPathProcessor.java/left.java
+||||||| /usr/src/app/output/mmlab/rmlprocessor/d46b8c445cac62835aeffc0b74b41f69283fd31d/src/main/java/be/ugent/mmlab/rml/processor/concrete/XPathProcessor.java/base.java
+            log.info("[XPathProcessor:extractValueFromNode] expression doesn't start with count " + expression.toString());
+=======
+            //log.info("[XPathProcessor:extractValueFromNode] expression doesn't start with count " + expression.toString());
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/d46b8c445cac62835aeffc0b74b41f69283fd31d/src/main/java/be/ugent/mmlab/rml/processor/concrete/XPathProcessor.java/right.java
             //if there's nothing to uniquelly identify, use # - temporary solution - challenge
             if(expression.equals("#")){
                 list.add(Integer.toString(enumerator++));
@@ -231,19 +237,19 @@ public class XPathProcessor extends AbstractRMLProcessor {
                 //checks if the node has a value or children
                 if(!n.getValue().isEmpty() || (n.getChildCount()!=0))
                     //MVS's for extracting elements and not the string
-                    /*if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
+                    if (!(n instanceof Attribute) && n.getChild(0) instanceof Element) {
                         list.add(n.toXML());
                     } 
                     else {
                         list.add(n.getValue());
-                    }*/
-                    
+                    }
+                    /*
                     //checks if the node has children, then cleans up new lines and extra spaces
                     if (!(n instanceof Attribute) && n.getChildCount()>1)
                         list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
                     else
                         list.add(n.getValue().toString());
-                    
+                    */
             }
         }
         return list;
