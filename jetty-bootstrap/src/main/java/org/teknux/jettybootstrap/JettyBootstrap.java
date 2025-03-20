@@ -1,31 +1,8 @@
-/*******************************************************************************
- * (C) Copyright 2014 Teknux.org (http://teknux.org/).
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *  
- * Contributors:
- *      "Pierre PINON"
- *      "Francois EYL"
- *      "Laurent MARCHAL"
- *  
- *******************************************************************************/
 package org.teknux.jettybootstrap;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.server.Connector;
@@ -52,34 +29,41 @@ import org.teknux.jettybootstrap.handler.listener.JettyLifeCycleListenerUtil;
 import org.teknux.jettybootstrap.keystore.JettyKeystore;
 import org.teknux.jettybootstrap.keystore.JettyKeystoreException;
 
-
 /**
  * Main class for easily boostrapping jetty.
  */
 public class JettyBootstrap {
+  private final Logger logger = LoggerFactory.getLogger(JettyBootstrap.class);
 
-	private final Logger logger = LoggerFactory.getLogger(JettyBootstrap.class);
+  private static final String DEFAULT_KEYSTORE_FILENAME = "default.keystore";
 
-	private static final String DEFAULT_KEYSTORE_FILENAME = "default.keystore";
-	private static final String DEFAULT_KEYSTORE_DOMAINNAME = "unknown";
-	private static final String DEFAULT_KEYSTORE_ALIAS = "jettybootstrap";
-	private static final String DEFAULT_KEYSTORE_PASSWORD = "jettybootstrap";
+  private static final String DEFAULT_KEYSTORE_DOMAINNAME = "unknown";
 
-	private static final String TEMP_DIRECTORY_NAME = ".temp";
-	public static final File TEMP_DIRECTORY_JARDIR = new File(getJarDir().getPath() + File.separator + TEMP_DIRECTORY_NAME);
-	public static final File TEMP_DIRECTORY_SYSTEMP = new File(System.getProperty("java.io.tmpdir") + File.separator + TEMP_DIRECTORY_NAME);
-	protected static final File TEMP_DIRECTORY_DEFAULT = TEMP_DIRECTORY_JARDIR;
+  private static final String DEFAULT_KEYSTORE_ALIAS = "jettybootstrap";
 
-	private static final String RESOURCE_WEBAPP = "/webapp";
-	private static final String CONTEXT_PATH_ROOT = "/";
+  private static final String DEFAULT_KEYSTORE_PASSWORD = "jettybootstrap";
 
-	private IJettyConfiguration jettyConfiguration;
-	private List<IJettyHandler> jettyHandlers = new ArrayList<IJettyHandler>();
+  private static final String TEMP_DIRECTORY_NAME = ".temp";
 
-	private Server server = null;
-	private HandlerList handlers = new HandlerList();
+  public static final File TEMP_DIRECTORY_JARDIR = new File(getJarDir().getPath() + File.separator + TEMP_DIRECTORY_NAME);
 
-	/**
+  public static final File TEMP_DIRECTORY_SYSTEMP = new File(System.getProperty("java.io.tmpdir") + File.separator + TEMP_DIRECTORY_NAME);
+
+  protected static final File TEMP_DIRECTORY_DEFAULT = TEMP_DIRECTORY_JARDIR;
+
+  private static final String RESOURCE_WEBAPP = "/webapp";
+
+  private static final String CONTEXT_PATH_ROOT = "/";
+
+  private IJettyConfiguration jettyConfiguration;
+
+  private List<IJettyHandler> jettyHandlers = new ArrayList<IJettyHandler>();
+
+  private Server server = null;
+
+  private HandlerList handlers = new HandlerList();
+
+  /**
 	 * Shortcut to start Jetty when called within a JAR file
 	 * containing the WEB-INF folder and needed libraries.
 	 * <p>
@@ -90,30 +74,30 @@ public class JettyBootstrap {
 	 * @throws JettyBootstrapException
 	 *             if an error occurs during the startup
 	 */
-	public static JettyBootstrap startSelf() throws JettyBootstrapException {
-		return new JettyBootstrap().addSelf().startServer();
-	}
+  public static JettyBootstrap startSelf() throws JettyBootstrapException {
+    return new JettyBootstrap().addSelf().startServer();
+  }
 
-	/**
+  /**
 	 * Default constructor using the default
 	 * {@link PropertiesJettyConfiguration} configuration.
 	 */
-	public JettyBootstrap() {
-		this(new PropertiesJettyConfiguration());
-	}
+  public JettyBootstrap() {
+    this(new PropertiesJettyConfiguration());
+  }
 
-	/**
+  /**
 	 * Constructor specifiying the configuration properties.
 	 * 
 	 * @param configuration
 	 *            the {@link IJettyConfiguration}
 	 *            implementation of the configuration
 	 */
-	public JettyBootstrap(IJettyConfiguration configuration) {
-		this.jettyConfiguration = configuration;
-	}
+  public JettyBootstrap(IJettyConfiguration configuration) {
+    this.jettyConfiguration = configuration;
+  }
 
-	/**
+  /**
 	 * Starts the Jetty Server and join the calling thread
 	 * according to
 	 * {@link IJettyConfiguration#isAutoJoinOnStart()}
@@ -124,11 +108,11 @@ public class JettyBootstrap {
 	 *             initialization
 	 * @see #startServer(boolean)
 	 */
-	public JettyBootstrap startServer() throws JettyBootstrapException {
-		return startServer(jettyConfiguration.isAutoJoinOnStart());
-	}
+  public JettyBootstrap startServer() throws JettyBootstrapException {
+    return startServer(jettyConfiguration.isAutoJoinOnStart());
+  }
 
-	/**
+  /**
 	 * Starts the Jetty Server and join the calling thread.
 	 * 
 	 * @param join
@@ -140,36 +124,30 @@ public class JettyBootstrap {
 	 *             if an exception occurs during the
 	 *             initialization
 	 */
-	public JettyBootstrap startServer(boolean join) throws JettyBootstrapException {
-		logger.info("Starting Server...");
+  public JettyBootstrap startServer(boolean join) throws JettyBootstrapException {
+    logger.info("Starting Server...");
+    if (server == null) {
+      init(jettyConfiguration);
+    }
+    setHandlers();
+    try {
+      server.start();
+    } catch (Exception e) {
+      throw new JettyBootstrapException(e);
+    }
+    if (jettyConfiguration.getJettyConnectors().contains(JettyConnector.HTTP)) {
+      logger.info("http://{}:{}", jettyConfiguration.getHost(), jettyConfiguration.getPort());
+    }
+    if (jettyConfiguration.getJettyConnectors().contains(JettyConnector.HTTPS)) {
+      logger.info("https://{}:{}", jettyConfiguration.getHost(), jettyConfiguration.getSslPort());
+    }
+    if (join) {
+      joinServer();
+    }
+    return this;
+  }
 
-		if (server == null) {
-			init(jettyConfiguration);
-		}
-		setHandlers();
-
-		try {
-			server.start();
-		} catch (Exception e) {
-			throw new JettyBootstrapException(e);
-		}
-
-		// display server addresses
-		if (jettyConfiguration.getJettyConnectors().contains(JettyConnector.HTTP)) {
-		    logger.info("http://{}:{}", jettyConfiguration.getHost(), jettyConfiguration.getPort());
-		}
-		if (jettyConfiguration.getJettyConnectors().contains(JettyConnector.HTTPS)) {
-            logger.info("https://{}:{}", jettyConfiguration.getHost(), jettyConfiguration.getSslPort());
-        }
-
-		if (join) {
-			joinServer();
-		}
-
-		return this;
-	}
-
-	/**
+  /**
 	 * Blocks the calling thread until the server stops.
 	 * 
 	 * @return this instance
@@ -177,32 +155,30 @@ public class JettyBootstrap {
 	 *             if an exception occurs while blocking the
 	 *             thread
 	 */
-	public JettyBootstrap joinServer() throws JettyBootstrapException {
-		try {
-			if (isServerStarted()) {
-				logger.debug("Joining Server...");
+  public JettyBootstrap joinServer() throws JettyBootstrapException {
+    try {
+      if (isServerStarted()) {
+        logger.debug("Joining Server...");
+        server.join();
+      } else {
+        logger.warn("Can\'t join Server. Not started");
+      }
+    } catch (InterruptedException e) {
+      throw new JettyBootstrapException(e);
+    }
+    return this;
+  }
 
-				server.join();
-			} else {
-				logger.warn("Can't join Server. Not started");
-			}
-		} catch (InterruptedException e) {
-			throw new JettyBootstrapException(e);
-		}
-
-		return this;
-	}
-	
-	/**
+  /**
 	 * Return if server is started
 	 * 
 	 * @return if server is started
 	 */
-	public boolean isServerStarted() {
-	    return (server != null && server.isStarted());
-	}
+  public boolean isServerStarted() {
+    return (server != null && server.isStarted());
+  }
 
-	/**
+  /**
 	 * Stops the Jetty server.
 	 * 
 	 * @return this instance
@@ -210,26 +186,23 @@ public class JettyBootstrap {
 	 *             if an exception occurs while stopping the
 	 *             server or if the server is not started
 	 */
-	public JettyBootstrap stopServer() throws JettyBootstrapException {
-		logger.info("Stopping Server...");
-		try {
-			handlers.stop();
+  public JettyBootstrap stopServer() throws JettyBootstrapException {
+    logger.info("Stopping Server...");
+    try {
+      handlers.stop();
+      if (isServerStarted()) {
+        server.stop();
+        logger.info("Server stopped.");
+      } else {
+        logger.warn("Can\'t stop server. Already stopped");
+      }
+    } catch (Exception e) {
+      throw new JettyBootstrapException(e);
+    }
+    return this;
+  }
 
-			if (isServerStarted()) {
-				server.stop();
-				
-				logger.info("Server stopped.");
-			} else {
-				logger.warn("Can't stop server. Already stopped");
-			}
-		} catch (Exception e) {
-			throw new JettyBootstrapException(e);
-		}
-
-		return this;
-	}
-
-	/**
+  /**
 	 * Add a War application the default context path
 	 * {@value #CONTEXT_PATH_ROOT}
 	 * 
@@ -237,11 +210,11 @@ public class JettyBootstrap {
 	 *            the path to a war file
 	 * @return this instance
 	 */
-	public JettyBootstrap addWarApp(String war) {
-		return addWarApp(war, CONTEXT_PATH_ROOT);
-	}
+  public JettyBootstrap addWarApp(String war) {
+    return addWarApp(war, CONTEXT_PATH_ROOT);
+  }
 
-	/**
+  /**
 	 * Add a War application specifying the context path.
 	 * 
 	 * @param war
@@ -251,15 +224,14 @@ public class JettyBootstrap {
 	 *            available
 	 * @return this instance
 	 */
-	public JettyBootstrap addWarApp(String war, String contextPath) {
-		WarAppJettyHandler warAppJettyHandler = new WarAppJettyHandler();
-		warAppJettyHandler.setWar(war);
-		warAppJettyHandler.setContextPath(contextPath);
+  public JettyBootstrap addWarApp(String war, String contextPath) {
+    WarAppJettyHandler warAppJettyHandler = new WarAppJettyHandler();
+    warAppJettyHandler.setWar(war);
+    warAppJettyHandler.setContextPath(contextPath);
+    return addJettyHandler(warAppJettyHandler);
+  }
 
-		return addJettyHandler(warAppJettyHandler);
-	}
-
-	/**
+  /**
 	 * Add a War application from the current classpath on
 	 * the default context path {@value #CONTEXT_PATH_ROOT}
 	 * 
@@ -267,11 +239,11 @@ public class JettyBootstrap {
 	 *            the path to a war file in the classpath
 	 * @return this instance
 	 */
-	public JettyBootstrap addWarAppFromClasspath(String warFromClasspath) {
-		return addWarAppFromClasspath(warFromClasspath, CONTEXT_PATH_ROOT);
-	}
+  public JettyBootstrap addWarAppFromClasspath(String warFromClasspath) {
+    return addWarAppFromClasspath(warFromClasspath, CONTEXT_PATH_ROOT);
+  }
 
-	/**
+  /**
 	 * Add a War application from the current classpath
 	 * specifying the context path.
 	 * 
@@ -282,15 +254,14 @@ public class JettyBootstrap {
 	 *            available
 	 * @return this instance
 	 */
-	public JettyBootstrap addWarAppFromClasspath(String warFromClasspath, String contextPath) {
-		WarAppFromClasspathJettyHandler warAppFromClasspathJettyHandler = new WarAppFromClasspathJettyHandler();
-		warAppFromClasspathJettyHandler.setWarFromClasspath(warFromClasspath);
-		warAppFromClasspathJettyHandler.setContextPath(contextPath);
+  public JettyBootstrap addWarAppFromClasspath(String warFromClasspath, String contextPath) {
+    WarAppFromClasspathJettyHandler warAppFromClasspathJettyHandler = new WarAppFromClasspathJettyHandler();
+    warAppFromClasspathJettyHandler.setWarFromClasspath(warFromClasspath);
+    warAppFromClasspathJettyHandler.setContextPath(contextPath);
+    return addJettyHandler(warAppFromClasspathJettyHandler);
+  }
 
-		return addJettyHandler(warAppFromClasspathJettyHandler);
-	}
-
-	/**
+  /**
 	 * Add an exploded (not packaged) War application on the
 	 * default context path {@value #CONTEXT_PATH_ROOT}
 	 * 
@@ -300,11 +271,11 @@ public class JettyBootstrap {
 	 *            the web.xml descriptor path
 	 * @return this instance
 	 */
-	public JettyBootstrap addExplodedWarApp(String explodedWar, String descriptor) {
-		return addExplodedWarApp(explodedWar, descriptor, CONTEXT_PATH_ROOT);
-	}
+  public JettyBootstrap addExplodedWarApp(String explodedWar, String descriptor) {
+    return addExplodedWarApp(explodedWar, descriptor, CONTEXT_PATH_ROOT);
+  }
 
-	/**
+  /**
 	 * Add an exploded (not packaged) War application
 	 * specifying the context path.
 	 * 
@@ -317,16 +288,15 @@ public class JettyBootstrap {
 	 *            available
 	 * @return this instance
 	 */
-	public JettyBootstrap addExplodedWarApp(String explodedWar, String descriptor, String contextPath) {
-		ExplodedWarAppJettyHandler explodedWarAppJettyHandler = new ExplodedWarAppJettyHandler();
-		explodedWarAppJettyHandler.setWebAppBase(explodedWar);
-		explodedWarAppJettyHandler.setDescriptor(descriptor);
-		explodedWarAppJettyHandler.setContextPath(contextPath);
+  public JettyBootstrap addExplodedWarApp(String explodedWar, String descriptor, String contextPath) {
+    ExplodedWarAppJettyHandler explodedWarAppJettyHandler = new ExplodedWarAppJettyHandler();
+    explodedWarAppJettyHandler.setWebAppBase(explodedWar);
+    explodedWarAppJettyHandler.setDescriptor(descriptor);
+    explodedWarAppJettyHandler.setContextPath(contextPath);
+    return addJettyHandler(explodedWarAppJettyHandler);
+  }
 
-		return addJettyHandler(explodedWarAppJettyHandler);
-	}
-
-	/**
+  /**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, on the default context path
 	 * {@value #CONTEXT_PATH_ROOT}
@@ -335,11 +305,11 @@ public class JettyBootstrap {
 	 *            the exploded war path
 	 * @return this instance
 	 */
-	public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar) {
-		return addExplodedWarAppFromClasspath(explodedWar, null);
-	}
+  public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar) {
+    return addExplodedWarAppFromClasspath(explodedWar, null);
+  }
 
-	/**
+  /**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, on the default context path
 	 * {@value #CONTEXT_PATH_ROOT}
@@ -350,11 +320,11 @@ public class JettyBootstrap {
 	 *            the web.xml descriptor path
 	 * @return this instance
 	 */
-	public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar, String descriptor) {
-		return addExplodedWarAppFromClasspath(explodedWar, descriptor, CONTEXT_PATH_ROOT);
-	}
+  public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar, String descriptor) {
+    return addExplodedWarAppFromClasspath(explodedWar, descriptor, CONTEXT_PATH_ROOT);
+  }
 
-	/**
+  /**
 	 * Add an exploded (not packaged) War application from
 	 * the current classpath, specifying the context path.
 	 * 
@@ -367,16 +337,15 @@ public class JettyBootstrap {
 	 *            available
 	 * @return this instance
 	 */
-	public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar, String descriptor, String contextPath) {
-		ExplodedWarAppJettyHandler explodedWarAppJettyHandler = new ExplodedWarAppJettyHandler();
-		explodedWarAppJettyHandler.setWebAppBaseFromClasspath(explodedWar);
-		explodedWarAppJettyHandler.setDescriptor(descriptor);
-		explodedWarAppJettyHandler.setContextPath(contextPath);
+  public JettyBootstrap addExplodedWarAppFromClasspath(String explodedWar, String descriptor, String contextPath) {
+    ExplodedWarAppJettyHandler explodedWarAppJettyHandler = new ExplodedWarAppJettyHandler();
+    explodedWarAppJettyHandler.setWebAppBaseFromClasspath(explodedWar);
+    explodedWarAppJettyHandler.setDescriptor(descriptor);
+    explodedWarAppJettyHandler.setContextPath(contextPath);
+    return addJettyHandler(explodedWarAppJettyHandler);
+  }
 
-		return addJettyHandler(explodedWarAppJettyHandler);
-	}
-
-	/**
+  /**
 	 * Add an exploded War application found from
 	 * {@value #RESOURCE_WEBAPP} in the current classpath on
 	 * the default context path {@value #CONTEXT_PATH_ROOT}
@@ -384,11 +353,11 @@ public class JettyBootstrap {
 	 * @see #addExplodedWarAppFromClasspath(String, String)
 	 * @return this instance
 	 */
-	public JettyBootstrap addSelf() {
-		return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null);
-	}
+  public JettyBootstrap addSelf() {
+    return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null);
+  }
 
-	/**
+  /**
 	 * Add an exploded War application found from
 	 * {@value #RESOURCE_WEBAPP} in the current classpath
 	 * specifying the context path.
@@ -400,36 +369,34 @@ public class JettyBootstrap {
 	 *            available
 	 * @return this instance
 	 */
-	public JettyBootstrap addSelf(String contextPath) {
-		return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null, contextPath);
-	}
+  public JettyBootstrap addSelf(String contextPath) {
+    return addExplodedWarAppFromClasspath(RESOURCE_WEBAPP, null, contextPath);
+  }
 
-	/**
+  /**
 	 * Add Handler
 	 * 
 	 * @param handler
 	 * @return this instance
 	 */
-	public JettyBootstrap addHandler(Handler handler) {
-		JettyHandler jettyHandler = new JettyHandler();
-		jettyHandler.setHandler(handler);
+  public JettyBootstrap addHandler(Handler handler) {
+    JettyHandler jettyHandler = new JettyHandler();
+    jettyHandler.setHandler(handler);
+    return addJettyHandler(jettyHandler);
+  }
 
-		return addJettyHandler(jettyHandler);
-	}
-
-	/**
+  /**
 	 * Add Handler
 	 * 
 	 * @param iJettyHandler
 	 * @return this instance
 	 */
-	public JettyBootstrap addJettyHandler(IJettyHandler iJettyHandler) {
-		jettyHandlers.add(iJettyHandler);
+  public JettyBootstrap addJettyHandler(IJettyHandler iJettyHandler) {
+    jettyHandlers.add(iJettyHandler);
+    return this;
+  }
 
-		return this;
-	}
-
-	/**
+  /**
 	 * Get the jetty {@link Server} Object. Calls
 	 * {@link #init(IJettyConfiguration)} if not initialized
 	 * yet.
@@ -439,14 +406,14 @@ public class JettyBootstrap {
 	 *             if an error occurs during
 	 *             {@link #init(IJettyConfiguration)}
 	 */
-	public Server getServer() throws JettyBootstrapException {
-		if (server == null) {
-			init(jettyConfiguration);
-		}
-		return server;
-	}
+  public Server getServer() throws JettyBootstrapException {
+    if (server == null) {
+      init(jettyConfiguration);
+    }
+    return server;
+  }
 
-	/**
+  /**
 	 * Initialize Jetty server using the given
 	 * {@link IJettyConfiguration}. Basically creates the
 	 * server, set connectors, handlers and adds the
@@ -455,18 +422,15 @@ public class JettyBootstrap {
 	 * @param iJettyConfiguration
 	 * @throws JettyBootstrapException
 	 */
-	protected void init(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
-		this.jettyConfiguration = initConfiguration(iJettyConfiguration);
+  protected void init(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
+    this.jettyConfiguration = initConfiguration(iJettyConfiguration);
+    server = createServer(iJettyConfiguration);
+    server.setConnectors(createConnectors(iJettyConfiguration, server));
+    server.setHandler(handlers);
+    createShutdownHook(iJettyConfiguration);
+  }
 
-		server = createServer(iJettyConfiguration);
-		server.setConnectors(createConnectors(iJettyConfiguration, server));
-
-		server.setHandler(handlers);
-
-		createShutdownHook(iJettyConfiguration);
-	}
-
-	/**
+  /**
 	 * Parse the given {@link IJettyConfiguration} object,
 	 * validate the configuration and initialize it. Clean
 	 * temp directory if necessary and generates SSL
@@ -476,75 +440,63 @@ public class JettyBootstrap {
 	 * @return
 	 * @throws JettyBootstrapException
 	 */
-	protected IJettyConfiguration initConfiguration(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
-		logger.debug("Init Configuration...");
+  protected IJettyConfiguration initConfiguration(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
+    logger.debug("Init Configuration...");
+    logger.trace("Check Temp Directory...");
+    if (iJettyConfiguration.getTempDirectory() == null) {
+      iJettyConfiguration.setTempDirectory(TEMP_DIRECTORY_DEFAULT);
+    }
+    if (iJettyConfiguration.getTempDirectory().exists() && iJettyConfiguration.isCleanTempDir()) {
+      logger.trace("Clean Temp Directory...");
+      try {
+        FileUtils.deleteDirectory(iJettyConfiguration.getTempDirectory());
+      } catch (IOException e) {
+        throw new JettyBootstrapException("Can\'t clean temporary directory");
+      }
+    }
+    if (!iJettyConfiguration.getTempDirectory().exists() && !iJettyConfiguration.getTempDirectory().mkdirs()) {
+      throw new JettyBootstrapException("Can\'t create temporary directory");
+    }
+    logger.trace("Check required properties...");
+    if (iJettyConfiguration.getHost() == null || iJettyConfiguration.getHost().isEmpty()) {
+      throw new JettyBootstrapException("Host not specified");
+    }
+    logger.trace("Check connectors...");
+    if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS) && (iJettyConfiguration.getSslKeyStorePath() == null || iJettyConfiguration.getSslKeyStorePath().isEmpty())) {
+      File keystoreFile = new File(iJettyConfiguration.getTempDirectory().getPath() + File.separator + DEFAULT_KEYSTORE_FILENAME);
+      if (!keystoreFile.exists()) {
+        try {
+          JettyKeystore.generateKeystoreAndSave(DEFAULT_KEYSTORE_DOMAINNAME, DEFAULT_KEYSTORE_ALIAS, DEFAULT_KEYSTORE_PASSWORD, keystoreFile);
+        } catch (JettyKeystoreException e) {
+          throw new JettyBootstrapException("Can\'t generate keyStore", e);
+        }
+      }
+      iJettyConfiguration.setSslKeyStorePath(keystoreFile.getPath());
+      iJettyConfiguration.setSslKeyStorePassword(DEFAULT_KEYSTORE_PASSWORD);
+    }
+    if (iJettyConfiguration.isRedirectWebAppsOnHttpsConnector() && (!iJettyConfiguration.hasJettyConnector(JettyConnector.HTTP) || !iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS))) {
+      throw new JettyBootstrapException("You can\'t redirect all from HTTP to HTTPS Connector if both connectors are not setted");
+    }
+    logger.trace("Configuration : {}", iJettyConfiguration);
+    return iJettyConfiguration;
+  }
 
-		logger.trace("Check Temp Directory...");
-		if (iJettyConfiguration.getTempDirectory() == null) {
-			iJettyConfiguration.setTempDirectory(TEMP_DIRECTORY_DEFAULT);
-		}
-
-		if (iJettyConfiguration.getTempDirectory().exists() && iJettyConfiguration.isCleanTempDir()) {
-			logger.trace("Clean Temp Directory...");
-
-			try {
-				FileUtils.deleteDirectory(iJettyConfiguration.getTempDirectory());
-			} catch (IOException e) {
-				throw new JettyBootstrapException("Can't clean temporary directory");
-			}
-		}
-		if (!iJettyConfiguration.getTempDirectory().exists() && !iJettyConfiguration.getTempDirectory().mkdirs()) {
-			throw new JettyBootstrapException("Can't create temporary directory");
-		}
-
-		logger.trace("Check required properties...");
-		if (iJettyConfiguration.getHost() == null || iJettyConfiguration.getHost().isEmpty()) {
-			throw new JettyBootstrapException("Host not specified");
-		}
-
-		logger.trace("Check connectors...");
-		if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS) && (iJettyConfiguration.getSslKeyStorePath() == null || iJettyConfiguration.getSslKeyStorePath().isEmpty())) {
-			File keystoreFile = new File(iJettyConfiguration.getTempDirectory().getPath() + File.separator + DEFAULT_KEYSTORE_FILENAME);
-
-			if (!keystoreFile.exists()) {
-				try {
-					JettyKeystore.generateKeystoreAndSave(DEFAULT_KEYSTORE_DOMAINNAME, DEFAULT_KEYSTORE_ALIAS, DEFAULT_KEYSTORE_PASSWORD, keystoreFile);
-				} catch (JettyKeystoreException e) {
-					throw new JettyBootstrapException("Can't generate keyStore", e);
-				}
-			}
-			iJettyConfiguration.setSslKeyStorePath(keystoreFile.getPath());
-			iJettyConfiguration.setSslKeyStorePassword(DEFAULT_KEYSTORE_PASSWORD);
-		}
-
-		if (iJettyConfiguration.isRedirectWebAppsOnHttpsConnector() &&
-			(!iJettyConfiguration.hasJettyConnector(JettyConnector.HTTP) || !iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS))) {
-			throw new JettyBootstrapException("You can't redirect all from HTTP to HTTPS Connector if both connectors are not setted");
-		}
-
-		logger.trace("Configuration : {}", iJettyConfiguration);
-
-		return iJettyConfiguration;
-	}
-
-	/**
+  /**
 	 * Convenient method used to build and return a new
 	 * {@link Server}.
 	 * 
 	 * @param iJettyConfiguration
 	 * @return
 	 */
-	protected Server createServer(IJettyConfiguration iJettyConfiguration) {
-		logger.trace("Create Jetty Server...");
+  protected Server createServer(IJettyConfiguration iJettyConfiguration) {
+    logger.trace("Create Jetty Server...");
+    Server server = new Server(new QueuedThreadPool(iJettyConfiguration.getMaxThreads()));
+    server.setStopAtShutdown(false);
+    server.setStopTimeout(iJettyConfiguration.getStopTimeout());
+    return server;
+  }
 
-		Server server = new Server(new QueuedThreadPool(iJettyConfiguration.getMaxThreads()));
-		server.setStopAtShutdown(false); //Reimplemented. See @IJettyConfiguration.stopAtShutdown
-		server.setStopTimeout(iJettyConfiguration.getStopTimeout());
-
-		return server;
-	}
-
-	/**
+  /**
 	 * Creates and returns the necessary
 	 * {@link ServerConnector} based on the given
 	 * {@link IJettyConfiguration}.
@@ -554,118 +506,100 @@ public class JettyBootstrap {
 	 *            the server to
 	 * @return
 	 */
-	protected Connector[] createConnectors(IJettyConfiguration iJettyConfiguration, Server server) {
-		logger.trace("Creating Jetty Connectors...");
+  protected Connector[] createConnectors(IJettyConfiguration iJettyConfiguration, Server server) {
+    logger.trace("Creating Jetty Connectors...");
+    List<Connector> connectors = new ArrayList<Connector>();
+    if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTP)) {
+      logger.trace("Adding HTTP Connector...");
+      ServerConnector serverConnector;
+      if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS)) {
+        HttpConfiguration httpConfiguration = new HttpConfiguration();
+        httpConfiguration.setSecurePort(iJettyConfiguration.getSslPort());
+        httpConfiguration.setSecureScheme(HttpScheme.HTTPS.asString());
+        HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);
+        serverConnector = new ServerConnector(server, httpConnectionFactory);
+      } else {
+        serverConnector = new ServerConnector(server);
+      }
+      serverConnector.setIdleTimeout(iJettyConfiguration.getIdleTimeout());
+      serverConnector.setHost(iJettyConfiguration.getHost());
+      serverConnector.setPort(iJettyConfiguration.getPort());
+      connectors.add(serverConnector);
+    }
+    if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS)) {
+      logger.trace("Adding HTTPS Connector...");
+      SslContextFactory sslContextFactory = new SslContextFactory(iJettyConfiguration.getSslKeyStorePath());
+      sslContextFactory.setKeyStorePassword(iJettyConfiguration.getSslKeyStorePassword());
+      ServerConnector serverConnector = new ServerConnector(server, sslContextFactory);
+      serverConnector.setIdleTimeout(iJettyConfiguration.getIdleTimeout());
+      serverConnector.setHost(iJettyConfiguration.getHost());
+      serverConnector.setPort(iJettyConfiguration.getSslPort());
+      connectors.add(serverConnector);
+    }
+    return connectors.toArray(new Connector[connectors.size()]);
+  }
 
-		List<Connector> connectors = new ArrayList<Connector>();
-
-		if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTP)) {
-			logger.trace("Adding HTTP Connector...");
-
-			ServerConnector serverConnector;
-
-			if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS)) {
-				HttpConfiguration httpConfiguration = new HttpConfiguration();
-				httpConfiguration.setSecurePort(iJettyConfiguration.getSslPort());
-				httpConfiguration.setSecureScheme(HttpScheme.HTTPS.asString());
-
-				HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfiguration);
-
-				serverConnector = new ServerConnector(server, httpConnectionFactory);
-			} else {
-				serverConnector = new ServerConnector(server);
-			}
-			serverConnector.setIdleTimeout(iJettyConfiguration.getIdleTimeout());
-			serverConnector.setHost(iJettyConfiguration.getHost());
-			serverConnector.setPort(iJettyConfiguration.getPort());
-
-			connectors.add(serverConnector);
-		}
-		if (iJettyConfiguration.hasJettyConnector(JettyConnector.HTTPS)) {
-			logger.trace("Adding HTTPS Connector...");
-
-			SslContextFactory sslContextFactory = new SslContextFactory(iJettyConfiguration.getSslKeyStorePath());
-			sslContextFactory.setKeyStorePassword(iJettyConfiguration.getSslKeyStorePassword());
-			ServerConnector serverConnector = new ServerConnector(server, sslContextFactory);
-
-			serverConnector.setIdleTimeout(iJettyConfiguration.getIdleTimeout());
-			serverConnector.setHost(iJettyConfiguration.getHost());
-			serverConnector.setPort(iJettyConfiguration.getSslPort());
-
-			connectors.add(serverConnector);
-		}
-
-		return connectors.toArray(new Connector[connectors.size()]);
-	}
-
-	/**
+  /**
 	 * Convenient method used to gracefully stop Jetty
 	 * server. Invoked by the registered shutdown hook.
 	 * 
 	 * @param configuration
 	 */
-	protected void shutdown(IJettyConfiguration configuration) {
-		try {
-			logger.debug("Shutting Down...");
-			if (configuration.isStopAtShutdown()) {
-				stopServer();
-			}
-		} catch (Exception e) {
-			logger.error("Shutdown", e);
-		}
-	}
+  protected void shutdown(IJettyConfiguration configuration) {
+    try {
+      logger.debug("Shutting Down...");
+      if (configuration.isStopAtShutdown()) {
+        stopServer();
+      }
+    } catch (Exception e) {
+      logger.error("Shutdown", e);
+    }
+  }
 
-	/**
+  /**
 	 * Set Handlers to jetty
 	 * 
 	 * @throws JettyBootstrapException
 	 */
-	private void setHandlers() throws JettyBootstrapException {
-		if (jettyHandlers.size() == 0) {
-			return;
-		}
+  private void setHandlers() throws JettyBootstrapException {
+    if (jettyHandlers.size() == 0) {
+      return;
+    }
+    handlers.removeBeans();
+    for (IJettyHandler jettyHandler : jettyHandlers) {
+      if (jettyHandler instanceof AbstractAppJettyHandler) {
+        AbstractAppJettyHandler abstractAppJettyHandler = (AbstractAppJettyHandler) jettyHandler;
+        abstractAppJettyHandler.setTempDirectory(jettyConfiguration.getTempDirectory());
+        abstractAppJettyHandler.setPersistTempDirectory(jettyConfiguration.isPersistAppTempDirectories());
+        abstractAppJettyHandler.setRedirectOnHttpsConnector(jettyConfiguration.isRedirectWebAppsOnHttpsConnector());
+        abstractAppJettyHandler.setThrowIfStartupException(jettyConfiguration.isThrowIfStartupException());
+      }
+      jettyHandler.addJettyLifeCycleListener(JettyLifeCycleListenerUtil.getDefaultJettyLifeCycleListener());
+      logger.debug("Deploying {}...", jettyHandler);
+      handlers.addHandler(jettyHandler.getHandler());
+    }
+  }
 
-		handlers.removeBeans();
-
-		for (IJettyHandler jettyHandler : jettyHandlers) {
-			if (jettyHandler instanceof AbstractAppJettyHandler) {
-				AbstractAppJettyHandler abstractAppJettyHandler = (AbstractAppJettyHandler) jettyHandler;
-				abstractAppJettyHandler.setTempDirectory(jettyConfiguration.getTempDirectory());
-				abstractAppJettyHandler.setPersistTempDirectory(jettyConfiguration.isPersistAppTempDirectories());
-				abstractAppJettyHandler.setRedirectOnHttpsConnector(jettyConfiguration.isRedirectWebAppsOnHttpsConnector());
-				abstractAppJettyHandler.setThrowIfStartupException(jettyConfiguration.isThrowIfStartupException());
-			}
-
-			jettyHandler.addJettyLifeCycleListener(JettyLifeCycleListenerUtil.getDefaultJettyLifeCycleListener());
-
-			logger.debug("Deploying {}...", jettyHandler);
-
-			handlers.addHandler(jettyHandler.getHandler());
-		}
-	}
-
-	/**
+  /**
 	 * Create Shutdown Hook.
 	 * 
 	 * @param configuration
 	 */
-	private void createShutdownHook(final IJettyConfiguration configuration) {
-		logger.trace("Creating Jetty ShutdownHook...");
+  private void createShutdownHook(final IJettyConfiguration configuration) {
+    logger.trace("Creating Jetty ShutdownHook...");
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        shutdown(configuration);
+      }
+    });
+  }
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-
-			public void run() {
-				shutdown(configuration);
-			}
-		});
-	}
-
-	/**
+  /**
 	 * Get directory location of Jar
 	 * 
 	 * @return @File
 	 */
-	private static File getJarDir() {
-		return new File(JettyBootstrap.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile();
-	}
+  private static File getJarDir() {
+    return new File(JettyBootstrap.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile();
+  }
 }
