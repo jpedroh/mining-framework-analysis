@@ -86,7 +86,6 @@ public class HasherNode implements MessageHandler {
 		this.messageFactory = new MessageFactory(session);
 
 		this.hashRequests = metrics.meter(METRIC_NAME_HASH_MESSAGES);
-		this.buffer = ByteBuffer.allocate(INITIAL_BUFFER_SIZE);
 	}
 
 	/**
@@ -107,6 +106,16 @@ public class HasherNode implements MessageHandler {
 	@Deprecated
 	public HasherNode(ClientSession session, ImagePHash hasher, String requestAddress, String resultAddress) throws ActiveMQException {
 		this(session, hasher, requestAddress, resultAddress, new MetricRegistry());
+	}
+	@Deprecated
+	public HasherNode(ClientSession session, ImagePHash hasher, String requestAddress, String resultAddress) throws ActiveMQException {
+		this.hasher = hasher;
+		this.session = session;
+		this.consumer = session.createConsumer(requestAddress);
+		this.producer = session.createProducer(resultAddress);
+		this.consumer.setMessageHandler(this);
+		this.messageFactory = new MessageFactory(session);
+		this.buffer = ByteBuffer.allocate(INITIAL_BUFFER_SIZE);
 	}
 
 	protected final void setMessageFactory(MessageFactory messageFactory) {
