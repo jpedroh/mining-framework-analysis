@@ -148,8 +148,16 @@ public class SSDiscUserEntryAddFct{
     
     try{
       
-      if(SSObjU.isNull(par.label, par.type)){
+<<<<<<< /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/left.java
+      if(SSObjU.isNull(par.discLabel, par.discType)){
         throw new Exception("label, disc type null");
+||||||| /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/base.java
+      if(SSObjU.isNull(par.discLabel, par.discType)){
+        throw new Exception("label or disc type null");
+=======
+      if(SSObjU.isNull(par.label, par.type)){
+        throw new Exception("label or disc type null");
+>>>>>>> /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/right.java
       }
       
       switch(par.type){
@@ -157,6 +165,24 @@ public class SSDiscUserEntryAddFct{
         case qa:
         case chat: break;
         default: throw new Exception("disc type not valid");
+<<<<<<< /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/left.java
+||||||| /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/base.java
+      }
+      
+      if(
+        SSEntityE.equals (par.discType, SSEntityE.qa) &&
+        SSObjU.isNull    (par.content)){
+        
+        throw new Exception("question content null");
+=======
+      }
+      
+      if(
+        SSEntityE.equals (par.type, SSEntityE.qa) &&
+        SSObjU.isNull    (par.entry)){
+        
+        throw new Exception("question content null");
+>>>>>>> /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/right.java
       }
       
       if(

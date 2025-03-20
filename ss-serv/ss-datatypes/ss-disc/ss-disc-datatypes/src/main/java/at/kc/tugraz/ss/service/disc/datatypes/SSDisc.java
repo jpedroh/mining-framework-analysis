@@ -66,10 +66,10 @@ public class SSDisc extends SSEntityA {
     
     super(uri);
     
-    this.id       = uri;
+    this.id          = uri;
     this.label        = label;
     this.author       = author;
-    this.entity   = target;
+    this.entity       = target;
     this.type     = discType;
     this.explanation  = explanation;
     this.creationTime = creationTime;
@@ -93,7 +93,7 @@ public class SSDisc extends SSEntityA {
     ld.put(SSVarU.entries, entriesObj);
     
     ld.put(SSVarU.author,       SSVarU.sss + SSStrU.colon + SSUri.class.getName());
-    ld.put(SSVarU.entity,   SSVarU.sss + SSStrU.colon + SSUri.class.getName());
+    ld.put(SSVarU.entity,       SSVarU.sss + SSStrU.colon + SSUri.class.getName());
     ld.put(SSVarU.label,        SSVarU.sss + SSStrU.colon + SSLabel.class.getName());
     ld.put(SSVarU.type,     SSVarU.sss + SSStrU.colon + SSEntityE.class.getName());
     ld.put(SSVarU.explanation,  SSVarU.sss + SSStrU.colon + SSTextComment.class.getName());
