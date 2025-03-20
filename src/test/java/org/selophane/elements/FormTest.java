@@ -1,5 +1,4 @@
 package org.selophane.elements;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,159 +17,132 @@ import org.selophane.elements.widget.Label;
 /**
  * Test the form element types.
  */
-@RunWith(JUnit4.class)
-public class FormTest {
-    static WebDriver driver;
-    static FormTestObject testObject;
+@RunWith(value = JUnit4.class) public class FormTest {
+  static WebDriver driver;
 
-    @BeforeClass
-    public static void beforeClass() {
-        driver = new HtmlUnitDriver();
-        testObject = FormTestObject.initialize(driver);
-    }
-    
-    @Before
-    public void beforeTest() {
-    	testObject.get();
-    }
+  static FormTestObject testObject;
 
-    @Test
-    public void isChecked() {
-        Assert.assertFalse(testObject.checkbox.isChecked());
-    }
+  @BeforeClass public static void beforeClass() {
+    driver = new HtmlUnitDriver();
+    testObject = FormTestObject.initialize(driver);
+  }
 
-    @Test
-    public void check() {
-        testObject.checkbox.check();
-        Assert.assertTrue(testObject.checkbox.isChecked());
-    }
+  @Before public void beforeTest() {
+    testObject.get();
+  }
 
-    @Test
-    public void uncheck() {
-        testObject.checkbox.click();
-        testObject.checkbox.uncheck();
-        Assert.assertFalse(testObject.checkbox.isChecked());
-    }
+  @Test public void isChecked() {
+    Assert.assertFalse(testObject.checkbox.isChecked());
+  }
 
-    @Test
-    public void selectWiredProperly() {
-        testObject.selectFragment.getOption1().selectByIndex(0);
-        Assert.assertEquals(1, testObject.selectFragment.getOption1().getAllSelectedOptions().size());
-    }
+  @Test public void check() {
+    testObject.checkbox.check();
+    Assert.assertTrue(testObject.checkbox.isChecked());
+  }
 
-    @Test
-    public void getLabelsList() {
-        for (Label label : testObject.labels) {
-            Assert.assertNotNull(label.getFor());
-        }
-    }
+  @Test public void uncheck() {
+    testObject.checkbox.click();
+    testObject.checkbox.uncheck();
+    Assert.assertFalse(testObject.checkbox.isChecked());
+  }
 
-    @Test
-    public void getElementLabelsList() {
-        for (Element webElementLabel : testObject.elementLabels) {
-            Assert.assertNotNull(webElementLabel.getAttribute("for"));
-        }
-    }
+  @Test public void selectWiredProperly() {
+    testObject.selectFragment.getOption1().selectByIndex(0);
+    Assert.assertEquals(1, testObject.selectFragment.getOption1().getAllSelectedOptions().size());
+  }
 
-    @Test
-    public void getWebElementLabelsList() {
-        for (WebElement webElementLabel : testObject.webElementLabels) {
-            Assert.assertNotNull(webElementLabel.getAttribute("for"));
-        }
+  @Test public void getLabelsList() {
+    for (Label label : testObject.labels) {
+      Assert.assertNotNull(label.getFor());
     }
+  }
 
-    @Test
-    public void getWebElement() {
-        Assert.assertTrue(testObject.labelForTextB.isDisplayed());
+  @Test public void getElementLabelsList() {
+    for (Element webElementLabel : testObject.elementLabels) {
+      Assert.assertNotNull(webElementLabel.getAttribute("for"));
     }
+  }
 
-    @Test
-    public void formElement() {
-        Assert.assertTrue(testObject.element.elementWired());
+  @Test public void getWebElementLabelsList() {
+    for (WebElement webElementLabel : testObject.webElementLabels) {
+      Assert.assertNotNull(webElementLabel.getAttribute("for"));
     }
+  }
 
-    @Test
-    public void textInputSet() {
-        testObject.texta.set("TestText");
-        Assert.assertEquals("TestText", testObject.texta.getAttribute("value"));
-    }
+  @Test public void getWebElement() {
+    Assert.assertTrue(testObject.labelForTextB.isDisplayed());
+  }
 
-    @Test
-    public void textInputClear() {
-        testObject.texta.set("TestText");
-        testObject.texta.clear();
-        Assert.assertEquals("", testObject.texta.getAttribute("value"));
-    }
+  @Test public void formElement() {
+    Assert.assertTrue(testObject.element.elementWired());
+  }
 
-    @Test
-    public void textInputGetValue() {
-        testObject.texta.set("TestText");
-        Assert.assertEquals("TestText", testObject.texta.getText());
-    }
+  @Test public void textInputSet() {
+    testObject.texta.set("TestText");
+    Assert.assertEquals("TestText", testObject.texta.getAttribute("value"));
+  }
 
-    @Test
-    public void formWebElement() {
-        Assert.assertTrue(testObject.webElement.isDisplayed());
-    }
-    
-    @Test
-    public void tableRowCount() {
-    	Assert.assertEquals(4, testObject.table.getRowCount());
-    }
-    
-    @Test
-    public void tableColumnCount() {
-    	Assert.assertEquals(2, testObject.table.getColumnCount());
-    }
-    
-    @Test
-    public void tableGetHeaderCell() {
-    	Assert.assertEquals("Month", testObject.table.getCellAtIndex(0, 0).getText());
-    }
-    
-    @Test
-    public void tableGetBodyCell() {
-    	Assert.assertEquals("$80", testObject.table.getCellAtIndex(2, 1).getText());
-    }
-    
-    @Test
-    public void tableGetFooterCell() {
-    	Assert.assertEquals("Sum", testObject.table.getCellAtIndex(3, 0).getText());
-    }
-    
-    @Test
-    @Ignore("At the momment the implementation is wrong")
-    public void selectDisabledElement() {
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-        final String disabledOptionText = "Disabled option";
-        testObject.option1.selectByVisibleText(disabledOptionText);
-        Assert.assertNotEquals(disabledOptionText, testObject.option1.getFirstSelectedOption().getText());
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-    }
-    
-    @Test
-    @Ignore("At the momment the implementation is wrong")
-    public void selectHiddenElement() {
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-        final String displayNoneText = "Option display none";
-        testObject.option1.selectByVisibleText(displayNoneText);
-        Assert.assertNotEquals(displayNoneText, testObject.option1.getFirstSelectedOption().getText());
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-    }
-    
-    @Test
-    @Ignore("At the momment the implementation is wrong")
-    public void selectHiddenElementSelectByValue() {
-        testObject.option1.selectByIndex(0);
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-        final String displayNoneText = "Option display none";
-        testObject.option1.selectByValue("option5");
-        Assert.assertNotEquals(displayNoneText, testObject.option1.getFirstSelectedOption().getText());
-        Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
-    }
+  @Test public void textInputClear() {
+    testObject.texta.set("TestText");
+    testObject.texta.clear();
+    Assert.assertEquals("", testObject.texta.getAttribute("value"));
+  }
 
-    @AfterClass
-    public static void afterClass() {
-        driver.close();
-    }
+  @Test public void textInputGetValue() {
+    testObject.texta.set("TestText");
+    Assert.assertEquals("TestText", testObject.texta.getText());
+  }
+
+  @Test public void formWebElement() {
+    Assert.assertTrue(testObject.webElement.isDisplayed());
+  }
+
+  @Test public void tableRowCount() {
+    Assert.assertEquals(4, testObject.table.getRowCount());
+  }
+
+  @Test public void tableColumnCount() {
+    Assert.assertEquals(2, testObject.table.getColumnCount());
+  }
+
+  @Test public void tableGetHeaderCell() {
+    Assert.assertEquals("Month", testObject.table.getCellAtIndex(0, 0).getText());
+  }
+
+  @Test public void tableGetBodyCell() {
+    Assert.assertEquals("$80", testObject.table.getCellAtIndex(2, 1).getText());
+  }
+
+  @Test public void tableGetFooterCell() {
+    Assert.assertEquals("Sum", testObject.table.getCellAtIndex(3, 0).getText());
+  }
+
+  @Test @Ignore(value = "At the momment the implementation is wrong") public void selectDisabledElement() {
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+    final String disabledOptionText = "Disabled option";
+    testObject.option1.selectByVisibleText(disabledOptionText);
+    Assert.assertNotEquals(disabledOptionText, testObject.option1.getFirstSelectedOption().getText());
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+  }
+
+  @Test @Ignore(value = "At the momment the implementation is wrong") public void selectHiddenElement() {
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+    final String displayNoneText = "Option display none";
+    testObject.option1.selectByVisibleText(displayNoneText);
+    Assert.assertNotEquals(displayNoneText, testObject.option1.getFirstSelectedOption().getText());
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+  }
+
+  @Test @Ignore(value = "At the momment the implementation is wrong") public void selectHiddenElementSelectByValue() {
+    testObject.option1.selectByIndex(0);
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+    final String displayNoneText = "Option display none";
+    testObject.option1.selectByValue("option5");
+    Assert.assertNotEquals(displayNoneText, testObject.option1.getFirstSelectedOption().getText());
+    Assert.assertEquals("option1", testObject.option1.getFirstSelectedOption().getText());
+  }
+
+  @AfterClass public static void afterClass() {
+    driver.close();
+  }
 }
