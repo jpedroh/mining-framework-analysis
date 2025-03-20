@@ -1,11 +1,9 @@
 package com.github.dakusui.jcunit8.core;
-
 import com.github.dakusui.jcunit.core.tuples.Tuple;
 import com.github.dakusui.jcunit8.exceptions.FrameworkException;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -17,38 +15,37 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 import static com.github.dakusui.jcunit.core.reflect.ReflectionUtils.getMethod;
 import static com.github.dakusui.jcunit8.exceptions.FrameworkException.unexpectedByDesign;
 import static java.util.Collections.singletonList;
 
 public enum Utils {
+
   ;
 
   public static final PrintStream DUMMY_PRINTSTREAM = new PrintStream(new OutputStream() {
-    @Override
-    public void write(int b) throws IOException {
+    @Override public void write(int b) throws IOException {
     }
   });
-  public static       PrintStream out               = System.out;
 
-  public static <T> Function<T, T> printer() {
+  public static PrintStream out = System.out;
+
+  public static <T extends java.lang.Object> Function<T, T> printer() {
     return printer(Object::toString);
   }
 
-  public static <T> Function<T, T> printer(Function<T, String> formatter) {
-    return t -> {
-      System.out.println(formatter.apply(t));
+  public static <T extends java.lang.Object> Function<T, T> printer(Function<T, String> formatter) {
+    return (t) -> {
+      Utils.out().println(formatter.apply(t));
       return t;
     };
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T> T print(T data) {
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends java.lang.Object> T print(T data) {
     return (T) printer().apply(data);
   }
 
-  public static <T> List<T> unique(List<T> in) {
+  public static <T extends java.lang.Object> List<T> unique(List<T> in) {
     return new ArrayList<>(new LinkedHashSet<>(in));
   }
 
@@ -60,8 +57,7 @@ public enum Utils {
 
   public static TestClass createTestClassMock(final TestClass testClass) {
     return new TestClass(testClass.getJavaClass()) {
-      @Override
-      public List<FrameworkMethod> getAnnotatedMethods(final Class<? extends Annotation> annClass) {
+      @Override public List<FrameworkMethod> getAnnotatedMethods(final Class<? extends Annotation> annClass) {
         if (Parameterized.Parameters.class.equals(annClass)) {
           return singletonList(createDummyFrameworkMethod());
         }
@@ -74,23 +70,18 @@ public enum Utils {
             return true;
           }
 
-          @Override
-          public Object invokeExplosively(Object target, Object... params) {
-            return new Object[] {};
+          @Override public Object invokeExplosively(Object target, Object... params) {
+            return new Object[] {  };
           }
 
-          @SuppressWarnings("unchecked")
-          @Override
-          public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+          @SuppressWarnings(value = { "unchecked" }) @Override public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
             FrameworkException.checkCondition(Parameterized.Parameters.class.equals(annotationType));
             return (T) new Parameterized.Parameters() {
-              @Override
-              public Class<? extends Annotation> annotationType() {
+              @Override public Class<? extends Annotation> annotationType() {
                 return Parameterized.Parameters.class;
               }
 
-              @Override
-              public String name() {
+              @Override public String name() {
                 return "{index}";
               }
             };
@@ -114,8 +105,9 @@ public enum Utils {
 
   private static String className(Class klass, String work) {
     String canonicalName = klass.getCanonicalName();
-    if (canonicalName != null)
+    if (canonicalName != null) {
       return canonicalName;
+    }
     return className(klass.getEnclosingClass(), work + "$");
   }
 
@@ -130,11 +122,37 @@ public enum Utils {
     }
   }
 
-  public static <T extends Predicate<E>, E> Predicate<E> conjunct(Iterable<T> predicates) {
-    Predicate<E> ret = tuple -> true;
+  public static <T extends Predicate<E>, E extends java.lang.Object> Predicate<E> conjunct(Iterable<T> predicates) {
+    Predicate<E> ret = (tuple) -> true;
     for (Predicate<E> each : predicates) {
       ret = ret.and(each);
     }
     return ret;
+  }
+
+  public static boolean isRunByMaven() {
+    final String s = System.getProperty("sun.java.command");
+    return s != null && s.contains("surefire");
+  }
+
+  public synchronized static void configureStdIOs() {
+    if (isRunByMaven()) {
+      setSilent();
+    } else {
+      setVerbose();
+    }
+  }
+
+  public synchronized static void setSilent() {
+    out = DUMMY_PRINTSTREAM;
+  }
+
+  public synchronized static void setVerbose() {
+    out = System.out;
+  }
+
+  public static PrintStream out() {
+    configureStdIOs();
+    return out;
   }
 }

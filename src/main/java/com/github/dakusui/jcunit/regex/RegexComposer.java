@@ -1,16 +1,15 @@
 package com.github.dakusui.jcunit.regex;
-
 import com.github.dakusui.jcunit.core.tuples.Tuple;
 import com.github.dakusui.jcunit.core.utils.Checks;
 import com.github.dakusui.jcunit8.pipeline.stages.Generator;
-
 import java.util.*;
-
 import static java.util.Arrays.asList;
 
 public class RegexComposer {
-  private final String            prefix;
-  private final Expr              topLevel;
+  private final String prefix;
+
+  private final Expr topLevel;
+
   private final Map<String, Expr> exprs;
 
   public RegexComposer(String prefix, Expr topLevel) {
@@ -29,7 +28,6 @@ public class RegexComposer {
     List<String> ret = new LinkedList<>();
     for (Object each : in) {
       Checks.checkcond(each instanceof String);
-      //noinspection ConstantConditions
       String eachString = (String) each;
       if (!eachString.contains(" ")) {
         ret.add(eachString);
@@ -43,29 +41,25 @@ public class RegexComposer {
   private Map<String, Expr> createMap(Expr top) {
     final Map<String, Expr> ret = new HashMap<String, Expr>();
     top.accept(new Expr.Visitor() {
-      @Override
-      public void visit(Expr.Alt exp) {
+      @Override public void visit(Expr.Alt exp) {
         ret.put(RegexComposer.this.composeKey(exp), exp);
         for (Expr each : exp.getChildren()) {
           each.accept(this);
         }
       }
 
-      @Override
-      public void visit(Expr.Cat exp) {
+      @Override public void visit(Expr.Cat exp) {
         ret.put(RegexComposer.this.composeKey(exp), exp);
         for (Expr each : exp.getChildren()) {
           each.accept(this);
         }
       }
 
-      @Override
-      public void visit(Expr.Leaf exp) {
+      @Override public void visit(Expr.Leaf exp) {
         ret.put(RegexComposer.this.composeKey(exp), exp);
       }
 
-      @Override
-      public void visit(Expr.Empty exp) {
+      @Override public void visit(Expr.Empty exp) {
         ret.put(RegexComposer.this.composeKey(exp), exp);
       }
     });
@@ -77,8 +71,10 @@ public class RegexComposer {
   }
 
   private class ComposerVisitor implements Expr.Visitor {
-    private final Tuple             tuple;
+    private final Tuple tuple;
+
     private final Map<String, Expr> exprs;
+
     public List<Object> out = new LinkedList<Object>();
 
     private ComposerVisitor(Tuple tuple, Map<String, Expr> exprs) {
@@ -86,12 +82,11 @@ public class RegexComposer {
       this.exprs = exprs;
     }
 
-    @Override
-    public void visit(Expr.Alt expr) {
-      //noinspection ConstantConditions
+    @Override public void visit(Expr.Alt expr) {
       Object values = tuple.get(composeKey(expr));
-      if (Generator.VOID.equals(values))
+      if (Generator.VOID.equals(values)) {
         return;
+      }
       for (Object each : (List) values) {
         if (each instanceof Reference) {
           this.exprs.get(((Reference) each).key).accept(this);
@@ -101,21 +96,17 @@ public class RegexComposer {
       }
     }
 
-    @Override
-    public void visit(Expr.Cat expr) {
+    @Override public void visit(Expr.Cat expr) {
       for (Expr each : expr.getChildren()) {
         each.accept(this);
       }
     }
 
-    @Override
-    public void visit(Expr.Leaf expr) {
+    @Override public void visit(Expr.Leaf expr) {
       out.add(expr.value());
     }
 
-    @Override
-    public void visit(Expr.Empty empty) {
-
+    @Override public void visit(Expr.Empty empty) {
     }
   }
 }

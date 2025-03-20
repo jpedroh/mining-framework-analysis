@@ -1,5 +1,4 @@
 package com.github.dakusui.jcunit8.pipeline;
-
 import com.github.dakusui.jcunit.core.tuples.Tuple;
 import com.github.dakusui.jcunit8.factorspace.Constraint;
 import com.github.dakusui.jcunit8.factorspace.Factor;
@@ -10,11 +9,9 @@ import com.github.dakusui.jcunit8.pipeline.stages.Generator;
 import com.github.dakusui.jcunit8.pipeline.stages.Joiner;
 import com.github.dakusui.jcunit8.pipeline.stages.Partitioner;
 import com.github.dakusui.jcunit8.testsuite.SchemafulTupleSet;
-
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -35,14 +32,19 @@ public interface Config {
 
   Function<? super FactorSpace, ? extends FactorSpace> optimizer();
 
-  class Builder {
-    private final Requirement       requirement;
-    private       Generator.Factory generatorFactory;
-    private       Joiner            joiner;
-    private       Partitioner       partitioner;
 
-    public static Builder forTuple(Requirement requirement) {
-      return new Builder(requirement);
+<<<<<<< /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/pipeline/Config.java/left.java
+  class Builder<T extends java.lang.Object> {
+    private final Requirement requirement;
+
+    private Generator.Factory generatorFactory;
+
+    private Joiner joiner;
+
+    private Partitioner partitioner;
+
+    public static Builder<Tuple> forTuple(Requirement requirement) {
+      return new Builder<>(requirement);
     }
 
     public Builder(Requirement requirement) {
@@ -50,6 +52,46 @@ public interface Config {
       this.withGeneratorFactory(new Generator.Factory.Standard());
       this.withJoiner(new Joiner.Standard(requirement));
       this.withPartitioner(new Partitioner.Standard());
+    }
+
+    public Builder<T> withGeneratorFactory(Generator.Factory generatorFactory) {
+      this.generatorFactory = generatorFactory;
+      return this;
+    }
+
+    public Builder<T> withJoiner(Joiner joiner) {
+      this.joiner = joiner;
+      return this;
+    }
+
+    public Builder<T> withPartitioner(Partitioner partitioner) {
+      this.partitioner = partitioner;
+      return this;
+    }
+
+    public Config build() {
+      return new Impl(requirement, generatorFactory, joiner, partitioner);
+    }
+  }
+=======
+  class Builder {
+    private final Requirement requirement;
+
+    private Generator.Factory generatorFactory;
+
+    private Joiner joiner;
+
+    private Partitioner partitioner;
+
+    public static Builder forTuple(Requirement requirement) {
+      return new Builder(requirement);
+    }
+
+    public Builder(Requirement requirement) {
+      this.requirement = requirement;
+      this.generatorFactory = new Generator.Factory.Standard();
+      this.joiner = new Joiner.Standard(requirement);
+      this.partitioner = new Partitioner.Standard();
     }
 
     public Builder withGeneratorFactory(Generator.Factory generatorFactory) {
@@ -71,13 +113,19 @@ public interface Config {
       return new Impl(requirement, generatorFactory, joiner, partitioner);
     }
   }
+>>>>>>> /usr/src/app/output/dakusui/jcunit/ca5f167b3c86b6b2e90f8b1fe0425f65a6748713/src/main/java/com/github/dakusui/jcunit8/pipeline/Config.java/right.java
+
 
   class Impl implements Config {
     private final Generator.Factory generatorFactory;
-    private final Joiner            joiner;
-    private final Partitioner       partitioner;
-    private final Requirement       requirement;
-    private final Encoder           encoder;
+
+    private final Joiner joiner;
+
+    private final Partitioner partitioner;
+
+    private final Requirement requirement;
+
+    private final Encoder encoder;
 
     public Impl(Requirement requirement, Generator.Factory generatorFactory, Joiner joiner, Partitioner partitioner) {
       this.generatorFactory = requireNonNull(generatorFactory);
@@ -87,41 +135,23 @@ public interface Config {
       this.requirement = requireNonNull(requirement);
     }
 
-    @Override
-    public Function<ParameterSpace, FactorSpace> encoder() {
+    @Override public Function<ParameterSpace, FactorSpace> encoder() {
       return this.encoder;
     }
 
-    @Override
-    public Function<FactorSpace, List<FactorSpace>> partitioner() {
+    @Override public Function<FactorSpace, List<FactorSpace>> partitioner() {
       return partitioner;
     }
 
-    @Override
-    public Function<FactorSpace, SchemafulTupleSet> generator(ParameterSpace parameterSpace, Requirement requirement) {
-      return (FactorSpace factorSpace) -> new SchemafulTupleSet.Builder(
-          factorSpace.getFactors().stream(
-          ).map(
-              Factor::getName
-          ).collect(
-              toList()
-          )
-      ).addAll(
-          generatorFactory.create(
-              factorSpace,
-              requirement,
-              ParameterSpace.encodeSeedTuples(parameterSpace, requirement.seeds())
-          ).generate()
-      ).build();
+    @Override public Function<FactorSpace, SchemafulTupleSet> generator(ParameterSpace parameterSpace, Requirement requirement) {
+      return (FactorSpace factorSpace) -> new SchemafulTupleSet.Builder(factorSpace.getFactors().stream().map(Factor::getName).collect(toList())).addAll(generatorFactory.create(factorSpace, requirement, ParameterSpace.encodeSeedTuples(parameterSpace, requirement.seeds())).generate()).build();
     }
 
-    @Override
-    public BinaryOperator<SchemafulTupleSet> joiner() {
+    @Override public BinaryOperator<SchemafulTupleSet> joiner() {
       return joiner;
     }
 
-    @Override
-    public Requirement getRequirement() {
+    @Override public Requirement getRequirement() {
       return requirement;
     }
 
@@ -129,30 +159,8 @@ public interface Config {
      * Returns a function that removes levels that cannot be valid because single
      * parameter constraints invalidate them.
      */
-    @Override
-    public Function<? super FactorSpace, ? extends FactorSpace> optimizer() {
-      return (FactorSpace factorSpace) -> FactorSpace.create(
-          factorSpace.getFactors().stream()
-              .map(
-                  (Factor factor) -> Factor.create(
-                      factor.getName(),
-                      factor.getLevels()
-                          .stream()
-                          .filter(
-                              (Object o) -> factorSpace.getConstraints()
-                                  .stream()
-                                  .filter((Constraint constraint) -> singletonList(factor.getName()).equals(constraint.involvedKeys()))
-                                  .allMatch((Constraint constraint) -> constraint.test(new Tuple.Builder().put(factor.getName(), o).build()))
-                          )
-                          .collect(toList()).toArray()
-                  ))
-              .collect(toList()),
-          factorSpace.getConstraints().stream()
-              .filter(
-                  (Constraint constraint) -> constraint.involvedKeys().size() > 1
-              )
-              .collect(toList())
-      );
+    @Override public Function<? super FactorSpace, ? extends FactorSpace> optimizer() {
+      return (FactorSpace factorSpace) -> FactorSpace.create(factorSpace.getFactors().stream().map((Factor factor) -> Factor.create(factor.getName(), factor.getLevels().stream().filter((Object o) -> factorSpace.getConstraints().stream().filter((Constraint constraint) -> singletonList(factor.getName()).equals(constraint.involvedKeys())).allMatch((Constraint constraint) -> constraint.test(new Tuple.Builder().put(factor.getName(), o).build()))).collect(toList()).toArray())).collect(toList()), factorSpace.getConstraints().stream().filter((Constraint constraint) -> constraint.involvedKeys().size() > 1).collect(toList()));
     }
   }
 }
