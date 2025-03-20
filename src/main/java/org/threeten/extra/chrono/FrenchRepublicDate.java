@@ -201,7 +201,13 @@ public final class FrenchRepublicDate
 
     @Override
     public ValueRange range(TemporalField field) {
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/left.java
         if (DAY_OF_WEEK.equals(field)) {
+||||||| /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/base.java
+        if (field.equals(WeekFields.ISO.dayOfWeek()))
+=======
+        if (WeekFields.ISO.dayOfWeek().equals(field)) {
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/right.java
             return DOW_RANGE;
         }
 
@@ -210,7 +216,13 @@ public final class FrenchRepublicDate
 
     @Override
     public long getLong(TemporalField field) {
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/left.java
         if (DAY_OF_WEEK.equals(field)) {
+||||||| /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/base.java
+        if (field.equals(WeekFields.ISO.dayOfWeek()))
+=======
+        if (WeekFields.ISO.dayOfWeek().equals(field)) {
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicDate.java/right.java
             return day;
         }
         return super.getLong(field);

@@ -308,9 +308,18 @@ public final class FrenchRepublicChronology
     public ValueRange range(ChronoField field) {
         if (field == DAY_OF_WEEK) {
             return DOW_RANGE;
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicChronology.java/left.java
         } else if (field == ALIGNED_WEEK_OF_MONTH) {
-            return ALIGNED_WOM_RANGE;
-        }
+||||||| /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicChronology.java/base.java
+        else if (WeekFields.ISO.dayOfWeek().equals(field))
+            return DOW_RANGE;
+        else if (field == ALIGNED_WEEK_OF_MONTH)
+=======
+        } else if (WeekFields.ISO.dayOfWeek().equals(field)) {
+            return DOW_RANGE;
+        } else if (field == ALIGNED_WEEK_OF_MONTH) {
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/7fe13bdfa7d8a9cf5f5a40f5070ebb17d22c5e4c/src/main/java/org/threeten/extra/chrono/FrenchRepublicChronology.java/right.java
+            return ALIGNED_WOM_RANGE;}
         return super.range(field);
     }
 
