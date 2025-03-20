@@ -66,6 +66,46 @@ public class PlotterSettingsPanel extends JPanel {
 		SelectPanel interior1 = new SelectPanel();
 
 		PlotterSettings settings = myPlotter.getSettings();
+<<<<<<< /usr/src/app/output/marginallyclever/makelangelo/3a475307e2c539d696adb258b4cbc01e7cdd1d81/src/main/java/com/marginallyclever/makelangelo/plotter/settings/PlotterSettingsPanel.java/left.java
+		
+		double w = settings.getLimitRight() - settings.getLimitLeft();
+		double h = settings.getLimitTop() - settings.getLimitBottom();
+		interior.add(machineWidth 		= new SelectDouble("width",		 Translator.get("MachineWidth"		),w));
+		interior.add(machineHeight 		= new SelectDouble("height",		 Translator.get("MachineHeight"		),h));
+		interior.add(totalStepperNeeded = new SelectDouble("stepperLength", Translator.get("StepperLengthNeeded"),0));
+		interior.add(totalBeltNeeded 	= new SelectDouble("beltLength",	 Translator.get("BeltLengthNeeded"	),0));
+		interior.add(totalServoNeeded 	= new SelectDouble("servoLength",	 Translator.get("ServoLengthNeeded"	),0));
+		interior.add(penDiameter 		= new SelectDouble("diameter",		 Translator.get("penToolDiameter"	),settings.getPenDiameter()));
+	    interior.add(travelFeedRate 	= new SelectDouble("feedrate",		 Translator.get("penToolMaxFeedRate"),settings.getTravelFeedRate()));
+	    interior.add(drawFeedRate 		= new SelectDouble("speed",		 Translator.get("Speed"				),settings.getDrawFeedRate()));
+	    interior.add(acceleration 		= new SelectDouble("acceleration",	 Translator.get("AdjustAcceleration"),settings.getMaxAcceleration()));
+		interior.add(penRaiseRate       = new SelectDouble("liftSpeed",	 Translator.get("penToolLiftSpeed"	),settings.getPenLiftTime()));
+		interior.add(penLowerRate       = new SelectDouble("lowerSpeed",	 Translator.get("penToolLowerSpeed"	),settings.getPenLowerTime()));
+	    interior.add(penUpAngle 		= new SelectDouble("up",			 Translator.get("penToolUp"			),settings.getPenUpAngle()));
+	    interior.add(penDownAngle 		= new SelectDouble("down",			 Translator.get("penToolDown"		),settings.getPenDownAngle()));
+	    interior.add(selectPenDownColor = new SelectColor("colorDown",		 Translator.get("pen down color"	),settings.getPenDownColor(),this));
+		interior.add(selectPenUpColor 	= new SelectColor("colorUp",		 Translator.get("pen up color"		),settings.getPenUpColor(),this));
+||||||| /usr/src/app/output/marginallyclever/makelangelo/3a475307e2c539d696adb258b4cbc01e7cdd1d81/src/main/java/com/marginallyclever/makelangelo/plotter/settings/PlotterSettingsPanel.java/base.java
+		
+		double w = settings.getLimitRight() - settings.getLimitLeft();
+		double h = settings.getLimitTop() - settings.getLimitBottom();
+		interior.add(machineWidth 		= new SelectDouble("width",		 Translator.get("MachineWidth"		),w));
+		interior.add(machineHeight 		= new SelectDouble("height",		 Translator.get("MachineHeight"		),h));
+		interior.add(totalStepperNeeded = new SelectDouble("stepperLength", Translator.get("StepperLengthNeeded"),0));
+		interior.add(totalBeltNeeded 	= new SelectDouble("beltLength",	 Translator.get("BeltLengthNeeded"	),0));
+		interior.add(totalServoNeeded 	= new SelectDouble("servoLength",	 Translator.get("ServoLengthNeeded"	),0));
+		interior.add(penDiameter 		= new SelectDouble("diameter",		 Translator.get("penToolDiameter"	),settings.getPenDiameter()));
+	    interior.add(travelFeedRate 	= new SelectDouble("feedrate",		 Translator.get("penToolMaxFeedRate"),settings.getTravelFeedRate()));
+	    interior.add(drawFeedRate 		= new SelectDouble("speed",		 Translator.get("Speed"				),settings.getDrawFeedRate()));
+	    interior.add(acceleration 		= new SelectDouble("acceleration",	 Translator.get("AdjustAcceleration"),settings.getMaxAcceleration()));
+		interior.add(penZRate 			= new SelectDouble("liftSpeed",	 Translator.get("penToolLiftSpeed"	),settings.getPenLiftTime()));
+	    interior.add(penUpAngle 		= new SelectDouble("up",			 Translator.get("penToolUp"			),settings.getPenUpAngle()));
+	    interior.add(penDownAngle 		= new SelectDouble("down",			 Translator.get("penToolDown"		),settings.getPenDownAngle()));
+	    interior.add(selectPenDownColor = new SelectColor("colorDown",		 Translator.get("pen down color"	),settings.getPenDownColor(),this));
+		interior.add(selectPenUpColor 	= new SelectColor("colorUp",		 Translator.get("pen up color"		),settings.getPenUpColor(),this));
+=======
+>>>>>>> /usr/src/app/output/marginallyclever/makelangelo/3a475307e2c539d696adb258b4cbc01e7cdd1d81/src/main/java/com/marginallyclever/makelangelo/plotter/settings/PlotterSettingsPanel.java/right.java
+
 		interior0.add(machineWidth 		 = new SelectDouble("width",		 	 Translator.get("MachineWidth"		),settings.getLimitRight() - settings.getLimitLeft()));
 		interior0.add(machineHeight 	 = new SelectDouble("height",		 Translator.get("MachineHeight"		),settings.getLimitTop() - settings.getLimitBottom()));
 		interior0.add(totalStepperNeeded = new SelectDouble("stepperLength",  Translator.get("StepperLengthNeeded"),0));
