@@ -1,22 +1,4 @@
-/*
- * SonarHTML :: SonarQube Plugin
- * Copyright (c) 2010-2019 SonarSource SA and Matthijs Galesloot
- * sonarqube@googlegroups.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.sonar.plugins.html.rules;
-
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.sonar.plugins.html.checks.attributes.IllegalAttributeCheck;
@@ -81,69 +63,13 @@ import org.sonar.plugins.html.checks.whitespace.IllegalTabCheck;
 import org.sonar.plugins.html.checks.whitespace.WhiteSpaceAroundCheck;
 
 public final class CheckClasses {
-
-  private static final List<Class> CLASSES = ImmutableList.of(
-    AbsoluteURICheck.class,
-    AvoidHtmlCommentCheck.class,
-    ChildElementRequiredCheck.class,
-    ComplexityCheck.class,
-    DeprecatedAttributesInHtml5Check.class,
-    DoubleQuotesCheck.class,
-    DynamicJspIncludeCheck.class,
-    FileLengthCheck.class,
-    IllegalElementCheck.class,
-    IllegalTabCheck.class,
-    IllegalTagLibsCheck.class,
-    InlineStyleCheck.class,
-    InternationalizationCheck.class,
-    JspScriptletCheck.class,
-    LibraryDependencyCheck.class,
-    LongJavaScriptCheck.class,
-    NestedJavaScriptCheck.class,
-    MaxLineLengthCheck.class,
-    ParentElementIllegalCheck.class,
-    ParentElementRequiredCheck.class,
-    UnclosedTagCheck.class,
-    UnifiedExpressionCheck.class,
-    WhiteSpaceAroundCheck.class,
-    ChildElementIllegalCheck.class,
-    HeaderCheck.class,
-    IllegalAttributeCheck.class,
-    IllegalNamespaceCheck.class,
-    MultiplePageDirectivesCheck.class,
-    RequiredAttributeCheck.class,
-    AvoidCommentedOutCodeCheck.class,
-    ImgWithoutAltCheck.class,
-    UnsupportedTagsInHtml5Check.class,
-    NonConsecutiveHeadingCheck.class,
-    MetaRefreshCheck.class,
-    LinkToImageCheck.class,
-    LinkToNothingCheck.class,
-    ServerSideImageMapsCheck.class,
-    FrameWithoutTitleCheck.class,
-    BoldAndItalicTagsCheck.class,
-    MouseEventWithoutKeyboardEquivalentCheck.class,
-    PageWithoutTitleCheck.class,
-    VideoTrackCheck.class,
-    ItemTagNotWithinContainerTagCheck.class,
-    FieldsetWithoutLegendCheck.class,
-    WmodeIsWindowCheck.class,
-    TableWithoutCaptionCheck.class,
-    LinksIdenticalTextsDifferentTargetsCheck.class,
-    FlashUsesBothObjectAndEmbedCheck.class,
-    DoctypePresenceCheck.class,
-    TableHeaderHasIdOrScopeCheck.class,
-    InputWithoutLabelCheck.class,
-    ImgWithoutWidthOrHeightCheck.class,
-    PageWithoutFaviconCheck.class,
-    TodoCommentCheck.class,
-    FixmeCommentCheck.class,
-    ElementWithGivenIdPresentCheck.class,
-    LayoutTableCheck.class,
-    LayoutTableWithSemanticMarkupCheck.class,
-    TableWithoutHeaderCheck.class,
-    LangAttributeCheck.class
-  );
+  private static final List<Class> CLASSES = ImmutableList.of(AbsoluteURICheck.class, AvoidHtmlCommentCheck.class, ChildElementRequiredCheck.class, ComplexityCheck.class, DeprecatedAttributesInHtml5Check.class, DoubleQuotesCheck.class, DynamicJspIncludeCheck.class, FileLengthCheck.class, IllegalElementCheck.class, IllegalTabCheck.class, IllegalTagLibsCheck.class, InlineStyleCheck.class, InternationalizationCheck.class, JspScriptletCheck.class, LibraryDependencyCheck.class, LongJavaScriptCheck.class, NestedJavaScriptCheck.class, MaxLineLengthCheck.class, ParentElementIllegalCheck.class, ParentElementRequiredCheck.class, UnclosedTagCheck.class, UnifiedExpressionCheck.class, WhiteSpaceAroundCheck.class, ChildElementIllegalCheck.class, HeaderCheck.class, IllegalAttributeCheck.class, IllegalNamespaceCheck.class, MultiplePageDirectivesCheck.class, RequiredAttributeCheck.class, AvoidCommentedOutCodeCheck.class, ImgWithoutAltCheck.class, UnsupportedTagsInHtml5Check.class, NonConsecutiveHeadingCheck.class, MetaRefreshCheck.class, LinkToImageCheck.class, LinkToNothingCheck.class, ServerSideImageMapsCheck.class, FrameWithoutTitleCheck.class, BoldAndItalicTagsCheck.class, MouseEventWithoutKeyboardEquivalentCheck.class, PageWithoutTitleCheck.class, VideoTrackCheck.class, ItemTagNotWithinContainerTagCheck.class, FieldsetWithoutLegendCheck.class, WmodeIsWindowCheck.class, TableWithoutCaptionCheck.class, LinksIdenticalTextsDifferentTargetsCheck.class, FlashUsesBothObjectAndEmbedCheck.class, DoctypePresenceCheck.class, TableHeaderHasIdOrScopeCheck.class, InputWithoutLabelCheck.class, ImgWithoutWidthOrHeightCheck.class, PageWithoutFaviconCheck.class, TodoCommentCheck.class, FixmeCommentCheck.class, ElementWithGivenIdPresentCheck.class, LayoutTableCheck.class, 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-web/2034e49e0066e082d7277df1af9a7e54a33b1db2/sonar-html-plugin/src/main/java/org/sonar/plugins/html/rules/CheckClasses.java/left.java
+  LayoutTableWithSemanticMarkupCheck
+=======
+  TableWithoutHeaderCheck
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-web/2034e49e0066e082d7277df1af9a7e54a33b1db2/sonar-html-plugin/src/main/java/org/sonar/plugins/html/rules/CheckClasses.java/right.java
+  .class, LangAttributeCheck.class);
 
   private CheckClasses() {
   }
@@ -151,9 +77,7 @@ public final class CheckClasses {
   /**
    * Gets the list of XML checks.
    */
-  @SuppressWarnings("rawtypes")
-  public static List<Class> getCheckClasses() {
+  @SuppressWarnings(value = { "rawtypes" }) public static List<Class> getCheckClasses() {
     return CLASSES;
   }
-
 }
