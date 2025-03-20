@@ -1,12 +1,9 @@
 package no.motif.single;
-
 import static no.motif.Base.notNull;
-
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-
 import no.motif.Iterate;
 import no.motif.Singular;
 import no.motif.f.Fn;
@@ -27,11 +24,8 @@ import no.motif.types.Prependable;
  *
  * @param <V> The type of the wrapped object.
  */
-public abstract class Optional<V>
-    implements Iterable<V>, Mappable<V>, Filterable<V>, Appendable<V>, Prependable<V>, Serializable {
-
-
-    /**
+public abstract class Optional<V extends java.lang.Object> implements Iterable<V>, Mappable<V>, Filterable<V>, Appendable<V>, Prependable<V>, Serializable {
+  /**
      * <h1>*** Not part of the public API! ***</h1>
      * Factory method for resolving a value to {@link Some} or {@link None}.
      *
@@ -39,198 +33,153 @@ public abstract class Optional<V>
      * @see Singular#optional(Predicate, Object)
      * @see Singular#none()
      */
-    public static <V> Optional<V> resolve(Predicate<? super V> isPresent, V value) {
-        if (isPresent.$(value)) {
-            return some(value);
-        } else {
-            return None.getInstance();
-        }
+  public static <V extends java.lang.Object> Optional<V> resolve(Predicate<? super V> isPresent, V value) {
+    if (isPresent.$(value)) {
+      return some(value);
+    } else {
+      return None.getInstance();
     }
+  }
 
-    /**
+  /**
      * <h1>*** Not part of the public API! ***</h1>
      *
      * @see Singular#the(Object)
      */
-    public static <V> Some<V> some(V value) {
-        return new Some<>(value);
+  public static <V extends java.lang.Object> Some<V> some(V value) {
+    return new Some<>(value);
+  }
+
+  public static final class Some<V extends java.lang.Object> extends Optional<V> implements A<V> {
+    private final V value;
+
+    private Some(V value) {
+      this.value = value;
     }
 
-
-    /**
-     * Wrapper for a 'defined' value. You never under normal
-     * circumstances refer to this type.
-     *
-     * @param <V> The type of the wrapped object.
-     */
-    public static final class Some<V> extends Optional<V> implements A<V> {
-
-        private final V value;
-
-        private Some(V value) {
-            this.value = value;
-        }
-
-        @Override
-        public V get() {
-            return value;
-        }
-
-        @Override
-        public final Iterator<V> iterator() {
-            return new SingularIterator<V>(value);
-        }
-
-        @Override
-        public final boolean isSome() {
-            return true;
-        }
-
-        @Override
-        public final V orElse(V fallback) {
-            return get();
-        }
-
-        @Override
-        public V orNull() {
-            return value;
-        }
-
-        @Override
-        public Optional<V> or(Optional<V> otherOptional) {
-            return this;
-        }
-
-        @Override
-        public <O> Optional<O> map(Fn<? super V, O> mapper) {
-            O mapped = mapper.$(this.value);
-            return resolve(notNull, mapped);
-        }
-
-        @Override
-        public <O> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper) {
-            O mapped = mapper.$(this.value);
-            return resolve(isPresent, mapped);
-        }
-
-        @Override
-        public <O> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper) {
-            return mapper.$(value);
-        }
-
-        @Override
-        public Optional<V> filter(Predicate<? super V> accepted) {
-            return resolve(accepted, value);
-        }
-
-        @Override
-        public <O> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter) {
-            return Iterate.on(splitter.$(value));
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Some) {
-                Some<?> other = (Some<?>) o;
-                return Objects.equals(this.value, other.value);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(value);
-        }
-
-        @Override
-        public String toString() {
-            return "Some(" + value + ")";
-        }
-
+    @Override public V get() {
+      return value;
     }
 
-    /**
-     * Wrapper for an 'undefined' value. You never under normal
-     * circumstances refer to this type.
-     *
-     * @param <V> The type of the undefined value.
-     */
-    public static final class None<V> extends Optional<V> {
-
-        private static final None<?> INSTANCE = new None<Object>();
-
-        @SuppressWarnings("unchecked")
-        public static <V> None<V> getInstance() {
-            return (None<V>) INSTANCE;
-        }
-
-        private None() {}
-
-        @Override
-        public V get() {
-            throw new NoSuchElementException("Called get() on " + this);
-        }
-
-        @Override
-        public final Iterator<V> iterator() {
-            return EmptyIterator.instance();
-        }
-
-        @Override
-        public final boolean isSome() {
-            return false;
-        }
-
-        @Override
-        public final V orElse(V fallback) {
-            return fallback;
-        }
-
-        @Override
-        public V orNull() {
-            return null;
-        }
-
-        @Override
-        public Optional<V> or(Optional<V> otherOptional) {
-            return otherOptional;
-        }
-
-        @Override
-        public <O> Optional<O> map(Fn<? super V, O> mapper) {
-            return None.getInstance();
-        }
-
-        @Override
-        public <O> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper) {
-            return None.getInstance();
-        }
-
-        @Override
-        public <O> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper) {
-            return None.getInstance();
-        }
-
-        @Override
-        public Optional<V> filter(Predicate<? super V> filter) {
-            return None.getInstance();
-        }
-
-        @Override
-        public <O> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter) {
-            return Iterate.none();
-        }
-
-        @Override
-        public String toString() {
-            return "None";
-        }
-
+    @Override public final Iterator<V> iterator() {
+      return new SingularIterator<V>(value);
     }
 
+    @Override public final boolean isSome() {
+      return true;
+    }
 
+    @Override public final V orElse(V fallback) {
+      return get();
+    }
 
-    /**
+    @Override public V orNull() {
+      return value;
+    }
+
+    @Override public Optional<V> or(Optional<V> otherOptional) {
+      return this;
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> map(Fn<? super V, O> mapper) {
+      O mapped = mapper.$(this.value);
+      return resolve(notNull, mapped);
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper) {
+      O mapped = mapper.$(this.value);
+      return resolve(isPresent, mapped);
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper) {
+      return mapper.$(value);
+    }
+
+    @Override public Optional<V> filter(Predicate<? super V> accepted) {
+      return resolve(accepted, value);
+    }
+
+    @Override public <O extends java.lang.Object> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter) {
+      return Iterate.on(splitter.$(value));
+    }
+
+    @Override public boolean equals(Object o) {
+      if (o instanceof Some) {
+        Some<?> other = (Some<?>) o;
+        return Objects.equals(this.value, other.value);
+      }
+      return false;
+    }
+
+    @Override public int hashCode() {
+      return Objects.hashCode(value);
+    }
+
+    @Override public String toString() {
+      return "Some(" + value + ")";
+    }
+  }
+
+  public static final class None<V extends java.lang.Object> extends Optional<V> {
+    private static final None<?> INSTANCE = new None<Object>();
+
+    @SuppressWarnings(value = { "unchecked" }) public static <V extends java.lang.Object> None<V> getInstance() {
+      return (None<V>) INSTANCE;
+    }
+
+    private None() {
+    }
+
+    @Override public V get() {
+      throw new NoSuchElementException("Called get() on " + this);
+    }
+
+    @Override public final Iterator<V> iterator() {
+      return EmptyIterator.instance();
+    }
+
+    @Override public final boolean isSome() {
+      return false;
+    }
+
+    @Override public final V orElse(V fallback) {
+      return fallback;
+    }
+
+    @Override public V orNull() {
+      return null;
+    }
+
+    @Override public Optional<V> or(Optional<V> otherOptional) {
+      return otherOptional;
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> map(Fn<? super V, O> mapper) {
+      return None.getInstance();
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper) {
+      return None.getInstance();
+    }
+
+    @Override public <O extends java.lang.Object> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper) {
+      return None.getInstance();
+    }
+
+    @Override public Optional<V> filter(Predicate<? super V> filter) {
+      return None.getInstance();
+    }
+
+    @Override public <O extends java.lang.Object> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter) {
+      return Iterate.none();
+    }
+
+    @Override public String toString() {
+      return "None";
+    }
+  }
+
+  /**
      * Obtain the value contained in the <code>Optional</code>. To use
      * this method one <em>must</em> first determine that the
      * <code>Optional</code> does in fact hold a value.
@@ -244,11 +193,9 @@ public abstract class Optional<V>
      *
      * @see #isSome()
      */
-    public abstract V get();
+  public abstract V get();
 
-
-
-    /**
+  /**
      * Map this <code>Optional</code> to another type of <code>Optional</code>.
      *
      * @param mapper      A {@link Fn function} which transforms
@@ -259,56 +206,47 @@ public abstract class Optional<V>
      * @return A new <code>Optional</code> from which the new value can be
      *         obtained, if it is defined.
      */
-    @Override
-    public abstract <O> Optional<O> map(Fn<? super V, O> mapper);
+  @Override public abstract <O extends java.lang.Object> Optional<O> map(Fn<? super V, O> mapper);
 
-
-    /**
+  /**
      * Map this <code>Optional</code> to another type of <code>Optional</code>.
      *
      * @see #map(Fn)
      * @see #resolve(Predicate, Object)
      */
-    public abstract <O> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper);
+  public abstract <O extends java.lang.Object> Optional<O> map(Predicate<? super O> isPresent, Fn<? super V, O> mapper);
 
+  public abstract <O extends java.lang.Object> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper);
 
-    public abstract <O> Optional<O> flatMap(Fn<? super V, Optional<O>> mapper);
+  @Override public abstract Optional<V> filter(Predicate<? super V> filter);
 
-
-    @Override
-    public abstract Optional<V> filter(Predicate<? super V> filter);
-
-
-    /**
+  /**
      * @return <code>true</code> if the <code>Optional</code> holds a
      *         defined value, or <code>false</code> otherwise, which usually
      *         means that the wrapped value is <code>null</code>.
      */
-    public abstract boolean isSome();
+  public abstract boolean isSome();
 
-
-    /**
+  /**
      *
      * @param fallback A value to return if called on a {@link None}.
      * @return The wrapped value, or the fallback value if it is undefined.
      */
-    public abstract V orElse(V fallback);
+  public abstract V orElse(V fallback);
 
-
-    /**
+  /**
      * Shortcut for {@link #orElse(Object) .orElse(null)}
      * @return The wrapped value, or <code>null</code> if it is undefined.
      */
-    public abstract V orNull();
+  public abstract V orNull();
 
-    /**
+  /**
      * @return If this <code>Optional</code> is not defined, the given <code>otherOptional</code>
      *         is returned, otherwise the original <code>Optional</code> is returned as-is.
      */
-    public abstract Optional<V> or(Optional<V> otherOptional);
+  public abstract Optional<V> or(Optional<V> otherOptional);
 
-
-    /**
+  /**
      * Split an optional value, if defined, into multiple values.
      * <p>
      * Due to limitations of the type system in Java, it is not possible to overload this
@@ -323,29 +261,24 @@ public abstract class Optional<V>
      * @param splitter a function yielding an iterable.
      * @return the elements, or empty iterable if undefined value.
      */
-    public abstract <O> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter);
+  public abstract <O extends java.lang.Object> Elements<O> split(Fn<? super V, ? extends Iterable<O>> splitter);
 
+  @Override public Elements<V> append(Iterable<? extends V> trailingElements) {
+    return Iterate.on(this).append(trailingElements);
+  }
 
-    @Override
-    public Elements<V> append(Iterable<? extends V> trailingElements) {
-        return Iterate.on(this).append(trailingElements);
-    }
+  @Override public Elements<V> append(V value) {
+    return Iterate.on(this).append(value);
+  }
 
-    @Override
-    public Elements<V> append(V value) {
-        return Iterate.on(this).append(value);
-    }
+  @Override public Elements<V> prepend(Iterable<? extends V> leadingElements) {
+    return Iterate.on(this).prepend(leadingElements);
+  }
 
-    @Override
-    public Elements<V> prepend(Iterable<? extends V> leadingElements) {
-        return Iterate.on(this).prepend(leadingElements);
-    }
+  @Override public Elements<V> prepend(V value) {
+    return Iterate.on(this).prepend(value);
+  }
 
-    @Override
-    public Elements<V> prepend(V value) {
-        return Iterate.on(this).prepend(value);
-    }
-
-
-    private Optional() {}
+  private Optional() {
+  }
 }
