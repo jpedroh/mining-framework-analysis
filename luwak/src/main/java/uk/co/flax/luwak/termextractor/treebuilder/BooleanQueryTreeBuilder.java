@@ -37,7 +37,13 @@ import uk.co.flax.luwak.termextractor.querytree.QueryTree;
  * If the query is a pure conjunction, then this extractor will select the best
  * matching term from all the clauses and only extract that.
  */
+<<<<<<< /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/left.java
+public abstract class BooleanQueryTreeBuilder<T extends Query> extends QueryTreeBuilder<T> {
+||||||| /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/base.java
+public abstract class BooleanQueryTreeBuilder<T> extends QueryTreeBuilder<T> {
+=======
 public class BooleanQueryTreeBuilder extends QueryTreeBuilder<BooleanQuery> {
+>>>>>>> /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/right.java
 
     public BooleanQueryTreeBuilder() {
         super(BooleanQuery.class);
@@ -77,8 +83,24 @@ public class BooleanQueryTreeBuilder extends QueryTreeBuilder<BooleanQuery> {
         return ConjunctionNode.build(buildChildTrees(builder, clauses.getConjunctions()));
     }
 
+<<<<<<< /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/left.java
+    private List<QueryTree> buildChildTrees(QueryAnalyzer builder, List<Query> children) {
+        List<QueryTree> trees = new ArrayList<>();
+        for (Query child : children) {
+            trees.add(builder.buildTree(child));
+        }
+        return trees;
+||||||| /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/base.java
+    private List<QueryTree> buildChildTrees(QueryAnalyzer builder, List<Object> children) {
+        List<QueryTree> trees = new ArrayList<>();
+        for (Object child : children) {
+            trees.add(builder.buildTree(child));
+        }
+        return trees;
+=======
     private List<QueryTree> buildChildTrees(QueryAnalyzer builder, List<Query> children) {
         return children.stream().map(builder::buildTree).collect(Collectors.toList());
+>>>>>>> /usr/src/app/output/flaxsearch/luwak/3127e7cacfec616e0b6ea7bee472cd3c4b8b829f/luwak/src/main/java/uk/co/flax/luwak/termextractor/treebuilder/BooleanQueryTreeBuilder.java/right.java
     }
 
     public static class Clauses {
