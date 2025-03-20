@@ -143,7 +143,6 @@ public class Assertions {
   public static <T> PredicateAssert<T> assertThat(Predicate<T> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link IntPredicate}.
    *
@@ -155,7 +154,6 @@ public class Assertions {
   public static IntPredicateAssert assertThat(IntPredicate actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link LongPredicate}.
    *
@@ -167,7 +165,6 @@ public class Assertions {
   public static LongPredicateAssert assertThat(LongPredicate actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link DoublePredicate}.
    *
@@ -179,7 +176,6 @@ public class Assertions {
   public static DoublePredicateAssert assertThat(DoublePredicate actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.CompletableFuture}.
    *
@@ -192,7 +188,6 @@ public class Assertions {
   public static <RESULT> CompletableFutureAssert<RESULT> assertThat(CompletableFuture<RESULT> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.Optional}.
    *
@@ -205,7 +200,6 @@ public class Assertions {
   public static <VALUE> OptionalAssert<VALUE> assertThat(Optional<VALUE> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalDouble}.
    *
@@ -217,7 +211,6 @@ public class Assertions {
   public static OptionalDoubleAssert assertThat(OptionalDouble actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalInt}.
    *
@@ -229,7 +222,6 @@ public class Assertions {
   public static OptionalIntAssert assertThat(OptionalInt actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalInt}.
    *
@@ -241,7 +233,6 @@ public class Assertions {
   public static OptionalLongAssert assertThat(OptionalLong actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
@@ -252,7 +243,6 @@ public class Assertions {
   public static AbstractBigDecimalAssert<?> assertThat(BigDecimal actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BigIntegerAssert}</code>.
    *
@@ -264,7 +254,6 @@ public class Assertions {
   public static AbstractBigIntegerAssert<?> assertThat(BigInteger actual) {
     return new BigIntegerAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UriAssert}</code>.
    *
@@ -275,7 +264,6 @@ public class Assertions {
   public static AbstractUriAssert<?> assertThat(URI actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UrlAssert}</code>.
    *
@@ -286,7 +274,6 @@ public class Assertions {
   public static AbstractUrlAssert<?> assertThat(URL actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -297,7 +284,6 @@ public class Assertions {
   public static AbstractBooleanAssert<?> assertThat(boolean actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -308,7 +294,6 @@ public class Assertions {
   public static AbstractBooleanAssert<?> assertThat(Boolean actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanArrayAssert}</code>.
    *
@@ -319,7 +304,6 @@ public class Assertions {
   public static AbstractBooleanArrayAssert<?> assertThat(boolean[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -330,7 +314,6 @@ public class Assertions {
   public static AbstractByteAssert<?> assertThat(byte actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -341,7 +324,6 @@ public class Assertions {
   public static AbstractByteAssert<?> assertThat(Byte actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteArrayAssert}</code>.
    *
@@ -352,7 +334,6 @@ public class Assertions {
   public static AbstractByteArrayAssert<?> assertThat(byte[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -363,7 +344,6 @@ public class Assertions {
   public static AbstractCharacterAssert<?> assertThat(char actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharArrayAssert}</code>.
    *
@@ -374,7 +354,6 @@ public class Assertions {
   public static AbstractCharArrayAssert<?> assertThat(char[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -385,7 +364,6 @@ public class Assertions {
   public static AbstractCharacterAssert<?> assertThat(Character actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassAssert}</code>
    *
@@ -396,7 +374,6 @@ public class Assertions {
   public static AbstractClassAssert<?> assertThat(Class<?> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -407,7 +384,6 @@ public class Assertions {
   public static AbstractDoubleAssert<?> assertThat(double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -418,7 +394,6 @@ public class Assertions {
   public static AbstractDoubleAssert<?> assertThat(Double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleArrayAssert}</code>.
    *
@@ -429,7 +404,6 @@ public class Assertions {
   public static AbstractDoubleArrayAssert<?> assertThat(double[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FileAssert}</code>.
    *
@@ -440,7 +414,6 @@ public class Assertions {
   public static AbstractFileAssert<?> assertThat(File actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.Future}.
    *
@@ -454,7 +427,6 @@ public class Assertions {
   public static <RESULT> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> assertThat(Future<RESULT> actual) {
     return new FutureAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InputStreamAssert}</code>.
    *
@@ -465,7 +437,6 @@ public class Assertions {
   public static AbstractInputStreamAssert<?, ? extends InputStream> assertThat(InputStream actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -476,7 +447,6 @@ public class Assertions {
   public static AbstractFloatAssert<?> assertThat(float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -487,7 +457,6 @@ public class Assertions {
   public static AbstractFloatAssert<?> assertThat(Float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatArrayAssert}</code>.
    *
@@ -498,7 +467,6 @@ public class Assertions {
   public static AbstractFloatArrayAssert<?> assertThat(float[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -509,7 +477,6 @@ public class Assertions {
   public static AbstractIntegerAssert<?> assertThat(int actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntArrayAssert}</code>.
    *
@@ -520,7 +487,6 @@ public class Assertions {
   public static AbstractIntArrayAssert<?> assertThat(int[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -531,7 +497,6 @@ public class Assertions {
   public static AbstractIntegerAssert<?> assertThat(Integer actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -572,7 +537,6 @@ public class Assertions {
                                                                                  AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -604,7 +568,6 @@ public class Assertions {
                                                                                           Class<ELEMENT_ASSERT> assertClass) {
            return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -644,7 +607,6 @@ public class Assertions {
                                                                                         AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> tallowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -676,9 +638,7 @@ public class Assertions {
                                                                                       Class<ELEMENT_ASSERT> assertClass) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
 //@format:on
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -689,7 +649,6 @@ public class Assertions {
   public static AbstractLongAssert<?> assertThat(long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -700,7 +659,6 @@ public class Assertions {
   public static AbstractLongAssert<?> assertThat(Long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongArrayAssert}</code>.
    *
@@ -711,7 +669,6 @@ public class Assertions {
   public static AbstractLongArrayAssert<?> assertThat(long[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectAssert}</code>.
    *
@@ -719,11 +676,38 @@ public class Assertions {
    * @param <T> the type of the actual value.
    * @return the created assertion object.
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/15cbb306b6a162438dead6e432ff75f52ec03c22/src/main/java/org/assertj/core/api/Assertions.java/left.java
   @CheckReturnValue
   public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/15cbb306b6a162438dead6e432ff75f52ec03c22/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return new GenericComparableAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+=======
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return new GenericComparableAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/15cbb306b6a162438dead6e432ff75f52ec03c22/src/main/java/org/assertj/core/api/Assertions.java/right.java
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
    *
@@ -734,7 +718,6 @@ public class Assertions {
   public static <T> AbstractObjectArrayAssert<?, T> assertThat(T[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -745,7 +728,6 @@ public class Assertions {
   public static AbstractShortAssert<?> assertThat(short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -756,7 +738,6 @@ public class Assertions {
   public static AbstractShortAssert<?> assertThat(Short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortArrayAssert}</code>.
    *
@@ -767,23 +748,16 @@ public class Assertions {
   public static AbstractShortArrayAssert<?> assertThat(short[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
-   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
+   * Creates a new instance of <code>{@link StringAssert}</code>.
    *
-   * <p>
-   * Read the comments on {@link AssertProvider} for an example of its usage.
-   * </p>
-   * @param <T> the generic type of the assert provided by the component.
-   * @param component
-   *          the component that creates its own assert
-   * @return the associated {@link Assert} of the given component
+   * @param actual the actual value.
+   * @return the created assertion object.
    */
   @CheckReturnValue
   public static AbstractCharSequenceAssert<?, String> assertThat(String actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DateAssert}</code>.
    *
@@ -794,7 +768,6 @@ public class Assertions {
   public static AbstractDateAssert<?> assertThat(Date actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
@@ -807,7 +780,6 @@ public class Assertions {
   public static AbstractZonedDateTimeAssert<?> assertThat(ZonedDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
@@ -818,7 +790,6 @@ public class Assertions {
   public static AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link java.time.OffsetDateTime}</code>.
    *
@@ -829,7 +800,6 @@ public class Assertions {
   public static AbstractOffsetDateTimeAssert<?> assertThat(OffsetDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.time.OffsetTime}.
    *
@@ -840,7 +810,6 @@ public class Assertions {
   public static AbstractOffsetTimeAssert<?> assertThat(OffsetTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -851,7 +820,6 @@ public class Assertions {
   public static AbstractLocalTimeAssert<?> assertThat(LocalTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
@@ -862,7 +830,6 @@ public class Assertions {
   public static AbstractLocalDateAssert<?> assertThat(LocalDate actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InstantAssert}</code>.
    *
@@ -874,7 +841,6 @@ public class Assertions {
   public static AbstractInstantAssert<?> assertThat(Instant actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicBoolean}.
    *
@@ -886,7 +852,6 @@ public class Assertions {
   public static AtomicBooleanAssert assertThat(AtomicBoolean actual) {
     return new AtomicBooleanAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicInteger}.
    *
@@ -898,7 +863,6 @@ public class Assertions {
   public static AtomicIntegerAssert assertThat(AtomicInteger actual) {
     return new AtomicIntegerAssert(actual);
   }
-
   /**
    * Create int[] assertion for {@link AtomicIntegerArray}.
    *
@@ -910,7 +874,6 @@ public class Assertions {
   public static AtomicIntegerArrayAssert assertThat(AtomicIntegerArray actual) {
     return new AtomicIntegerArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicIntegerFieldUpdater}.
    *
@@ -923,7 +886,6 @@ public class Assertions {
   public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return new AtomicIntegerFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLong}.
    *
@@ -935,7 +897,6 @@ public class Assertions {
   public static AtomicLongAssert assertThat(AtomicLong actual) {
     return new AtomicLongAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongArray}.
    *
@@ -947,7 +908,6 @@ public class Assertions {
   public static AtomicLongArrayAssert assertThat(AtomicLongArray actual) {
     return new AtomicLongArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongFieldUpdater}.
    *
@@ -960,7 +920,6 @@ public class Assertions {
   public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
     return new AtomicLongFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReference}.
    *
@@ -973,7 +932,6 @@ public class Assertions {
   public static <VALUE> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
     return new AtomicReferenceAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceArray}.
    *
@@ -986,7 +944,6 @@ public class Assertions {
   public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
     return new AtomicReferenceArrayAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceFieldUpdater}.
    *
@@ -1000,7 +957,6 @@ public class Assertions {
   public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return new AtomicReferenceFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicMarkableReference}.
    *
@@ -1013,7 +969,6 @@ public class Assertions {
   public static <VALUE> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
     return new AtomicMarkableReferenceAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicStampedReference}.
    *
@@ -1026,7 +981,6 @@ public class Assertions {
   public static <VALUE> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
     return new AtomicStampedReferenceAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code>.
    *
@@ -1037,7 +991,6 @@ public class Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThat(Throwable actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -1066,7 +1019,6 @@ public class Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -1112,7 +1064,6 @@ public class Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatCode(ThrowingCallable shouldRaiseOrNotThrowable) {
     return AssertionsForClassTypes.assertThatCode(shouldRaiseOrNotThrowable);
   }
-
   /**
    * Allows to catch an {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -1140,7 +1091,6 @@ public class Assertions {
   public static Throwable catchThrowable(ThrowingCallable shouldRaiseThrowable) {
     return AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
   }
-
   /**
    * Entry point to check that an exception of type T is thrown by a given {@code throwingCallable}
    * which allows to chain assertions on the thrown exception.
@@ -1158,7 +1108,6 @@ public class Assertions {
   public static <T extends Throwable> ThrowableTypeAssert<T> assertThatExceptionOfType(final Class<? extends T> exceptionType) {
     return AssertionsForClassTypes.assertThatExceptionOfType(exceptionType);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link NullPointerException}.
    * 
@@ -1170,7 +1119,6 @@ public class Assertions {
   public static ThrowableTypeAssert<NullPointerException> assertThatNullPointerException() {
     return assertThatExceptionOfType(NullPointerException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IllegalArgumentException}.
    * 
@@ -1182,7 +1130,6 @@ public class Assertions {
   public static ThrowableTypeAssert<IllegalArgumentException> assertThatIllegalArgumentException() {
     return assertThatExceptionOfType(IllegalArgumentException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IOException}.
    * 
@@ -1194,7 +1141,6 @@ public class Assertions {
   public static ThrowableTypeAssert<IOException> assertThatIOException() {
     return assertThatExceptionOfType(IOException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IllegalStateException}.
    * 
@@ -1206,11 +1152,9 @@ public class Assertions {
   public static ThrowableTypeAssert<IllegalStateException> assertThatIllegalStateException() {
     return assertThatExceptionOfType(IllegalStateException.class);
   }
-
   // -------------------------------------------------------------------------------------------------
   // fail methods : not assertions but here to have a single entry point to all AssertJ features.
   // -------------------------------------------------------------------------------------------------
-
   /**
    * Sets whether we remove elements related to AssertJ from assertion error stack trace.
    *
@@ -1219,7 +1163,6 @@ public class Assertions {
   public static void setRemoveAssertJRelatedElementsFromStackTrace(boolean removeAssertJRelatedElementsFromStackTrace) {
     Fail.setRemoveAssertJRelatedElementsFromStackTrace(removeAssertJRelatedElementsFromStackTrace);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message.
    *
@@ -1229,7 +1172,6 @@ public class Assertions {
   public static void fail(String failureMessage) {
     Fail.fail(failureMessage);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message built as {@link String#format(String, Object...)}.
    *
@@ -1240,7 +1182,6 @@ public class Assertions {
   public static void fail(String failureMessage, Object... args) {
     Fail.fail(failureMessage, args);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message and with the {@link Throwable} that caused the failure.
    * @param failureMessage the description of the failed assertion. It can be {@code null}.
@@ -1250,7 +1191,6 @@ public class Assertions {
   public static void fail(String failureMessage, Throwable realCause) {
     Fail.fail(failureMessage, realCause);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1265,7 +1205,6 @@ public class Assertions {
   public static void failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
     Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1276,7 +1215,6 @@ public class Assertions {
   public static void shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * In error messages, sets the threshold when iterable/array formatting will on one line (if their String description
    * is less than this parameter) or it will be formatted with one element per line.
@@ -1303,7 +1241,6 @@ public class Assertions {
   public static void setMaxLengthForSingleLineDescription(int maxLengthForSingleLineDescription) {
     StandardRepresentation.setMaxLengthForSingleLineDescription(maxLengthForSingleLineDescription);
   }
-
   /**
    * In error messages, sets the threshold for how many elements from one iterable/array/map will be included in the
    * in the description.
@@ -1330,18 +1267,16 @@ public class Assertions {
   public static void setMaxElementsForPrinting(int maxElementsForPrinting) {
     StandardRepresentation.setMaxElementsForPrinting(maxElementsForPrinting);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // properties methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
    * all AssertJ features (but you can use {@link Properties} if you prefer).
    * <p>
    * Typical usage is to chain <code>extractProperty</code> with <code>from</code> method, see examples below :
-   *
+   * <p>
    * <pre><code class='java'> // extract simple property values having a java standard type (here String)
    * assertThat(extractProperty(&quot;name&quot;, String.class).from(fellowshipOfTheRing))
    *           .contains(&quot;Boromir&quot;, &quot;Gandalf&quot;, &quot;Frodo&quot;, &quot;Legolas&quot;)
@@ -1359,14 +1294,13 @@ public class Assertions {
   public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
    * all AssertJ features (but you can use {@link Properties} if you prefer).
    * <p>
    * Typical usage is to chain <code>extractProperty</code> with <code>from</code> method, see examples below :
-   *
+   * <p>
    * <pre><code class='java'> // extract simple property values, as no type has been defined the extracted property will be considered as Object
    * // to define the real property type (here String) use extractProperty(&quot;name&quot;, String.class) instead.
    * assertThat(extractProperty(&quot;name&quot;).from(fellowshipOfTheRing))
@@ -1379,14 +1313,10 @@ public class Assertions {
    *
    * // extract nested property on Race
    * assertThat(extractProperty(&quot;race.name&quot;).from(fellowshipOfTheRing)).contains(&quot;Hobbit&quot;, &quot;Elf&quot;).doesNotContain(&quot;Orc&quot;); </code></pre>
-   *
-   * @param propertyName the name of the property to extract
-   * @return the created {@code Properties}.
    */
   public static Properties<Object> extractProperty(String propertyName) {
     return Properties.extractProperty(propertyName);
   }
-
   /**
    * Utility method to build nicely a {@link Tuple} when working with {@link IterableAssert#extracting(String...)} or
    * {@link ObjectArrayAssert#extracting(String...)}
@@ -1397,7 +1327,6 @@ public class Assertions {
   public static Tuple tuple(Object... values) {
     return Tuple.tuple(values);
   }
-
   /**
    * Globally sets whether
    * <code>{@link org.assertj.core.api.AbstractIterableAssert#extracting(String) IterableAssert#extracting(String)}</code>
@@ -1410,7 +1339,6 @@ public class Assertions {
   public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
     FieldSupport.extraction().setAllowUsingPrivateFields(allowExtractingPrivateFields);
   }
-
   /**
    * Globally sets whether the use of private fields is allowed for comparison.
    * The following (incomplete) list of methods will be impacted by this change :
@@ -1428,31 +1356,26 @@ public class Assertions {
   public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
     FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
    * all
    * AssertJ features (but you can use {@link MapEntry} if you prefer).
    * <p>
    * Typical usage is to call <code>entry</code> in MapAssert <code>contains</code> assertion, see examples below :
+   * <p>
    *
    * <pre><code class='java'> Map&lt;Ring, TolkienCharacter&gt; ringBearers = ... // init omitted
    *
    * assertThat(ringBearers).contains(entry(oneRing, frodo), entry(nenya, galadriel));</code></pre>
    * @param <K> the type of keys in the map.
    * @param <V> the type of values in the map.
-   * @param key the key of the entry to create.
-   * @param value the value of the entry to create.
-   * @return the created {@code MapEntry}.
    */
   public static <K, V> MapEntry<K, V> entry(K key, V value) {
     return MapEntry.entry(key, value);
   }
-
   /**
    * Only delegate to {@link Index#atIndex(int)} so that Assertions offers a full feature entry point to all AssertJ
    * features (but you can use {@link Index} if you prefer).
@@ -1461,167 +1384,102 @@ public class Assertions {
    *
    * <pre><code class='java'> List&lt;Ring&gt; elvesRings = newArrayList(vilya, nenya, narya);
    * assertThat(elvesRings).contains(vilya, atIndex(0)).contains(nenya, atIndex(1)).contains(narya, atIndex(2));</code></pre>
-   *
-   * @param index the value of the index.
-   * @return the created {@code Index}.
    */
   public static Index atIndex(int index) {
     return Index.atIndex(index);
   }
-
   /**
    * Assertions entry point for double {@link Offset}.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, offset(0.1));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Double> offset(Double value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for float {@link Offset}.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, offset(0.2f));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Float> offset(Float value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, within(0.1));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Double> within(Double value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Alias for {@link #offset(Double)} to use with real number assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, withPrecision(0.1));</code></pre>
-   * @param value the required precision
-   * @return the created {@code Offset}.
-   */
   public static Offset<Double> withPrecision(Double value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, within(0.2f));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Float> within(Float value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Alias for {@link #offset(Float)} to use with real number assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(8.2f).isEqualTo(8.0f, withPrecision(0.2f));</code></pre>
-   * @param value the required precision
-   * @return the created {@code Offset}.
-   */
   public static Offset<Float> withPrecision(Float value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(BigDecimal.TEN).isCloseTo(new BigDecimal("10.5"), within(BigDecimal.ONE));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<BigDecimal> within(BigDecimal value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(BigInteger.TEN).isCloseTo(new BigInteger("11"), within(new BigInteger("2")));</code></pre>
-   * @since 2.7.0 / 3.7.0
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
-   */
   public static Offset<BigInteger> within(BigInteger value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat((byte) 10).isCloseTo((byte) 11, within((byte) 1));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
-   */
   public static Offset<Byte> within(Byte value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Integer> within(Integer value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Short> within(Short value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(5l).isCloseTo(7l, within(2l));</code></pre>
-   * @param value the allowed offset
-   * @return the created {@code Offset}.
    */
   public static Offset<Long> within(Long value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for {@link TemporalUnitOffset} with  with less than or equal condition
    * to use with isCloseTo temporal assertions.
@@ -1635,7 +1493,6 @@ public class Assertions {
   public static TemporalUnitOffset within(long value, TemporalUnit unit) {
     return new TemporalUnitWithinOffset(value, unit);
   }
-
   /**
    * Assertions entry point for Double {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1643,13 +1500,10 @@ public class Assertions {
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(11.0).isCloseTo(10.0, withinPercentage(10.0));</code></pre>
-   * @param value the required precision percentage
-   * @return the created {@code Percentage}.
    */
   public static Percentage withinPercentage(Double value) {
     return withPercentage(value);
   }
-
   /**
    * Assertions entry point for Integer {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1657,13 +1511,10 @@ public class Assertions {
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(11).isCloseTo(10, withinPercentage(10));</code></pre>
-   * @param value the required precision percentage
-   * @return the created {@code Percentage}.
    */
   public static Percentage withinPercentage(Integer value) {
     return withPercentage(value);
   }
-
   /**
    * Assertions entry point for Long {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1671,110 +1522,34 @@ public class Assertions {
    * Typical usage :
    *
    * <pre><code class='java'> assertThat(11L).isCloseTo(10L, withinPercentage(10L));</code></pre>
-   * @param value the required precision percentage
-   * @return the created {@code Percentage}.
    */
   public static Percentage withinPercentage(Long value) {
     return withPercentage(value);
   }
-
-  /**
-   * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, byLessThan(0.1));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Double> byLessThan(Double value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, byLessThan(0.2f));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Float> byLessThan(Float value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(BigDecimal.TEN).isCloseTo(new BigDecimal("10.5"), byLessThan(BigDecimal.ONE));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<BigDecimal> byLessThan(BigDecimal value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(BigInteger.TEN).isCloseTo(new BigInteger("11"), byLessThan(new BigInteger("2")));</code></pre>
-   * 
-   * @return the created {@code Offset}.
-   * @since 2.7.0 / 3.7.0
-   */
   public static Offset<BigInteger> byLessThan(BigInteger value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat((byte) 10).isCloseTo((byte) 11, byLessThan((byte) 1));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Byte> byLessThan(Byte value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(10).isCloseTo(11, byLessThan(1));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Integer> byLessThan(Integer value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(10).isCloseTo(11, byLessThan(1));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Short> byLessThan(Short value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> assertThat(5l).isCloseTo(7l, byLessThan(2l));</code></pre>
-   *
-   * @return the created {@code Offset}.
-   */
   public static Offset<Long> byLessThan(Long value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for {@link TemporalUnitOffset} with strict less than condition
    * to use with {@code isCloseTo} temporal assertions.
@@ -1788,7 +1563,6 @@ public class Assertions {
   public static TemporalUnitOffset byLessThan(long value, TemporalUnit unit) {
     return new TemporalUnitLessThanOffset(value, unit);
   }
-
   /**
    * A syntax sugar to write fluent assertion using {@link ObjectAssert#returns(Object, Function)}.
    * <p>
@@ -1804,11 +1578,9 @@ public class Assertions {
    * @return same instance of {@code extractor}
    */
   public static <F, T> Function<F, T> from(Function<F, T> extractor) { return extractor; }
-
   // ------------------------------------------------------------------------------------------------------
   // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -1822,7 +1594,6 @@ public class Assertions {
   public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
     return AllOf.allOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -1835,24 +1606,19 @@ public class Assertions {
   public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return AllOf.allOf(conditions);
   }
-
   /**
    * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link AnyOf} if you prefer).
    * <p>
    * Typical usage (<code>jedi</code> and <code>sith</code> are {@link Condition}) :
+   * <p>
    *
    * <pre><code class='java'> assertThat(&quot;Vader&quot;).is(anyOf(jedi, sith));</code></pre>
-   *
-   * @param <T> the type of object the given condition accept.
-   * @param conditions the conditions to evaluate.
-   * @return the created {@code AnyOf}.
    */
   @SafeVarargs
   public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
     return AnyOf.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AnyOf}</code>
    *
@@ -1865,7 +1631,6 @@ public class Assertions {
   public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return AnyOf.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link DoesNotHave}</code>.
    *
@@ -1875,7 +1640,6 @@ public class Assertions {
   public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return DoesNotHave.doesNotHave(condition);
   }
-
   /**
    * Creates a new <code>{@link Not}</code>.
    *
@@ -1885,11 +1649,9 @@ public class Assertions {
   public static <T> Not<T> not(Condition<? super T> condition) {
     return Not.not(condition);
   }
-
   // --------------------------------------------------------------------------------------------------
   // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -1897,21 +1659,19 @@ public class Assertions {
    * Note that the given array is not modified, the filters are performed on an {@link Iterable} copy of the array.
    * <p>
    * Typical usage with {@link Condition} :
+   * <p>
    *
    * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
    * <p>
    * and with filter language based on java bean property :
+   * <p>
    *
    * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
    *           .containsOnly(james, rose);</code></pre>
-   *
-   * @param array the array to filter.
-   * @return the created <code>{@link Filters}</code>.
    */
   public static <E> Filters<E> filter(E[] array) {
     return Filters.filter(array);
   }
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -1919,21 +1679,19 @@ public class Assertions {
    * Note that the given {@link Iterable} is not modified, the filters are performed on a copy.
    * <p>
    * Typical usage with {@link Condition} :
+   * <p>
    *
    * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
    * <p>
    * and with filter language based on java bean property :
+   * <p>
    *
    * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
    *            .containsOnly(james, rose);</code></pre>
-   *
-   * @param iterable the {@code Iterable} to filter.
-   * @return the created <code>{@link Filters}</code>.
    */
   public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
     return Filters.filter(iterableToFilter);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -1957,7 +1715,6 @@ public class Assertions {
   public static InFilter in(Object... values) {
     return InFilter.in(values);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -1981,7 +1738,6 @@ public class Assertions {
   public static NotInFilter notIn(Object... valuesNotToMatch) {
     return NotInFilter.notIn(valuesNotToMatch);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -2005,11 +1761,9 @@ public class Assertions {
   public static NotFilter not(Object valueNotToMatch) {
     return NotFilter.not(valueNotToMatch);
   }
-
   // --------------------------------------------------------------------------------------------------
   // File methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2026,7 +1780,6 @@ public class Assertions {
   public static String contentOf(File file, Charset charset) {
     return Files.contentOf(file, charset);
   }
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2043,7 +1796,6 @@ public class Assertions {
   public static String contentOf(File file, String charsetName) {
     return Files.contentOf(file, charsetName);
   }
-
   /**
    * Loads the text content of a file with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -2059,7 +1811,6 @@ public class Assertions {
   public static String contentOf(File file) {
     return Files.contentOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -2073,7 +1824,6 @@ public class Assertions {
   public static List<String> linesOf(File file) {
     return Files.linesOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -2087,7 +1837,6 @@ public class Assertions {
   public static List<String> linesOf(File file, Charset charset) {
     return Files.linesOf(file, charset);
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -2101,11 +1850,9 @@ public class Assertions {
   public static List<String> linesOf(File file, String charsetName) {
     return Files.linesOf(file, charsetName);
   }
-
   // --------------------------------------------------------------------------------------------------
   // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2121,7 +1868,6 @@ public class Assertions {
   public static String contentOf(URL url, Charset charset) {
     return URLs.contentOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2137,7 +1883,6 @@ public class Assertions {
   public static String contentOf(URL url, String charsetName) {
     return URLs.contentOf(url, charsetName);
   }
-
   /**
    * Loads the text content of a URL with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -2152,7 +1897,6 @@ public class Assertions {
   public static String contentOf(URL url) {
     return URLs.contentOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -2166,7 +1910,6 @@ public class Assertions {
   public static List<String> linesOf(URL url) {
     return URLs.linesOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -2180,7 +1923,6 @@ public class Assertions {
   public static List<String> linesOf(URL url, Charset charset) {
     return URLs.linesOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -2194,11 +1936,9 @@ public class Assertions {
   public static List<String> linesOf(URL url, String charsetName) {
     return URLs.linesOf(url, charsetName);
   }
-
   // --------------------------------------------------------------------------------------------------
   // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Instead of using default strict date/time parsing, it is possible to use lenient parsing mode for default date
    * formats parser to interpret inputs that do not precisely match supported date formats (lenient parsing).
@@ -2234,7 +1974,6 @@ public class Assertions {
   public static void setLenientDateParsing(boolean value) {
     AbstractDateAssert.setLenientDateParsing(value);
   }
-
   /**
    * Add the given date format to the ones used to parse date String in String based Date assertions like
    * {@link org.assertj.core.api.AbstractDateAssert#isEqualTo(String)}.
@@ -2280,7 +2019,6 @@ public class Assertions {
   public static void registerCustomDateFormat(DateFormat userCustomDateFormat) {
     AbstractDateAssert.registerCustomDateFormat(userCustomDateFormat);
   }
-
   /**
    * Add the given date format to the ones used to parse date String in String based Date assertions like
    * {@link org.assertj.core.api.AbstractDateAssert#isEqualTo(String)}.
@@ -2326,7 +2064,6 @@ public class Assertions {
   public static void registerCustomDateFormat(String userCustomDateFormatPattern) {
     AbstractDateAssert.registerCustomDateFormat(userCustomDateFormatPattern);
   }
-
   /**
    * Remove all registered custom date formats =&gt; use only the defaults date formats to parse string as date.
    * <p>
@@ -2351,7 +2088,6 @@ public class Assertions {
   public static void useDefaultDateFormatsOnly() {
     AbstractDateAssert.useDefaultDateFormatsOnly();
   }
-
   /**
    * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
    *
@@ -2366,7 +2102,6 @@ public class Assertions {
   public static <T> T assertThat(final AssertProvider<T> component) {
     return AssertionsForInterfaceTypes.assertThat(component);
   }
-
   /**
    * Creates a new instance of <code>{@link CharSequenceAssert}</code>.
    *
@@ -2377,7 +2112,6 @@ public class Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
    *
@@ -2388,7 +2122,6 @@ public class Assertions {
   public static <ELEMENT> IterableAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
     return new IterableAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
    * <p>
@@ -2403,7 +2136,6 @@ public class Assertions {
   public static <ELEMENT> IterableAssert<ELEMENT> assertThat(Iterator<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code>.
    *
@@ -2414,7 +2146,6 @@ public class Assertions {
   public static <ELEMENT> ListAssert<ELEMENT> assertThat(List<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link BaseStream}.
    * <p>
@@ -2432,7 +2163,6 @@ public class Assertions {
   public static <ELEMENT, STREAM extends BaseStream<ELEMENT, STREAM>> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(BaseStream<? extends ELEMENT, STREAM> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of {@link PathAssert}
    *
@@ -2443,7 +2173,6 @@ public class Assertions {
   public static AbstractPathAssert<?> assertThat(Path actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link MapAssert}</code>.
    * <p>
@@ -2457,7 +2186,6 @@ public class Assertions {
   public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
    * standard comparison semantics.
@@ -2465,11 +2193,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
    * <code>assertThat</code>.
@@ -2521,11 +2244,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
-
   /**
    * Register a {@link Representation} that will be used in all following assertions.
    * <p>
@@ -2571,7 +2289,6 @@ public class Assertions {
   public static void useRepresentation(Representation customRepresentation) {
     AbstractAssert.setCustomRepresentation(customRepresentation);
   }
-
   /**
    * Assertions error messages uses a {@link Representation} to format the different types involved, using this method
    * you can control the formatting of a given type by providing a specific formatter.
@@ -2607,12 +2324,453 @@ public class Assertions {
   public static <T> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
     StandardRepresentation.registerFormatterForType(type, formatter);
   }
-
   /**
    * Fallback to use {@link StandardRepresentation} to revert the effect of calling {@link #useRepresentation(Representation)}.
    *
    * @since 2.5.0 / 3.5.0
    */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  //@format:off
+//@format:on
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
+   * 
+   * <p>
+   * Read the comments on {@link AssertProvider} for an example of its usage.
+   * </p>
+   * @param <T> the generic type of the assert provided by the component.
+   * @param component
+   *          the component that creates its own assert
+   * @return the associated {@link Assert} of the given component
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  // -------------------------------------------------------------------------------------------------
+  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
+  // -------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
+   * to
+   * all AssertJ features (but you can use {@link Properties} if you prefer).
+   * <p>
+   * Typical usage is to chain <code>extractProperty</code> with <code>from</code> method, see examples below :
+   *
+   * <pre><code class='java'> // extract simple property values having a java standard type (here String)
+   * assertThat(extractProperty(&quot;name&quot;, String.class).from(fellowshipOfTheRing)).contains(&quot;
+   * Boromir&quot;, &quot;Gandalf&quot;, &quot;Frodo&quot;,
+   *     &quot;Legolas&quot;).doesNotContain(&quot;Sauron&quot;, &quot;Elrond&quot;);
+   *
+   * // extracting property works also with user's types (here Race)
+   * assertThat(extractProperty(&quot;race&quot;, String.class).from(fellowshipOfTheRing)).contains(HOBBIT,
+   * ELF).doesNotContain(ORC);
+   *
+   * // extract nested property on Race
+   * assertThat(extractProperty(&quot;race.name&quot;, String.class).from(fellowshipOfTheRing)).contains(&quot;
+   * Hobbit&quot;, &quot;Elf&quot;)
+   *     .doesNotContain(&quot;Orc&quot;);</code></pre>
+   */
+  /**
+   * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
+   * to
+   * all AssertJ features (but you can use {@link Properties} if you prefer).
+   * <p>
+   * Typical usage is to chain <code>extractProperty</code> with <code>from</code> method, see examples below :
+   *
+   * <pre><code class='java'> // extract simple property values, as no type has been defined the extracted property will be considered as Object
+   * // to define the real property type (here String) use extractProperty(&quot;name&quot;, String.class) instead.
+   * assertThat(extractProperty(&quot;name&quot;).from(fellowshipOfTheRing)).contains(&quot;Boromir&quot;,
+   * &quot;Gandalf&quot;, &quot;Frodo&quot;, &quot;Legolas&quot;)
+   *     .doesNotContain(&quot;Sauron&quot;, &quot;Elrond&quot;);
+   *
+   * // extracting property works also with user's types (here Race), even though it will be considered as Object
+   * // to define the real property type (here String) use extractProperty(&quot;name&quot;, Race.class) instead.
+   * assertThat(extractProperty(&quot;race&quot;).from(fellowshipOfTheRing)).contains(HOBBIT, ELF).doesNotContain(ORC);
+   *
+   * // extract nested property on Race
+   * assertThat(extractProperty(&quot;race.name&quot;).from(fellowshipOfTheRing)).contains(&quot;Hobbit&quot;,
+   * &quot;Elf&quot;).doesNotContain(&quot;Orc&quot;);</code></pre>
+   *
+   * @param propertyName the name of the property to extract
+   * @return the created {@code Properties}.
+   */
+  // ------------------------------------------------------------------------------------------------------
+  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
+   * all
+   * AssertJ features (but you can use {@link MapEntry} if you prefer).
+   * <p>
+   * Typical usage is to call <code>entry</code> in MapAssert <code>contains</code> assertion, see examples below :
+   * 
+   * <pre><code class='java'> Map&lt;Ring, TolkienCharacter&gt; ringBearers = ... // init omitted
+   * 
+   * assertThat(ringBearers).contains(entry(oneRing, frodo), entry(nenya, galadriel));</code></pre>
+   * @param <K> the type of keys in the map.
+   * @param <V> the type of values in the map.
+   * @param key the key of the entry to create.
+   * @param value the value of the entry to create.
+   * @return the created {@code MapEntry}.
+   */
+  /**
+   * Only delegate to {@link Index#atIndex(int)} so that Assertions offers a full feature entry point to all AssertJ
+   * features (but you can use {@link Index} if you prefer).
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> List&lt;Ring&gt; elvesRings = newArrayList(vilya, nenya, narya);
+   * assertThat(elvesRings).contains(vilya, atIndex(0)).contains(nenya, atIndex(1)).contains(narya, atIndex(2));</code></pre>
+   *
+   * @param index the value of the index.
+   * @return the created {@code Index}.
+   */
+  /**
+   * Assertions entry point for double {@link Offset}.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, offset(0.1));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for float {@link Offset}.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, offset(0.2f));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, within(0.1));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Alias for {@link #offset(Double)} to use with real number assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, withPrecision(0.1));</code></pre>
+   * @param value the required precision
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, within(0.2f));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Alias for {@link #offset(Float)} to use with real number assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.2f).isEqualTo(8.0f, withPrecision(0.2f));</code></pre>
+   * @param value the required precision
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(BigDecimal.TEN).isCloseTo(new BigDecimal("10.5"), within(BigDecimal.ONE));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(BigInteger.TEN).isCloseTo(new BigInteger("11"), within(new BigInteger("2")));</code></pre>
+   * @since 2.7.0 / 3.7.0
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat((byte) 10).isCloseTo((byte) 11, within((byte) 1));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(5l).isCloseTo(7l, within(2l));</code></pre>
+   * @param value the allowed offset
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Double {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
+   * percentages.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(11.0).isCloseTo(10.0, withinPercentage(10.0));</code></pre>
+   * @param value the required precision percentage
+   * @return the created {@code Percentage}.
+   */
+  /**
+   * Assertions entry point for Integer {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
+   * percentages.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(11).isCloseTo(10, withinPercentage(10));</code></pre>
+   * @param value the required precision percentage
+   * @return the created {@code Percentage}.
+   */
+  /**
+   * Assertions entry point for Long {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
+   * percentages.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(11L).isCloseTo(10L, withinPercentage(10L));</code></pre>
+   * @param value the required precision percentage
+   * @return the created {@code Percentage}.
+   */
+  /**
+   * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, byLessThan(0.1));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, byLessThan(0.2f));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(BigDecimal.TEN).isCloseTo(new BigDecimal("10.5"), byLessThan(BigDecimal.ONE));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(BigInteger.TEN).isCloseTo(new BigInteger("11"), byLessThan(new BigInteger("2")));</code></pre>
+   * 
+   * @return the created {@code Offset}.
+   * @since 2.7.0 / 3.7.0
+   */
+  /**
+   * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat((byte) 10).isCloseTo((byte) 11, byLessThan((byte) 1));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(10).isCloseTo(11, byLessThan(1));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(10).isCloseTo(11, byLessThan(1));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  /**
+   * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> assertThat(5l).isCloseTo(7l, byLessThan(2l));</code></pre>
+   *
+   * @return the created {@code Offset}.
+   */
+  // ------------------------------------------------------------------------------------------------------
+  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
+   * AssertJ features (but you can use {@link AnyOf} if you prefer).
+   * <p>
+   * Typical usage (<code>jedi</code> and <code>sith</code> are {@link Condition}) :
+   * 
+   * <pre><code class='java'> assertThat(&quot;Vader&quot;).is(anyOf(jedi, sith));</code></pre>
+   *
+   * @param <T> the type of object the given condition accept.
+   * @param conditions the conditions to evaluate.
+   * @return the created {@code AnyOf}.
+   */
+  // --------------------------------------------------------------------------------------------------
+  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
+   * AssertJ features (but you can use {@link Filters} if you prefer).
+   * <p>
+   * Note that the given array is not modified, the filters are performed on an {@link Iterable} copy of the array.
+   * <p>
+   * Typical usage with {@link Condition} :
+   * 
+   * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
+   * <p>
+   * and with filter language based on java bean property :
+   * 
+   * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
+   *           .containsOnly(james, rose);</code></pre>
+   *
+   * @param array the array to filter.
+   * @return the created <code>{@link Filters}</code>.
+   */
+  /**
+   * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
+   * AssertJ features (but you can use {@link Filters} if you prefer).
+   * <p>
+   * Note that the given {@link Iterable} is not modified, the filters are performed on a copy.
+   * <p>
+   * Typical usage with {@link Condition} :
+   * 
+   * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
+   * <p>
+   * and with filter language based on java bean property :
+   * 
+   * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
+   *            .containsOnly(james, rose);</code></pre>
+   *
+   * @param iterable the {@code Iterable} to filter.
+   * @return the created <code>{@link Filters}</code>.
+   */
+  // --------------------------------------------------------------------------------------------------
+  // File methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
   public static void useDefaultRepresentation() {
     StandardRepresentation.removeAllRegisteredFormatters();
     AbstractAssert.setCustomRepresentation(STANDARD_REPRESENTATION);

@@ -290,7 +290,6 @@ public class Java6Assertions {
   public static AbstractBooleanAssert<?> assertThat(boolean actual) {
     return new BooleanAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -301,7 +300,6 @@ public class Java6Assertions {
   public static AbstractBooleanAssert<?> assertThat(Boolean actual) {
     return new BooleanAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanArrayAssert}</code>.
    *
@@ -312,7 +310,6 @@ public class Java6Assertions {
   public static AbstractBooleanArrayAssert<?> assertThat(boolean[] actual) {
     return new BooleanArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -323,7 +320,6 @@ public class Java6Assertions {
   public static AbstractByteAssert<?> assertThat(byte actual) {
     return new ByteAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -334,7 +330,6 @@ public class Java6Assertions {
   public static AbstractByteAssert<?> assertThat(Byte actual) {
     return new ByteAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteArrayAssert}</code>.
    *
@@ -345,7 +340,6 @@ public class Java6Assertions {
   public static AbstractByteArrayAssert<?> assertThat(byte[] actual) {
     return new ByteArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -356,7 +350,6 @@ public class Java6Assertions {
   public static AbstractCharacterAssert<?> assertThat(char actual) {
     return new CharacterAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharArrayAssert}</code>.
    *
@@ -367,7 +360,6 @@ public class Java6Assertions {
   public static AbstractCharArrayAssert<?> assertThat(char[] actual) {
     return new CharArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -378,7 +370,6 @@ public class Java6Assertions {
   public static AbstractCharacterAssert<?> assertThat(Character actual) {
     return new CharacterAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassAssert}</code>
    *
@@ -389,7 +380,6 @@ public class Java6Assertions {
   public static AbstractClassAssert<?> assertThat(Class<?> actual) {
     return new ClassAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
    * standard comparison semantics.
@@ -401,7 +391,14 @@ public class Java6Assertions {
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
     return new GenericComparableAssert<>(actual);
   }
-
+  @CheckReturnValue
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
    *
@@ -412,7 +409,6 @@ public class Java6Assertions {
   public static <T> AbstractIterableAssert<?, Iterable<? extends T>, T, ObjectAssert<T>> assertThat(Iterable<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
    * <p>
@@ -427,7 +423,6 @@ public class Java6Assertions {
   public static <T> AbstractIterableAssert<?, Iterable<? extends T>, T, ObjectAssert<T>> assertThat(Iterator<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -438,7 +433,6 @@ public class Java6Assertions {
   public static AbstractDoubleAssert<?> assertThat(double actual) {
     return new DoubleAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -449,7 +443,6 @@ public class Java6Assertions {
   public static AbstractDoubleAssert<?> assertThat(Double actual) {
     return new DoubleAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleArrayAssert}</code>.
    *
@@ -460,7 +453,6 @@ public class Java6Assertions {
   public static AbstractDoubleArrayAssert<?> assertThat(double[] actual) {
     return new DoubleArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FileAssert}</code>.
    *
@@ -471,7 +463,6 @@ public class Java6Assertions {
   public static AbstractFileAssert<?> assertThat(File actual) {
     return new FileAssert(actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.Future}.
    *
@@ -485,7 +476,6 @@ public class Java6Assertions {
   public static <RESULT> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> assertThat(Future<RESULT> actual) {
     return new FutureAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InputStreamAssert}</code>.
    *
@@ -496,7 +486,6 @@ public class Java6Assertions {
   public static AbstractInputStreamAssert<?, ? extends InputStream> assertThat(InputStream actual) {
     return new InputStreamAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -507,7 +496,6 @@ public class Java6Assertions {
   public static AbstractFloatAssert<?> assertThat(float actual) {
     return new FloatAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -518,7 +506,6 @@ public class Java6Assertions {
   public static AbstractFloatAssert<?> assertThat(Float actual) {
     return new FloatAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatArrayAssert}</code>.
    *
@@ -529,7 +516,6 @@ public class Java6Assertions {
   public static AbstractFloatArrayAssert<?> assertThat(float[] actual) {
     return new FloatArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -540,7 +526,6 @@ public class Java6Assertions {
   public static AbstractIntegerAssert<?> assertThat(int actual) {
     return new IntegerAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntArrayAssert}</code>.
    *
@@ -551,7 +536,6 @@ public class Java6Assertions {
   public static AbstractIntArrayAssert<?> assertThat(int[] actual) {
     return new IntArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -562,7 +546,6 @@ public class Java6Assertions {
   public static AbstractIntegerAssert<?> assertThat(Integer actual) {
     return new IntegerAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code>.
    *
@@ -573,7 +556,6 @@ public class Java6Assertions {
   public static <T> AbstractListAssert<?, List<? extends T>, T, ObjectAssert<T>> assertThat(List<? extends T> actual) {
     return new ListAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -614,7 +596,6 @@ public class Java6Assertions {
                                                                                      AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return new FactoryBasedNavigableIterableAssert(actual, FactoryBasedNavigableIterableAssert.class, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -646,7 +627,6 @@ public class Java6Assertions {
                                                                                    Class<ELEMENT_ASSERT> assertClass) {
     return new ClassBasedNavigableIterableAssert(actual, ClassBasedNavigableIterableAssert.class, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -686,7 +666,6 @@ public class Java6Assertions {
                                                                                  AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return new FactoryBasedNavigableListAssert(actual, FactoryBasedNavigableListAssert.class, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -718,7 +697,6 @@ public class Java6Assertions {
                                                                                Class<ELEMENT_ASSERT> assertClass) {
     return new ClassBasedNavigableListAssert(actual, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -729,7 +707,6 @@ public class Java6Assertions {
   public static AbstractLongAssert<?> assertThat(long actual) {
     return new LongAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -740,7 +717,6 @@ public class Java6Assertions {
   public static AbstractLongAssert<?> assertThat(Long actual) {
     return new LongAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongArrayAssert}</code>.
    *
@@ -751,18 +727,12 @@ public class Java6Assertions {
   public static AbstractLongArrayAssert<?> assertThat(long[] actual) {
     return new LongArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectAssert}</code>.
    *
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
-    return new ObjectAssert<>(actual);
-  }
-
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
    * <code>assertThat</code>.
@@ -814,27 +784,9 @@ public class Java6Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
-
-  /**
-   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
-   *
-   * <p>
-   * Read the comments on {@link AssertProvider} for an example of its usage.
-   * </p>
-   *
-   * @param <T> the generic type of the assert provided by the component.
-   * @param component
-   *          the component that creates its own assert
-   * @return the associated {@link Assert} of the given component
-   */
   public static <T> T assertThat(final AssertProvider<T> component) {
     return component.assertThat();
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
    *
@@ -845,7 +797,6 @@ public class Java6Assertions {
   public static <T> AbstractObjectArrayAssert<?, T> assertThat(T[] actual) {
     return new ObjectArrayAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link MapAssert}</code>.
    * <p>
@@ -861,7 +812,6 @@ public class Java6Assertions {
   public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
     return new MapAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -872,7 +822,6 @@ public class Java6Assertions {
   public static AbstractShortAssert<?> assertThat(short actual) {
     return new ShortAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -883,7 +832,6 @@ public class Java6Assertions {
   public static AbstractShortAssert<?> assertThat(Short actual) {
     return new ShortAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortArrayAssert}</code>.
    *
@@ -894,7 +842,6 @@ public class Java6Assertions {
   public static AbstractShortArrayAssert<?> assertThat(short[] actual) {
     return new ShortArrayAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharSequenceAssert}</code>.
    *
@@ -905,7 +852,6 @@ public class Java6Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
     return new CharSequenceAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link StringAssert}</code>.
    *
@@ -916,7 +862,6 @@ public class Java6Assertions {
   public static AbstractCharSequenceAssert<?, String> assertThat(String actual) {
     return new StringAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DateAssert}</code>.
    *
@@ -927,7 +872,6 @@ public class Java6Assertions {
   public static AbstractDateAssert<?> assertThat(Date actual) {
     return new DateAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code>.
    *
@@ -938,7 +882,6 @@ public class Java6Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThat(Throwable actual) {
     return new ThrowableAssert(actual);
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -979,7 +922,6 @@ public class Java6Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return new ThrowableAssert(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable}.
    *
@@ -1031,7 +973,6 @@ public class Java6Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatCode(ThrowingCallable shouldRaiseOrNotThrowable) {
     return assertThat(catchThrowable(shouldRaiseOrNotThrowable));
   }
-
   /**
    * Allows to catch an {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -1075,11 +1016,9 @@ public class Java6Assertions {
   public static Throwable catchThrowable(ThrowingCallable shouldRaiseThrowable) {
     return ThrowableAssert.catchThrowable(shouldRaiseThrowable);
   }
-
   // -------------------------------------------------------------------------------------------------
   // fail methods : not assertions but here to have a single entry point to all AssertJ features.
   // -------------------------------------------------------------------------------------------------
-
   /**
    * Throws an {@link AssertionError} with the given message.
    * 
@@ -1089,7 +1028,6 @@ public class Java6Assertions {
   public static void fail(String failureMessage) {
     Fail.fail(failureMessage);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message built as {@link String#format(String, Object...)}.
    * 
@@ -1100,7 +1038,6 @@ public class Java6Assertions {
   public static void fail(String failureMessage, Object... args) {
     Fail.fail(failureMessage, args);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message and with the {@link Throwable} that caused the failure.
    * @param failureMessage the description of the failed assertion. It can be {@code null}.
@@ -1110,7 +1047,6 @@ public class Java6Assertions {
   public static void fail(String failureMessage, Throwable realCause) {
     Fail.fail(failureMessage, realCause);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1125,7 +1061,6 @@ public class Java6Assertions {
   public static void failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
     Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1136,7 +1071,6 @@ public class Java6Assertions {
   public static void shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * In error messages, sets the threshold when iterable/array formatting will on one line (if their String description
    * is less than this parameter) or it will be formatted with one element per line.
@@ -1163,7 +1097,6 @@ public class Java6Assertions {
   public static void setMaxLengthForSingleLineDescription(int maxLengthForSingleLineDescription) {
     StandardRepresentation.setMaxLengthForSingleLineDescription(maxLengthForSingleLineDescription);
   }
-
   /**
    * In error messages, sets the threshold for how many elements from one iterable/array/map will be included in the
    * in the description.
@@ -1190,11 +1123,9 @@ public class Java6Assertions {
   public static void setMaxElementsForPrinting(int maxElementsForPrinting) {
     StandardRepresentation.setMaxElementsForPrinting(maxElementsForPrinting);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // properties methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -1218,7 +1149,557 @@ public class Java6Assertions {
   public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
-
+  public static Properties<Object> extractProperty(String propertyName) {
+    return Properties.extractProperty(propertyName);
+  }
+  /**
+   * Utility method to build nicely a {@link Tuple} when working with {@link IterableAssert#extracting(String...)} or
+   * {@link ObjectArrayAssert#extracting(String...)}
+   *
+   * @param values the values stored in the {@link Tuple}
+   * @return the built {@link Tuple}
+   */
+  public static Tuple tuple(Object... values) {
+    return Tuple.tuple(values);
+  }
+  /**
+   * Globally sets whether
+   * <code>{@link org.assertj.core.api.AbstractIterableAssert#extracting(String) IterableAssert#extracting(String)}</code>
+   * and
+   * <code>{@link org.assertj.core.api.AbstractObjectArrayAssert#extracting(String) ObjectArrayAssert#extracting(String)}</code>
+   * should be allowed to extract private fields, if not and they try it fails with exception.
+   *
+   * @param allowExtractingPrivateFields allow private fields extraction. Default {@code true}.
+   */
+  public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
+    FieldSupport.extraction().setAllowUsingPrivateFields(allowExtractingPrivateFields);
+  }
+  /**
+   * Globally sets whether the use of private fields is allowed for comparison.
+   * The following (incomplete) list of methods will be impacted by this change :
+   * <ul>
+   * <li>
+   * <code>{@link org.assertj.core.api.AbstractIterableAssert#usingElementComparatorOnFields(java.lang.String...)}</code>
+   * </li>
+   * <li><code>{@link org.assertj.core.api.AbstractObjectAssert#isEqualToComparingFieldByField(Object)}</code></li>
+   * </ul>
+   *
+   * If the value is <code>false</code> and these methods try to compare private fields, it will fail with an exception.
+   *
+   * @param allowComparingPrivateFields allow private fields comparison. Default {@code true}.
+   */
+  public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
+    FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
+  }
+  // ------------------------------------------------------------------------------------------------------
+  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  public static <K, V> MapEntry<K, V> entry(K key, V value) {
+    return MapEntry.entry(key, value);
+  }
+  public static Index atIndex(int index) {
+    return Index.atIndex(index);
+  }
+  public static Offset<Double> offset(Double value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Float> offset(Float value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Double> within(Double value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Float> within(Float value) {
+    return Offset.offset(value);
+  }
+  public static Offset<BigDecimal> within(BigDecimal value) {
+    return Offset.offset(value);
+  }
+  public static Offset<BigInteger> within(BigInteger value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Byte> within(Byte value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Integer> within(Integer value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Short> within(Short value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Long> within(Long value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Double> byLessThan(Double value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Float> byLessThan(Float value) {
+    return Offset.offset(value);
+  }
+  public static Offset<BigDecimal> byLessThan(BigDecimal value) {
+    return Offset.offset(value);
+  }
+  public static Offset<BigInteger> byLessThan(BigInteger value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Byte> byLessThan(Byte value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Integer> byLessThan(Integer value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Short> byLessThan(Short value) {
+    return Offset.offset(value);
+  }
+  public static Offset<Long> byLessThan(Long value) {
+    return Offset.offset(value);
+  }
+  public static Percentage withinPercentage(Double value) {
+    return withPercentage(value);
+  }
+  public static Percentage withinPercentage(Integer value) {
+    return withPercentage(value);
+  }
+  public static Percentage withinPercentage(Long value) {
+    return withPercentage(value);
+  }
+  // ------------------------------------------------------------------------------------------------------
+  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Creates a new <code>{@link AllOf}</code>
+   *
+   * @param <T> the type of object the given condition accept.
+   * @param conditions the conditions to evaluate.
+   * @return the created {@code AnyOf}.
+   * @throws NullPointerException if the given array is {@code null}.
+   * @throws NullPointerException if any of the elements in the given array is {@code null}.
+   */
+  @SafeVarargs
+  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
+    return AllOf.allOf(conditions);
+  }
+  /**
+   * Creates a new <code>{@link AllOf}</code>
+   *
+   * @param <T> the type of object the given condition accept.
+   * @param conditions the conditions to evaluate.
+   * @return the created {@code AnyOf}.
+   * @throws NullPointerException if the given iterable is {@code null}.
+   * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
+   */
+  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+    return AllOf.allOf(conditions);
+  }
+  /**
+   * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
+   * AssertJ features (but you can use {@link AnyOf} if you prefer).
+   * <p>
+   * Typical usage (<code>jedi</code> and <code>sith</code> are {@link Condition}) :
+   * <pre><code class='java'> assertThat(&quot;Vader&quot;).is(anyOf(jedi, sith));</code></pre>
+   */
+  @SafeVarargs
+  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
+    return AnyOf.anyOf(conditions);
+  }
+  /**
+   * Creates a new <code>{@link AnyOf}</code>
+   *
+   * @param <T> the type of object the given condition accept.
+   * @param conditions the conditions to evaluate.
+   * @return the created {@code AnyOf}.
+   * @throws NullPointerException if the given iterable is {@code null}.
+   * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
+   */
+  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
+    return AnyOf.anyOf(conditions);
+  }
+  /**
+   * Creates a new <code>{@link DoesNotHave}</code>.
+   *
+   * @param condition the condition to inverse.
+   * @return The Not condition created.
+   */
+  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
+    return DoesNotHave.doesNotHave(condition);
+  }
+  /**
+   * Creates a new <code>{@link Not}</code>.
+   *
+   * @param condition the condition to inverse.
+   * @return The Not condition created.
+   */
+  public static <T> Not<T> not(Condition<? super T> condition) {
+    return Not.not(condition);
+  }
+  // --------------------------------------------------------------------------------------------------
+  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  public static <E> Filters<E> filter(E[] array) {
+    return Filters.filter(array);
+  }
+  public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
+    return Filters.filter(iterableToFilter);
+  }
+  /**
+   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
+   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
+   * value matches one of the given values.
+   * <p>
+   * As often, an example helps:
+   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   *
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * assertThat(employees).filteredOn("age", in(800, 26))
+   *                      .containsOnly(yoda, obiwan, luke);</code></pre>
+   *
+   * @param values values to match (one match is sufficient)
+   * @return the created "in" filter
+   */
+  public static InFilter in(Object... values) {
+    return InFilter.in(values);
+  }
+  /**
+   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
+   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
+   * value matches does not match any of the given values.
+   * <p>
+   * As often, an example helps:
+   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   *
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * assertThat(employees).filteredOn("age", notIn(800, 50))
+   *                      .containsOnly(luke);</code></pre>
+   *
+   * @param valuesNotToMatch values not to match (none of the values must match)
+   * @return the created "not in" filter
+   */
+  public static NotInFilter notIn(Object... valuesNotToMatch) {
+    return NotInFilter.notIn(valuesNotToMatch);
+  }
+  /**
+   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
+   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
+   * value matches does not match the given value.
+   * <p>
+   * As often, an example helps:
+   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   *
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * assertThat(employees).filteredOn("age", not(800))
+   *                      .containsOnly(luke, noname);</code></pre>
+   *
+   * @param valueNotToMatch the value not to match
+   * @return the created "not" filter
+   */
+  public static NotFilter not(Object valueNotToMatch) {
+    return NotFilter.not(valueNotToMatch);
+  }
+  // --------------------------------------------------------------------------------------------------
+  // File methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
+   * with {@link #assertThat(File)}.
+   * </p>
+   *
+   * @param file the file.
+   * @param charset the character set to use.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(File file, Charset charset) {
+    return Files.contentOf(file, charset);
+  }
+  /**
+   * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
+   * with {@link #assertThat(File)}.
+   * </p>
+   *
+   * @param file the file.
+   * @param charsetName the name of the character set to use.
+   * @return the content of the file.
+   * @throws IllegalArgumentException if the given character set is not supported on this platform.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(File file, String charsetName) {
+    return Files.contentOf(file, charsetName);
+  }
+  /**
+   * Loads the text content of a file with the default character set, so that it can be passed to
+   * {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
+   * with {@link #assertThat(File)}.
+   * </p>
+   *
+   * @param file the file.
+   * @return the content of the file.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(File file) {
+    return Files.contentOf(file, Charset.defaultCharset());
+  }
+  /**
+   * Loads the text content of a file into a list of strings with the default charset, each string corresponding to a
+   * line.
+   * The line endings are either \n, \r or \r\n.
+   *
+   * @param file the file.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(File file) {
+    return Files.linesOf(file, Charset.defaultCharset());
+  }
+  /**
+   * Loads the text content of a file into a list of strings, each string corresponding to a line.
+   * The line endings are either \n, \r or \r\n.
+   *
+   * @param file the file.
+   * @param charset the character set to use.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(File file, Charset charset) {
+    return Files.linesOf(file, charset);
+  }
+  /**
+   * Loads the text content of a file into a list of strings, each string corresponding to a line. The line endings are
+   * either \n, \r or \r\n.
+   *
+   * @param file the file.
+   * @param charsetName the name of the character set to use.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(File file, String charsetName) {
+    return Files.linesOf(file, charsetName);
+  }
+  // --------------------------------------------------------------------------------------------------
+  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire contents in memory.
+   * </p>
+   *
+   * @param url the URL.
+   * @param charset the character set to use.
+   * @return the content of the URL.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(URL url, Charset charset) {
+    return URLs.contentOf(url, charset);
+  }
+  /**
+   * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire contents in memory.
+   * </p>
+   *
+   * @param url the URL.
+   * @param charsetName the name of the character set to use.
+   * @return the content of the URL.
+   * @throws IllegalArgumentException if the given character set is not supported on this platform.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(URL url, String charsetName) {
+    return URLs.contentOf(url, charsetName);
+  }
+  /**
+   * Loads the text content of a URL with the default character set, so that it can be passed to
+   * {@link #assertThat(String)}.
+   * <p>
+   * Note that this will load the entire file in memory; for larger files.
+   * </p>
+   *
+   * @param url the URL.
+   * @return the content of the file.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static String contentOf(URL url) {
+    return URLs.contentOf(url, Charset.defaultCharset());
+  }
+  /**
+   * Loads the text content of a URL into a list of strings with the default charset, each string corresponding to a
+   * line.
+   * The line endings are either \n, \r or \r\n.
+   *
+   * @param url the URL.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(URL url) {
+    return URLs.linesOf(url, Charset.defaultCharset());
+  }
+  /**
+   * Loads the text content of a URL into a list of strings, each string corresponding to a line.
+   * The line endings are either \n, \r or \r\n.
+   *
+   * @param url the URL.
+   * @param charset the character set to use.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(URL url, Charset charset) {
+    return URLs.linesOf(url, charset);
+  }
+  /**
+   * Loads the text content of a URL into a list of strings, each string corresponding to a line. The line endings are
+   * either \n, \r or \r\n.
+   *
+   * @param url the URL.
+   * @param charsetName the name of the character set to use.
+   * @return the content of the file.
+   * @throws NullPointerException if the given charset is {@code null}.
+   * @throws RuntimeIOException if an I/O exception occurs.
+   */
+  public static List<String> linesOf(URL url, String charsetName) {
+    return URLs.linesOf(url, charsetName);
+  }
+  // --------------------------------------------------------------------------------------------------
+  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+//@format:off
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
+   *
+   * <p>
+   * Read the comments on {@link AssertProvider} for an example of its usage.
+   * </p>
+   *
+   * @param <T> the generic type of the assert provided by the component.
+   * @param component
+   *          the component that creates its own assert
+   * @return the associated {@link Assert} of the given component
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  // -------------------------------------------------------------------------------------------------
+  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
+  // -------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -1242,56 +1723,9 @@ public class Java6Assertions {
    * @param propertyName the name of the property to extract
    * @return the created {@code Properties}.
    */
-  public static Properties<Object> extractProperty(String propertyName) {
-    return Properties.extractProperty(propertyName);
-  }
-
-  /**
-   * Utility method to build nicely a {@link Tuple} when working with {@link IterableAssert#extracting(String...)} or
-   * {@link ObjectArrayAssert#extracting(String...)}
-   *
-   * @param values the values stored in the {@link Tuple}
-   * @return the built {@link Tuple}
-   */
-  public static Tuple tuple(Object... values) {
-    return Tuple.tuple(values);
-  }
-
-  /**
-   * Globally sets whether
-   * <code>{@link org.assertj.core.api.AbstractIterableAssert#extracting(String) IterableAssert#extracting(String)}</code>
-   * and
-   * <code>{@link org.assertj.core.api.AbstractObjectArrayAssert#extracting(String) ObjectArrayAssert#extracting(String)}</code>
-   * should be allowed to extract private fields, if not and they try it fails with exception.
-   *
-   * @param allowExtractingPrivateFields allow private fields extraction. Default {@code true}.
-   */
-  public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
-    FieldSupport.extraction().setAllowUsingPrivateFields(allowExtractingPrivateFields);
-  }
-
-  /**
-   * Globally sets whether the use of private fields is allowed for comparison.
-   * The following (incomplete) list of methods will be impacted by this change :
-   * <ul>
-   * <li>
-   * <code>{@link org.assertj.core.api.AbstractIterableAssert#usingElementComparatorOnFields(java.lang.String...)}</code>
-   * </li>
-   * <li><code>{@link org.assertj.core.api.AbstractObjectAssert#isEqualToComparingFieldByField(Object)}</code></li>
-   * </ul>
-   *
-   * If the value is <code>false</code> and these methods try to compare private fields, it will fail with an exception.
-   *
-   * @param allowComparingPrivateFields allow private fields comparison. Default {@code true}.
-   */
-  public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
-    FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
-  }
-
   // ------------------------------------------------------------------------------------------------------
   // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
    * all
@@ -1308,10 +1742,6 @@ public class Java6Assertions {
    * @param value the value of the entry to create.
    * @return the created {@code MapEntry}.
    */
-  public static <K, V> MapEntry<K, V> entry(K key, V value) {
-    return MapEntry.entry(key, value);
-  }
-
   /**
    * Only delegate to {@link Index#atIndex(int)} so that Assertions offers a full feature entry point to all AssertJ
    * features (but you can use {@link Index} if you prefer).
@@ -1322,10 +1752,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Index}.
    */
-  public static Index atIndex(int index) {
-    return Index.atIndex(index);
-  }
-
   /**
    * Assertions entry point for double {@link Offset}.
    * <p>
@@ -1334,10 +1760,6 @@ public class Java6Assertions {
    * @param value the allowed offset
    * @return the created {@code Offset}.
    */
-  public static Offset<Double> offset(Double value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for float {@link Offset}.
    * <p>
@@ -1347,10 +1769,6 @@ public class Java6Assertions {
    * @param value the allowed offset
    * @return the created {@code Offset}.
    */
-  public static Offset<Float> offset(Float value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
    * <p>
@@ -1359,10 +1777,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Double> within(Double value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
@@ -1371,10 +1785,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Float> within(Float value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1383,10 +1793,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<BigDecimal> within(BigDecimal value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1396,10 +1802,6 @@ public class Java6Assertions {
    * @return the created {@code Offset}.
    * @since 2.7.0 / 3.7.0
    */
-  public static Offset<BigInteger> within(BigInteger value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1408,10 +1810,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Byte> within(Byte value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1420,10 +1818,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Integer> within(Integer value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1432,10 +1826,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Short> within(Short value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1444,10 +1834,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Long> within(Long value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
    * <p>
@@ -1456,10 +1842,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Double> byLessThan(Double value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
@@ -1468,10 +1850,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Float> byLessThan(Float value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1480,10 +1858,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<BigDecimal> byLessThan(BigDecimal value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1493,10 +1867,6 @@ public class Java6Assertions {
    * @return the created {@code Offset}.
    * @since 2.7.0 / 3.7.0
    */
-  public static Offset<BigInteger> byLessThan(BigInteger value) {
-    return Offset.offset(value);
-  }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1505,10 +1875,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Byte> byLessThan(Byte value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1517,10 +1883,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Integer> byLessThan(Integer value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1529,10 +1891,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Short> byLessThan(Short value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Assertions entry point for Long {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -1541,10 +1899,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Offset}.
    */
-  public static Offset<Long> byLessThan(Long value) {
-    return Offset.offset(value);
-  }
-  
   /**
    * Assertions entry point for Double {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1554,10 +1908,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Percentage}.
    */
-  public static Percentage withinPercentage(Double value) {
-    return withPercentage(value);
-  }
-
   /**
    * Assertions entry point for Integer {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1567,10 +1917,6 @@ public class Java6Assertions {
    *
    * @return the created {@code Percentage}.
    */
-  public static Percentage withinPercentage(Integer value) {
-    return withPercentage(value);
-  }
-
   /**
    * Assertions entry point for Long {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -1580,90 +1926,12 @@ public class Java6Assertions {
    *
    * @return the created {@code Percentage}.
    */
-  public static Percentage withinPercentage(Long value) {
-    return withPercentage(value);
-  }
-
   // ------------------------------------------------------------------------------------------------------
   // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
-  /**
-   * Creates a new <code>{@link AllOf}</code>
-   *
-   * @param <T> the type of object the given condition accept.
-   * @param conditions the conditions to evaluate.
-   * @return the created {@code AnyOf}.
-   * @throws NullPointerException if the given array is {@code null}.
-   * @throws NullPointerException if any of the elements in the given array is {@code null}.
-   */
-  @SafeVarargs
-  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
-    return AllOf.allOf(conditions);
-  }
-
-  /**
-   * Creates a new <code>{@link AllOf}</code>
-   *
-   * @param <T> the type of object the given condition accept.
-   * @param conditions the conditions to evaluate.
-   * @return the created {@code AnyOf}.
-   * @throws NullPointerException if the given iterable is {@code null}.
-   * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
-   */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
-    return AllOf.allOf(conditions);
-  }
-
-  /**
-   * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
-   * AssertJ features (but you can use {@link AnyOf} if you prefer).
-   * <p>
-   * Typical usage (<code>jedi</code> and <code>sith</code> are {@link Condition}) :
-   * <pre><code class='java'> assertThat(&quot;Vader&quot;).is(anyOf(jedi, sith));</code></pre>
-   */
-  @SafeVarargs
-  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
-    return AnyOf.anyOf(conditions);
-  }
-
-  /**
-   * Creates a new <code>{@link AnyOf}</code>
-   *
-   * @param <T> the type of object the given condition accept.
-   * @param conditions the conditions to evaluate.
-   * @return the created {@code AnyOf}.
-   * @throws NullPointerException if the given iterable is {@code null}.
-   * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
-   */
-  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
-    return AnyOf.anyOf(conditions);
-  }
-
-  /**
-   * Creates a new <code>{@link DoesNotHave}</code>.
-   *
-   * @param condition the condition to inverse.
-   * @return The Not condition created.
-   */
-  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
-    return DoesNotHave.doesNotHave(condition);
-  }
-
-  /**
-   * Creates a new <code>{@link Not}</code>.
-   *
-   * @param condition the condition to inverse.
-   * @return The Not condition created.
-   */
-  public static <T> Not<T> not(Condition<? super T> condition) {
-    return Not.not(condition);
-  }
-
   // --------------------------------------------------------------------------------------------------
   // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -1680,10 +1948,6 @@ public class Java6Assertions {
    * @param array the array to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  public static <E> Filters<E> filter(E[] array) {
-    return Filters.filter(array);
-  }
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -1700,268 +1964,12 @@ public class Java6Assertions {
    * @param iterable the {@code Iterable} to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
-    return Filters.filter(iterableToFilter);
-  }
-
-  /**
-   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
-   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
-   * value matches one of the given values.
-   * <p>
-   * As often, an example helps:
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
-   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
-   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
-   * Employee noname = new Employee(4L, null, 50);
-   *
-   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
-   * assertThat(employees).filteredOn("age", in(800, 26))
-   *                      .containsOnly(yoda, obiwan, luke);</code></pre>
-   *
-   * @param values values to match (one match is sufficient)
-   * @return the created "in" filter
-   */
-  public static InFilter in(Object... values) {
-    return InFilter.in(values);
-  }
-
-  /**
-   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
-   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
-   * value matches does not match any of the given values.
-   * <p>
-   * As often, an example helps:
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
-   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
-   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
-   * Employee noname = new Employee(4L, null, 50);
-   *
-   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
-   * assertThat(employees).filteredOn("age", notIn(800, 50))
-   *                      .containsOnly(luke);</code></pre>
-   *
-   * @param valuesNotToMatch values not to match (none of the values must match)
-   * @return the created "not in" filter
-   */
-  public static NotInFilter notIn(Object... valuesNotToMatch) {
-    return NotInFilter.notIn(valuesNotToMatch);
-  }
-
-  /**
-   * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
-   * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
-   * value matches does not match the given value.
-   * <p>
-   * As often, an example helps:
-   * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
-   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
-   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
-   * Employee noname = new Employee(4L, null, 50);
-   *
-   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
-   * assertThat(employees).filteredOn("age", not(800))
-   *                      .containsOnly(luke, noname);</code></pre>
-   *
-   * @param valueNotToMatch the value not to match
-   * @return the created "not" filter
-   */
-  public static NotFilter not(Object valueNotToMatch) {
-    return NotFilter.not(valueNotToMatch);
-  }
-
   // --------------------------------------------------------------------------------------------------
   // File methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
-  /**
-   * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
-   * with {@link #assertThat(File)}.
-   * </p>
-   *
-   * @param file the file.
-   * @param charset the character set to use.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(File file, Charset charset) {
-    return Files.contentOf(file, charset);
-  }
-
-  /**
-   * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
-   * with {@link #assertThat(File)}.
-   * </p>
-   *
-   * @param file the file.
-   * @param charsetName the name of the character set to use.
-   * @return the content of the file.
-   * @throws IllegalArgumentException if the given character set is not supported on this platform.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(File file, String charsetName) {
-    return Files.contentOf(file, charsetName);
-  }
-
-  /**
-   * Loads the text content of a file with the default character set, so that it can be passed to
-   * {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire file in memory; for larger files, there might be a more efficient alternative
-   * with {@link #assertThat(File)}.
-   * </p>
-   *
-   * @param file the file.
-   * @return the content of the file.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(File file) {
-    return Files.contentOf(file, Charset.defaultCharset());
-  }
-
-  /**
-   * Loads the text content of a file into a list of strings with the default charset, each string corresponding to a
-   * line.
-   * The line endings are either \n, \r or \r\n.
-   *
-   * @param file the file.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(File file) {
-    return Files.linesOf(file, Charset.defaultCharset());
-  }
-
-  /**
-   * Loads the text content of a file into a list of strings, each string corresponding to a line.
-   * The line endings are either \n, \r or \r\n.
-   *
-   * @param file the file.
-   * @param charset the character set to use.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(File file, Charset charset) {
-    return Files.linesOf(file, charset);
-  }
-
-  /**
-   * Loads the text content of a file into a list of strings, each string corresponding to a line. The line endings are
-   * either \n, \r or \r\n.
-   *
-   * @param file the file.
-   * @param charsetName the name of the character set to use.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(File file, String charsetName) {
-    return Files.linesOf(file, charsetName);
-  }
-
   // --------------------------------------------------------------------------------------------------
   // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
-  /**
-   * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire contents in memory.
-   * </p>
-   *
-   * @param url the URL.
-   * @param charset the character set to use.
-   * @return the content of the URL.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(URL url, Charset charset) {
-    return URLs.contentOf(url, charset);
-  }
-
-  /**
-   * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire contents in memory.
-   * </p>
-   *
-   * @param url the URL.
-   * @param charsetName the name of the character set to use.
-   * @return the content of the URL.
-   * @throws IllegalArgumentException if the given character set is not supported on this platform.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(URL url, String charsetName) {
-    return URLs.contentOf(url, charsetName);
-  }
-
-  /**
-   * Loads the text content of a URL with the default character set, so that it can be passed to
-   * {@link #assertThat(String)}.
-   * <p>
-   * Note that this will load the entire file in memory; for larger files.
-   * </p>
-   *
-   * @param url the URL.
-   * @return the content of the file.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static String contentOf(URL url) {
-    return URLs.contentOf(url, Charset.defaultCharset());
-  }
-
-  /**
-   * Loads the text content of a URL into a list of strings with the default charset, each string corresponding to a
-   * line.
-   * The line endings are either \n, \r or \r\n.
-   *
-   * @param url the URL.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(URL url) {
-    return URLs.linesOf(url, Charset.defaultCharset());
-  }
-
-  /**
-   * Loads the text content of a URL into a list of strings, each string corresponding to a line.
-   * The line endings are either \n, \r or \r\n.
-   *
-   * @param url the URL.
-   * @param charset the character set to use.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(URL url, Charset charset) {
-    return URLs.linesOf(url, charset);
-  }
-
-  /**
-   * Loads the text content of a URL into a list of strings, each string corresponding to a line. The line endings are
-   * either \n, \r or \r\n.
-   *
-   * @param url the URL.
-   * @param charsetName the name of the character set to use.
-   * @return the content of the file.
-   * @throws NullPointerException if the given charset is {@code null}.
-   * @throws RuntimeIOException if an I/O exception occurs.
-   */
-  public static List<String> linesOf(URL url, String charsetName) {
-    return URLs.linesOf(url, charsetName);
-  }
-
   // --------------------------------------------------------------------------------------------------
   // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
