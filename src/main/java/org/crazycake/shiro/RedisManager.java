@@ -1,74 +1,70 @@
 package org.crazycake.shiro;
-
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
-public class RedisManager extends BaseRedisManager implements IRedisManager{
-	
-	private String host = "127.0.0.1";
+public class RedisManager extends BaseRedisManager implements IRedisManager {
+  private String host = "127.0.0.1";
 
-	private int port = Protocol.DEFAULT_PORT ;
-	
-	// timeout for jedis try to connect to redis server, not expire time! In milliseconds
-	private int timeout = Protocol.DEFAULT_TIMEOUT;
-	
-	private String password;
+  private int port = Protocol.DEFAULT_PORT;
 
-	private int database = Protocol.DEFAULT_DATABASE;
+  private int timeout = Protocol.DEFAULT_TIMEOUT;
 
-	private void init() {
-		synchronized (this) {
-			if (jedisPool == null) {
-				jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password, database);
-			}
-		}
-	}
+  private String password;
 
-	@Override
-	protected void checkAndInit() {
-		if (jedisPool == null) {
-			init();
-		}
-	}
+  private int database = Protocol.DEFAULT_DATABASE;
 
-	public String getHost() {
-		return host;
-	}
+  private void init() {
+    synchronized (this) {
+      if (jedisPool == null) {
+        jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password, database);
+      }
+    }
+  }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+  @Override protected void checkAndInit() {
+    if (jedisPool == null) {
+      init();
+    }
+  }
 
-	public int getPort() {
-		return port;
-	}
+  public String getHost() {
+    return host;
+  }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-	public int getTimeout() {
-		return timeout;
-	}
+  public int getPort() {
+    return port;
+  }
 
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
+  public void setPort(int port) {
+    this.port = port;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public int getTimeout() {
+    return timeout;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
+  }
 
-	public int getDatabase() {
-		return database;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public void setDatabase(int database) {
-		this.database = database;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public int getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(int database) {
+    this.database = database;
+  }
 }
