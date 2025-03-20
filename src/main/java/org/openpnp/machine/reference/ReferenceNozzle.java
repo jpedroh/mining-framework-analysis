@@ -123,7 +123,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     public void setHeadOffsets(Location headOffsets) {
         this.headOffsets = headOffsets;
         // Changing a head offset invalidates the nozzle tip calibration.
-        ReferenceNozzleTipCalibration.resetAllNozzleTips();
+        ReferenceNozzleTip.Calibration.resetAllNozzleTips();
     }
 
     public String getVacuumSenseActuatorName() {

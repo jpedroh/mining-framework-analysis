@@ -220,7 +220,7 @@ public class ReferenceNozzleTipCalibrationWizard extends AbstractConfigurationWi
         lblRecalibration.setToolTipText("<html>\r\n<p>Determines when a recalibration is automatically executed:</p>\r\n<p><ul><li>On each nozzle tip change.</li>\r\n<li>On each nozzle tip change but only in Jobs.</li>\r\n<li>On machine homing and when first loaded. </li></ul></p>\r\n<p>Manual with stored calibration (only recommended for machines <br /> \r\nwith C axis homing).</p>\r\n</html>");
         panelCalibration.add(lblRecalibration, "2, 14, right, default");
 
-        recalibrationCb = new JComboBox(ReferenceNozzleTipCalibration.RecalibrationTrigger.values());
+        recalibrationCb = new JComboBox(ReferenceNozzleTip.Calibration.RecalibrationTrigger.values());
         panelCalibration.add(recalibrationCb, "4, 14, left, default");
 
         lblNewLabel = new JLabel("Pipeline");

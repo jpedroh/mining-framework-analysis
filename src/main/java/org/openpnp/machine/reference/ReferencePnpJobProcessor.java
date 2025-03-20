@@ -461,6 +461,19 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 throw new JobProcessorException(nozzleTip,  e);
             }
             
+<<<<<<< /usr/src/app/output/openpnp/openpnp/b8e09be2a49e1aafa13895c40f7407facc178839/src/main/java/org/openpnp/machine/reference/ReferencePnpJobProcessor.java/left.java
+            // calibrate nozzle after change
+            if (nozzleTip != null) {
+                if (! nozzleTip.isCalibrated()) {
+                    Logger.debug("Calibrating nozzle tip {} after change.", nozzleTip);
+                    nozzleTip.calibrate();
+                }
+||||||| /usr/src/app/output/openpnp/openpnp/b8e09be2a49e1aafa13895c40f7407facc178839/src/main/java/org/openpnp/machine/reference/ReferencePnpJobProcessor.java/base.java
+            // calibrate nozzle after change
+            if (nozzleTip != null) {
+                Logger.debug("Calibrating nozzle tip {} after change.", nozzleTip);
+                nozzleTip.calibrate();
+=======
             return this;
         }
     }
@@ -489,6 +502,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             fireTextStatus("Calibrate nozzle tip %s", nozzleTip);
             try {
                 nozzleTip.calibrate();
+>>>>>>> /usr/src/app/output/openpnp/openpnp/b8e09be2a49e1aafa13895c40f7407facc178839/src/main/java/org/openpnp/machine/reference/ReferencePnpJobProcessor.java/right.java
             }
             catch (Exception e) {
                 throw new JobProcessorException(nozzleTip, e);

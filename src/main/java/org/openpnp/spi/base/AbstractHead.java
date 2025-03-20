@@ -186,6 +186,9 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
         for (Actuator actuator : actuators) {
             actuator.home();
         }
+        for (PasteDispenser dispenser : pasteDispensers) {
+            dispenser.home();
+        }
     }
 
     @Override
