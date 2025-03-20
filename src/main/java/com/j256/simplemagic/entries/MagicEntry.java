@@ -1,8 +1,6 @@
 package com.j256.simplemagic.entries;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.endian.EndianConverter;
 import com.j256.simplemagic.entries.MagicMatcher.MutableOffset;
@@ -16,250 +14,255 @@ import com.j256.simplemagic.logger.LoggerFactory;
  * @author graywatson
  */
 public class MagicEntry {
+  private static Logger logger = LoggerFactory.getLogger(MagicEntry.class);
 
-	private static Logger logger = LoggerFactory.getLogger(MagicEntry.class);
+  private final String name;
 
-	private final String name;
-	private final int level;
-	private final boolean addOffset;
-	private final int offset;
-	private final OffsetInfo offsetInfo;
-	private final MagicMatcher matcher;
-	private final Long andValue;
-	private final boolean unsignedType;
-	// the testValue object is defined by the particular matcher
-	private final Object testValue;
-	private final boolean formatSpacePrefix;
-	private final boolean clearFormat;
-	private final MagicFormatter formatter;
+  private final int level;
 
-	/** if this entry matches then check the children entry(s) which may provide more content type details */
-	private List<MagicEntry> children;
-	private String mimeType;
-	private boolean optional;
+  private final boolean addOffset;
 
-	/**
+  private final int offset;
+
+  private final OffsetInfo offsetInfo;
+
+  private final MagicMatcher matcher;
+
+  private final Long andValue;
+
+  private final boolean unsignedType;
+
+  private final Object testValue;
+
+  private final boolean formatSpacePrefix;
+
+  private final boolean clearFormat;
+
+  private final MagicFormatter formatter;
+
+  /** if this entry matches then check the children entry(s) which may provide more content type details */
+  private List<MagicEntry> children;
+
+  private String mimeType;
+
+  private boolean optional;
+
+  /**
 	 * Package protected constructor.
 	 */
-	MagicEntry(String name, int level, boolean addOffset, int offset, OffsetInfo offsetInfo, MagicMatcher matcher,
-			Long andValue, boolean unsignedType, Object testValue, boolean formatSpacePrefix, boolean clearFormat,
-			MagicFormatter formatter) {
-		this.name = name;
-		this.level = level;
-		this.addOffset = addOffset;
-		this.offset = offset;
-		this.offsetInfo = offsetInfo;
-		this.matcher = matcher;
-		this.andValue = andValue;
-		this.unsignedType = unsignedType;
-		this.testValue = testValue;
-		this.formatSpacePrefix = formatSpacePrefix;
-		this.clearFormat = clearFormat;
-		this.formatter = formatter;
-	}
+  MagicEntry(String name, int level, boolean addOffset, int offset, OffsetInfo offsetInfo, MagicMatcher matcher, Long andValue, boolean unsignedType, Object testValue, boolean formatSpacePrefix, boolean clearFormat, MagicFormatter formatter) {
+    this.name = name;
+    this.level = level;
+    this.addOffset = addOffset;
+    this.offset = offset;
+    this.offsetInfo = offsetInfo;
+    this.matcher = matcher;
+    this.andValue = andValue;
+    this.unsignedType = unsignedType;
+    this.testValue = testValue;
+    this.formatSpacePrefix = formatSpacePrefix;
+    this.clearFormat = clearFormat;
+    this.formatter = formatter;
+  }
 
-	/**
+  /**
 	 * Returns the content type associated with the bytes or null if it does not match.
 	 */
-	ContentInfo matchBytes(byte[] bytes) {
-		ContentData data = matchBytes(bytes, 0, 0, null);
-		if (data == null || data.name.equals(MagicEntryParser.UNKNOWN_NAME)) {
-			return null;
-		} else {
-			return new ContentInfo(data.name, data.mimeType, data.sb.toString(), data.partial);
-		}
-	}
+  ContentInfo matchBytes(byte[] bytes) {
+    ContentData data = matchBytes(bytes, 0, 0, null);
+    if (data == null || 
+<<<<<<< /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/left.java
+    data.name.equals(UNKNOWN_NAME)
+=======
+    data.name == MagicEntryParser.UNKNOWN_NAME
+>>>>>>> /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/right.java
+    ) {
+      return null;
+    } else {
+      return new ContentInfo(data.name, data.mimeType, data.sb.toString(), data.partial);
+    }
+  }
 
-	/**
+  /**
 	 * Return the "level" of the rule. Level-0 rules start the matching process. Level-1 and above rules are processed
 	 * only when the level-0 matches.
 	 */
-	int getLevel() {
-		return level;
-	}
+  int getLevel() {
+    return level;
+  }
 
-	byte[] getStartsWithByte() {
-		if (offset != 0) {
-			return null;
-		} else {
-			return matcher.getStartingBytes(testValue);
-		}
-	}
+  byte[] getStartsWithByte() {
+    if (offset != 0) {
+      return null;
+    } else {
+      return matcher.getStartingBytes(testValue);
+    }
+  }
 
-	boolean isOptional() {
-		return optional;
-	}
+  boolean isOptional() {
+    return optional;
+  }
 
-	void setOptional(boolean optional) {
-		this.optional = optional;
-	}
+  void setOptional(boolean optional) {
+    this.optional = optional;
+  }
 
-	void addChild(MagicEntry child) {
-		if (children == null) {
-			children = new ArrayList<MagicEntry>();
-		}
-		children.add(child);
-	}
+  void addChild(MagicEntry child) {
+    if (children == null) {
+      children = new ArrayList<MagicEntry>();
+    }
+    children.add(child);
+  }
 
-	void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
-	}
+  void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+  }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("level ").append(level);
-		if (name != null) {
-			sb.append(",name '").append(name).append('\'');
-		}
-		if (mimeType != null) {
-			sb.append(",mime '").append(mimeType).append('\'');
-		}
-		if (testValue != null) {
-			sb.append(",test '").append(testValue).append('\'');
-		}
-		if (formatter != null) {
-			sb.append(",format '").append(formatter).append('\'');
-		}
-		return sb.toString();
-	}
+  @Override public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("level ").append(level);
+    if (name != null) {
+      sb.append(",name \'").append(name).append('\'');
+    }
+    if (mimeType != null) {
+      sb.append(",mime \'").append(mimeType).append('\'');
+    }
+    if (testValue != null) {
+      sb.append(",test \'").append(testValue).append('\'');
+    }
+    if (formatter != null) {
+      sb.append(",format \'").append(formatter).append('\'');
+    }
+    return sb.toString();
+  }
 
-	/**
+  /**
 	 * Main processing method which can go recursive.
 	 */
-	private ContentData matchBytes(byte[] bytes, int prevOffset, int level, ContentData contentData) {
-		int offset = this.offset;
-		if (offsetInfo != null) {
-			// offset can be null if we run out of bytes
-			Integer maybeOffset = offsetInfo.getOffset(bytes);
-			if (maybeOffset == null) {
-				return null;
-			}
-			offset = maybeOffset;
-		}
-		if (addOffset) {
-			offset = prevOffset + offset;
-		}
-		boolean required = (testValue == null && formatter != null);
-		Object val = matcher.extractValueFromBytes(offset, bytes, required);
-		if (val == null) {
-			return null;
-		}
-		if (testValue != null) {
-			MutableOffset mutableOffset = new MutableOffset(offset);
-			val = matcher.isMatch(testValue, andValue, unsignedType, val, mutableOffset, bytes);
-			if (val == null) {
-				return null;
-			}
-			offset = mutableOffset.offset;
-		}
+  private ContentData matchBytes(byte[] bytes, int prevOffset, int level, ContentData contentData) {
+    int offset = this.offset;
+    if (offsetInfo != null) {
+      Integer maybeOffset = offsetInfo.getOffset(bytes);
+      if (maybeOffset == null) {
+        return null;
+      }
+      offset = maybeOffset;
+    }
+    if (addOffset) {
+      offset = prevOffset + offset;
+    }
+    boolean required = (testValue == null && formatter != null);
+    Object val = matcher.extractValueFromBytes(offset, bytes, required);
+    if (val == null) {
+      return null;
+    }
+    if (testValue != null) {
+      MutableOffset mutableOffset = new MutableOffset(offset);
+      val = matcher.isMatch(testValue, andValue, unsignedType, val, mutableOffset, bytes);
+      if (val == null) {
+        return null;
+      }
+      offset = mutableOffset.offset;
+    }
+    if (contentData == null) {
+      contentData = new ContentData(name, mimeType, level);
+      contentData.partial = true;
+    }
+    if (formatter != null) {
+      if (clearFormat) {
+        contentData.sb.setLength(0);
+      }
+      if (formatSpacePrefix && contentData.sb.length() > 0) {
+        contentData.sb.append(' ');
+      }
+      matcher.renderValue(contentData.sb, val, formatter);
+    }
+    logger.trace("matched data: {}: {}", this, contentData);
+    if (children == null) {
+      contentData.partial = false;
+    } else {
+      boolean allOptional = true;
+      for (MagicEntry entry : children) {
+        if (!entry.isOptional()) {
+          allOptional = false;
+        }
+        entry.matchBytes(bytes, offset, level + 1, contentData);
+      }
+      if (allOptional) {
+        contentData.partial = false;
+      }
+    }
+    if (
+<<<<<<< /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/left.java
+    !name.equals(UNKNOWN_NAME)
+=======
+    name != MagicEntryParser.UNKNOWN_NAME
+>>>>>>> /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/right.java
+     && 
+<<<<<<< /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/left.java
+    contentData.name.equals(UNKNOWN_NAME)
+=======
+    contentData.name == MagicEntryParser.UNKNOWN_NAME
+>>>>>>> /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/right.java
+    ) {
+      contentData.name = name;
+    }
+    if (mimeType != null && (contentData.mimeType == null || level > contentData.mimeTypeLevel)) {
+      contentData.mimeType = mimeType;
+      contentData.mimeTypeLevel = level;
+    }
+    return contentData;
+  }
 
-		if (contentData == null) {
-			contentData = new ContentData(name, mimeType, level);
-			// default is a child didn't match, set a partial so the matcher will keep looking
-			contentData.partial = true;
-		}
-		if (formatter != null) {
-			if (clearFormat) {
-				contentData.sb.setLength(0);
-			}
-			// if we are appending and need a space then prepend one
-			if (formatSpacePrefix && contentData.sb.length() > 0) {
-				contentData.sb.append(' ');
-			}
-			matcher.renderValue(contentData.sb, val, formatter);
-		}
-		logger.trace("matched data: {}: {}", this, contentData);
+  static class ContentData {
+    String name;
 
-		if (children == null) {
-			// no children so we have a full match and can set partial to false
-			contentData.partial = false;
-		} else {
-			// run through the children to add more content-type details
-			boolean allOptional = true;
-			for (MagicEntry entry : children) {
-				if (!entry.isOptional()) {
-					allOptional = false;
-				}
-				// goes recursive here
-				entry.matchBytes(bytes, offset, level + 1, contentData);
-				// we continue to match to see if we can add additional children info to the name
-			}
-			if (allOptional) {
-				contentData.partial = false;
-			}
-		}
+    boolean partial;
 
-		/*
-		 * Now that we have processed this entry (either with or without children), see if we still need to annotate the
-		 * content information.
-		 * 
-		 * NOTE: the children will have the first opportunity to set this which makes sense since they are the most
-		 * specific.
-		 */
-		if (!name.equals(MagicEntryParser.UNKNOWN_NAME) && contentData.name.equals(MagicEntryParser.UNKNOWN_NAME)) {
-			contentData.name = name;
-		}
-		/*
-		 * Set the mime-type if it is not set already or if we've gotten more specific in the processing of a pattern
-		 * and determine that it's actually a different type so we can override the previous mime-type. Example of this
-		 * is Adobe Illustrator which looks like a PDF but has extra stuff in it.
-		 */
-		if (mimeType != null && (contentData.mimeType == null || level > contentData.mimeTypeLevel)) {
-			contentData.mimeType = mimeType;
-			contentData.mimeTypeLevel = level;
-		}
-		return contentData;
-	}
+    String mimeType;
 
-	/**
-	 * Internal processing data about the content.
-	 */
-	static class ContentData {
-		String name;
-		boolean partial;
-		String mimeType;
-		int mimeTypeLevel;
-		final StringBuilder sb = new StringBuilder();
+    int mimeTypeLevel;
 
-		private ContentData(String name, String mimeType, int mimeTypeLevel) {
-			this.name = name;
-			this.mimeType = mimeType;
-			this.mimeTypeLevel = mimeTypeLevel;
-		}
-	}
+    final StringBuilder sb = new StringBuilder();
 
-	/**
-	 * Information about the extended offset.
-	 */
-	static class OffsetInfo {
+    private ContentData(String name, String mimeType, int mimeTypeLevel) {
+      this.name = name;
+      this.mimeType = mimeType;
+      this.mimeTypeLevel = mimeTypeLevel;
+    }
+  }
 
-		final int offset;
-		final EndianConverter converter;
-		final boolean isId3;
-		final int size;
-		final int add;
+  static class OffsetInfo {
+    final int offset;
 
-		OffsetInfo(int offset, EndianConverter converter, boolean isId3, int size, int add) {
-			this.offset = offset;
-			this.converter = converter;
-			this.isId3 = isId3;
-			this.size = size;
-			this.add = add;
-		}
+    final EndianConverter converter;
 
-		public Integer getOffset(byte[] bytes) {
-			Long val;
-			if (isId3) {
-				val = (Long) converter.convertId3(offset, bytes, size);
-			} else {
-				val = (Long) converter.convertNumber(offset, bytes, size);
-			}
-			if (val == null) {
-				return null;
-			} else {
-				return (int) (val + add);
-			}
-		}
-	}
+    final boolean isId3;
+
+    final int size;
+
+    final int add;
+
+    OffsetInfo(int offset, EndianConverter converter, boolean isId3, int size, int add) {
+      this.offset = offset;
+      this.converter = converter;
+      this.isId3 = isId3;
+      this.size = size;
+      this.add = add;
+    }
+
+    public Integer getOffset(byte[] bytes) {
+      Long val;
+      if (isId3) {
+        val = (Long) converter.convertId3(offset, bytes, size);
+      } else {
+        val = (Long) converter.convertNumber(offset, bytes, size);
+      }
+      if (val == null) {
+        return null;
+      } else {
+        return (int) (val + add);
+      }
+    }
+  }
 }
