@@ -1,13 +1,14 @@
 package com.github.dakusui.jcunit.generators;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.github.dakusui.jcunit.core.GeneratorParameters;
 import com.github.dakusui.jcunit.generators.ipo.IPO;
+
 import com.github.dakusui.jcunit.generators.ipo.TestRun;
+
 import com.github.dakusui.jcunit.generators.ipo.TestRunSet;
+
 import com.github.dakusui.jcunit.generators.ipo.TestSpace;
 
 /**
@@ -21,11 +22,17 @@ import com.github.dakusui.jcunit.generators.ipo.TestSpace;
  * @param <T> Type of keys
  * @param <U> Type of values
  */
-public class PairwiseTestArrayGenerator<T, U> extends BaseTestArrayGenerator<T, U> {
+
+import java.util.LinkedHashMap;
+
+import com.github.dakusui.jcunit.core.GeneratorParameters;
+
+public class PairwiseTestArrayGenerator<T, U> extends
+    BaseTestArrayGenerator<T, U> {
 	/**
 	 * A set of test runs.
 	 */
-	private TestRunSet testRunSet;
+	private TestRunSet      testRunSet;
 	
 	/**
 	 * A map which associates IPO's indices (1-origin) to keys.
@@ -33,12 +40,12 @@ public class PairwiseTestArrayGenerator<T, U> extends BaseTestArrayGenerator<T, 
 	private Map<Integer, T> indexToKeyMap = new HashMap<Integer, T>();
 	
 	@Override
-  public void init(GeneratorParameters.Value[] params,
-      LinkedHashMap<T, U[]> domains) {
-    super.init(params, domains);
+	public void init(GeneratorParameters.Value[] params,
+	    LinkedHashMap<T, U[]> domains) {
+		super.init(params, domains);
 		this.testRunSet = this.composeTestRunSet(indexToKeyMap);
 		this.size = this.testRunSet.size();
-		this.cur = 0;
+	  this.cur = 0;
 	}
 
 	/**
@@ -46,15 +53,16 @@ public class PairwiseTestArrayGenerator<T, U> extends BaseTestArrayGenerator<T, 
 	 */
 	protected TestRunSet composeTestRunSet(Map<Integer, T> indexToKeyMap) {
 		Object[][] testSpaceDomains = new Object[this.domains.size()][];
-		int i = 0;
-		for (T cur: this.domains.keySet()) {
-			testSpaceDomains[i++] = this.domains.get(cur);
-			indexToKeyMap.put(i, cur); // since i is already incremented, put it as is. 
-		}
-	    TestSpace space = new TestSpace(testSpaceDomains);
-	    IPO ipo = new IPO(space);
-	    return ipo.ipo();
-  }
+	  int i = 0;
+	  for (T cur : this.domains.keySet()) {
+	    testSpaceDomains[i++] = this.domains.get(cur);
+	    indexToKeyMap.put(i, cur); // since i is already incremented, put it as
+	                               // is.
+	  }
+		TestSpace space = new TestSpace(testSpaceDomains);
+	  IPO ipo = new IPO(space);
+		return ipo.ipo();
+	}
 
   @SuppressWarnings("unchecked")
   @Override
