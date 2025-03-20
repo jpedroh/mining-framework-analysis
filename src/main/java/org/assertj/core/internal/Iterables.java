@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.internal;
-
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.StreamSupport.stream;
@@ -59,7 +46,6 @@ import static org.assertj.core.internal.IterableDiff.diff;
 import static org.assertj.core.util.IterableUtil.isNullOrEmpty;
 import static org.assertj.core.util.IterableUtil.sizeOf;
 import static org.assertj.core.util.Lists.newArrayList;
-
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -68,7 +54,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.AssertionInfo;
 import org.assertj.core.api.Condition;
 import org.assertj.core.presentation.PredicateDescription;
@@ -84,15 +69,15 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  */
 public class Iterables {
-
   private static final Iterables INSTANCE = new Iterables();
+
   private final ComparisonStrategy comparisonStrategy;
-  @VisibleForTesting
-  Failures failures = Failures.instance();
-  @VisibleForTesting
-  Conditions conditions = Conditions.instance();
-  @VisibleForTesting
-  Predicates predicates = Predicates.instance();
+
+  @VisibleForTesting Failures failures = Failures.instance();
+
+  @VisibleForTesting Conditions conditions = Conditions.instance();
+
+  @VisibleForTesting Predicates predicates = Predicates.instance();
 
   /**
    * Returns the singleton instance of this class based on {@link StandardComparisonStrategy}.
@@ -103,8 +88,7 @@ public class Iterables {
     return INSTANCE;
   }
 
-  @VisibleForTesting
-  Iterables() {
+  @VisibleForTesting Iterables() {
     this(StandardComparisonStrategy.instance());
   }
 
@@ -112,16 +96,14 @@ public class Iterables {
     this.comparisonStrategy = comparisonStrategy;
   }
 
-  @VisibleForTesting
-  public Comparator<?> getComparator() {
+  @VisibleForTesting public Comparator<?> getComparator() {
     if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) {
       return ((ComparatorBasedComparisonStrategy) comparisonStrategy).getComparator();
     }
     return null;
   }
 
-  @VisibleForTesting
-  public ComparisonStrategy getComparisonStrategy() {
+  @VisibleForTesting public ComparisonStrategy getComparisonStrategy() {
     return comparisonStrategy;
   }
 
@@ -133,7 +115,9 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} is not {@code null} *and* contains one or more elements.
    */
   public void assertNullOrEmpty(AssertionInfo info, Iterable<?> actual) {
-    if (!isNullOrEmpty(actual)) throw failures.failure(info, shouldBeNullOrEmpty(actual));
+    if (!isNullOrEmpty(actual)) {
+      throw failures.failure(info, shouldBeNullOrEmpty(actual));
+    }
   }
 
   /**
@@ -146,7 +130,9 @@ public class Iterables {
    */
   public void assertEmpty(AssertionInfo info, Iterable<?> actual) {
     assertNotNull(info, actual);
-    if (!isNullOrEmpty(actual)) throw failures.failure(info, shouldBeEmpty(actual));
+    if (!isNullOrEmpty(actual)) {
+      throw failures.failure(info, shouldBeEmpty(actual));
+    }
   }
 
   /**
@@ -159,7 +145,9 @@ public class Iterables {
    */
   public void assertNotEmpty(AssertionInfo info, Iterable<?> actual) {
     assertNotNull(info, actual);
-    if (isNullOrEmpty(actual)) throw failures.failure(info, shouldNotBeEmpty());
+    if (isNullOrEmpty(actual)) {
+      throw failures.failure(info, shouldNotBeEmpty());
+    }
   }
 
   /**
@@ -219,9 +207,9 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} does not contain the given values.
    */
   public void assertContains(AssertionInfo info, Iterable<?> actual, Object[] values) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, values))
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, values)) {
       return;
-    // check for elements in values that are missing in actual.
+    }
     assertIterableContainsGivenValues(actual, values, info);
   }
 
@@ -232,8 +220,9 @@ public class Iterables {
         notFound.add(value);
       }
     }
-    if (notFound.isEmpty())
+    if (notFound.isEmpty()) {
       return;
+    }
     throw failures.failure(info, shouldContain(actual, values, notFound, comparisonStrategy));
   }
 
@@ -264,13 +253,13 @@ public class Iterables {
    *           {@code Iterable} contains values that are not in the given array.
    */
   public void assertContainsOnly(AssertionInfo info, Iterable<?> actual, Object[] values) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, values)) return;
-
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, values)) {
+      return;
+    }
     IterableDiff diff = diff(newArrayList(actual), asList(values), comparisonStrategy);
-    if (diff.differencesFound())
-      throw failures.failure(info, shouldContainOnly(actual, values,
-                                                     diff.missing, diff.unexpected,
-                                                     comparisonStrategy));
+    if (diff.differencesFound()) {
+      throw failures.failure(info, shouldContainOnly(actual, values, diff.missing, diff.unexpected, comparisonStrategy));
+    }
   }
 
   /**
@@ -286,21 +275,24 @@ public class Iterables {
    *           {@code Iterable} contains values that are not in the given array.
    */
   public void assertContainsOnlyOnce(AssertionInfo info, Iterable<?> actual, Object[] values) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, values)) return;
-    // check for elements in values that are missing in actual.
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, values)) {
+      return;
+    }
     Set<Object> notFound = new LinkedHashSet<>();
     Set<Object> notOnlyOnce = new LinkedHashSet<>();
     Iterable<?> actualDuplicates = comparisonStrategy.duplicatesFrom(actual);
     for (Object expectedOnlyOnce : values) {
       if (!iterableContains(actual, expectedOnlyOnce)) {
         notFound.add(expectedOnlyOnce);
-      } else if (iterableContains(actualDuplicates, expectedOnlyOnce)) {
-        notOnlyOnce.add(expectedOnlyOnce);
+      } else {
+        if (iterableContains(actualDuplicates, expectedOnlyOnce)) {
+          notOnlyOnce.add(expectedOnlyOnce);
+        }
       }
     }
-    if (!notFound.isEmpty() || !notOnlyOnce.isEmpty())
+    if (!notFound.isEmpty() || !notOnlyOnce.isEmpty()) {
       throw failures.failure(info, shouldContainsOnlyOnce(actual, values, notFound, notOnlyOnce, comparisonStrategy));
-    // assertion succeeded
+    }
   }
 
   /**
@@ -316,12 +308,14 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} does not contain the given sequence of objects.
    */
   public void assertContainsSequence(AssertionInfo info, Iterable<?> actual, Object[] sequence) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) return;
-    // check for elements in values that are missing in actual.
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) {
+      return;
+    }
     List<?> actualAsList = newArrayList(actual);
     for (int i = 0; i < actualAsList.size(); i++) {
-      // look for given sequence in actual starting from current index (i)
-      if (containsSequenceAtGivenIndex(actualAsList, sequence, i)) return;
+      if (containsSequenceAtGivenIndex(actualAsList, sequence, i)) {
+        return;
+      }
     }
     throw actualDoesNotContainSequence(info, actual, sequence);
   }
@@ -339,17 +333,21 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} does not contain the given subsequence of objects.
    */
   public void assertContainsSubsequence(AssertionInfo info, Iterable<?> actual, Object[] subsequence) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, subsequence)) return;
-
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, subsequence)) {
+      return;
+    }
     Iterator<?> actualIterator = actual.iterator();
     int subsequenceIndex = 0;
     while (actualIterator.hasNext() && subsequenceIndex < subsequence.length) {
       Object actualNext = actualIterator.next();
       Object subsequenceNext = subsequence[subsequenceIndex];
-      if (areEqual(actualNext, subsequenceNext)) subsequenceIndex++;
+      if (areEqual(actualNext, subsequenceNext)) {
+        subsequenceIndex++;
+      }
     }
-
-    if (subsequenceIndex < subsequence.length) throw actualDoesNotContainSubsequence(info, actual, subsequence);
+    if (subsequenceIndex < subsequence.length) {
+      throw actualDoesNotContainSubsequence(info, actual, subsequence);
+    }
   }
 
   /**
@@ -368,9 +366,13 @@ public class Iterables {
     checkIterableIsNotNull(info, values);
     List<Object> extra = newArrayList();
     for (Object actualElement : actual) {
-      if (!iterableContains(values, actualElement)) extra.add(actualElement);
+      if (!iterableContains(values, actualElement)) {
+        extra.add(actualElement);
+      }
     }
-    if (extra.size() > 0) throw failures.failure(info, shouldBeSubsetOf(actual, values, extra, comparisonStrategy));
+    if (extra.size() > 0) {
+      throw failures.failure(info, shouldBeSubsetOf(actual, values, extra, comparisonStrategy));
+    }
   }
 
   /**
@@ -382,10 +384,13 @@ public class Iterables {
    * @return true if actualAsList contains exactly the given sequence at given starting index, false otherwise.
    */
   private boolean containsSequenceAtGivenIndex(List<?> actualAsList, Object[] sequence, int startingIndex) {
-    // check that, starting from given index, actualAsList has enough remaining elements to contain sequence
-    if (actualAsList.size() - startingIndex < sequence.length) return false;
+    if (actualAsList.size() - startingIndex < sequence.length) {
+      return false;
+    }
     for (int i = 0; i < sequence.length; i++) {
-      if (!areEqual(actualAsList.get(startingIndex + i), sequence[i])) return false;
+      if (!areEqual(actualAsList.get(startingIndex + i), sequence[i])) {
+        return false;
+      }
     }
     return true;
   }
@@ -421,9 +426,13 @@ public class Iterables {
     assertNotNull(info, actual);
     Set<Object> found = new LinkedHashSet<>();
     for (Object o : values) {
-      if (iterableContains(actual, o)) found.add(o);
+      if (iterableContains(actual, o)) {
+        found.add(o);
+      }
     }
-    if (!found.isEmpty()) throw failures.failure(info, shouldNotContain(actual, values, found, comparisonStrategy));
+    if (!found.isEmpty()) {
+      throw failures.failure(info, shouldNotContain(actual, values, found, comparisonStrategy));
+    }
   }
 
   /**
@@ -437,8 +446,7 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} is {@code null}.
    * @throws AssertionError if the given {@code Iterable} contains any of given values.
    */
-  public <T> void assertDoesNotContainAnyElementsOf(AssertionInfo info, Iterable<? extends T> actual,
-                                                    Iterable<? extends T> iterable) {
+  public <T extends java.lang.Object> void assertDoesNotContainAnyElementsOf(AssertionInfo info, Iterable<? extends T> actual, Iterable<? extends T> iterable) {
     checkIsNotNullAndNotEmpty(iterable);
     List<T> values = newArrayList(iterable);
     assertDoesNotContain(info, actual, values.toArray());
@@ -457,8 +465,9 @@ public class Iterables {
   public void assertDoesNotHaveDuplicates(AssertionInfo info, Iterable<?> actual) {
     assertNotNull(info, actual);
     Iterable<?> duplicates = comparisonStrategy.duplicatesFrom(actual);
-    if (!isNullOrEmpty(duplicates))
+    if (!isNullOrEmpty(duplicates)) {
       throw failures.failure(info, shouldNotHaveDuplicates(actual, duplicates, comparisonStrategy));
+    }
   }
 
   /**
@@ -475,15 +484,20 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} does not start with the given sequence of objects.
    */
   public void assertStartsWith(AssertionInfo info, Iterable<?> actual, Object[] sequence) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) return;
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) {
+      return;
+    }
     int i = 0;
     for (Object actualCurrentElement : actual) {
-      if (i >= sequence.length) break;
-      if (areEqual(actualCurrentElement, sequence[i++])) continue;
+      if (i >= sequence.length) {
+        break;
+      }
+      if (areEqual(actualCurrentElement, sequence[i++])) {
+        continue;
+      }
       throw actualDoesNotStartWithSequence(info, actual, sequence);
     }
     if (sequence.length > i) {
-      // sequence has more elements than actual
       throw actualDoesNotStartWithSequence(info, actual, sequence);
     }
   }
@@ -506,16 +520,22 @@ public class Iterables {
    * @throws AssertionError if the given {@code Iterable} does not end with the given sequence of objects.
    */
   public void assertEndsWith(AssertionInfo info, Iterable<?> actual, Object[] sequence) {
-    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) return;
-
+    if (commonCheckThatIterableAssertionSucceeds(info, actual, sequence)) {
+      return;
+    }
     int sizeOfActual = sizeOf(actual);
-    if (sizeOfActual < sequence.length) throw actualDoesNotEndWithSequence(info, actual, sequence);
-
+    if (sizeOfActual < sequence.length) {
+      throw actualDoesNotEndWithSequence(info, actual, sequence);
+    }
     int start = sizeOfActual - sequence.length;
     int sequenceIndex = 0, indexOfActual = 0;
     for (Object actualElement : actual) {
-      if (indexOfActual++ < start) continue;
-      if (areEqual(actualElement, sequence[sequenceIndex++])) continue;
+      if (indexOfActual++ < start) {
+        continue;
+      }
+      if (areEqual(actualElement, sequence[sequenceIndex++])) {
+        continue;
+      }
       throw actualDoesNotEndWithSequence(info, actual, sequence);
     }
   }
@@ -523,8 +543,9 @@ public class Iterables {
   private boolean commonCheckThatIterableAssertionSucceeds(AssertionInfo info, Iterable<?> actual, Object[] sequence) {
     checkIsNotNull(sequence);
     assertNotNull(info, actual);
-    // if both actual and values are empty, then assertion passes.
-    if (!actual.iterator().hasNext() && sequence.length == 0) return true;
+    if (!actual.iterator().hasNext() && sequence.length == 0) {
+      return true;
+    }
     failIfEmptySinceActualIsNotEmpty(sequence);
     return false;
   }
@@ -539,7 +560,9 @@ public class Iterables {
    */
   public void assertContainsNull(AssertionInfo info, Iterable<?> actual) {
     assertNotNull(info, actual);
-    if (!iterableContains(actual, null)) throw failures.failure(info, shouldContainNull(actual));
+    if (!iterableContains(actual, null)) {
+      throw failures.failure(info, shouldContainNull(actual));
+    }
   }
 
   /**
@@ -552,7 +575,9 @@ public class Iterables {
    */
   public void assertDoesNotContainNull(AssertionInfo info, Iterable<?> actual) {
     assertNotNull(info, actual);
-    if (iterableContains(actual, null)) throw failures.failure(info, shouldNotContainNull(actual));
+    if (iterableContains(actual, null)) {
+      throw failures.failure(info, shouldNotContainNull(actual));
+    }
   }
 
   /**
@@ -565,13 +590,14 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
-  public <T> void assertAre(AssertionInfo info, Iterable<? extends T> actual, Condition<? super T> condition) {
+  public <T extends java.lang.Object> void assertAre(AssertionInfo info, Iterable<? extends T> actual, Condition<? super T> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
       List<T> notSatisfiesCondition = notSatisfyingCondition(actual, condition);
-      if (!notSatisfiesCondition.isEmpty())
+      if (!notSatisfiesCondition.isEmpty()) {
         throw failures.failure(info, elementsShouldBe(actual, notSatisfiesCondition, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -587,13 +613,14 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  public <E> void assertAreNot(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertAreNot(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
       List<E> satisfiesCondition = satisfiesCondition(actual, condition);
-      if (!satisfiesCondition.isEmpty())
+      if (!satisfiesCondition.isEmpty()) {
         throw failures.failure(info, elementsShouldNotBe(actual, satisfiesCondition, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -609,13 +636,14 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
-  public <E> void assertHave(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertHave(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
       List<E> notSatisfiesCondition = notSatisfyingCondition(actual, condition);
-      if (!notSatisfiesCondition.isEmpty())
+      if (!notSatisfiesCondition.isEmpty()) {
         throw failures.failure(info, elementsShouldHave(actual, notSatisfiesCondition, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -631,20 +659,21 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  public <E> void assertDoNotHave(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertDoNotHave(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
       List<E> satisfiesCondition = satisfiesCondition(actual, condition);
-      if (!satisfiesCondition.isEmpty())
+      if (!satisfiesCondition.isEmpty()) {
         throw failures.failure(info, elementsShouldNotHave(actual, satisfiesCondition, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
   }
 
   /**
-   * Assert that there are <b>at least</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
+   * Assert that there is <b>at least</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
    * condition.
    *
    * @param info contains information about the assertion.
@@ -655,26 +684,25 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if the number of elements satisfying the given condition is &lt; n.
    */
-  public <E> void assertAreAtLeast(AssertionInfo info, Iterable<? extends E> actual, int times,
-                                   Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertAreAtLeast(AssertionInfo info, Iterable<? extends E> actual, int times, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedAtLeastNTimes(actual, times, condition))
+      if (!conditionIsSatisfiedAtLeastNTimes(actual, times, condition)) {
         throw failures.failure(info, elementsShouldBeAtLeast(actual, times, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
   }
 
-  private <E> boolean conditionIsSatisfiedAtLeastNTimes(Iterable<? extends E> actual, int n,
-                                                        Condition<? super E> condition) {
+  private <E extends java.lang.Object> boolean conditionIsSatisfiedAtLeastNTimes(Iterable<? extends E> actual, int n, Condition<? super E> condition) {
     List<E> satisfiesCondition = satisfiesCondition(actual, condition);
     return satisfiesCondition.size() >= n;
   }
 
   /**
-   * Assert that there are <b>at most</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
+   * Assert that there is <b>at most</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
    * condition.
    *
    * @param info contains information about the assertion.
@@ -685,26 +713,25 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if the number of elements satisfying the given condition is &gt; n.
    */
-  public <E> void assertAreAtMost(AssertionInfo info, Iterable<? extends E> actual, int n,
-                                  Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertAreAtMost(AssertionInfo info, Iterable<? extends E> actual, int n, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedAtMostNTimes(actual, condition, n))
+      if (!conditionIsSatisfiedAtMostNTimes(actual, condition, n)) {
         throw failures.failure(info, elementsShouldBeAtMost(actual, n, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
   }
 
-  private <E> boolean conditionIsSatisfiedAtMostNTimes(Iterable<? extends E> actual, Condition<? super E> condition,
-                                                       int n) {
+  private <E extends java.lang.Object> boolean conditionIsSatisfiedAtMostNTimes(Iterable<? extends E> actual, Condition<? super E> condition, int n) {
     List<E> satisfiesCondition = satisfiesCondition(actual, condition);
     return satisfiesCondition.size() <= n;
   }
 
   /**
-   * Verifies that there are <b>exactly</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
+   * Verifies that there is <b>exactly</b> <i>n</i> elements in the actual {@code Iterable} satisfying the given
    * condition.
    *
    * @param info contains information about the assertion.
@@ -715,20 +742,19 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if the number of elements satisfying the given condition is &ne; n.
    */
-  public <E> void assertAreExactly(AssertionInfo info, Iterable<? extends E> actual, int times,
-                                   Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertAreExactly(AssertionInfo info, Iterable<? extends E> actual, int times, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedNTimes(actual, condition, times))
+      if (!conditionIsSatisfiedNTimes(actual, condition, times)) {
         throw failures.failure(info, elementsShouldBeExactly(actual, times, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
   }
 
-  private <E> boolean conditionIsSatisfiedNTimes(Iterable<? extends E> actual, Condition<? super E> condition,
-                                                 int times) {
+  private <E extends java.lang.Object> boolean conditionIsSatisfiedNTimes(Iterable<? extends E> actual, Condition<? super E> condition, int times) {
     List<E> satisfiesCondition = satisfiesCondition(actual, condition);
     return satisfiesCondition.size() == times;
   }
@@ -737,13 +763,13 @@ public class Iterables {
    * An alias method of {@link #assertAreAtLeast(AssertionInfo, Iterable, int, Condition)} to provide a richer fluent
    * api (same logic, only error message differs).
    */
-  public <E> void assertHaveAtLeast(AssertionInfo info, Iterable<? extends E> actual, int times,
-                                    Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertHaveAtLeast(AssertionInfo info, Iterable<? extends E> actual, int times, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedAtLeastNTimes(actual, times, condition))
+      if (!conditionIsSatisfiedAtLeastNTimes(actual, times, condition)) {
         throw failures.failure(info, elementsShouldHaveAtLeast(actual, times, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -753,13 +779,13 @@ public class Iterables {
    * An alias method of {@link #assertAreAtMost(AssertionInfo, Iterable, int, Condition)} to provide a richer fluent api
    * (same logic, only error message differs).
    */
-  public <E> void assertHaveAtMost(AssertionInfo info, Iterable<? extends E> actual, int times,
-                                   Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertHaveAtMost(AssertionInfo info, Iterable<? extends E> actual, int times, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedAtMostNTimes(actual, condition, times))
+      if (!conditionIsSatisfiedAtMostNTimes(actual, condition, times)) {
         throw failures.failure(info, elementsShouldHaveAtMost(actual, times, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -769,13 +795,13 @@ public class Iterables {
    * An alias method of {@link #assertAreExactly(AssertionInfo, Iterable, int, Condition)} to provide a richer fluent
    * api (same logic, only error message differs).
    */
-  public <E> void assertHaveExactly(AssertionInfo info, Iterable<? extends E> actual, int times,
-                                    Condition<? super E> condition) {
+  public <E extends java.lang.Object> void assertHaveExactly(AssertionInfo info, Iterable<? extends E> actual, int times, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
     try {
-      if (!conditionIsSatisfiedNTimes(actual, condition, times))
+      if (!conditionIsSatisfiedNTimes(actual, condition, times)) {
         throw failures.failure(info, elementsShouldHaveExactly(actual, times, condition));
+      }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldBeSameGenericBetweenIterableAndCondition(actual, condition));
     }
@@ -793,7 +819,9 @@ public class Iterables {
    *           {@code Iterable}, in any order.
    */
   public void assertContainsAll(AssertionInfo info, Iterable<?> actual, Iterable<?> other) {
-    if (other == null) throw iterableToLookForIsNull();
+    if (other == null) {
+      throw iterableToLookForIsNull();
+    }
     assertNotNull(info, actual);
     Object[] values = newArrayList(other).toArray();
     assertIterableContainsGivenValues(actual, values, info);
@@ -814,14 +842,13 @@ public class Iterables {
     checkIsNotNull(values);
     assertNotNull(info, actual);
     int actualSize = sizeOf(actual);
-    if (values.length != actualSize)
+    if (values.length != actualSize) {
       throw failures.failure(info, shouldHaveSameSize(actual, values, actualSize, values.length, comparisonStrategy));
-    assertHasSameSizeAs(info, actual, values); // include check that actual is not null
-
+    }
+    assertHasSameSizeAs(info, actual, values);
     List<Object> actualAsList = newArrayList(actual);
     IterableDiff diff = diff(actualAsList, asList(values), comparisonStrategy);
     if (!diff.differencesFound()) {
-      // actual and values have the same elements but are they in the same order ?
       int i = 0;
       for (Object elementFromActual : actual) {
         if (!areEqual(elementFromActual, values[i])) {
@@ -831,14 +858,13 @@ public class Iterables {
       }
       return;
     }
-    throw failures.failure(info,
-                           shouldContainExactly(actual, values, diff.missing, diff.unexpected, comparisonStrategy));
+    throw failures.failure(info, shouldContainExactly(actual, values, diff.missing, diff.unexpected, comparisonStrategy));
   }
 
-  public <E> void assertAllSatisfy(AssertionInfo info, Iterable<? extends E> actual, Consumer<? super E> requirements) {
+  public <E extends java.lang.Object> void assertAllSatisfy(AssertionInfo info, Iterable<? extends E> actual, Consumer<? super E> requirements) {
     assertNotNull(info, actual);
     requireNonNull(requirements, "The Consumer<T> expressing the assertions requirements must not be null");
-    stream(actual.spliterator(), false).forEach(e -> {
+    stream(actual.spliterator(), false).forEach((e) -> {
       try {
         requirements.accept(e);
       } catch (AssertionError ex) {
@@ -847,28 +873,20 @@ public class Iterables {
     });
   }
 
-  public <E> void assertAllMatch(AssertionInfo info, Iterable<? extends E> actual, Predicate<? super E> predicate,
-                                 PredicateDescription predicateDescription) {
+  public <E extends java.lang.Object> void assertAllMatch(AssertionInfo info, Iterable<? extends E> actual, Predicate<? super E> predicate, PredicateDescription predicateDescription) {
     assertNotNull(info, actual);
     predicates.assertIsNotNull(predicate);
-    stream(actual.spliterator(), false).filter(predicate.negate())
-                                       .findFirst()
-                                       .ifPresent(e -> {
-                                         throw failures.failure(info, elementsShouldMatch(actual, e,
-                                                                                          predicateDescription));
-                                       });
+    stream(actual.spliterator(), false).filter(predicate.negate()).findFirst().ifPresent((e) -> {
+      throw failures.failure(info, elementsShouldMatch(actual, e, predicateDescription));
+    });
   }
 
-  public <E> void assertNoneMatch(AssertionInfo info, Iterable<? extends E> actual, Predicate<? super E> predicate,
-                                  PredicateDescription predicateDescription) {
+  public <E extends java.lang.Object> void assertNoneMatch(AssertionInfo info, Iterable<? extends E> actual, Predicate<? super E> predicate, PredicateDescription predicateDescription) {
     assertNotNull(info, actual);
     predicates.assertIsNotNull(predicate);
-    stream(actual.spliterator(), false).filter(predicate)
-                                       .findFirst()
-                                       .ifPresent(e -> {
-                                         throw failures.failure(info, noElementsShouldMatch(actual, e,
-                                                                                            predicateDescription));
-                                       });
+    stream(actual.spliterator(), false).filter(predicate).findFirst().ifPresent((e) -> {
+      throw failures.failure(info, noElementsShouldMatch(actual, e, predicateDescription));
+    });
   }
 
   public void assertContainsExactlyInAnyOrder(AssertionInfo info, Iterable<?> actual, Object[] values) {
@@ -876,18 +894,16 @@ public class Iterables {
     assertNotNull(info, actual);
     List<Object> notExpected = newArrayList(actual);
     List<Object> notFound = newArrayList(values);
-
     for (Object value : values) {
       if (iterableContains(notExpected, value)) {
         iterablesRemoveFirst(notExpected, value);
         iterablesRemoveFirst(notFound, value);
       }
     }
-
-    if (notExpected.isEmpty() && notFound.isEmpty()) return;
-
-    throw failures.failure(info,
-                           shouldContainExactlyInAnyOrder(actual, values, notFound, notExpected, comparisonStrategy));
+    if (notExpected.isEmpty() && notFound.isEmpty()) {
+      return;
+    }
+    throw failures.failure(info, shouldContainExactlyInAnyOrder(actual, values, notFound, notExpected, comparisonStrategy));
   }
 
   void assertNotNull(AssertionInfo info, Iterable<?> actual) {
@@ -898,18 +914,22 @@ public class Iterables {
     return failures.failure(info, shouldEndWith(actual, sequence, comparisonStrategy));
   }
 
-  private <E> List<E> notSatisfyingCondition(Iterable<? extends E> actual, Condition<? super E> condition) {
+  private <E extends java.lang.Object> List<E> notSatisfyingCondition(Iterable<? extends E> actual, Condition<? super E> condition) {
     List<E> notSatisfiesCondition = new LinkedList<>();
     for (E o : actual) {
-      if (!condition.matches(o)) notSatisfiesCondition.add(o);
+      if (!condition.matches(o)) {
+        notSatisfiesCondition.add(o);
+      }
     }
     return notSatisfiesCondition;
   }
 
-  private <E> List<E> satisfiesCondition(Iterable<? extends E> actual, Condition<? super E> condition) {
+  private <E extends java.lang.Object> List<E> satisfiesCondition(Iterable<? extends E> actual, Condition<? super E> condition) {
     List<E> satisfiesCondition = new LinkedList<>();
     for (E o : actual) {
-      if (condition.matches(o)) satisfiesCondition.add(o);
+      if (condition.matches(o)) {
+        satisfiesCondition.add(o);
+      }
     }
     return satisfiesCondition;
   }
@@ -921,5 +941,4 @@ public class Iterables {
   static public IllegalArgumentException iterableToLookForIsEmpty() {
     return new IllegalArgumentException("The iterable to look for should not be empty");
   }
-
 }

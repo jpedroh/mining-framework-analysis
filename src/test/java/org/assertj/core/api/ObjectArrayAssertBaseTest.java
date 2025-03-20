@@ -1,26 +1,11 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.test.ExpectedException.none;
 import static org.assertj.core.test.ObjectArrays.emptyArray;
 import static org.mockito.Mockito.mock;
-
 import org.assertj.core.internal.Iterables;
 import org.assertj.core.internal.ObjectArrays;
 import org.assertj.core.test.ExpectedException;
 import org.junit.Rule;
-
 
 /**
  * Base class for {@link ObjectArrayAssert} tests.
@@ -28,27 +13,34 @@ import org.junit.Rule;
  * @author Olivier Michallat
  */
 public abstract class ObjectArrayAssertBaseTest extends BaseTestTemplate<ObjectArrayAssert<Object>, Object[]> {
-
-  @Rule
-  public ExpectedException thrown = none();
-
   protected ObjectArrays arrays;
-  protected Iterables iterables;
 
-  @Override
-  protected ObjectArrayAssert<Object> create_assertions() {
+  protected @Rule public 
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/327f0860049931d7af945af02e57dab608ae0aed/src/test/java/org/assertj/core/api/ObjectArrayAssertBaseTest.java/left.java
+  Iterables
+=======
+  ExpectedException
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/327f0860049931d7af945af02e57dab608ae0aed/src/test/java/org/assertj/core/api/ObjectArrayAssertBaseTest.java/right.java
+   
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/327f0860049931d7af945af02e57dab608ae0aed/src/test/java/org/assertj/core/api/ObjectArrayAssertBaseTest.java/left.java
+  iterables
+=======
+  thrown = none()
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/327f0860049931d7af945af02e57dab608ae0aed/src/test/java/org/assertj/core/api/ObjectArrayAssertBaseTest.java/right.java
+  ;
+
+  @Override protected ObjectArrayAssert<Object> create_assertions() {
     return new ObjectArrayAssert<>(emptyArray());
   }
 
-  @Override
-  protected void inject_internal_objects() {
+  @Override protected void inject_internal_objects() {
     super.inject_internal_objects();
     arrays = mock(ObjectArrays.class);
     iterables = mock(Iterables.class);
     assertions.arrays = arrays;
     assertions.iterables = iterables;
   }
-  
+
   protected ObjectArrays getArrays(ObjectArrayAssert<Object> someAssertions) {
     return someAssertions.arrays;
   }
