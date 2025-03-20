@@ -17,7 +17,6 @@
  */
 
 package com.graphhopper.jsprit.core.problem.job;
-
 import com.graphhopper.jsprit.core.problem.SizeDimension;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.PickupActivityNEW;
@@ -47,7 +46,7 @@ public class CustomJobTest {
                 super(id);
             }
 
-            public CustomJob.BuilderBase<T, B> addPickup(Location location, SizeDimension capacity) {
+            public CustomJob.BuilderBase<T,B> addPickup(Location location, SizeDimension capacity) {
                 locs.add(location);
                 cap.add(capacity);
                 return this;
@@ -113,9 +112,9 @@ public class CustomJobTest {
     @Test
     public void whenCreatingANewJobWithThreeDistinctActivities_jobShouldContainActivities() {
         CustomJob cj = CustomJob.Builder.newInstance("job")
-            .addPickup(Location.newInstance(10, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(10, 0), SizeDimension.Builder.newInstance().addDimension(0,1).build())
             .addPickup(Location.newInstance(5, 0), SizeDimension.Builder.newInstance().addDimension(0, 2).build())
-            .addPickup(Location.newInstance(20, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(20, 0), SizeDimension.Builder.newInstance().addDimension(0,1).build())
             .build();
         Assert.assertEquals(3, cj.getActivityList().size());
 

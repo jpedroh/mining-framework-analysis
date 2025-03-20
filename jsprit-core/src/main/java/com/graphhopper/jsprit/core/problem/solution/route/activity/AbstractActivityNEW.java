@@ -1,11 +1,13 @@
 package com.graphhopper.jsprit.core.problem.solution.route.activity;
 
 
-import com.graphhopper.jsprit.core.problem.SizeDimension;
+import com.graphhopper.jsprit.core.problem.Capacity;
 import com.graphhopper.jsprit.core.problem.Location;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import com.graphhopper.jsprit.core.problem.SizeDimension;
 
 public abstract class AbstractActivityNEW implements TourActivity {
 

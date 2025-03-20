@@ -38,14 +38,178 @@ import org.junit.Test;
  */
 public class FirstCustomJobWithMultipleActivitiesExample {
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/left.java
+    static class CustomJob extends AbstractJob {
+
+        public static abstract class BuilderBase<T extends CustomJob, B extends BuilderBase<T, B>>
+            extends JobBuilder<T, B> {
+
+            List<Location> locs = new ArrayList<>();
+
+            List<SizeDimension> cap = new ArrayList<>();
+
+            public BuilderBase(String id) {
+                super(id);
+            }
+
+            public BuilderBase<T,B> addPickup(Location location, SizeDimension capacity){
+                locs.add(location);
+                cap.add(capacity);
+                return this;
+            }
+
+            public List<Location> getLocs() {
+                return locs;
+            }
+
+            public List<SizeDimension> getCaps() { return cap; }
+
+            protected void validate(){
+
+            }
+        }
+
+        public static final class Builder extends BuilderBase<CustomJob, Builder> {
+
+            public static Builder newInstance(String id) {
+                return new Builder(id);
+            }
+
+            public Builder(String id) {
+                super(id);
+            }
+
+            @Override
+            protected CustomJob createInstance() {
+                return new CustomJob(this);
+            }
+
+        }
+        /**
+         * Builder based constructor.
+         *
+         * @param builder The builder instance.
+         * @see JobBuilder
+         */
+        protected CustomJob(JobBuilder<?, ?> builder) {
+            super(builder);
+
+        }
+
+        @Override
+        public SizeDimension getSize() {
+            return SizeDimension.EMPTY;
+        }
+
+        @Override
+        protected void createActivities(JobBuilder<? extends AbstractJob, ?> jobBuilder) {
+            Builder builder = (Builder) jobBuilder;
+            JobActivityList list = new SequentialJobActivityList(this);
+            for(int i=0;i<builder.getLocs().size();i++){
+                list.addActivity(new PickupActivityNEW(this,"pick",builder.getLocs().get(i),0,builder.getCaps().get(i), Arrays.asList(TimeWindow.ETERNITY)));
+            }
+            setActivities(list);
+        }
+    }
+
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/base.java
+    static class CustomJob extends AbstractJob {
+
+        public static abstract class BuilderBase<T extends CustomJob, B extends BuilderBase<T, B>>
+            extends JobBuilder<T, B> {
+
+            List<Location> locs = new ArrayList<>();
+
+            List<Capacity> cap = new ArrayList<>();
+
+            public BuilderBase(String id) {
+                super(id);
+            }
+
+            public BuilderBase<T,B> addPickup(Location location, Capacity capacity){
+                locs.add(location);
+                cap.add(capacity);
+                return this;
+            }
+
+            public List<Location> getLocs() {
+                return locs;
+            }
+
+            public List<Capacity> getCaps() { return cap; }
+
+            protected void validate(){
+
+            }
+        }
+
+        public static final class Builder extends BuilderBase<CustomJob, Builder> {
+
+            public static Builder newInstance(String id) {
+                return new Builder(id);
+            }
+
+            public Builder(String id) {
+                super(id);
+            }
+
+            @Override
+            protected CustomJob createInstance() {
+                return new CustomJob(this);
+            }
+
+        }
+        /**
+         * Builder based constructor.
+         *
+         * @param builder The builder instance.
+         * @see JobBuilder
+         */
+        protected CustomJob(JobBuilder<?, ?> builder) {
+            super(builder);
+
+        }
+
+        @Override
+        public Capacity getSize() {
+            return Capacity.EMPTY;
+        }
+
+        @Override
+        protected void createActivities(JobBuilder<? extends AbstractJob, ?> jobBuilder) {
+            Builder builder = (Builder) jobBuilder;
+            JobActivityList list = new SequentialJobActivityList(this);
+            for(int i=0;i<builder.getLocs().size();i++){
+                list.addActivity(new PickupActivityNEW(this,"pick",builder.getLocs().get(i),0,builder.getCaps().get(i), Arrays.asList(TimeWindow.ETERNITY)));
+            }
+            setActivities(list);
+        }
+    }
+
+=======
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/right.java
 
 
     @Test
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/left.java
+    public void test(){
+        CustomJob cj = CustomJob.Builder.newInstance("job")
+            .addPickup(Location.newInstance(10,0),SizeDimension.Builder.newInstance().addDimension(0,1).build())
+            .addPickup(Location.newInstance(5,0),SizeDimension.Builder.newInstance().addDimension(0,2).build())
+            .addPickup(Location.newInstance(20,0),SizeDimension.Builder.newInstance().addDimension(0,1).build())
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/base.java
+    public void test(){
+        CustomJob cj = CustomJob.Builder.newInstance("job")
+            .addPickup(Location.newInstance(10,0),Capacity.Builder.newInstance().addDimension(0,1).build())
+            .addPickup(Location.newInstance(5,0),Capacity.Builder.newInstance().addDimension(0,2).build())
+            .addPickup(Location.newInstance(20,0),Capacity.Builder.newInstance().addDimension(0,1).build())
+=======
     public void shouldRunOK() {
         CustomPickupJob cj = CustomPickupJob.Builder.newInstance("job")
-            .addPickup(Location.newInstance(10, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
-            .addPickup(Location.newInstance(5, 0), SizeDimension.Builder.newInstance().addDimension(0, 2).build())
-            .addPickup(Location.newInstance(20, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(10, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(5, 0), Capacity.Builder.newInstance().addDimension(0, 2).build())
+            .addPickup(Location.newInstance(20, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/algorithm/FirstCustomJobWithMultipleActivitiesExample.java/right.java
             .build();
         VehicleType type = VehicleTypeImpl.Builder.newInstance("type").addCapacityDimension(0, 4).build();
         Vehicle v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0, 0)).build();
@@ -61,9 +225,9 @@ public class FirstCustomJobWithMultipleActivitiesExample {
     @Test
     public void shouldNotIgnoresCapacity() {
         CustomPickupJob cj = CustomPickupJob.Builder.newInstance("job")
-            .addPickup(Location.newInstance(10, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
-            .addPickup(Location.newInstance(5, 0), SizeDimension.Builder.newInstance().addDimension(0, 2).build())
-            .addPickup(Location.newInstance(20, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(10, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(5, 0), Capacity.Builder.newInstance().addDimension(0, 2).build())
+            .addPickup(Location.newInstance(20, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
             .build();
         VehicleType type = VehicleTypeImpl.Builder.newInstance("type").addCapacityDimension(0, 2).build();
         Vehicle v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0, 0)).build();

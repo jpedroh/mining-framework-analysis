@@ -261,9 +261,9 @@ public abstract class AbstractJob implements Job {
 
     protected Set<TimeWindow> allTimeWindows;
 
-    private SizeDimension sizeAtStart;
+    private Capacity sizeAtStart;
 
-    private SizeDimension sizeAtEnd;
+    private Capacity sizeAtEnd;
 
 
 
@@ -314,8 +314,8 @@ public abstract class AbstractJob implements Job {
         sizeAtEnd = calcSizeAt(false);
     }
 
-    private SizeDimension calcSizeAt(boolean start) {
-        SizeDimension size = SizeDimension.EMPTY;
+    private Capacity calcSizeAt(boolean start) {
+        Capacity size = Capacity.EMPTY;
         for (JobActivity act : activityList.getAll()) {
             size = size.add(act.getSize());
         }
@@ -329,11 +329,11 @@ public abstract class AbstractJob implements Job {
         }
     }
 
-    public SizeDimension getSizeAtStart() {
+    public Capacity getSizeAtStart() {
         return sizeAtStart;
     }
 
-    public SizeDimension getSizeAtEnd() {
+    public Capacity getSizeAtEnd() {
         return sizeAtEnd;
     }
 

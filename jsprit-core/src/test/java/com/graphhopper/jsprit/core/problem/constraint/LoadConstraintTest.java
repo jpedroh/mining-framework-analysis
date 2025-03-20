@@ -105,9 +105,9 @@ public class LoadConstraintTest {
     @Test
     public void whenCustomJob_itShouldNotIgnoreCapacity() {
         CustomPickupJob cj = CustomPickupJob.Builder.newInstance("job")
-            .addPickup(Location.newInstance(10, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
-            .addPickup(Location.newInstance(5, 0), SizeDimension.Builder.newInstance().addDimension(0, 2).build())
-            .addPickup(Location.newInstance(20, 0), SizeDimension.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(10, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
+            .addPickup(Location.newInstance(5, 0), Capacity.Builder.newInstance().addDimension(0, 2).build())
+            .addPickup(Location.newInstance(20, 0), Capacity.Builder.newInstance().addDimension(0, 1).build())
             .build();
         VehicleType type = VehicleTypeImpl.Builder.newInstance("type").addCapacityDimension(0, 2).build();
         Vehicle v = VehicleImpl.Builder.newInstance("v").setType(type).setStartLocation(Location.newInstance(0, 0)).build();
@@ -123,6 +123,19 @@ public class LoadConstraintTest {
     /*
     serviceroute
      */
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenServiceRouteAndNewServiceFitsIn_itShouldReturnFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.<Job>emptyList());
+        Service s = mock(Service.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 5).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+        JobInsertionContext context = new JobInsertionContext(serviceRoute, s, serviceRoute.getVehicle(), null, 0.);
+        assertTrue(loadConstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenServiceRouteAndNewServiceFitsIn_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.emptyList());
@@ -133,6 +146,7 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(serviceRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertTrue(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
     @Test
     public void whenServiceRouteAndNewServiceFitsInBetweenStartAndAct1_itShouldReturnFulfilled() {
@@ -188,6 +202,7 @@ public class LoadConstraintTest {
     /*
     service does not fit in at act level
      */
+
     @Test
     public void whenServiceRouteAndNewServiceDoesNotFitInBetweenStartAndAct1_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.<Job>emptyList());
@@ -239,7 +254,19 @@ public class LoadConstraintTest {
         assertEquals(HardActivityConstraint.ConstraintsStatus.NOT_FULFILLED, status);
     }
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenServiceRouteAndNewServiceDoesNotFitIn_itShouldReturnFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.<Job>emptyList());
+        Service s = mock(Service.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 6).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
 
+        JobInsertionContext context = new JobInsertionContext(serviceRoute, s, serviceRoute.getVehicle(), null, 0.);
+        assertFalse(loadConstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenServiceRouteAndNewServiceDoesNotFitIn_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.emptyList());
@@ -248,12 +275,27 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(serviceRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertFalse(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
     /*
     pickupDeliveryRoute
     pickup 10
     delivery 5
      */
+
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenPDRouteRouteAndNewPickupFitsIn_itShouldReturnFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(pickup_delivery_route), Collections.<Job>emptyList());
+        Pickup s = mock(Pickup.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 10).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+        JobInsertionContext context = new JobInsertionContext(pickup_delivery_route, s, serviceRoute.getVehicle(), null, 0.);
+        assertTrue(loadconstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenPDRouteRouteAndNewPickupFitsIn_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(pickupDeliveryRoute), Collections.<Job>emptyList());
@@ -262,7 +304,21 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(pickupDeliveryRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertTrue(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenPDRouteRouteAndNewDeliveryFitsIn_itShouldReturnFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(pickup_delivery_route), Collections.<Job>emptyList());
+        Delivery s = mock(Delivery.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 15).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+        JobInsertionContext context = new JobInsertionContext(pickup_delivery_route, s, serviceRoute.getVehicle(), null, 0.);
+        assertTrue(loadconstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenPDRouteRouteAndNewDeliveryFitsIn_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(pickupDeliveryRoute), Collections.emptyList());
@@ -271,7 +327,21 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(pickupDeliveryRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertTrue(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenPDRouteRouteAndNewPickupDoesNotFitIn_itShouldReturnNotFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(pickup_delivery_route), Collections.<Job>emptyList());
+        Pickup s = mock(Pickup.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 11).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+        JobInsertionContext context = new JobInsertionContext(pickup_delivery_route, s, serviceRoute.getVehicle(), null, 0.);
+        assertFalse(loadconstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenPDRouteRouteAndNewPickupDoesNotFitIn_itShouldReturnNotFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(pickupDeliveryRoute), Collections.<Job>emptyList());
@@ -282,7 +352,21 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(pickupDeliveryRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertFalse(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+    @Test
+    public void whenPDRouteRouteAndNewDeliveryDoesNotFitIn_itShouldReturnNotFulfilled() {
+        stateManager.informInsertionStarts(Arrays.asList(pickup_delivery_route), Collections.<Job>emptyList());
+        Delivery s = mock(Delivery.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 16).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+        JobInsertionContext context = new JobInsertionContext(pickupDeliveryRoute, s, serviceRoute.getVehicle(), null, 0.);
+        assertFalse(loadConstraint.fulfilled(context));
+    }
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+=======
     @Test
     public void whenPDRouteRouteAndNewDeliveryDoesNotFitIn_itShouldReturnNotFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(pickupDeliveryRoute), Collections.<Job>emptyList());
@@ -293,10 +377,11 @@ public class LoadConstraintTest {
         JobInsertionContext context = new JobInsertionContext(pickupDeliveryRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertFalse(loadConstraint.fulfilled(context));
     }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
 
     /*
-    pick fits in between activities
-     */
+pick fits in between activities
+ */
     @Test
     public void whenPDRoute_newPickupShouldFitInBetweenStartAndAct1() {
         stateManager.informInsertionStarts(Arrays.asList(pickupDeliveryRoute), Collections.<Job>emptyList());
@@ -606,8 +691,20 @@ public class LoadConstraintTest {
     @Test
     public void whenPDRouteAndNewServiceDoesNotFitIn_itShouldReturnFulfilled() {
         stateManager.informInsertionStarts(Arrays.asList(serviceRoute), Collections.<Job>emptyList());
+<<<<<<< /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/left.java
+        Service s = mock(Service.class);
+        when(s.getSize()).thenReturn(SizeDimension.Builder.newInstance().addDimension(0, 6).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+||||||| /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/base.java
+        Service s = mock(Service.class);
+        when(s.getSize()).thenReturn(Capacity.Builder.newInstance().addDimension(0, 6).build());
+        ServiceLoadRouteLevelConstraint loadconstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+
+=======
         Service s = Service.Builder.newInstance("service").addSizeDimension(0, 6).setLocation(Location.newInstance(0)).build();
         ServiceLoadRouteLevelConstraint loadConstraint = new ServiceLoadRouteLevelConstraint(stateManager);
+>>>>>>> /usr/src/app/output/jsprit/jsprit/bf597eb8ec5d4fe4917d750f18d7339c90890435/jsprit-core/src/test/java/com/graphhopper/jsprit/core/problem/constraint/LoadConstraintTest.java/right.java
         JobInsertionContext context = new JobInsertionContext(serviceRoute, s, serviceRoute.getVehicle(), null, 0.);
         assertFalse(loadConstraint.fulfilled(context));
     }

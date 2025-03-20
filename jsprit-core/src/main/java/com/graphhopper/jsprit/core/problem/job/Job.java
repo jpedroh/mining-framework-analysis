@@ -24,6 +24,8 @@ import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import java.util.List;
 import java.util.Set;
 
+import com.graphhopper.jsprit.core.problem.SizeDimension;
+
 /**
  * Basic interface for all jobs.
  *
