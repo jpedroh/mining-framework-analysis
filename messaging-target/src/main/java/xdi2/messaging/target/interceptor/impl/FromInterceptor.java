@@ -1,5 +1,4 @@
 package xdi2.messaging.target.interceptor.impl;
-
 import xdi2.core.exceptions.Xdi2RuntimeException;
 import xdi2.messaging.Message;
 import xdi2.messaging.target.MessagingTarget;
@@ -16,32 +15,15 @@ import xdi2.messaging.target.interceptor.MessageInterceptor;
  * @author markus
  */
 public class FromInterceptor extends AbstractInterceptor<MessagingTarget> implements MessageInterceptor, Prototype<FromInterceptor> {
+  @Override public FromInterceptor instanceFor(PrototypingContext prototypingContext) {
+    return this;
+  }
 
-	/*
-	 * Prototype
-	 */
+  @Override public InterceptorResult before(Message message, ExecutionContext executionContext, ExecutionResult executionResult) throws Xdi2MessagingException {
+    throw new Xdi2RuntimeException("Not implemented.");
+  }
 
-	@Override
-	public FromInterceptor instanceFor(PrototypingContext prototypingContext) {
-
-		// done
-
-		return this;
-	}
-
-	/*
-	 * MessageInterceptor
-	 */
-
-	@Override
-	public InterceptorResult before(Message message, ExecutionContext executionContext, ExecutionResult executionResult) throws Xdi2MessagingException {
-
-		throw new Xdi2RuntimeException("Not implemented.");
-	}
-
-	@Override
-	public InterceptorResult after(Message message, ExecutionContext executionContext, ExecutionResult executionResult) throws Xdi2MessagingException {
-
-		return InterceptorResult.DEFAULT;
-	}
+  @Override public InterceptorResult after(Message message, ExecutionContext executionContext, ExecutionResult executionResult) throws Xdi2MessagingException {
+    return InterceptorResult.DEFAULT;
+  }
 }
