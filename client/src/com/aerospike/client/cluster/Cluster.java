@@ -1359,7 +1359,12 @@ public class Cluster implements Runnable, Closeable {
 								state.eventLoop.schedule(this, 200, TimeUnit.MILLISECONDS);
 								return;
 							}
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/deae846ff30975c39b4f883823e68e10a3849425/client/src/com/aerospike/client/cluster/Cluster.java/left.java
+							Log.warn("Cluster closed with pending async commands");
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/deae846ff30975c39b4f883823e68e10a3849425/client/src/com/aerospike/client/cluster/Cluster.java/base.java
+=======
 							closedWithPending.set(true);
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/deae846ff30975c39b4f883823e68e10a3849425/client/src/com/aerospike/client/cluster/Cluster.java/right.java
 						}
 
 						// Cluster's event loop connections can now be closed.
