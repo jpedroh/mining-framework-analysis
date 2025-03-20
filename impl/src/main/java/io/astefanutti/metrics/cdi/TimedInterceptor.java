@@ -1,24 +1,7 @@
-/**
- * Copyright © 2013 Antonin Stefanutti (antonin.stefanutti@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.astefanutti.metrics.cdi;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.Timed;
-
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.interceptor.AroundConstruct;
@@ -29,47 +12,39 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
 import javax.interceptor.AroundTimeout;
 
-@Timed
-@Interceptor
-@Priority(Interceptor.Priority.LIBRARY_BEFORE  + 10)
-/* package-private */ class TimedInterceptor {
+@Timed @Interceptor @Priority(value = Interceptor.Priority.LIBRARY_BEFORE + 10) class TimedInterceptor {
+  private final MetricRegistry registry;
 
-    private final MetricRegistry registry;
+  private final MetricResolver resolver;
 
-    private final MetricResolver resolver;
+  @Inject private TimedInterceptor(MetricRegistry registry, MetricResolver resolver) {
+    this.registry = registry;
+    this.resolver = resolver;
+  }
 
-    @Inject
-    private TimedInterceptor(MetricRegistry registry, MetricResolver resolver) {
-        this.registry = registry;
-        this.resolver = resolver;
+  @AroundConstruct private Object timedConstructor(InvocationContext context) throws Exception {
+    return timedCallable(context, context.getConstructor().getDeclaringClass(), context.getConstructor());
+  }
+
+  @AroundInvoke private Object timedMethod(InvocationContext context) throws Exception {
+    return timedCallable(context, context.getTarget().getClass().getSuperclass(), context.getMethod());
+  }
+
+  @AroundTimeout private Object timedTimeout(InvocationContext context) throws Exception {
+    return timedCallable(context, context.getTarget().getClass().getSuperclass(), context.getMethod());
+  }
+
+  private <E extends Member & AnnotatedElement> Object timedCallable(InvocationContext context, Class<?> topClass, E element) throws Exception {
+    String name = resolver.timed(topClass, element).metricName();
+    Timer timer = (Timer) registry.getMetrics().get(name);
+    if (timer == null) {
+      throw new IllegalStateException("No timer with name [" + name + "] found in registry [" + registry + "]");
     }
-
-    @AroundConstruct
-    private Object timedConstructor(InvocationContext context) throws Exception {
-        return timedCallable(context, context.getConstructor().getDeclaringClass(), context.getConstructor());
+    Timer.Context time = timer.time();
+    try {
+      return context.proceed();
+    }  finally {
+      time.stop();
     }
-
-    @AroundInvoke
-    private Object timedMethod(InvocationContext context) throws Exception {
-        return timedCallable(context, context.getTarget().getClass().getSuperclass(), context.getMethod());
-    }
-
-    @AroundTimeout
-    private Object timedTimeout(InvocationContext context) throws Exception {
-        return timedCallable(context, context.getTarget().getClass().getSuperclass(), context.getMethod());
-    }
-
-    private <E extends Member & AnnotatedElement> Object timedCallable(InvocationContext context, Class<?> topClass, E element) throws Exception {
-        String name = resolver.timed(topClass, element).metricName();
-        Timer timer = (Timer) registry.getMetrics().get(name);
-        if (timer == null)
-            throw new IllegalStateException("No timer with name [" + name + "] found in registry [" + registry + "]");
-
-        Timer.Context time = timer.time();
-        try {
-            return context.proceed();
-        } finally {
-            time.stop();
-        }
-    }
+  }
 }
