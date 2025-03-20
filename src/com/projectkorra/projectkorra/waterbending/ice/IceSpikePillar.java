@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 public class IceSpikePillar extends IceAbility {
 
 	/** The list of blocks IceSpike uses */
+	/** The list of blocks IceSpike uses */
 	private Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
 
 	private int height;
@@ -43,13 +44,16 @@ public class IceSpikePillar extends IceAbility {
 	private double range;
 	private double speed;
 	private Block source_block; //The block clicked on
+//The block clicked on
 	private Block base_block; //The block at the bottom of the pillar
+//The block at the bottom of the pillar
 	private Location origin;
 	private Location location;
 	private Vector thrownForce;
 	private Vector direction;
 	private ArrayList<LivingEntity> damaged;
 	protected boolean inField = false; //If it's part of a field or not. 
+//If it's part of a field or not. 
 
 	public IceSpikePillar(Player player) {
 		super(player);
