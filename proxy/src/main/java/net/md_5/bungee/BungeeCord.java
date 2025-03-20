@@ -412,6 +412,34 @@ public class BungeeCord extends ProxyServer
                 {
                 }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/83fe72bde898161888f17d7d8c1e827b002e234d/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/left.java
+                getLogger().info( "Closing IO threads" );
+                bossEventLoopGroup.shutdownGracefully(); //BotFilter
+                workerEventLoopGroup.shutdownGracefully(); //BotFilter
+                while ( true ) //BotFilter
+                {
+                    try
+                    {
+                        bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter
+                        workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter
+                        break;
+                    } catch ( InterruptedException ignored )
+                    {
+                    }
+                }
+
+||||||| /usr/src/app/output/spigotmc/bungeecord/83fe72bde898161888f17d7d8c1e827b002e234d/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/base.java
+                getLogger().info( "Closing IO threads" );
+                eventLoops.shutdownGracefully();
+                try
+                {
+                    eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
+                } catch ( InterruptedException ex )
+                {
+                }
+
+=======
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/83fe72bde898161888f17d7d8c1e827b002e234d/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/right.java
                 if ( reconnectHandler != null )
                 {
                     getLogger().info( "Saving reconnect locations" );
@@ -441,18 +469,12 @@ public class BungeeCord extends ProxyServer
                 }
 
                 getLogger().info( "Closing IO threads" );
-                bossEventLoopGroup.shutdownGracefully(); //BotFilter
-                workerEventLoopGroup.shutdownGracefully(); //BotFilter
-                while ( true ) //BotFilter
+                eventLoops.shutdownGracefully();
+                try
                 {
-                    try
-                    {
-                        bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter
-                        workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter
-                        break;
-                    } catch ( InterruptedException ignored )
-                    {
-                    }
+                    eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
+                } catch ( InterruptedException ex )
+                {
                 }
 
                 getLogger().info( "Thank you and goodbye" );
