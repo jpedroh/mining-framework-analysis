@@ -38,6 +38,43 @@ public class QueryAnalyzer {
 
     private final List<QueryTreeBuilder<?>> queryTreeBuilders;
 
+<<<<<<< /usr/src/app/output/flaxsearch/luwak/cad281c6da899e58fb7963f4e1c4bd46f06b27e9/luwak/src/main/java/uk/co/flax/luwak/termextractor/QueryAnalyzer.java/left.java
+||||||| /usr/src/app/output/flaxsearch/luwak/cad281c6da899e58fb7963f4e1c4bd46f06b27e9/luwak/src/main/java/uk/co/flax/luwak/termextractor/QueryAnalyzer.java/base.java
+    public static final List<QueryTreeBuilder<? extends Query>> DEFAULT_BUILDERS = CollectionUtils.makeUnmodifiableList(
+            new BooleanQueryTreeBuilder.QueryBuilder(),
+            new PhraseQueryTreeBuilder(),
+            new ConstantScoreQueryTreeBuilder(),
+            new NumericRangeQueryTreeBuilder(),
+            new TermRangeQueryTreeBuilder(),
+            new RegexpAnyTermQueryTreeBuilder(),
+            new SimpleTermQueryTreeBuilder(),
+            new SpanTermQueryTreeBuilder(),
+            new SpanNearQueryTreeBuilder(),
+            new SpanOrQueryTreeBuilder(),
+            new SpanMultiTermQueryWrapperTreeBuilder(),
+            new SpanNotQueryTreeBuilder(),
+            new GenericQueryTreeBuilder()
+    );
+
+=======
+    public static final List<QueryTreeBuilder<? extends Query>> DEFAULT_BUILDERS = CollectionUtils.makeUnmodifiableList(
+            new BooleanQueryTreeBuilder.QueryBuilder(),
+            new PhraseQueryTreeBuilder(),
+            new ConstantScoreQueryTreeBuilder(),
+            new BoostQueryTreeBuilder(),
+            new NumericRangeQueryTreeBuilder(),
+            new TermRangeQueryTreeBuilder(),
+            new RegexpAnyTermQueryTreeBuilder(),
+            new SimpleTermQueryTreeBuilder(),
+            new SpanTermQueryTreeBuilder(),
+            new SpanNearQueryTreeBuilder(),
+            new SpanOrQueryTreeBuilder(),
+            new SpanMultiTermQueryWrapperTreeBuilder(),
+            new SpanNotQueryTreeBuilder(),
+            new GenericQueryTreeBuilder()
+    );
+
+>>>>>>> /usr/src/app/output/flaxsearch/luwak/cad281c6da899e58fb7963f4e1c4bd46f06b27e9/luwak/src/main/java/uk/co/flax/luwak/termextractor/QueryAnalyzer.java/right.java
     public final TreeWeightor weightor;
 
     /**
