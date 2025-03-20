@@ -37,7 +37,13 @@ public class Soundex implements Simplifier {
 
 	@Override
 	public String toString() {
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/5f973be314a72f132d668ea0500013139b0481de/simmetrics-core/src/main/java/org/simmetrics/simplifiers/Soundex.java/left.java
 		return "Soundex";
+||||||| /usr/src/app/output/simmetrics/simmetrics/5f973be314a72f132d668ea0500013139b0481de/simmetrics-core/src/main/java/org/simmetrics/simplifiers/Soundex.java/base.java
+		return "SoundexSimplifier [length=" + length + "]";
+=======
+		return "SoundexSimplifier";
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/5f973be314a72f132d668ea0500013139b0481de/simmetrics-core/src/main/java/org/simmetrics/simplifiers/Soundex.java/right.java
 	}
 
 	@Override
