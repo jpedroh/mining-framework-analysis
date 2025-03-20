@@ -1071,76 +1071,77 @@ public class DocumentService {
      * @throws IOException
      * @throws QueryException
      */
-	public void backup(String query, String filePath, boolean snapshots) throws IOException, QueryException {
-		boolean hasMoreData = true;
-		int JUNK_SIZE = 100;
-		long totalcount = 0;
-		int pageIndex = 0;
-		int icount = 0;
+    public void backup(String query, String filePath, boolean snapshots) throws IOException, QueryException {
+    	boolean hasMoreData = true;
+    	int JUNK_SIZE = 100;
+    	long totalcount = 0;
+    	int pageIndex = 0;
+    	int icount = 0;
 
-		logger.info("backup - starting...");
-		logger.info("backup - query=" + query);
-		logger.info("backup - target=" + filePath);
+    	logger.info("backup - starting...");
+    	logger.info("backup - query=" + query);
+    	logger.info("backup - target=" + filePath);
 
-		if (filePath == null || filePath.isEmpty()) {
-			logger.severe("Invalid FilePath!");
-			return;
-		}
+    	if (filePath == null || filePath.isEmpty()) {
+    		logger.severe("Invalid FilePath!");
+    		return;
+    	}
 
-		FileOutputStream fos = new FileOutputStream(filePath);
-		ObjectOutputStream out = new ObjectOutputStream(fos);
-		while (hasMoreData) {
-			// read a junk....
+    	FileOutputStream fos = new FileOutputStream(filePath);
+    	ObjectOutputStream out = new ObjectOutputStream(fos);
+    	while (hasMoreData) {
+    		// read a junk....
 
-			Collection<ItemCollection> col = find(query, JUNK_SIZE, pageIndex);
-			totalcount = totalcount + col.size();
-			logger.info("backup - processing...... " + col.size() + " documents read....");
+    		Collection<ItemCollection> col = find(query, JUNK_SIZE, pageIndex);
+    		totalcount = totalcount + col.size();
+    		logger.info("backup - processing...... " + col.size() + " documents read....");
 
-			if (col.size() < JUNK_SIZE) {
-				hasMoreData = false;
-				logger.finest("......all data read.");
-			} else {
-				pageIndex++;
-				logger.finest("......next page...");
-			}
+    		if (col.size() < JUNK_SIZE) {
+    			hasMoreData = false;
+    			logger.finest("......all data read.");
+    		} else {
+    			pageIndex++;
+    			logger.finest("......next page...");
+    		}
 
-            for (ItemCollection aworkitem : col) {
-                Map<?, ?> hmap=null;
-                if (snapshots==true) {
-                    // load the snapshot
-                    String snapshotID = aworkitem.getItemValueString("$snapshotid");
-                    if (!snapshotID.isEmpty()) {
-                        ItemCollection snapshotDoc = load(snapshotID);
-                        if (snapshotDoc!=null) {
-                            hmap = snapshotDoc.getAllItems();
-                        }
-                    } 
-                }
-                
-                if (hmap==null) {
-                    // get serialized data
-                    hmap = aworkitem.getAllItems();
-                }
-                // write object
-                out.writeObject(hmap);
-                icount++;
-            }
-		}
-		out.close();
-		logger.info("backup - finished: " + icount + " documents read totaly.");
-	}
-
+    		for (ItemCollection aworkitem : col) {
+    		    Map<?, ?> hmap=null;
+    		    if (snapshots==true) {
+    		        // load the snapshot
+    		        String snapshotID = aworkitem.getItemValueString("$snapshotid");
+    		        if (!snapshotID.isEmpty()) {
+    		            ItemCollection snapshotDoc = load(snapshotID);
+    		            if (snapshotDoc!=null) {
+    		                hmap = snapshotDoc.getAllItems();
+    		            }
+    		        } 
+    		    }
+    		    
+    		    if (hmap==null) {
+    		        // get serialized data
+    		        hmap = aworkitem.getAllItems();
+    		    }
+    		    // write object
+    		    out.writeObject(hmap);
+    			icount++;
+    		}
+    	}
+    	out.close();
+    	logger.info("backup - finished: " + icount + " documents read totaly.");
+    }
+    
     // default method 
     public void backup(String query, String filePath) throws IOException, QueryException {
         this.backup(query, filePath,false);
     }
-	/**
-	 * This method restores a backup from the file system and imports the Documents
-	 * into the database.
-	 * 
-	 * @param filepath
-	 * @throws IOException
-	 */
+
+    /**
+     * This method restores a backup from the file system and imports the Documents
+     * into the database.
+     * 
+     * @param filepath
+     * @throws IOException
+     */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void restore(String filePath) throws IOException {
 		int JUNK_SIZE = 100;
@@ -1150,7 +1151,7 @@ public class DocumentService {
 
 		FileInputStream fis = new FileInputStream(filePath);
 		ObjectInputStream in = new ObjectInputStream(fis);
-		logger.info("...starting restor form file " + filePath + "...");
+		logger.info("...starting restore form file " + filePath + "...");
 		long l = System.currentTimeMillis();
 		while (true) {
 			try {
