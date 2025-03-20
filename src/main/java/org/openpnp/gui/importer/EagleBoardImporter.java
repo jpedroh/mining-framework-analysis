@@ -197,62 +197,56 @@ public class EagleBoardImporter implements BoardImporter {
 					//are relative to the 'placement'
 					Configuration cfg = Configuration.get();
 		            if (cfg != null && createMissingParts) {
-		                String value = element.getValue(); // Value
-		                String packageId = element.getPackage(); //Package
-		                String libraryId = element.getLibrary(); //Library that contains the package
-		                
-		                String pkgId  = libraryId + "-" + packageId;
-		                
-		                String partId = libraryId + "-" + packageId;
-		                if (value.trim().length() > 0) {
-		                    partId += "-" + value;
-		                }
-		                
-		                Part part = cfg.getPart(partId);
-		                Package pkg = cfg.getPackage(pkgId);
-		                
-		                if ((part == null) || (pkg == null)) {
-		                    
-		                    if (pkg == null) {
-		                        pkg = new Package(pkgId);
+				    String value = element.getValue(); // Value
+				    String packageId = element.getPackage(); //Package
+				    String libraryId = element.getLibrary(); //Library that contains the package
+				    
+				    String pkgId  = libraryId + "-" + packageId;
+				    
+				    String partId = libraryId + "-" + packageId;
+				    if (value.trim().length() > 0) {
+				        partId += "-" + value;
+				    }
+				    
+				    Part part = cfg.getPart(partId);
+				    Package pkg = cfg.getPackage(pkgId);
+				    
+				    if ((part == null) || (pkg == null)) {
+				        
+				        if (pkg == null) {
+				            pkg = new Package(pkgId);
             		            cfg.addPackage(pkg); //save the package in the configuration file
             		            if (part != null) {
             		            	cfg.removePart(part);//we have to remove the part so we can re-add it with the correct package & library
             		            	part = null;
             		            }
             		            
-		                    }
-		                	if (part == null) {
-		                		part = new Part(partId);
+				        }
+				    	if (part == null) {
+				    		part = new Part(partId);
             			        part.setPackage(pkg);
-<<<<<<< HEAD
-            			        part.setLibrary(libraryId);
-            			        cfg.addPart(part); //save the package in the configuration file
-		                	}
-=======
 
-            			        cfg.addPart(part);
-		                    }
->>>>>>> 47b2d6aef2fbbd25662d1372931f0e57845a4ad6
-		                }
-		                placement.setPart(part);
-		                
+            			        cfg.addPart(part); //save the package in the configuration file
+				    	}
+				    }
+				    placement.setPart(part);
+				    
 			            //Now we have the part, we now need to add the SolderPastePad to the board
 			            //Note, Eagle has the concept of minimum and max from the edge of the pad so we need to 
 			            //adjust the pad to be the size as the mid-point between the minimum and max
 			            //in practice these are usually 0, which means we paste the entire pad
 
                         if ( ! boardToProcess.board.getLibraries().getLibrary().isEmpty()) {
-                        	for (Library library: boardToProcess.board.getLibraries().getLibrary()) {
-                        		if (library.getName().equalsIgnoreCase(libraryId)) {
-                        			//we have found the library, now to scan for the package we want
-                        			if ( !library.getPackages().getPackage().isEmpty()) {
-                        				
-                        				ListIterator<org.openpnp.model.eagle.xml.Package> it = library.getPackages().getPackage().listIterator();
-                        				
-                        				while(it.hasNext()) {
+					for (Library library: boardToProcess.board.getLibraries().getLibrary()) {
+						if (library.getName().equalsIgnoreCase(libraryId)) {
+							//we have found the library, now to scan for the package we want
+							if ( !library.getPackages().getPackage().isEmpty()) {
+								
+								ListIterator<org.openpnp.model.eagle.xml.Package> it = library.getPackages().getPackage().listIterator();
+								
+								while(it.hasNext()) {
 
-                        					org.openpnp.model.eagle.xml.Package pak = (org.openpnp.model.eagle.xml.Package) it.next();
+									org.openpnp.model.eagle.xml.Package pak = (org.openpnp.model.eagle.xml.Package) it.next();
 		                        			if (pak.getName().equalsIgnoreCase(packageId)) {
 
 		                		                for (Object e: pak.getPolygonOrWireOrTextOrDimensionOrCircleOrRectangleOrFrameOrHoleOrPadOrSmd()) {
@@ -317,14 +311,14 @@ public class EagleBoardImporter implements BoardImporter {
 		                        							logger.info("Warning: " + file + "contains a Polygon pad - this functionality has not yet been implemented");
 		                        						}
 		                        					}
-                        						}
-                        					}
-                        				}
-                        			}
-                        		}
-                        	}
-                        }
-		            }
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				}
 
 					placement.setSide(element_side);
 					placements.add(placement);
