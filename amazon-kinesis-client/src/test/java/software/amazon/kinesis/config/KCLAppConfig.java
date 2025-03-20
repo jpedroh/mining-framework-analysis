@@ -24,7 +24,6 @@ import software.amazon.kinesis.common.ConfigsBuilder;
 import software.amazon.kinesis.common.InitialPositionInStream;
 import software.amazon.kinesis.processor.ShardRecordProcessorFactory;
 import software.amazon.kinesis.retrieval.RetrievalConfig;
-import software.amazon.kinesis.utils.ReshardOptions;
 
 import java.io.IOException;
 import java.net.Inet4Address;
