@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2014-2016 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn.encoding.tlv;
-
 import java.nio.ByteBuffer;
 import java.nio.BufferUnderflowException;
 import net.named_data.jndn.encoding.EncodingException;
@@ -35,9 +15,7 @@ public class TlvDecoder {
    * the underlying buffer whose contents must remain valid during the life of
    * this object.
    */
-  public
-  TlvDecoder(ByteBuffer input)
-  {
+  public TlvDecoder(ByteBuffer input) {
     input_ = input.duplicate();
   }
 
@@ -48,15 +26,14 @@ public class TlvDecoder {
    * @throws EncodingException if the VAR-NUMBER is 64-bit or read past the end
    * of the input.
    */
-  public final int
-  readVarNumber() throws EncodingException
-  {
+  public final int readVarNumber() throws EncodingException {
     try {
-      int firstOctet = (int)input_.get() & 0xff;
-      if (firstOctet < 253)
+      int firstOctet = (int) input_.get() & 0xff;
+      if (firstOctet < 253) {
         return firstOctet;
-      else
+      } else {
         return readExtendedVarNumber(firstOctet);
+      }
     } catch (BufferUnderflowException ex) {
       throw new EncodingException("Read past the end of the input");
     }
@@ -71,22 +48,17 @@ public class TlvDecoder {
    * @throws EncodingException if the VAR-NUMBER is 64-bit or read past the end 
    * of the input.
    */
-  public final int
-  readExtendedVarNumber(int firstOctet) throws EncodingException
-  {
+  public final int readExtendedVarNumber(int firstOctet) throws EncodingException {
     try {
-      if (firstOctet == 253)
-        return (((int)input_.get() & 0xff) << 8) +
-                ((int)input_.get() & 0xff);
-      else if (firstOctet == 254)
-        return (((int)input_.get() & 0xff) << 24) +
-               (((int)input_.get() & 0xff) << 16) +
-               (((int)input_.get() & 0xff) << 8) +
-                ((int)input_.get() & 0xff);
-      else
-        // we are returning a 32-bit int, so can't handle 64-bit.
-        throw new EncodingException
-          ("Decoding a 64-bit VAR-NUMBER is not supported");
+      if (firstOctet == 253) {
+        return (((int) input_.get() & 0xff) << 8) + ((int) input_.get() & 0xff);
+      } else {
+        if (firstOctet == 254) {
+          return (((int) input_.get() & 0xff) << 24) + (((int) input_.get() & 0xff) << 16) + (((int) input_.get() & 0xff) << 8) + ((int) input_.get() & 0xff);
+        } else {
+          throw new EncodingException("Decoding a 64-bit VAR-NUMBER is not supported");
+        }
+      }
     } catch (BufferUnderflowException ex) {
       throw new EncodingException("Read past the end of the input");
     }
@@ -103,17 +75,15 @@ public class TlvDecoder {
    * length exceeds the buffer length, or the type is encoded as a 64-bit value,
    * or the length is encoded as a 64-bit value.
    */
-  public final int
-  readTypeAndLength(int expectedType) throws EncodingException
-  {
+  public final int readTypeAndLength(int expectedType) throws EncodingException {
     int type = readVarNumber();
-    if (type != expectedType)
+    if (type != expectedType) {
       throw new EncodingException("Did not get the expected TLV type");
-
+    }
     int length = readVarNumber();
-    if (length > input_.remaining())
+    if (length > input_.remaining()) {
       throw new EncodingException("TLV length exceeds the buffer length");
-
+    }
     return length;
   }
 
@@ -130,9 +100,7 @@ public class TlvDecoder {
    * length exceeds the buffer length, or the type is encoded as a 64-bit value,
    * or the length is encoded as a 64-bit value.
    */
-  public final int
-  readNestedTlvsStart(int expectedType) throws EncodingException
-  {
+  public final int readNestedTlvsStart(int expectedType) throws EncodingException {
     return readTypeAndLength(expectedType) + input_.position();
   }
 
@@ -146,30 +114,22 @@ public class TlvDecoder {
    * @throws EncodingException if the TLV length does not equal the total length
    * of the nested TLVs.
    */
-  public final void
-  finishNestedTlvs(int endOffset) throws EncodingException
-  {
-    // We expect the position to be endOffset, so check this first.
-    if (input_.position() == endOffset)
+  public final void finishNestedTlvs(int endOffset) throws EncodingException {
+    if (input_.position() == endOffset) {
       return;
-
-    // Skip remaining TLVs.
+    }
     while (input_.position() < endOffset) {
-      // Skip the type VAR-NUMBER.
       readVarNumber();
-      // Read the length and update the position.
       int length = readVarNumber();
       int newPosition = input_.position() + length;
-      // Check newPosition before updating input_position since it would
-      //   throw its own exception.
-      if (newPosition > input_.limit())
+      if (newPosition > input_.limit()) {
         throw new EncodingException("TLV length exceeds the buffer length");
+      }
       input_.position(newPosition);
     }
-
-    if (input_.position() != endOffset)
-      throw new EncodingException
-        ("TLV length does not equal the total length of the nested TLVs");
+    if (input_.position() != endOffset) {
+      throw new EncodingException("TLV length does not equal the total length of the nested TLVs");
+    }
   }
 
   /**
@@ -184,18 +144,13 @@ public class TlvDecoder {
    * @return true if the type of the next TLV is the expectedType, otherwise
    * false.
    */
-  public final boolean
-  peekType(int expectedType, int endOffset) throws EncodingException
-  {
-    if (input_.position() >= endOffset)
-      // No more sub TLVs to look at.
+  public final boolean peekType(int expectedType, int endOffset) throws EncodingException {
+    if (input_.position() >= endOffset) {
       return false;
-    else {
+    } else {
       int savePosition = input_.position();
       int type = readVarNumber();
-      // Restore the position.
       input_.position(savePosition);
-
       return type == expectedType;
     }
   }
@@ -208,31 +163,25 @@ public class TlvDecoder {
    * @throws EncodingException if length is an invalid length for a TLV
    * non-negative integer or read past the end of the input.
    */
-  public final long
-  readNonNegativeInteger(int length) throws EncodingException
-  {
+  public final long readNonNegativeInteger(int length) throws EncodingException {
     try {
-      if (length == 1)
-        return (long)input_.get() & 0xff;
-      else if (length == 2)
-         return (((long)input_.get() & 0xff) << 8) +
-                 ((long)input_.get() & 0xff);
-      else if (length == 4)
-         return (((long)input_.get() & 0xff) << 24) +
-                (((long)input_.get() & 0xff) << 16) +
-                (((long)input_.get() & 0xff) << 8) +
-                 ((long)input_.get() & 0xff);
-      else if (length == 8)
-         return (((long)input_.get() & 0xff) << 56) +
-                (((long)input_.get() & 0xff) << 48) +
-                (((long)input_.get() & 0xff) << 40) +
-                (((long)input_.get() & 0xff) << 32) +
-                (((long)input_.get() & 0xff) << 24) +
-                (((long)input_.get() & 0xff) << 16) +
-                (((long)input_.get() & 0xff) << 8) +
-                 ((long)input_.get() & 0xff);
-      else
-        throw new EncodingException("Invalid length for a TLV nonNegativeInteger");
+      if (length == 1) {
+        return (long) input_.get() & 0xff;
+      } else {
+        if (length == 2) {
+          return (((long) input_.get() & 0xff) << 8) + ((long) input_.get() & 0xff);
+        } else {
+          if (length == 4) {
+            return (((long) input_.get() & 0xff) << 24) + (((long) input_.get() & 0xff) << 16) + (((long) input_.get() & 0xff) << 8) + ((long) input_.get() & 0xff);
+          } else {
+            if (length == 8) {
+              return (((long) input_.get() & 0xff) << 56) + (((long) input_.get() & 0xff) << 48) + (((long) input_.get() & 0xff) << 40) + (((long) input_.get() & 0xff) << 32) + (((long) input_.get() & 0xff) << 24) + (((long) input_.get() & 0xff) << 16) + (((long) input_.get() & 0xff) << 8) + ((long) input_.get() & 0xff);
+            } else {
+              throw new EncodingException("Invalid length for a TLV nonNegativeInteger");
+            }
+          }
+        }
+      }
     } catch (BufferUnderflowException ex) {
       throw new EncodingException("Read past the end of the input");
     }
@@ -247,9 +196,7 @@ public class TlvDecoder {
    * @throws EncodingException if did not get the expected TLV type or can't
    * decode the value.
    */
-  public final long
-  readNonNegativeIntegerTlv(int expectedType) throws EncodingException
-  {
+  public final long readNonNegativeIntegerTlv(int expectedType) throws EncodingException {
     int length = readTypeAndLength(expectedType);
     return readNonNegativeInteger(length);
   }
@@ -265,14 +212,12 @@ public class TlvDecoder {
    * @return The integer as a Java 64-bit long or -1 if the next TLV doesn't
    * have the expected type.
    */
-  public final long
-  readOptionalNonNegativeIntegerTlv
-    (int expectedType, int endOffset) throws EncodingException
-  {
-    if (peekType(expectedType, endOffset))
+  public final long readOptionalNonNegativeIntegerTlv(int expectedType, int endOffset) throws EncodingException {
+    if (peekType(expectedType, endOffset)) {
       return readNonNegativeIntegerTlv(expectedType);
-    else
+    } else {
       return -1;
+    }
   }
 
   /**
@@ -285,17 +230,12 @@ public class TlvDecoder {
    * must make a copy of the return value.
    * @throws EncodingException if did not get the expected TLV type.
    */
-  public final ByteBuffer
-  readBlobTlv(int expectedType) throws EncodingException
-  {
+  public final ByteBuffer readBlobTlv(int expectedType) throws EncodingException {
     int length = readTypeAndLength(expectedType);
     int saveLimit = input_.limit();
     input_.limit(input_.position() + length);
     ByteBuffer result = input_.slice();
-    // Restore the limit.
     input_.limit(saveLimit);
-
-    // readTypeAndLength already checked if length exceeds the input buffer.
     input_.position(input_.position() + length);
     return result;
   }
@@ -313,13 +253,12 @@ public class TlvDecoder {
    * bytes in the input buffer. If you need a copy, then you must make a copy of
    * the return value.
    */
-  public final ByteBuffer
-  readOptionalBlobTlv(int expectedType, int endOffset) throws EncodingException
-  {
-    if (peekType(expectedType, endOffset))
+  public final ByteBuffer readOptionalBlobTlv(int expectedType, int endOffset) throws EncodingException {
+    if (peekType(expectedType, endOffset)) {
       return readBlobTlv(expectedType);
-    else
+    } else {
       return null;
+    }
   }
 
   /**
@@ -333,26 +272,21 @@ public class TlvDecoder {
    * @return true, or else false if the next TLV doesn't have the
    * expected type.
    */
-  public final boolean
-  readBooleanTlv(int expectedType, int endOffset) throws EncodingException
-  {
+  public final boolean readBooleanTlv(int expectedType, int endOffset) throws EncodingException {
     if (peekType(expectedType, endOffset)) {
       int length = readTypeAndLength(expectedType);
-      // We expect the length to be 0, but update offset anyway.
       input_.position(input_.position() + length);
       return true;
-    }
-    else
+    } else {
       return false;
+    }
   }
 
   /**
    * Get the input buffer position (offset), used for the next read.
    * @return The input buffer position (offset).
    */
-  public final int
-  getOffset()
-  {
+  public final int getOffset() {
     return input_.position();
   }
 
@@ -360,9 +294,7 @@ public class TlvDecoder {
    * Set the offset into the input, used for the next read.
    * @param offset The new offset.
    */
-  public final void
-  seek(int offset)
-  {
+  public final void seek(int offset) {
     input_.position(offset);
   }
 
@@ -374,11 +306,8 @@ public class TlvDecoder {
    * the input buffer. If you need a copy, then you must make a copy of the
    * return value.
    */
-  public final ByteBuffer
-  getSlice(int beginOffset, int endOffset)
-  {
+  public final ByteBuffer getSlice(int beginOffset, int endOffset) {
     ByteBuffer result = input_.duplicate();
-    // First set position to 0 to be sure that endOffset won't be before it.
     result.position(0);
     result.limit(endOffset);
     result.position(beginOffset);
@@ -386,6 +315,6 @@ public class TlvDecoder {
   }
 
   private final ByteBuffer input_;
-  // This is to force an import of net.named_data.jndn.util.
+
   private static Common dummyCommon_ = new Common();
 }
