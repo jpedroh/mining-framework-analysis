@@ -381,6 +381,35 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 	 * @see PushManager#unregisterFailedConnectionListener(FailedConnectionListener)
 	 */
 	public void registerFailedConnectionListener(final FailedConnectionListener<? super T> listener) {
+		if (this.shutDown) {
+			throw new IllegalStateException("Failed connection listeners may not be registered after a push manager has been shut down.");
+		}
+
+		this.failedConnectionListeners.add(listener);
+	}
+
+	/**
+	 * <p>Un-registers a connection failure listener.</p>
+	 * 
+	 * @param listener the listener to un-register
+	 * 
+	 * @return {@code true} if the given listener was registered with this push manager and removed or {@code false} if
+	 * the listener was not already registered with this push manager
+	 */
+	public boolean unregisterFailedConnectionListener(final FailedConnectionListener<? super T> listener) {
+		return this.failedConnectionListeners.remove(listener);
+	}
+
+	/**
+	 * <p>Registers a listener for failed attempts to connect to the APNs gateway.</p>
+	 * 
+	 * @param listener the listener to register
+	 * 
+	 * @throws IllegalStateException if this push manager has already been shut down
+	 * 
+	 * @see PushManager#unregisterFailedConnectionListener(FailedConnectionListener)
+	 */
+	public void registerFailedConnectionListener(final FailedConnectionListener<? super T> listener) {
 		if (this.isShutDown()) {
 			throw new IllegalStateException("Failed connection listeners may not be registered after a push manager has been shut down.");
 		}
@@ -496,6 +525,7 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 		this.removeActiveConnection(connection);
 
 		// We tried to open a connection, but failed. As long as we're not shut down, try to open a new one.
+<<<<<<< /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/left.java
 		final PushManager<T> pushManager = this;
 
 		for (final FailedConnectionListener<? super T> listener : this.failedConnectionListeners) {
@@ -510,6 +540,24 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 
 		// As long as we're not shut down, keep trying to open a replacement connection.
 		if (!this.drainingFinished) {
+||||||| /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/base.java
+		if (!this.isShutDown()) {
+=======
+		final PushManager<T> pushManager = this;
+
+		for (final FailedConnectionListener<? super T> listener : this.failedConnectionListeners) {
+
+			// Handle connection failures in a separate thread in case a handler takes a long time to run
+			this.listenerExecutorService.submit(new Runnable() {
+				public void run() {
+					listener.handleFailedConnection(pushManager, cause);
+				}
+			});
+		}
+
+		// As long as we're not shut down, keep trying to open a replacement connection.
+		if (!this.isShutDown()) {
+>>>>>>> /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/right.java
 			this.startNewConnection();
 		}
 	}
@@ -543,7 +591,14 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 			this.dispatchThread.interrupt();
 		}
 
+<<<<<<< /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/left.java
 		final PushManager<T> pushManager = this;
+||||||| /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/base.java
+		// TODO Do this in an executor service instead of spawning a new thread
+		new Thread(new Runnable() {
+=======
+		this.listenerExecutorService.execute(new Runnable() {
+>>>>>>> /usr/src/app/output/relayrides/pushy/7d1bed05c2e8409d40ee93c3c9994cd35f6dadc4/src/main/java/com/relayrides/pushy/apns/PushManager.java/right.java
 
 		this.listenerExecutorService.execute(new Runnable() {
 			public void run() {
