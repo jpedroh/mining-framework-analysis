@@ -6,9 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.*;
 import de.hochschuletrier.gdw.commons.gdx.assets.*;
 import de.hochschuletrier.gdw.commons.jackson.*;
-import de.hochschuletrier.gdw.ss14.gamestates.*;
+import de.hochschuletrier.gdw.ss14.states.*;
 
 import java.util.*;
+import de.hochschuletrier.gdw.ss14.gamestates.GameStateEnum;
 
 public class LevelMenu extends LaserCatMenu
 {
