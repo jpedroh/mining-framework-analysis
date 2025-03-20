@@ -1,5 +1,6 @@
 package com.mitchellbosecke.pebble.template;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import java.util.Locale;
 
 /**
