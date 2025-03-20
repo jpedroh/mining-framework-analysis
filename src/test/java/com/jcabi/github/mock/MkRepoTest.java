@@ -79,8 +79,7 @@ public final class MkRepoTest {
             Matchers.notNullValue()
         );
     }
-
-    /**    
+    /**
      * Repo can fetch its commits.
      *
      * @throws IOException if some problem inside
