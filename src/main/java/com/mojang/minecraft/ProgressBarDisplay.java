@@ -157,19 +157,68 @@ public final class ProgressBarDisplay {
         localURLConnection.setReadTimeout(40000);
         localURLConnection.setConnectTimeout(15000);
         localURLConnection.setDoInput(true);
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
         localURLConnection.addRequestProperty("User-Agent", Constants.USER_AGENT);
         localURLConnection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+||||||| /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+    
+        if (AddWomProperty) {
+            localURLConnection.addRequestProperty("X-Wom-Version", "WoMClient-2.0.8");
+            localURLConnection.addRequestProperty("X-Wom-Username", "Greg0001");
+            localURLConnection.addRequestProperty("User-Agent", new StringBuilder().append("WoM/")
+                    .append("WoMClient-2.0.8").toString());
+        } else {
+            localURLConnection
+                    .addRequestProperty("User-Agent",
+                            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0) Gecko/20100101 Firefox/6.0 FirePHP/0.5");
+        }
+
+        localURLConnection.addRequestProperty("Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+=======
+    
+        if (AddWomProperty) {
+            localURLConnection.addRequestProperty("X-Wom-Version", "WoMClient-2.0.8");
+            localURLConnection.addRequestProperty("X-Wom-Username", "Greg0001");
+            localURLConnection.addRequestProperty("User-Agent", new StringBuilder().append("WoM/")
+                    .append("WoMClient-2.0.8").toString());
+        } else {
+            localURLConnection.addRequestProperty("User-Agent", Constants.USER_AGENT);
+        }
+
+        localURLConnection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
         localURLConnection.addRequestProperty("Accept-Language", "en-us,en;q=0.5");
         localURLConnection.addRequestProperty("Accept-Encoding", "gzip, deflate, compress");
         localURLConnection.addRequestProperty("Connection", "keep-alive");
 
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
         if (body.length() > 0) {
             localURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             localURLConnection.addRequestProperty("Content-Length", Integer.toString(body.length()));
+||||||| /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+        if (s1.length() > 0) {
+            localURLConnection.addRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
+            localURLConnection.addRequestProperty("Content-Length", Integer.toString(s1.length()));
+=======
+        if (s1.length() > 0) {
+            localURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            localURLConnection.addRequestProperty("Content-Length", Integer.toString(s1.length()));
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
             localURLConnection.setDoOutput(true);
 
+<<<<<<< /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/left.java
             OutputStreamWriter localOutputStreamWriter = new OutputStreamWriter(localURLConnection.getOutputStream());
             localOutputStreamWriter.write(body);
+||||||| /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/base.java
+            OutputStreamWriter localOutputStreamWriter = new OutputStreamWriter(
+                    localURLConnection.getOutputStream());
+            localOutputStreamWriter.write(s1);
+=======
+            OutputStreamWriter localOutputStreamWriter = new OutputStreamWriter(localURLConnection.getOutputStream());
+            localOutputStreamWriter.write(s1);
+>>>>>>> /usr/src/app/output/andrewphorn/classicube-client/13382c090c30a301818952d910b8cddbff481f15/src/main/java/com/mojang/minecraft/ProgressBarDisplay.java/right.java
             localOutputStreamWriter.flush();
             localOutputStreamWriter.close();
         }
