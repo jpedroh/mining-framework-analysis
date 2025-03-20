@@ -1,9 +1,7 @@
 package com.fincatto.documentofiscal.utils;
-
 import com.fincatto.documentofiscal.DFConfig;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
-
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -19,51 +17,46 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 
 public class DFSocketFactory implements ProtocolSocketFactory {
-    
-    private final DFConfig config;
-    private final SSLContext sslContext;
-    
-    public DFSocketFactory(final DFConfig config) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        this.config = config;
-        this.sslContext = this.createSSLContext(config);
-    }
+  private final DFConfig config;
 
-    @Override
-    public Socket createSocket(final String host, final int port, final InetAddress localAddress, final int localPort, final HttpConnectionParams params) throws IOException {
-        final Socket socket = this.sslContext.getSocketFactory().createSocket();
-        ((SSLSocket) socket).setEnabledProtocols(this.config.getSSLProtocolos());
-        socket.bind(new InetSocketAddress(localAddress, localPort));
-        
-        socket.connect(new InetSocketAddress(host, port), params.getConnectionTimeout());
-        return socket;
-    }
+  private final SSLContext sslContext;
 
-    @Override
-    public Socket createSocket(final String host, final int port, final InetAddress clientHost, final int clientPort) throws IOException {
-        return this.sslContext.getSocketFactory().createSocket(host, port, clientHost, clientPort);
-    }
+  public DFSocketFactory(final DFConfig config) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    this.config = config;
+    this.sslContext = this.createSSLContext(config);
+  }
 
-    @Override
-    public Socket createSocket(final String host, final int port) throws IOException {
-        return this.sslContext.getSocketFactory().createSocket(host, port);
-    }
+  @Override public Socket createSocket(final String host, final int port, final InetAddress localAddress, final int localPort, final HttpConnectionParams params) throws IOException {
+    final Socket socket = this.sslContext.getSocketFactory().createSocket();
+    ((SSLSocket) socket).setEnabledProtocols(this.config.getSSLProtocolos());
+    socket.bind(new InetSocketAddress(localAddress, localPort));
+    socket.connect(new InetSocketAddress(host, port), params.getConnectionTimeout());
+    return socket;
+  }
 
-    private SSLContext createSSLContext(final DFConfig config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
-        final KeyManager[] keyManagers = this.createKeyManagers(config);
-        final TrustManager[] trustManagers = this.createTrustManagers(config);
-        final SSLContext sslContext = SSLContext.getInstance(config.getSSLProtocolos()[0]);
-        sslContext.init(keyManagers, trustManagers, null);
-        return sslContext;
-    }
+  @Override public Socket createSocket(final String host, final int port, final InetAddress clientHost, final int clientPort) throws IOException {
+    return this.sslContext.getSocketFactory().createSocket(host, port, clientHost, clientPort);
+  }
 
-    private KeyManager[] createKeyManagers(final DFConfig config) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException{
-        return new KeyManager[]{new com.fincatto.documentofiscal.utils.DFKeyManager(config)};
-    }
+  @Override public Socket createSocket(final String host, final int port) throws IOException {
+    return this.sslContext.getSocketFactory().createSocket(host, port);
+  }
 
-    private TrustManager[] createTrustManagers(final DFConfig config) throws KeyStoreException, NoSuchAlgorithmException {
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(config.getCadeiaCertificadosKeyStore());
-        return trustManagerFactory.getTrustManagers();
-    }
+  private SSLContext createSSLContext(final DFConfig config) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    final KeyManager[] keyManagers = this.createKeyManagers(config);
+    final TrustManager[] trustManagers = this.createTrustManagers(config);
+    final SSLContext sslContext = SSLContext.getInstance(config.getSSLProtocolos()[0]);
+    sslContext.init(keyManagers, trustManagers, null);
+    return sslContext;
+  }
 
+  private KeyManager[] createKeyManagers(final DFConfig config) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+    return new KeyManager[] { new com.fincatto.documentofiscal.utils.DFKeyManager(config) };
+  }
+
+  private TrustManager[] createTrustManagers(final DFConfig config) throws KeyStoreException, NoSuchAlgorithmException {
+    final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    trustManagerFactory.init(config.getCadeiaCertificadosKeyStore());
+    return trustManagerFactory.getTrustManagers();
+  }
 }
