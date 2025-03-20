@@ -71,23 +71,51 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void evaluate(Writer writer) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(null);
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = initContext(null);
+        evaluate(writer, context);
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = initContext(null);
+        evaluate(writer, context);
+=======
+        EvaluationContext context = this.initContext(null);
         this.evaluate(writer, context);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
     }
 
     public void evaluate(Writer writer, Locale locale) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(locale);
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = initContext(locale);
+        evaluate(writer, context);
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = initContext(locale);
+        evaluate(writer, context);
+=======
+        EvaluationContext context = this.initContext(locale);
         this.evaluate(writer, context);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
     }
 
     public void evaluate(Writer writer, Map<String, Object> map) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(null);
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = initContext(null);
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = initContext(null);
+=======
+        EvaluationContext context = this.initContext(null);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
         context.getScopeChain().pushScope(map);
         this.evaluate(writer, context);
     }
 
     public void evaluate(Writer writer, Map<String, Object> map, Locale locale) throws PebbleException, IOException {
-        EvaluationContextImpl context = this.initContext(locale);
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = initContext(locale);
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = initContext(locale);
+=======
+        EvaluationContext context = this.initContext(locale);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
         context.getScopeChain().pushScope(map);
         this.evaluate(writer, context);
     }
@@ -127,8 +155,16 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      * @param locale The desired locale
      * @return The evaluation context
      */
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
     private EvaluationContextImpl initContext(Locale locale) {
+        locale = locale == null ? engine.getDefaultLocale() : locale;
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+    private EvaluationContext initContext(Locale locale) {
+        locale = locale == null ? engine.getDefaultLocale() : locale;
+=======
+    private EvaluationContext initContext(Locale locale) {
         locale = locale == null ? this.engine.getDefaultLocale() : locale;
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
 
         // globals
         Map<String, Object> globals = new HashMap<>();
@@ -139,8 +175,16 @@ public class PebbleTemplateImpl implements PebbleTemplate {
         // global vars provided from extensions
         scopeChain.pushScope(this.engine.getExtensionRegistry().getGlobalVariables());
 
-        EvaluationContextImpl context = new EvaluationContextImpl(this, this.engine.isStrictVariables(), locale,
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        EvaluationContextImpl context = new EvaluationContextImpl(this, engine.isStrictVariables(), locale,
+                engine.getExtensionRegistry(), engine.getTagCache(), engine.getExecutorService(),
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        EvaluationContext context = new EvaluationContext(this, engine.isStrictVariables(), locale,
+                engine.getExtensionRegistry(), engine.getTagCache(), engine.getExecutorService(),
+=======
+        EvaluationContext context = new EvaluationContext(this, this.engine.isStrictVariables(), locale,
                 this.engine.getExtensionRegistry(), this.engine.getTagCache(), this.engine.getExecutorService(),
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
                 new ArrayList<PebbleTemplateImpl>(), scopeChain, null);
         return context;
     }
@@ -153,8 +197,16 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      * @throws PebbleException Thrown if an error occurs while rendering the imported
      *                         template
      */
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
     public void importTemplate(EvaluationContextImpl context, String name) throws PebbleException {
+        context.getImportedTemplates().add((PebbleTemplateImpl) engine.getTemplate(this.resolveRelativePath(name)));
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+    public void importTemplate(EvaluationContext context, String name) throws PebbleException {
+        context.getImportedTemplates().add((PebbleTemplateImpl) engine.getTemplate(this.resolveRelativePath(name)));
+=======
+    public void importTemplate(EvaluationContext context, String name) throws PebbleException {
         context.getImportedTemplates().add((PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name)));
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
     }
 
     /**
@@ -170,8 +222,16 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      */
     public void includeTemplate(Writer writer, EvaluationContextImpl context, String name, Map<?, ?> additionalVariables)
             throws PebbleException, IOException {
-        PebbleTemplateImpl template = (PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name));
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+        PebbleTemplateImpl template = (PebbleTemplateImpl) engine.getTemplate(this.resolveRelativePath(name));
         EvaluationContextImpl newContext = context.shallowCopyWithoutInheritanceChain(template);
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        PebbleTemplateImpl template = (PebbleTemplateImpl) engine.getTemplate(this.resolveRelativePath(name));
+        EvaluationContext newContext = context.shallowCopyWithoutInheritanceChain(template);
+=======
+        PebbleTemplateImpl template = (PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name));
+        EvaluationContext newContext = context.shallowCopyWithoutInheritanceChain(template);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
         ScopeChain scopeChain = newContext.getScopeChain();
         scopeChain.pushScope();
         for (Entry<?, ?> entry : additionalVariables.entrySet()) {
@@ -289,7 +349,13 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      * @return The results of the macro invocation
      * @throws PebbleException An exception that may have occurred
      */
-    public SafeString macro(EvaluationContextImpl context, String macroName, ArgumentsNode args, boolean ignoreOverriden, int lineNumber)
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
+    public SafeString macro(EvaluationContextImpl context, String macroName, ArgumentsNode args, boolean ignoreOverriden)
+||||||| /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+    public SafeString macro(EvaluationContext context, String macroName, ArgumentsNode args, boolean ignoreOverriden)
+=======
+    public SafeString macro(EvaluationContext context, String macroName, ArgumentsNode args, boolean ignoreOverriden, int lineNumber)
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5e0ae828b608474920471010ea6f02a4ba92ef34/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
             throws PebbleException {
         SafeString result = null;
         boolean found = false;
