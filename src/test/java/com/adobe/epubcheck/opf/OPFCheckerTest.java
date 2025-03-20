@@ -1160,7 +1160,7 @@ public class OPFCheckerTest
     Collections.addAll(expectedErrors, MessageId.RSC_005);
     testValidateDocument("invalid/itemref-duplicate.opf", EPUBVersion.VERSION_3);
   }
-
+  
   @Test
   public void testVocabA11y() {
     // tests that the a11y vocb and known properties are allowed
