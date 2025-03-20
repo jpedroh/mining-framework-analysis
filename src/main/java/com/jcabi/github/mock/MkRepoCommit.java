@@ -45,8 +45,6 @@ import lombok.ToString;
  * @version $Id$
  * @todo #166 Should implement the compareTo method in MkRepoCommit.
  *  Once implemented please remove this puzzle.
- * @todo #166 Should create test class for MkRepoCommit.
- *  Once created please remove this puzzle.
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -74,7 +72,8 @@ final class MkRepoCommit implements RepoCommit {
      * @param repo The repository
      * @param sha Commit SHA
      */
-    MkRepoCommit(final MkStorage stg, final Repo repo, final String sha) {
+    MkRepoCommit(final MkStorage stg, @NotNull(message = "repo is never NULL") final Repo repo,
+        @NotNull(message = "sha is never NULL") final String sha) {
         this.storage = stg;
         this.repository = repo;
         this.hash = sha;
