@@ -281,6 +281,7 @@ public class RDBMSStoreManager extends AbstractStoreManager implements BackedSCO
     {
         super("rdbms", clr, ctx, props);
 
+<<<<<<< /usr/src/app/output/datanucleus/datanucleus-rdbms/b4f243ee7357b22c82759725b42e2532be164f33/src/main/java/org/datanucleus/store/rdbms/RDBMSStoreManager.java/left.java
         initRDBMSStoreManager(clr, ctx, props);
     }
 
@@ -289,6 +290,15 @@ public class RDBMSStoreManager extends AbstractStoreManager implements BackedSCO
         persistenceHandler = createPersistenceHandler();
         flushProcess = createFlushProcess();
         schemaHandler = createSchemaHandler();
+||||||| /usr/src/app/output/datanucleus/datanucleus-rdbms/b4f243ee7357b22c82759725b42e2532be164f33/src/main/java/org/datanucleus/store/rdbms/RDBMSStoreManager.java/base.java
+        persistenceHandler = new RDBMSPersistenceHandler(this);
+        flushProcess = new FlushOrdered(); // TODO Change this to FlushReferential when we have it complete
+        schemaHandler = new RDBMSSchemaHandler(this);
+=======
+        persistenceHandler = createPersistenceHandler();
+        flushProcess = createFlushProcess();
+        schemaHandler = createSchemaHandler();
+>>>>>>> /usr/src/app/output/datanucleus/datanucleus-rdbms/b4f243ee7357b22c82759725b42e2532be164f33/src/main/java/org/datanucleus/store/rdbms/RDBMSStoreManager.java/right.java
 
         // Retrieve the Database Adapter for this datastore
         try
