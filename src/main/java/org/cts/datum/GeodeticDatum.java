@@ -206,6 +206,7 @@ public class GeodeticDatum extends AbstractDatum {
             GeographicExtent.WORLD,
             "", "1983");
 
+
     // NAD83(HARN) is a precise geodetic network for USA.
     // Grid-based transformations from NAD83 to NAD83(HARN) use different grids for
     // different states (5-6 cm accuracy)
@@ -217,8 +218,6 @@ public class GeodeticDatum extends AbstractDatum {
             SevenParameterTransformation.createBursaWolfTransformation(-0.991, 1.9072, 0.5129, 0.125033, 0.046785, 0.056529, -0.00062, 1.0),
             GeographicExtent.WORLD,
             "", null);
-
-
     // NAD83(CORS96) is based on the Continuously Operating Reference Station (CORS) network.
     // Discrepancies with NAD83(HARN) are about 6cm
     // The hereafter toWGS84 transformation is for epoch 1997.0 and for WGS84 (G1150)
@@ -230,8 +229,6 @@ public class GeodeticDatum extends AbstractDatum {
             SevenParameterTransformation.createBursaWolfTransformation(-0.9956, 1.9013, 0.5215, 0.025915, 0.009426, 0.0011599, -0.00062, 1.0),
             GeographicExtent.WORLD,
             "", "1997");
-
-
     // NAD83(2011) can be assimilated to WGS84 (G1674) for topographic topics
     // For precise geodetic purposes, relation between NAD83(2011) and ITRF 2008 (G1674) is defined
     // by a 14 parameters time dependant transformation and has 0.1 m accuracy.
@@ -243,23 +240,18 @@ public class GeodeticDatum extends AbstractDatum {
             SevenParameterTransformation.createBursaWolfTransformation(-0.99343, 1.90331, 0.52655, 0.02591467, 0.00942645, 0.001159935, -0.00171504, 0.1),
             GeographicExtent.WORLD,
             "", "2012");
-
-    
     public final static GeodeticDatum GGRS87 = new GeodeticDatum(
             new Identifier("EPSG", "4121", "Greek Geodetic Reference System 1987", "GGRS87"),
             PrimeMeridian.GREENWICH, Ellipsoid.GRS80,null, 
             new GeographicExtent("Greece - onshore", 34.88, 41.75, 19.57,28.3), "","1987" );
-    
     public final static GeodeticDatum HERMANNSKOGEL = new GeodeticDatum(
             new Identifier("EPSG", "4312", "Militar-Geographische Institut", "MGI"),
             PrimeMeridian.GREENWICH, Ellipsoid.BESSEL1841,null, 
             new GeographicExtent("Austria", 46.4, 49.02, 9.53, 17.17), "","" );
-    
     public final static GeodeticDatum POSTDAM = new GeodeticDatum(
             new Identifier("EPSG", "4314", "Deutsches Hauptdreiecksnetz", "DHDN"),
             PrimeMeridian.GREENWICH, Ellipsoid.BESSEL1841,null, 
             new GeographicExtent("Germany - states of former West Germany onshore", 47.27, 55.09, 5.87 , 13.84 ), "","" );
-    
     public final static GeodeticDatum CARTHAGE = new GeodeticDatum(
             new Identifier("EPSG", "4223", "Carthage", "Carthage"),
             PrimeMeridian.GREENWICH, Ellipsoid.CLARKE1880IGN, null,
