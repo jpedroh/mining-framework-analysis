@@ -114,8 +114,9 @@ public class JsonEncoderDecoderClassCreator extends BaseSourceCreator {
                             if (getterName != null) {
                                 fieldExpr = "value." + getterName + "()";
                             }
+                            
+                            Style style = jsonAnnotation!=null ? jsonAnnotation.style() : classStyle;
 
-                            Style style = jsonAnnotation!=null ? jsonAnnotation.style() : classStyle;                            
                             String expression = locator.encodeExpression(field.getType(), fieldExpr, style);
 
                             p("{").i(1);
