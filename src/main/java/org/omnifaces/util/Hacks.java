@@ -22,9 +22,9 @@ import static org.omnifaces.util.FacesLocal.setContextAttribute;
 import static org.omnifaces.util.Reflection.findMethod;
 import static org.omnifaces.util.Utils.unmodifiableSet;
 
-import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

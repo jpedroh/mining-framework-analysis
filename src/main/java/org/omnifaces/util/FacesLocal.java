@@ -15,7 +15,6 @@ package org.omnifaces.util;
 import static java.util.Arrays.asList;
 import static javax.servlet.http.HttpServletResponse.SC_MOVED_PERMANENTLY;
 import static org.omnifaces.util.Servlets.prepareRedirectURL;
-import static org.omnifaces.util.Utils.close;
 import static org.omnifaces.util.Utils.encodeURL;
 import static org.omnifaces.util.Utils.isAnyEmpty;
 
@@ -1448,14 +1447,8 @@ public final class FacesLocal {
 			externalContext.setResponseHeader("Pragma", "public");
 		}
 
-		OutputStream output = null;
-
-		try {
-			output = externalContext.getResponseOutputStream();
+		try (OutputStream output = externalContext.getResponseOutputStream()) {
 			outputCallback.writeTo(output);
-		}
-		finally {
-			close(output);
 		}
 
 		context.responseComplete();

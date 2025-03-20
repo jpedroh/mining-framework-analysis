@@ -59,7 +59,6 @@ public final class SelectItemsCollector {
 	 * @return list of select items obtained from parent's children.
 	 */
 	public static List<SelectItem> collectFromParent(FacesContext context, UIComponent parent) {
-
 		List<SelectItem> selectItems = new ArrayList<SelectItem>();
 
 		// Iterate over all children of the parent component. Non-UISelectItem/s children are automatically skipped.

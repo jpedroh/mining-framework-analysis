@@ -245,7 +245,7 @@ public class FullAjaxExceptionHandler extends ExceptionHandlerWrapper {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Throwable>[] getExceptionTypesToUnwrap(ServletContext context) {
-		Set<Class<? extends Throwable>> typesToUnwrap = new HashSet<Class<? extends Throwable>>(STANDARD_TYPES_TO_UNWRAP);
+		Set<Class<? extends Throwable>> typesToUnwrap = new HashSet<>(STANDARD_TYPES_TO_UNWRAP);
 		String typesToUnwrapParam = context.getInitParameter(PARAM_NAME_EXCEPTION_TYPES_TO_UNWRAP);
 
 		if (!isEmpty(typesToUnwrapParam)) {

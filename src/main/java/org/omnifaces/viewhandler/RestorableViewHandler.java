@@ -17,6 +17,7 @@ import static org.omnifaces.util.Components.buildView;
 import static org.omnifaces.util.FacesLocal.getApplicationAttribute;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.faces.FacesException;
 import javax.faces.application.ViewExpiredException;
@@ -24,8 +25,11 @@ import javax.faces.application.ViewHandler;
 import javax.faces.application.ViewHandlerWrapper;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PreDestroyViewMapEvent;
+import javax.faces.render.ResponseStateManager;
 
 import org.omnifaces.taghandler.EnableRestorableView;
+import org.omnifaces.util.Hacks;
 
 /**
  * This view handler implementation will recreate the entire view state whenever the view has apparently been expired,
@@ -56,12 +60,52 @@ public class RestorableViewHandler extends ViewHandlerWrapper { // TODO: rename 
 	// Actions --------------------------------------------------------------------------------------------------------
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/left.java
 	 * If the <code>&lt;o:enableRestoreView&gt;</code> is used once in the application, and the restored view is null
 	 * and the current request is a postback, then recreate and rebuild the view from scratch. If it indeed contains the
 	 * <code>&lt;o:enableRestoreView&gt;</code>, then return the newly created view, else return <code>null</code>.
+||||||| /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/base.java
+	 * If the current request is an unload request from {@link ViewScoped}, then create a dummy view, restore only the
+	 * view scope state and destroy the view, else restore the view as usual. If the <code>&lt;o:enableRestoreView&gt;</code>
+	 * is used once in the application, and the restored view is null and the current request is a postback, then
+	 * recreate and rebuild the view from scratch. If it indeed contains the <code>&lt;o:enableRestoreView&gt;</code>,
+	 * then return the newly created view, else return <code>null</code>.
+=======
+	 * If the current request is an unload request from {@link ViewScoped}, then create a dummy view, restore only the
+	 * view root state and then immediately explicitly destroy the view, else restore the view as usual. If the
+	 * <code>&lt;o:enableRestoreView&gt;</code> is used once in the application, and the restored view is null and the
+	 * current request is a postback, then recreate and rebuild the view from scratch. If it indeed contains the
+	 * <code>&lt;o:enableRestoreView&gt;</code>, then return the newly created view, else return <code>null</code>.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/right.java
 	 */
 	@Override
 	public UIViewRoot restoreView(FacesContext context, String viewId) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/left.java
+||||||| /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/base.java
+		if (isUnloadRequest(context)) {
+			UIViewRoot createdView = createView(context, viewId);
+			createdView.restoreViewScopeState(context, getRenderKit(context).getResponseStateManager().getState(context, viewId));
+			BeanManager.INSTANCE.getReference(ViewScopeManager.class).preDestroyView();
+			responseComplete();
+			return createdView;
+		}
+
+=======
+		if (isUnloadRequest(context)) {
+			UIViewRoot createdView = createView(context, viewId);
+			ResponseStateManager manager = getRenderKit(context).getResponseStateManager();
+
+			if (restoreViewRootState(context, manager, createdView)) {
+				context.setProcessingEvents(true);
+				context.getApplication().publishEvent(context, PreDestroyViewMapEvent.class, UIViewRoot.class, createdView);
+				Hacks.removeViewState(context, manager, viewId);
+			}
+
+			responseComplete();
+			return createdView;
+		}
+
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/33b5cb552f5a2362066606d943400a7ea8ea48ca/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/right.java
 		UIViewRoot restoredView = super.restoreView(context, viewId);
 
 		if (!(isRestorableViewEnabled(context) && restoredView == null && context.isPostback())) {
@@ -75,6 +119,31 @@ public class RestorableViewHandler extends ViewHandlerWrapper { // TODO: rename 
 		catch (IOException e) {
 			throw new FacesException(e);
 		}
+	}
+
+	/**
+	 * Restore only the view root state. This ensures that the view scope map and all view root component system event
+	 * listeners are also restored. Calling <code>super.restoreView()</code> would implicitly also build the entire view
+	 * and restore state of all other components in the tree. This is unnecessary during an unload request.
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean restoreViewRootState(FacesContext context, ResponseStateManager manager, UIViewRoot view) {
+		Object[] state = (Object[]) manager.getState(context, view.getViewId());
+
+		if (state == null || state.length < 2 || !(state[1] instanceof Map)) {
+			return false;
+		}
+
+		Map<String, Object> states = (Map<String, Object>) state[1]; // Fortunately Mojarra and MyFaces have same structure.
+
+		if (view.getId() == null) {
+			view.setId(view.createUniqueId(context, null));
+		}
+
+		Object viewRootState = states.get(view.getClientId(context));
+		view.restoreState(context, viewRootState);
+		context.setViewRoot(view);
+		return true;
 	}
 
 	private boolean isRestorableViewEnabled(FacesContext context) {
