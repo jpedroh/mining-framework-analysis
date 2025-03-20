@@ -1,5 +1,4 @@
 package com.github.dakusui.jcunitx.examples.bankaccount2;
-
 import com.github.dakusui.jcunitx.metamodel.parameters.CallSequenceRegexParameter;
 import com.github.dakusui.jcunitx.metamodel.parameters.SimpleParameter;
 import com.github.dakusui.jcunitx.runners.helpers.ParameterUtils;
@@ -10,30 +9,84 @@ import com.github.dakusui.jcunitx.runners.junit4.annotations.Given;
 import com.github.dakusui.jcunitx.runners.junit4.annotations.ParameterSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import java.util.List;
-
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(JCUnit8.class)
-public class BankAccountExample2 {
+@RunWith(value = JCUnit8.class) public class BankAccountExample2 {
+  private BankAccount2 myAccount;
 
   private final BankAccount2 anotherAccount = BankAccount2.open();
-  private       BankAccount2 myAccount;
 
-  private static int calculateBalance(List<String> scenario,
-      int amountOfDeposit,
-      int amountOfWithdraw,
-      int amountOfTransfer) {
+  @ParameterSource public CallSequenceRegexParameter.Descriptor scenario() {
+    return CallSequenceRegexParameter.Descriptor.of("open deposit(deposit|withdraw|transfer){0,2}getBalance").parameters("open", 
+<<<<<<< /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/left.java
+    SimpleParameter.Descriptor.of(asList("Steve Smith", "Scot Tiger"))
+=======
+    ParameterUtils.simple(asList("Steve Smith", "Scot Tiger")).create("")
+>>>>>>> /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/right.java
+    ).parameters("deposit", 
+<<<<<<< /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/left.java
+    SimpleParameter.Descriptor.of(asList(0, 1, 1_000_000))
+=======
+    ParameterUtils.simple(asList(0, 1, 1_000_000)).create("")
+>>>>>>> /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/right.java
+    );
+  }
+
+  @ParameterSource public SimpleParameter.Descriptor<Integer> depositAmount() {
+    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
+  }
+
+  @ParameterSource public SimpleParameter.Descriptor<Integer> withdrawAmount() {
+    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
+  }
+
+  @ParameterSource public SimpleParameter.Descriptor<Integer> transferAmount() {
+    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
+  }
+
+  @Condition(constraint = true) public boolean depositUsed(@From(value = "scenario") List<String> scenario, @From(value = "depositAmount") int amount) {
+    if (!scenario.contains("deposit")) {
+      return amount == -1;
+    } else {
+      return amount != -1;
+    }
+  }
+
+  @Condition(constraint = true) public boolean withdrawUsed(@From(value = "scenario") List<String> scenario, @From(value = "withdrawAmount") int amount) {
+    if (!scenario.contains("withdraw")) {
+      return amount == -1;
+    } else {
+      return amount != -1;
+    }
+  }
+
+  @Condition(constraint = true) public boolean transferUsed(@From(value = "scenario") List<String> scenario, @From(value = "transferAmount") int amount) {
+    if (!scenario.contains("transfer")) {
+      return amount == -1;
+    } else {
+      return amount != -1;
+    }
+  }
+
+  @Condition(constraint = true) public boolean overdraftNotHappens(@From(value = "scenario") List<String> scenario, @From(value = "depositAmount") int amountOfDeposit, @From(value = "withdrawAmount") int amountOfWithdraw, @From(value = "transferAmount") int amountOfTransfer) {
+    return calculateBalance(scenario, amountOfDeposit, amountOfWithdraw, amountOfTransfer) >= 0;
+  }
+
+  private static int calculateBalance(List<String> scenario, int amountOfDeposit, int amountOfWithdraw, int amountOfTransfer) {
     int balance = 0;
     for (String op : scenario) {
       if ("deposit".equals(op)) {
         balance += amountOfDeposit;
-      } else if ("withdraw".equals(op)) {
-        balance -= amountOfWithdraw;
-      } else if ("transfer".equals(op)) {
-        balance -= amountOfTransfer;
+      } else {
+        if ("withdraw".equals(op)) {
+          balance -= amountOfWithdraw;
+        } else {
+          if ("transfer".equals(op)) {
+            balance -= amountOfTransfer;
+          }
+        }
       }
       if (balance < 0) {
         return balance;
@@ -42,86 +95,7 @@ public class BankAccountExample2 {
     return balance;
   }
 
-  @ParameterSource
-  public CallSequenceRegexParameter.Descriptor scenario() {
-    return CallSequenceRegexParameter.Descriptor.of("open deposit(deposit|withdraw|transfer){0,2}getBalance")
-        .parameters("open", ParameterUtils.simple(asList("Steve Smith", "Scot Tiger")).create(""))
-        .parameters("deposit", ParameterUtils.simple(asList(0, 1, 1_000_000)).create(""));
-
-  }
-
-  @ParameterSource
-  public SimpleParameter.Descriptor<Integer> depositAmount() {
-    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
-  }
-
-  @ParameterSource
-  public SimpleParameter.Descriptor<Integer> withdrawAmount() {
-    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
-  }
-
-  @ParameterSource
-  public SimpleParameter.Descriptor<Integer> transferAmount() {
-    return SimpleParameter.Descriptor.of(asList(100, 200, 300, 400, 500, 600, -1));
-  }
-
-  @Condition(constraint = true)
-  public boolean depositUsed(
-      @From("scenario") List<String> scenario,
-      @From("depositAmount") int amount
-  ) {
-    //noinspection SimplifiableIfStatement
-    if (!scenario.contains("deposit")) {
-      return amount == -1;
-    } else {
-      return amount != -1;
-    }
-  }
-
-  @Condition(constraint = true)
-  public boolean withdrawUsed(
-      @From("scenario") List<String> scenario,
-      @From("withdrawAmount") int amount
-  ) {
-    //noinspection SimplifiableIfStatement
-    if (!scenario.contains("withdraw")) {
-      return amount == -1;
-    } else {
-      return amount != -1;
-    }
-  }
-
-  @Condition(constraint = true)
-  public boolean transferUsed(
-      @From("scenario") List<String> scenario,
-      @From("transferAmount") int amount
-  ) {
-    //noinspection SimplifiableIfStatement
-    if (!scenario.contains("transfer")) {
-      return amount == -1;
-    } else {
-      return amount != -1;
-    }
-  }
-
-  @Condition(constraint = true)
-  public boolean overdraftNotHappens(
-      @From("scenario") List<String> scenario,
-      @From("depositAmount") int amountOfDeposit,
-      @From("withdrawAmount") int amountOfWithdraw,
-      @From("transferAmount") int amountOfTransfer
-  ) {
-    return calculateBalance(scenario, amountOfDeposit, amountOfWithdraw, amountOfTransfer) >= 0;
-  }
-
-  @Test
-  @Given("overdraftNotHappens")
-  public void whenPerformScenario$thenBalanceIsCorrect(
-      @From("scenario") List<String> scenario,
-      @From("depositAmount") int amountOfDeposit,
-      @From("withdrawAmount") int amountOfWithdraw,
-      @From("transferAmount") int amountOfTransfer
-  ) {
+  @Test @Given(value = "overdraftNotHappens") public void whenPerformScenario$thenBalanceIsCorrect(@From(value = "scenario") List<String> scenario, @From(value = "depositAmount") int amountOfDeposit, @From(value = "withdrawAmount") int amountOfWithdraw, @From(value = "transferAmount") int amountOfTransfer) {
     int balance = -1;
     for (String operation : scenario) {
       balance = perform(operation, amountOfDeposit, amountOfWithdraw, amountOfTransfer);
@@ -129,41 +103,29 @@ public class BankAccountExample2 {
     assertEquals(calculateBalance(scenario, amountOfDeposit, amountOfWithdraw, amountOfTransfer), balance);
   }
 
-  @Test
-  @Given("overdraftNotHappens")
-  public void printScenario(
-      @From("scenario") List<String> scenario,
-      @From("depositAmount") int amountOfDeposit,
-      @From("withdrawAmount") int amountOfWithdraw,
-      @From("transferAmount") int amountOfTransfer
-  ) {
+  @Test @Given(value = "overdraftNotHappens") public void printScenario(@From(value = "scenario") List<String> scenario, @From(value = "depositAmount") int amountOfDeposit, @From(value = "withdrawAmount") int amountOfWithdraw, @From(value = "transferAmount") int amountOfTransfer) {
     System.out.println(scenario + ":" + amountOfDeposit + ":" + amountOfWithdraw + ":" + amountOfTransfer);
   }
 
-  private int perform(
-      String operation,
-      int amountOfDeposit,
-      int amountOfWithdraw,
-      int amountOfTransfer
-  ) {
+  private int perform(String operation, int amountOfDeposit, int amountOfWithdraw, int amountOfTransfer) {
     int ret = -1;
     switch (operation) {
-    case "open":
+      case "open":
       myAccount = BankAccount2.open();
       break;
-    case "deposit":
+      case "deposit":
       myAccount.deposit(amountOfDeposit);
       break;
-    case "withdraw":
+      case "withdraw":
       myAccount.withdraw(amountOfWithdraw);
       break;
-    case "transfer":
+      case "transfer":
       myAccount.transferTo(anotherAccount, amountOfTransfer);
       break;
-    case "getBalance":
+      case "getBalance":
       ret = myAccount.getBalance();
       break;
-    default:
+      default:
       throw new AssertionError();
     }
     return ret;
