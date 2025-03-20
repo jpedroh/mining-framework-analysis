@@ -1,94 +1,99 @@
 package org.crazycake.shiro;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
-public class RedisManager extends BaseRedisManager implements IRedisManager{
+public class RedisManager extends BaseRedisManager implements IRedisManager {
+  private static final 
+<<<<<<< /usr/src/app/output/alexxiyang/shiro-redis/0f0ecea024252dcaad14f1891f49bf96fd8e0e0b/src/main/java/org/crazycake/shiro/RedisManager.java/left.java
+  String
+=======
+  JedisPool
+>>>>>>> /usr/src/app/output/alexxiyang/shiro-redis/0f0ecea024252dcaad14f1891f49bf96fd8e0e0b/src/main/java/org/crazycake/shiro/RedisManager.java/right.java
+   
+<<<<<<< /usr/src/app/output/alexxiyang/shiro-redis/0f0ecea024252dcaad14f1891f49bf96fd8e0e0b/src/main/java/org/crazycake/shiro/RedisManager.java/left.java
+  DEFAULT_HOST = "127.0.0.1:6379"
+=======
+  jedisPool
+>>>>>>> /usr/src/app/output/alexxiyang/shiro-redis/0f0ecea024252dcaad14f1891f49bf96fd8e0e0b/src/main/java/org/crazycake/shiro/RedisManager.java/right.java
+  ;
 
-	private static final String DEFAULT_HOST = "127.0.0.1:6379";
-	private String host = DEFAULT_HOST;
+  private String host = DEFAULT_HOST;
 
-	@Deprecated
-	private int port = Protocol.DEFAULT_PORT ;
-	
-	// timeout for jedis try to connect to redis server, not expire time! In milliseconds
-	private int timeout = Protocol.DEFAULT_TIMEOUT;
-	
-	private String password;
+  @Deprecated private int port = Protocol.DEFAULT_PORT;
 
-	private int database = Protocol.DEFAULT_DATABASE;
+  private int timeout = Protocol.DEFAULT_TIMEOUT;
 
-	private JedisPool jedisPool;
+  private String password;
 
-	private void init() {
-		synchronized (this) {
-			if (jedisPool == null) {
-				if(host.contains(":")){
-					// support host:port config style
-					String[] hostAndPort = host.split(":");
-					jedisPool = new JedisPool(jedisPoolConfig, hostAndPort[0], Integer.parseInt(hostAndPort[1]), timeout, password, database);
-				}else{
-					jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password, database);
-				}
-			}
-		}
-	}
+  private int database = Protocol.DEFAULT_DATABASE;
 
-	@Override
-	protected Jedis getJedis() {
-		if (jedisPool == null) {
-			init();
-		}
-		return jedisPool.getResource();
-	}
+  private void init() {
+    synchronized (this) {
+      if (jedisPool == null) {
+        if (host.contains(":")) {
+          String[] hostAndPort = host.split(":");
+          jedisPool = new JedisPool(jedisPoolConfig, hostAndPort[0], Integer.parseInt(hostAndPort[1]), timeout, password, database);
+        } else {
+          jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password, database);
+        }
+      }
+    }
+  }
 
-	public String getHost() {
-		return host;
-	}
+  @Override protected Jedis getJedis() {
+    if (jedisPool == null) {
+      init();
+    }
+    return jedisPool.getResource();
+  }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+  public String getHost() {
+    return host;
+  }
 
-	public int getPort() {
-		return port;
-	}
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+  public int getPort() {
+    return port;
+  }
 
-	public int getTimeout() {
-		return timeout;
-	}
+  public void setPort(int port) {
+    this.port = port;
+  }
 
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
+  public int getTimeout() {
+    return timeout;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public int getDatabase() {
-		return database;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	public void setDatabase(int database) {
-		this.database = database;
-	}
+  public int getDatabase() {
+    return database;
+  }
 
-	public JedisPool getJedisPool() {
-		return jedisPool;
-	}
+  public void setDatabase(int database) {
+    this.database = database;
+  }
 
-	public void setJedisPool(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
-	}
+  public JedisPool getJedisPool() {
+    return jedisPool;
+  }
+
+  public void setJedisPool(JedisPool jedisPool) {
+    this.jedisPool = jedisPool;
+  }
 }
