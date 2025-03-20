@@ -1,5 +1,4 @@
 package com.mitchellbosecke.pebble.node.expression;
-
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 

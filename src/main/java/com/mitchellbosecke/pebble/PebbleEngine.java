@@ -132,7 +132,7 @@ public class PebbleEngine {
                     }
                 });
             }
-        } catch (CompletionException e) {
+        } catch (CompletionException | Exception e) {
             /*
              * The completion exception is probably caused by a PebbleException
              * being thrown in the above function. We will unravel it and throw
@@ -150,9 +150,21 @@ public class PebbleEngine {
         return result;
     }
 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/left.java
     private PebbleTemplate getPebbleTemplate(final PebbleEngine self, final String templateName, final Object cacheKey) throws LoaderException, ParserException {
       LexerImpl lexer = new LexerImpl(this.syntax, this.extensionRegistry.getUnaryOperators().values(),
               this.extensionRegistry.getBinaryOperators().values());
+||||||| /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/base.java
+    public PebbleTemplateImpl call() throws Exception {
+
+        LexerImpl lexer = new LexerImpl(syntax, extensionRegistry.getUnaryOperators().values(),
+                extensionRegistry.getBinaryOperators().values());
+=======
+    public PebbleTemplateImpl call() {
+
+        LexerImpl lexer = new LexerImpl(syntax, extensionRegistry.getUnaryOperators().values(),
+                extensionRegistry.getBinaryOperators().values());
+>>>>>>> /usr/src/app/output/mbosecke/pebble/16c84db836af1ff7b2ec8a7849e951a2b3f5be36/src/main/java/com/mitchellbosecke/pebble/PebbleEngine.java/right.java
         Reader templateReader = self.retrieveReaderFromLoader(self.loader, cacheKey);
         TokenStream tokenStream = lexer.tokenize(templateReader, templateName);
 

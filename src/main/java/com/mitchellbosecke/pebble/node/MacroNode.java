@@ -10,10 +10,7 @@ package com.mitchellbosecke.pebble.node;
 
 import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.node.expression.Expression;
-import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
-import com.mitchellbosecke.pebble.template.Macro;
-import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-import com.mitchellbosecke.pebble.template.ScopeChain;
+import com.mitchellbosecke.pebble.template.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,7 +34,7 @@ public class MacroNode extends AbstractRenderableNode {
     }
 
     @Override
-    public void render(PebbleTemplateImpl self, Writer writer, EvaluationContextImpl context) throws IOException {
+    public void render(PebbleTemplateImpl self, Writer writer, EvaluationContextImpl context) {
         // do nothing
     }
 

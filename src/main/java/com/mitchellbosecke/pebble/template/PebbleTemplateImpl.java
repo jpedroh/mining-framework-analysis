@@ -276,7 +276,8 @@ public class PebbleTemplateImpl implements PebbleTemplate {
      * @param writer          The writer
      * @throws IOException     Thrown from the writer object
      */
-    public void block(Writer writer, EvaluationContextImpl context, String blockName, boolean ignoreOverriden) throws IOException {
+    public void block(Writer writer, EvaluationContextImpl context, String blockName, boolean ignoreOverriden)
+            throws IOException {
 
         Hierarchy hierarchy = context.getHierarchy();
         PebbleTemplateImpl childTemplate = hierarchy.getChild();
@@ -363,8 +364,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     }
 
     public void setParent(EvaluationContextImpl context, String parentName) {
-        context.getHierarchy()
-                .pushAncestor((PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(parentName)));
+        context.getHierarchy().pushAncestor((PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(parentName)));
     }
 
     /**

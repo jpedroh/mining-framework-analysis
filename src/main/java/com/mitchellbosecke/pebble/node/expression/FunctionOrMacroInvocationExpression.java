@@ -42,7 +42,8 @@ public class FunctionOrMacroInvocationExpression implements Expression<Object> {
         return self.macro(context, this.functionName, this.args, false, this.lineNumber);
     }
 
-    private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function, ArgumentsNode args) {
+    private Object applyFunction(PebbleTemplateImpl self, EvaluationContextImpl context, Function function,
+                                 ArgumentsNode args) {
         List<Object> arguments = new ArrayList<>();
 
         Collections.addAll(arguments, args);
