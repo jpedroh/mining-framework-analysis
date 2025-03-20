@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -31,8 +18,7 @@ import java.util.function.Predicate;
  * @author Joel Costigliola
  * @author Nicolas François
  */
-public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T> extends EnumerableAssert<S, T> {
-
+public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T extends java.lang.Object> extends EnumerableAssert<S, T> {
   /**
    * Verifies that the actual group contains the given values, in any order.
    * <p>
@@ -53,7 +39,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain the given values.
    */
-  S contains(@SuppressWarnings("unchecked") T... values);
+  S contains(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in any order</b>.
@@ -75,7 +61,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more values than the given ones.
    */
-  S containsOnly(@SuppressWarnings("unchecked") T... values);
+  S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains the given values only once.
@@ -89,8 +75,8 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * 
    * // assertions will fail
    * assertThat(newArrayList(&quot;winter&quot;, &quot;is&quot;, &quot;coming&quot;)).containsOnlyOnce(&quot;Lannister&quot;);
-   * assertThat(newArrayList(&quot;Arya&quot;, &quot;Stark&quot;, &quot;daughter&quot;, &quot;of&quot;, &quot;Ned&quot;, &quot;Stark&quot;)).containsOnlyOnce(&quot;Stark&quot;);
-   * assertThat(newArrayList(&quot;Arya&quot;, &quot;Stark&quot;, &quot;daughter&quot;, &quot;of&quot;, &quot;Ned&quot;, &quot;Stark&quot;)).containsOnlyOnce(&quot;Stark&quot;, &quot;Lannister&quot;, &quot;Arya&quot;);</code></pre>
+   * assertThat(newArrayList(&quot;Aria&quot;, &quot;Stark&quot;, &quot;daughter&quot;, &quot;of&quot;, &quot;Ned&quot;, &quot;Stark&quot;)).containsOnlyOnce(&quot;Stark&quot;);
+   * assertThat(newArrayList(&quot;Aria&quot;, &quot;Stark&quot;, &quot;daughter&quot;, &quot;of&quot;, &quot;Ned&quot;, &quot;Stark&quot;)).containsOnlyOnce(&quot;Stark&quot;, &quot;Lannister&quot;, &quot;Aria&quot;);</code></pre>
    * 
    * @param values the given values.
    * @return {@code this} assertion object.
@@ -100,7 +86,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more than once these values.
    */
-  S containsOnlyOnce(@SuppressWarnings("unchecked") T... values);
+  S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in order</b>.<br>
@@ -125,7 +111,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    *           contains some or none of the given values, or the actual group contains more values than the given ones
    *           or values are the same but the order is not.
    */
-  S containsExactly(@SuppressWarnings("unchecked") T... values);
+  S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
@@ -149,7 +135,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group
    *           contains some or none of the given values, or the actual group contains more values than the given ones.
    */
-  S containsExactlyInAnyOrder(@SuppressWarnings("unchecked") T... values);
+  S containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains the given sequence in the correct order and <b>without extra value between the sequence values</b>.
@@ -174,7 +160,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given sequence.
    */
-  S containsSequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains the given subsequence in the correct order (possibly with other values between them).
@@ -196,7 +182,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given subsequence.
    */
-  S containsSubsequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group does not contain the given values.
@@ -215,7 +201,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains any of the given values.
    */
-  S doesNotContain(@SuppressWarnings("unchecked") T... values);
+  S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group does not contain duplicates.
@@ -259,7 +245,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not start with the given sequence of objects.
    */
-  S startsWith(@SuppressWarnings("unchecked") T... sequence);
+  S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group ends with the given sequence of objects, without any other objects between them.
@@ -283,7 +269,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not end with the given sequence of objects.
    */
-  S endsWith(@SuppressWarnings("unchecked") T... sequence);
+  S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains at least a null element.
@@ -735,7 +721,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual {@code Iterable} is not subset of set {@code Iterable}.
    */
   S isSubsetOf(Iterable<? extends T> values);
-  
+
   /**
    * Verifies that all the elements of actual are present in the given values.
    * <p>
@@ -756,7 +742,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of the given values.
    */
-  S isSubsetOf(@SuppressWarnings("unchecked") T... values);
+  S isSubsetOf(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that all the elements of actual match the given {@link Predicate}.
@@ -831,5 +817,4 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if one or more elements don't satisfy given requirements.
    */
   S allSatisfy(Consumer<? super T> requirements);
-
 }

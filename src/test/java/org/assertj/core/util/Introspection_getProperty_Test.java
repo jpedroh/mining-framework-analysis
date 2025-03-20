@@ -1,23 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.util;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.introspection.Introspection.getPropertyGetter;
-
 import java.lang.reflect.Method;
-
 import org.assertj.core.util.introspection.IntrospectionError;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,43 +10,81 @@ import org.junit.Test;
 public class Introspection_getProperty_Test {
   private Employee judy;
 
-  @Before
-  public void initData() {
+  @Before public void initData() {
     judy = new Employee(100000.0, 31);
   }
 
-  @Test
-  public void get_descriptor_for_property() {
+  @Test public void get_descriptor_for_property() {
     Method getter = getPropertyGetter("age", judy);
     assertThat(getter).isNotNull();
   }
 
-  @Test
-  public void should_raise_an_error_because_of_missing_getter() {
-    assertThatThrownBy(() -> getPropertyGetter("salary", judy)).isInstanceOf(IntrospectionError.class)
-                                                         .hasMessage("No getter for property 'salary' in org.assertj.core.util.Employee");
+  @Test public void get_descriptor_for_property_from_interface_default_method() {
+    PropertyDescriptor propertyDescriptor = getProperty("degree", judy);
+    assertThat(propertyDescriptor).isNotNull();
+    assertThat(propertyDescriptor.getName()).isEqualTo("degree");
+    assertThat(propertyDescriptor.getPropertyType()).isEqualTo(String.class);
   }
 
-  @Test
-  public void should_raise_an_error_because_of_non_public_getter() {
-    assertThatThrownBy(() -> getPropertyGetter("firstJob", judy)).isInstanceOf(IntrospectionError.class)
-                                                           .hasMessage("No public getter for property 'firstJob' in org.assertj.core.util.Employee");
-    assertThatThrownBy(() -> getPropertyGetter("company", judy)).isInstanceOf(IntrospectionError.class)
-                                                          .hasMessage("No public getter for property 'company' in org.assertj.core.util.Employee");
+  @Test public void should_raise_an_error_because_of_missing_getter() {
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/left.java
+    assertThatThrownBy(() -> getProperty("salary", judy)).isInstanceOf(IntrospectionError.class).hasMessage("No getter for property \'salary\' in org.assertj.core.util.Employee");
+=======
+    try {
+      getPropertyGetter("salary", judy);
+      fail("IntrospectionError expected");
+    } catch (IntrospectionError error) {
+      assertThat(error).hasMessage("No getter for property \'salary\' in org.assertj.core.util.Employee");
+    }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/right.java
   }
 
-  @Test
-  public void should_raise_an_error_because_of_non_public_getter_when_getter_is_in_superclass() {
-   assertThatThrownBy(() -> getPropertyGetter("name", new Example())).isInstanceOf(IntrospectionError.class) 
-                                                               .hasMessage("No public getter for property 'name' in org.assertj.core.util.Introspection_getProperty_Test$Example");
+  @Test public void should_raise_an_error_because_of_non_public_getter() {
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/left.java
+    assertThatThrownBy(() -> getProperty("firstJob", judy)).isInstanceOf(IntrospectionError.class).hasMessage("No public getter for property \'firstJob\' in org.assertj.core.util.Employee");
+=======
+    try {
+      getPropertyGetter("company", judy);
+      fail("IntrospectionError expected");
+    } catch (IntrospectionError error) {
+      assertThat(error).hasMessage("No public getter for property \'company\' in org.assertj.core.util.Employee");
+    }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/right.java
+
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/left.java
+    assertThatThrownBy(() -> getProperty("company", judy)).isInstanceOf(IntrospectionError.class).hasMessage("No public getter for property \'company\' in org.assertj.core.util.Employee");
+=======
+    try {
+      getPropertyGetter("firstJob", judy);
+      fail("IntrospectionError expected");
+    } catch (IntrospectionError error) {
+      assertThat(error).hasMessage("No public getter for property \'firstJob\' in org.assertj.core.util.Employee");
+    }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/right.java
+  }
+
+  @Test public void should_raise_an_error_because_of_non_public_getter_when_getter_is_in_superclass() {
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/left.java
+    assertThatThrownBy(() -> getProperty("name", new Example())).isInstanceOf(IntrospectionError.class).hasMessage("No public getter for property \'name\' in org.assertj.core.util.Introspection_getProperty_Test$Example");
+=======
+    try {
+      getPropertyGetter("name", new Example());
+      fail("IntrospectionError expected");
+    } catch (IntrospectionError error) {
+      assertThat(error).hasMessage("No public getter for property \'name\' in org.assertj.core.util.Introspection_getProperty_Test$Example");
+    }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/test/java/org/assertj/core/util/Introspection_getProperty_Test.java/right.java
   }
 
   public static class Example extends Super {
   }
 
   public static class Super {
-    @SuppressWarnings("unused")
-    private String getName() {
+    @SuppressWarnings(value = { "unused" }) private String getName() {
       return "a";
     }
   }

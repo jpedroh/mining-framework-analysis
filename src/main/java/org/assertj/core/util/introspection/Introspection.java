@@ -1,24 +1,13 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.util.introspection;
-
 import static java.lang.String.format;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.util.Preconditions.checkNotNull;
 import static org.assertj.core.util.Preconditions.checkNotNullOrEmpty;
 import static org.assertj.core.util.Strings.quote;
-
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
 /**
@@ -28,6 +17,34 @@ import java.lang.reflect.Method;
  * @author Alex Ruiz
  */
 public final class Introspection {
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/c85be7b3c81624c9ada99251b31ec677cbd338a6/src/main/java/org/assertj/core/util/introspection/Introspection.java/left.java
+  /**
+   * Returns a {@link PropertyDescriptor} for a property matching the given name in the given object.
+   *
+   * @param propertyName the given property name.
+   * @param target the given object.
+   * @return a {@code PropertyDescriptor} for a property matching the given name in the given object.
+   * @throws NullPointerException if the given property name is {@code null}.
+   * @throws IllegalArgumentException if the given property name is empty.
+   * @throws NullPointerException if the given object is {@code null}.
+   * @throws IntrospectionError if a matching property cannot be found or accessed.
+   */
+  public static PropertyDescriptor getProperty(String propertyName, Object target) {
+    checkNotNullOrEmpty(propertyName);
+    checkNotNull(target);
+    PropertyDescriptor prop = getBeanProperty(target.getClass(), propertyName);
+    if (prop == null) {
+      prop = digForDefaultImplementations(target.getClass(), propertyName);
+    }
+    if (prop != null) {
+      return prop;
+    }
+    throw new IntrospectionError(propertyNotFoundErrorMessage(propertyName, target));
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
 
   /**
    * Returns the getter {@link Method} for a property matching the given name in the given object.
@@ -53,6 +70,34 @@ public final class Introspection {
     return getter;
   }
 
+  private static PropertyDescriptor digForDefaultImplementations(Class<?> type, String propertyName) {
+    for (Class<?> interfaz : type.getInterfaces()) {
+      PropertyDescriptor prop = getBeanProperty(interfaz, propertyName);
+      if (prop == null) {
+        prop = digForDefaultImplementations(interfaz, propertyName);
+      }
+      if (prop != null) {
+        return prop;
+      }
+    }
+    return null;
+  }
+
+  private static PropertyDescriptor getBeanProperty(Class<?> type, String propertyName) {
+    BeanInfo beanInfo;
+    try {
+      beanInfo = Introspector.getBeanInfo(type);
+    } catch (Exception t) {
+      throw new IntrospectionError(format("Unable to get BeanInfo for type %s", type.getName()), t);
+    }
+    for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+      if (propertyName.equals(descriptor.getName())) {
+        return descriptor;
+      }
+    }
+    return null;
+  }
+
   private static String propertyNotFoundErrorMessage(String propertyName, Object target) {
     String targetTypeName = target.getClass().getName();
     String property = quote(propertyName);
@@ -68,12 +113,10 @@ public final class Introspection {
 
   private static Method findGetter(String propertyName, Object target) {
     String capitalized = propertyName.substring(0, 1).toUpperCase(ENGLISH) + propertyName.substring(1);
-    // try to find getProperty
     Method getter = findMethod("get" + capitalized, target);
     if (getter != null) {
       return getter;
     }
-    // try to find isProperty for boolean properties
     return findMethod("is" + capitalized, target);
   }
 
