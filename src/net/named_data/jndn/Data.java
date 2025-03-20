@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2013-2015 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn;
-
 import java.nio.ByteBuffer;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.WireFormat;
@@ -27,14 +7,12 @@ import net.named_data.jndn.util.ChangeCounter;
 import net.named_data.jndn.util.ChangeCountable;
 import net.named_data.jndn.util.SignedBlob;
 
-
 public class Data implements ChangeCountable, SignatureHolder {
   /**
    * Create a new Data object with default values and where the signature is a
    * blank Sha256WithRsaSignature.
    */
-  public Data()
-  {
+  public Data() {
   }
 
   /**
@@ -42,8 +20,7 @@ public class Data implements ChangeCountable, SignatureHolder {
    * the signature is a blank Sha256WithRsaSignature.
    * @param name The name which is copied.
    */
-  public Data(Name name)
-  {
+  public Data(Name name) {
     name_.set(new Name(name));
   }
 
@@ -52,18 +29,12 @@ public class Data implements ChangeCountable, SignatureHolder {
    * signature object.
    * @param data The data object to copy.
    */
-  public Data(Data data)
-  {
+  public Data(Data data) {
     try {
-      signature_.set(data.signature_ == null ?
-        new Sha256WithRsaSignature() : (Signature)data.getSignature().clone());
+      signature_.set(data.signature_ == null ? new Sha256WithRsaSignature() : (Signature) data.getSignature().clone());
+    } catch (CloneNotSupportedException e) {
+      throw new NullPointerException("Data.setSignature: unexpected exception in clone(): " + e.getMessage());
     }
-    catch (CloneNotSupportedException e) {
-      // We don't expect this to happen, so just treat it as if we got a null pointer.
-      throw new NullPointerException
-        ("Data.setSignature: unexpected exception in clone(): " + e.getMessage());
-    }
-
     name_.set(new Name(data.getName()));
     metaInfo_.set(new MetaInfo(data.getMetaInfo()));
     content_ = data.content_;
@@ -76,25 +47,17 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @param wireFormat A WireFormat object used to decode the input.
    * @return The encoded buffer.
    */
-  public final SignedBlob
-  wireEncode(WireFormat wireFormat)
-  {
-    if (!getDefaultWireEncoding().isNull() &&
-        getDefaultWireEncodingFormat() == wireFormat)
-      // We already have an encoding in the desired format.
+  public final SignedBlob wireEncode(WireFormat wireFormat) {
+    if (!getDefaultWireEncoding().isNull() && getDefaultWireEncodingFormat() == wireFormat) {
       return getDefaultWireEncoding();
-
+    }
     int[] signedPortionBeginOffset = new int[1];
     int[] signedPortionEndOffset = new int[1];
-    Blob encoding = wireFormat.encodeData
-      (this, signedPortionBeginOffset, signedPortionEndOffset);
-    SignedBlob wireEncoding = new SignedBlob
-      (encoding, signedPortionBeginOffset[0], signedPortionEndOffset[0]);
-
-    if (wireFormat == WireFormat.getDefaultWireFormat())
-      // This is the default wire encoding.
+    Blob encoding = wireFormat.encodeData(this, signedPortionBeginOffset, signedPortionEndOffset);
+    SignedBlob wireEncoding = new SignedBlob(encoding, signedPortionBeginOffset[0], signedPortionEndOffset[0]);
+    if (wireFormat == WireFormat.getDefaultWireFormat()) {
       setDefaultWireEncoding(wireEncoding, WireFormat.getDefaultWireFormat());
-
+    }
     return wireEncoding;
   }
 
@@ -103,9 +66,7 @@ public class Data implements ChangeCountable, SignatureHolder {
    * Also set the defaultWireEncoding field to the encoded result.
    * @return The encoded buffer.
    */
-  public final SignedBlob
-  wireEncode()
-  {
+  public final SignedBlob wireEncode() {
     return wireEncode(WireFormat.getDefaultWireFormat());
   }
 
@@ -118,21 +79,15 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @param wireFormat A WireFormat object used to decode the input.
    * @throws EncodingException For invalid encoding.
    */
-  public void
-  wireDecode(Blob input, WireFormat wireFormat) throws EncodingException
-  {
+  public void wireDecode(Blob input, WireFormat wireFormat) throws EncodingException {
     int[] signedPortionBeginOffset = new int[1];
     int[] signedPortionEndOffset = new int[1];
-    wireFormat.decodeData
-      (this, input.buf(), signedPortionBeginOffset, signedPortionEndOffset);
-
-    if (wireFormat == WireFormat.getDefaultWireFormat())
-      // This is the default wire encoding.
-      setDefaultWireEncoding
-        (new SignedBlob(input, signedPortionBeginOffset[0],
-         signedPortionEndOffset[0]), WireFormat.getDefaultWireFormat());
-    else
+    wireFormat.decodeData(this, input.buf(), signedPortionBeginOffset, signedPortionEndOffset);
+    if (wireFormat == WireFormat.getDefaultWireFormat()) {
+      setDefaultWireEncoding(new SignedBlob(input, signedPortionBeginOffset[0], signedPortionEndOffset[0]), WireFormat.getDefaultWireFormat());
+    } else {
       setDefaultWireEncoding(new SignedBlob(), null);
+    }
   }
 
   /**
@@ -143,9 +98,7 @@ public class Data implements ChangeCountable, SignatureHolder {
    * buf().limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public final void
-  wireDecode(Blob input) throws EncodingException
-  {
+  public final void wireDecode(Blob input) throws EncodingException {
     wireDecode(input, WireFormat.getDefaultWireFormat());
   }
 
@@ -159,9 +112,7 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @param wireFormat A WireFormat object used to decode the input.
    * @throws EncodingException For invalid encoding.
    */
-  public final void
-  wireDecode(ByteBuffer input, WireFormat wireFormat) throws EncodingException
-  {
+  public final void wireDecode(ByteBuffer input, WireFormat wireFormat) throws EncodingException {
     wireDecode(new Blob(input, true), wireFormat);
   }
 
@@ -173,47 +124,46 @@ public class Data implements ChangeCountable, SignatureHolder {
    * limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public final void
-  wireDecode(ByteBuffer input) throws EncodingException
-  {
+  public final void wireDecode(ByteBuffer input) throws EncodingException {
     wireDecode(input, WireFormat.getDefaultWireFormat());
   }
 
-  public final Signature
-  getSignature() { return (Signature)signature_.get(); }
+  public final Signature getSignature() {
+    return (Signature) signature_.get();
+  }
 
-  public final Name
-  getName() { return (Name)name_.get(); }
+  public final Name getName() {
+    return (Name) name_.get();
+  }
 
-  public final MetaInfo
-  getMetaInfo() { return (MetaInfo)metaInfo_.get(); }
+  public final MetaInfo getMetaInfo() {
+    return (MetaInfo) metaInfo_.get();
+  }
 
-  public final Blob
-  getContent() { return content_; }
+  public final Blob getContent() {
+    return content_;
+  }
 
   /**
    * Get the incoming face ID of the local control header.
    * @return The incoming face ID. If not specified, return -1.
    * @note This is an experimental feature. This API may change in the future.
    */
-  long
-  getIncomingFaceId() { return localControlHeader_.getIncomingFaceId(); }
+  long getIncomingFaceId() {
+    return localControlHeader_.getIncomingFaceId();
+  }
 
   /**
    * Return a pointer to the defaultWireEncoding, which was encoded with
    * getDefaultWireEncodingFormat().
    * @return The default wire encoding. Its pointer may be null.
    */
-  public final SignedBlob
-  getDefaultWireEncoding()
-  {
+  public final SignedBlob getDefaultWireEncoding() {
     if (getDefaultWireEncodingChangeCount_ != getChangeCount()) {
-      // The values have changed, so the default wire encoding is invalidated.
       defaultWireEncoding_ = new SignedBlob();
       defaultWireEncodingFormat_ = null;
       getDefaultWireEncodingChangeCount_ = getChangeCount();
     }
-
     return defaultWireEncoding_;
   }
 
@@ -222,28 +172,21 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @return The WireFormat, which is only meaningful if the
    * getDefaultWireEncoding() does not have a null pointer.
    */
-  WireFormat
-  getDefaultWireEncodingFormat() { return defaultWireEncodingFormat_; }
+  WireFormat getDefaultWireEncodingFormat() {
+    return defaultWireEncodingFormat_;
+  }
 
   /**
    * Set the signature to a copy of the given signature.
    * @param signature The signature object which is cloned.
    * @return This Data so that you can chain calls to update values.
    */
-  public final Data
-  setSignature(Signature signature)
-  {
+  public final Data setSignature(Signature signature) {
     try {
-      signature_.set(signature == null ?
-        new Sha256WithRsaSignature() : (Signature)signature.clone());
+      signature_.set(signature == null ? new Sha256WithRsaSignature() : (Signature) signature.clone());
+    } catch (CloneNotSupportedException e) {
+      throw new NullPointerException("Data.setSignature: unexpected exception in clone(): " + e.getMessage());
     }
-    catch (CloneNotSupportedException e) {
-      // We don't expect this to happen, so just treat it as if we got a null
-      //   pointer.
-      throw new NullPointerException
-        ("Data.setSignature: unexpected exception in clone(): " + e.getMessage());
-    }
-
     ++changeCount_;
     return this;
   }
@@ -254,9 +197,7 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @param name The Name which is copied.
    * @return This Data so that you can chain calls to update values.
    */
-  public Data
-  setName(Name name)
-  {
+  public Data setName(Name name) {
     name_.set(name == null ? new Name() : new Name(name));
     ++changeCount_;
     return this;
@@ -267,17 +208,13 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @param metaInfo The MetaInfo which is copied.
    * @return This Data so that you can chain calls to update values.
    */
-  public final Data
-  setMetaInfo(MetaInfo metaInfo)
-  {
+  public final Data setMetaInfo(MetaInfo metaInfo) {
     metaInfo_.set(metaInfo == null ? new MetaInfo() : new MetaInfo(metaInfo));
     ++changeCount_;
     return this;
   }
 
-  public final Data
-  setContent(Blob content)
-  {
+  public final Data setContent(Blob content) {
     content_ = (content == null ? new Blob() : content);
     ++changeCount_;
     return this;
@@ -289,13 +226,8 @@ public class Data implements ChangeCountable, SignatureHolder {
    * @return This Data so that you can chain calls to update values.
    * @note This is an experimental feature. This API may change in the future.
    */
-  public final Data
-  setLocalControlHeader(LocalControlHeader localControlHeader)
-  {
-    localControlHeader_ =
-      (localControlHeader == null ?
-       new LocalControlHeader() : new LocalControlHeader(localControlHeader));
-    // Don't update changeCount_ since this doesn't affect the wire encoding.
+  public final Data setLocalControlHeader(LocalControlHeader localControlHeader) {
+    localControlHeader_ = (localControlHeader == null ? new LocalControlHeader() : new LocalControlHeader(localControlHeader));
     return this;
   }
 
@@ -304,40 +236,37 @@ public class Data implements ChangeCountable, SignatureHolder {
    * (or a child object) is changed.
    * @return The change count.
    */
-  public final long
-  getChangeCount()
-  {
-    // Make sure each of the checkChanged is called.
+  public final long getChangeCount() {
     boolean changed = signature_.checkChanged();
     changed = name_.checkChanged() || changed;
     changed = metaInfo_.checkChanged() || changed;
-    if (changed)
-      // A child object has changed, so update the change count.
+    if (changed) {
       ++changeCount_;
-
+    }
     return changeCount_;
   }
 
-  private void
-  setDefaultWireEncoding
-    (SignedBlob defaultWireEncoding, WireFormat defaultWireEncodingFormat)
-  {
+  private void setDefaultWireEncoding(SignedBlob defaultWireEncoding, WireFormat defaultWireEncodingFormat) {
     defaultWireEncoding_ = defaultWireEncoding;
     defaultWireEncodingFormat_ = defaultWireEncodingFormat;
-    // Set getDefaultWireEncodingChangeCount_ so that the next call to
-    //   getDefaultWireEncoding() won't clear defaultWireEncoding_.
     getDefaultWireEncodingChangeCount_ = getChangeCount();
   }
 
-  private final ChangeCounter signature_ =
-    new ChangeCounter(new Sha256WithRsaSignature());
+  private final ChangeCounter signature_ = new ChangeCounter(new Sha256WithRsaSignature());
+
   private final ChangeCounter name_ = new ChangeCounter(new Name());
-  private final ChangeCounter metaInfo_ =
-    new ChangeCounter(new MetaInfo());
+
+  private final ChangeCounter metaInfo_ = new ChangeCounter(new MetaInfo());
+
   private Blob content_ = new Blob();
+
   private LocalControlHeader localControlHeader_ = new LocalControlHeader();
+
   private SignedBlob defaultWireEncoding_ = new SignedBlob();
+
   private WireFormat defaultWireEncodingFormat_;
+
   private long getDefaultWireEncodingChangeCount_ = 0;
+
   private long changeCount_ = 0;
 }
