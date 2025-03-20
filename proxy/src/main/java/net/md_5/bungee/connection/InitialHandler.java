@@ -228,9 +228,9 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     private ServerPing getPingInfo(String motd, int protocol)
     {
         return new ServerPing(
-                new ServerPing.Protocol( bungee.getCustomBungeeName(), protocol ), //BotFilter
-                new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountBF( true ), null ), //BotFilter
-                motd, PingLimiter.handle() ? null : BungeeCord.getInstance().config.getFaviconObject() //BotFilter PingLimiter.handle() ? null :
+                new ServerPing.Protocol( bungee.getName() + " " + bungee.getGameVersion(), protocol ),
+                new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCount(), null ),
+                motd, BungeeCord.getInstance().config.getFaviconObject()
         );
     }
 
@@ -277,7 +277,23 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             ( (BungeeServerInfo) forced ).ping( pingBack, handshake.getProtocolVersion() );
         } else
         {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/932348085a5332c09cb9f0a07f72e65592b3dbc6/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
+            int protocol = ( ProtocolConstants.SUPPORTED_VERSION_IDS.contains( handshake.getProtocolVersion() ) ) ? handshake.getProtocolVersion() : bungee.getProtocolVersion();
+            pingBack.done( new ServerPing(
+                    new ServerPing.Protocol( bungee.getCustomBungeeName(), protocol ), //BotFilter
+                    new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountBF( true ), null ), //BotFilter
+                    motd, PingLimiter.handle() ? null : BungeeCord.getInstance().config.getFaviconObject() ), //BotFilter PingLimiter.handle() ? null :
+                    null );
+||||||| /usr/src/app/output/spigotmc/bungeecord/932348085a5332c09cb9f0a07f72e65592b3dbc6/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+            int protocol = ( ProtocolConstants.SUPPORTED_VERSION_IDS.contains( handshake.getProtocolVersion() ) ) ? handshake.getProtocolVersion() : bungee.getProtocolVersion();
+            pingBack.done( new ServerPing(
+                    new ServerPing.Protocol( bungee.getName() + " " + bungee.getGameVersion(), protocol ),
+                    new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCount(), null ),
+                    motd, BungeeCord.getInstance().config.getFaviconObject() ),
+                    null );
+=======
             pingBack.done( getPingInfo( motd, protocol ), null );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/932348085a5332c09cb9f0a07f72e65592b3dbc6/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
         }
 
         thisState = State.PING;
