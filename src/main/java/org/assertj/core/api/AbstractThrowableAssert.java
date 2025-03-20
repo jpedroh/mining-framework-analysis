@@ -1,23 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldNotHaveThrown.shouldNotHaveThrown;
-
 import java.util.IllegalFormatException;
-
-import org.assertj.core.error.BasicErrorMessageFactory;
 import org.assertj.core.internal.Failures;
+import org.assertj.core.error.BasicErrorMessageFactory;
 import org.assertj.core.internal.Throwables;
 import org.assertj.core.util.VisibleForTesting;
 
@@ -34,11 +19,8 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAssert<SELF, ACTUAL>, ACTUAL extends Throwable>
-    extends AbstractObjectAssert<SELF, ACTUAL> {
-
-  @VisibleForTesting
-  Throwables throwables = Throwables.instance();
+public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAssert<SELF, ACTUAL>, ACTUAL extends Throwable> extends AbstractObjectAssert<SELF, ACTUAL> {
+  @VisibleForTesting Throwables throwables = Throwables.instance();
 
   public AbstractThrowableAssert(ACTUAL actual, Class<?> selfType) {
     super(actual, selfType);
@@ -107,7 +89,6 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
    * assertThat(throwable).hasCause(new NullPointerException());
    * assertThat(throwable).hasCause(null); // prefer hasNoCause()</code></pre>
    * 
-   * @param cause the expected cause
    * @return this assertion object.
    * @throws AssertionError if the actual {@code Throwable} is {@code null}.
    * @throws AssertionError if the actual {@code Throwable} has not the given cause.
@@ -366,6 +347,8 @@ public abstract class AbstractThrowableAssert<SELF extends AbstractThrowableAsse
    * @since 3.7.0
    */
   public void doesNotThrowAnyException() {
-    if (actual != null) throw Failures.instance().failure(info, shouldNotHaveThrown(actual));
+    if (actual != null) {
+      throw Failures.instance().failure(info, shouldNotHaveThrown(actual));
+    }
   }
 }
