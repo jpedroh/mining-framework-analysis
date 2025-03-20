@@ -249,7 +249,6 @@ public final class ProxyUtil {
 				return false;
 			}
         }
-        return true;
     }
 
     public static class Resolver {
@@ -298,6 +297,7 @@ public final class ProxyUtil {
         } else {
             return new String[] { hostPort.substring(0, cidx), hostPort.substring(cidx+1) };
         }
+        return true;
     }
 
     protected static final String PROXY_REGISTRY =
