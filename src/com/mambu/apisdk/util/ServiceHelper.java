@@ -213,6 +213,7 @@ public class ServiceHelper {
 	 */
 	public static ParamsMap makeParamsForTransactionRequest(String transactionType,
 			JSONTransactionRequest transactionRequest) {
+
 		// JSONTransactionRequest contains all required for a request fields except the transaction type
 		// Create JSON string for a transactionReqest and add type parameter in a format of: "type":"DISBURSEMENT"
 
