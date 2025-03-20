@@ -63,18 +63,20 @@ public class MailTransaction
     }
 
     /**
-     * Creates an MailTransaction-Object, with Parameters<br/>
-     * <b>Statuscodes:</b> <br/>
-     * 0 - Mail has a wrong Pattern<br/>
-     * 100 - Mail does not exist<br/>
-     * 200 - Mail exists but is inactive <br/>
-     * 300 - Mail has been forwarded successfully <br/>
-     * 400 - the Mail can't be forwarded (target not reachable)<br/>
-     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
-     * 600 - User is inactive</br>
+     * Creates an MailTransaction-Object.
+     * 
+     * <b>Status codes:</b>
+     * <ul>
+     * <li>0 - Mail has a wrong Pattern</li>
+     * <li>100 - Mail does not exist</li>
+     * <li>200 - Mail exists but is inactive</li>
+     * <li>300 - Mail has been forwarded successfully</li>
+     * <li>400 - the Mail can't be forwarded (target not reachable)</li>
+     * <li>500 - Relay denied (recipient's address does not belong to this server)</li>
+     * </ul>
      * 
      * @param stat
-     *            Statuscode of the Transaction
+     *            status-code of the transaction
      * @param source
      *            the Sender's - Address
      * @param relay
@@ -90,7 +92,6 @@ public class MailTransaction
         this.sourceaddr = source;
         this.relayaddr = relay;
     }
-
     /**
      * @return the ID of this Transaction
      */
@@ -98,7 +99,6 @@ public class MailTransaction
     {
         return id;
     }
-
     /**
      * @param id
      *            the ID of this Transaction to set
@@ -107,7 +107,6 @@ public class MailTransaction
     {
         this.id = id;
     }
-
     /**
      * @return the Timestamp of this Transaction
      */
@@ -115,7 +114,6 @@ public class MailTransaction
     {
         return ts;
     }
-
     /**
      * @return the Timestamp as String in the Format "dd.MM.yyyy hh:mm"
      */
@@ -154,7 +152,6 @@ public class MailTransaction
 
         return day + "." + mon + "." + dt.getYear() + " " + hou + ":" + min;
     }
-
     /**
      * @param ts
      *            sets the Timestamp in Milliseconds
@@ -163,42 +160,41 @@ public class MailTransaction
     {
         this.ts = ts;
     }
-
     /**
-     * <b>Statuscodes:</b> <br/>
-     * 0 - Mail has a wrong Pattern <br/>
-     * 100 - Mail does not exist<br/>
-     * 200 - Mail exists but is inactive <br/>
-     * 300 - Mail has been forwarded successfully <br/>
-     * 400 - the Mail can't be forwarded (target not reachable)<br/>
-     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
-     * 600 - User is inactive</br>
+     * Returns the status code.
+     * <ul>
+     * <li>0 - Mail has a wrong Pattern</li>
+     * <li>100 - Mail does not exist</li>
+     * <li>200 - Mail exists but is inactive</li>
+     * <li>300 - Mail has been forwarded successfully</li>
+     * <li>400 - the Mail can't be forwarded (target not reachable)</li>
+     * <li>500 - Relay denied (recipient's address does not belong to this server)</li>
+     * </ul>
      * 
-     * @return a Statuscode
+     * @return status code
      */
     public int getStatus()
     {
         return status;
     }
-
     /**
-     * <b>Statuscodes:</b> <br/>
-     * 0 - Mail has a wrong Pattern<br/>
-     * 100 - Mail does not exist<br/>
-     * 200 - Mail exists but is inactive <br/>
-     * 300 - Mail has been forwarded successfully <br/>
-     * 400 - the Mail can't be forwarded (target not reachable)<br/>
-     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
-     * 600 - User is inactive</br>
+     * Sets the status code.
+     * <ul>
+     * <li>0 - Mail has a wrong Pattern</li>
+     * <li>100 - Mail does not exist</li>
+     * <li>200 - Mail exists but is inactive</li>
+     * <li>300 - Mail has been forwarded successfully</li>
+     * <li>400 - the Mail can't be forwarded (target not reachable)</li>
+     * <li>500 - Relay denied (recipient's address does not belong to this server)</li>
+     * </ul>
      * 
      * @param status
-     *            the Status to set
+     *            the status to set
      */
     public void setStatus(int status)
     {
         this.status = status;
     }
-
     /**
      * @return the Target-Address of this Transaction
      */
@@ -206,7 +202,6 @@ public class MailTransaction
     {
         return targetaddr;
     }
-
     /**
      * @param targetaddr
      *            the Target-Address to set
@@ -215,7 +210,6 @@ public class MailTransaction
     {
         this.targetaddr = targetaddr;
     }
-
     /**
      * @return the Source-Address of this transaction
      */
@@ -223,7 +217,6 @@ public class MailTransaction
     {
         return sourceaddr;
     }
-
     /**
      * @param sourceaddr
      *            the Source-Address to set
@@ -232,7 +225,6 @@ public class MailTransaction
     {
         this.sourceaddr = sourceaddr;
     }
-
     /**
      * @return the Relay-Address of this transaction (if existent)
      */
@@ -240,7 +232,6 @@ public class MailTransaction
     {
         return relayaddr;
     }
-
     /**
      * @param relayaddr
      *            the Relay-Address of this transaction (if existent)
@@ -249,11 +240,9 @@ public class MailTransaction
     {
         this.relayaddr = relayaddr;
     }
-
     // -------------------------------------------------------
     // E-Bean Functions
     // -------------------------------------------------------
-
     /**
      * @return all Transactions which were stored in the Database
      */
@@ -261,20 +250,12 @@ public class MailTransaction
     {
         return Ebean.find(MailTransaction.class).findList();
     }
-
-    /**
-     * @param sortage
-     *            a String which indicates the sortage of the returned list, the string should be in the form "fieldname
-     *            asc" or "fieldname desc"
-     * @return a sorted list of all MailTransactions
-     */
     public static List<MailTransaction> all(String sortage)
     {
         List<MailTransaction> list = Ebean.find(MailTransaction.class).where().orderBy(sortage).findList();
 
         return list;
     }
-
     /**
      * Gets all Mail-Transactions in the last "Period"
      * 
@@ -286,7 +267,6 @@ public class MailTransaction
     {
         return Ebean.find(MailTransaction.class).where().gt("ts", DateTime.now().minus(period).getMillis()).findList();
     }
-
     /**
      * returns a list of MailTransactions sorted descending and limited by the given number
      * 
@@ -300,7 +280,60 @@ public class MailTransaction
                                           .findList();
         return list;
     }
-
+    /**
+     * Creates an MailTransaction-Object, with Parameters<br/>
+     * <b>Statuscodes:</b> <br/>
+     * 0 - Mail has a wrong Pattern<br/>
+     * 100 - Mail does not exist<br/>
+     * 200 - Mail exists but is inactive <br/>
+     * 300 - Mail has been forwarded successfully <br/>
+     * 400 - the Mail can't be forwarded (target not reachable)<br/>
+     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
+     * 600 - User is inactive</br>
+     * 
+     * @param stat
+     *            Statuscode of the Transaction
+     * @param source
+     *            the Sender's - Address
+     * @param relay
+     *            Relay-Address of the Mail (the mail which is virtually created on this app)
+     * @param target
+     *            Original Recipients-Address of the Mail
+     */
+    /**
+     * <b>Statuscodes:</b> <br/>
+     * 0 - Mail has a wrong Pattern <br/>
+     * 100 - Mail does not exist<br/>
+     * 200 - Mail exists but is inactive <br/>
+     * 300 - Mail has been forwarded successfully <br/>
+     * 400 - the Mail can't be forwarded (target not reachable)<br/>
+     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
+     * 600 - User is inactive</br>
+     * 
+     * @return a Statuscode
+     */
+    /**
+     * <b>Statuscodes:</b> <br/>
+     * 0 - Mail has a wrong Pattern<br/>
+     * 100 - Mail does not exist<br/>
+     * 200 - Mail exists but is inactive <br/>
+     * 300 - Mail has been forwarded successfully <br/>
+     * 400 - the Mail can't be forwarded (target not reachable)<br/>
+     * 500 - Relay denied (recipient's address does not belong to this server)<br/>
+     * 600 - User is inactive</br>
+     * 
+     * @param status
+     *            the Status to set
+     */
+    // -------------------------------------------------------
+    // E-Bean Functions
+    // -------------------------------------------------------
+    /**
+     * @param sortage
+     *            a String which indicates the sortage of the returned list, the string should be in the form "fieldname
+     *            asc" or "fieldname desc"
+     * @return a sorted list of all MailTransactions
+     */
     /**
      * returns a list of MailTransactions with the given target address
      * 
@@ -314,7 +347,6 @@ public class MailTransaction
                                           .orderBy("ts desc").findList();
         return list;
     }
-
     /**
      * returns a list of MailTransactions with the given relay address
      * 
@@ -328,7 +360,6 @@ public class MailTransaction
                                           .orderBy("ts desc").findList();
         return list;
     }
-
     /**
      * returns a list of MailTransactions with the given source address
      * 
