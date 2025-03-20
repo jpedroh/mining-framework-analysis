@@ -30,6 +30,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+
+import org.reactivestreams.Subscription;
+
 import software.amazon.kinesis.annotations.KinesisClientInternalApi;
 import software.amazon.kinesis.exceptions.internal.BlockedOnParentShardException;
 import software.amazon.kinesis.leases.Lease;
