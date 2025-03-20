@@ -19,6 +19,7 @@ public class RMSE extends AbstractErrorMetric implements EvaluationMetric<Long> 
         super(predictions, test);
     }
 
+
     public RMSE(DataModel<Long, Long> predictions, DataModel<Long, Long> test, ErrorStrategy errorStrategy) {
         super(predictions, test, errorStrategy);
     }
