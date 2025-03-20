@@ -277,6 +277,15 @@ public final class StringMetrics {
 	 * @see Soundex
 	 * @see JaroWinkler
 	 */
+	/**
+	 * Returns a string metric that uses a {@link Soundex} and
+	 * {@link JaroWinkler} metric.
+	 * 
+	 * @return a Soundex metric
+	 * 
+	 * @deprecated will be removed due to a lack of a good use case 
+	 */
+	@Deprecated
 	public static StringMetric soundex() {
 		return create(new JaroWinkler(), new Soundex());
 	}
@@ -395,11 +404,44 @@ public final class StringMetrics {
 	 * 
 	 * @see StringMetricBuilder
 	 */
+	/**
+	 * Creates a new composite string metric.The tokenizer is used to tokenize
+	 * the simplified strings. The set metric compares the the tokens.
+	 * 
+	 * @param metric
+	 *            a list metric
+	 * @param simplifier
+	 *            a simplifier
+	 * @param tokenizer
+	 *            a tokenizer
+	 * @return a new composite string metric
+	 * 
+	 * @throws NullPointerException
+	 *             when either metric, simplifier or tokenizer are null
+	 * 
+	 * @see StringMetricBuilder
+	 */
 	public static StringMetric createForSetMetric(Metric<Set<String>> metric, Simplifier simplifier,
 			Tokenizer tokenizer) {
 		return new ForSetWithSimplifier(metric, simplifier, tokenizer);
 	}
 
+	/**
+	 * Creates a new composite string metric. The tokenizer is used to tokenize
+	 * the strings. The set metric compares the the tokens.
+	 * 
+	 * @param metric
+	 *            a set metric
+	 * 
+	 * @param tokenizer
+	 *            a tokenizer
+	 * @return a new composite string metric
+	 * 
+	 * @throws NullPointerException
+	 *             when either metric or tokenizer are null
+	 * 
+	 * @see StringMetricBuilder
+	 */
 	/**
 	 * Creates a new composite string metric. The tokenizer is used to tokenize
 	 * the strings. The set metric compares the the tokens.
@@ -438,11 +480,44 @@ public final class StringMetrics {
 	 * 
 	 * @see StringMetricBuilder
 	 */
+	/**
+	 * Creates a new composite string metric.The tokenizer is used to tokenize
+	 * the simplified strings. The set metric compares the the tokens.
+	 * 
+	 * @param metric
+	 *            a list metric
+	 * @param simplifier
+	 *            a simplifier
+	 * @param tokenizer
+	 *            a tokenizer
+	 * @return a new composite string metric
+	 * 
+	 * @throws NullPointerException
+	 *             when either metric, simplifier or tokenizer are null
+	 * 
+	 * @see StringMetricBuilder
+	 */
 	public static StringMetric createForMultisetMetric(Metric<Multiset<String>> metric, Simplifier simplifier,
 			Tokenizer tokenizer) {
 		return new ForMultisetWithSimplifier(metric, simplifier, tokenizer);
 	}
 
+	/**
+	 * Creates a new composite string metric. The tokenizer is used to tokenize
+	 * the strings. The set metric compares the the tokens.
+	 * 
+	 * @param metric
+	 *            a set metric
+	 * 
+	 * @param tokenizer
+	 *            a tokenizer
+	 * @return a new composite string metric
+	 * 
+	 * @throws NullPointerException
+	 *             when either metric or tokenizer are null
+	 * 
+	 * @see StringMetricBuilder
+	 */
 	/**
 	 * Creates a new composite string metric. The tokenizer is used to tokenize
 	 * the strings. The set metric compares the the tokens.
