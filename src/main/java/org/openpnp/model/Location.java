@@ -288,7 +288,7 @@ public class Location {
      * value from this object instead of the second location.
      * 
      * This is intended as a utility method, useful for creating new Locations based on two existing
-     * ones with one or more values substituted.
+     * ones with one or more values substituded.
      * 
      * @param location
      * @param x
@@ -305,6 +305,21 @@ public class Location {
                                 z ? location.z : this.z, 
                                         rotation ? location.rotation : this.rotation);
     }
+    /**
+     * Returns a new Location with the same units as this one but with values updated from 
+     * a second Location. If a specified boolean is false, the new Location will contain the
+     * value from this object instead of the second location.
+     * 
+     * This is intended as a utility method, useful for creating new Locations based on two existing
+     * ones with one or more values substituted.
+     * 
+     * @param location
+     * @param x
+     * @param y
+     * @param z
+     * @param rotation
+     * @return
+     */
 
     /**
      * Returns a new Location with this Location's X and Y rotated by angle. Z and Rotation are

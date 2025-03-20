@@ -135,6 +135,11 @@ public interface Head extends Identifiable, Named, WizardConfigurable, PropertyS
     public Actuator getZProbe(); 
     
     public Actuator getPump(); 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/1e33925ca869825e32b3683870d39322f7204101/src/main/java/org/openpnp/spi/Head.java/left.java
+
+    public boolean isInsideSoftLimits(HeadMountable hm, Location location) throws Exception;
+||||||| /usr/src/app/output/openpnp/openpnp/1e33925ca869825e32b3683870d39322f7204101/src/main/java/org/openpnp/spi/Head.java/base.java
+=======
 
     /**
      * Returns true if the given HeadMountable can go to the specified location within soft-limits.
@@ -143,4 +148,5 @@ public interface Head extends Identifiable, Named, WizardConfigurable, PropertyS
      * @return
      */
     public boolean isInsideSoftLimits(HeadMountable hm, Location location) throws Exception;
+>>>>>>> /usr/src/app/output/openpnp/openpnp/1e33925ca869825e32b3683870d39322f7204101/src/main/java/org/openpnp/spi/Head.java/right.java
 }
