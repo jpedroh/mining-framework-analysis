@@ -23,7 +23,14 @@ import org.assertj.core.util.VisibleForTesting;
 
 /**
  * Base class for all implementations of assertions for {@link List}s.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/0536ebda46c31e95aeb2dfef04496c79ed874dbc/src/main/java/org/assertj/core/api/AbstractListAssert.java/left.java
+ * 
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/0536ebda46c31e95aeb2dfef04496c79ed874dbc/src/main/java/org/assertj/core/api/AbstractListAssert.java/base.java
+ * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/anMa4g"
+=======
  * @param <S> the "self" type of this assertion class. Please read &quot;<a href="http://bit.ly/1IZIRcY"
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/0536ebda46c31e95aeb2dfef04496c79ed874dbc/src/main/java/org/assertj/core/api/AbstractListAssert.java/right.java
  *          target="_blank">Emulating 'self types' using Java Generics to simplify fluent API implementation</a>&quot;
  *          for more details.
  * @param <A> the type of the "actual" value.

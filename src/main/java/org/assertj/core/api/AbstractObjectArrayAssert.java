@@ -79,11 +79,21 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   * 
+   * @throws AssertionError {@inheritDoc}
+   */
   @Override
   public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
+  /**
+   * {@inheritDoc}
+   * 
+   * @throws AssertionError {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    * 
@@ -99,12 +109,22 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * 
    * @throws AssertionError {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   * 
+   * @throws AssertionError {@inheritDoc}
+   */
   @Override
   public S isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   * 
+   * @throws AssertionError {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    * 
@@ -127,12 +147,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S contains(@SuppressWarnings("unchecked") T... values) {
@@ -141,6 +163,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S containsOnly(@SuppressWarnings("unchecked") T... values) {
     arrays.assertContainsOnly(info, actual, values);
@@ -148,17 +171,20 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S hasSameElementsAs(Iterable<? extends T> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S containsOnlyOnce(@SuppressWarnings("unchecked") T... values) {
@@ -167,6 +193,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S containsExactly(@SuppressWarnings("unchecked") T... values) {
     arrays.assertContainsExactly(info, actual, values);
@@ -174,11 +201,13 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S containsSequence(@SuppressWarnings("unchecked") T... sequence) {
@@ -187,12 +216,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S containsSubsequence(@SuppressWarnings("unchecked") T... subsequence) {
     arrays.assertContainsSubsequence(info, actual, subsequence);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S contains(T value, Index index) {
@@ -201,12 +232,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S doesNotContain(T value, Index index) {
     arrays.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S doesNotContain(@SuppressWarnings("unchecked") T... values) {
@@ -215,12 +248,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
     arrays.assertDoesNotContainAnyElementsOf(info, actual, iterable);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S doesNotHaveDuplicates() {
@@ -229,12 +264,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S startsWith(@SuppressWarnings("unchecked") T... sequence) {
     arrays.assertStartsWith(info, actual, sequence);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S endsWith(@SuppressWarnings("unchecked") T... sequence) {
@@ -243,12 +280,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S isSubsetOf(Iterable<? extends T> values) {
     arrays.assertIsSubsetOf(info, actual, values);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S containsNull() {
@@ -257,12 +296,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S doesNotContainNull() {
     arrays.assertDoesNotContainNull(info, actual);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S are(Condition<? super T> condition) {
@@ -271,12 +312,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S areNot(Condition<? super T> condition) {
     arrays.assertAreNot(info, actual, condition);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S have(Condition<? super T> condition) {
@@ -285,12 +328,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S doNotHave(Condition<? super T> condition) {
     arrays.assertDoNotHave(info, actual, condition);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S areAtLeast(int times, Condition<? super T> condition) {
@@ -299,12 +344,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S areAtLeastOne(Condition<? super T> condition) {
     areAtLeast(1, condition);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S areAtMost(int times, Condition<? super T> condition) {
@@ -313,6 +360,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S areExactly(int times, Condition<? super T> condition) {
     arrays.assertAreExactly(info, actual, times, condition);
@@ -320,11 +368,13 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S haveAtLeast(int times, Condition<? super T> condition) {
@@ -333,12 +383,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S haveAtMost(int times, Condition<? super T> condition) {
     arrays.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S haveExactly(int times, Condition<? super T> condition) {
@@ -347,12 +399,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S hasAtLeastOneElementOfType(Class<?> type) {
     arrays.assertHasAtLeastOneElementOfType(info, actual, type);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S hasOnlyElementsOfType(Class<?> type) {
@@ -361,6 +415,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S isSorted() {
     arrays.assertIsSorted(info, actual);
@@ -368,12 +423,14 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S isSortedAccordingTo(Comparator<? super T> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
 
+  /** {@inheritDoc} */
   /** {@inheritDoc} */
   @Override
   public S containsAll(Iterable<? extends T> iterable) {
@@ -1086,6 +1143,43 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
     return (S) new ObjectArrayAssert<>(toArray(filter.get()));
   }
 
+  /**
+   * Filter the array under test keeping only elements matching the given {@link Condition}.
+   * <p>
+   * Example : check old employees whose age > 100:
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   * 
+   * Employee[] employees = new Employee[] { yoda, luke, obiwan, noname };
+   * 
+   * // old employee condition, "old employees" describes the condition in error message
+   * // you just have to implement 'matches' method 
+   * Condition&lt;Employee&gt; oldEmployees = new Condition&lt;Employee&gt;("old employees") {
+   *       {@literal @}Override
+   *       public boolean matches(Employee employee) {
+   *         return employee.getAge() > 100;
+   *       }
+   *     };
+   *   }
+   * assertThat(employees).filteredOn(oldEmployees)
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
+   * You can combine {@link Condition} with condition operator like {@link Not}:
+   * 
+   * <pre><code class='java'>
+   * // 'not' filter is statically imported from Assertions.not 
+   * assertThat(employees).filteredOn(not(oldEmployees))
+   *                      .contains(luke, noname);
+   * </code></pre>
+   * 
+   * @param condition the filter condition / predicate
+   * @return a new assertion object with the filtered array under test
+   * @throws IllegalArgumentException if the given condition is {@code null}.
+   */
   /**
    * Filter the array under test keeping only elements matching the given {@link Condition}.
    * <p>

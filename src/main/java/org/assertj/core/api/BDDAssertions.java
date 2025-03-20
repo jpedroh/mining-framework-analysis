@@ -80,7 +80,6 @@ public class BDDAssertions extends Assertions {
   public static <T> OptionalAssert<T> then(Optional<T> optional) {
     return assertThat(optional);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalInt}.
    *
@@ -91,7 +90,6 @@ public class BDDAssertions extends Assertions {
   public static OptionalIntAssert then(OptionalInt optional) {
     return assertThat(optional);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalLong}.
    *
@@ -102,7 +100,6 @@ public class BDDAssertions extends Assertions {
   public static OptionalLongAssert then(OptionalLong optional) {
     return assertThat(optional);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalDouble}.
    *
@@ -113,7 +110,6 @@ public class BDDAssertions extends Assertions {
   public static OptionalDoubleAssert then(OptionalDouble optional) {
     return assertThat(optional);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BigDecimalAssert}</code>.
    *
@@ -123,7 +119,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBigDecimalAssert<?> then(BigDecimal actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
    *
@@ -133,7 +128,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanAssert<?> then(boolean actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
    *
@@ -143,7 +137,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanAssert<?> then(Boolean actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BooleanArrayAssert}</code>.
    *
@@ -153,7 +146,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanArrayAssert<?> then(boolean[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
    *
@@ -163,7 +155,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteAssert<?> then(byte actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
    *
@@ -173,7 +164,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteAssert<?> then(Byte actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteArrayAssert}</code>.
    *
@@ -183,7 +173,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteArrayAssert<?> then(byte[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
    *
@@ -193,7 +182,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharacterAssert<?> then(char actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharArrayAssert}</code>.
    *
@@ -203,7 +191,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharArrayAssert<?> then(char[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
    *
@@ -213,7 +200,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharacterAssert<?> then(Character actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ClassAssert}</code>
    *
@@ -223,7 +209,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractClassAssert<?> then(Class<?> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.GenericComparableAssert}</code> with
    * standard comparison semantics.
@@ -234,7 +219,9 @@ public class BDDAssertions extends Assertions {
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return assertThat(actual);
   }
-
+  public static <T> AbstractObjectAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IterableAssert}</code>.
    *
@@ -244,7 +231,6 @@ public class BDDAssertions extends Assertions {
   public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterable<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IterableAssert}</code>. The <code>{@link
    * java.util.Iterator}</code> is first
@@ -257,7 +243,6 @@ public class BDDAssertions extends Assertions {
   public static <T> AbstractIterableAssert<?, ? extends Iterable<? extends T>, T> then(Iterator<? extends T> actual) {
     return new IterableAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
    *
@@ -267,7 +252,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleAssert<?> then(double actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
    *
@@ -277,7 +261,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleAssert<?> then(Double actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleArrayAssert}</code>.
    *
@@ -287,7 +270,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleArrayAssert<?> then(double[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FileAssert}</code>.
    *
@@ -297,7 +279,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFileAssert<?> then(File actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.InputStreamAssert}</code>.
    *
@@ -307,7 +288,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractInputStreamAssert<?, ? extends InputStream> then(InputStream actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
    *
@@ -317,7 +297,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatAssert<?> then(float actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
    *
@@ -327,7 +306,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatAssert<?> then(Float actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatArrayAssert}</code>.
    *
@@ -337,7 +315,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatArrayAssert<?> then(float[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
    *
@@ -347,7 +324,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntegerAssert<?> then(int actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntArrayAssert}</code>.
    *
@@ -357,7 +333,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntArrayAssert<?> then(int[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
    *
@@ -367,7 +342,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntegerAssert<?> then(Integer actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ListAssert}</code>.
    *
@@ -377,7 +351,6 @@ public class BDDAssertions extends Assertions {
   public static <T> AbstractListAssert<?, ? extends List<? extends T>, T> then(List<? extends T> actual) {
     return new ListAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
    *
@@ -387,7 +360,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongAssert<?> then(long actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
    *
@@ -397,7 +369,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongAssert<?> then(Long actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongArrayAssert}</code>.
    *
@@ -407,17 +378,12 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongArrayAssert<?> then(long[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectAssert}</code>.
    *
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> then(T actual) {
-    return assertThat(actual);
-  }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectArrayAssert}</code>.
    *
@@ -427,7 +393,6 @@ public class BDDAssertions extends Assertions {
   public static <T> AbstractObjectArrayAssert<?, T> then(T[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.MapAssert}</code>.
    *
@@ -437,7 +402,6 @@ public class BDDAssertions extends Assertions {
   public static <K, V> AbstractMapAssert<?, ? extends Map<K, V>, K, V> then(Map<K, V> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
    *
@@ -447,7 +411,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortAssert<?> then(short actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
    *
@@ -457,7 +420,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortAssert<?> then(Short actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortArrayAssert}</code>.
    *
@@ -467,7 +429,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortArrayAssert<?> then(short[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharSequenceAssert}</code>.
    *
@@ -477,7 +438,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> then(CharSequence actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.StringAssert}</code>.
    *
@@ -487,7 +447,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharSequenceAssert<?, String> then(String actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DateAssert}</code>.
    *
@@ -497,7 +456,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDateAssert<?> then(Date actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ThrowableAssert}</code>.
    *
@@ -507,7 +465,177 @@ public class BDDAssertions extends Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> then(Throwable actual) {
     return assertThat(actual);
   }
-
+  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
+    return assertThatThrownBy(shouldRaiseThrowable);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalDateAssert<?> then(LocalDate actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalDateTimeAssert<?> then(LocalDateTime actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ZonedDateTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractZonedDateTimeAssert<?> then(ZonedDateTime actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalTimeAssert<?> then(LocalTime actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractOffsetTimeAssert<?> then(OffsetTime actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link UriAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractUriAssert<?> then(URI actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link UrlAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractUrlAssert<?> then(URL actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractOffsetDateTimeAssert<?> then(OffsetDateTime actual) {
+    return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    * 
@@ -533,89 +661,6 @@ public class BDDAssertions extends Assertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
    */
-  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
-    return assertThatThrownBy(shouldRaiseThrowable);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalDateAssert<?> then(LocalDate actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalDateTimeAssert<?> then(LocalDateTime actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.ZonedDateTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractZonedDateTimeAssert<?> then(ZonedDateTime actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalTimeAssert<?> then(LocalTime actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractOffsetTimeAssert<?> then(OffsetTime actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link UriAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractUriAssert<?> then(URI actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link UrlAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractUrlAssert<?> then(URL actual) {
-    return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractOffsetDateTimeAssert<?> then(OffsetDateTime actual) {
-    return assertThat(actual);
-  }
 
   /**
    * Creates a new </code>{@link org.assertj.core.api.BDDAssertions}</code>.

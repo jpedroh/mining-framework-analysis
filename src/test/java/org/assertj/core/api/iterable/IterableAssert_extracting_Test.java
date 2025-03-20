@@ -175,7 +175,7 @@ public class IterableAssert_extracting_Test {
   }
 
   @Test
-  public void should_allow_extracting_multiple_values_using_extractor() throws Exception {
+  public void sohuld_allow_extracting_multiple_values_using_extractor() throws Exception {
 	assertThat(employees).extracting(new Extractor<Employee, Tuple>() {
 	  @Override
 	  public Tuple extract(Employee input) {
@@ -184,13 +184,13 @@ public class IterableAssert_extracting_Test {
 	}).containsOnly(tuple("Yoda", 800, 1L), tuple("Luke", 26, 2L));
   }
 
- @Test
+  @Test
   public void should_allow_extracting_by_toString_method() {
     assertThat(employees).extracting(Extractors.toStringMethod()).containsOnly(
         "Employee[id=1, name=Name[first='Yoda', last='null'], age=800]",
         "Employee[id=2, name=Name[first='Luke', last='Skywalker'], age=26]");
   }
-    
+
   @Test
   public void should_allow_assertions_by_using_function_extracted_from_given_iterable() throws Exception {
 	assertThat(fellowshipOfTheRing).extracting(TolkienCharacter::getName)

@@ -80,6 +80,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void isNullOrEmpty() {
     iterables.assertNullOrEmpty(info, actual);
@@ -88,11 +91,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void isEmpty() {
     iterables.assertEmpty(info, actual);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -105,12 +114,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S hasSize(int expected) {
     iterables.assertHasSize(info, actual, expected);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -123,12 +138,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S hasSameSizeAs(Iterable<?> other) {
     iterables.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -141,12 +162,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsOnly(@SuppressWarnings("unchecked") T... values) {
     iterables.assertContainsOnly(info, actual, values);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -159,12 +186,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsExactly(@SuppressWarnings("unchecked") T... values) {
     iterables.assertContainsExactly(info, actual, values);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -177,12 +210,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsSequence(@SuppressWarnings("unchecked") T... sequence) {
     iterables.assertContainsSequence(info, actual, sequence);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -207,12 +246,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S doesNotHaveDuplicates() {
     iterables.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -225,12 +270,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S endsWith(@SuppressWarnings("unchecked") T... sequence) {
     iterables.assertEndsWith(info, actual, sequence);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -243,12 +294,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S doesNotContainNull() {
     iterables.assertDoesNotContainNull(info, actual);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -261,12 +318,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S areNot(Condition<? super T> condition) {
     iterables.assertAreNot(info, actual, condition);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -279,12 +342,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S doNotHave(Condition<? super T> condition) {
     iterables.assertDoNotHave(info, actual, condition);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -297,12 +366,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S areAtLeast(int times, Condition<? super T> condition) {
     iterables.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -315,6 +390,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S areExactly(int times, Condition<? super T> condition) {
     iterables.assertAreExactly(info, actual, times, condition);
@@ -322,11 +400,15 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   }
 
   /** {@inheritDoc} */
+  /** {@inheritDoc} */
   @Override
   public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -339,12 +421,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S haveAtMost(int times, Condition<? super T> condition) {
     iterables.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -415,12 +503,18 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsAll(Iterable<? extends T> iterable) {
     iterables.assertContainsAll(info, actual, iterable);
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -433,6 +527,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
     return myself;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -1019,7 +1116,6 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
                                                             .collect(toList());
     return new ListAssert<Tuple>(tuples);
   }
-
   /**
    * Same as {@link #containsExactly(Object[])} but handle the {@link Iterable} to array conversion. Same semantic as
    * {@link #containsExactly(Object...)} : verifies that actual contains all the elements of the given iterable and
@@ -1039,6 +1135,9 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    *
    * @param iterable the given {@code Iterable} we will get elements from.
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
@@ -1047,11 +1146,17 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   /**
    * {@inheritDoc}
    */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
+  /**
+   * {@inheritDoc}
+   */
   /**
    * {@inheritDoc}
    */
@@ -1227,6 +1332,69 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * <p>
    * 
    * As an example, let's check all employees 800 years old (yes, special employees):
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   * 
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * assertThat(employees).filteredOn("age", 800)
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
+   * Nested properties/fields are supported:
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
+   *
+   * // name is null for noname => it does not match the filter on "name.first" 
+   * assertThat(employees).filteredOn("name.first", "Luke")
+   *                      .containsOnly(luke);
+   * 
+   * assertThat(employees).filteredOn("name.last", "Vader")
+   *                      .isEmpty();
+   * </code></pre>
+   * <p>
+   * If you want to filter on null value, use {@link #filteredOnNull(String)} as Java will resolve the call to
+   * {@link #filteredOn(String, FilterOperator)} instead of this method.
+   * <p>
+   * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
+   * elements.
+   * <p>
+   * You can chain filters:
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
+   * // 'not' filter is statically imported from Assertions.not 
+   * 
+   * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
+   *                                .filteredOn("name", not("Boromir"))
+   *                                .containsOnly(aragorn);
+   * </code></pre>
+   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * 
+   * @param propertyOrFieldName the name of the property or field to read
+   * @param expectedValue the value to compare element's property or field with
+   * @return a new assertion object with the filtered iterable under test
+   * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
+   * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
+   */
+  /**
+   * Filter the iterable under test keeping only elements having a property or field equal to {@code expectedValue}, the
+   * property/field is specified by {@code propertyOrFieldName} parameter.
+   * <p>
+   * The filter first tries to get the value from a property (named {@code propertyOrFieldName}), if no such property
+   * exists it tries to read the value from a field. Reading private fields is supported by default, this can be
+   * globally disabled by calling {@link Assertions#setAllowExtractingPrivateFields(boolean)
+   * Assertions.setAllowExtractingPrivateFields(false)}.
+   * <p>
+   * When reading <b>nested</b> property/field, if an intermediate value is null the whole nested property/field is
+   * considered to be null, thus reading "address.street.name" value will return null if "street" value is null.
+   * <p>
+   * 
+   * As an example, let's check all employees 800 years old (yes, special employees):
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
@@ -1261,7 +1429,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    *                                .filteredOn("name", not("Boromir"))
    *                                .containsOnly(aragorn);</code></pre>
    * 
-   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * If you need more complex filter, use {@link #filteredOn(Condition)} and provide a {@link Condition} to specify the
+   * filter to apply.
    * 
    * @param propertyOrFieldName the name of the property or field to read
    * @param expectedValue the value to compare element's property or field with
@@ -1276,6 +1445,48 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
     return (S) new ListAssert<>(newArrayList(filteredIterable));
   }
 
+  /**
+   * Filter the iterable under test keeping only elements whose property or field specified by
+   * {@code propertyOrFieldName} is null.
+   * <p>
+   * The filter first tries to get the value from a property (named {@code propertyOrFieldName}), if no such property
+   * exists it tries to read the value from a field. Reading private fields is supported by default, this can be
+   * globally disabled by calling {@link Assertions#setAllowExtractingPrivateFields(boolean)
+   * Assertions.setAllowExtractingPrivateFields(false)}.
+   * <p>
+   * When reading <b>nested</b> property/field, if an intermediate value is null the whole nested property/field is
+   * considered to be null, thus reading "address.street.name" value will return null if "street" value is null.
+   * <p>
+   * As an example, let's check all employees 800 years old (yes, special employees):
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   * 
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * assertThat(employees).filteredOnNull("name")
+   *                      .containsOnly(noname);
+   * </code></pre>
+   * Nested properties/fields are supported:
+   * 
+   * <pre><code class='java'>
+   * // Name is bean class with 'first' and 'last' String properties 
+   *
+   * assertThat(employees).filteredOnNull("name.last")
+   *                      .containsOnly(yoda, obiwan, noname);
+   * </code></pre>
+   * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
+   * elements.
+   * <p>
+   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * 
+   * @param propertyOrFieldName the name of the property or field to read
+   * @return a new assertion object with the filtered iterable under test
+   * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
+   */
   /**
    * Filter the iterable under test keeping only elements whose property or field specified by
    * {@code propertyOrFieldName} is null.
@@ -1308,7 +1519,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
    * elements.
    * <p>
-   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * If you need more complex filter, use {@link #filteredOn(Condition)} and provide a {@link Condition} to specify the
+   * filter to apply.
    * 
    * @param propertyOrFieldName the name of the property or field to read
    * @return a new assertion object with the filtered iterable under test
@@ -1320,6 +1532,77 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
+  /**
+   * Filter the iterable under test keeping only elements having a property or field matching the filter expressed with
+   * the {@link FilterOperator}, the property/field is specified by {@code propertyOrFieldName} parameter.
+   * <p>
+   * The existing filters are :
+   * <ul>
+   * <li> {@link Assertions#not(Object) not(Object)}</li>
+   * <li> {@link Assertions#in(Object...) in(Object...)}</li>
+   * <li> {@link Assertions#notIn(Object...) notIn(Object...)}</li>
+   * </ul>
+   * <p>
+   * Whatever filter is applied, it first tries to get the value from a property (named {@code propertyOrFieldName}), if
+   * no such property exists it tries to read the value from a field. Reading private fields is supported by default,
+   * this can be globally disabled by calling {@link Assertions#setAllowExtractingPrivateFields(boolean)
+   * Assertions.setAllowExtractingPrivateFields(false)}.
+   * <p>
+   * When reading <b>nested</b> property/field, if an intermediate value is null the whole nested property/field is
+   * considered to be null, thus reading "address.street.name" value will return null if "street" value is null.
+   * <p>
+   * 
+   * As an example, let's check stuff on some special employees :
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * 
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   *
+   * // 'not' filter is statically imported from Assertions.not 
+   * assertThat(employees).filteredOn("age", not(800))
+   *                      .containsOnly(luke);
+   * 
+   * // 'in' filter is statically imported from Assertions.in
+   * // Name is bean class with 'first' and 'last' String properties 
+   * assertThat(employees).filteredOn("name.first", in("Yoda", "Luke"))
+   *                      .containsOnly(yoda, luke);
+   * 
+   * // 'notIn' filter is statically imported from Assertions.notIn
+   * assertThat(employees).filteredOn("name.first", notIn("Yoda", "Luke"))
+   *                      .containsOnly(obiwan);
+   * </code></pre>
+   * An {@link IntrospectionError} is thrown if the given propertyOrFieldName can't be found in one of the iterable
+   * elements.
+   * <p>
+   * Note that combining filter operators is not supported, thus the following code is not correct:
+   * 
+   * <pre><code class='java'>
+   * // Combining filter operators like not(in(800)) is NOT supported
+   * // -&gt; throws UnsupportedOperationException
+   * assertThat(employees).filteredOn("age", not(in(800)))
+   *                      .contains(luke);
+   * </code></pre>
+   * <p>
+   * You can chain filters:
+   * 
+   * <pre><code class='java'>
+   * // fellowshipOfTheRing is a list of TolkienCharacter having race and name fields
+   * // 'not' filter is statically imported from Assertions.not 
+   * 
+   * assertThat(fellowshipOfTheRing).filteredOn("race.name", "Man")
+   *                                .filteredOn("name", not("Boromir"))
+   *                                .containsOnly(aragorn);
+   * </code></pre>
+   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * 
+   * @param propertyOrFieldName the name of the property or field to read
+   * @param filterOperator the filter operator to apply
+   * @return a new assertion object with the filtered iterable under test
+   * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
+   */
   /**
    * Filter the iterable under test keeping only elements having a property or field matching the filter expressed with
    * the {@link FilterOperator}, the property/field is specified by {@code propertyOrFieldName} parameter.
@@ -1377,7 +1660,8 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    *                                .filteredOn("name", not("Boromir"))
    *                                .containsOnly(aragorn);</code></pre>
    * 
-   * If you need more complex filter, use {@link #filteredOn(Predicate)} or {@link #filteredOn(Condition)}.
+   * If you need more complex filter, use {@link #filteredOn(Condition)} and provide a {@link Condition} to specify the
+   * filter to apply.
    * 
    * @param propertyOrFieldName the name of the property or field to read
    * @param filterOperator the filter operator to apply
@@ -1396,6 +1680,43 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
    * Filter the iterable under test keeping only elements matching the given {@link Condition}.
    * <p>
    * If you prefer {@link Predicate} over {@link Condition}, use {@link #filteredOn(Predicate)}.
+   * <p>
+   * Example : check old employees whose age > 100:
+   * 
+   * <pre><code class='java'> 
+   * Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
+   * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
+   * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
+   * Employee noname = new Employee(4L, null, 50);
+   * 
+   * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
+   * 
+   * // old employee condition, "old employees" describes the condition in error message
+   * // you just have to implement 'matches' method 
+   * Condition&lt;Employee&gt; oldEmployees = new Condition&lt;Employee&gt;("old employees") {
+   *       {@literal @}Override
+   *       public boolean matches(Employee employee) {
+   *         return employee.getAge() > 100;
+   *       }
+   *     };
+   *   }
+   * assertThat(employees).filteredOn(oldEmployees)
+   *                      .containsOnly(yoda, obiwan);
+   * </code></pre>
+   * You can combine {@link Condition} with condition operator like {@link Not}:
+   * 
+   * <pre><code class='java'>
+   * // 'not' filter is statically imported from Assertions.not 
+   * assertThat(employees).filteredOn(not(oldEmployees))
+   *                      .contains(luke, noname);
+   * </code></pre>
+   * 
+   * @param condition the filter condition / predicate
+   * @return a new assertion object with the filtered iterable under test
+   * @throws IllegalArgumentException if the given condition is {@code null}.
+   */
+  /**
+   * Filter the iterable under test keeping only elements matching the given {@link Condition}.
    * <p>
    * Example : check old employees whose age > 100:
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
