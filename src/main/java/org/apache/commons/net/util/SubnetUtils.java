@@ -255,6 +255,7 @@ public class SubnetUtils {
         if (matcher.matches()) {
             address = matchAddress(matcher);
 
+<<<<<<< /usr/src/app/output/apache/commons-net/d0815aadc03e80da2afe0d8e95927081973e6a4b/src/main/java/org/apache/commons/net/util/SubnetUtils.java/left.java
             /*
              * Create a binary netmask from the number of bits specification /x
              * 
@@ -269,7 +270,13 @@ public class SubnetUtils {
              * Note that rotation a int value by 32 is no operation.
              */
             netmask = (int) (0x0FFFFFFFFL << NBITS - rangeCheck(Integer.parseInt(matcher.group(5)), 0, NBITS));
-
+||||||| /usr/src/app/output/apache/commons-net/d0815aadc03e80da2afe0d8e95927081973e6a4b/src/main/java/org/apache/commons/net/util/SubnetUtils.java/base.java
+            /* Create a binary netmask from the number of bits specification /x */
+            int cidrPart = rangeCheck(Integer.parseInt(matcher.group(5)), 0, NBITS);
+            for (int j = 0; j < cidrPart; ++j) {
+                netmask |= (1 << 31 - j);
+            }
+=======
             /* Create a binary netmask from the number of bits specification /x */
 
             int trailingZeroes = NBITS - rangeCheck(Integer.parseInt(matcher.group(5)), 0, NBITS);
@@ -282,6 +289,7 @@ public class SubnetUtils {
              * a long to ensure that the left-most bit is shifted out correctly.
              */
             netmask = (int) (0x0FFFFFFFFL << trailingZeroes );
+>>>>>>> /usr/src/app/output/apache/commons-net/d0815aadc03e80da2afe0d8e95927081973e6a4b/src/main/java/org/apache/commons/net/util/SubnetUtils.java/right.java
 
             /* Calculate base network address */
             network = (address & netmask);
