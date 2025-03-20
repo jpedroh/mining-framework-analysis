@@ -157,23 +157,45 @@ public class JsonEncoderDecoderClassCreator extends BaseSourceCreator {
     private Collection<Type> findJsonSubTypes(JClassType clazz, Set<Type> types) {
         if (clazz == null) {
             return Collections.emptyList();
-        }
-        JsonSubTypes annotation = getClassAnnotation(clazz, JsonSubTypes.class);
+<<<<<<< /usr/src/app/output/resty-gwt/resty-gwt/d6c18bc8da762766b8946d212a1f8db96ba3cd10/restygwt/src/main/java/org/fusesource/restygwt/rebind/JsonEncoderDecoderClassCreator.java/left.java
             
+        } else {
+            JsonSubTypes annotation = getClassAnnotation(clazz, JsonSubTypes.class);
+            
+            if (annotation == null) {
+                return Collections.emptyList();
+            }
+
+            for (Type type : annotation.value()) {
+                if (types.add(type)) {
+                    Class<?> subclazz = type.value();
+                    String newSubClassName = subclazz.getName().replaceAll("\\$", ".");
+                    JClassType subJClazz = context.getTypeOracle().findType(newSubClassName);
+                    findJsonSubTypes(subJClazz, types);
+                }
+            }
+
+            return types;
+||||||| /usr/src/app/output/resty-gwt/resty-gwt/d6c18bc8da762766b8946d212a1f8db96ba3cd10/restygwt/src/main/java/org/fusesource/restygwt/rebind/JsonEncoderDecoderClassCreator.java/base.java
+        else {
+            JsonSubTypes annotation = getClassAnnotation(clazz, JsonSubTypes.class);
+            if (annotation == null) {
+                return Collections.emptyList();
+            }
+            Set<Type> result = new HashSet<JsonSubTypes.Type>();
+            Type[] value = annotation.value();
+            Collections.addAll(result, value);
+            return result;
+=======
+        JsonSubTypes annotation = getClassAnnotation(clazz, JsonSubTypes.class);
         if (annotation == null) {
             return Collections.emptyList();
+>>>>>>> /usr/src/app/output/resty-gwt/resty-gwt/d6c18bc8da762766b8946d212a1f8db96ba3cd10/restygwt/src/main/java/org/fusesource/restygwt/rebind/JsonEncoderDecoderClassCreator.java/right.java
         }
-
-        for (Type type : annotation.value()) {
-            if (types.add(type)) {
-                Class<?> subclazz = type.value();
-                String newSubClassName = subclazz.getName().replaceAll("\\$", ".");
-                JClassType subJClazz = context.getTypeOracle().findType(newSubClassName);
-                findJsonSubTypes(subJClazz, types);
-            }
-        }
-
-        return types;
+        Set<Type> result = new HashSet<JsonSubTypes.Type>();
+        Type[] value = annotation.value();
+        Collections.addAll(result, value);
+        return result;
     }
 
     protected void generateSingleton(String shortName)
@@ -275,7 +297,7 @@ public class JsonEncoderDecoderClassCreator extends BaseSourceCreator {
                         // If can ignore some fields right off the back..
                         // if there is a creator encode only final fields with JsonProperty annotation
                         if (ignoreField || getterName == null && (field.isStatic() || (field.isFinal() && !(creator != null && orderedFields.contains(field))) || field.isTransient()
-								|| field.isAnnotationPresent(JsonIgnore.class) || field.isAnnotationPresent(XmlTransient.class))) {
+                								|| field.isAnnotationPresent(JsonIgnore.class) || field.isAnnotationPresent(XmlTransient.class))) {
                             continue;
                         }
 
