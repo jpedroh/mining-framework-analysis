@@ -16,9 +16,9 @@ import de.hochschuletrier.gdw.commons.gdx.state.transition.SplitHorizontalTransi
 import de.hochschuletrier.gdw.commons.gdx.utils.DrawUtil;
 import de.hochschuletrier.gdw.ss14.Main;
 import de.hochschuletrier.gdw.ss14.sound.LocalMusic;
-
-import de.hochschuletrier.gdw.ss14.ui.*;
+import de.hochschuletrier.gdw.ss14.ui.MainMenu;
 import de.hochschuletrier.gdw.ss14.sound.SoundManager;
+import de.hochschuletrier.gdw.ss14.ui.UIActions;
 
 /**
  * Menu state
@@ -30,7 +30,6 @@ public class MainMenuState extends GameState implements InputProcessor {
     
     private MainMenu mainMenu;
     InputInterceptor inputProcessor;
-    private LocalMusic music;
 
     public MainMenuState() {
     }
@@ -39,12 +38,6 @@ public class MainMenuState extends GameState implements InputProcessor {
     public void init(AssetManagerX assetManager) {
         super.init(assetManager);
 
-        Texture logo = assetManager.getTexture("logo");
-        AnimationExtended walking = assetManager.getAnimation("walking");
-        this.music = Main.musicManager.getMusicStreamByStateName(GameStates.MAINMENU);
-        Sound click = assetManager.getSound("click");
-        
-//        music.play();
 
         inputProcessor = new InputInterceptor(this) {
             @Override
@@ -77,25 +70,44 @@ public class MainMenuState extends GameState implements InputProcessor {
 
     @Override
     public void onEnter() {
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/left.java
         mainMenu = new MainMenu();
         mainMenu.init(assetManager);
-		if (this.music.isMusicPlaying()) {
-			this.music.setFade('i', 2000);
-		} else {
-			this.music.play("menu");
-		}
-
+||||||| /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/base.java
+    		if (this.music.isMusicPlaying()) {
+    			this.music.setFade('i', 4000);
+    		} else {
+    			this.music.play("menu");
+    		}
+    	
+=======
+    		if (this.music.isMusicPlaying()) {
+    			this.music.setFade('i', 2000);
+    		} else {
+    			this.music.play("menu");
+    		}
+    		SoundManager.performAction(UIActions.BELLCLICKED);
+    	
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/right.java
         inputProcessor.setActive(true);
         inputProcessor.setBlocking(true);
     }
 
     @Override
     public void onLeave() {
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/left.java
     	mainMenu.dispose();
-		if (this.music.isMusicPlaying()) {
+||||||| /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/base.java
+    		if (this.music.isMusicPlaying()) {
+    		this.music.setFade('o', 4000);
+    		}
+    		
+=======
+    		if (this.music.isMusicPlaying()) {
     		this.music.setFade('o', 2000);
-		}
-
+    		}
+    		
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/bb4703104114664a8800674df2159429666c1863/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/states/MainMenuState.java/right.java
         inputProcessor.setActive(false);
         inputProcessor.setBlocking(false);
     }
