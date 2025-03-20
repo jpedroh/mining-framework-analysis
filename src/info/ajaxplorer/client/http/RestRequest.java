@@ -1,25 +1,5 @@
-/**
- *  Copyright 2012 Charles du Jeu
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *  
- *  This file is part of the AjaXplorer Java Client
- *  More info on http://ajaxplorer.info/
- */
 package info.ajaxplorer.client.http;
-
 import info.ajaxplorer.client.model.Server;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.naming.AuthenticationException;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,712 +37,653 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class RestRequest {
-	String httpUser;
-	String httpPassword;
-	Boolean serversNeedsCredentials = false;
-	String authStep = "";
-	Boolean loginStateChanged = false;
-	MessageListener handler;
+  String httpUser;
 
-	public boolean throwAuthExceptions = false;
-	public boolean throwIOExceptions = false;
+  String httpPassword;
 
-	public static String STATUS_REFRESHING_AUTH 	= "refreshing_auth";
-	public static String STATUS_LOADING_DATA 		= "loading_data";
-	public static String STATUS_PARSING_RESPONSE	= "parsing_response";
+  Boolean serversNeedsCredentials = false;
 
-	public static String AUTH_ERROR_NOSERVER		= "nocurrent_server";
-	public static String AUTH_ERROR_LOCKEDOUT		= "locked_out";
-	public static String AUTH_ERROR_LOGIN_FAILED	= "login_failed";
-	public static String IO_CONNECTION_ERROR    	= "Error_Connection";
+  String authStep = "";
 
-	public long getMaxUploadSize() {
-		double maxUpload = 60 * 1024 * 1024;
-		Map<String, String> caps = RestStateHolder.getInstance().getServer().getRemoteCapacities(this);
-		if(caps!=null && caps.containsKey(Server.capacity_UPLOAD_LIMIT)) {
+  Boolean loginStateChanged = false;
 
-			try{
-				double doubl = new Double( caps.get(Server.capacity_UPLOAD_LIMIT));
-				maxUpload = (long) doubl;
-			}catch (NumberFormatException e) {}
-		}
-		maxUpload = Math.min(maxUpload, 60*1024*1024);
-		return (long)maxUpload;
-	}
-	public void setHandler(MessageListener handler) {
-		this.handler = handler;
-	}
+  MessageListener handler;
 
-	public void clearHandler() {
-		this.handler = null;
-	}
+  public boolean throwAuthExceptions = false;
 
-	public void setTimeout(int timeoutMillis){
-		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), timeoutMillis);
-	}
+  public boolean throwIOExceptions = false;
 
-	public int getTimeout(){
-		return HttpConnectionParams.getConnectionTimeout(httpClient.getParams());
-	}
+  public static String STATUS_REFRESHING_AUTH = "refreshing_auth";
 
-	protected AjxpHttpClient httpClient;
-	protected RestStateHolder.ServerStateListener internalListener;
+  public static String STATUS_LOADING_DATA = "loading_data";
 
-	public RestRequest() {
-		RestStateHolder state = RestStateHolder.getInstance();
-		internalListener = new RestStateHolder.ServerStateListener() {
-			public void onServerChange(Server newServer, Server oldServer) {
-				
-				// we clear cookies if newServer and OldServer have the same host names (aliases) but different users credentials.
-				
-				initWithServer(newServer);				
-				if(oldServer != null && AjxpHttpClient.cookieStore != null){
-					
-					String currentHost = oldServer.getHost();
-					String currentUser = oldServer.getUser();					
-					
-					if(newServer.getUri() != null && newServer.getUri().toString() != null && !newServer.getUri().toString().contains(EndPointResolverApi.SERVER_URL_RESOLUTION)) {
-					    if(newServer.getHost().equals(currentHost) && !newServer.getUser().equals(currentUser)){
-					    	AjxpHttpClient.cookieStore.clear();						    	
-					    }
-					    return;
-					}
-					
-					String oldAlias = null;
-					String newAlias = null;
-					try{		
-						oldAlias = oldServer.getServerNode().getPropertyValue("Resolution_Alias");
-						newAlias = newServer.getServerNode().getPropertyValue("Resolution_Alias");
-					}catch(Exception e){}
-					
-					if(newAlias == null || oldAlias == null){
-						return;
-					}
-					
-					String serverURI = newServer.getUri().toString();
-					if(serverURI != null && serverURI.contains(EndPointResolverApi.SERVER_URL_RESOLUTION) && !newAlias.equals(oldAlias)) {
-						AjxpHttpClient.cookieStore.clear();
-					}					
-				}
-			}
-		};
-		state.registerStateListener(internalListener);
-		this.initWithServer(state.getServer());
-	}
+  public static String STATUS_PARSING_RESPONSE = "parsing_response";
 
-	public void release(){
-		RestStateHolder.getInstance().unRegisterStateListener(internalListener);
-	}
+  public static String AUTH_ERROR_NOSERVER = "nocurrent_server";
 
-	private void initWithServer(Server server){
-		boolean trustSSL  = (server != null && server.shouldTrustSSL());
-		if(httpClient != null){
-			httpClient.destroy();
-		}
-		httpClient = new AjxpHttpClient(trustSSL);
-		if(server != null){
-			setHttpUser(server.getUser());
-			setHttpPassword(server.getPassword());
-			refreshCredentials();
-		}
-	}
+  public static String AUTH_ERROR_LOCKEDOUT = "locked_out";
 
-	private CountingMultipartRequestEntity.ProgressListener uploadListener;
-	public void setUploadProgressListener(CountingMultipartRequestEntity.ProgressListener uploadList){
-		this.uploadListener = uploadList;
-	}
+  public static String AUTH_ERROR_LOGIN_FAILED = "login_failed";
 
-	private HttpResponse issueRequest(URI uri) throws Exception{
-		return this.issueRequest(uri, null, null, null, null);
-	}
+  public static String IO_CONNECTION_ERROR = "Error_Connection";
 
-	private HttpResponse issueRequest(URI uri, Map<String,String> postParameters) throws Exception{
-		return this.issueRequest(uri, postParameters, null, null, null);
-	}
+  public long getMaxUploadSize() {
+    double maxUpload = 60 * 1024 * 1024;
+    Map<String, String> caps = RestStateHolder.getInstance().getServer().getRemoteCapacities(this);
+    if (caps != null && caps.containsKey(Server.capacity_UPLOAD_LIMIT)) {
+      try {
+        double doubl = new Double(caps.get(Server.capacity_UPLOAD_LIMIT));
+        maxUpload = (long) doubl;
+      } catch (NumberFormatException e) {
+      }
+    }
+    maxUpload = Math.min(maxUpload, 60 * 1024 * 1024);
+    return (long) maxUpload;
+  }
 
-	private HttpResponse issueRequest(URI uri, Map<String, String> postParameters, File file, String fileName, AjxpFileBody fileBody)
-			throws Exception {
-		return this.issueRequest(uri, postParameters, file, fileName, fileBody, false);
-	}
+  public void setHandler(MessageListener handler) {
+    this.handler = handler;
+  }
 
-	private HttpResponse issueRequest(URI uri, Map<String, String> postParameters, File file, String fileName, AjxpFileBody fileBody,
-			boolean skipAuth) throws Exception {
-		URI originalUri = new URI(uri.toString());
+  public void clearHandler() {
+    this.handler = null;
+  }
 
-	    if(EndPointResolverApi.checkResolutionRequired(uri))
-		{
-	    	EndPointResolverApi endPointResolverApi = null;
-			String uri_server ="";
-			Server server = RestStateHolder.getInstance().getServer();
-			String resolverName = server.getServerNode().getPropertyValue("resolver_class");
+  public void setTimeout(int timeoutMillis) {
+    HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), timeoutMillis);
+  }
 
-			if (resolverName != null && !resolverName.equals("")) {
-				Class<?> classe = null;
-				try {
-					classe = Class.forName(resolverName);
-				}catch(Exception e) {
-					String msg = e.getMessage();
-					System.out.println(msg);
-				}
-				Constructor<?> ctor = classe.getConstructor();
-				endPointResolverApi = (EndPointResolverApi) ctor.newInstance();
-			}
+  public int getTimeout() {
+    return HttpConnectionParams.getConnectionTimeout(httpClient.getParams());
+  }
 
-			if(endPointResolverApi == null) {
-				endPointResolverApi = new EndPointResolverApi();
-			}
-	    
-   			uri_server = endPointResolverApi.resolveServer(server, this,uri);
-         
-			originalUri = new URI(uri_server);
-			uri = new URI(uri.toString().replace("RequestResolution", uri_server));
-			RestStateHolder.getInstance().getServer().setUrl(uri_server);
+  protected AjxpHttpClient httpClient;
 
-			// RestStateHolder.getInstance().getServer().setId(Server.slugifyId(RestStateHolder.getInstance().getServer().getUser(),
-			// RestStateHolder.getInstance().getServer().getServerNode().getPropertyValue("server_url")));
-			RestStateHolder.getInstance().notifyServerChanged(RestStateHolder.getInstance().getServer());
-			// TEST WEIRD, SHOULD BE SET BY THE NOTIFIER.... ????
-			AjxpAPI.getInstance().setServer(RestStateHolder.getInstance().getServer());
-		}
+  protected RestStateHolder.ServerStateListener internalListener;
 
-		if(RestStateHolder.getInstance().getSECURE_TOKEN() != null){
-			uri = new URI(uri.toString().concat("&secure_token=" + RestStateHolder.getInstance().getSECURE_TOKEN()));
-		}
+  public RestRequest() {
+    RestStateHolder state = RestStateHolder.getInstance();
+    internalListener = new RestStateHolder.ServerStateListener() {
+      public void onServerChange(Server newServer, Server oldServer) {
+        initWithServer(newServer);
+        if (oldServer != null && AjxpHttpClient.cookieStore != null) {
+          String currentHost = oldServer.getHost();
+          String currentUser = oldServer.getUser();
+          if (newServer.getUri() != null && newServer.getUri().toString() != null && !newServer.getUri().toString().contains(EndPointResolverApi.SERVER_URL_RESOLUTION)) {
+            if (newServer.getHost().equals(currentHost) && !newServer.getUser().equals(currentUser)) {
+              AjxpHttpClient.cookieStore.clear();
+            }
+            return;
+          }
+          String oldAlias = null;
+          String newAlias = null;
+          try {
+            oldAlias = oldServer.getServerNode().getPropertyValue("Resolution_Alias");
+            newAlias = newServer.getServerNode().getPropertyValue("Resolution_Alias");
+          } catch (Exception e) {
+          }
+          if (newAlias == null || oldAlias == null) {
+            return;
+          }
+          String serverURI = newServer.getUri().toString();
+          if (serverURI != null && serverURI.contains(EndPointResolverApi.SERVER_URL_RESOLUTION) && !newAlias.equals(oldAlias)) {
+            AjxpHttpClient.cookieStore.clear();
+          }
+        }
+      }
+    };
+    state.registerStateListener(internalListener);
+    this.initWithServer(state.getServer());
+  }
 
-		HttpResponse response = null;
-		try {
-			HttpRequestBase request;
+  public void release() {
+    RestStateHolder.getInstance().unRegisterStateListener(internalListener);
+  }
 
-			if(postParameters != null || file != null){
-				request = new HttpPost();
-				if (file != null) {
+  private void initWithServer(Server server) {
+    boolean trustSSL = (server != null && server.shouldTrustSSL());
+    if (httpClient != null) {
+      httpClient.destroy();
+    }
+    httpClient = new AjxpHttpClient(trustSSL);
+    if (server != null) {
+      setHttpUser(server.getUser());
+      setHttpPassword(server.getPassword());
+      refreshCredentials();
+    }
+  }
 
-					if(fileBody == null){
-						if(fileName == null) fileName = file.getName(); 
-						fileBody = new AjxpFileBody(file, fileName);
-						fileBody.setMessageListener(handler);
-						// set upload chunk size
-						fileBody.setUploadChunkSize(RestStateHolder.getInstance().getFileUploadChunkSize());
-						long maxUpload = getMaxUploadSize();
-						if(maxUpload > 0 && maxUpload < file.length()){
-							fileBody.chunkIntoPieces((int)maxUpload);
-							if(uploadListener != null){
-								uploadListener.partTransferred(fileBody.getCurrentIndex(), fileBody.getTotalChunks());
-							}
-						}
-					}else{
-						if(uploadListener != null){
-							uploadListener.partTransferred(fileBody.getCurrentIndex() , fileBody.getTotalChunks());
-						}
-					}
-					MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-					reqEntity.addPart("userfile_0", fileBody);
+  private CountingMultipartRequestEntity.ProgressListener uploadListener;
 
-					if(fileName != null && !EncodingUtils.getAsciiString(EncodingUtils.getBytes(fileName, "US-ASCII")).equals(fileName)){
-						reqEntity.addPart("urlencoded_filename", new StringBody(java.net.URLEncoder.encode(fileName, "UTF-8")));
-					}
-					if(fileBody != null && !fileBody.getFilename().equals(fileBody.getRootFilename())){
-						reqEntity.addPart("appendto_urlencoded_part", new StringBody(java.net.URLEncoder.encode(fileBody.getRootFilename(), "UTF-8")));
-					}
-					if (postParameters != null) {
-						Iterator<Map.Entry<String, String>> it = postParameters.entrySet().iterator();
-						while(it.hasNext()){
-							Map.Entry<String, String> entry = it.next();
-							reqEntity.addPart(entry.getKey(), new StringBody(entry.getValue()));
-						}
-					}
-					if(uploadListener != null){
-						CountingMultipartRequestEntity countingEntity = new CountingMultipartRequestEntity(reqEntity, uploadListener);
-						((HttpPost)request).setEntity(countingEntity);
-					}else{
-						((HttpPost)request).setEntity(reqEntity);
-					}
-				}else{
-					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(postParameters.size());
-					Iterator<Map.Entry<String, String>> it = postParameters.entrySet().iterator();
-					while(it.hasNext()){
-						Map.Entry<String, String> entry = it.next();
-						nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-					}
-					((HttpPost)request).setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				}
-			}else{
-				request = new HttpGet();
-			}
+  public void setUploadProgressListener(CountingMultipartRequestEntity.ProgressListener uploadList) {
+    this.uploadListener = uploadList;
+  }
 
-			request.setURI(uri);
-			if(this.httpUser.length()> 0 && this.httpPassword.length()> 0 ){
-				request.addHeader("Ajxp-Force-Login", "true");
-			}
-			
-			response = httpClient.executeInContext(request);
+  private HttpResponse issueRequest(URI uri) throws Exception {
+    return this.issueRequest(uri, null, null, null, null);
+  }
 
-			if (!skipAuth && isAuthenticationRequested(response)) {
-				sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_REFRESHING_AUTH);
-				this.discardResponse(response);
-				this.authenticate();
-				if(loginStateChanged){
-					// RELOAD
-					loginStateChanged = false;
-					sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_LOADING_DATA);
+  private HttpResponse issueRequest(URI uri, Map<String, String> postParameters) throws Exception {
+    return this.issueRequest(uri, postParameters, null, null, null);
+  }
 
-					sendLogToHandler("RestRequest - About to send request again to server - STATE: skipAuth="
-							+ skipAuth
-							+ " authenticationRequested="
-							// + authenticationRequested
-							+ (fileBody != null ? (" fileBody-chunks=" + fileBody.getTotalChunks() + " fileBody-currentChunk=" + fileBody
-									.getCurrentIndex()) : " fileBody=null"));
+  private HttpResponse issueRequest(URI uri, Map<String, String> postParameters, File file, String fileName, AjxpFileBody fileBody) throws Exception {
+    return this.issueRequest(uri, postParameters, file, fileName, fileBody, false);
+  }
 
-					if(fileBody != null) fileBody.resetChunkIndex();
-					return this.issueRequest(originalUri, postParameters, file, fileName, fileBody);
-				}
-			}else if(fileBody != null && fileBody.isChunked() && !fileBody.allChunksUploaded()){
-				this.discardResponse(response);
-				this.issueRequest(originalUri, postParameters, file, fileName, fileBody);
-			}
+  private HttpResponse issueRequest(URI uri, Map<String, String> postParameters, File file, String fileName, AjxpFileBody fileBody, boolean skipAuth) throws Exception {
+    URI originalUri = new URI(uri.toString());
+    if (EndPointResolverApi.checkResolutionRequired(uri)) {
+      EndPointResolverApi endPointResolverApi = null;
+      String uri_server = "";
+      Server server = RestStateHolder.getInstance().getServer();
+      String resolverName = server.getServerNode().getPropertyValue("resolver_class");
+      if (resolverName != null && !resolverName.equals("")) {
+        Class<?> classe = null;
+        try {
+          classe = Class.forName(resolverName);
+        } catch (Exception e) {
+          String msg = e.getMessage();
+          System.out.println(msg);
+        }
+        Constructor<?> ctor = classe.getConstructor();
+        endPointResolverApi = (EndPointResolverApi) ctor.newInstance();
+      }
+      if (endPointResolverApi == null) {
+        endPointResolverApi = new EndPointResolverApi();
+      }
+      uri_server = endPointResolverApi.resolveServer(server, this, uri);
+      originalUri = new URI(uri_server);
+      uri = new URI(uri.toString().replace("RequestResolution", uri_server));
+      RestStateHolder.getInstance().getServer().setUrl(uri_server);
+      RestStateHolder.getInstance().notifyServerChanged(RestStateHolder.getInstance().getServer());
+      AjxpAPI.getInstance().setServer(RestStateHolder.getInstance().getServer());
+    }
+    if (RestStateHolder.getInstance().getSECURE_TOKEN() != null) {
+      uri = new URI(uri.toString().concat("&secure_token=" + RestStateHolder.getInstance().getSECURE_TOKEN()));
+    }
+    HttpResponse response = null;
+    try {
+      HttpRequestBase request;
+      if (postParameters != null || file != null) {
+        request = new HttpPost();
+        if (file != null) {
+          if (fileBody == null) {
+            if (fileName == null) {
+              fileName = file.getName();
+            }
+            fileBody = new AjxpFileBody(file, fileName);
+            fileBody.setMessageListener(handler);
+            fileBody.setUploadChunkSize(RestStateHolder.getInstance().getFileUploadChunkSize());
+            long maxUpload = getMaxUploadSize();
+            if (maxUpload > 0 && maxUpload < file.length()) {
+              fileBody.chunkIntoPieces((int) maxUpload);
+              if (uploadListener != null) {
+                uploadListener.partTransferred(fileBody.getCurrentIndex(), fileBody.getTotalChunks());
+              }
+            }
+          } else {
+            if (uploadListener != null) {
+              uploadListener.partTransferred(fileBody.getCurrentIndex(), fileBody.getTotalChunks());
+            }
+          }
+          MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+          reqEntity.addPart("userfile_0", fileBody);
+          if (fileName != null && !EncodingUtils.getAsciiString(EncodingUtils.getBytes(fileName, "US-ASCII")).equals(fileName)) {
+            reqEntity.addPart("urlencoded_filename", new StringBody(java.net.URLEncoder.encode(fileName, "UTF-8")));
+          }
+          if (fileBody != null && !fileBody.getFilename().equals(fileBody.getRootFilename())) {
+            reqEntity.addPart("appendto_urlencoded_part", new StringBody(java.net.URLEncoder.encode(fileBody.getRootFilename(), "UTF-8")));
+          }
+          if (postParameters != null) {
+            Iterator<Map.Entry<String, String>> it = postParameters.entrySet().iterator();
+            while (it.hasNext()) {
+              Map.Entry<String, String> entry = it.next();
+              reqEntity.addPart(entry.getKey(), new StringBody(entry.getValue()));
+            }
+          }
+          if (uploadListener != null) {
+            CountingMultipartRequestEntity countingEntity = new CountingMultipartRequestEntity(reqEntity, uploadListener);
+            ((HttpPost) request).setEntity(countingEntity);
+          } else {
+            ((HttpPost) request).setEntity(reqEntity);
+          }
+        } else {
+          List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(postParameters.size());
+          Iterator<Map.Entry<String, String>> it = postParameters.entrySet().iterator();
+          while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+          }
+          ((HttpPost) request).setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        }
+      } else {
+        request = new HttpGet();
+      }
+      request.setURI(uri);
+      if (this.httpUser.length() > 0 && this.httpPassword.length() > 0) {
+        request.addHeader("Ajxp-Force-Login", "true");
+      }
+      response = httpClient.executeInContext(request);
+      if (!skipAuth && isAuthenticationRequested(response)) {
+        sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_REFRESHING_AUTH);
+        this.discardResponse(response);
+        this.authenticate();
+        if (loginStateChanged) {
+          loginStateChanged = false;
+          sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_LOADING_DATA);
+          sendLogToHandler("RestRequest - About to send request again to server - STATE: skipAuth=" + skipAuth + " authenticationRequested=" + (fileBody != null ? (" fileBody-chunks=" + fileBody.getTotalChunks() + " fileBody-currentChunk=" + fileBody.getCurrentIndex()) : " fileBody=null"));
+          if (fileBody != null) {
+            fileBody.resetChunkIndex();
+          }
+          return this.issueRequest(originalUri, postParameters, file, fileName, fileBody);
+        }
+      } else {
+        if (fileBody != null && fileBody.isChunked() && !fileBody.allChunksUploaded()) {
+          this.discardResponse(response);
+          this.issueRequest(originalUri, postParameters, file, fileName, fileBody);
+        }
+      }
+    } catch (ClientProtocolException e) {
+      error(e);
+    } catch (IOException e) {
+      errorConnection(e);
+    } catch (AuthenticationException e) {
+      if (this.throwAuthExceptions) {
+        throw e;
+      } else {
+        error(e);
+      }
+    } catch (SAXException e) {
+      error(e);
+    } catch (Exception e) {
+      sendMessageToHandler(MessageListener.MESSAGE_WHAT_ERROR, e.getMessage());
+      e.printStackTrace();
+    } finally {
+      uploadListener = null;
+    }
+    return response;
+  }
 
-		} catch (ClientProtocolException e) {
-			error(e);
-		} catch (IOException e) {
-			errorConnection(e);
-		} catch (AuthenticationException e){
-			if(this.throwAuthExceptions) throw e;
-			else error(e);
-		} catch (SAXException e){
-			error(e);
-		} catch (Exception e) {
-		    sendMessageToHandler(MessageListener.MESSAGE_WHAT_ERROR, e.getMessage());
-			e.printStackTrace();
-		}finally{
-			uploadListener = null;
-		}
-		return response;
-	}
+  public HttpResponse getHttpResponse(URI uri) throws Exception {
+    return this.issueRequest(uri);
+  }
 
-	public HttpResponse getHttpResponse(URI uri) throws Exception{
-		return this.issueRequest(uri);
-	}
+  private void authenticate() throws AuthenticationException {
+    loginStateChanged = false;
+    AjxpAPI API = AjxpAPI.getInstance();
+    try {
+      if (authStep.equals("RENEW-TOKEN")) {
+        JSONObject jObject = this.getJSonContent(API.getGetSecureTokenUri());
+        RestStateHolder.getInstance().setSECURE_TOKEN(jObject.getString("SECURE_TOKEN"));
+        loginStateChanged = true;
+      } else {
+        String seed = this.getStringContent(API.getGetLoginSeedUri());
+        if (seed != null) {
+          seed = seed.trim();
+        }
+        if (seed.indexOf("captcha") > -1) {
+          throw new AuthenticationException(AUTH_ERROR_LOCKEDOUT);
+        }
+        if (!RestStateHolder.getInstance().isServerSet()) {
+          throw new AuthenticationException(AUTH_ERROR_NOSERVER);
+        }
+        String user = RestStateHolder.getInstance().getServer().getUser();
+        String password = RestStateHolder.getInstance().getServer().getPassword();
+        if (!seed.trim().equals("-1")) {
+          password = RestRequest.md5(password) + seed;
+          password = RestRequest.md5(password);
+        }
+        Map<String, String> loginPass = new HashMap<String, String>();
+        loginPass.put("userid", user);
+        loginPass.put("password", password);
+        loginPass.put("login_seed", seed);
+        Document doc = this.getDocumentContent(API.makeLoginUri(), loginPass);
+        if (doc.getElementsByTagName("logging_result").getLength() > 0) {
+          String result = doc.getElementsByTagName("logging_result").item(0).getAttributes().getNamedItem("value").getNodeValue();
+          if (result.equals("1")) {
+            String newToken = doc.getElementsByTagName("logging_result").item(0).getAttributes().getNamedItem("secure_token").getNodeValue();
+            RestStateHolder.getInstance().setSECURE_TOKEN(newToken);
+            loginStateChanged = true;
+          } else {
+            throw new AuthenticationException(AUTH_ERROR_LOGIN_FAILED);
+          }
+        }
+      }
+    } catch (AuthenticationException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new AuthenticationException(e.getMessage());
+    }
+  }
 
-	private void authenticate() throws AuthenticationException{
-		loginStateChanged = false;
-		AjxpAPI API = AjxpAPI.getInstance();
-		try{
-			if(authStep.equals("RENEW-TOKEN")){
+  private boolean isAuthenticationRequested(HttpResponse response) throws Exception {
+    Header[] heads = response.getHeaders("Content-type");
+    boolean xml = false;
+    for (int i = 0; i < heads.length; i++) {
+      if (heads[i].getValue().contains("text/xml")) {
+        xml = true;
+      }
+    }
+    if (!xml || loginStateChanged) {
+      return false;
+    }
+    try {
+      HttpEntity ent = response.getEntity();
+      Document doc;
+      if (ent.getClass() == XMLDocEntity.class) {
+        doc = ((XMLDocEntity) ent).getDoc();
+        ((XMLDocEntity) ent).toLogger();
+      } else {
+        XMLDocEntity docEntity = new XMLDocEntity(ent);
+        doc = docEntity.getDoc();
+        ent.consumeContent();
+        response.setEntity(docEntity);
+        docEntity.toLogger();
+      }
+      if (doc.getElementsByTagName("ajxp_registry_part").getLength() > 0 && doc.getDocumentElement().getAttribute("xPath").equals("user/repositories") && doc.getElementsByTagName("repositories").getLength() == 0) {
+        this.authStep = "LOG-USER";
+        return true;
+      }
+      if (doc.getElementsByTagName("message").getLength() > 0) {
+        if (doc.getElementsByTagName("message").item(0).getFirstChild().getNodeValue().trim().contains("You are not allowed to access this resource.")) {
+          this.authStep = "RENEW-TOKEN";
+          return true;
+        }
+      }
+      if (doc.getElementsByTagName("require_auth").getLength() > 0) {
+        if (doc.getElementsByTagName("message").getLength() > 0) {
+          throw new Exception(doc.getElementsByTagName("message").item(0).getFirstChild().getNodeValue().trim());
+        }
+        this.authStep = "LOG-USER";
+        return true;
+      }
+    } catch (Exception e) {
+      error(e);
+    }
+    return false;
+  }
 
-				JSONObject jObject = this.getJSonContent(API.getGetSecureTokenUri());
-				RestStateHolder.getInstance().setSECURE_TOKEN(jObject.getString("SECURE_TOKEN"));
-				loginStateChanged = true;
+  public String getStringContent(URI uri) throws Exception {
+    return this.getStringContent(uri, null, null, null);
+  }
 
-			}else{
+  public String getContentString(URI uri, Map<String, String> map) throws Exception {
+    return this.getStringContent(uri, map, null, null);
+  }
 
-				String seed = this.getStringContent(API.getGetLoginSeedUri());
-				if(seed != null) seed = seed.trim();
-				if(seed.indexOf("captcha") > -1){
-					throw new AuthenticationException(AUTH_ERROR_LOCKEDOUT);
-				}
-				if(!RestStateHolder.getInstance().isServerSet()){
-					throw new AuthenticationException(AUTH_ERROR_NOSERVER);
-				}
-				String user = RestStateHolder.getInstance().getServer().getUser();
-				String password = RestStateHolder.getInstance().getServer().getPassword();
-				if(!seed.trim().equals("-1")){
-					password = RestRequest.md5(password) + seed;
-					password = RestRequest.md5(password);
-				}
-					Map<String, String> loginPass = new HashMap<String, String>();
-					loginPass.put("userid", user);
-					loginPass.put("password", password);
-					loginPass.put("login_seed", seed);
-				Document doc = this.getDocumentContent(API.makeLoginUri(),loginPass);
-				if(doc.getElementsByTagName("logging_result").getLength() > 0){
-					String result = doc.getElementsByTagName("logging_result").item(0).getAttributes().getNamedItem("value").getNodeValue();
-					if(result.equals("1")){
-						//Log.d("RestRequest Authentication", "LOGGING SUCCEED! REFRESHING TOKEN");
-						String newToken = doc.getElementsByTagName("logging_result").item(0).getAttributes().getNamedItem("secure_token").getNodeValue();
-						RestStateHolder.getInstance().setSECURE_TOKEN(newToken);
-						loginStateChanged = true;
-					}else{
-						//Log.d("RestRequest Authentication", "Login Failed");
-						throw new AuthenticationException(AUTH_ERROR_LOGIN_FAILED);
-					}
-				}
+  public String getStringContent(URI uri, Map<String, String> parameters) throws Exception {
+    return this.getStringContent(uri, parameters, null, null);
+  }
 
-			}
-		}catch(AuthenticationException e){
-			throw e;
-		}catch(Exception e){
-			throw new AuthenticationException(e.getMessage());
-		}
-	}
+  public String getStringContent(URI uri, Map<String, String> parameters, File file, String fileName) throws Exception {
+    return this.getStringContent(uri, parameters, file, fileName, -1);
+  }
 
-	private boolean isAuthenticationRequested(HttpResponse response) throws Exception {
+  public String getStringContent(URI uri, Map<String, String> parameters, File file, String fileName, int checkStatusCode) throws Exception {
+    BufferedReader in = null;
+    try {
+      HttpResponse response = this.issueRequest(uri, parameters, file, fileName, null);
+      if (response == null) {
+        throw new Exception("Empty Http response");
+      }
+      HttpEntity e = response.getEntity();
+      String content;
+      if (e.getClass() == XMLDocEntity.class) {
+        Document doc = ((XMLDocEntity) e).getDoc();
+        content = doc.toString();
+      } else {
+        in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        StringBuffer sb = new StringBuffer("");
+        String line = "";
+        String NL = System.getProperty("line.separator");
+        while ((line = in.readLine()) != null) {
+          sb.append(line + NL);
+        }
+        in.close();
+        content = sb.toString();
+      }
+      if (checkStatusCode != -1 && response.getStatusLine().getStatusCode() != checkStatusCode) {
+        throw new Exception("Wrong status code (" + response.getStatusLine().getStatusCode() + ", expected " + checkStatusCode + "). Response was :" + content);
+      }
+      return content;
+    }  finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
 
-		Header[] heads = response.getHeaders("Content-type");
-		boolean xml = false;
-		for(int i=0;i<heads.length;i++){
-			if(heads[i].getValue().contains("text/xml")) xml = true;
-		}
-		if(!xml || loginStateChanged) return false;
-		try{
-			HttpEntity ent = response.getEntity();
-			Document doc;
-			if(ent.getClass() == XMLDocEntity.class){
-				doc = ((XMLDocEntity)ent).getDoc();
-				((XMLDocEntity)ent).toLogger();
-			}else{
-				XMLDocEntity docEntity = new XMLDocEntity(ent);
-				doc = docEntity.getDoc();
-				ent.consumeContent();// Make sure to clear resources
-				response.setEntity(docEntity);
-				docEntity.toLogger();
-			}
+  public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params, File uploadFile, boolean skipAuth) throws Exception {
+    HttpResponse response = this.issueRequest(uri, params, uploadFile, null, null, skipAuth);
+    StatusLine status = response.getStatusLine();
+    if (status.getStatusCode() != 200) {
+      throw new Exception("Status code :" + status.getStatusCode());
+    }
+    return response.getEntity();
+  }
 
-			if(doc.getElementsByTagName("ajxp_registry_part").getLength() > 0
-					&& doc.getDocumentElement().getAttribute("xPath").equals("user/repositories")
-					&& doc.getElementsByTagName("repositories").getLength() == 0){
-				//Log.d("RestRequest Authentication", "EMPTY REGISTRY : AUTH IS REQUIRED");
-				this.authStep = "LOG-USER";
-				return true;
-			}
-			if(doc.getElementsByTagName("message").getLength() > 0){
-				if(doc.getElementsByTagName("message").item(0).getFirstChild().getNodeValue().trim().contains("You are not allowed to access this resource.")){
-					//Log.d("RestRequest Authentication", "REQUIRE_AUTH TAG : TOKEN IS REQUIRED");
-					this.authStep = "RENEW-TOKEN";
-					return true;
-				}
-			}
-			if(doc.getElementsByTagName("require_auth").getLength() > 0){
-				//Log.d("RestRequest Authentication", "REQUIRE_AUTH TAG : AUTH IS REQUIRED");
-				if(doc.getElementsByTagName("message").getLength() > 0) {
-					throw new Exception(doc.getElementsByTagName("message").item(0).getFirstChild().getNodeValue().trim());
-				}
-				this.authStep = "LOG-USER";
-				return true;
-			}
-		}catch (Exception e) {
-			error(e);
-			/*
-			 * sendMessageToHandler(MessageListener.MESSAGE_WHAT_ERROR,
-			 * e.getMessage());
-			 * e.printStackTrace();
-			 */
-		}
-		return false;
-	}
+  public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params, File uploadFile) throws Exception {
+    return this.getNotConsumedResponseEntity(uri, params, uploadFile, false);
+  }
 
-	public String getStringContent(URI uri) throws Exception {
-		return this.getStringContent(uri, null, null, null);
-	}
-	
-	public String getContentString(URI uri, Map<String, String> map) throws Exception{
-		return this.getStringContent(uri, map, null, null);
-	}
+  public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params) throws Exception {
+    return this.getNotConsumedResponseEntity(uri, params, null);
+  }
 
-	public String getStringContent(URI uri, Map<String, String> parameters) throws Exception {
-		return this.getStringContent(uri, parameters, null, null);
-	}
+  public Document getDocumentContent(URI uri) throws Exception {
+    return getDocumentContent(uri, null);
+  }
 
-	public String getStringContent(URI uri, Map<String, String> parameters, File file, String fileName) throws Exception {
-		return this.getStringContent(uri, parameters, file, fileName, -1);
-	}
+  public Document getDocumentContent(URI uri, Map<String, String> postParams) throws Exception {
+    if (EndPointResolverApi.checkResolutionRequired(uri)) {
+      EndPointResolverApi endPointResolverApi = null;
+      Server server = RestStateHolder.getInstance().getServer();
+      String resolverName = server.getServerNode().getPropertyValue("resolver_class");
+      if (resolverName != null && !resolverName.equals("")) {
+        Class<?> classe = null;
+        try {
+          classe = Class.forName(resolverName);
+        } catch (Exception e) {
+          String msg = e.getMessage();
+          System.out.println(msg);
+        }
+        Constructor<?> ctor = classe.getConstructor();
+        endPointResolverApi = (EndPointResolverApi) ctor.newInstance();
+      }
+      if (endPointResolverApi == null) {
+        endPointResolverApi = new EndPointResolverApi();
+      }
+      String uri_server = endPointResolverApi.resolveServer(RestStateHolder.getInstance().getServer(), this, uri);
+      uri = new URI(uri.toString().replace("RequestResolution", uri_server));
+      RestStateHolder.getInstance().getServer().setUrl(uri_server);
+      RestStateHolder.getInstance().notifyServerChanged(RestStateHolder.getInstance().getServer());
+    }
+    HttpResponse response = this.issueRequest(uri, postParams);
+    HttpEntity ent = response.getEntity();
+    Document doc;
+    sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_PARSING_RESPONSE);
+    if (ent.getClass() == XMLDocEntity.class) {
+      doc = ((XMLDocEntity) ent).getDoc();
+    } else {
+      XMLDocEntity docEntity = new XMLDocEntity(ent);
+      ent.consumeContent();
+      doc = docEntity.getDoc();
+      response.setEntity(docEntity);
+    }
+    return doc;
+  }
 
-	public String getStringContent(URI uri, Map<String, String> parameters, File file, String fileName, int checkStatusCode) throws Exception {
-		BufferedReader in = null;
-		try {
-			HttpResponse response = this.issueRequest(uri, parameters, file, fileName, null);
-			if(response == null){
-				throw new Exception("Empty Http response");
-			}			
+  public JSONObject getJSonContent(URI uri) throws Exception {
+    return new JSONObject(this.getStringContent(uri));
+  }
 
-			HttpEntity e = response.getEntity();
-			String content;
-			if(e.getClass() == XMLDocEntity.class){
-				
-				Document doc = ((XMLDocEntity)e).getDoc();			
-				content = doc.toString();
+  public JSONObject getJSonContent(URI uri, Map<String, String> parameters) throws ParseException, Exception {
+    return new JSONObject(this.getStringContent(uri, parameters, null, null));
+  }
 
-			}else{
-				in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-				StringBuffer sb = new StringBuffer("");
-				String line = "";
-				String NL = System.getProperty("line.separator");
-
-				while ((line = in.readLine()) != null) {
-					sb.append(line + NL);
-				}
-
-				in.close();
-
-				content = sb.toString();
-			}
-			
-			if(checkStatusCode != -1 && response.getStatusLine().getStatusCode() != checkStatusCode){
-				throw new Exception("Wrong status code ("+response.getStatusLine().getStatusCode()+", expected "+checkStatusCode+"). Response was :" + content);
-			}	
-			return content;
-
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params, File uploadFile, boolean skipAuth) throws Exception {
-		HttpResponse response = this.issueRequest(uri, params, uploadFile, null, null, skipAuth);
-
-		StatusLine status = response.getStatusLine();
-		if(status.getStatusCode() != 200){
-			throw new Exception("Status code :" + status.getStatusCode());
-		}
-		return response.getEntity();
-	}
-
-	public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params, File uploadFile) throws Exception {
-		return this.getNotConsumedResponseEntity(uri, params, uploadFile, false);
-	}
-
-	public HttpEntity getNotConsumedResponseEntity(URI uri, Map<String, String> params) throws Exception{
-		return this.getNotConsumedResponseEntity(uri, params, null);
-	}
-
-	public Document getDocumentContent(URI uri) throws Exception {
-		return getDocumentContent(uri, null);
-	}
-
-	public Document getDocumentContent(URI uri, Map<String, String> postParams) throws Exception {
-		if(EndPointResolverApi.checkResolutionRequired(uri)) 
-		{
-			EndPointResolverApi endPointResolverApi = null;//new EndPointResolverApi();
-
-			Server server = RestStateHolder.getInstance().getServer();
-			String resolverName = server.getServerNode().getPropertyValue("resolver_class");
-
-			if (resolverName != null && !resolverName.equals("")) {
-				Class<?> classe = null;
-				try {
-					classe = Class.forName(resolverName);
-				}catch(Exception e) {
-					String msg = e.getMessage();
-					System.out.println(msg);
-				}
-				Constructor<?> ctor = classe.getConstructor();
-				endPointResolverApi = (EndPointResolverApi) ctor.newInstance();
-			}
-			if(endPointResolverApi == null) {
-				endPointResolverApi = new EndPointResolverApi();
-			}
-
-			String uri_server = endPointResolverApi.resolveServer(RestStateHolder.getInstance().getServer(), this,uri);
-
-			uri = new URI(uri.toString().replace("RequestResolution", uri_server));
-			RestStateHolder.getInstance().getServer().setUrl(uri_server);
-			// RestStateHolder.getInstance().getServer().setId(Server.slugifyId(RestStateHolder.getInstance().getServer().getUser(),
-			// RestStateHolder.getInstance().getServer().getServerNode().getPropertyValue("server_url")));
-			RestStateHolder.getInstance().notifyServerChanged(RestStateHolder.getInstance().getServer());
-		}
-
-		HttpResponse response = this.issueRequest(uri, postParams);
-		HttpEntity ent = response.getEntity();
-		Document doc;
-		sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, STATUS_PARSING_RESPONSE);
-		if(ent.getClass() == XMLDocEntity.class){
-			doc = ((XMLDocEntity)ent).getDoc();
-		}else{
-			XMLDocEntity docEntity = new XMLDocEntity(ent);
-			ent.consumeContent();
-			doc = docEntity.getDoc();
-			response.setEntity(docEntity);
-		}
-		return doc;
-	}
-
-	public JSONObject getJSonContent(URI uri) throws Exception {
-		return new JSONObject(this.getStringContent(uri));
-	}
-	public JSONObject getJSonContent(URI uri, Map<String, String> parameters) throws ParseException, Exception {
-		return new JSONObject(this.getStringContent(uri, parameters, null, null));		
-	}
-	/**
+  /**
 	 * @param uri
 	 *            Target uri that might require http basic auth
 	 * @return true or false depending if the target uri requires http basic
 	 *         auth
 	 */
-	public Boolean credentialsRequired(URI uri) {
+  public Boolean credentialsRequired(URI uri) {
+    Boolean credentialsRequired = false;
+    try {
+      int status = getStatusCodeForRequest(uri);
+      if (status == 401) {
+        credentialsRequired = true;
+        serversNeedsCredentials = true;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return credentialsRequired;
+  }
 
-		Boolean credentialsRequired = false;
-		try {
-			int status = getStatusCodeForRequest(uri);
-			if (status == 401) {
-				credentialsRequired = true;
-				serversNeedsCredentials = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return credentialsRequired;
-	}
+  public Boolean credentialsRequired() {
+    return serversNeedsCredentials;
+  }
 
-	public Boolean credentialsRequired() {
-		return serversNeedsCredentials;
-	}
+  public void parseDocumentMessage(Document doc) {
+    try {
+      parseDocumentMessage(doc, false);
+    } catch (Exception e) {
+    }
+  }
 
-	public void parseDocumentMessage(Document doc){
-		try{
-			parseDocumentMessage(doc, false);
-		}catch(Exception e){}
-	}
+  public void parseDocumentMessage(Document doc, boolean throwOnError) throws Exception {
+    if (doc.getElementsByTagName("message").getLength() > 0) {
+      Node node = doc.getElementsByTagName("message").item(0);
+      String type = node.getAttributes().getNamedItem("type").getNodeValue();
+      String message = node.getTextContent();
+      if (type.equalsIgnoreCase("error")) {
+        if (throwOnError) {
+          throw new Exception(message);
+        }
+        sendMessageToHandler(MessageListener.MESSAGE_WHAT_ERROR, message);
+      } else {
+        sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, message);
+      }
+    }
+  }
 
-	public void parseDocumentMessage(Document doc, boolean throwOnError) throws Exception{
-		if(doc.getElementsByTagName("message").getLength() > 0){
-			Node node = doc.getElementsByTagName("message").item(0);
-			String type = node.getAttributes().getNamedItem("type").getNodeValue();
-			String message = node.getTextContent();
-			if(type.equalsIgnoreCase("error")){
-				if(throwOnError){
-					throw new Exception(message);
-				}
-				sendMessageToHandler(MessageListener.MESSAGE_WHAT_ERROR, message);
-			}else{
-				sendMessageToHandler(MessageListener.MESSAGE_WHAT_STATE, message);
-			}
-		}
-	}
+  public String getHttpUser() {
+    return httpUser;
+  }
 
-	public String getHttpUser() {
-		return httpUser;
-	}
+  public void setHttpUser(String httpUser) {
+    this.httpUser = httpUser;
+  }
 
-	public void setHttpUser(String httpUser) {
-		this.httpUser = httpUser;
-		//setAuthenticator();
-	}
+  public String getHttpPassword() {
+    return httpPassword;
+  }
 
-	public String getHttpPassword() {
-		return httpPassword;
-	}
+  public void setHttpPassword(String httpPassword) {
+    this.httpPassword = httpPassword;
+  }
 
-	public void setHttpPassword(String httpPassword) {
-		this.httpPassword = httpPassword;
-		//setAuthenticator();
-	}
+  public void refreshCredentials() {
+    this.getHttpClient().refreshCredentials(httpUser, httpPassword);
+  }
 
-	public void refreshCredentials(){
-		this.getHttpClient().refreshCredentials(httpUser, httpPassword);
-	}
+  public int getStatusCodeForRequest(URI uri) {
+    HttpResponse response;
+    try {
+      response = issueRequest(uri);
+      if (response != null) {
+        int status = response.getStatusLine().getStatusCode();
+        discardResponse(response);
+        return status;
+      } else {
+        return -1;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      return -1;
+    }
+  }
 
-	/*
-	public void setAuthenticator() {
-		if (httpPassword != null && httpUser != null) {
-			Authenticator.setDefault(new Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(httpUser, httpPassword.toCharArray());
-				}
-			});
-		}
-	}
-*/
+  public void discardResponse(HttpResponse response) {
+    try {
+      BufferedReader in = null;
+      in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+      StringBuffer sb = new StringBuffer("");
+      String line = "";
+      String NL = System.getProperty("line.separator");
+      while ((line = in.readLine()) != null) {
+        sb.append(line + NL);
+      }
+      in.close();
+    } catch (IllegalStateException e) {
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-	public int getStatusCodeForRequest(URI uri) {
-		HttpResponse response;
-		try {
-			response = issueRequest(uri);
-			if (response != null) {
-				int status = response.getStatusLine().getStatusCode();
+  public synchronized AjxpHttpClient getHttpClient() {
+    return httpClient;
+  }
 
-				// we need to read the whole response-body stream if we want to
-				// avoid problems with the SingleConnexionManager
-				discardResponse(response);
+  public static final String md5(final String s) {
+    try {
+      MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+      digest.update(s.getBytes());
+      byte messageDigest[] = digest.digest();
+      StringBuffer hexString = new StringBuffer();
+      for (int i = 0; i < messageDigest.length; i++) {
+        String h = Integer.toHexString(0xFF & messageDigest[i]);
+        while (h.length() < 2) {
+          h = "0" + h;
+        }
+        hexString.append(h);
+      }
+      return hexString.toString();
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
 
-				return status;
-			} else {
-				return -1;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
-	}
+  protected void error(Exception e) throws Exception {
+    if (handler != null) {
+      handler.sendMessage(MessageListener.MESSAGE_WHAT_ERROR, e.getMessage());
+    } else {
+      e.printStackTrace();
+      throw e;
+    }
+  }
 
-	public void discardResponse(HttpResponse response) {
-		try {
-			BufferedReader in = null;
-			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			StringBuffer sb = new StringBuffer("");
-			String line = "";
-			String NL = System.getProperty("line.separator");
-			while ((line = in.readLine()) != null) {
-				sb.append(line + NL);
-			}
-			in.close();
-		} catch (IllegalStateException e){
-			// Silent, was already consumed
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+  protected void errorConnection(Exception e) throws Exception {
+    if (this.throwIOExceptions) {
+      throw new Exception(IO_CONNECTION_ERROR);
+    } else {
+      if (handler != null) {
+        handler.sendMessage(MessageListener.MESSAGE_WHAT_ERROR, IO_CONNECTION_ERROR);
+      } else {
+        e.printStackTrace();
+        throw e;
+      }
+    }
+  }
 
-	public synchronized AjxpHttpClient getHttpClient() {
-		return httpClient;
-	}
+  protected void sendMessageToHandler(int messageType, Object obj) {
+    if (handler == null) {
+      return;
+    }
+    handler.sendMessage(messageType, obj);
+  }
 
-	public static final String md5(final String s) {
-	    try {
-	        // Create MD5 Hash
-	        MessageDigest digest = java.security.MessageDigest
-	                .getInstance("MD5");
-	        digest.update(s.getBytes());
-	        byte messageDigest[] = digest.digest();
-	 
-	        // Create Hex String
-	        StringBuffer hexString = new StringBuffer();
-	        for (int i = 0; i < messageDigest.length; i++) {
-	            String h = Integer.toHexString(0xFF & messageDigest[i]);
-	            while (h.length() < 2)
-	                h = "0" + h;
-	            hexString.append(h);
-	        }
-	        return hexString.toString();
-	 
-	    } catch (NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    }
-	    return "";
-	}
-
-	protected void error(Exception e) throws Exception{
-		if(handler != null) handler.sendMessage(MessageListener.MESSAGE_WHAT_ERROR, e.getMessage());
-		else {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	protected void errorConnection(Exception e) throws Exception{
-		if(this.throwIOExceptions) throw new Exception(IO_CONNECTION_ERROR);
-		else if(handler != null)
-			{
-			  handler.sendMessage(MessageListener.MESSAGE_WHAT_ERROR, IO_CONNECTION_ERROR);
-			}
-		else {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	protected void sendMessageToHandler(int messageType, Object obj){
-		if(handler == null) return;
-		handler.sendMessage(messageType, obj);
-	}
-
-	protected void sendLogToHandler(String message) {
-		if (handler == null)
-			return;
-		handler.log(message);
-	}
-
+  protected void sendLogToHandler(String message) {
+    if (handler == null) {
+      return;
+    }
+    handler.log(message);
+  }
 }
