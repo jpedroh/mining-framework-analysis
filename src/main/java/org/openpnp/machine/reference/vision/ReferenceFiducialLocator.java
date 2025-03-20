@@ -195,17 +195,63 @@ public class ReferenceFiducialLocator implements FiducialLocator {
         MovableUtils.moveToLocationAtSafeZ(camera, location);
 
         PartSettings partSettings = getPartSettings(part);
+<<<<<<< /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/left.java
+||||||| /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/base.java
+        CvPipeline pipeline = partSettings.getPipeline();
+=======
+        CvPipeline pipeline = partSettings.getPipeline();
         List<Location> matchedLocations = new ArrayList<Location>();
+>>>>>>> /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/right.java
         
         try (CvPipeline pipeline = partSettings.getPipeline()) {
             MovableUtils.moveToLocationAtSafeZ(camera, location);
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/left.java
             pipeline.setProperty("camera", camera);
             pipeline.setProperty("part", part);
             pipeline.setProperty("package", pkg);
             pipeline.setProperty("footprint", footprint);
+||||||| /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/base.java
+        pipeline.setProperty("camera", camera);
+        pipeline.setProperty("part", part);
+        pipeline.setProperty("package", pkg);
+        pipeline.setProperty("footprint", footprint);
+        
+        for (int i = 0; i < 3; i++) {
+            List<KeyPoint> keypoints;
+            try {
+                // Perform vision operation
+                pipeline.process();
+                
+                // Get the results
+                keypoints = (List<KeyPoint>) pipeline.getResult("results").getModel();
+            }
+            catch (Exception e) {
+                Logger.debug(e);
+                return null;
+            }
+=======
+        pipeline.setProperty("camera", camera);
+        pipeline.setProperty("part", part);
+        pipeline.setProperty("package", pkg);
+        pipeline.setProperty("footprint", footprint);
+        
+        for (int i = 0; i < repeatFiducialRecognition; i++) {
+            List<KeyPoint> keypoints;
+            try {
+                // Perform vision operation
+                pipeline.process();
+                
+                // Get the results
+                keypoints = (List<KeyPoint>) pipeline.getResult("results").getModel();
+            }
+            catch (Exception e) {
+                Logger.debug(e);
+                return null;
+            }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/right.java
             
-            for (int i = 0; i < repeatFiducialRecognition; i++) {
+            for (int i = 0; i < 3; i++) {
                 List<KeyPoint> keypoints;
                 try {
                     // Perform vision operation
@@ -214,6 +260,7 @@ public class ReferenceFiducialLocator implements FiducialLocator {
                     // Get the results
                     keypoints = (List<KeyPoint>) pipeline.getResult(VisionUtils.PIPELINE_RESULTS_NAME).getModel();
                 }
+<<<<<<< /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/left.java
                 catch (Exception e) {
                     Logger.debug(e);
                     return null;
@@ -229,6 +276,8 @@ public class ReferenceFiducialLocator implements FiducialLocator {
                 for (KeyPoint keypoint : keypoints) {
                     locations.add(VisionUtils.getPixelLocation(camera, keypoint.pt.x, keypoint.pt.y));
                 }
+                
+                System.out.println(locations);
                 
                 // Sort by distance from center.
                 Collections.sort(locations, new Comparator<Location>() {
@@ -246,39 +295,60 @@ public class ReferenceFiducialLocator implements FiducialLocator {
                 Logger.debug("{} located at {}", part.getId(), location);
                 // Move to where we actually found the fid
                 camera.moveTo(location);
-    
-                if (i > 0) {
-                	//to average, keep a list of all matches except the first, since its probably most off
-                	matchedLocations.add(location);
-                }
+            }
+||||||| /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/base.java
+            });
             
-                Logger.debug("{} located at {}", part.getId(), location);
-                // Move to where we actually found the fid
-                camera.moveTo(location);
-            }
+            // And use the closest result
+            location = locations.get(0);
+            
+            Logger.debug("{} located at {}", part.getId(), location);
+            // Move to where we actually found the fid
+            camera.moveTo(location);
         }
-        
-        if (this.enabledAveraging && matchedLocations.size() >= 2) {
-            // the arithmetic average is calculated if user wishes to do so and there were at least
-            // 2 matches
-            double sumX = 0;
-            double sumY = 0;
-
-            for (Location matchedLocation : matchedLocations) {
-                sumX += matchedLocation.getX();
-                sumY += matchedLocation.getY();
+=======
+            });
+            
+            // And use the closest result
+            location = locations.get(0);
+            
+            if (i > 0) {
+            	//to average, keep a list of all matches except the first, since its probably most off
+            	matchedLocations.add(location);
             }
-
-            // update the location to the arithmetic average
-            location = location.derive(sumX / matchedLocations.size(),
-                    sumY / matchedLocations.size(), null, null);
-
-            Logger.debug("{} averaged location is at {}", part.getId(), location);
-
+            
+            Logger.debug("{} located at {}", part.getId(), location);
+            // Move to where we actually found the fid
             camera.moveTo(location);
         }
         
+        if (this.enabledAveraging && matchedLocations.size() >= 2) {
+        	//the arithmetic average is calculated if user wishes to do so and there were at least 2 matches
+        	double sumX=0;
+        	double sumY=0;
+        	
+        	for (Location matchedLocation : matchedLocations) {
+        		sumX+=matchedLocation.getX();
+        		sumY+=matchedLocation.getY();
+        	}
+        	
+        	//update the location to the arithmetic average
+        	location=location.derive(sumX/matchedLocations.size(), sumY/matchedLocations.size(),null,null);
+        	
+        	Logger.debug("{} averaged location is at {}", part.getId(), location);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/right.java
+
+<<<<<<< /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/left.java
+            return location;
+        }
+||||||| /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/base.java
         return location;
+=======
+        	camera.moveTo(location);
+        }
+        
+        return location;
+>>>>>>> /usr/src/app/output/openpnp/openpnp/eeadc7dfc0ec4adfb2b44a924c22f485e6b086c6/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/right.java
     }
     
     /**
