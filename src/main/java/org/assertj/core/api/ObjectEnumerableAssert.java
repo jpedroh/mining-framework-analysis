@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -31,8 +18,7 @@ import java.util.function.Predicate;
  * @author Joel Costigliola
  * @author Nicolas François
  */
-public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T> extends EnumerableAssert<S, T> {
-
+public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T extends java.lang.Object> extends EnumerableAssert<S, T> {
   /**
    * Verifies that the actual group contains the given values, in any order.
    * <p>
@@ -53,7 +39,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain the given values.
    */
-  S contains(@SuppressWarnings("unchecked") T... values);
+  S contains(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in any order</b>.
@@ -75,7 +61,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more values than the given ones.
    */
-  S containsOnly(@SuppressWarnings("unchecked") T... values);
+  S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains the given values only once.
@@ -100,11 +86,11 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more than once these values.
    */
-  S containsOnlyOnce(@SuppressWarnings("unchecked") T... values);
+  S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in order</b>.<br>
-   * This assertion should only be used with groups that have a consistent iteration order (i.e. don't use it with
+   * This assertion should only be used with group that have a consistent iteration order (i.e. don't use it with
    * {@link HashSet}, prefer {@link #containsOnly(Object...)} in that case).
    * <p>
    * Example :
@@ -125,10 +111,11 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    *           contains some or none of the given values, or the actual group contains more values than the given ones
    *           or values are the same but the order is not.
    */
-  S containsExactly(@SuppressWarnings("unchecked") T... values);
+  S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
+   *
    *
    * <p>
    * Example :
@@ -148,10 +135,10 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group
    *           contains some or none of the given values, or the actual group contains more values than the given ones.
    */
-  S containsExactlyInAnyOrder(@SuppressWarnings("unchecked") T... values);
+  S containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
-   * Verifies that the actual group contains the given sequence in the correct order and <b>without extra values between the sequence values</b>.
+   * Verifies that the actual group contains the given sequence in the correct order and <b>without extra value between the sequence values</b>.
    * <p> 
    * Use {@link #containsSubsequence(Object...)} to allow values between the expected sequence values.
    * <p>
@@ -173,7 +160,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given sequence.
    */
-  S containsSequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains the given subsequence in the correct order (possibly with other values between them).
@@ -195,7 +182,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given subsequence.
    */
-  S containsSubsequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group does not contain the given values.
@@ -204,14 +191,8 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * <pre><code class='java'> // an Iterable is used in the example but it would also work with an array
    * Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
    *
-   * // assertions will pass
-   * assertThat(abc).doesNotContain("d")
-   * assertThat(abc).doesNotContain("d", "e");
-   * 
-   * // assertions will fail
-   * assertThat(abc).doesNotContain("a");
-   * assertThat(abc).doesNotContain("a", "b");
-   * assertThat(abc).doesNotContain("c", "d");</code></pre>
+   * // assertion will pass
+   * assertThat(abc).doesNotContain("d", "e");</code></pre>
    * 
    * @param values the given values.
    * @return {@code this} assertion object.
@@ -220,7 +201,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains any of the given values.
    */
-  S doesNotContain(@SuppressWarnings("unchecked") T... values);
+  S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group does not contain duplicates.
@@ -251,8 +232,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * <pre><code class='java'> // an Iterable is used in the example but it would also work with an array
    * Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
    *
-   * // assertions will pass
-   * assertThat(abc).startsWith("a");
+   * // assertion will pass
    * assertThat(abc).startsWith("a", "b");
    * 
    * // assertion will fail
@@ -265,7 +245,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not start with the given sequence of objects.
    */
-  S startsWith(@SuppressWarnings("unchecked") T... sequence);
+  S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group ends with the given sequence of objects, without any other objects between them.
@@ -276,13 +256,11 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * <pre><code class='java'> // an Iterable is used in the example but it would also work with an array
    * Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
    *
-   * // assertions will pass
-   * assertThat(abc).endsWith("c")
+   * // assertion will pass
    * assertThat(abc).endsWith("b", "c");
    * 
-   * // assertions will fail
-   * assertThat(abc).endsWith("a");
-   * assertThat(abc).endsWith("a", "b");</code></pre>
+   * // assertion will fail
+   * assertThat(abc).endsWith("a");</code></pre>
    * 
    * @param sequence the sequence of objects to look for.
    * @return this assertion object.
@@ -291,7 +269,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not end with the given sequence of objects.
    */
-  S endsWith(@SuppressWarnings("unchecked") T... sequence);
+  S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains at least a null element.
@@ -332,7 +310,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S doesNotContainNull();
 
   /**
-   * Verifies that each element value satisfies the given condition.
+   * Verifies that each element value satisfies the given condition
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;String&gt; abc  = newArrayList("a", "b", "c");
@@ -356,7 +334,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S are(Condition<? super T> condition);
 
   /**
-   * Verifies that each element value does not satisfy the given condition.
+   * Verifies that each element value does not satisfy the given condition
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
@@ -404,7 +382,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S have(Condition<? super T> condition);
 
   /**
-   * Verifies that all elements do not satisfy the given condition.
+   * Verifies that all elements don't satisfy the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
@@ -428,7 +406,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S doNotHave(Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>at least</b> <i>n</i> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>at least</b> <i>n</i> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -464,7 +442,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S areAtLeastOne(Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>at most</b> <i>n</i> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>at most</b> <i>n</i> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -488,7 +466,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S areAtMost(int n, Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>exactly</b> <i>n</i> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>exactly</b> <i>n</i> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -527,7 +505,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S haveAtLeastOne(Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>at least <i>n</i></b> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>at least <i>n</i></b> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -545,7 +523,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S haveAtLeast(int n, Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>at most</b> <i>n</i> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>at most</b> <i>n</i> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -564,7 +542,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S haveAtMost(int n, Condition<? super T> condition);
 
   /**
-   * Verifies that there are <b>exactly</b> <i>n</i> elements in the actual group satisfying the given condition.
+   * Verifies that there is <b>exactly</b> <i>n</i> elements in the actual group satisfying the given condition.
    * <p>
    * Example :
    * <pre><code class='java'> Iterable&lt;Integer&gt; oneTwoThree = newArrayList(1, 2, 3);
@@ -601,7 +579,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
   S containsAll(Iterable<? extends T> iterable);
 
   /**
-   * Verifies that at least one element in the actual {@code Object} group has the specified type (matching
+   * Verifies that at least one element in the actual {@code Object} group belong to the specified type (matching
    * includes subclasses of the given type).
    * <p>
    * Example:
@@ -707,10 +685,10 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * Example:
    * <pre><code class='java'> Iterable&lt;String&gt; abc = newArrayList("a", "b", "c"); 
    * 
-   * // assertion succeeds:
+   * // These assertions succeed:
    * assertThat(actual).doesNotContainAnyElementsOf(newArrayList("d", "e"));
    * 
-   * // assertion fails:
+   * // These fail:
    * assertThat(actual).doesNotContainAnyElementsOf(newArrayList("d", "e", "a"));</code></pre>
    *
    * @param iterable the {@link Iterable} whose elements must not be in the actual group.
@@ -743,7 +721,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual {@code Iterable} is not subset of set {@code Iterable}.
    */
   S isSubsetOf(Iterable<? extends T> values);
-  
+
   /**
    * Verifies that all the elements of actual are present in the given values.
    * <p>
@@ -764,7 +742,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of the given values.
    */
-  S isSubsetOf(@SuppressWarnings("unchecked") T... values);
+  S isSubsetOf(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that all the elements of actual match the given {@link Predicate}.
@@ -839,5 +817,4 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @since 3.6.0
    */
   S allSatisfy(Consumer<? super T> requirements);
-
 }

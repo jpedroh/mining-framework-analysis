@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.internal;
-
 import static org.assertj.core.error.ShouldBeAtIndex.shouldBeAtIndex;
 import static org.assertj.core.error.ShouldBeSorted.shouldBeSorted;
 import static org.assertj.core.error.ShouldBeSorted.shouldBeSortedAccordingToGivenComparator;
@@ -22,16 +9,13 @@ import static org.assertj.core.error.ShouldHaveAtIndex.shouldHaveAtIndex;
 import static org.assertj.core.error.ShouldNotContainAtIndex.shouldNotContainAtIndex;
 import static org.assertj.core.internal.CommonValidations.checkIndexValueIsValid;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import org.assertj.core.api.AssertionInfo;
 import org.assertj.core.api.Condition;
 import org.assertj.core.data.Index;
 import org.assertj.core.util.VisibleForTesting;
-
 
 /**
  * Reusable assertions for <code>{@link List}</code>s.
@@ -40,9 +24,7 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Yvonne Wang
  * @author Joel Costigliola
  */
-// TODO inherits from Collections to avoid repeating comparisonStrategy ?
 public class Lists {
-
   private static final Lists INSTANCE = new Lists();
 
   /**
@@ -55,11 +37,9 @@ public class Lists {
 
   private final ComparisonStrategy comparisonStrategy;
 
-  @VisibleForTesting
-  Failures failures = Failures.instance();
+  @VisibleForTesting Failures failures = Failures.instance();
 
-  @VisibleForTesting
-  Lists() {
+  @VisibleForTesting Lists() {
     this(StandardComparisonStrategy.instance());
   }
 
@@ -67,10 +47,10 @@ public class Lists {
     this.comparisonStrategy = comparisonStrategy;
   }
 
-  @VisibleForTesting
-  public Comparator<?> getComparator() {
-    if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) { return ((ComparatorBasedComparisonStrategy) comparisonStrategy)
-        .getComparator(); }
+  @VisibleForTesting public Comparator<?> getComparator() {
+    if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) {
+      return ((ComparatorBasedComparisonStrategy) comparisonStrategy).getComparator();
+    }
     return null;
   }
 
@@ -91,7 +71,9 @@ public class Lists {
     Iterables.instance().assertNotEmpty(info, actual);
     checkIndexValueIsValid(index, actual.size() - 1);
     Object actualElement = actual.get(index.value);
-    if (areEqual(actualElement, value)) return;
+    if (areEqual(actualElement, value)) {
+      return;
+    }
     throw failures.failure(info, shouldContainAtIndex(actual, value, index, actual.get(index.value), comparisonStrategy));
   }
 
@@ -109,14 +91,18 @@ public class Lists {
     assertNotNull(info, actual);
     checkIndexValueIsValid(index, Integer.MAX_VALUE);
     int indexValue = index.value;
-    if (indexValue >= actual.size()) return;
+    if (indexValue >= actual.size()) {
+      return;
+    }
     Object actualElement = actual.get(index.value);
-    if (!areEqual(actualElement, value)) return;
+    if (!areEqual(actualElement, value)) {
+      return;
+    }
     throw failures.failure(info, shouldNotContainAtIndex(actual, value, index, comparisonStrategy));
   }
 
   /**
-   * Verifies that the actual list is sorted in ascending order according to the natural ordering of its elements.
+   * Verifies that the actual list is sorted into ascending order according to the natural ordering of its elements.
    * <p>
    * All list elements must implement the {@link Comparable} interface and must be mutually comparable (that is, e1.compareTo(e2)
    * must not throw a ClassCastException for any elements e1 and e2 in the list), examples :
@@ -130,7 +116,7 @@ public class Lists {
    * @param info contains information about the assertion.
    * @param actual the given {@code List}.
    * 
-   * @throws AssertionError if the actual list is not sorted in ascending order according to the natural ordering of its
+   * @throws AssertionError if the actual list is not sorted into ascending order according to the natural ordering of its
    *           elements.
    * @throws AssertionError if the actual list is <code>null</code>.
    * @throws AssertionError if the actual list element type does not implement {@link Comparable}.
@@ -139,30 +125,28 @@ public class Lists {
   public void assertIsSorted(AssertionInfo info, List<?> actual) {
     assertNotNull(info, actual);
     if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) {
-      // instead of comparing elements with their natural comparator, use the one set by client.
       Comparator<?> comparator = ((ComparatorBasedComparisonStrategy) comparisonStrategy).getComparator();
       assertIsSortedAccordingToComparator(info, actual, comparator);
       return;
     }
     try {
-      // sorted assertion is only relevant if elements are Comparable, we assume they are
       List<Comparable<Object>> comparableList = listOfComparableElements(actual);
-      // array with 0 or 1 element are considered sorted.
-      if (comparableList.size() <= 1) return;
+      if (comparableList.size() <= 1) {
+        return;
+      }
       for (int i = 0; i < comparableList.size() - 1; i++) {
-        // array is sorted in ascending order iif element i is less or equal than element i+1
-        if (comparableList.get(i).compareTo(comparableList.get(i + 1)) > 0)
+        if (comparableList.get(i).compareTo(comparableList.get(i + 1)) > 0) {
           throw failures.failure(info, shouldBeSorted(i, actual));
+        }
       }
     } catch (ClassCastException e) {
-      // elements are either not Comparable or not mutually Comparable (e.g. List<Object> containing String and Integer)
       throw failures.failure(info, shouldHaveMutuallyComparableElements(actual));
     }
   }
 
   /**
    * Verifies that the actual list is sorted according to the given comparator.</br> Empty lists are considered sorted whatever
-   * the comparator is.</br> One element lists are considered sorted if the element is compatible with comparator.
+   * the comparator is.</br> One element lists are considered sorted if element is compatible with comparator.
    * 
    * @param info contains information about the assertion.
    * @param actual the given {@code List}.
@@ -173,25 +157,22 @@ public class Lists {
    * @throws NullPointerException if the given comparator is <code>null</code>.
    * @throws AssertionError if the actual list elements are not mutually comparable according to given Comparator.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  public void assertIsSortedAccordingToComparator(AssertionInfo info, List<?> actual, Comparator<?> comparator) {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) public void assertIsSortedAccordingToComparator(AssertionInfo info, List<?> actual, Comparator<?> comparator) {
     assertNotNull(info, actual);
     checkNotNull(comparator, "The given comparator should not be null");
     try {
-      // Empty collections are considered sorted even if comparator can't be applied to their element type
-      // We can't verify that point because of erasure type at runtime.
-      if (actual.size() == 0) return;
+      if (actual.size() == 0) {
+        return;
+      }
       Comparator rawComparator = comparator;
       if (actual.size() == 1) {
-        // Compare unique element with itself to verify that it is compatible with comparator (a ClassCastException is
-        // thrown if not). We have to use a raw comparator to compare the unique element of actual ... :(
         rawComparator.compare(actual.get(0), actual.get(0));
         return;
       }
       for (int i = 0; i < actual.size() - 1; i++) {
-        // List is sorted in comparator defined order if current element is less or equal than next element
-        if (rawComparator.compare(actual.get(i), actual.get(i + 1)) > 0)
+        if (rawComparator.compare(actual.get(i), actual.get(i + 1)) > 0) {
           throw failures.failure(info, shouldBeSortedAccordingToGivenComparator(i, actual, comparator));
+        }
       }
     } catch (ClassCastException e) {
       throw failures.failure(info, shouldHaveComparableElementsAccordingToGivenComparator(actual, comparator));
@@ -213,8 +194,10 @@ public class Lists {
    * @throws AssertionError if the value in the given {@code List} at the given index does not satisfy the given {@code Condition}
    *           .
    */
-  public <T> void assertHas(AssertionInfo info, List<? extends T> actual, Condition<? super T> condition, Index index) {
-    if (conditionIsMetAtIndex(info, actual, condition, index)) return;
+  public <T extends java.lang.Object> void assertHas(AssertionInfo info, List<? extends T> actual, Condition<? super T> condition, Index index) {
+    if (conditionIsMetAtIndex(info, actual, condition, index)) {
+      return;
+    }
     throw failures.failure(info, shouldHaveAtIndex(actual, condition, index, actual.get(index.value)));
   }
 
@@ -233,12 +216,14 @@ public class Lists {
    * @throws AssertionError if the value in the given {@code List} at the given index does not satisfy the given {@code Condition}
    *           .
    */
-  public <T> void assertIs(AssertionInfo info, List<? extends T> actual, Condition<? super T> condition, Index index) {
-    if (conditionIsMetAtIndex(info, actual, condition, index)) return;
+  public <T extends java.lang.Object> void assertIs(AssertionInfo info, List<? extends T> actual, Condition<? super T> condition, Index index) {
+    if (conditionIsMetAtIndex(info, actual, condition, index)) {
+      return;
+    }
     throw failures.failure(info, shouldBeAtIndex(actual, condition, index, actual.get(index.value)));
   }
 
-  private <T> boolean conditionIsMetAtIndex(AssertionInfo info, List<T> actual, Condition<? super T> condition, Index index) {
+  private <T extends java.lang.Object> boolean conditionIsMetAtIndex(AssertionInfo info, List<T> actual, Condition<? super T> condition, Index index) {
     assertNotNull(info, actual);
     assertNotNull(condition);
     Iterables.instance().assertNotEmpty(info, actual);
@@ -246,8 +231,7 @@ public class Lists {
     return condition.matches(actual.get(index.value));
   }
 
-  @SuppressWarnings("unchecked")
-  private static List<Comparable<Object>> listOfComparableElements(List<?> collection) {
+  @SuppressWarnings(value = { "unchecked" }) private static List<Comparable<Object>> listOfComparableElements(List<?> collection) {
     List<Comparable<Object>> listOfComparableElements = new ArrayList<>();
     for (Object object : collection) {
       listOfComparableElements.add((Comparable<Object>) object);
@@ -270,8 +254,7 @@ public class Lists {
     return comparisonStrategy.areEqual(actual, other);
   }
 
-    @VisibleForTesting
-  public ComparisonStrategy getComparisonStrategy() {
+  @VisibleForTesting public ComparisonStrategy getComparisonStrategy() {
     return comparisonStrategy;
   }
 }

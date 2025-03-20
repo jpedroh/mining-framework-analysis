@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.Comparator;
 import java.util.List;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.description.Description;
 import org.assertj.core.internal.ComparatorBasedComparisonStrategy;
@@ -36,32 +22,21 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-//@format:off
-public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>, 
-                                         ACTUAL extends List<? extends ELEMENT>, 
-                                         ELEMENT, 
-                                         ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-       extends AbstractIterableAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>
-       implements IndexedObjectEnumerableAssert<SELF, ELEMENT> {
-// @format:on
-
-  @VisibleForTesting
-  Lists lists = Lists.instance();
+public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>, ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> extends AbstractIterableAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT> implements IndexedObjectEnumerableAssert<SELF, ELEMENT> {
+  @VisibleForTesting Lists lists = Lists.instance();
 
   public AbstractListAssert(ACTUAL actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF contains(ELEMENT value, Index index) {
+  @Override public SELF contains(ELEMENT value, Index index) {
     lists.assertContains(info, actual, value, index);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF doesNotContain(ELEMENT value, Index index) {
+  @Override public SELF doesNotContain(ELEMENT value, Index index) {
     lists.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
@@ -105,7 +80,7 @@ public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, A
   }
 
   /**
-   * Verifies that the actual list is sorted in ascending order according to the natural ordering of its elements.
+   * Verifies that the actual list is sorted into ascending order according to the natural ordering of its elements.
    * <p>
    * All list elements must implement the {@link Comparable} interface and must be mutually comparable (that is,
    * e1.compareTo(e2) must not throw a ClassCastException for any elements e1 and e2 in the list), examples :
@@ -118,7 +93,7 @@ public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, A
    *
    * @return {@code this} assertion object.
    *
-   * @throws AssertionError if the actual list is not sorted in ascending order according to the natural ordering of its
+   * @throws AssertionError if the actual list is not sorted into ascending order according to the natural ordering of its
    *           elements.
    * @throws AssertionError if the actual list is <code>null</code>.
    * @throws AssertionError if the actual list element type does not implement {@link Comparable}.
@@ -131,7 +106,7 @@ public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, A
 
   /**
    * Verifies that the actual list is sorted according to the given comparator.</br> Empty lists are considered sorted whatever
-   * the comparator is.</br> One element lists are considered sorted if the element is compatible with comparator.
+   * the comparator is.</br> One element lists are considered sorted if element is compatible with comparator.
    *
    * @param comparator the {@link Comparator} used to compare list elements
    *
@@ -147,196 +122,153 @@ public abstract class AbstractListAssert<SELF extends AbstractListAssert<SELF, A
     return myself;
   }
 
-  @Override
-  public SELF usingElementComparator(Comparator<? super ELEMENT> customComparator) {
+  @Override public SELF usingElementComparator(Comparator<? super ELEMENT> customComparator) {
     super.usingElementComparator(customComparator);
     lists = new Lists(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public SELF usingDefaultElementComparator() {
+  @Override public SELF usingDefaultElementComparator() {
     super.usingDefaultElementComparator();
     lists = Lists.instance();
     return myself;
   }
 
-  // can't really honor basic assertion consistently with this comparisonStrategy
-  @Override
-  protected SELF usingComparisonStrategy(ComparisonStrategy comparisonStrategy) {
+  @Override protected SELF usingComparisonStrategy(ComparisonStrategy comparisonStrategy) {
     super.usingComparisonStrategy(comparisonStrategy);
     lists = new Lists(comparisonStrategy);
     return myself;
   }
 
-  //
-
-  // override methods to avoid compilation error when chaining an AbstractAssert method with a AbstractListAssert one on
-  // raw types :(
-
-  @Override
-  public SELF as(String description, Object... args) {
+  @Override public SELF as(String description, Object... args) {
     return super.as(description, args);
   }
 
-  @Override
-  public SELF as(Description description) {
+  @Override public SELF as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public SELF describedAs(Description description) {
+  @Override public SELF describedAs(Description description) {
     return super.describedAs(description);
   }
 
-  @Override
-  public SELF describedAs(String description, Object... args) {
+  @Override public SELF describedAs(String description, Object... args) {
     return super.describedAs(description, args);
   }
 
-  @Override
-  public SELF doesNotHave(Condition<? super ACTUAL> condition) {
+  @Override public SELF doesNotHave(Condition<? super ACTUAL> condition) {
     return super.doesNotHave(condition);
   }
 
-  @Override
-  public SELF doesNotHaveSameClassAs(Object other) {
+  @Override public SELF doesNotHaveSameClassAs(Object other) {
     return super.doesNotHaveSameClassAs(other);
   }
 
-  @Override
-  public SELF has(Condition<? super ACTUAL> condition) {
+  @Override public SELF has(Condition<? super ACTUAL> condition) {
     return super.has(condition);
   }
 
-  @Override
-  public SELF hasSameClassAs(Object other) {
+  @Override public SELF hasSameClassAs(Object other) {
     return super.hasSameClassAs(other);
   }
 
-  @Override
-  public SELF hasToString(String expectedToString) {
+  @Override public SELF hasToString(String expectedToString) {
     return super.hasToString(expectedToString);
   }
 
-  @Override
-  public SELF is(Condition<? super ACTUAL> condition) {
+  @Override public SELF is(Condition<? super ACTUAL> condition) {
     return super.is(condition);
   }
 
-  @Override
-  public SELF isEqualTo(Object expected) {
+  @Override public SELF isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
-  @Override
-  public SELF isExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isExactlyInstanceOf(Class<?> type) {
     return super.isExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isIn(Iterable<?> values) {
+  @Override public SELF isIn(Iterable<?> values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isIn(Object... values) {
+  @Override public SELF isIn(Object... values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isInstanceOf(Class<?> type) {
+  @Override public SELF isInstanceOf(Class<?> type) {
     return super.isInstanceOf(type);
   }
 
-  @Override
-  public SELF isInstanceOfAny(Class<?>... types) {
+  @Override public SELF isInstanceOfAny(Class<?>... types) {
     return super.isInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNot(Condition<? super ACTUAL> condition) {
+  @Override public SELF isNot(Condition<? super ACTUAL> condition) {
     return super.isNot(condition);
   }
 
-  @Override
-  public SELF isNotEqualTo(Object other) {
+  @Override public SELF isNotEqualTo(Object other) {
     return super.isNotEqualTo(other);
   }
 
-  @Override
-  public SELF isNotExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isNotExactlyInstanceOf(Class<?> type) {
     return super.isNotExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotIn(Iterable<?> values) {
+  @Override public SELF isNotIn(Iterable<?> values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotIn(Object... values) {
+  @Override public SELF isNotIn(Object... values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotInstanceOf(Class<?> type) {
+  @Override public SELF isNotInstanceOf(Class<?> type) {
     return super.isNotInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotInstanceOfAny(Class<?>... types) {
+  @Override public SELF isNotInstanceOfAny(Class<?>... types) {
     return super.isNotInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNotOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isNotOfAnyClassIn(Class<?>... types) {
     return super.isNotOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isNotNull() {
+  @Override public SELF isNotNull() {
     return super.isNotNull();
   }
 
-  @Override
-  public SELF isNotSameAs(Object other) {
+  @Override public SELF isNotSameAs(Object other) {
     return super.isNotSameAs(other);
   }
 
-  @Override
-  public SELF isOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isOfAnyClassIn(Class<?>... types) {
     return super.isOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isSameAs(Object expected) {
+  @Override public SELF isSameAs(Object expected) {
     return super.isSameAs(expected);
   }
 
-  @Override
-  public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
+  @Override public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
     return super.overridingErrorMessage(newErrorMessage, args);
   }
 
-  @Override
-  public SELF usingDefaultComparator() {
+  @Override public SELF usingDefaultComparator() {
     return super.usingDefaultComparator();
   }
 
-  @Override
-  public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
+  @Override public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
     return super.usingComparator(customComparator);
   }
 
-  @Override
-  public SELF withFailMessage(String newErrorMessage, Object... args) {
+  @Override public SELF withFailMessage(String newErrorMessage, Object... args) {
     return super.withFailMessage(newErrorMessage, args);
   }
 
-  @Override
-  public SELF withThreadDumpOnError() {
+  @Override public SELF withThreadDumpOnError() {
     return super.withThreadDumpOnError();
   }
-
 }
