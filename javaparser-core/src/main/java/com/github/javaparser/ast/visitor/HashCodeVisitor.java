@@ -19,7 +19,8 @@
  * GNU Lesser General Public License for more details.
  */
 package com.github.javaparser.ast.visitor;
-
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.RecordDeclarationConstructor;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
