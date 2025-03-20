@@ -51,6 +51,9 @@ import com.google.common.base.Predicates;
  * build a string metric. Supports the addition of simplification, tokenization,
  * filtering and caching to a metric.
  * 
+ * Designed to be used with a static import
+ * {@code import static org.simmetrics.StringMetricBuilder.with;}.
+ * 
  * <h2>Metrics</h2>
  * 
  * A metric is used to measure the similarity between strings. Metrics can work
@@ -66,8 +69,9 @@ import com.google.common.base.Predicates;
  * <pre>
  * <code>
  * {@code
- * 	StringMetric metric = new StringMetricBuilder()
- * 		.with(new CosineSimilarity<String>())
+ * 
+ * 
+ * 		with(new CosineSimilarity<String>())
  * 		.simplify(new NonWordCharacterSimplifier())
  * 		.simplify(new CaseSimplifier.Lower())
  * 		.tokenize(new WhitespaceTokenizer())
@@ -101,8 +105,7 @@ import com.google.common.base.Predicates;
  * <pre>
  * <code>
  * {@code
- * 	return new StringMetricBuilder()
- * 			.with(new SimonWhite<String>())
+ * 			with(new SimonWhite<String>())
  * 			.tokenize(new WhitespaceTokenizer())
  * 			.tokenize(new QGramTokenizer(2))
  * 			.build();
@@ -205,7 +208,13 @@ public class StringMetricBuilder {
 	 *            the metric to use as a base
 	 * @return a builder for fluent chaining
 	 */
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
+	public StringMetricSimplifierStep with(StringMetric metric) {
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+	public CompositeStringMetricBuilder with(StringMetric metric) {
+=======
 	public static CompositeStringMetricBuilder with(StringMetric metric) {
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 		return new CompositeStringMetricBuilder(metric);
 	}
 
@@ -230,13 +239,140 @@ public class StringMetricBuilder {
 	 */
 	public static CompositeSetMetricBuilder with(SetMetric<String> metric) {
 		return new CompositeSetMetricBuilder(metric);
+	}
+
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
+	@SuppressWarnings("javadoc")
+	public interface BuildStep {
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+	/**
+	 * Builder for the simplification chain.
+	 * 
+	 * @author M.P. Korstanje
+	 * @param <T>
+	 *            type of metric for which the chain is build
+	 * 
+	 */
+	public abstract class SimplyfingBuilder<T> {
+
+		protected final T metric;
+
+		protected Simplifier simplifier = new PassThroughSimplifier();
+
+		SimplyfingBuilder(T metric) {
+			checkNotNull(metric);
+			this.metric = metric;
+		}
+
+		void setSimplifier(Simplifier simplifier) {
+			this.simplifier = simplifier;
+		}
+
+=======
+	/**
+	 * Builder for the simplification chain.
+	 * 
+	 * @author M.P. Korstanje
+	 * @param <T>
+	 *            type of metric for which the chain is build
+	 * 
+	 */
+	public static abstract class SimplyfingBuilder<T> {
+
+		protected final T metric;
+
+		protected Simplifier simplifier = new PassThroughSimplifier();
+
+		SimplyfingBuilder(T metric) {
+			checkNotNull(metric);
+			this.metric = metric;
+		}
+
+		void setSimplifier(Simplifier simplifier) {
+			this.simplifier = simplifier;
+		}
+
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
+		/**
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
+		 * Builds a metric with the given steps.
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+		 * Adds a simplifier to the metric.
+		 * 
+		 * @param simplifier
+		 *            a simplifier to add
+		 * @return a builder for fluent chaining
+		 */
+		public abstract SimplifierChainBuilder simplify(Simplifier simplifier);
 
 	}
 
-	@SuppressWarnings("javadoc")
-	public interface BuildStep {
+	/**
+	 * Builder for the simplification chain of string metrics.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public final class CompositeStringMetricBuilder extends
+			SimplyfingBuilder<StringMetric> {
+
+		CompositeStringMetricBuilder(StringMetric metric) {
+			super(metric);
+		}
+
 		/**
-		 * Builds a metric with the given steps.
+		 * Adds a simplifier to the metric.
+		 * 
+		 * @param simplifier
+		 *            a simplifier to add
+		 * @return a builder for fluent chaining
+		 */
+		@Override
+		public StringSimplifierChainBuilder simplify(Simplifier simplifier) {
+			return new StringSimplifierChainBuilder(this, simplifier);
+		}
+
+		/**
+		 * Builds a metric with the given simplification steps and cache.
+=======
+		 * Adds a simplifier to the metric.
+		 * 
+		 * @param simplifier
+		 *            a simplifier to add
+		 * @return a builder for fluent chaining
+		 */
+		public abstract SimplifierChainBuilder simplify(Simplifier simplifier);
+
+	}
+
+	/**
+	 * Builder for the simplification chain of string metrics.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public static final class CompositeStringMetricBuilder extends
+			SimplyfingBuilder<StringMetric> {
+
+		CompositeStringMetricBuilder(StringMetric metric) {
+			super(metric);
+		}
+
+		/**
+		 * Adds a simplifier to the metric.
+		 * 
+		 * @param simplifier
+		 *            a simplifier to add
+		 * @return a builder for fluent chaining
+		 */
+		@Override
+		public StringSimplifierChainBuilder simplify(Simplifier simplifier) {
+			return new StringSimplifierChainBuilder(this, simplifier);
+		}
+
+		/**
+		 * Builds a metric with the given simplification steps and cache.
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 		 * 
 		 * @return a metric
 		 */
@@ -244,10 +380,346 @@ public class StringMetricBuilder {
 
 	}
 
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
 	@SuppressWarnings("javadoc")
 	public interface StringMetricSimplifierStep {
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+	/**
+	 * Builder for the simplification chain of collection based metrics.
+	 * 
+	 * @author M.P. Korstanje
+	 * @param <T>
+	 *            type of metric for which the chain is build
+	 * 
+	 */
+	public abstract class CollectionMetricBuilder<T> extends
+			SimplyfingBuilder<T> {
+
+		protected Tokenizer tokenizer;
+
+		CollectionMetricBuilder(T metric) {
+			super(metric);
+		}
+
+		void setTokenizer(Tokenizer tokenizer) {
+			checkNotNull(tokenizer);
+			this.tokenizer = tokenizer;
+		}
+
+=======
+	/**
+	 * Builder for the simplification chain of collection based metrics.
+	 * 
+	 * @author M.P. Korstanje
+	 * @param <T>
+	 *            type of metric for which the chain is build
+	 * 
+	 */
+	public static abstract class CollectionMetricBuilder<T> extends
+			SimplyfingBuilder<T> {
+
+		protected Tokenizer tokenizer;
+
+		CollectionMetricBuilder(T metric) {
+			super(metric);
+		}
+
+		void setTokenizer(Tokenizer tokenizer) {
+			checkNotNull(tokenizer);
+			this.tokenizer = tokenizer;
+		}
+
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 		/**
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
 		 * Adds a simplifier to the metric.
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+		 * Adds a tokenization step to the metric.
+		 * 
+		 * @param tokenizer
+		 *            a tokenizer to add
+		 * @return a builder for fluent chaining
+		 */
+		public TokenizingChainBuilder tokenize(Tokenizer tokenizer) {
+			return new TokenizingChainBuilder(this, tokenizer);
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> simplify(Simplifier simplifier) {
+			return new TokenSimplifierChainBuilder<>(this, simplifier);
+		}
+
+		abstract StringMetric build();
+
+	}
+
+	/**
+	 * Convenience tool to create a string metric from a {@link ListMetric} .
+	 * Supports simplification and caching.
+	 * 
+	 * @author mpkorstanje
+	 * 
+	 */
+	public final class CompositeListMetricBuilder extends
+			CollectionMetricBuilder<ListMetric<String>> {
+
+		CompositeListMetricBuilder(ListMetric<String> metric) {
+			super(metric);
+		}
+
+		@Override
+		CompositeTokenListMetric build() {
+			return new CompositeTokenListMetric(metric, simplifier, tokenizer);
+		}
+	}
+
+	/**
+	 * Convenience tool to create a string metric from a {@link SetMetric} .
+	 * Supports simplification and caching.
+	 * 
+	 * @author mpkorstanje
+	 * 
+	 */
+	public final class CompositeSetMetricBuilder extends
+			CollectionMetricBuilder<SetMetric<String>> {
+
+		CompositeSetMetricBuilder(SetMetric<String> metric) {
+			super(metric);
+		}
+
+		@Override
+		public CompositeTokenSetMetric build() {
+			return new CompositeTokenSetMetric(metric, simplifier, tokenizer);
+		}
+
+	}
+
+	/**
+	 * Builder for the simplification and tokenization chains.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 * @param <T>
+	 *            type of the metric for which the chain is build
+	 */
+	public final class TokenSimplifierChainBuilder<T> extends
+			SimplifierChainBuilder {
+
+		private final CollectionMetricBuilder<T> builder;
+
+		TokenSimplifierChainBuilder(CollectionMetricBuilder<T> builder,
+				Simplifier simplifier) {
+			super(simplifier);
+
+			this.builder = builder;
+
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> simplify(Simplifier simplifier) {
+			super.simplify(simplifier);
+			return this;
+		}
+
+		/**
+		 * Adds a tokenization step to the metric.
+		 * 
+		 * @param tokenizer
+		 *            a tokenizer to add
+		 * @return a builder for fluent chaining
+		 */
+		public TokenizingChainBuilder tokenize(Tokenizer tokenizer) {
+			builder.setSimplifier(innerBuild());
+			return builder.tokenize(tokenizer);
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache(
+				SimplifyingSimplifier cache) {
+			super.setSimplifierCache(cache);
+			return this;
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache(
+				int initialCapacity, int maximumSize) {
+			super.setSimplifierCache(initialCapacity, maximumSize);
+			return this;
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache() {
+			super.setSimplifierCache();
+			return this;
+		}
+
+	}
+
+	/**
+	 * Builder for a simplifier chain.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public abstract class SimplifierChainBuilder {
+
+		private static final int CACHE_SIZE = 2;
+
+		private final List<Simplifier> simplifiers = new ArrayList<>();
+
+		private SimplifyingSimplifier cache;
+
+		SimplifierChainBuilder(Simplifier simplifier) {
+			checkNotNull(simplifier);
+			this.simplifiers.add(simplifier);
+		}
+
+		/**
+		 * Adds a simplification step to the metric.
+=======
+		 * Adds a tokenization step to the metric.
+		 * 
+		 * @param tokenizer
+		 *            a tokenizer to add
+		 * @return a builder for fluent chaining
+		 */
+		public TokenizingChainBuilder tokenize(Tokenizer tokenizer) {
+			return new TokenizingChainBuilder(this, tokenizer);
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> simplify(Simplifier simplifier) {
+			return new TokenSimplifierChainBuilder<>(this, simplifier);
+		}
+
+		abstract StringMetric build();
+
+	}
+
+	/**
+	 * Convenience tool to create a string metric from a {@link ListMetric} .
+	 * Supports simplification and caching.
+	 * 
+	 * @author mpkorstanje
+	 * 
+	 */
+	public static final class CompositeListMetricBuilder extends
+			CollectionMetricBuilder<ListMetric<String>> {
+
+		CompositeListMetricBuilder(ListMetric<String> metric) {
+			super(metric);
+		}
+
+		@Override
+		CompositeTokenListMetric build() {
+			return new CompositeTokenListMetric(metric, simplifier, tokenizer);
+		}
+	}
+
+	/**
+	 * Convenience tool to create a string metric from a {@link SetMetric} .
+	 * Supports simplification and caching.
+	 * 
+	 * @author mpkorstanje
+	 * 
+	 */
+	public static final class CompositeSetMetricBuilder extends
+			CollectionMetricBuilder<SetMetric<String>> {
+
+		CompositeSetMetricBuilder(SetMetric<String> metric) {
+			super(metric);
+		}
+
+		@Override
+		public CompositeTokenSetMetric build() {
+			return new CompositeTokenSetMetric(metric, simplifier, tokenizer);
+		}
+
+	}
+
+	/**
+	 * Builder for the simplification and tokenization chains.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 * @param <T>
+	 *            type of the metric for which the chain is build
+	 */
+	public static final class TokenSimplifierChainBuilder<T> extends
+			SimplifierChainBuilder {
+
+		private final CollectionMetricBuilder<T> builder;
+
+		TokenSimplifierChainBuilder(CollectionMetricBuilder<T> builder,
+				Simplifier simplifier) {
+			super(simplifier);
+
+			this.builder = builder;
+
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> simplify(Simplifier simplifier) {
+			super.simplify(simplifier);
+			return this;
+		}
+
+		/**
+		 * Adds a tokenization step to the metric.
+		 * 
+		 * @param tokenizer
+		 *            a tokenizer to add
+		 * @return a builder for fluent chaining
+		 */
+		public TokenizingChainBuilder tokenize(Tokenizer tokenizer) {
+			builder.setSimplifier(innerBuild());
+			return builder.tokenize(tokenizer);
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache(
+				SimplifyingSimplifier cache) {
+			super.setSimplifierCache(cache);
+			return this;
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache(
+				int initialCapacity, int maximumSize) {
+			super.setSimplifierCache(initialCapacity, maximumSize);
+			return this;
+		}
+
+		@Override
+		public TokenSimplifierChainBuilder<T> setSimplifierCache() {
+			super.setSimplifierCache();
+			return this;
+		}
+
+	}
+
+	/**
+	 * Builder for a simplifier chain.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public static abstract class SimplifierChainBuilder {
+
+		private static final int CACHE_SIZE = 2;
+
+		private final List<Simplifier> simplifiers = new ArrayList<>();
+
+		private SimplifyingSimplifier cache;
+
+		SimplifierChainBuilder(Simplifier simplifier) {
+			checkNotNull(simplifier);
+			this.simplifiers.add(simplifier);
+		}
+
+		/**
+		 * Adds a simplification step to the metric.
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 		 * 
 		 * @param simplifier
 		 *            a simplifier to add
@@ -306,7 +778,143 @@ public class StringMetricBuilder {
 		 * 
 		 * @return this for fluent chaining
 		 */
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
 		BuildStep setSimplifierCache();
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+		public SimplifierChainBuilder setSimplifierCache() {
+			return setSimplifierCache(CACHE_SIZE, CACHE_SIZE);
+		}
+
+		Simplifier innerBuild() {
+			Simplifier simplifier;
+
+			if (simplifiers.size() == 1) {
+				simplifier = simplifiers.get(0);
+			} else {
+				simplifier = new CompositeSimplifier(simplifiers);
+			}
+
+			if (cache != null) {
+				cache.setSimplifier(simplifier);
+				simplifier = cache;
+			}
+
+			return simplifier;
+		}
+
+	}
+
+	/**
+	 * Builder for the simplification chain, used by the
+	 * {@link CompositeStringMetricBuilder}.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public final class StringSimplifierChainBuilder extends
+			SimplifierChainBuilder {
+
+		private final CompositeStringMetricBuilder builder;
+
+		StringSimplifierChainBuilder(CompositeStringMetricBuilder builder,
+				Simplifier simplifier) {
+			super(simplifier);
+			this.builder = builder;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder simplify(Simplifier simplifier) {
+			super.simplify(simplifier);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache(
+				SimplifyingSimplifier cache) {
+			super.setSimplifierCache(cache);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache(
+				int initialCapacity, int maximumSize) {
+			super.setSimplifierCache(initialCapacity, maximumSize);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache() {
+			super.setSimplifierCache();
+			return this;
+		}
+=======
+		public SimplifierChainBuilder setSimplifierCache() {
+			return setSimplifierCache(CACHE_SIZE, CACHE_SIZE);
+		}
+
+		Simplifier innerBuild() {
+			Simplifier simplifier;
+
+			if (simplifiers.size() == 1) {
+				simplifier = simplifiers.get(0);
+			} else {
+				simplifier = new CompositeSimplifier(simplifiers);
+			}
+
+			if (cache != null) {
+				cache.setSimplifier(simplifier);
+				simplifier = cache;
+			}
+
+			return simplifier;
+		}
+
+	}
+
+	/**
+	 * Builder for the simplification chain, used by the
+	 * {@link CompositeStringMetricBuilder}.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public static final class StringSimplifierChainBuilder extends
+			SimplifierChainBuilder {
+
+		private final CompositeStringMetricBuilder builder;
+
+		StringSimplifierChainBuilder(CompositeStringMetricBuilder builder,
+				Simplifier simplifier) {
+			super(simplifier);
+			this.builder = builder;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder simplify(Simplifier simplifier) {
+			super.simplify(simplifier);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache(
+				SimplifyingSimplifier cache) {
+			super.setSimplifierCache(cache);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache(
+				int initialCapacity, int maximumSize) {
+			super.setSimplifierCache(initialCapacity, maximumSize);
+			return this;
+		}
+
+		@Override
+		public StringSimplifierChainBuilder setSimplifierCache() {
+			super.setSimplifierCache();
+			return this;
+		}
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 
 		/**
 		 * Builds a metric with the given simplifier.
@@ -317,6 +925,7 @@ public class StringMetricBuilder {
 
 	}
 
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/left.java
 	@SuppressWarnings("javadoc")
 	public interface CollectionMetricStep {
 		/**
@@ -327,6 +936,59 @@ public class StringMetricBuilder {
 		 * @return this for fluent chaining
 		 */
 		CollectionMetricSimplifierStep simplify(Simplifier simplifier);
+||||||| /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/base.java
+	/**
+	 * Builder for the tokenization chain. Supports tokenization, filtering and
+	 * caching.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public final class TokenizingChainBuilder {
+		private static final int CACHE_SIZE = 2;
+
+		private final CollectionMetricBuilder<?> builder;
+
+		private final List<Tokenizer> tokenizers = new ArrayList<>();
+
+		private TokenizingTokenizer cache;
+
+		TokenizingChainBuilder(CollectionMetricBuilder<?> builder,
+				Tokenizer tokenizer) {
+
+			checkNotNull(tokenizer);
+
+			this.builder = builder;
+			this.tokenizers.add(tokenizer);
+
+		}
+=======
+	/**
+	 * Builder for the tokenization chain. Supports tokenization, filtering and
+	 * caching.
+	 * 
+	 * @author M.P. Korstanje
+	 * 
+	 */
+	public static final class TokenizingChainBuilder {
+		private static final int CACHE_SIZE = 2;
+
+		private final CollectionMetricBuilder<?> builder;
+
+		private final List<Tokenizer> tokenizers = new ArrayList<>();
+
+		private TokenizingTokenizer cache;
+
+		TokenizingChainBuilder(CollectionMetricBuilder<?> builder,
+				Tokenizer tokenizer) {
+
+			checkNotNull(tokenizer);
+
+			this.builder = builder;
+			this.tokenizers.add(tokenizer);
+
+		}
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/f28a7ee5dcf91706f3dfedc07e4723196b4e6c22/simmetrics-core/src/main/java/org/simmetrics/StringMetricBuilder.java/right.java
 
 		/**
 		 * Adds a tokenization step to the metric.
@@ -475,7 +1137,7 @@ public class StringMetricBuilder {
 
 
 	@SuppressWarnings("javadoc")
-	public static final class CompositeStringMetricBuilder implements
+	public final class CompositeStringMetricBuilder implements
 			StringMetricSimplifierStep, StringMetricSimplifierCacheStep,
 			BuildStep {
 
@@ -545,7 +1207,7 @@ public class StringMetricBuilder {
 
 
 	@SuppressWarnings("javadoc")
-	public static abstract class CompositeCollectionMetricBuilder<T extends Collection<String>>
+	public abstract class CompositeCollectionMetricBuilder<T extends Collection<String>>
 			implements BuildStep, CollectionMetricStep,
 			CollectionMetricSimplifierStep, CollectionMetricTokenizerStep,
 			CollectionMetricTokenizerCacheStep {
@@ -678,7 +1340,7 @@ public class StringMetricBuilder {
 
 
 	@SuppressWarnings("javadoc")
-	public static final class CompositeListMetricBuilder extends
+	public final class CompositeListMetricBuilder extends
 			CompositeCollectionMetricBuilder<List<String>> {
 
 		CompositeListMetricBuilder(Metric<List<String>> metric) {
@@ -695,7 +1357,7 @@ public class StringMetricBuilder {
 
 
 	@SuppressWarnings("javadoc")
-	public static final class CompositeSetMetricBuilder extends
+	public final class CompositeSetMetricBuilder extends
 			CompositeCollectionMetricBuilder<Set<String>> {
 
 		CompositeSetMetricBuilder(Metric<Set<String>> metric) {

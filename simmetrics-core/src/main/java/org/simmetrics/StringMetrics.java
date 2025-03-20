@@ -175,7 +175,8 @@ public final class StringMetrics {
 	 */
 	public static StringMetric blockDistance() {
 		return with(new BlockDistance<String>())
-				.tokenize(new WhitespaceTokenizer()).build();
+				.tokenize(new WhitespaceTokenizer())
+				.build();
 	}
 
 	/**
@@ -257,8 +258,7 @@ public final class StringMetrics {
 	 */
 	public static StringMetric matchingCoefficient() {
 		return with(new MatchingCoefficient<String>())
-				.tokenize(new WhitespaceTokenizer())
-				.build();
+				.tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -269,10 +269,8 @@ public final class StringMetrics {
 	 * @return a Monge-Elkan metric
 	 */
 	public static StringMetric mongeElkan() {
-		return with(
-				new MongeElkan(new SmithWatermanGotoh()))
-				.tokenize(new WhitespaceTokenizer())
-				.build();
+		return with(new MongeElkan(new SmithWatermanGotoh()))
+				.tokenize(new WhitespaceTokenizer()).build();
 	}
 
 	/**
@@ -303,7 +301,8 @@ public final class StringMetrics {
 	 */
 	public static StringMetric qGramsDistance() {
 		return with(new BlockDistance<String>())
-				.tokenize(new QGramExtendedTokenizer(3)).build();
+				.tokenize(new QGramExtendedTokenizer(3))
+				.build();
 	}
 
 	/**
