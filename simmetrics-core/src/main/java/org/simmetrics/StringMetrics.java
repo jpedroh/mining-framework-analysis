@@ -87,6 +87,426 @@ import org.simmetrics.tokenizers.Tokenizers;
  */
 public final class StringMetrics {
 
+<<<<<<< /usr/src/app/output/simmetrics/simmetrics/e068a678082c18fcaa360b58ba6e340908e9a3c2/simmetrics-core/src/main/java/org/simmetrics/StringMetrics.java/left.java
+||||||| /usr/src/app/output/simmetrics/simmetrics/e068a678082c18fcaa360b58ba6e340908e9a3c2/simmetrics-core/src/main/java/org/simmetrics/StringMetrics.java/base.java
+	private static final class ForList implements StringMetric {
+		private final Metric<List<String>> metric;
+		private final Tokenizer tokenizer;
+
+		ForList(Metric<List<String>> metric, Tokenizer tokenizer) {
+
+			checkNotNull(metric);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(tokenizer.tokenizeToList(a),
+					tokenizer.tokenizeToList(b));
+		}
+
+		Metric<List<String>> getMetric() {
+			return metric;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + tokenizer + "]";
+		}
+	}
+
+	private static final class ForListWithSimplifier implements StringMetric {
+		private final Metric<List<String>> metric;
+		private final Simplifier simplifier;
+		private final Tokenizer tokenizer;
+
+		ForListWithSimplifier(Metric<List<String>> metric,
+				Simplifier simplifier, Tokenizer tokenizer) {
+
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(
+					tokenizer.tokenizeToList(simplifier.simplify(a)),
+					tokenizer.tokenizeToList(simplifier.simplify(b)));
+		}
+
+		Metric<List<String>> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+		}
+	}
+
+	private static final class ForSet implements StringMetric {
+
+		private final Metric<Set<String>> metric;
+		private final Tokenizer tokenizer;
+
+		ForSet(Metric<Set<String>> metric, Tokenizer tokenizer) {
+			checkNotNull(metric);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(tokenizer.tokenizeToSet(a),
+					tokenizer.tokenizeToSet(b));
+		}
+
+		Metric<Set<String>> getMetric() {
+			return metric;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + tokenizer + "]";
+		}
+
+	}
+
+	private static final class ForSetWithSimplifier implements StringMetric {
+
+		private final Metric<Set<String>> metric;
+		private final Simplifier simplifier;
+		private final Tokenizer tokenizer;
+
+		ForSetWithSimplifier(Metric<Set<String>> metric, Simplifier simplifier,
+				Tokenizer tokenizer) {
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(
+					tokenizer.tokenizeToSet(simplifier.simplify(a)),
+					tokenizer.tokenizeToSet(simplifier.simplify(b)));
+		}
+
+		Metric<Set<String>> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+		}
+
+	}
+
+	private static final class ForString implements StringMetric {
+		private final Metric<String> metric;
+
+		ForString(Metric<String> metric) {
+			this.metric = metric;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(a, b);
+		}
+		
+		@Override
+		public String toString() {
+			return metric.toString();
+		}
+
+	}
+
+	private static final class ForStringWithSimplifier implements StringMetric {
+
+		private final Metric<String> metric;
+
+		private final Simplifier simplifier;
+
+		ForStringWithSimplifier(Metric<String> metric, Simplifier simplifier) {
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(simplifier.simplify(a),
+					simplifier.simplify(b));
+		}
+
+		Metric<String> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + "]";
+		}
+
+	}
+
+=======
+	private static final class ForList implements StringMetric {
+		private final Metric<List<String>> metric;
+		private final Tokenizer tokenizer;
+
+		ForList(Metric<List<String>> metric, Tokenizer tokenizer) {
+
+			checkNotNull(metric);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(tokenizer.tokenizeToList(a),
+					tokenizer.tokenizeToList(b));
+		}
+
+		Metric<List<String>> getMetric() {
+			return metric;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + tokenizer + "]";
+		}
+	}
+
+	private static final class ForListWithSimplifier implements StringMetric {
+		private final Metric<List<String>> metric;
+		private final Simplifier simplifier;
+		private final Tokenizer tokenizer;
+
+		ForListWithSimplifier(Metric<List<String>> metric,
+				Simplifier simplifier, Tokenizer tokenizer) {
+
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(
+					tokenizer.tokenizeToList(simplifier.simplify(a)),
+					tokenizer.tokenizeToList(simplifier.simplify(b)));
+		}
+
+		Metric<List<String>> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+		}
+	}
+
+	private static final class ForSet implements StringMetric {
+
+		private final Metric<Set<String>> metric;
+		private final Tokenizer tokenizer;
+
+		ForSet(Metric<Set<String>> metric, Tokenizer tokenizer) {
+			checkNotNull(metric);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(tokenizer.tokenizeToSet(a),
+					tokenizer.tokenizeToSet(b));
+		}
+
+		Metric<Set<String>> getMetric() {
+			return metric;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + tokenizer + "]";
+		}
+
+	}
+
+	private static final class ForSetWithSimplifier implements StringMetric {
+
+		private final Metric<Set<String>> metric;
+		private final Simplifier simplifier;
+		private final Tokenizer tokenizer;
+
+		ForSetWithSimplifier(Metric<Set<String>> metric, Simplifier simplifier,
+				Tokenizer tokenizer) {
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+			checkNotNull(tokenizer);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+			this.tokenizer = tokenizer;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(
+					tokenizer.tokenizeToSet(simplifier.simplify(a)),
+					tokenizer.tokenizeToSet(simplifier.simplify(b)));
+		}
+
+		Metric<Set<String>> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		Tokenizer getTokenizer() {
+			return tokenizer;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + " -> " + tokenizer + "]";
+		}
+
+	}
+
+	private static final class ForString implements StringMetric {
+		private final Metric<String> metric;
+
+		ForString(Metric<String> metric) {
+			this.metric = metric;
+		}
+		
+		Metric<String> getMetric() {
+			return metric;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(a, b);
+		}
+		
+		@Override
+		public String toString() {
+			return metric.toString();
+		}
+
+	}
+
+	private static final class ForStringWithSimplifier implements StringMetric {
+
+		private final Metric<String> metric;
+
+		private final Simplifier simplifier;
+
+		ForStringWithSimplifier(Metric<String> metric, Simplifier simplifier) {
+			checkNotNull(metric);
+			checkNotNull(simplifier);
+
+			this.metric = metric;
+			this.simplifier = simplifier;
+		}
+
+		@Override
+		public float compare(String a, String b) {
+			return metric.compare(simplifier.simplify(a),
+					simplifier.simplify(b));
+		}
+
+		Metric<String> getMetric() {
+			return metric;
+		}
+
+		Simplifier getSimplifier() {
+			return simplifier;
+		}
+
+		@Override
+		public String toString() {
+			return metric + " [" + simplifier + "]";
+		}
+
+	}
+
+>>>>>>> /usr/src/app/output/simmetrics/simmetrics/e068a678082c18fcaa360b58ba6e340908e9a3c2/simmetrics-core/src/main/java/org/simmetrics/StringMetrics.java/right.java
 	/**
 	 * Applies a metric to a string c and a list of strings. Returns an array
 	 * with the similarity value for c and each string in the list.
