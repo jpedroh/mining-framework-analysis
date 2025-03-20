@@ -71,11 +71,7 @@ public class Graph implements Serializable {
             }
         }
         Node n = new Node(label, idx, pos);
-        if (n.idx>0) {
-            nodes.put(n.idx - 1, n);
-        } else {
-            root = n;
-        }
+        nodes.put(n.idx - 1, n);
         return n;
     }
 
