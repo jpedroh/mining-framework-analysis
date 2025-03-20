@@ -246,7 +246,13 @@ public class DaemonStarter {
 				DaemonStarter.darofi = new DailyRollingFileAppender();
 				DaemonStarter.darofi.setName("DAROFI");
 				DaemonStarter.darofi.setLayout(new PatternLayout("%d{HH:mm:ss,SSS} %-5p %c %x - %m%n"));
+<<<<<<< /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/left.java
+				DaemonStarter.darofi.setFile("log/" + DaemonStarter.daemonName.get() + ".log");
+||||||| /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/base.java
+				DaemonStarter.darofi.setFile("log/" + DaemonStarter.daemonName + ".log");
+=======
 				DaemonStarter.darofi.setFile("log/" + DaemonStarter.getDaemonName() + ".log");
+>>>>>>> /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/right.java
 				DaemonStarter.darofi.setDatePattern("'.'yyyy-MM-dd");
 				DaemonStarter.darofi.setAppend(true);
 				DaemonStarter.darofi.setThreshold(Level.INFO);
@@ -255,7 +261,13 @@ public class DaemonStarter {
 
 				DaemonStarter.syslog = new SyslogAppender();
 				DaemonStarter.syslog.setName("SYSLOG");
+<<<<<<< /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/left.java
+				DaemonStarter.syslog.setLayout(new PatternLayout(DaemonStarter.daemonName.get() + ": %-5p %c %x - %m%n"));
+||||||| /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/base.java
+				DaemonStarter.syslog.setLayout(new PatternLayout(DaemonStarter.daemonName + ": %-5p %c %x - %m%n"));
+=======
 				DaemonStarter.syslog.setLayout(new PatternLayout(DaemonStarter.getDaemonName() + ": %-5p %c %x - %m%n"));
+>>>>>>> /usr/src/app/output/taimos/daemon-framework/f1696c8958a9311d29297b106064211abec721dd/src/main/java/de/taimos/daemon/DaemonStarter.java/right.java
 				DaemonStarter.syslog.setSyslogHost("localhost");
 				DaemonStarter.syslog.setFacility("LOCAL0");
 				DaemonStarter.syslog.setFacilityPrinting(false);
