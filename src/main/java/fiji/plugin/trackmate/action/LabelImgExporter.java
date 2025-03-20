@@ -128,12 +128,19 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
+
 	public static final ImagePlus createLabelImagePlus(
 			final TrackMate trackmate,
 			final boolean exportSpotsAsDots,
 			final boolean exportTracksOnly )
 	{
+<<<<<<< /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/left.java
 		return createLabelImagePlus( trackmate, exportSpotsAsDots, exportTracksOnly, Logger.VOID_LOGGER );
+||||||| /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/base.java
+		return createLabelImagePlus( trackmate.getModel(), Logger.VOID_LOGGER );
+=======
+		return createLabelImagePlus( trackmate, Logger.VOID_LOGGER );
+>>>>>>> /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/right.java
 	}
 
 	/**
@@ -162,6 +169,7 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
+
 	public static final ImagePlus createLabelImagePlus(
 			final TrackMate trackmate,
 			final boolean exportSpotsAsDots,
@@ -194,6 +202,7 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
+
 	public static final ImagePlus createLabelImagePlus(
 			final Model model,
 			final ImagePlus imp,
@@ -229,6 +238,7 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
+
 	public static final ImagePlus createLabelImagePlus(
 			final Model model,
 			final ImagePlus imp,
@@ -236,14 +246,24 @@ public class LabelImgExporter extends AbstractTMAction
 			final boolean exportTracksOnly,
 			final Logger logger )
 	{
+		return createLabelImagePlus( model, imp, Logger.VOID_LOGGER );
+	}
+
+	public static final ImagePlus createLabelImagePlus( final Model model, final ImagePlus imp, final Logger logger )
+	{
 		final int[] dimensions = imp.getDimensions();
 		final int[] dims = new int[] { dimensions[ 0 ], dimensions[ 1 ], dimensions[ 3 ], dimensions[ 4 ] };
 
+<<<<<<< /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/left.java
 		final ImagePlus lblImp = createLabelImagePlus( model, dims, exportSpotsAsDots, exportTracksOnly, logger );
+||||||| /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/base.java
+		final ImagePlus lblImp = createLabelImagePlus( model, dims );
+=======
+		final ImagePlus lblImp = createLabelImagePlus( model, dims, logger );
+>>>>>>> /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/right.java
 		lblImp.setCalibration( imp.getCalibration().copy() );
 		lblImp.setTitle( "LblImg_" + imp.getTitle() );
 		return lblImp;
-
 	}
 
 	/**
@@ -268,6 +288,7 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
+
 	public static final ImagePlus createLabelImagePlus(
 			final Model model,
 			final int[] dimensions,
@@ -302,18 +323,20 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link ImagePlus}.
 	 */
-	public static final ImagePlus createLabelImagePlus(
-			final Model model,
-			final int[] dimensions,
-			final boolean exportSpotsAsDots,
-			final boolean exportTracksOnly,
-			final Logger logger )
+
+	public static final ImagePlus createLabelImagePlus( final Model model, final int[] dimensions, final Logger logger )
 	{
 		final long[] dims = new long[ 4 ];
 		for ( int d = 0; d < dims.length; d++ )
 			dims[ d ] = dimensions[ d ];
 
+<<<<<<< /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/left.java
 		final ImagePlus lblImp = ImageJFunctions.wrap( createLabelImg( model, dims, exportSpotsAsDots, exportTracksOnly, logger ), "LblImage" );
+||||||| /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/base.java
+		final ImagePlus lblImp = ImageJFunctions.wrap( createLabelImg( model, dims ), "LblImage" );
+=======
+		final ImagePlus lblImp = ImageJFunctions.wrap( createLabelImg( model, dims, logger ), "LblImage" );
+>>>>>>> /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/right.java
 		lblImp.setDimensions( 1, dimensions[ 2 ], dimensions[ 3 ] );
 		lblImp.setOpenAsHyperStack( true );
 		lblImp.resetDisplayRange();
@@ -342,6 +365,7 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link Img}.
 	 */
+
 	public static final Img< UnsignedShortType > createLabelImg(
 			final Model model,
 			final long[] dimensions,
@@ -376,12 +400,41 @@ public class LabelImgExporter extends AbstractTMAction
 	 *
 	 * @return a new {@link Img}.
 	 */
+
+	public static final ImagePlus createLabelImagePlus( final TrackMate trackmate, final Logger logger )
+	{
+		return createLabelImagePlus( trackmate.getModel(), trackmate.getSettings().imp, logger );
+	}
+
+	public static final ImagePlus createLabelImagePlus(
+			final Model model,
+			final int[] dimensions,
+			final boolean exportSpotsAsDots,
+			final boolean exportTracksOnly,
+			final Logger logger )
+	{
+		return createLabelImagePlus( model, dimensions, Logger.VOID_LOGGER );
+	}
+
 	public static final Img< UnsignedShortType > createLabelImg(
 			final Model model,
 			final long[] dimensions,
 			final boolean exportSpotsAsDots,
 			final boolean exportTracksOnly,
 			final Logger logger )
+	{
+		return createLabelImg( model, dimensions, Logger.VOID_LOGGER );
+	}
+
+	/**
+	 * @param model
+	 * @param dimensions
+	 *            the dimensions of the output image (width, height, nZSlices,
+	 *            nFrames) as a 4 element int array.
+	 *
+	 * @return a new {@link ImagePlus}
+	 */
+	public static final Img< UnsignedShortType > createLabelImg( final Model model, final long[] dimensions, final Logger logger )
 	{
 		/*
 		 * Create target image.
@@ -411,37 +464,48 @@ public class LabelImgExporter extends AbstractTMAction
 		 * Frame by frame iteration.
 		 */
 
+<<<<<<< /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/left.java
 		logger.log( "Writing label image.\n" );
+||||||| /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/base.java
+=======
+		logger.log( "Writing label image." );
+>>>>>>> /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/right.java
+
 		for ( int frame = 0; frame < dimensions[ 3 ]; frame++ )
+	{
+		final ImgPlus< UnsignedShortType > imgC = HyperSliceImgPlus.fixChannelAxis( imgPlus, 0 );
+		final ImgPlus< UnsignedShortType > imgCT = HyperSliceImgPlus.fixTimeAxis( imgC, frame );
+
+		final SpotWriter spotWriter = exportSpotsAsDots
+				? new SpotAsDotWriter( imgCT )
+				: new SpotSphereWriter( imgCT );
+
+		for ( final Spot spot : model.getSpots().iterable( frame, true ) )
 		{
-			final ImgPlus< UnsignedShortType > imgC = HyperSliceImgPlus.fixChannelAxis( imgPlus, 0 );
-			final ImgPlus< UnsignedShortType > imgCT = HyperSliceImgPlus.fixTimeAxis( imgC, frame );
-
-			final SpotWriter spotWriter = exportSpotsAsDots
-					? new SpotAsDotWriter( imgCT )
-					: new SpotSphereWriter( imgCT );
-
-			for ( final Spot spot : model.getSpots().iterable( frame, true ) )
+			final int id;
+			final Integer trackID = model.getTrackModel().trackIDOf( spot );
+			if ( null == trackID || !model.getTrackModel().isVisible( trackID ) )
 			{
-				final int id;
-				final Integer trackID = model.getTrackModel().trackIDOf( spot );
-				if ( null == trackID || !model.getTrackModel().isVisible( trackID ) )
-				{
-					if ( exportTracksOnly )
-						continue;
+				if ( exportTracksOnly )
+					continue;
 
-					id = lonelySpotID.getAndIncrement();
-				}
-				else
-				{
-					id = 1 + trackID.intValue();
-				}
-
-				spotWriter.write( spot, id );
+				id = lonelySpotID.getAndIncrement();
 			}
-			logger.setProgress( ( double ) ( 1 + frame ) / dimensions[ 3 ] );
+			else
+			{
+				id = 1 + trackID.intValue();
+			}
+
+			spotWriter.write( spot, id );
 		}
+		logger.setProgress( ( double ) ( 1 + frame ) / dimensions[ 3 ] );
+	}
+<<<<<<< /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/left.java
 		logger.log( "Done.\n" );
+||||||| /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/base.java
+=======
+		logger.log( "Done." );
+>>>>>>> /usr/src/app/output/fiji/trackmate/cd50720acbc96d28db16793b408e57ffb240b1cd/src/main/java/fiji/plugin/trackmate/action/LabelImgExporter.java/right.java
 
 		return lblImg;
 	}
@@ -543,7 +607,7 @@ public class LabelImgExporter extends AbstractTMAction
 		createLabelImagePlus(
 				plugIn.getModel(),
 				plugIn.getSettings().imp,
-				false,
+				true,
 				true,
 				plugIn.getModel().getLogger() ).show();
 	}
