@@ -17,14 +17,18 @@ class NumberConverter implements ValueConverter {
     boolean signable = true;
     boolean dottable = false;
     boolean exponentable = false;
+<<<<<<< /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/left.java
     boolean terminatable = false;
+||||||| /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/base.java
+=======
     boolean underscorable = false;
+>>>>>>> /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/right.java
     String type = "";
     StringBuilder sb = new StringBuilder();
 
     for (int i = index.get(); i < s.length(); i = index.incrementAndGet()) {
       char c = s.charAt(i);
-      boolean notLastChar = s.length() > i + 1;
+      boolean notLastChar = chars.length > i + 1;
 
       if (Character.isDigit(c)) {
         sb.append(c);
@@ -36,19 +40,39 @@ class NumberConverter implements ValueConverter {
         }
         underscorable = notLastChar;
         exponentable = !type.equals("exponent");
+<<<<<<< /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/left.java
+      } else if ((c == '+' || c == '-') && signable && s.length() > i + 1) {
+||||||| /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/base.java
+      } else if ((c == '+' || c == '-') && signable && chars.length > i + 1) {
+=======
       } else if ((c == '+' || c == '-') && signable && notLastChar) {
+>>>>>>> /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/right.java
         signable = false;
         terminatable = false;
         if (c == '-') {
           sb.append('-');
         }
+        underscorable = false;
+<<<<<<< /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/left.java
+      } else if (c == '.' && dottable && s.length() > i + 1) {
+||||||| /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/base.java
+      } else if (c == '.' && dottable && chars.length > i + 1) {
+=======
       } else if (c == '.' && dottable && notLastChar) {
+>>>>>>> /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/right.java
         sb.append('.');
         type = "float";
         terminatable = false;
         dottable = false;
         exponentable = false;
+        underscorable = false;
+<<<<<<< /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/left.java
+      } else if ((c == 'E' || c == 'e') && exponentable && s.length() > i + 1) {
+||||||| /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/base.java
+      } else if ((c == 'E' || c == 'e') && exponentable && chars.length > i + 1) {
+=======
       } else if ((c == 'E' || c == 'e') && exponentable && notLastChar) {
+>>>>>>> /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/right.java
         sb.append('E');
         type = "exponent";
         terminatable = false;
@@ -56,8 +80,7 @@ class NumberConverter implements ValueConverter {
         dottable = false;
         exponentable = false;
         underscorable = false;
-      } else if (c == '_' && underscorable && notLastChar && Character.isDigit(s.charAt(i + 1))) {
-        underscorable = false;
+<<<<<<< /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/left.java
       } else {
         if (!terminatable) {
           type = "";
@@ -65,6 +88,27 @@ class NumberConverter implements ValueConverter {
         index.decrementAndGet();
         break;
       }
+||||||| /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/base.java
+      } else if (Character.isWhitespace(c)) {
+        whitespace = true;
+      } else if (whitespace && c == '#') {
+        break;
+      } else {
+        type = "";
+        break;
+      }
+=======
+      } else if (c == '_' && underscorable && notLastChar && Character.isDigit(chars[i + 1])) {
+        underscorable = false;
+      } else if (Character.isWhitespace(c)) {
+        whitespace = true;
+      } else if (whitespace && c == '#') {
+        break;
+      } else {
+        type = "";
+        break;
+      }
+>>>>>>> /usr/src/app/output/mwanji/toml4j/a3edb55e9c0c40f0620c3b8c4480864a2f07f46c/src/main/java/com/moandjiezana/toml/NumberConverter.java/right.java
     }
 
     if (type.equals("integer")) {
