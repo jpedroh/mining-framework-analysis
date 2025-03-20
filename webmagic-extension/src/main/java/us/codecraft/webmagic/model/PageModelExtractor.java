@@ -184,7 +184,13 @@ class PageModelExtractor {
             return null;
         }
         if (objectExtractor == null) {
+<<<<<<< /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-extension/src/main/java/us/codecraft/webmagic/model/PageModelExtractor.java/left.java
+            return processSingle(page, null, false);
+||||||| /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-extension/src/main/java/us/codecraft/webmagic/model/PageModelExtractor.java/base.java
+            return processSingle(page, null, page.getHtml().toString());
+=======
             return processSingle(page, null, true);
+>>>>>>> /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-extension/src/main/java/us/codecraft/webmagic/model/PageModelExtractor.java/right.java
         } else {
             if (objectExtractor.multi) {
                 List<Object> os = new ArrayList<Object>();

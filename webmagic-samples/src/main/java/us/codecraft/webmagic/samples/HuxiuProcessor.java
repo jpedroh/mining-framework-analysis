@@ -1,10 +1,8 @@
 package us.codecraft.webmagic.samples;
-
+import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-
 import java.util.List;
 
 /**
@@ -22,10 +20,6 @@ public class HuxiuProcessor implements PageProcessor {
     @Override
     public Site getSite() {
         return Site.me().setDomain("www.huxiu.com").addStartUrl("http://www.huxiu.com/");
-    }
-
-    public static void main(String[] args) {
-        Spider.create(new HuxiuProcessor()).run();
     }
 
     public static void main(String[] args) {

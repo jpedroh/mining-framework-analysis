@@ -2,9 +2,10 @@ package us.codecraft.webmagic.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.charset.Charset;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

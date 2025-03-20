@@ -313,12 +313,22 @@ public class Spider implements Runnable, Task {
             sleep(site.getSleepTime());
             return;
         }
+<<<<<<< /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-core/src/main/java/us/codecraft/webmagic/Spider.java/left.java
+        //for cycle retry
+        if (page.getHtml()==null){
+            addRequest(page);
+            sleep(site.getSleepTime());
+            return;
+        }
+||||||| /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-core/src/main/java/us/codecraft/webmagic/Spider.java/base.java
+=======
         //for cycle retry
         if (page.getHtml() == null) {
             addRequest(page);
             sleep(site.getSleepTime());
             return;
         }
+>>>>>>> /usr/src/app/output/code4craft/webmagic/a2fba8caa2684e3b2915c8c73577f5db2f9b7c01/webmagic-core/src/main/java/us/codecraft/webmagic/Spider.java/right.java
         pageProcessor.process(page);
         addRequest(page);
         if (!page.getResultItems().isSkip()) {
@@ -393,12 +403,16 @@ public class Spider implements Runnable, Task {
 
     /**
      * switch off xsoup
+     * @return
+     */
+    public static void xsoupOff(){
+        EnvironmentUtil.setUseXsoup(false);
+    }
+    /**
+     * switch off xsoup
      *
      * @return
      */
-    public static void xsoupOff() {
-        EnvironmentUtil.setUseXsoup(false);
-    }
 
     @Override
     public String getUUID() {
