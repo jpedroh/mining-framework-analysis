@@ -5,17 +5,34 @@
  * License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/872c4584f2f14824f2208a2620ccdfef0cafbf19/src/main/java/org/fest/assertions/internal/Files.java/left.java
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * 
- * Copyright @2012 the original author or authors.
+ * Copyright @2011 the original author or authors.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/872c4584f2f14824f2208a2620ccdfef0cafbf19/src/main/java/org/fest/assertions/internal/Files.java/base.java
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * Copyright @2011 the original author or authors.
+=======
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * Copyright @2011-12 the original author or authors.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/872c4584f2f14824f2208a2620ccdfef0cafbf19/src/main/java/org/fest/assertions/internal/Files.java/right.java
  */
 package org.fest.assertions.internal;
 
 import static org.fest.assertions.error.ShouldBeAbsolutePath.shouldBeAbsolutePath;
 import static org.fest.assertions.error.ShouldBeDirectory.shouldBeDirectory;
+import static org.fest.assertions.error.ShouldBeExecutable.shouldBeExecutable;
 import static org.fest.assertions.error.ShouldBeFile.shouldBeFile;
 import static org.fest.assertions.error.ShouldBeReadable.shouldBeReadable;
 import static org.fest.assertions.error.ShouldBeRelativePath.shouldBeRelativePath;
@@ -256,6 +273,20 @@ public class Files {
     throw failures.failure(info, shouldBeReadable(actual));
   }
 
+  /**
+   * Asserts that the given file can be executed by the application.
+   * @param info contains information about the assertion.
+   * @param actual the given file.
+   * @throws AssertionError if the given file is {@code null}.
+   * @throws AssertionError if the given file can not be executed.
+   */
+
+  public void assertCanExecute(AssertionInfo info, File actual) {
+    assertNotNull(info, actual);
+    if (actual.canExecute()) return;
+    throw failures.failure(info, shouldBeExecutable(actual));
+  }
+  
   private static void assertNotNull(AssertionInfo info, File actual) {
     Objects.instance().assertNotNull(info, actual);
   }
