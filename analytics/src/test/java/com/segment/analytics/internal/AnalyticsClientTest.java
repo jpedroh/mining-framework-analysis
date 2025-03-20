@@ -1,5 +1,4 @@
 package com.segment.analytics.internal;
-
 import static com.segment.analytics.internal.FlushMessage.POISON;
 import static com.segment.analytics.internal.StopMessage.STOP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +13,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
-
 import com.segment.analytics.Callback;
 import com.segment.analytics.Log;
 import com.segment.analytics.TestUtils.MessageBuilderTest;
@@ -34,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -55,90 +52,68 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.mock.Calls;
 
-@RunWith(BurstJUnit4.class) //
-public class AnalyticsClientTest {
-  // Backo instance for testing which trims down the wait times.
-  private static final Backo BACKO =
-      Backo.builder().base(TimeUnit.NANOSECONDS, 1).factor(1).build();
+@RunWith(value = BurstJUnit4.class) public class AnalyticsClientTest {
+  private static final Backo BACKO = Backo.builder().base(TimeUnit.NANOSECONDS, 1).factor(1).build();
 
   private int DEFAULT_RETRIES = 10;
-  private int MAX_BATCH_SIZE = 1024 * 500; // 500kb
-  private int MAX_MSG_SIZE = 1024 * 32; // 32kb //This is the limit for a message object
-  private int MSG_MAX_CREATE_SIZE =
-      MAX_MSG_SIZE
-          - 200; // Once we create msg object with this size it barely below 32 threshold so good
-  // for tests
+
+  private int MAX_BATCH_SIZE = 1024 * 500;
+
+  private int MAX_MSG_SIZE = 1024 * 32;
+
+  private int MSG_MAX_CREATE_SIZE = MAX_MSG_SIZE - 200;
 
   Log log = Log.NONE;
 
   ThreadFactory threadFactory;
+
   @Spy LinkedBlockingQueue<Message> messageQueue;
+
   @Mock SegmentService segmentService;
+
   @Mock ExecutorService networkExecutor;
+
   @Mock Callback callback;
+
   @Mock UploadResponse response;
 
   AtomicBoolean isShutDown;
 
-  @Before
-  public void setUp() {
+  @Before public void setUp() {
     openMocks(this);
-
     isShutDown = new AtomicBoolean(false);
     threadFactory = Executors.defaultThreadFactory();
   }
 
-  // Defers loading the client until tests can initialize all required
-  // dependencies.
   AnalyticsClient newClient() {
-    return new AnalyticsClient(
-        messageQueue,
-        segmentService,
-        50,
-        TimeUnit.HOURS.toMillis(1),
-        0,
-        MAX_BATCH_SIZE,
-        log,
-        threadFactory,
-        networkExecutor,
-        Collections.singletonList(callback),
-        isShutDown);
+    return new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), 0, MAX_BATCH_SIZE, log, threadFactory, networkExecutor, Collections.singletonList(callback), isShutDown);
   }
 
-  @Test
-  public void enqueueAddsToQueue(MessageBuilderTest builder) throws InterruptedException {
+  @Test public void enqueueAddsToQueue(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
-
     Message message = builder.get().userId("prateek").build();
     client.enqueue(message);
-
     verify(messageQueue).put(message);
   }
 
-  @Test
-  public void shutdown() throws InterruptedException {
+  @Test public void shutdown() throws InterruptedException {
     messageQueue = new LinkedBlockingQueue<>();
     AnalyticsClient client = newClient();
-
     client.shutdown();
-
     verify(networkExecutor).shutdown();
     verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
   }
 
-  @Test
-  public void flushInsertsPoison() throws InterruptedException {
+  @Test public void flushInsertsPoison() throws InterruptedException {
     AnalyticsClient client = newClient();
-
     client.flush();
-
     verify(messageQueue).put(FlushMessage.POISON);
   }
 
   /** Wait until the queue is drained. */
   static void wait(Queue<?> queue) {
-    // noinspection StatementWithEmptyBody
-    while (queue.size() > 0) {}
+    while (queue.size() > 0) {
+    }
   }
 
   /**
@@ -155,34 +130,29 @@ public class AnalyticsClientTest {
   private static String generateDataOfSize(int msgSize) {
     char[] chars = new char[msgSize];
     Arrays.fill(chars, 'a');
-
     return new String(chars);
   }
 
-  private static String generateDataOfSizeSpecialChars(
-      int sizeInBytes, boolean slightlyBelowLimit) {
+  private static String generateDataOfSizeSpecialChars(int sizeInBytes, boolean slightlyBelowLimit) {
     StringBuilder builder = new StringBuilder();
-    Character[] specialChars = new Character[] {'$', '¢', 'ह', '€', '한', '©', '¶'};
+    Character[] specialChars = new Character[] { '$', '\u00a2', '\u0939', '\u20ac', '\ud55c', '\u00a9', '\u00b6' };
     int currentSize = 0;
-    String smileyFace = "\uD83D\uDE01";
-    // 😁 = '\uD83D\uDE01';
+    String smileyFace = "\ud83d\ude01";
     Random rand = new Random();
     int loopCount = 1;
     while (currentSize < sizeInBytes) {
       int randomNum;
-      // decide if regular/special character
       if (loopCount > 3 && loopCount % 4 == 0) {
         randomNum = rand.nextInt(((specialChars.length - 1) - 0) + 1) + 0;
         builder.append(specialChars[randomNum]);
-      } else if (loopCount > 9 && loopCount % 10 == 0) {
-        builder.append(smileyFace);
       } else {
-        // random letter from a - z
-        randomNum = rand.nextInt(('z' - 'a') + 1) + 'a';
-        builder.append((char) randomNum);
+        if (loopCount > 9 && loopCount % 10 == 0) {
+          builder.append(smileyFace);
+        } else {
+          randomNum = rand.nextInt(('z' - 'a') + 1) + 'a';
+          builder.append((char) randomNum);
+        }
       }
-
-      // check size so far
       String temp = builder.toString();
       currentSize = temp.getBytes(StandardCharsets.UTF_8).length;
       if (slightlyBelowLimit && ((sizeInBytes - currentSize) < 500)) {
@@ -193,64 +163,44 @@ public class AnalyticsClientTest {
     return builder.toString();
   }
 
-  @Test
-  public void flushSubmitsToExecutor() {
+  @Test public void flushSubmitsToExecutor() {
     messageQueue = new LinkedBlockingQueue<>();
     AnalyticsClient client = newClient();
-
     TrackMessage first = TrackMessage.builder("foo").userId("bar").build();
     TrackMessage second = TrackMessage.builder("qaz").userId("qux").build();
     client.enqueue(first);
     client.enqueue(second);
     client.flush();
     wait(messageQueue);
-
     assertThat(captureBatch(networkExecutor).batch()).containsExactly(first, second);
   }
 
-  @Test
-  public void enqueueMaxTriggersFlush() {
+  @Test public void enqueueMaxTriggersFlush() {
     messageQueue = new LinkedBlockingQueue<>();
     AnalyticsClient client = newClient();
-
-    // Enqueuing 51 messages (> 50) should trigger flush.
     for (int i = 0; i < 51; i++) {
       client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
     }
     wait(messageQueue);
-
-    // Verify that the executor saw the batch.
     assertThat(captureBatch(networkExecutor).batch()).hasSize(50);
   }
 
-  @Test
-  public void shouldBeAbleToCalculateMessageSize() {
+  @Test public void shouldBeAbleToCalculateMessageSize() {
     AnalyticsClient client = newClient();
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property1", generateDataOfSize(1024 * 33));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
     client.enqueue(bigMessage);
-
-    // can't test for exact size cause other attributes come in play
     assertThat(client.messageSizeInBytes(bigMessage)).isGreaterThan(1024 * 33);
   }
 
-  @Test
-  public void dontFlushUntilReachesMaxSize() throws InterruptedException {
+  @Test public void dontFlushUntilReachesMaxSize() throws InterruptedException {
     AnalyticsClient client = newClient();
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property2", generateDataOfSize(MAX_BATCH_SIZE - 200));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
     client.enqueue(bigMessage);
-
     wait(messageQueue);
-
     verify(networkExecutor, never()).submit(any(Runnable.class));
   }
 
@@ -266,40 +216,16 @@ public class AnalyticsClientTest {
    *
    * @throws InterruptedException
    */
-  @Test
-  public void flushHowManyTimesNecessaryToStayWithinLimit() throws InterruptedException {
-    AnalyticsClient client =
-        new AnalyticsClient(
-            messageQueue,
-            segmentService,
-            50,
-            TimeUnit.HOURS.toMillis(1),
-            0,
-            MAX_BATCH_SIZE * 4,
-            log,
-            threadFactory,
-            networkExecutor,
-            Collections.singletonList(callback),
-            isShutDown);
-
+  @Test public void flushHowManyTimesNecessaryToStayWithinLimit() throws InterruptedException {
+    AnalyticsClient client = new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), 0, MAX_BATCH_SIZE * 4, log, threadFactory, networkExecutor, Collections.singletonList(callback), isShutDown);
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property3", generateDataOfSize(MSG_MAX_CREATE_SIZE));
-
     for (int i = 0; i < 46; i++) {
-      TrackMessage bigMessage =
-          TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+      TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
       client.enqueue(bigMessage);
       verify(messageQueue).put(bigMessage);
     }
-
     wait(messageQueue);
-    /**
-     * modified from expected 4 to expected 3 times, since we removed the inner loop. The inner loop
-     * was forcing to message list created from the queue to keep making batches even if its a 1
-     * message batch until the message list is empty, that was forcing the code to make one last
-     * batch of 1 msg in size bumping the number of times a batch would be submitted from 3 to 4
-     */
     verify(networkExecutor, times(3)).submit(any(Runnable.class));
   }
 
@@ -314,35 +240,28 @@ public class AnalyticsClientTest {
    *
    * @throws InterruptedException
    */
-  @Test
-  public void flushWhenMultipleMessagesReachesMaxSize() throws InterruptedException {
+  @Test public void flushWhenMultipleMessagesReachesMaxSize() throws InterruptedException {
     AnalyticsClient client = newClient();
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("property3", generateDataOfSize(MSG_MAX_CREATE_SIZE));
-
     for (int i = 0; i < 16; i++) {
-      TrackMessage bigMessage =
-          TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
+      TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("bar").properties(properties).build();
       client.enqueue(bigMessage);
     }
     wait(messageQueue);
     client.shutdown();
-    while (!isShutDown.get()) {}
+    while (!isShutDown.get()) {
+    }
     verify(networkExecutor, times(2)).submit(any(Runnable.class));
   }
 
-  @Test
-  public void enqueueBeforeMaxDoesNotTriggerFlush() {
+  @Test public void enqueueBeforeMaxDoesNotTriggerFlush() {
     messageQueue = new LinkedBlockingQueue<>();
     AnalyticsClient client = newClient();
-
-    // Enqueuing 5 messages (< 50) should not trigger flush.
     for (int i = 0; i < 5; i++) {
       client.enqueue(TrackMessage.builder("Event " + i).userId("bar").build());
     }
     wait(messageQueue);
-
-    // Verify that the executor didn't see anything.
     verify(networkExecutor, never()).submit(any(Runnable.class));
   }
 
@@ -350,376 +269,238 @@ public class AnalyticsClientTest {
     return Batch.create(Collections.<String, Object>emptyMap(), Collections.singletonList(message));
   }
 
-  @Test
-  public void batchRetriesForNetworkErrors() {
+  @Test public void batchRetriesForNetworkErrors() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
     Response<UploadResponse> successResponse = Response.success(200, response);
     Response<UploadResponse> failureResponse = Response.error(429, ResponseBody.create(null, ""));
-
-    // Throw a network error 3 times.
-    when(segmentService.upload(batch))
-        .thenReturn(Calls.response(failureResponse))
-        .thenReturn(Calls.response(failureResponse))
-        .thenReturn(Calls.response(failureResponse))
-        .thenReturn(Calls.response(successResponse));
-
+    when(segmentService.upload(batch)).thenReturn(Calls.response(failureResponse)).thenReturn(Calls.response(failureResponse)).thenReturn(Calls.response(failureResponse)).thenReturn(Calls.response(successResponse));
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, DEFAULT_RETRIES);
     batchUploadTask.run();
-
-    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
     verify(segmentService, times(4)).upload(batch);
     verify(callback).success(trackMessage);
   }
 
-  @Test
-  public void batchRetriesForHTTP5xxErrors() {
+  @Test public void batchRetriesForHTTP5xxErrors() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    // Throw a HTTP error 3 times.
-
     Response<UploadResponse> successResponse = Response.success(200, response);
-    Response<UploadResponse> failResponse =
-        Response.error(500, ResponseBody.create(null, "Server Error"));
-    when(segmentService.upload(batch))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(successResponse));
-
+    Response<UploadResponse> failResponse = Response.error(500, ResponseBody.create(null, "Server Error"));
+    when(segmentService.upload(batch)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(successResponse));
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, DEFAULT_RETRIES);
     batchUploadTask.run();
-
-    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
     verify(segmentService, times(4)).upload(batch);
     verify(callback).success(trackMessage);
   }
 
-  @Test
-  public void batchRetriesForHTTP429Errors() {
+  @Test public void batchRetriesForHTTP429Errors() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    // Throw a HTTP error 3 times.
     Response<UploadResponse> successResponse = Response.success(200, response);
-    Response<UploadResponse> failResponse =
-        Response.error(429, ResponseBody.create(null, "Rate Limited"));
-    when(segmentService.upload(batch))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(failResponse))
-        .thenReturn(Calls.response(successResponse));
-
+    Response<UploadResponse> failResponse = Response.error(429, ResponseBody.create(null, "Rate Limited"));
+    when(segmentService.upload(batch)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(failResponse)).thenReturn(Calls.response(successResponse));
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, DEFAULT_RETRIES);
     batchUploadTask.run();
-
-    // Verify that we tried to upload 4 times, 3 failed and 1 succeeded.
     verify(segmentService, times(4)).upload(batch);
     verify(callback).success(trackMessage);
   }
 
-  @Test
-  public void batchDoesNotRetryForNon5xxAndNon429HTTPErrors() {
+  @Test public void batchDoesNotRetryForNon5xxAndNon429HTTPErrors() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    // Throw a HTTP error that should not be retried.
-    Response<UploadResponse> failResponse =
-        Response.error(404, ResponseBody.create(null, "Not Found"));
+    Response<UploadResponse> failResponse = Response.error(404, ResponseBody.create(null, "Not Found"));
     when(segmentService.upload(batch)).thenReturn(Calls.response(failResponse));
-
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, DEFAULT_RETRIES);
     batchUploadTask.run();
-
-    // Verify we only tried to upload once.
     verify(segmentService).upload(batch);
     verify(callback).failure(eq(trackMessage), any(IOException.class));
   }
 
-  @Test
-  public void batchDoesNotRetryForNonNetworkErrors() {
+  @Test public void batchDoesNotRetryForNonNetworkErrors() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
     Call<UploadResponse> networkFailure = Calls.failure(new RuntimeException());
     when(segmentService.upload(batch)).thenReturn(networkFailure);
-
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, DEFAULT_RETRIES);
     batchUploadTask.run();
-
-    // Verify we only tried to upload once.
     verify(segmentService).upload(batch);
     verify(callback).failure(eq(trackMessage), any(RuntimeException.class));
   }
 
-  @Test
-  public void givesUpAfterMaxRetries() {
+  @Test public void givesUpAfterMaxRetries() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    when(segmentService.upload(batch))
-        .thenAnswer(
-            new Answer<Call<UploadResponse>>() {
-              public Call<UploadResponse> answer(InvocationOnMock invocation) {
-                Response<UploadResponse> failResponse =
-                    Response.error(429, ResponseBody.create(null, "Not Found"));
-                return Calls.response(failResponse);
-              }
-            });
-
+    when(segmentService.upload(batch)).thenAnswer(new Answer<Call<UploadResponse>>() {
+      public Call<UploadResponse> answer(InvocationOnMock invocation) {
+        Response<UploadResponse> failResponse = Response.error(429, ResponseBody.create(null, "Not Found"));
+        return Calls.response(failResponse);
+      }
+    });
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, 10);
     batchUploadTask.run();
-
-    // DEFAULT_RETRIES == maxRetries
-    // tries 11(one normal run + 10 retries) even though default is 50 in AnalyticsClient.java
     verify(segmentService, times(11)).upload(batch);
-    verify(callback)
-        .failure(
-            eq(trackMessage),
-            argThat(
-                new ArgumentMatcher<IOException>() {
-                  @Override
-                  public boolean matches(IOException exception) {
-                    return exception.getMessage().equals("11 retries exhausted");
-                  }
-                }));
+    verify(callback).failure(eq(trackMessage), argThat(new ArgumentMatcher<IOException>() {
+      @Override public boolean matches(IOException exception) {
+        return exception.getMessage().equals("11 retries exhausted");
+      }
+    }));
   }
 
-  @Test
-  public void hasDefaultRetriesSetTo3() {
+  @Test public void hasDefaultRetriesSetTo3() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    when(segmentService.upload(batch))
-        .thenAnswer(
-            new Answer<Call<UploadResponse>>() {
-              public Call<UploadResponse> answer(InvocationOnMock invocation) {
-                Response<UploadResponse> failResponse =
-                    Response.error(429, ResponseBody.create(null, "Not Found"));
-                return Calls.response(failResponse);
-              }
-            });
-
+    when(segmentService.upload(batch)).thenAnswer(new Answer<Call<UploadResponse>>() {
+      public Call<UploadResponse> answer(InvocationOnMock invocation) {
+        Response<UploadResponse> failResponse = Response.error(429, ResponseBody.create(null, "Not Found"));
+        return Calls.response(failResponse);
+      }
+    });
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, 3);
     batchUploadTask.run();
-
-    // DEFAULT_RETRIES == maxRetries
-    // tries 11(one normal run + 10 retries)
     verify(segmentService, times(4)).upload(batch);
-    verify(callback)
-        .failure(
-            eq(trackMessage),
-            argThat(
-                new ArgumentMatcher<IOException>() {
-                  @Override
-                  public boolean matches(IOException exception) {
-                    return exception.getMessage().equals("4 retries exhausted");
-                  }
-                }));
+    verify(callback).failure(eq(trackMessage), argThat(new ArgumentMatcher<IOException>() {
+      @Override public boolean matches(IOException exception) {
+        return exception.getMessage().equals("4 retries exhausted");
+      }
+    }));
   }
 
-  @Test
-  public void flushWhenNotShutDown() throws InterruptedException {
+  @Test public void flushWhenNotShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
-
     client.flush();
     verify(messageQueue).put(POISON);
   }
 
-  @Test
-  public void flushWhenShutDown() throws InterruptedException {
+  @Test public void flushWhenShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
     isShutDown.set(true);
-
     client.flush();
-
     verify(messageQueue, times(0)).put(any(Message.class));
   }
 
-  @Test
-  public void enqueueWithRegularMessageWhenNotShutdown(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void enqueueWithRegularMessageWhenNotShutdown(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
-
     final Message message = builder.get().userId("foo").build();
     client.enqueue(message);
-
     verify(messageQueue).put(message);
   }
 
-  @Test
-  public void enqueueWithRegularMessageWhenShutdown(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void enqueueWithRegularMessageWhenShutdown(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
     isShutDown.set(true);
-
     client.enqueue(builder.get().userId("foo").build());
-
     verify(messageQueue, times(0)).put(any(Message.class));
   }
 
-  @Test
-  public void enqueueWithStopMessageWhenShutdown() throws InterruptedException {
+  @Test public void enqueueWithStopMessageWhenShutdown() throws InterruptedException {
     AnalyticsClient client = newClient();
     isShutDown.set(true);
-
     client.enqueue(STOP);
-
     verify(messageQueue).put(STOP);
   }
 
-  @Test
-  public void shutdownWhenAlreadyShutDown() throws InterruptedException {
+  @Test public void shutdownWhenAlreadyShutDown() throws InterruptedException {
     AnalyticsClient client = newClient();
     isShutDown.set(true);
-
     client.shutdown();
-
     verify(messageQueue, times(0)).put(any(Message.class));
     verifyNoInteractions(networkExecutor, callback, segmentService);
   }
 
-  @Test
-  public void shutdownWithNoMessageInTheQueue() throws InterruptedException {
+  @Test public void shutdownWithNoMessageInTheQueue() throws InterruptedException {
     AnalyticsClient client = newClient();
     client.shutdown();
-
     verify(messageQueue).put(STOP);
     verify(networkExecutor).shutdown();
     verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
     verifyNoMoreInteractions(networkExecutor);
   }
 
-  @Test
-  public void shutdownWithMessagesInTheQueue(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void shutdownWithMessagesInTheQueue(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
-
     client.enqueue(builder.get().userId("foo").build());
     client.shutdown();
-
     verify(messageQueue).put(STOP);
     verify(networkExecutor).shutdown();
     verify(networkExecutor).awaitTermination(1, TimeUnit.SECONDS);
     verify(networkExecutor).submit(any(AnalyticsClient.BatchUploadTask.class));
   }
 
-  @Test
-  public void neverRetries() {
+  @Test public void neverRetries() {
     AnalyticsClient client = newClient();
     TrackMessage trackMessage = TrackMessage.builder("foo").userId("bar").build();
     Batch batch = batchFor(trackMessage);
-
-    when(segmentService.upload(batch))
-        .thenAnswer(
-            new Answer<Call<UploadResponse>>() {
-              public Call<UploadResponse> answer(InvocationOnMock invocation) {
-                Response<UploadResponse> failResponse =
-                    Response.error(429, ResponseBody.create(null, "Not Found"));
-                return Calls.response(failResponse);
-              }
-            });
-
+    when(segmentService.upload(batch)).thenAnswer(new Answer<Call<UploadResponse>>() {
+      public Call<UploadResponse> answer(InvocationOnMock invocation) {
+        Response<UploadResponse> failResponse = Response.error(429, ResponseBody.create(null, "Not Found"));
+        return Calls.response(failResponse);
+      }
+    });
     BatchUploadTask batchUploadTask = new BatchUploadTask(client, BACKO, batch, 0);
     batchUploadTask.run();
-
-    // runs once but never retries
     verify(segmentService, times(1)).upload(batch);
-    verify(callback)
-        .failure(
-            eq(trackMessage),
-            argThat(
-                new ArgumentMatcher<IOException>() {
-                  @Override
-                  public boolean matches(IOException exception) {
-                    return exception.getMessage().equals("1 retries exhausted");
-                  }
-                }));
+    verify(callback).failure(eq(trackMessage), argThat(new ArgumentMatcher<IOException>() {
+      @Override public boolean matches(IOException exception) {
+        return exception.getMessage().equals("1 retries exhausted");
+      }
+    }));
   }
 
-  /**
-   * **********************************************************************************************
-   * Test cases for Size check
-   * *********************************************************************************************
-   */
-
   /** Individual Size check happy path regular chars */
-  @Test
-  public void checkForIndividualMessageSizeLessThanLimit() {
+  @Test public void checkForIndividualMessageSizeLessThanLimit() {
     AnalyticsClient client = newClient();
-    int msgSize = 1024 * 31; // 31KB
-    int sizeLimit = MAX_MSG_SIZE; // 32KB = 32768
+    int msgSize = 1024 * 31;
+    int sizeLimit = MAX_MSG_SIZE;
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property1", generateDataOfSize(msgSize));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
     client.enqueue(bigMessage);
-
     int msgActualSize = client.messageSizeInBytes(bigMessage);
     assertThat(msgActualSize).isLessThanOrEqualTo(sizeLimit);
   }
 
   /** Individual Size check sad path regular chars (over the limit) */
-  @Test
-  public void checkForIndividualMessageSizeOverLimit() {
+  @Test public void checkForIndividualMessageSizeOverLimit() {
     AnalyticsClient client = newClient();
-    int msgSize = MAX_MSG_SIZE + 1; // BARELY over the limit
-    int sizeLimit = MAX_MSG_SIZE; // 32KB = 32768
+    int msgSize = MAX_MSG_SIZE + 1;
+    int sizeLimit = MAX_MSG_SIZE;
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property1", generateDataOfSize(msgSize));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
     client.enqueue(bigMessage);
-
     int msgActualSize = client.messageSizeInBytes(bigMessage);
     assertThat(msgActualSize).isGreaterThan(sizeLimit);
   }
 
   /** Individual Size check happy path special chars */
-  @Test
-  public void checkForIndividualMessageSizeSpecialCharsLessThanLimit() {
+  @Test public void checkForIndividualMessageSizeSpecialCharsLessThanLimit() {
     AnalyticsClient client = newClient();
-    int msgSize = MAX_MSG_SIZE; // 32KB
-    int sizeLimit = MAX_MSG_SIZE; // 32KB = 32768
-
+    int msgSize = MAX_MSG_SIZE;
+    int sizeLimit = MAX_MSG_SIZE;
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("property1", generateDataOfSizeSpecialChars(msgSize, true));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
     client.enqueue(bigMessage);
-
     int msgActualSize = client.messageSizeInBytes(bigMessage);
     assertThat(msgActualSize).isLessThanOrEqualTo(sizeLimit);
   }
 
   /** Individual Size check sad path special chars (over the limit) */
-  @Test
-  public void checkForIndividualMessageSizeSpecialCharsAboveLimit() {
+  @Test public void checkForIndividualMessageSizeSpecialCharsAboveLimit() {
     AnalyticsClient client = newClient();
-    int msgSize = MAX_MSG_SIZE; // 32KB
-    int sizeLimit = MAX_MSG_SIZE; // 32KB = 32768
+    int msgSize = MAX_MSG_SIZE;
+    int sizeLimit = MAX_MSG_SIZE;
     Map<String, String> properties = new HashMap<String, String>();
-
     properties.put("property1", generateDataOfSizeSpecialChars(msgSize, false));
-
-    TrackMessage bigMessage =
-        TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
+    TrackMessage bigMessage = TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
     client.enqueue(bigMessage);
-
     int msgActualSize = client.messageSizeInBytes(bigMessage);
     assertThat(msgActualSize).isGreaterThan(sizeLimit);
   }
@@ -729,29 +510,22 @@ public class AnalyticsClientTest {
    * Test cases for enqueue modified logic
    * ***************************************************************************************************************
    */
-  @Test
-  public void enqueueVerifyPoisonIsNotCheckedForSize() throws InterruptedException {
+  @Test public void enqueueVerifyPoisonIsNotCheckedForSize() throws InterruptedException {
     AnalyticsClient clientSpy = spy(newClient());
-
     clientSpy.enqueue(POISON);
     verify(messageQueue).put(POISON);
     verify(clientSpy, never()).messageSizeInBytes(POISON);
   }
 
-  @Test
-  public void enqueueVerifyStopIsNotCheckedForSize() throws InterruptedException {
+  @Test public void enqueueVerifyStopIsNotCheckedForSize() throws InterruptedException {
     AnalyticsClient clientSpy = spy(newClient());
-
     clientSpy.enqueue(STOP);
     verify(messageQueue).put(STOP);
     verify(clientSpy, never()).messageSizeInBytes(STOP);
   }
 
-  @Test
-  public void enqueueVerifyRegularMessageIsEnqueuedAndCheckedForSize(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void enqueueVerifyRegularMessageIsEnqueuedAndCheckedForSize(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient clientSpy = spy(newClient());
-
     Message message = builder.get().userId("jorgen25").build();
     clientSpy.enqueue(message);
     verify(messageQueue).put(message);
@@ -767,94 +541,57 @@ public class AnalyticsClientTest {
    * @param builder
    * @throws InterruptedException
    */
-  @Test
-  public void enqueueSingleMessageAboveLimitWhenNotShutdown(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void enqueueSingleMessageAboveLimitWhenNotShutdown(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
-
-    // Message is above batch limit
     final String massData = generateDataOfSizeSpecialChars(MAX_MSG_SIZE, false);
     Map<String, String> integrationOpts = new HashMap<>();
     integrationOpts.put("massData", massData);
-    Message message =
-        builder.get().userId("foo").integrationOptions("someKey", integrationOpts).build();
-
+    Message message = builder.get().userId("foo").integrationOptions("someKey", integrationOpts).build();
     client.enqueue(message);
-
     wait(messageQueue);
-
-    // Message is above MSG/BATCH size limit so it should not be put in queue
     verify(messageQueue, never()).put(message);
-    // And since it was never in the queue, it was never submitted in batch
     verify(networkExecutor, never()).submit(any(AnalyticsClient.BatchUploadTask.class));
   }
 
-  @Test
-  public void enqueueVerifyRegularMessagesSpecialCharactersBelowLimit(MessageBuilderTest builder)
-      throws InterruptedException {
+  @Test public void enqueueVerifyRegularMessagesSpecialCharactersBelowLimit(MessageBuilderTest builder) throws InterruptedException {
     AnalyticsClient client = newClient();
-    int msgSize = 1024 * 18; // 18KB
-
+    int msgSize = 1024 * 18;
     for (int i = 0; i < 2; i++) {
       final String data = generateDataOfSizeSpecialChars(msgSize, true);
       Map<String, String> integrationOpts = new HashMap<>();
       integrationOpts.put("data", data);
-      Message message =
-          builder.get().userId("jorgen25").integrationOptions("someKey", integrationOpts).build();
+      Message message = builder.get().userId("jorgen25").integrationOptions("someKey", integrationOpts).build();
       client.enqueue(message);
       verify(messageQueue).put(message);
     }
     client.enqueue(POISON);
     verify(messageQueue).put(POISON);
-
     wait(messageQueue);
     client.shutdown();
-    while (!isShutDown.get()) {}
-
+    while (!isShutDown.get()) {
+    }
     verify(networkExecutor, times(1)).submit(any(AnalyticsClient.BatchUploadTask.class));
   }
-
-  /**
-   * ******************************************************************************************************************
-   * Test cases for Batch creation logic
-   * ****************************************************************************************************************
-   */
 
   /**
    * Several messages are enqueued and then submitted in a batch
    *
    * @throws InterruptedException
    */
-  @Test
-  public void submitBatchBelowThreshold() throws InterruptedException {
-    AnalyticsClient client =
-        new AnalyticsClient(
-            messageQueue,
-            segmentService,
-            50,
-            TimeUnit.HOURS.toMillis(1),
-            0,
-            MAX_BATCH_SIZE * 4,
-            log,
-            threadFactory,
-            networkExecutor,
-            Collections.singletonList(callback),
-            isShutDown);
-
+  @Test public void submitBatchBelowThreshold() throws InterruptedException {
+    AnalyticsClient client = new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), 0, MAX_BATCH_SIZE * 4, log, threadFactory, networkExecutor, Collections.singletonList(callback), isShutDown);
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("property3", generateDataOfSizeSpecialChars(MAX_MSG_SIZE, true));
-
     for (int i = 0; i < 15; i++) {
-      TrackMessage bigMessage =
-          TrackMessage.builder("Big Event").userId("jorgen25").properties(properties).build();
+      TrackMessage bigMessage = TrackMessage.builder("Big Event").userId("jorgen25").properties(properties).build();
       client.enqueue(bigMessage);
       verify(messageQueue).put(bigMessage);
     }
     client.enqueue(POISON);
     wait(messageQueue);
-
     client.shutdown();
-    while (!isShutDown.get()) {}
+    while (!isShutDown.get()) {
+    }
     verify(networkExecutor, times(1)).submit(any(Runnable.class));
   }
 
@@ -864,73 +601,35 @@ public class AnalyticsClientTest {
    *
    * @throws InterruptedException
    */
-  @Test
-  public void submitBatchAboveThreshold() throws InterruptedException {
-    AnalyticsClient client =
-        new AnalyticsClient(
-            messageQueue,
-            segmentService,
-            50,
-            TimeUnit.HOURS.toMillis(1),
-            0,
-            MAX_BATCH_SIZE * 4,
-            log,
-            threadFactory,
-            networkExecutor,
-            Collections.singletonList(callback),
-            isShutDown);
-
+  @Test public void submitBatchAboveThreshold() throws InterruptedException {
+    AnalyticsClient client = new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), 0, MAX_BATCH_SIZE * 4, log, threadFactory, networkExecutor, Collections.singletonList(callback), isShutDown);
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("property3", generateDataOfSizeSpecialChars(MAX_MSG_SIZE, true));
-
     for (int i = 0; i < 100; i++) {
-      TrackMessage message =
-          TrackMessage.builder("Big Event").userId("jorgen25").properties(properties).build();
+      TrackMessage message = TrackMessage.builder("Big Event").userId("jorgen25").properties(properties).build();
       client.enqueue(message);
       verify(messageQueue).put(message);
     }
     wait(messageQueue);
     client.shutdown();
-    while (!isShutDown.get()) {}
-
-    /**
-     * modified from expected 8 to expected 7 times, since we removed the inner loop. The inner loop
-     * was forcing to message list created from the queue to keep making batches even if its a 1
-     * message batch until the message list is empty, that was forcing the code to make one last
-     * batch of 1 msg in size bumping the number of times a batch would be submitted from 7 to 8
-     */
+    while (!isShutDown.get()) {
+    }
     verify(networkExecutor, times(7)).submit(any(Runnable.class));
   }
 
-  @Test
-  public void submitManySmallMessagesBatchAboveThreshold() throws InterruptedException {
-    AnalyticsClient client =
-        new AnalyticsClient(
-            messageQueue,
-            segmentService,
-            50,
-            TimeUnit.HOURS.toMillis(1),
-            0,
-            MAX_BATCH_SIZE * 4,
-            log,
-            threadFactory,
-            networkExecutor,
-            Collections.singletonList(callback),
-            isShutDown);
-
+  @Test public void submitManySmallMessagesBatchAboveThreshold() throws InterruptedException {
+    AnalyticsClient client = new AnalyticsClient(messageQueue, segmentService, 50, TimeUnit.HOURS.toMillis(1), 0, MAX_BATCH_SIZE * 4, log, threadFactory, networkExecutor, Collections.singletonList(callback), isShutDown);
     Map<String, String> properties = new HashMap<String, String>();
     properties.put("property3", generateDataOfSizeSpecialChars(1024 * 8, true));
-
     for (int i = 0; i < 600; i++) {
-      TrackMessage message =
-          TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
+      TrackMessage message = TrackMessage.builder("Event").userId("jorgen25").properties(properties).build();
       client.enqueue(message);
       verify(messageQueue).put(message);
     }
     wait(messageQueue);
     client.shutdown();
-    while (!isShutDown.get()) {}
-
+    while (!isShutDown.get()) {
+    }
     verify(networkExecutor, times(19)).submit(any(Runnable.class));
   }
 }
