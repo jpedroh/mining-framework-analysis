@@ -57,7 +57,6 @@ public class DataFormatPluginTest {
     private static final File geojsonTempFile;
     private static final String path;
     private static final String pathgeo;
-
     private final Map<String, String> paramsCsv = new HashMap<>();
     private final Map<String, String> paramsXls = new HashMap<>();
     private final Map<String, String> paramsJson = new HashMap<>();
@@ -70,8 +69,13 @@ public class DataFormatPluginTest {
         csvTempFile = createTempFile("csvtest", ".csv");
         xlsTempFile = createTempFile("xlstest", ".xls");
         jsonTempFile = createTempFile("jsontest", ".json");
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/left.java
         jsonListTempFile = createTempFile("jsonlisttest", ".json");
         geojsonTempFile = createTempFile("geojsontest", ".geojson");
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/base.java
+=======
+        jsonListTempFile = createTempFile("jsonlisttest", ".json");
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/right.java
         path = "/dataset0/_data";
         pathgeo = "/dataset1/_data";
     }
@@ -115,8 +119,13 @@ public class DataFormatPluginTest {
         paramsCsv.put("format", "csv");
         paramsXls.put("format", "xls");
         paramsJson.put("format", "json");
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/left.java
         paramsJsonList.put("format", "jsonlist");
         paramsGeoJson.put("format", "geojson");
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/base.java
+=======
+        paramsJsonList.put("format", "jsonlist");
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/right.java
     }
 
     @After
@@ -124,8 +133,13 @@ public class DataFormatPluginTest {
         paramsCsv.clear();
         paramsXls.clear();
         paramsJson.clear();
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/left.java
         paramsJsonList.clear();
         paramsGeoJson.clear();
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/base.java
+=======
+        paramsJsonList.clear();
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/right.java
     }
 
     @Test
@@ -515,7 +529,7 @@ public class DataFormatPluginTest {
             assertEquals(docNumber + 2, lines.length);
             assertTrue(lines[0].equals("["));
             assertTrue(lines[1].startsWith("{" + "\"aaa\":\"test"));
-            assertTrue(lines[docNumber + 1].equals("]"));
+            assertTrue(lines[docNumber + 1].equals("]"));            
         }
     }
 

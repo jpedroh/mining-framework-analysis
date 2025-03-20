@@ -129,6 +129,7 @@ public class RestDataAction extends BaseRestHandler {
                 || "application/json".equals(contentType)
                 || "json".equalsIgnoreCase(contentType)) {
             return ContentType.JSON;
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/rest/RestDataAction.java/left.java
         } else if ("application/list+json".equals(contentType)
                 || "jsonlist".equals(contentType)) {
             return ContentType.JSONLIST;
@@ -137,6 +138,14 @@ public class RestDataAction extends BaseRestHandler {
                 || "geojson".equals(contentType)) {
             return ContentType.GEOJSON;
         }
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/rest/RestDataAction.java/base.java
+        } 
+=======
+        } else if ("application/list+json".equals(contentType)
+                || "jsonlist".equals(contentType)) {
+            return ContentType.JSONLIST;
+        }
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/rest/RestDataAction.java/right.java
 
         return null;
     }

@@ -97,6 +97,7 @@ public enum ContentType {
             }
             return index + ".xlsx";
         }
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/content/ContentType.java/left.java
     },
     JSONLIST(50) {
         @Override
@@ -139,6 +140,30 @@ public enum ContentType {
             }
             return index + ".geojson";
         }
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/content/ContentType.java/base.java
+=======
+    },
+    JSONLIST(50) {
+        @Override
+        public String contentType() {
+            return "application/json";
+        }
+
+        @Override
+        public DataContent dataContent(final Client client,
+                final RestRequest request) {
+            return new JsonListContent(client, request, this);
+        }
+
+        @Override
+        public String fileName(final RestRequest request) {
+            final String index = request.param("index");
+            if (index == null) {
+                return "_all.json";
+            }
+            return index + ".json";
+        }
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/e0575ef213f2503660bbaa5274bcb5e9c7cd2275/src/main/java/org/codelibs/elasticsearch/df/content/ContentType.java/right.java
     };
 
     private int index;
