@@ -43,8 +43,7 @@ public class ParallelNode extends AbstractRenderableNode {
     }
 
     @Override
-    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context)
-            throws IOException {
+    public void render(final PebbleTemplateImpl self, Writer writer, final EvaluationContextImpl context) throws IOException {
 
         ExecutorService es = context.getExecutorService();
 

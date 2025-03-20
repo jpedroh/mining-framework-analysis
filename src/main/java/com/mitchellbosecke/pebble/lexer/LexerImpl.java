@@ -147,6 +147,8 @@ public final class LexerImpl implements Lexer {
      *            The reader provided from the Loader
      * @param name
      *            The name of the template (used for meaningful error messages)
+     * @throws ParserException
+     *             Thrown from the Reader object
      */
     @Override
     public TokenStream tokenize(Reader reader, String name) {
