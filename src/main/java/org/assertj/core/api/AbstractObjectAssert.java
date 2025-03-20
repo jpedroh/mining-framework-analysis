@@ -1,25 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.extractor.Extractors.byName;
-
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.assertj.core.description.Description;
 import org.assertj.core.groups.Tuple;
 import org.assertj.core.internal.TypeComparators;
@@ -42,12 +27,13 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Joel Costigliola
  * @author Libor Ondrusek
  */
-public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>, A> extends AbstractAssert<S, A> {
-
+public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>, A extends java.lang.Object> extends AbstractAssert<S, A> {
   private static final double DOUBLE_COMPARATOR_PRECISION = 1e-15;
+
   private static final float FLOAT_COMPARATOR_PRECISION = 1e-6f;
 
   private Map<String, Comparator<?>> comparatorByPropertyOrField = new HashMap<>();
+
   private TypeComparators comparatorByType = defaultTypeComparators();
 
   public AbstractObjectAssert(A actual, Class<?> selfType) {
@@ -61,13 +47,11 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
     return comparatorByType;
   }
 
-  @Override
-  public S as(Description description) {
+  @Override public S as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public S as(String description, Object... args) {
+  @Override public S as(String description, Object... args) {
     return super.as(description, args);
   }
 
@@ -150,8 +134,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if a property/field does not exist in actual.
    */
   public S isEqualToComparingOnlyGivenFields(Object other, String... propertiesOrFieldsUsedInComparison) {
-    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                                    propertiesOrFieldsUsedInComparison);
+    objects.assertIsEqualToComparingOnlyGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsUsedInComparison);
     return myself;
   }
 
@@ -189,8 +172,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if one of actual's property/field to compare can't be found in the other object.
    */
   public S isEqualToIgnoringGivenFields(Object other, String... propertiesOrFieldsToIgnore) {
-    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType,
-                                               propertiesOrFieldsToIgnore);
+    objects.assertIsEqualToIgnoringGivenFields(info, actual, other, comparatorByPropertyOrField, comparatorByType, propertiesOrFieldsToIgnore);
     return myself;
   }
 
@@ -298,8 +280,6 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * <p>
    * Comparators specified by this method have precedence over comparators added by {@link #usingComparatorForType}.
    * <p>
-   * The comparators specified by this method are only used for field by field comparison like {@link #isEqualToComparingFieldByField(Object)}.
-   * <p>
    * Example:
    * <p>
    * <pre><code class='java'> public class TolkienCharacter {
@@ -339,7 +319,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @param propertiesOrFields the names of the properties and/or fields the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> S usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
+  public <T extends java.lang.Object> S usingComparatorForFields(Comparator<T> comparator, String... propertiesOrFields) {
     for (String propertyOrField : propertiesOrFields) {
       comparatorByPropertyOrField.put(propertyOrField, comparator);
     }
@@ -351,8 +331,6 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * A typical usage is for comparing fields of numeric type at a given precision.
    * <p>
    * Comparators specified by {@link #usingComparatorForFields} have precedence over comparators specified by this method.
-   * <p>
-   * The comparators specified by this method are only used for field by field comparison like {@link #isEqualToComparingFieldByField(Object)}.
    * <p>
    * Example:
    * <pre><code class='java'> public class TolkienCharacter {
@@ -388,19 +366,11 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * assertThat(frodo).usingComparatorForType(closeEnough, Double.class)
    *                  .isEqualToComparingFieldByField(reallyTallFrodo);</code></pre>
    * </p>
-   * If multiple compatible comparators have been registered for a given {@code type}, the closest in the inheritance 
-   * chain to the given {@code type} is chosen in the following order:
-   * <ol>
-   * <li>The comparator for the exact given {@code type}</li>
-   * <li>The comparator of a superclass of the given {@code type}</li>
-   * <li>The comparator of an interface implemented by the given {@code type}</li>
-   * </ol>
-   * <p>
    * @param comparator the {@link java.util.Comparator} to use
    * @param type the {@link java.lang.Class} of the type the comparator should be used for
    * @return {@code this} assertions object
    */
-  public <T> S usingComparatorForType(Comparator<T> comparator, Class<T> type) {
+  public <T extends java.lang.Object> S usingComparatorForType(Comparator<T> comparator, Class<T> type) {
     comparatorByType.put(type, comparator);
     return myself;
   }
@@ -551,11 +521,8 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the array containing the extracted values
    */
-  @SafeVarargs
-  public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
-    Object[] values = Stream.of(extractors)
-                            .map(extractor -> extractor.apply(actual))
-                            .toArray();
+  @SafeVarargs public final AbstractObjectArrayAssert<?, Object> extracting(Function<? super A, Object>... extractors) {
+    Object[] values = Stream.of(extractors).map((extractor) -> extractor.apply(actual)).toArray();
     return new ObjectArrayAssert<Object>(values);
   }
 
@@ -629,8 +596,7 @@ public abstract class AbstractObjectAssert<S extends AbstractObjectAssert<S, A>,
    * @throws IntrospectionError if one property/field to compare can not be found.
    */
   public S isEqualToComparingFieldByFieldRecursively(Object other) {
-    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField,
-                                                            comparatorByType);
+    objects.assertIsEqualToComparingFieldByFieldRecursively(info, actual, other, comparatorByPropertyOrField, comparatorByType);
     return myself;
   }
 }

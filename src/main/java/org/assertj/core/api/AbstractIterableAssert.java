@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +9,6 @@ import static org.assertj.core.util.Arrays.isArray;
 import static org.assertj.core.util.IterableUtil.toArray;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,12 +19,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import org.assertj.core.api.IterableAssert.LazyIterable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.assertj.core.api.IterableAssert.LazyIterable;
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.api.iterable.Extractor;
@@ -85,18 +70,11 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Mateusz Haligowski
  * @author Lovro Pandzic
  */
-//@format:off
-public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>,
-                                             ACTUAL extends Iterable<? extends ELEMENT>,
-                                             ELEMENT,
-                                             ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-       extends AbstractAssert<SELF, ACTUAL>
-       implements ObjectEnumerableAssert<SELF, ELEMENT> {
-//@format:on
-
+public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>, ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> extends AbstractAssert<SELF, ACTUAL> implements ObjectEnumerableAssert<SELF, ELEMENT> {
   private static final String ASSERT = "Assert";
 
   private Map<String, Comparator<?>> comparatorsForElementPropertyOrFieldNames = new HashMap<>();
+
   private TypeComparators comparatorsForElementPropertyOrFieldTypes = new TypeComparators();
 
   protected Iterables iterables = Iterables.instance();
@@ -105,7 +83,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
     super(actual, selfType);
   }
 
-  protected static <T> Iterable<T> toLazyIterable(Iterator<T> actual) {
+  protected static <T extends java.lang.Object> Iterable<T> toLazyIterable(Iterator<T> actual) {
     if (actual == null) {
       return null;
     }
@@ -123,32 +101,28 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @param newActual new value
    * @return a new {@link AbstractListAssert}.
    */
-  protected <E> AbstractListAssert<?, List<? extends E>, E, ObjectAssert<E>> newListAssertInstance(List<? extends E> newActual) {
-    // this might not be the best implementation (SoftAssertion needs to override this).
+  protected <E extends java.lang.Object> AbstractListAssert<?, List<? extends E>, E, ObjectAssert<E>> newListAssertInstance(List<? extends E> newActual) {
     return new ListAssert<>(newActual);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     iterables.assertNullOrEmpty(info, actual);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     iterables.assertEmpty(info, actual);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF isNotEmpty() {
+  @Override public SELF isNotEmpty() {
     iterables.assertNotEmpty(info, actual);
     return myself;
   }
@@ -156,8 +130,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF hasSize(int expected) {
+  @Override public SELF hasSize(int expected) {
     iterables.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -220,8 +193,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF hasSameSizeAs(Object other) {
+  @Override public SELF hasSameSizeAs(Object other) {
     iterables.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -229,8 +201,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF hasSameSizeAs(Iterable<?> other) {
+  @Override public SELF hasSameSizeAs(Iterable<?> other) {
     iterables.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -238,8 +209,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF contains(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF contains(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertContains(info, actual, values);
     return myself;
   }
@@ -247,8 +217,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsOnly(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF containsOnly(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertContainsOnly(info, actual, values);
     return myself;
   }
@@ -256,8 +225,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsOnlyOnce(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
@@ -265,15 +233,13 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsExactly(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF containsExactly(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertContainsExactly(info, actual, values);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF containsExactlyInAnyOrder(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertContainsExactlyInAnyOrder(info, actual, values);
     return myself;
   }
@@ -281,8 +247,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF isSubsetOf(Iterable<? extends ELEMENT> values) {
+  @Override public SELF isSubsetOf(Iterable<? extends ELEMENT> values) {
     iterables.assertIsSubsetOf(info, actual, values);
     return myself;
   }
@@ -290,8 +255,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF isSubsetOf(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF isSubsetOf(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertIsSubsetOf(info, actual, Arrays.asList(values));
     return myself;
   }
@@ -299,8 +263,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsSequence(@SuppressWarnings("unchecked") ELEMENT... sequence) {
+  @Override public SELF containsSequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence) {
     iterables.assertContainsSequence(info, actual, sequence);
     return myself;
   }
@@ -308,20 +271,17 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsSubsequence(@SuppressWarnings("unchecked") ELEMENT... sequence) {
+  @Override public SELF containsSubsequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence) {
     iterables.assertContainsSubsequence(info, actual, sequence);
     return myself;
   }
 
-  @Override
-  public SELF doesNotContain(@SuppressWarnings("unchecked") ELEMENT... values) {
+  @Override public SELF doesNotContain(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values) {
     iterables.assertDoesNotContain(info, actual, values);
     return myself;
   }
 
-  @Override
-  public SELF doesNotContainAnyElementsOf(Iterable<? extends ELEMENT> iterable) {
+  @Override public SELF doesNotContainAnyElementsOf(Iterable<? extends ELEMENT> iterable) {
     iterables.assertDoesNotContainAnyElementsOf(info, actual, iterable);
     return myself;
   }
@@ -329,8 +289,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF doesNotHaveDuplicates() {
+  @Override public SELF doesNotHaveDuplicates() {
     iterables.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
@@ -338,8 +297,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF startsWith(@SuppressWarnings("unchecked") ELEMENT... sequence) {
+  @Override public SELF startsWith(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence) {
     iterables.assertStartsWith(info, actual, sequence);
     return myself;
   }
@@ -347,8 +305,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF endsWith(@SuppressWarnings("unchecked") ELEMENT... sequence) {
+  @Override public SELF endsWith(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence) {
     iterables.assertEndsWith(info, actual, sequence);
     return myself;
   }
@@ -356,8 +313,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsNull() {
+  @Override public SELF containsNull() {
     iterables.assertContainsNull(info, actual);
     return myself;
   }
@@ -365,8 +321,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF doesNotContainNull() {
+  @Override public SELF doesNotContainNull() {
     iterables.assertDoesNotContainNull(info, actual);
     return myself;
   }
@@ -374,8 +329,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF are(Condition<? super ELEMENT> condition) {
+  @Override public SELF are(Condition<? super ELEMENT> condition) {
     iterables.assertAre(info, actual, condition);
     return myself;
   }
@@ -383,8 +337,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF areNot(Condition<? super ELEMENT> condition) {
+  @Override public SELF areNot(Condition<? super ELEMENT> condition) {
     iterables.assertAreNot(info, actual, condition);
     return myself;
   }
@@ -392,8 +345,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF have(Condition<? super ELEMENT> condition) {
+  @Override public SELF have(Condition<? super ELEMENT> condition) {
     iterables.assertHave(info, actual, condition);
     return myself;
   }
@@ -401,8 +353,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF doNotHave(Condition<? super ELEMENT> condition) {
+  @Override public SELF doNotHave(Condition<? super ELEMENT> condition) {
     iterables.assertDoNotHave(info, actual, condition);
     return myself;
   }
@@ -410,8 +361,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF areAtLeastOne(Condition<? super ELEMENT> condition) {
+  @Override public SELF areAtLeastOne(Condition<? super ELEMENT> condition) {
     areAtLeast(1, condition);
     return myself;
   }
@@ -419,8 +369,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF areAtLeast(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF areAtLeast(int times, Condition<? super ELEMENT> condition) {
     iterables.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -428,8 +377,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF areAtMost(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF areAtMost(int times, Condition<? super ELEMENT> condition) {
     iterables.assertAreAtMost(info, actual, times, condition);
     return myself;
   }
@@ -437,23 +385,20 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF areExactly(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF areExactly(int times, Condition<? super ELEMENT> condition) {
     iterables.assertAreExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public SELF haveAtLeastOne(Condition<? super ELEMENT> condition) {
+  @Override public SELF haveAtLeastOne(Condition<? super ELEMENT> condition) {
     return haveAtLeast(1, condition);
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF haveAtLeast(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF haveAtLeast(int times, Condition<? super ELEMENT> condition) {
     iterables.assertHaveAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -461,8 +406,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF haveAtMost(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF haveAtMost(int times, Condition<? super ELEMENT> condition) {
     iterables.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
@@ -470,8 +414,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF haveExactly(int times, Condition<? super ELEMENT> condition) {
+  @Override public SELF haveExactly(int times, Condition<? super ELEMENT> condition) {
     iterables.assertHaveExactly(info, actual, times, condition);
     return myself;
   }
@@ -496,10 +439,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if the actual {@code Object} group does not have any elements of the given type.
    */
-  @Override
-  public SELF hasAtLeastOneElementOfType(Class<?> expectedType) {
-    // reuse code from object arrays as the logic is the same
-    // (ok since this assertion don't rely on comparison strategy)
+  @Override public SELF hasAtLeastOneElementOfType(Class<?> expectedType) {
     ObjectArrays.instance().assertHasAtLeastOneElementOfType(info, toArray(actual), expectedType);
     return myself;
   }
@@ -526,10 +466,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws NullPointerException if the given type is {@code null}.
    * @throws AssertionError if one element is not of the expected type.
    */
-  @Override
-  public SELF hasOnlyElementsOfType(Class<?> expectedType) {
-    // reuse code from object arrays as the logic is the same
-    // (ok since this assertion don't rely on comparison strategy)
+  @Override public SELF hasOnlyElementsOfType(Class<?> expectedType) {
     ObjectArrays.instance().assertHasOnlyElementsOfType(info, toArray(actual), expectedType);
     return myself;
   }
@@ -537,8 +474,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsAll(Iterable<? extends ELEMENT> iterable) {
+  @Override public SELF containsAll(Iterable<? extends ELEMENT> iterable) {
     iterables.assertContainsAll(info, actual, iterable);
     return myself;
   }
@@ -546,11 +482,8 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF usingElementComparator(Comparator<? super ELEMENT> elementComparator) {
+  @Override public SELF usingElementComparator(Comparator<? super ELEMENT> elementComparator) {
     this.iterables = new Iterables(new ComparatorBasedComparisonStrategy(elementComparator));
-    // to have the same semantics on base assertions like isEqualTo, we need to use an iterable comparator comparing
-    // elements with elementComparator parameter
     objects = new Objects(new IterableElementComparisonStrategy<>(elementComparator));
     return myself;
   }
@@ -558,8 +491,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF usingDefaultElementComparator() {
+  @Override public SELF usingDefaultElementComparator() {
     usingDefaultComparator();
     this.iterables = Iterables.instance();
     return myself;
@@ -735,10 +667,8 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws IllegalArgumentException if no method exists with the given name, or method is not public, or method does
    *           return void or method accepts arguments.
    */
-  public <P> AbstractListAssert<?, List<? extends P>, P, ObjectAssert<P>> extractingResultOf(String method,
-                                                                                             Class<P> extractedType) {
-    @SuppressWarnings("unchecked")
-    List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
+  public <P extends java.lang.Object> AbstractListAssert<?, List<? extends P>, P, ObjectAssert<P>> extractingResultOf(String method, Class<P> extractedType) {
+    @SuppressWarnings(value = { "unchecked" }) List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
     return newListAssertInstance(values);
   }
 
@@ -822,10 +752,8 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws IntrospectionError if no field or property exists with the given name in one of the initial
    *         Iterable's element.
    */
-  public <P> AbstractListAssert<?, List<? extends P>, P, ObjectAssert<P>> extracting(String propertyOrField,
-                                                                                     Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, byName(propertyOrField));
+  public <P extends java.lang.Object> AbstractListAssert<?, List<? extends P>, P, ObjectAssert<P>> extracting(String propertyOrField, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) List<P> values = (List<P>) FieldsOrPropertiesExtractor.extract(actual, byName(propertyOrField));
     return newListAssertInstance(values);
   }
 
@@ -949,7 +877,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @param extractor the object transforming input object to desired one
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <V> AbstractListAssert<?, List<? extends V>, V, ObjectAssert<V>> extracting(Extractor<? super ELEMENT, V> extractor) {
+  public <V extends java.lang.Object> AbstractListAssert<?, List<? extends V>, V, ObjectAssert<V>> extracting(Extractor<? super ELEMENT, V> extractor) {
     List<V> values = FieldsOrPropertiesExtractor.extract(actual, extractor);
     return newListAssertInstance(values);
   }
@@ -983,14 +911,12 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return a new assertion object whose object under test is the list of values extracted
    * @throws NullPointerException if one of the {@code Iterable}'s element is null.
    */
-  public <V> AbstractListAssert<?, List<? extends V>, V, ObjectAssert<V>> flatExtracting(Extractor<? super ELEMENT, ? extends Collection<V>> extractor) {
+  public <V extends java.lang.Object> AbstractListAssert<?, List<? extends V>, V, ObjectAssert<V>> flatExtracting(Extractor<? super ELEMENT, ? extends Collection<V>> extractor) {
     List<V> result = newArrayList();
     final List<? extends Collection<V>> extractedValues = FieldsOrPropertiesExtractor.extract(actual, extractor);
-
     for (Collection<? extends V> iterable : extractedValues) {
       result.addAll(iterable);
     }
-
     return newListAssertInstance(result);
   }
 
@@ -1019,12 +945,9 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @param extractors all the extractors to apply on each actual {@code Iterable}'s elements
    * @return a new assertion object whose object under test is a flattened list of all extracted values.
    */
-  @SafeVarargs
-  public final ListAssert<Object> flatExtracting(Extractor<? super ELEMENT, ?>... extractors) {
+  @SafeVarargs public final ListAssert<Object> flatExtracting(Extractor<? super ELEMENT, ?>... extractors) {
     Stream<? extends ELEMENT> actualStream = stream(actual.spliterator(), false);
-    List<Object> result = actualStream.flatMap(element -> Stream.of(extractors)
-                                                                .map(extractor -> extractor.extract(element)))
-                                      .collect(Collectors.toList());
+    List<Object> result = actualStream.flatMap((element) -> Stream.of(extractors).map((extractor) -> extractor.extract(element))).collect(Collectors.toList());
     return new ListAssert<>(result);
   }
 
@@ -1061,19 +984,20 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
     List<Object> extractedValues = newArrayList();
     List<?> extractedGroups = FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrPropertyName));
     for (Object group : extractedGroups) {
-      // expecting group to be an iterable or an array
       if (isArray(group)) {
         int size = Array.getLength(group);
         for (int i = 0; i < size; i++) {
           extractedValues.add(Array.get(group, i));
         }
-      } else if (group instanceof Iterable) {
-        Iterable<?> iterable = (Iterable<?>) group;
-        for (Object value : iterable) {
-          extractedValues.add(value);
-        }
       } else {
-        CommonErrors.wrongElementTypeForFlatExtracting(group);
+        if (group instanceof Iterable) {
+          Iterable<?> iterable = (Iterable<?>) group;
+          for (Object value : iterable) {
+            extractedValues.add(value);
+          }
+        } else {
+          CommonErrors.wrongElementTypeForFlatExtracting(group);
+        }
       }
     }
     return newListAssertInstance(extractedValues);
@@ -1128,20 +1052,15 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @param extractors the extractor functions to extract a value from an element of the Iterable under test.
    * @return a new assertion object whose object under test is the list of Tuples containing the extracted values.
    */
-  @SafeVarargs
-  public final ListAssert<Tuple> extracting(Function<ELEMENT, ?>... extractors) {
-    // combine all extractors into one function
-    Function<ELEMENT, Tuple> tupleExtractor = objectToExtractValueFrom -> {
+  @SafeVarargs public final ListAssert<Tuple> extracting(Function<ELEMENT, ?>... extractors) {
+    Function<ELEMENT, Tuple> tupleExtractor = (objectToExtractValueFrom) -> {
       Tuple tuple = new Tuple();
       for (Function<ELEMENT, ?> extractor : extractors) {
-        // extract value one by one
         tuple.addData(extractor.apply(objectToExtractValueFrom));
       }
       return tuple;
     };
-
-    List<Tuple> tuples = stream(actual.spliterator(), false).map(tupleExtractor)
-                                                            .collect(toList());
+    List<Tuple> tuples = stream(actual.spliterator(), false).map(tupleExtractor).collect(toList());
     return new ListAssert<Tuple>(tuples);
   }
 
@@ -1179,24 +1098,21 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsExactlyElementsOf(Iterable<? extends ELEMENT> iterable) {
+  @Override public SELF containsExactlyElementsOf(Iterable<? extends ELEMENT> iterable) {
     return containsExactly(toArray(iterable));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF containsOnlyElementsOf(Iterable<? extends ELEMENT> iterable) {
+  @Override public SELF containsOnlyElementsOf(Iterable<? extends ELEMENT> iterable) {
     return containsOnly(toArray(iterable));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF hasSameElementsAs(Iterable<? extends ELEMENT> iterable) {
+  @Override public SELF hasSameElementsAs(Iterable<? extends ELEMENT> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
@@ -1261,8 +1177,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return {@code this} assertions object
    * @since 2.5.0 / 3.5.0
    */
-  public <T> SELF usingComparatorForElementFieldsWithNames(Comparator<T> comparator,
-                                                           String... elementPropertyOrFieldNames) {
+  public <T extends java.lang.Object> SELF usingComparatorForElementFieldsWithNames(Comparator<T> comparator, String... elementPropertyOrFieldNames) {
     for (String elementPropertyOrField : elementPropertyOrFieldNames) {
       comparatorsForElementPropertyOrFieldNames.put(elementPropertyOrField, comparator);
     }
@@ -1329,7 +1244,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return {@code this} assertions object
    * @since 2.5.0 / 3.5.0
    */
-  public <T> SELF usingComparatorForElementFieldsWithType(Comparator<T> comparator, Class<T> type) {
+  public <T extends java.lang.Object> SELF usingComparatorForElementFieldsWithType(Comparator<T> comparator, Class<T> type) {
     comparatorsForElementPropertyOrFieldTypes.put(type, comparator);
     return myself;
   }
@@ -1361,8 +1276,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return {@code this} assertion object.
    */
   public SELF usingFieldByFieldElementComparator() {
-    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                             comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1410,8 +1324,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @since 2.5.0 / 3.5.0
    */
   public SELF usingRecursiveFieldByFieldElementComparator() {
-    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                                      comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1442,8 +1355,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return {@code this} assertion object.
    */
   public SELF usingElementComparatorOnFields(String... fields) {
-    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                         comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   protected SELF usingComparisonStrategy(ComparisonStrategy comparisonStrategy) {
@@ -1479,8 +1391,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return {@code this} assertion object.
    */
   public SELF usingElementComparatorIgnoringFields(String... fields) {
-    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                               comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   /**
@@ -1513,8 +1424,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public SELF inHexadecimal() {
+  @Override public SELF inHexadecimal() {
     return super.inHexadecimal();
   }
 
@@ -1546,8 +1456,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public SELF inBinary() {
+  @Override public SELF inBinary() {
     return super.inBinary();
   }
 
@@ -1607,8 +1516,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
    */
-  public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(String propertyOrFieldName,
-                                                                                                   Object expectedValue) {
+  @SuppressWarnings(value = { "unchecked" }) public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(String propertyOrFieldName, Object expectedValue) {
     Filters<? extends ELEMENT> filter = filter((Iterable<? extends ELEMENT>) actual);
     Iterable<? extends ELEMENT> filteredIterable = filter.with(propertyOrFieldName, expectedValue).get();
     return newListAssertInstance(newArrayList(filteredIterable));
@@ -1653,8 +1561,6 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the iterable elements.
    */
   public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOnNull(String propertyOrFieldName) {
-    // need to cast nulll to Object otherwise it calls :
-    // filteredOn(String propertyOrFieldName, FilterOperation<?> filterOperation)
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
@@ -1722,8 +1628,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    */
-  public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(String propertyOrFieldName,
-                                                                                                   FilterOperator<?> filterOperator) {
+  @SuppressWarnings(value = { "unchecked" }) public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
     checkNotNull(filterOperator);
     Filters<? extends ELEMENT> filter = filter((Iterable<? extends ELEMENT>) actual).with(propertyOrFieldName);
     filterOperator.applyOn(filter);
@@ -1764,13 +1669,11 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given condition is {@code null}.
    */
-  public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(Condition<? super ELEMENT> condition) {
+  @SuppressWarnings(value = { "unchecked" }) public AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> filteredOn(Condition<? super ELEMENT> condition) {
     Filters<? extends ELEMENT> filter = filter((Iterable<? extends ELEMENT>) actual);
     Iterable<? extends ELEMENT> filteredIterable = filter.being(condition).get();
     return newListAssertInstance(newArrayList(filteredIterable));
   }
-
-  // navigable assertions
 
   /**
    * Navigate and allow to perform assertions on the first element of the {@link Iterable} under test.
@@ -1815,7 +1718,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    */
   public ELEMENT_ASSERT first() {
     isNotEmpty();
-    return toAssert(actual.iterator().next(), navigationDescription("check first element")); // TOD better description
+    return toAssert(actual.iterator().next(), navigationDescription("check first element"));
   }
 
   /**
@@ -1920,8 +1823,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    */
   public ELEMENT_ASSERT element(int index) {
     isNotEmpty();
-    assertThat(index).describedAs(navigationDescription("check index validity"))
-                     .isBetween(0, IterableUtil.sizeOf(actual) - 1);
+    assertThat(index).describedAs(navigationDescription("check index validity")).isBetween(0, IterableUtil.sizeOf(actual) - 1);
     ELEMENT elementAtIndex = null;
     if (actual instanceof List) {
       List<? extends ELEMENT> list = (List<? extends ELEMENT>) actual;
@@ -1933,7 +1835,6 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
       }
       elementAtIndex = actualIterator.next();
     }
-
     return toAssert(elementAtIndex, navigationDescription("element at index " + index));
   }
 
@@ -1969,17 +1870,17 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return a new assertion object with the filtered iterable under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public SELF filteredOn(Predicate<? super ELEMENT> predicate) {
-    if (predicate == null) throw new IllegalArgumentException("The filter predicate should not be null");
+  @SuppressWarnings(value = { "unchecked" }) public SELF filteredOn(Predicate<? super ELEMENT> predicate) {
+    if (predicate == null) {
+      throw new IllegalArgumentException("The filter predicate should not be null");
+    }
     return (SELF) new ListAssert<>(stream(actual.spliterator(), false).filter(predicate).collect(toList()));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF allMatch(Predicate<? super ELEMENT> predicate) {
+  @Override public SELF allMatch(Predicate<? super ELEMENT> predicate) {
     iterables.assertAllMatch(info, actual, predicate);
     return myself;
   }
@@ -1987,177 +1888,140 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
   /**
    * {@inheritDoc}
    */
-  @Override
-  public SELF allSatisfy(Consumer<? super ELEMENT> requirements) {
+  @Override public SELF allSatisfy(Consumer<? super ELEMENT> requirements) {
     iterables.assertAllSatisfy(info, actual, requirements);
     return myself;
   }
 
-  // override methods to avoid compilation error when chaining an AbstractAssert method with a AbstractIterableAssert
-  // one on raw types.
-
-  @Override
-  public SELF as(String description, Object... args) {
+  @Override public SELF as(String description, Object... args) {
     return super.as(description, args);
   }
 
-  @Override
-  public SELF as(Description description) {
+  @Override public SELF as(Description description) {
     return super.as(description);
   }
 
-  @Override
-  public SELF describedAs(Description description) {
+  @Override public SELF describedAs(Description description) {
     return super.describedAs(description);
   }
 
-  @Override
-  public SELF describedAs(String description, Object... args) {
+  @Override public SELF describedAs(String description, Object... args) {
     return super.describedAs(description, args);
   }
 
-  @Override
-  public SELF doesNotHave(Condition<? super ACTUAL> condition) {
+  @Override public SELF doesNotHave(Condition<? super ACTUAL> condition) {
     return super.doesNotHave(condition);
   }
 
-  @Override
-  public SELF doesNotHaveSameClassAs(Object other) {
+  @Override public SELF doesNotHaveSameClassAs(Object other) {
     return super.doesNotHaveSameClassAs(other);
   }
 
-  @Override
-  public SELF has(Condition<? super ACTUAL> condition) {
+  @Override public SELF has(Condition<? super ACTUAL> condition) {
     return super.has(condition);
   }
 
-  @Override
-  public SELF hasSameClassAs(Object other) {
+  @Override public SELF hasSameClassAs(Object other) {
     return super.hasSameClassAs(other);
   }
 
-  @Override
-  public SELF hasToString(String expectedToString) {
+  @Override public SELF hasToString(String expectedToString) {
     return super.hasToString(expectedToString);
   }
 
-  @Override
-  public SELF is(Condition<? super ACTUAL> condition) {
+  @Override public SELF is(Condition<? super ACTUAL> condition) {
     return super.is(condition);
   }
 
-  @Override
-  public SELF isEqualTo(Object expected) {
+  @Override public SELF isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
-  @Override
-  public SELF isExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isExactlyInstanceOf(Class<?> type) {
     return super.isExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isIn(Iterable<?> values) {
+  @Override public SELF isIn(Iterable<?> values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isIn(Object... values) {
+  @Override public SELF isIn(Object... values) {
     return super.isIn(values);
   }
 
-  @Override
-  public SELF isInstanceOf(Class<?> type) {
+  @Override public SELF isInstanceOf(Class<?> type) {
     return super.isInstanceOf(type);
   }
 
-  @Override
-  public SELF isInstanceOfAny(Class<?>... types) {
+  @Override public SELF isInstanceOfAny(Class<?>... types) {
     return super.isInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNot(Condition<? super ACTUAL> condition) {
+  @Override public SELF isNot(Condition<? super ACTUAL> condition) {
     return super.isNot(condition);
   }
 
-  @Override
-  public SELF isNotEqualTo(Object other) {
+  @Override public SELF isNotEqualTo(Object other) {
     return super.isNotEqualTo(other);
   }
 
-  @Override
-  public SELF isNotExactlyInstanceOf(Class<?> type) {
+  @Override public SELF isNotExactlyInstanceOf(Class<?> type) {
     return super.isNotExactlyInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotIn(Iterable<?> values) {
+  @Override public SELF isNotIn(Iterable<?> values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotIn(Object... values) {
+  @Override public SELF isNotIn(Object... values) {
     return super.isNotIn(values);
   }
 
-  @Override
-  public SELF isNotInstanceOf(Class<?> type) {
+  @Override public SELF isNotInstanceOf(Class<?> type) {
     return super.isNotInstanceOf(type);
   }
 
-  @Override
-  public SELF isNotInstanceOfAny(Class<?>... types) {
+  @Override public SELF isNotInstanceOfAny(Class<?>... types) {
     return super.isNotInstanceOfAny(types);
   }
 
-  @Override
-  public SELF isNotOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isNotOfAnyClassIn(Class<?>... types) {
     return super.isNotOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isNotNull() {
+  @Override public SELF isNotNull() {
     return super.isNotNull();
   }
 
-  @Override
-  public SELF isNotSameAs(Object other) {
+  @Override public SELF isNotSameAs(Object other) {
     return super.isNotSameAs(other);
   }
 
-  @Override
-  public SELF isOfAnyClassIn(Class<?>... types) {
+  @Override public SELF isOfAnyClassIn(Class<?>... types) {
     return super.isOfAnyClassIn(types);
   }
 
-  @Override
-  public SELF isSameAs(Object expected) {
+  @Override public SELF isSameAs(Object expected) {
     return super.isSameAs(expected);
   }
 
-  @Override
-  public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
+  @Override public SELF overridingErrorMessage(String newErrorMessage, Object... args) {
     return super.overridingErrorMessage(newErrorMessage, args);
   }
 
-  @Override
-  public SELF usingDefaultComparator() {
+  @Override public SELF usingDefaultComparator() {
     return super.usingDefaultComparator();
   }
 
-  @Override
-  public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
+  @Override public SELF usingComparator(Comparator<? super ACTUAL> customComparator) {
     return super.usingComparator(customComparator);
   }
 
-  @Override
-  public SELF withFailMessage(String newErrorMessage, Object... args) {
+  @Override public SELF withFailMessage(String newErrorMessage, Object... args) {
     return super.withFailMessage(newErrorMessage, args);
   }
 
-  @Override
-  public SELF withThreadDumpOnError() {
+  @Override public SELF withThreadDumpOnError() {
     return super.withThreadDumpOnError();
   }
 
@@ -2182,8 +2046,7 @@ public abstract class AbstractIterableAssert<SELF extends AbstractIterableAssert
    * @return AbstractIterableSizeAssert built with the {@code Iterable}'s size.
    * @throws NullPointerException if the given {@code Iterable} is {@code null}.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  public AbstractIterableSizeAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT> size() {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) public AbstractIterableSizeAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT> size() {
     Preconditions.checkNotNull(actual, "Can not perform assertions on the size of a null iterable.");
     return new IterableSizeAssert(this, IterableUtil.sizeOf(actual));
   }

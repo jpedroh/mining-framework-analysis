@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.filter.Filters.filter;
 import static org.assertj.core.extractor.Extractors.byName;
@@ -20,7 +7,6 @@ import static org.assertj.core.util.Arrays.isArray;
 import static org.assertj.core.util.IterableUtil.toArray;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +18,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.api.iterable.Extractor;
@@ -72,29 +57,24 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Mateusz Haligowski
  * @author Lovro Pandzic
  */
-public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T> extends
-    AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>,
-    ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
+public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAssert<S, T>, T extends java.lang.Object> extends AbstractAssert<S, T[]> implements IndexedObjectEnumerableAssert<AbstractObjectArrayAssert<S, T>, T>, ArraySortedAssert<AbstractObjectArrayAssert<S, T>, T> {
+  @VisibleForTesting ObjectArrays arrays = ObjectArrays.instance();
 
-  @VisibleForTesting
-  ObjectArrays arrays = ObjectArrays.instance();
-  @VisibleForTesting
-  Iterables iterables = Iterables.instance();
+  @VisibleForTesting Iterables iterables = Iterables.instance();
 
   private Map<String, Comparator<?>> comparatorsForElementPropertyOrFieldNames = new HashMap<>();
+
   private TypeComparators comparatorsForElementPropertyOrFieldTypes = new TypeComparators();
 
   public AbstractObjectArrayAssert(T[] actual, Class<?> selfType) {
     super(actual, selfType);
   }
-  
-  @Override
-  public S as(Description description) {
+
+  @Override public S as(Description description) {
     return super.as(description);
   }
-  
-  @Override
-  public S as(String description, Object... args) {
+
+  @Override public S as(String description, Object... args) {
     return super.as(description, args);
   }
 
@@ -103,8 +83,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     arrays.assertNullOrEmpty(info, actual);
   }
 
@@ -113,8 +92,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     arrays.assertEmpty(info, actual);
   }
 
@@ -123,8 +101,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S isNotEmpty() {
+  @Override public S isNotEmpty() {
     arrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -134,8 +111,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @throws AssertionError {@inheritDoc}
    */
-  @Override
-  public S hasSize(int expected) {
+  @Override public S hasSize(int expected) {
     arrays.assertHasSize(info, actual, expected);
     return myself;
   }
@@ -158,9 +134,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual group and given array don't have the same size.
    */
-  @Override
-  public S hasSameSizeAs(Object other) {
-    // same implementation as in AbstractArrayAssert, but can't inherit from it due to generics problem ...
+  @Override public S hasSameSizeAs(Object other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -181,8 +155,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the other {@code Iterable} is {@code null}.
    * @throws AssertionError if actual group and given {@code Iterable} don't have the same size.
    */
-  @Override
-  public S hasSameSizeAs(Iterable<?> other) {
+  @Override public S hasSameSizeAs(Iterable<?> other) {
     arrays.assertHasSameSizeAs(info, actual, other);
     return myself;
   }
@@ -207,8 +180,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain the given values.
    */
-  @Override
-  public S contains(@SuppressWarnings("unchecked") T... values) {
+  @Override public S contains(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContains(info, actual, values);
     return myself;
   }
@@ -233,8 +205,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more values than the given ones.
    */
-  @Override
-  public S containsOnly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnly(info, actual, values);
     return myself;
   }
@@ -257,8 +228,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @param iterable the given {@code Iterable} we will get elements from.
    */
-  @Override
-  public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsOnlyElementsOf(Iterable<? extends T> iterable) {
     return containsOnly(toArray(iterable));
   }
 
@@ -339,8 +309,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual {@code Iterable} does not have the same elements, in any order, as the given
    *           {@code Iterable}
    */
-  @Override
-  public S hasSameElementsAs(Iterable<? extends T> iterable) {
+  @Override public S hasSameElementsAs(Iterable<? extends T> iterable) {
     return containsOnlyElementsOf(iterable);
   }
 
@@ -367,8 +336,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more than once these values.
    */
-  @Override
-  public S containsOnlyOnce(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
@@ -393,8 +361,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *           contains some or none of the given values, or the actual group contains more values than the given ones
    *           or values are the same but the order is not.
    */
-  @Override
-  public S containsExactly(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsExactly(info, actual, values);
     return myself;
   }
@@ -419,8 +386,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual arrray does not contain the given values, i.e. the actual array
    *           contains some or none of the given values, or the actual group contains more values than the given ones.
    */
-  @Override
-  public S containsExactlyInAnyOrder(@SuppressWarnings("unchecked") T... values) {
+  @Override public S containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertContainsExactlyInAnyOrder(info, actual, values);
     return myself;
   }
@@ -440,8 +406,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @param iterable the given {@code Iterable} we will get elements from.
    */
-  @Override
-  public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S containsExactlyElementsOf(Iterable<? extends T> iterable) {
     return containsExactly(toArray(iterable));
   }
 
@@ -467,8 +432,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given sequence.
    */
-  @Override
-  public S containsSequence(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertContainsSequence(info, actual, sequence);
     return myself;
   }
@@ -492,8 +456,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given subsequence.
    */
-  @Override
-  public S containsSubsequence(@SuppressWarnings("unchecked") T... subsequence) {
+  @Override public S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... subsequence) {
     arrays.assertContainsSubsequence(info, actual, subsequence);
     return myself;
   }
@@ -523,8 +486,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *           group.
    * @throws AssertionError if the actual group does not contain the given object at the given index.
    */
-  @Override
-  public S contains(T value, Index index) {
+  @Override public S contains(T value, Index index) {
     arrays.assertContains(info, actual, value, index);
     return myself;
   }
@@ -578,8 +540,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains any of the given values.
    */
-  @Override
-  public S doesNotContain(@SuppressWarnings("unchecked") T... values) {
+  @Override public S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertDoesNotContain(info, actual, values);
     return myself;
   }
@@ -604,8 +565,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains some elements of the given {@link Iterable}.
    */
-  @Override
-  public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
+  @Override public S doesNotContainAnyElementsOf(Iterable<? extends T> iterable) {
     arrays.assertDoesNotContainAnyElementsOf(info, actual, iterable);
     return myself;
   }
@@ -627,8 +587,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains duplicates.
    */
-  @Override
-  public S doesNotHaveDuplicates() {
+  @Override public S doesNotHaveDuplicates() {
     arrays.assertDoesNotHaveDuplicates(info, actual);
     return myself;
   }
@@ -654,8 +613,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not start with the given sequence of objects.
    */
-  @Override
-  public S startsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertStartsWith(info, actual, sequence);
     return myself;
   }
@@ -681,8 +639,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not end with the given sequence of objects.
    */
-  @Override
-  public S endsWith(@SuppressWarnings("unchecked") T... sequence) {
+  @Override public S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence) {
     arrays.assertEndsWith(info, actual, sequence);
     return myself;
   }
@@ -706,8 +663,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws NullPointerException if the given {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of set {@code Iterable}.
    */
-  @Override
-  public S isSubsetOf(Iterable<? extends T> values) {
+  @Override public S isSubsetOf(Iterable<? extends T> values) {
     arrays.assertIsSubsetOf(info, actual, values);
     return myself;
   }
@@ -731,8 +687,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of the given values.
    */
-  @Override
-  public S isSubsetOf(@SuppressWarnings("unchecked") T... values) {
+  @Override public S isSubsetOf(@SuppressWarnings(value = { "unchecked" }) T... values) {
     arrays.assertIsSubsetOf(info, actual, Arrays.asList(values));
     return myself;
   }
@@ -754,8 +709,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain a null element.
    */
-  @Override
-  public S containsNull() {
+  @Override public S containsNull() {
     arrays.assertContainsNull(info, actual);
     return myself;
   }
@@ -777,8 +731,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains a null element.
    */
-  @Override
-  public S doesNotContainNull() {
+  @Override public S doesNotContainNull() {
     arrays.assertDoesNotContainNull(info, actual);
     return myself;
   }
@@ -805,8 +758,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements don't satisfy the given condition.
    */
-  @Override
-  public S are(Condition<? super T> condition) {
+  @Override public S are(Condition<? super T> condition) {
     arrays.assertAre(info, actual, condition);
     return myself;
   }
@@ -833,8 +785,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  @Override
-  public S areNot(Condition<? super T> condition) {
+  @Override public S areNot(Condition<? super T> condition) {
     arrays.assertAreNot(info, actual, condition);
     return myself;
   }
@@ -861,8 +812,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
-  @Override
-  public S have(Condition<? super T> condition) {
+  @Override public S have(Condition<? super T> condition) {
     arrays.assertHave(info, actual, condition);
     return myself;
   }
@@ -889,8 +839,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements satisfy the given condition.
    */
-  @Override
-  public S doNotHave(Condition<? super T> condition) {
+  @Override public S doNotHave(Condition<? super T> condition) {
     arrays.assertDoNotHave(info, actual, condition);
     return myself;
   }
@@ -916,8 +865,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element can not be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &lt; n.
    */
-  @Override
-  public S areAtLeast(int times, Condition<? super T> condition) {
+  @Override public S areAtLeast(int times, Condition<? super T> condition) {
     arrays.assertAreAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -933,8 +881,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @see #haveAtLeast(int, Condition)
    */
-  @Override
-  public S areAtLeastOne(Condition<? super T> condition) {
+  @Override public S areAtLeastOne(Condition<? super T> condition) {
     areAtLeast(1, condition);
     return myself;
   }
@@ -961,8 +908,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &gt; n.
    */
-  @Override
-  public S areAtMost(int times, Condition<? super T> condition) {
+  @Override public S areAtMost(int times, Condition<? super T> condition) {
     arrays.assertAreAtMost(info, actual, times, condition);
     return myself;
   }
@@ -989,8 +935,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if the number of elements satisfying the given condition is &ne; n.
    */
-  @Override
-  public S areExactly(int times, Condition<? super T> condition) {
+  @Override public S areExactly(int times, Condition<? super T> condition) {
     arrays.assertAreExactly(info, actual, times, condition);
     return myself;
   }
@@ -1008,8 +953,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @see #haveAtLeast(int, Condition)
    */
-  @Override
-  public S haveAtLeastOne(Condition<? super T> condition) {
+  @Override public S haveAtLeastOne(Condition<? super T> condition) {
     return haveAtLeast(1, condition);
   }
 
@@ -1029,8 +973,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * This method is an alias for {@link #areAtLeast(int, Condition)}.
    */
-  @Override
-  public S haveAtLeast(int times, Condition<? super T> condition) {
+  @Override public S haveAtLeast(int times, Condition<? super T> condition) {
     arrays.assertHaveAtLeast(info, actual, times, condition);
     return myself;
   }
@@ -1052,8 +995,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * This method is an alias {@link #areAtMost(int, Condition)}.
    */
-  @Override
-  public S haveAtMost(int times, Condition<? super T> condition) {
+  @Override public S haveAtMost(int times, Condition<? super T> condition) {
     arrays.assertHaveAtMost(info, actual, times, condition);
     return myself;
   }
@@ -1075,36 +1017,31 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * This method is an alias {@link #areExactly(int, Condition)}.
    */
-  @Override
-  public S haveExactly(int times, Condition<? super T> condition) {
+  @Override public S haveExactly(int times, Condition<? super T> condition) {
     arrays.assertHaveExactly(info, actual, times, condition);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasAtLeastOneElementOfType(Class<?> type) {
+  @Override public S hasAtLeastOneElementOfType(Class<?> type) {
     arrays.assertHasAtLeastOneElementOfType(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S hasOnlyElementsOfType(Class<?> type) {
+  @Override public S hasOnlyElementsOfType(Class<?> type) {
     arrays.assertHasOnlyElementsOfType(info, actual, type);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSorted() {
+  @Override public S isSorted() {
     arrays.assertIsSorted(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S isSortedAccordingTo(Comparator<? super T> comparator) {
+  @Override public S isSortedAccordingTo(Comparator<? super T> comparator) {
     arrays.assertIsSortedAccordingToComparator(info, actual, comparator);
     return myself;
   }
@@ -1125,8 +1062,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain all the elements of given {@code Iterable}.
    */
-  @Override
-  public S containsAll(Iterable<? extends T> iterable) {
+  @Override public S containsAll(Iterable<? extends T> iterable) {
     arrays.assertContainsAll(info, actual, iterable);
     return myself;
   }
@@ -1164,15 +1100,12 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    */
   public S usingElementComparator(Comparator<? super T> elementComparator) {
     this.arrays = new ObjectArrays(new ComparatorBasedComparisonStrategy(elementComparator));
-    // to have the same semantics on base assertions like isEqualTo, we need to use an iterable comparator comparing
-    // elements with elementComparator parameter
     objects = new Objects(new ObjectArrayElementComparisonStrategy<>(elementComparator));
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public S usingDefaultElementComparator() {
+  @Override public S usingDefaultElementComparator() {
     this.arrays = ObjectArrays.instance();
     return myself;
   }
@@ -1241,8 +1174,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return {@code this} assertions object
    * @since 2.5.0 / 3.5.0
    */
-  public <C> S usingComparatorForElementFieldsWithNames(Comparator<C> comparator,
-                                                        String... elementPropertyOrFieldNames) {
+  public <C extends java.lang.Object> S usingComparatorForElementFieldsWithNames(Comparator<C> comparator, String... elementPropertyOrFieldNames) {
     for (String elementPropertyOrField : elementPropertyOrFieldNames) {
       comparatorsForElementPropertyOrFieldNames.put(elementPropertyOrField, comparator);
     }
@@ -1305,20 +1237,13 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *                    .usingFieldByFieldElementComparator()
    *                    .contains(reallyTallFrodo);</code></pre>
    * </p>
-   * If multiple compatible comparators have been registered for a given {@code type}, the closest in the inheritance 
-   * chain to the given {@code type} is chosen in the following order:
-   * <ol>
-   * <li>The comparator for the exact given {@code type}</li>
-   * <li>The comparator of a superclass of the given {@code type}</li>
-   * <li>The comparator of an interface implemented by the given {@code type}</li>
-   * </ol>
    *
    * @param comparator the {@link java.util.Comparator} to use
    * @param type the {@link java.lang.Class} of the type of the element fields the comparator should be used for
    * @return {@code this} assertions object
    * @since 2.5.0 / 3.5.0
    */
-  public <C> S usingComparatorForElementFieldsWithType(Comparator<C> comparator, Class<C> type) {
+  public <C extends java.lang.Object> S usingComparatorForElementFieldsWithType(Comparator<C> comparator, Class<C> type) {
     comparatorsForElementPropertyOrFieldTypes.put(type, comparator);
     return myself;
   }
@@ -1350,8 +1275,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return {@code this} assertion object.
    */
   public S usingFieldByFieldElementComparator() {
-    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                             comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new FieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1398,8 +1322,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @since 2.5.0 / 3.5.0
    */
   public S usingRecursiveFieldByFieldElementComparator() {
-    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames,
-                                                                      comparatorsForElementPropertyOrFieldTypes));
+    return usingElementComparator(new RecursiveFieldByFieldComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes));
   }
 
   /**
@@ -1430,8 +1353,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return {@code this} assertion object.
    */
   public S usingElementComparatorOnFields(String... fields) {
-    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                         comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new OnFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   /**
@@ -1462,8 +1384,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return {@code this} assertion object.
    */
   public S usingElementComparatorIgnoringFields(String... fields) {
-    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames,
-                                                               comparatorsForElementPropertyOrFieldTypes, fields));
+    return usingElementComparator(new IgnoringFieldsComparator(comparatorsForElementPropertyOrFieldNames, comparatorsForElementPropertyOrFieldTypes, fields));
   }
 
   /**
@@ -1556,9 +1477,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object whose object under test is the array of extracted field/property values.
    * @throws IntrospectionError if no field or property exists with the given name
    */
-  public <P> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extracting(String fieldOrProperty, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, byName(fieldOrProperty));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -1617,7 +1537,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   public ObjectArrayAssert<Tuple> extracting(String... propertiesOrFields) {
     Object[] values = FieldsOrPropertiesExtractor.extract(actual, byName(propertiesOrFields));
     Tuple[] result = Arrays.copyOf(values, values.length, Tuple[].class);
-
     return new ObjectArrayAssert<>(result);
   }
 
@@ -1652,9 +1571,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractor the object transforming input object to desired one
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <U> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
+  public <U extends java.lang.Object> ObjectArrayAssert<U> extracting(Extractor<? super T, U> extractor) {
     U[] extracted = FieldsOrPropertiesExtractor.extract(actual, extractor);
-
     return new ObjectArrayAssert<>(extracted);
   }
 
@@ -1707,18 +1625,15 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractors the extractor functions to extract a value from an element of the array under test.
    * @return a new assertion object whose object under test is the array of Tuples containing the extracted values.
    */
-  @SafeVarargs
-  public final ObjectArrayAssert<Tuple> extracting(Function<T, ?>... extractors) {
-    // combine all extractors into one function
-    Function<T, Tuple> tupleExtractor = objectToExtractValueFrom -> {
+  @SafeVarargs public final ObjectArrayAssert<Tuple> extracting(Function<T, ?>... extractors) {
+    Function<T, Tuple> tupleExtractor = (objectToExtractValueFrom) -> {
       Tuple tuple = new Tuple();
       for (Function<T, ?> extractor : extractors) {
-        // extract value one by one
         tuple.addData(extractor.apply(objectToExtractValueFrom));
       }
       return tuple;
     };
-    Tuple[] tuples = stream(actual).map(tupleExtractor).toArray(size -> new Tuple[size]);
+    Tuple[] tuples = stream(actual).map(tupleExtractor).toArray((size) -> new Tuple[size]);
     return new ObjectArrayAssert<Tuple>(tuples);
   }
 
@@ -1750,14 +1665,12 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @param extractor the object transforming input object to an Iterable of desired ones
    * @return a new assertion object whose object under test is the list of values extracted
    */
-  public <U, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
+  public <U extends java.lang.Object, C extends Collection<U>> ObjectArrayAssert<U> flatExtracting(Extractor<? super T, C> extractor) {
     final List<C> extractedValues = FieldsOrPropertiesExtractor.extract(Arrays.asList(actual), extractor);
-
     final List<U> result = newArrayList();
     for (C e : extractedValues) {
       result.addAll(e);
     }
-
     return new ObjectArrayAssert<>(IterableUtil.toArray(result));
   }
 
@@ -1794,19 +1707,20 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
     List<Object> extractedValues = newArrayList();
     List<?> extractedGroups = FieldsOrPropertiesExtractor.extract(Arrays.asList(actual), byName(propertyName));
     for (Object group : extractedGroups) {
-      // expecting group to be an iterable or an array
       if (isArray(group)) {
         int size = Array.getLength(group);
         for (int i = 0; i < size; i++) {
           extractedValues.add(Array.get(group, i));
         }
-      } else if (group instanceof Iterable) {
-        Iterable<?> iterable = (Iterable<?>) group;
-        for (Object value : iterable) {
-          extractedValues.add(value);
-        }
       } else {
-        CommonErrors.wrongElementTypeForFlatExtracting(group);
+        if (group instanceof Iterable) {
+          Iterable<?> iterable = (Iterable<?>) group;
+          for (Object value : iterable) {
+            extractedValues.add(value);
+          }
+        } else {
+          CommonErrors.wrongElementTypeForFlatExtracting(group);
+        }
       }
     }
     return new ObjectArrayAssert<>(extractedValues.toArray());
@@ -1892,9 +1806,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IllegalArgumentException if no method exists with the given name, or method is not public, or method does
    *           return void, or method accepts arguments.
    */
-  public <P> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
-    @SuppressWarnings("unchecked")
-    P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
+  public <P extends java.lang.Object> ObjectArrayAssert<P> extractingResultOf(String method, Class<P> extractingType) {
+    @SuppressWarnings(value = { "unchecked" }) P[] values = (P[]) FieldsOrPropertiesExtractor.extract(actual, resultOf(method));
     return new ObjectArrayAssert<>(values);
   }
 
@@ -1925,13 +1838,11 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    *
    * @return {@code this} assertion object.
    */
-  @Override
-  public S inHexadecimal() {
+  @Override public S inHexadecimal() {
     return super.inHexadecimal();
   }
 
-  @Override
-  public S inBinary() {
+  @Override public S inBinary() {
     return super.inBinary();
   }
 
@@ -1991,8 +1902,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the array elements.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, Object expectedValue) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, Object expectedValue) {
     Iterable<? extends T> filteredIterable = filter(actual).with(propertyOrFieldName, expectedValue).get();
     return (S) new ObjectArrayAssert<>(toArray(filteredIterable));
   }
@@ -2036,8 +1946,6 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws IntrospectionError if the given propertyOrFieldName can't be found in one of the array elements.
    */
   public S filteredOnNull(String propertyOrFieldName) {
-    // need to cast nulll to Object otherwise it calls :
-    // filteredOn(String propertyOrFieldName, FilterOperation<?> filterOperation)
     return filteredOn(propertyOrFieldName, (Object) null);
   }
 
@@ -2106,8 +2014,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given propertyOrFieldName is {@code null} or empty.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(String propertyOrFieldName, FilterOperator<?> filterOperator) {
     checkNotNull(filterOperator);
     Filters<? extends T> filter = filter(actual).with(propertyOrFieldName);
     filterOperator.applyOn(filter);
@@ -2146,8 +2053,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given condition is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Condition<? super T> condition) {
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Condition<? super T> condition) {
     Iterable<? extends T> filteredIterable = filter(actual).being(condition).get();
     return (S) new ObjectArrayAssert<>(toArray(filteredIterable));
   }
@@ -2170,9 +2076,10 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @return a new assertion object with the filtered array under test
    * @throws IllegalArgumentException if the given predicate is {@code null}.
    */
-  @SuppressWarnings("unchecked")
-  public S filteredOn(Predicate<? super T> predicate) {
-    if (predicate == null) throw new IllegalArgumentException("The filter predicate should not be null");
+  @SuppressWarnings(value = { "unchecked" }) public S filteredOn(Predicate<? super T> predicate) {
+    if (predicate == null) {
+      throw new IllegalArgumentException("The filter predicate should not be null");
+    }
     return (S) new ObjectArrayAssert<>(stream(actual).filter(predicate).toArray());
   }
 
@@ -2197,8 +2104,7 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements don't satisfy the given predicate.
    */
-  @Override
-  public S allMatch(Predicate<? super T> condition) {
+  @Override public S allMatch(Predicate<? super T> condition) {
     iterables.assertAllMatch(info, newArrayList(actual), condition);
     return myself;
   }
@@ -2206,10 +2112,8 @@ public abstract class AbstractObjectArrayAssert<S extends AbstractObjectArrayAss
   /**
    * {@inheritDoc}
    */
-  @Override
-  public S allSatisfy(Consumer<? super T> requirements) {
+  @Override public S allSatisfy(Consumer<? super T> requirements) {
     iterables.assertAllSatisfy(info, newArrayList(actual), requirements);
     return myself;
   }
-
 }
