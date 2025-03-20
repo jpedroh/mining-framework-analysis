@@ -1,17 +1,4 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.input;
-
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static org.omnifaces.component.input.Form.PropertyKeys.includeRequestParams;
@@ -23,12 +10,10 @@ import static org.omnifaces.util.FacesLocal.getRequestURI;
 import static org.omnifaces.util.FacesLocal.getViewParameterMap;
 import static org.omnifaces.util.Servlets.toQueryString;
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationWrapper;
 import javax.faces.application.ViewHandler;
@@ -40,7 +25,6 @@ import javax.faces.component.UIViewParameter;
 import javax.faces.component.html.HtmlForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextWrapper;
-
 import org.omnifaces.component.ParamHolder;
 import org.omnifaces.taghandler.IgnoreValidationFailed;
 import org.omnifaces.util.State;
@@ -127,251 +111,201 @@ import org.omnifaces.util.State;
  * @author Arjan Tijms
  * @author Bauke Scholtz
  */
-@FacesComponent(Form.COMPONENT_TYPE)
-public class Form extends HtmlForm {
+@FacesComponent(value = Form.COMPONENT_TYPE) public class Form extends HtmlForm {
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.input.Form";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  enum PropertyKeys {
+    includeViewParams,
+    includeRequestParams,
+    useRequestURI
+  }
 
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.input.Form";
+  private final State state = new State(getStateHelper());
 
-	enum PropertyKeys {
-		includeViewParams,
-		includeRequestParams,
-		useRequestURI
-	}
+  private boolean ignoreValidationFailed;
 
-	// Variables ------------------------------------------------------------------------------------------------------
+  @Override public void processValidators(FacesContext context) {
+    if (isIgnoreValidationFailed()) {
+      super.processValidators(new IgnoreValidationFailedFacesContext(context));
+    } else {
+      super.processValidators(context);
+    }
+  }
 
-	private final State state = new State(getStateHelper());
-	private boolean ignoreValidationFailed;
+  @Override public void processUpdates(FacesContext context) {
+    if (isIgnoreValidationFailed()) {
+      super.processUpdates(new IgnoreValidationFailedFacesContext(context));
+    } else {
+      super.processUpdates(context);
+    }
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
+  @Override public void encodeBegin(FacesContext context) throws IOException {
+    super.encodeBegin(new ActionURLDecorator(context, this));
+  }
 
-	@Override
-	public void processValidators(FacesContext context) {
-		if (isIgnoreValidationFailed()) {
-			super.processValidators(new IgnoreValidationFailedFacesContext(context));
-		}
-		else {
-			super.processValidators(context);
-		}
-	}
-
-	@Override
-	public void processUpdates(FacesContext context) {
-		if (isIgnoreValidationFailed()) {
-			super.processUpdates(new IgnoreValidationFailedFacesContext(context));
-		}
-		else {
-			super.processUpdates(context);
-		}
-	}
-
-	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
-		super.encodeBegin(new ActionURLDecorator(context, this));
-	}
-
-	/**
+  /**
 	 * Collect the necessary parameters for query string in action URL.
 	 */
-	private Map<String, List<String>> collectParams(FacesContext context) {
-		Map<String, List<String>> params;
+  private Map<String, List<String>> collectParams(FacesContext context) {
+    Map<String, List<String>> params;
+    if (isUseRequestURI() || isIncludeRequestParams()) {
+      params = getRequestQueryStringMap(context);
+    } else {
+      if (isIncludeViewParams()) {
+        params = getViewParameterMap(context);
+      } else {
+        params = new LinkedHashMap<String, List<String>>(0);
+      }
+    }
+    for (ParamHolder param : getParams(this)) {
+      Object value = param.getValue();
+      if (isEmpty(value)) {
+        continue;
+      }
+      params.put(param.getName(), asList(value.toString()));
+    }
+    return params;
+  }
 
-		if (isUseRequestURI() || isIncludeRequestParams()) {
-			params = getRequestQueryStringMap(context);
-		}
-		else if (isIncludeViewParams()) {
-			params = getViewParameterMap(context);
-		}
-		else {
-			params = new LinkedHashMap<String, List<String>>(0);
-		}
-
-		for (ParamHolder param : getParams(this)) {
-			Object value = param.getValue();
-
-			if (isEmpty(value)) {
-				continue;
-			}
-
-			params.put(param.getName(), asList(value.toString()));
-		}
-
-		return params;
-	}
-
-	// Getters/setters ------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns whether or not the view parameters should be encoded into the form's action URL.
 	 * @return Whether or not the view parameters should be encoded into the form's action URL.
 	 */
-	public boolean isIncludeViewParams() {
-		return state.get(includeViewParams, FALSE);
-	}
+  public boolean isIncludeViewParams() {
+    return state.get(includeViewParams, FALSE);
+  }
 
-	/**
+  /**
 	 * Set whether or not the view parameters should be encoded into the form's action URL.
 	 *
 	 * @param includeViewParams
 	 *            The state of the switch for encoding view parameters
 	 */
-	public void setIncludeViewParams(boolean includeViewParams) {
-		state.put(PropertyKeys.includeViewParams, includeViewParams);
-	}
+  public void setIncludeViewParams(boolean includeViewParams) {
+    state.put(PropertyKeys.includeViewParams, includeViewParams);
+  }
 
-	/**
+  /**
 	 * Returns whether or not the request parameters should be encoded into the form's action URL.
 	 * @return Whether or not the request parameters should be encoded into the form's action URL.
 	 * @since 1.5
 	 */
-	public boolean isIncludeRequestParams() {
-		return state.get(includeRequestParams, FALSE);
-	}
+  public boolean isIncludeRequestParams() {
+    return state.get(includeRequestParams, FALSE);
+  }
 
-	/**
+  /**
 	 * Set whether or not the request parameters should be encoded into the form's action URL.
 	 *
 	 * @param includeRequestParams
 	 *            The state of the switch for encoding request parameters.
 	 * @since 1.5
 	 */
-	public void setIncludeRequestParams(boolean includeRequestParams) {
-		state.put(PropertyKeys.includeRequestParams, includeRequestParams);
-	}
+  public void setIncludeRequestParams(boolean includeRequestParams) {
+    state.put(PropertyKeys.includeRequestParams, includeRequestParams);
+  }
 
-	/**
+  /**
 	 * Returns whether or not the request URI should be used as form's action URL.
 	 * @return Whether or not the request URI should be used as form's action URL.
 	 * @since 1.6
 	 */
-	public boolean isUseRequestURI() {
-		return state.get(useRequestURI, FALSE);
-	}
+  public boolean isUseRequestURI() {
+    return state.get(useRequestURI, FALSE);
+  }
 
-	/**
+  /**
 	 * Set whether or not the request URI should be used as form's action URL.
 	 *
 	 * @param useRequestURI
 	 *            The state of the switch for using request URI.
 	 * @since 1.6
 	 */
-	public void setUseRequestURI(boolean useRequestURI) {
-		state.put(PropertyKeys.useRequestURI, useRequestURI);
-	}
+  public void setUseRequestURI(boolean useRequestURI) {
+    state.put(PropertyKeys.useRequestURI, useRequestURI);
+  }
 
-	/**
+  /**
 	 * Returns whether or not the form should ignore validation fail (and thus proceed to update model/invoke action).
 	 * @return Whether or not the form should ignore validation fail.
 	 * @since 2.1
 	 */
-	public boolean isIgnoreValidationFailed() {
-		return ignoreValidationFailed;
-	}
+  public boolean isIgnoreValidationFailed() {
+    return ignoreValidationFailed;
+  }
 
-	/**
+  /**
 	 * Set whether or not the form should ignore validation fail.
 	 * @param ignoreValidationFailed Whether or not the form should ignore validation fail.
 	 * @since 2.1
 	 */
-	public void setIgnoreValidationFailed(boolean ignoreValidationFailed) {
-		this.ignoreValidationFailed = ignoreValidationFailed;
-	}
+  public void setIgnoreValidationFailed(boolean ignoreValidationFailed) {
+    this.ignoreValidationFailed = ignoreValidationFailed;
+  }
 
-	// Nested classes -------------------------------------------------------------------------------------------------
+  static class IgnoreValidationFailedFacesContext extends FacesContextWrapper {
+    private FacesContext wrapped;
 
-	/**
-	 * FacesContext wrapper which performs NOOP during {@link FacesContext#validationFailed()} and
-	 * {@link FacesContext#renderResponse()}.
-	 *
-	 * @author Bauke Scholtz
-	 */
-	static class IgnoreValidationFailedFacesContext extends FacesContextWrapper {
+    public IgnoreValidationFailedFacesContext(FacesContext wrapped) {
+      this.wrapped = wrapped;
+    }
 
-		private FacesContext wrapped;
+    @Override public void validationFailed() {
+    }
 
-		public IgnoreValidationFailedFacesContext(FacesContext wrapped) {
-			this.wrapped = wrapped;
-		}
+    @Override public void renderResponse() {
+    }
 
-		@Override
-		public void validationFailed() {
-			// NOOP.
-		}
+    @Override public FacesContext getWrapped() {
+      return wrapped;
+    }
+  }
 
-		@Override
-		public void renderResponse() {
-			// NOOP.
-		}
+  static class ActionURLDecorator extends FacesContextWrapper {
+    private final FacesContext facesContext;
 
-		@Override
-		public FacesContext getWrapped() {
-			return wrapped;
-		}
+    private final Form form;
 
-	}
+    public ActionURLDecorator(FacesContext facesContext, Form form) {
+      this.facesContext = facesContext;
+      this.form = form;
+    }
 
-	/**
-	 * Helper class used for creating a FacesContext with a decorated FacesContext -&gt; Application -&gt; ViewHandler
-	 * -&gt; getActionURL.
-	 *
-	 * @author Arjan Tijms
-	 */
-	static class ActionURLDecorator extends FacesContextWrapper {
+    @Override public Application getApplication() {
+      return new ApplicationWrapper() {
+        private final Application application = ActionURLDecorator.super.getApplication();
 
-		private final FacesContext facesContext;
-		private final Form form;
+        @Override public ViewHandler getViewHandler() {
+          return new ViewHandlerWrapper() {
+            private final ViewHandler viewHandler = application.getViewHandler();
 
-
-		public ActionURLDecorator(FacesContext facesContext, Form form) {
-			this.facesContext = facesContext;
-			this.form = form;
-		}
-
-		@Override
-		public Application getApplication() {
-			return new ApplicationWrapper() {
-
-				private final Application application = ActionURLDecorator.super.getApplication();
-
-				@Override
-				public ViewHandler getViewHandler() {
-					return new ViewHandlerWrapper() {
-
-						private final ViewHandler viewHandler = application.getViewHandler();
-
-						/**
+            /**
 						 * The actual method we're decorating in order to either include the view parameters into the
 						 * action URL, or include the request parameters into the action URL, or use request URI as
 						 * action URL. Any <code>&lt;f|o:param&gt;</code> nested in the form component will be included
 						 * in the query string, overriding any existing view or request parameters on same name.
 						 */
-						@Override
-						public String getActionURL(FacesContext context, String viewId) {
-							String url = form.isUseRequestURI() ? getRequestURI(context) : super.getActionURL(context, viewId);
-							String queryString = toQueryString(form.collectParams(context));
-							return isEmpty(queryString) ? url : url + (url.contains("?") ? "&" : "?") + queryString;
-						}
+            @Override public String getActionURL(FacesContext context, String viewId) {
+              String url = form.isUseRequestURI() ? getRequestURI(context) : super.getActionURL(context, viewId);
+              String queryString = toQueryString(form.collectParams(context));
+              return isEmpty(queryString) ? url : url + (url.contains("?") ? "&" : "?") + queryString;
+            }
 
-						@Override
-						public ViewHandler getWrapped() {
-							return viewHandler;
-						}
-					};
-				}
+            @Override public ViewHandler getWrapped() {
+              return viewHandler;
+            }
+          };
+        }
 
-				@Override
-				public Application getWrapped() {
-					return application;
-				}
-			};
-		}
+        @Override public Application getWrapped() {
+          return application;
+        }
+      };
+    }
 
-		@Override
-		public FacesContext getWrapped() {
-			return facesContext;
-		}
-	}
-
+    @Override public FacesContext getWrapped() {
+      return facesContext;
+    }
+  }
 }
