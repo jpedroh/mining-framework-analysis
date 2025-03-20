@@ -1,8 +1,6 @@
 package ee.ignorance.transformiceapi;
-
 import java.util.List;
 import java.util.ArrayList;
-
 import ee.ignorance.transformiceapi.protocol.client.ChatRequest;
 import ee.ignorance.transformiceapi.protocol.client.CommandRequest;
 import ee.ignorance.transformiceapi.protocol.client.CryRequest;
@@ -20,239 +18,243 @@ import ee.ignorance.transformiceapi.protocol.client.TakeCheeseRequest;
 import ee.ignorance.transformiceapi.listeners.NormalChatListener;
 
 public class Player {
+  private GameConnection connection;
 
-	private GameConnection connection;
-	private String username;
-	private String password;
-	private String gameCode;
-	
-	private int currentX;
-	private int currentY;
-	
-	private String room;
-	private List<Mouse> roomMice;
-	
-	private int mouseId;
-	private boolean admin;
-	private boolean moderator;
-	private Mouse playerMouse;
-	
-	private Boolean loginResult;
-	private boolean syncStatus;
-	
-	private Integer secondShamanCode;
-	private boolean isShaman;
+  private String username;
 
-        private ArrayList <NormalChatListener>normalChatListeners;
-	
-	public Player(String username, String password, GameConnection connection) {
-		this.connection = connection;
-		this.username = username;
-		this.password = password;
+  private String password;
 
-                normalChatListeners = new ArrayList<NormalChatListener>() ;
-	}
+  private String gameCode;
 
-	public boolean login(boolean waitToFinish) {
-		loginResult = null;
-		LoginRequest request = new LoginRequest( username, password );
-		connection.sendRequest(request);
-		if (waitToFinish) {
-			new Blocker(20) {
-				@Override
-				public boolean check() {
-					return loginResult != null;
-				}
-			};
-		}
-		return loginResult;
-	}
-	
-	public void changeRoom(final String roomName, boolean waitToFinish) {
-		CommandRequest request = new CommandRequest("room " + roomName);
-		connection.sendRequest(request);
-		if (waitToFinish) {
-			new Blocker(20) {
-				@Override
-				public boolean check() {
-					return getRoom().equals(roomName);
-				}
-			};
-		}
-	}
-	
-	public void move(int x, int y) {
-		currentX = x;
-		currentY = y;
-		PositionRequest request = new PositionRequest(getGameCode(), x, y);
-		connection.sendRequest(request);
-	}
-	
-	public void chat(String message) {
-		ChatRequest request = new ChatRequest(message);
-		connection.sendRequest(request);
-	}
+  private int currentX;
 
-        public void cry() {
-                CryRequest request = new CryRequest(getGameCode());
-                connection.sendRequest(request);
+  private int currentY;
+
+  private String room;
+
+  private List<Mouse> roomMice;
+
+  private int mouseId;
+
+  private boolean admin;
+
+  private boolean moderator;
+
+  private Mouse playerMouse;
+
+  private Boolean loginResult;
+
+  private boolean syncStatus;
+
+  private Integer secondShamanCode;
+
+  private boolean isShaman;
+
+  private ArrayList<NormalChatListener> normalChatListeners;
+
+  public Player(String username, String password, GameConnection connection) {
+    this.connection = connection;
+    this.username = username;
+    this.password = password;
+    normalChatListeners = new ArrayList<NormalChatListener>();
+  }
+
+  public boolean login(boolean waitToFinish) {
+    loginResult = null;
+    LoginRequest request = new LoginRequest(username, password);
+    connection.sendRequest(request);
+    if (waitToFinish) {
+      new Blocker(20) {
+        @Override public boolean check() {
+          return loginResult != null;
         }
+      };
+    }
+    return loginResult;
+  }
 
-        public void dance() {
-                DanceRequest request = new DanceRequest(getGameCode());
-                connection.sendRequest(request);
+  public void changeRoom(final String roomName, boolean waitToFinish) {
+    CommandRequest request = new CommandRequest("room " + roomName);
+    connection.sendRequest(request);
+    if (waitToFinish) {
+      new Blocker(20) {
+        @Override public boolean check() {
+          return getRoom().equals(roomName);
         }
+      };
+    }
+  }
 
-        public void die() {
-                DeathRequest request = new DeathRequest(getGameCode());
-                connection.sendRequest(request);
-        }
+  public void move(int x, int y) {
+    currentX = x;
+    currentY = y;
+    PositionRequest request = new PositionRequest(getGameCode(), x, y);
+    connection.sendRequest(request);
+  }
 
-        public void kiss() {
-                KissRequest request = new KissRequest(getGameCode());
-                connection.sendRequest(request);
-        }
+  public void chat(String message) {
+    ChatRequest request = new ChatRequest(message);
+    connection.sendRequest(request);
+  }
 
-        public void smile() {
-                SmileRequest request = new SmileRequest(getGameCode());
-                connection.sendRequest(request);
-        }
+  public void cry() {
+    CryRequest request = new CryRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public void command(String message) {
-		CommandRequest request = new CommandRequest(message);
-		connection.sendRequest(request);
-	}
+  public void dance() {
+    DanceRequest request = new DanceRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public void setRoom(String room) {
-		this.room = room;
-	}
-	
-	public String getRoom() {
-		return room;
-	}
+  public void die() {
+    DeathRequest request = new DeathRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public String getGameCode() {
-		return gameCode;
-	}
+  public void kiss() {
+    KissRequest request = new KissRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public void setGameCode(String gameCode) {
-		this.gameCode = gameCode;
-	}
+  public void smile() {
+    SmileRequest request = new SmileRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public void cheese() {
-		TakeCheeseRequest request = new TakeCheeseRequest(getGameCode());
-		connection.sendRequest(request);
-	}
+  public void command(String message) {
+    CommandRequest request = new CommandRequest(message);
+    connection.sendRequest(request);
+  }
 
-	public void hole() {
-		HoleRequest request = new HoleRequest(getGameCode());
-		connection.sendRequest(request);
-	}
+  public void setRoom(String room) {
+    this.room = room;
+  }
 
-	public GameConnection getConnection() {
-		return connection;
-	}
+  public String getRoom() {
+    return room;
+  }
 
-	public void setRoomMice(List<Mouse> mice) {
-		for (Mouse mouse : mice) {
-			if (mouse.getCode() == mouseId) {
-				setPlayerMouse(mouse);
-			}
-		}
-		this.roomMice = mice;
-	}
+  public String getGameCode() {
+    return gameCode;
+  }
 
-	public int getMouseId() {
-		return mouseId;
-	}
+  public void setGameCode(String gameCode) {
+    this.gameCode = gameCode;
+  }
 
-	public void setMouseId(int mouseId) {
-		this.mouseId = mouseId;
-	}
+  public void cheese() {
+    TakeCheeseRequest request = new TakeCheeseRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public boolean isAdmin() {
-		return admin;
-	}
+  public void hole() {
+    HoleRequest request = new HoleRequest(getGameCode());
+    connection.sendRequest(request);
+  }
 
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
-	}
+  public GameConnection getConnection() {
+    return connection;
+  }
 
-	public boolean isModerator() {
-		return moderator;
-	}
+  public void setRoomMice(List<Mouse> mice) {
+    for (Mouse mouse : mice) {
+      if (mouse.getCode() == mouseId) {
+        setPlayerMouse(mouse);
+      }
+    }
+    this.roomMice = mice;
+  }
 
-	public void setModerator(boolean moderator) {
-		this.moderator = moderator;
-	}
+  public int getMouseId() {
+    return mouseId;
+  }
 
-	public Boolean getLoginResult() {
-		return loginResult;
-	}
+  public void setMouseId(int mouseId) {
+    this.mouseId = mouseId;
+  }
 
-	public void setLoginResult(Boolean loginResult) {
-		this.loginResult = loginResult;
-	}
+  public boolean isAdmin() {
+    return admin;
+  }
 
-	public Mouse getPlayerMouse() {
-		return playerMouse;
-	}
+  public void setAdmin(boolean admin) {
+    this.admin = admin;
+  }
 
-	public void setPlayerMouse(Mouse playerMouse) {
-		this.playerMouse = playerMouse;
-	}
+  public boolean isModerator() {
+    return moderator;
+  }
 
-	public boolean isSyncStatus() {
-		return syncStatus;
-	}
+  public void setModerator(boolean moderator) {
+    this.moderator = moderator;
+  }
 
-	public void setSyncStatus(boolean syncStatus) {
-		this.syncStatus = syncStatus;
-	}
+  public Boolean getLoginResult() {
+    return loginResult;
+  }
 
-	public Integer getSecondShamanCode() {
-		return secondShamanCode;
-	}
+  public void setLoginResult(Boolean loginResult) {
+    this.loginResult = loginResult;
+  }
 
-	public void setSecondShamanCode(Integer secondShamanCode) {
-		this.secondShamanCode = secondShamanCode;
-	}
+  public Mouse getPlayerMouse() {
+    return playerMouse;
+  }
 
-	public boolean isShaman() {
-		return isShaman;
-	}
+  public void setPlayerMouse(Mouse playerMouse) {
+    this.playerMouse = playerMouse;
+  }
 
-	public void setShaman(boolean isShaman) {
-		this.isShaman = isShaman;
-	}
+  public boolean isSyncStatus() {
+    return syncStatus;
+  }
 
-        public void registerNormalChatListener(NormalChatListener listener){
-            normalChatListeners.add(listener);
-        }
+  public void setSyncStatus(boolean syncStatus) {
+    this.syncStatus = syncStatus;
+  }
 
-        public void notifyNormalChatListeners(String sender, String message){
-            for (NormalChatListener listener : normalChatListeners) {
-                listener.processNormalChatMessage(sender, message);
-            }
-        }
-	
-	public void magic(int type, int x, int y) {
-		MagicBeginRequest magicBeginRequest = new MagicBeginRequest(type, x, y);
-		getConnection().sendRequest(magicBeginRequest);
-		sleep(50);
-		MagicCastRequest magicCastRequest = new MagicCastRequest(type, x, y);
-		getConnection().sendRequest(magicCastRequest);
-		sleep(50);
-		MagicStopRequest magicStopRequest = new MagicStopRequest();
-		getConnection().sendRequest(magicStopRequest);
-	}
-	
-	private void sleep(long interval) {
-		try {
-			Thread.sleep(interval);
-		} catch (InterruptedException e) {
-		}
-	}
-	
-	
+  public Integer getSecondShamanCode() {
+    return secondShamanCode;
+  }
+
+  public void setSecondShamanCode(Integer secondShamanCode) {
+    this.secondShamanCode = secondShamanCode;
+  }
+
+  public boolean isShaman() {
+    return isShaman;
+  }
+
+  public void setShaman(boolean isShaman) {
+    this.isShaman = isShaman;
+  }
+
+  public void registerNormalChatListener(NormalChatListener listener) {
+    normalChatListeners.add(listener);
+  }
+
+  public void notifyNormalChatListeners(String sender, String message) {
+    for (NormalChatListener listener : normalChatListeners) {
+      listener.processNormalChatMessage(sender, message);
+    }
+  }
+
+  public void magic(int type, int x, int y) {
+    MagicBeginRequest magicBeginRequest = new MagicBeginRequest(type, x, y);
+    getConnection().sendRequest(magicBeginRequest);
+    sleep(50);
+    MagicCastRequest magicCastRequest = new MagicCastRequest(type, x, y);
+    getConnection().sendRequest(magicCastRequest);
+    sleep(50);
+    MagicStopRequest magicStopRequest = new MagicStopRequest();
+    getConnection().sendRequest(magicStopRequest);
+  }
+
+  private void sleep(long interval) {
+    try {
+      Thread.sleep(interval);
+    } catch (InterruptedException e) {
+    }
+  }
 }
