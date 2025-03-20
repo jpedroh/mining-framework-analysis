@@ -36,8 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Used to get an attribute from an object. It will look up attributes in the
- * following order: map entry, array item, list item,
- * {@link DynamicAttributeProvider}, get method, is method, has method, public method,
+ * following order: map entry, array item, list item, 
+ * {@link DynamicAttributeProvider}, get method, is method, has method, public method, 
  * public field.
  *
  * @author Mitchell
@@ -162,6 +162,12 @@ public class GetAttributeExpression implements Expression<Object> {
              * turn args into an array of types and an array of values in order
              * to use them for our reflection calls
              */
+<<<<<<< /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+||||||| /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+            argumentValues = getArgumentValues(self, context);
+=======
+            argumentValues = this.getArgumentValues(self, context);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
             Class<?>[] argumentTypes = new Class<?>[argumentValues.length];
 
             for (int i = 0; i < argumentValues.length; i++) {
@@ -181,7 +187,19 @@ public class GetAttributeExpression implements Expression<Object> {
         }
 
         if (object != null && member != null) {
+<<<<<<< /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+            result = invokeMember(object, member, argumentValues);
+||||||| /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+            if (argumentValues == null) {
+                argumentValues = getArgumentValues(self, context);
+            }
+            result = invokeMember(object, member, argumentValues);
+=======
+            if (argumentValues == null) {
+                argumentValues = this.getArgumentValues(self, context);
+            }
             result = this.invokeMember(object, member, argumentValues);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/0d20dd1243c2e96516bafbd29301eed7b9f53e5e/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
         } else if (context.isStrictVariables()) {
             if (object == null) {
 

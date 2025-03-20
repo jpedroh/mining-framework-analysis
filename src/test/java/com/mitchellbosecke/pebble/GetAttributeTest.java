@@ -582,21 +582,21 @@ public class GetAttributeTest extends AbstractTest {
             return String.valueOf(bool);
         }
     }
-
+    
     public class DynamicAttributeProviderObject implements DynamicAttributeProvider {
 
         public String getSurname() {
             return "Doe";
         }
-
+        
         public String name = "Invalid";
         public String getName() {
             return name;
         }
-
+        
         @Override
         public boolean canProvideDynamicAttribute(Object attributeName) {
-
+            
             if("name".equals(attributeName)) {
                 return true;
             }
@@ -605,20 +605,20 @@ public class GetAttributeTest extends AbstractTest {
 
         @Override
         public Object getDynamicAttribute(Object attributeName, Object[] argumentValues) {
-
+            
             if("name".equals(attributeName)) {
-
+                
                 String name = "Steve";
                 if(argumentValues != null && argumentValues.length > 0) {
                     name += " " + Arrays.toString(argumentValues);
                 }
                 return name;
             }
-
+            
             return "Invalid";
         }
     }
-
+    
     @Test
     public void testAttributeProviderSimple() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(false).build();
@@ -631,7 +631,7 @@ public class GetAttributeTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("hello Steve Doe", writer.toString());
     }
-
+    
     @Test
     public void testAttributeProviderEmptyArguments() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(true).build();
@@ -644,7 +644,7 @@ public class GetAttributeTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("hello Steve", writer.toString());
     }
-
+    
     @Test
     public void testAttributeProviderWithArguments() throws PebbleException, IOException {
         PebbleEngine pebble = new PebbleEngine.Builder().loader(new StringLoader()).strictVariables(true).build();
@@ -657,8 +657,8 @@ public class GetAttributeTest extends AbstractTest {
         template.evaluate(writer, context);
         assertEquals("hello Steve [abc, 42]", writer.toString());
     }
-
-
+    
+    
 
     @Test
     public void testAttributePrimitiveAccessWithEmptyMap() throws Exception {
