@@ -1,13 +1,9 @@
 package de.hochschuletrier.gdw.ss14.ecs.systems;
-
-
 import org.slf4j.LoggerFactory;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-
 import de.hochschuletrier.gdw.ss14.ecs.EntityManager;
 import de.hochschuletrier.gdw.ss14.ecs.components.CameraComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.CatPropertyComponent;
@@ -22,173 +18,112 @@ import de.hochschuletrier.gdw.ss14.ecs.components.RenderComponent;
 import de.hochschuletrier.gdw.ss14.input.GameInputAdapter;
 import de.hochschuletrier.gdw.ss14.input.InputManager;
 
-public class InputSystem extends ECSystem implements GameInputAdapter
-{
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(InputSystem.class);
-    
-    public int waterPistol;
-    public ParticleEmitterComponent waterParticleEmitter;
-    public boolean waterPistolIsOn = false;
-    public float timeInFear = 2;
+public class InputSystem extends ECSystem implements GameInputAdapter {
+  private static final org.slf4j.Logger logger = LoggerFactory.getLogger(InputSystem.class);
 
-    public InputSystem(EntityManager entityManager)
-    {
-        super(entityManager, 2);
-        InputManager.getInstance().addGameInputAdapter(this);
-        
-        waterParticleEmitter = new ParticleEmitterComponent();
-        waterParticleEmitter.particleTintColor = new Color(0,0,0.5f,0.5f);
-        waterParticleEmitter.emitInterval = 0.001f;
-        waterParticleEmitter.particleLifetime = 3.0f;
-        waterParticleEmitter.emitRadius = 15f;
-        
-        
-        
-        waterPistol = entityManager.createEntity();
-        entityManager.addComponent(waterPistol, new PhysicsComponent());
-    }
+  public int waterPistol;
 
-    @Override
-    public void update(float delta)
-    {
-        // TODO Auto-generated method stub
-        Array<Integer> compos = entityManager.getAllEntitiesWithComponents(InputComponent.class, CameraComponent.class, PlayerComponent.class);
-        Array<Integer> compos2 = entityManager.getAllEntitiesWithComponents(LaserPointerComponent.class);
-        Array<Integer> compos3 = entityManager.getAllEntitiesWithComponents(EnemyComponent.class);
+  public ParticleEmitterComponent waterParticleEmitter;
 
-        for (Integer integer : compos)
-        {
-            InputComponent inputCompo = entityManager.getComponent(integer, InputComponent.class);
-            CameraComponent camComp = entityManager.getComponent(integer, CameraComponent.class);
-            LaserPointerComponent laser = entityManager.getComponent(compos2.get(0), LaserPointerComponent.class);
-            CatPropertyComponent catProp = entityManager.getComponent(compos.get(0), CatPropertyComponent.class);
-            
-            if(!catProp.isInfluenced){
-                inputCompo.whereToGo = laser.position;
-                            
-                Vector3 vec = new Vector3(inputCompo.whereToGo.x, inputCompo.whereToGo.y, 1);
-                if(laser.input == InputState.MOUSE){
-                    vec = camComp.smoothCamera.getOrthographicCamera().unproject(vec);
-                }
-                inputCompo.whereToGo = new Vector2(vec.x, vec.y);
-                entityManager.getComponent(waterPistol, PhysicsComponent.class).defaultPosition = inputCompo.whereToGo;
-           }else{
-                inputCompo.whereToGo = laser.position;
-                Vector3 vec = new Vector3(inputCompo.whereToGo.x, inputCompo.whereToGo.y, 1);
-                if(laser.input == InputState.MOUSE){
-                    vec = camComp.smoothCamera.getOrthographicCamera().unproject(vec);
-                }
-                inputCompo.whereToGo = new Vector2(vec.x, vec.y);
-                Vector2 laserToWool = new Vector2();//woolPosition.sub(laser.position);
-                catProp.influencedToLaser -= delta/catProp.TIME_TILL_INFLUENCED;
-                catProp.timeTillInfluencedTimer += delta;
-                inputCompo.whereToGo = new Vector2(inputCompo.whereToGo.x + laserToWool.x * catProp.influencedToLaser, inputCompo.whereToGo.y + laserToWool.y * catProp.influencedToLaser);
-            }
+  public boolean waterPistolIsOn = false;
+
+  public float timeInFear = 2;
+
+  public InputSystem(EntityManager entityManager) {
+    super(entityManager, 2);
+    InputManager.getInstance().addGameInputAdapter(this);
+    waterParticleEmitter = new ParticleEmitterComponent();
+    waterParticleEmitter.particleTintColor = new Color(0, 0, 0.5f, 0.5f);
+    waterParticleEmitter.emitInterval = 0.001f;
+    waterParticleEmitter.particleLifetime = 3.0f;
+    waterParticleEmitter.emitRadius = 15f;
+    waterPistol = entityManager.createEntity();
+    entityManager.addComponent(waterPistol, new PhysicsComponent());
+  }
+
+  @Override public void update(float delta) {
+    Array<Integer> compos = entityManager.getAllEntitiesWithComponents(InputComponent.class, CameraComponent.class, PlayerComponent.class);
+    Array<Integer> compos2 = entityManager.getAllEntitiesWithComponents(LaserPointerComponent.class);
+    Array<Integer> compos3 = entityManager.getAllEntitiesWithComponents(EnemyComponent.class);
+    for (Integer integer : compos) {
+      InputComponent inputCompo = entityManager.getComponent(integer, InputComponent.class);
+      CameraComponent camComp = entityManager.getComponent(integer, CameraComponent.class);
+      LaserPointerComponent laser = entityManager.getComponent(compos2.get(0), LaserPointerComponent.class);
+      CatPropertyComponent catProp = entityManager.getComponent(compos.get(0), CatPropertyComponent.class);
+      if (!catProp.isInfluenced) {
+        inputCompo.whereToGo = laser.position;
+        Vector3 vec = new Vector3(inputCompo.whereToGo.x, inputCompo.whereToGo.y, 1);
+        if (laser.input == InputState.MOUSE) {
+          vec = camComp.smoothCamera.getOrthographicCamera().unproject(vec);
         }
-    }
-
-    @Override
-    public void render()
-    {
-    }
-
-    @Override
-    public void move(int screenX, int screenY)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void moveUp(float scale)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void moveDown(float scale)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void moveLeft(float scale)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void moveRight(float scale)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void laserButtonPressed()
-    {
-        //logger.debug("Laser button pressed!");
-
-        Array<Integer> laser = entityManager.getAllEntitiesWithComponents(LaserPointerComponent.class);
-        if(laser.size > 0)
-        {
-            for (Integer entity : laser)
-            {
-                LaserPointerComponent laserPointerComponent = entityManager.getComponent(entity, LaserPointerComponent.class);
-
-                // toggle laser
-                if(laserPointerComponent.isVisible == true)
-                {
-                    laserPointerComponent.isVisible = false;
-                }
-                else
-                {
-                    laserPointerComponent.isVisible = true;
-                }
-            }
+        inputCompo.whereToGo = new Vector2(vec.x, vec.y);
+        entityManager.getComponent(waterPistol, PhysicsComponent.class).defaultPosition = inputCompo.whereToGo;
+      } else {
+        inputCompo.whereToGo = laser.position;
+        Vector3 vec = new Vector3(inputCompo.whereToGo.x, inputCompo.whereToGo.y, 1);
+        if (laser.input == InputState.MOUSE) {
+          vec = camComp.smoothCamera.getOrthographicCamera().unproject(vec);
         }
+        inputCompo.whereToGo = new Vector2(vec.x, vec.y);
+        Vector2 laserToWool = new Vector2();
+        catProp.influencedToLaser -= delta / catProp.TIME_TILL_INFLUENCED;
+        catProp.timeTillInfluencedTimer += delta;
+        inputCompo.whereToGo = new Vector2(inputCompo.whereToGo.x + laserToWool.x * catProp.influencedToLaser, inputCompo.whereToGo.y + laserToWool.y * catProp.influencedToLaser);
+      }
+    }
+  }
 
-        Array<Integer> entities = entityManager.getAllEntitiesWithComponents(CatPropertyComponent.class);
+  @Override public void render() {
+  }
 
-        for (Integer entity : entities)
-        {
-            CatPropertyComponent catPropertyComponent = entityManager.getComponent(entity, CatPropertyComponent.class);
+  @Override public void move(int screenX, int screenY) {
+  }
 
-            // check if cat should move out of box
-            if (catPropertyComponent.isHidden)
-            {
-                catPropertyComponent.isHidden = !catPropertyComponent.isHidden;
+  @Override public void moveUp(float scale) {
+  }
 
-                RenderComponent renderComponent = new RenderComponent();
-                entityManager.addComponent(entity, renderComponent);
-            }
+  @Override public void moveDown(float scale) {
+  }
+
+  @Override public void moveLeft(float scale) {
+  }
+
+  @Override public void moveRight(float scale) {
+  }
+
+  @Override public void laserButtonPressed() {
+    Array<Integer> laser = entityManager.getAllEntitiesWithComponents(LaserPointerComponent.class);
+    if (laser.size > 0) {
+      for (Integer entity : laser) {
+        LaserPointerComponent laserPointerComponent = entityManager.getComponent(entity, LaserPointerComponent.class);
+        if (laserPointerComponent.isVisible == true) {
+          laserPointerComponent.isVisible = false;
+        } else {
+          laserPointerComponent.isVisible = true;
         }
-
+      }
     }
-
-    @Override
-    public void waterPistolButtonDown()
-    {
-        // TODO Auto-generated method stub
-        entityManager.addComponent(waterPistol, waterParticleEmitter);
-        waterPistolIsOn = true;
+    Array<Integer> entities = entityManager.getAllEntitiesWithComponents(CatPropertyComponent.class);
+    for (Integer entity : entities) {
+      CatPropertyComponent catPropertyComponent = entityManager.getComponent(entity, CatPropertyComponent.class);
+      if (catPropertyComponent.isHidden) {
+        catPropertyComponent.isHidden = !catPropertyComponent.isHidden;
+        RenderComponent renderComponent = new RenderComponent();
+        entityManager.addComponent(entity, renderComponent);
+      }
     }
+  }
 
-    @Override
-    public void waterPistolButtonUp()
-    {
-        // TODO Auto-generated method stub
-        entityManager.removeComponent(waterPistol, waterParticleEmitter);
-        waterPistolIsOn = false;
-    }
+  @Override public void waterPistolButtonDown() {
+    entityManager.addComponent(waterPistol, waterParticleEmitter);
+    waterPistolIsOn = true;
+  }
 
-    @Override
-    public void menueButtonPressed()
-    {
-        // TODO Auto-generated method stub
+  @Override public void waterPistolButtonUp() {
+    entityManager.removeComponent(waterPistol, waterParticleEmitter);
+    waterPistolIsOn = false;
+  }
 
-    }
+  @Override public void menueButtonPressed() {
+  }
 }
