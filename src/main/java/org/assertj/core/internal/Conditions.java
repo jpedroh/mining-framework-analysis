@@ -118,8 +118,14 @@ public class Conditions {
   /**
    * Asserts the the given <code>{@link Condition}</code> is not null.
    * @param condition the given {@code Condition}.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Conditions.java/left.java
+   * @param  format as in {@link String#format(String, Object...)}
+   * @param  args as in {@link String#format(String, Object...)}
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Conditions.java/base.java
+=======
    * @param format as in {@link String#format(String, Object...)}
    * @param args as in {@link String#format(String, Object...)}
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Conditions.java/right.java
    * @throws NullPointerException if the given {@code Condition} is {@code null}.
    */
   public void assertIsNotNull(Condition<?> condition, String format, Object... args) {

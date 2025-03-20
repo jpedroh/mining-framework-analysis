@@ -104,6 +104,11 @@ public class Assumptions {
   public static <T> AbstractObjectAssert<?, T> assumeThat(T actual) {
     return asAssumption(ObjectAssert.class, Object.class, actual);
   }
+  @CheckReturnValue
+  @SuppressWarnings("unchecked")
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assumeThat(T actual) {
+    return asAssumption(GenericComparableAssert.class, Comparable.class, actual);
+  }
 
   /**
    * Creates a new instance of <code>{@link StringAssert}</code> assumption.
@@ -172,6 +177,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractBooleanAssert<?> assumeThat(boolean actual) {
     return asAssumption(BooleanAssert.class, Boolean.class, actual);
@@ -183,6 +194,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractBooleanAssert<?> assumeThat(Boolean actual) {
@@ -208,6 +225,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractByteAssert<?> assumeThat(byte actual) {
     return asAssumption(ByteAssert.class, Byte.class, actual);
@@ -219,6 +242,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractByteAssert<?> assumeThat(Byte actual) {
@@ -244,6 +273,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractCharacterAssert<?> assumeThat(char actual) {
     return asAssumption(CharacterAssert.class, Character.class, actual);
@@ -255,6 +290,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractCharacterAssert<?> assumeThat(Character actual) {
@@ -292,6 +333,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractShortAssert<?> assumeThat(short actual) {
     return asAssumption(ShortAssert.class, Short.class, actual);
@@ -303,6 +350,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractShortAssert<?> assumeThat(Short actual) {
@@ -328,6 +381,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractIntegerAssert<?> assumeThat(int actual) {
     return asAssumption(IntegerAssert.class, Integer.class, actual);
@@ -339,6 +398,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractIntegerAssert<?> assumeThat(Integer actual) {
@@ -364,6 +429,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractLongAssert<?> assumeThat(long actual) {
     return asAssumption(LongAssert.class, Long.class, actual);
@@ -375,6 +446,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractLongAssert<?> assumeThat(Long actual) {
@@ -400,6 +477,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractFloatAssert<?> assumeThat(float actual) {
     return asAssumption(FloatAssert.class, Float.class, actual);
@@ -411,6 +494,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractFloatAssert<?> assumeThat(Float actual) {
@@ -436,6 +525,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   public static AbstractDoubleAssert<?> assumeThat(double actual) {
     return asAssumption(DoubleAssert.class, Double.class, actual);
@@ -447,6 +542,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   public static AbstractDoubleAssert<?> assumeThat(Double actual) {
@@ -707,6 +808,12 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
+   */
   @CheckReturnValue
   @SuppressWarnings("unchecked")
   public static <ELEMENT> FactoryBasedNavigableIterableAssert<IterableAssert<ELEMENT>, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assumeThat(Iterable<? extends ELEMENT> actual) {
@@ -720,6 +827,12 @@ public class Assumptions {
    * @param actual the actual value.
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
+   */
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code> assumption.
+   *
+   * @param actual the actual value.
+   * @return the created assumption for assertion object.
    */
   @CheckReturnValue
   @SuppressWarnings("unchecked")
@@ -778,11 +891,6 @@ public class Assumptions {
    * @return the created assumption for assertion object.
    * @since 2.9.0 / 3.9.0
    */
-  @CheckReturnValue
-  @SuppressWarnings("unchecked")
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assumeThat(T actual) {
-    return asAssumption(GenericComparableAssert.class, Comparable.class, actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code> assumption.

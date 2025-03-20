@@ -761,6 +761,14 @@ public class Assertions {
   public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
 
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
@@ -1583,7 +1591,14 @@ public class Assertions {
    * Assertions entry point for double {@link Offset}.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, offset(0.1));</code></pre>
+   * 
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, offset(0.1));</code></pre>
+=======
    * <pre><code class='java'> assertThat(0.1).isEqualTo(0.0, offset(0.1));</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @param value the allowed offset
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
@@ -1597,7 +1612,14 @@ public class Assertions {
    * Assertions entry point for float {@link Offset}.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, offset(0.2f));</code></pre>
+   * 
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, offset(0.2f));</code></pre>
+=======
    * <pre><code class='java'> assertThat(0.2f).isCloseTo(0.0f, offset(0.2f));</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @param value the allowed offset
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
@@ -1611,8 +1633,17 @@ public class Assertions {
    * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, within(0.1));</code></pre>
+   * 
+   * @param value the value of the offset.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(8.1).isCloseTo(8.0, within(0.1));</code></pre>
+   * @param value the allowed offset
+=======
    * <pre><code class='java'> assertThat(0.1).isCloseTo(0.0, within(0.1));</code></pre>
    * @param value the allowed offset
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1625,7 +1656,14 @@ public class Assertions {
    * Alias for {@link #offset(Double)} to use with real number assertions.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, withPrecision(0.1));</code></pre>
+   * 
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(8.1).isEqualTo(8.0, withPrecision(0.1));</code></pre>
+=======
    * <pre><code class='java'> assertThat(0.1).isEqualTo(0.0, withPrecision(0.1));</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @param value the required precision
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
@@ -1640,8 +1678,8 @@ public class Assertions {
    * <p>
    * Typical usage :
    * <pre><code class='java'> assertThat(8.2f).isCloseTo(8.0f, within(0.2f));</code></pre>
-   *
-   * @param value the allowed offset
+   * 
+   * @param value the value of the offset.
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1654,7 +1692,14 @@ public class Assertions {
    * Alias for {@link #offset(Float)} to use with real number assertions.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * <pre><code class='java'> assertThat(8.2f).isEqualTo(8.0f, withPrecision(0.2f));</code></pre>
+   * 
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(8.2f).isEqualTo(8.0f, withPrecision(0.2f));</code></pre>
+=======
    * <pre><code class='java'> assertThat(0.2f).isEqualTo(0.0f, withPrecision(0.2f));</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @param value the required precision
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
@@ -1669,8 +1714,8 @@ public class Assertions {
    * <p>
    * Typical usage :
    * <pre><code class='java'> assertThat(BigDecimal.TEN).isCloseTo(new BigDecimal("10.5"), within(BigDecimal.ONE));</code></pre>
-   *
-   * @param value the allowed offset
+   * 
+   * @param value the value of the offset.
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1684,9 +1729,8 @@ public class Assertions {
    * <p>
    * Typical usage :
    * <pre><code class='java'> assertThat(BigInteger.TEN).isCloseTo(new BigInteger("11"), within(new BigInteger("2")));</code></pre>
-   *
-   * @since 2.7.0 / 3.7.0
-   * @param value the allowed offset
+   * 
+   * @param value the value of the offset.
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1730,9 +1774,17 @@ public class Assertions {
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
    * Typical usage :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
    * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
    * 
+   * @param value the value of the offset.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * <pre><code class='java'> assertThat(10).isCloseTo(11, within(1));</code></pre>
    * @param value the allowed offset
+=======
+   * <pre><code class='java'> assertThat((short) 10).isCloseTo((short) 11, within((short) 1));</code></pre>
+   * @param value the allowed offset
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1747,7 +1799,7 @@ public class Assertions {
    * Typical usage :
    * <pre><code class='java'> assertThat(5l).isCloseTo(7l, within(2l));</code></pre>
    * 
-   * @param value the allowed offset
+   * @param value the value of the offset.
    * @return the created {@code Offset}.
    * @throws NullPointerException if the given value is {@code null}.
    * @throws IllegalArgumentException if the given value is negative.
@@ -1941,7 +1993,10 @@ public class Assertions {
    * Typical usage :
    * <pre><code class='java'> assertThat(5l).isCloseTo(7l, byLessThan(3l));</code></pre>
    *
+   * @param value the value of the offset.
    * @return the created {@code Offset}.
+   * @throws NullPointerException if the given value is {@code null}.
+   * @throws IllegalArgumentException if the given value is negative.
    */
   public static Offset<Long> byLessThan(Long value) {
     return Offset.strictOffset(value);
@@ -2104,6 +2159,17 @@ public class Assertions {
    * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
    * <p>
    * and with filter language based on java bean property :
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/left.java
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * 
+   * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
+   *            .containsOnly(james, rose);</code></pre>
+=======
+   * 
+   * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20)
+   *                           .and(&quot;assistsPerGame&quot;).greaterThan(7).get())
+   *           .containsOnly(james, rose);</code></pre>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/api/Assertions.java/right.java
    *
    * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20)
    *                           .and(&quot;assistsPerGame&quot;).greaterThan(7).get())
@@ -2703,10 +2769,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -2759,10 +2821,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Register a {@link Representation} that will be used in all following assertions.

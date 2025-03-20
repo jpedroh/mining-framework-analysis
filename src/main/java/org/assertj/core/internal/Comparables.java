@@ -47,7 +47,7 @@ public class Comparables {
    * 
    * @return a {@link Comparables} using a {@link StandardComparisonStrategy}.
    */
-  @VisibleForTesting
+  
   public Comparables() {
     this(StandardComparisonStrategy.instance());
   }
@@ -291,8 +291,8 @@ public class Comparables {
     checkArgument(inclusiveEnd && inclusiveStart && comparisonStrategy.isLessThanOrEqualTo(start, end) ||
                   !inclusiveEnd && !inclusiveStart && comparisonStrategy.isLessThan(start, end),
                   format("The end value <%s> must not be %s the start value <%s>%s!", end,
-                         (inclusiveEnd && inclusiveStart ? "less than" : "less than or equal to"), start,
-                         (comparisonStrategy.isStandard() ? "" : " (using " + comparisonStrategy + ")")));
+                                (inclusiveEnd && inclusiveStart ? "less than" : "less than or equal to"), start,
+                                (comparisonStrategy.isStandard() ? "" : " (using " + comparisonStrategy + ")")));
     boolean checkLowerBoundaryRange = inclusiveStart ? !isGreaterThan(start, actual) : isLessThan(start, actual);
     boolean checkUpperBoundaryRange = inclusiveEnd ? !isGreaterThan(actual, end) : isLessThan(actual, end);
     if (checkLowerBoundaryRange && checkUpperBoundaryRange)

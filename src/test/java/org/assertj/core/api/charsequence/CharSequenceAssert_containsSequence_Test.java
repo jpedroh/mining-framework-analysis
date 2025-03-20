@@ -21,10 +21,19 @@ import org.assertj.core.api.CharSequenceAssert;
 import org.assertj.core.api.CharSequenceAssertBaseTest;
 
 /**
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/test/java/org/assertj/core/api/charsequence/CharSequenceAssert_containsSequence_Test.java/left.java
+ * Tests for <code>{@link CharSequenceAssert#containsSequence(Iterable)}</code>.
+ * 
+ * @author André Diermann
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/test/java/org/assertj/core/api/charsequence/CharSequenceAssert_containsSequence_Test.java/base.java
+ * Tests for <code>{@link CharSequenceAssert#containsSequence(Iterable<CharSequence>)}</code>.
+ * 
+ * @author André Diermann
+=======
  * Tests for <code>{@link CharSequenceAssert#containsSequence(Iterable<CharSequence>)}</code>.
  *
  * @author Billy Yuan
- * @author André Diermann
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/test/java/org/assertj/core/api/charsequence/CharSequenceAssert_containsSequence_Test.java/right.java
  */
 public class CharSequenceAssert_containsSequence_Test extends CharSequenceAssertBaseTest {
 

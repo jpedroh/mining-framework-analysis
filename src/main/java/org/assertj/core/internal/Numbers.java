@@ -175,7 +175,12 @@ public abstract class Numbers<NUMBER extends Number & Comparable<NUMBER>> extend
    *
    * @param info contains information about the assertion.
    * @param actual the actual value.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/left.java
    * @param expected the value to compare actual too.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/base.java
+=======
+   * @param actual the expected value.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/right.java
    * @param offset the given positive offset.
    */
   public void assertIsCloseTo(final AssertionInfo info, final NUMBER actual, final NUMBER expected,
@@ -196,7 +201,12 @@ public abstract class Numbers<NUMBER extends Number & Comparable<NUMBER>> extend
    *
    * @param info contains information about the assertion.
    * @param actual the actual value.
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/left.java
    * @param expected the value to compare actual too.
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/base.java
+=======
+   * @param actual the expected value.
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/6e98947d7295414f753f05fd251878ba7277bdb1/src/main/java/org/assertj/core/internal/Numbers.java/right.java
    * @param offset the given positive offset.
    */
   public void assertIsNotCloseTo(final AssertionInfo info, final NUMBER actual, final NUMBER expected,

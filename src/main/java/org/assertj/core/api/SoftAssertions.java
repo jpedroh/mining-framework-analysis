@@ -12,13 +12,12 @@
  */
 package org.assertj.core.api;
 
+import static org.assertj.core.api.Assertions.extractProperty;
 import static java.lang.String.format;
 import static org.assertj.core.groups.FieldsOrPropertiesExtractor.extract;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-
 import org.assertj.core.api.iterable.Extractor;
 
 /**
@@ -70,6 +69,7 @@ import org.assertj.core.api.iterable.Extractor;
  *   softly.assertThat(mansion.professor()).as(&quot;Professor&quot;).isEqualTo(&quot;well kempt&quot;);
  *   softly.assertAll();
  * }</code></pre>
+ *
  *
  * <p>
  * Now upon running the test our JUnit exception message is far more detailed:
