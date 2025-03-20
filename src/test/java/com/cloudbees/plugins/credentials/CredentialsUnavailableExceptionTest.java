@@ -1,28 +1,4 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2016, CloudBees, Inc..
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package com.cloudbees.plugins.credentials;
-
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
@@ -67,7 +43,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestExtension;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -76,284 +51,216 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 public class CredentialsUnavailableExceptionTest {
+  @Rule public JenkinsRule r = new JenkinsRule();
 
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
-    private CredentialsStore systemStore;
+  private CredentialsStore systemStore;
 
-    @Before
-    public void setUp() throws Exception {
-        SystemCredentialsProvider.ProviderImpl system = ExtensionList.lookup(CredentialsProvider.class).get(
-                SystemCredentialsProvider.ProviderImpl.class);
+  @Before public void setUp() throws Exception {
+    SystemCredentialsProvider.ProviderImpl system = ExtensionList.lookup(CredentialsProvider.class).get(SystemCredentialsProvider.ProviderImpl.class);
+    systemStore = system.getStore(r.getInstance());
+    List<Domain> domainList = new ArrayList<>(systemStore.getDomains());
+    domainList.remove(Domain.global());
+    for (Domain d : domainList) {
+      systemStore.removeDomain(d);
+    }
+    List<Credentials> credentialsList = new ArrayList<>(systemStore.getCredentials(Domain.global()));
+    for (Credentials c : credentialsList) {
+      systemStore.removeCredentials(Domain.global(), c);
+    }
+  }
 
-        systemStore = system.getStore(r.getInstance());
+  @Test public void buildFailure() throws Exception {
+    systemStore.addCredentials(Domain.global(), new UsernameUnavailablePasswordImpl("buildFailure", "test", "foo"));
+    FreeStyleProject project = r.createFreeStyleProject();
+    project.getBuildersList().add(new PasswordBuildStep("buildFailure"));
+    FreeStyleBuild build = project.scheduleBuild2(0).get();
+    this.r.assertBuildStatus(Result.FAILURE, build);
+    this.r.assertLogContains("username: foo", build);
+    this.r.assertLogContains("Property \'password\' is currently unavailable", build);
+    this.r.assertLogNotContains("Could not find", build);
+    this.r.assertLogNotContains("Extracted secret", build);
+  }
 
-        List<Domain> domainList = new ArrayList<>(systemStore.getDomains());
-        domainList.remove(Domain.global());
-        for (Domain d : domainList) {
-            systemStore.removeDomain(d);
-        }
+  @Test public void checkoutFailure() throws Exception {
+    systemStore.addCredentials(Domain.global(), new UsernameUnavailablePasswordImpl("checkoutFailure", "test", "bar"));
+    FreeStyleProject project = r.createFreeStyleProject();
+    project.setScm(new PasswordSCM("checkoutFailure"));
+    FreeStyleBuild build = project.scheduleBuild2(0).get();
+    this.r.assertBuildStatus(Result.FAILURE, build);
+    this.r.assertLogContains("user: bar", build);
+    this.r.assertLogContains("Property \'password\' is currently unavailable", build);
+    this.r.assertLogNotContains("Could not find", build);
+    this.r.assertLogNotContains("Checking out with password", build);
+  }
 
-        List<Credentials> credentialsList = new ArrayList<>(systemStore.getCredentials(Domain.global()));
-        for (Credentials c : credentialsList) {
-            systemStore.removeCredentials(Domain.global(), c);
-        }
+  @Test public void pollingFailure() throws Exception {
+    UsernameUnavailablePasswordImpl credentials = new UsernameUnavailablePasswordImpl("pollingFailure", "test", "manchu");
+    systemStore.addCredentials(Domain.global(), credentials);
+    FreeStyleProject project = r.createFreeStyleProject();
+    project.setQuietPeriod(0);
+    r.buildAndAssertSuccess(project);
+    project.setScm(new PasswordSCM("pollingFailure"));
+    SCMTrigger trigger = new SCMTrigger("* * * * *");
+    project.addTrigger(trigger);
+    trigger.start(project, true);
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.add(Calendar.MINUTE, 1);
+    int number = project.getLastBuild().getNumber();
+    Trigger.checkTriggers(cal);
+    r.waitUntilNoActivity();
+    SCMTrigger.SCMAction action = getScmAction(trigger);
+    assertThat(action.getLog(), allOf(containsString("Checking remote revision as user: manchu"), containsString("Property \'password\' is currently unavailable")));
+    assertThat("No new builds", project.getLastBuild().getNumber(), is(number));
+    cal.add(Calendar.MINUTE, 1);
+    Trigger.checkTriggers(cal);
+    r.waitUntilNoActivity();
+    action = getScmAction(trigger);
+    assertThat(action.getLog(), allOf(containsString("Checking remote revision as user: manchu"), containsString("Property \'password\' is currently unavailable")));
+    assertThat("No new builds", project.getLastBuild().getNumber(), is(number));
+    systemStore.updateCredentials(Domain.global(), credentials, new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "pollingFailure", "working", "manchu", "secret"));
+    Trigger.checkTriggers(cal);
+    r.waitUntilNoActivity();
+    action = getScmAction(trigger);
+    assertThat(action.getLog(), allOf(containsString("Checking remote revision as user: manchu"), not(containsString("Property \'password\' is currently unavailable")), containsString("Checking remote revision with password: secret")));
+    assertThat("New build", project.getLastBuild().getNumber(), greaterThan(number));
+  }
+
+  private SCMTrigger.SCMAction getScmAction(SCMTrigger trigger) {
+    Collection<? extends Action> actions = trigger.getProjectActions();
+    for (Action a : actions) {
+      if (a instanceof SCMTrigger.SCMAction) {
+        return (SCMTrigger.SCMAction) a;
+      }
+    }
+    return null;
+  }
+
+  public static class PasswordSCM extends SCM {
+    private final String id;
+
+    public PasswordSCM(String id) {
+      this.id = id;
     }
 
-    @Test
-    public void buildFailure() throws Exception {
-        systemStore.addCredentials(Domain.global(), new UsernameUnavailablePasswordImpl("buildFailure", "test", "foo"));
-        FreeStyleProject project = r.createFreeStyleProject();
-        project.getBuildersList().add(new PasswordBuildStep("buildFailure"));
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        this.r.assertBuildStatus(Result.FAILURE, build);
-        this.r.assertLogContains("username: foo", build);
-        this.r.assertLogContains("Property 'password' is currently unavailable", build);
-        this.r.assertLogNotContains("Could not find", build);
-        this.r.assertLogNotContains("Extracted secret", build);
+    @Override public boolean supportsPolling() {
+      return true;
     }
 
-    @Test
-    public void checkoutFailure() throws Exception {
-        systemStore.addCredentials(Domain.global(), new UsernameUnavailablePasswordImpl("checkoutFailure", "test", "bar"));
-        FreeStyleProject project = r.createFreeStyleProject();
-        project.setScm(new PasswordSCM("checkoutFailure"));
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        this.r.assertBuildStatus(Result.FAILURE, build);
-        this.r.assertLogContains("user: bar", build);
-        this.r.assertLogContains("Property 'password' is currently unavailable", build);
-        this.r.assertLogNotContains("Could not find", build);
-        this.r.assertLogNotContains("Checking out with password", build);
+    @Override public boolean requiresWorkspaceForPolling() {
+      return false;
     }
 
-    @Test
-    public void pollingFailure() throws Exception {
-        UsernameUnavailablePasswordImpl credentials =
-                new UsernameUnavailablePasswordImpl("pollingFailure", "test", "manchu");
-        systemStore.addCredentials(Domain.global(),
-                credentials);
-        FreeStyleProject project = r.createFreeStyleProject();
-        project.setQuietPeriod(0);
-        // ensure we have a build so that polling doesn't trigger a build by accident
-        r.buildAndAssertSuccess(project);
-        project.setScm(new PasswordSCM("pollingFailure"));
-        SCMTrigger trigger = new SCMTrigger("* * * * *");
-        project.addTrigger(trigger);
-        trigger.start(project, true);
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.add(Calendar.MINUTE, 1);
-        int number = project.getLastBuild().getNumber();
-        // now we trigger polling the first time...
-        Trigger.checkTriggers(cal);
-        // we should get here without an exception being thrown or else core is handling the runtime exceptions poorly
-        r.waitUntilNoActivity();
-        SCMTrigger.SCMAction action = getScmAction(trigger);
-        assertThat(action.getLog(), allOf(
-                containsString("Checking remote revision as user: manchu"),
-                containsString("Property 'password' is currently unavailable")));
-        assertThat("No new builds", project.getLastBuild().getNumber(), is(number));
-        cal.add(Calendar.MINUTE, 1);
-        // now we trigger polling the second time to verify that polling is not stuck
-        Trigger.checkTriggers(cal);
-        r.waitUntilNoActivity();
-        action = getScmAction(trigger);
-        assertThat(action.getLog(), allOf(
-                containsString("Checking remote revision as user: manchu"),
-                containsString("Property 'password' is currently unavailable")));
-        assertThat("No new builds", project.getLastBuild().getNumber(), is(number));
-        systemStore.updateCredentials(Domain.global(), credentials, new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, "pollingFailure", "working", "manchu", "secret"));
-        // now we trigger polling the third time... now with working credentials
-        Trigger.checkTriggers(cal);
-        r.waitUntilNoActivity();
-        action = getScmAction(trigger);
-        assertThat(action.getLog(), allOf(
-                containsString("Checking remote revision as user: manchu"),
-                not(containsString("Property 'password' is currently unavailable")),
-                containsString("Checking remote revision with password: secret")));
-        assertThat("New build", project.getLastBuild().getNumber(), greaterThan(number));
+    @Override public void checkout(@NonNull Run<?, ?> build, @NonNull Launcher launcher, @NonNull FilePath workspace, @NonNull TaskListener listener, @javax.annotation.CheckForNull File changelogFile, @javax.annotation.CheckForNull SCMRevisionState baseline) {
+      StandardUsernamePasswordCredentials credentials = CredentialsProvider.findCredentialById(this.id, StandardUsernamePasswordCredentials.class, build);
+      if (credentials == null) {
+        listener.getLogger().printf("Could not find credentials with id \'%s\'%n", id);
+        build.setResult(Result.UNSTABLE);
+      } else {
+        listener.getLogger().printf("Checking out as user: %s%n", credentials.getUsername());
+        Secret password = credentials.getPassword();
+        listener.getLogger().printf("Checking out with password: %s%n", password.getPlainText());
+      }
     }
 
-    private SCMTrigger.SCMAction getScmAction(SCMTrigger trigger) {
-        Collection<? extends Action> actions = trigger.getProjectActions();
-        for (Action a : actions) {
-            if (a instanceof SCMTrigger.SCMAction) {
-                return (SCMTrigger.SCMAction)a;
-            }
+    @Override public SCMRevisionState calcRevisionsFromBuild(@NonNull Run<?, ?> build, @Nullable FilePath workspace, @Nullable Launcher launcher, @NonNull TaskListener listener) {
+      return new SCMRevisionState() {
+        @Override public String getIconFileName() {
+          return "mock.svg";
         }
-        return null;
+
+        @Override public String getDisplayName() {
+          return "mock";
+        }
+
+        @Override public String getUrlName() {
+          return "mock";
+        }
+      };
     }
 
-    public static class PasswordSCM extends SCM {
-
-        private final String id;
-
-        public PasswordSCM(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean supportsPolling() {
-            return true;
-        }
-
-        @Override
-        public boolean requiresWorkspaceForPolling() {
-            return false;
-        }
-
-        @Override
-        public void checkout(@NonNull Run<?, ?> build, @NonNull Launcher launcher, @NonNull FilePath workspace,
-                             @NonNull TaskListener listener, @javax.annotation.CheckForNull File changelogFile,
-                             @javax.annotation.CheckForNull SCMRevisionState baseline) {
-            StandardUsernamePasswordCredentials credentials =
-                    CredentialsProvider.findCredentialById(this.id, StandardUsernamePasswordCredentials.class, build);
-            if (credentials == null) {
-                listener.getLogger().printf("Could not find credentials with id '%s'%n", id);
-                build.setResult(Result.UNSTABLE);
-            } else {
-                listener.getLogger().printf("Checking out as user: %s%n", credentials.getUsername());
-                Secret password = credentials.getPassword();
-                listener.getLogger().printf("Checking out with password: %s%n", password.getPlainText());
-            }
-        }
-
-        @Override
-        public SCMRevisionState calcRevisionsFromBuild(@NonNull Run<?, ?> build, @Nullable FilePath workspace,
-                                                       @Nullable Launcher launcher, @NonNull TaskListener listener) {
-            return new SCMRevisionState() {
-                @Override
-                public String getIconFileName() {
-                    return "mock.svg";
-                }
-
-                @Override
-                public String getDisplayName() {
-                    return "mock";
-                }
-
-                @Override
-                public String getUrlName() {
-                    return "mock";
-                }
-            };
-        }
-
-        @Override
-        public PollingResult compareRemoteRevisionWith(@NonNull Job<?, ?> project, @Nullable Launcher launcher,
-                                                       @Nullable FilePath workspace, @NonNull TaskListener listener,
-                                                       @NonNull SCMRevisionState baseline)
-                throws IOException {
-            StandardUsernamePasswordCredentials credentials = CredentialsMatchers.firstOrNull(
-                    CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, project,
-                            CredentialsProvider.getDefaultAuthenticationOf(project),
-                            Collections.emptyList()), CredentialsMatchers.withId(id));
-            if (credentials == null) {
-                throw new IOException(String.format("Could not find credentials with id '%s'", id));
-            } else {
-                listener.getLogger().printf("Checking remote revision as user: %s%n", credentials.getUsername());
-                Secret password = credentials.getPassword();
-                listener.getLogger()
-                        .printf("Checking remote revision with password: %s%n", password.getPlainText());
-            }
-            return PollingResult.SIGNIFICANT;
-        }
-
-        @Override
-        public ChangeLogParser createChangeLogParser() {
-            return new ChangeLogParser() {
-                @Override
-                public ChangeLogSet<? extends ChangeLogSet.Entry> parse(Run build, RepositoryBrowser<?> browser,
-                                                                        File changelogFile) {
-                    return ChangeLogSet.createEmpty(build);
-                }
-            };
-        }
-
-        @TestExtension
-        public static class DescriptorImpl extends SCMDescriptor<PasswordSCM> {
-
-            public DescriptorImpl() {
-                super(RepositoryBrowser.class);
-            }
-
-            @NonNull
-            @Override
-            public String getDisplayName() {
-                return "Password SCM";
-            }
-        }
+    @Override public PollingResult compareRemoteRevisionWith(@NonNull Job<?, ?> project, @Nullable Launcher launcher, @Nullable FilePath workspace, @NonNull TaskListener listener, @NonNull SCMRevisionState baseline) throws IOException {
+      StandardUsernamePasswordCredentials credentials = CredentialsMatchers.firstOrNull(CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class, project, CredentialsProvider.getDefaultAuthenticationOf(project), Collections.emptyList()), CredentialsMatchers.withId(id));
+      if (credentials == null) {
+        throw new IOException(String.format("Could not find credentials with id \'%s\'", id));
+      } else {
+        listener.getLogger().printf("Checking remote revision as user: %s%n", credentials.getUsername());
+        Secret password = credentials.getPassword();
+        listener.getLogger().printf("Checking remote revision with password: %s%n", password.getPlainText());
+      }
+      return PollingResult.SIGNIFICANT;
     }
 
-    public static class PasswordBuildStep extends Builder {
-
-        private final String id;
-
-        public PasswordBuildStep(String id) {
-            this.id = id;
+    @Override public ChangeLogParser createChangeLogParser() {
+      return new ChangeLogParser() {
+        @Override public ChangeLogSet<? extends ChangeLogSet.Entry> parse(Run build, RepositoryBrowser<?> browser, File changelogFile) {
+          return ChangeLogSet.createEmpty(build);
         }
-
-        @Override
-        public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-            StandardUsernamePasswordCredentials credentials =
-                    CredentialsProvider.findCredentialById(this.id, StandardUsernamePasswordCredentials.class, build);
-            if (credentials == null) {
-                listener.getLogger().printf("Could not find credentials with id '%s'%n", id);
-                build.setResult(Result.UNSTABLE);
-            } else {
-                listener.getLogger().printf("Credentials with id '%s', username: %s%n", id, credentials.getUsername());
-                Secret password = credentials.getPassword();
-                listener.getLogger().printf("Extracted secret: %s%n", password.getPlainText());
-            }
-            return true;
-        }
-
-        @TestExtension
-        public static class DescriptorImpl extends Descriptor<Builder> {
-
-            @NonNull
-            @Override
-            public String getDisplayName() {
-                return "Password buildstep";
-            }
-        }
+      };
     }
 
-    public static class UsernameUnavailablePasswordImpl extends BaseStandardCredentials implements StandardUsernamePasswordCredentials {
+    @TestExtension public static class DescriptorImpl extends SCMDescriptor<PasswordSCM> {
+      public DescriptorImpl() {
+        super(RepositoryBrowser.class);
+      }
 
-        private final String username;
-
-        public UsernameUnavailablePasswordImpl(@CheckForNull String id, @CheckForNull String description,
-                                               String username) {
-            super(id, description);
-            this.username = username;
-        }
-
-        public UsernameUnavailablePasswordImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id,
-                                               @CheckForNull String description, String username) {
-            super(scope, id, description);
-            this.username = username;
-        }
-
-        @NonNull
-        @Override
-        public Secret getPassword() {
-            throw new CredentialsUnavailableException("password");
-        }
-
-        @NonNull
-        @Override
-        public String getUsername() {
-            return username;
-        }
-
-        @TestExtension
-        public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
-
-            @NonNull
-            @Override
-            public String getDisplayName() {
-                return "Username and unavailable password";
-            }
-        }
+      @NonNull @Override public String getDisplayName() {
+        return "Password SCM";
+      }
     }
+  }
+
+  public static class PasswordBuildStep extends Builder {
+    private final String id;
+
+    public PasswordBuildStep(String id) {
+      this.id = id;
+    }
+
+    @Override public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
+      StandardUsernamePasswordCredentials credentials = CredentialsProvider.findCredentialById(this.id, StandardUsernamePasswordCredentials.class, build);
+      if (credentials == null) {
+        listener.getLogger().printf("Could not find credentials with id \'%s\'%n", id);
+        build.setResult(Result.UNSTABLE);
+      } else {
+        listener.getLogger().printf("Credentials with id \'%s\', username: %s%n", id, credentials.getUsername());
+        Secret password = credentials.getPassword();
+        listener.getLogger().printf("Extracted secret: %s%n", password.getPlainText());
+      }
+      return true;
+    }
+
+    @TestExtension public static class DescriptorImpl extends Descriptor<Builder> {
+      @NonNull @Override public String getDisplayName() {
+        return "Password buildstep";
+      }
+    }
+  }
+
+  public static class UsernameUnavailablePasswordImpl extends BaseStandardCredentials implements StandardUsernamePasswordCredentials {
+    private final String username;
+
+    public UsernameUnavailablePasswordImpl(@CheckForNull String id, @CheckForNull String description, String username) {
+      super(id, description);
+      this.username = username;
+    }
+
+    public UsernameUnavailablePasswordImpl(@CheckForNull CredentialsScope scope, @CheckForNull String id, @CheckForNull String description, String username) {
+      super(scope, id, description);
+      this.username = username;
+    }
+
+    @NonNull @Override public Secret getPassword() {
+      throw new CredentialsUnavailableException("password");
+    }
+
+    @NonNull @Override public String getUsername() {
+      return username;
+    }
+
+    @TestExtension public static class DescriptorImpl extends BaseStandardCredentialsDescriptor {
+      @NonNull @Override public String getDisplayName() {
+        return "Username and unavailable password";
+      }
+    }
+  }
 }
