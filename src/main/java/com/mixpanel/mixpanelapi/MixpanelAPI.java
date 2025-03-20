@@ -26,8 +26,6 @@ import org.json.JSONObject;
 public class MixpanelAPI {
 
     private static final int BUFFER_SIZE = 256; // Small, we expect small responses.
-
-    private static final int CONNECT_TIMEOUT_MILLIS = 30000; // 30 seconds should be more than enough for a response.
     private static final int READ_TIMEOUT_MILLIS = 120000; // Two minutes should be more than enough for a response.
 
     private final String mEventsEndpoint;
@@ -202,5 +200,7 @@ public class MixpanelAPI {
 
         return out.toString();
     }
+    private static final int CONNECT_TIMEOUT_MILLIS = 30000;
+// 30 seconds should be more than enough for a response.
 
 }
