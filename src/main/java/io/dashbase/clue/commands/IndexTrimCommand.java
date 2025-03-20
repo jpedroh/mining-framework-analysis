@@ -1,14 +1,16 @@
 package io.dashbase.clue.commands;
 
-import io.dashbase.clue.ClueContext;
+import java.io.PrintStream;
+import java.util.Random;
+
 import io.dashbase.clue.util.DocIdMatcher;
-import io.dashbase.clue.util.MatchSomeDocsQuery;
 import io.dashbase.clue.util.MatcherDocIdSetIterator;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.Query;
 
-import java.io.PrintStream;
+import io.dashbase.clue.ClueContext;
+import io.dashbase.clue.util.MatchSomeDocsQuery;
 
 public class IndexTrimCommand extends ClueCommand {
 
@@ -28,7 +30,13 @@ public class IndexTrimCommand extends ClueCommand {
   
   private static Query buildDeleteQuery(final int percentToDelete, int maxDoc) {
     assert percentToDelete >= 0 && percentToDelete <= 100;
+<<<<<<< /usr/src/app/output/javasoze/clue/50ef81d6971ce97277810a9f4f2f013e7c76477d/src/main/java/io/dashbase/clue/commands/IndexTrimCommand.java/left.java
     return new MatchSomeDocsQuery(new MatcherDocIdSetIterator(DocIdMatcher.newRandomMatcher(percentToDelete), maxDoc));
+||||||| /usr/src/app/output/javasoze/clue/50ef81d6971ce97277810a9f4f2f013e7c76477d/src/main/java/io/dashbase/clue/commands/IndexTrimCommand.java/base.java
+    return new MatchSomeDocsQuery(new MatcherDocIdSetIterator(DocIdMatcher.newRandomMatcher(percentToDelete)));
+=======
+    return new MatchSomeDocsQuery(new MatcherDocIdSetIterator(DocIdMatcher.newRandomMatcher(percentToDelete), Integer.MAX_VALUE));
+>>>>>>> /usr/src/app/output/javasoze/clue/50ef81d6971ce97277810a9f4f2f013e7c76477d/src/main/java/io/dashbase/clue/commands/IndexTrimCommand.java/right.java
   }
 
   @Override
