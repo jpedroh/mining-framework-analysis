@@ -1,13 +1,1 @@
-package com.mitchellbosecke.pebble.template;
-
-import java.util.Locale;
-
-/**
- * Created by mitchell on 2016-11-13.
- */
-public interface EvaluationContext {
-
-    boolean isStrictVariables();
-
-    Locale getLocale();
-}
+  package    com . mitchellbosecke . pebble . template ;   import   java . util . Locale ;  import      com . github . benmanes . caffeine . cache . Cache ;   public interface EvaluationContext  {  boolean isStrictVariables  ( ) ;  Locale getLocale  ( ) ; }
