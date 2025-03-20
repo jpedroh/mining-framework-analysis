@@ -84,39 +84,92 @@ public final class InternationalFixedChronology extends AbstractChronology imple
     /**
      * Serialization version UID.
      */
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/left.java
+    private static final long serialVersionUID = -199871091397669007L;
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/base.java
+=======
     private static final long serialVersionUID = -8252657100538813526L;
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/right.java
+
     /**
      * Standard 7-day week.
      */
+
     static final int DAYS_IN_WEEK = 7;
+
     /**
      * In all months, there are 4 complete weeks.
      */
+
     static final int WEEKS_IN_MONTH = 4;
+
     /**
      * There are 13 months in a year.
      */
+
     static final int MONTHS_IN_YEAR = 13;
+
     /**
      * There are 4 weeks of 7 days, or 28 total days in a month.
      */
+
     static final int DAYS_IN_MONTH = WEEKS_IN_MONTH * DAYS_IN_WEEK;
+
     /**
      * Range of aligned day-of-week.
      */
+
     static final ValueRange ALIGNED_DAY_OF_WEEK_RANGE = ValueRange.of(0, DAYS_IN_WEEK);
+
     /**
      * Range of day-of-week.
      */
+
     static final ValueRange DAY_OF_WEEK_RANGE = ValueRange.of(0, 1, 0, DAYS_IN_WEEK);
+
     /**
      * There are 13 months of 28 days, or 365 days in a (non-leap) year.
      */
+
     static final int DAYS_IN_YEAR = MONTHS_IN_YEAR * DAYS_IN_MONTH + 1;
+
     /**
      * There are 52 weeks in a year.
      */
+
     static final int WEEKS_IN_YEAR = DAYS_IN_YEAR / DAYS_IN_WEEK;
+
+    /**
+     * Range of year.
+     */
+
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/left.java
+    private static final ValueRange YEAR_RANGE = ValueRange.of (1, 999_999);
+    static final ValueRange YEAR_RANGE = ValueRange.of(1, 1_000_000L);
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/base.java
+    static final ValueRange YEAR_RANGE = ValueRange.of(1, 1_000_000L);
+=======
+    static final ValueRange YEAR_RANGE = ValueRange.of(1, 1_000_000L);
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/right.java
+
+    /**
+     * Range of proleptic month.
+     */
+
+    /**
+     * Range of day of month.
+     */
+
+    /**
+     * Range of day of year.
+     */
+
+    static final ValueRange DAY_OF_YEAR_RANGE = ValueRange.of (1, DAYS_IN_YEAR, DAYS_IN_YEAR + 1);
+
+    /**
+     * Range of month of year.
+     */
+
     /**
      * The number of days in a 400 year cycle.
      */
@@ -130,7 +183,6 @@ public final class InternationalFixedChronology extends AbstractChronology imple
     /**
      * Range of year.
      */
-    static final ValueRange YEAR_RANGE = ValueRange.of(1, 1_000_000L);
     /**
      * Epoch day range.
      */
@@ -162,7 +214,6 @@ public final class InternationalFixedChronology extends AbstractChronology imple
     /**
      * Range of day of year, inclusive
      */
-    static final ValueRange DAY_OF_YEAR_RANGE = ValueRange.of(1, DAYS_IN_YEAR, DAYS_IN_YEAR + 1);
     /**
      * Range of month of year.
      */
@@ -468,7 +519,13 @@ public final class InternationalFixedChronology extends AbstractChronology imple
             throw new ClassCastException("Invalid era: " + era);
         }
 
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/left.java
+        if (1 > yearOfEra) {
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/base.java
+        if (0 > yearOfEra) {
+=======
         if (yearOfEra < 1) {
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/main/java/org/threeten/extra/chrono/InternationalFixedChronology.java/right.java
             throw new DateTimeException("Invalid year of era: " + yearOfEra);
         }
 

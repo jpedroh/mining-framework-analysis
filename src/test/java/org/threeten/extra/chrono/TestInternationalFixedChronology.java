@@ -112,8 +112,18 @@ public class TestInternationalFixedChronology {
     @DataProvider(name = "samples")
     Object[][] data_samples() {
         return new Object[][] {
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+                { InternationalFixedDate.of (1, 13, 29), LocalDate.of (1, 12, 31) },
+                { InternationalFixedDate.of (1, 1, 1), LocalDate.of (1, 1, 1) },
+                { InternationalFixedDate.of (1, 1, 2), LocalDate.of (1, 1, 2) },
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+                { InternationalFixedDate.of (0, 13, 29), LocalDate.of (0, 12, 31) },
+                { InternationalFixedDate.of (1, 1, 1), LocalDate.of (1, 1, 1) },
+                { InternationalFixedDate.of (1, 1, 2), LocalDate.of (1, 1, 2) },
+=======
             {InternationalFixedDate.of(1, 1, 1), LocalDate.of(1, 1, 1)},
             {InternationalFixedDate.of(1, 1, 2), LocalDate.of(1, 1, 2)},
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
 
             {InternationalFixedDate.of(1, 6, 27), LocalDate.of(1, 6, 16)},
             {InternationalFixedDate.of(1, 6, 28), LocalDate.of(1, 6, 17)},
@@ -133,11 +143,19 @@ public class TestInternationalFixedChronology {
             {InternationalFixedDate.of(4, 7, 1), LocalDate.of(4, 6, 18)},
             {InternationalFixedDate.of(4, 7, 2), LocalDate.of(4, 6, 19)},
 
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+                { InternationalFixedDate.of (1, 13, 28), LocalDate.of (1, 12, 30) },
+                { InternationalFixedDate.of (1, 13, 27), LocalDate.of (1, 12, 29) },
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+                { InternationalFixedDate.of (0, 13, 28), LocalDate.of (0, 12, 30) },
+                { InternationalFixedDate.of (0, 13, 27), LocalDate.of (0, 12, 29) },
+=======
             {InternationalFixedDate.of(4, 13, 28), LocalDate.of(4, 12, 30)},
             {InternationalFixedDate.of(4, 13, 27), LocalDate.of(4, 12, 29)},
             {InternationalFixedDate.of(4, 0, 0), LocalDate.of(4, 12, 31)},
             {InternationalFixedDate.yearDay(4), LocalDate.of(4, 12, 31)},
             {InternationalFixedDate.of(5, 1, 1), LocalDate.of(5, 1, 1)},
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
 
             {InternationalFixedDate.of(100, 6, 27), LocalDate.of(100, 6, 16)},
             {InternationalFixedDate.of(100, 6, 28), LocalDate.of(100, 6, 17)},
@@ -200,6 +218,21 @@ public class TestInternationalFixedChronology {
         assertEquals(InternationalFixedChronology.INSTANCE.date(iso), fixed);
     }
 
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    @Test (dataProvider = "samples")
+    public void test_plusDays (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (LocalDate.from (date.plus (0, ChronoUnit.DAYS)), iso);
+        assertEquals (LocalDate.from (date.plus (1, ChronoUnit.DAYS)), iso.plusDays (1));
+        assertEquals (LocalDate.from (date.plus (35, ChronoUnit.DAYS)), iso.plusDays (35));
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    @Test (dataProvider = "samples")
+    public void test_plusDays (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (LocalDate.from (date.plus (0, ChronoUnit.DAYS)), iso);
+        assertEquals (LocalDate.from (date.plus (1, ChronoUnit.DAYS)), iso.plusDays (1));
+        assertEquals (LocalDate.from (date.plus (35, ChronoUnit.DAYS)), iso.plusDays (35));
+        assertEquals (LocalDate.from (date.plus (-1, ChronoUnit.DAYS)), iso.plusDays (-1));
+        assertEquals (LocalDate.from (date.plus (-60, ChronoUnit.DAYS)), iso.plusDays (-60));
+=======
     @Test(dataProvider = "samples")
     public void test_plusDays(InternationalFixedDate fixed, LocalDate iso) {
         assertEquals(LocalDate.from(fixed.plus(0, DAYS)), iso);
@@ -209,8 +242,24 @@ public class TestInternationalFixedChronology {
             assertEquals(LocalDate.from(fixed.plus(-1, DAYS)), iso.plusDays(-1));
             assertEquals(LocalDate.from(fixed.plus(-60, DAYS)), iso.plusDays(-60));
         }
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    @Test (dataProvider = "samples")
+    public void test_minusDays (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (LocalDate.from (date.minus (0, ChronoUnit.DAYS)), iso);
+        assertEquals (LocalDate.from (date.minus (-1, ChronoUnit.DAYS)), iso.minusDays (-1));
+        assertEquals (LocalDate.from (date.minus (-60, ChronoUnit.DAYS)), iso.minusDays (-60));
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    @Test (dataProvider = "samples")
+    public void test_minusDays (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (LocalDate.from (date.minus (0, ChronoUnit.DAYS)), iso);
+        assertEquals (LocalDate.from (date.minus (1, ChronoUnit.DAYS)), iso.minusDays (1));
+        assertEquals (LocalDate.from (date.minus (35, ChronoUnit.DAYS)), iso.minusDays (35));
+        assertEquals (LocalDate.from (date.minus (-1, ChronoUnit.DAYS)), iso.minusDays (-1));
+        assertEquals (LocalDate.from (date.minus (-60, ChronoUnit.DAYS)), iso.minusDays (-60));
+=======
     @Test(dataProvider = "samples")
     public void test_minusDays(InternationalFixedDate fixed, LocalDate iso) {
         assertEquals(LocalDate.from(fixed.minus(0, DAYS)), iso);
@@ -220,9 +269,23 @@ public class TestInternationalFixedChronology {
         }
         assertEquals(LocalDate.from(fixed.minus(-1, DAYS)), iso.minusDays(-1));
         assertEquals(LocalDate.from(fixed.minus(-60, DAYS)), iso.minusDays(-60));
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
     }
 
-
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    @Test (dataProvider = "samples")
+    public void test_until_DAYS (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (date.until (iso.plusDays (0), ChronoUnit.DAYS), 0);
+        assertEquals (date.until (iso.plusDays (1), ChronoUnit.DAYS), 1);
+        assertEquals (date.until (iso.plusDays (35), ChronoUnit.DAYS), 35);
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    @Test (dataProvider = "samples")
+    public void test_until_DAYS (final InternationalFixedDate date, final LocalDate iso) {
+        assertEquals (date.until (iso.plusDays (0), ChronoUnit.DAYS), 0);
+        assertEquals (date.until (iso.plusDays (1), ChronoUnit.DAYS), 1);
+        assertEquals (date.until (iso.plusDays (35), ChronoUnit.DAYS), 35);
+        assertEquals (date.until (iso.minusDays (40), ChronoUnit.DAYS), -40);
+=======
     @Test(dataProvider = "samples")
     public void test_until_DAYS(InternationalFixedDate fixed, LocalDate iso) {
         assertEquals(fixed.until(iso.plusDays(0), DAYS), 0);
@@ -231,11 +294,27 @@ public class TestInternationalFixedChronology {
         if (LocalDate.ofYearDay(1, 40).isBefore(iso)) {
             assertEquals(fixed.until(iso.minusDays(40), DAYS), -40);
         }
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
     }
 
     @DataProvider(name = "badDates")
     Object[][] data_badDates() {
         return new Object[][] {
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+                {    0, 1, 1 },
+                { 1900, 0, 0 },
+                { 1900, -1, 1 },
+                { 1900, 0, 1 },
+                { 1900, 15, 1 },
+                { 1900, 16, 1 },
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+                { 1900, 0, 0 },
+
+                { 1900, -1, 1 },
+                { 1900, 0, 1 },
+                { 1900, 15, 1 },
+                { 1900, 16, 1 },
+=======
             {-1, 13, 28},
             {-1, 0, 0},
             {0, 1, 1},
@@ -243,6 +322,7 @@ public class TestInternationalFixedChronology {
             {1900, -2, 1},
             {1900, 14, 1},
             {1900, 15, 1},
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
 
             {1900, 1, -1},
             {1900, 1, 0},
@@ -310,14 +390,52 @@ public class TestInternationalFixedChronology {
             return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0);
         };
 
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+        for (int year = 1; year < 1001; year++) {
+            InternationalFixedDate base = InternationalFixedDate.of (year, 1, 1);
+            assertEquals (base.isLeapYear (), isLeapYear.test (year), "Year " + year + " is failing");
+            assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (year), isLeapYear.test (year), "Year " + year + " is failing");
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+        for (int year = 0; year < 1000; year++) {
+            InternationalFixedDate base = InternationalFixedDate.of (year, 1, 1);
+            assertEquals (base.isLeapYear (), isLeapYear.test (year), "Year " + year + " is failing");
+            assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (year), isLeapYear.test (year), "Year " + year + " is failing");
+=======
         for (int year = 1; year < 500; year++) {
             InternationalFixedDate base = InternationalFixedDate.of(year, 1, 1);
             assertEquals(base.isLeapYear(), isLeapYear.test(year), "Year " + year + " is failing");
             assertEquals(InternationalFixedChronology.INSTANCE.isLeapYear(year), isLeapYear.test(year), "Year " + year + " is failing leap-year test");
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
         }
     }
 
     @Test
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    public void test_isLeapYear_specific () {
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (400), true);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (100), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (99), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (7), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (6), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (5), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (4), true);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (3), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (2), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (1), false);
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    public void test_isLeapYear_specific () {
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (400), true);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (100), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (99), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (7), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (6), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (5), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (4), true);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (3), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (2), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (1), false);
+        assertEquals (InternationalFixedChronology.INSTANCE.isLeapYear (0), true);
+=======
     public void test_isLeapYear_specific() {
         assertTrue(InternationalFixedChronology.INSTANCE.isLeapYear(400));
         assertFalse(InternationalFixedChronology.INSTANCE.isLeapYear(100));
@@ -325,6 +443,7 @@ public class TestInternationalFixedChronology {
         assertFalse(InternationalFixedChronology.INSTANCE.isLeapYear(3));
         assertFalse(InternationalFixedChronology.INSTANCE.isLeapYear(2));
         assertFalse(InternationalFixedChronology.INSTANCE.isLeapYear(1));
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
     }
 
     //-----------------------------------------------------------------------
@@ -368,10 +487,22 @@ public class TestInternationalFixedChronology {
     // era, prolepticYear and dateYearDay
     //-----------------------------------------------------------------------
     @Test
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    public void test_era_loop () {
+        for (int year = 1; year < 401; year++) {
+            InternationalFixedDate base = InternationalFixedChronology.INSTANCE.date (year, 1, 1);
+            assertEquals (year, base.get (ChronoField.YEAR));
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    public void test_era_loop () {
+        for (int year = 0; year < 400; year++) {
+            InternationalFixedDate base = InternationalFixedChronology.INSTANCE.date (year, 1, 1);
+            assertEquals (year, base.get (ChronoField.YEAR));
+=======
     public void test_era_loop() {
         for (int year = 1; year < 200; year++) {
             InternationalFixedDate base = InternationalFixedChronology.INSTANCE.date(year, 1, 1);
             assertEquals(year, base.get(YEAR));
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
             InternationalFixedEra era = InternationalFixedEra.CE;
             assertEquals(era, base.getEra());
             assertEquals(year, base.get(YEAR_OF_ERA));
@@ -381,10 +512,22 @@ public class TestInternationalFixedChronology {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+    public void test_era_yearDay_loop () {
+        for (int year = 1; year < 401; year++) {
+            InternationalFixedDate base = InternationalFixedChronology.INSTANCE.dateYearDay (year, 1);
+            assertEquals (year, base.get (ChronoField.YEAR));
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+    public void test_era_yearDay_loop () {
+        for (int year = 0; year < 400; year++) {
+            InternationalFixedDate base = InternationalFixedChronology.INSTANCE.dateYearDay (year, 1);
+            assertEquals (year, base.get (ChronoField.YEAR));
+=======
     public void test_era_yearDay_loop() {
         for (int year = 1; year < 200; year++) {
             InternationalFixedDate base = InternationalFixedChronology.INSTANCE.dateYearDay(year, 1);
             assertEquals(year, base.get(YEAR));
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
             InternationalFixedEra era = InternationalFixedEra.CE;
             assertEquals(era, base.getEra());
             assertEquals(year, base.get(YEAR_OF_ERA));
@@ -519,6 +662,37 @@ public class TestInternationalFixedChronology {
     @DataProvider(name = "getLong")
     Object[][] data_getLong() {
         return new Object[][] {
+<<<<<<< /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/left.java
+                { 2014, 5, 26, ChronoField.DAY_OF_WEEK, 7 },
+                { 2014, 5, 26, ChronoField.DAY_OF_MONTH, 26 },
+                { 2014, 5, 26, ChronoField.DAY_OF_YEAR, 28 + 28 + 28 + 28 + 26 },
+                { 2014, 5, 26, ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH, 5 },
+                { 2014, 5, 26, ChronoField.ALIGNED_WEEK_OF_MONTH, 4 },
+                { 2014, 5, 26, ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR, 5 },
+                { 2014, 5, 26, ChronoField.ALIGNED_WEEK_OF_YEAR, 20 },
+                { 2014, 5, 26, ChronoField.MONTH_OF_YEAR, 5 },
+                { 2014, 5, 26, ChronoField.PROLEPTIC_MONTH, 2014 * 13 + 5 - 1 },
+                { 2014, 5, 26, ChronoField.YEAR, 2014 },
+                { 2014, 5, 26, ChronoField.ERA, 1 },
+                {    1, 6,  8, ChronoField.ERA, 1 },
+                { 2014, 5, 26, WeekFields.ISO.dayOfWeek (), 7 },
+||||||| /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/base.java
+                { 2014, 5, 26, ChronoField.DAY_OF_WEEK, 7 },
+                { 2014, 5, 26, ChronoField.DAY_OF_MONTH, 26 },
+                { 2014, 5, 26, ChronoField.DAY_OF_YEAR, 28 + 28 + 28 + 28 + 26 },
+                { 2014, 5, 26, ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH, 5 },
+                { 2014, 5, 26, ChronoField.ALIGNED_WEEK_OF_MONTH, 4 },
+                { 2014, 5, 26, ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR, 5 },
+                { 2014, 5, 26, ChronoField.ALIGNED_WEEK_OF_YEAR, 20 },
+                { 2014, 5, 26, ChronoField.MONTH_OF_YEAR, 5 },
+                { 2014, 5, 26, ChronoField.PROLEPTIC_MONTH, 2014 * 13 + 5 - 1 },
+                { 2014, 5, 26, ChronoField.YEAR, 2014 },
+                { 2014, 5, 26, ChronoField.ERA, 1 },
+                { 1, 6, 8, ChronoField.ERA, 1 },
+                { 0, 6, 8, ChronoField.ERA, 0 },
+
+                { 2014, 5, 26, WeekFields.ISO.dayOfWeek (), 7 },
+=======
             {2014, 5, 26, DAY_OF_WEEK, 5},
             {2014, 5, 26, DAY_OF_MONTH, 26},
             {2014, 5, 26, DAY_OF_YEAR, 28 + 28 + 28 + 28 + 26},
@@ -561,6 +735,7 @@ public class TestInternationalFixedChronology {
             {2012, -1, -1, ALIGNED_WEEK_OF_YEAR, 0},
             {2012, -1, -1, MONTH_OF_YEAR, -1},
             {2012, -1, -1, PROLEPTIC_MONTH, 2012 * 13 + 7 - 1},
+>>>>>>> /usr/src/app/output/threeten/threeten-extra/e5a3e5ebfa32bb843cf0b90c76354f8eeead3ebe/src/test/java/org/threeten/extra/chrono/TestInternationalFixedChronology.java/right.java
         };
     }
 
