@@ -37,7 +37,17 @@ public abstract class AbstractPnpJobProcessor extends AbstractJobProcessor
         }
         try {
             // discard the part
+<<<<<<< /usr/src/app/output/openpnp/openpnp/8dd62e41086ca1245d13969ee7e4d0e9a17318ee/src/main/java/org/openpnp/spi/base/AbstractPnpJobProcessor.java/left.java
             nozzle.place(Configuration.get().getMachine().getDiscardLocation());
+            
+||||||| /usr/src/app/output/openpnp/openpnp/8dd62e41086ca1245d13969ee7e4d0e9a17318ee/src/main/java/org/openpnp/spi/base/AbstractPnpJobProcessor.java/base.java
+            nozzle.place();
+            nozzle.moveToSafeZ();
+            
+            
+=======
+            nozzle.place();
+            nozzle.moveToSafeZ();
             try {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("nozzle", nozzle);
@@ -46,6 +56,7 @@ public abstract class AbstractPnpJobProcessor extends AbstractJobProcessor
             catch (Exception e) {
                 Logger.warn(e);
             }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/8dd62e41086ca1245d13969ee7e4d0e9a17318ee/src/main/java/org/openpnp/spi/base/AbstractPnpJobProcessor.java/right.java
         }
         catch (Exception e) {
             throw new JobProcessorException(nozzle, e);
