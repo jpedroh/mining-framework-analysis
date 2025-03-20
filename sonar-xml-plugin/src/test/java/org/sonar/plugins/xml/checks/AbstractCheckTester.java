@@ -19,15 +19,19 @@
  */
 package org.sonar.plugins.xml.checks;
 
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
+import org.junit.rules.TemporaryFolder;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
+import org.sonar.api.batch.fs.internal.DefaultInputFile;
+import org.sonar.api.batch.fs.internal.FileMetadata;
+import org.sonar.plugins.xml.AbstractXmlPluginTester;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
-import org.junit.rules.TemporaryFolder;
-import org.sonar.api.batch.fs.internal.DefaultFileSystem;
-import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.plugins.xml.AbstractXmlPluginTester;
 import org.sonar.plugins.xml.compat.CompatibleInputFile;
 
 import static org.sonar.plugins.xml.compat.CompatibilityHelper.wrap;
@@ -60,11 +64,20 @@ public abstract class AbstractCheckTester extends AbstractXmlPluginTester {
     return xmlSourceCode;
   }
 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/checks/AbstractCheckTester.java/left.java
+  private InputFile newInputFile(File file) {
+    return new DefaultInputFile("modulekey", file.getName())
+      .setModuleBaseDir(file.getParentFile().toPath())
+      .setCharset(StandardCharsets.UTF_8);
+  }
+||||||| /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/checks/AbstractCheckTester.java/base.java
+=======
   private CompatibleInputFile newInputFile(File file) {
     return wrap(new DefaultInputFile("modulekey", file.getName())
       .setModuleBaseDir(file.getParentFile().toPath())
       .setCharset(StandardCharsets.UTF_8));
   }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/checks/AbstractCheckTester.java/right.java
 
   protected DefaultFileSystem createFileSystem() {
     File workDir = temporaryFolder.newFolder("temp");

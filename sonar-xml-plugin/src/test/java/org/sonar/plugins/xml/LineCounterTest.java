@@ -18,7 +18,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.sonar.plugins.xml;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -34,19 +33,16 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.plugins.xml.checks.XmlFile;
-import org.sonar.plugins.xml.compat.CompatibleInputFile;
 import org.sonar.plugins.xml.language.Xml;
-
 import java.io.File;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import org.sonar.plugins.xml.compat.CompatibleInputFile;
 import static org.sonar.plugins.xml.compat.CompatibilityHelper.wrap;
 
 public class LineCounterTest {
@@ -75,6 +71,26 @@ public class LineCounterTest {
     verifyMetrics("complex.xml", 40, 21, 12);
   }
 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/LineCounterTest.java/left.java
+  private void verifyMetrics(String filename, int lines, int ncloc, int commentLines) throws IOException {
+    File moduleBaseDir = new File("src/test/resources/parsers/linecount");
+    DefaultInputFile inputFile = createInputFile(moduleBaseDir.toPath(), filename);
+    String componentKey = getComponentKey(filename);
+
+    DefaultFileSystem localFS = new DefaultFileSystem(moduleBaseDir);
+    localFS.setWorkDir(tmpFolder.newFolder());
+
+    SensorContextTester context = SensorContextTester.create(moduleBaseDir);
+    LineCounter.analyse(context, fileLinesContextFactory, new XmlFile(inputFile, localFS), Charsets.UTF_8);
+
+    // No empty line at end of file
+    assertThat(context.measure(componentKey, CoreMetrics.LINES).value()).isEqualTo(lines);
+    assertThat(context.measure(componentKey, CoreMetrics.NCLOC).value()).isEqualTo(ncloc);
+    assertThat(context.measure(componentKey, CoreMetrics.COMMENT_LINES).value()).isEqualTo(commentLines);
+  }
+||||||| /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/LineCounterTest.java/base.java
+  private void verifyMetrics(String filename, int lines, int ncloc, int commentLines) throws IOException 
+=======
   private void verifyMetrics(String filename, int lines, int ncloc, int commentLines) throws IOException {
     File moduleBaseDir = new File("src/test/resources/parsers/linecount");
     CompatibleInputFile inputFile = createInputFile(moduleBaseDir.toPath(), filename);
@@ -91,6 +107,7 @@ public class LineCounterTest {
     assertThat(context.measure(componentKey, CoreMetrics.NCLOC).value()).isEqualTo(ncloc);
     assertThat(context.measure(componentKey, CoreMetrics.COMMENT_LINES).value()).isEqualTo(commentLines);
   }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/LineCounterTest.java/right.java
 
   private String getComponentKey(String filename) {
     return MODULE_KEY + ":" + filename;
@@ -108,11 +125,10 @@ public class LineCounterTest {
     verify(fileLinesContext).setIntValue(eq(CoreMetrics.COMMENT_LINES_DATA_KEY), eq(5), eq(1));
   }
 
-  private CompatibleInputFile createInputFile(Path moduleBaseDir, String name) {
+  private CompatibleInputFile createInputFile(Path moduleBaseDir,String name) {
     return wrap(new DefaultInputFile(MODULE_KEY, name)
       .setModuleBaseDir(moduleBaseDir)
-      .setType(InputFile.Type.MAIN)
-      .setLanguage(Xml.KEY)
+      .setType(InputFile.Type.MAIN)  .setLanguage(Xml.KEY)
       .setCharset(StandardCharsets.UTF_8));
   }
 

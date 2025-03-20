@@ -23,8 +23,8 @@ import com.google.common.base.Strings;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -36,8 +36,8 @@ import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.FileMetadata;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
+import org.sonar.api.batch.fs.internal.FileMetadata;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.plugins.xml.checks.XmlFile;
 import org.sonar.plugins.xml.language.Xml;
@@ -275,6 +275,7 @@ public class XmlHighlightingTest {
   public void testCharBeforeProlog() throws Exception {
     File file = tmpFolder.newFile("char_before_prolog.xml");
     FileUtils.write(file, "\n\n\n<?xml version=\"1.0\" encoding=\"UTF-8\" ?> <tag/>");
+    // TODO verify, but should be ok
     DefaultInputFile inputFile = new DefaultInputFile("module", "char_before_prolog.xml")
       .setModuleBaseDir(file.getParentFile().toPath())
       .setType(InputFile.Type.MAIN)
@@ -324,6 +325,7 @@ public class XmlHighlightingTest {
 
   private HighlightingData getFirstHighlightingData(String filename) throws IOException {
     File file = new File("src/test/resources/highlighting/" + filename);
+    // TODO verify, but should be ok
     DefaultInputFile inputFile = new DefaultInputFile("modulekey", filename)
       .setModuleBaseDir(file.getParentFile().toPath())
       .setType(InputFile.Type.MAIN)

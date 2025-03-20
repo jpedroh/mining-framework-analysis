@@ -85,7 +85,8 @@ public class XmlSensor implements Sensor {
           ((AbstractXmlCheck) check).validate(sourceCode);
         }
         saveIssue(context, sourceCode);
-        saveSyntaxHighlighting(context, new XMLHighlighting(xmlFile).getHighlightingData(), xmlFile.getInputFile().wrapped());
+
+        saveSyntaxHighlighting(context,new XMLHighlighting(xmlFile).getHighlightingData(), xmlFile.getInputFile().wrapped());
       }
     } catch (Exception e) {
       throw new IllegalStateException("Could not analyze the file " + xmlFile.getAbsolutePath(), e);
@@ -106,7 +107,13 @@ public class XmlSensor implements Sensor {
     for (XmlIssue xmlIssue : sourceCode.getXmlIssues()) {
       NewIssue newIssue = context.newIssue().forRule(xmlIssue.getRuleKey());
       NewIssueLocation location = newIssue.newLocation()
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/left.java
+        .on(sourceCode.getInputFile())
+||||||| /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/base.java
+        .on
+=======
         .on(sourceCode.getInputFile().wrapped())
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/right.java
         .at(sourceCode.getInputFile().selectLine(xmlIssue.getLine()))
         .message(xmlIssue.getMessage());
       newIssue.at(location).save();
@@ -126,12 +133,23 @@ public class XmlSensor implements Sensor {
   }
 
   @Override
-  public void execute(SensorContext context) {
+  public
+  @Override void execute(SensorContext context) {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/left.java
+    for (InputFile inputFile : fileSystem.inputFiles(mainFilesPredicate)) {
+      XmlFile xmlFile = new XmlFile(inputFile, fileSystem);
+
+      computeLinesMeasures(context, xmlFile);
+      runChecks(context, xmlFile);
+    }
+||||||| /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/base.java
+=======
     for (CompatibleInputFile inputFile : wrap(fileSystem.inputFiles(mainFilesPredicate), context)) {
       XmlFile xmlFile = new XmlFile(inputFile, fileSystem);
 
       computeLinesMeasures(context, xmlFile);
       runChecks(context, xmlFile);
     }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/main/java/org/sonar/plugins/xml/XmlSensor.java/right.java
   }
 }

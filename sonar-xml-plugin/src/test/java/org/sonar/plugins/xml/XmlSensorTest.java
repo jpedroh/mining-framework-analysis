@@ -19,13 +19,8 @@
  */
 package org.sonar.plugins.xml;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,17 +34,21 @@ import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.measures.FileLinesContext;
+import org.sonar.api.internal.google.common.base.Charsets;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.plugins.xml.checks.CheckRepository;
 import org.sonar.plugins.xml.language.Xml;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.FileLinesContext;
 
 public class XmlSensorTest extends AbstractXmlPluginTester {
 
@@ -123,8 +122,14 @@ public class XmlSensorTest extends AbstractXmlPluginTester {
       .setType(InputFile.Type.MAIN)
       .setLanguage(Xml.KEY)
       .setCharset(StandardCharsets.UTF_8);
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/XmlSensorTest.java/left.java
+    defaultInputFile.initMetadata(new FileMetadata().readMetadata(defaultInputFile.file(), Charsets.UTF_8));
+    return defaultInputFile;
+||||||| /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/XmlSensorTest.java/base.java
+=======
     defaultInputFile.initMetadata(new FileMetadata().readMetadata(defaultInputFile.file(), StandardCharsets.UTF_8));
     return defaultInputFile;
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-xml/0e1fee2967a660d9ad773b8279e8ffe5ab4d0908/sonar-xml-plugin/src/test/java/org/sonar/plugins/xml/XmlSensorTest.java/right.java
   }
 
   @Test
@@ -168,5 +173,4 @@ public class XmlSensorTest extends AbstractXmlPluginTester {
     String componentKey = modulekey + ":" + filename;
     assertThat(context.measure(componentKey, CoreMetrics.LINES).value()).isEqualTo(2);
   }
-
 }
