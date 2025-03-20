@@ -11,7 +11,10 @@
  * specific language governing permissions and limitations under the License.
  */
 package org.omnifaces.util;
-
+import javax.faces.FacesException;
+import javax.faces.application.Application;
+import javax.faces.application.Resource;
+import javax.faces.component.UIPanel;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.quote;
 import static javax.faces.component.visit.VisitContext.createVisitContext;
@@ -26,22 +29,18 @@ import static org.omnifaces.util.FacesLocal.normalizeViewId;
 import static org.omnifaces.util.Renderers.RENDERER_TYPE_JS;
 import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.isOneInstanceOf;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-import javax.faces.FacesException;
-import javax.faces.application.Application;
-import javax.faces.application.Resource;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.NamingContainer;
@@ -52,7 +51,6 @@ import javax.faces.component.UIForm;
 import javax.faces.component.UIInput;
 import javax.faces.component.UINamingContainer;
 import javax.faces.component.UIOutput;
-import javax.faces.component.UIPanel;
 import javax.faces.component.UIParameter;
 import javax.faces.component.UIViewRoot;
 import javax.faces.component.behavior.AjaxBehavior;
@@ -72,10 +70,8 @@ import javax.faces.event.MethodExpressionActionListener;
 import javax.faces.render.RenderKit;
 import javax.faces.view.ViewDeclarationLanguage;
 import javax.faces.view.facelets.FaceletContext;
-
 import org.omnifaces.component.ParamHolder;
 import org.omnifaces.component.SimpleParam;
-
 /**
  * <p>
  * Collection of utility methods for the JSF API with respect to working with {@link UIComponent}. There are several
@@ -132,8 +128,10 @@ public final class Components {
 
 	private static final String ERROR_INVALID_PARENT =
 		"Component '%s' must have a parent of type '%s', but it cannot be found.";
+
 	private static final String ERROR_INVALID_DIRECT_PARENT =
 		"Component '%s' must have a direct parent of type '%s', but it cannot be found.";
+
 	private static final String ERROR_CHILDREN_DISALLOWED =
 		"Component '%s' must have no children. Encountered children of types '%s'.";
 
@@ -150,6 +148,7 @@ public final class Components {
 	 * @return The current UI component from the EL context.
 	 * @see UIComponent#getCurrentComponent(FacesContext)
 	 */
+
 	public static UIComponent getCurrentComponent() {
 		return UIComponent.getCurrentComponent(getContext());
 	}
@@ -163,6 +162,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 * @since 1.5
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getAttribute(UIComponent component, String name) {
 		return (T) component.getAttributes().get(name);
@@ -175,6 +175,7 @@ public final class Components {
 	 * @return <code>true</code> if the given UI component and all of its parents is rendered.
 	 * @since 1.8
 	 */
+
 	public static boolean isRendered(UIComponent component) {
 		for (UIComponent current = component; current.getParent() != null; current = current.getParent()) {
 			if (!current.isRendered()) {
@@ -195,6 +196,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>C</code> is of wrong type.
 	 * @see UIComponent#findComponent(String)
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <C extends UIComponent> C findComponent(String clientId) {
 		return (C) getViewRoot().findComponent(clientId);
@@ -213,6 +215,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>C</code> is of wrong type.
 	 * @see UIComponent#findComponent(String)
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <C extends UIComponent> C findComponentRelatively(UIComponent component, String clientId) {
 
@@ -242,6 +245,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>C</code> is of wrong type.
 	 * @see UIComponent#findComponent(String)
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <C extends UIComponent> C findComponentInParents(UIComponent component, String clientId) {
 
@@ -282,6 +286,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>C</code> is of wrong type.
 	 * @see UIComponent#findComponent(String)
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <C extends UIComponent> C findComponentInChildren(UIComponent component, String clientId) {
 
@@ -319,6 +324,7 @@ public final class Components {
 	 * @param type The type of the UI components to be searched in children of the given component.
 	 * @return A list of UI components matching the given type in children of the given component.
 	 */
+
 	public static <C extends UIComponent> List<C> findComponentsInChildren(UIComponent component, Class<C> type) {
 		List<C> components = new ArrayList<C>();
 		findComponentsInChildren(component, type, components);
@@ -328,6 +334,7 @@ public final class Components {
 	/**
 	 * Helper method for {@link #findComponentsInChildren(UIComponent, Class)} utilizing tail recursion.
 	 */
+
 	@SuppressWarnings("unchecked")
 	private static <C extends UIComponent> void findComponentsInChildren(UIComponent component, Class<C> type, List<C> matches) {
 		for (UIComponent child : component.getChildren()) {
@@ -348,6 +355,7 @@ public final class Components {
 	 * @return From the given component the closest parent of the given parent type, or <code>null</code> if none
 	 * is found.
 	 */
+
 	public static <C extends UIComponent> C getClosestParent(UIComponent component, Class<C> parentType) {
 		UIComponent parent = component.getParent();
 
@@ -364,6 +372,7 @@ public final class Components {
 	 * @return <code>true</code> if the given visit context contains the visit hint that iteration should be skipped.
 	 * @since 1.3
 	 */
+
 	public static boolean shouldVisitSkipIteration(VisitContext context) {
 		try {
 			// JSF 2.1.
@@ -389,6 +398,7 @@ public final class Components {
 	 * @return A new instance of {@link ForEach}.
 	 * @since 2.0
 	 */
+
 	public static ForEach forEachComponent() {
 		return new ForEach();
 	}
@@ -406,6 +416,7 @@ public final class Components {
 	 * @return A new instance of {@link ForEach}, using the given faces context.
 	 * @since 2.0
 	 */
+
 	public static ForEach forEachComponent(FacesContext facesContext) {
 		return new ForEach(facesContext);
 	}
@@ -418,6 +429,7 @@ public final class Components {
 	 * @author Arjan Tijms
 	 *
 	 */
+
 	public static class ForEach {
 
 		private FacesContext facesContext;
@@ -591,7 +603,6 @@ public final class Components {
 		}
 	}
 
-
 	// Manipulation ---------------------------------------------------------------------------------------------------
 
 	/**
@@ -605,6 +616,7 @@ public final class Components {
 	 * @see FaceletContext#includeFacelet(UIComponent, String)
 	 * @since 1.5
 	 */
+
 	public static void includeFacelet(UIComponent parent, String path) throws IOException {
 		getFaceletContext().includeFacelet(parent, path);
 	}
@@ -622,6 +634,7 @@ public final class Components {
 	 * @return The created composite component, which can if necessary be used to set more custom attributes on it.
 	 * @since 1.5
 	 */
+
 	public static UIComponent includeCompositeComponent(UIComponent parent, String libraryName, String tagName, String id) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Application application = context.getApplication();
@@ -660,6 +673,7 @@ public final class Components {
 	 * @return The created script component.
 	 * @since 2.2
 	 */
+
 	public static UIComponent addScriptToBody(String script) {
 		UIOutput outputScript = createScriptResource();
 		UIOutput content = new UIOutput();
@@ -676,6 +690,7 @@ public final class Components {
 	 * @return The created script component resource.
 	 * @since 2.2
 	 */
+
 	public static UIComponent addScriptResourceToBody(String libraryName, String resourceName) {
 		return addScriptResource(libraryName, resourceName, "body");
 	}
@@ -690,6 +705,7 @@ public final class Components {
 	 * @return The created script component resource.
 	 * @since 2.2
 	 */
+
 	public static UIComponent addScriptResourceToHead(String libraryName, String resourceName) {
 		return addScriptResource(libraryName, resourceName, "head");
 	}
@@ -728,6 +744,7 @@ public final class Components {
 	 * @see ViewHandler#createView(FacesContext, String)
 	 * @see ViewDeclarationLanguage#buildView(FacesContext, UIViewRoot)
 	 */
+
 	public static UIViewRoot buildView(String viewId) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		String normalizedViewId = normalizeViewId(context, viewId);
@@ -762,6 +779,7 @@ public final class Components {
 	 * @since 2.2
 	 * @see UIComponent#encodeAll(FacesContext)
 	 */
+
 	public static String encodeHtml(UIComponent component) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		ResponseWriter originalWriter = context.getResponseWriter();
@@ -789,6 +807,7 @@ public final class Components {
 	 * @return The currently submitted UI form component.
 	 * @see UIForm#isSubmitted()
 	 */
+
 	public static UIForm getCurrentForm() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -831,6 +850,7 @@ public final class Components {
 	 * @return The currently invoked UI command component.
 	 * @since 1.6
 	 */
+
 	public static UICommand getCurrentCommand() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -874,6 +894,7 @@ public final class Components {
 	 * @param input The UI input component to be checked.
 	 * @return <code>true</code> if the given UI input component is editable.
 	 */
+
 	public static boolean isEditable(UIInput input) {
 		return input.isRendered()
 			&& !Boolean.TRUE.equals(input.getAttributes().get("disabled"))
@@ -887,6 +908,7 @@ public final class Components {
 	 * @return The value of the <code>label</code> attribute associated with the given UI component if any, else
 	 * the client ID.
 	 */
+
 	public static String getLabel(UIComponent input) {
 		String label = getOptionalLabel(input);
 		return (label != null) ? label : input.getClientId();
@@ -899,6 +921,7 @@ public final class Components {
 	 * @return The value of the <code>label</code> attribute associated with the given UI component if any, else
 	 * null.
 	 */
+
 	public static String getOptionalLabel(UIComponent input) {
 		Object label = input.getAttributes().get("label");
 
@@ -923,6 +946,7 @@ public final class Components {
 	 * @return The value of the given editable value holder component.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getValue(EditableValueHolder component) {
 		Object submittedValue = component.getSubmittedValue();
@@ -938,6 +962,7 @@ public final class Components {
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 * @since 1.2
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getImmediateValue(UIInput input) {
 		if (input.isValid() && input.getSubmittedValue() != null) {
@@ -953,6 +978,7 @@ public final class Components {
 	 * @return <code>true</code> if the given editable value holder component has a submitted value, otherwise
 	 * <code>false</code>.
 	 */
+
 	public static boolean hasSubmittedValue(EditableValueHolder component) {
 		return !Utils.isEmpty(component.getSubmittedValue());
 	}
@@ -964,6 +990,7 @@ public final class Components {
 	 * @return <code>true</code> if the given component has invoked the form submit.
 	 * @since 1.3
 	 */
+
 	public static boolean hasInvokedSubmit(UIComponent component) {
 		FacesContext context = FacesContext.getCurrentInstance();
 
@@ -1006,6 +1033,7 @@ public final class Components {
 	 * disabled.
 	 * @since 2.1
 	 */
+
 	public static List<ParamHolder> getParams(UIComponent component) {
 		if (component.getChildCount() > 0) {
 			List<ParamHolder> params = new ArrayList<ParamHolder>(component.getChildCount());
@@ -1036,6 +1064,7 @@ public final class Components {
 	 * @return The created editable value expression, ready to be used as
 	 * {@link UIComponent#setValueExpression(String, ValueExpression)}.
 	 */
+
 	public static ValueExpression createValueExpression(String expression, Class<?> type) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		return context.getApplication().getExpressionFactory().createValueExpression(
@@ -1069,6 +1098,7 @@ public final class Components {
 	 * @return The created method expression, ready to be used as
 	 * {@link UICommand#setActionExpression(MethodExpression)}.
 	 */
+
 	public static MethodExpression createMethodExpression
 		(String expression, Class<?> returnType, Class<?>... parameterTypes)
 	{
@@ -1096,6 +1126,7 @@ public final class Components {
 	 * @return The created void method expression, ready to be used as
 	 * {@link UICommand#setActionExpression(MethodExpression)}.
 	 */
+
 	public static MethodExpression createVoidMethodExpression(String expression, Class<?>... parameterTypes) {
 		return createMethodExpression(expression, Void.class, parameterTypes);
 	}
@@ -1115,6 +1146,7 @@ public final class Components {
 	 * @return The created action listener method expression, ready to be used as
 	 * {@link UICommand#addActionListener(javax.faces.event.ActionListener)}.
 	 */
+
 	public static MethodExpressionActionListener createActionListenerMethodExpression(String expression) {
 		return new MethodExpressionActionListener(createVoidMethodExpression(expression, ActionEvent.class));
 	}
@@ -1137,6 +1169,7 @@ public final class Components {
 	 * {@link UIComponentBase#addClientBehavior(String, ClientBehavior)} whereby the string argument represents the
 	 * client event name, such as "action", "valueChange", "click", "blur", etc.
 	 */
+
 	public static AjaxBehavior createAjaxBehavior(String expression) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		AjaxBehavior behavior = (AjaxBehavior) context.getApplication().createBehavior(AjaxBehavior.BEHAVIOR_ID);
@@ -1159,6 +1192,7 @@ public final class Components {
 	 * @param parentType The parent type to be checked.
 	 * @throws IllegalArgumentException When the given component doesn't have any parent of the given type.
 	 */
+
 	public static <C extends UIComponent> void validateHasParent(UIComponent component, Class<C> parentType)
 		throws IllegalArgumentException
 	{
@@ -1175,6 +1209,7 @@ public final class Components {
 	 * @param parentType The parent type to be checked.
 	 * @throws IllegalArgumentException When the given component doesn't have a direct parent of the given type.
 	 */
+
 	public static <C extends UIComponent> void validateHasDirectParent(UIComponent component, Class<C> parentType)
 		throws IllegalArgumentException
 	{
@@ -1189,6 +1224,7 @@ public final class Components {
 	 * @param component The component to be validated.
 	 * @throws IllegalArgumentException When the given component has any children.
 	 */
+
 	public static void validateHasNoChildren(UIComponent component) throws IllegalArgumentException {
 		if (component.getChildCount() > 0) {
 			StringBuilder childClassNames = new StringBuilder();
@@ -1211,6 +1247,7 @@ public final class Components {
 	/**
 	 * Strip UIData/UIRepeat iteration index in pattern <code>:[0-9+]:</code> from given component client ID.
 	 */
+
 	private static String stripIterationIndexFromClientId(String clientId) {
 		String separatorChar = Character.toString(UINamingContainer.getSeparatorChar(getContext()));
 		return clientId.replaceAll(quote(separatorChar) + "[0-9]+" + quote(separatorChar), separatorChar);
@@ -1220,6 +1257,7 @@ public final class Components {
 	 * Use {@link UIViewRoot#findComponent(String)} and ignore the potential {@link IllegalArgumentException} by
 	 * returning null instead.
 	 */
+
 	private static UIComponent findComponentIgnoringIAE(UIViewRoot viewRoot, String clientId) {
 		try {
 			return viewRoot.findComponent(clientId);
@@ -1229,6 +1267,67 @@ public final class Components {
 			return null;
 		}
 	}
+
+	// Inner classes --------------------------------------------------------------------------------------------------
+
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	// Constructors ---------------------------------------------------------------------------------------------------
+
+	// General --------------------------------------------------------------------------------------------------------
+
+	// Traversal ------------------------------------------------------------------------------------------------------
+
+	// Iteration / Visiting -------------------------------------------------------------------------------------------
+
+	// Manipulation ---------------------------------------------------------------------------------------------------
+
+	/**
+	 * Create and include the composite component of the given library and resource name as child of the given UI
+	 * component parent and return the created composite component.
+	 * This has the same effect as using <code>xmlns:my="http://xmlns.jcp.org/jsf/composite/libraryName</code> and
+	 * <code>&lt;my:tagName&gt;</code>. The given component ID must be unique relative to the current naming
+	 * container parent and is mandatory for functioning of input components inside the composite, if any.
+	 * @param parent The parent component to include the composite component in.
+	 * @param libraryName The library name of the composite component (path after "http://xmlns.jcp.org/jsf/composite/").
+	 * @param tagName The tag name of the composite component.
+	 * @param id The component ID of the composite component.
+	 * @return The created composite component, which can if necessary be used to set more custom attributes on it.
+	 * @since 1.5
+	 */
+
+	/**
+	 * Create and include the composite component of the given library and resource name as child of the given UI
+	 * component parent, set the given attributes on it and return the created composite component.
+	 * This has the same effect as using <code>xmlns:my="http://xmlns.jcp.org/jsf/composite/libraryName</code> and
+	 * <code>&lt;my:tagName&gt;</code>. The given component ID must be unique relative to the current naming
+	 * container parent and is mandatory for functioning of input components inside the composite, if any.
+	 * <p>
+	 * The attribute values must represent literal values or literal EL expressions, exactly like as you would declare
+	 * in the view file. E.g.
+	 * <pre>
+	 * attributes.put("foo", "#{bean.foo}");
+	 * attributes.put("bar", "true");
+	 * attributes.put("baz", "#{bean.baz(" + someId + ")}");
+	 * </pre>
+	 * @param parent The parent component to include the composite component in.
+	 * @param libraryName The library name of the composite component (path after "http://xmlns.jcp.org/jsf/composite/").
+	 * @param tagName The tag name of the composite component.
+	 * @param id The component ID of the composite component.
+	 * @param attributes The attributes to be set on the composite component.
+	 * @return The created composite component, which can if necessary be used to set more custom attributes on it.
+	 * @since 2.2
+	 */
+
+	// Building / rendering -------------------------------------------------------------------------------------------
+
+	// Forms ----------------------------------------------------------------------------------------------------------
+
+	// Expressions ----------------------------------------------------------------------------------------------------
+
+	// Validation -----------------------------------------------------------------------------------------------------
+
+	// Helpers --------------------------------------------------------------------------------------------------------
 
 	// Inner classes --------------------------------------------------------------------------------------------------
 
