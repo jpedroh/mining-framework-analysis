@@ -164,6 +164,24 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 84, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
+<<<<<<< /usr/src/app/output/spoutcraft/legacylauncher/7897db4ecb236b7b4d8a559e97239fae330de299/src/main/java/org/spoutcraft/launcher/skin/MetroLoginFrame.java/left.java
+		
+		// Login Strip
+		TransparentJLabel loginStrip = new TransparentJLabel();
+		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 25, FRAME_WIDTH, 107);
+		loginStrip.setTransparency(0.95F);
+		loginStrip.setHoverTransparency(0.95F);
+		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
+||||||| /usr/src/app/output/spoutcraft/legacylauncher/7897db4ecb236b7b4d8a559e97239fae330de299/src/main/java/org/spoutcraft/launcher/skin/MetroLoginFrame.java/base.java
+		
+		// Login Strip
+		TransparentJLabel loginStrip = new TransparentJLabel();
+		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 55, FRAME_WIDTH, 107);
+		loginStrip.setTransparency(0.95F);
+		loginStrip.setHoverTransparency(0.95F);
+		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
+=======
+>>>>>>> /usr/src/app/output/spoutcraft/legacylauncher/7897db4ecb236b7b4d8a559e97239fae330de299/src/main/java/org/spoutcraft/launcher/skin/MetroLoginFrame.java/right.java
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
@@ -192,16 +210,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		home.setHoverTransparency(1F);
 
 		
-//		// Forums link
-//		HyperlinkJLabel forums = new HyperlinkJLabel("DEATHRAT MAKE MORE RICE", "http://forums.technicpack.net/");
-//		forums.setFont(largerMinecraft);
-//		forums.setBounds(625, 35, 90, 20);
-//		forums.setForeground(Color.WHITE);
-//		forums.setOpaque(false);
-//		forums.setTransparency(0.70F);
-//		forums.setHoverTransparency(1F);
-//		
-//		
+	//		// Forums link
+	//		HyperlinkJLabel forums = new HyperlinkJLabel("DEATHRAT MAKE MORE RICE", "http://forums.technicpack.net/");
+	//		forums.setFont(largerMinecraft);
+	//		forums.setBounds(625, 35, 90, 20);
+	//		forums.setForeground(Color.WHITE);
+	//		forums.setOpaque(false);
+	//		forums.setTransparency(0.70F);
+	//		forums.setHoverTransparency(1F);
+	//		
+	//		
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
@@ -320,7 +338,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		//contentPane.add(gplus);
 		contentPane.add(youtube);
 		//contentPane.add(home);
-//		contentPane.add(forums);
+	//		contentPane.add(forums);
 		//contentPane.add(donate);
 		//contentPane.add(issues);
 		contentPane.add(logo);
