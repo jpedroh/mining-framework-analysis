@@ -358,6 +358,7 @@ public class PhaseChange extends IceAbility {
 		meltArea(center, meltRadius);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void melt(Block b) {
 		if (b.getWorld() != player.getWorld()) {
 			return;
@@ -402,10 +403,22 @@ public class PhaseChange extends IceAbility {
 			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
 			b.setType(m);
 			melted_blocks.add(b);
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/a0f05df6f745d01f272a5be66ef778ed5ae193cd/src/com/projectkorra/projectkorra/waterbending/PhaseChange.java/left.java
 		} else if (isSnow(b)) {
 			new TempBlock(b, Material.AIR, (byte)0);
 			melted_blocks.add(b);
 		}
+||||||| /usr/src/app/output/projectkorra/projectkorra/a0f05df6f745d01f272a5be66ef778ed5ae193cd/src/com/projectkorra/projectkorra/waterbending/PhaseChange.java/base.java
+		} 
+=======
+		} else if (isSnow(b)) {
+			byte data = b.getData();
+			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
+			b.setType(m);
+			b.setData(data);
+			melted_blocks.add(b);
+		}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/a0f05df6f745d01f272a5be66ef778ed5ae193cd/src/com/projectkorra/projectkorra/waterbending/PhaseChange.java/right.java
 	}
 	/**
 	 * Only works with PhaseChange frozen blocks!
