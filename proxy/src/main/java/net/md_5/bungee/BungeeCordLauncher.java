@@ -74,7 +74,13 @@ public class BungeeCordLauncher
                     try
                     {
                         JsonObject json = new JsonParser().parse( new InputStreamReader( con.getInputStream() ) ).getAsJsonObject();
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/4d6f19c2f720fb28540471a93d5b7b99c15dfa71/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/left.java
                         tagName = json.get( "tag_name" ).getAsString();
+||||||| /usr/src/app/output/spigotmc/bungeecord/4d6f19c2f720fb28540471a93d5b7b99c15dfa71/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/base.java
+                        deadline.add( Calendar.WEEK_OF_YEAR, -4 );
+=======
+                        deadline.add( Calendar.WEEK_OF_YEAR, -8 );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/4d6f19c2f720fb28540471a93d5b7b99c15dfa71/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/right.java
 
                         int latestVersion = Integer.parseInt( tagName.substring( 1, tagName.length() ) );
 
