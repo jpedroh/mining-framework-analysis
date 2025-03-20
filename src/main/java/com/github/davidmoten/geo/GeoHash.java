@@ -375,40 +375,40 @@ public final class GeoHash {
 		longitude = Position.to180(longitude);
 
 		boolean isEven = true;
-		double minLat = -90.0,  maxLat = 90;
-		double minLon = -180.0, maxLon = 180.0;
-		int bit = 0;
+	    double minLat = -90.0,  maxLat = 90;
+	    double minLon = -180.0, maxLon = 180.0;
+	    int bit = 0;
 		int ch = 0;
 
-		int count = 0;
-		char[] geohash = new char[length];
+	    int count = 0;
+	    char[] geohash = new char[length];
 
-		while (count < length) {
-			if (isEven) {
-				double mid = (minLon + maxLon) / 2;
-				if (longitude >= mid) {
-					ch |= BITS[bit];
-					minLon = mid;
-				} else
-					maxLon = mid;
-			} else {
-				double mid = (minLat + maxLat) / 2;
-				if (latitude >= mid) {
-					ch |= BITS[bit];
-					minLat = mid;
-				} else
-					maxLat = mid;
-			}
+	    while (count < length) {
+	        if (isEven) {
+	            double mid = (minLon + maxLon) / 2;
+	            if (longitude >= mid) {
+	                ch |= BITS[bit];
+	                minLon = mid;
+	            } else
+	                maxLon = mid;
+	        } else {
+	            double mid = (minLat + maxLat) / 2;
+	            if (latitude >= mid) {
+	                ch |= BITS[bit];
+	                minLat = mid;
+	            } else
+	                maxLat = mid;
+	        }
 
-			isEven = !isEven;
-			if (bit < 4)
-				bit++;
-			else {
-				geohash[count++] = BASE32.charAt(ch);
-				bit = 0;
-				ch = 0;
-			}
-		}
+	        isEven = !isEven;
+	    	if (bit < 4)
+	    		bit++;
+	    	else {
+	    		geohash[count++] = BASE32.charAt(ch);
+	    		bit = 0;
+	    		ch = 0;
+	    	}
+	    }
 		return new String(geohash);
 	}
 
