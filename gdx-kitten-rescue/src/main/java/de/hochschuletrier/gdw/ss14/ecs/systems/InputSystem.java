@@ -1,18 +1,15 @@
 package de.hochschuletrier.gdw.ss14.ecs.systems;
 
-
+import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.utils.*;
+import de.hochschuletrier.gdw.ss14.ecs.*;
 import de.hochschuletrier.gdw.ss14.ecs.components.*;
-import org.slf4j.LoggerFactory;
-
+import de.hochschuletrier.gdw.ss14.ecs.components.LaserPointerComponent.*;
+import de.hochschuletrier.gdw.ss14.input.*;
+import org.slf4j.*;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-
-import de.hochschuletrier.gdw.ss14.ecs.EntityManager;
-import de.hochschuletrier.gdw.ss14.ecs.components.LaserPointerComponent.InputState;
-import de.hochschuletrier.gdw.ss14.input.GameInputAdapter;
-import de.hochschuletrier.gdw.ss14.input.InputManager;
+import de.hochschuletrier.gdw.ss14.ecs.components.ParticleEmitterComponent;
+import de.hochschuletrier.gdw.ss14.ecs.components.PhysicsComponent;
 
 public class InputSystem extends ECSystem implements GameInputAdapter
 {
