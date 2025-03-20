@@ -5,17 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.mitchellbosecke.pebble.attributes.AttributeResolver;
 import com.mitchellbosecke.pebble.operator.BinaryOperator;
 import com.mitchellbosecke.pebble.operator.UnaryOperator;
 import com.mitchellbosecke.pebble.tokenParser.TokenParser;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Storage for the extensions and the components retrieved
@@ -24,49 +17,40 @@ import java.util.Map;
  * Created by mitch_000 on 2015-11-28.
  */
 public class ExtensionRegistry {
-
+    private final HashMap<Class<? extends Extension>, Extension> extensions = new HashMap<>();
     /**
      * Unary operators used during the lexing phase.
      */
     private final Map<String, UnaryOperator> unaryOperators = new HashMap<>();
-
     /**
      * Binary operators used during the lexing phase.
      */
     private final Map<String, BinaryOperator> binaryOperators = new HashMap<>();
-
     /**
      * Token parsers used during the parsing phase.
      */
     private final Map<String, TokenParser> tokenParsers = new HashMap<>();
-
     /**
      * Node visitors available during the parsing phase.
      */
     private final List<NodeVisitorFactory> nodeVisitors = new ArrayList<>();
-
     /**
      * Filters used during the evaluation phase.
      */
     private final Map<String, Filter> filters = new HashMap<>();
-
     /**
      * Tests used during the evaluation phase.
      */
     private final Map<String, Test> tests = new HashMap<>();
-
     /**
      * Functions used during the evaluation phase.
      */
     private final Map<String, Function> functions = new HashMap<>();
-
     /**
      * Global variables available during the evaluation phase.
      */
     private final Map<String, Object> globalVariables = new HashMap<>();
-
     private final List<AttributeResolver> attributeResolver = new ArrayList<>();
-
     public ExtensionRegistry(Collection<? extends Extension> extensions) {
 
         for (Extension extension : extensions) {
@@ -127,7 +111,7 @@ public class ExtensionRegistry {
             if (nodeVisitors != null) {
                 this.nodeVisitors.addAll(nodeVisitors);
             }
-
+            
             // attribute resolver
             List<AttributeResolver> attributeResolvers = extension.getAttributeResolver();
             if (attributeResolvers!=null) {
@@ -135,39 +119,30 @@ public class ExtensionRegistry {
             }
         }
     }
-
     public Filter getFilter(String name) {
         return this.filters.get(name);
     }
-
     public Test getTest(String name) {
         return this.tests.get(name);
     }
-
     public Function getFunction(String name) {
         return this.functions.get(name);
     }
-
     public Map<String, BinaryOperator> getBinaryOperators() {
         return this.binaryOperators;
     }
-
     public Map<String, UnaryOperator> getUnaryOperators() {
         return this.unaryOperators;
     }
-
     public List<NodeVisitorFactory> getNodeVisitors() {
         return this.nodeVisitors;
     }
-
     public Map<String, Object> getGlobalVariables() {
         return this.globalVariables;
     }
-
     public Map<String, TokenParser> getTokenParsers() {
         return this.tokenParsers;
     }
-
     public List<AttributeResolver> getAttributeResolver() {
         return this.attributeResolver;
     }

@@ -8,16 +8,8 @@
  ******************************************************************************/
 package com.mitchellbosecke.pebble;
 
-import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
-import com.mitchellbosecke.pebble.error.ClassAccessException;
-import com.mitchellbosecke.pebble.error.PebbleException;
-import com.mitchellbosecke.pebble.error.RootAttributeNotFoundException;
-import com.mitchellbosecke.pebble.extension.DynamicAttributeProvider;
-import com.mitchellbosecke.pebble.loader.StringLoader;
-import com.mitchellbosecke.pebble.template.PebbleTemplate;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import com.mitchellbosecke.pebble.error.ClassAccessException;
 
 import java.io.IOException;
 import java.io.StringWriter;
