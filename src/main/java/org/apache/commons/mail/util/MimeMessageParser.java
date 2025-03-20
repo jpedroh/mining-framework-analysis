@@ -95,9 +95,17 @@ public class MimeMessageParser
      * @throws Exception determining the recipients failed
      */
     public List<javax.mail.Address> getTo()
+<<<<<<< /usr/src/app/output/apache/commons-email/e04e3a519953a6d40174ef9d80118c8cc9366288/src/main/java/org/apache/commons/mail/util/MimeMessageParser.java/left.java
+    {
+        //final javax.mail.Address[] recipients = this.mimeMessage.getRecipients(Message.RecipientType.TO);
+        return Arrays.asList(new javax.mail.internet.NewsAddress());
+    }
+||||||| /usr/src/app/output/apache/commons-email/e04e3a519953a6d40174ef9d80118c8cc9366288/src/main/java/org/apache/commons/mail/util/MimeMessageParser.java/base.java
+=======
     {
         return Arrays.asList(new javax.mail.internet.NewsAddress());
     }
+>>>>>>> /usr/src/app/output/apache/commons-email/e04e3a519953a6d40174ef9d80118c8cc9366288/src/main/java/org/apache/commons/mail/util/MimeMessageParser.java/right.java
 
     /**
      * @return the 'cc' recipients of the message
