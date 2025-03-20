@@ -747,11 +747,16 @@ public class HyperLogLogPlus implements ICardinality, Serializable {
             int[] sortedSet = sortEncodedSet(tmpSet, tmpIndex);
             sparseSet = merge(sparseSet, sortedSet);
             tmpIndex = 0;
+<<<<<<< /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/left.java
+            if (resizeTmpSet && (tmpSet.length * 2) < (retSet.length / SPARSE_SET_TEMP_SET_RATIO)) {
+                tmpSet = new int[retSet.length / SPARSE_SET_TEMP_SET_RATIO];
+            }
+||||||| /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/base.java
+=======
             if (sparseSet.length > sparseSetThreshold) {
                 convertToNormal();
-            } else if (resizeTmpSet && (tmpSet.length * 2) < (sparseSet.length / SPARSE_SET_TEMP_SET_RATIO)) {
-                tmpSet = new int[sparseSet.length / SPARSE_SET_TEMP_SET_RATIO];
             }
+>>>>>>> /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/right.java
         }
     }
 
@@ -819,7 +824,21 @@ public class HyperLogLogPlus implements ICardinality, Serializable {
 
         if ((format == Format.SPARSE) && (other.format == Format.SPARSE)) {
             sparseSet = mergeEstimators(other);
+<<<<<<< /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/left.java
+            // Convert to normal mode if needed.
+            // Since offer trigger the switch to the normal mode on only when
+            // the tmpSet is full and the threshold is reached, we follow the same
+            // behavior here to ease testing
+            if (sparseSet.length > (sparseSetThreshold * (SPARSE_SET_TEMP_SET_RATIO + 1)) / SPARSE_SET_TEMP_SET_RATIO) {
+||||||| /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/base.java
+            // Convert to normal mode if needed. 
+            // Since offer trigger the switch to the normal mode on only when 
+            // the tmpSet is full and the threshold is reached, we follow the same 
+            // behavior here to ease testing
+            if (sparseSet.length > (sparseSetThreshold + sortThreshold)) {
+=======
             if (sparseSet.length > sparseSetThreshold) {
+>>>>>>> /usr/src/app/output/addthis/stream-lib/a946396485c9f3cb1aeb11230a19233a0c9c88c0/src/main/java/com/clearspring/analytics/stream/cardinality/HyperLogLogPlus.java/right.java
                 convertToNormal();
             }
             return;
