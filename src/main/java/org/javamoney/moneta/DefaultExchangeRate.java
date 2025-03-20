@@ -1,25 +1,8 @@
-/**
- * Copyright (c) 2012, 2014, Credit Suisse (Anatole Tresch), Werner Keil and others by the @author tag.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package org.javamoney.moneta;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import javax.money.CurrencyUnit;
 import javax.money.NumberValue;
 import javax.money.convert.ConversionContext;
@@ -87,125 +70,122 @@ import javax.money.convert.ExchangeRate;
  * Exchange Rate (Quotations)</a>
  */
 class DefaultExchangeRate implements ExchangeRate, Serializable, Comparable<ExchangeRate> {
-
-    /**
+  /**
      * serialVersionUID.
      */
-    private static final long serialVersionUID = 5077295306570465837L;
-    /**
+  private static final long serialVersionUID = 5077295306570465837L;
+
+  /**
      * The base currency.
      */
-    private final CurrencyUnit base;
-    /**
+  private final CurrencyUnit base;
+
+  /**
      * The terminating currency.
      */
-    private final CurrencyUnit term;
-    /**
+  private final CurrencyUnit term;
+
+  /**
      * The conversion factor.
      */
-    private final NumberValue factor;
-    /**
+  private final NumberValue factor;
+
+  /**
      * The {@link javax.money.convert.ConversionContext}
      */
-    private final ConversionContext conversionContext;
-    /**
+  private final ConversionContext conversionContext;
+
+  /**
      * The full chain, at least one instance long.
      */
-    private final List<ExchangeRate> chain = new ArrayList<>();
+  private final List<ExchangeRate> chain = new ArrayList<>();
 
-
-    /**
+  /**
      * Creates a new instance with a custom chain of exchange rate type, e.g. or
      * creating <i>derived</i> rates.
      *
      * @param builder The Builder, never {@code null}.
      */
-    DefaultExchangeRate(ExchangeRateBuilder builder) {
-        Objects.requireNonNull(builder.base, "base may not be null.");
-        Objects.requireNonNull(builder.term, "term may not be null.");
-        Objects.requireNonNull(builder.factor, "factor may not be null.");
-        Objects.requireNonNull(builder.conversionContext, "exchangeRateType may not be null.");
-        this.base = builder.base;
-        this.term = builder.term;
-        this.factor = builder.factor;
-        this.conversionContext = builder.conversionContext;
+  DefaultExchangeRate(ExchangeRateBuilder builder) {
+    Objects.requireNonNull(builder.base, "base may not be null.");
+    Objects.requireNonNull(builder.term, "term may not be null.");
+    Objects.requireNonNull(builder.factor, "factor may not be null.");
+    Objects.requireNonNull(builder.conversionContext, "exchangeRateType may not be null.");
+    this.base = builder.base;
+    this.term = builder.term;
+    this.factor = builder.factor;
+    this.conversionContext = builder.conversionContext;
+    setExchangeRateChain(builder.rateChain);
+  }
 
-        setExchangeRateChain(builder.rateChain);
-    }
-
-    /**
+  /**
      * Internal method to set the rate chain, which also ensure that the chain
      * passed, when not null, contains valid elements.
      *
      * @param chain the chain to set.
      */
-    private void setExchangeRateChain(List<ExchangeRate> chain) {
-        this.chain.clear();
-        if (Objects.isNull(chain) || chain.isEmpty()) {
-            this.chain.add(this);
-        } else {
-            for (ExchangeRate rate : chain) {
-                if (Objects.isNull(rate)) {
-                    throw new IllegalArgumentException("Rate Chain element can not be null.");
-                }
-            }
-            this.chain.addAll(chain);
+  private void setExchangeRateChain(List<ExchangeRate> chain) {
+    this.chain.clear();
+    if (Objects.isNull(chain) || chain.isEmpty()) {
+      this.chain.add(this);
+    } else {
+      for (ExchangeRate rate : chain) {
+        if (Objects.isNull(rate)) {
+          throw new IllegalArgumentException("Rate Chain element can not be null.");
         }
+      }
+      this.chain.addAll(chain);
     }
+  }
 
-    /**
+  /**
      * Access the {@link javax.money.convert.ConversionContext} of {@link javax.money.convert.ExchangeRate}.
      *
      * @return the conversion context, never null.
      */
-    @Override
-	public final ConversionContext getContext() {
-        return this.conversionContext;
-    }
+  @Override public final ConversionContext getContext() {
+    return this.conversionContext;
+  }
 
-    /**
+  /**
      * Get the base (source) {@link javax.money.CurrencyUnit}.
      *
      * @return the base {@link javax.money.CurrencyUnit}.
      */
-    @Override
-	public final CurrencyUnit getBaseCurrency() {
-        return this.base;
-    }
+  @Override public final CurrencyUnit getBaseCurrency() {
+    return this.base;
+  }
 
-    /**
+  /**
      * Get the term (target) {@link javax.money.CurrencyUnit}.
      *
      * @return the term {@link javax.money.CurrencyUnit}.
      */
-    @Override
-	public final CurrencyUnit getCurrency() {
-        return this.term;
-    }
+  @Override public final CurrencyUnit getCurrency() {
+    return this.term;
+  }
 
-    /**
+  /**
      * Access the rate's bid factor.
      *
      * @return the bid factor for this exchange rate, or {@code null}.
      */
-    @Override
-	public final NumberValue getFactor() {
-        return this.factor;
-    }
+  @Override public final NumberValue getFactor() {
+    return this.factor;
+  }
 
-    /**
+  /**
      * Access the chain of exchange rates.
      *
      * @return the chain of rates, in case of a derived rate, this may be
      * several instances. For a direct exchange rate, this equals to
      * <code>new ExchangeRate[]{this}</code>.
      */
-    @Override
-	public final List<ExchangeRate> getExchangeRateChain() {
-        return this.chain;
-    }
+  @Override public final List<ExchangeRate> getExchangeRateChain() {
+    return this.chain;
+  }
 
-    /**
+  /**
      * Allows to evaluate if this exchange rate is a derived exchange rate.
      * <p>
      * Derived exchange rates are defined by an ordered list of subconversions
@@ -217,75 +197,59 @@ class DefaultExchangeRate implements ExchangeRate, Serializable, Comparable<Exch
      *
      * @return true, if the exchange rate is derived.
      */
-    @Override
-	public final boolean isDerived() {
-        return this.chain.size() > 1;
-    }
+  @Override public final boolean isDerived() {
+    return this.chain.size() > 1;
+  }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(ExchangeRate o) {
-        Objects.requireNonNull(o);
-        int compare = this.getBaseCurrency().getCurrencyCode().compareTo(o.getBaseCurrency().getCurrencyCode());
-        if (compare == 0) {
-            compare = this.getCurrency().getCurrencyCode().compareTo(o.getCurrency().getCurrencyCode());
-        }
-        if (compare == 0) {
-            compare = this.getContext().getProviderName().compareTo(o.getContext().getProviderName());
-        }
-        return compare;
+  @Override public int compareTo(ExchangeRate o) {
+    Objects.requireNonNull(o);
+    int compare = this.getBaseCurrency().getCurrencyCode().compareTo(o.getBaseCurrency().getCurrencyCode());
+    if (compare == 0) {
+      compare = this.getCurrency().getCurrencyCode().compareTo(o.getCurrency().getCurrencyCode());
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "ExchangeRate [base=" + base + ", term=" + term + ", factor=" + factor + ", conversionContext=" + conversionContext + ']';
+    if (compare == 0) {
+      compare = this.getContext().getProviderName().compareTo(o.getContext().getProviderName());
     }
+    return compare;
+  }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(base, conversionContext, factor, term, chain);
+  @Override public String toString() {
+    return 
+<<<<<<< /usr/src/app/output/javamoney/jsr354-ri/bf07022ccddab3171412db1170d03ec24c77c41f/src/main/java/org/javamoney/moneta/DefaultExchangeRate.java/left.java
+    "ExchangeRate [base="
+=======
+    "ExchangeRate [base= "
+>>>>>>> /usr/src/app/output/javamoney/jsr354-ri/bf07022ccddab3171412db1170d03ec24c77c41f/src/main/java/org/javamoney/moneta/DefaultExchangeRate.java/right.java
+     + base + 
+<<<<<<< /usr/src/app/output/javamoney/jsr354-ri/bf07022ccddab3171412db1170d03ec24c77c41f/src/main/java/org/javamoney/moneta/DefaultExchangeRate.java/left.java
+    ", term="
+=======
+    " term= "
+>>>>>>> /usr/src/app/output/javamoney/jsr354-ri/bf07022ccddab3171412db1170d03ec24c77c41f/src/main/java/org/javamoney/moneta/DefaultExchangeRate.java/right.java
+     + term + ", factor=" + factor + ", conversionContext=" + conversionContext + ']';
+  }
+
+  @Override public int hashCode() {
+    return Objects.hash(base, conversionContext, factor, term, chain);
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof DefaultExchangeRate) {
-            DefaultExchangeRate other = (DefaultExchangeRate) obj;
-            return Objects.equals(base, other.base) &&
-                    Objects.equals(conversionContext, other.conversionContext) &&
-                    Objects.equals(factor, other.factor) && Objects.equals(term, other.term);
-        }
-        return false;
+    if (obj instanceof DefaultExchangeRate) {
+      DefaultExchangeRate other = (DefaultExchangeRate) obj;
+      return Objects.equals(base, other.base) && Objects.equals(conversionContext, other.conversionContext) && Objects.equals(factor, other.factor) && Objects.equals(term, other.term);
     }
+    return false;
+  }
 
-    /**
+  /**
      * Create a {@link ExchangeRateBuilder} based on the current rate instance.
      *
      * @return a new {@link ExchangeRateBuilder}, never {@code null}.
      */
-    public ExchangeRateBuilder toBuilder() {
-        return new ExchangeRateBuilder(getContext()).setBase(getBaseCurrency()).setTerm(getCurrency())
-                .setFactor(getFactor()).setRateChain(getExchangeRateChain());
-    }
+  public ExchangeRateBuilder toBuilder() {
+    return new ExchangeRateBuilder(getContext()).setBase(getBaseCurrency()).setTerm(getCurrency()).setFactor(getFactor()).setRateChain(getExchangeRateChain());
+  }
 }
