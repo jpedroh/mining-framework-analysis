@@ -45,11 +45,11 @@ public class TestFRReceiptIssuingHandler extends FRDocumentAbstractTest {
         this.handler = this.getInstance(FRReceiptIssuingHandler.class);
 
         FRReceiptEntity receipt = this.newInvoice(INVOICE_TYPE.RC);
-        this.createSeries(receipt, this.DEFAULT_SERIES);
+		this.createSeries(receipt, this.DEFAULT_SERIES);
         try {
             this.issueNewInvoice(this.handler, receipt, this.DEFAULT_SERIES);
             this.issuedReceiptUID = receipt.getUID();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled e) {
+        } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
     }

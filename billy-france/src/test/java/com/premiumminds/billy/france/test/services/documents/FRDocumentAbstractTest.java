@@ -80,21 +80,37 @@ public class FRDocumentAbstractTest extends FRPersistencyAbstractTest {
     }
 
     protected <T extends DocumentIssuingHandler<I, FRIssuingParams>, I extends FRGenericInvoiceEntity> void issueNewInvoice(
-            T handler, I invoice, String series) throws DocumentIssuingException, DocumentSeriesDoesNotExistException , SeriesUniqueCodeNotFilled {
+            T handler, I invoice, String series)
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/left.java
+		throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/base.java
+		throws DocumentIssuingException
+=======
+		throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/right.java
+	{
         DAOFRInvoice dao = this.getInstance(DAOFRInvoice.class);
         try {
-            dao.beginTransaction();
-            invoice.initializeEntityDates();
-            this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
-            dao.commit();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled up) {
-            dao.rollback();
-            throw up;
-        }
+        dao.beginTransaction();
+        invoice.initializeEntityDates();
+        this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
+        dao.commit();
+    } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException up) {
+        dao.rollback();
+        throw up;
+    }
     }
 
     protected <T extends DocumentIssuingHandler<I, FRIssuingParams>, I extends FRGenericInvoiceEntity> void issueNewInvoice(
-            T handler, I invoice, String series, Date date) throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+            T handler, I invoice, String series, Date date)
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/left.java
+		throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/base.java
+		throws DocumentIssuingException
+=======
+		throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-france/src/test/java/com/premiumminds/billy/france/test/services/documents/FRDocumentAbstractTest.java/right.java
+	{
         this.parameters.setInvoiceSeries(series);
         invoice.setDate(date);
         handler.issue(invoice, this.parameters);

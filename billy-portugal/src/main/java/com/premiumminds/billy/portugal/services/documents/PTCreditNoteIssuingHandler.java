@@ -42,7 +42,14 @@ public class PTCreditNoteIssuingHandler extends PTGenericInvoiceIssuingHandler<P
 
     @Override
     public PTCreditNoteEntity issue(PTCreditNoteEntity document, PTIssuingParams parameters)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTCreditNoteIssuingHandler.java/left.java
+		throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTCreditNoteIssuingHandler.java/base.java
+		throws DocumentIssuingException
+=======
+		throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTCreditNoteIssuingHandler.java/right.java
+	{
 
         return this.issue(document, parameters, this.daoCreditNote, PTCreditNoteIssuingHandler.INVOICE_TYPE);
     }

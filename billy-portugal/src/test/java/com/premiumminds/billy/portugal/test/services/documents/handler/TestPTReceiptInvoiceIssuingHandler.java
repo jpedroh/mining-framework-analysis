@@ -52,9 +52,11 @@ public class TestPTReceiptInvoiceIssuingHandler extends PTDocumentAbstractTest {
                     TestPTReceiptInvoiceIssuingHandler.SOURCE_BILLING);
             this.createSeries(invoice, PTPersistencyAbstractTest.DEFAULT_SERIES);
 
+			this.createSeries(invoice, PTPersistencyAbstractTest.DEFAULT_SERIES);
+
             this.issueNewInvoice(this.handler, invoice, PTPersistencyAbstractTest.DEFAULT_SERIES);
             this.issuedInvoiceUID = invoice.getUID();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled e) {
+        } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
 

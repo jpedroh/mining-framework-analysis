@@ -125,9 +125,16 @@ public class TestConcurrentIssuing extends PTDocumentAbstractTest {
     @Test
     public void testConcurrentIssuing2() throws InterruptedException, ExecutionException {
         String B1 = "Business 1";
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/left.java
         this.createSeries(B1, "A");
         this.createSeries(B1, "B");
         this.createSeries(B1, "C");
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/base.java
+=======
+    		this.createSeries(B1, "A");
+    		this.createSeries(B1, "B");
+    		this.createSeries(B1, "C");
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/right.java
         PTBusinessEntity businessEntity1 = new PTBusinessTestUtil(PTAbstractTest.injector).getBusinessEntity(B1);
         ConcurrentTestUtil test = new ConcurrentTestUtil(10);
         List<Future<?>> results1 = test.runThreads(new TestRunner(PTAbstractTest.injector, "A", businessEntity1));
@@ -183,9 +190,16 @@ public class TestConcurrentIssuing extends PTDocumentAbstractTest {
     @Test
     public void testMultipleSeriesIssuing() throws InterruptedException, ExecutionException {
         String B1 = "Business 1";
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/left.java
         this.createSeries(B1, "A");
         this.createSeries(B1, "B");
         this.createSeries(B1, "C");
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/base.java
+=======
+    		this.createSeries(B1, "A");
+    		this.createSeries(B1, "B");
+    		this.createSeries(B1, "C");
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestConcurrentIssuing.java/right.java
         PTBusinessEntity businessEntity1 = new PTBusinessTestUtil(PTAbstractTest.injector).getBusinessEntity(B1);
         Integer totalThreads = 10;
         ConcurrentTestUtil test = new ConcurrentTestUtil(totalThreads);

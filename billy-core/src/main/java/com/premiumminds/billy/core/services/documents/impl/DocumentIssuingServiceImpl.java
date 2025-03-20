@@ -116,7 +116,14 @@ public class DocumentIssuingServiceImpl implements DocumentIssuingService {
     }
 
     private <T extends GenericInvoice> T issueDocument(Builder<T> documentBuilder, final IssuingParams parameters)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/left.java
+		throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/base.java
+		throws DocumentIssuingException
+=======
+		throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/impl/DocumentIssuingServiceImpl.java/right.java
+	{
 
         final T document = documentBuilder.build();
         final Type[] types = document.getClass().getGenericInterfaces();

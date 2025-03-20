@@ -45,16 +45,16 @@ public class TestESReceiptIssuingHandler extends ESDocumentAbstractTest {
         this.handler = this.getInstance(ESReceiptIssuingHandler.class);
 
         ESReceiptEntity receipt = this.newInvoice(INVOICE_TYPE.RC);
-        try {
-            this.createSeries(receipt, this.DEFAULT_SERIES);
+		try {
+    	this.createSeries(receipt, this.DEFAULT_SERIES);
 
-            this.issueNewInvoice(this.handler, receipt, this.DEFAULT_SERIES);
+    	this.issueNewInvoice(this.handler, receipt, this.DEFAULT_SERIES);
 
             this.issuedReceiptUID = receipt.getUID();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled e) {
+        } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
-    }
+	}
 
     @Test
     public void testIssueReceipt() {

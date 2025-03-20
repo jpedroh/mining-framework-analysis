@@ -19,6 +19,9 @@
 package com.premiumminds.billy.spain.test.services.documents;
 
 import com.premiumminds.billy.core.exceptions.SeriesUniqueCodeNotFilled;
+import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
+import com.premiumminds.billy.core.persistence.entities.jpa.JPAInvoiceSeriesEntity;
+import com.premiumminds.billy.core.services.entities.documents.GenericInvoice;
 import com.premiumminds.billy.core.services.exceptions.DocumentSeriesDoesNotExistException;
 import java.util.Date;
 
@@ -81,22 +84,36 @@ public class ESDocumentAbstractTest extends ESPersistencyAbstractTest {
 
     protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void
             issueNewInvoice(T handler, I invoice, String series)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/left.java
+            throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/base.java
+            throws DocumentIssuingException
+=======
+            throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/right.java
+	{
         DAOESInvoice dao = this.getInstance(DAOESInvoice.class);
         try {
-            dao.beginTransaction();
-            invoice.initializeEntityDates();
-            this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
-            dao.commit();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled up) {
-            dao.rollback();
-            throw up;
-        }
+        dao.beginTransaction();
+        invoice.initializeEntityDates();
+        this.issueNewInvoice(handler, invoice, series, new Date(invoice.getCreateTimestamp().getTime() + 100));
+        dao.commit();
+    } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException up) {
+        dao.rollback();
+        throw up;
+    }
     }
 
     protected <T extends DocumentIssuingHandler<I, ESIssuingParams>, I extends ESGenericInvoiceEntity> void
             issueNewInvoice(T handler, I invoice, String series, Date date)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/left.java
+            throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/base.java
+            throws DocumentIssuingException
+=======
+            throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-spain/src/test/java/com/premiumminds/billy/spain/test/services/documents/ESDocumentAbstractTest.java/right.java
+	{
         this.parameters.setInvoiceSeries(series);
         invoice.setDate(date);
         handler.issue(invoice, this.parameters);

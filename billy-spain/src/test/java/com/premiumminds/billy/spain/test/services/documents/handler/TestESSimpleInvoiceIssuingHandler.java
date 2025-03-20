@@ -51,11 +51,11 @@ public class TestESSimpleInvoiceIssuingHandler extends ESDocumentAbstractTest {
         try {
             ESSimpleInvoiceEntity invoice = this.newInvoice(INVOICE_TYPE.FS, SOURCE_BILLING.APPLICATION);
 
-            this.createSeries(invoice, this.DEFAULT_SERIES);
+			this.createSeries(invoice, this.DEFAULT_SERIES);
 
             this.issueNewInvoice(this.handler, invoice, this.DEFAULT_SERIES);
             this.issuedInvoiceUID = invoice.getUID();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled e) {
+        } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
     }

@@ -29,6 +29,7 @@ import javax.persistence.LockModeType;
 
 import com.premiumminds.billy.core.persistence.dao.DAOInvoiceSeries;
 import com.premiumminds.billy.core.persistence.entities.InvoiceSeriesEntity;
+import com.premiumminds.billy.core.persistence.entities.jpa.JPAInvoiceSeriesEntity;
 import com.premiumminds.billy.core.services.documents.DocumentIssuingHandler;
 import com.premiumminds.billy.core.services.exceptions.DocumentIssuingException;
 import com.premiumminds.billy.portugal.persistence.dao.AbstractDAOPTGenericInvoice;
@@ -60,14 +61,14 @@ public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceE
     }
 
     protected <D extends AbstractDAOPTGenericInvoice<T>> T issue(final T document, final PTIssuingParams parametersPT,
-            final D daoInvoice, final TYPE invoiceType) throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+            final D daoInvoice, final TYPE invoiceType) throws DocumentIssuingException, SeriesUniqueCodeNotFilled {
 
         String series = parametersPT.getInvoiceSeries();
 
         validateSeriesHasNoWhiteSpaces(series);
 
         InvoiceSeriesEntity invoiceSeriesEntity =
-                this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
+            this.getInvoiceSeries(document, series, LockModeType.PESSIMISTIC_WRITE);
 
         SourceBilling sourceBilling = ((PTGenericInvoice) document).getSourceBilling();
 
@@ -81,38 +82,38 @@ public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceE
         String previousHash = null;
 
         T latestInvoice = daoInvoice.getLatestInvoiceFromSeries(invoiceSeriesEntity.getSeries(),
-                document.getBusiness().getUID().toString());
+            document.getBusiness().getUID().toString());
 
         if (null != latestInvoice) {
-            seriesNumber = latestInvoice.getSeriesNumber() + 1;
-            previousHash = latestInvoice.getHash();
-            Date latestInvoiceDate = latestInvoice.getDate();
+        seriesNumber = latestInvoice.getSeriesNumber() + 1;
+        previousHash = latestInvoice.getHash();
+        Date latestInvoiceDate = latestInvoice.getDate();
 
-            this.validateDocumentType(invoiceType, latestInvoice.getType(), invoiceSeriesEntity.getSeries());
+        this.validateDocumentType(invoiceType, latestInvoice.getType(), invoiceSeriesEntity.getSeries());
 
-            if (!latestInvoice.getSourceBilling().equals(sourceBilling)) {
-                throw new InvalidSourceBillingException(invoiceSeriesEntity.getSeries(), sourceBilling.toString(),
-                        latestInvoice.getSourceBilling().toString());
-            }
-
-            if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
-                throw new InvalidInvoiceDateException();
-            }
-        } else {
-            seriesNumber = 1;
+        if (!latestInvoice.getSourceBilling().equals(sourceBilling)) {
+            throw new InvalidSourceBillingException(invoiceSeriesEntity.getSeries(), sourceBilling.toString(),
+                    latestInvoice.getSourceBilling().toString());
         }
+
+        if (latestInvoiceDate.compareTo(invoiceDate) > 0) {
+            throw new InvalidInvoiceDateException();
+        }
+    } else {
+        seriesNumber = 1;
+    }
 
         String formattedNumber = invoiceType.toString() + " " + parametersPT.getInvoiceSeries() + "/" + seriesNumber;
 
         validatePTInvoiceNumber(formattedNumber);
 
         String newHash =
-                GenerateHash.generateHash(parametersPT.getPrivateKey(), parametersPT.getPublicKey(), invoiceDate,
-                        systemDate, formattedNumber, document.getAmountWithTax(), previousHash);
+            GenerateHash.generateHash(parametersPT.getPrivateKey(), parametersPT.getPublicKey(), invoiceDate,
+                    systemDate, formattedNumber, document.getAmountWithTax(), previousHash);
 
         String sourceHash =
-                GenerateHash.generateSourceHash(invoiceDate, systemDate, formattedNumber, document.getAmountWithTax(),
-                        previousHash);
+            GenerateHash.generateSourceHash(invoiceDate, systemDate, formattedNumber, document.getAmountWithTax(),
+                    previousHash);
 
         if (invoiceSeriesEntity.getSeriesUniqueCode().isPresent()) {
             validateSeriesUniqueCode(invoiceSeriesEntity.getSeriesUniqueCode().get());
@@ -165,7 +166,7 @@ public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceE
         }
     }
 
-    private void validateSeriesUniqueCode(final String seriesUniqueCode) throws DocumentIssuingException {
+    private void validateSeriesUniqueCode(final String seriesUniqueCode) throws DocumentIssuingException, DocumentSeriesDoesNotExistException {
         try {
             BillyValidator.matchesPattern(seriesUniqueCode, "[A-Za-z0-9]{8,}", "field.seriesUniqueCode");
         } catch (IllegalArgumentException e) {
@@ -174,13 +175,12 @@ public abstract class PTGenericInvoiceIssuingHandler<T extends PTGenericInvoiceE
     }
 
     private InvoiceSeriesEntity getInvoiceSeries(final T document, String series, LockModeType lockMode)
-            throws DocumentSeriesDoesNotExistException {
+    	throws DocumentSeriesDoesNotExistException {
         InvoiceSeriesEntity invoiceSeriesEntity =
-                this.daoInvoiceSeries.getSeries(series, document.getBusiness().getUID().toString(), lockMode);
+        	this.daoInvoiceSeries.getSeries(series, document.getBusiness().getUID().toString(), lockMode);
 
         if (null == invoiceSeriesEntity) {
-            throw new DocumentSeriesDoesNotExistException(
-                    "Requested to issue an invoice with series " + series + " but series does not exist");
+        	throw new DocumentSeriesDoesNotExistException("Requested to issue an invoice with series " + series + " but series does not exist");
         }
         return invoiceSeriesEntity;
     }

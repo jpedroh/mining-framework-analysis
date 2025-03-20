@@ -43,7 +43,14 @@ public class PTInvoiceIssuingHandler extends PTGenericInvoiceIssuingHandler<PTIn
 
     @Override
     public PTInvoiceEntity issue(PTInvoiceEntity document, PTIssuingParams parameters)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled {
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTInvoiceIssuingHandler.java/left.java
+            throws DocumentIssuingException, SeriesUniqueCodeNotFilled
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTInvoiceIssuingHandler.java/base.java
+            throws DocumentIssuingException
+=======
+            throws DocumentIssuingException, DocumentSeriesDoesNotExistException
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/main/java/com/premiumminds/billy/portugal/services/documents/PTInvoiceIssuingHandler.java/right.java
+	{
         return this.issue(document, parameters, this.daoInvoice, PTInvoiceIssuingHandler.INVOICE_TYPE);
     }
 

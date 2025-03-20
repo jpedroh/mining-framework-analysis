@@ -54,7 +54,7 @@ public class TestPTManualInvoiceIssuingHandler extends PTDocumentAbstractTest {
 
             this.issueNewInvoice(this.handler, invoice, PTPersistencyAbstractTest.DEFAULT_SERIES);
             this.issuedInvoiceUID = invoice.getUID();
-        } catch (DocumentIssuingException | DocumentSeriesDoesNotExistException | SeriesUniqueCodeNotFilled e) {
+        } catch (DocumentIssuingException | SeriesUniqueCodeNotFilled | DocumentSeriesDoesNotExistException e) {
             e.printStackTrace();
         }
     }
@@ -74,7 +74,7 @@ public class TestPTManualInvoiceIssuingHandler extends PTDocumentAbstractTest {
     /**
      * Test the issue of a normal invoice in a manual series.
      *
-     */
+	 */
     @Test
     public void testDifferentBilling() {
         PTInvoiceEntity issuedInvoice = this.getInstance(DAOPTInvoice.class).get(this.issuedInvoiceUID);

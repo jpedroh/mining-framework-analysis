@@ -48,8 +48,14 @@ public class TestDAOPTInvoice extends PTPersistencyAbstractTest {
     public void testLastInvoiceNumberWithDifferentBusiness() {
         String B1 = "B1";
         String B2 = "B2";
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/dao/TestDAOPTInvoice.java/left.java
         this.createSeries(B1);
         this.createSeries(B2);
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/dao/TestDAOPTInvoice.java/base.java
+=======
+    		this.createSeries(B1);
+    		this.createSeries(B2);
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/dao/TestDAOPTInvoice.java/right.java
         PTInvoiceEntity inv1 = this.getNewIssuedInvoice(B1);
         PTInvoiceEntity inv2 = this.getNewIssuedInvoice(B2);
 

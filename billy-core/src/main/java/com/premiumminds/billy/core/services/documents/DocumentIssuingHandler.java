@@ -25,6 +25,11 @@ import com.premiumminds.billy.core.services.exceptions.DocumentSeriesDoesNotExis
 
 public interface DocumentIssuingHandler<T extends GenericInvoice, P extends IssuingParams> {
 
-    public T issue(T document, P parameters)
-            throws DocumentIssuingException, DocumentSeriesDoesNotExistException, SeriesUniqueCodeNotFilled;
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/DocumentIssuingHandler.java/left.java
+    public T issue(T document, P parameters) throws DocumentIssuingException, SeriesUniqueCodeNotFilled;
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/DocumentIssuingHandler.java/base.java
+    public T issue(T document, P parameters) throws DocumentIssuingException;
+=======
+    public T issue(T document, P parameters) throws DocumentIssuingException, DocumentSeriesDoesNotExistException;
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-core/src/main/java/com/premiumminds/billy/core/services/documents/DocumentIssuingHandler.java/right.java
 }

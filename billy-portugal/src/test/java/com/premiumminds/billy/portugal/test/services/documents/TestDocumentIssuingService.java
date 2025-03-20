@@ -48,7 +48,13 @@ public class TestDocumentIssuingService extends PTDocumentAbstractTest {
 
     @Test
     public void testIssuingService() throws DocumentIssuingException {
+
+<<<<<<< /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestDocumentIssuingService.java/left.java
         final PTBusinessEntity businessEntity = new PTBusinessTestUtil(PTAbstractTest.injector).getBusinessEntity();
+||||||| /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestDocumentIssuingService.java/base.java
+=======
+        PTBusinessEntity businessEntity = new PTBusinessTestUtil(PTAbstractTest.injector).getBusinessEntity();
+>>>>>>> /usr/src/app/output/premium-minds/billy/9420e73394b22e375a57d57822bad925e7f9572a/billy-portugal/src/test/java/com/premiumminds/billy/portugal/test/services/documents/TestDocumentIssuingService.java/right.java
         this.createSeries(businessEntity.getUID().toString(), "A");
         this.service.issue(
                 new PTInvoiceTestUtil(PTAbstractTest.injector).getInvoiceBuilder(businessEntity, SourceBilling.P),
