@@ -20,9 +20,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
 import javax.persistence.Id;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 
 /**
  * Serializer to use for values proxied using {@link org.hibernate.proxy.HibernateProxy}.
@@ -84,7 +82,7 @@ public class HibernateProxySerializer
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         return new HibernateProxySerializer(this._forceLazyLoading, _serializeIdentifier,
                 _mapping, property);
-    }
+    }    
 
     /*
     /**********************************************************************
