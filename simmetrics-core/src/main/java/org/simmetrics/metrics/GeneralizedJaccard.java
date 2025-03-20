@@ -1,30 +1,7 @@
-/*
- * #%L
- * Simmetrics Core
- * %%
- * Copyright (C) 2014 - 2016 Simmetrics Authors
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * #L%
- */
-
 package org.simmetrics.metrics;
-
 import static org.simmetrics.metrics.Math.intersection;
-
 import org.simmetrics.MultisetDistance;
 import org.simmetrics.MultisetMetric;
-
 import com.google.common.collect.Multiset;
 
 /**
@@ -57,35 +34,23 @@ import com.google.common.collect.Multiset;
  *            type of the token
  * 
  */
-public final class GeneralizedJaccard<T> implements MultisetMetric<T>,
-		MultisetDistance<T> {
-	@Override
-	public float compare(Multiset<T> a, Multiset<T> b) {
+public final class GeneralizedJaccard<T extends java.lang.Object> implements MultisetMetric<T>, MultisetDistance<T> {
+  @Override public float compare(Multiset<T> a, Multiset<T> b) {
+    if (a.isEmpty() && b.isEmpty()) {
+      return 1.0f;
+    }
+    if (a.isEmpty() || b.isEmpty()) {
+      return 0.0f;
+    }
+    final int intersection = intersection(a, b).size();
+    return intersection / (float) (a.size() + b.size() - intersection);
+  }
 
-		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
-		}
+  @Override public float distance(Multiset<T> a, Multiset<T> b) {
+    return 1.0f - compare(a, b);
+  }
 
-		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
-		}
-
-		final int intersection = intersection(a, b).size();
-
-		// ∣a ∩ b∣ / ∣a ∪ b∣
-		// Implementation note: The size of the union of two sets is equal to
-		// the size of both sets minus the duplicate elements.
-		return intersection / (float) (a.size() + b.size() - intersection);
-	}
-
-	@Override
-	public float distance(Multiset<T> a, Multiset<T> b) {
-		return 1.0f - compare(a, b);
-	}
-
-	@Override
-	public String toString() {
-		return "GeneralizedJaccard";
-	}
-
+  @Override public String toString() {
+    return "GeneralizedJaccard";
+  }
 }
