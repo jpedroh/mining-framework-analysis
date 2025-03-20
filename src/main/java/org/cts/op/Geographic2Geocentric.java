@@ -157,18 +157,11 @@ public class Geographic2Geocentric extends AbstractCoordinateOperation {
     public String toString() {
         return getName() + " (" + ellipsoid.getName() + ")";
     }
-
-    public Ellipsoid getEllipsoid() {
-        return ellipsoid;
-    }
-
-    /**
-     * Returns true if object is equals to
-     * <code>this</code>. Tests equality between the ellipsoid used by the
-     * transformation.
-     *
-     * @param object The object to compare this Geographic2Geocentric against
-     */
+        
+        public Ellipsoid getEllipsoid() {
+            return ellipsoid;
+        }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -181,9 +174,6 @@ public class Geographic2Geocentric extends AbstractCoordinateOperation {
         return false;
     }
 
-    /**
-     * Returns the hash code for this Geographic2Geocentric.
-     */
     @Override
     public int hashCode() {
         int hash = 5;

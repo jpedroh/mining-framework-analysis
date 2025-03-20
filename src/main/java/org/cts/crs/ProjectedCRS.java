@@ -62,15 +62,15 @@ public class ProjectedCRS extends GeodeticCRS {
 
     /**
      * A 2D {@link CoordinateSystem} whose first {@link Axis} contains easting
-     * and second {@link Axis} contains northing. The unit used by these axes is
-     * meter.
+     * and second {@link Axis} contains northing. The unit used by these axes
+     * is meter.
      */
     public static CoordinateSystem EN_CS = new CoordinateSystem(new Axis[]{
         EASTING, NORTHING}, new Unit[]{METER, METER});
     /**
      * A 2D {@link CoordinateSystem} whose first {@link Axis} contains northing
-     * and second {@link Axis} contains easting. The unit used by these axes is
-     * meter.
+     * and second {@link Axis} contains easting. The unit used by these axes
+     * is meter.
      */
     public static CoordinateSystem NE_CS = new CoordinateSystem(new Axis[]{
         NORTHING, EASTING}, new Unit[]{METER, METER});
@@ -205,6 +205,34 @@ public class ProjectedCRS extends GeodeticCRS {
         if (this == o) {
             return true;
         }
+        if (o instanceof ProjectedCRS) {
+            ProjectedCRS crs = (ProjectedCRS) o;
+            if (getIdentifier().equals(crs.getIdentifier())) {
+                return true;
+            }
+            boolean nadgrids;
+            if (getGridTransformations()== null) {
+                if (crs.getGridTransformations()== null) {
+                    nadgrids = true;
+                } else {
+                    nadgrids = false;
+                }
+            } else {
+                nadgrids = getGridTransformations().equals(crs.getGridTransformations());
+            }
+
+            return getDatum().equals(crs.getDatum()) && getProjection().equals(crs.getProjection())
+                    && getCoordinateSystem().equals(crs.getCoordinateSystem()) && nadgrids;
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o instanceof GeodeticCRS) {
             GeodeticCRS crs = (GeodeticCRS) o;
             System.out.println(this);
@@ -225,20 +253,42 @@ public class ProjectedCRS extends GeodeticCRS {
             } else {
                 nadgrids = getGridTransformations().equals(crs.getGridTransformations());
             }
+            boolean crstransf;
+            if (getCRSTransformations() == null) {
+                if (crs.getCRSTransformations() == null) {
+                    crstransf = true;
+                } else {
+                    crstransf = false;
+                }
+            } else {
+                crstransf = getCRSTransformations().equals(crs.getGridTransformations());
+            }
+
+<<<<<<< /usr/src/app/output/irstv/cts/e5ac2fb4e8ef1b4418f9d55477b664e02193101f/src/main/java/org/cts/crs/ProjectedCRS.java/left.java
             return getDatum().equals(crs.getDatum()) && getProjection().equals(crs.getProjection())
-                    && getCoordinateSystem().equals(crs.getCoordinateSystem()) && nadgrids;
+                    && getCoordinateSystem().equals(crs.getCoordinateSystem()) && nadgrids && crstransf
+                    && getProjection().equals(crs.getProjection());
         } else {
             return false;
         }
     }
 
-    /**
-     * Returns the hash code for this ProjectedCRS.
-     */
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 59 * hash + (this.projection != null ? this.projection.hashCode() : 0);
         return hash;
     }
+||||||| /usr/src/app/output/irstv/cts/e5ac2fb4e8ef1b4418f9d55477b664e02193101f/src/main/java/org/cts/crs/ProjectedCRS.java/base.java
+=======
+    /**
+     * Returns the hash code for this ProjectedCRS.
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.projection != null ? this.projection.hashCode() : 0);
+        return hash;
+    }
+>>>>>>> /usr/src/app/output/irstv/cts/e5ac2fb4e8ef1b4418f9d55477b664e02193101f/src/main/java/org/cts/crs/ProjectedCRS.java/right.java
 }

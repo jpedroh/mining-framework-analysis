@@ -36,9 +36,9 @@ import java.util.*;
 import org.cts.IdentifiableComponent;
 import org.cts.Identifier;
 import org.cts.cs.Extent;
-import org.cts.op.CoordinateOperation;
 import org.cts.op.CoordinateOperationSequence;
 import org.cts.op.NonInvertibleOperationException;
+import org.cts.op.CoordinateOperation;
 
 /**
  * A datum (plural datums) is a reference from which measurements are made.<p>

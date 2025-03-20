@@ -32,7 +32,6 @@
 package org.cts.op;
 
 import java.util.Arrays;
-
 import org.cts.Identifier;
 import org.cts.IllegalCoordinateException;
 
@@ -190,14 +189,7 @@ public class CoordinateOperationSequence extends AbstractCoordinateOperation {
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Returns true if object is equals to
-     * <code>this</code>. Tests equality between the length of the sequences and
-     * then the equality of each CoordinateOperation.
-     *
-     * @param object The object to compare this CoordinateOperationSequence against
-     */
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -206,7 +198,7 @@ public class CoordinateOperationSequence extends AbstractCoordinateOperation {
         if (o instanceof CoordinateOperationSequence) {
             CoordinateOperationSequence cooordseq = (CoordinateOperationSequence) o;
             if (getSequence().length == cooordseq.getSequence().length) {
-                for (int i = 0; i < getSequence().length; i++) {
+                for (int i=0;i<getSequence().length;i++) {
                     if (!getSequence()[i].equals(cooordseq.getSequence()[i])) {
                         return false;
                     }
@@ -217,9 +209,6 @@ public class CoordinateOperationSequence extends AbstractCoordinateOperation {
         return false;
     }
 
-    /**
-     * Returns the hash code for this CoordinateOperationSequence.
-     */
     @Override
     public int hashCode() {
         int hash = 3;

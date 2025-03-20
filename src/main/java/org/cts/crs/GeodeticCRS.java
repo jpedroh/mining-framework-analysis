@@ -61,16 +61,10 @@ public abstract class GeodeticCRS extends IdentifiableComponent
      * <code>CoordinateReferenceSystem</code> is refering.
      */
     private GeodeticDatum geodeticDatum;
-    /**
-     * A map of known grid transformations from this CRS, the key of the map is
-     * the target datum of the nadgrid.
-     */
+    // A map of known grid transformations from this CRS, the key of the map is the target datum of the nadgrid.
     private Map<GeodeticDatum, List<CoordinateOperation>> nadgridsTransformations = new HashMap<GeodeticDatum, List<CoordinateOperation>>();
-    /**
-     * A map of known transformations from this CRS to other CRS.
-     */
-    private Map<CoordinateReferenceSystem, List<CoordinateOperation>> crsTransformations = new HashMap<CoordinateReferenceSystem, List<CoordinateOperation>>();
-
+    // A map of known transformations from this CRS to other CRS
+    private Map<CoordinateReferenceSystem, List<CoordinateOperation>> crsTransformation = new HashMap<CoordinateReferenceSystem, List<CoordinateOperation>>();
     /**
      * @see CoordinateReferenceSystem#getProjection()
      */
@@ -83,10 +77,9 @@ public abstract class GeodeticCRS extends IdentifiableComponent
      * <code>CoordinateReferenceSystem</code>.
      */
     protected CoordinateSystem coordinateSystem;
-
     /**
      * Create a new GeodeticCRS.
-     *
+     * 
      * @param identifier the identifier of the GeodeticCRS
      * @param datum the datum associated with the GeodeticCRS
      * @param coordSys the coordinate system associated with the GeodeticCRS
@@ -97,13 +90,11 @@ public abstract class GeodeticCRS extends IdentifiableComponent
         this.geodeticDatum = datum;
         this.coordinateSystem = coordinateSystem;
     }
-
     /**
      * @see CoordinateReferenceSystem#getType()
      */
     @Override
     abstract public Type getType();
-
     /**
      * @see CoordinateReferenceSystem#getCoordinateSystem()
      */
@@ -111,16 +102,13 @@ public abstract class GeodeticCRS extends IdentifiableComponent
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
-
     /**
      * Returns the number of dimensions of the {@link CoordinateSystem} used by
-     * this
-     * <code>CoordinateReferenceSystem</code>.
+     * this <code>CoordinateReferenceSystem</code>.
      */
     public int getDimension() {
         return coordinateSystem.getDimension();
     }
-
     /**
      * Returns the {@link Datum} to which this
      * <code>CoordinateReferenceSystem</code> is refering.
@@ -129,7 +117,6 @@ public abstract class GeodeticCRS extends IdentifiableComponent
     public GeodeticDatum getDatum() {
         return geodeticDatum;
     }
-
     /**
      * Return whether this coord is a valid coord in this
      * CoordinateReferenceSystem.
@@ -141,13 +128,13 @@ public abstract class GeodeticCRS extends IdentifiableComponent
     public boolean isValid(double[] coord) {
         return geodeticDatum.getExtent().isInside(coord);
     }
-
     /**
      * Add a Nadgrids Transformation for this CRS to the CRS using the key
      * {@link GeodeticDatum}.
      *
      * @param gd the target GeodeticDatum of the nadgrid transformation to add
-     * @param coordOp the transformation linking this CRS and the *      * target <code>gd</code>
+     * @param coordOp the transformation linking this CRS and the
+     * target <code>gd</code>
      */
     public void addGridTransformation(GeodeticDatum gd, CoordinateOperation coordOp) {
         if (nadgridsTransformations.get(gd) == null) {
@@ -155,14 +142,18 @@ public abstract class GeodeticCRS extends IdentifiableComponent
         }
         nadgridsTransformations.get(gd).add(coordOp);
     }
-
     /**
      * Return the list of nadgrids transformation defined for this CRS.
      */
     public Map<GeodeticDatum, List<CoordinateOperation>> getGridTransformations() {
         return nadgridsTransformations;
     }
-
+    public Map<GeodeticDatum, CoordinateOperation> getGridTransformations() {
+        return nadgridsTransformation;
+    }
+    /**
+     * Return the list of nadgrids transformation defined for this CRS.
+     */
     /**
      * Return the list of nadgrids transformation defined for this CRS that used
      * the datum in parameter as target datum.
@@ -173,32 +164,38 @@ public abstract class GeodeticCRS extends IdentifiableComponent
     public List<CoordinateOperation> getGridTransformations(GeodeticDatum datum) {
         return nadgridsTransformations.get(datum);
     }
-
     /**
      * Add a transformation for this CRS to the CRS in parameter.
      *
      * @param crs the target crs of the transformation to add
-     * @param opList the list of operations linking <code>this</code> *      * and <code>crs</code>
+     * @param opList the list of operations linking <code>this</code>
+     * and <code>crs</code>
      */
     public void addCRSTransformation(CoordinateReferenceSystem crs, List<CoordinateOperation> opList) {
-        crsTransformations.put(crs, opList);
+        crsTransformation.put(crs, opList);
     }
-
     /**
-     * Return the list of nadgrids transformations defined for this CRS.
+     * Return the list of nadgrids transformation defined for this CRS.
      */
     public Map<CoordinateReferenceSystem, List<CoordinateOperation>> getCRSTransformations() {
-        return crsTransformations;
+        return crsTransformation;
     }
+    /**
+     * A map of known grid transformations from this CRS, the key of the map is
+     * the target datum of the nadgrid.
+     */
+    /**
+     * A map of known transformations from this CRS to other CRS.
+     */
 
     /**
-     * Return the list of transformations defined for this CRS to the CRS in
+     * Return the list of transformation defined for this CRS to the CRS in
      * parameter.
-     *
+     * 
      * @param crs the crs that must be a target for returned list of operations
      */
     public List<CoordinateOperation> getCRSTransformations(CoordinateReferenceSystem crs) {
-        return crsTransformations.get(crs);
+        return crsTransformation.get(crs);
     }
 
     /**
@@ -226,15 +223,7 @@ public abstract class GeodeticCRS extends IdentifiableComponent
     public String toString() {
         return "[" + getAuthorityName() + ":" + getAuthorityKey() + "] " + getName();
     }
-
-    /**
-     * Returns true if object is equals to
-     * <code>this</code>. Tests equality between identifiers, then tests if the
-     * components of this ProjectedCRS are equals : the grids transformations,
-     * the {@link GeodeticDatum}, the {@link CoordinateSystem}.
-     *
-     * @param object The object to compare this GeodeticCRS against
-     */
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -258,16 +247,24 @@ public abstract class GeodeticCRS extends IdentifiableComponent
             } else {
                 nadgrids = getGridTransformations().equals(crs.getGridTransformations());
             }
-            return getDatum().equals(crs.getDatum()) && nadgrids
-                    && getCoordinateSystem().equals(crs.getCoordinateSystem());
+            boolean crstransf;
+            if (getCRSTransformations() == null) {
+                if (crs.getCRSTransformations() == null) {
+                    crstransf = true;
+                } else {
+                    crstransf = false;
+                }
+            } else {
+                crstransf = getCRSTransformations().equals(crs.getGridTransformations());
+            }
+
+            return getDatum().equals(crs.getDatum()) && getProjection().equals(crs.getProjection())
+                    && getCoordinateSystem().equals(crs.getCoordinateSystem()) && nadgrids && crstransf;
         } else {
             return false;
         }
     }
 
-    /**
-     * Returns the hash code for this GeodeticCRS.
-     */
     @Override
     public int hashCode() {
         int hash = 7;
