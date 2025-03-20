@@ -1,5 +1,4 @@
 package com.tumblr.jumblr.request;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -25,119 +24,132 @@ import org.scribe.oauth.OAuthService;
  * @author jc
  */
 public class RequestBuilder {
+  private OAuthService service;
 
-    private String hostname = "api.tumblr.com";
-    private final JumblrClient client;
+  private Token token;
 
-    public RequestBuilder(JumblrClient client) {
-        this.client = client;
+  private final JumblrClient client;
+
+  private String hostname = "api.tumblr.com";
+
+  public RequestBuilder(JumblrClient client) {
+    this.client = client;
+  }
+
+  public String getRedirectUrl(String path) {
+    OAuthRequest request = this.constructGet(path, null);
+    sign(request);
+    boolean presetVal = HttpURLConnection.getFollowRedirects();
+    HttpURLConnection.setFollowRedirects(false);
+    Response response = request.send();
+    HttpURLConnection.setFollowRedirects(presetVal);
+    if (response.getCode() == 301) {
+      return response.getHeader("Location");
+    } else {
+      throw new JumblrException(response);
     }
+  }
 
-    public String getRedirectUrl(String path) {
-        OAuthRequest request = this.constructGet(path, null);
-        sign(request);
-        boolean presetVal = HttpURLConnection.getFollowRedirects();
-        HttpURLConnection.setFollowRedirects(false);
-        Response response = request.send();
-        HttpURLConnection.setFollowRedirects(presetVal);
-        if (response.getCode() == 301) {
-            return response.getHeader("Location");
-        } else {
-            throw new JumblrException(response);
-        }
+  public ResponseWrapper postMultipart(String path, Map<String, ?> bodyMap) throws IOException {
+    OAuthRequest request = this.constructPost(path, bodyMap);
+    sign(request);
+    OAuthRequest newRequest = RequestBuilder.convertToMultipart(request, bodyMap);
+    return clear(newRequest.send());
+  }
+
+  public ResponseWrapper post(String path, Map<String, ?> bodyMap) {
+    OAuthRequest request = this.constructPost(path, bodyMap);
+    sign(request);
+    return clear(request.send());
+  }
+
+  public ResponseWrapper get(String path, Map<String, ?> map) {
+    OAuthRequest request = this.constructGet(path, map);
+    sign(request);
+    return clear(request.send());
+  }
+
+  private OAuthRequest constructGet(String path, Map<String, ?> queryParams) {
+    String url = 
+<<<<<<< /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/left.java
+    "http://" + hostname + "/v2" + path
+=======
+    "https://api.tumblr.com/v2" + path
+>>>>>>> /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/right.java
+    ;
+    OAuthRequest request = new OAuthRequest(Verb.GET, url);
+    if (queryParams != null) {
+      for (String key : queryParams.keySet()) {
+        request.addQuerystringParameter(key, queryParams.get(key).toString());
+      }
     }
+    return request;
+  }
 
-    public ResponseWrapper postMultipart(String path, Map<String, ?> bodyMap) throws IOException {
-        OAuthRequest request = this.constructPost(path, bodyMap);
-        sign(request);
-        OAuthRequest newRequest = RequestBuilder.convertToMultipart(request, bodyMap);
-        return clear(newRequest.send());
+  private OAuthRequest constructPost(String path, Map<String, ?> bodyMap) {
+    String url = 
+<<<<<<< /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/left.java
+    "http://" + hostname + "/v2" + path
+=======
+    "https://api.tumblr.com/v2" + path
+>>>>>>> /usr/src/app/output/tumblr/jumblr/7f11b916bf62f92e12c3a6c098ed2df7c36ad9f4/src/main/java/com/tumblr/jumblr/request/RequestBuilder.java/right.java
+    ;
+    OAuthRequest request = new OAuthRequest(Verb.POST, url);
+    for (String key : bodyMap.keySet()) {
+      if (bodyMap.get(key) == null) {
+        continue;
+      }
+      if (bodyMap.get(key) instanceof File) {
+        continue;
+      }
+      request.addBodyParameter(key, bodyMap.get(key).toString());
     }
+    return request;
+  }
 
-    public ResponseWrapper post(String path, Map<String, ?> bodyMap) {
-        OAuthRequest request = this.constructPost(path, bodyMap);
-        sign(request);
-        return clear(request.send());
+  public void setConsumer(String consumerKey, String consumerSecret) {
+    service = new ServiceBuilder().provider(TumblrApi.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
+  }
+
+  public void setToken(String token, String tokenSecret) {
+    this.token = new Token(token, tokenSecret);
+  }
+
+  private ResponseWrapper clear(Response response) {
+    if (response.getCode() == 200 || response.getCode() == 201) {
+      String json = response.getBody();
+      try {
+        Gson gson = new GsonBuilder().registerTypeAdapter(JsonElement.class, new JsonElementDeserializer()).create();
+        ResponseWrapper wrapper = gson.fromJson(json, ResponseWrapper.class);
+        wrapper.setClient(client);
+        return wrapper;
+      } catch (JsonSyntaxException ex) {
+        throw new JumblrException(response);
+      }
+    } else {
+      throw new JumblrException(response);
     }
+  }
 
-    public ResponseWrapper get(String path, Map<String, ?> map) {
-        OAuthRequest request = this.constructGet(path, map);
-        sign(request);
-        return clear(request.send());
+  private void sign(OAuthRequest request) {
+    if (token != null) {
+      service.signRequest(token, request);
     }
+  }
 
-    private OAuthRequest constructGet(String path, Map<String, ?> queryParams) {
-        String url = "https://" + hostname + "/v2" + path;
-        OAuthRequest request = new OAuthRequest(Verb.GET, url);
-        if (queryParams != null) {
-            for (String key : queryParams.keySet()) {
-                request.addQuerystringParameter(key, queryParams.get(key).toString());
-            }
-        }
-        return request;
-    }
+  public static OAuthRequest convertToMultipart(OAuthRequest request, Map<String, ?> bodyMap) throws IOException {
+    return new MultipartConverter(request, bodyMap).getRequest();
+  }
 
-    private OAuthRequest constructPost(String path, Map<String, ?> bodyMap) {
-        String url = "https://" + hostname + "/v2" + path;
-        OAuthRequest request = new OAuthRequest(Verb.POST, url);
+  public String getHostname() {
+    return hostname;
+  }
 
-        for (String key : bodyMap.keySet()) {
-            if (bodyMap.get(key) == null) { continue; }
-            if (bodyMap.get(key) instanceof File) { continue; }
-            request.addBodyParameter(key, bodyMap.get(key).toString());
-        }
-        return request;
-    }
-
-    public void setConsumer(String consumerKey, String consumerSecret) {
-        service = new ServiceBuilder().
-        provider(TumblrApi.class).
-        apiKey(consumerKey).apiSecret(consumerSecret).
-        build();
-    }
-
-    public void setToken(String token, String tokenSecret) {
-        this.token = new Token(token, tokenSecret);
-    }
-
-    private ResponseWrapper clear(Response response) {
-        if (response.getCode() == 200 || response.getCode() == 201) {
-            String json = response.getBody();
-            try {
-                Gson gson = new GsonBuilder().
-                        registerTypeAdapter(JsonElement.class, new JsonElementDeserializer()).
-                        create();
-                ResponseWrapper wrapper = gson.fromJson(json, ResponseWrapper.class);
-                wrapper.setClient(client);
-                return wrapper;
-            } catch (JsonSyntaxException ex) {
-                throw new JumblrException(response);
-            }
-        } else {
-            throw new JumblrException(response);
-        }
-    }
-
-    private void sign(OAuthRequest request) {
-        if (token != null) {
-            service.signRequest(token, request);
-        }
-    }
-
-    public static OAuthRequest convertToMultipart(OAuthRequest request, Map<String, ?> bodyMap) throws IOException {
-        return new MultipartConverter(request, bodyMap).getRequest();
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
-     * Set hostname without protocol
+  /**
+     * Set hostname without protocol 
      * @param host such as "api.tumblr.com"
      */
-    public void setHostname(String host) {
-        this.hostname = host;
-    }
-
+  public void setHostname(String host) {
+    this.hostname = host;
+  }
 }
