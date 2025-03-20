@@ -48,8 +48,15 @@ public class Assertions_assertThat_with_List_Test {
 
   @Test
   public void should_create_Assert() {
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_List_Test.java/left.java
+    assertNotNull(Assertions.assertThat(emptyList()));
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_List_Test.java/base.java
+    AbstractListAssert<?, ? extends List<Object>, Object> assertions = Assertions.assertThat(emptyList());
+    assertNotNull(assertions);
+=======
     AbstractListAssert<?, ? extends List<? extends Object>, Object> assertions = Assertions.assertThat(emptyList());
     assertNotNull(assertions);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_List_Test.java/right.java
   }
 
   @Test

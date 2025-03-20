@@ -28,14 +28,28 @@ public class Assertions_assertThat_with_Iterable_Test {
 
   @Test
   public void should_create_Assert() {
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/left.java
+    assertNotNull(Assertions.assertThat(newLinkedHashSet()));
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/base.java
+    AbstractIterableAssert<?, ? extends Iterable<Object>, Object> assertions = Assertions.assertThat(newLinkedHashSet());
+    assertNotNull(assertions);
+=======
     AbstractIterableAssert<?, ? extends Iterable<?>, Object> assertions = Assertions.assertThat( newLinkedHashSet() );
     assertNotNull(assertions);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/right.java
   }
 
   @Test
   public void should_pass_actual() {
     Iterable<String> names = newLinkedHashSet("Luke");
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/left.java
+    assertSame(names, Assertions.assertThat(names).actual);
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/base.java
+    AbstractIterableAssert<?, ? extends Iterable<String>, String> assertions = Assertions.assertThat(names);
+    assertSame(names, assertions.actual);
+=======
     AbstractIterableAssert<?, ? extends Iterable<? extends String>, String> assertions = Assertions.assertThat( names );
     assertSame(names, assertions.actual);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterable_Test.java/right.java
   }
 }

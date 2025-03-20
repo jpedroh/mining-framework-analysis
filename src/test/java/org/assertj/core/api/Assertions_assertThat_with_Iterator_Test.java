@@ -34,21 +34,44 @@ public class Assertions_assertThat_with_Iterator_Test {
 
   @Test
   public void should_create_Assert() {
-	AbstractIterableAssert<?, ? extends Iterable<? extends Object>, Object> assertions = Assertions.assertThat(newLinkedHashSet());
-	assertNotNull(assertions);
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/left.java
+    assertNotNull(Assertions.assertThat(newLinkedHashSet()));
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/base.java
+    AbstractIterableAssert<?, ? extends Iterable<Object>, Object> assertions = Assertions.assertThat(newLinkedHashSet());
+    assertNotNull(assertions);
+=======
+  	AbstractIterableAssert<?, ? extends Iterable<? extends Object>, Object> assertions = Assertions.assertThat(newLinkedHashSet());
+  	assertNotNull(assertions);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/right.java
   }
 
   @Test
   public void should_initialise_actual() {
-	Iterator<String> names = asList("Luke", "Leia").iterator();
-	AbstractIterableAssert<?, ? extends Iterable<? extends String>, String> assertions = assertThat(names);
-	assertThat(assertions.actual).containsOnly("Leia", "Luke");
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/left.java
+    Iterator<String> names = asList("Luke", "Leia").iterator();
+    assertThat(assertThat(names).actual, hasItems("Leia", "Luke"));
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/base.java
+    Iterator<String> names = asList("Luke", "Leia").iterator();
+    AbstractIterableAssert<?, ? extends Iterable<String>, String> assertions = assertThat(names);
+    assertThat(assertions.actual, hasItems("Leia", "Luke"));
+=======
+  	Iterator<String> names = asList("Luke", "Leia").iterator();
+  	AbstractIterableAssert<?, ? extends Iterable<? extends String>, String> assertions = assertThat(names);
+  	assertThat(assertions.actual).containsOnly("Leia", "Luke");
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/right.java
   }
 
   @Test
   public void should_allow_null() {
-	AbstractIterableAssert<?, ? extends Iterable<? extends String>, String> assertions = assertThat((Iterator<String>) null);
-	assertThat(assertions.actual).isNull();
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/left.java
+    assertThat(assertThat((Iterator<String>) null).actual).isNull();
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/base.java
+    AbstractIterableAssert<?, ? extends Iterable<String>, String> assertions = assertThat((Iterator<String>) null);
+    assertThat(assertions.actual).isNull();
+=======
+  	AbstractIterableAssert<?, ? extends Iterable<? extends String>, String> assertions = assertThat((Iterator<String>) null);
+  	assertThat(assertions.actual).isNull();
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/e48c141d6c44ba4ea76f65400de6a8a19a5722cc/src/test/java/org/assertj/core/api/Assertions_assertThat_with_Iterator_Test.java/right.java
   }
 
   @Test
