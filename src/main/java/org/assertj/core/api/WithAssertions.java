@@ -1,17 +1,4 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2019 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +53,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
@@ -105,9 +91,7 @@ import org.assertj.core.util.CheckReturnValue;
  * @author Alan Rothkopf
  *
  */
-@CheckReturnValue
-public interface WithAssertions {
-
+@CheckReturnValue public interface WithAssertions {
   /**
    * Assertions entry point for float {@link Offset}.
    * <p>
@@ -148,7 +132,7 @@ public interface WithAssertions {
    * @param value the value of the entry to create.
    * @return the created {@code MapEntry}.
    */
-  default <K, V> MapEntry<K, V> entry(final K key, final V value) {
+  default <K extends java.lang.Object, V extends java.lang.Object> MapEntry<K, V> entry(final K key, final V value) {
     return Assertions.entry(key, value);
   }
 
@@ -160,7 +144,7 @@ public interface WithAssertions {
    * @return nothing, it's just to be used in doSomething(optional.orElse(() -&gt; fail("boom")));.
    * @throws AssertionError with the given message.
    */
-  default <T> T fail(final String failureMessage) {
+  default <T extends java.lang.Object> T fail(final String failureMessage) {
     return Assertions.fail(failureMessage);
   }
 
@@ -174,7 +158,7 @@ public interface WithAssertions {
    * @throws AssertionError with the given built message.
    * @since 3.9.0
    */
-  default <T> T fail(String failureMessage, Object... args) {
+  default <T extends java.lang.Object> T fail(String failureMessage, Object... args) {
     return Assertions.fail(failureMessage, args);
   }
 
@@ -187,7 +171,7 @@ public interface WithAssertions {
    * @return nothing, it's just to be used in doSomething(optional.orElse(() -&gt; fail("boom", cause)));.
    * @throws AssertionError with the given message and with the {@link Throwable} that caused the failure.
    */
-  default <T> T fail(final String failureMessage, final Throwable realCause) {
+  default <T extends java.lang.Object> T fail(final String failureMessage, final Throwable realCause) {
     return Assertions.fail(failureMessage, realCause);
   }
 
@@ -198,7 +182,7 @@ public interface WithAssertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  default <T> Not<T> not(final Condition<? super T> condition) {
+  default <T extends java.lang.Object> Not<T> not(final Condition<? super T> condition) {
     return Assertions.not(condition);
   }
 
@@ -207,11 +191,11 @@ public interface WithAssertions {
    *
    * @param <T> the type of object the given condition accept.
    * @param conditions the conditions to evaluate.
-   * @return the created {@code AllOf}.
+   * @return the created {@code AnyOf}.
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  default <T> Condition<T> allOf(final Iterable<? extends Condition<? super T>> conditions) {
+  default <T extends java.lang.Object> Condition<T> allOf(final Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.allOf(conditions);
   }
 
@@ -220,11 +204,11 @@ public interface WithAssertions {
    *
    * @param <T> the type of object the given condition accept.
    * @param conditions the conditions to evaluate.
-   * @return the created {@code AllOf}.
+   * @return the created {@code AnyOf}.
    * @throws NullPointerException if the given array is {@code null}.
    * @throws NullPointerException if any of the elements in the given array is {@code null}.
    */
-  default <T> Condition<T> allOf(@SuppressWarnings("unchecked") final Condition<? super T>... conditions) {
+  default <T extends java.lang.Object> Condition<T> allOf(@SuppressWarnings(value = { "unchecked" }) final Condition<? super T>... conditions) {
     return Assertions.allOf(conditions);
   }
 
@@ -235,7 +219,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <T> ObjectArrayAssert<T> assertThat(final T[] actual) {
+  default <T extends java.lang.Object> ObjectArrayAssert<T> assertThat(final T[] actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -305,7 +289,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <K, V> MapAssert<K, V> assertThat(final Map<K, V> actual) {
+  default <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> assertThat(final Map<K, V> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -356,7 +340,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <T> ObjectAssert<T> assertThat(final T actual) {
+  default <T extends java.lang.Object> ObjectAssert<T> assertThat(final T actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -452,7 +436,7 @@ public interface WithAssertions {
    * @param <OBJECT> the type of the object holding the updatable field.
    * @return the created assertion object.
    */
-  default <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  default <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -486,7 +470,7 @@ public interface WithAssertions {
    * @param <OBJECT> the type of the object holding the updatable field.
    * @return the created assertion object.
    */
-  default <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
+  default <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -498,7 +482,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <VALUE> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
+  default <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -510,7 +494,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
+  default <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -523,7 +507,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  default <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -535,7 +519,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <VALUE> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
+  default <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -547,7 +531,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <VALUE> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
+  default <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -662,7 +646,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <T> IterableAssert<T> assertThat(final Iterable<? extends T> actual) {
+  default <T extends java.lang.Object> IterableAssert<T> assertThat(final Iterable<? extends T> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -702,8 +686,7 @@ public interface WithAssertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-  default <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual,
-                                                                                                                                                                                                                   AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  default <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return Assertions.assertThat(actual, assertFactory);
   }
 
@@ -726,7 +709,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <T> IteratorAssert<T> assertThat(final Iterator<? extends T> actual) {
+  default <T extends java.lang.Object> IteratorAssert<T> assertThat(final Iterator<? extends T> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -758,8 +741,7 @@ public interface WithAssertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  default <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual,
-                                                                                                                                                                                                                 Class<ELEMENT_ASSERT> assertClass) {
+  default <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual, Class<ELEMENT_ASSERT> assertClass) {
     return Assertions.assertThat(actual, assertClass);
   }
 
@@ -862,7 +844,7 @@ public interface WithAssertions {
    * @return the created assertion object.
    * @since 3.7.0
    */
-  default <RESULT> FutureAssert<RESULT> assertThat(Future<RESULT> actual) {
+  default <RESULT extends java.lang.Object> FutureAssert<RESULT> assertThat(Future<RESULT> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -953,7 +935,7 @@ public interface WithAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  default <T> ListAssert<T> assertThat(final List<? extends T> actual) {
+  default <T extends java.lang.Object> ListAssert<T> assertThat(final List<? extends T> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -985,8 +967,7 @@ public interface WithAssertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  default <ELEMENT, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                                                                                                                                         Class<ELEMENT_ASSERT> assertClass) {
+  default <ELEMENT extends java.lang.Object, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, Class<ELEMENT_ASSERT> assertClass) {
     return Assertions.assertThat(actual, assertClass);
   }
 
@@ -1026,8 +1007,7 @@ public interface WithAssertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-  default <ACTUAL extends List<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                                                                                                                                           AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  default <ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return Assertions.assertThat(actual, assertFactory);
   }
 
@@ -1058,7 +1038,7 @@ public interface WithAssertions {
    * @param actual the actual {@link Stream} value.
    * @return the created assertion object.
    */
-  default <ELEMENT> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
+  default <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -1220,7 +1200,7 @@ public interface WithAssertions {
    * @throws NullPointerException if the given property name is {@code null}.
    * @throws IllegalArgumentException if the given property name is empty.
    */
-  default <T> Properties<T> extractProperty(final String propertyName, final Class<T> propertyType) {
+  default <T extends java.lang.Object> Properties<T> extractProperty(final String propertyName, final Class<T> propertyType) {
     return Assertions.extractProperty(propertyName, propertyType);
   }
 
@@ -1637,7 +1617,7 @@ public interface WithAssertions {
    * @return same instance of {@code extractor}
    * @since 3.9.0
    */
-  default <F, T> Function<F, T> from(Function<F, T> extractor) {
+  default <F extends java.lang.Object, T extends java.lang.Object> Function<F, T> from(Function<F, T> extractor) {
     return Assertions.from(extractor);
   }
 
@@ -1650,7 +1630,7 @@ public interface WithAssertions {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  default <T> Condition<T> anyOf(final Iterable<? extends Condition<? super T>> conditions) {
+  default <T extends java.lang.Object> Condition<T> anyOf(final Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.anyOf(conditions);
   }
 
@@ -1666,7 +1646,7 @@ public interface WithAssertions {
    * @param conditions the conditions to evaluate.
    * @return the created {@code AnyOf}.
    */
-  default <T> Condition<T> anyOf(@SuppressWarnings("unchecked") final Condition<? super T>... conditions) {
+  default <T extends java.lang.Object> Condition<T> anyOf(@SuppressWarnings(value = { "unchecked" }) final Condition<? super T>... conditions) {
     return Assertions.anyOf(conditions);
   }
 
@@ -1677,7 +1657,7 @@ public interface WithAssertions {
    * @param condition the condition to inverse.
    * @return The DoesNotHave condition created.
    */
-  default <T> DoesNotHave<T> doesNotHave(final Condition<? super T> condition) {
+  default <T extends java.lang.Object> DoesNotHave<T> doesNotHave(final Condition<? super T> condition) {
     return Assertions.doesNotHave(condition);
   }
 
@@ -1794,7 +1774,7 @@ public interface WithAssertions {
    * @throws AssertionError with a message explaining that a {@link Throwable} of given class was expected to be thrown but had
    *           not been.
    */
-  default <T> T failBecauseExceptionWasNotThrown(final Class<? extends Throwable> throwableClass) {
+  default <T extends java.lang.Object> T failBecauseExceptionWasNotThrown(final Class<? extends Throwable> throwableClass) {
     return Assertions.failBecauseExceptionWasNotThrown(throwableClass);
   }
 
@@ -1808,7 +1788,7 @@ public interface WithAssertions {
    *           not been.
    * @since 3.9.0
    */
-  default <T> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
+  default <T extends java.lang.Object> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     return Assertions.shouldHaveThrown(throwableClass);
   }
 
@@ -2076,7 +2056,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <RESULT> CompletableFutureAssert<RESULT> assertThat(final CompletableFuture<RESULT> future) {
+  default <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> assertThat(final CompletableFuture<RESULT> future) {
     return Assertions.assertThat(future);
   }
 
@@ -2110,7 +2090,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <RESULT> CompletableFutureAssert<RESULT> assertThat(final CompletionStage<RESULT> completionStage) {
+  default <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> assertThat(final CompletionStage<RESULT> completionStage) {
     return Assertions.assertThat(completionStage);
   }
 
@@ -2122,7 +2102,7 @@ public interface WithAssertions {
    *
    * @return the created assertion object.
    */
-  default <VALUE> OptionalAssert<VALUE> assertThat(final Optional<VALUE> optional) {
+  default <VALUE extends java.lang.Object> OptionalAssert<VALUE> assertThat(final Optional<VALUE> optional) {
     return Assertions.assertThat(optional);
   }
 
@@ -2248,8 +2228,7 @@ public interface WithAssertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return the created {@link ThrowableAssert}.
    */
-  @CanIgnoreReturnValue
-  default AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(final ThrowingCallable shouldRaiseThrowable) {
+  @CanIgnoreReturnValue default AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(final ThrowingCallable shouldRaiseThrowable) {
     return Assertions.assertThatThrownBy(shouldRaiseThrowable);
   }
 
@@ -2285,9 +2264,7 @@ public interface WithAssertions {
    *
    * @since 3.9.0
    */
-  @CanIgnoreReturnValue
-  default AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable,
-                                                                             String description, Object... args) {
+  @CanIgnoreReturnValue default AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable, String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
 
@@ -2357,7 +2334,7 @@ public interface WithAssertions {
    * @return the created assertion object.
    * @since 3.12.0
    */
-  default <T> ObjectAssert<T> assertThatObject(T actual) {
+  default <T extends java.lang.Object> ObjectAssert<T> assertThatObject(T actual) {
     return assertThat(actual);
   }
 
@@ -2427,8 +2404,7 @@ public interface WithAssertions {
    * @see #catchThrowable(ThrowableAssert.ThrowingCallable)
    * @since 3.9.0
    */
-  default <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(final ThrowingCallable shouldRaiseThrowable,
-                                                                       final Class<THROWABLE> type) {
+  default <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(final ThrowingCallable shouldRaiseThrowable, final Class<THROWABLE> type) {
     return Assertions.catchThrowableOfType(shouldRaiseThrowable, type);
   }
 
@@ -2498,7 +2474,7 @@ public interface WithAssertions {
    * @return the created assertion object.
    *
    */
-  default <T> PredicateAssert<T> assertThat(final Predicate<T> actual) {
+  default <T extends java.lang.Object> PredicateAssert<T> assertThat(final Predicate<T> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -2564,13 +2540,9 @@ public interface WithAssertions {
    *          the component that creates its own assert
    * @return the associated {@link Assert} of the given component
    */
-  default <T> T assertThat(final AssertProvider<T> component) {
+  default <T extends java.lang.Object> T assertThat(final AssertProvider<T> component) {
     return Assertions.assertThat(component);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a complete entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
@@ -2591,7 +2563,7 @@ public interface WithAssertions {
    * @param array the array to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  default <E> Filters<E> filter(final E[] array) {
+  default <E extends java.lang.Object> Filters<E> filter(final E[] array) {
     return Assertions.filter(array);
   }
 
@@ -2615,7 +2587,7 @@ public interface WithAssertions {
    * @param iterableToFilter the {@code Iterable} to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  default <E> Filters<E> filter(final Iterable<E> iterableToFilter) {
+  default <E extends java.lang.Object> Filters<E> filter(final Iterable<E> iterableToFilter) {
     return Assertions.filter(iterableToFilter);
   }
 
@@ -2690,10 +2662,6 @@ public interface WithAssertions {
   default NotFilter not(Object valueNotToMatch) {
     return Assertions.not(valueNotToMatch);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
@@ -2873,7 +2841,7 @@ public interface WithAssertions {
    * @param formatter the formatter {@link Function}
    * @since 3.9.0
    */
-  default <T> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
+  default <T extends java.lang.Object> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
     Assertions.registerFormatterForType(type, formatter);
   }
 

@@ -1,20 +1,6 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2019 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.configuration.ConfigurationProvider.CONFIGURATION_PROVIDER;
 import static org.assertj.core.data.Percentage.withPercentage;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +57,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
@@ -137,13 +122,12 @@ import org.assertj.core.util.introspection.Introspection;
  * @author Julien Meddah
  * @author William Delanoue
  */
-@CheckReturnValue
-public class Assertions {
-
+@CheckReturnValue public class Assertions {
   /**
    * Creates a new <code>{@link Assertions}</code>.
    */
-  protected Assertions() {}
+  protected Assertions() {
+  }
 
   /**
    * Create assertion for {@link Predicate}.
@@ -154,7 +138,7 @@ public class Assertions {
    *
    * @since 3.5.0
    */
-  public static <T> PredicateAssert<T> assertThat(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> assertThat(Predicate<T> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -202,7 +186,7 @@ public class Assertions {
    *
    * @return the created assertion object.
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> assertThat(CompletableFuture<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> assertThat(CompletableFuture<RESULT> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -216,7 +200,7 @@ public class Assertions {
    *
    * @return the created assertion object.
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> assertThat(CompletionStage<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> assertThat(CompletionStage<RESULT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -250,7 +234,7 @@ public class Assertions {
    *
    * @return the created assertion object.
    */
-  public static <VALUE> OptionalAssert<VALUE> assertThat(Optional<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> OptionalAssert<VALUE> assertThat(Optional<VALUE> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -477,7 +461,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <RESULT> FutureAssert<RESULT> assertThat(Future<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> FutureAssert<RESULT> assertThat(Future<RESULT> actual) {
     return new FutureAssert<>(actual);
   }
 
@@ -588,10 +572,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.5.0 / 3.5.0
    */
-  //@format:off
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual,
-                                                                                 AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
 
@@ -624,10 +605,8 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.5.0 / 3.5.0
    */
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual,
-                                                                                          Class<ELEMENT_ASSERT> assertClass) {
-           return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual, Class<ELEMENT_ASSERT> assertClass) {
+    return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
 
   /**
@@ -667,9 +646,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.5.0 / 3.5.0
    */
-  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                        AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
 
@@ -702,13 +679,9 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.5.0 / 3.5.0
    */
-  public static <ELEMENT, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                      Class<ELEMENT_ASSERT> assertClass) {
+  public static <ELEMENT extends java.lang.Object, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, Class<ELEMENT_ASSERT> assertClass) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
-  //@format:on
 
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
@@ -747,7 +720,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectAssert<T> assertThat(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -758,7 +731,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectArrayAssert<T> assertThat(T[] actual) {
+  public static <T extends java.lang.Object> ObjectArrayAssert<T> assertThat(T[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -914,7 +887,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return new AtomicIntegerFieldUpdaterAssert<>(actual);
   }
 
@@ -948,7 +921,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
     return new AtomicLongFieldUpdaterAssert<>(actual);
   }
 
@@ -960,7 +933,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
     return new AtomicReferenceAssert<>(actual);
   }
 
@@ -972,7 +945,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
     return new AtomicReferenceArrayAssert<>(actual);
   }
 
@@ -985,7 +958,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  public static <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return new AtomicReferenceFieldUpdaterAssert<>(actual);
   }
 
@@ -997,7 +970,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
     return new AtomicMarkableReferenceAssert<>(actual);
   }
 
@@ -1009,7 +982,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
     return new AtomicStampedReferenceAssert<>(actual);
   }
 
@@ -1051,8 +1024,7 @@ public class Assertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return the created {@link ThrowableAssert}.
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
 
@@ -1088,9 +1060,7 @@ public class Assertions {
    *
    * @since 3.9.0
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable,
-                                                                                   String description, Object... args) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable, String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
 
@@ -1154,7 +1124,7 @@ public class Assertions {
    * @return the created assertion object.
    * @since 3.12.0
    */
-  public static <T> ObjectAssert<T> assertThatObject(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> assertThatObject(T actual) {
     return assertThat(actual);
   }
 
@@ -1226,8 +1196,7 @@ public class Assertions {
    * @see #catchThrowable(ThrowableAssert.ThrowingCallable)
    * @since 3.9.0
    */
-  public static <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(ThrowingCallable shouldRaiseThrowable,
-                                                                             Class<THROWABLE> type) {
+  public static <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(ThrowingCallable shouldRaiseThrowable, Class<THROWABLE> type) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseThrowable, type);
   }
 
@@ -1293,14 +1262,8 @@ public class Assertions {
     return assertThatExceptionOfType(IllegalStateException.class);
   }
 
-  // -------------------------------------------------------------------------------------------------
-  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
-  // -------------------------------------------------------------------------------------------------
-
   /**
    * Sets whether we remove elements related to AssertJ from assertion error stack trace.
-   * <p>
-   * Default is {@value org.assertj.core.configuration.Configuration#REMOVE_ASSERTJ_RELATED_ELEMENTS_FROM_STACK_TRACE}.
    *
    * @param removeAssertJRelatedElementsFromStackTrace flag.
    */
@@ -1316,8 +1279,7 @@ public class Assertions {
    * @return nothing, it's just to be used in doSomething(optional.orElse(() -&gt; fail("boom")));.
    * @throws AssertionError with the given message.
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage) {
     return Fail.fail(failureMessage);
   }
 
@@ -1330,8 +1292,7 @@ public class Assertions {
    * @return nothing, it's just to be used in doSomething(optional.orElse(() -&gt; fail("b%s", ""oom)));.
    * @throws AssertionError with the given built message.
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage, Object... args) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage, Object... args) {
     return Fail.fail(failureMessage, args);
   }
 
@@ -1343,8 +1304,7 @@ public class Assertions {
    * @return nothing, it's just to be used in doSomething(optional.orElse(() -&gt; fail("boom", cause)));.
    * @throws AssertionError with the given message and with the {@link Throwable} that caused the failure.
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage, Throwable realCause) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage, Throwable realCause) {
     return Fail.fail(failureMessage, realCause);
   }
 
@@ -1361,8 +1321,7 @@ public class Assertions {
    *           not been.
    *
    */
-  @CanIgnoreReturnValue
-  public static <T> T failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
     return Fail.shouldHaveThrown(throwableClass);
   }
 
@@ -1375,8 +1334,7 @@ public class Assertions {
    * @throws AssertionError with a message explaining that a {@link Throwable} of given class was expected to be thrown but had
    *           not been.
    */
-  @CanIgnoreReturnValue
-  public static <T> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     return Fail.shouldHaveThrown(throwableClass);
   }
 
@@ -1434,10 +1392,6 @@ public class Assertions {
     StandardRepresentation.setMaxElementsForPrinting(maxElementsForPrinting);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -1466,7 +1420,7 @@ public class Assertions {
    * @throws NullPointerException if the given property name is {@code null}.
    * @throws IllegalArgumentException if the given property name is empty.
    */
-  public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
+  public static <T extends java.lang.Object> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
 
@@ -1518,7 +1472,7 @@ public class Assertions {
    * <code>{@link org.assertj.core.api.AbstractObjectArrayAssert#extracting(String) ObjectArrayAssert#extracting(String)}</code>
    * should be allowed to extract private fields, if not and they try it fails with exception.
    *
-   * @param allowExtractingPrivateFields allow private fields extraction. Default is {@value org.assertj.core.configuration.Configuration#ALLOW_EXTRACTING_PRIVATE_FIELDS}.
+   * @param allowExtractingPrivateFields allow private fields extraction. Default {@code true}.
    */
   public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
     FieldSupport.extraction().setAllowUsingPrivateFields(allowExtractingPrivateFields);
@@ -1536,7 +1490,7 @@ public class Assertions {
    *
    * If the value is <code>false</code> and these methods try to compare private fields, it will fail with an exception.
    *
-   * @param allowComparingPrivateFields allow private fields comparison. Default is {@value org.assertj.core.configuration.Configuration#ALLOW_COMPARING_PRIVATE_FIELDS}.
+   * @param allowComparingPrivateFields allow private fields comparison. Default {@code true}.
    */
   public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
     FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
@@ -1550,10 +1504,6 @@ public class Assertions {
   public static void setExtractBareNamePropertyMethods(boolean barenamePropertyMethods) {
     Introspection.setExtractBareNamePropertyMethods(barenamePropertyMethods);
   }
-
-  // ------------------------------------------------------------------------------------------------------
-  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
@@ -1571,7 +1521,7 @@ public class Assertions {
    * @param value the value of the entry to create.
    * @return the created {@code MapEntry}.
    */
-  public static <K, V> MapEntry<K, V> entry(K key, V value) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapEntry<K, V> entry(K key, V value) {
     return MapEntry.entry(key, value);
   }
 
@@ -1994,25 +1944,20 @@ public class Assertions {
    * @param <T> Type of the property under the assertion
    * @return same instance of {@code extractor}
    */
-  public static <F, T> Function<F, T> from(Function<F, T> extractor) {
+  public static <F extends java.lang.Object, T extends java.lang.Object> Function<F, T> from(Function<F, T> extractor) {
     return extractor;
   }
-
-  // ------------------------------------------------------------------------------------------------------
-  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
 
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
    * @param <T> the type of object the given condition accept.
    * @param conditions the conditions to evaluate.
-   * @return the created {@code AllOf}.
+   * @return the created {@code AnyOf}.
    * @throws NullPointerException if the given array is {@code null}.
    * @throws NullPointerException if any of the elements in the given array is {@code null}.
    */
-  @SafeVarargs
-  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> allOf(Condition<? super T>... conditions) {
     return AllOf.allOf(conditions);
   }
 
@@ -2021,11 +1966,11 @@ public class Assertions {
    *
    * @param <T> the type of object the given condition accept.
    * @param conditions the conditions to evaluate.
-   * @return the created {@code AllOf}.
+   * @return the created {@code AnyOf}.
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return AllOf.allOf(conditions);
   }
 
@@ -2041,8 +1986,7 @@ public class Assertions {
    * @param conditions the conditions to evaluate.
    * @return the created {@code AnyOf}.
    */
-  @SafeVarargs
-  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> anyOf(Condition<? super T>... conditions) {
     return AnyOf.anyOf(conditions);
   }
 
@@ -2055,7 +1999,7 @@ public class Assertions {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return AnyOf.anyOf(conditions);
   }
 
@@ -2066,7 +2010,7 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The DoesNotHave condition created.
    */
-  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return DoesNotHave.doesNotHave(condition);
   }
 
@@ -2077,13 +2021,9 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  public static <T> Not<T> not(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> Not<T> not(Condition<? super T> condition) {
     return Not.not(condition);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
@@ -2104,7 +2044,7 @@ public class Assertions {
    * @param array the array to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  public static <E> Filters<E> filter(E[] array) {
+  public static <E extends java.lang.Object> Filters<E> filter(E[] array) {
     return Filters.filter(array);
   }
 
@@ -2128,7 +2068,7 @@ public class Assertions {
    * @param iterableToFilter the {@code Iterable} to filter.
    * @return the created <code>{@link Filters}</code>.
    */
-  public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
+  public static <E extends java.lang.Object> Filters<E> filter(Iterable<E> iterableToFilter) {
     return Filters.filter(iterableToFilter);
   }
 
@@ -2200,10 +2140,6 @@ public class Assertions {
   public static NotFilter not(Object valueNotToMatch) {
     return NotFilter.not(valueNotToMatch);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // File methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
@@ -2297,10 +2233,6 @@ public class Assertions {
     return Files.linesOf(file, charsetName);
   }
 
-  // --------------------------------------------------------------------------------------------------
-  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2390,10 +2322,6 @@ public class Assertions {
     return URLs.linesOf(url, charsetName);
   }
 
-  // --------------------------------------------------------------------------------------------------
-  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
-
   /**
    * Instead of using default strict date/time parsing, it is possible to use lenient parsing mode for default date
    * formats parser to interpret inputs that do not precisely match supported date formats (lenient parsing).
@@ -2457,8 +2385,7 @@ public class Assertions {
    *   assertThat(date).isEqualTo("2003/04/26");
    * } catch (AssertionError e) {
    *   assertThat(e).hasMessage("Failed to parse 2003/04/26 with any of these date formats: " +
-   *                            "[yyyy-MM-dd'T'HH:mm:ss.SSSX, yyyy-MM-dd'T'HH:mm:ss.SSS, " +
-   *                            "yyyy-MM-dd'T'HH:mm:ssX, " +
+   *                            "[yyyy-MM-dd'T'HH:mm:ss.SSS, yyyy-MM-dd'T'HH:mm:ssX, " +
    *                            "yyyy-MM-dd'T'HH:mm:ss, yyyy-MM-dd]");
    * }
    *
@@ -2504,8 +2431,7 @@ public class Assertions {
    *   assertThat(date).isEqualTo("2003/04/26");
    * } catch (AssertionError e) {
    *   assertThat(e).hasMessage("Failed to parse 2003/04/26 with any of these date formats: " +
-   *                            "[yyyy-MM-dd'T'HH:mm:ss.SSSX, yyyy-MM-dd'T'HH:mm:ss.SSS, " +
-   *                            "yyyy-MM-dd'T'HH:mm:ssX, " +
+   *                            "[yyyy-MM-dd'T'HH:mm:ss.SSS, yyyy-MM-dd'T'HH:mm:ssX, " +
    *                            "yyyy-MM-dd'T'HH:mm:ss, yyyy-MM-dd]");
    * }
    *
@@ -2529,7 +2455,6 @@ public class Assertions {
    * <p>
    * Defaults date format are:
    * <ul>
-   * <li><code>yyyy-MM-dd HH:mm:ss.SSSX</code></li>
    * <li><code>yyyy-MM-dd'T'HH:mm:ss.SSS</code></li>
    * <li><code>yyyy-MM-dd HH:mm:ss.SSS</code> (for {@link Timestamp} String representation support)</li>
    * <li><code>yyyy-MM-dd'T'HH:mm:ssX</code></li>
@@ -2561,7 +2486,7 @@ public class Assertions {
    *          the component that creates its own assert
    * @return the associated {@link Assert} of the given component
    */
-  public static <T> T assertThat(final AssertProvider<T> component) {
+  public static <T extends java.lang.Object> T assertThat(final AssertProvider<T> component) {
     return AssertionsForInterfaceTypes.assertThat(component);
   }
 
@@ -2614,14 +2539,11 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> IterableAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IterableAssert<ELEMENT> assertThat(Iterable<? extends ELEMENT> actual) {
     if (actual instanceof SortedSet) {
-      @SuppressWarnings("unchecked")
-      SortedSet<ELEMENT> sortedSet = (SortedSet<ELEMENT>) actual;
+      @SuppressWarnings(value = { "unchecked" }) SortedSet<ELEMENT> sortedSet = (SortedSet<ELEMENT>) actual;
       Comparator<? super ELEMENT> comparator = sortedSet.comparator();
-      return comparator == null
-          ? new IterableAssert<>(actual)
-          : new IterableAssert<ELEMENT>(actual).usingElementComparator(comparator);
+      return comparator == null ? new IterableAssert<>(actual) : new IterableAssert<ELEMENT>(actual).usingElementComparator(comparator);
     }
     return new IterableAssert<>(actual);
   }
@@ -2645,7 +2567,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> IteratorAssert<ELEMENT> assertThat(Iterator<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IteratorAssert<ELEMENT> assertThat(Iterator<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -2656,7 +2578,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> ListAssert<ELEMENT> assertThat(List<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> assertThat(List<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -2687,7 +2609,7 @@ public class Assertions {
    * @param actual the actual {@link Stream} value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -2802,7 +2724,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> assertThat(Map<K, V> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -2957,7 +2879,7 @@ public class Assertions {
    *
    * @since 3.5.0
    */
-  public static <T> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
+  public static <T extends java.lang.Object> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
     StandardRepresentation.registerFormatterForType(type, formatter);
   }
 
@@ -2969,5 +2891,4 @@ public class Assertions {
   public static void useDefaultRepresentation() {
     AbstractAssert.setCustomRepresentation(CONFIGURATION_PROVIDER.representation());
   }
-
 }
