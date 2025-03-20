@@ -93,7 +93,6 @@ public class SpanRewriter {
     }
 
     protected Query rewriteTermsQuery(TermsQuery query) throws RewriteException {
-
         Map<String, List<SpanTermQuery>> spanQueries = new HashMap<>();
 
         try {
@@ -121,15 +120,11 @@ public class SpanRewriter {
 
     }
 
-    protected Query rewriteUnknown(Query query) throws RewriteException {
-        throw new RewriteException("Don't know how to rewrite " + query.getClass(), query);
-    }
-
     /*
      * This method is only able to rewrite standard phrases where each word must follow the previous one
      * with no gaps or overlaps.  This does however cover all common uses (such as "amazing horse").
      */
-    protected Query rewritePhraseQuery(PhraseQuery query) throws RewriteException {
+    protected Query rewritePhraseQuery(PhraseQuery query) {
         Term[] terms = query.getTerms();
         int[] positions = query.getPositions();
         SpanTermQuery[] spanQueries = new SpanTermQuery[positions.length];
@@ -137,15 +132,19 @@ public class SpanRewriter {
         for(int i = 0; i < positions.length; i++) {
             if(positions[i] - positions[0] != i) {
                 // positions must increase by 1 each time (i-1 is safe as the if can't be true for i=0)
-                throw new RewriteException("Don't know how to rewrite PhraseQuery with holes or overlaps " +
+                throw new IllegalArgumentException("Don't know how to rewrite PhraseQuery with holes or overlaps " +
                         "(position must increase by 1 each time but found term " + terms[i-1] + " at position " +
-                        positions[i-1] + " followed by term " + terms[i] + " at position " + positions[i] + ")", query);
+                        positions[i-1] + " followed by term " + terms[i] + " at position " + positions[i] + ")");
             }
 
             spanQueries[i] = new SpanTermQuery(terms[i]);
         }
 
         return new SpanNearQuery(spanQueries, query.getSlop(), true);
+    }
+
+    protected Query rewriteUnknown(Query query) throws RewriteException {
+        throw new RewriteException("Don't know how to rewrite " + query.getClass(), query);
     }
 
 }

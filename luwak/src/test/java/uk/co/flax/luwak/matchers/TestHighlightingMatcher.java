@@ -388,5 +388,4 @@ public class TestHighlightingMatcher {
                 .withErrorMessage("Don't know how to rewrite");
 
     }
-
 }

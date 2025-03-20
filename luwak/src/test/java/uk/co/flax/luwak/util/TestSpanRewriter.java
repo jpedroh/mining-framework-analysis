@@ -19,6 +19,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.TermsQuery;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.spans.SpanNearQuery;
+import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.junit.Test;
 
@@ -53,7 +54,7 @@ public class TestSpanRewriter {
     }
 
     @Test
-    public void testPhraseQuery() throws RewriteException {
+    public void testPhraseQuery() {
 
         PhraseQuery pq = new PhraseQuery(1, "field1", "term1", "term2");
 
