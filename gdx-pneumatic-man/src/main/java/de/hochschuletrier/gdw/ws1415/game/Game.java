@@ -37,17 +37,12 @@ import de.hochschuletrier.gdw.ws1415.game.components.*;
 import de.hochschuletrier.gdw.ws1415.game.contactlisteners.ImpactSoundListener;
 import de.hochschuletrier.gdw.ws1415.game.contactlisteners.PlayerContactListener;
 import de.hochschuletrier.gdw.ws1415.game.contactlisteners.TriggerListener;
-
 import de.hochschuletrier.gdw.ws1415.game.systems.MovementSystem;
-
-import de.hochschuletrier.gdw.ws1415.game.systems.AnimationRenderSubsystem;
-import de.hochschuletrier.gdw.ws1415.game.systems.RenderSystem;
-
 import de.hochschuletrier.gdw.ws1415.game.systems.UpdatePositionSystem;
 import de.hochschuletrier.gdw.ws1415.game.utils.PhysixUtil;
-
+import de.hochschuletrier.gdw.ws1415.game.systems.AnimationRenderSubsystem;
+import de.hochschuletrier.gdw.ws1415.game.systems.RenderSystem;
 import java.util.HashMap;
-
 
 import java.util.function.Consumer;
 
