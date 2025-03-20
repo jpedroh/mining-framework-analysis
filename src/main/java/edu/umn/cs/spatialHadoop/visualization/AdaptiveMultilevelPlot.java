@@ -1,20 +1,10 @@
-/***********************************************************************
- * Copyright (c) 2015 by Regents of the University of Minnesota.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Apache License, Version 2.0 which
- * accompanies this distribution and is available at
- * http://www.opensource.org/licenses/apache2.0.php.
- *
- *************************************************************************/
 package edu.umn.cs.spatialHadoop.visualization;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import static java.lang.Math.pow;
-
 import edu.umn.cs.spatialHadoop.util.FSUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +19,6 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.LocalJobRunner;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
-
 import edu.umn.cs.spatialHadoop.OperationsParams;
 import edu.umn.cs.spatialHadoop.core.Rectangle;
 import edu.umn.cs.spatialHadoop.core.Shape;
@@ -45,6 +34,7 @@ import org.apache.hadoop.util.LineReader;
  */
 public class AdaptiveMultilevelPlot {
   private static final Log LOG = LogFactory.getLog(AdaptiveMultilevelPlot.class);
+
   /** Configuration entry for input MBR */
   private static final String InputMBR = "mbr";
 
@@ -60,16 +50,15 @@ public class AdaptiveMultilevelPlot {
 
   public static final String TilesToProcess = "AdaptiveMultilevelPlot.TilesToProcess";
 
-  /** The classes of tiles according to our design */
-  public enum TileClass {ImageTile, DataTile, ShallowTile, EmptyTile};
+  public enum TileClass {
+    ImageTile,
+    DataTile,
+    ShallowTile,
+    EmptyTile
+  }
 
-  /**
-   * A map function for adaptive multilevel plot using flat partitioning for image tiles.
-   * It takes each record, plots it to all overlapping image-tiles in the pyramid,
-   * and writes the generated partial images (canvases) to the output.
-   * Overlaps between the input records and non-image tiles are simply ignored
-   * as they are the responsibility of FlatPartitionMapData.
-   */
+
+
   public static class PartialImageTileCreator extends Mapper<Rectangle, Iterable<? extends Shape>, LongWritable, Canvas> {
     /** The subpyramid that defines the tiles of interest*/
     private SubPyramid subPyramid;
@@ -85,17 +74,16 @@ public class AdaptiveMultilevelPlot {
 
     /** The plotter associated with this job */
     private Plotter plotter;
+
     /** A histogram for the size of the input data used to classify tiles */
     private GridHistogram histogram;
 
     /** The threshold on the data size that defines data and image tiles */
     private long threshold;
 
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    @Override protected void setup(Context context) throws IOException, InterruptedException {
       super.setup(context);
       Configuration conf = context.getConfiguration();
-      // Create the sub-pyramid that defines the range of tiles in interest
       String[] strLevels = conf.get("levels", "7").split("\\.\\.");
       int minLevel, maxLevel;
       if (strLevels.length == 1) {
@@ -106,30 +94,25 @@ public class AdaptiveMultilevelPlot {
         maxLevel = Integer.parseInt(strLevels[1]);
       }
       Rectangle inputMBR = (Rectangle) OperationsParams.getShape(conf, InputMBR);
-      System.out.println("MaxLevel in PartialImageTileCreator"+maxLevel);
+      System.out.println("MaxLevel in PartialImageTileCreator" + maxLevel);
       subPyramid = new SubPyramid(inputMBR, minLevel, maxLevel, 0, 0, 1 << maxLevel, 1 << maxLevel);
-
-      // Create the configured plotter and retrieve other parameters
       this.plotter = Plotter.getPlotter(conf);
       this.smooth = plotter.isSmooth();
       this.tileWidth = conf.getInt("tilewidth", 256);
       this.tileHeight = conf.getInt("tileheight", 256);
-
-      // Read the histogram and the threshold
       Path histogramFile = new Path(conf.get(HistogramFileName));
       histogram = GridHistogram.readFromFile(histogramFile.getFileSystem(conf), histogramFile);
       histogram.computePrefixSums();
-      this.threshold = conf.getLong(DataTileThreshold,1024*1024);
+      this.threshold = conf.getLong(DataTileThreshold, 1024 * 1024);
     }
 
-    @Override
-    protected void map(Rectangle key, Iterable<? extends Shape> shapes, Context context) throws IOException, InterruptedException {
-      if (smooth)
+    @Override protected void map(Rectangle key, Iterable<? extends Shape> shapes, Context context) throws IOException, InterruptedException {
+      if (smooth) {
         shapes = plotter.smooth(shapes);
+      }
       Map<Long, Canvas> canvasLayers = new HashMap<Long, Canvas>();
       createTiles(shapes, subPyramid, tileWidth, tileHeight, plotter, histogram, threshold, canvasLayers, null);
-      // Write all created layers to the output
-      LOG.info("Writing "+canvasLayers.size()+" partial images");
+      LOG.info("Writing " + canvasLayers.size() + " partial images");
       LongWritable outKey = new LongWritable();
       for (Map.Entry<Long, Canvas> entry : canvasLayers.entrySet()) {
         outKey.set(entry.getKey());
@@ -138,12 +121,6 @@ public class AdaptiveMultilevelPlot {
     }
   }
 
-  /**
-   * A reduce function that merges partial canvases into a final canvas that
-   * is written to the output. The input is a tile index and a list of canvases
-   * while the output is the same tile index and one canvas that is the result
-   * of merging all the partial canvases
-   */
   public static class ImageTileMerger extends Reducer<LongWritable, Canvas, LongWritable, Canvas> {
     /** The MBR of the input area to draw */
     private Rectangle inputMBR;
@@ -157,8 +134,7 @@ public class AdaptiveMultilevelPlot {
     /** Fixed height for one tile */
     private int tileHeight;
 
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    @Override protected void setup(Context context) throws IOException, InterruptedException {
       super.setup(context);
       Configuration conf = context.getConfiguration();
       String[] strLevels = conf.get("levels", "7").split("\\.\\.");
@@ -168,28 +144,18 @@ public class AdaptiveMultilevelPlot {
       this.plotter = Plotter.getPlotter(conf);
     }
 
-    @Override
-    protected void reduce(LongWritable tileID, Iterable<Canvas> interLayers, Context context)
-        throws IOException, InterruptedException {
+    @Override protected void reduce(LongWritable tileID, Iterable<Canvas> interLayers, Context context) throws IOException, InterruptedException {
       Rectangle tileMBR = TileIndex.getMBR(inputMBR, tileID.get());
       Canvas finalLayer = plotter.createCanvas(tileWidth, tileHeight, tileMBR);
       for (Canvas interLayer : interLayers) {
         plotter.merge(finalLayer, interLayer);
         context.progress();
       }
-
       context.write(tileID, finalLayer);
     }
   }
 
-  /**
-   * A map function that partitions the data using the fine-grained pyramid
-   * partitioning scheme. It only partitions the records that belong to
-   * data tiles. This function is used to create data tiles in the top levels
-   * of the pyramid.
-   */
   public static class PyramidDataTilePartitioner extends Mapper<Rectangle, Iterable<? extends Shape>, LongWritable, Shape> {
-
     /** The sub-pyramid that represents the tiles of interest */
     private SubPyramid subPyramid;
 
@@ -199,8 +165,7 @@ public class AdaptiveMultilevelPlot {
     /** The threshold on the data size that defines data and image tiles */
     private long threshold;
 
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    @Override protected void setup(Context context) throws IOException, InterruptedException {
       super.setup(context);
       Configuration conf = context.getConfiguration();
       String[] strLevels = conf.get("levels", "7").split("\\.\\.");
@@ -212,42 +177,28 @@ public class AdaptiveMultilevelPlot {
         minLevel = Integer.parseInt(strLevels[0]);
         maxLevel = Integer.parseInt(strLevels[1]);
       }
-      System.out.println("MaxLevel in pyramidDataTilePartitioner:"+maxLevel);
+      System.out.println("MaxLevel in pyramidDataTilePartitioner:" + maxLevel);
       Rectangle inputMBR = (Rectangle) OperationsParams.getShape(conf, InputMBR);
       subPyramid = new SubPyramid(inputMBR, minLevel, maxLevel, 0, 0, 1 << maxLevel, 1 << maxLevel);
-
-      // Read the histogram and the threshold
       Path histogramFile = new Path(conf.get(HistogramFileName));
       histogram = GridHistogram.readFromFile(histogramFile.getFileSystem(conf), histogramFile);
       histogram.computePrefixSums();
-      this.threshold = conf.getLong(DataTileThreshold, 1024*1024);
+      this.threshold = conf.getLong(DataTileThreshold, 1024 * 1024);
     }
 
-    @Override
-    protected void map(Rectangle partition, Iterable<? extends Shape> shapes, Context context)
-        throws IOException, InterruptedException {
-      // Use the create tiles function
-      // Setting the plotter to null ensures that image tiles are skipped
-      createTiles(shapes, subPyramid, 0, 0, null,
-          histogram, threshold, null, context);
+    @Override protected void map(Rectangle partition, Iterable<? extends Shape> shapes, Context context) throws IOException, InterruptedException {
+      createTiles(shapes, subPyramid, 0, 0, null, histogram, threshold, null, context);
     }
   }
 
-  /**
-   * A map function for adaptive multilevel plot using flat partitioning for data tiles.
-   * It takes each record, and replicates it to select overlapping pyramid tiles
-   * as defined by the coarse-grained pyramid partitioning logic.
-   */
   public static class PyramidPartitioner extends Mapper<Rectangle, Iterable<? extends Shape>, LongWritable, Shape> {
-
     /** The sub-pyramid that represents the tiles of interest */
     private SubPyramid subPyramid;
 
     /** Maximum number of levels to assign to one reducer (parameter k in the paper)*/
     private int maxLevelsPerReducer;
 
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    @Override protected void setup(Context context) throws IOException, InterruptedException {
       super.setup(context);
       Configuration conf = context.getConfiguration();
       String[] strLevels = conf.get("levels", "7").split("\\.\\.");
@@ -260,36 +211,28 @@ public class AdaptiveMultilevelPlot {
         maxLevel = Integer.parseInt(strLevels[1]);
       }
       this.maxLevelsPerReducer = conf.getInt(MaxLevelsPerReducer, 3);
-      // Adjust the maximum level according to the maxLevelsPerReducer (k) parameter
-      // such that we cover the range of levels of interest and the minimum z
-      // to replicate to is the same as the minimum level of interest
       maxLevel -= (maxLevel - minLevel) % maxLevelsPerReducer;
       Rectangle inputMBR = (Rectangle) OperationsParams.getShape(conf, InputMBR);
       subPyramid = new SubPyramid(inputMBR, minLevel, maxLevel, 0, 0, 1 << maxLevel, 1 << maxLevel);
     }
 
-    @Override
-    protected void map(Rectangle partition, Iterable<? extends Shape> shapes, Context context)
-        throws IOException, InterruptedException {
+    @Override protected void map(Rectangle partition, Iterable<? extends Shape> shapes, Context context) throws IOException, InterruptedException {
       java.awt.Rectangle overlaps = new java.awt.Rectangle();
       LongWritable outKey = new LongWritable();
       int i = 0;
       for (Shape shape : shapes) {
         Rectangle shapeMBR = shape.getMBR();
-        if (shapeMBR == null)
+        if (shapeMBR == null) {
           continue;
+        }
         subPyramid.getOverlappingTiles(shapeMBR, overlaps);
-        // Iterate over levels from bottom up
-        for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel;
-             z -= maxLevelsPerReducer) {
+        for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel; z -= maxLevelsPerReducer) {
           for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
             for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
-              // TODO verify if the subpyramid rooted at outKey contains any non-empty tiles
               outKey.set(TileIndex.encode(z, x, y));
               context.write(outKey, shape);
             }
           }
-          // Shrink overlapping cells to match the upper z
           int updatedX1 = overlaps.x >> maxLevelsPerReducer;
           int updatedY1 = overlaps.y >> maxLevelsPerReducer;
           int updatedX2 = (overlaps.x + overlaps.width - 1) >> maxLevelsPerReducer;
@@ -299,31 +242,29 @@ public class AdaptiveMultilevelPlot {
           overlaps.width = updatedX2 - updatedX1 + 1;
           overlaps.height = updatedY2 - updatedY1 + 1;
         }
-
-        if (((++i) & 0xff) == 0)
+        if (((++i) & 0xff) == 0) {
           context.progress();
+        }
       }
     }
   }
 
-  /**
-   * A reduce function that takes a tile index and a list of shapes and outputs
-   * the final values for that tile and up-to maxLevelsPerReducer below it.
-   * The final value could be either shapes (written individually one-by-one)
-   * or one canvas that represents the image of that tile
-   */
   public static class FinalTileCreator extends Reducer<LongWritable, Shape, LongWritable, Writable> {
-
     /**The range of levels to consider*/
     private int minLevel, maxLevel;
+
     /**The MBR of the input dataset*/
     private Rectangle inputMBR;
+
     /** The user-configured plotter */
     private Plotter plotter;
+
     /** Maximum levels to generate per reducer */
     private int maxLevelsPerReducer;
+
     /** Size of each tile in pixels */
     private int tileWidth, tileHeight;
+
     /** Whether the configured plotter defines a smooth function or not */
     private boolean smooth;
 
@@ -339,8 +280,7 @@ public class AdaptiveMultilevelPlot {
     /**A temporary tile index to decode the tileID*/
     private TileIndex tileIndex;
 
-    @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    @Override protected void setup(Context context) throws IOException, InterruptedException {
       super.setup(context);
       Configuration conf = context.getConfiguration();
       String[] strLevels = conf.get("levels", "7").split("\\.\\.");
@@ -357,68 +297,58 @@ public class AdaptiveMultilevelPlot {
       this.smooth = plotter.isSmooth();
       this.tileWidth = conf.getInt("tilewidth", 256);
       this.tileHeight = conf.getInt("tileheight", 256);
-      // Read the histogram and the threshold
       Path histogramFile = new Path(conf.get(HistogramFileName));
       histogram = GridHistogram.readFromFile(histogramFile.getFileSystem(conf), histogramFile);
       histogram.computePrefixSums();
-      this.threshold = conf.getLong(DataTileThreshold, 1024*1024);
+      this.threshold = conf.getLong(DataTileThreshold, 1024 * 1024);
     }
 
-    @Override
-    protected void reduce(LongWritable tileID, Iterable<Shape> shapes, Context context)
-        throws IOException, InterruptedException {
+    @Override protected void reduce(LongWritable tileID, Iterable<Shape> shapes, Context context) throws IOException, InterruptedException {
       tileIndex = TileIndex.decode(tileID.get(), tileIndex);
-      // Create the sub-pyramid associated with the given tileID
       int tileMaxLevel = Math.min(this.maxLevel, tileIndex.z + maxLevelsPerReducer - 1);
-      // The difference between min and max level in this tile
       int levelDifference = tileMaxLevel - tileIndex.z;
       int c1 = tileIndex.x << levelDifference;
       int r1 = tileIndex.y << levelDifference;
       int c2 = c1 + (1 << levelDifference);
       int r2 = r1 + (1 << levelDifference);
       subPyramid.set(inputMBR, tileIndex.z, tileMaxLevel, c1, r1, c2, r2);
-
       Map<Long, Canvas> canvasLayers = new HashMap<Long, Canvas>();
-
       context.setStatus("Plotting");
       if (smooth) {
         shapes = plotter.smooth(shapes);
         context.progress();
       }
       int i = 0;
-
-      createTiles(shapes, subPyramid, tileWidth, tileHeight, plotter,
-          histogram, threshold, canvasLayers, context);
-      
-      
+      createTiles(shapes, subPyramid, tileWidth, tileHeight, plotter, histogram, threshold, canvasLayers, context);
       java.awt.Rectangle overlaps = new java.awt.Rectangle();
-           overlaps.x = subPyramid.c1;
-           overlaps.y = subPyramid.r1;
-           overlaps.width = subPyramid.c2 - subPyramid.c1;
-           overlaps.height = subPyramid.r2 - subPyramid.r1;
-           for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel; z--) {
-              for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
-               for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
-                // Now, we should close the tile at (z,x,y)
-                 long tileIDToClose = TileIndex.encode(z, x, y);
-                 tileIDToClose=-tileIDToClose-1;
-                 tileID.set(tileIDToClose); // This is how we signal a close tile command
-                  context.write(tileID, null);
-                }
-              }
-             // Update overlappingCells for the higher z
-             int updatedX1 = overlaps.x / 2;
-             int updatedY1 = overlaps.y / 2;
-             int updatedX2 = (overlaps.x + overlaps.width - 1) / 2;
-             int updatedY2 = (overlaps.y + overlaps.height - 1) / 2;
-             overlaps.x = updatedX1;
-             overlaps.y = updatedY1;
-             overlaps.width = updatedX2 - updatedX1 + 1;
-             overlaps.height = updatedY2 - updatedY1 + 1;
-           }
-      
-      context.setStatus("Writing " + canvasLayers.size() + " tiles");
-      // Write all created layers to the output as images
+      overlaps.x = subPyramid.c1;
+      overlaps.y = subPyramid.r1;
+      overlaps.width = subPyramid.c2 - subPyramid.c1;
+      overlaps.height = subPyramid.r2 - subPyramid.r1;
+      for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel; z--) {
+        for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
+          for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
+            long tileIDToClose = TileIndex.encode(z, x, y);
+            tileIDToClose = -tileIDToClose - 1;
+            tileID.set(
+<<<<<<< /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/left.java
+            tileIDToClose
+=======
+            -tileIDToClose - 1
+>>>>>>> /usr/src/app/output/aseldawy/spatialhadoop2/83340231db8f7e94b9972fb90e6dbd379e7937fa/src/main/java/edu/umn/cs/spatialHadoop/visualization/AdaptiveMultilevelPlot.java/right.java
+            );
+            context.write(tileID, null);
+          }
+        }
+        int updatedX1 = overlaps.x / 2;
+        int updatedY1 = overlaps.y / 2;
+        int updatedX2 = (overlaps.x + overlaps.width - 1) / 2;
+        int updatedY2 = (overlaps.y + overlaps.height - 1) / 2;
+        overlaps.x = updatedX1;
+        overlaps.y = updatedY1;
+        overlaps.width = updatedX2 - updatedX1 + 1;
+        overlaps.height = updatedY2 - updatedY1 + 1;
+      }
       LongWritable outKey = new LongWritable();
       for (Map.Entry<Long, Canvas> entry : canvasLayers.entrySet()) {
         outKey.set(entry.getKey());
@@ -438,33 +368,28 @@ public class AdaptiveMultilevelPlot {
    * @return
    */
   public static TileClass classifyTile(GridHistogram h, long threshold, int z, int x, int y) {
-    float histTileWidth = h.getWidth() / (float)(1 << z);
-    float histTileHeight = h.getHeight() / (float)(1 << z);
+    float histTileWidth = h.getWidth() / (float) (1 << z);
+    float histTileHeight = h.getHeight() / (float) (1 << z);
     int x1 = (int) (x * histTileWidth);
     int y1 = (int) (y * histTileHeight);
     long size = h.getSumOrderOne(x1, y1, histTileWidth, histTileHeight);
-//    if(z==6&&x==6&&y==36)
-//    	System.out.println("tile-6-6-36="+size);
-    // If the size is larger than the threshold then it has to be an image tile
-    if (size > threshold)
+    if (size > threshold) {
       return TileClass.ImageTile;
-    // The code below is incorrect because the histogram is not 100% accurate
-//    if (size == 0)
-//      return TileClass.EmptyTile;
-
-    // It could be either a data tile or shallow/empty tile based on its parent size
-    if (z == 0)
-      return TileClass.DataTile; // No parent
-    
-    // Compute the size of the parent
+    }
+    if (size == 0) {
+      return TileClass.EmptyTile;
+    }
+    if (z == 0) {
+      return TileClass.DataTile;
+    }
     histTileWidth *= 2;
     histTileHeight *= 2;
     x1 = (int) ((x / 2) * histTileWidth);
     y1 = (int) ((y / 2) * histTileHeight);
     long parentSize = h.getSumOrderOne(x1, y1, histTileWidth, histTileHeight);
-    if (parentSize > threshold)
+    if (parentSize > threshold) {
       return TileClass.DataTile;
-
+    }
     return TileClass.ShallowTile;
   }
 
@@ -482,52 +407,40 @@ public class AdaptiveMultilevelPlot {
 *              empty which indicates no tiles created yet.
    * @param context The context to report progress and write output shapes
    */
-  public static void createTiles(
-      Iterable<? extends Shape> shapes, SubPyramid subPyramid,
-      int tileWidth, int tileHeight,
-      Plotter plotter, GridHistogram h, long threshold, Map<Long, Canvas> tiles,
-      TaskInputOutputContext context) throws IOException, InterruptedException {
+  public static void createTiles(Iterable<? extends Shape> shapes, SubPyramid subPyramid, int tileWidth, int tileHeight, Plotter plotter, GridHistogram h, long threshold, Map<Long, Canvas> tiles, TaskInputOutputContext context) throws IOException, InterruptedException {
     Rectangle inputMBR = subPyramid.getInputMBR();
     java.awt.Rectangle overlaps = new java.awt.Rectangle();
     LongWritable key = new LongWritable();
-
     for (Shape shape : shapes) {
-      if (shape == null)
+      if (shape == null) {
         continue;
+      }
       Rectangle mbr = shape.getMBR();
-      if (mbr == null)
+      if (mbr == null) {
         continue;
-
+      }
       subPyramid.getOverlappingTiles(mbr, overlaps);
       for (int z = subPyramid.maximumLevel; z >= subPyramid.minimumLevel; z--) {
         for (int x = overlaps.x; x < overlaps.x + overlaps.width; x++) {
           for (int y = overlaps.y; y < overlaps.y + overlaps.height; y++) {
-            // Process the tile according to its class
-            TileClass tileClass = h == null? null : classifyTile(h, threshold, z, x, y);
-//            if(z==6&&x==6&&y==36)
-//            	System.out.println("tile-6-10-34="+tileClass);
+            TileClass tileClass = h == null ? null : classifyTile(h, threshold, z, x, y);
             long tileID = TileIndex.encode(z, x, y);
-            
-            if (plotter!= null && (tileClass == null || tileClass == TileClass.ImageTile)) {
-              // Plot the shape on the tile at (z,x,y)
+            if (plotter != null && (tileClass == null || tileClass == TileClass.ImageTile)) {
               Canvas c = tiles.get(tileID);
               if (c == null) {
-                // First time to encounter this tile, create the corresponding canvas
                 Rectangle tileMBR = TileIndex.getMBR(inputMBR, z, x, y);
-             //   System.out.println("tile-"+z+"-"+x+"-"+y+tileMBR);
                 c = plotter.createCanvas(tileWidth, tileHeight, tileMBR);
                 tiles.put(tileID, c);
               }
               plotter.plot(c, shape);
-            } else if (context != null && tileClass == TileClass.DataTile) {
-//              if(z==6&&x==6&&y==36)	
-//            	  System.out.println("TileID="+tileID);
-              key.set(tileID);
-              context.write(key, shape);
+            } else {
+              if (context != null && tileClass == TileClass.DataTile) {
+                key.set(tileID);
+                context.write(key, shape);
+              }
             }
           }
         }
-        // Update overlappingCells for the higher z
         int updatedX1 = overlaps.x / 2;
         int updatedY1 = overlaps.y / 2;
         int updatedX2 = (overlaps.x + overlaps.width - 1) / 2;
@@ -536,12 +449,8 @@ public class AdaptiveMultilevelPlot {
         overlaps.y = updatedY1;
         overlaps.width = updatedX2 - updatedX1 + 1;
         overlaps.height = updatedY2 - updatedY1 + 1;
-
       }
     }
-    
-    
-    
   }
 
   /**
@@ -565,10 +474,7 @@ public class AdaptiveMultilevelPlot {
    * @throws InterruptedException
    * @throws ClassNotFoundException
    */
-  public static Job[] plot(Path[] inPaths, Path outPath, Class<? extends Plotter> plotterClass, OperationsParams params)
-      throws IOException, InterruptedException, ClassNotFoundException {
-	  //public enum TileClass {ImageTile, DataTile, ShallowTile, EmptyTile};
-    // Extract the range of levels to generate
+  public static Job[] plot(Path[] inPaths, Path outPath, Class<? extends Plotter> plotterClass, OperationsParams params) throws IOException, InterruptedException, ClassNotFoundException {
     String[] strLevels = params.get("levels", "7").split("\\.\\.");
     int minLevel, maxLevel;
     if (strLevels.length == 1) {
@@ -578,22 +484,17 @@ public class AdaptiveMultilevelPlot {
       minLevel = Integer.parseInt(strLevels[0]);
       maxLevel = Integer.parseInt(strLevels[1]);
     }
-    System.out.println("MaxLevel="+maxLevel);
-    // Create an output directory that will hold the output of all the jobs
+    System.out.println("MaxLevel=" + maxLevel);
     FileSystem outFS = outPath.getFileSystem(params);
     outFS.mkdirs(outPath);
-
-    // 1- Set or compute the input file MBR
     Rectangle inputMBR = (Rectangle) params.getShape("mbr");
     if (inputMBR == null) {
-      // MBR not set, compute it
       OperationsParams fileMBRParams = new OperationsParams(params);
       fileMBRParams.setBoolean("background", false);
-      System.err.println("fileMBRParams"+fileMBRParams);
+      System.err.println("fileMBRParams" + fileMBRParams);
       inputMBR = FileMBR.fileMBR(inPaths, fileMBRParams);
     }
-    System.out.println("InputMBR before Adjustment="+inputMBR);
-    // Expand input MBR to a square for compatibility with the pyramid structure
+    System.out.println("InputMBR before Adjustment=" + inputMBR);
     if (params.getBoolean("keepratio", true)) {
       if (inputMBR.getWidth() > inputMBR.getHeight()) {
         inputMBR.y1 -= (inputMBR.getWidth() - inputMBR.getHeight()) / 2;
@@ -603,88 +504,54 @@ public class AdaptiveMultilevelPlot {
         inputMBR.x2 = inputMBR.x1 + inputMBR.getHeight();
       }
     }
-    System.out.println("InputMBR="+inputMBR);
+    System.out.println("InputMBR=" + inputMBR);
     OperationsParams.setShape(params, InputMBR, inputMBR);
-
-    // ---------------------------
-    // 2 - Compute the histogram
     Path histogramFile = new Path(outPath, "histogram");
     long t1 = System.currentTimeMillis();
-
     Histogram.histogram(inPaths, histogramFile, params);
     params.setInt(Histogram.HistogramWidth, 1 << maxLevel);
     params.setInt(Histogram.HistogramHeight, 1 << maxLevel);
     long t2 = System.currentTimeMillis();
-    LOG.info("Computed the histogram in "+(t2-t1)/1000.0+" seconds");
+    LOG.info("Computed the histogram in " + (t2 - t1) / 1000.0 + " seconds");
     params.set(HistogramFileName, histogramFile.toString());
-    int imageCount=0;
-    int dataCount=0;
-    int emptyCount=0;
-    
-  //  Path histogramFile = new Path(params.get(HistogramFileName));
-   GridHistogram h = GridHistogram.readFromFile(histogramFile.getFileSystem(params), histogramFile);
+    int imageCount = 0;
+    int dataCount = 0;
+    int emptyCount = 0;
+    GridHistogram h = GridHistogram.readFromFile(histogramFile.getFileSystem(params), histogramFile);
     h.computePrefixSums();
-  //  Rectangle inputMBR = (Rectangle) OperationsParams.getShape(params, InputMBR);
     PrintWriter writer = new PrintWriter("TileInfo.txt", "UTF-8");
-    //writer.println("{");
-    for (int level =maxLevel;level>=0;level--){
-    	for(int x=0;x<pow(2,level);x++){
-    		for (int y=0;y<pow(2,level);y++){
-    			
-    			//System.out.println("Path:"+"tile-"+level+"-"+x+"-"+y);
-    			
-    			
-    			Rectangle tileMBR=TileIndex.getMBR(inputMBR,level,x,y);
-    			
-    			int tempY=((1 << level) - 1) - y;
-    			//writer.println("Path:"+"tile-"+level+"-"+x+"-"+tempY);
-    			
-//    			writer.println("State:"+null+",");
-//    			writer.println("Unloader:"+null+",");
-    			TileClass tileClass = h == null? null : classifyTile(h, 1024, level, x, y);
-    			if(tileClass == TileClass.ImageTile){
-    				//imageCount++;
-    				writer.println("{");
-    				writer.println("Path:"+"\""+"tile-"+level+"-"+x+"-"+tempY+".png"+"\""+",");
-    				writer.println("MinZoomLevel:"+level+",");
-    				writer.println("TileMBR:"+"{"+"north:"+tileMBR.y2+","+"south:"+tileMBR.y1+",east:"+tileMBR.x2+",west:"+tileMBR.x1+"},");
-    				writer.println("Loader:"+"'ImageLoader'"+",");
-    				writer.println("State:"+null+",");
-        			writer.println("Unloader:"+null+",");
-    				writer.println("},");
-    				
-    			}
-    			else if (tileClass==TileClass.DataTile){
-    				//dataCount++;
-    				//System.out.println("Tile-"+level+"-"+x+"-"+y);
-    				writer.println("{");
-    				writer.println("Path:"+"\""+"tile-"+level+"-"+x+"-"+tempY+".txt"+"\""+",");
-    				writer.println("MinZoomLevel:"+level+",");
-    				writer.println("MaxZoomLevel:"+18+",");
-    				writer.println("TileMBR:"+"{"+"north:"+tileMBR.y2+","+"south:"+tileMBR.y1+",east:"+tileMBR.x2+",west:"+tileMBR.x1+"},");
-    				writer.println("Loader:"+"'DataLoader'"+",");
-    				writer.println("State:"+null+",");
-        			writer.println("Unloader:"+null+",");
-    				writer.println("},");
-    				
-    			}
-//    			else if(tileClass==TileClass.ShallowTile){
-//    				//emptyCount++;
-//    				writer.println("Path:"+"tile-"+level+"-"+x+"-"+tempY+",");
-//    				writer.println("Loader:"+null+",");
-//    			}
-    			
-    			
-    		}
-    		
-    	}
+    for (int level = maxLevel; level >= 0; level--) {
+      for (int x = 0; x < pow(2, level); x++) {
+        for (int y = 0; y < pow(2, level); y++) {
+          Rectangle tileMBR = TileIndex.getMBR(inputMBR, level, x, y);
+          int tempY = ((1 << level) - 1) - y;
+          TileClass tileClass = h == null ? null : classifyTile(h, 1024, level, x, y);
+          if (tileClass == TileClass.ImageTile) {
+            writer.println("{");
+            writer.println("Path:" + "\"" + "tile-" + level + "-" + x + "-" + tempY + ".png" + "\"" + ",");
+            writer.println("MinZoomLevel:" + level + ",");
+            writer.println("TileMBR:" + "{" + "north:" + tileMBR.y2 + "," + "south:" + tileMBR.y1 + ",east:" + tileMBR.x2 + ",west:" + tileMBR.x1 + "},");
+            writer.println("Loader:" + "\'ImageLoader\'" + ",");
+            writer.println("State:" + null + ",");
+            writer.println("Unloader:" + null + ",");
+            writer.println("},");
+          } else {
+            if (tileClass == TileClass.DataTile) {
+              writer.println("{");
+              writer.println("Path:" + "\"" + "tile-" + level + "-" + x + "-" + tempY + ".txt" + "\"" + ",");
+              writer.println("MinZoomLevel:" + level + ",");
+              writer.println("MaxZoomLevel:" + 18 + ",");
+              writer.println("TileMBR:" + "{" + "north:" + tileMBR.y2 + "," + "south:" + tileMBR.y1 + ",east:" + tileMBR.x2 + ",west:" + tileMBR.x1 + "},");
+              writer.println("Loader:" + "\'DataLoader\'" + ",");
+              writer.println("State:" + null + ",");
+              writer.println("Unloader:" + null + ",");
+              writer.println("},");
+            }
+          }
+        }
+      }
     }
-    
     writer.close();
-    //System.out.println("ImageCount="+imageCount+"\t DataCount="+dataCount+"\t EmptyCount"+emptyCount);
-    
-    // Now we will run the three plotting jobs
-    // First, set the plotter and some common conf used by the three jobs
     Plotter plotter;
     try {
       plotter = plotterClass.newInstance();
@@ -694,24 +561,16 @@ public class AdaptiveMultilevelPlot {
     } catch (IllegalAccessException e) {
       throw new RuntimeException("Error creating plotter", e);
     }
-    // Use multithreading in case the job is running locally
     params.setInt(LocalJobRunner.LOCAL_MAX_MAPS, Runtime.getRuntime().availableProcessors());
-
     Job[] plottingJobs = new Job[3];
     int maxLevelWithFlatPartitioning = params.getInt(FlatPartitioningLevelThreshold, 3);
-
     if (minLevel <= maxLevelWithFlatPartitioning) {
-      // Generate the top levels using the non-spatial partitioning algorithm
       String flatLevels = minLevel + ".." + Math.min(maxLevelWithFlatPartitioning, maxLevel);
       LOG.info("Using flat partitioning in levels " + flatLevels);
-
-      // 3- job for image tiles at the top levels using flat partitioning
       Job flatImagesJob = Job.getInstance(params, "FlatImages");
       flatImagesJob.setJarByClass(AdaptiveMultilevelPlot.class);
       Configuration flatImagesConf = flatImagesJob.getConfiguration();
       flatImagesConf.set("levels", flatLevels);
-
-      // Set input and output
       flatImagesJob.setInputFormatClass(SpatialInputFormat3.class);
       SpatialInputFormat3.setInputPaths(flatImagesJob, inPaths);
       if (flatImagesConf.getBoolean("output", true)) {
@@ -720,29 +579,17 @@ public class AdaptiveMultilevelPlot {
       } else {
         flatImagesJob.setOutputFormatClass(NullOutputFormat.class);
       }
-
-      // Set map and reduce functions along with intermediate key-value classes
       flatImagesJob.setMapOutputKeyClass(LongWritable.class);
       flatImagesJob.setMapperClass(PartialImageTileCreator.class);
       flatImagesJob.setReducerClass(ImageTileMerger.class);
       flatImagesJob.setMapOutputValueClass(plotter.getCanvasClass());
-
-      // Set number of reducers
       flatImagesJob.setNumReduceTasks(Math.max(1, new JobClient(new JobConf()).getClusterStatus().getMaxReduceTasks() * 7 / 8));
-
-      // Start the job in the background
       flatImagesJob.submit();
       plottingJobs[0] = flatImagesJob;
-
-      // ----------------------------------------------------------------------
-      // 4- job for data tiles at the top levels using flat partitioning
-      // TODO we can check the histogram to verify if there are such tiles or not
       Job flatDataJob = Job.getInstance(params, "FlatData");
       flatDataJob.setJarByClass(AdaptiveMultilevelPlot.class);
       Configuration flatDataConf = flatDataJob.getConfiguration();
       flatDataConf.set("levels", flatLevels);
-
-      // Set input and output
       flatDataJob.setInputFormatClass(SpatialInputFormat3.class);
       SpatialInputFormat3.setInputPaths(flatDataJob, inPaths);
       if (flatDataConf.getBoolean("output", true)) {
@@ -751,33 +598,20 @@ public class AdaptiveMultilevelPlot {
       } else {
         flatDataJob.setOutputFormatClass(NullOutputFormat.class);
       }
-
-      // Set map and reduce functions along with intermediate key-value classes
       flatDataJob.setMapperClass(PyramidDataTilePartitioner.class);
       flatDataJob.setMapOutputKeyClass(LongWritable.class);
-      flatDataJob.setMapOutputValueClass(
-          OperationsParams.getShape(flatDataConf, "shape").getClass());
-      // No reduce function is needed. The default identify reduce function is good enough
-
-      // Set number of reducers
+      flatDataJob.setMapOutputValueClass(OperationsParams.getShape(flatDataConf, "shape").getClass());
       flatDataJob.setNumReduceTasks(Math.max(1, new JobClient(new JobConf()).getClusterStatus().getMaxReduceTasks() * 7 / 8));
-
-      // Start the job in the background
       flatDataJob.submit();
       plottingJobs[1] = flatDataJob;
     }
-    // -------------------------------------
     if (maxLevel > maxLevelWithFlatPartitioning) {
-      // 5- Generate the bottom levels using the pyramid partitioning algorithm
       String pyramidLevels = (maxLevelWithFlatPartitioning + 1) + ".." + maxLevel;
       LOG.info("Using pyramid partitioning in levels " + pyramidLevels);
-
       Job pyramidJob = Job.getInstance(params, "AdaptivePyramid");
       pyramidJob.setJarByClass(AdaptiveMultilevelPlot.class);
       Configuration pyramidConf = pyramidJob.getConfiguration();
       pyramidConf.set("levels", pyramidLevels);
-
-      // Set input and output
       pyramidJob.setInputFormatClass(SpatialInputFormat3.class);
       SpatialInputFormat3.setInputPaths(pyramidJob, inPaths);
       if (pyramidConf.getBoolean("output", true)) {
@@ -786,34 +620,21 @@ public class AdaptiveMultilevelPlot {
       } else {
         pyramidJob.setOutputFormatClass(NullOutputFormat.class);
       }
-
-      // Set intermediate key and value classes
       pyramidJob.setMapOutputKeyClass(LongWritable.class);
-      pyramidJob.setMapOutputValueClass(
-          OperationsParams.getShape(pyramidConf, "shape").getClass());
-
-      // Set map and reduce functions
+      pyramidJob.setMapOutputValueClass(OperationsParams.getShape(pyramidConf, "shape").getClass());
       pyramidJob.setMapperClass(PyramidPartitioner.class);
       pyramidJob.setReducerClass(FinalTileCreator.class);
-
-      // Set number of reducers
       pyramidJob.setNumReduceTasks(Math.max(1, new JobClient(new JobConf()).getClusterStatus().getMaxReduceTasks() * 7 / 8));
-
-      // Start the job in the background
       pyramidJob.submit();
       plottingJobs[2] = pyramidJob;
     }
-    // Start the jobs and wait for their completion
     for (Job job : plottingJobs) {
-      if (job != null)
+      if (job != null) {
         job.waitForCompletion(false);
+      }
     }
     histogramFile.getFileSystem(params).delete(histogramFile, true);
-    // Move all output files to one directory
     FSUtil.flattenDirectory(outFS, outPath);
-
-    // Write a new HTML file that displays both parts of the pyramid
-    // Add an HTML file that visualizes the result using Google Maps
     LineReader templateFileReader = new LineReader(AdaptiveMultilevelPlot.class.getResourceAsStream("/zoom_view.html"));
     PrintStream htmlOut = new PrintStream(outFS.create(new Path(outPath, "index.html")));
     Text line = new Text();
@@ -823,13 +644,11 @@ public class AdaptiveMultilevelPlot {
       lineStr = lineStr.replace("#{TILE_HEIGHT}", Integer.toString(params.getInt("tileheight", 256)));
       lineStr = lineStr.replace("#{MAX_ZOOM}", Integer.toString(maxLevel));
       lineStr = lineStr.replace("#{MIN_ZOOM}", Integer.toString(minLevel));
-      lineStr = lineStr.replace("#{TILE_URL}", "'tile-' + zoom + '-' + coord.x + '-' + coord.y + '.png'");
-
+      lineStr = lineStr.replace("#{TILE_URL}", "\'tile-\' + zoom + \'-\' + coord.x + \'-\' + coord.y + \'.png\'");
       htmlOut.println(lineStr);
     }
     templateFileReader.close();
     htmlOut.close();
-
     return plottingJobs;
   }
 }
