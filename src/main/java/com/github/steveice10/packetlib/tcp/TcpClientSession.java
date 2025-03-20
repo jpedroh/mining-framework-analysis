@@ -7,21 +7,16 @@ import com.github.steveice10.packetlib.packet.PacketProtocol;
 import com.github.steveice10.packetlib.io.local.LocalChannelWithRemoteAddress;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.AddressedEnvelope;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.kqueue.KQueue;
 import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
 import io.netty.channel.kqueue.KQueueSocketChannel;
@@ -47,6 +42,8 @@ import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
+import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.net.*;
 
 public class TcpClientSession extends TcpSession {
@@ -62,6 +59,8 @@ public class TcpClientSession extends TcpSession {
     private final ProxyInfo proxy;
 
     private boolean isInternallyConnecting = false;
+    private Class<? extends SocketChannel> socketChannel;
+    private Class<? extends DatagramChannel> datagramChannel;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
@@ -97,8 +96,38 @@ public class TcpClientSession extends TcpSession {
         }
 
         try {
+<<<<<<< /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/left.java
+            switch (TransportHelper.determineTransportMethod()) {
+                case IO_URING:
+                    this.group = new IOUringEventLoopGroup();
+                    this.socketChannel = IOUringSocketChannel.class;
+                    this.datagramChannel = IOUringDatagramChannel.class;
+                    break;
+                case EPOLL:
+                    this.group = new EpollEventLoopGroup();
+                    this.socketChannel = EpollSocketChannel.class;
+                    this.datagramChannel = EpollDatagramChannel.class;
+                    break;
+                case NIO:
+                    this.group = new NioEventLoopGroup();
+                    this.socketChannel = NioSocketChannel.class;
+                    this.datagramChannel = NioDatagramChannel.class;
+                    break;
+            }
+
+||||||| /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/base.java
+            this.group = new NioEventLoopGroup();
+
+=======
+>>>>>>> /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/right.java
             final Bootstrap bootstrap = new Bootstrap();
+<<<<<<< /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/left.java
+            bootstrap.channel(this.socketChannel);
+||||||| /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/base.java
+            bootstrap.channel(NioSocketChannel.class);
+=======
             bootstrap.channel(CHANNEL_CLASS);
+>>>>>>> /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/right.java
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
@@ -226,7 +255,13 @@ public class TcpClientSession extends TcpSession {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
                 resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+<<<<<<< /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/left.java
+                        .channelType(this.datagramChannel)
+||||||| /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/base.java
+                        .channelType(NioDatagramChannel.class)
+=======
                         .channelType(DATAGRAM_CHANNEL_CLASS)
+>>>>>>> /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpClientSession.java/right.java
                         .build();
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
@@ -359,26 +394,20 @@ public class TcpClientSession extends TcpSession {
             return;
         }
 
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
-                EVENT_LOOP_GROUP = new IOUringEventLoopGroup();
-                CHANNEL_CLASS = IOUringSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-                break;
-            case EPOLL:
-                EVENT_LOOP_GROUP = new EpollEventLoopGroup();
-                CHANNEL_CLASS = EpollSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-                break;
-            case KQUEUE:
-                EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
-                CHANNEL_CLASS = KQueueSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-            case NIO:
-                EVENT_LOOP_GROUP = new NioEventLoopGroup();
-                CHANNEL_CLASS = NioSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-                break;
+        boolean disableNative = System.getProperties().contains("disableNativeEventLoop");
+
+        if (!disableNative && Epoll.isAvailable()) {
+            CHANNEL_CLASS = EpollSocketChannel.class;
+            DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
+            EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+        } else if (!disableNative && KQueue.isAvailable()) {
+            CHANNEL_CLASS = KQueueSocketChannel.class;
+            DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
+            EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
+        } else {
+            CHANNEL_CLASS = NioSocketChannel.class;
+            DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
+            EVENT_LOOP_GROUP = new NioEventLoopGroup();
         }
     }
 

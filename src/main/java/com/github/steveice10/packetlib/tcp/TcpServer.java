@@ -5,21 +5,17 @@ import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
+import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -44,7 +40,9 @@ public class TcpServer extends AbstractServer {
         if(this.group != null || this.channel != null) {
             return;
         }
+        boolean debug = getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false);
 
+<<<<<<< /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpServer.java/left.java
         switch (TransportHelper.determineTransportMethod()) {
             case IO_URING:
                 this.group = new IOUringEventLoopGroup();
@@ -61,8 +59,27 @@ public class TcpServer extends AbstractServer {
         }
 
         ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<Channel>() {
+||||||| /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpServer.java/base.java
+        this.group = new NioEventLoopGroup();
+        ChannelFuture future = new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
+=======
+        this.group = new NioEventLoopGroup();
+        Class<? extends ServerChannel> channelClass;
+        if (Epoll.isAvailable()) {
+            channelClass = EpollServerSocketChannel.class;
+        } else {
+            if(debug) {
+                System.out.println("[PacketLib] Not using Epoll: " + Epoll.unavailabilityCause().getMessage());
+            }
+            channelClass = NioServerSocketChannel.class;
+        }
+        if(debug) {
+            System.out.println("[PacketLib] Channel class: " + channelClass.getName());
+        }
+        ChannelFuture future = new ServerBootstrap().channel(channelClass).childHandler(new ChannelInitializer<Channel>() {
+>>>>>>> /usr/src/app/output/steveice10/packetlib/6fe86c063737c0d01d8ee7a1df92a887d4aab3fb/src/main/java/com/github/steveice10/packetlib/tcp/TcpServer.java/right.java
             @Override
-            public void initChannel(Channel channel) {
+            public void initChannel(Channel channel) throws Exception {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                 PacketProtocol protocol = createPacketProtocol();
 
@@ -98,16 +115,19 @@ public class TcpServer extends AbstractServer {
                 callback.run();
             }
         } else {
-            future.addListener((ChannelFutureListener) future1 -> {
-                if(future1.isSuccess()) {
-                    channel = future1.channel();
-                    if(callback != null) {
-                        callback.run();
-                    }
-                } else {
-                    System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                    if(future1.cause() != null) {
-                        future1.cause().printStackTrace();
+            future.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if(future.isSuccess()) {
+                        channel = future.channel();
+                        if(callback != null) {
+                            callback.run();
+                        }
+                    } else {
+                        System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
+                        if(future.cause() != null) {
+                            future.cause().printStackTrace();
+                        }
                     }
                 }
             });
