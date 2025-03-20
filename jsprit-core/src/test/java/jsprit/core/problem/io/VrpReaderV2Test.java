@@ -299,6 +299,8 @@ public class VrpReaderV2Test {
 		assertEquals("startLoc",v.getStartLocationId());
 	}
 	
+	
+	
 	@Test
 	public void whenReadingJobs_capOfShipment3IsReadCorrectly(){
 		VehicleRoutingProblem.Builder builder = VehicleRoutingProblem.Builder.newInstance();
