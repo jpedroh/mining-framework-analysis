@@ -17,10 +17,12 @@
 package com.seanchenxi.gwt.storage.client.serializer;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.ClientSerializationStreamReader;
 import com.google.gwt.user.client.rpc.impl.Serializer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -55,7 +57,7 @@ final class StorageRPCSerializerImpl implements StorageSerializer {
     TYPE_MAP.put(String.class, StorageValueType.STRING);
   }
 
-  @Override 
+  @Override
   @SuppressWarnings("unchecked")
   public <T> T deserialize(Class<? super T> clazz, String serializedString) throws SerializationException {
     if (serializedString == null) {
