@@ -60,7 +60,13 @@ public class Game {
         initializeSystems();
         initializeTestComponents();
 
-        mapManager.loadMap("mehrstoeckigMap"); 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
+        mapManager.loadMap("mehrstoeckigMap");
+||||||| /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+        mapManager.loadMap("Katzenklappentest");
+=======
+        mapManager.loadMap("mehrstoeckigmap");
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
         mapManager.setFloor(0);
         
         behaviourManager.activate();

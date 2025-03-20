@@ -288,7 +288,16 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
             /* c → used to check if the other has component xy 
              * d → used to get a specific "my" component to react to the collision
              * */
-
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
+            /*if((c = entityManager.getComponent(startEntity, EnemyComponent.class)) != null){
+                if((d = entityManager.getComponent(targetEntity, PlayerComponent.class)) != null){
+                    //dog sees cat
+||||||| /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+            if((c = entityManager.getComponent(startEntity, EnemyComponent.class)) != null){
+                if((d = entityManager.getComponent(targetEntity, PlayerComponent.class)) != null){
+                    //dog sees cat
+=======
+        
             if(startEntity != null && targetEntity != null)
             {
                 c = entityManager.getComponent(startEntity, EnemyComponent.class);
@@ -300,6 +309,7 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
                         //dog sees cat
                     }
 
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/aac8578ba47d0a9efb21e3bc28f6889522cf734f/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
                 }
                 else
                 {
@@ -313,7 +323,7 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
                         }
                     }
                 }
-            }
+            }*/
             
             
             rcp.reset();
