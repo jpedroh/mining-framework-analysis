@@ -80,6 +80,10 @@ public class EvaluationContext {
     private final Map<String, PebbleTemplateImpl> namedImportedTemplates;
 
     /**
+     * The named imported templates are used to look up macros.
+     */
+
+    /**
      * evaluation options
      */
     private final EvaluationOptions evaluationOptions;
@@ -98,9 +102,18 @@ public class EvaluationContext {
      */
     public EvaluationContext(PebbleTemplateImpl self, boolean strictVariables, Locale locale,
                              ExtensionRegistry extensionRegistry, Cache<CacheKey, Object> tagCache,
+<<<<<<< /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/left.java
                              ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates,
                              Map<String, PebbleTemplateImpl> namedImportedTemplates, ScopeChain scopeChain,
                              Hierarchy hierarchy, EvaluationOptions evaluationOptions) {
+||||||| /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/base.java
+                             ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates, ScopeChain scopeChain,
+                             Hierarchy hierarchy, boolean allowGetClass) {
+=======
+                             ExecutorService executorService, List<PebbleTemplateImpl> importedTemplates,
+                             Map<String, PebbleTemplateImpl> namedImportedTemplates, ScopeChain scopeChain,
+                             Hierarchy hierarchy, boolean allowGetClass) {
+>>>>>>> /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/right.java
 
         if (hierarchy == null) {
             hierarchy = new Hierarchy(self);
@@ -140,8 +153,16 @@ public class EvaluationContext {
      * @return A copy of the evaluation context
      */
     public EvaluationContext threadSafeCopy(PebbleTemplateImpl self) {
+<<<<<<< /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/left.java
         EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache, executorService,
                 new ArrayList<>(importedTemplates), new HashMap<>(namedImportedTemplates), scopeChain.deepCopy(), hierarchy, evaluationOptions);
+||||||| /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/base.java
+        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache,
+                executorService, new ArrayList<>(importedTemplates), scopeChain.deepCopy(), hierarchy, allowGetClass);
+=======
+        EvaluationContext result = new EvaluationContext(self, strictVariables, locale, extensionRegistry, tagCache, executorService,
+                new ArrayList<>(importedTemplates), new HashMap<>(namedImportedTemplates), scopeChain.deepCopy(), hierarchy, allowGetClass);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/EvaluationContext.java/right.java
         return result;
     }
 
@@ -205,6 +226,12 @@ public class EvaluationContext {
         }
         this.namedImportedTemplates.put(alias, template);
     }
+
+    /**
+     * Returns the named imported template.
+     *
+     * @return the named imported template.
+     */
 
     /**
      * Returns the cache used for the "cache" tag

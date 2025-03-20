@@ -174,9 +174,19 @@ public class PebbleTemplateImpl implements PebbleTemplate {
         // global vars provided from extensions
         scopeChain.pushScope(this.engine.getExtensionRegistry().getGlobalVariables());
 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/left.java
         return new EvaluationContext(this, this.engine.isStrictVariables(), locale, this.engine.getExtensionRegistry(), this.engine.getTagCache(),
                         this.engine.getExecutorService(), new ArrayList<PebbleTemplateImpl>(), new HashMap<String, PebbleTemplateImpl>(), scopeChain,
                         null, this.engine.getEvaluationOptions());
+||||||| /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/base.java
+        return new EvaluationContext(this, this.engine.isStrictVariables(), locale,
+                this.engine.getExtensionRegistry(), this.engine.getTagCache(), this.engine.getExecutorService(),
+                new ArrayList<PebbleTemplateImpl>(), scopeChain, null, this.engine.isAllowGetClass());
+=======
+        return new EvaluationContext(this, this.engine.isStrictVariables(), locale,
+                this.engine.getExtensionRegistry(), this.engine.getTagCache(), this.engine.getExecutorService(),
+                new ArrayList<PebbleTemplateImpl>(), new HashMap<String, PebbleTemplateImpl>(), scopeChain, null, this.engine.isAllowGetClass());
+>>>>>>> /usr/src/app/output/mbosecke/pebble/0fa388a0a48235007053027a05325d87f7a3c2cd/src/main/java/com/mitchellbosecke/pebble/template/PebbleTemplateImpl.java/right.java
     }
 
     /**
