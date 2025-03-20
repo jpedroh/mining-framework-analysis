@@ -7,8 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.UUID;
+import java.util.function.Function;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -45,8 +47,15 @@ public class JDBITest
             h.execute("insert into something (id, name) values (?, ?)", 2, "Steven");
 
             return h.query("select id, name from something")
-                    .map(rs -> new Something(rs.getInt(1), rs.getString(2)))
+                    .map(rs -> new Something(rs.getInt(1),
+                                             rs.getString(2)))
+<<<<<<< /usr/src/app/output/brianm/jdbi3/9f40c034b7d4b1a262f723ec81a630d1ebeb31bd/src/test/java/org/jdbi/jdbi3/JDBITest.java/left.java
+                    .collect(Collectors.<Something>toSet());
+||||||| /usr/src/app/output/brianm/jdbi3/9f40c034b7d4b1a262f723ec81a630d1ebeb31bd/src/test/java/org/jdbi/jdbi3/JDBITest.java/base.java
+                    .collect(new HashSet<Something>());
+=======
                     .collect(Collectors.toSet());
+>>>>>>> /usr/src/app/output/brianm/jdbi3/9f40c034b7d4b1a262f723ec81a630d1ebeb31bd/src/test/java/org/jdbi/jdbi3/JDBITest.java/right.java
         });
 
         assertThat(things).isEqualTo(ImmutableSet.of(new Something(1, "Brian"),
