@@ -1,38 +1,18 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.resourcehandler;
-
 import static org.omnifaces.util.Faces.evaluateExpressionGet;
 import static org.omnifaces.util.Faces.getInitParameter;
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.faces.application.Resource;
 import javax.faces.application.ResourceDependency;
 import javax.faces.application.ResourceHandler;
 
 /**
  * <p>
- * This {@link ResourceHandler} implementation allows the developer to provide external (CDN) URLs instead of the
- * default local URLs for JSF resources. This also works on auto-included resources provided as
- * {@link ResourceDependency} by the JSF implementation and/or component libraries. For example, JSF's own
- * <code>javax.faces:jsf.js</code> resource or PrimeFaces' <code>primefaces:jquery/jquery.js</code> resource could be
- * pointed to a CDN.
- * <p>
- * For non-JSF resources, you can just keep using plain HTML <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code>
- * elements referring the external URL.
+ * This {@link ResourceHandler} implementation allows the developer to provide CDN URLs instead of the default local
+ * URLs for JSF resources as provided by <code>&lt;h:outputScript&gt;</code>, <code>&lt;h:outputStylesheet&gt;</code>
+ * and <code>&lt;h:graphicImage&gt;</code>.
  *
  * <h3>Installation</h3>
  * <p>
@@ -57,7 +37,7 @@ import javax.faces.application.ResourceHandler;
  *         js/script1.js=http://cdn.example.com/js/script1.js,
  *         somelib:js/script2.js=http://cdn.example.com/somelib/js/script2.js,
  *         otherlib:style.css=http://cdn.example.com/otherlib/style.css,
- *         somelib:images/logo.png=http://cdn.example.com/somelib/logo.png
+ *         images/logo.png=http://cdn.example.com/logo.png
  *     &lt;/param-value&gt;
  * &lt;/context-param&gt;
  * </pre>
@@ -67,7 +47,7 @@ import javax.faces.application.ResourceHandler;
  * &lt;h:outputScript name="js/script1.js" /&gt;
  * &lt;h:outputScript library="somelib" name="js/script2.js" /&gt;
  * &lt;h:outputStylesheet library="otherlib" name="style.css" /&gt;
- * &lt;h:graphicImage library="somelib" name="images/logo.png" /&gt;
+ * &lt;h:graphicImage name="images/logo.png" /&gt;
  * </pre>
  * <p>
  * Will be rendered as:
@@ -76,6 +56,13 @@ import javax.faces.application.ResourceHandler;
  * &lt;script type="text/javascript" src="http://cdn.example.com/somelib/js/script2.js"&gt;&lt;/script&gt;
  * &lt;link type="text/css" rel="stylesheet" href="http://cdn.example.com/otherlib/style.css" /&gt;
  * &lt;img src="http://cdn.example.com/logo.png" /&gt;
+ * </pre>
+ * <p>
+ * Note that you can also use this on resources provided as {@link ResourceDependency} by the JSF implementation and/or
+ * component libraries. For example, JSF's own <code>javax.faces:jsf.js</code> resource which is been used by
+ * <code>&lt;f:ajax&gt;</code> can be provided by a CDN URL using the following syntax:
+ * <pre>
+ * javax.faces:jsf.js=http://cdn.example.com/jsf.js
  * </pre>
  *
  * <h3>Wildcard configuration</h3>
@@ -145,122 +132,90 @@ import javax.faces.application.ResourceHandler;
  * @see DefaultResourceHandler
  */
 public class CDNResourceHandler extends DefaultResourceHandler {
+  /** The context parameter name to specify CDN URLs for the given resource identifiers. */
+  public static final String PARAM_NAME_CDN_RESOURCES = "org.omnifaces.CDN_RESOURCE_HANDLER_URLS";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  /** The context parameter name to conditionally disable CDN resource handler. @since 2.0 */
+  public static final String PARAM_NAME_CDN_DISABLED = "org.omnifaces.CDN_RESOURCE_HANDLER_DISABLED";
 
-	/** The context parameter name to specify CDN URLs for the given resource identifiers. */
-	public static final String PARAM_NAME_CDN_RESOURCES = "org.omnifaces.CDN_RESOURCE_HANDLER_URLS";
+  private static final String ERROR_MISSING_INIT_PARAM = "Context parameter \'" + PARAM_NAME_CDN_RESOURCES + "\' is missing in web.xml or web-fragment.xml.";
 
-	/** The context parameter name to conditionally disable CDN resource handler. @since 2.0 */
-	public static final String PARAM_NAME_CDN_DISABLED = "org.omnifaces.CDN_RESOURCE_HANDLER_DISABLED";
+  private static final String ERROR_INVALID_INIT_PARAM = "Context parameter \'" + PARAM_NAME_CDN_RESOURCES + "\' is in invalid syntax." + " It must follow \'resourceId=URL,resourceId=URL,resourceId=URL\' syntax.";
 
-	private static final String ERROR_MISSING_INIT_PARAM =
-		"Context parameter '" + PARAM_NAME_CDN_RESOURCES + "' is missing in web.xml or web-fragment.xml.";
-	private static final String ERROR_INVALID_INIT_PARAM =
-		"Context parameter '" + PARAM_NAME_CDN_RESOURCES + "' is in invalid syntax."
-			+ " It must follow 'resourceId=URL,resourceId=URL,resourceId=URL' syntax.";
-	private static final String ERROR_INVALID_WILDCARD =
-		"Context parameter '" + PARAM_NAME_CDN_RESOURCES + "' is in invalid syntax."
-			+ " Wildcard can only represent entire resource name '*' and URL suffix '/*' as in"
-			+ " 'libraryName:*=http://cdn.example.com/*'.";
+  private static final String ERROR_INVALID_WILDCARD = "Context parameter \'" + PARAM_NAME_CDN_RESOURCES + "\' is in invalid syntax." + " Wildcard can only represent entire resource name \'*\' and URL suffix \'/*\' as in" + " \'libraryName:*=http://cdn.example.com/*\'.";
 
-	// Properties -----------------------------------------------------------------------------------------------------
+  private String disabledParam;
 
-	private String disabledParam;
-	private Map<ResourceIdentifier, String> cdnResources;
+  private Map<ResourceIdentifier, String> cdnResources;
 
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Creates a new instance of this CDN resource handler which wraps the given resource handler. The CDN resources
 	 * will be initialized based on the {@value org.omnifaces.resourcehandler.CDNResourceHandler#PARAM_NAME_CDN_RESOURCES}
 	 * context parameter.
 	 * @param wrapped The resource handler to be wrapped.
 	 * @throws IllegalArgumentException When the context parameter is missing or is in invalid format.
 	 */
-	public CDNResourceHandler(ResourceHandler wrapped) {
-		super(wrapped);
-		disabledParam = getInitParameter(PARAM_NAME_CDN_DISABLED);
-		cdnResources = initCDNResources();
+  public CDNResourceHandler(ResourceHandler wrapped) {
+    super(wrapped);
+    disabledParam = getInitParameter(PARAM_NAME_CDN_DISABLED);
+    cdnResources = initCDNResources();
+    if (cdnResources == null) {
+      throw new IllegalArgumentException(ERROR_MISSING_INIT_PARAM);
+    }
+  }
 
-		if (cdnResources == null) {
-			throw new IllegalArgumentException(ERROR_MISSING_INIT_PARAM);
-		}
-	}
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * If the given resource is not <code>null</code> and the CDN resource handler is not (conditionally) disabled for
 	 * the current request, then the CDN resources will be consulted if any CDN URL is available for the given resource.
 	 * If there is none, then just return the JSF default resource, otherwise return a wrapped resource whose
 	 * {@link Resource#getRequestPath()} returns the CDN URL as is been set in the
 	 * {@value org.omnifaces.resourcehandler.CDNResourceHandler#PARAM_NAME_CDN_RESOURCES} context parameter.
 	 */
-	@Override
-	public Resource decorateResource(Resource resource) {
-		if (resource == null || (disabledParam != null && Boolean.valueOf(String.valueOf(evaluateExpressionGet(disabledParam))))) {
-			return resource;
-		}
+  @Override public Resource decorateResource(Resource resource) {
+    if (resource == null || (disabledParam != null && Boolean.valueOf(String.valueOf(evaluateExpressionGet(disabledParam))))) {
+      return resource;
+    }
+    String requestPath = null;
+    if (cdnResources != null) {
+      String libraryName = resource.getLibraryName();
+      String resourceName = resource.getResourceName();
+      requestPath = cdnResources.get(new ResourceIdentifier(libraryName, resourceName));
+      if (requestPath == null) {
+        requestPath = cdnResources.get(new ResourceIdentifier(libraryName, "*"));
+        if (requestPath != null) {
+          requestPath = requestPath.substring(0, requestPath.length() - 1) + resourceName;
+        }
+      }
+    }
+    if (requestPath == null) {
+      return resource;
+    }
+    String evaluatedRequestPath = evaluateExpressionGet(requestPath);
+    return new RemappedResource(resource, evaluatedRequestPath);
+  }
 
-		String requestPath = null;
-
-		if (cdnResources != null) {
-			String libraryName = resource.getLibraryName();
-			String resourceName = resource.getResourceName();
-
-			requestPath = cdnResources.get(new ResourceIdentifier(libraryName, resourceName));
-
-			if (requestPath == null) {
-				requestPath = cdnResources.get(new ResourceIdentifier(libraryName, "*"));
-
-				if (requestPath != null) {
-					requestPath = requestPath.substring(0, requestPath.length() - 1) + resourceName;
-				}
-			}
-		}
-
-		if (requestPath == null) {
-			return resource;
-		}
-
-		String evaluatedRequestPath = evaluateExpressionGet(requestPath);
-		return new RemappedResource(resource, evaluatedRequestPath);
-	}
-
-	// Helpers --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Initialize the CDN resources.
 	 * @return The CDN resources, or <code>null</code> if the context parameter has not been set.
 	 * @throws IllegalArgumentException When the context parameter value is in invalid format.
 	 */
-	static Map<ResourceIdentifier, String> initCDNResources() {
-		String cdnResourcesParam = getInitParameter(PARAM_NAME_CDN_RESOURCES);
-
-		if (isEmpty(cdnResourcesParam)) {
-			return null;
-		}
-
-		Map<ResourceIdentifier, String> cdnResources = new HashMap<ResourceIdentifier, String>();
-
-		for (String cdnResource : cdnResourcesParam.split("\\s*,\\s*")) {
-			String[] cdnResourceIdAndURL = cdnResource.split("\\s*=\\s*", 2);
-
-			if (cdnResourceIdAndURL.length != 2) {
-				throw new IllegalArgumentException(ERROR_INVALID_INIT_PARAM);
-			}
-
-			ResourceIdentifier id = new ResourceIdentifier(cdnResourceIdAndURL[0]);
-
-			if (id.getName().contains("*") && (!id.getName().equals("*") || !cdnResourceIdAndURL[1].endsWith("/*"))) {
-				throw new IllegalArgumentException(ERROR_INVALID_WILDCARD);
-			}
-
-			cdnResources.put(id, cdnResourceIdAndURL[1]);
-		}
-
-		return cdnResources;
-	}
-
+  static Map<ResourceIdentifier, String> initCDNResources() {
+    String cdnResourcesParam = getInitParameter(PARAM_NAME_CDN_RESOURCES);
+    if (isEmpty(cdnResourcesParam)) {
+      return null;
+    }
+    Map<ResourceIdentifier, String> cdnResources = new HashMap<ResourceIdentifier, String>();
+    for (String cdnResource : cdnResourcesParam.split("\\s*,\\s*")) {
+      String[] cdnResourceIdAndURL = cdnResource.split("\\s*=\\s*", 2);
+      if (cdnResourceIdAndURL.length != 2) {
+        throw new IllegalArgumentException(ERROR_INVALID_INIT_PARAM);
+      }
+      ResourceIdentifier id = new ResourceIdentifier(cdnResourceIdAndURL[0]);
+      if (id.getName().contains("*") && (!id.getName().equals("*") || !cdnResourceIdAndURL[1].endsWith("/*"))) {
+        throw new IllegalArgumentException(ERROR_INVALID_WILDCARD);
+      }
+      cdnResources.put(id, cdnResourceIdAndURL[1]);
+    }
+    return cdnResources;
+  }
 }

@@ -1,17 +1,4 @@
-/*
- * Copyright 2013 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.util;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.quote;
 import static javax.faces.application.ProjectStage.Development;
@@ -24,7 +11,6 @@ import static org.omnifaces.util.Utils.encodeURL;
 import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.startsWithOneOf;
 import static org.omnifaces.util.Utils.unmodifiableSet;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.faces.application.Application;
 import javax.faces.application.ResourceHandler;
 import javax.faces.context.ExternalContext;
@@ -43,7 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.omnifaces.component.ParamHolder;
 
 /**
@@ -72,26 +56,16 @@ import org.omnifaces.component.ParamHolder;
  * @since 1.6
  */
 public final class Servlets {
+  private static final Set<String> FACES_AJAX_HEADERS = unmodifiableSet("partial/ajax", "partial/process");
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final String FACES_AJAX_REDIRECT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<partial-response><redirect url=\"%s\"></redirect></partial-response>";
 
-	private static final Set<String> FACES_AJAX_HEADERS = unmodifiableSet("partial/ajax", "partial/process");
-	private static final String FACES_AJAX_REDIRECT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		+ "<partial-response><redirect url=\"%s\"></redirect></partial-response>";
+  private static Boolean facesDevelopment;
 
-	// Variables ------------------------------------------------------------------------------------------------------
+  private Servlets() {
+  }
 
-	private static Boolean facesDevelopment;
-
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	private Servlets() {
-		// Hide constructor.
-	}
-
-	// HttpServletRequest ---------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the HTTP request hostname. This is the entire domain, without any scheme and slashes. Noted should be
 	 * that this value is extracted from the request URL, not from {@link HttpServletRequest#getServerName()} as its
 	 * outcome can be influenced by proxies.
@@ -101,28 +75,27 @@ public final class Servlets {
 	 * otherwise not have hit the server at all.
 	 * @see HttpServletRequest#getRequestURL()
 	 */
-	public static String getRequestHostname(HttpServletRequest request) {
-		try {
-			return new URL(request.getRequestURL().toString()).getHost();
-		}
-		catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+  public static String getRequestHostname(HttpServletRequest request) {
+    try {
+      return new URL(request.getRequestURL().toString()).getHost();
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request domain URL. This is the URL with the scheme and domain, without any trailing slash.
 	 * @param request The involved HTTP servlet request.
 	 * @return The HTTP request domain URL.
 	 * @see HttpServletRequest#getRequestURL()
 	 * @see HttpServletRequest#getRequestURI()
 	 */
-	public static String getRequestDomainURL(HttpServletRequest request) {
-		String url = request.getRequestURL().toString();
-		return url.substring(0, url.length() - request.getRequestURI().length());
-	}
+  public static String getRequestDomainURL(HttpServletRequest request) {
+    String url = request.getRequestURL().toString();
+    return url.substring(0, url.length() - request.getRequestURI().length());
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request base URL. This is the URL from the scheme, domain until with context path, including
 	 * the trailing slash. This is the value you could use in HTML <code>&lt;base&gt;</code> tag.
 	 * @param request The involved HTTP servlet request.
@@ -131,11 +104,11 @@ public final class Servlets {
 	 * @see HttpServletRequest#getRequestURI()
 	 * @see HttpServletRequest#getContextPath()
 	 */
-	public static String getRequestBaseURL(HttpServletRequest request) {
-		return getRequestDomainURL(request) + request.getContextPath() + "/";
-	}
+  public static String getRequestBaseURL(HttpServletRequest request) {
+    return getRequestDomainURL(request) + request.getContextPath() + "/";
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request URI relative to the context root of a web application. This is the request URI
 	 * minus the context path. Note that this includes path parameters.
 	 *
@@ -143,11 +116,11 @@ public final class Servlets {
 	 * @return the request URI relative to the context root
 	 * @since 1.8
 	 */
-	public static String getRequestRelativeURI(HttpServletRequest request) {
-		return request.getRequestURI().substring(request.getContextPath().length());
-	}
+  public static String getRequestRelativeURI(HttpServletRequest request) {
+    return request.getRequestURI().substring(request.getContextPath().length());
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request URI relative to the context root of a web application. This is the servlet path
 	 * plus the path info (if any).
 	 *
@@ -155,11 +128,11 @@ public final class Servlets {
 	 * @return the request URI relative to the context root
 	 * @since 1.8
 	 */
-	public static String getRequestRelativeURIWithoutPathParameters(HttpServletRequest request) {
-		return request.getPathInfo() == null? request.getServletPath() : request.getServletPath() + request.getPathInfo();
-	}
+  public static String getRequestRelativeURIWithoutPathParameters(HttpServletRequest request) {
+    return request.getPathInfo() == null ? request.getServletPath() : request.getServletPath() + request.getPathInfo();
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request URL with query string. This is the full request URL with query string as the enduser
 	 * sees in browser address bar.
 	 * @param request The involved HTTP servlet request.
@@ -167,13 +140,13 @@ public final class Servlets {
 	 * @see HttpServletRequest#getRequestURL()
 	 * @see HttpServletRequest#getQueryString()
 	 */
-	public static String getRequestURLWithQueryString(HttpServletRequest request) {
-		StringBuffer requestURL = request.getRequestURL();
-		String queryString = request.getQueryString();
-		return (queryString == null) ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
-	}
+  public static String getRequestURLWithQueryString(HttpServletRequest request) {
+    StringBuffer requestURL = request.getRequestURL();
+    String queryString = request.getQueryString();
+    return (queryString == null) ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request URI with query string. This is the part after the domain in the request URL, including
 	 * the leading slash and the request query string.
 	 * @param request The involved HTTP servlet request.
@@ -181,13 +154,13 @@ public final class Servlets {
 	 * @see HttpServletRequest#getRequestURI()
 	 * @see HttpServletRequest#getQueryString()
 	 */
-	public static String getRequestURIWithQueryString(HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
-		String queryString = request.getQueryString();
-		return (queryString == null) ? requestURI : (requestURI + "?" + queryString);
-	}
+  public static String getRequestURIWithQueryString(HttpServletRequest request) {
+    String requestURI = request.getRequestURI();
+    String queryString = request.getQueryString();
+    return (queryString == null) ? requestURI : (requestURI + "?" + queryString);
+  }
 
-	/**
+  /**
 	 * Returns the HTTP request query string as parameter values map. Note this method returns <strong>only</strong>
 	 * the request URL (GET) parameters, as opposed to {@link HttpServletRequest#getParameterMap()}, which contains both
 	 * the request URL (GET) parameters and and the request body (POST) parameters.
@@ -195,145 +168,124 @@ public final class Servlets {
 	 * @param request The request for which the base URL is computed.
 	 * @return The HTTP request query string as parameter values map.
 	 */
-	public static Map<String, List<String>> getRequestQueryStringMap(HttpServletRequest request) {
-		String queryString = request.getQueryString();
+  public static Map<String, List<String>> getRequestQueryStringMap(HttpServletRequest request) {
+    String queryString = request.getQueryString();
+    if (isEmpty(queryString)) {
+      return new LinkedHashMap<>(0);
+    }
+    return toParameterMap(queryString);
+  }
 
-		if (isEmpty(queryString)) {
-			return new LinkedHashMap<String, List<String>>(0);
-		}
-
-		return toParameterMap(queryString);
-	}
-
-	/**
+  /**
 	 * Returns the original HTTP request URI behind this forwarded request, if any.
 	 * This does not include the request query string.
 	 * @param request The involved HTTP servlet request.
 	 * @return The original HTTP request URI behind this forwarded request, if any.
 	 * @since 1.8
 	 */
-	public static String getForwardRequestURI(HttpServletRequest request) {
-		return (String) request.getAttribute("javax.servlet.forward.request_uri");
-	}
+  public static String getForwardRequestURI(HttpServletRequest request) {
+    return (String) request.getAttribute("javax.servlet.forward.request_uri");
+  }
 
-	/**
+  /**
 	 * Returns the original HTTP request query string behind this forwarded request, if any.
 	 * @param request The involved HTTP servlet request.
 	 * @return The original HTTP request query string behind this forwarded request, if any.
 	 * @since 1.8
 	 */
-	public static String getForwardRequestQueryString(HttpServletRequest request) {
-		return (String) request.getAttribute("javax.servlet.forward.query_string");
-	}
+  public static String getForwardRequestQueryString(HttpServletRequest request) {
+    return (String) request.getAttribute("javax.servlet.forward.query_string");
+  }
 
-	/**
+  /**
 	 * Returns the original HTTP request URI with query string behind this forwarded request, if any.
 	 * @param request The involved HTTP servlet request.
 	 * @return The original HTTP request URI with query string behind this forwarded request, if any.
 	 * @since 1.8
 	 */
-	public static String getForwardRequestURIWithQueryString(HttpServletRequest request) {
-		String requestURI = getForwardRequestURI(request);
-		String queryString = getForwardRequestQueryString(request);
-		return (queryString == null) ? requestURI : (requestURI + "?" + queryString);
-	}
+  public static String getForwardRequestURIWithQueryString(HttpServletRequest request) {
+    String requestURI = getForwardRequestURI(request);
+    String queryString = getForwardRequestQueryString(request);
+    return (queryString == null) ? requestURI : (requestURI + "?" + queryString);
+  }
 
-	/**
+  /**
 	 * Converts the given request query string to request parameter values map.
 	 * @param queryString The request query string.
 	 * @return The request query string as request parameter values map.
 	 * @since 1.7
 	 */
-	public static Map<String, List<String>> toParameterMap(String queryString) {
-		String[] parameters = queryString.split(quote("&"));
-		Map<String, List<String>> parameterMap = new LinkedHashMap<String, List<String>>(parameters.length);
+  public static Map<String, List<String>> toParameterMap(String queryString) {
+    String[] parameters = queryString.split(quote("&"));
+    Map<String, List<String>> parameterMap = new LinkedHashMap<String, List<String>>(parameters.length);
+    for (String parameter : parameters) {
+      if (parameter.contains("=")) {
+        String[] pair = parameter.split(quote("="));
+        String key = decodeURL(pair[0]);
+        String value = (pair.length > 1 && !isEmpty(pair[1])) ? decodeURL(pair[1]) : "";
+        List<String> values = parameterMap.get(key);
+        if (values == null) {
+          values = new ArrayList<String>(1);
+          parameterMap.put(key, values);
+        }
+        values.add(value);
+      }
+    }
+    return parameterMap;
+  }
 
-		for (String parameter : parameters) {
-			if (parameter.contains("=")) {
-				String[] pair = parameter.split(quote("="));
-				String key = decodeURL(pair[0]);
-				String value = (pair.length > 1 && !isEmpty(pair[1])) ? decodeURL(pair[1]) : "";
-				List<String> values = parameterMap.get(key);
-
-				if (values == null) {
-					values = new ArrayList<String>(1);
-					parameterMap.put(key, values);
-				}
-
-				values.add(value);
-			}
-		}
-
-		return parameterMap;
-	}
-
-	/**
+  /**
 	 * Converts the given request parameter values map to request query string.
-	 * Empty names and null values will be skipped.
 	 * @param parameterMap The request parameter values map.
 	 * @return The request parameter values map as request query string.
 	 * @since 2.0
 	 */
-	public static String toQueryString(Map<String, List<String>> parameterMap) {
-		StringBuilder queryString = new StringBuilder();
+  public static String toQueryString(Map<String, List<String>> parameterMap) {
+    StringBuilder queryString = new StringBuilder();
+    for (Entry<String, List<String>> entry : parameterMap.entrySet()) {
+      if (isEmpty(entry.getKey())) {
+        continue;
+      }
+      String name = encodeURL(entry.getKey());
+      for (String value : entry.getValue()) {
+        if (value == null) {
+          continue;
+        }
+        if (queryString.length() > 0) {
+          queryString.append("&");
+        }
+        queryString.append(name).append("=").append(encodeURL(value));
+      }
+    }
+    return queryString.toString();
+  }
 
-		for (Entry<String, List<String>> entry : parameterMap.entrySet()) {
-			if (isEmpty(entry.getKey())) {
-				continue;
-			}
-
-			String name = encodeURL(entry.getKey());
-
-			for (String value : entry.getValue()) {
-				if (value == null) {
-					continue;
-				}
-
-				if (queryString.length() > 0) {
-					queryString.append("&");
-				}
-
-				queryString.append(name).append("=").append(encodeURL(value));
-			}
-		}
-
-		return queryString.toString();
-	}
-
-	/**
+  /**
 	 * Converts the given parameter values list to request query string.
 	 * Empty names and null values will be skipped.
 	 * @param params The parameter values list.
 	 * @return The parameter values list as request query string.
 	 * @since 2.2
 	 */
-	public static String toQueryString(List<ParamHolder> params) {
-		StringBuilder queryString = new StringBuilder();
+  public static String toQueryString(List<ParamHolder> params) {
+    StringBuilder queryString = new StringBuilder();
+    for (ParamHolder param : params) {
+      if (isEmpty(param.getName())) {
+        continue;
+      }
+      Object value = param.getValue();
+      if (value == null) {
+        continue;
+      }
+      if (queryString.length() > 0) {
+        queryString.append("&");
+      }
+      queryString.append(encodeURL(param.getName())).append("=").append(encodeURL(value.toString()));
+    }
+    return queryString.toString();
+  }
 
-		for (ParamHolder param : params) {
-			if (isEmpty(param.getName())) {
-				continue;
-			}
-
-			Object value = param.getValue();
-
-			if (value == null) {
-				continue;
-			}
-
-			if (queryString.length() > 0) {
-				queryString.append("&");
-			}
-
-			queryString.append(encodeURL(param.getName())).append("=").append(encodeURL(value.toString()));
-		}
-
-		return queryString.toString();
-	}
-
-	// HttpServletResponse --------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * <p>Set the cache headers. If the <code>expires</code> argument is larger than 0 seconds, then the following headers
 	 * will be set:
 	 * <ul>
@@ -345,18 +297,17 @@ public final class Servlets {
 	 * @param expires The expire time in seconds (not milliseconds!).
 	 * @since 2.2
 	 */
-	public static void setCacheHeaders(HttpServletResponse response, long expires) {
-		if (expires > 0) {
-			response.setHeader("Cache-Control", "public,max-age=" + expires + ",must-revalidate");
-			response.setDateHeader("Expires", System.currentTimeMillis() + SECONDS.toMillis(expires));
-			response.setHeader("Pragma", ""); // Explicitly set pragma to prevent container from overriding it.
-		}
-		else {
-			setNoCacheHeaders(response);
-		}
-	}
+  public static void setCacheHeaders(HttpServletResponse response, long expires) {
+    if (expires > 0) {
+      response.setHeader("Cache-Control", "public,max-age=" + expires + ",must-revalidate");
+      response.setDateHeader("Expires", System.currentTimeMillis() + SECONDS.toMillis(expires));
+      response.setHeader("Pragma", "");
+    } else {
+      setNoCacheHeaders(response);
+    }
+  }
 
-	/**
+  /**
 	 * <p>Set the no-cache headers. The following headers will be set:
 	 * <ul>
 	 * <li><code>Cache-Control: no-cache,no-store,must-revalidate</code></li>
@@ -367,15 +318,13 @@ public final class Servlets {
 	 * @param response The HTTP servlet response to set the headers on.
 	 * @since 2.2
 	 */
-	public static void setNoCacheHeaders(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
-		response.setDateHeader("Expires", 0);
-		response.setHeader("Pragma", "no-cache"); // Backwards compatibility for HTTP 1.0.
-	}
+  public static void setNoCacheHeaders(HttpServletResponse response) {
+    response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
+    response.setDateHeader("Expires", 0);
+    response.setHeader("Pragma", "no-cache");
+  }
 
-	// Cookies --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the value of the HTTP request cookie associated with the given name. The value is implicitly URL-decoded
 	 * with a charset of UTF-8.
 	 * @param request The involved HTTP servlet request.
@@ -385,21 +334,19 @@ public final class Servlets {
 	 * @see HttpServletRequest#getCookies()
 	 * @since 2.0
 	 */
-	public static String getRequestCookie(HttpServletRequest request, String name) {
-		Cookie[] cookies = request.getCookies();
+  public static String getRequestCookie(HttpServletRequest request, String name) {
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(name)) {
+          return decodeURL(cookie.getValue());
+        }
+      }
+    }
+    return null;
+  }
 
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name)) {
-					return decodeURL(cookie.getValue());
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
+  /**
 	 * Add a cookie with given name, value and maxage to the HTTP response. The cookie value will implicitly be
 	 * URL-encoded with UTF-8 so that any special characters can be stored in the cookie. The cookie will implicitly
 	 * be set to secure when the current request is secure (i.e. when the current request is a HTTPS request). The
@@ -416,13 +363,11 @@ public final class Servlets {
 	 * @see HttpServletResponse#addCookie(Cookie)
 	 * @since 2.0
 	 */
-	public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response,
-		String name, String value, int maxAge)
-	{
-		addResponseCookie(request, response, name, value, getRequestHostname(request), null, maxAge);
-	}
+  public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, int maxAge) {
+    addResponseCookie(request, response, name, value, getRequestHostname(request), null, maxAge);
+  }
 
-	/**
+  /**
 	 * Add a cookie with given name, value, path and maxage to the HTTP response. The cookie value will implicitly be
 	 * URL-encoded with UTF-8 so that any special characters can be stored in the cookie. The cookie will implicitly
 	 * be set to secure when the current request is secure (i.e. when the current request is a HTTPS request). The
@@ -441,13 +386,11 @@ public final class Servlets {
 	 * @see HttpServletResponse#addCookie(Cookie)
 	 * @since 2.0
 	 */
-	public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response,
-		String name, String value, String path, int maxAge)
-	{
-		addResponseCookie(request, response, name, value, getRequestHostname(request), path, maxAge);
-	}
+  public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, String path, int maxAge) {
+    addResponseCookie(request, response, name, value, getRequestHostname(request), path, maxAge);
+  }
 
-	/**
+  /**
 	 * Add a cookie with given name, value, domain, path and maxage to the HTTP response. The cookie value will
 	 * implicitly be URL-encoded with UTF-8 so that any special characters can be stored in the cookie. The cookie will
 	 * implicitly be set to secure when the current request is secure (i.e. when the current request is a HTTPS request).
@@ -467,25 +410,20 @@ public final class Servlets {
 	 * @see HttpServletResponse#addCookie(Cookie)
 	 * @since 2.0
 	 */
-	public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response,
-		String name, String value, String domain, String path, int maxAge)
-	{
-		Cookie cookie = new Cookie(name, encodeURL(value));
+  public static void addResponseCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, String domain, String path, int maxAge) {
+    Cookie cookie = new Cookie(name, encodeURL(value));
+    if (domain != null && !domain.equals("localhost")) {
+      cookie.setDomain(domain);
+    }
+    if (path != null) {
+      cookie.setPath(path);
+    }
+    cookie.setMaxAge(maxAge);
+    cookie.setSecure(request.isSecure());
+    response.addCookie(cookie);
+  }
 
-		if (domain != null && !domain.equals("localhost")) { // Chrome doesn't like domain:"localhost" on cookies.
-			cookie.setDomain(domain);
-		}
-
-		if (path != null) {
-			cookie.setPath(path);
-		}
-
-		cookie.setMaxAge(maxAge);
-		cookie.setSecure(request.isSecure());
-		response.addCookie(cookie);
-	}
-
-	/**
+  /**
 	 * Remove the cookie with given name and path from the HTTP response. Note that the name and path must be exactly
 	 * the same as it was when the cookie was created.
 	 * @param request The involved HTTP servlet request.
@@ -495,15 +433,11 @@ public final class Servlets {
 	 * @see HttpServletResponse#addCookie(Cookie)
 	 * @since 2.0
 	 */
-	public static void removeResponseCookie(HttpServletRequest request, HttpServletResponse response,
-		String name, String path)
-	{
-		addResponseCookie(request, response, name, null, path, 0);
-	}
+  public static void removeResponseCookie(HttpServletRequest request, HttpServletResponse response, String name, String path) {
+    addResponseCookie(request, response, name, null, path, 0);
+  }
 
-	// ServletContext -------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the application scope attribute value associated with the given name.
 	 * @param <T> The expected return type.
 	 * @param context The servlet context used for looking up the attribute.
@@ -512,14 +446,11 @@ public final class Servlets {
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 * @see ServletContext#getAttribute(String)
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getApplicationAttribute(ServletContext context, String name) {
-		return (T) context.getAttribute(name);
-	}
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends java.lang.Object> T getApplicationAttribute(ServletContext context, String name) {
+    return (T) context.getAttribute(name);
+  }
 
-	// JSF ------------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns <code>true</code> if the given HTTP servlet request is a JSF ajax request. This does exactly the same as
 	 * {@link Faces#isAjaxRequest()}, but then without the need for a {@link FacesContext}. The major advantage is that
 	 * you can perform the job inside a servlet filter, where the {@link FacesContext} is normally not available.
@@ -527,11 +458,11 @@ public final class Servlets {
 	 * @return <code>true</code> if the given HTTP servlet request is a JSF ajax request.
 	 * @since 2.0
 	 */
-	public static boolean isFacesAjaxRequest(HttpServletRequest request) {
-		return FACES_AJAX_HEADERS.contains(request.getHeader("Faces-Request"));
-	}
+  public static boolean isFacesAjaxRequest(HttpServletRequest request) {
+    return FACES_AJAX_HEADERS.contains(request.getHeader("Faces-Request"));
+  }
 
-	/**
+  /**
 	 * Returns <code>true</code> if the given HTTP servlet request is a JSF resource request. I.e. this request will
 	 * trigger the JSF {@link ResourceHandler} for among others CSS/JS/image resources.
 	 * @param request The involved HTTP servlet request.
@@ -539,11 +470,11 @@ public final class Servlets {
 	 * @since 2.0
 	 * @see ResourceHandler#RESOURCE_IDENTIFIER
 	 */
-	public static boolean isFacesResourceRequest(HttpServletRequest request) {
-		return request.getRequestURI().startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
-	}
+  public static boolean isFacesResourceRequest(HttpServletRequest request) {
+    return request.getRequestURI().startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
+  }
 
-	/**
+  /**
 	 * Returns <code>true</code> if we're in JSF development stage. This will be the case when the
 	 * <code>javax.faces.PROJECT_STAGE</code> context parameter in <code>web.xml</code> is set to
 	 * <code>Development</code>.
@@ -552,29 +483,24 @@ public final class Servlets {
 	 * @since 2.1
 	 * @see Application#getProjectStage()
 	 */
-	public static boolean isFacesDevelopment(ServletContext context) {
-		if (facesDevelopment != null) {
-			return facesDevelopment;
-		}
+  public static boolean isFacesDevelopment(ServletContext context) {
+    if (facesDevelopment != null) {
+      return facesDevelopment;
+    }
+    String projectStage = null;
+    try {
+      projectStage = lookup(PROJECT_STAGE_JNDI_NAME);
+    } catch (IllegalStateException ignore) {
+      return false;
+    }
+    if (projectStage == null) {
+      projectStage = context.getInitParameter(PROJECT_STAGE_PARAM_NAME);
+    }
+    facesDevelopment = Development.name().equals(projectStage);
+    return facesDevelopment;
+  }
 
-		String projectStage = null;
-
-		try {
-			projectStage = lookup(PROJECT_STAGE_JNDI_NAME);
-		}
-		catch (IllegalStateException ignore) {
-			return false; // May happen in a.o. GlassFish 4.1 during startup.
-		}
-
-		if (projectStage == null) {
-			projectStage = context.getInitParameter(PROJECT_STAGE_PARAM_NAME);
-		}
-
-		facesDevelopment = Development.name().equals(projectStage);
-		return facesDevelopment;
-	}
-
-	/**
+  /**
 	 * Sends a temporary (302) JSF redirect to the given URL, supporting JSF ajax requests. This does exactly the same
 	 * as {@link Faces#redirect(String, String...)}, but without the need for a {@link FacesContext}. The major
 	 * advantage is that you can perform the job inside a servlet filter or even a plain vanilla servlet, where the
@@ -602,46 +528,33 @@ public final class Servlets {
 	 * redeclare it in the action method. The servletcontainer will handle it.
 	 * @since 2.0
 	 */
-	public static void facesRedirect
-		(HttpServletRequest request, HttpServletResponse response, String url, String ... paramValues)
-			throws IOException
-	{
-		String redirectURL = prepareRedirectURL(request, url, paramValues);
+  public static void facesRedirect(HttpServletRequest request, HttpServletResponse response, String url, String... paramValues) throws IOException {
+    String redirectURL = prepareRedirectURL(request, url, paramValues);
+    if (isFacesAjaxRequest(request)) {
+      setNoCacheHeaders(response);
+      response.setContentType("text/xml");
+      response.setCharacterEncoding(UTF_8.name());
+      response.getWriter().printf(FACES_AJAX_REDIRECT_XML, redirectURL);
+    } else {
+      response.sendRedirect(redirectURL);
+    }
+  }
 
-		if (isFacesAjaxRequest(request)) {
-			setNoCacheHeaders(response);
-			response.setContentType("text/xml");
-			response.setCharacterEncoding(UTF_8.name());
-			response.getWriter().printf(FACES_AJAX_REDIRECT_XML, redirectURL);
-		}
-		else {
-			response.sendRedirect(redirectURL);
-		}
-	}
-
-	// Helpers --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Helper method to prepare redirect URL. Package-private so that {@link FacesLocal} can also use it.
 	 */
-	static String prepareRedirectURL(HttpServletRequest request, String url, String... paramValues) {
-		String redirectURL = url;
-
-		if (!startsWithOneOf(url, "http://", "https://", "/")) {
-			redirectURL = request.getContextPath() + "/" + url;
-		}
-
-		if (isEmpty(paramValues)) {
-			return redirectURL;
-		}
-
-		Object[] encodedParams = new Object[paramValues.length];
-
-		for (int i = 0; i < paramValues.length; i++) {
-			encodedParams[i] = encodeURL(paramValues[i]);
-		}
-
-		return String.format(redirectURL, encodedParams);
-	}
-
+  static String prepareRedirectURL(HttpServletRequest request, String url, String... paramValues) {
+    String redirectURL = url;
+    if (!startsWithOneOf(url, "http://", "https://", "/")) {
+      redirectURL = request.getContextPath() + "/" + url;
+    }
+    if (isEmpty(paramValues)) {
+      return redirectURL;
+    }
+    Object[] encodedParams = new Object[paramValues.length];
+    for (int i = 0; i < paramValues.length; i++) {
+      encodedParams[i] = encodeURL(paramValues[i]);
+    }
+    return String.format(redirectURL, encodedParams);
+  }
 }

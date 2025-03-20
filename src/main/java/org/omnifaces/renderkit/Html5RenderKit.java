@@ -1,30 +1,15 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.renderkit;
-
 import static org.omnifaces.util.Components.getCurrentComponent;
 import static org.omnifaces.util.Faces.getInitParameter;
 import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.isOneInstanceOf;
 import static org.omnifaces.util.Utils.unmodifiableSet;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIForm;
@@ -114,284 +99,197 @@ import javax.faces.render.RenderKitWrapper;
  * &lt;/h:inputText&gt;
  * </pre>
  *
- * <h3>Deprecation</h3>
- * <p>
- * As per OmniFaces 2.2 (actually technically already since OmniFaces 2.0), this HTML5 render kit is deprecated. Users
- * are encouraged to migrate to new JSF 2.2 support for passthrough attributes as described above. The HTML5 render kit
- * is scheduled to be removed in a future OmniFaces 3.0 (for JSF 2.3).
- *
  * @author Bauke Scholtz
  * @since 1.1
- * @deprecated
  */
-@Deprecated
-public class Html5RenderKit extends RenderKitWrapper {
+@Deprecated public class Html5RenderKit extends RenderKitWrapper {
+  /** The context parameter name to specify additional passthrough attributes. */
+  public static final String PARAM_NAME_PASSTHROUGH_ATTRIBUTES = "org.omnifaces.HTML5_RENDER_KIT_PASSTHROUGH_ATTRIBUTES";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final Set<String> HTML5_UIFORM_ATTRIBUTES = unmodifiableSet("autocomplete");
 
-	/** The context parameter name to specify additional passthrough attributes. */
-	public static final String PARAM_NAME_PASSTHROUGH_ATTRIBUTES =
-		"org.omnifaces.HTML5_RENDER_KIT_PASSTHROUGH_ATTRIBUTES";
+  private static final Set<String> HTML5_SELECT_ATTRIBUTES = unmodifiableSet("autofocus");
 
-	private static final Set<String> HTML5_UIFORM_ATTRIBUTES = unmodifiableSet(
-		"autocomplete"
-		// "novalidate" attribute is not useable in a JSF form.
-	);
+  private static final Set<String> HTML5_TEXTAREA_ATTRIBUTES = unmodifiableSet("autofocus", "maxlength", "placeholder", "spellcheck", "wrap");
 
-	private static final Set<String> HTML5_SELECT_ATTRIBUTES = unmodifiableSet(
-		"autofocus"
-		// "form" attribute is not useable in a JSF form.
-	);
+  private static final Set<String> HTML5_INPUT_ATTRIBUTES = unmodifiableSet("autofocus", "list", "pattern", "placeholder", "spellcheck");
 
-	private static final Set<String> HTML5_TEXTAREA_ATTRIBUTES = unmodifiableSet(
-		"autofocus", "maxlength", "placeholder", "spellcheck", "wrap"
-		// "form" attribute is not useable in a JSF form.
-		// "required" attribute can't be used as it would override JSF default "required" attribute behaviour.
-	);
+  private static final Set<String> HTML5_INPUT_PASSWORD_ATTRIBUTES = unmodifiableSet("autofocus", "pattern", "placeholder");
 
-	private static final Set<String> HTML5_INPUT_ATTRIBUTES = unmodifiableSet(
-		"autofocus", "list", "pattern", "placeholder", "spellcheck"
-		// "form*" attributes are not useable in a JSF form.
-		// "multiple" attribute is only applicable on <input type="email"> and <input type="file"> and can't be
-		// decoded by standard HtmlInputText.
-		// "required" attribute can't be used as it would override JSF default "required" attribute behaviour.
-	);
+  private static final Set<String> HTML5_INPUT_RANGE_ATTRIBUTES = unmodifiableSet("max", "min", "step");
 
-	private static final Set<String> HTML5_INPUT_PASSWORD_ATTRIBUTES = unmodifiableSet(
-		"autofocus", "pattern", "placeholder"
-		// "form*" attributes are not useable in a JSF form.
-		// "required" attribute can't be used as it would override JSF default "required" attribute behaviour.
-	);
+  private static final Set<String> HTML5_INPUT_RANGE_TYPES = unmodifiableSet("range", "number", "date");
 
-	private static final Set<String> HTML5_INPUT_RANGE_ATTRIBUTES = unmodifiableSet(
-		"max", "min", "step"
-	);
+  private static final Set<String> HTML5_INPUT_TYPES = unmodifiableSet("text", "search", "email", "url", "tel", HTML5_INPUT_RANGE_TYPES);
 
-	private static final Set<String> HTML5_INPUT_RANGE_TYPES = unmodifiableSet(
-		"range", "number", "date"
-	);
+  private static final Set<String> HTML5_BUTTON_ATTRIBUTES = unmodifiableSet("autofocus");
 
-	private static final Set<String> HTML5_INPUT_TYPES = unmodifiableSet(
-		"text", "search", "email", "url", "tel", HTML5_INPUT_RANGE_TYPES
-	);
+  private static final String ERROR_INVALID_INIT_PARAM = "Context parameter \'" + PARAM_NAME_PASSTHROUGH_ATTRIBUTES + "\' is in invalid syntax.";
 
-	private static final Set<String> HTML5_BUTTON_ATTRIBUTES = unmodifiableSet(
-		"autofocus"
-		// "form" attribute is not useable in a JSF form.
-	);
+  private static final String ERROR_INVALID_INIT_PARAM_CLASS = "Context parameter \'" + PARAM_NAME_PASSTHROUGH_ATTRIBUTES + "\'" + " references a class which is not found in runtime classpath: \'%s\'";
 
-	private static final String ERROR_INVALID_INIT_PARAM =
-		"Context parameter '" + PARAM_NAME_PASSTHROUGH_ATTRIBUTES + "' is in invalid syntax.";
-	private static final String ERROR_INVALID_INIT_PARAM_CLASS =
-		"Context parameter '" + PARAM_NAME_PASSTHROUGH_ATTRIBUTES + "'"
-			+ " references a class which is not found in runtime classpath: '%s'";
-	private static final String ERROR_UNSUPPORTED_HTML5_INPUT_TYPE =
-		"HtmlInputText type '%s' is not supported. Supported types are " + HTML5_INPUT_TYPES + ".";
+  private static final String ERROR_UNSUPPORTED_HTML5_INPUT_TYPE = "HtmlInputText type \'%s\' is not supported. Supported types are " + HTML5_INPUT_TYPES + ".";
 
-	// Properties -----------------------------------------------------------------------------------------------------
+  private RenderKit wrapped;
 
-	private RenderKit wrapped;
-	private Map<Class<UIComponent>, Set<String>> passthroughAttributes;
+  private Map<Class<UIComponent>, Set<String>> passthroughAttributes;
 
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Construct a new HTML5 render kit around the given wrapped render kit.
 	 * @param wrapped The wrapped render kit.
 	 */
-	public Html5RenderKit(RenderKit wrapped) {
-		this.wrapped = wrapped;
-		passthroughAttributes = initPassthroughAttributes();
-	}
+  public Html5RenderKit(RenderKit wrapped) {
+    this.wrapped = wrapped;
+    passthroughAttributes = initPassthroughAttributes();
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns a new HTML5 response writer which in turn wraps the default response writer.
 	 */
-	@Override
-	public ResponseWriter createResponseWriter(Writer writer, String contentTypeList, String characterEncoding) {
-		return new Html5ResponseWriter(super.createResponseWriter(writer, contentTypeList, characterEncoding));
-	}
+  @Override public ResponseWriter createResponseWriter(Writer writer, String contentTypeList, String characterEncoding) {
+    return new Html5ResponseWriter(super.createResponseWriter(writer, contentTypeList, characterEncoding));
+  }
 
-	@Override
-	public RenderKit getWrapped() {
-		return wrapped;
-	}
+  @Override public RenderKit getWrapped() {
+    return wrapped;
+  }
 
-	// Helpers --------------------------------------------------------------------------------------------------------
+  @SuppressWarnings(value = { "unchecked" }) private static Map<Class<UIComponent>, Set<String>> initPassthroughAttributes() {
+    String passthroughAttributesParam = getInitParameter(PARAM_NAME_PASSTHROUGH_ATTRIBUTES);
+    if (isEmpty(passthroughAttributesParam)) {
+      return null;
+    }
+    Map<Class<UIComponent>, Set<String>> passthroughAttributes = new HashMap<Class<UIComponent>, Set<String>>();
+    for (String passthroughAttribute : passthroughAttributesParam.split("\\s*;\\s*")) {
+      String[] classAndAttributeNames = passthroughAttribute.split("\\s*=\\s*", 2);
+      if (classAndAttributeNames.length != 2) {
+        throw new IllegalArgumentException(ERROR_INVALID_INIT_PARAM);
+      }
+      String className = classAndAttributeNames[0];
+      Object[] attributeNames = classAndAttributeNames[1].split("\\s*,\\s*");
+      Set<String> attributeNameSet = unmodifiableSet(attributeNames);
+      try {
+        passthroughAttributes.put((Class<UIComponent>) Class.forName(className), attributeNameSet);
+      } catch (ClassNotFoundException e) {
+        throw new IllegalArgumentException(String.format(ERROR_INVALID_INIT_PARAM_CLASS, className), e);
+      }
+    }
+    return passthroughAttributes;
+  }
 
-	@SuppressWarnings("unchecked")
-	private static Map<Class<UIComponent>, Set<String>> initPassthroughAttributes() {
-		String passthroughAttributesParam = getInitParameter(PARAM_NAME_PASSTHROUGH_ATTRIBUTES);
+  class Html5ResponseWriter extends ResponseWriterWrapper {
+    private ResponseWriter wrapped;
 
-		if (isEmpty(passthroughAttributesParam)) {
-			return null;
-		}
+    public Html5ResponseWriter(ResponseWriter wrapped) {
+      this.wrapped = wrapped;
+    }
 
-		Map<Class<UIComponent>, Set<String>> passthroughAttributes = new HashMap<Class<UIComponent>, Set<String>>();
+    @Override public ResponseWriter cloneWithWriter(Writer writer) {
+      return new Html5ResponseWriter(super.cloneWithWriter(writer));
+    }
 
-		for (String passthroughAttribute : passthroughAttributesParam.split("\\s*;\\s*")) {
-			String[] classAndAttributeNames = passthroughAttribute.split("\\s*=\\s*", 2);
-
-			if (classAndAttributeNames.length != 2) {
-				throw new IllegalArgumentException(ERROR_INVALID_INIT_PARAM);
-			}
-
-			String className = classAndAttributeNames[0];
-			Object[] attributeNames = classAndAttributeNames[1].split("\\s*,\\s*");
-			Set<String> attributeNameSet = unmodifiableSet(attributeNames);
-
-			try {
-				passthroughAttributes.put((Class<UIComponent>) Class.forName(className), attributeNameSet);
-			}
-			catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException(String.format(ERROR_INVALID_INIT_PARAM_CLASS, className), e);
-			}
-		}
-
-		return passthroughAttributes;
-	}
-
-	// Nested classes -------------------------------------------------------------------------------------------------
-
-	/**
-	 * This HTML5 response writer does all the job.
-	 * @author Bauke Scholtz
-	 */
-	class Html5ResponseWriter extends ResponseWriterWrapper {
-
-		// Properties -------------------------------------------------------------------------------------------------
-
-		private ResponseWriter wrapped;
-
-		// Constructors -----------------------------------------------------------------------------------------------
-
-		public Html5ResponseWriter(ResponseWriter wrapped) {
-			this.wrapped = wrapped;
-		}
-
-		// Actions ----------------------------------------------------------------------------------------------------
-
-		@Override
-		public ResponseWriter cloneWithWriter(Writer writer) {
-			return new Html5ResponseWriter(super.cloneWithWriter(writer));
-		}
-
-		/**
+    /**
 		 * An override which checks if the given component is an instance of {@link UIForm} or {@link UIInput} and then
 		 * write HTML5 attributes which are explicitly been set by the developer.
 		 */
-		@Override
-		public void startElement(String name, UIComponent component) throws IOException {
-			super.startElement(name, component);
+    @Override public void startElement(String name, UIComponent component) throws IOException {
+      super.startElement(name, component);
+      if (component == null) {
+        return;
+      }
+      if (component instanceof UIForm && "form".equals(name)) {
+        writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_UIFORM_ATTRIBUTES);
+      } else {
+        if (component instanceof UIInput) {
+          writeHtml5AttributesIfNecessary((UIInput) component, name);
+        } else {
+          if (component instanceof UICommand && "input".equals(name)) {
+            writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_BUTTON_ATTRIBUTES);
+          }
+        }
+      }
+      if (passthroughAttributes != null) {
+        for (Entry<Class<UIComponent>, Set<String>> entry : passthroughAttributes.entrySet()) {
+          if (entry.getKey().isInstance(component)) {
+            writeHtml5AttributesIfNecessary(component.getAttributes(), entry.getValue());
+          }
+        }
+      }
+    }
 
-			if (component == null) {
-				return; // Either the renderer is broken, or it's plain text/html.
-			}
-
-			if (component instanceof UIForm && "form".equals(name)) {
-				writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_UIFORM_ATTRIBUTES);
-			}
-			else if (component instanceof UIInput) {
-				writeHtml5AttributesIfNecessary((UIInput) component, name);
-			}
-			else if (component instanceof UICommand && "input".equals(name)) {
-				writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_BUTTON_ATTRIBUTES);
-			}
-
-			if (passthroughAttributes != null) {
-				for (Entry<Class<UIComponent>, Set<String>> entry : passthroughAttributes.entrySet()) {
-					if (entry.getKey().isInstance(component)) {
-						writeHtml5AttributesIfNecessary(component.getAttributes(), entry.getValue());
-					}
-				}
-			}
-		}
-
-		/**
+    /**
 		 * An override which checks if an attribute of <code>type="text"</code> is been written by an {@link UIInput}
 		 * component and if so then check if the <code>type</code> attribute isn't been explicitly set by the developer
 		 * and if so then write it.
 		 * @throws IllegalArgumentException When the <code>type</code> attribute is not supported.
 		 */
-		@Override
-		public void writeAttribute(String name, Object value, String property) throws IOException {
-			if ("type".equals(name) && "text".equals(value)) {
-				UIComponent component = getCurrentComponent();
+    @Override public void writeAttribute(String name, Object value, String property) throws IOException {
+      if ("type".equals(name) && "text".equals(value)) {
+        UIComponent component = getCurrentComponent();
+        if (component instanceof HtmlInputText) {
+          Object type = component.getAttributes().get("type");
+          if (type != null) {
+            if (HTML5_INPUT_TYPES.contains(type)) {
+              super.writeAttribute(name, type, null);
+              return;
+            } else {
+              throw new IllegalArgumentException(String.format(ERROR_UNSUPPORTED_HTML5_INPUT_TYPE, type));
+            }
+          }
+        }
+      }
+      super.writeAttribute(name, value, property);
+    }
 
-				if (component instanceof HtmlInputText) {
-					Object type = component.getAttributes().get("type");
+    @Override public ResponseWriter getWrapped() {
+      return wrapped;
+    }
 
-					if (type != null) {
-						if (HTML5_INPUT_TYPES.contains(type)) {
-							super.writeAttribute(name, type, null);
-							return;
-						}
-						else {
-							throw new IllegalArgumentException(
-								String.format(ERROR_UNSUPPORTED_HTML5_INPUT_TYPE, type));
-						}
-					}
-				}
-			}
+    private void writeHtml5AttributesIfNecessary(UIInput component, String name) throws IOException {
+      if (isInput(component, name)) {
+        Map<String, Object> attributes = component.getAttributes();
+        writeHtml5AttributesIfNecessary(attributes, HTML5_INPUT_ATTRIBUTES);
+        if (HTML5_INPUT_RANGE_TYPES.contains(attributes.get("type"))) {
+          writeHtml5AttributesIfNecessary(attributes, HTML5_INPUT_RANGE_ATTRIBUTES);
+        }
+      } else {
+        if (isInputPassword(component, name)) {
+          writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_INPUT_PASSWORD_ATTRIBUTES);
+        } else {
+          if (isTextarea(component, name)) {
+            writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_TEXTAREA_ATTRIBUTES);
+          } else {
+            if (isSelect(component, name)) {
+              writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_SELECT_ATTRIBUTES);
+            }
+          }
+        }
+      }
+    }
 
-			super.writeAttribute(name, value, property);
-		}
+    private void writeHtml5AttributesIfNecessary(Map<String, Object> attributes, Set<String> names) throws IOException {
+      for (String name : names) {
+        Object value = attributes.get(name);
+        if (value != null) {
+          super.writeAttribute(name, value, null);
+        }
+      }
+    }
 
-		@Override
-		public ResponseWriter getWrapped() {
-			return wrapped;
-		}
+    private boolean isInput(UIInput component, String name) {
+      return component instanceof HtmlInputText && "input".equals(name);
+    }
 
-		// Helpers ----------------------------------------------------------------------------------------------------
+    private boolean isInputPassword(UIInput component, String name) {
+      return component instanceof HtmlInputSecret && "input".equals(name);
+    }
 
-		private void writeHtml5AttributesIfNecessary(UIInput component, String name) throws IOException {
-			if (isInput(component, name)) {
-				Map<String, Object> attributes = component.getAttributes();
-				writeHtml5AttributesIfNecessary(attributes, HTML5_INPUT_ATTRIBUTES);
+    private boolean isTextarea(UIInput component, String name) {
+      return component instanceof HtmlInputTextarea && "textarea".equals(name);
+    }
 
-				if (HTML5_INPUT_RANGE_TYPES.contains(attributes.get("type"))) {
-					writeHtml5AttributesIfNecessary(attributes, HTML5_INPUT_RANGE_ATTRIBUTES);
-				}
-			}
-			else if (isInputPassword(component, name)) {
-				writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_INPUT_PASSWORD_ATTRIBUTES);
-			}
-			else if (isTextarea(component, name)) {
-				writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_TEXTAREA_ATTRIBUTES);
-			}
-			else if (isSelect(component, name)) {
-				writeHtml5AttributesIfNecessary(component.getAttributes(), HTML5_SELECT_ATTRIBUTES);
-			}
-		}
-
-		private void writeHtml5AttributesIfNecessary(Map<String, Object> attributes, Set<String> names) throws IOException {
-			for (String name : names) {
-				Object value = attributes.get(name);
-
-				if (value != null) {
-					super.writeAttribute(name, value, null);
-				}
-			}
-		}
-
-		private boolean isInput(UIInput component, String name) {
-			return component instanceof HtmlInputText && "input".equals(name);
-		}
-
-		private boolean isInputPassword(UIInput component, String name) {
-			return component instanceof HtmlInputSecret && "input".equals(name);
-		}
-
-		private boolean isTextarea(UIInput component, String name) {
-			return component instanceof HtmlInputTextarea && "textarea".equals(name);
-		}
-
-		private boolean isSelect(UIInput component, String name) {
-			return isOneInstanceOf(component.getClass(), UISelectBoolean.class, UISelectOne.class, UISelectMany.class)
-				&& ("input".equals(name) || "select".equals(name));
-		}
-	}
-
+    private boolean isSelect(UIInput component, String name) {
+      return isOneInstanceOf(component.getClass(), UISelectBoolean.class, UISelectOne.class, UISelectMany.class) && ("input".equals(name) || "select".equals(name));
+    }
+  }
 }
