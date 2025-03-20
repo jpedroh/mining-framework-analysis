@@ -1,3 +1,4 @@
+
 package com.mitchellbosecke.pebble.template;
 
 import java.util.Locale;
@@ -5,6 +6,7 @@ import java.util.Locale;
 /**
  * Created by mitchell on 2016-11-13.
  */
+
 public interface EvaluationContext {
 
     boolean isStrictVariables();
@@ -13,3 +15,5 @@ public interface EvaluationContext {
 
     Object getVariable(String key);
 }
+
+import com.mitchellbosecke.pebble.cache.CacheKey;

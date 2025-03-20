@@ -127,8 +127,23 @@ public class ScopeChain {
                 return scope.get(key);
             }
 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/edcb7368e0c64c3268f102f7be46f122f067a45c/src/main/java/com/mitchellbosecke/pebble/template/ScopeChain.java/left.java
+            while (result == null && iterator.hasNext()) {
+                scope = iterator.next();
+
+                result = scope.get(key);
+||||||| /usr/src/app/output/mbosecke/pebble/edcb7368e0c64c3268f102f7be46f122f067a45c/src/main/java/com/mitchellbosecke/pebble/template/ScopeChain.java/base.java
+            while (result == null && iterator.hasNext()) {
+                scope = iterator.next();
+
+                result = scope.get(key);
+                if (scope.isLocal()) {
+                    break;
+                }
+=======
             if (scope.isLocal()) {
                 return null;
+>>>>>>> /usr/src/app/output/mbosecke/pebble/edcb7368e0c64c3268f102f7be46f122f067a45c/src/main/java/com/mitchellbosecke/pebble/template/ScopeChain.java/right.java
             }
         }
 

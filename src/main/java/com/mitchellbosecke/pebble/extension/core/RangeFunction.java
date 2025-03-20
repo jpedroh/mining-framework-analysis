@@ -51,7 +51,7 @@ public class RangeFunction implements Function {
             throw new PebbleException(null, "The increment of the range function must be a number " + increment,
                     lineNumber, self.getName());
         }
-        
+
         long incrementNum = ((Number) increment).longValue();
 
         List<Object> results = new ArrayList<>();
@@ -64,8 +64,7 @@ public class RangeFunction implements Function {
                 for (long i = startNum; i <= endNum; i += incrementNum) {
                     results.add(i);
                 }
-            }
-            else if (incrementNum < 0) {
+            } else if (incrementNum < 0) {
                 for (long i = startNum; i >= endNum; i += incrementNum) {
                     results.add(i);
                 }
