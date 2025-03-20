@@ -61,23 +61,42 @@ public class ShadowSystem extends ECSystem{
 				float shadowWidth = renderComp.texture.getRegionWidth() * shadowComp.z;
 				float shadowHeight = renderComp.texture.getRegionHeight() * shadowComp.z;
 				
-//				// Überprüfen, entity eine Katze ist und springt
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/66a8b6c02ec07d0ff0f5e4d7e7ccfe6314416238/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/ShadowSystem.java/left.java
+			//				// Überprüfen, entity eine Katze ist und springt
 				CatPropertyComponent catPropComp = entityManager.getComponent(currentEnt, 
 						CatPropertyComponent.class);
 				if(catPropComp != null){
 					switch(catPropComp.getState()){
-//					case JUMP_BEGIN:
-//						shadowWidth *= 1.25f;
-//						shadowHeight *= 1.25f;
-//						break;
+			//					case JUMP_BEGIN:
+			//						shadowWidth *= 1.25f;
+			//						shadowHeight *= 1.25f;
+			//						break;
 					case JUMP:
 						shadowWidth *= 1.35f;
 						shadowHeight *= 1.35f;
-//					case JUMP_END:
-//						shadowWidth *= 1.25f;
-//						shadowHeight *= 1.25f;
-//					}
-//				// Überprüfen, ob entity springt
+			//					case JUMP_END:
+			//						shadowWidth *= 1.25f;
+			//						shadowHeight *= 1.25f;
+			//					}
+||||||| /usr/src/app/output/lusito/gamedevweek/66a8b6c02ec07d0ff0f5e4d7e7ccfe6314416238/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/ShadowSystem.java/base.java
+			//				// Überprüfen, entity eine Katze ist und springt
+				CatPropertyComponent catPropComp = entityManager.getComponent(currentEnt, 
+						CatPropertyComponent.class);
+				if(catPropComp != null){
+					switch(catPropComp.getState()){
+					case JUMP_BEGIN:
+						shadowWidth *= 1.25f;
+						shadowHeight *= 1.25f;
+						break;
+					case JUMP:
+						shadowWidth *= 1.35f;
+						shadowHeight *= 1.35f;
+					case JUMP_END:
+						shadowWidth *= 1.25f;
+						shadowHeight *= 1.25f;
+					}
+=======
+			//				// Überprüfen, ob entity springt
 				JumpDataComponent jumpComp = entityManager.getComponent(currentEnt, 
 						JumpDataComponent.class);
 				// Nur überprüfen, falls entity auch eine Jump Komponente hat
@@ -93,28 +112,28 @@ public class ShadowSystem extends ECSystem{
 					shadowHeight *= factorShadowSize;
 					
 					
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/66a8b6c02ec07d0ff0f5e4d7e7ccfe6314416238/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/ShadowSystem.java/right.java
 				}
 				
 				DrawUtil.batch.draw(renderComp.texture,
-                        physicsComp.getPosition().x - (shadowWidth / 2) + shadowComp.shadowOffsetX, 
-                        physicsComp.getPosition().y - (shadowHeight / 2) + shadowComp.shadowOffsetY, 
-                        shadowWidth / 2, 
-                        shadowHeight / 2, 
-                        shadowWidth, 
-                        shadowHeight, 
-                        1f, 
-                        1f, 
-                        (float)(physicsComp.getRotation() * 180 / Math.PI));
+			                        physicsComp.getPosition().x - (shadowWidth / 2) + shadowComp.shadowOffsetX, 
+			                        physicsComp.getPosition().y - (shadowHeight / 2) + shadowComp.shadowOffsetY, 
+			                        shadowWidth / 2, 
+			                        shadowHeight / 2, 
+			                        shadowWidth, 
+			                        shadowHeight, 
+			                        1f, 
+			                        1f, 
+			                        (float)(physicsComp.getRotation() * 180 / Math.PI));
 				
 				DrawUtil.batch.end();
 				DrawUtil.resetColor();
 				Gdx.gl.glDisable(GL20.GL_BLEND);
 				DrawUtil.batch.begin();
 				
-				}
-			
-			
-				}
+			}
+
+
 			}
 		}
 	}
