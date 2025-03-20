@@ -63,6 +63,7 @@ public interface DeployKey extends JsonReadable {
      */
     int number();
 
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/101ab53a09daf5a947b5a1d972b7b9ab463438d9/src/main/java/com/jcabi/github/DeployKey.java/left.java
     /**
      * Edits a key.
      * @see <a href="http://developer.github.com/v3/repos/keys/#edit">Deploy keys API</a>
@@ -71,11 +72,14 @@ public interface DeployKey extends JsonReadable {
      * @throws IOException if any I/O problem occurs86
      */
     void edit(String title, String value) throws IOException;
-
+||||||| /usr/src/app/output/jcabi/jcabi-github/101ab53a09daf5a947b5a1d972b7b9ab463438d9/src/main/java/com/jcabi/github/DeployKey.java/base.java
+=======
     /**
      * Delete a deploy key.
      * @throws java.io.IOException If there is any I/O problem
      * @see <a href="http://developer.github.com/v3/repos/keys/#delete">Remove a deploy key</a>
      */
     void remove() throws IOException;
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/101ab53a09daf5a947b5a1d972b7b9ab463438d9/src/main/java/com/jcabi/github/DeployKey.java/right.java
+
 }

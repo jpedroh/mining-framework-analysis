@@ -91,19 +91,18 @@ public final class RtDeployKey implements DeployKey {
     }
 
     @Override
+    public void remove() throws IOException {
+        this.request.method(Request.DELETE).fetch()
+            .as(RestResponse.class)
+            .assertStatus(HttpURLConnection.HTTP_NO_CONTENT);
+    }
+
+    @Override
     public void edit(final String title, final String value)
         throws IOException {
         this.request.method(Request.PATCH)
             .body()
             .formParam("title", title)
-            .formParam("key", value).back().fetch().as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_ACCEPTED);
-    }
-
-    @Override
-    public void remove() throws IOException {
-        this.request.method(Request.DELETE).fetch()
-            .as(RestResponse.class)
-            .assertStatus(HttpURLConnection.HTTP_NO_CONTENT);
+            .formParam("key", value).back().fetch();
     }
 }
