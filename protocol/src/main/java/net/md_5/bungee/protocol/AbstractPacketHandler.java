@@ -163,7 +163,7 @@ public abstract class AbstractPacketHandler
     public void handle(ResourcePackResponse resourcePackResponse) throws Exception
     {
     }
-    
+
     public void handle(LoginPayloadRequest request) throws Exception
     {
     }

@@ -93,9 +93,13 @@ public class Configuration implements ProxyConfig
         ipForward = adapter.getBoolean( "ip_forward", ipForward );
         compressionThreshold = adapter.getInt( "network_compression_threshold", compressionThreshold );
         preventProxyConnections = adapter.getBoolean( "prevent_proxy_connections", preventProxyConnections );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/590713abee8bd87f7f3300a79bc6a906d8bc6c94/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java/left.java
         resourcePack = adapter.getString( "resource_pack", resourcePack );
         resourcePackHash = adapter.getString( "resource_pack_sha1", resourcePackHash );
+||||||| /usr/src/app/output/spigotmc/bungeecord/590713abee8bd87f7f3300a79bc6a906d8bc6c94/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java/base.java
+=======
         forgeSupport = adapter.getBoolean( "forge_support", forgeSupport );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/590713abee8bd87f7f3300a79bc6a906d8bc6c94/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java/right.java
 
         disabledCommands = new CaseInsensitiveSet( (Collection<String>) adapter.getList( "disabled_commands", Arrays.asList( "disabledcommandhere" ) ) );
 
