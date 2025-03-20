@@ -1,42 +1,11 @@
-/*  
- *  Imixs-Workflow 
- *  
- *  Copyright (C) 2001-2020 Imixs Software Solutions GmbH,  
- *  http://www.imixs.com
- *  
- *  This program is free software; you can redistribute it and/or 
- *  modify it under the terms of the GNU General Public License 
- *  as published by the Free Software Foundation; either version 2 
- *  of the License, or (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- *  General Public License for more details.
- *  
- *  You can receive a copy of the GNU General Public
- *  License at http://www.gnu.org/licenses/gpl.html
- *  
- *  Project: 
- *      https://www.imixs.org
- *      https://github.com/imixs/imixs-workflow
- *  
- *  Contributors:  
- *      Imixs Software Solutions GmbH - Project Management
- *      Ralph Soika - Software Developer
- */
-
 package org.imixs.workflow.engine.lucene;
-
 import java.util.List;
 import java.util.logging.Logger;
-
 import jakarta.inject.Inject;
-
+import javax.ejb.AccessTimeout;
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.engine.index.UpdateService;
 import org.imixs.workflow.exceptions.IndexException;
-
 import jakarta.ejb.Singleton;
 
 /**
@@ -65,15 +34,12 @@ import jakarta.ejb.Singleton;
  * @version 1.2
  * @author rsoika
  */
-@Singleton
-public class LuceneUpdateService implements UpdateService {
+@Singleton @AccessTimeout(value = 30000) public class LuceneUpdateService implements UpdateService {
+  @Inject private LuceneIndexService luceneIndexService;
 
-    @Inject
-    private LuceneIndexService luceneIndexService;
+  private static Logger logger = Logger.getLogger(LuceneUpdateService.class.getName());
 
-    private static Logger logger = Logger.getLogger(LuceneUpdateService.class.getName());
-
-    /**
+  /**
      * This method adds a collection of documents to the Lucene index. The documents
      * are added immediately to the index. Calling this method within a running
      * transaction leads to a uncommitted reads in the index. For transaction
@@ -85,26 +51,23 @@ public class LuceneUpdateService implements UpdateService {
      * @param documents of ItemCollections to be indexed
      * @throws IndexException
      */
-    @Override
-    public void updateIndex(List<ItemCollection> documents) {
-        luceneIndexService.indexDocuments(documents);
+  @Override public void updateIndex(List<ItemCollection> documents) {
+    luceneIndexService.indexDocuments(documents);
+  }
 
-    }
-
-    /**
+  /**
      * This method flush the event log.
      */
-    @Override
-    public void updateIndex() {
-        long ltime = System.currentTimeMillis();
-        // flush eventlog (see issue #411)
-        int flushCount = 0;
-        while (luceneIndexService.flushEventLog(2048) == false) {
-            // repeat flush....
-            flushCount = +2048;
-            logger.info("...flush event log: " + flushCount + " entries updated in "
-                    + (System.currentTimeMillis() - ltime) + "ms ...");
-        }
+  @Override public void updateIndex() {
+    long ltime = System.currentTimeMillis();
+    int flushCount = 0;
+    while (luceneIndexService.flushEventLog(2048) == false) {
+      flushCount = +2048;
+      logger.info("...flush event log: " + flushCount + " entries updated in " + (System.currentTimeMillis() - ltime) + "ms ...");
     }
-
+    long updateTime = (System.currentTimeMillis() - ltime);
+    if (updateTime > 5000) {
+      logger.warning("...Slow lucene updateIndex take " + (updateTime) + "ms !");
+    }
+  }
 }
