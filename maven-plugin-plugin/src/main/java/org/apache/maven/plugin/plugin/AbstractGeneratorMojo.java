@@ -212,9 +212,43 @@ public abstract class AbstractGeneratorMojo
         boolean wrongScopedMavenPluginApi = mavenPluginApiDependencyNotInProvidedScope();
         if ( wrongScopedMavenPluginApi )
         {
+<<<<<<< /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/left.java
             getLog().warn(
                 "It is best practice to keep maven-plugin-api dependency in provided scope."
+||||||| /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/base.java
+            StringBuilder errorMessage = new StringBuilder(
+                "%n%nMaven dependencies of Maven Plugins should be in provided scope.%n"
+                    + "Please make sure that all your dependencies declared in POM whose group ID is%n"
+                    + "org.apache.maven have set '<scope>provided</scope>' as well.%n"
+                    + "In the future this error will break the build.%n%n"
+                    + "The following dependencies are in wrong scope:%n"
+=======
+            StringBuilder errorMessage = new StringBuilder(
+                LS + LS + "Maven dependencies of Maven Plugins should be in provided scope." + LS
+                    + "Please make sure that all your dependencies declared in POM whose group ID is" + LS
+                    + "org.apache.maven have set '<scope>provided</scope>' as well." + LS
+                    + "In the future this error will break the build." + LS + LS
+                    + "The following dependencies are in wrong scope:" + LS
+>>>>>>> /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/right.java
             );
+<<<<<<< /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/left.java
+||||||| /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/base.java
+            for ( Artifact artifact : wrongScopedArtifacts )
+            {
+                errorMessage.append( " * " ).append( artifact ).append( "%n" );
+            }
+            errorMessage.append( "%nPlease fix your build!%n%n" );
+
+            getLog().error( String.format( errorMessage.toString() ) );
+=======
+            for ( Artifact artifact : wrongScopedArtifacts )
+            {
+                errorMessage.append( " * " ).append( artifact ).append( LS );
+            }
+            errorMessage.append( LS ).append( "Please fix your build!" ).append( LS ).append( LS );
+
+            getLog().error( errorMessage.toString() );
+>>>>>>> /usr/src/app/output/apache/maven-plugin-tools/a859f5f2e195188a00c1af3b6ea86f3d5582f92f/maven-plugin-plugin/src/main/java/org/apache/maven/plugin/plugin/AbstractGeneratorMojo.java/right.java
         }
 
         String defaultGoalPrefix = getDefaultGoalPrefix( project );
