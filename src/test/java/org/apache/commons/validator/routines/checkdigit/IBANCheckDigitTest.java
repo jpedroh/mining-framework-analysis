@@ -58,7 +58,12 @@ public class IBANCheckDigitTest extends AbstractCheckDigitTest {
                 "BE68539007547034",              // Belgium
                 "BG80BNBG96611020345678",        // Bulgaria
                 "BH67BMAG00001299123456",        // Bahrain
+<<<<<<< /usr/src/app/output/apache/commons-validator/9aeb4661a9391148aa439a12ca71fedb4015c466/src/test/java/org/apache/commons/validator/routines/checkdigit/IBANCheckDigitTest.java/left.java
+                "BI4210000100010000332045181",  // Burundi
+||||||| /usr/src/app/output/apache/commons-validator/9aeb4661a9391148aa439a12ca71fedb4015c466/src/test/java/org/apache/commons/validator/routines/checkdigit/IBANCheckDigitTest.java/base.java
+=======
                 "BI4210000100010000332045181",   // Burundi
+>>>>>>> /usr/src/app/output/apache/commons-validator/9aeb4661a9391148aa439a12ca71fedb4015c466/src/test/java/org/apache/commons/validator/routines/checkdigit/IBANCheckDigitTest.java/right.java
                 "BR1800000000141455123924100C2", // Brazil
                 "BY13NBRB3600900000002Z00AB00",  // Belarus
                 "CH3900700115201849173",         // Switzerland
