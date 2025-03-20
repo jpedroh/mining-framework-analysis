@@ -266,6 +266,7 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 			unsentNotifications.addAll(this.getQueue());
 
 			return unsentNotifications;
+
 		}
 
 		if (!this.isStarted()) {
