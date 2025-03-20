@@ -1,34 +1,4 @@
-/*
- * Copyright (c) 2011-2017, jcabi.com
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met: 1) Redistributions of source code must retain the above
- * copyright notice, this list of conditions and the following
- * disclaimer. 2) Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided
- * with the distribution. 3) Neither the name of the jcabi.com nor
- * the names of its contributors may be used to endorse or promote
- * products derived from this software without specific prior written
- * permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
- * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package com.jcabi.http.mock;
-
 import java.net.URI;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -38,27 +8,24 @@ import org.hamcrest.Matchers;
  *
  * @since 1.5
  */
-@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
-public final class MkQueryMatchers {
-
-    /**
+@SuppressWarnings(value = { "PMD.ProhibitPublicStaticMethods" }) public final class MkQueryMatchers {
+  /**
      * Private ctor.
      */
-    private MkQueryMatchers() {
-        // Utility class - cannot instantiate
-    }
+  private MkQueryMatchers() {
+  }
 
-    /**
+  /**
      * Matches the value of the MkQuery's body against the given matcher.
      *
      * @param matcher The matcher to use.
      * @return Matcher for checking the body of MkQuery
      */
-    public static Matcher<MkQuery> hasBody(final Matcher<String> matcher) {
-        return new MkQueryBodyMatcher(matcher);
-    }
+  public static Matcher<MkQuery> hasBody(final Matcher<String> matcher) {
+    return new MkQueryBodyMatcher(matcher);
+  }
 
-    /**
+  /**
      * Matches the content of the MkQuery's header against the given matcher.
      * Note that for a valid match to occur, the header entry must exist
      * <i>and</i> its value(s) must match the given matcher.
@@ -67,45 +34,45 @@ public final class MkQueryMatchers {
      * @param matcher The matcher to use.
      * @return Matcher for checking the body of MkQuery
      */
-    public static Matcher<MkQuery> hasHeader(
-        final String header,
-        final Matcher<Iterable<? extends String>> matcher
-    ) {
-        return new MkQueryHeaderMatcher(header, matcher);
-    }
+  public static Matcher<MkQuery> hasHeader(final String header, final Matcher<Iterable<? extends String>> matcher) {
+    return new MkQueryHeaderMatcher(header, matcher);
+  }
 
-    /**
+  /**
      * Matches the path of the MkQuery.
      *
      * @param path The path to check.
      * @return Matcher for checking the path of MkQuery
      */
-    public static Matcher<MkQuery> hasPath(final Matcher<String> path) {
-        return new MkQueryUriMatcher(
-            Matchers.<URI>hasProperty("rawPath", path)
-        );
-    }
+  public static Matcher<MkQuery> hasPath(final Matcher<String> path) {
+    return new MkQueryUriMatcher(Matchers.<URI>hasProperty("rawPath", path));
+  }
 
-    /**
+  /**
      * Matches the query of the MkQuery.
      *
      * @param path The path to check.
      * @return Matcher for checking the query part of MkQuery
      */
-    public static Matcher<MkQuery> hasQuery(final Matcher<String> path) {
-        return new MkQueryUriMatcher(
-            Matchers.<URI>hasProperty("rawQuery", path)
-        );
-    }
-
-    /**
-     * Matches the query of the MkQuery.
-     *
-     * @param query The query to check.
-     * @return Matcher for checking the query of MkQuery
-     */
-    public static Matcher<MkQuery> hasQuery(final Matcher<String> query) {
-        return new MkQueryQueryMatcher(query);
-    }
-
+  public static Matcher<MkQuery> hasQuery(
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/left.java
+  final Matcher<String> path
+=======
+  final Matcher<String> query
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/right.java
+  ) {
+    return new 
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/left.java
+    MkQueryUriMatcher
+=======
+    MkQueryQueryMatcher
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/right.java
+    (
+<<<<<<< /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/left.java
+    Matchers.<URI>hasProperty("rawQuery", path)
+=======
+    query
+>>>>>>> /usr/src/app/output/jcabi/jcabi-http/0c63dd0c7521670361a6b8b54f23fc4efae247cb/src/main/java/com/jcabi/http/mock/MkQueryMatchers.java/right.java
+    );
+  }
 }
