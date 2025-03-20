@@ -921,5 +921,4 @@ public final class JavaParser {
     public MethodDeclaration parseAndGetMethodDeclaration(String methodDeclaration) {
         return unpackResult(parseMethodDeclaration(methodDeclaration));
     }
-
 }
