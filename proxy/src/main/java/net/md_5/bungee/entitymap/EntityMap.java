@@ -57,7 +57,7 @@ public abstract class EntityMap
             case ProtocolConstants.MINECRAFT_1_14_2:
                 return EntityMap_1_14.INSTANCE;
         }
-        throw new RuntimeException( "Version " + version + " has no entity map" );
+        // throw new RuntimeException( "Version " + version + " has no entity map" );
     }
 
     protected void addRewrite(int id, ProtocolConstants.Direction direction, boolean varint)
