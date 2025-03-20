@@ -61,13 +61,25 @@ public class EmailTypeConverter implements TypeConverter<String> {
      * Validates the user input to ensure that it is a valid email address.
      *
      * @param input the String input, always a non-null non-empty String
+<<<<<<< /usr/src/app/output/stripesframework/stripes/af036e7bf11bb36d77a6330cbeffee047e95151e/stripes/src/main/java/net/sourceforge/stripes/validation/EmailTypeConverter.java/left.java
+     * @param targetType realistically always String since java.lang.String is final
+     * @param errors a non-null collection of errors to populate in case of error
+     * @return the parsed address, or null if there are errors. Note that the parsed address
+     *         may be different from the input if extraneous characters were removed.
+||||||| /usr/src/app/output/stripesframework/stripes/af036e7bf11bb36d77a6330cbeffee047e95151e/stripes/src/main/java/net/sourceforge/stripes/validation/EmailTypeConverter.java/base.java
+     * @param targetType realistically always String since java.lang.String is final
+     * @param errors a non-null collection of errors to populate in case of error
+     * @return the parsed address, or null if there are no errors. Note that the parsed address
+     *         may be different from the input if extraneous characters were removed.
+=======
      * @param targetType realistically always String since java.lang.String is
      * final
      * @param errors a non-null collection of errors to populate in case of
      * error
-     * @return the parsed address, or null if there are errors. Note that the
+     * @return the parsed address, or null if there are no errors. Note that the
      * parsed address may be different from the input if extraneous characters
      * were removed.
+>>>>>>> /usr/src/app/output/stripesframework/stripes/af036e7bf11bb36d77a6330cbeffee047e95151e/stripes/src/main/java/net/sourceforge/stripes/validation/EmailTypeConverter.java/right.java
      */
     public String convert(String input,
             Class<? extends String> targetType,
