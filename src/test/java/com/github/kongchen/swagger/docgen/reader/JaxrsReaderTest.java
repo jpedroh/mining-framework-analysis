@@ -9,6 +9,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import io.swagger.models.Operation;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,7 +31,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.models.ArrayModel;
-import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.BodyParameter;
@@ -162,7 +162,6 @@ public class JaxrsReaderTest {
     @Path("/apath")
     static class NotAnnotatedApi {
     }
-
 
     @Api(value = "v1")
     @Path("/apath")
