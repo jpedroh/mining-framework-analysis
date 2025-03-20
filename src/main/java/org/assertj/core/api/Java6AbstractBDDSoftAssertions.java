@@ -79,11 +79,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public BooleanAssert then(boolean actual) {
     return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -112,11 +124,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public ByteAssert then(byte actual) {
     return proxy(ByteAssert.class, Byte.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -145,6 +169,12 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public CharacterAssert then(char actual) {
     return proxy(CharacterAssert.class, Character.class, actual);
@@ -161,6 +191,12 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
     return proxy(CharArrayAssert.class, char[].class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -197,6 +233,11 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
   public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return proxy(GenericComparableAssert.class, Comparable.class, actual);
   }
+  @SuppressWarnings("unchecked")
+  @CheckReturnValue
+  public <T> ObjectAssert<T> then(T actual) {
+    return proxy(ObjectAssert.class, Object.class, actual);
+  }
 
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
@@ -230,11 +271,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public DoubleAssert then(double actual) {
     return proxy(DoubleAssert.class, Double.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -298,11 +351,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public FloatAssert then(float actual) {
     return proxy(FloatAssert.class, Float.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -331,6 +396,12 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public IntegerAssert then(int actual) {
     return proxy(IntegerAssert.class, Integer.class, actual);
@@ -347,6 +418,12 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
     return proxy(IntArrayAssert.class, int[].class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -376,11 +453,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public LongAssert then(long actual) {
     return proxy(LongAssert.class, Long.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -409,11 +498,6 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  public <T> ObjectAssert<T> then(T actual) {
-    return proxy(ObjectAssert.class, Object.class, actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
@@ -447,11 +531,23 @@ public class Java6AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   @CheckReturnValue
   public ShortAssert then(short actual) {
     return proxy(ShortAssert.class, Short.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
