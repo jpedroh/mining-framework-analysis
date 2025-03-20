@@ -79,13 +79,28 @@ public class SpoutcraftBuild {
 			Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
 			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), recommended, libs);
 		} else if (SettingsUtil.isDevelopmentBuild()) {
+<<<<<<< /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/left.java
 			Map<String, Object> build = (Map<String, Object>) builds.get(latest);
 			Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
 			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), latest, libs);
+||||||| /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/base.java
+			Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
+			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), latest);
+=======
+			Map<String, Object> build = (Map<String, Object>) builds.get(latest);
+			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), latest);
+>>>>>>> /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/right.java
 		}
-
+<<<<<<< /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/left.java
 		Map<String, Object> build = (Map<String, Object>) builds.get(selected);
 		Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
 		return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), selected, libs);
+||||||| /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/base.java
+		Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
+		return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), selected);
+=======
+		Map<String, Object> build = (Map<String, Object>) builds.get(selected);
+		return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), selected);
+>>>>>>> /usr/src/app/output/spoutcraft/legacylauncher/66b1a81e0b1ce7a64454b616e2731b7c27f38ecb/src/main/java/org/spoutcraft/launcher/SpoutcraftBuild.java/right.java
 	}
 }
