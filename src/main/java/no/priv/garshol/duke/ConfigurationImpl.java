@@ -1,4 +1,3 @@
-
 package no.priv.garshol.duke;
 
 import java.util.Map;
@@ -30,11 +29,10 @@ public class ConfigurationImpl implements Configuration {
   private Map<String, Property> properties;
   private List<Property> proplist; // duplicate to preserve order
   private Collection<Property> lookups; // subset of properties
-
+  private List<Comparator> customComparators;
+  
   private Database database1;
   private Database database2; // used for record linkage, if necessary
-
-  private List<Comparator> customComparators;
 
   public ConfigurationImpl() {
     this.datasources = new ArrayList();
@@ -316,14 +314,14 @@ public class ConfigurationImpl implements Configuration {
     return copy;
   }
 
-
+  
   @Override
-  public List<Comparator> getCustomComparators() {
+  public List<Comparator> getCustomComparators() {	
 	return this.customComparators;
   }
 
   @Override
-  public void addCustomComparator(Comparator comparator) {
+  public void addCustomComparator(Comparator comparator) { 
 	this.customComparators.add(comparator);
   }
 }
