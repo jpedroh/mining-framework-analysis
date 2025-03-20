@@ -57,10 +57,6 @@ public class MaskHsv extends CvStage {
     @Property(description="Inverts the selection of pixels to mask.")
     private Boolean invert;
     
-    @Attribute(required = false)
-    @Property(description = "If set, the mask is returned directly as a grayscale image with the masked area black, the unmasked white. Otherwise the masked area is blackened in the source image.")
-    private boolean binaryMask = false;
-
     public Boolean getAuto() {
         return auto;
     }
@@ -79,6 +75,10 @@ public class MaskHsv extends CvStage {
         }
     }
     
+    @Attribute(required = false)
+    @Property(description = "If set, the mask is returned directly as a grayscale image with the masked area black, the unmasked white. Otherwise the masked area is blackened in the source image.")
+    private boolean binaryMask = false;
+
     public int getHueMin() {
         return hueMin;
     }

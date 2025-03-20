@@ -633,7 +633,13 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
                 && (getNozzleTip().getVacuumLevelPartOffLow() < getNozzleTip().getVacuumLevelPartOffHigh());
     }
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/left.java
+    protected Actuator getActuator() throws Exception {
+||||||| /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/base.java
+    protected double readVacuumLevel() throws Exception {
+=======
     protected Actuator getVacuumActuator() throws Exception {
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/right.java
         Actuator actuator = getHead().getActuatorByName(vacuumActuatorName);
         if (actuator == null) {
             throw new Exception(String.format("Can't find vacuum actuator %s", vacuumActuatorName));
@@ -641,17 +647,12 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
         return actuator;
     }
     
-    protected boolean hasPartOnAnyOtherNozzle() {
-        for (Nozzle nozzle : getHead().getNozzles()) {
-            if (nozzle != this ) {
-                if (nozzle.getPart() != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/left.java
+    private void actuateVacuumValve(boolean on) throws Exception {
+        getActuator().actuate(on);
     }
-    
+||||||| /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/base.java
+=======
     protected void actuateVacuumValve(boolean on) throws Exception {
         Actuator pump = getHead().getPump();
         if (pump != null && on) {
@@ -668,9 +669,28 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
             }
         }
     }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/right.java
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/left.java
+    private double readVacuumLevel() throws Exception {
+        return Double.parseDouble(getActuator().read());
+    }
+||||||| /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/base.java
+=======
     protected double readVacuumLevel() throws Exception {
         return Double.parseDouble(getVacuumActuator().read());
+    }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/right.java
+
+    protected boolean hasPartOnAnyOtherNozzle() {
+        for (Nozzle nozzle : getHead().getNozzles()) {
+            if (nozzle != this ) {
+                if (nozzle.getPart() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -683,6 +703,24 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     @Override
     public boolean isPartOff() throws Exception {
         try {
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/left.java
+            ReferenceNozzleTip nt = getNozzleTip();
+            double vacuumLevel = Double.NaN;
+            try {
+                // We need vacuum on to determine the vacuum level.
+                actuateVacuumValve(true);
+                // Use the same dwell time as a pick.
+                Thread.sleep(this.getPickDwellMilliseconds() + nt.getPickDwellMilliseconds());
+                // Now read the vacuum level.
+                vacuumLevel = readVacuumLevel();
+            }
+            finally {
+                actuateVacuumValve(false);
+            }
+||||||| /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/base.java
+            ReferenceNozzleTip nt = getNozzleTip();
+            double vacuumLevel = readVacuumLevel();
+=======
             // switch vacuum on for the test
             actuateVacuumValve(true);
             // Dwell Time
@@ -690,6 +728,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
             // read the vacuum level. 
             double vacuumLevel = readVacuumLevel();
             ReferenceNozzleTip nt = getNozzleTip();
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/machine/reference/ReferenceNozzle.java/right.java
             return vacuumLevel >= nt.getVacuumLevelPartOffLow() && vacuumLevel <= nt.getVacuumLevelPartOffHigh();
         }
         finally {

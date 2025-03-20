@@ -133,8 +133,11 @@ public interface Head extends Identifiable, Named, WizardConfigurable, PropertyS
 	public double getMaxPartSpeed(); 
 	
     public Actuator getZProbe(); 
-    
-    public Actuator getPump(); 
 
-    public boolean isInsideSoftLimits(HeadMountable hm, Location location) throws Exception;
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/spi/Head.java/left.java
+    public boolean isInsideSoftLimits(HeadMountable hm, Location location) throws Exception; 
+||||||| /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/spi/Head.java/base.java
+=======
+    public Actuator getPump(); 
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f1d9c747ac3d7f0376b56e1c81f4da617f396e98/src/main/java/org/openpnp/spi/Head.java/right.java
 }
