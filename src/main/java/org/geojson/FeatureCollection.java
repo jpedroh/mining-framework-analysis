@@ -38,11 +38,11 @@ public class FeatureCollection extends GeoJsonObject implements Iterable<Feature
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof FeatureCollection))
-			return false;
-		FeatureCollection features1 = (FeatureCollection)o;
+		if (this == o) return true;
+		if (!(o instanceof FeatureCollection)) return false;
+
+		FeatureCollection features1 = (FeatureCollection) o;
+
 		return features.equals(features1.features);
 	}
 
@@ -50,4 +50,5 @@ public class FeatureCollection extends GeoJsonObject implements Iterable<Feature
 	public int hashCode() {
 		return features.hashCode();
 	}
+
 }

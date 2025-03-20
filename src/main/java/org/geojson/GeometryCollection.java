@@ -33,13 +33,12 @@ public class GeometryCollection extends GeoJsonObject implements Iterable<GeoJso
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof GeometryCollection))
-			return false;
-		if (!super.equals(o))
-			return false;
-		GeometryCollection that = (GeometryCollection)o;
+		if (this == o) return true;
+		if (!(o instanceof GeometryCollection)) return false;
+		if (!super.equals(o)) return false;
+
+		GeometryCollection that = (GeometryCollection) o;
+
 		return !(geometries != null ? !geometries.equals(that.geometries) : that.geometries != null);
 	}
 

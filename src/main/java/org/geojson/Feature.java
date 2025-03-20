@@ -28,11 +28,11 @@ public class Feature extends GeoJsonObject {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof Feature))
-			return false;
-		Feature feature = (Feature)o;
+		if (this == o) return true;
+		if (!(o instanceof Feature)) return false;
+
+		Feature feature = (Feature) o;
+
 		if (geometry != null ? !geometry.equals(feature.geometry) : feature.geometry != null) {
 			return false;
 		}

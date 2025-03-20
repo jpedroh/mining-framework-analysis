@@ -1,7 +1,6 @@
 package org.geojson;
 
 public class Point extends GeoJsonObject {
-
 	private LngLatAlt coordinates;
 
 	public Point() {
@@ -28,11 +27,6 @@ public class Point extends GeoJsonObject {
 	}
 
 	@Override
-	public <T> T accept(GeoJsonObjectVisitor<T> geoJsonObjectVisitor) {
-		return geoJsonObjectVisitor.visit(this);
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
@@ -43,8 +37,11 @@ public class Point extends GeoJsonObject {
 		if (!super.equals(o)) {
 			return false;
 		}
-		Point point = (Point)o;
+
+		Point point = (Point) o;
+
 		return !(coordinates != null ? !coordinates.equals(point.coordinates) : point.coordinates != null);
+
 	}
 
 	@Override
@@ -52,5 +49,10 @@ public class Point extends GeoJsonObject {
 		int result = super.hashCode();
 		result = 31 * result + (coordinates != null ? coordinates.hashCode() : 0);
 		return result;
+	}
+
+	@Override
+	public <T> T accept(GeoJsonObjectVisitor<T> geoJsonObjectVisitor) {
+		return geoJsonObjectVisitor.visit(this);
 	}
 }
