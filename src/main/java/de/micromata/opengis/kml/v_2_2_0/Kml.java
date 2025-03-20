@@ -1,44 +1,40 @@
-
 package de.micromata.opengis.kml.v_2_2_0;
-
+import java.net.URLDecoder;
 import de.micromata.opengis.kml.v_2_2_0.gx.Tour;
+import java.net.URLEncoder;
 import jakarta.xml.bind.JAXBContext;
+import java.util.ArrayList;
 import jakarta.xml.bind.JAXBException;
+import java.util.Enumeration;
 import jakarta.xml.bind.Marshaller;
+import java.util.List;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.*;
 import org.jetbrains.annotations.NotNull;
+import java.util.zip.ZipEntry;
 import org.xml.sax.ContentHandler;
+import java.util.zip.ZipFile;
 import org.xml.sax.InputSource;
+import java.util.zip.ZipOutputStream;
 import org.xml.sax.SAXException;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
 
 /**
- * {@code <kml>}
+ * <kml>
  * <p>
- * {@code <kml xmlns="http://www.opengis.net/kml/2.2"> <NetworkLinkControl> ... </NetworkLinkControl>
- * <!-- 0 or 1 Feature elements --> </kml> }
+ * <kml xmlns="http://www.opengis.net/kml/2.2"> <NetworkLinkControl> ... </NetworkLinkControl> 
+ * <!-- 0 or 1 Feature elements --> </kml> 
  * </p>
  * <p>
- * A basic {@code <kml>} element contains 0 or 1 Feature and 0 or 1 NetworkLinkControl: 
+ * A basic <kml> element contains 0 or 1 Feature and 0 or 1 NetworkLinkControl: 
  * </p>
  * <p>
- * The {@code <kml>} element may also include the namespace for any external XML schemas that 
+ * The <kml> element may also include the namespace for any external XML schemas that 
  * are referenced within the file. 
  * </p>
  * <p>
@@ -53,21 +49,11 @@ import java.util.zip.ZipOutputStream;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "KmlType", propOrder = {
-    "networkLinkControl",
-    "feature",
-    "kmlSimpleExtension",
-    "kmlObjectExtension"
-})
-@XmlRootElement(name = "kml", namespace = "http://www.opengis.net/kml/2.2")
-public class Kml implements Cloneable
-{
-
-    /**
-     * {@code <NetworkLinkControl>}
+@XmlAccessorType(value = XmlAccessType.FIELD) @XmlType(name = "KmlType", propOrder = { "networkLinkControl", "feature", "kmlSimpleExtension", "kmlObjectExtension" }) @XmlRootElement(name = "kml", namespace = "http://www.opengis.net/kml/2.2") public class Kml implements Cloneable {
+  /**
+     * <NetworkLinkControl>
      * <p>
-     * Controls the behavior of files fetched by a NetworkLink. 
+     * Controls the behavior of files fetched by a <NetworkLink>. 
      * </p>
      * 
      * Syntax: 
@@ -85,16 +71,16 @@ public class Kml implements Cloneable
      * <strong>&lt;/NetworkLinkControl&gt;</strong></pre>
      * 
      * See Also: 
-     * NetworkLink
-     * Update
+     * <NetworkLink>
+     * <Update>
      * 
      * 
      * 
      */
-    @XmlElement(name = "NetworkLinkControl")
-    protected NetworkLinkControl networkLinkControl;
-    /**
-     * {@code <Feature>}
+  @XmlElement(name = "NetworkLinkControl") protected NetworkLinkControl networkLinkControl;
+
+  /**
+     * <Feature>
      * <p>
      * This is an abstract element and cannot be used directly in a KML file. The following 
      * diagram shows how some of a Feature's elements appear in Google Earth. 
@@ -122,30 +108,29 @@ public class Kml implements Cloneable
      *   &lt;ExtendedData&gt;...&lt;/ExtendedData&gt;      &lt;!-- new in KML 2.2 --&gt;<br></span>&lt;-- /<em>Feature</em> --&gt;</pre>
      * 
      * Extends: 
-     *
+     * @see: <Object>
      * 
      * Extended By: 
-     *
-     *
-     *
-     *
-     *
+     * @see: <Container>
+     * @see: <NetworkLink>
+     * @see: <Overlay>
+     * @see: <Placemark>
+     * @see: <gx:Tour>
      * 
      * 
      * 
      */
-    @XmlElementRef(name = "AbstractFeatureGroup", namespace = "http://www.opengis.net/kml/2.2", required = false)
-    protected Feature feature;
-    @XmlElement(name = "KmlSimpleExtensionGroup")
-    @XmlSchemaType(name = "anySimpleType")
-    protected List<Object> kmlSimpleExtension;
-    /**
-     * {@code <Object>}
+  @XmlElementRef(name = "AbstractFeatureGroup", namespace = "http://www.opengis.net/kml/2.2", required = false) protected Feature feature;
+
+  @XmlElement(name = "KmlSimpleExtensionGroup") @XmlSchemaType(name = "anySimpleType") protected List<Object> kmlSimpleExtension;
+
+  /**
+     * <Object>
      * <p>
      * This is an abstract base class and cannot be used directly in a KML file. It provides 
      * the id attribute, which allows unique identification of a KML element, and the targetId 
      * attribute, which is used to reference objects that have already been loaded into 
-     * Google Earth. The id attribute must be assigned if the Update mechanism is to 
+     * Google Earth. The id attribute must be assigned if the <Update> mechanism is to 
      * be used. 
      * </p>
      * 
@@ -157,626 +142,613 @@ public class Kml implements Cloneable
      * 
      * 
      */
-    @XmlElement(name = "KmlObjectExtensionGroup")
-    protected List<AbstractObject> kmlObjectExtension;
-    @XmlAttribute(name = "hint")
-    protected String hint;
+  @XmlElement(name = "KmlObjectExtensionGroup") protected List<AbstractObject> kmlObjectExtension;
 
-    private transient Marshaller marshaller = null;
-    private transient int missingNameCounter = (1);
+  @XmlAttribute(name = "hint") protected String hint;
 
-    private static JAXBContext jaxbContext = null;
-    private final static String SCHEMA_LOCATION = "src/main/resources/schema/ogckml/ogckml22.xsd";
+  private transient Marshaller marshaller = null;
 
-    public Kml() {
-        super();
-    }
+  private static JAXBContext jaxbContext = null;
 
-    /**
-     *
+  private transient int missingNameCounter = (1);
+
+  private final static String SCHEMA_LOCATION = "src/main/resources/schema/ogckml/ogckml22.xsd";
+
+  public Kml() {
+    super();
+  }
+
+  /**
+     * @see networkLinkControl
      * 
      * @return
      *     possible object is
      *     {@link NetworkLinkControl}
      *     
      */
-    public NetworkLinkControl getNetworkLinkControl() {
-        return networkLinkControl;
-    }
+  public NetworkLinkControl getNetworkLinkControl() {
+    return networkLinkControl;
+  }
 
-    /**
-     *
+  /**
+     * @see networkLinkControl
      * 
      * @param value
      *     allowed object is
      *     {@link NetworkLinkControl}
      *     
      */
-    public void setNetworkLinkControl(NetworkLinkControl value) {
-        this.networkLinkControl = value;
-    }
+  public void setNetworkLinkControl(NetworkLinkControl value) {
+    this.networkLinkControl = value;
+  }
 
-    /**
-     *
+  /**
+     * @see feature
      * 
      * @return
      *     possible object is
-     *     {@code <}{@link Container}{@code >}
-     *     {@code <}{@link GroundOverlay}{@code >}
-     *     {@code <}{@link NetworkLink}{@code >}
-     *     {@code <}{@link Folder}{@code >}
-     *     {@code <}{@link PhotoOverlay}{@code >}
-     *     {@code <}{@link Document}{@code >}
-     *     {@code <}{@link Tour}{@code >}
-     *     {@code <}{@link ScreenOverlay}{@code >}
-     *     {@code <}{@link Feature}{@code >}
-     *     {@code <}{@link Placemark}{@code >}
-     *     {@code <}{@link Overlay}{@code >}
+     *     {@code <}{@link Container}{@code>}
+     *     {@code <}{@link GroundOverlay}{@code>}
+     *     {@code <}{@link NetworkLink}{@code>}
+     *     {@code <}{@link Folder}{@code>}
+     *     {@code <}{@link PhotoOverlay}{@code>}
+     *     {@code <}{@link Document}{@code>}
+     *     {@code <}{@link Tour}{@code>}
+     *     {@code <}{@link ScreenOverlay}{@code>}
+     *     {@code <}{@link Feature}{@code>}
+     *     {@code <}{@link Placemark}{@code>}
+     *     {@code <}{@link Overlay}{@code>}
      *     
      */
-    public Feature getFeature() {
-        return feature;
-    }
+  public Feature getFeature() {
+    return feature;
+  }
 
-    /**
-     *
+  /**
+     * @see feature
      * 
      * @param value
      *     allowed object is
-     *     {@code <}{@link Container}{@code >}
-     *     {@code <}{@link GroundOverlay}{@code >}
-     *     {@code <}{@link NetworkLink}{@code >}
-     *     {@code <}{@link Folder}{@code >}
-     *     {@code <}{@link PhotoOverlay}{@code >}
-     *     {@code <}{@link Document}{@code >}
-     *     {@code <}{@link Tour}{@code >}
-     *     {@code <}{@link ScreenOverlay}{@code >}
-     *     {@code <}{@link Feature}{@code >}
-     *     {@code <}{@link Placemark}{@code >}
-     *     {@code <}{@link Overlay}{@code >}
+     *     {@code <}{@link Container}{@code>}
+     *     {@code <}{@link GroundOverlay}{@code>}
+     *     {@code <}{@link NetworkLink}{@code>}
+     *     {@code <}{@link Folder}{@code>}
+     *     {@code <}{@link PhotoOverlay}{@code>}
+     *     {@code <}{@link Document}{@code>}
+     *     {@code <}{@link Tour}{@code>}
+     *     {@code <}{@link ScreenOverlay}{@code>}
+     *     {@code <}{@link Feature}{@code>}
+     *     {@code <}{@link Placemark}{@code>}
+     *     {@code <}{@link Overlay}{@code>}
      *     
      */
-    public void setFeature(Feature value) {
-        this.feature = ((Feature ) value);
-    }
+  public void setFeature(Feature value) {
+    this.feature = ((Feature) value);
+  }
 
-    /**
-     *
+  /**
+     * @see kmlSimpleExtension
      * 
      */
-    public List<Object> getKmlSimpleExtension() {
-        if (kmlSimpleExtension == null) {
-            kmlSimpleExtension = new ArrayList<Object>();
-        }
-        return this.kmlSimpleExtension;
+  public List<Object> getKmlSimpleExtension() {
+    if (kmlSimpleExtension == null) {
+      kmlSimpleExtension = new ArrayList<Object>();
     }
+    return this.kmlSimpleExtension;
+  }
 
-    /**
-     *
+  /**
+     * @see kmlObjectExtension
      * 
      */
-    public List<AbstractObject> getKmlObjectExtension() {
-        if (kmlObjectExtension == null) {
-            kmlObjectExtension = new ArrayList<AbstractObject>();
-        }
-        return this.kmlObjectExtension;
+  public List<AbstractObject> getKmlObjectExtension() {
+    if (kmlObjectExtension == null) {
+      kmlObjectExtension = new ArrayList<AbstractObject>();
     }
+    return this.kmlObjectExtension;
+  }
 
-    /**
-     *
+  /**
+     * @see hint
      * 
      * @return
      *     possible object is
      *     {@link String}
      *     
      */
-    public String getHint() {
-        return hint;
-    }
+  public String getHint() {
+    return hint;
+  }
 
-    /**
-     *
+  /**
+     * @see hint
      * 
      * @param value
      *     allowed object is
      *     {@link String}
      *     
      */
-    public void setHint(String value) {
-        this.hint = value;
-    }
+  public void setHint(String value) {
+    this.hint = value;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((networkLinkControl == null)? 0 :networkLinkControl.hashCode()));
-        result = ((prime*result)+((feature == null)? 0 :feature.hashCode()));
-        result = ((prime*result)+((kmlSimpleExtension == null)? 0 :kmlSimpleExtension.hashCode()));
-        result = ((prime*result)+((kmlObjectExtension == null)? 0 :kmlObjectExtension.hashCode()));
-        result = ((prime*result)+((hint == null)? 0 :hint.hashCode()));
-        return result;
-    }
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((networkLinkControl == null) ? 0 : networkLinkControl.hashCode()));
+    result = ((prime * result) + ((feature == null) ? 0 : feature.hashCode()));
+    result = ((prime * result) + ((kmlSimpleExtension == null) ? 0 : kmlSimpleExtension.hashCode()));
+    result = ((prime * result) + ((kmlObjectExtension == null) ? 0 : kmlObjectExtension.hashCode()));
+    result = ((prime * result) + ((hint == null) ? 0 : hint.hashCode()));
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if ((obj instanceof Kml) == false) {
-            return false;
-        }
-        Kml other = ((Kml) obj);
-        if (networkLinkControl == null) {
-            if (other.networkLinkControl!= null) {
-                return false;
-            }
-        } else {
-            if (networkLinkControl.equals(other.networkLinkControl) == false) {
-                return false;
-            }
-        }
-        if (feature == null) {
-            if (other.feature!= null) {
-                return false;
-            }
-        } else {
-            if (feature.equals(other.feature) == false) {
-                return false;
-            }
-        }
-        if (kmlSimpleExtension == null) {
-            if (other.kmlSimpleExtension!= null) {
-                return false;
-            }
-        } else {
-            if (kmlSimpleExtension.equals(other.kmlSimpleExtension) == false) {
-                return false;
-            }
-        }
-        if (kmlObjectExtension == null) {
-            if (other.kmlObjectExtension!= null) {
-                return false;
-            }
-        } else {
-            if (kmlObjectExtension.equals(other.kmlObjectExtension) == false) {
-                return false;
-            }
-        }
-        if (hint == null) {
-            if (other.hint!= null) {
-                return false;
-            }
-        } else {
-            if (hint.equals(other.hint) == false) {
-                return false;
-            }
-        }
-        return true;
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if ((obj instanceof Kml) == false) {
+      return false;
+    }
+    Kml other = ((Kml) obj);
+    if (networkLinkControl == null) {
+      if (other.networkLinkControl != null) {
+        return false;
+      }
+    } else {
+      if (networkLinkControl.equals(other.networkLinkControl) == false) {
+        return false;
+      }
+    }
+    if (feature == null) {
+      if (other.feature != null) {
+        return false;
+      }
+    } else {
+      if (feature.equals(other.feature) == false) {
+        return false;
+      }
+    }
+    if (kmlSimpleExtension == null) {
+      if (other.kmlSimpleExtension != null) {
+        return false;
+      }
+    } else {
+      if (kmlSimpleExtension.equals(other.kmlSimpleExtension) == false) {
+        return false;
+      }
+    }
+    if (kmlObjectExtension == null) {
+      if (other.kmlObjectExtension != null) {
+        return false;
+      }
+    } else {
+      if (kmlObjectExtension.equals(other.kmlObjectExtension) == false) {
+        return false;
+      }
+    }
+    if (hint == null) {
+      if (other.hint != null) {
+        return false;
+      }
+    } else {
+      if (hint.equals(other.hint) == false) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link NetworkLinkControl} and set it to networkLinkControl.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * NetworkLinkControl networkLinkControl = new NetworkLinkControl();
-     * this.setNetworkLinkControl(networkLinkControl); }
+     * this.setNetworkLinkControl(networkLinkControl); </code>
      * 
      * 
      */
-    public NetworkLinkControl createAndSetNetworkLinkControl() {
-        NetworkLinkControl newValue = new NetworkLinkControl();
-        this.setNetworkLinkControl(newValue);
-        return newValue;
-    }
+  public NetworkLinkControl createAndSetNetworkLinkControl() {
+    NetworkLinkControl newValue = new NetworkLinkControl();
+    this.setNetworkLinkControl(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link Tour} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * Tour tour = new Tour();
-     * this.setFeature(tour); }
+     * this.setFeature(tour); </code>
      * 
      * 
      */
-    public Tour createAndSetTour() {
-        Tour newValue = new Tour();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public Tour createAndSetTour() {
+    Tour newValue = new Tour();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link ScreenOverlay} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * ScreenOverlay screenOverlay = new ScreenOverlay();
-     * this.setFeature(screenOverlay); }
+     * this.setFeature(screenOverlay); </code>
      * 
      * 
      */
-    public ScreenOverlay createAndSetScreenOverlay() {
-        ScreenOverlay newValue = new ScreenOverlay();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public ScreenOverlay createAndSetScreenOverlay() {
+    ScreenOverlay newValue = new ScreenOverlay();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link PhotoOverlay} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * PhotoOverlay photoOverlay = new PhotoOverlay();
-     * this.setFeature(photoOverlay); }
+     * this.setFeature(photoOverlay); </code>
      * 
      * 
      */
-    public PhotoOverlay createAndSetPhotoOverlay() {
-        PhotoOverlay newValue = new PhotoOverlay();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public PhotoOverlay createAndSetPhotoOverlay() {
+    PhotoOverlay newValue = new PhotoOverlay();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link GroundOverlay} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * GroundOverlay groundOverlay = new GroundOverlay();
-     * this.setFeature(groundOverlay); }
+     * this.setFeature(groundOverlay); </code>
      * 
      * 
      */
-    public GroundOverlay createAndSetGroundOverlay() {
-        GroundOverlay newValue = new GroundOverlay();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public GroundOverlay createAndSetGroundOverlay() {
+    GroundOverlay newValue = new GroundOverlay();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link NetworkLink} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * NetworkLink networkLink = new NetworkLink();
-     * this.setFeature(networkLink); }
+     * this.setFeature(networkLink); </code>
      * 
      * 
      */
-    public NetworkLink createAndSetNetworkLink() {
-        NetworkLink newValue = new NetworkLink();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public NetworkLink createAndSetNetworkLink() {
+    NetworkLink newValue = new NetworkLink();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link Folder} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * Folder folder = new Folder();
-     * this.setFeature(folder); }
+     * this.setFeature(folder); </code>
      * 
      * 
      */
-    public Folder createAndSetFolder() {
-        Folder newValue = new Folder();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public Folder createAndSetFolder() {
+    Folder newValue = new Folder();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link Document} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * Document document = new Document();
-     * this.setFeature(document); }
+     * this.setFeature(document); </code>
      * 
      * 
      */
-    public Document createAndSetDocument() {
-        Document newValue = new Document();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public Document createAndSetDocument() {
+    Document newValue = new Document();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
+  /**
      * Creates a new instance of {@link Placemark} and set it to feature.
      * 
      * This method is a short version for:
-     * {@code
+     * <code>
      * Placemark placemark = new Placemark();
-     * this.setFeature(placemark); }
+     * this.setFeature(placemark); </code>
      * 
      * 
      */
-    public Placemark createAndSetPlacemark() {
-        Placemark newValue = new Placemark();
-        this.setFeature(newValue);
-        return newValue;
-    }
+  public Placemark createAndSetPlacemark() {
+    Placemark newValue = new Placemark();
+    this.setFeature(newValue);
+    return newValue;
+  }
 
-    /**
-     *
+  /**
+     * @see kmlSimpleExtension
      * 
      * @param kmlSimpleExtension
-     *     Objects of the following type are allowed in the list: {@link Object}
      */
-    public void setKmlSimpleExtension(final List<Object> kmlSimpleExtension) {
-        this.kmlSimpleExtension = kmlSimpleExtension;
-    }
+  public void setKmlSimpleExtension(final List<Object> kmlSimpleExtension) {
+    this.kmlSimpleExtension = kmlSimpleExtension;
+  }
 
-    /**
+  /**
      * add a value to the kmlSimpleExtension property collection
      * 
      * @param kmlSimpleExtension
      *     Objects of the following type are allowed in the list: {@link Object}
      * @return
-     *     true (as general contract of Collection.add). 
+     *     <tt>true</tt> (as general contract of <tt>Collection.add</tt>). 
      */
-    public Kml addToKmlSimpleExtension(final Object kmlSimpleExtension) {
-        this.getKmlSimpleExtension().add(kmlSimpleExtension);
-        return this;
-    }
+  public Kml addToKmlSimpleExtension(final Object kmlSimpleExtension) {
+    this.getKmlSimpleExtension().add(kmlSimpleExtension);
+    return this;
+  }
 
-    /**
-     *
+  /**
+     * @see kmlObjectExtension
      * 
      * @param kmlObjectExtension
-     *     Objects of the following type are allowed in the list: {@link AbstractObject}
      */
-    public void setKmlObjectExtension(final List<AbstractObject> kmlObjectExtension) {
-        this.kmlObjectExtension = kmlObjectExtension;
-    }
+  public void setKmlObjectExtension(final List<AbstractObject> kmlObjectExtension) {
+    this.kmlObjectExtension = kmlObjectExtension;
+  }
 
-    /**
+  /**
      * add a value to the kmlObjectExtension property collection
      * 
      * @param kmlObjectExtension
      *     Objects of the following type are allowed in the list: {@link AbstractObject}
      * @return
-     *     true (as general contract of Collection.add). 
+     *     <tt>true</tt> (as general contract of <tt>Collection.add</tt>). 
      */
-    public Kml addToKmlObjectExtension(final AbstractObject kmlObjectExtension) {
-        this.getKmlObjectExtension().add(kmlObjectExtension);
-        return this;
-    }
+  public Kml addToKmlObjectExtension(final AbstractObject kmlObjectExtension) {
+    this.getKmlObjectExtension().add(kmlObjectExtension);
+    return this;
+  }
 
-    /**
+  /**
      * fluent setter
-     *
+     * @see #setNetworkLinkControl(NetworkLinkControl)
      * 
      * @param networkLinkControl
      *     required parameter
      */
-    public Kml withNetworkLinkControl(final NetworkLinkControl networkLinkControl) {
-        this.setNetworkLinkControl(networkLinkControl);
-        return this;
-    }
+  public Kml withNetworkLinkControl(final NetworkLinkControl networkLinkControl) {
+    this.setNetworkLinkControl(networkLinkControl);
+    return this;
+  }
 
-    /**
+  /**
      * fluent setter
-     *
+     * @see #setFeature(Feature)
      * 
      * @param feature
      *     required parameter
      */
-    public Kml withFeature(final Feature feature) {
-        this.setFeature(feature);
-        return this;
-    }
+  public Kml withFeature(final Feature feature) {
+    this.setFeature(feature);
+    return this;
+  }
 
-    /**
+  /**
      * fluent setter
-     *
+     * @see #setKmlSimpleExtension(List<Object>)
      * 
      * @param kmlSimpleExtension
      *     required parameter
      */
-    public Kml withKmlSimpleExtension(final List<Object> kmlSimpleExtension) {
-        this.setKmlSimpleExtension(kmlSimpleExtension);
-        return this;
-    }
+  public Kml withKmlSimpleExtension(final List<Object> kmlSimpleExtension) {
+    this.setKmlSimpleExtension(kmlSimpleExtension);
+    return this;
+  }
 
-    /**
+  /**
      * fluent setter
-     *
+     * @see #setKmlObjectExtension(List<AbstractObject>)
      * 
      * @param kmlObjectExtension
      *     required parameter
      */
-    public Kml withKmlObjectExtension(final List<AbstractObject> kmlObjectExtension) {
-        this.setKmlObjectExtension(kmlObjectExtension);
-        return this;
-    }
+  public Kml withKmlObjectExtension(final List<AbstractObject> kmlObjectExtension) {
+    this.setKmlObjectExtension(kmlObjectExtension);
+    return this;
+  }
 
-    /**
+  /**
      * fluent setter
-     *
+     * @see #setHint(String)
      * 
      * @param hint
      *     required parameter
      */
-    public Kml withHint(final String hint) {
-        this.setHint(hint);
-        return this;
-    }
+  public Kml withHint(final String hint) {
+    this.setHint(hint);
+    return this;
+  }
 
-    /**
-     *
+  /**
+     * @see jaxbContext
      * 
      */
-    private static JAXBContext getJaxbContext()
-        throws JAXBException
-    {
-        if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance((Kml.class));
-        }
-        return jaxbContext;
+  private static JAXBContext getJaxbContext() throws JAXBException {
+    if (jaxbContext == null) {
+      jaxbContext = JAXBContext.newInstance((Kml.class));
     }
+    return jaxbContext;
+  }
 
-    private Marshaller createMarshaller()
-        throws JAXBException
-    {
-        if (marshaller == null) {
-            marshaller = getJaxbContext().createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty("org.glassfish.jaxb.namespacePrefixMapper", new Kml.NameSpaceBeautyfier());
-        }
-        return marshaller;
+  private Marshaller createMarshaller() throws JAXBException {
+    if (marshaller == null) {
+      marshaller = getJaxbContext().createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/524dc619303f36bb3d0d04d8b4ea0bf72ad81cee/src/main/java/de/micromata/opengis/kml/v_2_2_0/Kml.java/left.java
+      marshaller.setProperty("org.glassfish.jaxb.namespacePrefixMapper", new Kml.NameSpaceBeautyfier());
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
     }
+    return marshaller;
+  }
 
-    /**
+  /**
      * Internal method
      * 
      */
-    private void addKmzFile(Kml kmzFile, ZipOutputStream out, boolean mainfile)
-        throws IOException
-    {
-        String fileName = null;
-        if (((kmzFile.getFeature() == null)||(kmzFile.getFeature().getName() == null))||(kmzFile.getFeature().getName().length() == 0)) {
-            fileName = (("noFeatureNameSet"+ missingNameCounter ++)+".kml");
-        } else {
-            fileName = kmzFile.getFeature().getName();
-            if (!fileName.endsWith(".kml")) {
-                fileName += ".kml";
-            }
-        }
-        if (mainfile) {
-            fileName = "doc.kml";
-        }
-        out.putNextEntry(new ZipEntry(URLEncoder.encode(fileName, "UTF-8")));
-        kmzFile.marshal(out);
-        out.closeEntry();
+  private void addKmzFile(Kml kmzFile, ZipOutputStream out, boolean mainfile) throws IOException {
+    String fileName = null;
+    if (((kmzFile.getFeature() == null) || (kmzFile.getFeature().getName() == null)) || (kmzFile.getFeature().getName().length() == 0)) {
+      fileName = (("noFeatureNameSet" + missingNameCounter++) + ".kml");
+    } else {
+      fileName = kmzFile.getFeature().getName();
+      if (!fileName.endsWith(".kml")) {
+        fileName += ".kml";
+      }
     }
+    if (mainfile) {
+      fileName = "doc.kml";
+    }
+    out.putNextEntry(new ZipEntry(URLEncoder.encode(fileName, "UTF-8")));
+    kmzFile.marshal(out);
+    out.closeEntry();
+  }
 
-    /**
+  /**
      * Java to KML
      * The object graph is marshalled to an OutputStream object.
      * The object is not saved as a zipped .kmz file.
-     *
+     * @see marshalKmz(String, Kml...)
      * 
      */
-    public boolean marshal(final OutputStream outputstream)
-        throws FileNotFoundException
-    {
-        try {
-            marshaller = this.createMarshaller();
-            marshaller.marshal(this, outputstream);
-            return true;
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-            return false;
-        }
+  public boolean marshal(final OutputStream outputstream) throws FileNotFoundException {
+    try {
+      marshaller = this.createMarshaller();
+      marshaller.marshal(this, outputstream);
+      return true;
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
+      return false;
     }
+  }
 
-    /**
+  /**
      * Java to KML
      * The object graph is marshalled to a Writer object.
      * The object is not saved as a zipped .kmz file.
-     *
+     * @see marshalKmz(String, Kml...)
      * 
      */
-    public boolean marshal(final Writer writer) {
-        try {
-            marshaller = this.createMarshaller();
-            marshaller.marshal(this, writer);
-            return true;
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-            return false;
-        }
+  public boolean marshal(final Writer writer) {
+    try {
+      marshaller = this.createMarshaller();
+      marshaller.marshal(this, writer);
+      return true;
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
+      return false;
     }
+  }
 
-    /**
+  /**
      * Java to KML
      * The object graph is marshalled to a Contenthandler object.
      * Useful if  marshaller cis needed to generate CDATA blocks.
-     * @see <a href="https://jaxb.dev.java.net/faq/">...</a>
-     * @see <a href="http://code.google.com/p/javaapiforkml/issues/detail?id=7">...</a>
+     * {@link https://jaxb.dev.java.net/faq/}
+     * {@link http://code.google.com/p/javaapiforkml/issues/detail?id=7}
      * The object is not saved as a zipped .kmz file.
-     *
+     * @see marshalKmz(String, Kml...)
      * 
      */
-    public boolean marshal(final ContentHandler contenthandler) {
-        try {
-            marshaller = this.createMarshaller();
-            marshaller.marshal(this, contenthandler);
-            return true;
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-            return false;
-        }
+  public boolean marshal(final ContentHandler contenthandler) {
+    try {
+      marshaller = this.createMarshaller();
+      marshaller.marshal(this, contenthandler);
+      return true;
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
+      return false;
     }
+  }
 
-    /**
+  /**
      * Java to KML
      * The object graph is printed to the console.
      * (Nothing is saved, nor saved. Just printed.)
      * 
      * 
      */
-    public boolean marshal() {
-        try {
-            marshaller = this.createMarshaller();
-            marshaller.marshal(this, System.out);
-            return true;
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-            return false;
-        }
+  public boolean marshal() {
+    try {
+      marshaller = this.createMarshaller();
+      marshaller.marshal(this, System.out);
+      return true;
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
+      return false;
     }
+  }
 
-    /**
+  /**
      * Java to KML
      * The object graph is marshalled to a File object.
      * The object is not saved as a zipped .kmz file.
-     *
+     * @see marshalKmz(String, Kml...)
      * 
      */
-    public boolean marshal(final File filename)
-        throws FileNotFoundException
-    {
-        OutputStream out = new FileOutputStream(filename);
-        return this.marshal(out);
-    }
+  public boolean marshal(final File filename) throws FileNotFoundException {
+    OutputStream out = new FileOutputStream(filename);
+    return this.marshal(out);
+  }
 
-    public boolean marshalAsKmz(
-        @NotNull
-        String name, Kml... additionalFiles)
-        throws IOException
-    {
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(name));
-        out.setComment("KMZ-file created with Java API for KML. Visit us: https://github.com/micromata/javaapiforkml");
-        this.addKmzFile(this, out, true);
-        for (Kml kml: additionalFiles) {
-            this.addKmzFile(kml, out, false);
-        }
-        out.close();
-        missingNameCounter = 1;
-        return false;
+  public boolean marshalAsKmz(@NotNull String name, Kml... additionalFiles) throws IOException {
+    ZipOutputStream out = new ZipOutputStream(new FileOutputStream(name));
+    out.setComment("KMZ-file created with Java API for KML. Visit us: https://github.com/micromata/javaapiforkml");
+    this.addKmzFile(this, out, true);
+    for (Kml kml : additionalFiles) {
+      this.addKmzFile(kml, out, false);
     }
+    out.close();
+    missingNameCounter = 1;
+    return false;
+  }
 
-    private static boolean validate(final Unmarshaller unmarshaller) {
-        try {
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            File schemaFile = new File(SCHEMA_LOCATION);
-            Schema schema = sf.newSchema(schemaFile);
-            unmarshaller.setSchema(schema);
-            return true;
-        } catch (SAXException _x) {
-            _x.printStackTrace();
-        }
-        return false;
+  private static boolean validate(final Unmarshaller unmarshaller) {
+    try {
+      SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      File schemaFile = new File(SCHEMA_LOCATION);
+      Schema schema = sf.newSchema(schemaFile);
+      unmarshaller.setSchema(schema);
+      return true;
+    } catch (SAXException _x) {
+      _x.printStackTrace();
     }
+    return false;
+  }
 
-    /**
+  /**
      * KML to Java
      * KML given as a file object is transformed into a graph of Java objects.
      * The boolean value indicates, whether the File object should be validated 
@@ -784,29 +756,29 @@ public class Kml implements Cloneable
      * all constraints defined in OGC's KML schema specification.
      * 
      */
-    public static Kml unmarshal(final File file, final boolean validate) {
-        try {
-            Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
-            if (validate == true) {
-                Kml.validate(unmarshaller);
-            }
-            InputSource input = new InputSource(new FileReader(file));
-            SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(validate), input);
-            Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
-            return jaxbRootElement;
-        } catch (SAXException _x) {
-            _x.printStackTrace();
-        } catch (ParserConfigurationException _x) {
-            _x.printStackTrace();
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-        } catch (FileNotFoundException _x) {
-            _x.printStackTrace();
-        }
-        return null;
+  public static Kml unmarshal(final File file, final boolean validate) {
+    try {
+      Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
+      if (validate == true) {
+        Kml.validate(unmarshaller);
+      }
+      InputSource input = new InputSource(new FileReader(file));
+      SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(validate), input);
+      Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
+      return jaxbRootElement;
+    } catch (SAXException _x) {
+      _x.printStackTrace();
+    } catch (ParserConfigurationException _x) {
+      _x.printStackTrace();
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
+    } catch (FileNotFoundException _x) {
+      _x.printStackTrace();
     }
+    return null;
+  }
 
-    /**
+  /**
      * KML to Java
      * KML given as a file object is transformed into a graph of Java objects.
      * Similar to the method: 
@@ -814,11 +786,11 @@ public class Kml implements Cloneable
      * with the exception that the File object is not validated (boolean is false). 
      * 
      */
-    public static Kml unmarshal(final File file) {
-        return Kml.unmarshal(file, false);
-    }
+  public static Kml unmarshal(final File file) {
+    return Kml.unmarshal(file, false);
+  }
 
-    /**
+  /**
      * KML to Java
      * Similar to the other unmarshal methods 
      * 
@@ -826,24 +798,24 @@ public class Kml implements Cloneable
      * 
      * 
      */
-    public static Kml unmarshal(final String content) {
-        try {
-            Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
-            InputSource input = new InputSource(new StringReader(content));
-            SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(false), input);
-            Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
-            return jaxbRootElement;
-        } catch (SAXException _x) {
-            _x.printStackTrace();
-        } catch (ParserConfigurationException _x) {
-            _x.printStackTrace();
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-        }
-        return null;
+  public static Kml unmarshal(final String content) {
+    try {
+      Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
+      InputSource input = new InputSource(new StringReader(content));
+      SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(false), input);
+      Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
+      return jaxbRootElement;
+    } catch (SAXException _x) {
+      _x.printStackTrace();
+    } catch (ParserConfigurationException _x) {
+      _x.printStackTrace();
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
     }
+    return null;
+  }
 
-    /**
+  /**
      * KML to Java
      * Similar to the other unmarshal methods 
      * 
@@ -851,24 +823,24 @@ public class Kml implements Cloneable
      * 
      * 
      */
-    public static Kml unmarshal(final InputStream content) {
-        try {
-            Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
-            InputSource input = new InputSource(content);
-            SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(false), input);
-            Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
-            return jaxbRootElement;
-        } catch (SAXException _x) {
-            _x.printStackTrace();
-        } catch (ParserConfigurationException _x) {
-            _x.printStackTrace();
-        } catch (JAXBException _x) {
-            _x.printStackTrace();
-        }
-        return null;
+  public static Kml unmarshal(final InputStream content) {
+    try {
+      Unmarshaller unmarshaller = JAXBContext.newInstance((Kml.class)).createUnmarshaller();
+      InputSource input = new InputSource(content);
+      SAXSource saxSource = new SAXSource(new NamespaceFilterXMLReader(false), input);
+      Kml jaxbRootElement = ((Kml) unmarshaller.unmarshal(saxSource));
+      return jaxbRootElement;
+    } catch (SAXException _x) {
+      _x.printStackTrace();
+    } catch (ParserConfigurationException _x) {
+      _x.printStackTrace();
+    } catch (JAXBException _x) {
+      _x.printStackTrace();
     }
+    return null;
+  }
 
-    /**
+  /**
      * KMZ to Java
      * Similar to the other unmarshal methods
      * 
@@ -876,65 +848,58 @@ public class Kml implements Cloneable
      * 
      * 
      */
-    public static Kml[] unmarshalFromKmz(
-        @NotNull
-        File file)
-        throws IOException
-    {
-        Kml[] EMPTY_KML_ARRAY = (new Kml[0]);
-        if (!file.getName().endsWith(".kmz")) {
-            return EMPTY_KML_ARRAY;
-        }
-        ZipFile zip = new ZipFile(file);
-        Enumeration<? extends ZipEntry> entries = zip.entries();
-        if (!file.exists()) {
-            return EMPTY_KML_ARRAY;
-        }
-        ArrayList<Kml> kmlfiles = new ArrayList<Kml>();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = ((ZipEntry) entries.nextElement());
-            if (entry.getName().contains("__MACOSX")||entry.getName().contains(".DS_STORE")) {
-                continue;
-            }
-            String entryName = URLDecoder.decode(entry.getName(), "UTF-8");
-            if (!entryName.endsWith(".kml")) {
-                continue;
-            }
-            InputStream in = zip.getInputStream(entry);
-            Kml unmarshal = Kml.unmarshal(in);
-            kmlfiles.add(unmarshal);
-        }
-        zip.close();
-        return kmlfiles.toArray(EMPTY_KML_ARRAY);
+  public static Kml[] unmarshalFromKmz(@NotNull File file) throws IOException {
+    Kml[] EMPTY_KML_ARRAY = (new Kml[0]);
+    if (!file.getName().endsWith(".kmz")) {
+      return EMPTY_KML_ARRAY;
     }
-
-    @Override
-    public Kml clone() {
-        Kml copy;
-        try {
-            copy = ((Kml) super.clone());
-        } catch (CloneNotSupportedException _x) {
-            throw new InternalError((_x.toString()));
-        }
-        copy.networkLinkControl = ((networkLinkControl == null)?null:((NetworkLinkControl) networkLinkControl.clone()));
-        copy.feature = ((feature == null)?null:((Feature ) feature.clone()));
-        copy.kmlSimpleExtension = new ArrayList<Object>((getKmlSimpleExtension().size()));
-        for (Object iter: kmlSimpleExtension) {
-            copy.kmlSimpleExtension.add(iter);
-        }
-        copy.kmlObjectExtension = new ArrayList<AbstractObject>((getKmlObjectExtension().size()));
-        for (AbstractObject iter: kmlObjectExtension) {
-            copy.kmlObjectExtension.add(iter.clone());
-        }
-        return copy;
+    ZipFile zip = new ZipFile(file);
+    Enumeration<? extends ZipEntry> entries = zip.entries();
+    if (!file.exists()) {
+      return EMPTY_KML_ARRAY;
     }
+    ArrayList<Kml> kmlfiles = new ArrayList<Kml>();
+    while (entries.hasMoreElements()) {
+      ZipEntry entry = ((ZipEntry) entries.nextElement());
+      if (entry.getName().contains("__MACOSX") || entry.getName().contains(".DS_STORE")) {
+        continue;
+      }
+      String entryName = URLDecoder.decode(entry.getName(), "UTF-8");
+      if (!entryName.endsWith(".kml")) {
+        continue;
+      }
+      InputStream in = zip.getInputStream(entry);
+      Kml unmarshal = Kml.unmarshal(in);
+      kmlfiles.add(unmarshal);
+    }
+    zip.close();
+    return kmlfiles.toArray(EMPTY_KML_ARRAY);
+  }
 
-    private final static class NameSpaceBeautyfier
-        extends NamespacePrefixMapper
-    {
+  @Override public Kml clone() {
+    Kml copy;
+    try {
+      copy = ((Kml) super.clone());
+    } catch (CloneNotSupportedException _x) {
+      throw new InternalError((_x.toString()));
+    }
+    copy.networkLinkControl = ((networkLinkControl == null) ? null : ((NetworkLinkControl) networkLinkControl.clone()));
+    copy.feature = ((feature == null) ? null : ((Feature) feature.clone()));
+    copy.kmlSimpleExtension = new ArrayList<Object>((getKmlSimpleExtension().size()));
+    for (Object iter : kmlSimpleExtension) {
+      copy.kmlSimpleExtension.add(iter);
+    }
+    copy.kmlObjectExtension = new ArrayList<AbstractObject>((getKmlObjectExtension().size()));
+    for (AbstractObject iter : kmlObjectExtension) {
+      copy.kmlObjectExtension.add(iter.clone());
+    }
+    return copy;
+  }
 
 
-        /**
+<<<<<<< /usr/src/app/output/micromata/javaapiforkml/524dc619303f36bb3d0d04d8b4ea0bf72ad81cee/src/main/java/de/micromata/opengis/kml/v_2_2_0/Kml.java/left.java
+  private final static class NameSpaceBeautyfier extends NamespacePrefixMapper {
+    /**
          * Internal method!
          * <p>Customizing Namespace Prefixes During Marshalling to a more readable format.</p>
          * <p>The default output is like:</p>
@@ -944,22 +909,22 @@ public class Kml implements Cloneable
          * <p>namespaceUri: http://www.w3.org/2005/Atom              prefix: atom</p><p>namespaceUri: urn:oasis:names:tc:ciq:xsdschema:xAL:2.0 prefix: xal</p><p>namespaceUri: http://www.google.com/kml/ext/2.2        prefix: gx</p><p>namespaceUri: anything else prefix: null</p>
          * 
          */
-        @Override
-        public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
-            if (namespaceUri.matches("http://www.opengis.net/kml/.*?")) {
-                return "";
-            }
-            if (namespaceUri.matches("http://www.w3.org/\\d{4}/Atom")) {
-                return "atom";
-            }
-            if (namespaceUri.matches("urn:oasis:names:tc:ciq:xsdschema:xAL:.*?")) {
-                return "xal";
-            }
-            if (namespaceUri.matches("http://www.google.com/kml/ext/.*?")) {
-                return "gx";
-            }
-            return null;
-        }
-
+    @Override public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
+      if (namespaceUri.matches("http://www.opengis.net/kml/.*?")) {
+        return "";
+      }
+      if (namespaceUri.matches("http://www.w3.org/\\d{4}/Atom")) {
+        return "atom";
+      }
+      if (namespaceUri.matches("urn:oasis:names:tc:ciq:xsdschema:xAL:.*?")) {
+        return "xal";
+      }
+      if (namespaceUri.matches("http://www.google.com/kml/ext/.*?")) {
+        return "gx";
+      }
+      return null;
     }
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 }
