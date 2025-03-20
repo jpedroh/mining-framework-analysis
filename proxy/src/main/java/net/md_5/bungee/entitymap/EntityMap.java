@@ -53,8 +53,13 @@ public abstract class EntityMap
                 return EntityMap_1_13.INSTANCE;
             case ProtocolConstants.MINECRAFT_1_14:
             case ProtocolConstants.MINECRAFT_1_14_1:
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/proxy/src/main/java/net/md_5/bungee/entitymap/EntityMap.java/left.java
+            case ProtocolConstants.MINECRAFT_1_14_2:
+||||||| /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/proxy/src/main/java/net/md_5/bungee/entitymap/EntityMap.java/base.java
+=======
             case ProtocolConstants.MINECRAFT_1_14_2:
             case ProtocolConstants.MINECRAFT_1_14_3:
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/proxy/src/main/java/net/md_5/bungee/entitymap/EntityMap.java/right.java
                 return EntityMap_1_14.INSTANCE;
         }
         throw new RuntimeException( "Version " + version + " has no entity map" );

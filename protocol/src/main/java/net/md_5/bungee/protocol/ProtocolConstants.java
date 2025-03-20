@@ -24,7 +24,6 @@ public class ProtocolConstants
     public static final int MINECRAFT_1_14_1 = 480;
     public static final int MINECRAFT_1_14_2 = 485;
     public static final int MINECRAFT_1_14_3 = 489;
-
     public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(
             "1.8.x",
             "1.9.x",
@@ -50,9 +49,16 @@ public class ProtocolConstants
             ProtocolConstants.MINECRAFT_1_13_1,
             ProtocolConstants.MINECRAFT_1_13_2,
             ProtocolConstants.MINECRAFT_1_14,
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java/left.java
+            ProtocolConstants.MINECRAFT_1_14_1,
+            ProtocolConstants.MINECRAFT_1_14_2
+||||||| /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java/base.java
+            ProtocolConstants.MINECRAFT_1_14_1
+=======
             ProtocolConstants.MINECRAFT_1_14_1,
             ProtocolConstants.MINECRAFT_1_14_2,
             ProtocolConstants.MINECRAFT_1_14_3
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/cf4d1dab810f88caadbb8a4dc6fc5f019278604d/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java/right.java
     );
 
     public enum Direction
