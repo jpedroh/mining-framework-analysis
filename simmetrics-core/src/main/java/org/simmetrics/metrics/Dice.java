@@ -1,29 +1,6 @@
-/*
- * #%L
- * Simmetrics Core
- * %%
- * Copyright (C) 2014 - 2016 Simmetrics Authors
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * #L%
- */
-
 package org.simmetrics.metrics;
-
 import static com.google.common.collect.Sets.intersection;
-
 import java.util.Set;
-
 import org.simmetrics.SetDistance;
 import org.simmetrics.SetMetric;
 
@@ -63,31 +40,22 @@ import org.simmetrics.SetMetric;
  * @param <T>
  *            type of the token
  */
-public final class Dice<T> implements SetMetric<T>, SetDistance<T> {
+public final class Dice<T extends java.lang.Object> implements SetMetric<T>, SetDistance<T> {
+  @Override public float compare(Set<T> a, Set<T> b) {
+    if (a.isEmpty() && b.isEmpty()) {
+      return 1.0f;
+    }
+    if (a.isEmpty() || b.isEmpty()) {
+      return 0.0f;
+    }
+    return (2.0f * intersection(a, b).size()) / (a.size() + b.size());
+  }
 
-	@Override
-	public float compare(Set<T> a, Set<T> b) {
+  @Override public float distance(Set<T> a, Set<T> b) {
+    return 1.0f - compare(a, b);
+  }
 
-		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
-		}
-
-		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
-		}
-
-		// 2 * ∣a ∩ b∣ / (∣a∣ + ∣b∣)
-		return (2.0f * intersection(a, b).size()) / (a.size() + b.size());
-	}
-
-	@Override
-	public float distance(Set<T> a, Set<T> b) {
-		return 1.0f - compare(a, b);
-	}
-
-	@Override
-	public String toString() {
-		return "Dice";
-	}
-
+  @Override public String toString() {
+    return "Dice";
+  }
 }

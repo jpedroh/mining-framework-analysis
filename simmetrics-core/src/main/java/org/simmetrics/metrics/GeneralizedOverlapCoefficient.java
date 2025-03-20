@@ -1,28 +1,6 @@
-/*
- * #%L
- * Simmetrics Core
- * %%
- * Copyright (C) 2014 - 2016 Simmetrics Authors
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * #L%
- */
-
 package org.simmetrics.metrics;
-
 import static org.simmetrics.metrics.Math.intersection;
 import static java.lang.Math.min;
-
 import org.simmetrics.MultisetMetric;
 import com.google.common.collect.Multiset;
 
@@ -50,27 +28,18 @@ import com.google.common.collect.Multiset;
  * @see <a href="http://en.wikipedia.org/wiki/Overlap_coefficient">Wikipedia -
  *      Overlap Coefficient</a>
  */
-public final class GeneralizedOverlapCoefficient<T> implements
-		MultisetMetric<T> {
+public final class GeneralizedOverlapCoefficient<T extends java.lang.Object> implements MultisetMetric<T> {
+  @Override public float compare(Multiset<T> a, Multiset<T> b) {
+    if (a.isEmpty() && b.isEmpty()) {
+      return 1.0f;
+    }
+    if (a.isEmpty() || b.isEmpty()) {
+      return 0.0f;
+    }
+    return intersection(a, b).size() / (float) min(a.size(), b.size());
+  }
 
-	@Override
-	public float compare(Multiset<T> a, Multiset<T> b) {
-
-		if (a.isEmpty() && b.isEmpty()) {
-			return 1.0f;
-		}
-
-		if (a.isEmpty() || b.isEmpty()) {
-			return 0.0f;
-		}
-
-		// ∣q ∩ r∣ / min{∣q∣, ∣r∣}
-		return intersection(a, b).size() / (float) min(a.size(), b.size());
-	}
-
-	@Override
-	public String toString() {
-		return "GeneralizedOverlapCoefficient";
-	}
-
+  @Override public String toString() {
+    return "GeneralizedOverlapCoefficient";
+  }
 }

@@ -1,39 +1,15 @@
-/*
- * #%L
- * Simmetrics Core
- * %%
- * Copyright (C) 2014 - 2016 Simmetrics Authors
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 package org.simmetrics.simplifiers;
-
 import static com.google.common.base.Joiner.on;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.asList;
-
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.simmetrics.builders.StringMetricBuilder;
-
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -44,54 +20,39 @@ import com.google.common.collect.ImmutableList;
  * are also thread-safe and immutable.
  */
 public final class Simplifiers {
+  static final class ChainSimplifier implements Simplifier {
+    private final List<Simplifier> simplifiers;
 
-	static final class ChainSimplifier implements Simplifier {
+    ChainSimplifier(List<Simplifier> simplifiers) {
+      checkArgument(!simplifiers.contains(null));
+      this.simplifiers = ImmutableList.copyOf(simplifiers);
+    }
 
-		private final List<Simplifier> simplifiers;
+    List<Simplifier> getSimplifiers() {
+      return simplifiers;
+    }
 
-		ChainSimplifier(List<Simplifier> simplifiers) {
-			checkArgument(!simplifiers.contains(null));
-			this.simplifiers = ImmutableList.copyOf(simplifiers);
-		}
+    @Override public String simplify(String input) {
+      checkNotNull(input);
+      String output = input;
+      for (Simplifier s : simplifiers) {
+        output = s.simplify(output);
+      }
+      return output;
+    }
 
-		List<Simplifier> getSimplifiers() {
-			return simplifiers;
-		}
+    @Override public String toString() {
+      return on(" -> ").join(simplifiers);
+    }
+  }
 
-		@Override
-		public String simplify(String input) {
-			checkNotNull(input);
-			String output = input;
-			for (Simplifier s : simplifiers) {
-				output = s.simplify(output);
-			}
+  static final class RemoveDiacritics implements Simplifier {
+    private static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
-			return output;
+    RemoveDiacritics() {
+    }
 
-		}
-
-		@Override
-		public String toString() {
-			return on(" -> ").join(simplifiers);
-		}
-		
-		
-	}
-
-	/**
-	 * A simplifier that removes diacritics.
-	 * <p>
-	 * This class is thread-safe and immutable.
-	 */
-	static final class RemoveDiacritics implements Simplifier {
-
-		private static final Pattern DIACRITICS_AND_FRIENDS = Pattern
-				.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
-
-		RemoveDiacritics() {
-		}
-
-		/**
+    /**
 		 * Simplifies the input string by removing all diacritics.
 		 * <p>
 		 * The input string is transformed to canonical decomposition. After
@@ -105,82 +66,69 @@ public final class Simplifiers {
 		 *         diacritics
 		 *
 		 */
-		@Override
-		public String simplify(String input) {
-			return DIACRITICS_AND_FRIENDS.matcher(
-					Normalizer.normalize(input, Normalizer.Form.NFD))
-					.replaceAll("");
-		}
+    @Override public String simplify(String input) {
+      return DIACRITICS_AND_FRIENDS.matcher(Normalizer.normalize(input, Normalizer.Form.NFD)).replaceAll("");
+    }
 
-		@Override
-		public String toString() {
-			return "RemoveDiacritics";
-		}
+    @Override public String toString() {
+      return "RemoveDiacritics";
+    }
+  }
 
-	}
+  static final class ReplaceAll implements Simplifier {
+    private final Pattern pattern;
 
-	static final class ReplaceAll implements Simplifier {
-		private final Pattern pattern;
+    private final String repplacement;
 
-		private final String repplacement;
+    public ReplaceAll(Pattern pattern, String replacement) {
+      checkNotNull(replacement);
+      checkNotNull(pattern);
+      this.pattern = pattern;
+      this.repplacement = replacement;
+    }
 
-		public ReplaceAll(Pattern pattern, String replacement) {
-			checkNotNull(replacement);
-			checkNotNull(pattern);
-			this.pattern = pattern;
-			this.repplacement = replacement;
-		}
+    @Override public String simplify(String input) {
+      return pattern.matcher(input).replaceAll(repplacement);
+    }
 
-		@Override
-		public String simplify(String input) {
-			return pattern.matcher(input).replaceAll(repplacement);
-		}
+    @Override public String toString() {
+      return "Replace [" + pattern + " -> \'" + repplacement + "\' ]";
+    }
+  }
 
-		@Override
-		public String toString() {
-			return "Replace [" + pattern + " -> '" + repplacement + "' ]";
-		}
-	}
+  static final class ToLowerCase implements Simplifier {
+    private final Locale locale;
 
-	static final class ToLowerCase implements Simplifier {
+    ToLowerCase(Locale locale) {
+      this.locale = locale;
+    }
 
-		private final Locale locale;
+    @Override public String simplify(String s) {
+      return s.toLowerCase(locale);
+    }
 
-		ToLowerCase(Locale locale) {
-			this.locale = locale;
-		}
+    @Override public String toString() {
+      return "ToLowerCase [locale=" + locale + "]";
+    }
+  }
 
-		@Override
-		public String simplify(String s) {
-			return s.toLowerCase(locale);
-		}
+  static final class ToUpperCase implements Simplifier {
+    private final Locale locale;
 
-		@Override
-		public String toString() {
-			return "ToLowerCase [locale=" + locale + "]";
-		}
-	}
+    ToUpperCase(Locale locale) {
+      this.locale = locale;
+    }
 
-	static final class ToUpperCase implements Simplifier {
+    @Override public String simplify(String s) {
+      return s.toUpperCase(locale);
+    }
 
-		private final Locale locale;
+    @Override public String toString() {
+      return "ToUpperCase [locale=" + locale + "]";
+    }
+  }
 
-		ToUpperCase(Locale locale) {
-			this.locale = locale;
-		}
-
-		@Override
-		public String simplify(String s) {
-			return s.toUpperCase(locale);
-		}
-
-		@Override
-		public String toString() {
-			return "ToUpperCase [locale=" + locale + "]";
-		}
-	}
-
-	/**
+  /**
 	 * Constructs a new chain of simplifiers. Applies the simplifiers in order.
 	 * 
 	 * @param simplifiers
@@ -189,14 +137,14 @@ public final class Simplifiers {
 	 * 
 	 * @see StringMetricBuilder
 	 */
-	public static Simplifier chain(List<Simplifier> simplifiers) {
-		if (simplifiers.size() == 1) {
-			return simplifiers.get(0);
-		}
-		return new ChainSimplifier(flatten(simplifiers));
-	}
+  public static Simplifier chain(List<Simplifier> simplifiers) {
+    if (simplifiers.size() == 1) {
+      return simplifiers.get(0);
+    }
+    return new ChainSimplifier(flatten(simplifiers));
+  }
 
-	/**
+  /**
 	 * Constructs a new chain of simplifiers. Applies the simplifiers in order.
 	 * 
 	 * @param simplifier
@@ -207,35 +155,28 @@ public final class Simplifiers {
 	 * 
 	 * @see StringMetricBuilder
 	 */
-	public static Simplifier chain(Simplifier simplifier,
-			Simplifier... simplifiers) {
-		checkArgument(simplifier != null);
-		if (simplifiers.length == 0) {
-			return simplifier;
-		}
+  public static Simplifier chain(Simplifier simplifier, Simplifier... simplifiers) {
+    checkArgument(simplifier != null);
+    if (simplifiers.length == 0) {
+      return simplifier;
+    }
+    return chain(asList(simplifier, simplifiers));
+  }
 
-		return chain(asList(simplifier, simplifiers));
-	}
+  private static List<Simplifier> flatten(List<Simplifier> simplifiers) {
+    final List<Simplifier> flattend = new ArrayList<>(simplifiers.size());
+    for (Simplifier s : simplifiers) {
+      if (s instanceof ChainSimplifier) {
+        final ChainSimplifier c = (ChainSimplifier) s;
+        flattend.addAll(c.getSimplifiers());
+      } else {
+        flattend.add(s);
+      }
+    }
+    return flattend;
+  }
 
-	private static List<Simplifier> flatten(List<Simplifier> simplifiers) {
-		final List<Simplifier> flattend = new ArrayList<>(simplifiers.size());
-
-		for (Simplifier s : simplifiers) {
-			if (s instanceof ChainSimplifier) {
-				// Simplifiers controls the creation of chain simplifiers
-				// all chain simplifiers are flat so we don't have
-				// to flatten recursively
-				final ChainSimplifier c = (ChainSimplifier) s;
-				flattend.addAll(c.getSimplifiers());
-			} else {
-				flattend.add(s);
-			}
-		}
-
-		return flattend;
-	}
-
-	/**
+  /**
 	 * Returns a simplifier that removes every subsequence of the input that
 	 * matches the regex.
 	 * 
@@ -246,11 +187,11 @@ public final class Simplifiers {
 	 * 
 	 * @return a simplifier that remove parts from the input
 	 */
-	public static Simplifier removeAll(String regex) {
-		return removeAll(Pattern.compile(regex));
-	}
+  public static Simplifier removeAll(String regex) {
+    return removeAll(Pattern.compile(regex));
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that removes every subsequence of the input that
 	 * matches the pattern.
 	 * 
@@ -261,11 +202,11 @@ public final class Simplifiers {
 	 * 
 	 * @return a simplifier that remove parts from the input
 	 */
-	public static Simplifier removeAll(Pattern pattern) {
-		return new ReplaceAll(pattern, "");
-	}
+  public static Simplifier removeAll(Pattern pattern) {
+    return new ReplaceAll(pattern, "");
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that removes diacritics.
 	 * <p>
 	 * The input string is transformed to the canonical decomposition form.
@@ -277,11 +218,11 @@ public final class Simplifiers {
 	 * 
 	 *
 	 */
-	public static Simplifier removeDiacritics() {
-		return new RemoveDiacritics();
-	}
+  public static Simplifier removeDiacritics() {
+    return new RemoveDiacritics();
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that removes all non-word {@code [^0-9a-zA-Z]}
 	 * characters.
 	 * 
@@ -289,11 +230,11 @@ public final class Simplifiers {
 	 * 
 	 * @see #removeAll(Pattern)
 	 */
-	public static Simplifier removeNonWord() {
-		return removeNonWord("");
-	}
+  public static Simplifier removeNonWord() {
+    return removeNonWord("");
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that removes all consecutive non-word characters
 	 * {@code [^0-9a-zA-Z]+} and replaces them with the {@code replacement}.
 	 * <p>
@@ -307,11 +248,11 @@ public final class Simplifiers {
 	 *         with a replacement
 	 * 
 	 */
-	public static Simplifier removeNonWord(String replacement) {
-		return removeAll("\\W+");
-	}
+  public static Simplifier removeNonWord(String replacement) {
+    return removeAll("\\W+");
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that replaces every subsequence of the input that
 	 * matches the regex with the given replacement string.
 	 * 
@@ -324,11 +265,11 @@ public final class Simplifiers {
 	 * @return a simplifier that replaces a pattern in the input
 	 * 
 	 */
-	public static Simplifier replaceAll(String regex, String replacement) {
-		return replaceAll(Pattern.compile(regex), replacement);
-	}
+  public static Simplifier replaceAll(String regex, String replacement) {
+    return replaceAll(Pattern.compile(regex), replacement);
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that replaces every subsequence of the input that
 	 * matches the pattern with the given replacement string.
 	 * 
@@ -341,21 +282,21 @@ public final class Simplifiers {
 	 * @return a simplifier that replaces a pattern in the input
 	 * 
 	 */
-	public static Simplifier replaceAll(Pattern pattern, String replacement) {
-		return new ReplaceAll(pattern, replacement);
-	}
+  public static Simplifier replaceAll(Pattern pattern, String replacement) {
+    return new ReplaceAll(pattern, replacement);
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that replaces all individual non-word characters
 	 * {@code [^0-9a-zA-Z]} with a space.
 	 * 
 	 * @return a simplifier that replaces all non-word characters
 	 */
-	public static Simplifier replaceNonWord() {
-		return replaceNonWord(" ");
-	}
+  public static Simplifier replaceNonWord() {
+    return replaceNonWord(" ");
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that replaces all individual non-word characters
 	 * {@code [^0-9a-zA-Z]} with the {@code replacement}.
 	 * 
@@ -364,11 +305,11 @@ public final class Simplifiers {
 	 * 
 	 * @return a simplifier that replaces all non-word characters
 	 */
-	public static Simplifier replaceNonWord(String replacement) {
-		return replaceAll("\\W", replacement);
-	}
+  public static Simplifier replaceNonWord(String replacement) {
+    return replaceAll("\\W", replacement);
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that transforms all upper case characters into their
 	 * lower case equivalent.
 	 * <P>
@@ -377,11 +318,11 @@ public final class Simplifiers {
 	 * @return a simplifier that transforms all upper case characters into their
 	 *         lower case equivalent
 	 */
-	public static Simplifier toLowerCase() {
-		return toLowerCase(Locale.getDefault());
-	}
+  public static Simplifier toLowerCase() {
+    return toLowerCase(Locale.getDefault());
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that transforms all upper case characters into their
 	 * lower case equivalent.
 	 * 
@@ -391,11 +332,11 @@ public final class Simplifiers {
 	 * @return a simplifier that transforms all upper case characters into their
 	 *         lower case equivalent
 	 */
-	public static Simplifier toLowerCase(Locale l) {
-		return new ToLowerCase(l);
-	}
+  public static Simplifier toLowerCase(Locale l) {
+    return new ToLowerCase(l);
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that transforms all lower case characters into their
 	 * upper case equivalent.
 	 * <P>
@@ -404,11 +345,11 @@ public final class Simplifiers {
 	 * @return a simplifier that transforms all lower case characters into their
 	 *         upper case equivalent
 	 */
-	public static Simplifier toUpperCase() {
-		return toUpperCase(Locale.getDefault());
-	}
+  public static Simplifier toUpperCase() {
+    return toUpperCase(Locale.getDefault());
+  }
 
-	/**
+  /**
 	 * Returns a simplifier that transforms all lower case characters into their
 	 * upper case equivalent.
 	 * 
@@ -418,12 +359,10 @@ public final class Simplifiers {
 	 * @return a simplifier that transforms all upper case characters into their
 	 *         lower case equivalent
 	 */
-	public static Simplifier toUpperCase(Locale l) {
-		return new ToUpperCase(l);
-	}
+  public static Simplifier toUpperCase(Locale l) {
+    return new ToUpperCase(l);
+  }
 
-	private Simplifiers() {
-		// Utility class
-	}
-
+  private Simplifiers() {
+  }
 }
