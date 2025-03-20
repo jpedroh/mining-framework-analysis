@@ -80,13 +80,17 @@ public class KafkaReader {
     fetch();
   }
 
-  public boolean hasNext() throws IOException {
-    if (messageIter != null && messageIter.hasNext())
-      return true;
-    else
-      return fetch();
+	public String getTopic() {
+		return kafkaRequest.getTopic();
+	}
+	
+	public boolean hasNext() throws IOException {
+	  if (messageIter != null && messageIter.hasNext())
+	    return true;
+	  else
+	    return fetch();
 
-  }
+	}
 
   /**
    * Fetches the next Kafka message and stuffs the results into the key and

@@ -231,6 +231,18 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
         }
         int count = 0;
         while (reader.getNext(key, msgValue, msgKey)) {
+<<<<<<< /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/left.java
+            context.progress();
+            mapperContext.getCounter("total", "data-read").increment(msgValue.getLength());
+            mapperContext.getCounter("total", "event-count").increment(1);
+            mapperContext.getCounter(reader.getTopic(), "event-count").increment(1);
+            byte[] bytes = getBytes(msgValue);
+||||||| /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/base.java
+            context.progress();
+            mapperContext.getCounter("total", "data-read").increment(msgValue.getLength());
+            mapperContext.getCounter("total", "event-count").increment(1);
+            byte[] bytes = getBytes(msgValue);
+=======
           readBytes += key.getMessageSize();
           count++;
           context.progress();
@@ -248,6 +260,7 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
                 + " MessageWithoutKey checksum : " + messageWithoutKey.checksum() + ". Expected " + key.getChecksum(),
                 key.getOffset());
           }
+>>>>>>> /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/right.java
 
           long tempTime = System.currentTimeMillis();
           CamusWrapper wrapper;
@@ -262,6 +275,45 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
               log.info("The same exception has occured for more than " + getMaximumDecoderExceptionsToPrint(context)
                   + " records. All further exceptions will not be printed");
             }
+<<<<<<< /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/left.java
+            
+            long tempTime = System.currentTimeMillis();
+            CamusWrapper wrapper;
+            try {
+                wrapper = getWrappedRecord(key.getTopic(), message);
+            } catch (Exception e) {
+                if(exceptionCount < getMaximumDecoderExceptionsToPrint(context))
+        				{
+        					mapperContext.write(key, new ExceptionWritable(e));
+        					exceptionCount++;
+        				} else
+        				if(exceptionCount == getMaximumDecoderExceptionsToPrint(context))
+        				{
+        					exceptionCount = Integer.MAX_VALUE; //Any random value
+        					System.out.println("The same exception has occured for more than " + getMaximumDecoderExceptionsToPrint(context) + " records. All further exceptions will not be printed");	
+        				}
+                continue;
+            }
+||||||| /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/base.java
+        
+            long tempTime = System.currentTimeMillis();
+            CamusWrapper wrapper;
+            try {
+                wrapper = getWrappedRecord(key.getTopic(), message);
+            } catch (Exception e) {
+                if(exceptionCount < getMaximumDecoderExceptionsToPrint(context))
+        				{
+        					mapperContext.write(key, new ExceptionWritable(e));
+        					exceptionCount++;
+        				} else
+        				if(exceptionCount == getMaximumDecoderExceptionsToPrint(context))
+        				{
+        					exceptionCount = Integer.MAX_VALUE; //Any random value
+        					System.out.println("The same exception has occured for more than " + getMaximumDecoderExceptionsToPrint(context) + " records. All further exceptions will not be printed");	
+        				}
+                continue;
+            }
+=======
             continue;
           }
 
@@ -269,6 +321,7 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
             mapperContext.write(key, new ExceptionWritable(new RuntimeException("null record")));
             continue;
           }
+>>>>>>> /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/right.java
 
           curTimeStamp = wrapper.getTimestamp();
           try {
@@ -298,9 +351,48 @@ public class EtlRecordReader extends RecordReader<EtlKey, CamusWrapper> {
             closeReader();
           }
 
+<<<<<<< /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/left.java
+            if (timeStamp < beginTimeStamp) {
+                mapperContext.getCounter("total", "skip-old").increment(1);
+                mapperContext.getCounter(reader.getTopic(), "skip-old").increment(1);
+            } else if (endTimeStamp == 0) {
+                DateTime time = new DateTime(timeStamp);
+                statusMsg += " begin read at " + time.toString();
+                context.setStatus(statusMsg);
+                System.out.println(key.getTopic() + " begin read at " + time.toString());
+                endTimeStamp = (time.plusHours(this.maxPullHours)).getMillis();
+            } else if (timeStamp > endTimeStamp || System.currentTimeMillis() > maxPullTime) {
+                statusMsg += " max read at " + new DateTime(timeStamp).toString();
+                context.setStatus(statusMsg);
+                System.out.println(key.getTopic() + " max read at "
+                        + new DateTime(timeStamp).toString());
+                mapperContext.getCounter("total", "request-time(ms)").increment(
+                        reader.getFetchTime());
+                closeReader();
+            }
+||||||| /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/base.java
+            if (timeStamp < beginTimeStamp) {
+                mapperContext.getCounter("total", "skip-old").increment(1);
+            } else if (endTimeStamp == 0) {
+                DateTime time = new DateTime(timeStamp);
+                statusMsg += " begin read at " + time.toString();
+                context.setStatus(statusMsg);
+                System.out.println(key.getTopic() + " begin read at " + time.toString());
+                endTimeStamp = (time.plusHours(this.maxPullHours)).getMillis();
+            } else if (timeStamp > endTimeStamp || System.currentTimeMillis() > maxPullTime) {
+                statusMsg += " max read at " + new DateTime(timeStamp).toString();
+                context.setStatus(statusMsg);
+                System.out.println(key.getTopic() + " max read at "
+                        + new DateTime(timeStamp).toString());
+                mapperContext.getCounter("total", "request-time(ms)").increment(
+                        reader.getFetchTime());
+                closeReader();
+            }
+=======
           long secondTime = System.currentTimeMillis();
           value = wrapper;
           long decodeTime = ((secondTime - tempTime));
+>>>>>>> /usr/src/app/output/linkedin/camus/9ec3308f3e8c14daf848cfeac219d0bc79aed173/camus-etl-kafka/src/main/java/com/linkedin/camus/etl/kafka/mapred/EtlRecordReader.java/right.java
 
           mapperContext.getCounter("total", "decode-time(ms)").increment(decodeTime);
 
