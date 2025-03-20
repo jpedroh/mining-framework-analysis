@@ -1,24 +1,4 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -28,13 +8,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-
 import com.github.maven_nar.cpptasks.CUtil;
 import com.github.maven_nar.cpptasks.CompilerDef;
 import com.github.maven_nar.cpptasks.CompilerEnum;
@@ -50,7 +28,6 @@ import com.github.maven_nar.cpptasks.types.DefineSet;
  * @author Mark Donszelmann
  */
 public abstract class Compiler {
-
   public static final String MAIN = "main";
 
   public static final String TEST = "test";
@@ -60,183 +37,155 @@ public abstract class Compiler {
    * "cc", "icc", "icpc", ... Default is
    * Architecture-OS-Linker specific: FIXME: table missing
    */
-  @Parameter
-  private String name;
+  @Parameter private String name;
 
   /**
    * The prefix for the compiler.
    */
-  @Parameter
-  private String prefix;
+  @Parameter private String prefix;
 
   /**
    * Path location of the compile tool
    */
-  @Parameter
-  private String toolPath;
+  @Parameter private String toolPath;
 
   /**
    * Source directory for native files
    */
-  @Parameter(defaultValue = "${basedir}/src/main", required = true)
-  private File sourceDirectory;
+  @Parameter(defaultValue = "${basedir}/src/main", required = true) private File sourceDirectory;
 
   /**
    * Source directory for native test files
    */
-  @Parameter(defaultValue = "${basedir}/src/test", required = true)
-  private File testSourceDirectory;
+  @Parameter(defaultValue = "${basedir}/src/test", required = true) private File testSourceDirectory;
 
   /**
    * Include patterns for sources
    */
-  @Parameter(required = true)
-  private Set<String> includes = new HashSet<String>();
+  @Parameter(required = true) private Set<String> includes = new HashSet<String>();
 
   /**
    * Exclude patterns for sources
    */
-  @Parameter(required = true)
-  private Set<String> excludes = new HashSet<String>();
+  @Parameter(required = true) private Set<String> excludes = new HashSet<String>();
 
   /**
    * Include patterns for test sources
    */
-  @Parameter(required = true)
-  private Set<String> testIncludes = new HashSet<String>();
+  @Parameter(required = true) private Set<String> testIncludes = new HashSet<String>();
 
   /**
    * Exclude patterns for test sources
    */
-  @Parameter(required = true)
-  private Set<String> testExcludes = new HashSet<String>();
+  @Parameter(required = true) private Set<String> testExcludes = new HashSet<String>();
 
-  @Parameter(defaultValue = "false", required = false)
-  private boolean ccache = false;
+  @Parameter(defaultValue = "false", required = false) private boolean ccache = false;
 
   /**
    * Compile with debug information.
    */
-  @Parameter(required = true)
-  private boolean debug = false;
+  @Parameter(required = true) private boolean debug = false;
 
   /**
    * Enables generation of exception handling code.
    */
-  @Parameter(defaultValue = "true", required = true)
-  private boolean exceptions = true;
+  @Parameter(defaultValue = "true", required = true) private boolean exceptions = true;
 
   /**
    * Enables run-time type information.
    */
-  @Parameter(defaultValue = "true", required = true)
-  private boolean rtti = true;
+  @Parameter(defaultValue = "true", required = true) private boolean rtti = true;
 
   /**
    * Sets optimization. Possible choices are: "none", "size", "minimal",
    * "speed", "full", "aggressive", "extreme",
    * "unsafe".
    */
-  @Parameter(defaultValue = "none", required = true)
-  private String optimize = "none";
+  @Parameter(defaultValue = "none", required = true) private String optimize = "none";
 
   /**
    * Enables or disables generation of multi-threaded code. Default value:
    * false, except on Windows.
    */
-  @Parameter(required = true)
-  private boolean multiThreaded = false;
+  @Parameter(required = true) private boolean multiThreaded = false;
 
   /**
    * Defines
    */
-  @Parameter
-  private List<String> defines;
+  @Parameter private List<String> defines;
 
   /**
    * Defines for the compiler as a comma separated list of name[=value] pairs,
    * where the value is optional. Will work
    * in combination with &lt;defines&gt;.
    */
-  @Parameter
-  private String defineSet;
+  @Parameter private String defineSet;
 
   /**
    * Clears default defines
    */
-  @Parameter(required = true)
-  private boolean clearDefaultDefines;
+  @Parameter(required = true) private boolean clearDefaultDefines;
 
   /**
    * Undefines
    */
-  @Parameter
-  private List<String> undefines;
+  @Parameter private List<String> undefines;
 
   /**
    * Undefines for the compiler as a comma separated list of name[=value] pairs
    * where the value is optional. Will work
    * in combination with &lt;undefines&gt;.
    */
-  @Parameter
-  private String undefineSet;
+  @Parameter private String undefineSet;
 
   /**
    * Clears default undefines
    */
-  @Parameter
-  private boolean clearDefaultUndefines;
+  @Parameter private boolean clearDefaultUndefines;
 
   /**
    * Include Paths. Defaults to "${sourceDirectory}/include"
    */
-  @Parameter
-  private List<IncludePath> includePaths;
+  @Parameter private List<IncludePath> includePaths;
 
   /**
    * Test Include Paths. Defaults to "${testSourceDirectory}/include"
    */
-  @Parameter
-  private List<IncludePath> testIncludePaths;
+  @Parameter private List<IncludePath> testIncludePaths;
 
   /**
    * System Include Paths, which are added at the end of all include paths
    */
-  @Parameter
-  private List<String> systemIncludePaths;
+  @Parameter private List<String> systemIncludePaths;
 
   /**
    * Additional options for the C++ compiler Defaults to Architecture-OS-Linker
    * specific values. FIXME table missing
    */
-  @Parameter
-  private List<String> options;
+  @Parameter private List<String> options;
 
   /**
    * Additional options for the compiler when running in the nar-testCompile
    * phase.
    */
-  @Parameter
-  private List<String> testOptions;
+  @Parameter private List<String> testOptions;
 
   /**
    * Options for the compiler as a whitespace separated list. Will work in
    * combination with &lt;options&gt;.
    */
-  @Parameter
-  private String optionSet;
+  @Parameter private String optionSet;
 
   /**
    * Clears default options
    */
-  @Parameter(required = true)
-  private boolean clearDefaultOptions;
+  @Parameter(required = true) private boolean clearDefaultOptions;
 
   /**
    * Comma separated list of filenames to compile in order
    */
-  @Parameter
-  private String compileOrder;
+  @Parameter private String compileOrder;
+
   private AbstractCompileMojo mojo;
 
   protected Compiler() {
@@ -245,8 +194,7 @@ public abstract class Compiler {
   public final void copyIncludeFiles(final MavenProject mavenProject, final File targetDirectory) throws IOException {
     for (final IncludePath includePath : getIncludePaths("dummy")) {
       if (includePath.exists()) {
-        NarUtil.copyDirectoryStructure(includePath.getFile(), targetDirectory, includePath.getIncludes(),
-            NarUtil.DEFAULT_EXCLUDES);
+        NarUtil.copyDirectoryStructure(includePath.getFile(), targetDirectory, includePath.getIncludes(), NarUtil.DEFAULT_EXCLUDES);
       }
     }
   }
@@ -267,40 +215,32 @@ public abstract class Compiler {
    * @throws MojoExecutionException
    *           TODO
    */
-  public final CompilerDef getCompiler(final String type, final String output)
-      throws MojoFailureException, MojoExecutionException {
+  public final CompilerDef getCompiler(final String type, final String output) throws MojoFailureException, MojoExecutionException {
     final String name = getName();
     if (name == null) {
       return null;
     }
-
     final CompilerDef compilerDef = new CompilerDef();
     compilerDef.setProject(this.mojo.getAntProject());
     final CompilerEnum compilerName = new CompilerEnum();
     compilerName.setValue(name);
     compilerDef.setName(compilerName);
-
-    // tool path
     if (this.toolPath != null) {
       compilerDef.setToolPath(this.toolPath);
-    } else if ("msvc".equalsIgnoreCase( this.mojo.getLinker().getName())){
-      mojo.getMsvc().setToolPath(compilerDef,getLanguage());
+    } else {
+      if ("msvc".equalsIgnoreCase(this.mojo.getLinker().getName())) {
+        mojo.getMsvc().setToolPath(compilerDef, getLanguage());
+      }
     }
-
-    // debug, exceptions, rtti, multiThreaded
     compilerDef.setCompilerPrefix(this.prefix);
     compilerDef.setCcache(this.ccache);
     compilerDef.setDebug(this.debug);
     compilerDef.setExceptions(this.exceptions);
     compilerDef.setRtti(this.rtti);
     compilerDef.setMultithreaded(this.mojo.getOS().equals("Windows") || this.multiThreaded);
-
-    // optimize
     final OptimizationEnum optimization = new OptimizationEnum();
     optimization.setValue(this.optimize);
     compilerDef.setOptimize(optimization);
-
-    // add options
     if (this.options != null) {
       for (final String string : this.options) {
         final CompilerArgument arg = new CompilerArgument();
@@ -308,24 +248,17 @@ public abstract class Compiler {
         compilerDef.addConfiguredCompilerArg(arg);
       }
     }
-
     if (this.optionSet != null) {
-
       final String[] opts = this.optionSet.split("\\s");
-
       for (final String opt : opts) {
-
         final CompilerArgument arg = new CompilerArgument();
-
         arg.setValue(opt);
         compilerDef.addConfiguredCompilerArg(arg);
       }
     }
-
     compilerDef.setClearDefaultOptions(this.clearDefaultOptions);
     if (!this.clearDefaultOptions) {
-      final String optionsProperty = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(
-          getPrefix() + "options");
+      final String optionsProperty = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "options");
       if (optionsProperty != null) {
         final String[] option = optionsProperty.split(" ");
         for (final String element : option) {
@@ -335,8 +268,6 @@ public abstract class Compiler {
         }
       }
     }
-
-    // add defines
     if (this.defines != null) {
       final DefineSet ds = new DefineSet();
       for (final String string : this.defines) {
@@ -348,37 +279,26 @@ public abstract class Compiler {
       }
       compilerDef.addConfiguredDefineset(ds);
     }
-
     if (this.defineSet != null) {
-
       final String[] defList = this.defineSet.split(",");
       final DefineSet defSet = new DefineSet();
-
       for (final String element : defList) {
-
         final String[] pair = element.trim().split("=", 2);
         final DefineArgument def = new DefineArgument();
-
         def.setName(pair[0]);
         def.setValue(pair.length > 1 ? pair[1] : null);
-
         defSet.addDefine(def);
       }
-
       compilerDef.addConfiguredDefineset(defSet);
     }
-
     if (!this.clearDefaultDefines) {
       final DefineSet ds = new DefineSet();
-      final String defaultDefines = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(
-          getPrefix() + "defines");
+      final String defaultDefines = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "defines");
       if (defaultDefines != null) {
         ds.setDefine(new CUtil.StringArrayBuilder(defaultDefines));
       }
       compilerDef.addConfiguredDefineset(ds);
     }
-
-    // add undefines
     if (this.undefines != null) {
       final DefineSet us = new DefineSet();
       for (final String string : this.undefines) {
@@ -390,73 +310,52 @@ public abstract class Compiler {
       }
       compilerDef.addConfiguredDefineset(us);
     }
-
     if (this.undefineSet != null) {
-
       final String[] undefList = this.undefineSet.split(",");
       final DefineSet undefSet = new DefineSet();
-
       for (final String element : undefList) {
-
         final String[] pair = element.trim().split("=", 2);
         final DefineArgument undef = new DefineArgument();
-
         undef.setName(pair[0]);
         undef.setValue(pair.length > 1 ? pair[1] : null);
-
         undefSet.addUndefine(undef);
       }
-
       compilerDef.addConfiguredDefineset(undefSet);
     }
-
     if (!this.clearDefaultUndefines) {
       final DefineSet us = new DefineSet();
-      final String defaultUndefines = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(
-          getPrefix() + "undefines");
+      final String defaultUndefines = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "undefines");
       if (defaultUndefines != null) {
         us.setUndefine(new CUtil.StringArrayBuilder(defaultUndefines));
       }
       compilerDef.addConfiguredDefineset(us);
     }
-
-    // add include path
     for (final IncludePath includePath : getIncludePaths(type)) {
-      // Darren Sargent, 30Jan2008 - fail build if invalid include path(s)
-      // specified.
       if (!includePath.exists()) {
         throw new MojoFailureException("NAR: Include path not found: " + includePath);
       }
       compilerDef.createIncludePath().setPath(includePath.getPath());
     }
-
-    // add system include path (at the end)
     if (this.systemIncludePaths != null) {
       for (final String path : this.systemIncludePaths) {
         compilerDef.createSysIncludePath().setPath(path);
       }
     }
-
-    // Add default fileset (if exists)
     final List<File> srcDirs = getSourceDirectories(type);
     final Set<String> includeSet = getIncludes(type);
     final Set<String> excludeSet = getExcludes(type);
-
-    // now add all but the current test to the excludes
-    for (final Iterator i = this.mojo.getTests().iterator(); i.hasNext();) {
+    for (final Iterator i = this.mojo.getTests().iterator(); i.hasNext(); ) {
       final Test test = (Test) i.next();
       if (!test.getName().equals(output)) {
         excludeSet.add("**/" + test.getName() + ".*");
       }
     }
-
     for (final File srcDir : srcDirs) {
       this.mojo.getLog().debug("Checking for existence of " + getLanguage() + " source directory: " + srcDir);
       if (srcDir.exists()) {
         if (this.compileOrder != null) {
           compilerDef.setOrder(Arrays.asList(StringUtils.split(this.compileOrder, ", ")));
         }
-
         final ConditionalFileSet fileSet = new ConditionalFileSet();
         fileSet.setProject(this.mojo.getAntProject());
         fileSet.setIncludes(StringUtils.join(includeSet.iterator(), ","));
@@ -465,7 +364,6 @@ public abstract class Compiler {
         compilerDef.addFileset(fileSet);
       }
     }
-    
     if (type.equals(TEST)) {
       if (this.testSourceDirectory.exists()) {
         compilerDef.setWorkDir(this.testSourceDirectory);
@@ -486,33 +384,29 @@ public abstract class Compiler {
     final Set<String> result = new HashSet<String>();
     if (type.equals(TEST) && !this.testExcludes.isEmpty()) {
       result.addAll(this.testExcludes);
-    } else if (!this.excludes.isEmpty()) {
-      result.addAll(this.excludes);
     } else {
-      final String defaultExcludes = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(
-          getPrefix() + "excludes");
-      if (defaultExcludes != null) {
-        final String[] exclude = defaultExcludes.split(" ");
-        for (final String element : exclude) {
-          result.add(element.trim());
+      if (!this.excludes.isEmpty()) {
+        result.addAll(this.excludes);
+      } else {
+        final String defaultExcludes = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "excludes");
+        if (defaultExcludes != null) {
+          final String[] exclude = defaultExcludes.split(" ");
+          for (final String element : exclude) {
+            result.add(element.trim());
+          }
         }
       }
     }
-
     return result;
   }
 
   protected final List<IncludePath> getIncludePaths(final String type) {
     List<IncludePath> includeList = type.equals(TEST) ? this.testIncludePaths : this.includePaths;
-
     if (includeList != null && includeList.size() != 0) {
       return includeList;
     }
-
     includeList = new ArrayList<IncludePath>();
     for (final File file2 : getSourceDirectories(type)) {
-      // VR 20100318 only add include directories that exist - we now fail the
-      // build fast if an include directory does not exist
       final File file = new File(file2, "include");
       if (file.isDirectory()) {
         final IncludePath includePath = new IncludePath();
@@ -531,15 +425,16 @@ public abstract class Compiler {
     final Set<String> result = new HashSet<String>();
     if (!type.equals(TEST) && !this.includes.isEmpty()) {
       result.addAll(this.includes);
-    } else if (type.equals(TEST) && !this.testIncludes.isEmpty()) {
-      result.addAll(this.testIncludes);
     } else {
-      final String defaultIncludes = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(
-          getPrefix() + "includes");
-      if (defaultIncludes != null) {
-        final String[] include = defaultIncludes.split(" ");
-        for (final String element : include) {
-          result.add(element.trim());
+      if (type.equals(TEST) && !this.testIncludes.isEmpty()) {
+        result.addAll(this.testIncludes);
+      } else {
+        final String defaultIncludes = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "includes");
+        if (defaultIncludes != null) {
+          final String[] include = defaultIncludes.split(" ");
+          for (final String element : include) {
+            result.add(element.trim());
+          }
         }
       }
     }
@@ -549,7 +444,6 @@ public abstract class Compiler {
   protected abstract String getLanguage();
 
   public String getName() throws MojoFailureException, MojoExecutionException {
-    // adjust default values
     if (this.name == null) {
       this.name = NarProperties.getInstance(this.mojo.getMavenProject()).getProperty(getPrefix() + "compiler");
     }
@@ -570,7 +464,6 @@ public abstract class Compiler {
   private List<File> getSourceDirectories(final String type) {
     final List<File> sourceDirectories = new ArrayList<File>();
     final File baseDir = this.mojo.getMavenProject().getBasedir();
-
     if (type.equals(TEST)) {
       if (this.testSourceDirectory == null) {
         this.testSourceDirectory = new File(baseDir, "/src/test");
@@ -578,7 +471,6 @@ public abstract class Compiler {
       if (this.testSourceDirectory.exists()) {
         sourceDirectories.add(this.testSourceDirectory);
       }
-
       for (final Object element : this.mojo.getMavenProject().getTestCompileSourceRoots()) {
         final File extraTestSourceDirectory = new File((String) element);
         if (extraTestSourceDirectory.exists()) {
@@ -592,7 +484,6 @@ public abstract class Compiler {
       if (this.sourceDirectory.exists()) {
         sourceDirectories.add(this.sourceDirectory);
       }
-
       for (final Object element : this.mojo.getMavenProject().getCompileSourceRoots()) {
         final File extraSourceDirectory = new File((String) element);
         if (extraSourceDirectory.exists()) {
@@ -600,7 +491,6 @@ public abstract class Compiler {
         }
       }
     }
-
     if (this.mojo.getLog().isDebugEnabled()) {
       for (final File file : sourceDirectories) {
         this.mojo.getLog().debug("Added to sourceDirectory: " + file.getPath());
@@ -613,8 +503,7 @@ public abstract class Compiler {
    * @return The standard Compiler configuration with 'testOptions' added to the
    *         argument list.
    */
-  public final CompilerDef getTestCompiler(final String type, final String output)
-      throws MojoFailureException, MojoExecutionException {
+  public final CompilerDef getTestCompiler(final String type, final String output) throws MojoFailureException, MojoExecutionException {
     final CompilerDef compiler = getCompiler(type, output);
     if (compiler != null && this.testOptions != null) {
       for (final String string : this.testOptions) {
@@ -630,8 +519,7 @@ public abstract class Compiler {
     this.mojo = mojo;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return NarUtil.prettyMavenString(this);
   }
 }

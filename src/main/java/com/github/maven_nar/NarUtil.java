@@ -1,24 +1,4 @@
-/*
- * #%L
- * Native ARchive plugin for Maven
- * %%
- * Copyright (C) 2002 - 2014 NAR Maven Plugin developers.
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 package com.github.maven_nar;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -59,8 +38,7 @@ public final class NarUtil {
       this.ts = ts;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       try {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(this.is));
         String line = null;
@@ -69,7 +47,6 @@ public final class NarUtil {
         }
         reader.close();
       } catch (final IOException e) {
-        // e.printStackTrace()
         final StackTraceElement[] stackTrace = e.getStackTrace();
         for (final StackTraceElement element : stackTrace) {
           this.ts.println(element.toString());
@@ -78,8 +55,7 @@ public final class NarUtil {
     }
   }
 
-  public static final String DEFAULT_EXCLUDES = "**/*~,**/#*#,**/.#*,**/%*%,**/._*,"
-      + "**/CVS,**/CVS/**,**/.cvsignore," + "**/SCCS,**/SCCS/**,**/vssver.scc," + "**/.svn,**/.svn/**,**/.DS_Store";
+  public static final String DEFAULT_EXCLUDES = "**/*~,**/#*#,**/.#*,**/%*%,**/._*," + "**/CVS,**/CVS/**,**/.cvsignore," + "**/SCCS,**/SCCS/**,**/vssver.scc," + "**/.svn,**/.svn/**,**/.DS_Store";
 
   public static String addLibraryPathToEnv(final String path, final Map environment, final String os) {
     String pathName = null;
@@ -87,22 +63,24 @@ public final class NarUtil {
     if (os.equals(OS.WINDOWS)) {
       pathName = "PATH";
       separator = ';';
-    } else if (os.equals(OS.MACOSX)) {
-      pathName = "DYLD_LIBRARY_PATH";
-      separator = ':';
-    } else if (os.equals(OS.AIX)) {
-        pathName = "LIBPATH";
-        separator = ':';
     } else {
-      pathName = "LD_LIBRARY_PATH";
-      separator = ':';
+      if (os.equals(OS.MACOSX)) {
+        pathName = "DYLD_LIBRARY_PATH";
+        separator = ':';
+      } else {
+        if (os.equals(OS.AIX)) {
+          pathName = "LIBPATH";
+          separator = ':';
+        } else {
+          pathName = "LD_LIBRARY_PATH";
+          separator = ':';
+        }
+      }
     }
-
     String value = environment != null ? (String) environment.get(pathName) : null;
     if (value == null) {
       value = NarUtil.getEnv(pathName, pathName, null);
     }
-
     String libPath = path;
     libPath = libPath.replace(File.pathSeparatorChar, separator);
     if (value != null) {
@@ -127,137 +105,90 @@ public final class NarUtil {
    */
   static List collectActiveProfiles(final MavenProject project) {
     final List profiles = project.getActiveProfiles();
-
     if (project.hasParent()) {
       profiles.addAll(collectActiveProfiles(project.getParent()));
     }
-
     return profiles;
   }
 
-  public static int copyDirectoryStructure(final File sourceDirectory, final File destinationDirectory,
-      final String includes, final String excludes) throws IOException {
+  public static int copyDirectoryStructure(final File sourceDirectory, final File destinationDirectory, final String includes, final String excludes) throws IOException {
     if (!sourceDirectory.exists()) {
-      throw new IOException("Source directory doesn't exists (" + sourceDirectory.getAbsolutePath() + ").");
+      throw new IOException("Source directory doesn\'t exists (" + sourceDirectory.getAbsolutePath() + ").");
     }
-
     final List files = FileUtils.getFiles(sourceDirectory, includes, excludes);
     final String sourcePath = sourceDirectory.getAbsolutePath();
-
     int copied = 0;
-    for (final Iterator i = files.iterator(); i.hasNext();) {
+    for (final Iterator i = files.iterator(); i.hasNext(); ) {
       final File file = (File) i.next();
       String dest = file.getAbsolutePath();
       dest = dest.substring(sourcePath.length() + 1);
       final File destination = new File(destinationDirectory, dest);
       if (file.isFile()) {
-        // destination = destination.getParentFile();
-        // use FileUtils from commons-io, because it preserves timestamps
         org.apache.commons.io.FileUtils.copyFile(file, destination);
         copied++;
-
-        // copy executable bit
         try {
-          // 1.6 only so coded using introspection
-          // destination.setExecutable( file.canExecute(), false );
-          final Method canExecute = file.getClass().getDeclaredMethod("canExecute", new Class[] {});
-          final Method setExecutable = destination.getClass().getDeclaredMethod("setExecutable", new Class[] {
-              boolean.class, boolean.class
-          });
-          setExecutable.invoke(destination, new Object[] {
-              (Boolean) canExecute.invoke(file, new Object[] {}), Boolean.FALSE
-          });
+          final Method canExecute = file.getClass().getDeclaredMethod("canExecute", new Class[] {  });
+          final Method setExecutable = destination.getClass().getDeclaredMethod("setExecutable", new Class[] { boolean.class, boolean.class });
+          setExecutable.invoke(destination, new Object[] { (Boolean) canExecute.invoke(file, new Object[] {  }), Boolean.FALSE });
         } catch (final SecurityException e) {
-          // ignored
         } catch (final NoSuchMethodException e) {
-          // ignored
         } catch (final IllegalArgumentException e) {
-          // ignored
         } catch (final IllegalAccessException e) {
-          // ignored
         } catch (final InvocationTargetException e) {
-          // ignored
         }
-      } else if (file.isDirectory()) {
-        if (!destination.exists() && !destination.mkdirs()) {
-          throw new IOException("Could not create destination directory '" + destination.getAbsolutePath() + "'.");
-        }
-        copied += copyDirectoryStructure(file, destination, includes, excludes);
       } else {
-        throw new IOException("Unknown file type: " + file.getAbsolutePath());
+        if (file.isDirectory()) {
+          if (!destination.exists() && !destination.mkdirs()) {
+            throw new IOException("Could not create destination directory \'" + destination.getAbsolutePath() + "\'.");
+          }
+          copied += copyDirectoryStructure(file, destination, includes, excludes);
+        } else {
+          throw new IOException("Unknown file type: " + file.getAbsolutePath());
+        }
       }
     }
     return copied;
   }
 
   public static void deleteDirectory(final File dir) throws MojoExecutionException {
-    int retries = OS.WINDOWS.equalsIgnoreCase(System.getProperty("os.name")) ? 3 : 1;  // Windows file locking (such as due to virus scanners) and sometimes deleting slowly, or slow to report completion.
+    int retries = OS.WINDOWS.equalsIgnoreCase(System.getProperty("os.name")) ? 3 : 1;
     while (retries > 0) {
       retries--;
       try {
         FileUtils.deleteDirectory(dir);
       } catch (final IOException e) {
         if (retries > 0) {
-//          getLog().info("Could not delete directory: " + dir + " : Retrying");
           Thread.yield();
         } else {
           throw new MojoExecutionException("Could not delete directory: " + dir, e);
         }
       }
-      //TODO: if( windows and interactive ) prompt for retry?
-      //@Component(role=org.codehaus.plexus.components.interactivity.Prompter.class, hint="archetype")
-      //public class ArchetypePrompter
     }
   }
-  
-  static Set findInstallNameToolCandidates(final File[] files, final Log log)
-      throws MojoExecutionException, MojoFailureException {
-    final HashSet candidates = new HashSet();
 
+  static Set findInstallNameToolCandidates(final File[] files, final Log log) throws MojoExecutionException, MojoFailureException {
+    final HashSet candidates = new HashSet();
     for (final File file2 : files) {
       final File file = file2;
-
       if (!file.exists()) {
         continue;
       }
-
       if (file.isDirectory()) {
         candidates.addAll(findInstallNameToolCandidates(file.listFiles(), log));
       }
-
       final String fileName = file.getName();
-      if (file.isFile() && file.canWrite()
-          && (fileName.endsWith(".so") || fileName.endsWith(".dylib") || fileName.endsWith(".jnilib"))) {
+      if (file.isFile() && file.canWrite() && (fileName.endsWith(".so") || fileName.endsWith(".dylib") || fileName.endsWith(".jnilib"))) {
         candidates.add(file);
       }
     }
-
     return candidates;
   }
 
-  // FIXME, should go to AOL.
-  /*
-   * NOT USED ?
-   * public static String getAOLKey( String architecture, String os, Linker
-   * linker )
-   * throws MojoFailureException, MojoExecutionException
-   * {
-   * // construct AOL key prefix
-   * return getArchitecture( architecture ) + "." + getOS( os ) + "." +
-   * getLinkerName( architecture, os, linker )
-   * + ".";
-   * }
-   */
-
-  public static AOL getAOL(final MavenProject project, final String architecture, final String os, final Linker linker,
-      final String aol, final Log log) throws MojoFailureException, MojoExecutionException {
-    // adjust aol
-    return aol == null ? new AOL(getArchitecture(architecture), getOS(os), getLinkerName(project, architecture, os,
-        linker, log)) : new AOL(aol);
+  public static AOL getAOL(final MavenProject project, final String architecture, final String os, final Linker linker, final String aol, final Log log) throws MojoFailureException, MojoExecutionException {
+    return aol == null ? new AOL(getArchitecture(architecture), getOS(os), getLinkerName(project, architecture, os, linker, log)) : new AOL(aol);
   }
 
   public static String getAOLKey(final String aol) {
-    // FIXME, this may not always work correctly
     return replace("-", ".", aol);
   }
 
@@ -289,16 +220,13 @@ public final class NarUtil {
         envValue = System.getProperty(alternateSystemProperty);
       }
     } catch (final Error e) {
-      // JDK 1.4?
       if (alternateSystemProperty != null) {
         envValue = System.getProperty(alternateSystemProperty);
       }
     }
-
     if (envValue == null) {
       envValue = defaultValue;
     }
-
     return envValue;
   }
 
@@ -324,11 +252,9 @@ public final class NarUtil {
 
   public static File getJavaHome(final File javaHome, final String os) {
     File home = javaHome;
-    // adjust JavaHome
     if (home == null) {
       home = new File(System.getProperty("java.home"));
       if (home.getName().equals("jre")) {
-        // we want the JDK base directory, not the JRE subfolder
         home = home.getParentFile();
       }
     }
@@ -343,15 +269,12 @@ public final class NarUtil {
     return link;
   }
 
-  public static String getLinkerName(final MavenProject project, final String architecture, final String os,
-      final Linker linker, final Log log) throws MojoFailureException, MojoExecutionException {
-    return getLinker(linker, log).getName(NarProperties.getInstance(project),
-        getArchitecture(architecture) + "." + getOS(os) + ".");
+  public static String getLinkerName(final MavenProject project, final String architecture, final String os, final Linker linker, final Log log) throws MojoFailureException, MojoExecutionException {
+    return getLinker(linker, log).getName(NarProperties.getInstance(project), getArchitecture(architecture) + "." + getOS(os) + ".");
   }
 
   public static String getOS(final String defaultOs) {
     String os = defaultOs;
-    // adjust OS if not given
     if (os == null) {
       os = System.getProperty("os.name");
       final String name = os.toLowerCase();
@@ -379,7 +302,6 @@ public final class NarUtil {
     if (!file.exists()) {
       return;
     }
-
     if (file.isDirectory()) {
       final File[] files = file.listFiles();
       for (final File file2 : files) {
@@ -387,13 +309,9 @@ public final class NarUtil {
       }
     }
     if (file.isFile() && file.canRead() && file.canWrite() && !file.isHidden()) {
-      // chmod +x file
-      final int result = runCommand("chmod", new String[] {
-          "+x", file.getPath()
-      }, null, null, log);
+      final int result = runCommand("chmod", new String[] { "+x", file.getPath() }, null, null, log);
       if (result != 0) {
-        throw new MojoExecutionException("Failed to execute 'chmod +x " + file.getPath() + "'" + " return code: \'"
-            + result + "\'.");
+        throw new MojoExecutionException("Failed to execute \'chmod +x " + file.getPath() + "\'" + " return code: \'" + result + "\'.");
       }
     }
   }
@@ -402,39 +320,30 @@ public final class NarUtil {
     if (!file.exists()) {
       return;
     }
-
     if (file.isDirectory()) {
       final File[] files = file.listFiles();
       for (final File file2 : files) {
         makeLink(file2, log);
       }
     }
-    if (file.isFile() && file.canRead() && file.canWrite() && !file.isHidden()
-        && file.getName().matches(".*\\.so(\\.\\d+)+$")) {
+    if (file.isFile() && file.canRead() && file.canWrite() && !file.isHidden() && file.getName().matches(".*\\.so(\\.\\d+)+$")) {
       final File sofile = new File(file.getParent(), file.getName().substring(0, file.getName().indexOf(".so") + 3));
       if (!sofile.exists()) {
-        // ln -s lib.so.xx lib.so
-        final int result = runCommand("ln", new String[] {
-            "-s", file.getName(), sofile.getPath()
-        }, null, null, log);
+        final int result = runCommand("ln", new String[] { "-s", file.getName(), sofile.getPath() }, null, null, log);
         if (result != 0) {
-          throw new MojoExecutionException("Failed to execute 'ln -s " + file.getName() + " " + sofile.getPath() + "'"
-              + " return code: \'" + result + "\'.");
+          throw new MojoExecutionException("Failed to execute \'ln -s " + file.getName() + " " + sofile.getPath() + "\'" + " return code: \'" + result + "\'.");
         }
       }
     }
   }
 
-  /* for jdk 1.4 */
   private static String quote(final String s) {
     final String escQ = "\\Q";
     final String escE = "\\E";
-
     int slashEIndex = s.indexOf(escE);
     if (slashEIndex == -1) {
       return escQ + s + escE;
     }
-
     final StringBuffer sb = new StringBuffer(s.length() * 2);
     sb.append(escQ);
     slashEIndex = 0;
@@ -452,7 +361,6 @@ public final class NarUtil {
     return sb.toString();
   }
 
-  /* for jdk 1.4 */
   private static String quoteReplacement(final String s) {
     if (s.indexOf('\\') == -1 && s.indexOf('$') == -1) {
       return s;
@@ -463,18 +371,20 @@ public final class NarUtil {
       if (c == '\\') {
         sb.append('\\');
         sb.append('\\');
-      } else if (c == '$') {
-        sb.append('\\');
-        sb.append('$');
       } else {
-        sb.append(c);
+        if (c == '$') {
+          sb.append('\\');
+          sb.append('$');
+        } else {
+          sb.append(c);
+        }
       }
     }
     return sb.toString();
   }
 
   static void removeNulls(final Collection<?> collection) {
-    for (final Iterator<?> iter = collection.iterator(); iter.hasNext();) {
+    for (final Iterator<?> iter = collection.iterator(); iter.hasNext(); ) {
       if (iter.next() == null) {
         iter.remove();
       }
@@ -490,14 +400,10 @@ public final class NarUtil {
    * @return
    */
   public static String replace(final CharSequence target, final CharSequence replacement, final String string) {
-    return Pattern.compile(quote(target.toString())/*
-                                                    * , Pattern.LITERAL jdk 1.4
-                                                    */).matcher(string).replaceAll(
-    /* Matcher. jdk 1.4 */quoteReplacement(replacement.toString()));
+    return Pattern.compile(quote(target.toString())).matcher(string).replaceAll(quoteReplacement(replacement.toString()));
   }
 
-  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env,
-      final Log log) throws MojoExecutionException, MojoFailureException {
+  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env, final Log log) throws MojoExecutionException, MojoFailureException {
     if (log.isInfoEnabled()) {
       final StringBuilder argLine = new StringBuilder();
       if (args != null) {
@@ -511,41 +417,32 @@ public final class NarUtil {
       log.info("+ " + cmd + argLine);
     }
     return runCommand(cmd, args, workingDirectory, env, new TextStream() {
-      @Override
-      public void println(final String text) {
+      @Override public void println(final String text) {
         log.info(text);
       }
     }, new TextStream() {
-      @Override
-      public void println(final String text) {
+      @Override public void println(final String text) {
         log.error(text);
       }
-
     }, new TextStream() {
-      @Override
-      public void println(final String text) {
+      @Override public void println(final String text) {
         log.debug(text);
       }
     }, log);
   }
 
-  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env,
-      final TextStream out, final TextStream err, final TextStream dbg, final Log log)
-      throws MojoExecutionException, MojoFailureException {
+  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env, final TextStream out, final TextStream err, final TextStream dbg, final Log log) throws MojoExecutionException, MojoFailureException {
     return runCommand(cmd, args, workingDirectory, env, out, err, dbg, log, false);
   }
 
-  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env,
-      final TextStream out, final TextStream err, final TextStream dbg, final Log log, final boolean expectFailure)
-      throws MojoExecutionException, MojoFailureException {
+  public static int runCommand(final String cmd, final String[] args, final File workingDirectory, final String[] env, final TextStream out, final TextStream err, final TextStream dbg, final Log log, final boolean expectFailure) throws MojoExecutionException, MojoFailureException {
     final Commandline cmdLine = new Commandline();
-
     try {
       dbg.println("RunCommand: " + cmd);
       cmdLine.setExecutable(cmd);
       if (args != null) {
         for (final String arg : args) {
-          dbg.println("  '" + arg + "'");
+          dbg.println("  \'" + arg + "\'");
         }
         cmdLine.addArguments(args);
       }
@@ -553,23 +450,20 @@ public final class NarUtil {
         dbg.println("in: " + workingDirectory.getPath());
         cmdLine.setWorkingDirectory(workingDirectory);
       }
-
       if (env != null) {
         dbg.println("with Env:");
         for (final String element : env) {
           final String[] nameValue = element.split("=", 2);
           if (nameValue.length < 2) {
-            throw new MojoFailureException("   Misformed env: '" + element + "'");
+            throw new MojoFailureException("   Misformed env: \'" + element + "\'");
           }
-          dbg.println("   '" + nameValue[0] + "=" + nameValue[1] + "'");
+          dbg.println("   \'" + nameValue[0] + "=" + nameValue[1] + "\'");
           cmdLine.addEnvironment(nameValue[0], nameValue[1]);
         }
       }
-
       final Process process = cmdLine.execute();
       final StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), err);
       final StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), out);
-
       errorGobbler.start();
       outputGobbler.start();
       process.waitFor();
@@ -600,36 +494,23 @@ public final class NarUtil {
 
   static void runInstallNameTool(final File[] files, final Log log) throws MojoExecutionException, MojoFailureException {
     final Set libs = findInstallNameToolCandidates(files, log);
-
-    for (final Iterator i = libs.iterator(); i.hasNext();) {
+    for (final Iterator i = libs.iterator(); i.hasNext(); ) {
       final File subjectFile = (File) i.next();
       final String subjectName = subjectFile.getName();
       final String subjectPath = subjectFile.getPath();
-
-      final int idResult = runCommand("install_name_tool", new String[] {
-          "-id", subjectPath, subjectPath
-      }, null, null, log);
-
+      final int idResult = runCommand("install_name_tool", new String[] { "-id", subjectPath, subjectPath }, null, null, log);
       if (idResult != 0) {
-        throw new MojoExecutionException("Failed to execute 'install_name_tool -id " + subjectPath + " " + subjectPath
-            + "'" + " return code: \'" + idResult + "\'.");
+        throw new MojoExecutionException("Failed to execute \'install_name_tool -id " + subjectPath + " " + subjectPath + "\'" + " return code: \'" + idResult + "\'.");
       }
-
-      for (final Iterator j = libs.iterator(); j.hasNext();) {
+      for (final Iterator j = libs.iterator(); j.hasNext(); ) {
         final File dependentFile = (File) j.next();
         final String dependentPath = dependentFile.getPath();
-
         if (dependentPath == subjectPath) {
           continue;
         }
-
-        final int changeResult = runCommand("install_name_tool", new String[] {
-            "-change", subjectName, subjectPath, dependentPath
-        }, null, null, log);
-
+        final int changeResult = runCommand("install_name_tool", new String[] { "-change", subjectName, subjectPath, dependentPath }, null, null, log);
         if (changeResult != 0) {
-          throw new MojoExecutionException("Failed to execute 'install_name_tool -change " + subjectName + " "
-              + subjectPath + " " + dependentPath + "'" + " return code: \'" + changeResult + "\'.");
+          throw new MojoExecutionException("Failed to execute \'install_name_tool -change " + subjectName + " " + subjectPath + " " + dependentPath + "\'" + " return code: \'" + changeResult + "\'.");
         }
       }
     }
@@ -639,7 +520,6 @@ public final class NarUtil {
     if (!file.exists()) {
       return;
     }
-
     if (file.isDirectory()) {
       final File[] files = file.listFiles();
       for (final File file2 : files) {
@@ -647,13 +527,9 @@ public final class NarUtil {
       }
     }
     if (file.isFile() && file.canWrite() && !file.isHidden() && file.getName().endsWith(".a")) {
-      // ranlib file
-      final int result = runCommand("ranlib", new String[] {
-        file.getPath()
-      }, null, null, log);
+      final int result = runCommand("ranlib", new String[] { file.getPath() }, null, null, log);
       if (result != 0) {
-        throw new MojoExecutionException("Failed to execute 'ranlib " + file.getPath() + "'" + " return code: \'"
-            + result + "\'.");
+        throw new MojoExecutionException("Failed to execute \'ranlib " + file.getPath() + "\'" + " return code: \'" + result + "\'.");
       }
     }
   }
@@ -670,7 +546,9 @@ public final class NarUtil {
     final StringBuilder sb = new StringBuilder();
     sb.append(o.getClass().getName() + ":\n");
     for (final Field f : o.getClass().getDeclaredFields()) {
-      if (f.getAnnotation(Parameter.class) == null) continue;
+      if (f.getAnnotation(Parameter.class) == null) {
+        continue;
+      }
       sb.append("\t" + f.getName() + "=" + fieldValue(f, o) + "\n");
     }
     return sb.toString();
@@ -679,13 +557,11 @@ public final class NarUtil {
   private static Object fieldValue(final Field f, final Object o) {
     try {
       return f.get(o);
-    }
-    catch (final IllegalArgumentException | IllegalAccessException exc) {
+    } catch (final IllegalArgumentException | IllegalAccessException exc) {
       return "<ERROR>";
     }
   }
 
   private NarUtil() {
-    // never instantiate
   }
 }
