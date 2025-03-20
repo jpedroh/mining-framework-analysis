@@ -1,10 +1,8 @@
 package de.hochschuletrier.gdw.ss14.ecs;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import de.hochschuletrier.gdw.commons.gdx.assets.AnimationExtended;
 import de.hochschuletrier.gdw.commons.gdx.assets.AssetManagerX;
 import de.hochschuletrier.gdw.commons.gdx.physix.PhysixManager;
@@ -24,129 +22,108 @@ import de.hochschuletrier.gdw.ss14.game.*;
 import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
 
 public class EntityFactory {
+  public static void constructBalk() {
+    int entity = manager.createEntity();
+  }
 
-    public static void constructBalk() {
-        int entity = manager.createEntity();
-    }
+  public static void constructBox() {
+    int entity = manager.createEntity();
+  }
 
-    public static void constructBox() {
-        int entity = manager.createEntity();
-    }
+  public static void constructBroom() {
+    int entity = manager.createEntity();
+  }
 
-    public static void constructBroom() {
-        int entity = manager.createEntity();
-    }
+  public static int constructCat(Vector2 pos, float maxVelocity, float middleVelocity, float minVelocity, float acceleration) {
+    int entity = manager.createEntity();
+    CatPhysicsComponent catPhysix = new CatPhysicsComponent(pos, 50, 100, 0, 1, 0);
+    CatContactSystem contactSystem = (CatContactSystem) Game.engine.getSystemOfType(CatContactSystem.class);
+    catPhysix.mListeners.add(contactSystem);
+    MovementComponent catMove = new MovementComponent(maxVelocity, middleVelocity, minVelocity, acceleration);
+    InputComponent catInput = new InputComponent();
+    catPhysix.initPhysics(phyManager);
+    CatPropertyComponent catProperty = new CatPropertyComponent();
+    AnimationComponent catAnimation = new AnimationComponent();
+    catAnimation.animation = new AnimationExtended[9];
+    catAnimation.animation[CatStateEnum.HIT.ordinal()] = assetManager.getAnimation("hit");
+    catAnimation.animation[CatStateEnum.IDLE.ordinal()] = assetManager.getAnimation("idle");
+    catAnimation.animation[CatStateEnum.WALK.ordinal()] = assetManager.getAnimation("walk");
+    catAnimation.animation[CatStateEnum.RUN.ordinal()] = assetManager.getAnimation("run");
+    catAnimation.animation[CatStateEnum.SLIDE_LEFT.ordinal()] = assetManager.getAnimation("slide_left");
+    catAnimation.animation[CatStateEnum.SLIDE_RIGHT.ordinal()] = assetManager.getAnimation("slide_right");
+    catAnimation.animation[CatStateEnum.CRASH.ordinal()] = assetManager.getAnimation("crash");
+    catAnimation.animation[CatStateEnum.FALL.ordinal()] = assetManager.getAnimation("fall");
+    catAnimation.animation[CatStateEnum.DIE.ordinal()] = assetManager.getAnimation("die");
+    CameraComponent cam = new CameraComponent();
+    cam.cameraZoom = 1.0f;
+    CatPropertyComponent catProperties = new CatPropertyComponent();
+    catProperties.state = CatStateEnum.IDLE;
+    manager.addComponent(entity, catProperties);
+    manager.addComponent(entity, catAnimation);
+    manager.addComponent(entity, new RenderComponent());
+    manager.addComponent(entity, catProperty);
+    manager.addComponent(entity, catPhysix);
+    manager.addComponent(entity, catMove);
+    manager.addComponent(entity, catInput);
+    manager.addComponent(entity, new PlayerComponent());
+    manager.addComponent(entity, cam);
+    return entity;
+  }
 
-    public static int constructCat(Vector2 pos, float maxVelocity, float middleVelocity, float minVelocity, float acceleration) {
-        int entity = manager.createEntity();
+  public static void constructCatbox() {
+    int entity = manager.createEntity();
+  }
 
-        CatPhysicsComponent catPhysix = new CatPhysicsComponent(pos, 50, 100, 0, 1, 0);
-        CatContactSystem contactSystem = (CatContactSystem) Game.engine.getSystemOfType(CatContactSystem.class);
-        catPhysix.mListeners.add(contactSystem);
+  public static int constructDog(Vector2 pos, float maxVelocity, float middleVelocity, float minVelocity, float acceleration) {
+    int entity = manager.createEntity();
+    CatPhysicsComponent dogPhysix = new CatPhysicsComponent(pos, 50, 100, 0, 1, 0);
+    MovementComponent dogMove = new MovementComponent(maxVelocity, middleVelocity, minVelocity, acceleration);
+    InputComponent dogInput = new InputComponent();
+    DogPropertyComponent dogState = new DogPropertyComponent();
+    dogPhysix.initPhysics(phyManager);
+    manager.addComponent(entity, dogState);
+    manager.addComponent(entity, dogPhysix);
+    manager.addComponent(entity, dogMove);
+    manager.addComponent(entity, dogInput);
+    manager.addComponent(entity, new EnemyComponent());
+    return entity;
+  }
 
-        MovementComponent catMove = new MovementComponent(maxVelocity, middleVelocity, minVelocity, acceleration);
-        InputComponent catInput = new InputComponent();
-        catPhysix.initPhysics(phyManager);
-        CatPropertyComponent catProperty = new CatPropertyComponent();
-        //catPhysix.physicsBody.setLinearVelocity(catMove.velocity, catMove.velocity);
-        AnimationComponent catAnimation = new AnimationComponent();
+  public static void constructDoor() {
+    int entity = manager.createEntity();
+  }
 
-        catAnimation.animation = new AnimationExtended[9];
-        catAnimation.animation[CatStateEnum.HIT.ordinal()]
-                = assetManager.getAnimation("hit");
-        catAnimation.animation[CatStateEnum.IDLE.ordinal()]
-                = assetManager.getAnimation("idle");
-        catAnimation.animation[CatStateEnum.WALK.ordinal()]
-                = assetManager.getAnimation("walk");
-        catAnimation.animation[CatStateEnum.RUN.ordinal()]
-                = assetManager.getAnimation("run");
-        catAnimation.animation[CatStateEnum.SLIDE_LEFT.ordinal()]
-                = assetManager.getAnimation("slide_left");
-        catAnimation.animation[CatStateEnum.SLIDE_RIGHT.ordinal()]
-                = assetManager.getAnimation("slide_right");
-        catAnimation.animation[CatStateEnum.CRASH.ordinal()]
-                = assetManager.getAnimation("crash");
-        catAnimation.animation[CatStateEnum.FALL.ordinal()]
-                = assetManager.getAnimation("fall");
-        catAnimation.animation[CatStateEnum.DIE.ordinal()]
-                = assetManager.getAnimation("die");
+  public static void constructFood() {
+    int entity = manager.createEntity();
+  }
 
-        CameraComponent cam = new CameraComponent();
-        cam.cameraZoom = 1.0f;
+  public static void constructLamp() {
+    int entity = manager.createEntity();
+  }
 
-        CatPropertyComponent catProperties = new CatPropertyComponent();
-        catProperties.state = CatStateEnum.IDLE;
+  public static void constructPuddleOfBlood() {
+    int entity = manager.createEntity();
+  }
 
-        manager.addComponent(entity, catProperties);
-        manager.addComponent(entity, catAnimation);
-        manager.addComponent(entity, new RenderComponent());
-        manager.addComponent(entity, catProperty);
-        manager.addComponent(entity, catPhysix);
-        manager.addComponent(entity, catMove);
-        manager.addComponent(entity, catInput);
-        manager.addComponent(entity, new PlayerComponent());
-        manager.addComponent(entity, cam);
-        //manager.addComponent(entity, new ConePhysicsComponent(catPhysix.getPosition(), 100,100,100));
-        //manager.addComponent(entity, new HitAnimationComponent());
+  public static void constructPuddleOfWater() {
+    int entity = manager.createEntity();
+  }
 
-        return entity;
-    }
+  public static void constructStairs() {
+    int entity = manager.createEntity();
+  }
 
-    public static void constructCatbox() {
-        int entity = manager.createEntity();
-    }
+  public static void constructVase() {
+    int entity = manager.createEntity();
+  }
 
-    public static int constructDog(Vector2 pos, float maxVelocity, float middleVelocity, float minVelocity, float acceleration) {
-        int entity = manager.createEntity();
-        CatPhysicsComponent dogPhysix = new CatPhysicsComponent(pos, 50, 100, 0, 1, 0);
-        MovementComponent dogMove = new MovementComponent(maxVelocity, middleVelocity, minVelocity, acceleration);
-        InputComponent dogInput = new InputComponent();
-        DogPropertyComponent dogState = new DogPropertyComponent();
-        dogPhysix.initPhysics(phyManager);
-        manager.addComponent(entity, dogState);
-        manager.addComponent(entity, dogPhysix);
-        manager.addComponent(entity, dogMove);
-        manager.addComponent(entity, dogInput);
-        manager.addComponent(entity, new EnemyComponent());
-//        manager.addComponent(entity, new AnimationComponent());
-        return entity;
-    }
+  public static void constructWool() {
+    int entity = manager.createEntity();
+  }
 
-    public static void constructDoor() {
-        int entity = manager.createEntity();
-    }
+  public static EntityManager manager;
 
-    public static void constructFood() {
-        int entity = manager.createEntity();
-    }
+  public static PhysixManager phyManager;
 
-    public static void constructLamp() {
-        int entity = manager.createEntity();
-    }
-
-    public static void constructPuddleOfBlood() {
-        int entity = manager.createEntity();
-    }
-
-    public static void constructPuddleOfWater() {
-        int entity = manager.createEntity();
-    }
-
-    public static void constructStairs() {
-        int entity = manager.createEntity();
-    }
-
-    public static void constructVase() {
-        int entity = manager.createEntity();
-    }
-
-    public static void constructWool() {
-        int entity = manager.createEntity();
-    }
-
-    public static EntityManager manager;
-
-    public static PhysixManager phyManager;
-
-    public static AssetManagerX assetManager;
+  public static AssetManagerX assetManager;
 }
