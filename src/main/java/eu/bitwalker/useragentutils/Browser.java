@@ -388,10 +388,103 @@ public enum Browser {
         if (agentString == null)
             return false;
 
+<<<<<<< /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/left.java
+    String agentStringLowerCase = agentString.toLowerCase();
+
+		return contains(agentStringLowerCase, aliases);
+	}
+
+	/**
+	 * Returns true if str contains any other string from array as a substring.
+	 */
+	private boolean contains(String str, String[] array) {
+		for (String s: array) {
+			if (str.contains(s))
+				return true;
+		}
+		return false;
+	}
+||||||| /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/base.java
+    String agentStringLowerCase = agentString.toLowerCase();
+		for (String alias : aliases)
+		{
+      if (agentStringLowerCase.contains(alias))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the given user-agent does not contain one of the tokens which should not match.
+	 * In most cases there are no excluding tokens, so the impact should be small.
+	 * @param agentString
+	 * @return
+	 */
+	private boolean containsExcludeToken(String agentString)
+	{
+    if (agentString == null) return false;
+=======
         String agentStringLowerCase = agentString.toLowerCase();
         return isInUserAgentLowercaseString(agentStringLowerCase);
     }
+>>>>>>> /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/right.java
 
+<<<<<<< /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/left.java
+	// for performance reasons this method accepts only lower case agent string;
+	// it does not call toLowerCase because the method itself can be called too often
+	private Browser checkUserAgent(String lowerCaseAgentString) {
+		if (lowerCaseAgentString == null) return null;
+
+		if (contains(lowerCaseAgentString, aliases)) {
+			if (this.children.size() > 0) {
+				for (Browser childBrowser : this.children) {
+					Browser match = childBrowser.checkUserAgent(lowerCaseAgentString);
+					if (match != null) { 
+						return match;
+					}
+				}
+			}
+			
+			// if children didn't match we continue checking the current to prevent false positives
+			if (excludeList == null || !contains(lowerCaseAgentString, excludeList)) {
+				return this;
+			}
+			
+		}
+		return null;
+	}
+||||||| /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/base.java
+		if (excludeList != null) {
+      String agentStringLowerCase = agentString.toLowerCase();
+      for (String exclude : excludeList) {
+        if (agentStringLowerCase.contains(exclude))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private Browser checkUserAgent(String agentString) {
+		if (this.isInUserAgentString(agentString)) {
+			
+			if (this.children.size() > 0) {
+				for (Browser childBrowser : this.children) {
+					Browser match = childBrowser.checkUserAgent(agentString);
+					if (match != null) { 
+						return match;
+					}
+				}
+			}
+			
+			// if children didn't match we continue checking the current to prevent false positives
+			if (!this.containsExcludeToken(agentString)) {
+				return this;
+			}
+			
+		}
+		return null;
+	}
+=======
     private boolean isInUserAgentLowercaseString(String agentStringLowerCase) {
         for (String alias : aliases)
         {
@@ -437,6 +530,7 @@ public enum Browser {
         }
         return null;
     }
+>>>>>>> /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/right.java
 	
 	/**
 	 * Iterates over all Browsers to compare the browser signature with 
@@ -452,6 +546,53 @@ public enum Browser {
 	{
 		return parseUserAgentString(agentString, topLevelBrowsers);
 	}
+<<<<<<< /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/left.java
+	
+	/**
+	 * Iterates over the given Browsers (incl. children) to compare the browser 
+	 * signature with the user agent string. 
+	 * If no match can be found Browser.UNKNOWN will be returned.
+	 * Steps out of loop as soon as there is a match.
+	 * Be aware that if the order of the provided Browsers is incorrect or if the set is too limited it can lead to false matches!
+	 * @param agentString
+	 * @return Browser
+	 */
+	public static Browser parseUserAgentString(String agentString, List<Browser> browsers)
+	{
+		if (agentString == null) return Browser.UNKNOWN;
+
+		String loCaseAgentString = agentString.toLowerCase();
+
+		for (Browser browser : browsers) {
+			Browser match = browser.checkUserAgent(loCaseAgentString);
+			if (match != null) {
+				return match; // either current operatingSystem or a child object
+			}
+		}
+		return Browser.UNKNOWN;
+	}
+||||||| /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/base.java
+	
+	/**
+	 * Iterates over the given Browsers (incl. children) to compare the browser 
+	 * signature with the user agent string. 
+	 * If no match can be found Browser.UNKNOWN will be returned.
+	 * Steps out of loop as soon as there is a match.
+	 * Be aware that if the order of the provided Browsers is incorrect or if the set is too limited it can lead to false matches!
+	 * @param agentString
+	 * @return Browser
+	 */
+	public static Browser parseUserAgentString(String agentString, List<Browser> browsers)
+	{
+		for (Browser browser : browsers) {
+			Browser match = browser.checkUserAgent(agentString);
+			if (match != null) {
+				return match; // either current operatingSystem or a child object
+			}
+		}
+		return Browser.UNKNOWN;
+	}
+=======
 
     public static Browser parseUserAgentLowercaseString(String agentString)
     {
@@ -488,6 +629,7 @@ public enum Browser {
         }
         return Browser.UNKNOWN;
     }
+>>>>>>> /usr/src/app/output/haraldwalker/user-agent-utils/d431158a5cb37a09e8878abbc423429ba2ee1db1/src/main/java/eu/bitwalker/useragentutils/Browser.java/right.java
 		
 	/**
 	 * Returns the enum constant of this type with the specified id.
