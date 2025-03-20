@@ -51,12 +51,14 @@ public final class MkRepoCommitsTest {
     public void returnIterator() throws IOException {
         final String user =  "testuser1";
         MatcherAssert.assertThat(
-            new MkRepoCommits(
+             new MkRepoCommits(
                 new MkStorage.InFile(),
                 user,
                 new Coordinates.Simple(user, "testrepo1")
-            ).iterate(Collections.<String, String>emptyMap()),
-            Matchers.notNullValue()
+            ).iterate(
+                Collections.<String, String>emptyMap()
+            ),
+                Matchers.notNullValue()
         );
     }
 
