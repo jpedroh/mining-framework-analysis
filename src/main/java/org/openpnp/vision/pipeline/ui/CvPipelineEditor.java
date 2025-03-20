@@ -1,15 +1,12 @@
 package org.openpnp.vision.pipeline.ui;
-
 import java.awt.BorderLayout;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-
 import org.openpnp.vision.pipeline.CvPipeline;
 import org.openpnp.vision.pipeline.CvStage;
 import org.openpnp.vision.pipeline.stages.BlurGaussian;
@@ -79,119 +76,114 @@ import org.openpnp.vision.pipeline.stages.WritePartTemplateImage;
  * 
  * The core CvStage classes are automatically registered during startup.
  */
-@SuppressWarnings("serial")
-public class CvPipelineEditor extends JPanel {
-    static {
-        stageClasses = new HashSet<>();
-        registerStageClass(BlurMedian.class);
-        registerStageClass(BlurGaussian.class);
-        registerStageClass(ClosestModel.class);
-        registerStageClass(Add.class);
-        registerStageClass(ComposeResult.class);
-        registerStageClass(ConvertColor.class);
-        registerStageClass(ConvertModelToPoints.class);
-        registerStageClass(ConvertModelToKeyPoints.class);
-        registerStageClass(CreateFootprintTemplateImage.class);
-        registerStageClass(CreateModelTemplateImage.class);
-        registerStageClass(CreateShapeTemplateImage.class);
-        registerStageClass(DetectCirclesHough.class);
-        registerStageClass(DetectEdgesCanny.class);
-        registerStageClass(DetectEdgesRobertsCross.class);
-        registerStageClass(DetectEdgesLaplacian.class);
-        registerStageClass(DetectFixedCirclesHough.class);
-        registerStageClass(DilateModel.class);
-        registerStageClass(DrawCircles.class);
-        registerStageClass(DrawContours.class);
-        registerStageClass(DrawImageCenter.class);
-        registerStageClass(DrawKeyPoints.class);
-        registerStageClass(DrawRotatedRects.class);
-        registerStageClass(DrawEllipses.class);
-        registerStageClass(DrawTemplateMatches.class);
-        registerStageClass(FilterContours.class);
-        registerStageClass(FilterRects.class);
-        registerStageClass(FindContours.class);
-        registerStageClass(GrabCut.class);
-        registerStageClass(HistogramEqualize.class);
-        registerStageClass(ImageCapture.class);
-        registerStageClass(ImageRead.class);
-        registerStageClass(ImageRecall.class);
-        registerStageClass(ImageWrite.class);
-        registerStageClass(ImageWriteDebug.class);
-        registerStageClass(MaskCircle.class);
-        registerStageClass(MaskHsv.class);
-        registerStageClass(MaskModel.class);
-        registerStageClass(MaskPolygon.class);
-        registerStageClass(MaskRectangle.class);
-        registerStageClass(MatchTemplate.class);
-        registerStageClass(MatchPartTemplate.class);
-        registerStageClass(MinAreaRect.class);
-        registerStageClass(MinAreaRectContours.class);
-        registerStageClass(FitEllipseContours.class);
-        registerStageClass(Normalize.class);
-        registerStageClass(OrientRotatedRects.class);
-        registerStageClass(ReadModelProperty.class);
-        registerStageClass(ReadPartTemplateImage.class);
-        registerStageClass(Rotate.class);
-        registerStageClass(SetColor.class);
-        registerStageClass(ScriptRun.class);
-        registerStageClass(SimpleBlobDetector.class);
-        registerStageClass(Threshold.class);
-        registerStageClass(ThresholdAdaptive.class);
-        registerStageClass(WritePartTemplateImage.class);
-    }
+@SuppressWarnings(value = { "serial" }) public class CvPipelineEditor extends JPanel {
+  static {
+    stageClasses = new HashSet<>();
+    registerStageClass(BlurMedian.class);
+    registerStageClass(BlurGaussian.class);
+    registerStageClass(ClosestModel.class);
+    registerStageClass(Add.class);
+    registerStageClass(ComposeResult.class);
+    registerStageClass(ConvertColor.class);
+    registerStageClass(ConvertModelToPoints.class);
+    registerStageClass(ConvertModelToKeyPoints.class);
+    registerStageClass(CreateFootprintTemplateImage.class);
+    registerStageClass(CreateModelTemplateImage.class);
+    registerStageClass(CreateShapeTemplateImage.class);
+    registerStageClass(DetectCirclesHough.class);
+    registerStageClass(DetectEdgesCanny.class);
+    registerStageClass(DetectEdgesRobertsCross.class);
+    registerStageClass(DetectEdgesLaplacian.class);
+    registerStageClass(DetectFixedCirclesHough.class);
+    registerStageClass(DilateModel.class);
+    registerStageClass(DrawCircles.class);
+    registerStageClass(DrawContours.class);
+    registerStageClass(DrawImageCenter.class);
+    registerStageClass(DrawKeyPoints.class);
+    registerStageClass(DrawRotatedRects.class);
+    registerStageClass(DrawEllipses.class);
+    registerStageClass(DrawTemplateMatches.class);
+    registerStageClass(FilterContours.class);
+    registerStageClass(FilterRects.class);
+    registerStageClass(FindContours.class);
+    registerStageClass(GrabCut.class);
+    registerStageClass(HistogramEqualize.class);
+    registerStageClass(ImageCapture.class);
+    registerStageClass(ImageRead.class);
+    registerStageClass(ImageRecall.class);
+    registerStageClass(ImageWrite.class);
+    registerStageClass(ImageWriteDebug.class);
+    registerStageClass(MaskCircle.class);
+    registerStageClass(MaskHsv.class);
+    registerStageClass(MaskModel.class);
+    registerStageClass(MaskPolygon.class);
+    registerStageClass(MaskRectangle.class);
+    registerStageClass(MatchTemplate.class);
+    registerStageClass(MatchPartTemplate.class);
+    registerStageClass(MinAreaRect.class);
+    registerStageClass(MinAreaRectContours.class);
+    registerStageClass(FitEllipseContours.class);
+    registerStageClass(Normalize.class);
+    registerStageClass(OrientRotatedRects.class);
+    registerStageClass(ReadModelProperty.class);
+    registerStageClass(ReadPartTemplateImage.class);
+    registerStageClass(Rotate.class);
+    registerStageClass(SetColor.class);
+    registerStageClass(ScriptRun.class);
+    registerStageClass(SimpleBlobDetector.class);
+    registerStageClass(Threshold.class);
+    registerStageClass(ThresholdAdaptive.class);
+    registerStageClass(WritePartTemplateImage.class);
+  }
 
-    private final static Set<Class<? extends CvStage>> stageClasses;
+  private final static Set<Class<? extends CvStage>> stageClasses;
 
-    private final CvPipeline pipeline;
-    private PipelinePanel pipelinePanel;
-    private ResultsPanel resultsPanel;
+  private final CvPipeline pipeline;
 
-    public CvPipelineEditor(CvPipeline pipeline) {
-        this.pipeline = pipeline;
+  private PipelinePanel pipelinePanel;
 
-        setLayout(new BorderLayout(0, 0));
+  private ResultsPanel resultsPanel;
 
-        JSplitPane inputAndOutputSplitPane = new JSplitPane();
-        inputAndOutputSplitPane.setContinuousLayout(true);
-        add(inputAndOutputSplitPane, BorderLayout.CENTER);
+  public CvPipelineEditor(CvPipeline pipeline) {
+    this.pipeline = pipeline;
+    setLayout(new BorderLayout(0, 0));
+    JSplitPane inputAndOutputSplitPane = new JSplitPane();
+    inputAndOutputSplitPane.setContinuousLayout(true);
+    add(inputAndOutputSplitPane, BorderLayout.CENTER);
+    resultsPanel = new ResultsPanel(this);
+    inputAndOutputSplitPane.setRightComponent(resultsPanel);
+    pipelinePanel = new PipelinePanel(this);
+    inputAndOutputSplitPane.setLeftComponent(pipelinePanel);
+    addHierarchyListener(new HierarchyListener() {
+      @Override public void hierarchyChanged(HierarchyEvent e) {
+        inputAndOutputSplitPane.setDividerLocation(0.25);
+      }
+    });
+    process();
+  }
 
-        resultsPanel = new ResultsPanel(this);
-        inputAndOutputSplitPane.setRightComponent(resultsPanel);
-        pipelinePanel = new PipelinePanel(this);
-        inputAndOutputSplitPane.setLeftComponent(pipelinePanel);
-        
-        addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                inputAndOutputSplitPane.setDividerLocation(0.25);
-            }
-        });
-        
-        process();
-    }
-    
-    public void initializeFocus() {
-        pipelinePanel.initializeFocus();    	
-    }
-    
-    public CvPipeline getPipeline() {
-        return pipeline;
-    }
+  public void initializeFocus() {
+    pipelinePanel.initializeFocus();
+  }
 
-    public void process() {
-        getPipeline().process();
-        resultsPanel.refresh();
-    }
+  public CvPipeline getPipeline() {
+    return pipeline;
+  }
 
-    public void stageSelected(CvStage stage) {
-        resultsPanel.setSelectedStage(stage);
-    }
+  public void process() {
+    getPipeline().process();
+    resultsPanel.refresh();
+  }
 
-    public static Set<Class<? extends CvStage>> getStageClasses() {
-        return Collections.unmodifiableSet(stageClasses);
-    }
+  public void stageSelected(CvStage stage) {
+    resultsPanel.setSelectedStage(stage);
+  }
 
-    public static void registerStageClass(Class<? extends CvStage> cls) {
-        stageClasses.add(cls);
-    }
+  public static Set<Class<? extends CvStage>> getStageClasses() {
+    return Collections.unmodifiableSet(stageClasses);
+  }
+
+  public static void registerStageClass(Class<? extends CvStage> cls) {
+    stageClasses.add(cls);
+  }
 }
