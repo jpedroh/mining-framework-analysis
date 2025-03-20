@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.ParseResult;
@@ -412,6 +413,11 @@ public class CompilationUnit extends Node {
     public ClassOrInterfaceDeclaration addClass(String name) {
         return addClass(name, Modifier.Keyword.PUBLIC);
     }
+    public ClassOrInterfaceDeclaration addClass(String name, Modifier.Keyword... modifiers) {
+        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), false, name);
+        getTypes().add(classOrInterfaceDeclaration);
+        return classOrInterfaceDeclaration;
+    }
 
     /**
      * Add a class to the types of this compilation unit
@@ -420,11 +426,6 @@ public class CompilationUnit extends Node {
      * @param modifiers the modifiers (like Modifier.PUBLIC)
      * @return the newly created class
      */
-    public ClassOrInterfaceDeclaration addClass(String name, Modifier.Keyword... modifiers) {
-        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), false, name);
-        getTypes().add(classOrInterfaceDeclaration);
-        return classOrInterfaceDeclaration;
-    }
 
     /**
      * Add a public interface class to the types of this compilation unit
@@ -435,6 +436,11 @@ public class CompilationUnit extends Node {
     public ClassOrInterfaceDeclaration addInterface(String name) {
         return addInterface(name, Modifier.Keyword.PUBLIC);
     }
+    public ClassOrInterfaceDeclaration addInterface(String name, Modifier.Keyword... modifiers) {
+        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), true, name);
+        getTypes().add(classOrInterfaceDeclaration);
+        return classOrInterfaceDeclaration;
+    }
 
     /**
      * Add an interface to the types of this compilation unit
@@ -443,11 +449,6 @@ public class CompilationUnit extends Node {
      * @param modifiers the modifiers (like Modifier.PUBLIC)
      * @return the newly created class
      */
-    public ClassOrInterfaceDeclaration addInterface(String name, Modifier.Keyword... modifiers) {
-        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = new ClassOrInterfaceDeclaration(createModifierList(modifiers), true, name);
-        getTypes().add(classOrInterfaceDeclaration);
-        return classOrInterfaceDeclaration;
-    }
 
     /**
      * Add a public enum to the types of this compilation unit
@@ -458,6 +459,11 @@ public class CompilationUnit extends Node {
     public EnumDeclaration addEnum(String name) {
         return addEnum(name, Modifier.Keyword.PUBLIC);
     }
+    public EnumDeclaration addEnum(String name, Modifier.Keyword... modifiers) {
+        EnumDeclaration enumDeclaration = new EnumDeclaration(createModifierList(modifiers), name);
+        getTypes().add(enumDeclaration);
+        return enumDeclaration;
+    }
 
     /**
      * Add an enum to the types of this compilation unit
@@ -466,11 +472,6 @@ public class CompilationUnit extends Node {
      * @param modifiers the modifiers (like Modifier.PUBLIC)
      * @return the newly created class
      */
-    public EnumDeclaration addEnum(String name, Modifier.Keyword... modifiers) {
-        EnumDeclaration enumDeclaration = new EnumDeclaration(createModifierList(modifiers), name);
-        getTypes().add(enumDeclaration);
-        return enumDeclaration;
-    }
 
     /**
      * Add a public annotation declaration to the types of this compilation unit
@@ -481,6 +482,11 @@ public class CompilationUnit extends Node {
     public AnnotationDeclaration addAnnotationDeclaration(String name) {
         return addAnnotationDeclaration(name, Modifier.Keyword.PUBLIC);
     }
+    public AnnotationDeclaration addAnnotationDeclaration(String name, Modifier.Keyword... modifiers) {
+        AnnotationDeclaration annotationDeclaration = new AnnotationDeclaration(createModifierList(modifiers), name);
+        getTypes().add(annotationDeclaration);
+        return annotationDeclaration;
+    }
 
     /**
      * Add an annotation declaration to the types of this compilation unit
@@ -489,11 +495,6 @@ public class CompilationUnit extends Node {
      * @param modifiers the modifiers (like Modifier.PUBLIC)
      * @return the newly created class
      */
-    public AnnotationDeclaration addAnnotationDeclaration(String name, Modifier.Keyword... modifiers) {
-        AnnotationDeclaration annotationDeclaration = new AnnotationDeclaration(createModifierList(modifiers), name);
-        getTypes().add(annotationDeclaration);
-        return annotationDeclaration;
-    }
 
     /**
      * Try to get a top level class declaration by its name
