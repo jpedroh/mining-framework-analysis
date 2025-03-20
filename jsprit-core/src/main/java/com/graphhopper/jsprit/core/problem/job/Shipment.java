@@ -89,9 +89,8 @@ public class Shipment extends AbstractJob {
 
         private int priority = 2;
 
-        public Object userData;
-
         public double maxTimeInVehicle = Double.MAX_VALUE;
+        public Object userData;
 
         /**
          * Returns new instance of this builder.

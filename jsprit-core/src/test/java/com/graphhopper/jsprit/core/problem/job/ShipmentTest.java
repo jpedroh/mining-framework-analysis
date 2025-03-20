@@ -443,19 +443,6 @@ public class ShipmentTest {
     }
 
     @Test
-    public void whenSettingUserData_itIsAssociatedWithTheJob() {
-        Shipment one = Shipment.Builder.newInstance("s").setPickupLocation(Location.newInstance("loc"))
-                .setDeliveryLocation(Location.newInstance("loc")).setUserData(new HashMap<String, Object>()).build();
-        Shipment two = Shipment.Builder.newInstance("s2").setPickupLocation(Location.newInstance("loc"))
-                .setDeliveryLocation(Location.newInstance("loc")).setUserData(42).build();
-        Shipment three = Shipment.Builder.newInstance("s3").setPickupLocation(Location.newInstance("loc"))
-                .setDeliveryLocation(Location.newInstance("loc")).build();
-
-        assertTrue(one.getUserData() instanceof Map);
-        assertEquals(42, two.getUserData());
-        assertNull(three.getUserData());
-    }
-    @Test
     public void whenAddingMaxTimeInVehicle_itShouldBeSet(){
         Shipment s = Shipment.Builder.newInstance("s").setPickupLocation(Location.newInstance("loc")).setDeliveryLocation(Location.newInstance("loc"))
             .setMaxTimeInVehicle(10)
@@ -470,4 +457,17 @@ public class ShipmentTest {
         Assert.assertEquals(Double.MAX_VALUE, s.getMaxTimeInVehicle(),0.001);
     }
 
+    @Test
+    public void whenSettingUserData_itIsAssociatedWithTheJob() {
+        Shipment one = Shipment.Builder.newInstance("s").setPickupLocation(Location.newInstance("loc"))
+                .setDeliveryLocation(Location.newInstance("loc")).setUserData(new HashMap<String, Object>()).build();
+        Shipment two = Shipment.Builder.newInstance("s2").setPickupLocation(Location.newInstance("loc"))
+                .setDeliveryLocation(Location.newInstance("loc")).setUserData(42).build();
+        Shipment three = Shipment.Builder.newInstance("s3").setPickupLocation(Location.newInstance("loc"))
+                .setDeliveryLocation(Location.newInstance("loc")).build();
+
+        assertTrue(one.getUserData() instanceof Map);
+        assertEquals(42, two.getUserData());
+        assertNull(three.getUserData());
+    }
 }

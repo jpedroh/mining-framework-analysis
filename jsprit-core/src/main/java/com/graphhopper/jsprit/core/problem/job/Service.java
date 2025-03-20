@@ -91,13 +91,15 @@ public class Service extends AbstractJob {
         private boolean twAdded = false;
 
         private int priority = 2;
+
+        protected double maxTimeInVehicle = Double.MAX_VALUE;
         protected Object userData;
 
-		protected double maxTimeInVehicle = Double.MAX_VALUE;Builder(String id){
-			this.id = id;
-			timeWindows = new TimeWindowsImpl();
-			timeWindows.add(timeWindow);
-		}
+        Builder(String id){
+            this.id = id;
+            timeWindows = new TimeWindowsImpl();
+            timeWindows.add(timeWindow);
+        }
 
         /**
          * Protected method to set the type-name of the service.
@@ -289,7 +291,8 @@ public class Service extends AbstractJob {
         location = builder.location;
         timeWindowManager = builder.timeWindows;
         priority = builder.priority;
-	maxTimeInVehicle = builder.maxTimeInVehicle;}
+        maxTimeInVehicle = builder.maxTimeInVehicle;
+	}
 
     public Collection<TimeWindow> getTimeWindows(){
         return timeWindowManager.getTimeWindows();

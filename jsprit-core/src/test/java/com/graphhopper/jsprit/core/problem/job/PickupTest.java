@@ -112,18 +112,6 @@ public class PickupTest {
         Assert.assertEquals(2, s.getPriority());
     }
 
-    @Test
-    public void whenSettingUserData_itIsAssociatedWithTheJob() {
-        Pickup one = Pickup.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
-                .setUserData(new HashMap<String, Object>()).build();
-        Pickup two = Pickup.Builder.newInstance("s2").setLocation(Location.newInstance("loc")).setUserData(42).build();
-        Pickup three = Pickup.Builder.newInstance("s3").setLocation(Location.newInstance("loc")).build();
-
-        assertTrue(one.getUserData() instanceof Map);
-        assertEquals(42, two.getUserData());
-        assertNull(three.getUserData());
-    }
-    
     @Test(expected = UnsupportedOperationException.class)
     public void whenAddingMaxTimeInVehicle_itShouldThrowEx(){
         Pickup s = Pickup.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
@@ -138,4 +126,15 @@ public class PickupTest {
         Assert.assertEquals(Double.MAX_VALUE, s.getMaxTimeInVehicle(),0.001);
     }
 
+    @Test
+    public void whenSettingUserData_itIsAssociatedWithTheJob() {
+        Pickup one = Pickup.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
+                .setUserData(new HashMap<String, Object>()).build();
+        Pickup two = Pickup.Builder.newInstance("s2").setLocation(Location.newInstance("loc")).setUserData(42).build();
+        Pickup three = Pickup.Builder.newInstance("s3").setLocation(Location.newInstance("loc")).build();
+
+        assertTrue(one.getUserData() instanceof Map);
+        assertEquals(42, two.getUserData());
+        assertNull(three.getUserData());
+    }
 }

@@ -300,7 +300,6 @@ public class ServiceTest {
         Assert.assertEquals(Double.MAX_VALUE, s.getMaxTimeInVehicle(),0.001);
     }
 
-
     @Test
     public void whenSettingUserData_itIsAssociatedWithTheJob() {
         Service one = Service.Builder.newInstance("s").setLocation(Location.newInstance("loc"))
