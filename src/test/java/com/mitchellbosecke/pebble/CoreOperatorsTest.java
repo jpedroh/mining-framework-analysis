@@ -161,20 +161,20 @@ public class CoreOperatorsTest extends AbstractTest {
         PebbleEngine pebble = new PebbleEngine(loader);
 
         String source = "{% if 3 > 2 %}yes{% endif %}" +
-                        "{% if 2 > 3 %}no{% endif %}" +
-                        "{% if 2 > 2 %}no{% endif %}" +
-                        "{% if 2 < 3 %}yes{% endif %}" +
-                        "{% if 3 < 2 %}no{% endif %}" +
-                        "{% if 2 < 2 %}no{% endif %}" +
-                        "{% if 3 >= 3 %}yes{% endif %}" +
-                        "{% if 3 >= 2 %}yes{% endif %}" +
-                        "{% if 2 >= 3 %}no{% endif %}" +
-                        "{% if 3 <= 3 %}yes{% endif %}" +
-                        "{% if 3 <= 2 %}no{% endif %}" +
-                        "{% if 2 <= 3 %}yes{% endif %}" +
-                        "{% if 100 <= 100 %}yes{% endif %}" +
-                        "{% if 2 == 2 %}yes{% endif %}" +
-                        "{% if 2 == 3 %}no{% endif %}";
+        		"{% if 2 > 3 %}no{% endif %}" +
+        		"{% if 2 > 2 %}no{% endif %}" +
+        		"{% if 2 < 3 %}yes{% endif %}" +
+        		"{% if 3 < 2 %}no{% endif %}" +
+        		"{% if 2 < 2 %}no{% endif %}" +
+        		"{% if 3 >= 3 %}yes{% endif %}" +
+        		"{% if 3 >= 2 %}yes{% endif %}" +
+        		"{% if 2 >= 3 %}no{% endif %}" +
+        		"{% if 3 <= 3 %}yes{% endif %}" +
+        		"{% if 3 <= 2 %}no{% endif %}" +
+        		"{% if 2 <= 3 %}yes{% endif %}" +
+        		"{% if 100 <= 100 %}yes{% endif %}" +
+        		"{% if 2 == 2 %}yes{% endif %}" +
+        		"{% if 2 == 3 %}no{% endif %}";
         PebbleTemplate template = pebble.getTemplate(source);
 
         Writer writer = new StringWriter();
@@ -548,6 +548,27 @@ public class CoreOperatorsTest extends AbstractTest {
     /**
      * Tests if the string concatenation is working.
      */
+<<<<<<< /usr/src/app/output/mbosecke/pebble/efa877dcba59b39df1cdceb95c0516bb248e4549/src/test/java/com/mitchellbosecke/pebble/CoreOperatorsTest.java/left.java
+    @Test
+    public void testStringConcatenation() throws PebbleException, IOException {
+        Loader<?> loader = new StringLoader();
+        PebbleEngine pebble = new PebbleEngine(loader);
+
+        String source = "{{ name1 ~ name2 ~ name3 | lower }}";
+        PebbleTemplate template = pebble.getTemplate(source);
+
+        Map<String, Object> context = new HashMap<>();
+        context.put("name1", "Bob");
+        context.put("name2", "Maria");
+        context.put("name3", "John");
+
+        Writer writer = new StringWriter();
+        template.evaluate(writer, context);
+        assertEquals("bobmariajohn", writer.toString());
+
+    }
+||||||| /usr/src/app/output/mbosecke/pebble/efa877dcba59b39df1cdceb95c0516bb248e4549/src/test/java/com/mitchellbosecke/pebble/CoreOperatorsTest.java/base.java
+=======
     @Test
     public void testStringConcatenation() throws PebbleException, IOException {
         Loader loader = new StringLoader();
@@ -566,5 +587,9 @@ public class CoreOperatorsTest extends AbstractTest {
         assertEquals("bobmariajohn", writer.toString());
 
     }
+>>>>>>> /usr/src/app/output/mbosecke/pebble/efa877dcba59b39df1cdceb95c0516bb248e4549/src/test/java/com/mitchellbosecke/pebble/CoreOperatorsTest.java/right.java
+    /**
+     * Tests if the string concatenation is working.
+     */
 
 }
