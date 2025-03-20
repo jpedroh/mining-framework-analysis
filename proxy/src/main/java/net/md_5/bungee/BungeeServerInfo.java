@@ -180,7 +180,7 @@ public class BungeeServerInfo implements ServerInfo
             }
         };
         new Bootstrap()
-                .channel( PipelineUtils.getChannel( socketAddress ) )
+                .channel( PipelineUtils.getChannel(socketAddress) )
                 .group( BungeeCord.getInstance().workerEventLoopGroup ) //BotFilter //WaterFall backport
                 .handler( PipelineUtils.BASE )
                 .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 ) // TODO: Configurable

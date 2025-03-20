@@ -139,13 +139,14 @@ public class Configuration implements ProxyConfig
         {
             HashSet<String> toRemove = new HashSet<>();
             servers.values().stream()
-                .filter( oldServer -> ( !newServers.containsKey( oldServer.getName() )
-                        || !newServers.get( oldServer.getName() ).equals( oldServer ) ) )
-                .forEach( server ->
-                {
-                    toRemove.add( server.getName() );
-                    server.getPlayers().forEach( p -> p.disconnect( BungeeCord.getInstance().getTranslation( "server_went_down" ) ) );
-                } );
+                    .filter(
+                            oldServer -> ( !newServers.containsKey( oldServer.getName() )
+                            || !newServers.get( oldServer.getName() ).equals( oldServer ) )
+                    ).forEach( server ->
+                    {
+                        toRemove.add( server.getName() );
+                        server.getPlayers().forEach( p -> p.disconnect( BungeeCord.getInstance().getTranslation( "server_went_down" ) ) );
+                    } );
 
             toRemove.forEach( s -> servers.remove( s ) );
 
