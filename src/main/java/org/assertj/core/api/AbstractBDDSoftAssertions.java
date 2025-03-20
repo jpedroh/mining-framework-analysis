@@ -1,19 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -35,13 +21,9 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
-
-  // then* methods duplicated from BDDAssertions
-
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
@@ -161,8 +143,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return proxy(GenericComparableAssert.class, Comparable.class, actual);
   }
 
@@ -172,8 +153,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> IterableAssert<T> then(Iterable<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> IterableAssert<T> then(Iterable<? extends T> actual) {
     return proxy(IterableAssert.class, Iterable.class, actual);
   }
 
@@ -185,8 +165,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> IterableAssert<T> then(Iterator<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> IterableAssert<T> then(Iterator<T> actual) {
     return proxy(IterableAssert.class, Iterator.class, actual);
   }
 
@@ -316,8 +295,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> ListAssert<T> then(List<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> ListAssert<T> then(List<? extends T> actual) {
     return proxy(ListAssert.class, List.class, actual);
   }
 
@@ -357,8 +335,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> ObjectAssert<T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> ObjectAssert<T> then(T actual) {
     return proxy(ObjectAssert.class, Object.class, actual);
   }
 
@@ -368,8 +345,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> ObjectArrayAssert<T> then(T[] actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> ObjectArrayAssert<T> then(T[] actual) {
     return proxy(ObjectArrayAssert.class, Object[].class, actual);
   }
 
@@ -381,8 +357,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <K, V> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <K extends java.lang.Object, V extends java.lang.Object> SoftAssertionMapAssert<K, V> then(Map<K, V> actual) {
     return proxy(SoftAssertionMapAssert.class, Map.class, actual);
   }
 
@@ -495,8 +470,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    *
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> OptionalAssert<T> then(Optional<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> OptionalAssert<T> then(Optional<T> actual) {
     return proxy(OptionalAssert.class, Optional.class, actual);
   }
 
@@ -621,8 +595,7 @@ public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
    *
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> CompletableFutureAssert<T> then(CompletableFuture<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> CompletableFutureAssert<T> then(CompletableFuture<T> actual) {
     return proxy(CompletableFutureAssert.class, CompletableFuture.class, actual);
   }
 }
