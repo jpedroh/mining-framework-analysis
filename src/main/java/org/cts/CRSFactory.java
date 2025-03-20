@@ -205,8 +205,17 @@ public class CRSFactory {
 
     /**
      * Return a list of supported codes according an registryName
+<<<<<<< /usr/src/app/output/irstv/cts/79a1b379cbabf06a9869a9b4cf17f1e8e731c06f/src/main/java/org/cts/CRSFactory.java/left.java
+     *
+     * @param registeryName
+     * @return
+||||||| /usr/src/app/output/irstv/cts/79a1b379cbabf06a9869a9b4cf17f1e8e731c06f/src/main/java/org/cts/CRSFactory.java/base.java
+     * @param registeryName
+     * @return 
+=======
      * @param registryName
      * @return 
+>>>>>>> /usr/src/app/output/irstv/cts/79a1b379cbabf06a9869a9b4cf17f1e8e731c06f/src/main/java/org/cts/CRSFactory.java/right.java
      */
     public Set<String> getSupportedCodes(String registryName) throws RegistryException {
         return getRegistryManager().getRegistry(registryName).getSupportedCodes();
