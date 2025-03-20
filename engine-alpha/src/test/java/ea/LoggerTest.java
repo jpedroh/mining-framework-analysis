@@ -1,37 +1,30 @@
 package ea;
-
 import static org.junit.Assert.assertTrue;
-
+import ea.internal.util.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import org.junit.Test;
 import java.nio.file.Paths;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-
-import ea.internal.util.Logger;
 
 public class LoggerTest {
+  private final PrintStream standardErr = System.err;
 
-    private final PrintStream standardErr = System.err;
-    private final ByteArrayOutputStream errStreamCaptor = new ByteArrayOutputStream();
+  private final ByteArrayOutputStream errStreamCaptor = new ByteArrayOutputStream();
 
-    @Before
-    public void setUp() {
-        System.setErr(new PrintStream(errStreamCaptor));
-    }
+  @Before public void setUp() {
+    System.setErr(new PrintStream(errStreamCaptor));
+  }
 
-    @After
-    public void tearDown() {
-        System.setErr(standardErr);
-    }
+  @After public void tearDown() {
+    System.setErr(standardErr);
+  }
 
-    @Test
-    public void fileExists() {
-        Logger.error("LoggerTest", "lorem ipsum");
-        assertTrue(errStreamCaptor.toString().indexOf("lorem ipsum") > -1);
-        assertTrue(Files.exists(Paths.get("engine-alpha.log")));
-    }
+  @Test public void fileExists() {
+    Logger.error("LoggerTest", "lorem ipsum");
+    assertTrue(errStreamCaptor.toString().indexOf("lorem ipsum") > -1);
+    assertTrue(Files.exists(Paths.get("engine-alpha.log")));
+  }
 }
