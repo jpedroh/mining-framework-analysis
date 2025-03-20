@@ -13,7 +13,6 @@
 package org.omnifaces.el.functions;
 
 import static org.omnifaces.util.Faces.getLocale;
-
 import java.text.MessageFormat;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
@@ -186,6 +185,16 @@ public final class Strings {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/left.java
+	 * Format the given string with 2 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
+	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions does not support
+	 * varargs methods nor overloaded function names.
+	 * @param pattern The format pattern.
+	 * @param param1 The first parameter.
+	 * @param param2 The second parameter.
+	 * @return The formatted string.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/base.java
+=======
 	 * Format the given string with 2 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
 	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions do not support
 	 * varargs methods nor overloaded function names.
@@ -193,6 +202,7 @@ public final class Strings {
 	 * @param param1 The first parameter.
 	 * @param param2 The second parameter.
 	 * @return The formatted string.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/right.java
 	 * @see #format1(String, Object)
 	 */
 	public static String format2(String pattern, Object param1, Object param2) {
@@ -200,6 +210,17 @@ public final class Strings {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/left.java
+	 * Format the given string with 3 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
+	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions does not support
+	 * varargs methods nor overloaded function names.
+	 * @param pattern The format pattern.
+	 * @param param1 The first parameter.
+	 * @param param2 The second parameter.
+	 * @param param3 The third parameter.
+	 * @return The formatted string.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/base.java
+=======
 	 * Format the given string with 3 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
 	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions do not support
 	 * varargs methods nor overloaded function names.
@@ -208,6 +229,7 @@ public final class Strings {
 	 * @param param2 The second parameter.
 	 * @param param3 The third parameter.
 	 * @return The formatted string.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/right.java
 	 * @see #format1(String, Object)
 	 */
 	public static String format3(String pattern, Object param1, Object param2, Object param3) {
@@ -215,6 +237,18 @@ public final class Strings {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/left.java
+	 * Format the given string with 4 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
+	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions does not support
+	 * varargs methods nor overloaded function names.
+	 * @param pattern The format pattern.
+	 * @param param1 The first parameter.
+	 * @param param2 The second parameter.
+	 * @param param3 The third parameter.
+	 * @param param4 The fourth parameter.
+	 * @return The formatted string.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/base.java
+=======
 	 * Format the given string with 4 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
 	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions do not support
 	 * varargs methods nor overloaded function names.
@@ -224,6 +258,7 @@ public final class Strings {
 	 * @param param3 The third parameter.
 	 * @param param4 The fourth parameter.
 	 * @return The formatted string.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/right.java
 	 * @see #format1(String, Object)
 	 */
 	public static String format4(String pattern, Object param1, Object param2, Object param3, Object param4) {
@@ -231,6 +266,19 @@ public final class Strings {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/left.java
+	 * Format the given string with 5 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
+	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions does not support
+	 * varargs methods nor overloaded function names.
+	 * @param pattern The format pattern.
+	 * @param param1 The first parameter.
+	 * @param param2 The second parameter.
+	 * @param param3 The third parameter.
+	 * @param param4 The fourth parameter.
+	 * @param param5 The fifth parameter.
+	 * @return The formatted string.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/base.java
+=======
 	 * Format the given string with 5 parameters. The locale is obtained by {@link Faces#getLocale()}. Design notice:
 	 * There are five formatX() methods, each taking 1 to 5 format parameters because EL functions do not support
 	 * varargs methods nor overloaded function names.
@@ -241,6 +289,7 @@ public final class Strings {
 	 * @param param4 The fourth parameter.
 	 * @param param5 The fifth parameter.
 	 * @return The formatted string.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Strings.java/right.java
 	 * @see #format1(String, Object)
 	 */
 	public static String format5

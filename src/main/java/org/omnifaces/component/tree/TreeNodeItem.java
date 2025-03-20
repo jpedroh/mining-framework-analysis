@@ -15,6 +15,7 @@ package org.omnifaces.component.tree;
 import static org.omnifaces.util.Components.getClosestParent;
 import static org.omnifaces.util.Components.shouldVisitSkipIteration;
 import static org.omnifaces.util.Components.validateHasParent;
+import static javax.faces.component.visit.VisitHint.SKIP_ITERATION;
 
 import java.io.IOException;
 
@@ -95,7 +96,7 @@ public class TreeNodeItem extends TreeFamily {
 		}
 
 		process(context, new Callback.ReturningWithArgument<Void, Tree>() {
-
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -125,7 +126,13 @@ public class TreeNodeItem extends TreeFamily {
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" }) // For TreeModel. We don't care about its actual type anyway.
 	public boolean visitTree(final VisitContext context, final VisitCallback callback) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/tree/TreeNodeItem.java/left.java
 		if (shouldVisitSkipIteration(context)) {
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/tree/TreeNodeItem.java/base.java
+		if (Components.shouldVisitSkipIteration(context)) {
+=======
+		if (context.getHints().contains(SKIP_ITERATION)) {
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/tree/TreeNodeItem.java/right.java
 			return super.visitTree(context, callback);
 		}
 
@@ -134,7 +141,7 @@ public class TreeNodeItem extends TreeFamily {
 		}
 
 		return process(context.getFacesContext(), new Callback.ReturningWithArgument<Boolean, Tree>() {
-
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override

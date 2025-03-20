@@ -12,9 +12,11 @@
  */
 package org.omnifaces.taghandler;
 
-import static javax.faces.event.PhaseId.RESTORE_VIEW;
 import static org.omnifaces.util.Components.getClosestParent;
 import static org.omnifaces.util.Components.hasInvokedSubmit;
+import static org.omnifaces.util.Events.addBeforePhaseListener;
+import static org.omnifaces.util.Faces.setContextAttribute;
+import static javax.faces.event.PhaseId.RESTORE_VIEW;
 import static org.omnifaces.util.Events.subscribeToRequestAfterPhase;
 
 import java.io.IOException;
@@ -91,11 +93,48 @@ public class IgnoreValidationFailed extends TagHandler {
 			throw new IllegalArgumentException(ERROR_INVALID_PARENT);
 		}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/left.java
+		if (ComponentHandler.isNew(parent)) {
+			addBeforePhaseListener(PhaseId.PROCESS_VALIDATIONS, new Callback.Void() {
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/base.java
+		if (ComponentHandler.isNew(parent)) {
+			Events.addBeforePhaseListener(PhaseId.PROCESS_VALIDATIONS, new Callback.Void() {
+=======
 		FacesContext facesContext = context.getFacesContext();
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/right.java
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/left.java
+				@Override
+				public void invoke() {
+					if (hasInvokedSubmit(parent)) {
+						setContextAttribute(IgnoreValidationFailed.class.getName(), true);
+					}
+				}
+			});
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/base.java
+				@Override
+				public void invoke() {
+					if (Components.hasInvokedSubmit(parent)) {
+						Faces.setContextAttribute(IgnoreValidationFailed.class.getName(), true);
+					}
+				}
+			});
+=======
 		if (!(ComponentHandler.isNew(parent) && facesContext.isPostback() && facesContext.getCurrentPhaseId() == RESTORE_VIEW)) {
 			return;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/right.java
 		}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/left.java
+		else {
+			if (getClosestParent(parent, Form.class) == null) {
+				throw new IllegalArgumentException(ERROR_INVALID_FORM);
+			}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/base.java
+		else {
+			if (Components.getClosestParent(parent, Form.class) == null) {
+				throw new IllegalArgumentException(ERROR_INVALID_FORM);
+			}
+=======
 
 		// We can't use hasInvokedSubmit() before the component is added to view, because the client ID isn't available.
 		// Hence, we subscribe this check to after phase of restore view.
@@ -113,6 +152,7 @@ public class IgnoreValidationFailed extends TagHandler {
 	protected void processIgnoreValidationFailed(UICommand command) {
 		if (!hasInvokedSubmit(command)) {
 			return;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/IgnoreValidationFailed.java/right.java
 		}
 
 		Form form = getClosestParent(command, Form.class);

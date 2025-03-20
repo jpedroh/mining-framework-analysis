@@ -39,6 +39,32 @@ import javax.servlet.http.HttpSession;
  * It's a bit the idea of using the convenient {@link HttpServlet} abstract servlet class instead of the barebones
  * {@link Servlet} interface.
  *
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/filter/HttpFilter.java/left.java
+ * <h3>Usage</h3>
+ * <p>
+ * To use it, just let your custom filter extend from {@link HttpFilter} instead of implement {@link Filter}.
+ * For example:
+ * <pre>
+ * {@literal @}WebFilter("/app/*")
+ * public class LoginFilter extends HttpFilter {
+ *
+ *     {@literal @}Override
+ *     public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {
+ *         if (session != null &amp;&amp; session.getAttribute("user") != null) {
+ *             chain.doFilter(request, response);
+ *         }
+ *         else {
+ *             Servlets.facesRedirect(request, response, "login.xhtml");
+ *         }
+ *     }
+ * }
+ * </pre>
+ *
+ * @author Arjan Tijms
+ * @author Bauke Scholtz
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/filter/HttpFilter.java/base.java
+ * @author Arjan Tijms, Bauke Scholtz
+=======
  * <h3>Usage</h3>
  * <p>
  * To use it, just let your custom filter extend from {@link HttpFilter} instead of implement {@link Filter}.
@@ -63,6 +89,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author Arjan Tijms
  * @author Bauke Scholtz
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/filter/HttpFilter.java/right.java
  */
 public abstract class HttpFilter implements Filter {
 

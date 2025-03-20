@@ -241,7 +241,7 @@ public abstract class ValidateMultipleFields extends ValidatorFamily implements 
 		}
 
 		UIComponent namingContainerParent = getNamingContainer();
-		List<UIInput> inputs = new ArrayList<UIInput>();
+		List<UIInput> inputs = new ArrayList<>();
 
 		for (String clientId : components.split("\\s+")) {
 			UIInput input = findInputComponent(namingContainerParent, clientId, PropertyKeys.components);
@@ -266,7 +266,7 @@ public abstract class ValidateMultipleFields extends ValidatorFamily implements 
 	 * @return The values of the given input components.
 	 */
 	protected List<Object> collectValues(List<UIInput> inputs) {
-		List<Object> values = new ArrayList<Object>(inputs.size());
+		List<Object> values = new ArrayList<>(inputs.size());
 
 		for (UIInput input : inputs) {
 			Object value = getValue(input);

@@ -40,6 +40,54 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  *
  * <h3>Make sure that your entity has a good <code>toString()</code> implementation</h3>
  * <p>
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/left.java
+ * The base converter uses by default the <code>toString()</code> method of the entity to uniquely identify
+ * the instance during the conversion. This is sufficient if your (abstract base) entity has a
+ * <code>toString()</code> implementation which looks something like this:
+ * <pre>
+ * {@literal @}Override
+ * public String toString() {
+ *     return String.format("%s[id=%d]", getClass().getSimpleName(), getId());
+ * }
+ * </pre>
+ * <p>
+ * By the way, <a href="http://stackoverflow.com/a/17343582/157882">you should also make sure that your entity
+ * has a good <code>equals()</code> and <code>hashCode()</code> implementation</a>, otherwise JSF won't be able
+ * to set the right entity back in the model. Please note that this problem is in turn unrelated to the
+ * <code>SelectItemsConverter</code>, you would have faced the same problem when using any other converter.
+ *
+ * <h3>If your entity can't have a good <code>toString()</code> implementation</h3>
+ * <p>
+ * However, if the entity doesn't have a <code>toString()</code> implementation (and thus relies on the default
+ * <code>fqn@hashcode</code> implementation), or the existing implementation doesn't necessarily uniquely
+ * identify the instance, and you can't implement/change it, then it is recommended to extend the
+ * <code>SelectItemsConverter</code> class and override <b>only</b> the <code>getAsString</code> method wherein
+ * the desired implementation is provided. For example:
+ * <pre>
+ * {@literal @}FacesConverter("exampleEntitySelectItemsConverter")
+ * public class ExampleEntitySelectItemsConverter extends SelectItemsConverter {
+ *
+ *     {@literal @}Override
+ *     public String getAsString(FacesContext context, UIComponent component, Object value) {
+ *         Long id = (value instanceof ExampleEntity) ? ((ExampleEntity) value).getId() : null;
+ *         return (id != null) ? String.valueOf(id) : null;
+ *     }
+ *
+ * }
+ * </pre>
+ * <p>
+ * Again, you do <strong>not</strong> need to override the <code>getAsObject()</code> method which would only
+ * need to perform possibly expensive service/DAO operations. The <code>SelectItemsConverter</code> base
+ * converter will already do it automatically based on the available items and the <code>getAsString()</code>
+ * implementation.
+ * <p>
+ * An alternative is to switch to {@link SelectItemsIndexConverter}, which will convert based on the position (index)
+ * of the selected item in the list instead of the {@link #toString()} of the selected item.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/base.java
+ * When extending this converter to override <code>getAsString()</code> to return something simpler, such as the entity
+ * ID by <code>return String.valueOf(((Entity) value).getId());</code>, you only have to change the <code>converter</code>
+ * attribute in the above example to refer the extended converter instead.
+=======
  * The base converter uses by default the <code>toString()</code> method of the entity to uniquely identify
  * the instance during the conversion. This is sufficient if your (abstract base) entity has a
  * <code>toString()</code> implementation which looks something like this:
@@ -82,10 +130,16 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  * <p>
  * An alternative is to switch to {@link SelectItemsIndexConverter}, which will convert based on the position (index)
  * of the selected item in the list instead of the {@link #toString()} of the selected item.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/right.java
  *
  * @author Arjan Tijms
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/left.java
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/base.java
+ *
+=======
  * @see SelectItemsUtils
  * @see SelectItemsCollector
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsConverter.java/right.java
  */
 @FacesConverter("omnifaces.SelectItemsConverter")
 public class SelectItemsConverter implements Converter {

@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -232,20 +233,20 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	// The data store and its maximum capacity
 	concurrencyLevel = builder.concurrencyLevel;
 	capacity = Math.min(builder.capacity, MAXIMUM_CAPACITY);
-	data = new ConcurrentHashMap<K, ConcurrentLinkedHashMap<K, V>.Node>(builder.initialCapacity, DEFAULT_LOAD_FACTOR, concurrencyLevel);
+	data = new ConcurrentHashMap<>(builder.initialCapacity, DEFAULT_LOAD_FACTOR, concurrencyLevel);
 
 	// The eviction support
 	weigher = builder.weigher;
 	nextOrder = Integer.MIN_VALUE;
 	drainedOrder = Integer.MIN_VALUE;
 	evictionLock = new ReentrantLock();
-	evictionDeque = new LinkedDeque<ConcurrentLinkedHashMap<K, V>.Node>();
-	drainStatus = new AtomicReference<DrainStatus>(IDLE);
+	evictionDeque = new LinkedDeque<>();
+	drainStatus = new AtomicReference<>(IDLE);
 
 	buffers = new Queue[NUMBER_OF_BUFFERS];
 	bufferLengths = new AtomicIntegerArray(NUMBER_OF_BUFFERS);
 	for (int i = 0; i < NUMBER_OF_BUFFERS; i++) {
-	  buffers[i] = new ConcurrentLinkedQueue<Task>();
+	  buffers[i] = new ConcurrentLinkedQueue<>();
 	}
 
 	// The notification queue and listener
@@ -257,9 +258,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 
   /** Ensures that the object is not null. */
   static void checkNotNull(Object o) {
-	if (o == null) {
-	  throw new NullPointerException();
-	}
+	Objects.requireNonNull(o);
   }
 
   /** Ensures that the argument expression is true. */
@@ -772,7 +771,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	checkNotNull(value);
 
 	final int weight = weigher.weightOf(key, value);
-	final WeightedValue<V> weightedValue = new WeightedValue<V>(value, weight);
+	final WeightedValue<V> weightedValue = new WeightedValue<>(value, weight);
 	final Node node = new Node(key, weightedValue);
 
 	for (;;) {
@@ -847,7 +846,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	checkNotNull(value);
 
 	final int weight = weigher.weightOf(key, value);
-	final WeightedValue<V> weightedValue = new WeightedValue<V>(value, weight);
+	final WeightedValue<V> weightedValue = new WeightedValue<>(value, weight);
 
 	final Node node = data.get(key);
 	if (node == null) {
@@ -875,7 +874,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	checkNotNull(newValue);
 
 	final int weight = weigher.weightOf(key, newValue);
-	final WeightedValue<V> newWeightedValue = new WeightedValue<V>(newValue, weight);
+	final WeightedValue<V> newWeightedValue = new WeightedValue<>(newValue, weight);
 
 	final Node node = data.get(key);
 	if (node == null) {
@@ -987,7 +986,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	  int initialCapacity = (weigher == Weighers.entrySingleton())
 		  ? Math.min(limit, (int) weightedSize())
 		  : DEFAULT_INITIAL_CAPACITY;
-	  Set<K> keys = new LinkedHashSet<K>(initialCapacity);
+	  Set<K> keys = new LinkedHashSet<>(initialCapacity);
 	  Iterator<Node> iterator = ascending
 		  ? evictionDeque.iterator()
 		  : evictionDeque.descendingIterator();
@@ -1103,7 +1102,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	  int initialCapacity = (weigher == Weighers.entrySingleton())
 		  ? Math.min(limit, (int) weightedSize())
 		  : DEFAULT_INITIAL_CAPACITY;
-	  Map<K, V> map = new LinkedHashMap<K, V>(initialCapacity);
+	  Map<K, V> map = new LinkedHashMap<>(initialCapacity);
 	  Iterator<Node> iterator = ascending
 		  ? evictionDeque.iterator()
 		  : evictionDeque.descendingIterator();
@@ -1197,7 +1196,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	 */
 	boolean tryToRetire(WeightedValue<V> expect) {
 	  if (expect.isAlive()) {
-		WeightedValue<V> retired = new WeightedValue<V>(expect.value, -expect.weight);
+		WeightedValue<V> retired = new WeightedValue<>(expect.value, -expect.weight);
 		return compareAndSet(expect, retired);
 	  }
 	  return false;
@@ -1213,7 +1212,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 		if (!current.isAlive()) {
 		  return;
 		}
-		WeightedValue<V> retired = new WeightedValue<V>(current.value, -current.weight);
+		WeightedValue<V> retired = new WeightedValue<>(current.value, -current.weight);
 		if (compareAndSet(current, retired)) {
 		  return;
 		}
@@ -1228,7 +1227,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	void makeDead() {
 	  for (;;) {
 		WeightedValue<V> current = get();
-		WeightedValue<V> dead = new WeightedValue<V>(current.value, 0);
+		WeightedValue<V> dead = new WeightedValue<>(current.value, 0);
 		if (compareAndSet(current, dead)) {
 		  weightedSize -= Math.abs(current.weight);
 		  return;
@@ -1432,7 +1431,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 	}
 
 	Object writeReplace() {
-	  return new SimpleEntry<K, V>(this);
+	  return new SimpleEntry<>(this);
 	}
   }
 
@@ -1521,7 +1520,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
   static final long serialVersionUID = 1;
 
   Object writeReplace() {
-	return new SerializationProxy<K, V>(this);
+	return new SerializationProxy<>(this);
   }
 
   @SuppressWarnings("unused")
@@ -1545,7 +1544,7 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
 
 	SerializationProxy(ConcurrentLinkedHashMap<K, V> map) {
 	  concurrencyLevel = map.concurrencyLevel;
-	  data = new HashMap<K, V>(map);
+	  data = new HashMap<>(map);
 	  capacity = map.capacity;
 	  listener = map.listener;
 	  weigher = map.weigher;
@@ -1579,129 +1578,348 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
    * }</pre>
    */
   public static final class Builder<K, V> {
-	static final int DEFAULT_CONCURRENCY_LEVEL = 16;
-	static final int DEFAULT_INITIAL_CAPACITY = 16;
+  	static final int DEFAULT_CONCURRENCY_LEVEL = 16;
+  	static final int DEFAULT_INITIAL_CAPACITY = 16;
 
-	private EvictionListener<K, V> listener;
-	private EntryWeigher<? super K, ? super V> weigher;
+  	private EvictionListener<K, V> listener;
+  	private EntryWeigher<? super K, ? super V> weigher;
 
-	private int concurrencyLevel;
-	private int initialCapacity;
-	private long capacity;
+  	private int concurrencyLevel;
+  	private int initialCapacity;
+  	private long capacity;
 
-	@SuppressWarnings("unchecked")
-	public Builder() {
-	  capacity = -1;
-	  weigher = Weighers.entrySingleton();
-	  initialCapacity = DEFAULT_INITIAL_CAPACITY;
-	  concurrencyLevel = DEFAULT_CONCURRENCY_LEVEL;
-	  listener = (EvictionListener<K, V>) DiscardingListener.INSTANCE;
-	}
+  	@SuppressWarnings("unchecked")
+  	public Builder() {
+  	  capacity = -1;
+  	  weigher = Weighers.entrySingleton();
+  	  initialCapacity = DEFAULT_INITIAL_CAPACITY;
+  	  concurrencyLevel = DEFAULT_CONCURRENCY_LEVEL;
+  	  listener = (EvictionListener<K, V>) DiscardingListener.INSTANCE;
+  	}
 
-	/**
-	 * Specifies the initial capacity of the hash table (default <tt>16</tt>).
-	 * This is the number of key-value pairs that the hash table can hold
-	 * before a resize operation is required.
-	 *
-	 * @param initialCapacity the initial capacity used to size the hash table
-	 *     to accommodate this many entries.
-	 * @return This builder.
-	 * @throws IllegalArgumentException if the initialCapacity is negative
-	 */
-	public Builder<K, V> initialCapacity(int initialCapacity) {
-	  checkArgument(initialCapacity >= 0);
-	  this.initialCapacity = initialCapacity;
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies the initial capacity of the hash table (default <tt>16</tt>).
+     * This is the number of key-value pairs that the hash table can hold
+     * before a resize operation is required.
+     *
+     * @param initialCapacity the initial capacity used to size the hash table
+     *     to accommodate this many entries.
+     * @return This builder.
+     * @throws IllegalArgumentException if the initialCapacity is negative
+     */
+    public Builder<K, V> initialCapacity(int initialCapacity) {
+      checkArgument(initialCapacity >= 0);
+      this.initialCapacity = initialCapacity;
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies the initial capacity of the hash table (default <tt>16</tt>).
+     * This is the number of key-value pairs that the hash table can hold
+     * before a resize operation is required.
+     *
+     * @param initialCapacity the initial capacity used to size the hash table
+     *     to accommodate this many entries.
+     * @throws IllegalArgumentException if the initialCapacity is negative
+     */
+    public Builder<K, V> initialCapacity(int initialCapacity) {
+      checkArgument(initialCapacity >= 0);
+      this.initialCapacity = initialCapacity;
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies the initial capacity of the hash table (default <tt>16</tt>).
+  	 * This is the number of key-value pairs that the hash table can hold
+  	 * before a resize operation is required.
+  	 *
+  	 * @param initialCapacity the initial capacity used to size the hash table
+  	 *     to accommodate this many entries.
+  	 * @return This builder.
+  	 * @throws IllegalArgumentException if the initialCapacity is negative
+  	 */
+  	public Builder<K, V> initialCapacity(int initialCapacity) {
+  	  checkArgument(initialCapacity >= 0);
+  	  this.initialCapacity = initialCapacity;
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Specifies the maximum weighted capacity to coerce the map to and may
-	 * exceed it temporarily.
-	 *
-	 * @param capacity the weighted threshold to bound the map by
-	 * @return This builder.
-	 * @throws IllegalArgumentException if the maximumWeightedCapacity is
-	 *     negative
-	 */
-	public Builder<K, V> maximumWeightedCapacity(long capacity) {
-	  checkArgument(capacity >= 0);
-	  this.capacity = capacity;
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies the maximum weighted capacity to coerce the map to and may
+     * exceed it temporarily.
+     *
+     * @param capacity the weighted threshold to bound the map by
+     * @return This builder.
+     * @throws IllegalArgumentException if the maximumWeightedCapacity is
+     *     negative
+     */
+    public Builder<K, V> maximumWeightedCapacity(long capacity) {
+      checkArgument(capacity >= 0);
+      this.capacity = capacity;
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies the maximum weighted capacity to coerce the map to and may
+     * exceed it temporarily.
+     *
+     * @param capacity the weighted threshold to bound the map by
+     * @throws IllegalArgumentException if the maximumWeightedCapacity is
+     *     negative
+     */
+    public Builder<K, V> maximumWeightedCapacity(long capacity) {
+      checkArgument(capacity >= 0);
+      this.capacity = capacity;
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies the maximum weighted capacity to coerce the map to and may
+  	 * exceed it temporarily.
+  	 *
+  	 * @param capacity the weighted threshold to bound the map by
+  	 * @return This builder.
+  	 * @throws IllegalArgumentException if the maximumWeightedCapacity is
+  	 *     negative
+  	 */
+  	public Builder<K, V> maximumWeightedCapacity(long capacity) {
+  	  checkArgument(capacity >= 0);
+  	  this.capacity = capacity;
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Specifies the estimated number of concurrently updating threads. The
-	 * implementation performs internal sizing to try to accommodate this many
-	 * threads (default <tt>16</tt>).
-	 *
-	 * @param concurrencyLevel the estimated number of concurrently updating
-	 *     threads
-	 * @return This builder.
-	 * @throws IllegalArgumentException if the concurrencyLevel is less than or
-	 *     equal to zero
-	 */
-	public Builder<K, V> concurrencyLevel(int concurrencyLevel) {
-	  checkArgument(concurrencyLevel > 0);
-	  this.concurrencyLevel = concurrencyLevel;
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies the estimated number of concurrently updating threads. The
+     * implementation performs internal sizing to try to accommodate this many
+     * threads (default <tt>16</tt>).
+     *
+     * @param concurrencyLevel the estimated number of concurrently updating
+     *     threads
+     * @return This builder.
+     * @throws IllegalArgumentException if the concurrencyLevel is less than or
+     *     equal to zero
+     */
+    public Builder<K, V> concurrencyLevel(int concurrencyLevel) {
+      checkArgument(concurrencyLevel > 0);
+      this.concurrencyLevel = concurrencyLevel;
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies the estimated number of concurrently updating threads. The
+     * implementation performs internal sizing to try to accommodate this many
+     * threads (default <tt>16</tt>).
+     *
+     * @param concurrencyLevel the estimated number of concurrently updating
+     *     threads
+     * @throws IllegalArgumentException if the concurrencyLevel is less than or
+     *     equal to zero
+     */
+    public Builder<K, V> concurrencyLevel(int concurrencyLevel) {
+      checkArgument(concurrencyLevel > 0);
+      this.concurrencyLevel = concurrencyLevel;
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies the estimated number of concurrently updating threads. The
+  	 * implementation performs internal sizing to try to accommodate this many
+  	 * threads (default <tt>16</tt>).
+  	 *
+  	 * @param concurrencyLevel the estimated number of concurrently updating
+  	 *     threads
+  	 * @return This builder.
+  	 * @throws IllegalArgumentException if the concurrencyLevel is less than or
+  	 *     equal to zero
+  	 */
+  	public Builder<K, V> concurrencyLevel(int concurrencyLevel) {
+  	  checkArgument(concurrencyLevel > 0);
+  	  this.concurrencyLevel = concurrencyLevel;
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Specifies an optional listener that is registered for notification when
-	 * an entry is evicted.
-	 *
-	 * @param listener the object to forward evicted entries to
-	 * @return This builder.
-	 * @throws NullPointerException if the listener is null
-	 */
-	public Builder<K, V> listener(EvictionListener<K, V> listener) {
-	  checkNotNull(listener);
-	  this.listener = listener;
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies an optional listener that is registered for notification when
+     * an entry is evicted.
+     *
+     * @param listener the object to forward evicted entries to
+     * @return This builder.
+     * @throws NullPointerException if the listener is null
+     */
+    public Builder<K, V> listener(EvictionListener<K, V> listener) {
+      checkNotNull(listener);
+      this.listener = listener;
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies an optional listener that is registered for notification when
+     * an entry is evicted.
+     *
+     * @param listener the object to forward evicted entries to
+     * @throws NullPointerException if the listener is null
+     */
+    public Builder<K, V> listener(EvictionListener<K, V> listener) {
+      checkNotNull(listener);
+      this.listener = listener;
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies an optional listener that is registered for notification when
+  	 * an entry is evicted.
+  	 *
+  	 * @param listener the object to forward evicted entries to
+  	 * @return This builder.
+  	 * @throws NullPointerException if the listener is null
+  	 */
+  	public Builder<K, V> listener(EvictionListener<K, V> listener) {
+  	  checkNotNull(listener);
+  	  this.listener = listener;
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Specifies an algorithm to determine how many the units of capacity an
-	 * entry consumes. The default algorithm bounds the map by the number of
-	 * key-value pairs by giving each entry a weight of <tt>1</tt>.
-	 *
-	 * @param weigher the algorithm to determine a entry's weight
-	 * @return This builder.
-	 * @throws NullPointerException if the weigher is null
-	 */
-	public Builder<K, V> weigher(Weigher<? super V> weigher) {
-	  this.weigher = (weigher == Weighers.singleton())
-		  ? Weighers.<K, V>entrySingleton()
-		  : new BoundedEntryWeigher<K, V>(Weighers.asEntryWeigher(weigher));
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies an algorithm to determine how many the units of capacity an
+     * entry consumes. The default algorithm bounds the map by the number of
+     * key-value pairs by giving each entry a weight of <tt>1</tt>.
+     *
+     * @param weigher the algorithm to determine a entry's weight
+     * @return This builder.
+     * @throws NullPointerException if the weigher is null
+     */
+    public Builder<K, V> weigher(Weigher<? super V> weigher) {
+      this.weigher = (weigher == Weighers.singleton())
+          ? Weighers.<K, V>entrySingleton()
+          : new BoundedEntryWeigher<K, V>(Weighers.asEntryWeigher(weigher));
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies an algorithm to determine how many the units of capacity an
+     * entry consumes. The default algorithm bounds the map by the number of
+     * key-value pairs by giving each entry a weight of <tt>1</tt>.
+     *
+     * @param weigher the algorithm to determine a entry's weight
+     * @throws NullPointerException if the weigher is null
+     */
+    public Builder<K, V> weigher(Weigher<? super V> weigher) {
+      this.weigher = (weigher == Weighers.singleton())
+          ? Weighers.<K, V>entrySingleton()
+          : new BoundedEntryWeigher<K, V>(Weighers.asEntryWeigher(weigher));
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies an algorithm to determine how many the units of capacity an
+  	 * entry consumes. The default algorithm bounds the map by the number of
+  	 * key-value pairs by giving each entry a weight of <tt>1</tt>.
+  	 *
+  	 * @param weigher the algorithm to determine a entry's weight
+  	 * @return This builder.
+  	 * @throws NullPointerException if the weigher is null
+  	 */
+  	public Builder<K, V> weigher(Weigher<? super V> weigher) {
+  	  this.weigher = (weigher == Weighers.singleton())
+  		  ? Weighers.<K, V>entrySingleton()
+  		  : new BoundedEntryWeigher<K, V>(Weighers.asEntryWeigher(weigher));
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Specifies an algorithm to determine how many the units of capacity a
-	 * value consumes. The default algorithm bounds the map by the number of
-	 * key-value pairs by giving each entry a weight of <tt>1</tt>.
-	 *
-	 * @param weigher the algorithm to determine a value's weight
-	 * @return This builder.
-	 * @throws NullPointerException if the weigher is null
-	 */
-	public Builder<K, V> weigher(EntryWeigher<? super K, ? super V> weigher) {
-	  this.weigher = (weigher == Weighers.entrySingleton())
-		  ? Weighers.<K, V>entrySingleton()
-		  : new BoundedEntryWeigher<K, V>(weigher);
-	  return this;
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Specifies an algorithm to determine how many the units of capacity a
+     * value consumes. The default algorithm bounds the map by the number of
+     * key-value pairs by giving each entry a weight of <tt>1</tt>.
+     *
+     * @param weigher the algorithm to determine a value's weight
+     * @return This builder.
+     * @throws NullPointerException if the weigher is null
+     */
+    public Builder<K, V> weigher(EntryWeigher<? super K, ? super V> weigher) {
+      this.weigher = (weigher == Weighers.entrySingleton())
+          ? Weighers.<K, V>entrySingleton()
+          : new BoundedEntryWeigher<K, V>(weigher);
+      return this;
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Specifies an algorithm to determine how many the units of capacity a
+     * value consumes. The default algorithm bounds the map by the number of
+     * key-value pairs by giving each entry a weight of <tt>1</tt>.
+     *
+     * @param weigher the algorithm to determine a value's weight
+     * @throws NullPointerException if the weigher is null
+     */
+    public Builder<K, V> weigher(EntryWeigher<? super K, ? super V> weigher) {
+      this.weigher = (weigher == Weighers.entrySingleton())
+          ? Weighers.<K, V>entrySingleton()
+          : new BoundedEntryWeigher<K, V>(weigher);
+      return this;
+    }
+=======
+  	/**
+  	 * Specifies an algorithm to determine how many the units of capacity a
+  	 * value consumes. The default algorithm bounds the map by the number of
+  	 * key-value pairs by giving each entry a weight of <tt>1</tt>.
+  	 *
+  	 * @param weigher the algorithm to determine a value's weight
+  	 * @return This builder.
+  	 * @throws NullPointerException if the weigher is null
+  	 */
+  	public Builder<K, V> weigher(EntryWeigher<? super K, ? super V> weigher) {
+  	  this.weigher = (weigher == Weighers.entrySingleton())
+  		  ? Weighers.<K, V>entrySingleton()
+  		  : new BoundedEntryWeigher<>(weigher);
+  	  return this;
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
 
-	/**
-	 * Creates a new {@link ConcurrentLinkedHashMap} instance.
-	 *
-	 * @return The built {@link ConcurrentLinkedHashMap} instance.
-	 * @throws IllegalStateException if the maximum weighted capacity was
-	 *     not set
-	 */
-	public ConcurrentLinkedHashMap<K, V> build() {
-	  checkState(capacity >= 0);
-	  return new ConcurrentLinkedHashMap<K, V>(this);
-	}
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/left.java
+    /**
+     * Creates a new {@link ConcurrentLinkedHashMap} instance.
+     *
+     * @return The built {@link ConcurrentLinkedHashMap} instance.
+     * @throws IllegalStateException if the maximum weighted capacity was
+     *     not set
+     */
+    public ConcurrentLinkedHashMap<K, V> build() {
+      checkState(capacity >= 0);
+      return new ConcurrentLinkedHashMap<K, V>(this);
+    }
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/base.java
+    /**
+     * Creates a new {@link ConcurrentLinkedHashMap} instance.
+     *
+     * @throws IllegalStateException if the maximum weighted capacity was
+     *     not set
+     */
+    public ConcurrentLinkedHashMap<K, V> build() {
+      checkState(capacity >= 0);
+      return new ConcurrentLinkedHashMap<K, V>(this);
+    }
+=======
+  	/**
+  	 * Creates a new {@link ConcurrentLinkedHashMap} instance.
+  	 *
+  	 * @return The built {@link ConcurrentLinkedHashMap} instance.
+  	 * @throws IllegalStateException if the maximum weighted capacity was
+  	 *     not set
+  	 */
+  	public ConcurrentLinkedHashMap<K, V> build() {
+  	  checkState(capacity >= 0);
+  	  return new ConcurrentLinkedHashMap<>(this);
+  	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/concurrentlinkedhashmap/ConcurrentLinkedHashMap.java/right.java
   }
 }

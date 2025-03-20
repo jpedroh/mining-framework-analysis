@@ -12,7 +12,7 @@
  */
 package org.omnifaces.filter;
 
-import static org.omnifaces.util.Utils.UTF_8;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

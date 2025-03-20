@@ -107,14 +107,14 @@ public final class Ajax {
 				context.setRenderAll(true);
 			}
 			else if (clientId.equals("@form")) {
-				UIComponent currentForm = getCurrentForm();
+			    UIComponent currentForm = getCurrentForm();
 
 				if (currentForm != null) {
 					renderIds.add(currentForm.getClientId());
 				}
 			}
 			else if (clientId.equals("@this")) {
-				UIComponent currentComponent = getCurrentComponent();
+			    UIComponent currentComponent = getCurrentComponent();
 
 				if (currentComponent != null) {
 					renderIds.add(currentComponent.getClientId());

@@ -51,6 +51,7 @@ import org.omnifaces.viewhandler.RestorableViewHandler;
  *     &lt;o:enableRestorableView/&gt;
  * &lt;/f:metadata&gt;
  * </pre>
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/left.java
  *
  * <h3>Mojarra's new stateless mode</h3>
  * <p>
@@ -67,6 +68,41 @@ import org.omnifaces.viewhandler.RestorableViewHandler;
  * However, on those kind of pages where <code>&lt;o:enableRestorableView&gt;</code> would work just fine, this
  * statelessness should not form any problem at all. So, if you have at least Mojarra 2.1.19 at hands, use the
  * <code>transient="true"</code> instead.
+ *
+ * <h3>Mojarra's new stateless mode</h3>
+ * <p>
+ * Since Mojarra 2.1.19, about 2 months after OmniFaces introduced the <code>&lt;o:enableRestorableView&gt;</code>,
+ * it's possible to enable a stateless mode on the view by simply setting its <code>transient</code> attribute to
+ * <code>true</code>:
+ * <pre>
+ * &lt;f:view transient="true"&gt;
+ *     ...
+ * &lt;/f:view&gt;
+ * </pre>
+ * <p>
+ * This goes actually a step further than <code>&lt;o:enableRestorableView&gt;</code> as no state would be saved at all.
+ * However, on those kind of pages where <code>&lt;o:enableRestorableView&gt;</code> would work just fine, this
+ * statelessness should not form any problem at all. So, if you have at least Mojarra 2.1.19 at hands, use the
+ * <code>transient="true"</code> instead.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/base.java
+=======
+ *
+ * <h3>Mojarra's new stateless mode</h3>
+ * <p>
+ * Since Mojarra 2.1.19, about 2 months after OmniFaces introduced the <code>&lt;o:enableRestorableView&gt;</code>,
+ * it's possible to enable a stateless mode on the view by simply setting its <code>transient</code> attribute to
+ * <code>true</code>:
+ * <pre>
+ * &lt;f:view transient="true"&gt;
+ *     ...
+ * &lt;/f:view&gt;
+ * </pre>
+ * <p>
+ * This goes actually a step further than <code>&lt;o:enableRestorableView&gt;</code> as no state would be saved at all.
+ * However, on those kind of pages where <code>&lt;o:enableRestorableView&gt;</code> would work just fine, this
+ * statelessness should not form any problem at all. So, if you have at least Mojarra 2.1.19 at hands, use the
+ * <code>transient="true"</code> instead.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/right.java
  *
  * @author Bauke Scholtz
  * @since 1.3
@@ -88,7 +124,12 @@ public class EnableRestorableView extends TagHandler {
 	 */
 	public EnableRestorableView(TagConfig config) {
 		super(config);
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/left.java
+		setApplicationAttribute(RestorableViewHandler.class.getName(), TRUE);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/base.java
+=======
 		setApplicationAttribute(EnableRestorableView.class.getName(), TRUE);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/right.java
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------

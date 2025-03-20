@@ -30,6 +30,27 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
 
 /**
  * <p>
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsIndexConverter.java/left.java
+ * The <code>omnifaces.SelectItemsIndexConverter</code> is a variant of the {@link SelectItemsConverter} which
+ * automatically converts based on the position (index) of the selected item in the list instead of the
+ * {@link #toString()} of the selected item.
+ *
+ * <h3>Usage</h3>
+ * <p>
+ * This converter is available by converter ID <code>omnifaces.SelectItemsIndexConverter</code>. Just specify it in the
+ * <code>converter</code> attribute of the selection component holding <code>&lt;f:selectItems&gt;</code>.
+ * <pre>
+ * &lt;h:selectOneMenu value="#{bean.selectedItem}" converter="omnifaces.SelectItemsConverter"&gt;
+ *     &lt;f:selectItems value="#{bean.availableItems}" /&gt;
+ * &lt;/h:selectOneMenu&gt;
+ * </pre>
+ *
+ * <h3>Pros and cons as compared to {@link SelectItemsConverter}</h3>
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsIndexConverter.java/base.java
+ * The <strong><code>SelectItemsIndexConverter</code></strong> automatically converts between the index of the select
+ * item value and the select item value itself based on its position in the associated select items for the component
+ * for which conversion is taking place.
+=======
  * The <code>omnifaces.SelectItemsIndexConverter</code> is a variant of the {@link SelectItemsConverter} which
  * automatically converts based on the position (index) of the selected item in the list instead of the
  * {@link #toString()} of the selected item.
@@ -45,6 +66,7 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  * </pre>
  *
  * <h3>Pros and cons as compared to {@link SelectItemsConverter}</h3>
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/SelectItemsIndexConverter.java/right.java
  * <p>
  * This converter has the following advantages over {@link SelectItemsConverter}:
  * <ul>

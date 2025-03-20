@@ -11,15 +11,9 @@
  * specific language governing permissions and limitations under the License.
  */
 package org.omnifaces.taghandler;
-
-import static org.omnifaces.taghandler.DeferredTagHandlerHelper.collectDeferredAttributes;
-import static org.omnifaces.taghandler.DeferredTagHandlerHelper.createInstance;
-import static org.omnifaces.taghandler.DeferredTagHandlerHelper.getValueExpression;
 import static org.omnifaces.util.Components.getLabel;
-
 import java.io.IOException;
 import java.io.Serializable;
-
 import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.application.Application;
@@ -33,7 +27,9 @@ import javax.faces.view.facelets.TagAttribute;
 import javax.faces.view.facelets.TagHandlerDelegate;
 import javax.faces.view.facelets.ValidatorConfig;
 import javax.faces.view.facelets.ValidatorHandler;
-
+import static org.omnifaces.taghandler.DeferredTagHandlerHelper.collectDeferredAttributes;
+import static org.omnifaces.taghandler.DeferredTagHandlerHelper.createInstance;
+import static org.omnifaces.taghandler.DeferredTagHandlerHelper.getValueExpression;
 import org.omnifaces.taghandler.DeferredTagHandlerHelper.DeferredAttributes;
 import org.omnifaces.taghandler.DeferredTagHandlerHelper.DeferredTagHandler;
 import org.omnifaces.taghandler.DeferredTagHandlerHelper.DeferredTagHandlerDelegate;

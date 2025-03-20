@@ -53,12 +53,23 @@ import javax.faces.convert.FacesConverter;
  * However, creating a new converter for every single enum type, only and only for use in {@link UISelectMany} with a
  * <code>List&lt;E&gt;</code> property, may be a bit clumsy. This generic enum converter is intended to remove the need
  * to create a new enum converter every time.
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/GenericEnumConverter.java/left.java
+ *
+ * <h3>Usage</h3>
+ * This converter is available by converter ID <code>omnifaces.GenericEnumConverter</code>. Just specify it in the
+ * <code>converter</code> attribute of the multi-selection component holding <code>&lt;f:selectItems&gt;</code>.
+ * example:
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/GenericEnumConverter.java/base.java
+ * <p>
+ * This converter is available by converter ID <code>omnifaces.GenericEnumConverter</code>. Basic usage example:
+=======
  *
  * <h3>Usage</h3>
  * <p>
  * This converter is available by converter ID <code>omnifaces.GenericEnumConverter</code>. Just specify it in the
  * <code>converter</code> attribute of the multi-selection component holding <code>&lt;f:selectItems&gt;</code>.
  * example:
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/converter/GenericEnumConverter.java/right.java
  * <pre>
  * &lt;h:selectManyCheckbox value="#{bean.selectedEnums}" converter="omnifaces.GenericEnumConverter"&gt;
  *     &lt;f:selectItems value="#{bean.availableEnums}" /&gt;

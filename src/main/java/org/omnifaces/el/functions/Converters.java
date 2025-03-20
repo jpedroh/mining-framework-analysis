@@ -88,7 +88,7 @@ public final class Converters {
 			return null;
 		}
 
-		return new ArrayList<E>(set);
+		return new ArrayList<>(set);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public final class Converters {
 			return null;
 		}
 
-		return new ArrayList<Entry<K, V>>(map.entrySet());
+		return new ArrayList<>(map.entrySet());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public final class Converters {
 			return null;
 		}
 
-		return new IterableDataModel<E>(iterable);
+		return new IterableDataModel<>(iterable);
 	}
 
 	/**
@@ -303,7 +303,13 @@ public final class Converters {
 		}
 
 		int sourceSize = list.size();
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Converters.java/left.java
 		List<List<E>> lists = new ArrayList<List<E>>((sourceSize + fragmentSize - 1) / fragmentSize);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Converters.java/base.java
+		List<List<E>> lists = new ArrayList<List<T>>((sourceSize + fragmentSize - 1) / fragmentSize);
+=======
+		List<List<E>> lists = new ArrayList<>((sourceSize + fragmentSize - 1) / fragmentSize);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/el/functions/Converters.java/right.java
 
 		for (int i = 0; i < sourceSize; i += fragmentSize) {
 			lists.add(list.subList(i, Math.min(i + fragmentSize, sourceSize)));

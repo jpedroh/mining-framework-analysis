@@ -47,7 +47,14 @@ public final class CombinedResourceInfo {
 	// Constants ------------------------------------------------------------------------------------------------------
 
 	private static final Logger logger = Logger.getLogger(CombinedResourceHandler.class.getName());
+
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/left.java
 	private static final Map<String, CombinedResourceInfo> CACHE = new ConcurrentHashMap<String, CombinedResourceInfo>();
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/base.java
+	private static final Map<String, CombinedResourceInfo> CACHE = new HashMap<String, CombinedResourceInfo>();
+=======
+	private static final Map<String, CombinedResourceInfo> CACHE = new ConcurrentHashMap<>();
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/right.java
 
 	private static final String LOG_RESOURCE_NOT_FOUND = "CombinedResourceHandler: The resource %s cannot be found"
 			+ " and therefore a 404 will be returned for the combined resource ID %s";
@@ -55,9 +62,13 @@ public final class CombinedResourceInfo {
 	// Properties -----------------------------------------------------------------------------------------------------
 
 	private String id;
+
 	private Set<ResourceIdentifier> resourceIdentifiers;
+
 	private Set<Resource> resources;
+
 	private int contentLength;
+
 	private long lastModified;
 
 	// Constructors ---------------------------------------------------------------------------------------------------
@@ -66,6 +77,7 @@ public final class CombinedResourceInfo {
 	 * Creates an instance of combined resource info based on the given ID and ordered set of resource identifiers.
 	 * @param resourceIdentifiers Ordered set of resource identifiers, which are to be combined in a single resource.
 	 */
+
 	private CombinedResourceInfo(String id, Set<ResourceIdentifier> resourceIdentifiers) {
 		this.id = id;
 		this.resourceIdentifiers = resourceIdentifiers;
@@ -75,6 +87,7 @@ public final class CombinedResourceInfo {
 	 * Use this builder to create an instance of combined resource info and put it in the cache if absent.
 	 * @author Bauke Scholtz
 	 */
+
 	public static final class Builder {
 
 		// Constants --------------------------------------------------------------------------------------------------
@@ -84,7 +97,7 @@ public final class CombinedResourceInfo {
 
 		// Properties -------------------------------------------------------------------------------------------------
 
-		private Set<ResourceIdentifier> resourceIdentifiers = new LinkedHashSet<ResourceIdentifier>();
+		private Set<ResourceIdentifier> resourceIdentifiers = new LinkedHashSet<>();
 
 		// Actions ----------------------------------------------------------------------------------------------------
 
@@ -130,6 +143,7 @@ public final class CombinedResourceInfo {
 	 * @param id The ID of the combined resource info to be returned from the cache.
 	 * @return The combined resource info identified by the given ID from the cache.
 	 */
+
 	public static CombinedResourceInfo get(String id) {
 		CombinedResourceInfo info = CACHE.get(id);
 
@@ -152,6 +166,7 @@ public final class CombinedResourceInfo {
 	 * are been initialized. If one of the resources cannot be resolved, then this will log a WARNING and leave the
 	 * resources empty.
 	 */
+
 	private synchronized void loadResources() {
 		if (!isEmpty(resources)) {
 			return;
@@ -159,7 +174,7 @@ public final class CombinedResourceInfo {
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		ResourceHandler handler = context.getApplication().getResourceHandler();
-		resources = new LinkedHashSet<Resource>();
+		resources = new LinkedHashSet<>();
 		contentLength = 0;
 		lastModified = 0;
 
@@ -176,7 +191,36 @@ public final class CombinedResourceInfo {
 			URLConnection connection;
 
 			try {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/left.java
+				URLConnection connection;
+
+				try {
+					connection = resource.getURL().openConnection();
+				}
+				catch (Exception richFacesDoesNotSupportThis) {
+					connection = new URL(getRequestDomainURL(context) + resource.getRequestPath()).openConnection();
+				}
+
+				contentLength += connection.getContentLength();
+				long lastModified = connection.getLastModified();
+
+				if (lastModified > this.lastModified) {
+					this.lastModified = lastModified;
+				}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/base.java
+				URLConnection connection = !Hacks.isRichFacesResourceOptimizationEnabled()
+					? resource.getURL().openConnection()
+					: new URL(Faces.getRequestDomainURL() + resource.getRequestPath()).openConnection();
+
+				contentLength += connection.getContentLength();
+				long lastModified = connection.getLastModified();
+
+				if (lastModified > this.lastModified) {
+					this.lastModified = lastModified;
+				}
+=======
 				connection = resource.getURL().openConnection();
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResourceInfo.java/right.java
 			}
 			catch (Exception richFacesDoesNotSupportThis) {
 				try {
@@ -202,6 +246,7 @@ public final class CombinedResourceInfo {
 	 * Returns true if the given object is also an instance of {@link CombinedResourceInfo} and its ID equals to the
 	 * ID of the current combined resource info instance.
 	 */
+
 	@Override
 	public boolean equals(Object other) {
 		return (other instanceof CombinedResourceInfo)
@@ -212,6 +257,7 @@ public final class CombinedResourceInfo {
 	/**
 	 * Returns the sum of the hash code of this class and the ID.
 	 */
+
 	@Override
 	public int hashCode() {
 		return getClass().hashCode() + id.hashCode();
@@ -223,6 +269,7 @@ public final class CombinedResourceInfo {
 	 * Where <code>id</code> is the unique ID and <code>resourceIdentifiers</code> is the ordered set of all resource
 	 * identifiers as is been created with the builder.
 	 */
+
 	@Override
 	public String toString() {
 		return String.format("CombinedResourceInfo[%s,%s]", id, resourceIdentifiers);
@@ -234,6 +281,7 @@ public final class CombinedResourceInfo {
 	 * Returns the ordered set of resource identifiers of this combined resource info.
 	 * @return the ordered set of resource identifiers of this combined resource info.
 	 */
+
 	public Set<ResourceIdentifier> getResourceIdentifiers() {
 		return resourceIdentifiers;
 	}
@@ -242,6 +290,7 @@ public final class CombinedResourceInfo {
 	 * Returns the ordered set of resources of this combined resource info.
 	 * @return The ordered set of resources of this combined resource info.
 	 */
+
 	public Set<Resource> getResources() {
 		loadResources();
 		return resources;
@@ -251,6 +300,7 @@ public final class CombinedResourceInfo {
 	 * Returns the content length in bytes of this combined resource info.
 	 * @return The content length in bytes of this combined resource info.
 	 */
+
 	public int getContentLength() {
 		loadResources();
 		return contentLength;
@@ -260,10 +310,23 @@ public final class CombinedResourceInfo {
 	 * Returns the last modified timestamp in milliseconds of this combined resource info.
 	 * @return The last modified timestamp in milliseconds of this combined resource info.
 	 */
+
 	public long getLastModified() {
 		loadResources();
 		return lastModified;
 	}
+
+	// Helpers ----------------------------------------------------------------------------------------------------
+
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	// Properties -----------------------------------------------------------------------------------------------------
+
+	// Constructors ---------------------------------------------------------------------------------------------------
+
+	// Actions --------------------------------------------------------------------------------------------------------
+
+	// Getters --------------------------------------------------------------------------------------------------------
 
 	// Helpers ----------------------------------------------------------------------------------------------------
 
@@ -296,7 +359,7 @@ public final class CombinedResourceInfo {
 			return null;
 		}
 
-		Set<ResourceIdentifier> resourceIdentifiers = new LinkedHashSet<ResourceIdentifier>();
+		Set<ResourceIdentifier> resourceIdentifiers = new LinkedHashSet<>();
 
 		for (String resourceIdentifier : resourcesId.split("\\|")) {
 			resourceIdentifiers.add(new ResourceIdentifier(resourceIdentifier));

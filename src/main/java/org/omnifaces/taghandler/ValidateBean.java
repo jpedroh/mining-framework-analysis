@@ -12,6 +12,34 @@
  */
 package org.omnifaces.taghandler;
 
+import static org.omnifaces.util.Components.hasInvokedSubmit;
+import static org.omnifaces.util.Events.addBeforePhaseListener;
+import static org.omnifaces.util.Events.subscribeToViewEvent;
+/**
+ * <p>
+ * The <code>&lt;o:validateBean&gt;</code> allows the developer to control bean validation on a per-{@link UICommand}
+ * or {@link UIInput} component basis. The standard <code>&lt;f:validateBean&gt;</code> only allows that on a per-form
+ * or a per-request basis (by using multiple tags and conditional EL expressions in its attributes) which may end up in
+ * boilerplate code.
+ *
+ * <h3>Usage</h3>
+ * <p>
+ * Some examples:
+ * <pre>
+ * &lt;h:commandButton value="submit" action="#{bean.submit}"&gt;
+ *     &lt;o:validateBean validationGroups="javax.validation.groups.Default,com.example.MyGroup"/&gt;
+ * &lt;/h:commandButton&gt;
+ * </pre>
+ * <pre>
+ * &lt;h:selectOneMenu value="#{bean.selectedItem}"&gt;
+ *     &lt;f:selectItems value="#{bean.availableItems}"
+ *     &lt;o:validateBean disabled="true" /&gt;
+ *     &lt;f:ajax execute="@form" listener="#{bean.itemChanged}" render="@form" /&gt;
+ * &lt;/h:commandButton&gt;
+ * </pre>
+ *
+ * @author Bauke Scholtz
+ */
 import static java.util.logging.Level.SEVERE;
 import static javax.faces.event.PhaseId.PROCESS_VALIDATIONS;
 import static javax.faces.event.PhaseId.RESTORE_VIEW;
@@ -20,10 +48,8 @@ import static org.omnifaces.el.ExpressionInspector.getValueReference;
 import static org.omnifaces.util.Components.forEachComponent;
 import static org.omnifaces.util.Components.getClosestParent;
 import static org.omnifaces.util.Components.getCurrentForm;
-import static org.omnifaces.util.Components.hasInvokedSubmit;
 import static org.omnifaces.util.Events.subscribeToRequestAfterPhase;
 import static org.omnifaces.util.Events.subscribeToRequestBeforePhase;
-import static org.omnifaces.util.Events.subscribeToViewEvent;
 import static org.omnifaces.util.Facelets.getBoolean;
 import static org.omnifaces.util.Facelets.getString;
 import static org.omnifaces.util.Facelets.getValueExpression;
@@ -37,7 +63,6 @@ import static org.omnifaces.util.Reflection.setProperties;
 import static org.omnifaces.util.Reflection.toClass;
 import static org.omnifaces.util.Utils.csvToList;
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,10 +71,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javax.el.ValueExpression;
 import javax.el.ValueReference;
-import javax.faces.FacesException;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
@@ -66,7 +89,6 @@ import javax.faces.view.facelets.FaceletContext;
 import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
 import javax.validation.ConstraintViolation;
-
 import org.omnifaces.eventlistener.BeanValidationEventListener;
 import org.omnifaces.util.Callback;
 import org.omnifaces.util.Platform;
@@ -76,7 +98,6 @@ import org.omnifaces.util.copier.CopyCtorCopier;
 import org.omnifaces.util.copier.MultiStrategyCopier;
 import org.omnifaces.util.copier.NewInstanceCopier;
 import org.omnifaces.util.copier.SerializationCopier;
-
 /**
  * <p>
  * The <code>&lt;o:validateBean&gt;</code> allows the developer to control bean validation on a per-{@link UICommand}
@@ -189,6 +210,14 @@ public class ValidateBean extends TagHandler {
 	 */
 	public ValidateBean(TagConfig config) {
 		super(config);
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+		validationGroups = getAttribute("validationGroups");
+		disabled = getAttribute("disabled");
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/base.java
+		this.validationGroups = getAttribute("validationGroups");
+		this.disabled = getAttribute("disabled");
+=======
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/right.java
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------
@@ -212,12 +241,37 @@ public class ValidateBean extends TagHandler {
 			return;
 		}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+		final String validationGroups = this.validationGroups != null ? this.validationGroups.getValue(context) : null;
+		final boolean disabled = this.disabled != null ? this.disabled.getBoolean(context) : false;
+		addBeforePhaseListener(PhaseId.PROCESS_VALIDATIONS, new Callback.Void() {
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/base.java
+		final String validationGroups = this.validationGroups != null ? this.validationGroups.getValue(context) : null;
+		final boolean disabled = this.disabled != null ? this.disabled.getBoolean(context) : false;
+		Events.addBeforePhaseListener(PhaseId.PROCESS_VALIDATIONS, new Callback.Void() {
+=======
 		value = getValueExpression(context, getAttribute("value"), Object.class);
 		disabled = getBoolean(context, getAttribute("disabled"));
 		method = ValidateMethod.of(getString(context, getAttribute("method")));
 		groups = getString(context, getAttribute("validationGroups"));
 		copier = getString(context, getAttribute("copier"));
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/right.java
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/left.java
+			@Override
+			public void invoke() {
+				if (hasInvokedSubmit(parent)) {
+					SystemEventListener listener = new BeanValidationEventListener(validationGroups, disabled);
+					subscribeToViewEvent(PreValidateEvent.class, listener);
+					subscribeToViewEvent(PostValidateEvent.class, listener);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/base.java
+			@Override
+			public void invoke() {
+				if (Components.hasInvokedSubmit(parent)) {
+					SystemEventListener listener = new BeanValidationEventListener(validationGroups, disabled);
+					Events.subscribeToViewEvent(PreValidateEvent.class, listener);
+					Events.subscribeToViewEvent(PostValidateEvent.class, listener);
+=======
 		// We can't use getCurrentForm() or hasInvokedSubmit() before the component is added to view, because the client ID isn't available.
 		// Hence, we subscribe this check to after phase of restore view.
 		subscribeToRequestAfterPhase(RESTORE_VIEW, new Callback.Void() { private static final long serialVersionUID = 1L; @Override public void invoke() {
@@ -254,6 +308,7 @@ public class ValidateBean extends TagHandler {
 					case validateCopy:
 						validateCopiedBean(form, bean, copier, groups);
 						break;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ValidateBean.java/right.java
 				}
 			}
 		}
@@ -281,7 +336,7 @@ public class ValidateBean extends TagHandler {
 	 * then validate copied bean and proceed to render response on fail.
 	 */
 	private void validateCopiedBean(final UIForm form, final Object bean, final String copier, final String groups) {
-		final Map<String, Object> properties = new HashMap<String, Object>();
+		final Map<String, Object> properties = new HashMap<>();
 
 		ValidateBeanCallback collectBeanProperties = new ValidateBeanCallback() { private static final long serialVersionUID = 1L; @Override public void run() {
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -382,7 +437,7 @@ public class ValidateBean extends TagHandler {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void validate(FacesContext context, UIForm form, Object bean, String groups, boolean renderResponseOnFail) {
-		List<Class> groupClasses = new ArrayList<Class>();
+		List<Class> groupClasses = new ArrayList<>();
 
 		for (String group : csvToList(groups)) {
 			groupClasses.add(toClass(group));
@@ -442,7 +497,7 @@ public class ValidateBean extends TagHandler {
 				validationFailed();
 				renderResponse();
 
-				throw new FacesException(e); // Rethrow, but JSF runtime will do little with it.
+				throw e; // Rethrow, but JSF runtime will do little with it.
 			}
 
 		}

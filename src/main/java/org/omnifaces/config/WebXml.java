@@ -14,6 +14,7 @@ package org.omnifaces.config;
 
 import static org.omnifaces.util.Faces.getServletContext;
 import static org.omnifaces.util.Faces.hasContext;
+import static org.omnifaces.util.Utils.close;
 import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.isNumber;
 import static org.omnifaces.util.Xml.createDocument;
@@ -405,11 +406,121 @@ public enum WebXml {
 	 * Load, merge and return all <code>web.xml</code> and <code>web-fragment.xml</code> files found in the classpath
 	 * into a single {@link Document}.
 	 */
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/left.java
+	private static Document loadWebXml(ServletContext context) throws Exception {
+		DocumentBuilder builder = createDocumentBuilder();
+		Document document = builder.newDocument();
+		document.appendChild(document.createElement("web"));
+		URL url = context.getResource(WEB_XML);
+
+		if (url != null) { // Since Servlet 3.0, web.xml is optional.
+			parseAndAppendChildren(url, builder, document);
+		}
+
+		if (context.getMajorVersion() >= 3) { // web-fragment.xml exist only since Servlet 3.0.
+			Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(WEB_FRAGMENT_XML);
+
+			while (urls.hasMoreElements()) {
+				parseAndAppendChildren(urls.nextElement(), builder, document);
+			}
+		}
+
+		return document;
+	}
+
+	/**
+	 * Returns an instance of {@link DocumentBuilder} which doesn't validate, nor is namespace aware nor expands entity
+	 * references (to keep it as lenient as possible).
+	 */
+	private static DocumentBuilder createDocumentBuilder() throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(false);
+		factory.setExpandEntityReferences(false);
+		return factory.newDocumentBuilder();
+	}
+
+	/**
+	 * Parse the given URL as a document using the given builder and then append all its child nodes to the given
+	 * document.
+	 */
+	private static void parseAndAppendChildren(URL url, DocumentBuilder builder, Document document) throws Exception {
+		URLConnection connection = url.openConnection();
+		connection.setUseCaches(false);
+		InputStream input = null;
+
+		try {
+			input = connection.getInputStream();
+			NodeList children = builder.parse(input).getDocumentElement().getChildNodes();
+
+			for (int i = 0; i < children.getLength(); i++) {
+				document.getDocumentElement().appendChild(document.importNode(children.item(i), true));
+			}
+		}
+		finally {
+			close(input);
+		}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/base.java
+	private static Document loadWebXml(ServletContext context) throws Exception {
+		DocumentBuilder builder = createDocumentBuilder();
+		Document document = builder.newDocument();
+		document.appendChild(document.createElement("web"));
+		URL url = context.getResource(WEB_XML);
+
+		if (url != null) { // Since Servlet 3.0, web.xml is optional.
+			parseAndAppendChildren(url, builder, document);
+		}
+
+		if (context.getMajorVersion() >= 3) { // web-fragment.xml exist only since Servlet 3.0.
+			Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(WEB_FRAGMENT_XML);
+
+			while (urls.hasMoreElements()) {
+				parseAndAppendChildren(urls.nextElement(), builder, document);
+			}
+		}
+
+		return document;
+	}
+
+	/**
+	 * Returns an instance of {@link DocumentBuilder} which doesn't validate, nor is namespace aware nor expands entity
+	 * references (to keep it as lenient as possible).
+	 */
+	private static DocumentBuilder createDocumentBuilder() throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(false);
+		factory.setExpandEntityReferences(false);
+		return factory.newDocumentBuilder();
+	}
+
+	/**
+	 * Parse the given URL as a document using the given builder and then append all its child nodes to the given
+	 * document.
+	 */
+	private static void parseAndAppendChildren(URL url, DocumentBuilder builder, Document document) throws Exception {
+		URLConnection connection = url.openConnection();
+		connection.setUseCaches(false);
+		InputStream input = null;
+
+		try {
+			input = connection.getInputStream();
+			NodeList children = builder.parse(input).getDocumentElement().getChildNodes();
+
+			for (int i = 0; i < children.getLength(); i++) {
+				document.getDocumentElement().appendChild(document.importNode(children.item(i), true));
+			}
+		}
+		finally {
+			Utils.close(input);
+		}
+=======
 	private static Document loadWebXml(ServletContext context) throws IOException, SAXException {
-		List<URL> webXmlURLs = new ArrayList<URL>();
+		List<URL> webXmlURLs = new ArrayList<>();
 		webXmlURLs.add(context.getResource(WEB_XML));
 		webXmlURLs.addAll(Collections.list(Thread.currentThread().getContextClassLoader().getResources(WEB_FRAGMENT_XML)));
 		return createDocument(webXmlURLs);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/right.java
 	}
 
 	/**
@@ -417,7 +528,7 @@ public enum WebXml {
 	 */
 	private static List<String> parseWelcomeFiles(Element webXml, XPath xpath) throws XPathExpressionException {
 		NodeList welcomeFileList = getNodeList(webXml, xpath, XPATH_WELCOME_FILE);
-		List<String> welcomeFiles = new ArrayList<String>(welcomeFileList.getLength());
+		List<String> welcomeFiles = new ArrayList<>(welcomeFileList.getLength());
 
 		for (int i = 0; i < welcomeFileList.getLength(); i++) {
 			welcomeFiles.add(getTextContent(welcomeFileList.item(i)));
@@ -432,7 +543,7 @@ public enum WebXml {
 	 */
 	@SuppressWarnings("unchecked") // For the cast on Class<Throwable>.
 	private static Map<Class<Throwable>, String> parseErrorPageLocations(Element webXml, XPath xpath) throws XPathExpressionException, ClassNotFoundException {
-		Map<Class<Throwable>, String> errorPageLocations = new LinkedHashMap<Class<Throwable>, String>();
+		Map<Class<Throwable>, String> errorPageLocations = new LinkedHashMap<>();
 		NodeList exceptionTypes = getNodeList(webXml, xpath, XPATH_EXCEPTION_TYPE);
 
 		for (int i = 0; i < exceptionTypes.getLength(); i++) {
@@ -481,7 +592,7 @@ public enum WebXml {
 	 * Create and return a mapping of all security constraint URL patterns and the associated roles.
 	 */
 	private static Map<String, Set<String>> parseSecurityConstraints(Element webXml, XPath xpath) throws XPathExpressionException {
-		Map<String, Set<String>> securityConstraints = new LinkedHashMap<String, Set<String>>();
+		Map<String, Set<String>> securityConstraints = new LinkedHashMap<>();
 		NodeList constraints = getNodeList(webXml, xpath, XPATH_SECURITY_CONSTRAINT);
 
 		for (int i = 0; i < constraints.getLength(); i++) {
@@ -491,7 +602,7 @@ public enum WebXml {
 
 			if (auth.getLength() > 0) {
 				NodeList authRoles = getNodeList(constraint, xpath, XPATH_AUTH_CONSTRAINT_ROLE_NAME);
-				roles = new HashSet<String>(authRoles.getLength());
+				roles = new HashSet<>(authRoles.getLength());
 
 				for (int j = 0; j < authRoles.getLength(); j++) {
 					roles.add(getTextContent(authRoles.item(j)));
@@ -517,6 +628,26 @@ public enum WebXml {
 	private static int parseSessionTimeout(Element webXml, XPath xpath) throws XPathExpressionException {
 		String sessionTimeout = xpath.compile(XPATH_SESSION_TIMEOUT).evaluate(webXml).trim();
 		return isNumber(sessionTimeout) ? Integer.parseInt(sessionTimeout) : -1;
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/left.java
+	}
+
+	// Helpers of helpers (JAXP hell) ---------------------------------------------------------------------------------
+
+	private static NodeList getNodeList(Node node, XPath xpath, String expression) throws Exception {
+		return (NodeList) xpath.compile(expression).evaluate(node, XPathConstants.NODESET);
+	}
+
+	private static String getTextContent(Node node) {
+		return node.getFirstChild().getNodeValue().trim();
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/base.java
+	}
+
+	// Helpers of helpers (JAXP hell) ---------------------------------------------------------------------------------
+
+	private static NodeList getNodeList(Node node, XPath xpath, String expression) throws Exception {
+		return (NodeList) xpath.compile(expression).evaluate(node, XPathConstants.NODESET);
+=======
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/WebXml.java/right.java
 	}
 
 }

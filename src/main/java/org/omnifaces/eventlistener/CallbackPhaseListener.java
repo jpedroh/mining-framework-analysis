@@ -11,21 +11,17 @@
  * specific language governing permissions and limitations under the License.
  */
 package org.omnifaces.eventlistener;
-
-import static javax.faces.event.PhaseId.ANY_PHASE;
 import static org.omnifaces.util.Faces.getContext;
 import static org.omnifaces.util.FacesLocal.getRequestAttribute;
 import static org.omnifaces.util.FacesLocal.setRequestAttribute;
-
+import javax.faces.context.FacesContext;
+import static javax.faces.event.PhaseId.ANY_PHASE;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
-
 /**
  * <p>
  * This phase listener picks up phase listener instances and phase event callbacks from the request scope subscribed via
@@ -59,15 +55,63 @@ public class CallbackPhaseListener implements PhaseListener {
 
 	@Override
 	public void beforePhase(final PhaseEvent event) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/left.java
+		Set<PhaseListener> phaseListeners = getCallbackPhaseListeners(event.getFacesContext(), false);
+
+		if (phaseListeners == null) {
+			return;
+		}
+
+		for (PhaseListener phaseListener : phaseListeners) {
+			if (isPhaseMatch(event, phaseListener.getPhaseId())) {
+				phaseListener.beforePhase(event);
+			}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/base.java
+		Set<PhaseListener> phaseListeners = getCallbackPhaseListeners(false);
+
+		if (phaseListeners == null) {
+			return;
+		}
+
+		for (PhaseListener phaseListener : phaseListeners) {
+			if (isPhaseMatch(event, phaseListener.getPhaseId())) {
+				phaseListener.beforePhase(event);
+			}
+=======
 		for (PhaseListener phaseListener : getCallbackPhaseListenersForEvent(event)) {
 			phaseListener.beforePhase(event);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/right.java
 		}
 	}
 
 	@Override
 	public void afterPhase(PhaseEvent event) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/left.java
+		Set<PhaseListener> phaseListeners = getCallbackPhaseListeners(event.getFacesContext(), false);
+
+		if (phaseListeners == null) {
+			return;
+		}
+
+		for (PhaseListener phaseListener : phaseListeners) {
+			if (isPhaseMatch(event, phaseListener.getPhaseId())) {
+				phaseListener.afterPhase(event);
+			}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/base.java
+		Set<PhaseListener> phaseListeners = getCallbackPhaseListeners(false);
+
+		if (phaseListeners == null) {
+			return;
+		}
+
+		for (PhaseListener phaseListener : phaseListeners) {
+			if (isPhaseMatch(event, phaseListener.getPhaseId())) {
+				phaseListener.afterPhase(event);
+			}
+=======
 		for (PhaseListener phaseListener : getCallbackPhaseListenersForEvent(event)) {
 			phaseListener.afterPhase(event);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/right.java
 		}
 	}
 
@@ -97,8 +141,16 @@ public class CallbackPhaseListener implements PhaseListener {
 		Set<PhaseListener> set = getRequestAttribute(context, CallbackPhaseListener.class.getName());
 
 		if (set == null && create) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/left.java
 			set = new HashSet<PhaseListener>(1);
 			setRequestAttribute(context, CallbackPhaseListener.class.getName(), set);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/base.java
+			set = new HashSet<PhaseListener>(1);
+			Faces.setRequestAttribute(CallbackPhaseListener.class.getName(), set);
+=======
+			set = new HashSet<>(1);
+			setRequestAttribute(context, CallbackPhaseListener.class.getName(), set);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/CallbackPhaseListener.java/right.java
 		}
 
 		return set;
@@ -111,7 +163,7 @@ public class CallbackPhaseListener implements PhaseListener {
 			return Collections.emptySet();
 		}
 
-		Set<PhaseListener> phaseListenersForEvent = new HashSet<PhaseListener>();
+		Set<PhaseListener> phaseListenersForEvent = new HashSet<>();
 
 		for (PhaseListener phaseListener : phaseListeners) {
 			if (isPhaseMatch(event, phaseListener.getPhaseId())) {

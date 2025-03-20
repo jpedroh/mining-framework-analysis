@@ -14,6 +14,8 @@ package org.omnifaces.component.output.cache.el;
 
 import static org.omnifaces.util.Faces.getContext;
 
+import java.util.Objects;
+
 import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -56,12 +58,12 @@ public class CachingValueExpression extends ValueExpressionWrapper {
 
 	@Override
 	public boolean equals(Object object) {
-		return super.equals(object) && ((name == ((CachingValueExpression) object).name) || (name != null && name.equals(((CachingValueExpression) object).name)));
+		return super.equals(object) && Objects.equals(name, ((CachingValueExpression) object).name);
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + (name != null ? name.hashCode() : 0);
+		return super.hashCode() + Objects.hashCode(name);
 	}
 
 }

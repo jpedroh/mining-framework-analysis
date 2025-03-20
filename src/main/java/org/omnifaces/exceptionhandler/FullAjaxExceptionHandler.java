@@ -14,6 +14,11 @@ package org.omnifaces.exceptionhandler;
 
 import static org.omnifaces.util.Exceptions.unwrap;
 import static org.omnifaces.util.Faces.getContext;
+import static javax.servlet.RequestDispatcher.ERROR_EXCEPTION;
+import static javax.servlet.RequestDispatcher.ERROR_EXCEPTION_TYPE;
+import static javax.servlet.RequestDispatcher.ERROR_MESSAGE;
+import static javax.servlet.RequestDispatcher.ERROR_REQUEST_URI;
+import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
 import static org.omnifaces.util.FacesLocal.getRequest;
 import static org.omnifaces.util.FacesLocal.normalizeViewId;
 
@@ -181,14 +186,6 @@ public class FullAjaxExceptionHandler extends ExceptionHandlerWrapper {
 			+ " web developer, it's time to read the server logs about the bug in the error page itself.</p></section>"
 			+ "</body></html>]]></update></changes></partial-response>";
 
-	// Yes, those are copies of Servlet 3.0 RequestDispatcher constant field values.
-	// They are hardcoded to maintain Servlet 2.5 compatibility.
-	private static final String ATTRIBUTE_ERROR_EXCEPTION = "javax.servlet.error.exception";
-	private static final String ATTRIBUTE_ERROR_EXCEPTION_TYPE = "javax.servlet.error.exception_type";
-	private static final String ATTRIBUTE_ERROR_MESSAGE = "javax.servlet.error.message";
-	private static final String ATTRIBUTE_ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
-	private static final String ATTRIBUTE_ERROR_STATUS_CODE = "javax.servlet.error.status_code";
-
 	// Variables ------------------------------------------------------------------------------------------------------
 
 	private ExceptionHandler wrapped;
@@ -259,11 +256,11 @@ public class FullAjaxExceptionHandler extends ExceptionHandlerWrapper {
 
 		// Set the necessary servlet request attributes which a bit decent error page may expect.
 		HttpServletRequest request = getRequest(context);
-		request.setAttribute(ATTRIBUTE_ERROR_EXCEPTION, exception);
-		request.setAttribute(ATTRIBUTE_ERROR_EXCEPTION_TYPE, exception.getClass());
-		request.setAttribute(ATTRIBUTE_ERROR_MESSAGE, exception.getMessage());
-		request.setAttribute(ATTRIBUTE_ERROR_REQUEST_URI, request.getRequestURI());
-		request.setAttribute(ATTRIBUTE_ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		request.setAttribute(ERROR_EXCEPTION, exception);
+		request.setAttribute(ERROR_EXCEPTION_TYPE, exception.getClass());
+		request.setAttribute(ERROR_MESSAGE, exception.getMessage());
+		request.setAttribute(ERROR_REQUEST_URI, request.getRequestURI());
+		request.setAttribute(ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 		try {
 			renderErrorPageView(context, request, errorPageLocation);
@@ -398,14 +395,26 @@ public class FullAjaxExceptionHandler extends ExceptionHandlerWrapper {
 			// Prevent some servlet containers from handling error page itself afterwards. So far Tomcat/JBoss
 			// are known to do that. It would only result in IllegalStateException "response already committed"
 			// or "getOutputStream() has already been called for this response".
-			request.removeAttribute(ATTRIBUTE_ERROR_EXCEPTION);
+			request.removeAttribute(ERROR_EXCEPTION);
 		}
 	}
 
 	private String getViewIdAndPrepareParamsIfNecessary(FacesContext context, String errorPageLocation) {
 		String[] parts = errorPageLocation.split("\\?", 2);
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/exceptionhandler/FullAjaxExceptionHandler.java/left.java
+		if (parts.length == 2) {
+			// Map<String, List<String>> params = toParameterMap(parts[1]);
+			// TODO: #287: make available via #{param(Values)}. Request wrapper needed :|
+		}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/exceptionhandler/FullAjaxExceptionHandler.java/base.java
+		if (parts.length == 2) {
+			Map<String, List<String>> params = toParameterMap(parts[1]);
+			// TODO: #287: make available via #{param(Values)}. Request wrapper needed :|
+		}
+=======
 		// TODO: #287: make params available via #{param(Values)}. Request wrapper needed :|
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/exceptionhandler/FullAjaxExceptionHandler.java/right.java
 
 		return normalizeViewId(context, parts[0]);
 	}

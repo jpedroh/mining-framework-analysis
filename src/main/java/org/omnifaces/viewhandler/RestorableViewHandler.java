@@ -97,14 +97,21 @@ public class RestorableViewHandler extends ViewHandlerWrapper {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/left.java
+	private boolean isEnabled(FacesContext context) {
+		return TRUE.equals(getApplicationAttribute(context, RestorableViewHandler.class.getName()));
+	}
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/base.java
+=======
 	private boolean isEnabled(FacesContext context) {
 		return TRUE.equals(getApplicationAttribute(context, EnableRestorableView.class.getName()));
 	}
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/viewhandler/RestorableViewHandler.java/right.java
 
 	@Override
-	public ViewHandler getWrapped() {
-		return wrapped;
-	}
+public ViewHandler getWrapped() {
+	return wrapped;
+}
 
 	// Inner classes --------------------------------------------------------------------------------------------------
 

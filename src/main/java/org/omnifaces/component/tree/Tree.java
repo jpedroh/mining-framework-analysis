@@ -189,7 +189,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 		process(context, getModel(phaseId), new Callback.Returning<Void>() {
 
 			private static final long serialVersionUID = 1L;
-
+			
 			@Override
 			public Void invoke() {
 				processTreeNode(context, phaseId);
@@ -211,7 +211,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 		}
 
 		return process(context.getFacesContext(), getModel(PhaseId.ANY_PHASE), new Callback.Returning<Boolean>() {
-
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -244,7 +244,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 			final FacesEvent wrapped = treeEvent.getWrapped();
 
 			process(context, treeEvent.getNode(), new Callback.Returning<Void>() {
-
+				
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -271,7 +271,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 	 */
 	protected void processTreeNode(final FacesContext context, final PhaseId phaseId) {
 		processTreeNode(phaseId, new Callback.ReturningWithArgument<Void, TreeNode>() {
-
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -298,7 +298,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 	 */
 	protected boolean visitTreeNode(final VisitContext context, final VisitCallback callback) {
 		return processTreeNode(PhaseId.ANY_PHASE, new Callback.ReturningWithArgument<Boolean, TreeNode>() {
-
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -366,7 +366,7 @@ public class Tree extends TreeFamily implements NamingContainer {
 	 */
 	private Map<Integer, TreeNode> getNodes(PhaseId phaseId) {
 		if (phaseId == PhaseId.RENDER_RESPONSE || nodes == null) {
-			nodes = new HashMap<Integer, TreeNode>(getChildCount());
+			nodes = new HashMap<>(getChildCount());
 
 			for (UIComponent child : getChildren()) {
 				if (child instanceof TreeNode) {

@@ -55,7 +55,7 @@ public final class CombinedResourceInputStream extends InputStream {
 	 * @throws IOException If something fails at I/O level.
 	 */
 	public CombinedResourceInputStream(Set<Resource> resources) throws IOException {
-		streams = new ArrayList<InputStream>();
+		streams = new ArrayList<>();
 		String domainURL = getRequestDomainURL();
 
 		for (Resource resource : resources) {

@@ -12,12 +12,12 @@
  */
 package org.omnifaces.util;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.regex.Pattern.quote;
 import static javax.faces.application.ProjectStage.Development;
 import static javax.faces.application.ProjectStage.PROJECT_STAGE_JNDI_NAME;
 import static javax.faces.application.ProjectStage.PROJECT_STAGE_PARAM_NAME;
 import static org.omnifaces.util.JNDI.lookup;
-import static org.omnifaces.util.Utils.UTF_8;
 import static org.omnifaces.util.Utils.decodeURL;
 import static org.omnifaces.util.Utils.encodeURL;
 import static org.omnifaces.util.Utils.isEmpty;
@@ -244,7 +244,7 @@ public final class Servlets {
 	 */
 	public static Map<String, List<String>> toParameterMap(String queryString) {
 		String[] parameters = queryString.split(quote("&"));
-		Map<String, List<String>> parameterMap = new LinkedHashMap<String, List<String>>(parameters.length);
+		Map<String, List<String>> parameterMap = new LinkedHashMap<>(parameters.length);
 
 		for (String parameter : parameters) {
 			if (parameter.contains("=")) {
@@ -254,7 +254,7 @@ public final class Servlets {
 				List<String> values = parameterMap.get(key);
 
 				if (values == null) {
-					values = new ArrayList<String>(1);
+					values = new ArrayList<>(1);
 					parameterMap.put(key, values);
 				}
 

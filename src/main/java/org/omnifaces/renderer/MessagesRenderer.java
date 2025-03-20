@@ -61,7 +61,7 @@ public class MessagesRenderer extends Renderer {
 	private static final Map<Severity, String> SEVERITY_NAMES = createSeverityNames();
 
 	private static Map<Severity, String> createSeverityNames() {
-		Map<Severity, String> severityNames = new HashMap<Severity, String>();
+		Map<Severity, String> severityNames = new HashMap<>();
 		severityNames.put(FacesMessage.SEVERITY_INFO, "info");
 		severityNames.put(FacesMessage.SEVERITY_WARN, "warn");
 		severityNames.put(FacesMessage.SEVERITY_ERROR, "error");
@@ -78,7 +78,6 @@ public class MessagesRenderer extends Renderer {
 	public boolean getRendersChildren() {
 		return true;
 	}
-
 	@Override
 	public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
 		if (!component.isRendered()) {
@@ -104,7 +103,6 @@ public class MessagesRenderer extends Renderer {
 			encodeMessages(context, omniMessages, messages, "table".equals(omniMessages.getLayout()));
 		}
 	}
-
 	/**
 	 * Collect all messages associated with components identified by <code>for</code> attribute and return it. An empty
 	 * list will be returned when there are no messages.
@@ -119,7 +117,7 @@ public class MessagesRenderer extends Renderer {
 			return component.isGlobalOnly() ? context.getMessageList(null) : context.getMessageList();
 		}
 
-		List<FacesMessage> messages = new ArrayList<FacesMessage>();
+		List<FacesMessage> messages = new ArrayList<>();
 
 		for (String forClientId : forClientIds.split("\\s+")) {
 			UIComponent forComponent = component.findComponent(forClientId);
@@ -139,7 +137,6 @@ public class MessagesRenderer extends Renderer {
 
 		return messages;
 	}
-
 	/**
 	 * Encode the case when the <code>var</code> attribute is specified. This will render without any HTML markup and
 	 * put the current message in the request scope as identified by the <code>var</code> attribute.
@@ -180,7 +177,6 @@ public class MessagesRenderer extends Renderer {
 			}
 		}
 	}
-
 	/**
 	 * Encode the case when there are no messages. This will render a div when the ID is specified.
 	 * @param context The involved faces context.
@@ -197,7 +193,6 @@ public class MessagesRenderer extends Renderer {
 			writer.endElement("div");
 		}
 	}
-
 	/**
 	 * Encode the case when the faces messages are to be rendered as either a HTML table or a HTML list.
 	 * @param context The involved faces context.
@@ -205,6 +200,9 @@ public class MessagesRenderer extends Renderer {
 	 * @param messages The queued faces messages.
 	 * @param table Whether to render the messages as a HTML table or a HTML list.
 	 * @throws IOException When an I/O error occurs.
+	 */
+	/**
+	 * Returns <code>true</code>.
 	 */
 	protected void encodeMessages
 		(FacesContext context, OmniMessages component, List<FacesMessage> messages, boolean table)
@@ -230,7 +228,6 @@ public class MessagesRenderer extends Renderer {
 
 		writer.endElement(table ? "table" : "ul");
 	}
-
 	/**
 	 * Encode a single faces message.
 	 * @param context The involved faces context.

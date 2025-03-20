@@ -13,16 +13,21 @@
 package org.omnifaces.resourcehandler;
 
 import static org.omnifaces.util.Faces.getMimeType;
-import static org.omnifaces.util.Utils.toByteArray;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
 import java.io.InputStream;
 
 import javax.faces.application.Resource;
+
+import static org.omnifaces.util.Utils.toByteArray;
+
+import java.io.ByteArrayInputStream;
+
 import javax.faces.context.FacesContext;
 
 import org.omnifaces.component.output.cache.Cache;
+
 import org.omnifaces.component.output.cache.CacheFactory;
 
 /**
@@ -35,15 +40,9 @@ import org.omnifaces.component.output.cache.CacheFactory;
  */
 public class CombinedResource extends DynamicResource {
 
-	// Constants ------------------------------------------------------------------------------------------------------
-
-	private static final String CACHE_SCOPE = "application";
-
 	// Properties -----------------------------------------------------------------------------------------------------
 
-	private String resourceId;
 	private CombinedResourceInfo info;
-	private Integer cacheTTL;
 
 	// Constructors ---------------------------------------------------------------------------------------------------
 
@@ -51,14 +50,30 @@ public class CombinedResource extends DynamicResource {
 	 * Constructs a new combined resource based on the given resource name. This constructor is only used by
 	 * {@link CombinedResourceHandler#createResource(String, String)}.
 	 * @param resourceName The resource name of the combined resource.
-	 * @param cacheTTL The combined resource content cache TTL.
 	 */
+
 	public CombinedResource(String resourceName, Integer cacheTTL) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/left.java
+		super(resourceName, CombinedResourceHandler.LIBRARY_NAME, getMimeType(resourceName));
+		String[] resourcePathParts = resourceName.split("\\.", 2)[0].split("/");
+		String resourceId = resourcePathParts[resourcePathParts.length - 1];
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/base.java
+		String[] resourcePathParts = name.split("\\.", 2)[0].split("/");
+		String resourceId = resourcePathParts[resourcePathParts.length - 1];
+=======
 		super(resourceName, CombinedResourceHandler.LIBRARY_NAME, getMimeType(resourceName));
 		String[] resourcePathParts = resourceName.split("\\.", 2)[0].split("/");
 		resourceId = resourcePathParts[resourcePathParts.length - 1];
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/right.java
 		info = CombinedResourceInfo.get(resourceId);
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/left.java
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/base.java
+		setResourceName(name);
+		setLibraryName(CombinedResourceHandler.LIBRARY_NAME);
+		setContentType(Faces.getMimeType(name));
+=======
 		this.cacheTTL = cacheTTL;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CombinedResource.java/right.java
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------
@@ -83,9 +98,31 @@ public class CombinedResource extends DynamicResource {
 		}
 	}
 
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	private static final String CACHE_SCOPE = "application";
+
+	// Properties -----------------------------------------------------------------------------------------------------
+
+	private String resourceId;
+
+	private Integer cacheTTL;
+
+	// Constructors ---------------------------------------------------------------------------------------------------
+
+	/**
+	 * Constructs a new combined resource based on the given resource name. This constructor is only used by
+	 * {@link CombinedResourceHandler#createResource(String, String)}.
+	 * @param resourceName The resource name of the combined resource.
+	 * @param cacheTTL The combined resource content cache TTL.
+	 */
+
+	// Actions --------------------------------------------------------------------------------------------------------
+
 	/**
 	 * Returns the cached input stream, or if there is none, then create one.
 	 */
+
 	private InputStream getInputStreamFromCache() throws IOException {
 		Cache combinedResourceCache = CacheFactory.getCache(FacesContext.getCurrentInstance(), CACHE_SCOPE);
 		byte[] cachedCombinedResource;

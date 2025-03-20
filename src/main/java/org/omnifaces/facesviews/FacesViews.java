@@ -16,14 +16,20 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Locale.US;
 import static java.util.regex.Pattern.quote;
+import static javax.faces.view.facelets.ResourceResolver.FACELETS_RESOURCE_RESOLVER_PARAM_NAME;
+import static org.omnifaces.facesviews.FacesServletDispatchMethod.DO_FILTER;
 import static org.omnifaces.util.Faces.getApplicationAttribute;
+import static org.omnifaces.util.Faces.getApplicationFromFactory;
 import static org.omnifaces.util.Platform.getFacesServletRegistration;
+import static org.omnifaces.util.ResourcePaths.filterExtension;
 import static org.omnifaces.util.ResourcePaths.getExtension;
 import static org.omnifaces.util.ResourcePaths.isDirectory;
+import static org.omnifaces.util.ResourcePaths.isExtensionless;
 import static org.omnifaces.util.ResourcePaths.stripExtension;
 import static org.omnifaces.util.ResourcePaths.stripPrefixPath;
 import static org.omnifaces.util.Servlets.getApplicationAttribute;
 import static org.omnifaces.util.Servlets.getRequestBaseURL;
+import static org.omnifaces.util.Servlets.isFacesDevelopment;
 import static org.omnifaces.util.Utils.csvToList;
 import static org.omnifaces.util.Utils.isEmpty;
 import static org.omnifaces.util.Utils.reverse;
@@ -35,11 +41,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.webapp.FacesServlet;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
+
+import org.omnifaces.ApplicationInitializer;
+import org.omnifaces.ApplicationListener;
+import org.omnifaces.config.WebXml;
 
 /**
  * <p>
@@ -76,9 +89,18 @@ import javax.servlet.http.HttpServletRequest;
  * aforementioned <a href="http://ocpsoft.org/prettyfaces">PrettyFaces</a>.
  *
  * @author Arjan Tijms
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/facesviews/FacesViews.java/left.java
  * @see FacesViewsForwardingFilter
  * @see FacesViewsViewHandler
  * @see FacesViewsResolver
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/facesviews/FacesViews.java/base.java
+ *
+=======
+ * @see FacesViewsForwardingFilter
+ * @see FacesViewsViewHandler
+ * @see FacesViewsViewHandlerInstaller
+ * @see FacesViewsResolver
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/facesviews/FacesViews.java/right.java
  */
 public final class FacesViews {
 
@@ -171,6 +193,130 @@ public final class FacesViews {
 
 	public static final String FACES_VIEWS_ORIGINAL_SERVLET_PATH = "org.omnifaces.facesviews.original.servlet_path";
 
+	/**
+	 * This will register the {@link FacesViewsForwardingFilter}.
+	 * @param servletContext The involved servlet context.
+	 */
+	public static void registerFilter(ServletContext servletContext) {
+
+		if (!"false".equals(servletContext.getInitParameter(FACES_VIEWS_ENABLED_PARAM_NAME))) {
+
+			// Scan our dedicated directory for Faces resources that need to be mapped
+			Map<String, String> collectedViews = new HashMap<>();
+			Set<String> collectedExtensions = new HashSet<>();
+			scanViewsFromRootPaths(servletContext, collectedViews, collectedExtensions);
+
+			if (!collectedViews.isEmpty()) {
+
+				// Store the resources and extensions that were found in application scope, where others can find it.
+				servletContext.setAttribute(FACES_VIEWS_RESOURCES, unmodifiableMap(collectedViews));
+				servletContext.setAttribute(FACES_VIEWS_REVERSE_RESOURCES, unmodifiableMap(reverse(collectedViews)));
+				servletContext.setAttribute(FACES_VIEWS_RESOURCES_EXTENSIONS, unmodifiableSet(collectedExtensions));
+
+				// Register 3 artifacts with the Servlet container and JSF that help implement this feature:
+
+				// 1. A Filter that forwards extensionless requests to an extension mapped request, e.g. /index to
+				// /index.xhtml
+				// (The FacesServlet doesn't work well with the exact mapping that we use for extensionless URLs).
+				FilterRegistration facesViewsRegistration = servletContext.addFilter(FacesViewsForwardingFilter.class.getName(),
+						FacesViewsForwardingFilter.class);
+
+				// 2. A Facelets resource resolver that resolves requests like /index.xhtml to
+				// /WEB-INF/faces-views/index.xhtml
+				servletContext.setInitParameter(FACELETS_RESOURCE_RESOLVER_PARAM_NAME, FacesViewsResolver.class.getName());
+
+				// 3. A ViewHandler that transforms the forwarded extension based URL back to an extensionless one, e.g.
+				// /index.xhtml to /index
+				// See FacesViewsForwardingFilter#init
+
+
+				if (isFacesDevelopment(servletContext) && getFacesServletDispatchMethod(servletContext) != DO_FILTER) {
+
+					// In development mode map this Filter to "*", so we can catch requests to extensionless resources that
+					// have been dynamically added. Note that resources with mapped extensions are already handled by the FacesViewsResolver.
+					// Adding resources with new extensions still requires a restart.
+
+					// Development mode only works when the dispatch mode is not DO_FILTER, since DO_FILTER mode depends
+					// on the Faces Servlet being "exact"-mapped on the view resources.
+
+					facesViewsRegistration.addMappingForUrlPatterns(null, isFilterAfterDeclaredFilters(servletContext), "/*");
+				} else {
+
+					// In non-development mode, only map this Filter to specific resources
+
+					// Map the forwarding filter to all the resources we found.
+					for (String resource : collectedViews.keySet()) {
+						facesViewsRegistration.addMappingForUrlPatterns(null, isFilterAfterDeclaredFilters(servletContext), resource);
+					}
+
+					// Additionally map the filter to all paths that were scanned and which are also directly
+					// accessible. This is to give the filter an opportunity to block these.
+					for (String path : getPublicRootPaths(servletContext)) {
+						facesViewsRegistration.addMappingForUrlPatterns(null, false, path + "*");
+					}
+				}
+
+				// We now need to map the Faces Servlet to the extensions we found, but at this point in time
+				// this Faces Servlet might not be created yet, so we do this part in FacesViewInitializedListener.
+			}
+		}
+	}
+
+	/**
+	 * This will map the {@link FacesServlet} to extensions found during scanning in {@link ApplicationInitializer}.
+	 * This part of the initialization is executed via {@link ApplicationListener}, because the {@link FacesServlet}
+	 * has to be available.
+	 * @param servletContext The involved servlet context.
+	 */
+	public static void addMappings(ServletContext servletContext) {
+
+		if (!"false".equals(servletContext.getInitParameter(FACES_VIEWS_ENABLED_PARAM_NAME))) {
+
+			Set<String> extensions = getApplicationAttribute(servletContext, FACES_VIEWS_RESOURCES_EXTENSIONS);
+
+			if (!isEmpty(extensions)) {
+
+				Set<String> mappings = new HashSet<>(extensions);
+				for (String welcomeFile : WebXml.INSTANCE.init(servletContext).getWelcomeFiles()) {
+					if (isExtensionless(welcomeFile)) {
+						if (!welcomeFile.startsWith("/")) {
+							welcomeFile = "/" + welcomeFile;
+						}
+						mappings.add(welcomeFile);
+					}
+				}
+
+				if (getFacesServletDispatchMethod(servletContext) == DO_FILTER) {
+					// In order for the DO_FILTER method to work the FacesServlet, in addition the forward filter, has
+					// to be mapped on all extensionless resources.
+					Map<String, String> collectedViews = getApplicationAttribute(servletContext, FACES_VIEWS_RESOURCES);
+					mappings.addAll(filterExtension(collectedViews.keySet()));
+				}
+
+				mapFacesServlet(servletContext, mappings);
+			}
+		}
+	}
+
+	/**
+	 * Register a view handler that transforms a view id with extension back to an extensionless one.
+	 * @param servletContext The involved servlet context.
+	 */
+	public static void setViewHander(ServletContext servletContext) {
+		if (isFacesViewsActive(servletContext)) {
+			Application application = getApplicationFromFactory();
+			application.setViewHandler(new FacesViewsViewHandler(application.getViewHandler()));
+		}
+	}
+
+	public static boolean isFacesViewsActive(ServletContext servletContext) {
+		if (!"false".equals(servletContext.getInitParameter(FACES_VIEWS_ENABLED_PARAM_NAME))) {
+			return !isEmpty(getApplicationAttribute(servletContext, FACES_VIEWS_RESOURCES_EXTENSIONS));
+		}
+
+		return false;
+	}
+
 	public static void scanViewsFromRootPaths(ServletContext servletContext, Map<String, String> collectedViews, Set<String> collectedExtensions) {
 		for (String rootPath : getRootPaths(servletContext)) {
 
@@ -192,7 +338,7 @@ public final class FacesViews {
 		Set<String> rootPaths = (Set<String>) servletContext.getAttribute(SCAN_PATHS);
 
 		if (rootPaths == null) {
-			rootPaths = new HashSet<String>(csvToList(servletContext.getInitParameter(FACES_VIEWS_SCAN_PATHS_PARAM_NAME)));
+			rootPaths = new HashSet<>(csvToList(servletContext.getInitParameter(FACES_VIEWS_SCAN_PATHS_PARAM_NAME)));
 			rootPaths.add(WEB_INF_VIEWS);
 			servletContext.setAttribute(SCAN_PATHS, unmodifiableSet(rootPaths));
 		}
@@ -206,7 +352,7 @@ public final class FacesViews {
 
 		if (publicRootPaths == null) {
 			Set<String> rootPaths = getRootPaths(servletContext);
-			publicRootPaths = new HashSet<String>();
+			publicRootPaths = new HashSet<>();
 			for (String rootPath : rootPaths) {
 
 				if (rootPath.contains("*")) {
@@ -427,7 +573,7 @@ public final class FacesViews {
 	 * @return views
 	 */
 	public static Map<String, String> scanViews(ServletContext servletContext) {
-		Map<String, String> collectedViews = new HashMap<String, String>();
+		Map<String, String> collectedViews = new HashMap<>();
 		scanViewsFromRootPaths(servletContext, collectedViews, null);
 		return collectedViews;
 	}
@@ -509,7 +655,7 @@ public final class FacesViews {
 		Set<String> extensions = (Set<String>) servletContext.getAttribute(FACES_SERVLET_EXTENSIONS);
 
 		if (extensions == null) {
-			extensions = new HashSet<String>();
+			extensions = new HashSet<>();
 			ServletRegistration facesServletRegistration = getFacesServletRegistration(servletContext);
 			if (facesServletRegistration != null) {
 				Collection<String> mappings = facesServletRegistration.getMappings();

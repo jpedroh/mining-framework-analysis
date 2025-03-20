@@ -15,8 +15,8 @@ package org.omnifaces.renderkit;
 import static org.omnifaces.util.Components.getCurrentComponent;
 import static org.omnifaces.util.Faces.getInitParameter;
 import static org.omnifaces.util.Utils.isEmpty;
-import static org.omnifaces.util.Utils.isOneInstanceOf;
 import static org.omnifaces.util.Utils.unmodifiableSet;
+import static org.omnifaces.util.Utils.isOneInstanceOf;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -221,7 +221,7 @@ public class Html5RenderKit extends RenderKitWrapper {
 			return null;
 		}
 
-		Map<Class<UIComponent>, Set<String>> passthroughAttributes = new HashMap<Class<UIComponent>, Set<String>>();
+		Map<Class<UIComponent>, Set<String>> passthroughAttributes = new HashMap<>();
 
 		for (String passthroughAttribute : passthroughAttributesParam.split("\\s*;\\s*")) {
 			String[] classAndAttributeNames = passthroughAttribute.split("\\s*=\\s*", 2);

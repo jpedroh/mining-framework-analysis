@@ -193,18 +193,29 @@ public class CDNResourceHandler extends DefaultResourceHandler {
 	// Actions --------------------------------------------------------------------------------------------------------
 
 	/**
-	 * If the given resource is not <code>null</code> and the CDN resource handler is not (conditionally) disabled for
-	 * the current request, then the CDN resources will be consulted if any CDN URL is available for the given resource.
-	 * If there is none, then just return the JSF default resource, otherwise return a wrapped resource whose
+	 * Delegate to {@link #createResource(String, String, String)} of the wrapped resource handler. If it returns
+	 * non-<code>null</code> and the current JSF project stage is <strong>not</strong> set to <code>Development</code>,
+	 * then the properties file will be consulted if any CDN URL is available for the given resource. If there is none,
+	 * then just return the JSF default resource, otherwise return a wrapped resource whose
 	 * {@link Resource#getRequestPath()} returns the CDN URL as is been set in the
 	 * {@value org.omnifaces.resourcehandler.CDNResourceHandler#PARAM_NAME_CDN_RESOURCES} context parameter.
 	 */
 	@Override
 	public Resource decorateResource(Resource resource) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/left.java
+		Resource resource = super.createResource(resourceName, libraryName, contentType);
+
 		if (resource == null || (disabledParam != null && Boolean.valueOf(String.valueOf(evaluateExpressionGet(disabledParam))))) {
 			return resource;
 		}
 
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/base.java
+=======
+		if (resource == null || (disabledParam != null && Boolean.valueOf(String.valueOf(evaluateExpressionGet(disabledParam))))) {
+			return resource;
+		}
+
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/right.java
 		String requestPath = null;
 
 		if (cdnResources != null) {
@@ -226,9 +237,42 @@ public class CDNResourceHandler extends DefaultResourceHandler {
 			return resource;
 		}
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/left.java
+		final String evaluatedRequestPath = evaluateExpressionGet(requestPath);
+
+		return new DefaultResource(resource) {
+			@Override
+			public String getRequestPath() {
+				return evaluatedRequestPath;
+			}
+		};
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/base.java
+		final String finalRequestPath = evaluateExpressionGet(requestPath);
+
+		return new ResourceWrapper() {
+
+			@Override
+			public String getRequestPath() {
+				return finalRequestPath;
+			}
+
+			@Override
+			public Resource getWrapped() {
+				return null;
+			}
+		};
+=======
 		String evaluatedRequestPath = evaluateExpressionGet(requestPath);
 		return new RemappedResource(resource, evaluatedRequestPath);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/CDNResourceHandler.java/right.java
 	}
+	/**
+	 * If the given resource is not <code>null</code> and the CDN resource handler is not (conditionally) disabled for
+	 * the current request, then the CDN resources will be consulted if any CDN URL is available for the given resource.
+	 * If there is none, then just return the JSF default resource, otherwise return a wrapped resource whose
+	 * {@link Resource#getRequestPath()} returns the CDN URL as is been set in the
+	 * {@value org.omnifaces.resourcehandler.CDNResourceHandler#PARAM_NAME_CDN_RESOURCES} context parameter.
+	 */
 
 	// Helpers --------------------------------------------------------------------------------------------------------
 
@@ -244,7 +288,7 @@ public class CDNResourceHandler extends DefaultResourceHandler {
 			return null;
 		}
 
-		Map<ResourceIdentifier, String> cdnResources = new HashMap<ResourceIdentifier, String>();
+		Map<ResourceIdentifier, String> cdnResources = new HashMap<>();
 
 		for (String cdnResource : cdnResourcesParam.split("\\s*,\\s*")) {
 			String[] cdnResourceIdAndURL = cdnResource.split("\\s*=\\s*", 2);

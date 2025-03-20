@@ -29,7 +29,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
 import org.omnifaces.component.ParamHolder;
-import org.omnifaces.util.Components;
 import org.omnifaces.util.Json;
 import org.omnifaces.util.State;
 
@@ -219,8 +218,16 @@ public class CommandScript extends UICommand {
 	protected void encodeOptions(FacesContext context) throws IOException {
 		ResponseWriter writer = context.getResponseWriter();
 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/script/CommandScript.java/left.java
+		if (!isEmpty(name)) {
+			writer.append("o[").append(Json.encode(name)).append("]=")
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/script/CommandScript.java/base.java
+		if (!Utils.isEmpty(name)) {
+			writer.append("o[").append(Json.encode(name)).append("]=")
+=======
 		for (ParamHolder param : Components.getParams(this)) {
 			writer.append("o[").append(Json.encode(param.getName())).append("]=")
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/script/CommandScript.java/right.java
 				.append(Json.encode(param.getValue())).append(";");
 		}
 

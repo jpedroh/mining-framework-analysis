@@ -29,6 +29,20 @@ import javax.faces.view.facelets.TagHandler;
 import org.omnifaces.util.MapWrapper;
 
 /**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/left.java
+ * <p>
+ * The <code>&lt;o:importConstants&gt;</code> taghandler allows the developer to have a mapping of all constant field
+ * values of the given fully qualified name of a type in the EL scope. The constant field values are those public static
+ * final fields. This works for classes, interfaces and enums.
+ *
+ * <h3>Usage</h3>
+ * <p>
+ * For example:
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/base.java
+ * <p>The <code>&lt;o:importConstants&gt;</code> allows the developer to have a mapping of all constant field values of
+ * the given fully qualified name of a type in the EL scope. The constant field values are those public static final
+ * fields. This works for classes, interfaces and enums. For example:
+=======
  * <p>
  * The <code>&lt;o:importConstants&gt;</code> taghandler allows the developer to have a mapping of all constant field
  * values of the given fully qualified name of a type in the request scope. The constant field values are those public
@@ -37,6 +51,7 @@ import org.omnifaces.util.MapWrapper;
  * <h3>Usage</h3>
  * <p>
  * For example:
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/right.java
  * <pre>
  * public class Foo {
  *     public static final String FOO1 = "foo1";
@@ -74,7 +89,7 @@ public class ImportConstants extends TagHandler {
 
 	// Constants ------------------------------------------------------------------------------------------------------
 
-	private static final Map<String, Map<String, Object>> CONSTANTS_CACHE = new ConcurrentHashMap<String, Map<String, Object>>();
+	private static final Map<String, Map<String, Object>> CONSTANTS_CACHE = new ConcurrentHashMap<>();
 
 	private static final String ERROR_INVALID_VAR = "The 'var' attribute may not be an EL expression.";
 	private static final String ERROR_MISSING_CLASS = "Cannot find type '%s' in classpath.";
@@ -138,7 +153,7 @@ public class ImportConstants extends TagHandler {
 	 * @return Constants of the given type.
 	 */
 	private static Map<String, Object> collectConstants(final String type) {
-		Map<String, Object> constants = new LinkedHashMap<String, Object>();
+		Map<String, Object> constants = new LinkedHashMap<>();
 
 		for (Field field : toClass(type).getFields()) {
 			if (isPublicStaticFinal(field)) {
@@ -171,9 +186,17 @@ public class ImportConstants extends TagHandler {
 
 			if (i > 0) {
 				try {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/left.java
+					return toClass(
+						new StringBuilder(type.substring(0, i)).append('$').append(type.substring(i + 1)).toString());
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/base.java
+					return Class.forName(
+						new StringBuilder(type.substring(0, i)).append('$').append(type.substring(i + 1)).toString());
+=======
 					return toClass(new StringBuilder(type).replace(i, i + 1, "$").toString());
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportConstants.java/right.java
 				}
-				catch (Exception ignore) {
+				catch (IllegalArgumentException | Exception ignore) {
 					ignore = null; // Just continue to IllegalArgumentException on original ClassNotFoundException.
 				}
 			}

@@ -68,6 +68,7 @@ public class OnloadScript extends ScriptFamily implements SystemEventListener {
 	// Public constants -----------------------------------------------------------------------------------------------
 
 	/** The standard component type. */
+
 	public static final String COMPONENT_TYPE = "org.omnifaces.component.script.OnloadScript";
 
 	// Actions --------------------------------------------------------------------------------------------------------
@@ -78,6 +79,7 @@ public class OnloadScript extends ScriptFamily implements SystemEventListener {
 	 * {@link PostRestoreStateEvent} and the current request is an ajax request, then subscribe to the
 	 * {@link PreRenderViewEvent} event.
 	 */
+
 	@Override
 	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
 		moveToBody(event, this);
@@ -90,10 +92,17 @@ public class OnloadScript extends ScriptFamily implements SystemEventListener {
 	/**
 	 * Returns <code>true</code> if the given source is an instance of {@link OnloadScript} or {@link UIViewRoot}.
 	 */
+
 	@Override
 	public boolean isListenerForSource(Object source) {
 		return source instanceof OnloadScript || source instanceof UIViewRoot;
 	}
+
+	// Public constants -----------------------------------------------------------------------------------------------
+
+	/** The standard component type. */
+
+	// Actions --------------------------------------------------------------------------------------------------------
 
 	/**
 	 * If the event is a {@link PreRenderViewEvent} and the current request is an ajax request and this component is

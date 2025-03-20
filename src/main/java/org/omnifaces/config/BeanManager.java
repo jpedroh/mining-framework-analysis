@@ -16,14 +16,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.omnifaces.util.JNDI;
 
 /**
  * <p>
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/left.java
  * This configuration enum allows you to get a reference to CDI managed beans without having any direct CDI dependency.
  * It will during initialization grab the CDI bean manager instance from JNDI and if it's not <code>null</code>, then
  * it's using reflection to get and store the necessary methods in the enum instance which are then invoked on instance
@@ -34,6 +32,24 @@ import org.omnifaces.util.JNDI;
  * // Get the CDI managed bean instance of the given bean class.
  * SomeBean someBean = BeanManager.INSTANCE.getReference(SomeBean.class);
  * </pre>
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+ * If you already have a CDI bean manager instance at hands (and thus having a CDI dependency is no problem), then use
+ * {@link org.omnifaces.util.Beans} instead.
+=======
+ * This configuration enum allows you to get a reference to CDI managed beans without having any direct CDI dependency.
+ * It will during initialization grab the CDI bean manager instance from JNDI and if it's not <code>null</code>, then
+ * it's using reflection to get and store the necessary methods in the enum instance which are then invoked on instance
+ * methods such as <code>getReference()</code>.
+ *
+ * <h3>Usage</h3>
+ * <pre>
+ * // Get the CDI managed bean instance of the given bean class.
+ * SomeBean someBean = BeanManager.INSTANCE.getReference(SomeBean.class);
+ * </pre>
+ * <p>
+ * If you however already have a CDI bean manager instance at hands via <code>@Inject</code>, use
+ * {@link org.omnifaces.util.BeansLocal#getReference(javax.enterprise.inject.spi.BeanManager, Class)} instead.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/right.java
  *
  * @author Bauke Scholtz
  * @since 1.6.1
@@ -50,25 +66,32 @@ public enum BeanManager {
 
 	// Private constants ----------------------------------------------------------------------------------------------
 
-	private static final Logger logger = Logger.getLogger(BeanManager.class.getName());
-	private static final String LOG_INITIALIZATION_ERROR = "BeanManager enum singleton failed to initialize.";
 	private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
+
+	private static final String ERROR_CDI_API_UNAVAILABLE =
+		"CDI API is not available in this environment.";
+	private static final String ERROR_JNDI_UNAVAILABLE =
+		"JNDI is not available in this environment.";
+	private static final String ERROR_CDI_IMPL_UNAVAILABLE =
+		"CDI BeanManager instance is not available in JNDI.";
+	private static final String ERROR_INITIALIZATION_FAIL =
+		"CDI BeanManager instance is available, but preparing getReference() method failed.";
 
 	// Properties -----------------------------------------------------------------------------------------------------
 
-	private AtomicBoolean initialized = new AtomicBoolean();
 	private Object beanManager;
 	private Method getBeans;
 	private Method resolve;
 	private Method createCreationalContext;
 	private Method getReference;
 
-	// Init -----------------------------------------------------------------------------------------------------------
+	// Constructors ---------------------------------------------------------------------------------------------------
 
 	/**
-	 * Perform automatic initialization whereby the bean manager is looked up from the JNDI. If the bean manager is
-	 * found, then invoke {@link #init(Object)} with the found bean manager.
+	 * Perform automatic initialization whereby the bean manager is looked up from the JNDI.
+	 * @throws IllegalStateException When initialization fails.
 	 */
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/left.java
 	private void init() {
 		if (!initialized.getAndSet(true)) {
 			try {
@@ -78,66 +101,106 @@ public enum BeanManager {
 			catch (Throwable e) {
 				return; // CDI or JNDI not supported on this environment.
 			}
-
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+	private void init() {
+		if (!initialized.getAndSet(true)) {
 			try {
-				Object beanManager = JNDI.lookup("java:comp/BeanManager"); // CDI spec.
-
-				if (beanManager == null) {
-					beanManager = JNDI.lookup("java:comp/env/BeanManager"); // Tomcat.
-				}
-
-				if (beanManager == null) {
-					return; // CDI not registered on this environment.
-				}
-
-				this.beanManager = beanManager;
-				Class<?> beanManagerClass = beanManager.getClass();
-				Class<?> contextualClass = Class.forName("javax.enterprise.context.spi.Contextual");
-				Class<?> beanClass = Class.forName("javax.enterprise.inject.spi.Bean");
-				Class<?> creationalContextClass = Class.forName("javax.enterprise.context.spi.CreationalContext");
-				getBeans = beanManagerClass.getMethod("getBeans", Type.class, Annotation[].class);
-				resolve = beanManagerClass.getMethod("resolve", Set.class);
-				createCreationalContext = beanManagerClass.getMethod("createCreationalContext", contextualClass);
-				getReference = beanManagerClass.getMethod("getReference", beanClass, Type.class, creationalContextClass);
-			}
-			catch (RuntimeException e) {
-				return; // CDI most likely just not supported on this environment.
+				Class.forName("javax.enterprise.inject.spi.BeanManager"); // Is CDI present?
+				JNDI.lookup("java:comp"); // Is JNDI present? (not on Google App Engine)
 			}
 			catch (Exception e) {
-				initialized.set(false);
-				logger.log(Level.SEVERE, LOG_INITIALIZATION_ERROR, e);
-				throw new RuntimeException(e);
+				return; // CDI or JNDI not supported on this environment.
 			}
+=======
+	private BeanManager() {
+		Class<?> beanManagerClass, contextualClass, beanClass, creationalContextClass;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/right.java
+
+		try {
+			beanManagerClass = Class.forName("javax.enterprise.inject.spi.BeanManager");
+			contextualClass = Class.forName("javax.enterprise.context.spi.Contextual");
+			beanClass = Class.forName("javax.enterprise.inject.spi.Bean");
+			creationalContextClass = Class.forName("javax.enterprise.context.spi.CreationalContext");
+		}
+		catch (Exception | LinkageError e) {
+			throw new IllegalStateException(ERROR_CDI_API_UNAVAILABLE, e);
+		}
+
+		try {
+			beanManager = JNDI.lookup("java:comp/BeanManager"); // CDI spec.
+
+			if (beanManager == null) {
+				beanManager = JNDI.lookup("java:comp/env/BeanManager"); // Tomcat.
+			}
+		}
+		catch (IllegalStateException e) {
+			throw new IllegalStateException(ERROR_CDI_IMPL_UNAVAILABLE, e);
+		}
+		catch (Exception | LinkageError e) {
+			throw new IllegalStateException(ERROR_JNDI_UNAVAILABLE, e);
+		}
+
+		if (beanManager == null) {
+			throw new IllegalStateException(ERROR_CDI_IMPL_UNAVAILABLE);
+		}
+
+		try {
+			getBeans = beanManagerClass.getMethod("getBeans", Type.class, Annotation[].class);
+			resolve = beanManagerClass.getMethod("resolve", Set.class);
+			createCreationalContext = beanManagerClass.getMethod("createCreationalContext", contextualClass);
+			getReference = beanManagerClass.getMethod("getReference", beanClass, Type.class, creationalContextClass);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(ERROR_INITIALIZATION_FAIL, e);
 		}
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------
 
 	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/left.java
 	 * Returns the CDI managed bean instance of the given class, or <code>null</code> if there is none.
 	 * @param <T> The generic bean type.
 	 * @param beanClass The type of the CDI managed bean instance.
 	 * @return The CDI managed bean instance of the given class, or <code>null</code> if there is none.
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/base.java
+	 * Returns the CDI managed bean instance of the given class, or <code>null</code> if there is none.
+	 * @param beanClass The type of the CDI managed bean instance.
+	 * @return The CDI managed bean instance of the given class, or <code>null</code> if there is none.
+=======
+	 * Returns the CDI bean manager.
+	 * @param <T> The <code>javax.enterprise.inject.spi.BeanManager</code>.
+	 * @return The CDI bean manager.
+	 * @throws ClassCastException When you assign it to a variable which is not declared as CDI BeanManager.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T get() {
+		return (T) beanManager;
+	}
+
+	/**
+	 * Returns the CDI managed bean reference (proxy) of the given class.
+	 * Note that this actually returns a client proxy and the underlying actual instance is thus always auto-created.
+	 * @param <T> The expected return type.
+	 * @param beanClass The CDI managed bean class.
+	 * @return The CDI managed bean reference (proxy) of the given class, or <code>null</code> if there is none.
+	 * @throws UnsupportedOperationException When obtaining the CDI managed bean reference failed with an exception.
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/config/BeanManager.java/right.java
 	 */
 	public <T> T getReference(Class<T> beanClass) {
-		// This init() call is performed here instead of in constructor, because WebLogic loads this enum as a CDI
-		// managed bean (in spite of having a VetoAnnotatedTypeExtension) which in turn implicitly invokes the enum
-		// constructor and thus causes an init while CDI context isn't fully initialized and thus the bean manager
-		// isn't available in JNDI yet. Perhaps it's fixed in newer WebLogic versions.
-		init();
-
-		if (beanManager == null) {
-			return null; // CDI not supported on this environment.
-		}
-
 		try {
 			Object bean = resolve.invoke(beanManager, getBeans.invoke(beanManager, beanClass, NO_ANNOTATIONS));
+
+			if (bean == null) {
+				return null;
+			}
+
 			Object creationalContext = createCreationalContext.invoke(beanManager, bean);
 			Object reference = getReference.invoke(beanManager, bean, beanClass, creationalContext);
 			return beanClass.cast(reference);
 		}
 		catch (Exception e) {
-			return null;
+			throw new UnsupportedOperationException(e);
 		}
 	}
 

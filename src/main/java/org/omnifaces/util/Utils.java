@@ -12,6 +12,7 @@
  */
 package org.omnifaces.util;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.regex.Pattern.quote;
 
@@ -30,7 +31,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,8 +71,6 @@ import javax.xml.bind.DatatypeConverter;
 public final class Utils {
 
 	// Constants ------------------------------------------------------------------------------------------------------
-
-	public static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private static final int DEFAULT_STREAM_BUFFER_SIZE = 10240;
 	private static final String PATTERN_RFC1123_DATE = "EEE, dd MMM yyyy HH:mm:ss zzz";
@@ -235,6 +233,7 @@ public final class Utils {
 	 * @return The first non-<code>null</code> object of the argument list, or <code>null</code> if there is no such
 	 * element.
 	 */
+	@SafeVarargs
 	public static <T> T coalesce(T... objects) {
 		for (T object : objects) {
 			if (object != null) {
@@ -252,6 +251,7 @@ public final class Utils {
 	 * @param objects The argument list of objects to be tested for equality.
 	 * @return <code>true</code> if the given object equals one of the given objects.
 	 */
+	@SafeVarargs
 	public static <T> boolean isOneOf(T object, T... objects) {
 		for (Object other : objects) {
 			if (object == null ? other == null : object.equals(other)) {
@@ -303,6 +303,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given clazz would be an instance of one of the given clazzes.
 	 * @since 2.0
 	 */
+	@SafeVarargs
 	public static boolean isOneAnnotationPresent(Class<?> cls, Class<? extends Annotation>... annotations) {
 		for (Class<? extends Annotation> annotation : annotations) {
 			if (cls.isAnnotationPresent(annotation)) {
@@ -326,12 +327,9 @@ public final class Utils {
 	 * @throws IOException When an I/O error occurs.
 	 */
 	public static long stream(InputStream input, OutputStream output) throws IOException {
-		ReadableByteChannel inputChannel = null;
-		WritableByteChannel outputChannel = null;
-
-		try {
-			inputChannel = Channels.newChannel(input);
-			outputChannel = Channels.newChannel(output);
+		try (ReadableByteChannel inputChannel = Channels.newChannel(input);
+			WritableByteChannel outputChannel = Channels.newChannel(output))
+		{
 			ByteBuffer buffer = ByteBuffer.allocateDirect(DEFAULT_STREAM_BUFFER_SIZE);
 			long size = 0;
 
@@ -342,10 +340,6 @@ public final class Utils {
 			}
 
 			return size;
-		}
-		finally {
-			close(outputChannel);
-			close(inputChannel);
 		}
 	}
 
@@ -397,7 +391,13 @@ public final class Utils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Set<E> unmodifiableSet(Object... values) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/left.java
 		Set<E> set = new HashSet<E>();
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/base.java
+		Set<E> set = new HashSet<T>();
+=======
+		Set<E> set = new HashSet<>();
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/right.java
 
 		for (Object value : values) {
 			if (value instanceof Object[]) {
@@ -437,9 +437,21 @@ public final class Utils {
 		if (iterable instanceof List) {
 			list = (List<E>) iterable;
 		} else if (iterable instanceof Collection) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/left.java
 			list = new ArrayList<E>((Collection<E>) iterable);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/base.java
+			list = new ArrayList<T>((Collection<E>) iterable);
+=======
+			list = new ArrayList<>((Collection<E>) iterable);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/right.java
 		} else {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/left.java
 			list = new ArrayList<E>();
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/base.java
+			list = new ArrayList<T>();
+=======
+			list = new ArrayList<>();
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/right.java
 			Iterator<E> iterator = iterable.iterator();
 			while (iterator.hasNext()) {
 				list.add(iterator.next());
@@ -496,7 +508,7 @@ public final class Utils {
 			return emptyList();
 		}
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (String value : values.split(quote(delimiter))) {
 			String trimmedValue = value.trim();
@@ -519,7 +531,7 @@ public final class Utils {
 	 * @return the reverse of the given map
 	 */
 	public static <T> Map<T, T> reverse(Map<T, T> source) {
-		Map<T, T> target = new HashMap<T, T>();
+		Map<T, T> target = new HashMap<>();
 		for (Entry<T, T> entry : source.entrySet()) {
 			target.put(entry.getValue(), entry.getKey());
 		}
@@ -616,7 +628,13 @@ public final class Utils {
 		}
 
 		try {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/left.java
+			String base64 = string.replace('-', '+').replace('_', '/') + "===".substring(0, string.length() % 4);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/base.java
+			String base64 = string.replace('~', '/').replace('-', '+').replace('_', '=');
+=======
 			String base64 = string.replace('-', '+').replace('_', '/') + "===".substring(0, string.length() % BASE64_SEGMENT_LENGTH);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Utils.java/right.java
 			InputStream deflated = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(base64));
 			return new String(toByteArray(new InflaterInputStream(deflated)), UTF_8);
 		}

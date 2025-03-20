@@ -71,6 +71,7 @@ public class GzipHttpServletResponse extends HttpServletResponseOutputWrapper {
 		// Get hold of content length locally to avoid it from being set on responses which will actually be gzipped.
 		this.contentLength = contentLength;
 	}
+	// @Override Servlet 3.1.
 
 	@Override
 	public void setHeader(String name, String value) {

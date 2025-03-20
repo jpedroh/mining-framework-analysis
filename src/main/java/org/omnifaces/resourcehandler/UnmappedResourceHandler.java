@@ -122,7 +122,28 @@ public class UnmappedResourceHandler extends DefaultResourceHandler {
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------
+	@Override
+	public Resource createResource(String resourceName, String libraryName, String contentType) {
+		Resource resource = super.createResource(resourceName, libraryName, contentType);
 
+		return (resource == null) ? null : new DefaultResource(resource) {
+			@Override
+			public String getRequestPath() {
+				String path = super.getRequestPath();
+				String mapping = getMapping();
+
+				if (isPrefixMapping(mapping)) {
+					return path.replaceFirst(mapping, "");
+				}
+				else if (path.contains("?")) {
+					return path.replace(mapping + "?", "?");
+				}
+				else {
+					return path.substring(0, path.length() - mapping.length());
+				}
+			}
+		};
+	}
 	/**
 	 * If the given resource is not <code>null</code>, then decorate it as an unmapped resource.
 	 */

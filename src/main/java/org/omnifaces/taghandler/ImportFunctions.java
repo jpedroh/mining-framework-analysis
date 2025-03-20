@@ -31,6 +31,22 @@ import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
 
 /**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportFunctions.java/left.java
+ * <p>
+ * The <code>&lt;o:importFunctions&gt;</code> taghandler allows the developer to have access to all functions of the
+ * given fully qualified name of a type in the EL scope using the usual EL functions syntax without the need to register
+ * them in <code>.taglib.xml</code> file. The functions are those <code>public static</code> methods with a
+ * <strong>non</strong>-<code>void</code> return type.
+ *
+ * <h3>Usage</h3>
+ * <p>
+ * For example:
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportFunctions.java/base.java
+ * <p>The <code>&lt;o:importFunctions&gt;</code> allows the developer to have access to all functions of the given
+ * fully qualified name of a type in the EL scope using the usual EL functions syntax without the need to register them
+ * in <code>.taglib.xml</code> file. The functions are those <code>public static</code> methods with a
+ * <strong>non</strong>-<code>void</code> return type. For example:
+=======
  * <p>
  * The <code>&lt;o:importFunctions&gt;</code> taghandler allows the developer to have access to all functions of the
  * given fully qualified name of a type in the Facelet scope using the usual EL functions syntax without the need to
@@ -40,6 +56,7 @@ import javax.faces.view.facelets.TagHandler;
  * <h3>Usage</h3>
  * <p>
  * For example:
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/ImportFunctions.java/right.java
  * <pre>
  * &lt;o:importFunctions type="java.lang.Math" var="m" /&gt;
  * &lt;o:importFunctions type="org.omnifaces.util.Faces" /&gt;
@@ -83,7 +100,7 @@ public class ImportFunctions extends TagHandler {
 
 	// Constants ------------------------------------------------------------------------------------------------------
 
-	private static final Map<String, Method> FUNCTIONS_CACHE = new ConcurrentHashMap<String, Method>();
+	private static final Map<String, Method> FUNCTIONS_CACHE = new ConcurrentHashMap<>();
 
 	private static final String ERROR_INVALID_VAR = "The 'var' attribute may not be an EL expression.";
 
@@ -156,7 +173,7 @@ public class ImportFunctions extends TagHandler {
 	 * @return The found method, or <code>null</code> if none is found.
 	 */
 	private static Method findMethod(Class<?> cls, String name) {
-		Set<Method> methods = new TreeSet<Method>(new Comparator<Method>() {
+		Set<Method> methods = new TreeSet<>(new Comparator<Method>() {
 			@Override
 			public int compare(Method m1, Method m2) {
 				return Integer.valueOf(m1.getParameterTypes().length).compareTo(m2.getParameterTypes().length);

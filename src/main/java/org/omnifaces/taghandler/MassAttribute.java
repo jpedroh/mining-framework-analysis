@@ -136,13 +136,26 @@ public class MassAttribute extends TagHandler {
 
 	@Override
 	public void apply(FaceletContext context, UIComponent parent) throws IOException {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/left.java
 		List<UIComponent> oldChildren = new ArrayList<UIComponent>(parent.getChildren());
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/base.java
+=======
+		List<UIComponent> oldChildren = new ArrayList<>(parent.getChildren());
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/right.java
 		nextHandler.apply(context, parent);
 
 		if (ComponentHandler.isNew(parent)) {
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/left.java
 			List<UIComponent> newChildren = new ArrayList<UIComponent>(parent.getChildren());
 			newChildren.removeAll(oldChildren);
 			applyMassAttribute(context, newChildren);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/base.java
+			applyMassAttribute(context, parent.getChildren());
+=======
+			List<UIComponent> newChildren = new ArrayList<>(parent.getChildren());
+			newChildren.removeAll(oldChildren);
+			applyMassAttribute(context, newChildren);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/right.java
 		}
 	}
 

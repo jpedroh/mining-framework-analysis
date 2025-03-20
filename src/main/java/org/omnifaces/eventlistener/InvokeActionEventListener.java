@@ -12,8 +12,9 @@
  */
 package org.omnifaces.eventlistener;
 
-import static org.omnifaces.util.Events.subscribeToApplicationEvent;
+import static org.omnifaces.util.Events.subscribeToEvent;
 import static org.omnifaces.util.Utils.isEmpty;
+import static org.omnifaces.util.Events.subscribeToApplicationEvent;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -77,7 +78,13 @@ public class InvokeActionEventListener extends DefaultPhaseListener implements S
 	 */
 	public InvokeActionEventListener() {
 		super(PhaseId.INVOKE_APPLICATION);
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/InvokeActionEventListener.java/left.java
+		subscribeToEvent(PostValidateEvent.class, this);
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/InvokeActionEventListener.java/base.java
+		Events.subscribeToEvent(PostValidateEvent.class, this);
+=======
 		subscribeToApplicationEvent(PostValidateEvent.class, this);
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/eventlistener/InvokeActionEventListener.java/right.java
 	}
 
 	// Actions --------------------------------------------------------------------------------------------------------
@@ -145,7 +152,7 @@ public class InvokeActionEventListener extends DefaultPhaseListener implements S
 			Set<UIComponent> components = (Set<UIComponent>) context.getAttributes().get(type);
 
 			if (components == null) {
-				components = new LinkedHashSet<UIComponent>();
+				components = new LinkedHashSet<>();
 				context.getAttributes().put(type, components);
 			}
 

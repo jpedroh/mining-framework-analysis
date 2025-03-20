@@ -17,14 +17,17 @@ import static org.omnifaces.util.Faces.getFlash;
 
 import java.text.MessageFormat;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.convert.ConverterException;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+import org.omnifaces.cdi.Startup;
 
 /**
  * <p>
@@ -90,10 +93,21 @@ import javax.servlet.ServletContextListener;
  * <p>
  * There is already a default resolver which just delegates the message and the parameters straight to
  * {@link MessageFormat#format(String, Object...)}. Note that the resolver can be set only once. It's recommend to do
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Messages.java/left.java
  * it early during webapp's startup, for example with a {@link ServletContextListener}, or a Servlet 3.0
  * <code>ServletContainerInitializer</code>, or an eagerly initialized {@link ApplicationScoped} {@link ManagedBean}.
  *
  * <h3>Design notice</h3>
+||||||| /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Messages.java/base.java
+ * it early during webapp's startup, for example with a {@link ServletContextListener}, or a Servlet 3.0
+ * <code>ServletContainerInitializer</code>, or an eagerly initialized {@link ApplicationScoped} {@link ManagedBean}.
+=======
+ * it early during webapp's startup, for example with a {@link ServletContextListener} as {@link WebListener}, or a
+ * {@link ServletContainerInitializer} in custom JAR, or a {@link ApplicationScoped} bean, or an eagerly initialized
+ * {@link Startup} bean.
+ *
+ * <h3>Design notice</h3>
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/util/Messages.java/right.java
  * <p>
  * Note that all of those shortcut methods by design only sets the message summary and ignores the message detail (it
  * is not possible to offer varargs to parameterize <em>both</em> the summary and the detail). The message summary is
@@ -149,8 +163,9 @@ public final class Messages {
 
 	/**
 	 * Set the custom message resolver. It can be set only once. It's recommend to do it early during webapp's startup,
-	 * for example with a {@link ServletContextListener}, or a Servlet 3.0 <code>ServletContainerInitializer</code>, or
-	 * an eagerly initialized {@link ApplicationScoped} {@link ManagedBean}.
+	 * for example with a {@link ServletContextListener} as {@link WebListener}, or a
+	 * {@link ServletContainerInitializer} in custom JAR, or a {@link ApplicationScoped} bean, or an eagerly initialized
+	 * {@link Startup} bean.
 	 * @param resolver The custom message resolver.
 	 * @throws IllegalStateException When the resolver has already been set.
 	 */

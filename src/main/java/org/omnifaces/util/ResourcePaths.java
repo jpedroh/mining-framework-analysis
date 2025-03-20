@@ -91,7 +91,7 @@ public final class ResourcePaths {
 	 * @return A set where no resource has an extension. May be empty, but never null.
 	 */
 	public static Set<String> filterExtension(Set<String> resources) {
-		Set<String> filteredResources = new HashSet<String>();
+		Set<String> filteredResources = new HashSet<>();
 		for (String resource : resources) {
 			if (isExtensionless(resource)) {
 				filteredResources.add(resource);
