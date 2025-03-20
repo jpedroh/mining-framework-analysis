@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2015-2017 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn;
-
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,10 +26,7 @@ public class ThreadPoolFace extends Face {
    * @param connectionInfo A Transport.ConnectionInfo to be used to connect to
    * the transport.
    */
-  public ThreadPoolFace
-    (ScheduledExecutorService threadPool, Transport transport,
-     Transport.ConnectionInfo connectionInfo)
-  {
+  public ThreadPoolFace(ScheduledExecutorService threadPool, Transport transport, Transport.ConnectionInfo connectionInfo) {
     super(transport, connectionInfo);
     threadPool_ = threadPool;
   }
@@ -60,22 +37,13 @@ public class ThreadPoolFace extends Face {
    * in an outer callback which submits a task to the thread pool to call the
    * supplied callback. See Face.expressInterest for calling details.
    */
-  public long
-  expressInterest
-    (final Interest interest, OnData onData, OnExpressFailure onExpressFailure,
-     final OnNetworkNack onNetworkNack, final WireFormat wireFormat)
-     throws IOException
-  {
+  public long expressInterest(final Interest interest, OnData onData, OnExpressFailure onExpressFailure, final OnNetworkNack onNetworkNack, final WireFormat wireFormat) throws IOException {
     final long pendingInterestId = node_.getNextEntryId();
-
-    // Wrap callbacks to submit to the thread pool.
     final OnData finalOnData = onData;
     final OnData onDataSubmit = new OnData() {
       public void onData(final Interest localInterest, final Data data) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onData.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnData.onData(localInterest, data);
             } catch (Throwable ex) {
@@ -85,17 +53,11 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     final OnExpressFailure finalOnExpressFailure = onExpressFailure;
-    final OnExpressFailure onExpressFailureSubmit = onExpressFailure == null ?
-        null : new OnExpressFailure() {
-      public void onExpressFailure
-          (final Interest localInterest, final ExpressFailureReason reason,
-           final Exception details) {
+    final OnExpressFailure onExpressFailureSubmit = onExpressFailure == null ? null : new OnExpressFailure() {
+      public void onExpressFailure(final Interest localInterest, final ExpressFailureReason reason, final Exception details) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onExpressFailure.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnExpressFailure.onExpressFailure(localInterest, reason, details);
             } catch (Throwable ex) {
@@ -105,16 +67,11 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     final OnNetworkNack finalOnNetworkNack = onNetworkNack;
-    final OnNetworkNack onNetworkNackSubmit =
-        onNetworkNack == null ? null : new OnNetworkNack() {
-      public void onNetworkNack
-          (final Interest localInterest, final NetworkNack networkNack) {
+    final OnNetworkNack onNetworkNackSubmit = onNetworkNack == null ? null : new OnNetworkNack() {
+      public void onNetworkNack(final Interest localInterest, final NetworkNack networkNack) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onData.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnNetworkNack.onNetworkNack(localInterest, networkNack);
             } catch (Throwable ex) {
@@ -124,22 +81,16 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
-    // Make an interest copy as required by Node.expressInterest.
     final Interest interestCopy = new Interest(interest);
     threadPool_.submit(new Runnable() {
       public void run() {
-        // Need to catch and log exceptions at this async entry point.
         try {
-          node_.expressInterest
-            (pendingInterestId, interestCopy, onDataSubmit, onExpressFailureSubmit,
-             onNetworkNackSubmit, wireFormat, ThreadPoolFace.this);
+          node_.expressInterest(pendingInterestId, interestCopy, onDataSubmit, onExpressFailureSubmit, onNetworkNackSubmit, wireFormat, ThreadPoolFace.this);
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, null, ex);
         }
       }
     });
-
     return pendingInterestId;
   }
 
@@ -151,22 +102,13 @@ public class ThreadPoolFace extends Face {
    * separate expressInterest overload for supplying a Name vs. Interest to
    * avoid making multiple copies of the Interest.
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData, 
-     OnExpressFailure onExpressFailure, final OnNetworkNack onNetworkNack,
-     final WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure, final OnNetworkNack onNetworkNack, final WireFormat wireFormat) throws IOException {
     final long pendingInterestId = node_.getNextEntryId();
-
-    // Wrap callbacks to submit to the thread pool.
     final OnData finalOnData = onData;
     final OnData onDataSubmit = new OnData() {
       public void onData(final Interest localInterest, final Data data) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onData.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnData.onData(localInterest, data);
             } catch (Throwable ex) {
@@ -176,17 +118,11 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     final OnExpressFailure finalOnExpressFailure = onExpressFailure;
-    final OnExpressFailure onExpressFailureSubmit = onExpressFailure == null ?
-        null : new OnExpressFailure() {
-      public void onExpressFailure
-          (final Interest localInterest, final ExpressFailureReason reason,
-           final Exception details) {
+    final OnExpressFailure onExpressFailureSubmit = onExpressFailure == null ? null : new OnExpressFailure() {
+      public void onExpressFailure(final Interest localInterest, final ExpressFailureReason reason, final Exception details) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onExpressFailure.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnExpressFailure.onExpressFailure(localInterest, reason, details);
             } catch (Throwable ex) {
@@ -196,16 +132,11 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     final OnNetworkNack finalOnNetworkNack = onNetworkNack;
-    final OnNetworkNack onNetworkNackSubmit =
-        onNetworkNack == null ? null : new OnNetworkNack() {
-      public void onNetworkNack
-          (final Interest localInterest, final NetworkNack networkNack) {
+    final OnNetworkNack onNetworkNackSubmit = onNetworkNack == null ? null : new OnNetworkNack() {
+      public void onNetworkNack(final Interest localInterest, final NetworkNack networkNack) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onData.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnNetworkNack.onNetworkNack(localInterest, networkNack);
             } catch (Throwable ex) {
@@ -215,22 +146,16 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
-    // Make an interest copy as required by Node.expressInterest.
     final Interest interestCopy = getInterestCopy(name, interestTemplate);
     threadPool_.submit(new Runnable() {
       public void run() {
-        // Need to catch and log exceptions at this async entry point.
         try {
-          node_.expressInterest
-            (pendingInterestId, interestCopy, onDataSubmit, onExpressFailureSubmit,
-             onNetworkNackSubmit, wireFormat, ThreadPoolFace.this);
+          node_.expressInterest(pendingInterestId, interestCopy, onDataSubmit, onExpressFailureSubmit, onNetworkNackSubmit, wireFormat, ThreadPoolFace.this);
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, null, ex);
         }
       }
     });
-
     return pendingInterestId;
   }
 
@@ -268,28 +193,15 @@ public class ThreadPoolFace extends Face {
    * @return The registered prefix ID which can be used with
    * removeRegisteredPrefix.
    */
-  public long
-  registerPrefix
-    (final Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     final ForwardingFlags flags, final WireFormat wireFormat)
-    throws IOException, SecurityException
-  {
+  public long registerPrefix(final Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, final ForwardingFlags flags, final WireFormat wireFormat) throws IOException, SecurityException {
     final long registeredPrefixId = node_.getNextEntryId();
-
-    // Wrap callbacks to submit to the thread pool.
     final OnInterestCallback finalOnInterest = onInterest;
-    final OnInterestCallback onInterestSubmit =
-        onInterest == null ? null : new OnInterestCallback() {
-      public void onInterest(final Name localPrefix, final Interest interest,
-          final Face face, final long interestFilterId, final InterestFilter filter) {
+    final OnInterestCallback onInterestSubmit = onInterest == null ? null : new OnInterestCallback() {
+      public void onInterest(final Name localPrefix, final Interest interest, final Face face, final long interestFilterId, final InterestFilter filter) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onInterest.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
-              finalOnInterest.onInterest
-                (localPrefix, interest, face, interestFilterId, filter);
+              finalOnInterest.onInterest(localPrefix, interest, face, interestFilterId, filter);
             } catch (Throwable ex) {
               logger_.log(Level.SEVERE, "Error in onInterest", ex);
             }
@@ -297,15 +209,11 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     final OnRegisterFailed finalOnRegisterFailed = onRegisterFailed;
-    final OnRegisterFailed onRegisterFailedSubmit =
-        new OnRegisterFailed() {
+    final OnRegisterFailed onRegisterFailedSubmit = new OnRegisterFailed() {
       public void onRegisterFailed(final Name localPrefix) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onRegisterFailed.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
               finalOnRegisterFailed.onRegisterFailed(localPrefix);
             } catch (Throwable ex) {
@@ -315,20 +223,13 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
-    // Wrap callbacks to submit to the thread pool.
     final OnRegisterSuccess finalOnRegisterSuccess = onRegisterSuccess;
-    final OnRegisterSuccess onRegisterSuccessSubmit =
-        onRegisterSuccess == null ? null : new OnRegisterSuccess() {
-      public void onRegisterSuccess(final Name localPrefix,
-                                    final long localRegisteredPrefixId) {
+    final OnRegisterSuccess onRegisterSuccessSubmit = onRegisterSuccess == null ? null : new OnRegisterSuccess() {
+      public void onRegisterSuccess(final Name localPrefix, final long localRegisteredPrefixId) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onRegisterSuccess.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
-              finalOnRegisterSuccess.onRegisterSuccess
-                (localPrefix, localRegisteredPrefixId);
+              finalOnRegisterSuccess.onRegisterSuccess(localPrefix, localRegisteredPrefixId);
             } catch (Throwable ex) {
               logger_.log(Level.SEVERE, "Error in onRegisterSuccess", ex);
             }
@@ -336,21 +237,15 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     threadPool_.submit(new Runnable() {
       public void run() {
-        // Need to catch and log exceptions at this async entry point.
         try {
-          node_.registerPrefix
-            (registeredPrefixId, prefix, onInterestSubmit, onRegisterFailedSubmit,
-             onRegisterSuccessSubmit, flags, wireFormat, 
-             commandKeyChain_, commandCertificateName_, ThreadPoolFace.this);
+          node_.registerPrefix(registeredPrefixId, prefix, onInterestSubmit, onRegisterFailedSubmit, onRegisterSuccessSubmit, flags, wireFormat, commandKeyChain_, commandCertificateName_, ThreadPoolFace.this);
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, null, ex);
         }
       }
     });
-
     return registeredPrefixId;
   }
 
@@ -370,24 +265,15 @@ public class ThreadPoolFace extends Face {
    * exceptions.
    * @return The interest filter ID which can be used with unsetInterestFilter.
    */
-  public long
-  setInterestFilter
-    (final InterestFilter filter, final OnInterestCallback onInterest)
-  {
+  public long setInterestFilter(final InterestFilter filter, final OnInterestCallback onInterest) {
     final long interestFilterId = node_.getNextEntryId();
-
-        // Wrap callbacks to submit to the thread pool.
     final OnInterestCallback finalOnInterest = onInterest;
     final OnInterestCallback onInterestSubmit = new OnInterestCallback() {
-      public void onInterest(final Name prefix, final Interest interest,
-          final Face face, final long interestFilterId, final InterestFilter filter) {
+      public void onInterest(final Name prefix, final Interest interest, final Face face, final long interestFilterId, final InterestFilter filter) {
         threadPool_.submit(new Runnable() {
-          // Call the passed-in onInterest.
           public void run() {
-            // Need to catch and log exceptions at this async entry point.
             try {
-              finalOnInterest.onInterest
-                (prefix, interest, face, interestFilterId, filter);
+              finalOnInterest.onInterest(prefix, interest, face, interestFilterId, filter);
             } catch (Throwable ex) {
               logger_.log(Level.SEVERE, "Error in onInterest", ex);
             }
@@ -395,20 +281,15 @@ public class ThreadPoolFace extends Face {
         });
       }
     };
-
     threadPool_.submit(new Runnable() {
       public void run() {
-        // Need to catch and log exceptions at this async entry point.
         try {
-          node_.setInterestFilter
-            (interestFilterId, filter, onInterestSubmit, ThreadPoolFace.this);
+          node_.setInterestFilter(interestFilterId, filter, onInterestSubmit, ThreadPoolFace.this);
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, null, ex);
         }
       }
     });
-
-
     return interestFilterId;
   }
 
@@ -419,24 +300,19 @@ public class ThreadPoolFace extends Face {
    * @param delayMilliseconds The delay in milliseconds.
    * @param callback This calls callback.run() after the delay.
    */
-  public void
-  callLater(double delayMilliseconds, final Runnable callback)
-  {
-    threadPool_.schedule
-      (new Runnable() {
-        public void run() {
-          // Need to catch and log exceptions at this async entry point.
-          try {
-            callback.run();
-          } catch (Throwable ex) {
-            logger_.log(Level.SEVERE, null, ex);
-          }
+  public void callLater(double delayMilliseconds, final Runnable callback) {
+    threadPool_.schedule(new Runnable() {
+      public void run() {
+        try {
+          callback.run();
+        } catch (Throwable ex) {
+          logger_.log(Level.SEVERE, null, ex);
         }
-       },
-       (long)delayMilliseconds, TimeUnit.MILLISECONDS);
+      }
+    }, (long) delayMilliseconds, TimeUnit.MILLISECONDS);
   }
 
   private final ScheduledExecutorService threadPool_;
-  private static final Logger logger_ = Logger.getLogger
-    (ThreadPoolFace.class.getName());
+
+  private static final Logger logger_ = Logger.getLogger(ThreadPoolFace.class.getName());
 }

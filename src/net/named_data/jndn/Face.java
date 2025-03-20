@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2014-2017 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
@@ -43,8 +23,7 @@ public class Face {
    * @param connectionInfo A Transport.ConnectionInfo to be used to connect to
    * the transport.
    */
-  public Face(Transport transport, Transport.ConnectionInfo connectionInfo)
-  {
+  public Face(Transport transport, Transport.ConnectionInfo connectionInfo) {
     node_ = new Node(transport, connectionInfo);
   }
 
@@ -54,10 +33,8 @@ public class Face {
    * @param host The host of the NDN hub.
    * @param port The port of the NDN hub.
    */
-  public Face(String host, int port)
-  {
-    node_ = new Node
-      (new TcpTransport(), new TcpTransport.ConnectionInfo(host, port));
+  public Face(String host, int port) {
+    node_ = new Node(new TcpTransport(), new TcpTransport.ConnectionInfo(host, port));
   }
 
   /**
@@ -65,20 +42,16 @@ public class Face {
    * default port 6363 and the default TcpTransport.
    * @param host The host of the NDN hub.
    */
-  public Face(String host)
-  {
-    node_ = new Node
-      (new TcpTransport(), new TcpTransport.ConnectionInfo(host, 6363));
+  public Face(String host) {
+    node_ = new Node(new TcpTransport(), new TcpTransport.ConnectionInfo(host, 6363));
   }
 
   /**
    * Create a new Face for communication with an NDN hub at "localhost" using the
    * default port 6363 and the default TcpTransport.
    */
-  public Face()
-  {
-    node_ = new Node
-      (new TcpTransport(), new TcpTransport.ConnectionInfo("localhost", 6363));
+  public Face() {
+    node_ = new Node(new TcpTransport(), new TcpTransport.ConnectionInfo("localhost", 6363));
   }
 
   /**
@@ -117,18 +90,9 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnExpressFailure onExpressFailure,
-     OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Interest interest, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
     long pendingInterestId = node_.getNextEntryId();
-
-    // Make an interest copy as required by Node.expressInterest.
-    node_.expressInterest
-      (pendingInterestId, new Interest(interest), onData, onExpressFailure,
-       onNetworkNack, wireFormat, this);
-
+    node_.expressInterest(pendingInterestId, new Interest(interest), onData, onExpressFailure, onNetworkNack, wireFormat, this);
     return pendingInterestId;
   }
 
@@ -168,14 +132,46 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnExpressFailure onExpressFailure,
-     OnNetworkNack onNetworkNack) throws IOException
-  {
-    return expressInterest
-      (interest, onData, onExpressFailure, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Interest interest, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(interest, onData, onExpressFailure, onNetworkNack, WireFormat.getDefaultWireFormat());
+  }
+
+  /**
+   * Send the Interest through the transport, read the entire response and call
+   * onData, onTimeout or onNetworkNack as described below.
+   * This uses the default WireFormat.getDefaultWireFormat().
+   * @param interest The Interest to send.  This copies the Interest.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onNetworkNack When a network Nack packet for the interest is
+   * received and onNetworkNack is not null, this calls
+   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
+   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
+   * do nothing and wait for the interest to time out. (Therefore, an
+   * application which does not yet process a network Nack reason treats a
+   * Nack the same as a timeout.)
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Interest interest, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(interest, onData, onTimeout, onNetworkNack, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -204,16 +200,40 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnExpressFailure onExpressFailure,
-     WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Interest interest, OnData onData, OnExpressFailure onExpressFailure, WireFormat wireFormat) throws IOException {
     return expressInterest(interest, onData, onExpressFailure, null, wireFormat);
   }
 
   /**
    * Send the Interest through the transport, read the entire response and call
+   * onData or onTimeout as described below.
+   * @param interest The Interest to send.  This copies the Interest.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param wireFormat A WireFormat object used to encode the message.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Interest interest, OnData onData, OnTimeout onTimeout, WireFormat wireFormat) throws IOException {
+    return expressInterest(interest, onData, onTimeout, null, wireFormat);
+  }
+
+  /**
+   * Send the Interest through the transport, read the entire response and call
    * onData or onExpressFailure as described below.
    * This uses the default WireFormat.getDefaultWireFormat().
    * @param interest The Interest to send.  This copies the Interest.
@@ -238,13 +258,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnExpressFailure onExpressFailure)
-    throws IOException
-  {
-    return expressInterest
-      (interest, onData, onExpressFailure, WireFormat.getDefaultWireFormat());
+  public long expressInterest(Interest interest, OnData onData, OnExpressFailure onExpressFailure) throws IOException {
+    return expressInterest(interest, onData, onExpressFailure, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -265,11 +280,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, WireFormat wireFormat) throws IOException
-  {
-    return expressInterest(interest, onData, (OnExpressFailure)null, wireFormat);
+  public long expressInterest(Interest interest, OnData onData, WireFormat wireFormat) throws IOException {
+    return expressInterest(interest, onData, (OnExpressFailure) null, wireFormat);
   }
 
   /**
@@ -290,11 +302,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest(Interest interest, OnData onData) throws IOException
-  {
-    return expressInterest
-      (interest, onData, (OnExpressFailure)null, WireFormat.getDefaultWireFormat());
+  public long expressInterest(Interest interest, OnData onData) throws IOException {
+    return expressInterest(interest, onData, (OnExpressFailure) null, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -331,18 +340,9 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, final OnTimeout onTimeout,
-     OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException
-  {
-    // Wrap onTimeout inside an onExpressFailure.
-    final OnExpressFailure onExpressFailure = onTimeout == null ?
-        null : new OnExpressFailure() {
-      public void onExpressFailure
-          (Interest localInterest, ExpressFailureReason dummyReason,
-           Exception dummyDetails) {
-        // Need to catch and log exceptions at this async entry point.
+  public long expressInterest(Interest interest, OnData onData, final OnTimeout onTimeout, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
+    final OnExpressFailure onExpressFailure = onTimeout == null ? null : new OnExpressFailure() {
+      public void onExpressFailure(Interest localInterest, ExpressFailureReason dummyReason, Exception dummyDetails) {
         try {
           onTimeout.onTimeout(localInterest);
         } catch (Throwable ex) {
@@ -350,85 +350,7 @@ public class Face {
         }
       }
     };
-
-    return expressInterest
-      (interest, onData, onExpressFailure, onNetworkNack, wireFormat);
-  }
-
-  /**
-   * Send the Interest through the transport, read the entire response and call
-   * onData, onTimeout or onNetworkNack as described below.
-   * This uses the default WireFormat.getDefaultWireFormat().
-   * @param interest The Interest to send.  This copies the Interest.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onNetworkNack When a network Nack packet for the interest is
-   * received and onNetworkNack is not null, this calls
-   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
-   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
-   * do nothing and wait for the interest to time out. (Therefore, an
-   * application which does not yet process a network Nack reason treats a
-   * Nack the same as a timeout.)
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnTimeout onTimeout,
-     OnNetworkNack onNetworkNack) throws IOException
-  {
-    return expressInterest
-      (interest, onData, onTimeout, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
-  }
-
-  /**
-   * Send the Interest through the transport, read the entire response and call
-   * onData or onTimeout as described below.
-   * @param interest The Interest to send.  This copies the Interest.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param wireFormat A WireFormat object used to encode the message.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnTimeout onTimeout,
-     WireFormat wireFormat) throws IOException
-  {
-    return expressInterest(interest, onData, onTimeout, null, wireFormat);
+    return expressInterest(interest, onData, onExpressFailure, onNetworkNack, wireFormat);
   }
 
   /**
@@ -455,12 +377,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Interest interest, OnData onData, OnTimeout onTimeout) throws IOException
-  {
-    return expressInterest
-      (interest, onData, onTimeout, WireFormat.getDefaultWireFormat());
+  public long expressInterest(Interest interest, OnData onData, OnTimeout onTimeout) throws IOException {
+    return expressInterest(interest, onData, onTimeout, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -503,19 +421,9 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData, 
-     OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack,
-     WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
     long pendingInterestId = node_.getNextEntryId();
-
-    // This copies the name object as required by Node.expressInterest.
-    node_.expressInterest
-      (pendingInterestId, getInterestCopy(name, interestTemplate), onData,
-       onExpressFailure, onNetworkNack, wireFormat, this);
-
+    node_.expressInterest(pendingInterestId, getInterestCopy(name, interestTemplate), onData, onExpressFailure, onNetworkNack, wireFormat, this);
     return pendingInterestId;
   }
 
@@ -559,14 +467,50 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure,
-     OnNetworkNack onNetworkNack) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onExpressFailure, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onExpressFailure, onNetworkNack, WireFormat.getDefaultWireFormat());
+  }
+
+  /**
+   * Encode name as an Interest. If interestTemplate is not null, use its
+   * interest selectors.
+   * Send the Interest through the transport, read the entire response and call
+   * onData, onTimeout or onNetworkNack as described below.
+   * This uses the default WireFormat.getDefaultWireFormat().
+   * @param name A Name for the interest. This copies the Name.
+   * @param interestTemplate If not null, copy interest selectors from the
+   * template. This does not keep a pointer to the Interest object.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onNetworkNack When a network Nack packet for the interest is
+   * received and onNetworkNack is not null, this calls
+   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
+   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
+   * do nothing and wait for the interest to time out. (Therefore, an
+   * application which does not yet process a network Nack reason treats a
+   * Nack the same as a timeout.)
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onTimeout, onNetworkNack, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -606,13 +550,47 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnExpressFailure onExpressFailure,
-     OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onExpressFailure, onNetworkNack, wireFormat);
+  public long expressInterest(Name name, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, null, onData, onExpressFailure, onNetworkNack, wireFormat);
+  }
+
+  /**
+   * Encode name as an Interest, using a default interest lifetime.
+   * Send the Interest through the transport, read the entire response and call
+   * onData, onTimeout or onNetworkNack as described below.
+   * @param name A Name for the interest. This copies the Name.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onNetworkNack When a network Nack packet for the interest is
+   * received and onNetworkNack is not null, this calls
+   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
+   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
+   * do nothing and wait for the interest to time out. (Therefore, an
+   * application which does not yet process a network Nack reason treats a
+   * Nack the same as a timeout.)
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param wireFormat A WireFormat object used to encode the message.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Name name, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, null, onData, onTimeout, onNetworkNack, wireFormat);
   }
 
   /**
@@ -652,14 +630,47 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnExpressFailure onExpressFailure,
-     OnNetworkNack onNetworkNack) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onExpressFailure, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(name, null, onData, onExpressFailure, onNetworkNack, WireFormat.getDefaultWireFormat());
+  }
+
+  /**
+   * Encode name as an Interest, using a default interest lifetime.
+   * Send the Interest through the transport, read the entire response and call
+   * onData, onTimeout or onNetworkNack as described below.
+   * This uses the default WireFormat.getDefaultWireFormat().
+   * @param name A Name for the interest. This copies the Name.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onNetworkNack When a network Nack packet for the interest is
+   * received and onNetworkNack is not null, this calls
+   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
+   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
+   * do nothing and wait for the interest to time out. (Therefore, an
+   * application which does not yet process a network Nack reason treats a
+   * Nack the same as a timeout.)
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Name name, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack) throws IOException {
+    return expressInterest(name, null, onData, onTimeout, onNetworkNack, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -692,13 +703,40 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData,
-     OnExpressFailure onExpressFailure, WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onExpressFailure, null, wireFormat);
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onExpressFailure, null, wireFormat);
+  }
+
+  /**
+   * Encode name as an Interest. If interestTemplate is not null, use its
+   * interest selectors.
+   * Send the Interest through the transport, read the entire response and call
+   * onData or onTimeout as described below.
+   * @param name A Name for the interest. This copies the Name.
+   * @param interestTemplate If not null, copy interest selectors from the
+   * template. This does not keep a pointer to the Interest object.
+   * @param onData  When a matching data packet is received, this calls
+   * onData.onData(interest, data) where interest is the interest given to
+   * expressInterest and data is the received Data object. NOTE: You must not
+   * change the interest object - if you need to change it then make a copy.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param onTimeout If the interest times out according to the interest
+   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
+   * interest given to expressInterest. If onTimeout is null, this does not use
+   * it.
+   * NOTE: The library will log any exceptions thrown by this callback, but for
+   * better error handling the callback should catch and properly handle any
+   * exceptions.
+   * @param wireFormat A WireFormat object used to encode the message.
+   * @return The pending interest ID which can be used with
+   * removePendingInterest.
+   * @throws IOException For I/O error in sending the interest.
+   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
+   */
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnTimeout onTimeout, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onTimeout, null, wireFormat);
   }
 
   /**
@@ -728,11 +766,7 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnExpressFailure onExpressFailure,
-     WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Name name, OnData onData, OnExpressFailure onExpressFailure, WireFormat wireFormat) throws IOException {
     return expressInterest(name, null, onData, onExpressFailure, wireFormat);
   }
 
@@ -758,13 +792,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData,
-     WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, (OnExpressFailure)null, wireFormat);
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, interestTemplate, onData, (OnExpressFailure) null, wireFormat);
   }
 
   /**
@@ -797,14 +826,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData,
-     OnExpressFailure onExpressFailure) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onExpressFailure,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnExpressFailure onExpressFailure) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onExpressFailure, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -829,13 +852,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, (OnExpressFailure)null,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData) throws IOException {
+    return expressInterest(name, interestTemplate, onData, (OnExpressFailure) null, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -865,12 +883,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnExpressFailure onExpressFailure) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onExpressFailure, WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, OnData onData, OnExpressFailure onExpressFailure) throws IOException {
+    return expressInterest(name, null, onData, onExpressFailure, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -892,12 +906,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, (OnExpressFailure)null, wireFormat);
+  public long expressInterest(Name name, OnData onData, WireFormat wireFormat) throws IOException {
+    return expressInterest(name, null, onData, (OnExpressFailure) null, wireFormat);
   }
 
   /**
@@ -919,12 +929,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest(Name name, OnData onData) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, (OnExpressFailure)null,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, OnData onData) throws IOException {
+    return expressInterest(name, null, onData, (OnExpressFailure) null, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -965,19 +971,9 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData,
-     final OnTimeout onTimeout, OnNetworkNack onNetworkNack,
-     WireFormat wireFormat) throws IOException
-  {
-    // Wrap onTimeout inside an onExpressFailure.
-    final OnExpressFailure onExpressFailure = onTimeout == null ?
-        null : new OnExpressFailure() {
-      public void onExpressFailure
-          (Interest localInterest, ExpressFailureReason dummyReason,
-           Exception dummyDetails) {
-        // Need to catch and log exceptions at this async entry point.
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, final OnTimeout onTimeout, OnNetworkNack onNetworkNack, WireFormat wireFormat) throws IOException {
+    final OnExpressFailure onExpressFailure = onTimeout == null ? null : new OnExpressFailure() {
+      public void onExpressFailure(Interest localInterest, ExpressFailureReason dummyReason, Exception dummyDetails) {
         try {
           onTimeout.onTimeout(localInterest);
         } catch (Throwable ex) {
@@ -985,184 +981,7 @@ public class Face {
         }
       }
     };
-
-    return expressInterest
-      (name, interestTemplate, onData, onExpressFailure, onNetworkNack, 
-       wireFormat);
-  }
-
-  /**
-   * Encode name as an Interest. If interestTemplate is not null, use its
-   * interest selectors.
-   * Send the Interest through the transport, read the entire response and call
-   * onData, onTimeout or onNetworkNack as described below.
-   * This uses the default WireFormat.getDefaultWireFormat().
-   * @param name A Name for the interest. This copies the Name.
-   * @param interestTemplate If not null, copy interest selectors from the
-   * template. This does not keep a pointer to the Interest object.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onNetworkNack When a network Nack packet for the interest is
-   * received and onNetworkNack is not null, this calls
-   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
-   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
-   * do nothing and wait for the interest to time out. (Therefore, an
-   * application which does not yet process a network Nack reason treats a
-   * Nack the same as a timeout.)
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData, OnTimeout onTimeout,
-     OnNetworkNack onNetworkNack) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onTimeout, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
-  }
-
-  /**
-   * Encode name as an Interest, using a default interest lifetime.
-   * Send the Interest through the transport, read the entire response and call
-   * onData, onTimeout or onNetworkNack as described below.
-   * @param name A Name for the interest. This copies the Name.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onNetworkNack When a network Nack packet for the interest is
-   * received and onNetworkNack is not null, this calls
-   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
-   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
-   * do nothing and wait for the interest to time out. (Therefore, an
-   * application which does not yet process a network Nack reason treats a
-   * Nack the same as a timeout.)
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param wireFormat A WireFormat object used to encode the message.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack,
-     WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onTimeout, onNetworkNack, wireFormat);
-  }
-
-  /**
-   * Encode name as an Interest, using a default interest lifetime.
-   * Send the Interest through the transport, read the entire response and call
-   * onData, onTimeout or onNetworkNack as described below.
-   * This uses the default WireFormat.getDefaultWireFormat().
-   * @param name A Name for the interest. This copies the Name.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onNetworkNack When a network Nack packet for the interest is
-   * received and onNetworkNack is not null, this calls
-   * onNetworkNack.onNetworkNack(interest, networkNack) and does not call
-   * onTimeout. However, if a network Nack is received and onNetworkNack is null,
-   * do nothing and wait for the interest to time out. (Therefore, an
-   * application which does not yet process a network Nack reason treats a
-   * Nack the same as a timeout.)
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnTimeout onTimeout, OnNetworkNack onNetworkNack)
-      throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onTimeout, onNetworkNack,
-       WireFormat.getDefaultWireFormat());
-  }
-
-  /**
-   * Encode name as an Interest. If interestTemplate is not null, use its
-   * interest selectors.
-   * Send the Interest through the transport, read the entire response and call
-   * onData or onTimeout as described below.
-   * @param name A Name for the interest. This copies the Name.
-   * @param interestTemplate If not null, copy interest selectors from the
-   * template. This does not keep a pointer to the Interest object.
-   * @param onData  When a matching data packet is received, this calls
-   * onData.onData(interest, data) where interest is the interest given to
-   * expressInterest and data is the received Data object. NOTE: You must not
-   * change the interest object - if you need to change it then make a copy.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param onTimeout If the interest times out according to the interest
-   * lifetime, this calls onTimeout.onTimeout(interest) where interest is the
-   * interest given to expressInterest. If onTimeout is null, this does not use
-   * it.
-   * NOTE: The library will log any exceptions thrown by this callback, but for
-   * better error handling the callback should catch and properly handle any
-   * exceptions.
-   * @param wireFormat A WireFormat object used to encode the message.
-   * @return The pending interest ID which can be used with
-   * removePendingInterest.
-   * @throws IOException For I/O error in sending the interest.
-   * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
-   */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData, OnTimeout onTimeout,
-     WireFormat wireFormat) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onTimeout, null, wireFormat);
+    return expressInterest(name, interestTemplate, onData, onExpressFailure, onNetworkNack, wireFormat);
   }
 
   /**
@@ -1190,11 +1009,7 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnTimeout onTimeout,
-     WireFormat wireFormat) throws IOException
-  {
+  public long expressInterest(Name name, OnData onData, OnTimeout onTimeout, WireFormat wireFormat) throws IOException {
     return expressInterest(name, null, onData, onTimeout, wireFormat);
   }
 
@@ -1226,14 +1041,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, Interest interestTemplate, OnData onData,
-     OnTimeout onTimeout) throws IOException
-  {
-    return expressInterest
-      (name, interestTemplate, onData, onTimeout,
-       WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, Interest interestTemplate, OnData onData, OnTimeout onTimeout) throws IOException {
+    return expressInterest(name, interestTemplate, onData, onTimeout, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1261,12 +1070,8 @@ public class Face {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public long
-  expressInterest
-    (Name name, OnData onData, OnTimeout onTimeout) throws IOException
-  {
-    return expressInterest
-      (name, null, onData, onTimeout, WireFormat.getDefaultWireFormat());
+  public long expressInterest(Name name, OnData onData, OnTimeout onTimeout) throws IOException {
+    return expressInterest(name, null, onData, onTimeout, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1276,9 +1081,7 @@ public class Face {
    * If there is no entry with the pendingInterestId, do nothing.
    * @param pendingInterestId The ID returned from expressInterest.
    */
-  public void
-  removePendingInterest(long pendingInterestId)
-  {
+  public void removePendingInterest(long pendingInterestId) {
     node_.removePendingInterest(pendingInterestId);
   }
 
@@ -1293,9 +1096,7 @@ public class Face {
    * This makes a copy of the Name. You can get the default certificate name
    * with keyChain.getDefaultCertificateName() .
    */
-  public void
-  setCommandSigningInfo(KeyChain keyChain, Name certificateName)
-  {
+  public void setCommandSigningInfo(KeyChain keyChain, Name certificateName) {
     commandKeyChain_ = keyChain;
     commandCertificateName_ = new Name(certificateName);
   }
@@ -1306,9 +1107,7 @@ public class Face {
    * @param certificateName The certificate name for signing interest.
    * This makes a copy of the Name.
    */
-  public void
-  setCommandCertificateName(Name certificateName)
-  {
+  public void setCommandCertificateName(Name certificateName) {
     commandCertificateName_ = new Name(certificateName);
   }
 
@@ -1324,11 +1123,8 @@ public class Face {
    * @note This method is an experimental feature. See the API docs for more detail at
    * http://named-data.net/doc/ndn-ccl-api/face.html#face-makecommandinterest-method .
    */
-  public void
-  makeCommandInterest(Interest interest, WireFormat wireFormat) throws SecurityException
-  {
-    node_.makeCommandInterest
-      (interest, commandKeyChain_, commandCertificateName_, wireFormat);
+  public void makeCommandInterest(Interest interest, WireFormat wireFormat) throws SecurityException {
+    node_.makeCommandInterest(interest, commandKeyChain_, commandCertificateName_, wireFormat);
   }
 
   /**
@@ -1343,9 +1139,7 @@ public class Face {
    * @note This method is an experimental feature. See the API docs for more detail at
    * http://named-data.net/doc/ndn-ccl-api/face.html#face-makecommandinterest-method .
    */
-  public void
-  makeCommandInterest(Interest interest) throws SecurityException
-  {
+  public void makeCommandInterest(Interest interest) throws SecurityException {
     makeCommandInterest(interest, WireFormat.getDefaultWireFormat());
   }
 
@@ -1386,21 +1180,9 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     ForwardingFlags flags, WireFormat wireFormat)
-    throws IOException, SecurityException
-  {
-    // Get the registeredPrefixId now so we can return it to the caller.
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, ForwardingFlags flags, WireFormat wireFormat) throws IOException, SecurityException {
     long registeredPrefixId = node_.getNextEntryId();
-
-    node_.registerPrefix
-      (registeredPrefixId, prefix, onInterest, onRegisterFailed,
-       onRegisterSuccess, flags, wireFormat, commandKeyChain_,
-       commandCertificateName_, this);
-
+    node_.registerPrefix(registeredPrefixId, prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, wireFormat, commandKeyChain_, commandCertificateName_, this);
     return registeredPrefixId;
   }
 
@@ -1409,15 +1191,8 @@ public class Face {
    * registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, wireFormat)
    * where the onRegisterSuccess parameter comes after onRegisterFailed.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed,
-     ForwardingFlags flags, WireFormat wireFormat)
-    throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, wireFormat);
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed, ForwardingFlags flags, WireFormat wireFormat) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, wireFormat);
   }
 
   /**
@@ -1454,15 +1229,8 @@ public class Face {
    * removeRegisteredPrefix.
    * @throws IOException For I/O error in sending the registration request.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     ForwardingFlags flags) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags,
-       WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, ForwardingFlags flags) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1470,15 +1238,8 @@ public class Face {
    * registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags)
    * where the onRegisterSuccess parameter comes after onRegisterFailed.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed,
-     ForwardingFlags flags) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags,
-       WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed, ForwardingFlags flags) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, flags, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1516,15 +1277,8 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     WireFormat wireFormat) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess,
-       new ForwardingFlags(), wireFormat);
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, WireFormat wireFormat) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, new ForwardingFlags(), wireFormat);
   }
 
   /**
@@ -1532,15 +1286,8 @@ public class Face {
    * registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, wireFormat)
    * where the onRegisterSuccess parameter comes after onRegisterFailed.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed,
-     WireFormat wireFormat) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess,
-       new ForwardingFlags(), wireFormat);
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed, WireFormat wireFormat) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, new ForwardingFlags(), wireFormat);
   }
 
   /**
@@ -1578,15 +1325,8 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess)
-    throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess,
-       new ForwardingFlags(), WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, new ForwardingFlags(), WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1594,15 +1334,8 @@ public class Face {
    * registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess)
    * where the onRegisterSuccess parameter comes after onRegisterFailed.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed)
-    throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, onRegisterSuccess,
-       new ForwardingFlags(), WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterSuccess onRegisterSuccess, OnRegisterFailed onRegisterFailed) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, onRegisterSuccess, new ForwardingFlags(), WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1634,14 +1367,8 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, ForwardingFlags flags,
-     WireFormat wireFormat) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, null, flags, wireFormat);
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, ForwardingFlags flags, WireFormat wireFormat) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, null, flags, wireFormat);
   }
 
   /**
@@ -1671,14 +1398,8 @@ public class Face {
    * removeRegisteredPrefix.
    * @throws IOException For I/O error in sending the registration request.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed,
-     ForwardingFlags flags) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, null, flags,
-       WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, ForwardingFlags flags) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, null, flags, WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1709,14 +1430,8 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed,
-     WireFormat wireFormat) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, null, new ForwardingFlags(),
-       wireFormat);
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, WireFormat wireFormat) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, null, new ForwardingFlags(), wireFormat);
   }
 
   /**
@@ -1747,14 +1462,8 @@ public class Face {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public long
-  registerPrefix
-    (Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed) throws IOException, SecurityException
-  {
-    return registerPrefix
-      (prefix, onInterest, onRegisterFailed, null, new ForwardingFlags(),
-       WireFormat.getDefaultWireFormat());
+  public long registerPrefix(Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed) throws IOException, SecurityException {
+    return registerPrefix(prefix, onInterest, onRegisterFailed, null, new ForwardingFlags(), WireFormat.getDefaultWireFormat());
   }
 
   /**
@@ -1765,9 +1474,7 @@ public class Face {
    * If there is no entry with the registeredPrefixId, do nothing.
    * @param registeredPrefixId The ID returned from registerPrefix.
    */
-  public void
-  removeRegisteredPrefix(long registeredPrefixId)
-  {
+  public void removeRegisteredPrefix(long registeredPrefixId) {
     node_.removeRegisteredPrefix(registeredPrefixId);
   }
 
@@ -1787,13 +1494,9 @@ public class Face {
    * exceptions.
    * @return The interest filter ID which can be used with unsetInterestFilter.
    */
-  public long
-  setInterestFilter(InterestFilter filter, OnInterestCallback onInterest)
-  {
+  public long setInterestFilter(InterestFilter filter, OnInterestCallback onInterest) {
     long interestFilterId = node_.getNextEntryId();
-
     node_.setInterestFilter(interestFilterId, filter, onInterest, this);
-
     return interestFilterId;
   }
 
@@ -1813,9 +1516,7 @@ public class Face {
    * exceptions.
    * @return The interest filter ID which can be used with unsetInterestFilter.
    */
-  public long
-  setInterestFilter(Name prefix, OnInterestCallback onInterest)
-  {
+  public long setInterestFilter(Name prefix, OnInterestCallback onInterest) {
     return setInterestFilter(new InterestFilter(prefix), onInterest);
   }
 
@@ -1826,9 +1527,7 @@ public class Face {
    * If there is no entry with the interestFilterId, do nothing.
    * @param interestFilterId The ID returned from setInterestFilter.
    */
-  public void
-  unsetInterestFilter(long interestFilterId)
-  {
+  public void unsetInterestFilter(long interestFilterId) {
     node_.unsetInterestFilter(interestFilterId);
   }
 
@@ -1839,9 +1538,7 @@ public class Face {
    * @param wireFormat A WireFormat object used to encode the Data packet.
    * @throws Error If the encoded Data packet size exceeds getMaxNdnPacketSize().
    */
-  public void
-  putData(Data data, WireFormat wireFormat) throws IOException
-  {
+  public void putData(Data data, WireFormat wireFormat) throws IOException {
     node_.putData(data, wireFormat);
   }
 
@@ -1852,9 +1549,7 @@ public class Face {
    * @param data The Data packet which satisfies the interest.
    * @throws Error If the encoded Data packet size exceeds getMaxNdnPacketSize().
    */
-  public void
-  putData(Data data) throws IOException
-  {
+  public void putData(Data data) throws IOException {
     putData(data, WireFormat.getDefaultWireFormat());
   }
 
@@ -1863,9 +1558,7 @@ public class Face {
    * @param encoding The blob with the the encoded packet to send.
    * @throws Error If the encoded packet size exceeds getMaxNdnPacketSize().
    */
-  public void
-  send(Blob encoding) throws IOException
-  {
+  public void send(Blob encoding) throws IOException {
     send(encoding.buf());
   }
 
@@ -1875,9 +1568,7 @@ public class Face {
    * reads from position() to limit(), but does not change the position.
    * @throws Error If the encoded packet size exceeds getMaxNdnPacketSize().
    */
-  public void
-  send(ByteBuffer encoding) throws IOException
-  {
+  public void send(ByteBuffer encoding) throws IOException {
     node_.send(encoding);
   }
 
@@ -1894,10 +1585,7 @@ public class Face {
    * processing the data. If you call this from an main event loop, you may want
    * to catch and log/disregard all exceptions.
    */
-  public void
-  processEvents() throws IOException, EncodingException
-  {
-    // Just call Node's processEvents.
+  public void processEvents() throws IOException, EncodingException {
     node_.processEvents();
   }
 
@@ -1908,18 +1596,14 @@ public class Face {
    * @throws IOException
    * @note This is an experimental feature. This API may change in the future.
    */
-  public boolean
-  isLocal() throws IOException
-  {
+  public boolean isLocal() throws IOException {
     return node_.isLocal();
   }
 
   /**
    * Shut down and disconnect this Face.
    */
-  public void
-  shutdown()
-  {
+  public void shutdown() {
     node_.shutdown();
   }
 
@@ -1928,8 +1612,9 @@ public class Face {
    * is larger than this, the library or application MAY drop it.
    * @return The maximum NDN packet size.
    */
-  public static int
-  getMaxNdnPacketSize() { return Common.MAX_NDN_PACKET_SIZE; }
+  public static int getMaxNdnPacketSize() {
+    return Common.MAX_NDN_PACKET_SIZE;
+  }
 
   /**
    * Call callback.run() after the given delay. Even though this is public,
@@ -1938,9 +1623,7 @@ public class Face {
    * @param delayMilliseconds The delay in milliseconds.
    * @param callback This calls callback.run() after the delay.
    */
-  public void
-  callLater(double delayMilliseconds, Runnable callback)
-  {
+  public void callLater(double delayMilliseconds, Runnable callback) {
     node_.callLater(delayMilliseconds, callback);
   }
 
@@ -1952,16 +1635,12 @@ public class Face {
    * template. This does not keep a pointer to the Interest object.
    * @return The Interest, suitable for Node.expressInterest.
    */
-  static protected Interest
-  getInterestCopy(Name name, Interest interestTemplate)
-  {
+  static protected Interest getInterestCopy(Name name, Interest interestTemplate) {
     if (interestTemplate != null) {
-      // Copy the interestTemplate.
       Interest interestCopy = new Interest(interestTemplate);
       interestCopy.setName(name);
       return interestCopy;
-    }
-    else {
+    } else {
       Interest interestCopy = new Interest(name);
       interestCopy.setInterestLifetimeMilliseconds(4000.0);
       return interestCopy;
@@ -1969,7 +1648,10 @@ public class Face {
   }
 
   protected final Node node_;
+
   protected KeyChain commandKeyChain_ = null;
+
   protected Name commandCertificateName_ = new Name();
+
   private static final Logger logger_ = Logger.getLogger(Face.class.getName());
 }

@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2014-2017 Regents of the University of California.
- * @author: Jeff Thompson <jefft0@remap.ucla.edu>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * A copy of the GNU Lesser General Public License is in the file COPYING.
- */
-
 package net.named_data.jndn;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -55,8 +35,7 @@ public class Node implements ElementListener {
    * @param connectionInfo A Transport.ConnectionInfo to be used to connect to
    * the transport.
    */
-  public Node(Transport transport, Transport.ConnectionInfo connectionInfo)
-  {
+  public Node(Transport transport, Transport.ConnectionInfo connectionInfo) {
     transport_ = transport;
     connectionInfo_ = connectionInfo;
   }
@@ -89,101 +68,62 @@ public class Node implements ElementListener {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  public final void
-  expressInterest
-    (final long pendingInterestId, final Interest interestCopy, final OnData onData,
-     final OnExpressFailure onExpressFailure, final OnNetworkNack onNetworkNack,
-     final WireFormat wireFormat, final Face face)
-     throws IOException
-  {
-    // Set the nonce in our copy of the Interest so it is saved in the PIT.
+  public final void expressInterest(final long pendingInterestId, final Interest interestCopy, final OnData onData, final OnExpressFailure onExpressFailure, final OnNetworkNack onNetworkNack, final WireFormat wireFormat, final Face face) throws IOException {
     interestCopy.setNonce(nonceTemplate_);
     interestCopy.refreshNonce();
-
     if (connectStatus_ == ConnectStatus.CONNECT_COMPLETE) {
-      // We are connected. Simply send the interest without synchronizing.
-      expressInterestHelper
-        (pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack,
-         wireFormat, face);
+      expressInterestHelper(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack, wireFormat, face);
       return;
     }
-
-    // Wile connecting, use onConnectedCallbacks_ to synchronize
-    // onConnectedCallbacks_ as well as connectStatus_.
-    synchronized(onConnectedCallbacks_) {
-      // TODO: Properly check if we are already connected to the expected host.
+    synchronized (onConnectedCallbacks_) {
       if (!transport_.isAsync()) {
-        // The simple case: Just do a blocking connect and express.
         transport_.connect(connectionInfo_, this, null);
-        expressInterestHelper
-          (pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack,
-           wireFormat, face);
-        // Make future calls to expressInterest send directly to the Transport.
+        expressInterestHelper(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack, wireFormat, face);
         connectStatus_ = ConnectStatus.CONNECT_COMPLETE;
-
         return;
       }
-
-      // Handle the async case.
       if (connectStatus_ == ConnectStatus.UNCONNECTED) {
         connectStatus_ = ConnectStatus.CONNECT_REQUESTED;
-
-        // expressInterestHelper will be called by onConnected.
         onConnectedCallbacks_.add(new Runnable() {
           public void run() {
             try {
-              expressInterestHelper
-                (pendingInterestId, interestCopy, onData, onExpressFailure,
-                 onNetworkNack, wireFormat, face);
+              expressInterestHelper(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack, wireFormat, face);
             } catch (IOException ex) {
               logger_.log(Level.SEVERE, null, ex);
             }
           }
         });
-
         Runnable onConnected = new Runnable() {
           public void run() {
-            // This is called on a separate thread from the surrounding code
-            // when connected, so synchronize again.
-            synchronized(onConnectedCallbacks_) {
-              // Call each callback added while the connection was opening.
-              for (int i = 0; i < onConnectedCallbacks_.size(); ++i)
-                ((Runnable)onConnectedCallbacks_.get(i)).run();
+            synchronized (onConnectedCallbacks_) {
+              for (int i = 0; i < onConnectedCallbacks_.size(); ++i) {
+                ((Runnable) onConnectedCallbacks_.get(i)).run();
+              }
               onConnectedCallbacks_.clear();
-
-              // Make future calls to expressInterest send directly to the
-              // Transport.
               connectStatus_ = ConnectStatus.CONNECT_COMPLETE;
             }
           }
         };
         transport_.connect(connectionInfo_, this, onConnected);
-      }
-      else if (connectStatus_ == ConnectStatus.CONNECT_REQUESTED) {
-        // Still connecting. add to the interests to express by onConnected.
-        onConnectedCallbacks_.add(new Runnable() {
-          public void run() {
-            try {
-              expressInterestHelper
-                (pendingInterestId, interestCopy, onData, onExpressFailure,
-                 onNetworkNack, wireFormat, face);
-            } catch (IOException ex) {
-              logger_.log(Level.SEVERE, null, ex);
+      } else {
+        if (connectStatus_ == ConnectStatus.CONNECT_REQUESTED) {
+          onConnectedCallbacks_.add(new Runnable() {
+            public void run() {
+              try {
+                expressInterestHelper(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack, wireFormat, face);
+              } catch (IOException ex) {
+                logger_.log(Level.SEVERE, null, ex);
+              }
             }
+          });
+        } else {
+          if (connectStatus_ == ConnectStatus.CONNECT_COMPLETE) {
+            expressInterestHelper(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack, wireFormat, face);
+          } else {
+            throw new Error("Node: Unrecognized _connectStatus " + connectStatus_);
           }
-        });
+        }
       }
-      else if (connectStatus_ == ConnectStatus.CONNECT_COMPLETE)
-        // We have to repeat this check for CONNECT_COMPLETE in case the
-        // onConnected callback was called while we were waiting to enter this
-        // synchronized block.
-        expressInterestHelper
-          (pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack,
-           wireFormat, face);
-      else
-        // Don't expect this to happen.
-        throw new Error
-          ("Node: Unrecognized _connectStatus " + connectStatus_);
     }
   }
 
@@ -194,9 +134,7 @@ public class Node implements ElementListener {
    * If there is no entry with the pendingInterestId, do nothing.
    * @param pendingInterestId The ID returned from expressInterest.
    */
-  public final void
-  removePendingInterest(long pendingInterestId)
-  {
+  public final void removePendingInterest(long pendingInterestId) {
     pendingInterestTable_.removePendingInterest(pendingInterestId);
   }
 
@@ -212,13 +150,8 @@ public class Node implements ElementListener {
    * @throws SecurityException If cannot find the private key for the
    * certificateName.
    */
-  void
-  makeCommandInterest
-    (Interest interest, KeyChain keyChain, Name certificateName,
-     WireFormat wireFormat) throws SecurityException
-  {
-    commandInterestGenerator_.generate
-      (interest, keyChain, certificateName, wireFormat);
+  void makeCommandInterest(Interest interest, KeyChain keyChain, Name certificateName, WireFormat wireFormat) throws SecurityException {
+    commandInterestGenerator_.generate(interest, keyChain, certificateName, wireFormat);
   }
 
   /**
@@ -250,17 +183,8 @@ public class Node implements ElementListener {
    * @throws SecurityException If signing a command interest for NFD and cannot
    * find the private key for the certificateName.
    */
-  public final void
-  registerPrefix
-    (long registeredPrefixId, Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     ForwardingFlags flags, WireFormat wireFormat, KeyChain commandKeyChain,
-     Name commandCertificateName, Face face) throws IOException, SecurityException
-  {
-    nfdRegisterPrefix
-      (registeredPrefixId, new Name(prefix), onInterest, onRegisterFailed,
-       onRegisterSuccess, flags, commandKeyChain, commandCertificateName,
-       wireFormat, face);
+  public final void registerPrefix(long registeredPrefixId, Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, ForwardingFlags flags, WireFormat wireFormat, KeyChain commandKeyChain, Name commandCertificateName, Face face) throws IOException, SecurityException {
+    nfdRegisterPrefix(registeredPrefixId, new Name(prefix), onInterest, onRegisterFailed, onRegisterSuccess, flags, commandKeyChain, commandCertificateName, wireFormat, face);
   }
 
   /**
@@ -271,9 +195,7 @@ public class Node implements ElementListener {
    * If there is no entry with the registeredPrefixId, do nothing.
    * @param registeredPrefixId The ID returned from registerPrefix.
    */
-  public final void
-  removeRegisteredPrefix(long registeredPrefixId)
-  {
+  public final void removeRegisteredPrefix(long registeredPrefixId) {
     registeredPrefixTable_.removeRegisteredPrefix(registeredPrefixId);
   }
 
@@ -292,13 +214,8 @@ public class Node implements ElementListener {
    * onInterest.onInterest(prefix, interest, face, interestFilterId, filter).
    * @param face The face which is passed to the onInterest callback.
    */
-  public final void
-  setInterestFilter
-    (long interestFilterId, InterestFilter filter, OnInterestCallback onInterest,
-     Face face)
-  {
-    interestFilterTable_.setInterestFilter
-      (interestFilterId, new InterestFilter(filter), onInterest, face);
+  public final void setInterestFilter(long interestFilterId, InterestFilter filter, OnInterestCallback onInterest, Face face) {
+    interestFilterTable_.setInterestFilter(interestFilterId, new InterestFilter(filter), onInterest, face);
   }
 
   /**
@@ -308,9 +225,7 @@ public class Node implements ElementListener {
    * If there is no entry with the interestFilterId, do nothing.
    * @param interestFilterId The ID returned from setInterestFilter.
    */
-  public final void
-  unsetInterestFilter(long interestFilterId)
-  {
+  public final void unsetInterestFilter(long interestFilterId) {
     interestFilterTable_.unsetInterestFilter(interestFilterId);
   }
 
@@ -321,14 +236,11 @@ public class Node implements ElementListener {
    * @param wireFormat A WireFormat object used to encode the Data packet.
    * @throws Error If the encoded Data packet size exceeds getMaxNdnPacketSize().
    */
-  public final void
-  putData(Data data, WireFormat wireFormat) throws IOException
-  {
+  public final void putData(Data data, WireFormat wireFormat) throws IOException {
     Blob encoding = data.wireEncode(wireFormat);
-    if (encoding.size() > getMaxNdnPacketSize())
-      throw new Error
-        ("The encoded Data packet size exceeds the maximum limit getMaxNdnPacketSize()");
-
+    if (encoding.size() > getMaxNdnPacketSize()) {
+      throw new Error("The encoded Data packet size exceeds the maximum limit getMaxNdnPacketSize()");
+    }
     transport_.send(encoding.buf());
   }
 
@@ -338,13 +250,10 @@ public class Node implements ElementListener {
    * reads from position() to limit(), but does not change the position.
    * @throws Error If the encoded packet size exceeds getMaxNdnPacketSize().
    */
-  public final void
-  send(ByteBuffer encoding) throws IOException
-  {
-    if (encoding.remaining() > getMaxNdnPacketSize())
-      throw new Error
-        ("The encoded packet size exceeds the maximum limit getMaxNdnPacketSize()");
-
+  public final void send(ByteBuffer encoding) throws IOException {
+    if (encoding.remaining() > getMaxNdnPacketSize()) {
+      throw new Error("The encoded packet size exceeds the maximum limit getMaxNdnPacketSize()");
+    }
     transport_.send(encoding);
   }
 
@@ -361,35 +270,26 @@ public class Node implements ElementListener {
    * processing the data. If you call this from an main event loop, you may want
    * to catch and log/disregard all exceptions.
    */
-  public final void
-  processEvents() throws IOException, EncodingException
-  {
+  public final void processEvents() throws IOException, EncodingException {
     transport_.processEvents();
-
-    // If Face.callLater is overridden to use a different mechanism, then
-    // processEvents is not needed to check for delayed calls.
     delayedCallTable_.callTimedOut();
   }
 
-  public final Transport
-  getTransport() { return transport_; }
+  public final Transport getTransport() {
+    return transport_;
+  }
 
-  public final Transport.ConnectionInfo
-  getConnectionInfo() { return connectionInfo_; }
+  public final Transport.ConnectionInfo getConnectionInfo() {
+    return connectionInfo_;
+  }
 
-  public final void onReceivedElement(ByteBuffer element) throws EncodingException
-  {
+  public final void onReceivedElement(ByteBuffer element) throws EncodingException {
     LpPacket lpPacket = null;
     if (element.get(0) == Tlv.LpPacket_LpPacket) {
-      // Decode the LpPacket and replace element with the fragment.
       lpPacket = new LpPacket();
-      // Set copy false so that the fragment is a slice which will be copied below.
-      // The header fields are all integers and don't need to be copied.
       TlvWireFormat.get().decodeLpPacket(lpPacket, element, false);
       element = lpPacket.getFragmentWireEncoding().buf();
     }
-
-    // First, decode as Interest or Data.
     Interest interest = null;
     Data data = null;
     if (element.get(0) == Tlv.Interest || element.get(0) == Tlv.Data) {
@@ -397,76 +297,61 @@ public class Node implements ElementListener {
       if (decoder.peekType(Tlv.Interest, element.remaining())) {
         interest = new Interest();
         interest.wireDecode(element, TlvWireFormat.get());
-
-        if (lpPacket != null)
+        if (lpPacket != null) {
           interest.setLpPacket(lpPacket);
-      }
-      else if (decoder.peekType(Tlv.Data, element.remaining())) {
-        data = new Data();
-        data.wireDecode(element, TlvWireFormat.get());
-
-        if (lpPacket != null)
-          data.setLpPacket(lpPacket);
+        }
+      } else {
+        if (decoder.peekType(Tlv.Data, element.remaining())) {
+          data = new Data();
+          data.wireDecode(element, TlvWireFormat.get());
+          if (lpPacket != null) {
+            data.setLpPacket(lpPacket);
+          }
+        }
       }
     }
-
     if (lpPacket != null) {
-      // We have decoded the fragment, so remove the wire encoding to save memory.
       lpPacket.setFragmentWireEncoding(new Blob());
-
       NetworkNack networkNack = NetworkNack.getFirstHeader(lpPacket);
       if (networkNack != null) {
-        if (interest == null)
-          // We got a Nack but not for an Interest, so drop the packet.
+        if (interest == null) {
           return;
-
-        ArrayList<PendingInterestTable.Entry> pitEntries =
-          new ArrayList<PendingInterestTable.Entry>();
+        }
+        ArrayList<PendingInterestTable.Entry> pitEntries = new ArrayList<PendingInterestTable.Entry>();
         pendingInterestTable_.extractEntriesForNackInterest(interest, pitEntries);
         for (int i = 0; i < pitEntries.size(); ++i) {
           PendingInterestTable.Entry pendingInterest = pitEntries.get(i);
           try {
-            pendingInterest.getOnNetworkNack().onNetworkNack
-              (pendingInterest.getInterest(), networkNack);
+            pendingInterest.getOnNetworkNack().onNetworkNack(pendingInterest.getInterest(), networkNack);
           } catch (Throwable ex) {
             logger_.log(Level.SEVERE, "Error in onNack", ex);
           }
         }
-
-        // We have processed the network Nack packet.
         return;
       }
     }
-
-    // Now process as Interest or Data.
     if (interest != null) {
-      // Quickly lock and get all interest filter callbacks which match.
       ArrayList matchedFilters = new ArrayList();
       interestFilterTable_.getMatchedFilters(interest, matchedFilters);
-
-      // The lock on interestFilterTable_ is released, so call the callbacks.
       for (int i = 0; i < matchedFilters.size(); ++i) {
-        InterestFilterTable.Entry entry =
-          (InterestFilterTable.Entry)matchedFilters.get(i);
+        InterestFilterTable.Entry entry = (InterestFilterTable.Entry) matchedFilters.get(i);
         try {
-          entry.getOnInterest().onInterest
-           (entry.getFilter().getPrefix(), interest, entry.getFace(),
-            entry.getInterestFilterId(), entry.getFilter());
+          entry.getOnInterest().onInterest(entry.getFilter().getPrefix(), interest, entry.getFace(), entry.getInterestFilterId(), entry.getFilter());
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, "Error in onInterest", ex);
         }
       }
-    }
-    else if (data != null) {
-      ArrayList<PendingInterestTable.Entry> pitEntries =
-        new ArrayList<PendingInterestTable.Entry>();
-      pendingInterestTable_.extractEntriesForExpressedInterest(data, pitEntries);
-      for (int i = 0; i < pitEntries.size(); ++i) {
-        PendingInterestTable.Entry pendingInterest = pitEntries.get(i);
-        try {
-          pendingInterest.getOnData().onData(pendingInterest.getInterest(), data);
-        } catch (Throwable ex) {
-          logger_.log(Level.SEVERE, "Error in onData", ex);
+    } else {
+      if (data != null) {
+        ArrayList<PendingInterestTable.Entry> pitEntries = new ArrayList<PendingInterestTable.Entry>();
+        pendingInterestTable_.extractEntriesForExpressedInterest(data, pitEntries);
+        for (int i = 0; i < pitEntries.size(); ++i) {
+          PendingInterestTable.Entry pendingInterest = pitEntries.get(i);
+          try {
+            pendingInterest.getOnData().onData(pendingInterest.getInterest(), data);
+          } catch (Throwable ex) {
+            logger_.log(Level.SEVERE, "Error in onData", ex);
+          }
         }
       }
     }
@@ -478,20 +363,18 @@ public class Node implements ElementListener {
    * @return True if the face is local, false if not.
    * @throws IOException
    */
-  public final boolean isLocal() throws IOException{
+  public final boolean isLocal() throws IOException {
     return transport_.isLocal(connectionInfo_);
   }
 
   /**
    * Shut down by closing the transport
    */
-  public final void
-  shutdown()
-  {
+  public final void shutdown() {
     try {
       transport_.close();
+    } catch (IOException e) {
     }
-    catch (IOException e) {}
   }
 
   /**
@@ -499,8 +382,9 @@ public class Node implements ElementListener {
    * is larger than this, the library or application MAY drop it.
    * @return The maximum NDN packet size.
    */
-  public static int
-  getMaxNdnPacketSize() { return Common.MAX_NDN_PACKET_SIZE; }
+  public static int getMaxNdnPacketSize() {
+    return Common.MAX_NDN_PACKET_SIZE;
+  }
 
   /**
    * Call callback.run() after the given delay. This adds to
@@ -508,9 +392,7 @@ public class Node implements ElementListener {
    * @param delayMilliseconds The delay in milliseconds.
    * @param callback This calls callback.run() after the delay.
    */
-  public final void
-  callLater(double delayMilliseconds, Runnable callback)
-  {
+  public final void callLater(double delayMilliseconds, Runnable callback) {
     delayedCallTable_.callLater(delayMilliseconds, callback);
   }
 
@@ -522,10 +404,8 @@ public class Node implements ElementListener {
    * safe lock in one method which is called by Face.
    * @return The next entry ID.
    */
-  public long
-  getNextEntryId()
-  {
-    synchronized(lastEntryIdLock_) {
+  public long getNextEntryId() {
+    synchronized (lastEntryIdLock_) {
       return ++lastEntryId_;
     }
   }
@@ -536,11 +416,10 @@ public class Node implements ElementListener {
    * its onExpressFailure callback.
    * @param pendingInterest The pending interest to check.
    */
-  private void
-  processInterestTimeout(PendingInterestTable.Entry pendingInterest)
-  {
-    if (pendingInterestTable_.removeEntry(pendingInterest))
+  private void processInterestTimeout(PendingInterestTable.Entry pendingInterest) {
+    if (pendingInterestTable_.removeEntry(pendingInterest)) {
       pendingInterest.callTimeout();
+    }
   }
 
   /**
@@ -563,49 +442,39 @@ public class Node implements ElementListener {
    * @throws IOException For I/O error in sending the interest.
    * @throws Error If the encoded interest size exceeds getMaxNdnPacketSize().
    */
-  private void
-  expressInterestHelper
-    (long pendingInterestId, Interest interestCopy, OnData onData,
-     OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack,
-     WireFormat wireFormat, Face face) throws IOException
-  {
-    final PendingInterestTable.Entry pendingInterest =
-      pendingInterestTable_.add
-        (pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack);
-    if (pendingInterest == null)
-      // removePendingInterest was already called with the pendingInterestId.
+  private void expressInterestHelper(long pendingInterestId, Interest interestCopy, OnData onData, OnExpressFailure onExpressFailure, OnNetworkNack onNetworkNack, WireFormat wireFormat, Face face) throws IOException {
+    final PendingInterestTable.Entry pendingInterest = pendingInterestTable_.add(pendingInterestId, interestCopy, onData, onExpressFailure, onNetworkNack);
+    if (pendingInterest == null) {
       return;
-
-    if (onExpressFailure != null ||
-        interestCopy.getInterestLifetimeMilliseconds() >= 0.0) {
-      // Set up the timeout.
-      double delayMilliseconds = interestCopy.getInterestLifetimeMilliseconds();
-      if (delayMilliseconds < 0.0)
-        // Use a default timeout delay.
-        delayMilliseconds = 4000.0;
-
-      face.callLater
-        (delayMilliseconds,
-         new Runnable() {
-           public void run() { processInterestTimeout(pendingInterest); }
-         });
     }
-
-    // Special case: For timeoutPrefix_ we don't actually send the interest.
+    if (onExpressFailure != null || interestCopy.getInterestLifetimeMilliseconds() >= 0.0) {
+      double delayMilliseconds = interestCopy.getInterestLifetimeMilliseconds();
+      if (delayMilliseconds < 0.0) {
+        delayMilliseconds = 4000.0;
+      }
+      face.callLater(delayMilliseconds, new Runnable() {
+        public void run() {
+          processInterestTimeout(pendingInterest);
+        }
+      });
+    }
     if (!timeoutPrefix_.match(interestCopy.getName())) {
       Blob encoding = interestCopy.wireEncode(wireFormat);
-      if (encoding.size() > getMaxNdnPacketSize())
-        throw new Error
-          ("The encoded interest size exceeds the maximum limit getMaxNdnPacketSize()");
+      if (encoding.size() > getMaxNdnPacketSize()) {
+        throw new Error("The encoded interest size exceeds the maximum limit getMaxNdnPacketSize()");
+      }
       transport_.send(encoding.buf());
     }
   }
 
-  private enum ConnectStatus { UNCONNECTED, CONNECT_REQUESTED, CONNECT_COMPLETE }
+  private enum ConnectStatus {
+    UNCONNECTED,
+    CONNECT_REQUESTED,
+    CONNECT_COMPLETE
+  }
 
   private static class RegisterResponse implements OnData, OnExpressFailure {
-    public RegisterResponse(Info info, Node parent)
-    {
+    public RegisterResponse(Info info, Node parent) {
       info_ = info;
       parent_ = parent;
     }
@@ -615,16 +484,12 @@ public class Node implements ElementListener {
      * @param interest
      * @param responseData
      */
-    public void
-    onData(Interest interest, Data responseData)
-    {
-      // Decode responseData.getContent() and check for a success code.
+    public void onData(Interest interest, Data responseData) {
       ControlResponse controlResponse = new ControlResponse();
       try {
         controlResponse.wireDecode(responseData.getContent(), TlvWireFormat.get());
       } catch (EncodingException ex) {
-        logger_.log(Level.INFO,
-          "Register prefix failed: Error decoding the NFD response: {0}", ex);
+        logger_.log(Level.INFO, "Register prefix failed: Error decoding the NFD response: {0}", ex);
         try {
           info_.onRegisterFailed_.onRegisterFailed(info_.prefix_);
         } catch (Throwable exception) {
@@ -632,12 +497,8 @@ public class Node implements ElementListener {
         }
         return;
       }
-
-      // Status code 200 is "OK".
       if (controlResponse.getStatusCode() != 200) {
-        logger_.log(Level.INFO,
-          "Register prefix failed: Expected NFD status code 200, got: {0}",
-          controlResponse.getStatusCode());
+        logger_.log(Level.INFO, "Register prefix failed: Expected NFD status code 200, got: {0}", controlResponse.getStatusCode());
         try {
           info_.onRegisterFailed_.onRegisterFailed(info_.prefix_);
         } catch (Throwable ex) {
@@ -645,37 +506,23 @@ public class Node implements ElementListener {
         }
         return;
       }
-
-      // Success, so we can add to the registered prefix table.
       if (info_.registeredPrefixId_ != 0) {
         long interestFilterId = 0;
         if (info_.onInterest_ != null) {
-          // registerPrefix was called with the "combined" form that includes the
-          // callback, so add an InterestFilterEntry.
           interestFilterId = parent_.getNextEntryId();
-          parent_.setInterestFilter
-            (interestFilterId, new InterestFilter
-             (info_.prefix_), info_.onInterest_, info_.face_);
+          parent_.setInterestFilter(interestFilterId, new InterestFilter(info_.prefix_), info_.onInterest_, info_.face_);
         }
-
-        if (!parent_.registeredPrefixTable_.add
-            (info_.registeredPrefixId_, info_.prefix_, interestFilterId)) {
-          // removeRegisteredPrefix was already called with the registeredPrefixId.
-          if (interestFilterId > 0)
-            // Remove the related interest filter we just added.
+        if (!parent_.registeredPrefixTable_.add(info_.registeredPrefixId_, info_.prefix_, interestFilterId)) {
+          if (interestFilterId > 0) {
             parent_.unsetInterestFilter(interestFilterId);
-
+          }
           return;
         }
       }
-
-      logger_.log(Level.INFO,
-        "Register prefix succeeded with the NFD forwarder for prefix {0}",
-        info_.prefix_.toUri());
+      logger_.log(Level.INFO, "Register prefix succeeded with the NFD forwarder for prefix {0}", info_.prefix_.toUri());
       if (info_.onRegisterSuccess_ != null) {
         try {
-          info_.onRegisterSuccess_.onRegisterSuccess
-            (info_.prefix_, info_.registeredPrefixId_);
+          info_.onRegisterSuccess_.onRegisterSuccess(info_.prefix_, info_.registeredPrefixId_);
         } catch (Throwable ex) {
           logger_.log(Level.SEVERE, "Error in onRegisterSuccess", ex);
         }
@@ -686,12 +533,8 @@ public class Node implements ElementListener {
      * We timed out waiting for the response.
      * @param timedOutInterest
      */
-    public void
-    onExpressFailure
-      (Interest timedOutInterest, ExpressFailureReason reason, Exception details)
-    {
-      logger_.log(Level.INFO,
-        "Timeout for NFD register prefix command.");
+    public void onExpressFailure(Interest timedOutInterest, ExpressFailureReason reason, Exception details) {
+      logger_.log(Level.INFO, "Timeout for NFD register prefix command.");
       try {
         info_.onRegisterFailed_.onRegisterFailed(info_.prefix_);
       } catch (Throwable ex) {
@@ -710,11 +553,7 @@ public class Node implements ElementListener {
        * @param onInterest The callback to add if register succeeds.
        * @param face
        */
-      public Info
-        (Name prefix,OnRegisterFailed onRegisterFailed,
-         OnRegisterSuccess onRegisterSuccess, long registeredPrefixId,
-         OnInterestCallback onInterest, Face face)
-      {
+      public Info(Name prefix, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, long registeredPrefixId, OnInterestCallback onInterest, Face face) {
         prefix_ = prefix;
         onRegisterFailed_ = onRegisterFailed;
         onRegisterSuccess_ = onRegisterSuccess;
@@ -724,14 +563,20 @@ public class Node implements ElementListener {
       }
 
       public final Name prefix_;
+
       public final OnRegisterFailed onRegisterFailed_;
+
       public final OnRegisterSuccess onRegisterSuccess_;
+
       public final long registeredPrefixId_;
+
       public final OnInterestCallback onInterest_;
+
       public final Face face_;
     }
 
     private final Info info_;
+
     private final Node parent_;
   }
 
@@ -753,34 +598,22 @@ public class Node implements ElementListener {
    * @throws SecurityException If cannot find the private key for the
    * certificateName.
    */
-  private void
-  nfdRegisterPrefix
-    (long registeredPrefixId, Name prefix, OnInterestCallback onInterest,
-     OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess,
-     ForwardingFlags flags, KeyChain commandKeyChain,
-     Name commandCertificateName, WireFormat wireFormat, Face face)
-    throws SecurityException
-  {
-    if (commandKeyChain == null)
-      throw new Error
-        ("registerPrefix: The command KeyChain has not been set. You must call setCommandSigningInfo.");
-    if (commandCertificateName.size() == 0)
-      throw new Error
-        ("registerPrefix: The command certificate name has not been set. You must call setCommandSigningInfo.");
-
+  private void nfdRegisterPrefix(long registeredPrefixId, Name prefix, OnInterestCallback onInterest, OnRegisterFailed onRegisterFailed, OnRegisterSuccess onRegisterSuccess, ForwardingFlags flags, KeyChain commandKeyChain, Name commandCertificateName, WireFormat wireFormat, Face face) throws SecurityException {
+    if (commandKeyChain == null) {
+      throw new Error("registerPrefix: The command KeyChain has not been set. You must call setCommandSigningInfo.");
+    }
+    if (commandCertificateName.size() == 0) {
+      throw new Error("registerPrefix: The command certificate name has not been set. You must call setCommandSigningInfo.");
+    }
     ControlParameters controlParameters = new ControlParameters();
     controlParameters.setName(prefix);
     controlParameters.setForwardingFlags(flags);
-
     Interest commandInterest = new Interest();
-
-    // Determine whether to use remote prefix registration.
     boolean faceIsLocal;
     try {
       faceIsLocal = isLocal();
     } catch (IOException ex) {
-      logger_.log(Level.INFO,
-        "Register prefix failed: Error attempting to determine if the face is local: {0}", ex);
+      logger_.log(Level.INFO, "Register prefix failed: Error attempting to determine if the face is local: {0}", ex);
       try {
         onRegisterFailed.onRegisterFailed(prefix);
       } catch (Throwable exception) {
@@ -788,39 +621,20 @@ public class Node implements ElementListener {
       }
       return;
     }
-
     if (faceIsLocal) {
       commandInterest.setName(new Name("/localhost/nfd/rib/register"));
-      // The interest is answered by the local host, so set a short timeout.
       commandInterest.setInterestLifetimeMilliseconds(2000.0);
-    }
-    else {
+    } else {
       commandInterest.setName(new Name("/localhop/nfd/rib/register"));
-      // The host is remote, so set a longer timeout.
       commandInterest.setInterestLifetimeMilliseconds(4000.0);
     }
-
-    // NFD only accepts TlvWireFormat packets.
     commandInterest.getName().append(controlParameters.wireEncode(TlvWireFormat.get()));
-    makeCommandInterest
-      (commandInterest, commandKeyChain, commandCertificateName,
-       TlvWireFormat.get());
-
-    // Send the registration interest.
-    RegisterResponse response = new RegisterResponse
-      (new RegisterResponse.Info
-        (prefix, onRegisterFailed, onRegisterSuccess, registeredPrefixId,
-         onInterest, face),
-       this);
+    makeCommandInterest(commandInterest, commandKeyChain, commandCertificateName, TlvWireFormat.get());
+    RegisterResponse response = new RegisterResponse(new RegisterResponse.Info(prefix, onRegisterFailed, onRegisterSuccess, registeredPrefixId, onInterest, face), this);
     try {
-      expressInterest
-        (getNextEntryId(), commandInterest, response, response, null,
-         wireFormat, face);
-    }
-    catch (IOException ex) {
-      // Can't send the interest. Call onRegisterFailed.
-      logger_.log(Level.INFO,
-        "Register prefix failed: Error sending the register prefix interest to the forwarder: {0}", ex);
+      expressInterest(getNextEntryId(), commandInterest, response, response, null, wireFormat, face);
+    } catch (IOException ex) {
+      logger_.log(Level.INFO, "Register prefix failed: Error sending the register prefix interest to the forwarder: {0}", ex);
       try {
         onRegisterFailed.onRegisterFailed(prefix);
       } catch (Throwable exception) {
@@ -830,23 +644,30 @@ public class Node implements ElementListener {
   }
 
   private final Transport transport_;
+
   private final Transport.ConnectionInfo connectionInfo_;
-  private final PendingInterestTable pendingInterestTable_ =
-    new PendingInterestTable();
-  private final InterestFilterTable interestFilterTable_ =
-    new InterestFilterTable();
-  private final RegisteredPrefixTable registeredPrefixTable_ =
-    new RegisteredPrefixTable(interestFilterTable_);
+
+  private final PendingInterestTable pendingInterestTable_ = new PendingInterestTable();
+
+  private final InterestFilterTable interestFilterTable_ = new InterestFilterTable();
+
+  private final RegisteredPrefixTable registeredPrefixTable_ = new RegisteredPrefixTable(interestFilterTable_);
+
   private final DelayedCallTable delayedCallTable_ = new DelayedCallTable();
-  // Use ArrayList without generics so it works with older Java compilers.
-  private final List onConnectedCallbacks_ =
-    Collections.synchronizedList(new ArrayList()); // Runnable
-  private final CommandInterestGenerator commandInterestGenerator_ =
-    new CommandInterestGenerator();
+
+  private final List onConnectedCallbacks_ = Collections.synchronizedList(new ArrayList());
+
+  private final CommandInterestGenerator commandInterestGenerator_ = new CommandInterestGenerator();
+
   private final Name timeoutPrefix_ = new Name("/local/timeout");
+
   private long lastEntryId_;
+
   private final Object lastEntryIdLock_ = new Object();
+
   private ConnectStatus connectStatus_ = ConnectStatus.UNCONNECTED;
+
   private static Blob nonceTemplate_ = new Blob(new byte[] { 0, 0, 0, 0 });
+
   private static final Logger logger_ = Logger.getLogger(Node.class.getName());
 }
