@@ -1,5 +1,4 @@
 package de.is24.deadcode4j.analyzer;
-
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import de.is24.deadcode4j.AnalysisContext;
@@ -10,11 +9,9 @@ import japa.parser.ast.TypeParameter;
 import japa.parser.ast.body.*;
 import japa.parser.ast.type.*;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 import static com.google.common.base.Predicates.and;
@@ -36,323 +33,282 @@ import static java.util.Map.Entry;
  *
  * @since 1.6
  */
-@SuppressWarnings("PMD.TooManyStaticImports")
-public class TypeErasureAnalyzer extends JavaFileAnalyzer {
+@SuppressWarnings(value = { "PMD.TooManyStaticImports" }) public class TypeErasureAnalyzer extends JavaFileAnalyzer {
+  @Override protected void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+    compilationUnit.accept(new TypeRecordingVisitor() {
+      private final ClassPoolAccessor classPoolAccessor = classPoolAccessorFor(analysisContext);
 
-    @Override
-    protected void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
-        compilationUnit.accept(new TypeRecordingVisitor() {
-            private final ClassPoolAccessor classPoolAccessor = classPoolAccessorFor(analysisContext);
-            private final Deque<Set<String>> definedTypeParameters = newLinkedList();
-            private final Map<String, Set<String>> typeReferences = newHashMap();
+      private final Deque<Set<String>> definedTypeParameters = newLinkedList();
 
-            @Override
-            public void visit(CompilationUnit n, Void arg) {
-                super.visit(n, arg);
-                resolveTypeReferences();
+      private final Map<String, Set<String>> typeReferences = newHashMap();
+
+      @Override public void visit(CompilationUnit n, Void arg) {
+        super.visit(n, arg);
+        resolveTypeReferences();
+      }
+
+      @Override public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+        this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
+        try {
+          super.visit(n, arg);
+        }  finally {
+          this.definedTypeParameters.removeLast();
+        }
+      }
+
+      @Override public void visit(ConstructorDeclaration n, Void arg) {
+        this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
+        try {
+          super.visit(n, arg);
+        }  finally {
+          this.definedTypeParameters.removeLast();
+        }
+      }
+
+      @Override public void visit(MethodDeclaration n, Void arg) {
+        this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
+        try {
+          super.visit(n, arg);
+        }  finally {
+          this.definedTypeParameters.removeLast();
+        }
+      }
+
+      @Override public void visit(ClassOrInterfaceType n, Void arg) {
+        for (Type type : emptyIfNull(n.getTypeArgs())) {
+          ClassOrInterfaceType referencedType = getReferencedType(type);
+          if (referencedType == null) {
+            continue;
+          }
+          if (typeParameterWithSameNameIsDefined(referencedType)) {
+            continue;
+          }
+          getOrAddMappedSet(this.typeReferences, getQualifier(referencedType)).add(getTypeName(n));
+          this.visit(referencedType, arg);
+        }
+      }
+
+      @Nonnull private Set<String> getTypeParameterNames(@Nullable List<TypeParameter> typeParameters) {
+        if (typeParameters == null) {
+          return emptySet();
+        }
+        Set<String> parameters = newHashSet();
+        for (TypeParameter typeParameter : typeParameters) {
+          parameters.add(typeParameter.getName());
+        }
+        return parameters;
+      }
+
+      @Nullable private ClassOrInterfaceType getReferencedType(@Nonnull Type type) {
+        final Type nestedType;
+        if (ReferenceType.class.isInstance(type)) {
+          nestedType = ReferenceType.class.cast(type).getType();
+        } else {
+          if (WildcardType.class.isInstance(type)) {
+            WildcardType wildcardType = WildcardType.class.cast(type);
+            ReferenceType referenceType = wildcardType.getExtends();
+            if (referenceType == null) {
+              referenceType = wildcardType.getSuper();
             }
-
-            @Override
-            public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-                this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
-                try {
-                    super.visit(n, arg);
-                } finally {
-                    this.definedTypeParameters.removeLast();
-                }
+            if (referenceType == null) {
+              return null;
             }
+            nestedType = referenceType.getType();
+          } else {
+            logger.warn("Encountered unexpected Type [{}:{}]; please create an issue at https://github.com/ImmobilienScout24/deadcode4j.", type.getClass(), type);
+            return null;
+          }
+        }
+        if (PrimitiveType.class.isInstance(nestedType)) {
+          return null;
+        }
+        if (!ClassOrInterfaceType.class.isInstance(nestedType)) {
+          logger.warn("[{}:{}] is no ClassOrInterfaceType; please create an issue at https://github.com/ImmobilienScout24/deadcode4j.", type.getClass(), type);
+          return null;
+        }
+        return ClassOrInterfaceType.class.cast(nestedType);
+      }
 
-            @Override
-            public void visit(ConstructorDeclaration n, Void arg) {
-                this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
-                try {
-                    super.visit(n, arg);
-                } finally {
-                    this.definedTypeParameters.removeLast();
-                }
+      private boolean typeParameterWithSameNameIsDefined(@Nonnull ClassOrInterfaceType nestedClassOrInterface) {
+        if (nestedClassOrInterface.getScope() != null) {
+          return false;
+        }
+        for (Set<String> definedTypeNames : this.definedTypeParameters) {
+          if (definedTypeNames.contains(nestedClassOrInterface.getName())) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      @Nonnull private String getQualifier(@Nonnull ClassOrInterfaceType classOrInterfaceType) {
+        StringBuilder buffy = new StringBuilder(classOrInterfaceType.getName());
+        while ((classOrInterfaceType = classOrInterfaceType.getScope()) != null) {
+          buffy.insert(0, '.');
+          buffy.insert(0, classOrInterfaceType.getName());
+        }
+        return buffy.toString();
+      }
+
+      private void resolveTypeReferences() {
+        for (Entry<String, Set<String>> typeReference : this.typeReferences.entrySet()) {
+          String referencedType = typeReference.getKey();
+          @SuppressWarnings(value = { "unchecked" }) Optional<String> resolvedClass = or(resolveFullyQualifiedClass(), resolveInnerType(), resolveImport(), resolvePackageType(), resolveAsteriskImports(), resolveJavaLangType()).apply(referencedType);
+          assert resolvedClass != null;
+          if (resolvedClass.isPresent()) {
+            for (String depender : typeReference.getValue()) {
+              analysisContext.addDependencies(depender, resolvedClass.get());
             }
+          } else {
+            logger.debug("Could not resolve Type Argument [{}] used by [{}].", referencedType, typeReference.getValue());
+          }
+        }
+      }
 
-            @Override
-            public void visit(MethodDeclaration n, Void arg) {
-                this.definedTypeParameters.addLast(getTypeParameterNames(n.getTypeParameters()));
-                try {
-                    super.visit(n, arg);
-                } finally {
-                    this.definedTypeParameters.removeLast();
-                }
+      @Nonnull private Function<String, Optional<String>> resolveFullyQualifiedClass() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            if (typeReference.indexOf('.') < 0) {
+              return absent();
             }
+            return classPoolAccessor.resolveClass(typeReference);
+          }
+        };
+      }
 
-            @Override
-            public void visit(ClassOrInterfaceType n, Void arg) {
-                for (Type type : emptyIfNull(n.getTypeArgs())) {
-                    ClassOrInterfaceType referencedType = getReferencedType(type);
-                    if (referencedType == null) {
-                        continue;
-                    }
-                    if (typeParameterWithSameNameIsDefined(referencedType)) {
-                        continue;
-                    }
-                    getOrAddMappedSet(this.typeReferences, getQualifier(referencedType)).add(getTypeName(n));
-                    this.visit(referencedType, arg); // resolve nested type arguments
-                }
+      @Nonnull private Function<String, Optional<String>> resolveInnerType() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            String potentialInnerType = getOuterMostType() + "$" + typeReference.replace('.', '$');
+            if (!getTypeNames().contains(potentialInnerType)) {
+              return absent();
             }
+            StringBuilder buffy = new StringBuilder(potentialInnerType);
+            prependPackageName(buffy);
+            return of(buffy.toString());
+          }
+        };
+      }
 
-            @Nonnull
-            private Set<String> getTypeParameterNames(@Nullable List<TypeParameter> typeParameters) {
-                if (typeParameters == null)
-                    return emptySet();
-                Set<String> parameters = newHashSet();
-                for (TypeParameter typeParameter : typeParameters) {
-                    parameters.add(typeParameter.getName());
-                }
-                return parameters;
+      @Nonnull private Function<String, Optional<String>> resolveImport() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            for (ImportDeclaration importDeclaration : filter(emptyIfNull(compilationUnit.getImports()), not(isAsterisk()))) {
+              String importedClass = importDeclaration.getName().getName();
+              if (importedClass.equals(typeReference) || typeReference.startsWith(importedClass + ".")) {
+                StringBuilder buffy = prepend(importDeclaration.getName(), new StringBuilder());
+                buffy.append(typeReference.substring(importedClass.length()));
+                return classPoolAccessor.resolveClass(buffy);
+              }
             }
+            return absent();
+          }
+        };
+      }
 
-            @Nullable
-            private ClassOrInterfaceType getReferencedType(@Nonnull Type type) {
-                final Type nestedType;
-                if (ReferenceType.class.isInstance(type)) {
-                    nestedType = ReferenceType.class.cast(type).getType();
-                } else if (WildcardType.class.isInstance(type)) {
-                    WildcardType wildcardType = WildcardType.class.cast(type);
-                    ReferenceType referenceType = wildcardType.getExtends();
-                    if (referenceType == null) {
-                        referenceType = wildcardType.getSuper();
-                    }
-                    if (referenceType == null) {
-                        // unbounded wildcard - nothing ro refer to
-                        return null;
-                    }
-                    nestedType = referenceType.getType();
-                } else {
-                    logger.warn("Encountered unexpected Type [{}:{}]; please create an issue at https://github.com/ImmobilienScout24/deadcode4j.", type.getClass(), type);
-                    return null;
-                }
-                if (PrimitiveType.class.isInstance(nestedType)) {
-                    // references to primitives won't be reported
-                    return null;
-                }
-                if (!ClassOrInterfaceType.class.isInstance(nestedType)) {
-                    logger.warn("[{}:{}] is no ClassOrInterfaceType; please create an issue at https://github.com/ImmobilienScout24/deadcode4j.", type.getClass(), type);
-                    return null;
-                }
-                return ClassOrInterfaceType.class.cast(nestedType);
+      @Nonnull private Function<String, Optional<String>> resolvePackageType() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            StringBuilder buffy = new StringBuilder(typeReference);
+            prependPackageName(buffy);
+            return classPoolAccessor.resolveClass(buffy);
+          }
+        };
+      }
+
+      @Nonnull private Function<String, Optional<String>> resolveAsteriskImports() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            for (ImportDeclaration importDeclaration : filter(emptyIfNull(compilationUnit.getImports()), and(isAsterisk(), not(isStatic())))) {
+              StringBuilder buffy = new StringBuilder(typeReference);
+              prepend(importDeclaration.getName(), buffy);
+              Optional<String> resolvedClass = classPoolAccessor.resolveClass(buffy);
+              if (resolvedClass.isPresent()) {
+                return resolvedClass;
+              }
             }
+            return absent();
+          }
+        };
+      }
 
-            private boolean typeParameterWithSameNameIsDefined(@Nonnull ClassOrInterfaceType nestedClassOrInterface) {
-                if (nestedClassOrInterface.getScope() != null) {
-                    return false;
-                }
-                for (Set<String> definedTypeNames : this.definedTypeParameters) {
-                    if (definedTypeNames.contains(nestedClassOrInterface.getName())) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+      @Nonnull private Function<String, Optional<String>> resolveJavaLangType() {
+        return new Function<String, Optional<String>>() {
+          @Nonnull @Override public Optional<String> apply(@SuppressWarnings(value = { "NullableProblems" }) @Nonnull String typeReference) {
+            return classPoolAccessor.resolveClass("java.lang." + typeReference);
+          }
+        };
+      }
 
-            @Nonnull
-            private String getQualifier(@Nonnull ClassOrInterfaceType classOrInterfaceType) {
-                StringBuilder buffy = new StringBuilder(classOrInterfaceType.getName());
-                while ((classOrInterfaceType = classOrInterfaceType.getScope()) != null) {
-                    buffy.insert(0, '.');
-                    buffy.insert(0, classOrInterfaceType.getName());
-                }
-                return buffy.toString();
-            }
+      @Nonnull private StringBuilder prependPackageName(@Nonnull StringBuilder buffy) {
+        if (compilationUnit.getPackage() == null) {
+          return buffy;
+        }
+        return prepend(compilationUnit.getPackage().getName(), buffy);
+      }
+    }, null);
+  }
 
-            private void resolveTypeReferences() {
-                for (Entry<String, Set<String>> typeReference : this.typeReferences.entrySet()) {
-                    String referencedType = typeReference.getKey();
-                    @SuppressWarnings("unchecked")
-                    Optional<String> resolvedClass = or(
-                            resolveFullyQualifiedClass(),
-                            resolveInnerType(),
-                            resolveImport(),
-                            resolvePackageType(),
-                            resolveAsteriskImports(),
-                            resolveJavaLangType()
-                    ).apply(referencedType);
-                    assert resolvedClass != null;
-                    if (resolvedClass.isPresent()) {
-                        for (String depender : typeReference.getValue()) {
-                            analysisContext.addDependencies(depender, resolvedClass.get());
-                        }
-                    } else {
-                        logger.debug("Could not resolve Type Argument [{}] used by [{}].", referencedType, typeReference.getValue());
-                    }
-                }
-            }
+  private static class TypeRecordingVisitor extends VoidVisitorAdapter<Void> {
+    private final LinkedList<String> typeHierarchy = newLinkedList();
 
-            @Nonnull
-            private Function<String, Optional<String>> resolveFullyQualifiedClass() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        if (typeReference.indexOf('.') < 0) {
-                            return absent();
-                        }
-                        return classPoolAccessor.resolveClass(typeReference);
-                    }
-                };
-            }
+    private final Set<String> typeNames = newHashSet();
 
-            @Nonnull
-            private Function<String, Optional<String>> resolveInnerType() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        String potentialInnerType = getOuterMostType() + "$" + typeReference.replace('.', '$');
-                        if (!getTypeNames().contains(potentialInnerType)) {
-                            return absent();
-                        }
-                        StringBuilder buffy = new StringBuilder(potentialInnerType);
-                        prependPackageName(buffy);
-                        return of(buffy.toString());
-                    }
-                };
-            }
+    private String outerMostType;
 
-            @Nonnull
-            private Function<String, Optional<String>> resolveImport() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        for (ImportDeclaration importDeclaration :
-                                filter(emptyIfNull(compilationUnit.getImports()), not(isAsterisk()))) {
-                            String importedClass = importDeclaration.getName().getName();
-                            if (importedClass.equals(typeReference) || typeReference.startsWith(importedClass + ".")) {
-                                StringBuilder buffy = prepend(importDeclaration.getName(), new StringBuilder());
-                                buffy.append(typeReference.substring(importedClass.length()));
-                                return classPoolAccessor.resolveClass(buffy);
-                            }
-                        }
-                        return absent();
-                    }
-                };
-            }
-
-            @Nonnull
-            private Function<String, Optional<String>> resolvePackageType() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        StringBuilder buffy = new StringBuilder(typeReference);
-                        prependPackageName(buffy);
-                        return classPoolAccessor.resolveClass(buffy);
-                    }
-                };
-            }
-
-            @Nonnull
-            private Function<String, Optional<String>> resolveAsteriskImports() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        for (ImportDeclaration importDeclaration :
-                                filter(emptyIfNull(compilationUnit.getImports()), and(isAsterisk(), not(isStatic())))) {
-                            StringBuilder buffy = new StringBuilder(typeReference);
-                            prepend(importDeclaration.getName(), buffy);
-                            Optional<String> resolvedClass = classPoolAccessor.resolveClass(buffy);
-                            if (resolvedClass.isPresent()) {
-                                return resolvedClass;
-                            }
-                        }
-                        return absent();
-                    }
-                };
-            }
-
-            @Nonnull
-            private Function<String, Optional<String>> resolveJavaLangType() {
-                return new Function<String, Optional<String>>() {
-                    @Nonnull
-                    @Override
-                    public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull String typeReference) {
-                        return classPoolAccessor.resolveClass("java.lang." + typeReference);
-                    }
-                };
-            }
-
-            @Nonnull
-            private StringBuilder prependPackageName(@Nonnull StringBuilder buffy) {
-                if (compilationUnit.getPackage() == null) {
-                    return buffy;
-                }
-                return prepend(compilationUnit.getPackage().getName(), buffy);
-            }
-
-        }, null);
+    @Override public void visit(AnnotationDeclaration n, Void arg) {
+      visitTypeDefinition(n);
+      try {
+        super.visit(n, arg);
+      }  finally {
+        unVisitTypeDefinition();
+      }
     }
 
-    private static class TypeRecordingVisitor extends VoidVisitorAdapter<Void> {
-
-        private final LinkedList<String> typeHierarchy = newLinkedList();
-        private final Set<String> typeNames = newHashSet();
-        private String outerMostType;
-
-        @Override
-        public void visit(AnnotationDeclaration n, Void arg) {
-            visitTypeDefinition(n);
-            try {
-                super.visit(n, arg);
-            } finally {
-                unVisitTypeDefinition();
-            }
-        }
-
-        @Override
-        public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-            visitTypeDefinition(n);
-            try {
-                super.visit(n, arg);
-            } finally {
-                unVisitTypeDefinition();
-            }
-        }
-
-        @Override
-        public void visit(EnumDeclaration n, Void arg) {
-            visitTypeDefinition(n);
-            try {
-                super.visit(n, arg);
-            } finally {
-                unVisitTypeDefinition();
-            }
-        }
-
-        private void visitTypeDefinition(TypeDeclaration typeDeclaration) {
-            String typeName = typeDeclaration.getName();
-            if (this.outerMostType == null) {
-                this.outerMostType = typeName;
-            }
-            this.typeHierarchy.add(typeName);
-            StringBuilder buffy = new StringBuilder();
-            for (String type : typeHierarchy) {
-                if (buffy.length() > 0) {
-                    buffy.append('$');
-                }
-                buffy.append(type);
-            }
-            this.typeNames.add(buffy.toString());
-        }
-
-        private void unVisitTypeDefinition() {
-            this.typeHierarchy.removeLast();
-        }
-
-        public String getOuterMostType() {
-            return this.outerMostType;
-        }
-
-        public Set<String> getTypeNames() {
-            return typeNames;
-        }
+    @Override public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+      visitTypeDefinition(n);
+      try {
+        super.visit(n, arg);
+      }  finally {
+        unVisitTypeDefinition();
+      }
     }
 
+    @Override public void visit(EnumDeclaration n, Void arg) {
+      visitTypeDefinition(n);
+      try {
+        super.visit(n, arg);
+      }  finally {
+        unVisitTypeDefinition();
+      }
+    }
+
+    private void visitTypeDefinition(TypeDeclaration typeDeclaration) {
+      String typeName = typeDeclaration.getName();
+      if (this.outerMostType == null) {
+        this.outerMostType = typeName;
+      }
+      this.typeHierarchy.add(typeName);
+      StringBuilder buffy = new StringBuilder();
+      for (String type : typeHierarchy) {
+        if (buffy.length() > 0) {
+          buffy.append('$');
+        }
+        buffy.append(type);
+      }
+      this.typeNames.add(buffy.toString());
+    }
+
+    private void unVisitTypeDefinition() {
+      this.typeHierarchy.removeLast();
+    }
+
+    public String getOuterMostType() {
+      return this.outerMostType;
+    }
+
+    public Set<String> getTypeNames() {
+      return typeNames;
+    }
+  }
 }
