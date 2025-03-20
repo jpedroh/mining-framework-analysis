@@ -188,23 +188,23 @@ public class PebbleTemplateImpl implements PebbleTemplate {
     public void importTemplate(EvaluationContext context, String name) {
         context.getImportedTemplates().add((PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name)));
     }
-
+    
     /**
      * Imports a named template.
      *
      * @param context The evaluation context
      * @param name    The template name
-     * @param alias   The template alias
+     * @param alias   The template alias 
      * @throws PebbleException Thrown if an error occurs while rendering the imported
      *                         template
      */
     public void importNamedTemplate(EvaluationContext context, String name, String alias) throws PebbleException {
         context.addNamedImportedTemplates(alias, (PebbleTemplateImpl) this.engine.getTemplate(this.resolveRelativePath(name)));
     }
-
+    
     /**
      * Imports named macros from specified template.
-     *
+     * 
      * @param context     The evaluation context
      * @param name        The template name
      * @param namedMacros named macros
@@ -217,12 +217,12 @@ public class PebbleTemplateImpl implements PebbleTemplate {
             registerMacro(pair.getLeft(), m);
         }
     }
-
+    
     /**
      * Returns a named template.
      *
      * @param context The evaluation context
-     * @param alias   The template alias
+     * @param alias   The template alias 
      */
     public PebbleTemplateImpl getNamedImportedTemplate(EvaluationContext context, String alias) {
         return context.getNamedImportedTemplate(alias);
@@ -306,7 +306,7 @@ public class PebbleTemplateImpl implements PebbleTemplate {
         }
         this.macros.put(macro.getName(), macro);
     }
-
+    
     /**
      * Registers a macro with alias
      *

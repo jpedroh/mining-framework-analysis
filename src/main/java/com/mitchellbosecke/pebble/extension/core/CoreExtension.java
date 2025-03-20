@@ -46,7 +46,6 @@ import com.mitchellbosecke.pebble.tokenParser.ExtendsTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.FilterTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.FlushTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.ForTokenParser;
-import com.mitchellbosecke.pebble.tokenParser.FromTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.IfTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.ImportTokenParser;
 import com.mitchellbosecke.pebble.tokenParser.IncludeTokenParser;

@@ -73,7 +73,7 @@ public class EvaluationContext {
      * The imported templates are used to look up macros.
      */
     private final List<PebbleTemplateImpl> importedTemplates;
-
+    
     /**
      * The named imported templates are used to look up macros.
      */
@@ -189,7 +189,7 @@ public class EvaluationContext {
     public List<PebbleTemplateImpl> getImportedTemplates() {
         return this.importedTemplates;
     }
-
+    
     /**
      * Returns the named imported template.
      *
@@ -198,7 +198,7 @@ public class EvaluationContext {
     public PebbleTemplateImpl getNamedImportedTemplate(String alias) {
         return this.namedImportedTemplates.get(alias);
     }
-
+    
     public void addNamedImportedTemplates(String alias, PebbleTemplateImpl template) throws PebbleException {
         if (namedImportedTemplates.containsKey(alias)) {
             throw new PebbleException(null, "More than one named template can not share the same name: " + alias);
