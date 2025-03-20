@@ -242,7 +242,7 @@ public final class CSVFormat implements Serializable {
      * @see Predefined#Default
      */
     public static final CSVFormat DEFAULT = new CSVFormat(COMMA, DOUBLE_QUOTE_CHAR, null, null, null, false, true, CRLF,
-            null, null, null, false, false, false, false, false, false, false);
+            null, null, null, false, false, false, false, false, false);
 
     /**
      * Excel file format (using a comma as the value delimiter). Note that the actual value delimiter used by Excel is
@@ -537,7 +537,7 @@ public final class CSVFormat implements Serializable {
      */
     public static CSVFormat newFormat(final char delimiter) {
         return new CSVFormat(delimiter, null, null, null, null, false, false, null, null, null, null, false, false,
-                false, false, false, false, false);
+                false, false, false, false);
     }
 
     /**
@@ -623,19 +623,27 @@ public final class CSVFormat implements Serializable {
      *            TODO
      * @param trailingDelimiter
      *            TODO
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
      * @param mutableRecords TODO
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+=======
      * @param autoFlush
-     * 	TODO
-     * 
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
      * @throws IllegalArgumentException
      *             if the delimiter is a line break character
      */
     private CSVFormat(final char delimiter, final Character quoteChar, final QuoteMode quoteMode,
-            final Character commentStart, final Character escape, final boolean ignoreSurroundingSpaces,
-            final boolean ignoreEmptyLines, final String recordSeparator, final String nullString,
-            final Object[] headerComments, final String[] header, final boolean skipHeaderRecord,
-            final boolean allowMissingColumnNames, final boolean ignoreHeaderCase, final boolean trim,
-            final boolean trailingDelimiter, final boolean autoFlush, final boolean mutableRecords) {
+                      final Character commentStart, final Character escape, final boolean ignoreSurroundingSpaces,
+                      final boolean ignoreEmptyLines, final String recordSeparator, final String nullString,
+                      final Object[] headerComments, final String[] header, final boolean skipHeaderRecord,
+                      final boolean allowMissingColumnNames, final boolean ignoreHeaderCase, final boolean trim,
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                      final boolean trailingDelimiter, boolean mutableRecords) {
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                      final boolean trailingDelimiter) {
+=======
+                      final boolean trailingDelimiter, final boolean autoFlush) {
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
         this.delimiter = delimiter;
         this.quoteCharacter = quoteChar;
         this.quoteMode = quoteMode;
@@ -652,8 +660,12 @@ public final class CSVFormat implements Serializable {
         this.ignoreHeaderCase = ignoreHeaderCase;
         this.trailingDelimiter = trailingDelimiter;
         this.trim = trim;
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
         this.mutableRecords = mutableRecords;
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+=======
         this.autoFlush = autoFlush;
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
         validate();
     }
 
@@ -1452,7 +1464,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withAllowMissingColumnNames(final boolean allowMissingColumnNames) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1467,7 +1485,7 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withAutoFlush(final boolean autoFlush) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
             ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-            skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+            skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
     }
 
     /**
@@ -1502,7 +1520,13 @@ public final class CSVFormat implements Serializable {
         }
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1520,7 +1544,13 @@ public final class CSVFormat implements Serializable {
         }
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1551,7 +1581,13 @@ public final class CSVFormat implements Serializable {
         }
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escape, ignoreSurroundingSpaces,
                 ignoreEmptyLines, recordSeparator, nullString, headerComments, header, skipHeaderRecord,
-                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1706,7 +1742,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withHeader(final String... header) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1727,7 +1769,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withHeaderComments(final Object... headerComments) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1752,7 +1800,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withIgnoreEmptyLines(final boolean ignoreEmptyLines) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1778,7 +1832,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withIgnoreHeaderCase(final boolean ignoreHeaderCase) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1803,7 +1863,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withIgnoreSurroundingSpaces(final boolean ignoreSurroundingSpaces) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1821,7 +1887,7 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withMutableRecords(final boolean mutableRecords) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
     }
 
     /**
@@ -1840,7 +1906,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withNullString(final String nullString) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1871,7 +1943,13 @@ public final class CSVFormat implements Serializable {
         }
         return new CSVFormat(delimiter, quoteChar, quoteMode, commentMarker, escapeCharacter, ignoreSurroundingSpaces,
                 ignoreEmptyLines, recordSeparator, nullString, headerComments, header, skipHeaderRecord,
-                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1885,7 +1963,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withQuoteMode(final QuoteMode quoteModePolicy) {
         return new CSVFormat(delimiter, quoteCharacter, quoteModePolicy, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1923,7 +2007,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withRecordSeparator(final String recordSeparator) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1950,7 +2040,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withSkipHeaderRecord(final boolean skipHeaderRecord) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -1962,7 +2058,7 @@ public final class CSVFormat implements Serializable {
      * only works for inputs with '\n', '\r' and "\r\n"
      * </p>
      *
-     * @return A new CSVFormat that is equal to this but with the operating system's line separator string
+     * @return A new CSVFormat that is equal to this but with the operating system's line separator stringr
      * @since 1.6
      */
     public CSVFormat withSystemRecordSeparator() {
@@ -1991,7 +2087,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withTrailingDelimiter(final boolean trailingDelimiter) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
     /**
@@ -2016,7 +2118,13 @@ public final class CSVFormat implements Serializable {
     public CSVFormat withTrim(final boolean trim) {
         return new CSVFormat(delimiter, quoteCharacter, quoteMode, commentMarker, escapeCharacter,
                 ignoreSurroundingSpaces, ignoreEmptyLines, recordSeparator, nullString, headerComments, header,
-                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush, mutableRecords);
+<<<<<<< /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/left.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, mutableRecords);
+||||||| /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/base.java
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter);
+=======
+                skipHeaderRecord, allowMissingColumnNames, ignoreHeaderCase, trim, trailingDelimiter, autoFlush);
+>>>>>>> /usr/src/app/output/apache/commons-csv/d482fd289ce446afb73a332cf52802fb16d0ddce/src/main/java/org/apache/commons/csv/CSVFormat.java/right.java
     }
 
 }
