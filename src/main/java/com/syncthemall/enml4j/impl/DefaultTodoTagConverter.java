@@ -67,7 +67,12 @@ public class DefaultTodoTagConverter extends BaseConverter {
 
 		List<Attribute> attrs = new ArrayList<Attribute>();
 		attrs.add(getEventFactory().createAttribute(TYPE, "checkbox"));
+<<<<<<< /usr/src/app/output/vanduynslagerp/enml4j/61e72c5c3568a9dc49d49cc19ef79a19972ccd26/src/main/java/com/syncthemall/enml4j/impl/DefaultTodoTagConverter.java/left.java
 		Attribute checkedAttr = start.getAttributeByName(new QName(CHECKED));
+||||||| /usr/src/app/output/vanduynslagerp/enml4j/61e72c5c3568a9dc49d49cc19ef79a19972ccd26/src/main/java/com/syncthemall/enml4j/impl/DefaultTodoTagConverter.java/base.java
+=======
+		Attribute checkedAttr = start.getAttributeByName(new QName("checked"));
+>>>>>>> /usr/src/app/output/vanduynslagerp/enml4j/61e72c5c3568a9dc49d49cc19ef79a19972ccd26/src/main/java/com/syncthemall/enml4j/impl/DefaultTodoTagConverter.java/right.java
 		if (checkedAttr != null && Boolean.parseBoolean(checkedAttr.getValue())) {
 			attrs.add(getEventFactory().createAttribute(CHECKED, ""));
 		}
