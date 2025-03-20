@@ -92,6 +92,8 @@ import org.fusesource.jansi.AnsiConsole;
 import ru.leymooo.botfilter.BotFilter;
 import ru.leymooo.botfilter.config.Settings;
 import ru.leymooo.fakeonline.FakeOnline;
+import ru.leymooo.botfilter.utils.ButtonUtils;
+import ru.leymooo.botfilter.Config;
 
 /**
  * Main BungeeCord proxy class.
@@ -254,6 +256,7 @@ public class BungeeCord extends ProxyServer
             ResourceLeakDetector.setLevel( ResourceLeakDetector.Level.DISABLED ); // Eats performance
         }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/left.java
         String property = System.getProperty( "bungeeName" ); // BotFilter
         customBungeeName = ( property == null ? getName() : property ) + " " + getGameVersion(); // BotFilter
 
@@ -261,7 +264,15 @@ public class BungeeCord extends ProxyServer
 
         bossEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Boss IO Thread #%1$d" ).build() ); //BotFilter
         workerEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Worker IO Thread #%1$d" ).build() ); //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/base.java
+        eventLoops = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty IO Thread #%1$d" ).build() );
+=======
+        bossEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Boss IO Thread #%1$d" ).build() ); //BotFilter
+        workerEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Worker IO Thread #%1$d" ).build() ); //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/right.java
 
+        new Config(); //BotFilter
+        new ButtonUtils();
         File moduleDirectory = new File( "modules" );
         moduleManager.load( this, moduleDirectory );
         pluginManager.detectPlugins( moduleDirectory );
@@ -558,6 +569,24 @@ public class BungeeCord extends ProxyServer
             //TODO: Handle fake online
         }
         return online;
+    }
+
+    @Override
+    public int getOnlineCountWithGG()
+    {
+        return connections.size() + Config.getConfig().getConnectedUsersSet().size();
+    }
+
+    @Override
+    public int getFakeOnlineCountWithGG()
+    {
+        return FakeOnline.getInstance().getFakeOnline() + Config.getConfig().getConnectedUsersSet().size();
+    }
+
+    @Override
+    public int getOnlineCountAuto()
+    {
+        return getFakeOnlineCountWithGG() - ( Config.getConfig().isOnlineFromFilter() ? 0 : Config.getConfig().getConnectedUsersSet().size() );
     }
 
     @Override

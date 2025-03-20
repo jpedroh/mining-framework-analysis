@@ -19,55 +19,60 @@ import net.md_5.bungee.command.ConsoleCommandSender;
 public class BungeeCordLauncher
 {
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/bootstrap/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/left.java
+    private static int VERSION = 222;
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/bootstrap/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/base.java
+=======
     private static int VERSION = 2231;
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/bootstrap/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/right.java
 
     public static void main(String[] args) throws Exception
+{
+    Security.setProperty( "networkaddress.cache.ttl", "30" );
+    Security.setProperty( "networkaddress.cache.negative.ttl", "10" );
+
+    OptionParser parser = new OptionParser();
+    parser.allowsUnrecognizedOptions();
+    parser.acceptsAll( Arrays.asList( "v", "version" ) );
+    parser.acceptsAll( Arrays.asList( "noconsole" ) );
+
+    OptionSet options = parser.parse( args );
+
+    if ( options.has( "version" ) )
     {
-        Security.setProperty( "networkaddress.cache.ttl", "30" );
-        Security.setProperty( "networkaddress.cache.negative.ttl", "10" );
+        System.out.println( Bootstrap.class.getPackage().getImplementationVersion() );
+        return;
+    }
+    //BotFilter start
+    if ( System.getProperty( "IReallyKnowWhatIAmDoingISwear" ) == null && checkUpdate() )
+    {
 
-        OptionParser parser = new OptionParser();
-        parser.allowsUnrecognizedOptions();
-        parser.acceptsAll( Arrays.asList( "v", "version" ) );
-        parser.acceptsAll( Arrays.asList( "noconsole" ) );
+        System.err.println( "*** ВНИМАНИЕ! Найдена новая версия***" );
+        System.err.println( "*** Новая версия тут: ***" );
+        System.err.println( "*** http://www.rubukkit.org/threads/137038/ ***" );
+        System.err.println( "*** Рекомендую обновиться. ***" );
+        System.err.println( "*** Запуск через 5 секунд ***" );
+        Thread.sleep( TimeUnit.SECONDS.toMillis( 5 ) );
+    }
+    //BotFilter end
 
-        OptionSet options = parser.parse( args );
+    BungeeCord bungee = new BungeeCord();
+    ProxyServer.setInstance( bungee );
+    bungee.getLogger().log( Level.WARNING, "Включаю BungeCord BotFilter {0} от vk.com/Leymooo_s", bungee.getGameVersion() );//BotFilter
+    bungee.start();
 
-        if ( options.has( "version" ) )
+    if ( !options.has( "noconsole" ) )
+    {
+        String line;
+        while ( bungee.isRunning && ( line = bungee.getConsoleReader().readLine( ">" ) ) != null )
         {
-            System.out.println( Bootstrap.class.getPackage().getImplementationVersion() );
-            return;
-        }
-        //BotFilter start
-        if ( System.getProperty( "IReallyKnowWhatIAmDoingISwear" ) == null && checkUpdate() )
-        {
-
-            System.err.println( "*** ВНИМАНИЕ! Найдена новая версия***" );
-            System.err.println( "*** Новая версия тут: ***" );
-            System.err.println( "*** http://www.rubukkit.org/threads/137038/ ***" );
-            System.err.println( "*** Рекомендую обновиться. ***" );
-            System.err.println( "*** Запуск через 5 секунд ***" );
-            Thread.sleep( TimeUnit.SECONDS.toMillis( 5 ) );
-        }
-        //BotFilter end
-
-        BungeeCord bungee = new BungeeCord();
-        ProxyServer.setInstance( bungee );
-        bungee.getLogger().log( Level.WARNING, "Включаю BungeCord BotFilter {0} от vk.com/Leymooo_s", bungee.getGameVersion() );//BotFilter
-        bungee.start();
-
-        if ( !options.has( "noconsole" ) )
-        {
-            String line;
-            while ( bungee.isRunning && ( line = bungee.getConsoleReader().readLine( ">" ) ) != null )
+            if ( !bungee.getPluginManager().dispatchCommand( ConsoleCommandSender.getInstance(), line ) )
             {
-                if ( !bungee.getPluginManager().dispatchCommand( ConsoleCommandSender.getInstance(), line ) )
-                {
-                    bungee.getConsole().sendMessage( new ComponentBuilder( "Команда не найдена :(" ).color( ChatColor.RED ).create() ); //BotFilter
-                }
+                bungee.getConsole().sendMessage( new ComponentBuilder( "Команда не найдена :(" ).color( ChatColor.RED ).create() ); //BotFilter
             }
         }
     }
+}
 
     private static boolean checkUpdate()
     {

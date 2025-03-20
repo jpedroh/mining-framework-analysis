@@ -67,7 +67,7 @@ public final class UserConnection implements ProxiedPlayer
 
     @Getter
     @Setter
-    private boolean needLogin = true; //BotFilter
+    private boolean needLogin = true; //BotFilter public boolean serverr; //BotFilter
     /*========================================================================*/
     @NonNull
     private final ProxyServer bungee;

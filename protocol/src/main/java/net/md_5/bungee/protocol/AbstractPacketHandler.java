@@ -7,6 +7,7 @@ import net.md_5.bungee.protocol.packet.ClientStatus;
 import net.md_5.bungee.protocol.packet.Login;
 import net.md_5.bungee.protocol.packet.Chat;
 import ru.leymooo.botfilter.packets.ConfirmTransaction;
+import net.md_5.bungee.protocol.packet.extra.ConfirmTransaction;
 import net.md_5.bungee.protocol.packet.EncryptionRequest;
 import net.md_5.bungee.protocol.packet.PlayerListHeaderFooter;
 import net.md_5.bungee.protocol.packet.PlayerListItem;
@@ -27,10 +28,12 @@ import net.md_5.bungee.protocol.packet.LoginRequest;
 import net.md_5.bungee.protocol.packet.LoginSuccess;
 import net.md_5.bungee.protocol.packet.PingPacket;
 import ru.leymooo.botfilter.packets.PlayerLook;
+import net.md_5.bungee.protocol.packet.extra.PlayerLook;
 import net.md_5.bungee.protocol.packet.StatusRequest;
 import net.md_5.bungee.protocol.packet.StatusResponse;
 import net.md_5.bungee.protocol.packet.TabCompleteResponse;
 import ru.leymooo.botfilter.packets.TeleportConfirm;
+import net.md_5.bungee.protocol.packet.extra.TeleportConfirm;
 import net.md_5.bungee.protocol.packet.Title;
 import ru.leymooo.botfilter.packets.Animation;
 import ru.leymooo.botfilter.packets.ChunkPacket;
@@ -38,6 +41,12 @@ import ru.leymooo.botfilter.packets.HeldItemSlot;
 import ru.leymooo.botfilter.packets.Player;
 import ru.leymooo.botfilter.packets.PlayerPosition;
 import ru.leymooo.botfilter.packets.PlayerPositionAndLook;
+import net.md_5.bungee.protocol.packet.extra.Animation;
+import net.md_5.bungee.protocol.packet.extra.HeldItemSlot;
+import net.md_5.bungee.protocol.packet.extra.Player;
+import net.md_5.bungee.protocol.packet.extra.PlayerPosition;
+import net.md_5.bungee.protocol.packet.extra.PlayerPositionAndLook;
+import net.md_5.bungee.protocol.packet.extra.PlayerTryUseItemOnBlock;
 
 public abstract class AbstractPacketHandler
 {
@@ -50,36 +59,33 @@ public abstract class AbstractPacketHandler
     public void handle(HeldItemSlot heldSlot) throws Exception
     {
     }
-
     public void handle(ConfirmTransaction transaction) throws Exception
     {
     }
-
     public void handle(Player player) throws Exception
     {
     }
-
     public void handle(PlayerPosition pos) throws Exception
     {
     }
-
     public void handle(PlayerLook look) throws Exception
     {
     }
-
     public void handle(TeleportConfirm confirm) throws Exception
     {
     }
-
     public void handle(PlayerPositionAndLook posRot) throws Exception
     {
     }
-
     public void handle(Animation anim)
     {
     }
-
     public void handle(ChunkPacket chunk)
+    {
+    }
+    //BotFilter end
+    //BotFilter statrt
+    public void handle(PlayerTryUseItemOnBlock blockClick) throws Exception
     {
     }
     //BotFilter end

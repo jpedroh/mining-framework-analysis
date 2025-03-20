@@ -186,9 +186,20 @@ public class ServerConnector extends PacketHandler
             user.getForgeClientHandler().setHandshakeComplete();
         }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
         if ( user.isNeedLogin() ) //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+        if ( user.getServer() == null ) //BotFilter
+=======
+        if ( !user.serverr ) //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
         {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/left.java
             user.setNeedLogin( false ); //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/base.java
+=======
+            user.serverr = true; //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/ServerConnector.java/right.java
             // Once again, first connection
             user.setClientEntityId( login.getEntityId() );
             user.setServerEntityId( login.getEntityId() );

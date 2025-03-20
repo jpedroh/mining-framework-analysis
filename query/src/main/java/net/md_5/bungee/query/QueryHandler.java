@@ -93,7 +93,13 @@ public class QueryHandler extends SimpleChannelInboundHandler<DatagramPacket>
                 writeString( out, listener.getMotd() ); // MOTD
                 writeString( out, "SMP" ); // Game Type
                 writeString( out, "BotFilter_by_vk.com/Leymooo_s" ); // World Name //BotFilter
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/left.java
                 writeNumber( out, bungee.getOnlineCountBF(true) ); // Online Count//BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/base.java
+                writeNumber( out, bungee.getOnlineCount(true) ); // Online Count//BotFilter
+=======
+                writeNumber( out, bungee.getOnlineCountAuto(true) ); // Online Count//BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/right.java
                 writeNumber( out, listener.getMaxPlayers() ); // Max Players
                 writeShort( out, listener.getHost().getPort() ); // Port
                 writeString( out, listener.getHost().getHostString() ); // IP
@@ -114,7 +120,13 @@ public class QueryHandler extends SimpleChannelInboundHandler<DatagramPacket>
                 data.put( "plugins", "" );
                 // End Extra Info
                 data.put( "map", "BotFilter_by_vk.com/Leymooo_s" ); //BotFilter
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/left.java
                 data.put( "numplayers", Integer.toString( bungee.getOnlineCountBF(true) ) ); //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/base.java
+                data.put( "numplayers", Integer.toString( bungee.getOnlineCount(true) ) ); //BotFilter
+=======
+                data.put( "numplayers", Integer.toString( bungee.getOnlineCountAuto(true) ) ); //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/query/src/main/java/net/md_5/bungee/query/QueryHandler.java/right.java
                 data.put( "maxplayers", Integer.toString( listener.getMaxPlayers() ) );
                 data.put( "hostport", Integer.toString( listener.getHost().getPort() ) );
                 data.put( "hostip", listener.getHost().getHostString() );

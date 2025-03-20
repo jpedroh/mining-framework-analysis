@@ -31,6 +31,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Connection.Unsafe;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import ru.leymooo.botfilter.event.BotFilterCheckStartingEvent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerHandshakeEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -69,6 +70,10 @@ import ru.leymooo.botfilter.caching.PacketUtil.KickType;
 import ru.leymooo.botfilter.config.Settings;
 import ru.leymooo.botfilter.utils.ManyChecksUtils;
 import ru.leymooo.botfilter.utils.ServerPingUtils;
+import ru.leymooo.botfilter.Config;
+import ru.leymooo.botfilter.BFConnector;
+import ru.leymooo.botfilter.utils.GeoIpUtils;
+import ru.leymooo.botfilter.utils.Utils;
 
 @RequiredArgsConstructor
 public class InitialHandler extends PacketHandler implements PendingConnection
@@ -157,8 +162,20 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         this.legacy = true;
         final boolean v1_5 = ping.isV1_5();
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
         ServerPing legacy = new ServerPing( new ServerPing.Protocol( bungee.getCustomBungeeName(), bungee.getProtocolVersion() ), //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+        ServerPing legacy = new ServerPing( new ServerPing.Protocol( bungee.getName() + " " + bungee.getGameVersion(), bungee.getProtocolVersion() ), //BotFilter
+=======
+        ServerPing legacy = new ServerPing( new ServerPing.Protocol( "BotFilter " + bungee.getGameVersion() + " by vk.com Leymooo_s", bungee.getProtocolVersion() ), //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
                 new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountBF( true ), null ), //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+                new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCount( true ), null ), //BotFilter
+=======
+                new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountAuto( true ), null ), //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
                 new TextComponent( TextComponent.fromLegacyText( listener.getMotd() ) ), (Favicon) null );
 
         Callback<ProxyPingEvent> callback = new Callback<ProxyPingEvent>()
@@ -244,8 +261,20 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         {
             int protocol = ( ProtocolConstants.SUPPORTED_VERSION_IDS.contains( handshake.getProtocolVersion() ) ) ? handshake.getProtocolVersion() : bungee.getProtocolVersion();
             pingBack.done( new ServerPing(
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
                     new ServerPing.Protocol( bungee.getCustomBungeeName(), protocol ), //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+                    new ServerPing.Protocol( bungee.getName() + " " + bungee.getGameVersion(), protocol ), //BotFilter
+=======
+                    new ServerPing.Protocol( "BotFilter " + bungee.getGameVersion() + " by vk.com Leymooo_s", protocol ), //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
                     new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountBF( true ), null ), //BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+                    new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCount( true ), null ), //BotFilter
+=======
+                    new ServerPing.Players( listener.getMaxPlayers(), bungee.getOnlineCountAuto( true ), null ), //BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
                     motd, BungeeCord.getInstance().config.getFaviconObject() ),
                     null );
         }
@@ -290,32 +319,44 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         this.virtualHost = InetSocketAddress.createUnresolved( handshake.getHost(), handshake.getPort() );
 
         bungee.getPluginManager().callEvent( new PlayerHandshakeEvent( InitialHandler.this, handshake ) );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
         //BotFilter Я тут гдето убрал строку которая выводит InitialHandler has connected
-        switch ( handshake.getRequestedProtocol() )
-        {
-            case 1:
-                // Ping
-                thisState = State.STATUS;
-                ch.setProtocol( Protocol.STATUS );
-                BotFilter.getInstance().getServerPingUtils().add( getAddress().getAddress() );
-                break;
-            case 2:
-                // Login
-                thisState = State.USERNAME;
-                ch.setProtocol( Protocol.LOGIN );
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+=======
+        //BotFilter Я тут гдето убрал строку которая выводить InitialHandler has connected
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
 
-                if ( !ProtocolConstants.SUPPORTED_VERSION_IDS.contains( handshake.getProtocolVersion() ) )
+        switch ( handshake.getRequestedProtocol() )
+    {
+        case 1:
+            // Ping
+            thisState = State.STATUS;
+            ch.setProtocol( Protocol.STATUS );
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
+            BotFilter.getInstance().getServerPingUtils().add( getAddress().getAddress() );
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+=======
+            ServerPingUtils.getInstance().add( getAddress().getAddress() );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
+                break;
+        case 2:
+            // Login
+            thisState = State.USERNAME;
+            ch.setProtocol( Protocol.LOGIN );
+
+            if ( !ProtocolConstants.SUPPORTED_VERSION_IDS.contains( handshake.getProtocolVersion() ) )
+            {
+                if ( handshake.getProtocolVersion() > bungee.getProtocolVersion() )
                 {
-                    if ( handshake.getProtocolVersion() > bungee.getProtocolVersion() )
-                    {
-                        disconnect( bungee.getTranslation( "outdated_server" ) );
-                    } else
-                    {
-                        disconnect( bungee.getTranslation( "outdated_client" ) );
-                    }
-                    return;
+                    disconnect( bungee.getTranslation( "outdated_server" ) );
+                } else
+                {
+                    disconnect( bungee.getTranslation( "outdated_client" ) );
                 }
-                //BotFilter start
+                return;
+            }
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
+            //BotFilter start
                 if ( ManyChecksUtils.isManyChecks( getAddress().getAddress() ) )
                 {
                     PacketUtil.kickPlayer( KickType.MANYCHECKS, Protocol.LOGIN, ch, getVersion() );
@@ -331,16 +372,26 @@ public class InitialHandler extends PacketHandler implements PendingConnection
                     return;
                 }
                 //BotFilter end
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+=======
+            //BotFilter start
+                if ( Utils.isManyChecks( getAddress().getAddress().getHostAddress(), false, false ) )
+                {
+                    disconnect( Config.getConfig().getErrorManyChecks() );
+                    return;
+                }
+                //BotFilter end
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
 
                 if ( bungee.getConnectionThrottle() != null && bungee.getConnectionThrottle().throttle( getAddress().getAddress() ) )
-                {
-                    PacketUtil.kickPlayer( KickType.THROTTLE, Protocol.LOGIN, ch, getVersion() );
-                    bungee.getLogger().log( Level.INFO, "[{0}] disconnected: Connection is throttled", getAddress().getAddress().getHostAddress() );
-                }
-                break;
-            default:
-                throw new IllegalArgumentException( "Cannot request protocol " + handshake.getRequestedProtocol() );
+        {
+            PacketUtil.kickPlayer( KickType.THROTTLE, Protocol.LOGIN, ch, getVersion() );
+            bungee.getLogger().log( Level.INFO, "[{0}] disconnected: Connection is throttled", getAddress().getAddress().getHostAddress() );
         }
+            break;
+        default:
+            throw new IllegalArgumentException( "Cannot request protocol " + handshake.getRequestedProtocol() );
+    }
     }
 
     @Override
@@ -362,12 +413,19 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         }
 
         int limit = BungeeCord.getInstance().config.getPlayerLimit();
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
         if ( limit > 0 && bungee.getOnlineCountBF( false ) > limit )//BotFilter
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+        if ( limit > 0 && bungee.getOnlineCount( false ) > limit )//BotFilter
+=======
+        if ( limit > 0 && bungee.getOnlineCountWithGG( false ) > limit )//BotFilter
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
         {
             disconnect( bungee.getTranslation( "proxy_full" ) );
             return;
         }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
         //BotFilter start
         KickType kickType = BotFilter.getInstance().checkIpAddress( getAddress().getAddress() );
         if ( kickType != null )
@@ -377,6 +435,30 @@ public class InitialHandler extends PacketHandler implements PendingConnection
                     getAddress().getAddress().getHostAddress() );
         }
         //BotFilter end
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+=======
+        //BotFilter start
+        Config config = Config.getConfig();
+        InetAddress address = getAddress().getAddress();
+        boolean needCheck = config.needCheck( getName(), address.getHostAddress() );
+        ServerPingUtils pingUtils = ServerPingUtils.getInstance();
+        if ( needCheck && pingUtils.needKickAndRemove( address ) )
+        {
+            disconnect( pingUtils.getMessage() );
+            return;
+        }
+        GeoIpUtils geo = config.getGeoUtils();
+        boolean proxy = config.getProxy().isProxy( address.getHostAddress() );
+        if ( config.isProtectionEnabled() && config.isForceKick() && needCheck )
+        {
+            if ( proxy || !geo.isAllowed( geo.getCountryCode( address ), false ) )
+            {
+                disconnect( proxy ? config.getErrorProxy() : config.getErrorConutry() );
+                return;
+            }
+        }
+        //BotFilter end
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
 
         // If offline mode and they are already on, don't allow connect
         // We can just check by UUID here as names are based on UUID
@@ -519,6 +601,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         userCon.setCompressionThreshold( BungeeCord.getInstance().config.getCompressionThreshold() );
         userCon.init();
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
         bungee.getLogger().log( Level.INFO, "{0} has connected", InitialHandler.this );
 
         unsafe.sendPacket( new LoginSuccess( getUniqueId().toString(), getName() ) ); // With dashes in between
@@ -526,12 +609,61 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         ch.setProtocol( Protocol.GAME );
 
         if ( BotFilter.getInstance().needCheck( getName(), getAddress().getAddress() ) )
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+        Callback<LoginEvent> complete = new Callback<LoginEvent>()
+=======
+        bungee.getLogger().log( Level.INFO, "{0} has connected", InitialHandler.this );
+
+        unsafe.sendPacket( new LoginSuccess( getUniqueId().toString(), getName() ) ); // With dashes in between
+
+        ch.setProtocol( Protocol.GAME );
+
+        if ( Config.getConfig().needCheck( getName(), getAddress().getAddress().getHostAddress() ) )
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
         {
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/left.java
             ch.getHandle().pipeline().get( HandlerBoss.class ).setHandler( new Connector( userCon ) );
         } else
         {
             finishLogin( userCon );
         }
+||||||| /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/base.java
+            @Override
+            public void done(LoginEvent result, Throwable error)
+            {
+                if ( result.isCancelled() )
+                {
+                    disconnect( result.getCancelReasonComponents() );
+                    return;
+                }
+                if ( ch.isClosed() )
+                {
+                    return;
+                }
+                if ( ch.getHandle().eventLoop().inEventLoop() )
+                {
+                    finnalyFinishLogin( userCon );
+                } else
+                {
+                    ch.getHandle().eventLoop().execute( () ->
+                    {
+                        if ( !ch.isClosing() )
+                        {
+                            finnalyFinishLogin( userCon );
+                        }
+                    } );
+                }
+            }
+        };
+        // fire login event
+        bungee.getPluginManager().callEvent( new LoginEvent( InitialHandler.this, complete ) );
+=======
+            callCheckEvent( userCon );
+        } else
+        {
+            finishLogin( userCon );
+        }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/78efbaebfd96d0a09b441c0b0efdfcbfd282aa1e/proxy/src/main/java/net/md_5/bungee/connection/InitialHandler.java/right.java
     }
 
     public void finishLogin(UserConnection userCon)
@@ -593,6 +725,42 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     }
     //BotFilter end
 
+    private void callCheckEvent(UserConnection userCon)
+    {
+        Callback<BotFilterCheckStartingEvent> complete = new Callback<BotFilterCheckStartingEvent>()
+        {
+            @Override
+            public void done(BotFilterCheckStartingEvent result, Throwable error)
+            {
+                if ( result.isCancelled() )
+                {
+                    disconnect( result.getCancelReasonComponents() );
+                    return;
+                }
+                if ( ch.isClosed() )
+                {
+                    return;
+                }
+                if ( ch.getHandle().eventLoop().inEventLoop() )
+                {
+                    ch.getHandle().pipeline().get( HandlerBoss.class ).setHandler( new BFConnector( userCon ) );
+                } else
+                {
+                    ch.getHandle().eventLoop().execute( () ->
+                    {
+                        if ( !ch.isClosing() )
+                        {
+                            ch.getHandle().pipeline().get( HandlerBoss.class ).setHandler( new BFConnector( userCon ) );
+                        }
+                    } );
+                }
+            }
+        };
+
+        // fire login event
+        bungee.getPluginManager().callEvent( new BotFilterCheckStartingEvent( userCon, complete ) );
+    }
+    //BotFilter end
     @Override
     public void disconnect(String reason)
     {
