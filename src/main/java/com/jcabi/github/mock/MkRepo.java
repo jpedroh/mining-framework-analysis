@@ -58,7 +58,17 @@ import lombok.ToString;
  * @version $Id$
  * @since 0.5
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/e85dff6ee1585dd8d763519f3e2dd528229fc825/src/main/java/com/jcabi/github/mock/MkRepo.java/left.java
+||||||| /usr/src/app/output/jcabi/jcabi-github/e85dff6ee1585dd8d763519f3e2dd528229fc825/src/main/java/com/jcabi/github/mock/MkRepo.java/base.java
+ * @todo #9 Implement milestones() method.
+ *  Please, implement milestones() method to return
+ *  MkMilestones. Don't forget about unit tests
+=======
  * @checkstyle ClassFanOutComplexity (500 lines)
+ * @todo #9 Implement milestones() method.
+ *  Please, implement milestones() method to return
+ *  MkMilestones. Don't forget about unit tests
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/e85dff6ee1585dd8d763519f3e2dd528229fc825/src/main/java/com/jcabi/github/mock/MkRepo.java/right.java
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
