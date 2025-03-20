@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.shouldHaveThrown;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.util.Arrays.array;
 import static org.assertj.core.util.DateUtil.parseDatetime;
+import static org.assertj.core.util.Sets.newHashSet;
 import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 import java.io.ByteArrayInputStream;
@@ -41,6 +42,11 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.DoublePredicate;
+import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -48,11 +54,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
-import java.util.function.DoublePredicate;
-import java.util.function.IntPredicate;
-import java.util.function.LongPredicate;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.iterable.Extractor;
@@ -62,6 +63,7 @@ import org.assertj.core.test.CartoonCharacter;
 import org.assertj.core.test.Maps;
 import org.assertj.core.test.Name;
 import org.assertj.core.util.Lists;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -884,6 +886,7 @@ public class SoftAssertionsTest extends BaseAssertionsTest {
       .hasMessageContaining("blue");
   }
 
+  @Test
   public void should_work_with_atomic() throws Exception {
     // simple atomic value
     softly.assertThat(new AtomicBoolean(true)).isTrue();

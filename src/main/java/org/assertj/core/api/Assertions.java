@@ -39,6 +39,14 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.DoublePredicate;
+import java.util.function.Function;
+import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -51,14 +59,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.concurrent.atomic.AtomicStampedReference;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.function.DoublePredicate;
-import java.util.function.Function;
-import java.util.function.IntPredicate;
-import java.util.function.LongPredicate;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.exception.RuntimeIOException;
@@ -704,6 +704,14 @@ public class Assertions {
   public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
 
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
@@ -781,7 +789,6 @@ public class Assertions {
   public static AbstractZonedDateTimeAssert<?> assertThat(ZonedDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
@@ -792,7 +799,6 @@ public class Assertions {
   public static AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link java.time.OffsetDateTime}</code>.
    *
@@ -803,7 +809,6 @@ public class Assertions {
   public static AbstractOffsetDateTimeAssert<?> assertThat(OffsetDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.time.OffsetTime}.
    *
@@ -814,7 +819,6 @@ public class Assertions {
   public static AbstractOffsetTimeAssert<?> assertThat(OffsetTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -825,7 +829,6 @@ public class Assertions {
   public static AbstractLocalTimeAssert<?> assertThat(LocalTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
@@ -836,7 +839,6 @@ public class Assertions {
   public static AbstractLocalDateAssert<?> assertThat(LocalDate actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicBoolean}.
    *
@@ -848,7 +850,6 @@ public class Assertions {
   public static AtomicBooleanAssert assertThat(AtomicBoolean actual) {
     return new AtomicBooleanAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicInteger}.
    *
@@ -860,7 +861,6 @@ public class Assertions {
   public static AtomicIntegerAssert assertThat(AtomicInteger actual) {
     return new AtomicIntegerAssert(actual);
   }
-
   /**
    * Create int[] assertion for {@link AtomicIntegerArray}.
    *
@@ -872,7 +872,6 @@ public class Assertions {
   public static AtomicIntegerArrayAssert assertThat(AtomicIntegerArray actual) {
     return new AtomicIntegerArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicIntegerFieldUpdater}.
    *
@@ -885,7 +884,6 @@ public class Assertions {
   public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return new AtomicIntegerFieldUpdaterAssert<OBJECT>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLong}.
    *
@@ -897,7 +895,6 @@ public class Assertions {
   public static AtomicLongAssert assertThat(AtomicLong actual) {
     return new AtomicLongAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongArray}.
    *
@@ -909,7 +906,6 @@ public class Assertions {
   public static AtomicLongArrayAssert assertThat(AtomicLongArray actual) {
     return new AtomicLongArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongFieldUpdater}.
    *
@@ -922,7 +918,6 @@ public class Assertions {
   public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
     return new AtomicLongFieldUpdaterAssert<OBJECT>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReference}.
    *
@@ -935,7 +930,6 @@ public class Assertions {
   public static <VALUE> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
     return new AtomicReferenceAssert<VALUE>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceArray}.
    *
@@ -948,7 +942,6 @@ public class Assertions {
   public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
     return new AtomicReferenceArrayAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceFieldUpdater}.
    *
@@ -962,7 +955,6 @@ public class Assertions {
   public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return new AtomicReferenceFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicMarkableReference}.
    *
@@ -975,7 +967,6 @@ public class Assertions {
   public static <VALUE> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
     return new AtomicMarkableReferenceAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicStampedReference}.
    *
@@ -2255,10 +2246,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -2311,10 +2298,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Register a {@link Representation} that will be used in all following assertions.
