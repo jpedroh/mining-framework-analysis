@@ -42,11 +42,19 @@ public class KeyGenerator {
     private String privateKeyPath;
 
     /**
-     * Generates the {@link PrivateKey} and {@link PublicKey} based on the
-     * {@link PrivateKey} location.
-     *
-     * @param privateKeyPath path to private key
-     */
+	 * Generates the {@link PrivateKey} and {@link PublicKey} based on the
+	 * {@link PrivateKey} location.
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/KeyGenerator.java/left.java
+	 *
+	 * @param privateKeyPath
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/KeyGenerator.java/base.java
+	 * 
+	 * @param privateKeyPath
+=======
+	 *
+	 * @param privateKeyPath path to private key
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/KeyGenerator.java/right.java
+	 */
     public KeyGenerator(String privateKeyPath) {
         if (Security.getProvider("BC") == null) {
             Security.addProvider(new BouncyCastleProvider());

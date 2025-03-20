@@ -82,9 +82,15 @@ public interface Application extends Entity {
     /**
      * Gets the application developer company collection of {@link Contact}
      * contacts.
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/services/entities/Application.java/left.java
+     * 
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/services/entities/Application.java/base.java
+     *  
+=======
      *
-     * @param <T> contact type class
-     * @return The list of contacts.
+	 * @param <T> contact type class 
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/services/entities/Application.java/right.java
+	 * @return The list of contacts.
      */
     public <T extends Contact> Collection<T> getContacts();
 

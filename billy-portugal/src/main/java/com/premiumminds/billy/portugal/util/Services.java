@@ -66,14 +66,26 @@ public class Services {
     }
 
     /**
-     * Issue a new document and store it in the database.
-     *
-     * @param <T> document type
-     * @param builder of the document to issue.
-     * @param issuingParameters required to issue the document.
-     * @return The newly issued document
-     * @throws DocumentIssuingException exception when document is not issued
-     */
+	 * Issue a new document and store it in the database.
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/Services.java/left.java
+	 *
+	 * @param {@link
+	 *        Builder} of the document to issue.
+	 * @param {@link
+	 *        IssuingParams} required to issue the document.
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/Services.java/base.java
+	 * 
+	 * @param {@link Builder} of the document to issue.
+	 * @param {@link IssuingParams} required to issue the document.
+=======
+	 *
+	 * @param <T> document type
+	 * @param builder of the document to issue.
+	 * @param issuingParameters required to issue the document.
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-portugal/src/main/java/com/premiumminds/billy/portugal/util/Services.java/right.java
+	 * @return The newly issued document
+	 * @throws DocumentIssuingException exception when document is not issued
+	 */
     public <T extends PTGenericInvoice> T issueDocument(Builder<T> builder, PTIssuingParams issuingParameters)
             throws DocumentIssuingException {
         return this.issuingService.issue(builder, issuingParameters);

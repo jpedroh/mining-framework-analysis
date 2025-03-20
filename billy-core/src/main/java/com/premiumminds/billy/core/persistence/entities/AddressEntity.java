@@ -40,17 +40,33 @@ public interface AddressEntity extends Address, BaseEntity {
     public void setPostalCode(String postalCode);
 
     /**
-     * Gets the ISO 3166-2 code for the country region
-     *
-     * @param region The region ISO code
-     */
+	 * Gets the ISO 3166-2 code for the country region
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/left.java
+	 *
+	 * @return The region ISO code
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/base.java
+	 * 
+	 * @return The region ISO code
+=======
+	 *
+	 * @param region The region ISO code
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/right.java
+	 */
     public void setRegion(String region);
 
     /**
-     * Gets the address country ISO 3166-1 code.
-     *
-     * @param country The country iso code.
-     */
+	 * Gets the address country ISO 3166-1 code.
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/left.java
+	 *
+	 * @return The country iso code.
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/base.java
+	 * 
+	 * @return The country iso code.
+=======
+	 *
+	 * @param country The country iso code.
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-core/src/main/java/com/premiumminds/billy/core/persistence/entities/AddressEntity.java/right.java
+	 */
     public void setISOCountry(String country);
 
 }

@@ -36,6 +36,7 @@ public abstract class ESAbstractTemplateBundle extends AbstractTemplateBundle im
         }
         PaymentMechanism payment = (PaymentMechanism) pmc;
         switch (payment) {
+<<<<<<< /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-spain/src/main/java/com/premiumminds/billy/spain/services/export/pdf/ESAbstractTemplateBundle.java/left.java
             case BANK_TRANSFER:
                 return ESTemplateBundle.BANK_TRANSFER_TEXT;
             case CASH:
@@ -60,6 +61,55 @@ public abstract class ESAbstractTemplateBundle extends AbstractTemplateBundle im
                 return ESTemplateBundle.ELECTRONIC_MONEY_TEXT;
             default:
                 return null;
+||||||| /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-spain/src/main/java/com/premiumminds/billy/spain/services/export/pdf/ESAbstractTemplateBundle.java/base.java
+        case BANK_TRANSFER:
+        	return BANK_TRANSFER_TEXT;
+        case CASH:
+        	return CASH_TEXT;
+        case CREDIT_CARD:
+        	return CREDIT_CARD_TEXT;
+        case CHECK:
+        	return CHECK_TEXT;
+        case DEBIT_CARD:
+        	return DEBIT_CARD_TEXT;
+        case COMPENSATION:
+        	return COMPENSATION_TEXT;
+        case COMMERCIAL_LETTER:
+        	return COMMERCIAL_LETTER_TEXT;
+        case ATM:
+        	return ATM_TEXT;
+        case RESTAURANT_TICKET:
+        	return RESTAURANT_TICKET_TEXT;
+        case EXCHANGE:
+        	return EXCHANGE_TEXT;
+        default:
+        	return null;
+=======
+        case BANK_TRANSFER:
+        	return BANK_TRANSFER_TEXT;
+        case CASH:
+        	return CASH_TEXT;
+        case CREDIT_CARD:
+        	return CREDIT_CARD_TEXT;
+        case CHECK:
+        	return CHECK_TEXT;
+        case DEBIT_CARD:
+        	return DEBIT_CARD_TEXT;
+        case COMPENSATION:
+        	return COMPENSATION_TEXT;
+        case COMMERCIAL_LETTER:
+        	return COMMERCIAL_LETTER_TEXT;
+        case ATM:
+        	return ATM_TEXT;
+        case RESTAURANT_TICKET:
+        	return RESTAURANT_TICKET_TEXT;
+        case EXCHANGE:
+        	return EXCHANGE_TEXT;
+        case ELECTRONIC_MONEY:
+        	return ELECTRONIC_MONEY_TEXT;
+        default:
+        	return null;
+>>>>>>> /usr/src/app/output/premium-minds/billy/ea16e7698c5fdd087ae74350842d89f17f679571/billy-spain/src/main/java/com/premiumminds/billy/spain/services/export/pdf/ESAbstractTemplateBundle.java/right.java
         }
     }
 
