@@ -861,7 +861,8 @@ public class SoftAssertionsTest extends BaseAssertionsTest {
     softly.shouldHaveThrown(IllegalArgumentException.class);
     assertThat(softly.wasSuccess()).isFalse();
     assertThat(softly.errorsCollected()).hasSize(1);
-    assertThat(softly.errorsCollected().get(0)).hasMessage("IllegalArgumentException should have been thrown");
+    assertThat(softly.errorsCollected()
+                     .get(0)).hasMessage("IllegalArgumentException should have been thrown");
   }
 
   @Test

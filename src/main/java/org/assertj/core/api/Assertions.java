@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.DoublePredicate;
 import java.util.function.Function;
@@ -46,6 +45,7 @@ import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.concurrent.Future;
 
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.exception.RuntimeIOException;
@@ -411,6 +411,12 @@ public class Assertions {
   }
 
   /**
+   * Creates a new instance of {@link PathAssert}
+   *
+   * @param actual the path to test
+   * @return the created assertion object
+   */
+  /**
    * Create assertion for {@link java.util.concurrent.Future}.
    *
    * @param actual the actual value.
@@ -690,6 +696,14 @@ public class Assertions {
   @CheckReturnValue
   public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
   }
 
   /**
@@ -2042,10 +2056,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -2098,10 +2108,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Register a {@link Representation} that will be used in all following assertions.

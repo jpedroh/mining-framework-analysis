@@ -140,14 +140,14 @@ public class IterableAssert_extracting_Test {
   @Test
   public void should_allow_assertions_on_property_values_extracted_from_given_iterable_with_extracted_type_defined()
        {
-    // extract field that is also a property and check generic for comparator.
-    assertThat(employees).extracting("name", Name.class).usingElementComparator(new Comparator<Name>() {
-      @Override
-      public int compare(Name o1, Name o2) {
-        return o1.getFirst().compareTo(o2.getFirst());
-      }
-    }).containsOnly(new Name("Yoda"), new Name("Luke", "Skywalker"));
-  }
+	// extract field that is also a property and check generic for comparator.
+	assertThat(employees).extracting("name", Name.class).usingElementComparator(new Comparator<Name>() {
+	  @Override
+	  public int compare(Name o1, Name o2) {
+		return o1.getFirst().compareTo(o2.getFirst());
+	  }
+	}).containsOnly(new Name("Yoda"), new Name("Luke", "Skywalker"));
+       }
 
   @Test
   public void should_throw_error_if_no_property_nor_field_with_given_name_can_be_extracted() {
@@ -176,12 +176,12 @@ public class IterableAssert_extracting_Test {
 
   @Test
   public void should_allow_extracting_multiple_values_using_extractor() {
-    assertThat(employees).extracting(new Extractor<Employee, Tuple>() {
-      @Override
-      public Tuple extract(Employee input) {
-        return new Tuple(input.getName().getFirst(), input.getAge(), input.id);
-      }
-    }).containsOnly(tuple("Yoda", 800, 1L), tuple("Luke", 26, 2L));
+	assertThat(employees).extracting(new Extractor<Employee, Tuple>() {
+	  @Override
+	  public Tuple extract(Employee input) {
+		return new Tuple(input.getName().getFirst(), input.getAge(), input.id);
+	  }
+	}).containsOnly(tuple("Yoda", 800, 1L), tuple("Luke", 26, 2L));
   }
 
  @Test

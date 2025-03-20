@@ -15,15 +15,23 @@ package org.assertj.core.test;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.assertj.core.util.introspection.IntrospectionError;
+
 import org.hamcrest.Matcher;
+
 import org.hamcrest.core.AllOf;
+
 import org.hamcrest.core.IsEqual;
+
 import org.hamcrest.core.IsSame;
+
 import org.hamcrest.core.StringContains;
+
 import org.hamcrest.core.StringEndsWith;
+
 import org.hamcrest.core.StringStartsWith;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
