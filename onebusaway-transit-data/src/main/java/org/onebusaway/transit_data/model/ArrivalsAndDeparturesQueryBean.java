@@ -1,30 +1,11 @@
-/**
- * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.onebusaway.transit_data.model;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.HashSet;
-
 import org.onebusaway.geospatial.model.CoordinateBounds;
 import org.onebusaway.util.SystemTime;
 
-@QueryBean
-public final class ArrivalsAndDeparturesQueryBean implements Serializable {
-
+@QueryBean public final class ArrivalsAndDeparturesQueryBean implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private long time = SystemTime.currentTimeMillis();
@@ -37,7 +18,6 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
 
   private int frequencyMinutesAfter = 30;
 
-  // should the queried for stopIds be included in nearby results
   private boolean includeInputIdsInNearby = false;
 
   private int maxCount = Integer.MAX_VALUE;
@@ -47,11 +27,12 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
   private HashSet<String> agenciesExcludingScheduled = new HashSet<>();
 
   private FilterChain systemFilterChain = new FilterChain();
+
   private FilterChain instanceFilterChain = new FilterChain();
 
- private List<Integer> routeTypes;
-  public ArrivalsAndDeparturesQueryBean() {
+  private List<Integer> routeTypes;
 
+  public ArrivalsAndDeparturesQueryBean() {
   }
 
   public ArrivalsAndDeparturesQueryBean(ArrivalsAndDeparturesQueryBean bean) {
@@ -139,27 +120,31 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
     this.bounds = bounds;
   }
 
-
   public void setRouteTypes(List<Integer> types) {
-      if (types == null || types.isEmpty()) return;
-      instanceFilterChain.add(new ArrivalAndDepartureFilterByRouteType(types));
+    if (types == null || types.isEmpty()) {
+      return;
+    }
+    instanceFilterChain.add(new ArrivalAndDepartureFilterByRouteType(types));
   }
+
   public void setRouteType(String routeType) {
-    if (routeType == null) return;
+    if (routeType == null) {
+      return;
+    }
     ArrivalAndDepartureFilterByRouteType arrivalAndDepartureFilterByRouteType = new ArrivalAndDepartureFilterByRouteType(routeType);
     routeTypes = arrivalAndDepartureFilterByRouteType.getRouteTypes();
     instanceFilterChain.add(arrivalAndDepartureFilterByRouteType);
   }
 
-  public List<Integer> getRouteTypes(){
-      return routeTypes;
+  public List<Integer> getRouteTypes() {
+    return routeTypes;
   }
 
-  public void setAgenciesExcludingScheduled(HashSet<String> agencies){
+  public void setAgenciesExcludingScheduled(HashSet<String> agencies) {
     this.agenciesExcludingScheduled = agencies;
   }
 
-  public HashSet<String> getAgenciesExcludingScheduled(){
+  public HashSet<String> getAgenciesExcludingScheduled() {
     return this.agenciesExcludingScheduled;
   }
 
@@ -179,8 +164,7 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
     this.instanceFilterChain = instanceFilterChain;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + frequencyMinutesAfter;
@@ -188,35 +172,46 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
     result = prime * result + minutesAfter;
     result = prime * result + minutesBefore;
     result = prime * result + (int) (time ^ (time >>> 32));
-    if (instanceFilterChain != null)
+    if (instanceFilterChain != null) {
       result = prime * result + instanceFilterChain.hashCode();
+    }
     return result;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     ArrivalsAndDeparturesQueryBean other = (ArrivalsAndDeparturesQueryBean) obj;
-    if (frequencyMinutesAfter != other.frequencyMinutesAfter)
+    if (frequencyMinutesAfter != other.frequencyMinutesAfter) {
       return false;
-    if (frequencyMinutesBefore != other.frequencyMinutesBefore)
+    }
+    if (frequencyMinutesBefore != other.frequencyMinutesBefore) {
       return false;
-    if (minutesAfter != other.minutesAfter)
+    }
+    if (minutesAfter != other.minutesAfter) {
       return false;
-    if (minutesBefore != other.minutesBefore)
+    }
+    if (minutesBefore != other.minutesBefore) {
       return false;
-    if (time != other.time)
+    }
+    if (time != other.time) {
       return false;
-    if (instanceFilterChain == null || other.instanceFilterChain == null)
-      if (instanceFilterChain != other.instanceFilterChain)
+    }
+    if (instanceFilterChain == null || other.instanceFilterChain == null) {
+      if (instanceFilterChain != other.instanceFilterChain) {
         return false;
-    if (!instanceFilterChain.equals(other.instanceFilterChain))
+      }
+    }
+    if (!instanceFilterChain.equals(other.instanceFilterChain)) {
       return false;
+    }
     return true;
   }
 }
