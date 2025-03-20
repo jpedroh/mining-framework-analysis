@@ -1,27 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
-package org.assertj.core.api;
-
-public class AbstractSoftAssertions {
-
-  protected final SoftProxies proxies;
-
-  public AbstractSoftAssertions() {
-	super();
-    proxies = new SoftProxies();
-  }
-
-  protected <T, V> V proxy(Class<V> assertClass, Class<T> actualClass, T actual) {
-    return proxies.create(assertClass, actualClass, actual);
-  }
-}
+  package    org . assertj . core . api ; 
+<<<<<<<
+  import static      org . assertj . core . util . Arrays . array ;  import   java . io . File ;  import   java . io . InputStream ;  import   java . math . BigDecimal ;  import   java . time . LocalDate ;  import   java . time . LocalDateTime ;  import   java . time . LocalTime ;  import   java . time . ZonedDateTime ;  import   java . util . Date ;  import   java . util . Iterator ;  import   java . util . List ;  import   java . util . Map ;  import   java . util . Optional ;  import    java . util . concurrent . Callable ;  import     net . sf . cglib . proxy . Enhancer ;
+=======
+>>>>>>>
+   public class AbstractSoftAssertions  {   public AbstractSoftAssertions  ( )  {  super  ( ) ;   proxies =  new SoftProxies  ( ) ; }   protected  <  T ,  V > V proxy  (   Class  < V > assertClass ,   Class  < T > actualClass ,  T actual )  {  return  proxies . create  ( assertClass , actualClass , actual ) ; }    @ SuppressWarnings  ( "unchecked" ) public  <  T >  OptionalAssert  < T > assertThat  (   Optional  < T > actual )  {  return  proxy  (  OptionalAssert . class ,  Optional . class , actual ) ; }   public LocalDateAssert assertThat  (  LocalDate actual )  {  return  proxy  (  LocalDateAssert . class ,  LocalDate . class , actual ) ; }   public LocalDateTimeAssert assertThat  (  LocalDateTime actual )  {  return  proxy  (  LocalDateTimeAssert . class ,  LocalDateTime . class , actual ) ; }   public ZonedDateTimeAssert assertThat  (  ZonedDateTime actual )  {  return  proxy  (  ZonedDateTimeAssert . class ,  ZonedDateTime . class , actual ) ; }   public LocalTimeAssert assertThat  (  LocalTime actual )  {  return  proxy  (  LocalTimeAssert . class ,  LocalTime . class , actual ) ; }   protected final SoftProxies  proxies ; }
