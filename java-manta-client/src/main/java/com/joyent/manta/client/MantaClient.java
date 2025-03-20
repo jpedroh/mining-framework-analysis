@@ -500,8 +500,6 @@ public class MantaClient implements AutoCloseable {
         final Instant expires = Instant.now().plus(expiresIn);
         return getAsSignedURI(path, method, expires);
     }
-
-
     /**
      * <p>Generates a URL that allows for the download of the resource specified
      * in the path without any additional authentication.</p>
@@ -528,8 +526,6 @@ public class MantaClient implements AutoCloseable {
 
         return httpSigner.signURI(request, method, expires.getEpochSecond());
     }
-
-
     /**
      * Get the metadata associated with a Manta object.
      *
@@ -560,8 +556,6 @@ public class MantaClient implements AutoCloseable {
         final MantaHttpHeaders headers = new MantaHttpHeaders(response.getHeaders());
         return new MantaObjectResponse(path, headers);
     }
-
-
     /**
      * Return the contents of a directory in Manta.
      *
@@ -599,8 +593,6 @@ public class MantaClient implements AutoCloseable {
             }
         }
     }
-
-
     /**
      * Creates a list of {@link MantaObjectResponse}s based on the HTTP response from Manta.
      *
@@ -630,8 +622,6 @@ public class MantaClient implements AutoCloseable {
         }
         return objs;
     }
-
-
     /**
      * Puts an object into Manta.
      *
@@ -660,7 +650,6 @@ public class MantaClient implements AutoCloseable {
 
         return httpPut(path, headers, content, null);
     }
-
     /**
      * Puts an object into Manta.
      *
@@ -689,8 +678,6 @@ public class MantaClient implements AutoCloseable {
 
         return httpPut(path, null, content, metadata);
     }
-
-
     /**
      * Puts an object into Manta.
      *
@@ -721,7 +708,6 @@ public class MantaClient implements AutoCloseable {
 
         return httpPut(path, headers, content, metadata);
     }
-
     /**
      * Executes an HTTP PUT against the remote Manta API.
      *
@@ -740,8 +726,6 @@ public class MantaClient implements AutoCloseable {
         final GenericUrl genericUrl = new GenericUrl(this.url + formatPath(path));
         return httpPut(genericUrl, headers, content, metadata);
     }
-
-
     /**
      * Executes an HTTP PUT against the remote Manta API.
      *
@@ -795,8 +779,6 @@ public class MantaClient implements AutoCloseable {
             }
         }
     }
-
-
     /**
      * Copies the supplied {@link InputStream} to a remote Manta object at the
      * specified path.
@@ -809,8 +791,6 @@ public class MantaClient implements AutoCloseable {
     public MantaObjectResponse put(final String path, final InputStream source) throws IOException {
         return put(path, source, null, null);
     }
-
-
     /**
      * Copies the supplied {@link String} to a remote Manta object at the specified
      * path using the default JVM character encoding as a binary representation.
@@ -828,8 +808,6 @@ public class MantaClient implements AutoCloseable {
             return put(path, is, headers);
         }
     }
-
-
     /**
      * Copies the supplied {@link String} to a remote Manta object at the specified
      * path using the default JVM character encoding as a binary representation.
@@ -847,8 +825,6 @@ public class MantaClient implements AutoCloseable {
             return put(path, is, null, metadata);
         }
     }
-
-
     /**
      * Copies the supplied {@link String} to a remote Manta object at the specified
      * path using the default JVM character encoding as a binary representation.
@@ -868,7 +844,6 @@ public class MantaClient implements AutoCloseable {
             return put(path, is, headers, metadata);
         }
     }
-
     /**
      * Copies the supplied {@link String} to a remote Manta object at the specified
      * path using the default JVM character encoding as a binary representation.
@@ -882,7 +857,6 @@ public class MantaClient implements AutoCloseable {
                                    final String string) throws IOException {
         return put(path, string, null, null);
     }
-
     /**
      * Appends the specified metadata to an existing Manta object.
      *
@@ -896,8 +870,6 @@ public class MantaClient implements AutoCloseable {
         final MantaHttpHeaders headers = new MantaHttpHeaders(metadata);
         return putMetadata(path, headers, metadata);
     }
-
-
     /**
      * Appends metadata derived from HTTP headers to an existing Manta object.
      *
@@ -913,6 +885,14 @@ public class MantaClient implements AutoCloseable {
         final MantaMetadata metadata = new MantaMetadata(headers.metadataAsStrings());
         return putMetadata(path, headers, metadata);
     }
+    /**
+     * Appends metadata derived from HTTP headers to an existing Manta object.
+     *
+     * @param path     The fully qualified path of the object. i.e. /user/stor/foo/bar/baz
+     * @param headers  HTTP headers to include when copying the object
+     * @return Manta response object
+     * @throws IOException when there is a problem sending the metadata over the wire
+     */
 
 
     /**
