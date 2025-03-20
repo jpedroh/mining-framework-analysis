@@ -52,6 +52,7 @@ public class IfNode extends AbstractRenderableNode {
         Object result = conditionalExpression.evaluate(self, context);
 
         if (result != null) {
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/left.java
           if (result instanceof Number
                     || result instanceof String
                     || result instanceof Boolean) {
@@ -64,8 +65,40 @@ public class IfNode extends AbstractRenderableNode {
                               result.getClass().getSimpleName()),
                       this.getLineNumber(),
                       self.getName());
+||||||| /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/base.java
+          try {
+            satisfied = (Boolean) result;
+          } catch (ClassCastException ex) {
+            throw new PebbleException(ex, "Expected a Boolean in \"if\" statement",
+                this.getLineNumber(),
+                self.getName());
+=======
+          if (result instanceof Boolean) {
+            satisfied = (Boolean) result;
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/right.java
+          }
+<<<<<<< /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/left.java
+
+||||||| /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/base.java
+=======
+          else if (result instanceof Number) {
+            Number number = (Number) result;
+            satisfied = number.intValue() != 0;
+          }
+          else if (result instanceof String) {
+            String str = (String) result;
+            satisfied = !str.isEmpty();
+          } else {
+            throw new PebbleException(
+                      null,
+                      String.format(
+                              "Unsupported value type %s. Expected Boolean, String, Number in \"if\" statement",
+                              result.getClass().getSimpleName()),
+                      this.getLineNumber(),
+                      self.getName());
           }
 
+>>>>>>> /usr/src/app/output/mbosecke/pebble/5b710983486abe67d4b3596aca89b94d9c58d5d7/pebble/src/main/java/com/mitchellbosecke/pebble/node/IfNode.java/right.java
         } else if (context.isStrictVariables()) {
           throw new PebbleException(null,
               "null value given to if statement and strict variables is set to true",
