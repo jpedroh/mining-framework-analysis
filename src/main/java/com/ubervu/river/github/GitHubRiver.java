@@ -49,9 +49,8 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
     private final String index;
     private final String repository;
     private final String owner;
-    private final int userRequestedInterval;
     private final String endpoint;
-
+    private final int userRequestedInterval;
     private String password;
     private String username;
     private DataStream dataStream;
@@ -392,16 +391,28 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                     throw new RuntimeException(e);
                 }
                 logger.debug("Checking for events");
-                if (getData(endpoint + "/repos/%s/%s/events?per_page=1000",
+                if (getData("https://api.github.com/repos/%s/%s/events?per_page=1000",
                         "event")) {
+<<<<<<< /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/left.java
                     logger.debug("First run or new events found, fetching rest of the data");
                     if (mostRecentEntry != null) {
-                        getData(endpoint + "/repos/%s/%s/issues?state=all&per_page=1000&since=%s",
+                        getData("https://api.github.com/repos/%s/%s/issues?state=all&per_page=1000&since=%s",
                                 "issue", mostRecentEntry);
                     } else {
-                        getData(endpoint + "/repos/%s/%s/issues?state=all&per_page=1000",
+                        getData("https://api.github.com/repos/%s/%s/issues?state=all&per_page=1000",
                                 "issue");
                     }
+||||||| /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/base.java
+                    getData("https://api.github.com/repos/%s/%s/events?per_page=1000", "event");
+                    getData("https://api.github.com/repos/%s/%s/issues?per_page=1000", "issue");
+                    getData("https://api.github.com/repos/%s/%s/issues?state=closed&per_page=1000", "issue");
+
+=======
+                    getData(endpoint + "/repos/%s/%s/events?per_page=1000", "event");
+                    getData(endpoint + "/repos/%s/%s/issues?per_page=1000", "issue");
+                    getData(endpoint + "/repos/%s/%s/issues?state=closed&per_page=1000", "issue");
+
+>>>>>>> /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/right.java
                     // delete pull req data - we are only storing open pull reqs
                     // and when a pull request is closed we have no way of knowing;
                     // this is why we have to delete them and reindex "fresh" ones
@@ -419,7 +430,23 @@ public class GitHubRiver extends AbstractRiverComponent implements River {
                     // and for labels - they have IDs based on the MD5 of the contents, so
                     // if a property changes, we get a "new" document
                     deleteByType("LabelData");
+<<<<<<< /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/left.java
+                    getData("https://api.github.com/repos/%s/%s/labels?per_page=1000", "label");
+||||||| /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/base.java
+                    getData("https://api.github.com/repos/%s/%s/labels?per_page=1000", "label");
+
+
+                    try {
+                        Thread.sleep(interval * 1000); // needs milliseconds
+                    } catch (InterruptedException e) {}
+=======
                     getData(endpoint + "/repos/%s/%s/labels?per_page=1000", "label");
+
+
+                    try {
+                        Thread.sleep(interval * 1000); // needs milliseconds
+                    } catch (InterruptedException e) {}
+>>>>>>> /usr/src/app/output/ubervu/elasticsearch-river-github/261184e89701acd7169b001d0dc58293ec680512/src/main/java/com/ubervu/river/github/GitHubRiver.java/right.java
                 } else {
                     logger.debug("No new events found");
                 }
