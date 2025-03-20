@@ -49,7 +49,7 @@ import java.util.logging.Level;
 public class JmxTransAgent {
     private static Logger logger = Logger.getLogger(JmxTransAgent.class.getName());
 
-    private static final String PROPERTIES_SYSTEM_PROPERTY_NAME = "jmxtrans.agent.properties.file";
+    private static final String PROPERTIES_SYSTEM_PROPERTY_NAME = JmxTransAgent.class.getName() + ".properties";
 
     @SuppressFBWarnings("MS_SHOULD_BE_FINAL")
     public static boolean DIAGNOSTIC = Boolean.valueOf(System.getProperty(JmxTransAgent.class.getName() + ".diagnostic", "false"));
@@ -87,12 +87,33 @@ public class JmxTransAgent {
             throw new IllegalStateException(msg);
         }
         try {
-            PropertiesLoader propertiesLoader = creatPropertiesLoader();
-            JmxTransConfigurationLoader configurationLoader = new JmxTransConfigurationXmlLoader(configFile, propertiesLoader);
+<<<<<<< /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/left.java
+            ConfigurationDocumentLoader configLoader = new JmxTransConfigurationDocumentLoader(configFile);
+            PropertiesLoader propertiesLoader = createPropertiesLoader();
+            JmxTransExporterBuilder jmxTransExporterBuilder = new JmxTransExporterBuilder(propertiesLoader);
+            JmxTransExporterConfiguration config = jmxTransExporterBuilder.build(configLoader);
+            JmxTransExporter jmxTransExporter = new JmxTransExporter(config);
+||||||| /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/base.java
+            ConfigurationDocumentLoader configLoader = new JmxTransConfigurationDocumentLoader(configFile);
+            JmxTransExporterConfiguration config = new JmxTransExporterBuilder().build(configLoader);
+            JmxTransExporter jmxTransExporter = new JmxTransExporter(config);
+=======
+            JmxTransConfigurationLoader configurationLoader = new JmxTransConfigurationXmlLoader(configFile);
             JmxTransExporter jmxTransExporter = new JmxTransExporter(configurationLoader);
+>>>>>>> /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/right.java
             //START
             jmxTransExporter.start();
             logger.info("JmxTransAgent started with configuration '" + configFile + "'");
+<<<<<<< /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/left.java
+             if (config.getConfigReloadInterval() >= 0) {
+                setupConfigReloadWatcher(jmxTransExporter, config, configLoader, jmxTransExporterBuilder);
+            }
+||||||| /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/base.java
+             if (config.getConfigReloadInterval() >= 0) {
+                setupConfigReloadWatcher(jmxTransExporter, config, configLoader);
+            }
+=======
+>>>>>>> /usr/src/app/output/jmxtrans/jmxtrans-agent/60e40f2ad4d067e75c9433b56c139e15ba4642f5/src/main/java/org/jmxtrans/agent/JmxTransAgent.java/right.java
         } catch (Exception e) {
             String msg = "Exception loading JmxTransExporter from '" + configFile + "'";
             logger.log(Level.SEVERE, msg, e);
@@ -100,12 +121,22 @@ public class JmxTransAgent {
         }
     }
 
-    private static PropertiesLoader creatPropertiesLoader() {
-        String propertiesFile = System.getProperty(PROPERTIES_SYSTEM_PROPERTY_NAME);
-        if (propertiesFile != null) {
-            return new UrlOrFilePropertiesLoader(propertiesFile);
+    private static PropertiesLoader createPropertiesLoader() {
+        String configuredPath = System.getProperty(PROPERTIES_SYSTEM_PROPERTY_NAME);
+        if (configuredPath == null) {
+            return new NoPropertiesSourcePropertiesLoader();
         }
-        return new NoPropertiesSourcePropertiesLoader();
+        logger.log(Level.INFO, "Will use properties file '" + configuredPath + "' for resolving placeholders");
+        return new UrlOrFilePropertiesLoader(configuredPath);
+    }
+
+    private static void setupConfigReloadWatcher(JmxTransExporter jmxTransExporter,
+            JmxTransExporterConfiguration initialConfiguration,
+            ConfigurationDocumentLoader configLoader,
+            JmxTransExporterBuilder jmxTransExporterBuilder) {
+        ConfigReloadWatcher watcher = new ConfigReloadWatcher(jmxTransExporter, initialConfiguration, configLoader,
+                jmxTransExporterBuilder);
+        watcher.start();
     }
 
     public static void dumpDiagnosticInfo() {
