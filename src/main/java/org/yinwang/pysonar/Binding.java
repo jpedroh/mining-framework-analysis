@@ -6,8 +6,9 @@ import org.yinwang.pysonar.ast.*;
 import org.yinwang.pysonar.types.ModuleType;
 import org.yinwang.pysonar.types.Type;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 
 public class Binding implements Comparable<Object> {
@@ -40,99 +41,80 @@ public class Binding implements Comparable<Object> {
     private Type type;       // inferred type
     public Kind kind;        // name usage context
 
-    private Set<Ref> refs;
-
-    // fields from Def
-    private int start = -1;
-    private int end = -1;
-    private int bodyStart = -1;
-    private int bodyEnd = -1;
-
-    @Nullable
-    private String fileOrUrl;
-
-
-    public Binding(@NotNull String id, @NotNull Node node, @NotNull Type type, @NotNull Kind kind) {
-        this.name = id;
-        this.qname = type.getTable().getPath();
-        this.type = type;
-        this.kind = kind;
-        this.node = node;
-
-        if (node instanceof Url) {
-            String url = ((Url) node).getURL();
-            if (url.startsWith("file://")) {
-                fileOrUrl = url.substring("file://".length());
-            } else {
-                fileOrUrl = url;
-            }
-        } else {
-            fileOrUrl = node.getFile();
-            if (node instanceof Name) {
-                name = node.asName().id;
-            }
-        }
-
-        initLocationInfo(node);
-        Indexer.idx.registerBinding(this);
-    }
-
-
-    private void initLocationInfo(Node node) {
-        start = node.start;
-        end = node.end;
-
-        Node parent = node.getParent();
-        if ((parent instanceof FunctionDef && ((FunctionDef) parent).name == node) ||
-                (parent instanceof ClassDef && ((ClassDef) parent).name == node))
-        {
-            bodyStart = parent.start;
-            bodyEnd = parent.end;
-        } else if (node instanceof Module) {
-            name = ((Module) node).name;
-            start = 0;
-            end = 0;
-            bodyStart = node.start;
-            bodyEnd = node.end;
-        } else {
-            bodyStart = node.start;
-            bodyEnd = node.end;
-        }
-    }
-
-
-    public Str getDocstring() {
-        Node parent = node.getParent();
-        if ((parent instanceof FunctionDef && ((FunctionDef) parent).name == node) ||
-                (parent instanceof ClassDef && ((ClassDef) parent).name == node))
-        {
-            return parent.getDocString();
-        } else {
-            return node.getDocString();
-        }
-    }
-
-
     @NotNull
-    public String getName() {
-        return name;
+    private SortedSet<Def> defs;   // definitions (may be multiple)   private SortedSet<Ref> refs;   // fields from Def   private int start = -1;   private int end = -1;   private int bodyStart = -1;   private int bodyEnd = -1;   @Nullable
+private String fileOrUrl;   public Binding(@NotNull String id, @NotNull Node node, @NotNull Type type, @NotNull Kind kind) {
+    this.name = id;
+    this.qname = type.getTable().getPath();
+    this.type = type;
+    this.kind = kind;
+<<<<<<< /usr/src/app/output/yinwang0/rubysonar/fe4005af961bdc19c4f47fd0d60dbea83278b782/src/main/java/org/yinwang/pysonar/Binding.java/left.java
+    this.defs = new TreeSet<>();
+||||||| /usr/src/app/output/yinwang0/rubysonar/fe4005af961bdc19c4f47fd0d60dbea83278b782/src/main/java/org/yinwang/pysonar/Binding.java/base.java
+    this.defs = new LinkedHashSet<>(1);
+=======
+    this.node = node;
+>>>>>>> /usr/src/app/output/yinwang0/rubysonar/fe4005af961bdc19c4f47fd0d60dbea83278b782/src/main/java/org/yinwang/pysonar/Binding.java/right.java
+
+    if (node instanceof Url) {
+        String url = ((Url) node).getURL();
+        if (url.startsWith("file://")) {
+            fileOrUrl = url.substring("file://".length());
+        } else {
+            fileOrUrl = url;
+        }
+    } else {
+        fileOrUrl = node.getFile();
+        if (node instanceof Name) {
+            name = node.asName().id;
+        }
     }
 
+    initLocationInfo(node);
+    Indexer.idx.registerBinding(this);
+}   private void initLocationInfo(Node node) {
+    start = node.start;
+    end = node.end;
 
-    public void setQname(@NotNull String qname) {
-        this.qname = qname;
+    Node parent = node.getParent();
+    if ((parent instanceof FunctionDef && ((FunctionDef) parent).name == node) ||
+            (parent instanceof ClassDef && ((ClassDef) parent).name == node))
+    {
+        bodyStart = parent.start;
+        bodyEnd = parent.end;
+    } else if (node instanceof Module) {
+        name = ((Module) node).name;
+        start = 0;
+        end = 0;
+        bodyStart = node.start;
+        bodyEnd = node.end;
+    } else {
+        bodyStart = node.start;
+        bodyEnd = node.end;
     }
-
-
-    @NotNull
-    public String getQname() {
-        return qname;
+}   public Str getDocstring() {
+    Node parent = node.getParent();
+    if ((parent instanceof FunctionDef && ((FunctionDef) parent).name == node) ||
+            (parent instanceof ClassDef && ((ClassDef) parent).name == node))
+    {
+        return parent.getDocString();
+    } else {
+        return node.getDocString();
     }
-
-
-    public void addRef(Ref ref) {
-        getRefs().add(ref);
-    }
+}   @NotNull
+public String getName() {
+    return name;
+}   public void setQname(@NotNull String qname) {
+    this.qname = qname;
+}   @NotNull
+public String getQname() {
+    return qname;
+}   public void addRef(Ref ref) {
+    getRefs().add(ref);
+}   // Returns one definition (even if there are many)   @NotNull
+public Def getSingle() {
+    return defs.first();
+}
 
 
     public void setType(Type type) {
@@ -187,7 +169,7 @@ public class Binding implements Comparable<Object> {
 
     public Set<Ref> getRefs() {
         if (refs == null) {
-            refs = new LinkedHashSet<>(1);
+            refs = new TreeSet<>();
         }
         return refs;
     }
@@ -267,6 +249,7 @@ public class Binding implements Comparable<Object> {
     /**
      * Bindings can be sorted by their location for outlining purposes.
      */
+    @Override
     public int compareTo(@NotNull Object o) {
         return getStart() - ((Binding) o).getStart();
     }
