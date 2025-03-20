@@ -1,15 +1,5 @@
-/*******************************************************************************
- * This file is part of Pebble.
- *
- * Copyright (c) 2014 by Mitchell Bösecke
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble.loader;
-
 import java.io.Reader;
-
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.LoaderException;
 
@@ -21,9 +11,8 @@ import com.mitchellbosecke.pebble.error.LoaderException;
  * @author mbosecke
  *
  */
-public interface Loader<T> {
-
-    /**
+public interface Loader<T extends java.lang.Object> {
+  /**
      * The reader which will be used by Pebble to read the contents of the
      * template.
      *
@@ -33,34 +22,34 @@ public interface Loader<T> {
      * @throws LoaderException
      *             If template can not be found
      */
-    Reader getReader(T cacheKey) throws LoaderException;
+  public Reader getReader(T cacheKey) throws LoaderException;
 
-    /**
+  /**
      * A method for end users to change the charset used by the loader.
      *
      * @param charset
      *            Character set used by the loader when building a reader object
      */
-    void setCharset(String charset);
+  public void setCharset(String charset);
 
-    /**
+  /**
      * Optional prefix to help find templates, ex "/WEB-INF/templates/" or
      * "database_schema."
      *
      * @param prefix
      *            Prefix to help find templates
      */
-    void setPrefix(String prefix);
+  public void setPrefix(String prefix);
 
-    /**
+  /**
      * Optional suffix to help find templates, ex ".html", ".peb"
      *
      * @param suffix
      *            Suffix to attach to template names
      */
-    void setSuffix(String suffix);
+  public void setSuffix(String suffix);
 
-    /**
+  /**
      * Resolves the given {@code relativePath} based on the given
      * {@code anchorPath}.
      *
@@ -77,9 +66,9 @@ public interface Loader<T> {
      * @return the resolved path or {@code null} when the path could not be
      *         resolved.
      */
-    String resolveRelativePath(String relativePath, String anchorPath);
+  public String resolveRelativePath(String relativePath, String anchorPath);
 
-    /**
+  /**
      * This method resolves the given template name to a unique object which can
      * be used as the key within the {@link PebbleEngine#getTemplateCache()}.
      * The returned object will be passed with {@link #getReader(Object)}.
@@ -120,6 +109,5 @@ public interface Loader<T> {
      * @param templateName
      * @return
      */
-    T createCacheKey(String templateName);
-
+  public T createCacheKey(String templateName);
 }
