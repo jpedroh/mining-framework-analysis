@@ -1,14 +1,14 @@
 package fr.linsolas.casperjsrunner;
 
-import static fr.linsolas.casperjsrunner.LogUtils.getLogger;
-import static fr.linsolas.casperjsrunner.PatternsChecker.checkPatterns;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import static fr.linsolas.casperjsrunner.LogUtils.getLogger;
+import static fr.linsolas.casperjsrunner.PatternsChecker.checkPatterns;
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -20,6 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
 
 /**
  * Runs JavaScript and/or CoffeScript test files on CasperJS instance
@@ -114,6 +115,40 @@ public class CasperJSRunnerMojo extends AbstractMojo {
 
     private Result executeScripts(final List<String> files) {
         Result result = new Result();
+<<<<<<< /usr/src/app/output/linsolas/casperjs-runner-maven-plugin/db79e3697d8d54d644dcace723c4a1cf41f7237d/src/main/java/fr/linsolas/casperjsrunner/CasperJSRunnerMojo.java/left.java
+        List<File> files = findFiles(ext, testsDir);
+        if (files.isEmpty()) {
+            log.warn("No " + ext + " files found in directory " + testsDir);
+        } else {
+            for (File f : files) {
+                log.debug("Execution of test " + f.getName());
+                int res = executeScript(f);
+                if (res == 0) {
+                    result.addSuccess();
+                } else {
+                    log.warn("Test '" + f.getName() + "' has failure");
+                    result.addFailure();
+                }
+||||||| /usr/src/app/output/linsolas/casperjs-runner-maven-plugin/db79e3697d8d54d644dcace723c4a1cf41f7237d/src/main/java/fr/linsolas/casperjsrunner/CasperJSRunnerMojo.java/base.java
+        File[] files = testsDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return StringUtils.endsWithIgnoreCase(name, ext);
+            }
+        });
+        if (files.length == 0) {
+            log.warn("No " + ext + " files found in directory " + testsDir);
+        } else {
+            for (File f : files) {
+                log.debug("Execution of test " + f.getName());
+                int res = executeScript(f);
+                if (res == 0) {
+                    result.addSuccess();
+                } else {
+                    log.warn("Test '" + f.getName() + "' has failure");
+                    result.addFailure();
+                }
+=======
         for (String file : files) {
             File f = new File(testsDir, file);
             getLogger().debug("Execution of test " + f.getName());
@@ -123,9 +158,22 @@ public class CasperJSRunnerMojo extends AbstractMojo {
             } else {
                 getLogger().warn("Test '" + f.getName() + "' has failure");
                 result.addFailure();
+>>>>>>> /usr/src/app/output/linsolas/casperjs-runner-maven-plugin/db79e3697d8d54d644dcace723c4a1cf41f7237d/src/main/java/fr/linsolas/casperjsrunner/CasperJSRunnerMojo.java/right.java
             }
         }
         return result;
+    }
+    
+    private List<File> findFiles(String ext, File folder) {
+    	List<File> files = new ArrayList<File>();
+    	for (File f : folder.listFiles()) {
+    		if (f.isDirectory()) {
+    			files.addAll(findFiles(ext, f));
+    		} else if (StringUtils.endsWithIgnoreCase(f.getName(), ext)) {
+    			files.add(f);
+    		}
+    	}
+    	return files;
     }
 
     private int executeScript(File f) {
