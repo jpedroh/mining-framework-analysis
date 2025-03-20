@@ -27,10 +27,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 public class FeedbackServiceClientTest extends BasePushyTest {
+
+	@Rule
+	public Timeout globalTimeout = new Timeout(10000);
 
 	@Test
 	public void testGetExpiredTokens() throws Exception {
