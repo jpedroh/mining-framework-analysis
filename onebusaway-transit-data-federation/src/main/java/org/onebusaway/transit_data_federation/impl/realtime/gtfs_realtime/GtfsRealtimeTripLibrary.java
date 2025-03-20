@@ -73,43 +73,48 @@ public class GtfsRealtimeTripLibrary {
 
   private static Pattern _pattern = Pattern.compile("^(-{0,1}\\d+):(\\d{2}):(\\d{2})$");
   private GtfsRealtimeEntitySource _entitySource;
-  private GtfsRealtimeServiceSource _serviceSource;
-
   /**
    * This is primarily here to assist with unit testing.
    */
+   
   private long _currentTime = 0;
-
+   
   private boolean _validateCurrentTime = true;
+   
   public void setValidateCurrentTime(boolean validate) {
     _validateCurrentTime = validate;
   }
+   
   private boolean validateCurrentTime() {
     return _validateCurrentTime;
   }
-
+   
+  private boolean _hackServiceDate = false;
+   
+  public void setHackServiceDate(boolean flag) {
+    _hackServiceDate = flag;
+  }
+   
   private StopModificationStrategy _stopModificationStrategy = null;
-
+   
   private boolean _scheduleAdherenceFromLocation = false;
-
+   
   private boolean _useLabelAsVehicleId = false;
-
+   
   private boolean _filterUnassigned = false;
-
+   
   public void setEntitySource(GtfsRealtimeEntitySource entitySource) {
     _entitySource = entitySource;
   }
-
-  public void setServiceSource(GtfsRealtimeServiceSource serviceSource) { _serviceSource = serviceSource; }
-
+   
   public long getCurrentTime() {
     return _currentTime;
   }
-
+   
   public void setCurrentTime(long currentTime) {
     setCurrentTime(currentTime, 0);
   }
-  
+   
   public void setCurrentTime(long currentTime, int originOffsetHours) {
     if (originOffsetHours != 0) {
       Calendar c = Calendar.getInstance();
@@ -122,26 +127,28 @@ public class GtfsRealtimeTripLibrary {
     }
     
   }
-  
+   
   public void setStopModificationStrategy(StopModificationStrategy strategy) {
     _stopModificationStrategy = strategy;
   }
-  
+   
   public void setScheduleAdherenceFromLocation(boolean scheduleAdherenceFromLocation) {
     _scheduleAdherenceFromLocation = scheduleAdherenceFromLocation;
   }
-
+   
   /**
    * use the vehicle label as the id.
    * @param useLabelAsVehicleId
    */
+   
   public void setUseLabelAsVehicleId(boolean useLabelAsVehicleId) {
     _useLabelAsVehicleId = useLabelAsVehicleId;
   }
-
+   
   public void setFilterUnassigned(boolean flag) {
     _filterUnassigned = flag;
   }
+   
   /**
    * Trip updates describe a trip which is undertaken by a vehicle (which is
    * itself described in vehicle positions), but GTFS-realtime does not demand
@@ -156,233 +163,225 @@ public class GtfsRealtimeTripLibrary {
    *
    * @return
    */
+   
   public List<CombinedTripUpdatesAndVehiclePosition> groupTripUpdatesAndVehiclePositions(
       FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
     return groupTripUpdatesAndVehiclePositions(null, tripUpdateMessage, vehiclePositionsMessage);
   }
+   
+  public List<CombinedTripUpdatesAndVehiclePosition> groupTripUpdatesAndVehiclePositionsInternal(MonitoredResult result,
+    FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
 
-  public List<CombinedTripUpdatesAndVehiclePosition> groupTripUpdatesAndVehiclePositions(MonitoredResult result,
-                                                                                         FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
-    try {
-      return groupTripUpdatesAndVehiclePositionsInternal(result, tripUpdateMessage, vehiclePositionsMessage);
-    } catch (Throwable t) {
-      _log.error("source-exception {}", t, t);
-      return new ArrayList<>();
+  List<CombinedTripUpdatesAndVehiclePosition> updates = new ArrayList<CombinedTripUpdatesAndVehiclePosition>();
+  ListMultimap<String, TripUpdate> tripUpdatesByVehicleId = ArrayListMultimap.create();
+  Map<String, VehiclePosition> vehiclePositionsByVehicleId = new HashMap<String, VehiclePosition>();
+  AssignmentInfo assignmentInfo = getAssignmentInfo(tripUpdateMessage, vehiclePositionsMessage);
+
+  ListMultimap<BlockDescriptor, TripUpdate> anonymousTripUpdatesByBlock = ArrayListMultimap.<BlockDescriptor, TripUpdate> create();
+  Map<BlockDescriptor, VehiclePosition> anonymousVehiclePositionsByBlock = new HashMap<BlockDescriptor, VehiclePosition>();
+
+  Set<BlockDescriptor> badAnonymousVehiclePositions = new HashSet<BlockDescriptor>();
+
+  for (FeedEntity fe : tripUpdateMessage.getEntityList()) {
+    if (!fe.hasTripUpdate()) {
+      continue;
     }
-  }
-    public List<CombinedTripUpdatesAndVehiclePosition> groupTripUpdatesAndVehiclePositionsInternal(MonitoredResult result,
-      FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
 
-    List<CombinedTripUpdatesAndVehiclePosition> updates = new ArrayList<CombinedTripUpdatesAndVehiclePosition>();
-    ListMultimap<String, TripUpdate> tripUpdatesByVehicleId = ArrayListMultimap.create();
-    Map<String, VehiclePosition> vehiclePositionsByVehicleId = new HashMap<String, VehiclePosition>();
-    AssignmentInfo assignmentInfo = getAssignmentInfo(tripUpdateMessage, vehiclePositionsMessage);
+    TripUpdate tu = fe.getTripUpdate();
+    BlockDescriptor bd = null;
+    if (tu.hasTrip() &&
+            (TransitDataConstants.STATUS_ADDED.equals(tu.getTrip().getScheduleRelationship().toString())
+            || TransitDataConstants.STATUS_DUPLICATED.equals(tu.getTrip().getScheduleRelationship().toString()))) {
+      result.addAddedTripId(tu.getTrip().getTripId());
+    }
+    if (tu.hasTrip() && TransitDataConstants.STATUS_DUPLICATED.equals(tu.getTrip().getScheduleRelationship().toString())) {
+      result.addAddedTripId(tu.getTrip().getTripId()); // for now we also consider this an ADDED trip
+      AddedTripInfo addedTripInfo = _serviceSource.getDuplicatedTripService().handleDuplicatedDescriptor(tu);
+      bd = _serviceSource.getDynamicTripBuilder().createBlockDescriptor(addedTripInfo);
+      if (bd == null) continue; // we failed
+      anonymousTripUpdatesByBlock.put(bd, tu);
+      continue; // don't let this trip update be processed
+    }
 
-    ListMultimap<BlockDescriptor, TripUpdate> anonymousTripUpdatesByBlock = ArrayListMultimap.<BlockDescriptor, TripUpdate> create();
-    Map<BlockDescriptor, VehiclePosition> anonymousVehiclePositionsByBlock = new HashMap<BlockDescriptor, VehiclePosition>();
-
-    Set<BlockDescriptor> badAnonymousVehiclePositions = new HashSet<BlockDescriptor>();
-
-    for (FeedEntity fe : tripUpdateMessage.getEntityList()) {
-      if (!fe.hasTripUpdate()) {
-        continue;
+    if (tu.hasVehicle() && tu.getVehicle().hasId() && StringUtils.isNotBlank(tu.getVehicle().getId())) {
+      // Trip update has a vehicle ID - index by vehicle ID
+      String vehicleId = getVehicleId(tu);
+      tripUpdatesByVehicleId.put(vehicleId, addStartDateTime(tu));
+    } else {
+      /*
+       * Trip update does not have a vehicle ID - index by TripDescriptor
+       * (includes start date and time).
+       */
+      TripDescriptor td = tu.getTrip();
+      long time = tu.hasTimestamp() ? tu.getTimestamp() * 1000 : currentTime();
+      if (bd == null) {
+        bd = getTripDescriptorAsBlockDescriptor(result, td, time);
       }
 
-      TripUpdate tu = fe.getTripUpdate();
-      BlockDescriptor bd = null;
-      if (tu.hasTrip() &&
-              (TransitDataConstants.STATUS_ADDED.equals(tu.getTrip().getScheduleRelationship().toString())
-              || TransitDataConstants.STATUS_DUPLICATED.equals(tu.getTrip().getScheduleRelationship().toString()))) {
-        result.addAddedTripId(tu.getTrip().getTripId());
-      }
-      if (tu.hasTrip() && TransitDataConstants.STATUS_DUPLICATED.equals(tu.getTrip().getScheduleRelationship().toString())) {
-        result.addAddedTripId(tu.getTrip().getTripId()); // for now we also consider this an ADDED trip
-        AddedTripInfo addedTripInfo = _serviceSource.getDuplicatedTripService().handleDuplicatedDescriptor(tu);
-        bd = _serviceSource.getDynamicTripBuilder().createBlockDescriptor(addedTripInfo);
+      if (bd == null) {
+        bd = handleDynamicTripUpdate(tu);
         if (bd == null) continue; // we failed
+        // this is implicitly an added trip
+        result.addAddedTripId(td.getTripId());
+
+        // if this trip has a vehiclePosition it will be matched later
         anonymousTripUpdatesByBlock.put(bd, tu);
-        continue; // don't let this trip update be processed
       }
 
-      if (tu.hasVehicle() && tu.getVehicle().hasId() && StringUtils.isNotBlank(tu.getVehicle().getId())) {
-        // Trip update has a vehicle ID - index by vehicle ID
-        String vehicleId = getVehicleId(tu);
-        tripUpdatesByVehicleId.put(vehicleId, addStartDateTime(tu));
-      } else {
-        /*
-         * Trip update does not have a vehicle ID - index by TripDescriptor
-         * (includes start date and time).
-         */
-        TripDescriptor td = tu.getTrip();
-        long time = tu.hasTimestamp() ? tu.getTimestamp() * 1000 : currentTime();
-        if (bd == null) {
-          bd = getTripDescriptorAsBlockDescriptor(result, td, time);
-        }
-
-        if (bd == null) {
-          bd = handleDynamicTripUpdate(tu);
-          if (bd == null) continue; // we failed
-          // this is implicitly an added trip
-          result.addAddedTripId(td.getTripId());
-
-          // if this trip has a vehiclePosition it will be matched later
+      // if this block has an assigned vehicle consume the tripUpdate
+      // if the block/vehicle matches (we support multiple updates per block)
+      TripEntry tripEntry = _entitySource.getTrip(td.getTripId());
+      if (tripEntry != null && tripEntry.getBlock() != null) {
+        String blockId = tripEntry.getBlock().getId().toString();
+        if (assignmentInfo.preferredVehicleByBlockId.containsKey(blockId)) {
+          String preferredVehicleId = assignmentInfo.preferredVehicleByBlockId.get(blockId);
+          _log.debug("adding anonymous trip update {} into vehicle {}", td.getTripId(), preferredVehicleId);
+          // this is a multimap; it supports multiple updates per block/vehicle
+          tripUpdatesByVehicleId.put(preferredVehicleId, tu);
+        } else {
           anonymousTripUpdatesByBlock.put(bd, tu);
         }
-
-        // if this block has an assigned vehicle consume the tripUpdate
-        // if the block/vehicle matches (we support multiple updates per block)
-        TripEntry tripEntry = _entitySource.getTrip(td.getTripId());
-        if (tripEntry != null && tripEntry.getBlock() != null) {
-          String blockId = tripEntry.getBlock().getId().toString();
-          if (assignmentInfo.preferredVehicleByBlockId.containsKey(blockId)) {
-            String preferredVehicleId = assignmentInfo.preferredVehicleByBlockId.get(blockId);
-            _log.debug("adding anonymous trip update {} into vehicle {}", td.getTripId(), preferredVehicleId);
-            // this is a multimap; it supports multiple updates per block/vehicle
-            tripUpdatesByVehicleId.put(preferredVehicleId, tu);
-          } else {
-            anonymousTripUpdatesByBlock.put(bd, tu);
-          }
-        } else {
-          // accept multiple updates here -- though the may be lost if we can't map them
-          anonymousTripUpdatesByBlock.put(bd, tu);
-        }
-      }
-
-    }
-
-    for (FeedEntity fe : vehiclePositionsMessage.getEntityList()) {
-      if (!fe.hasVehicle()) {
-        continue;
-      }
-
-      VehiclePosition vp = fe.getVehicle();
-
-      if (vp.hasVehicle() && vp.getVehicle().hasId()) {
-        // Vehicle position has a vehicle ID - index by vehicle ID
-        String vehicleId = getVehicleId(vp);
-
-        if (!vehiclePositionsByVehicleId.containsKey(vehicleId)) {
-          vehiclePositionsByVehicleId.put(vehicleId, vp);
-        } else {
-          _log.warn("Multiple updates for vehicle {}; taking newest.",
-              vehicleId);
-
-          VehiclePosition otherUpdate = vehiclePositionsByVehicleId.get(vehicleId);
-
-          long otherTimestamp = otherUpdate.getTimestamp();
-
-          if (vp.getTimestamp() > otherTimestamp) {
-            vehiclePositionsByVehicleId.put(vehicleId, vp);
-          }
-
-        }
-      } else if (vp.hasTrip()) {
-        /*
-         * Vehicle position does not have vehicle ID but has TripDescriptor, so
-         * use that, but only if there is only one.
-         */
-
-        TripDescriptor td = vp.getTrip();
-        long time = vp.hasTimestamp() ? vp.getTimestamp() * 1000 : currentTime();
-        BlockDescriptor bd = getTripDescriptorAsBlockDescriptor(result, td, time);
-
-        if (bd == null) {
-          continue;
-        }
-
-        if (!anonymousVehiclePositionsByBlock.containsKey(bd)) {
-          anonymousVehiclePositionsByBlock.put(bd, vp);
-        } else {
-          /*
-           * When we have multiple VehiclePositions for a block but no way to
-           * uniquely distinguish them there is nothing useful or reasonable we
-           * can do with the data.
-           */
-          _log.debug(
-              "Multiple anonymous VehiclePositions for trip {}; giving up.",
-              td.getTripId());
-          badAnonymousVehiclePositions.add(bd);
-        }
       } else {
-        /*
-         * Pathological VehiclePosition contains no identifying information;
-         * skip.
-         */
-        continue;
+        // accept multiple updates here -- though the may be lost if we can't map them
+        anonymousTripUpdatesByBlock.put(bd, tu);
       }
     }
 
-    // Remove multiple vehicles where multiple anonymous vehicles are present in
-    // a block
-    for (BlockDescriptor bd : badAnonymousVehiclePositions) {
-      anonymousVehiclePositionsByBlock.remove(bd);
-    }
-
-    // Map updates by vehicle ID
-    for (Map.Entry<String, Collection<TripUpdate>> e : tripUpdatesByVehicleId.asMap().entrySet()) {
-      CombinedTripUpdatesAndVehiclePosition update = new CombinedTripUpdatesAndVehiclePosition();
-
-      String vehicleId = e.getKey();
-      Collection<TripUpdate> tripUpdates = e.getValue();
-
-      // use the first trip to find the block, but pass through all tripUpdates
-      TripUpdate firstTrip = tripUpdates.iterator().next();
-      long time = firstTrip.hasTimestamp() ? firstTrip.getTimestamp() * 1000 : currentTime();
-      update.block = getTripDescriptorAsBlockDescriptor(result, firstTrip.getTrip(), time);
-      if (update.block == null && isNycDynamicTrip(firstTrip)) {
-        update.block = handleDynamicTripUpdate(firstTrip);
-      }
-      // pass through multiple trip updates per block
-      update.setTripUpdates(new ArrayList<>(tripUpdates));
-
-      if (vehiclePositionsByVehicleId.containsKey(vehicleId)) {
-        update.vehiclePosition = vehiclePositionsByVehicleId.get(vehicleId);
-      }
-
-      updates.add(update);
-    }
-
-    // Map anonymous updates by block descriptor
-    for (Entry<BlockDescriptor, Collection<TripUpdate>> e : anonymousTripUpdatesByBlock.asMap().entrySet()) {
-      CombinedTripUpdatesAndVehiclePosition update = new CombinedTripUpdatesAndVehiclePosition();
-
-      BlockDescriptor bd = e.getKey();
-      update.block = bd;
-      update.setTripUpdates(new ArrayList<TripUpdate>(e.getValue()));
-
-      if (update.getTripUpdatesSize() == 1
-          && anonymousVehiclePositionsByBlock.containsKey(bd)) {
-        update.vehiclePosition = anonymousVehiclePositionsByBlock.get(bd);
-      }
-
-      updates.add(update);
-    }
-
-    // Set vehicle ID in block if possible
-    for (CombinedTripUpdatesAndVehiclePosition update : updates) {
-      String vehicleId = null;
-
-      for (TripUpdate tu : update.getTripUpdates()) {
-        if (tu.hasVehicle() && tu.getVehicle().hasId()) {
-          vehicleId = getVehicleId(tu);
-          break;
-        }
-      }
-
-      if (vehicleId == null && update.vehiclePosition != null
-          && update.vehiclePosition.hasVehicle()
-          && update.vehiclePosition.getVehicle().hasId()) {
-        vehicleId = getVehicleId(update.vehiclePosition);
-      }
-
-      if (vehicleId != null && update.block != null && update.block.getVehicleId() == null) {
-        update.block.setVehicleId(vehicleId);
-      }
-    }
-
-    return updates;
   }
 
+  for (FeedEntity fe : vehiclePositionsMessage.getEntityList()) {
+    if (!fe.hasVehicle()) {
+      continue;
+    }
+
+    VehiclePosition vp = fe.getVehicle();
+
+    if (vp.hasVehicle() && vp.getVehicle().hasId()) {
+      // Vehicle position has a vehicle ID - index by vehicle ID
+      String vehicleId = getVehicleId(vp);
+
+      if (!vehiclePositionsByVehicleId.containsKey(vehicleId)) {
+        vehiclePositionsByVehicleId.put(vehicleId, vp);
+      } else {
+        _log.warn("Multiple updates for vehicle {}; taking newest.",
+            vehicleId);
+
+        VehiclePosition otherUpdate = vehiclePositionsByVehicleId.get(vehicleId);
+
+        long otherTimestamp = otherUpdate.getTimestamp();
+
+        if (vp.getTimestamp() > otherTimestamp) {
+          vehiclePositionsByVehicleId.put(vehicleId, vp);
+        }
+
+      }
+    } else if (vp.hasTrip()) {
+      /*
+       * Vehicle position does not have vehicle ID but has TripDescriptor, so
+       * use that, but only if there is only one.
+       */
+
+      TripDescriptor td = vp.getTrip();
+      long time = vp.hasTimestamp() ? vp.getTimestamp() * 1000 : currentTime();
+      BlockDescriptor bd = getTripDescriptorAsBlockDescriptor(result, td, time);
+
+      if (bd == null) {
+        continue;
+      }
+
+      if (!anonymousVehiclePositionsByBlock.containsKey(bd)) {
+        anonymousVehiclePositionsByBlock.put(bd, vp);
+      } else {
+        /*
+         * When we have multiple VehiclePositions for a block but no way to
+         * uniquely distinguish them there is nothing useful or reasonable we
+         * can do with the data.
+         */
+        _log.debug(
+            "Multiple anonymous VehiclePositions for trip {}; giving up.",
+            td.getTripId());
+        badAnonymousVehiclePositions.add(bd);
+      }
+    } else {
+      /*
+       * Pathological VehiclePosition contains no identifying information;
+       * skip.
+       */
+      continue;
+    }
+  }
+
+  // Remove multiple vehicles where multiple anonymous vehicles are present in
+  // a block
+  for (BlockDescriptor bd : badAnonymousVehiclePositions) {
+    anonymousVehiclePositionsByBlock.remove(bd);
+  }
+
+  // Map updates by vehicle ID
+  for (Map.Entry<String, Collection<TripUpdate>> e : tripUpdatesByVehicleId.asMap().entrySet()) {
+    CombinedTripUpdatesAndVehiclePosition update = new CombinedTripUpdatesAndVehiclePosition();
+
+    String vehicleId = e.getKey();
+    Collection<TripUpdate> tripUpdates = e.getValue();
+
+    // use the first trip to find the block, but pass through all tripUpdates
+    TripUpdate firstTrip = tripUpdates.iterator().next();
+    long time = firstTrip.hasTimestamp() ? firstTrip.getTimestamp() * 1000 : currentTime();
+    update.block = getTripDescriptorAsBlockDescriptor(result, firstTrip.getTrip(), time);
+    if (update.block == null && isNycDynamicTrip(firstTrip)) {
+      update.block = handleDynamicTripUpdate(firstTrip);
+    }
+    // pass through multiple trip updates per block
+    update.setTripUpdates(new ArrayList<>(tripUpdates));
+
+    if (vehiclePositionsByVehicleId.containsKey(vehicleId)) {
+      update.vehiclePosition = vehiclePositionsByVehicleId.get(vehicleId);
+    }
+
+    updates.add(update);
+  }
+
+  // Map anonymous updates by block descriptor
+  for (Entry<BlockDescriptor, Collection<TripUpdate>> e : anonymousTripUpdatesByBlock.asMap().entrySet()) {
+    CombinedTripUpdatesAndVehiclePosition update = new CombinedTripUpdatesAndVehiclePosition();
+
+    BlockDescriptor bd = e.getKey();
+    update.block = bd;
+    update.setTripUpdates(new ArrayList<TripUpdate>(e.getValue()));
+
+    if (update.getTripUpdatesSize() == 1
+        && anonymousVehiclePositionsByBlock.containsKey(bd)) {
+      update.vehiclePosition = anonymousVehiclePositionsByBlock.get(bd);
+    }
+
+    updates.add(update);
+  }
+
+  // Set vehicle ID in block if possible
+  for (CombinedTripUpdatesAndVehiclePosition update : updates) {
+    String vehicleId = null;
+
+    for (TripUpdate tu : update.getTripUpdates()) {
+      if (tu.hasVehicle() && tu.getVehicle().hasId()) {
+        vehicleId = getVehicleId(tu);
+        break;
+      }
+    }
+
+    if (vehicleId == null && update.vehiclePosition != null
+        && update.vehiclePosition.hasVehicle()
+        && update.vehiclePosition.getVehicle().hasId()) {
+      vehicleId = getVehicleId(update.vehiclePosition);
+    }
+
+    if (vehicleId != null && update.block != null && update.block.getVehicleId() == null) {
+      update.block.setVehicleId(vehicleId);
+    }
+  }
+
+  return updates;
+  }
+   
   private BlockDescriptor handleDynamicTripUpdate(TripUpdate tu) {
     try {
       TripDescriptor td = tu.getTrip();
@@ -419,10 +418,13 @@ public class GtfsRealtimeTripLibrary {
       return null;
     }
   }
-
+   
   // in order to support multiple trip updates per block we need
+   
   // to internally require trip_start_time which means we formally
+   
   // require trip_start_date;
+   
   private TripUpdate addStartDateTime(TripUpdate tu) {
     if (!tu.hasTrip() || !tu.getTrip().hasTripId()) {
       throw new IllegalStateException("unidentifiable trip " + tu);
@@ -463,7 +465,29 @@ public class GtfsRealtimeTripLibrary {
     TripUpdate.Builder builder = tu.toBuilder();
     return builder.setTrip(tdBuilder.build()).build();
   }
-
+   
+  // take hints from the vehicle position feed and hold on to for later grouping
+   
+  private GtfsRealtimeServiceSource _serviceSource;
+   
+  public void setServiceSource(GtfsRealtimeServiceSource serviceSource) { _serviceSource = serviceSource; }
+   
+  public List<CombinedTripUpdatesAndVehiclePosition> groupTripUpdatesAndVehiclePositions(MonitoredResult result,
+                                                                                         FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
+    try {
+      return groupTripUpdatesAndVehiclePositionsInternal(result, tripUpdateMessage, vehiclePositionsMessage);
+    } catch (Throwable t) {
+      _log.error("source-exception {}", t, t);
+      return new ArrayList<>();
+    }
+  }
+   
+  // in order to support multiple trip updates per block we need
+   
+  // to internally require trip_start_time which means we formally
+   
+  // require trip_start_date;
+   
   // take hints from the vehicle position feed and hold on to for later grouping
   private AssignmentInfo getAssignmentInfo(FeedMessage tripUpdateMessage, FeedMessage vehiclePositionsMessage) {
     Map<String, String> preferredTripByVehicleId = new HashMap<>();
@@ -799,33 +823,46 @@ public class GtfsRealtimeTripLibrary {
   private BlockDescriptor getTripDescriptorAsBlockDescriptor(MonitoredResult result,
       TripDescriptor trip, long currentTime) {
     try {
-    if (!trip.hasTripId()) {
-      return null;
-    }
-    TripEntry tripEntry = _entitySource.getTrip(trip.getTripId());
-    if (tripEntry == null) {
-      if (result != null) {
-        _log.debug("discarding: reporting unmatched trip with id=" + trip.getTripId());
-        result.addUnmatchedTripId(trip.getTripId());
-      } else {
-        _log.debug("discarding: no trip found with id=" + trip.getTripId());
+      if (!trip.hasTripId()) {
+        return null;
       }
-      
-      return null;
-    }
-    
-    ServiceDate serviceDate = null;
-    BlockInstance instance;
-    
-    BlockEntry block = tripEntry.getBlock();
-    if (trip.hasStartDate() && ! "0".equals(trip.getStartDate())) {
-    	try {
-    		serviceDate = ServiceDate.parseString(trip.getStartDate());
-    	} catch (ParseException ex) {
-    		_log.debug("Could not parse service date " + trip.getStartDate(), ex);
-    	}
-    }
-    
+      TripEntry tripEntry = _entitySource.getTrip(trip.getTripId());
+      if (tripEntry == null) {
+        if (result != null) {
+          _log.debug("discarding: reporting unmatched trip with id=" + trip.getTripId());
+          result.addUnmatchedTripId(trip.getTripId());
+        } else {
+          _log.debug("discarding: no trip found with id=" + trip.getTripId());
+        }
+
+        return null;
+      }
+
+      ServiceDate serviceDate = null;
+      BlockInstance instance;
+
+      BlockEntry block = tripEntry.getBlock();
+      if (trip.hasStartDate() && !"0".equals(trip.getStartDate())) {
+        try {
+          serviceDate = ServiceDate.parseString(trip.getStartDate());
+        } catch (ParseException ex) {
+          _log.debug("Could not parse service date " + trip.getStartDate(), ex);
+        }
+      }
+
+      if (serviceDate != null && _hackServiceDate) {
+        // see if we got a bad date
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(getCurrentTime());
+        if (cal.get(Calendar.HOUR_OF_DAY) < 3) {
+          if (serviceDate.getDay() == cal.get(Calendar.DAY_OF_MONTH)) {
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            // this is likely wrong, block likely started yesterday
+            serviceDate = new ServiceDate(cal);
+          }
+        }
+      }
+
       if (serviceDate != null) {
         instance = _serviceSource.getBlockCalendarService().getBlockInstance(block.getId(),
                 serviceDate.getAsDate().getTime());

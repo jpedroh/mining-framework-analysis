@@ -189,6 +189,9 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
   // this is a change from the default, but is much safer
   private boolean _validateCurrentTime = false;
 
+  // some systems mis-report service data at midnight
+  private boolean _hackServiceDate = false;
+
   // a special case of some specific integration - drop unassigned trips
   private boolean _filterUnassigned = false;
 
@@ -457,6 +460,10 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     _filterUnassigned = flag;
   }
 
+  public void setHackServiceDate(boolean flag) {
+    _hackServiceDate = flag;
+  }
+
   @Autowired
   public void setGtfsRealtimeCancelService(GtfsRealtimeCancelService service) {
     _cancelService = service;
@@ -486,7 +493,13 @@ public class GtfsRealtimeSource implements MonitoredDataSource {
     _tripsLibrary.setScheduleAdherenceFromLocation(_scheduleAdherenceFromLocation);
     _tripsLibrary.setUseLabelAsVehicleId(_useLabelAsId);
     _tripsLibrary.setValidateCurrentTime(_validateCurrentTime);
-
+<<<<<<< /usr/src/app/output/camsys/onebusaway-application-modules/3defd296d5e21a37be0a05a65996ede5ffe7eca1/onebusaway-transit-data-federation/src/main/java/org/onebusaway/transit_data_federation/impl/realtime/gtfs_realtime/GtfsRealtimeSource.java/left.java
+    _tripsLibrary.setHackServiceDate(_hackServiceDate);
+    _tripsLibrary.setAddedTripService(new AddedTripServiceImpl());
+||||||| /usr/src/app/output/camsys/onebusaway-application-modules/3defd296d5e21a37be0a05a65996ede5ffe7eca1/onebusaway-transit-data-federation/src/main/java/org/onebusaway/transit_data_federation/impl/realtime/gtfs_realtime/GtfsRealtimeSource.java/base.java
+    _tripsLibrary.setAddedTripService(new AddedTripServiceImpl());
+=======
+>>>>>>> /usr/src/app/output/camsys/onebusaway-application-modules/3defd296d5e21a37be0a05a65996ede5ffe7eca1/onebusaway-transit-data-federation/src/main/java/org/onebusaway/transit_data_federation/impl/realtime/gtfs_realtime/GtfsRealtimeSource.java/right.java
     _tripsLibrary.setFilterUnassigned(_filterUnassigned);
     DuplicatedTripServiceImpl duplicatedTripService = new DuplicatedTripServiceImpl();
     duplicatedTripService.setGtfsRealtimeEntitySource(_entitySource);
