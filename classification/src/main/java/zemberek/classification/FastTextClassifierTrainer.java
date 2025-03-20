@@ -1,5 +1,4 @@
 package zemberek.classification;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.nio.file.Path;
@@ -11,13 +10,18 @@ import zemberek.core.embeddings.FastTextTrainer;
 import zemberek.core.embeddings.SubWordHashProvider;
 
 public class FastTextClassifierTrainer {
-
   public static final int DEFAULT_DIMENSION = 50;
+
   public static final float DEFAULT_LR = 0.2f;
+
   public static final int DEFAULT_EPOCH = 25;
+
   public static final int DEFAULT_MIN_WORD_COUNT = 1;
+
   public static final int DEFAULT_WORD_NGRAM = 1;
+
   public static final int DEFAULT_CONTEXT_WINDOW_SIZE = 5;
+
   public static final int DEFAULT_TC = Runtime.getRuntime().availableProcessors() / 2;
 
   private EventBus eventBus = new EventBus();
@@ -37,20 +41,29 @@ public class FastTextClassifierTrainer {
   }
 
   public enum LossType {
-    SOFTMAX, HIERARCHICAL_SOFTMAX
+    SOFTMAX,
+    HIERARCHICAL_SOFTMAX
   }
 
   public static class Builder {
-
     LossType type = LossType.SOFTMAX;
+
     int wordNgramOrder = DEFAULT_WORD_NGRAM;
+
     SubWordHashProvider subWordHashProvider = new EmptySubwordHashProvider();
+
     float learningRate = DEFAULT_LR;
+
     int threadCount = DEFAULT_TC;
+
     int contextWindowSize = DEFAULT_CONTEXT_WINDOW_SIZE;
+
     int epochCount = DEFAULT_EPOCH;
+
     int dimension = DEFAULT_DIMENSION;
+
     int minWordCount = DEFAULT_MIN_WORD_COUNT;
+
     int quantizationCutOff = -1;
 
     public Builder lossType(LossType type) {
@@ -110,8 +123,7 @@ public class FastTextClassifierTrainer {
 
   public FastTextClassifier train(Path corpus) {
     Args args = Args.forSupervised();
-    args.loss = builder.type == LossType.SOFTMAX ?
-        loss_name.softmax : loss_name.hierarchicalSoftmax;
+    args.loss = builder.type == LossType.SOFTMAX ? loss_name.softmax : loss_name.hierarchicalSoftmax;
     args.dim = builder.dimension;
     args.wordNgrams = builder.wordNgramOrder;
     args.thread = builder.threadCount;
@@ -124,12 +136,8 @@ public class FastTextClassifierTrainer {
     args.maxn = p.getMaxN();
     args.minCount = builder.minWordCount;
     args.cutoff = builder.quantizationCutOff;
-
     FastTextTrainer trainer = new FastTextTrainer(args);
-
-    // for catching and forwarding progress events.
     trainer.getEventBus().register(this);
-
     try {
       return new FastTextClassifier(trainer.train(corpus));
     } catch (Exception e) {
@@ -138,9 +146,7 @@ public class FastTextClassifierTrainer {
     }
   }
 
-  @Subscribe
-  public void trainingProgress(FastTextTrainer.Progress progress) {
+  @Subscribe public void trainingProgress(FastTextTrainer.Progress progress) {
     this.eventBus.post(progress);
   }
-
 }
