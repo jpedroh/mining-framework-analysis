@@ -28,11 +28,9 @@ public class Photo {
 
     private String caption;
     private List<PhotoSize> alt_sizes;
-    private PhotoSize original_size;
 
     private String source;
     private File file;
-
     /**
      * Create a new photo with a data
      * @param file the file for the photo
@@ -40,7 +38,6 @@ public class Photo {
     public Photo(File file) {
         this.file = file;
     }
-
     /**
      * Create a new photo with a source
      * @param source the source for the photo
@@ -48,7 +45,6 @@ public class Photo {
     public Photo(String source) {
         this.source = source;
     }
-
     /**
      * Get the type of this photo
      * @return PhotoType the type of photo
@@ -58,6 +54,7 @@ public class Photo {
         if (this.file   != null) { return PhotoType.FILE;   }
         return null;
     }
+    private PhotoSize original_size;
 
     /**
      * Get the sizes of this Photo
