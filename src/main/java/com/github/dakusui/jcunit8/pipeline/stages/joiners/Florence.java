@@ -140,8 +140,9 @@ public class Florence extends Joiner.Base {
           ts.add(b.build());
         }
       } finally {
-        debug("hg:" + π.size() + "<-" + sizeOfπBeforeHd + ":" + ts.content().size() + ":" + (System
-            .currentTimeMillis() - beforeHg));
+        if (debug)
+          debug("hg:" + π.size() + "<-" + sizeOfπBeforeHd + ":" + ts.content().size() + ":" + (System
+              .currentTimeMillis() - beforeHg));
       }
       ////
       // vg
@@ -166,16 +167,25 @@ public class Florence extends Joiner.Base {
             π.removeAll(TupleUtils.subtuplesOf(n, t));
             ts.add(n);
           } finally {
+<<<<<<< /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/left.java
             firstTime = false;
             debug("vg[%s]:%s:%s:%s", ii, π.size(), ts.content().size(), (System.currentTimeMillis() - beforeVg_i));
             if (π.size() < 16) {
               debug("π=%s", π);
             }
             ii++;
+||||||| /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/base.java
+            System.out.println("vg[i]:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg_i));
+=======
+            if (debug)
+              System.out.println("vg[i]:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() -
+                  beforeVg_i));
+>>>>>>> /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/right.java
           }
         }
       } finally {
-        debug("vg:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg));
+        if (debug)
+          debug("vg:" + π.size() + ":" + ts.content().size() + ":" + (System.currentTimeMillis() - beforeVg));
       }
       alreadyProcessedFactors = involvedFactors;
     }
@@ -260,7 +270,8 @@ public class Florence extends Joiner.Base {
             AssertionError::new
         );
       } finally {
-        debug("allPossibleUniqueTuplesOfStrength:" + (System.currentTimeMillis() - before));
+        if (debug)
+          debug("allPossibleUniqueTuplesOfStrength:" + (System.currentTimeMillis() - before));
       }
     }
 
@@ -385,7 +396,12 @@ public class Florence extends Joiner.Base {
         // workaround compilation error on intellij ultimate/macosx
         throw new RuntimeException();
       });
+<<<<<<< /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/left.java
       */
+||||||| /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/base.java
+      //          ).orElseThrow(RuntimeException::new);
+=======
+>>>>>>> /usr/src/app/output/dakusui/jcunit/7c8b99f1e932c6dd8cd3f2bb7a3d6c824001f57f/src/main/java/com/github/dakusui/jcunit8/pipeline/stages/joiners/Florence.java/right.java
     }
 
     private TupleSet simplify(SchemafulTupleSet in, List<String> involvedFactors) {
