@@ -1,17 +1,8 @@
-/*
- * Copyright (C) NetStruxr, Inc. All rights reserved.
- *
- * This software is published under the terms of the NetStruxr
- * Public Software License version 0.5, a copy of which has been
- * included with this distribution in the LICENSE.NPL file.  */
 package er.extensions.foundation;
-
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver._private.WOProperties;
 import com.webobjects.foundation.NSArray;
@@ -20,7 +11,6 @@ import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSProperties;
 import com.webobjects.foundation.NSSelector;
-
 import er.extensions.ERXExtensions;
 import er.extensions.eof.ERXConstant;
 import er.extensions.logging.ERXLogger;
@@ -100,207 +90,198 @@ import er.extensions.logging.ERXLogger;
  * @property er.extensions.ERXConfigurationManager.PropertiesTouchFile if this property is set to a file name, the application will register for notifications of changes to that file and when that file is touched, the application will re-load properties.
  */
 public class ERXConfigurationManager {
-    private static final Logger log = LoggerFactory.getLogger(ERXConfigurationManager.class);
+  private static final Logger log = LoggerFactory.getLogger(ERXConfigurationManager.class);
 
-    /** 
+  /** 
      * Notification posted when the configuration is updated.  
      * The Java system properties is the part of the configuration.
-     */ 
-    public static final String ConfigurationDidChangeNotification = "ConfigurationDidChangeNotification";        
+     */
+  public static final String ConfigurationDidChangeNotification = "ConfigurationDidChangeNotification";
 
-    /** Configuration manager singleton */ 
-    static ERXConfigurationManager defaultManager = null;
-    
-    private String[] _commandLineArguments; 
-    private NSArray _monitoredProperties;
-    private Properties _defaultProperties;
-    private Properties _commandLineArgumentProperties;
-    private boolean _isInitialized = false;
-    private boolean _isRapidTurnAroundInitialized = false;
+  /** Configuration manager singleton */
+  static ERXConfigurationManager defaultManager = null;
 
-    /** Private constructor to prevent instantiation from outside the class */
-    private ERXConfigurationManager() {
-        /* empty */
-    }
+  private String[] _commandLineArguments;
 
-    /**
+  private NSArray _monitoredProperties;
+
+  private Properties _defaultProperties;
+
+  private Properties _commandLineArgumentProperties;
+
+  private boolean _isInitialized = false;
+
+  private boolean _isRapidTurnAroundInitialized = false;
+
+  /** Private constructor to prevent instantiation from outside the class */
+  private ERXConfigurationManager() {
+  }
+
+  /**
      * If set, touching this path will be used to signal a change to properties files.
      */
-    private static String propertiesTouchFile() {
-        return ERXProperties.stringForKey("er.extensions.ERXConfigurationManager.PropertiesTouchFile");
-    }
-    
-    /**
+  private static String propertiesTouchFile() {
+    return ERXProperties.stringForKey("er.extensions.ERXConfigurationManager.PropertiesTouchFile");
+  }
+
+  /**
      * Returns the single instance of this class
      * 
      * @return the configuration manager
      */
-    public static ERXConfigurationManager defaultManager() {
-        if (defaultManager == null)
-            defaultManager = new ERXConfigurationManager();
-        return defaultManager;
+  public static ERXConfigurationManager defaultManager() {
+    if (defaultManager == null) {
+      defaultManager = new ERXConfigurationManager();
     }
-    
-    /** 
+    return defaultManager;
+  }
+
+  /** 
      * Returns the command line arguments. 
      * {@link er.extensions.appserver.ERXApplication#main(String[], Class)} sets this value. 
      * 
      * @return the command line arguments as a String[]
      * @see #setCommandLineArguments
      */
-    public String[] commandLineArguments() {
-        return _commandLineArguments;
-    }
-    
-    /** 
+  public String[] commandLineArguments() {
+    return _commandLineArguments;
+  }
+
+  /** 
      * Returns the command line arguments as Properties. 
      * {@link er.extensions.appserver.ERXApplication#main(String[], Class)} sets this value. 
      * 
      * @return the command line arguments as a String[]
      * @see #setCommandLineArguments(String[])
      */
-    public Properties commandLineArgumentProperties() {
-        return (Properties) _commandLineArgumentProperties.clone();
-    }
-    
-    /** 
+  public Properties commandLineArgumentProperties() {
+    return (Properties) _commandLineArgumentProperties.clone();
+  }
+
+  /** 
      * Returns the command line arguments as Properties. 
      * {@link er.extensions.appserver.ERXApplication#main(String[], Class)} sets this value. 
      * 
      * @return the command line arguments as a String[]
      * @see #setCommandLineArguments(String[])
      */
-    public Properties defaultProperties() {
-        return (Properties) _defaultProperties.clone();
-    }
-    
-    /** 
+  public Properties defaultProperties() {
+    return (Properties) _defaultProperties.clone();
+  }
+
+  /** 
      * Sets the command line arguments. 
      * {@link er.extensions.appserver.ERXApplication#main(String[], Class)} will call this method 
      * when the application starts up. 
      * 
      * @see #commandLineArguments()
      */
-    public void setCommandLineArguments(String [] newCommandLineArguments) {
-    	_commandLineArguments = newCommandLineArguments;
-		_defaultProperties = (Properties) NSProperties._getProperties().clone();
-		_commandLineArgumentProperties = ERXProperties.propertiesFromArgv(_commandLineArguments);
-    }
+  public void setCommandLineArguments(String[] newCommandLineArguments) {
+    _commandLineArguments = newCommandLineArguments;
+    _defaultProperties = (Properties) NSProperties._getProperties().clone();
+    _commandLineArgumentProperties = ERXProperties.propertiesFromArgv(_commandLineArguments);
+  }
 
-    /**
+  /**
      * Initializes the configuration manager. 
      * The framework principal {@link ERXExtensions} calls 
      * this method when the ERExtensions framework is loaded. 
      */
-    public void initialize() {
-    	if (! _isInitialized) {
-    		_isInitialized = true;
-    		loadConfiguration();
-    	}
+  public void initialize() {
+    if (!_isInitialized) {
+      _isInitialized = true;
+      loadConfiguration();
     }
+  }
 
-    private NSArray monitoredProperties() {
-        if( _monitoredProperties == null) {
-            _monitoredProperties = ERXProperties.pathsForUserAndBundleProperties();
-        }
-        return _monitoredProperties;
+  private NSArray monitoredProperties() {
+    if (_monitoredProperties == null) {
+      _monitoredProperties = ERXProperties.pathsForUserAndBundleProperties();
     }
+    return _monitoredProperties;
+  }
 
-    /**
+  /**
      * Sets up the system for rapid turnaround mode. It will watch the changes
      * on Properties files in application and framework bundles and
      * WebObjects.properties under the home directory. Rapid turnaround mode
      * will only be enabled if there are such files available and system has
      * WOCaching disabled.
      */
-    public void configureRapidTurnAround() {
-        if (_isRapidTurnAroundInitialized)      return;
-
-        _isRapidTurnAroundInitialized = true;
-
-        if (WOApplication.application()!=null && WOApplication.application().isCachingEnabled()) {
-            log.info("WOCachingEnabled is true. Disabling the rapid turnaround for Properties files");
-            registerPropertiesTouchFiles();
-            return;
-        }
-
-        for (Enumeration e = monitoredProperties().objectEnumerator(); e.hasMoreElements();) {
-            String path = (String) e.nextElement();
-                registerForFileNotification(path, "updateSystemProperties");
-            }
-        }
-
-    private void registerPropertiesTouchFiles() {
-        String propertiesTouchFile = propertiesTouchFile();
-        
-        if (propertiesTouchFile != null) {
-            String appNamePlaceHolder = "/{AppName}/";
-            int appNamePlaceHolderIndex = propertiesTouchFile.lastIndexOf(appNamePlaceHolder);
-            if (appNamePlaceHolderIndex == -1) {
-                registerForFileNotification(propertiesTouchFile, "updateAllSystemProperties");
-            }
-            else {
-                if (WOApplication.application() != null) {
-                    StringBuilder appSpecificTouchFile = new StringBuilder();
-                    
-                    appSpecificTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
-                    appSpecificTouchFile.append(WOApplication.application().name());
-                    appSpecificTouchFile.append(propertiesTouchFile.substring(appNamePlaceHolderIndex + appNamePlaceHolder.length() - 1));
-                    
-                    registerForFileNotification(appSpecificTouchFile.toString(), "updateAllSystemProperties");
-                }
-                
-                StringBuilder globalTouchFile = new StringBuilder();
-                
-                globalTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
-                globalTouchFile.append(propertiesTouchFile.substring(appNamePlaceHolderIndex + appNamePlaceHolder.length()));
-                
-                registerForFileNotification(globalTouchFile.toString(), "updateAllSystemProperties");
-            }            
-        }
+  public void configureRapidTurnAround() {
+    if (_isRapidTurnAroundInitialized) {
+      return;
     }
-    
-    private void registerForFileNotification(String path, String callbackMethod) {
-        try {
-            ERXFileNotificationCenter.defaultCenter().addObserver(this,
-                                                                  new NSSelector(callbackMethod, ERXConstant.NotificationClassArray),
-                                                                  path);
-            log.debug("Registered: {}", path);
-        } catch (Exception ex) {
-            log.error("An exception occured while registering the observer for the "
-                      + "logging configuration file: {} {}", ex.getClass().getName(), ex.getMessage(), ex);
-        }            
+    _isRapidTurnAroundInitialized = true;
+    if (WOApplication.application() != null && WOApplication.application().isCachingEnabled()) {
+      log.info("WOCachingEnabled is true. Disabling the rapid turnaround for Properties files");
+      registerPropertiesTouchFiles();
+      return;
     }
+    for (Enumeration e = monitoredProperties().objectEnumerator(); e.hasMoreElements(); ) {
+      String path = (String) e.nextElement();
+      registerForFileNotification(path, "updateSystemProperties");
+    }
+  }
 
-    /**
+  private void registerPropertiesTouchFiles() {
+    String propertiesTouchFile = propertiesTouchFile();
+    if (propertiesTouchFile != null) {
+      String appNamePlaceHolder = "/{AppName}/";
+      int appNamePlaceHolderIndex = propertiesTouchFile.lastIndexOf(appNamePlaceHolder);
+      if (appNamePlaceHolderIndex == -1) {
+        registerForFileNotification(propertiesTouchFile, "updateAllSystemProperties");
+      } else {
+        if (WOApplication.application() != null) {
+          StringBuilder appSpecificTouchFile = new StringBuilder();
+          appSpecificTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
+          appSpecificTouchFile.append(WOApplication.application().name());
+          appSpecificTouchFile.append(propertiesTouchFile.substring(appNamePlaceHolderIndex + appNamePlaceHolder.length() - 1));
+          registerForFileNotification(appSpecificTouchFile.toString(), "updateAllSystemProperties");
+        }
+        StringBuilder globalTouchFile = new StringBuilder();
+        globalTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
+        globalTouchFile.append(propertiesTouchFile.substring(appNamePlaceHolderIndex + appNamePlaceHolder.length()));
+        registerForFileNotification(globalTouchFile.toString(), "updateAllSystemProperties");
+      }
+    }
+  }
+
+  private void registerForFileNotification(String path, String callbackMethod) {
+    try {
+      ERXFileNotificationCenter.defaultCenter().addObserver(this, new NSSelector(callbackMethod, ERXConstant.NotificationClassArray), path);
+      log.debug("Registered: {}", path);
+    } catch (Exception ex) {
+      log.error("An exception occured while registering the observer for the " + "logging configuration file: {} {}", ex.getClass().getName(), ex.getMessage(), ex);
+    }
+  }
+
+  /**
      * This will overlay the current system config files. It will then
      * re-load the command line args.
      */
-    public void loadConfiguration() {
-    	Properties systemProperties = System.getProperties();
-    	systemProperties = applyConfiguration(systemProperties);
-    	
-    	if (ERXProperties._useLoadtimeAppSpecifics) {
-    		ERXSystem.updateProperties(systemProperties);
-    		ERXProperties.transferPropertiesFromSourceToDest(systemProperties, System.getProperties());
-    	}
-    	else {
-    		ERXProperties.transferPropertiesFromSourceToDest(systemProperties, System.getProperties());
-    		ERXSystem.updateProperties();
-    	}
-
-    	ERXLogger.configureLoggingWithSystemProperties();
+  public void loadConfiguration() {
+    Properties systemProperties = System.getProperties();
+    systemProperties = applyConfiguration(systemProperties);
+    if (ERXProperties._useLoadtimeAppSpecifics) {
+      ERXSystem.updateProperties(systemProperties);
+      ERXProperties.transferPropertiesFromSourceToDest(systemProperties, System.getProperties());
+    } else {
+      ERXProperties.transferPropertiesFromSourceToDest(systemProperties, System.getProperties());
+      ERXSystem.updateProperties();
     }
-    
-    /**
+    ERXLogger.configureLoggingWithSystemProperties();
+  }
+
+  /**
      * This will overlay the current system config files. It will then
      * re-load the command line args.
      */
-    public Properties applyConfiguration(Properties systemProperties) {
-    	return ERXProperties.applyConfiguration(systemProperties, commandLineArgumentProperties());
-    }
+  public Properties applyConfiguration(Properties systemProperties) {
+    return ERXProperties.applyConfiguration(systemProperties, commandLineArgumentProperties());
+  }
 
-    /** 
+  /** 
      * Updates the configuration from the current configuration and 
      * posts {@link #ConfigurationDidChangeNotification}. It also  
      * calls {@link er.extensions.logging.ERXLogger#configureLoggingWithSystemProperties()} to reconfigure 
@@ -318,34 +299,47 @@ public class ERXConfigurationManager {
      * 
      * @param  n NSNotification object for the event (null means load all files)
      */
-    public synchronized void updateSystemProperties(NSNotification n) {
-    	loadConfiguration();
-    }
+  public synchronized void updateSystemProperties(NSNotification n) {
+    loadConfiguration();
+  }
 
-    public synchronized void updateAllSystemProperties(NSNotification notification) {
-    	loadConfiguration();
-    }
-    
-    public final static int WindowsOperatingSystem=1;
-    public final static int MacOSXOperatingSystem=2;
-    public final static int SolarisOperatingSystem=3;
-    public final static int UnknownOperatingSystem=3;
+  public synchronized void updateAllSystemProperties(NSNotification notification) {
+    loadConfiguration();
+  }
 
-    private int _operatingSystem=0;
-    public int operatingSystem() {
-        if (_operatingSystem==0) {
-            String osName=ERXSystem.getProperty("os.name").toLowerCase();
-            if (osName.indexOf("windows")!=-1) _operatingSystem=WindowsOperatingSystem;
-            else if (osName.indexOf("solaris")!=-1) _operatingSystem=SolarisOperatingSystem;
-            else if (osName.indexOf("macos")!=-1 || osName.indexOf("mac os")!=-1) _operatingSystem=MacOSXOperatingSystem;
-            else _operatingSystem=UnknownOperatingSystem;
+  public final static int WindowsOperatingSystem = 1;
+
+  public final static int MacOSXOperatingSystem = 2;
+
+  public final static int SolarisOperatingSystem = 3;
+
+  public final static int UnknownOperatingSystem = 3;
+
+  private int _operatingSystem = 0;
+
+  public int operatingSystem() {
+    if (_operatingSystem == 0) {
+      String osName = ERXSystem.getProperty("os.name").toLowerCase();
+      if (osName.indexOf("windows") != -1) {
+        _operatingSystem = WindowsOperatingSystem;
+      } else {
+        if (osName.indexOf("solaris") != -1) {
+          _operatingSystem = SolarisOperatingSystem;
+        } else {
+          if (osName.indexOf("macos") != -1 || osName.indexOf("mac os") != -1) {
+            _operatingSystem = MacOSXOperatingSystem;
+          } else {
+            _operatingSystem = UnknownOperatingSystem;
+          }
         }
-        return _operatingSystem;
+      }
     }
+    return _operatingSystem;
+  }
 
-    protected String documentRoot;
+  protected String documentRoot;
 
-    /**
+  /**
      * Path to the web server's document root.
      * This implementation tries first to resolve the
      * <code>application.name()+ "DocumentRoot"</code> property value,
@@ -354,44 +348,42 @@ public class ERXConfigurationManager {
      * JavaWebObjects bundle.
      * @return to the web server's document root.
      */
-    public String documentRoot() {
+  public String documentRoot() {
+    if (documentRoot == null) {
+      documentRoot = ERXProperties.stringForKey(WOApplication.application().name() + "DocumentRoot");
+      if (documentRoot == null) {
+        documentRoot = ERXProperties.stringForKey("ERXDocumentRoot");
         if (documentRoot == null) {
-            // for WebObjects.properties
-            documentRoot = ERXProperties.stringForKey(WOApplication.application().name() + "DocumentRoot");
-            if(documentRoot == null) {
-                // for command line and Properties
-                documentRoot = ERXProperties.stringForKey("ERXDocumentRoot");
-                if(documentRoot == null) {
-                    // default value
-                    NSDictionary dict = ERXDictionaryUtilities.dictionaryFromPropertyList("WebServerConfig", NSBundle.bundleForName("JavaWebObjects"));
-                    if(dict != null)
-                        documentRoot = (String)dict.objectForKey("DocumentRoot");
-                }
-            }
+          NSDictionary dict = ERXDictionaryUtilities.dictionaryFromPropertyList("WebServerConfig", NSBundle.bundleForName("JavaWebObjects"));
+          if (dict != null) {
+            documentRoot = (String) dict.objectForKey("DocumentRoot");
+          }
         }
-        return documentRoot;
+      }
     }
+    return documentRoot;
+  }
 
-    /** holds the host name */
-    protected String _hostName;
+  /** holds the host name */
+  protected String _hostName;
 
-    /**
+  /**
      * Gets the default host name for the current local host.
      * @return host name or UnknownHost if the host is unknown.
      */
-    public String hostName() {
-        if (_hostName == null) {
-            try {
-                _hostName = java.net.InetAddress.getLocalHost().getHostName();
-            } catch (java.net.UnknownHostException ehe) {
-                log.warn("Caught unknown host exception.", ehe);
-                _hostName = "UnknownHost";
-            }
-        }
-        return _hostName;
-    }    
-    
-    /**
+  public String hostName() {
+    if (_hostName == null) {
+      try {
+        _hostName = java.net.InetAddress.getLocalHost().getHostName();
+      } catch (java.net.UnknownHostException ehe) {
+        log.warn("Caught unknown host exception.", ehe);
+        _hostName = "UnknownHost";
+      }
+    }
+    return _hostName;
+  }
+
+  /**
      * Checks if the application is  be deployed as a servlet.
      * 
 	 * This heuristic to determine if an application is deployed as servlet relays on the fact, 
@@ -399,24 +391,27 @@ public class ERXConfigurationManager {
 	 *  
      * @return true if the application is deployed as a servlet
      */
-    public boolean isDeployedAsServlet() {
-		return contextClassName()!= null && contextClassName().contains("Servlet"); // i.e one of WOServletContext or ERXWOServletContext
+  public boolean isDeployedAsServlet() {
+    return 
+<<<<<<< /usr/src/app/output/wocommunity/wonder/4b8ea8d4f52275fb43ea92afa9649b036e84de7f/Frameworks/Core/ERExtensions/Sources/er/extensions/foundation/ERXConfigurationManager.java/left.java
+    contextClassName().contains("Servlet")
+=======
+    contextClassName() != null && contextClassName().contains("Servlet")
+>>>>>>> /usr/src/app/output/wocommunity/wonder/4b8ea8d4f52275fb43ea92afa9649b036e84de7f/Frameworks/Core/ERExtensions/Sources/er/extensions/foundation/ERXConfigurationManager.java/right.java
+    ;
+  }
+
+  public void setContextClassName(String name) {
+    if (name != null) {
+      WOProperties.TheContextClassName = name;
     }
-    
-	public void setContextClassName(String name) {
-		if (name != null) {
-			WOProperties.TheContextClassName = name;
-		}
+  }
 
-	}
-
-	public String contextClassName() {
-		if (WOProperties.TheContextClassName == null) {
-			String contextClassName = NSProperties.getProperty(WOProperties._ContextClassNameKey);
-			this.setContextClassName(contextClassName);
-		}
-
-		return WOProperties.TheContextClassName;
-	}
-
+  public String contextClassName() {
+    if (WOProperties.TheContextClassName == null) {
+      String contextClassName = NSProperties.getProperty(WOProperties._ContextClassNameKey);
+      this.setContextClassName(contextClassName);
+    }
+    return WOProperties.TheContextClassName;
+  }
 }
