@@ -154,15 +154,28 @@ public class BungeeCord extends ProxyServer
     private final ConsoleReader consoleReader;
     @Getter
     private final Logger logger;
-    public final Gson gson = new GsonBuilder()
+    public final Gson gson =  new GsonBuilder()
             .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
             .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
             .registerTypeAdapter( TranslatableComponent.class, new TranslatableComponentSerializer() )
-            .registerTypeAdapter( KeybindComponent.class, new KeybindComponentSerializer() )
+            .registerTypeAdapter( KeybindComponent.class, new KeybindComponentSerializer( ProtocolConstants.MINECRAFT_1_7_6 ) )
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/left.java
             .registerTypeAdapter( ScoreComponent.class, new ScoreComponentSerializer() )
+||||||| /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/base.java
+            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() )
+=======
+            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() )
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/right.java
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/left.java
             .registerTypeAdapter( SelectorComponent.class, new SelectorComponentSerializer() )
+||||||| /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/base.java
+            .create()
+=======
+            .create()
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/right.java
             .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer( ProtocolConstants.MINECRAFT_1_7_6 ) )
             .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/left.java
     public final Gson gsonLegacy = new GsonBuilder()
             .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
             .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
@@ -172,8 +185,17 @@ public class BungeeCord extends ProxyServer
             .registerTypeAdapter( SelectorComponent.class, new SelectorComponentSerializer() )
             .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer( ProtocolConstants.MINECRAFT_1_7_2 ) )
             .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
+||||||| /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/base.java
+=======
+    public final Gson gsonLegacy = new GsonBuilder()
+            .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
+            .registerTypeAdapter( TextComponent.class, new TextComponentSerializer() )
+            .registerTypeAdapter( TranslatableComponent.class, new TranslatableComponentSerializer() )
+            .registerTypeAdapter( ServerPing.PlayerInfo.class, new PlayerInfoSerializer( ProtocolConstants.MINECRAFT_1_7_2 ) )
+            .registerTypeAdapter( Favicon.class, Favicon.getFaviconTypeAdapter() ).create();
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/BungeeCord.java/right.java
     @Getter
-    private ConnectionThrottle connectionThrottle;
+private ConnectionThrottle connectionThrottle;
     private final ModuleManager moduleManager = new ModuleManager();
 
     

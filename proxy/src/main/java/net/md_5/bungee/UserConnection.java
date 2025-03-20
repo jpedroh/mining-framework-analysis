@@ -607,6 +607,7 @@ public final class UserConnection implements ProxiedPlayer
         return ImmutableMap.copyOf( forgeClientHandler.getClientModList() );
     }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/left.java
     @Override
     public void setTabHeader(BaseComponent header, BaseComponent footer)
     {
@@ -621,7 +622,22 @@ public final class UserConnection implements ProxiedPlayer
             ) );
         }
     }
+||||||| /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/base.java
+=======
+    @Override
+    public void setTabHeader(BaseComponent header, BaseComponent footer)
+    {
+        if ( pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
+        {
+            unsafe().sendPacket( new PlayerListHeaderFooter(
+                    ( header != null ) ? ComponentSerializer.toString( header ) : EMPTY_TEXT,
+                    ( footer != null ) ? ComponentSerializer.toString( footer ) : EMPTY_TEXT
+            ) );
+        }
+    }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/right.java
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/left.java
     @Override
     public void setTabHeader(BaseComponent[] header, BaseComponent[] footer)
     {
@@ -636,13 +652,27 @@ public final class UserConnection implements ProxiedPlayer
             ) );
         }
     }
+||||||| /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/base.java
+=======
+    @Override
+    public void setTabHeader(BaseComponent[] header, BaseComponent[] footer)
+    {
+        if ( pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
+        {
+            unsafe().sendPacket( new PlayerListHeaderFooter(
+                    ( header != null ) ? ComponentSerializer.toString( header ) : EMPTY_TEXT,
+                    ( footer != null ) ? ComponentSerializer.toString( footer ) : EMPTY_TEXT
+            ) );
+        }
+    }
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/7d1e131b67dd806d686060ba35fa1fbf59868ad8/proxy/src/main/java/net/md_5/bungee/UserConnection.java/right.java
 
     @Override
-    public void resetTabHeader()
-    {
-        // Mojang did not add a way to remove the header / footer completely, we can only set it to empty
-        setTabHeader( (BaseComponent) null, null );
-    }
+public void resetTabHeader()
+{
+    // Mojang did not add a way to remove the header / footer completely, we can only set it to empty
+    setTabHeader( (BaseComponent) null, null );
+}
 
     @Override
     public void sendTitle(Title title)
