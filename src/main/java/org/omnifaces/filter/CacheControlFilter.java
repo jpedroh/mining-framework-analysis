@@ -1,32 +1,16 @@
-/*
- * Copyright 2013 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.filter;
-
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.omnifaces.util.Servlets.isFacesDevelopment;
 import static org.omnifaces.util.Servlets.isFacesResourceRequest;
-
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.omnifaces.util.Servlets;
 
 /**
@@ -156,88 +140,72 @@ import org.omnifaces.util.Servlets;
  * <li><code>Pragma: no-cache</code></li>
  * </ul>
  *
- * <h3>JSF development stage</h3>
- * <p>To speed up development, caching by this filter is <strong>disabled</strong> when JSF project stage is set to
- * <code>Development</code> as per {@link Servlets#isFacesDevelopment(javax.servlet.ServletContext)}.
- *
  * @author Bauke Scholtz
  * @since 1.7
  */
 public class CacheControlFilter extends HttpFilter {
+  private static final String INIT_PARAM_EXPIRES = "expires";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final long DEFAULT_EXPIRES = 0;
 
-	private static final String INIT_PARAM_EXPIRES = "expires";
-	private static final long DEFAULT_EXPIRES = 0;
-	private static final long DAYS_PER_WEEK = 7;
-	private static final String ERROR_EXPIRES = "The 'expires' init param must be a number between 0 and 999999999 with"
-		+ " optionally the 'w', 'd', 'h', 'm' or 's' suffix. For example: '6w' is 6 weeks. Default suffix is 's' for"
-		+ " seconds. For example: '86400' is 86400 seconds. Encountered an invalid value of '%s'.";
+  private static final long DAYS_PER_WEEK = 7;
 
-	private enum Unit {
-		W(DAYS.toSeconds(DAYS_PER_WEEK)), D(DAYS.toSeconds(1)), H(HOURS.toSeconds(1)), M(MINUTES.toSeconds(1)), S(1);
+  private static final String ERROR_EXPIRES = "The \'expires\' init param must be a number between 0 and 999999999 with" + " optionally the \'w\', \'d\', \'h\', \'m\' or \'s\' suffix. For example: \'6w\' is 6 weeks. Default suffix is \'s\' for" + " seconds. For example: \'86400\' is 86400 seconds. Encountered an invalid value of \'%s\'.";
 
-		private long seconds;
+  private enum Unit {
+    W(DAYS.toSeconds(DAYS_PER_WEEK)),
+    D(DAYS.toSeconds(1)),
+    H(HOURS.toSeconds(1)),
+    M(MINUTES.toSeconds(1)),
+    S(1)
+    ;
 
-		private Unit(long seconds) {
-			this.seconds = seconds;
-		}
+    private long seconds;
 
-		public long toSeconds(long value) {
-			return value * seconds;
-		}
-	}
+    private Unit(long seconds) {
+      this.seconds = seconds;
+    }
 
-	// Vars -----------------------------------------------------------------------------------------------------------
+    public long toSeconds(long value) {
+      return value * seconds;
+    }
+  }
 
-	private long expires = DEFAULT_EXPIRES;
+  private long expires = DEFAULT_EXPIRES;
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Initialize the <code>expires</code> parameter.
 	 */
-	@Override
-	public void init() throws ServletException {
-		if (isFacesDevelopment(getServletContext())) {
-			return; // Don't cache during development.
-		}
+  @Override public void init() throws ServletException {
+    if (isFacesDevelopment(getServletContext())) {
+      return;
+    }
+    String expiresParam = getInitParameter(INIT_PARAM_EXPIRES);
+    if (expiresParam != null) {
+      if (!expiresParam.matches("[0-9]{1,9}[wdhms]?")) {
+        throw new ServletException(String.format(ERROR_EXPIRES, expiresParam));
+      }
+      String[] parts = expiresParam.split("(?=[wdhms])");
+      long number = Long.valueOf(parts[0]);
+      if (parts.length > 1) {
+        String unit = parts[1];
+        number = Unit.valueOf(unit.toUpperCase()).toSeconds(number);
+      }
+      expires = number;
+    }
+  }
 
-		String expiresParam = getInitParameter(INIT_PARAM_EXPIRES);
-
-		if (expiresParam != null) {
-			if (!expiresParam.matches("[0-9]{1,9}[wdhms]?")) {
-				throw new ServletException(String.format(ERROR_EXPIRES, expiresParam));
-			}
-
-			String[] parts = expiresParam.split("(?=[wdhms])");
-			long number = Long.valueOf(parts[0]);
-
-			if (parts.length > 1) {
-				String unit = parts[1];
-				number = Unit.valueOf(unit.toUpperCase()).toSeconds(number);
-			}
-
-			expires = number;
-		}
-	}
-
-	/**
+  /**
 	 * Set the necessary response headers based on <code>expires</code> initialization parameter.
 	 */
-	@Override
-	public void doFilter
-		(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain)
-			throws ServletException, IOException
-	{
-		if (!isFacesResourceRequest(request)) {
-			setCacheHeaders(response, expires);
-		}
+  @Override public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {
+    if (!isFacesResourceRequest(request)) {
+      setCacheHeaders(response, expires);
+    }
+    chain.doFilter(request, response);
+  }
 
-		chain.doFilter(request, response);
-	}
-
-	/**
+  /**
 	 * <p>Set the cache headers. If the <code>expires</code> argument is larger than 0 seconds, then the following headers
 	 * will be set:
 	 * <ul>
@@ -248,18 +216,17 @@ public class CacheControlFilter extends HttpFilter {
 	 * @param response The HTTP servlet response to set the headers on.
 	 * @param expires The expire time in seconds (not milliseconds!).
 	 */
-	public static void setCacheHeaders(HttpServletResponse response, long expires) {
-		if (expires > 0) {
-			response.setHeader("Cache-Control", "public,max-age=" + expires + ",must-revalidate");
-			response.setDateHeader("Expires", System.currentTimeMillis() + SECONDS.toMillis(expires));
-			response.setHeader("Pragma", ""); // Explicitly set pragma to prevent container from overriding it.
-		}
-		else {
-			setNoCacheHeaders(response);
-		}
-	}
+  public static void setCacheHeaders(HttpServletResponse response, long expires) {
+    if (expires > 0) {
+      response.setHeader("Cache-Control", "public,max-age=" + expires + ",must-revalidate");
+      response.setDateHeader("Expires", System.currentTimeMillis() + SECONDS.toMillis(expires));
+      response.setHeader("Pragma", "");
+    } else {
+      setNoCacheHeaders(response);
+    }
+  }
 
-	/**
+  /**
 	 * <p>Set the no-cache headers. The following headers will be set:
 	 * <ul>
 	 * <li><code>Cache-Control: no-cache,no-store,must-revalidate</code></li>
@@ -269,10 +236,9 @@ public class CacheControlFilter extends HttpFilter {
 	 * Set the no-cache headers.
 	 * @param response The HTTP servlet response to set the headers on.
 	 */
-	public static void setNoCacheHeaders(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
-		response.setDateHeader("Expires", 0);
-		response.setHeader("Pragma", "no-cache"); // Backwards compatibility for HTTP 1.0.
-	}
-
+  public static void setNoCacheHeaders(HttpServletResponse response) {
+    response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
+    response.setDateHeader("Expires", 0);
+    response.setHeader("Pragma", "no-cache");
+  }
 }

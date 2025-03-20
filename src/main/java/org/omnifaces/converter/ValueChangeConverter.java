@@ -1,17 +1,4 @@
-/*
- * Copyright 2013 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.converter;
-
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -46,7 +33,6 @@ import javax.faces.convert.Converter;
  *     // ...
  * }
  * </pre>
- * <p>
  * So, essentially, just replace <code>implements Converter</code> by <code>extends ValueChangeConverter</code> and
  * rename the method from <code>getAsObject</code> to <code>getAsChangedObject</code>.
  * Note: the <code>getAsString</code> method of your converter doesn't need to be changed.
@@ -55,29 +41,25 @@ import javax.faces.convert.Converter;
  * @since 1.6
  */
 public abstract class ValueChangeConverter implements Converter {
-
-	/**
+  /**
 	 * If the component is an instance of {@link EditableValueHolder} and the string representation of its old object
 	 * value is equal to the submitted value, then immediately return its old object value unchanged. Otherwise, invoke
 	 * {@link #getAsChangedObject(FacesContext, UIComponent, String)} which may in turn do the necessary possibly
 	 * expensive DAO operations.
 	 */
-	@Override
-	public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-		if (component instanceof EditableValueHolder) {
-			String newStringValue = submittedValue;
-			Object oldObjectValue = ((EditableValueHolder) component).getValue();
-			String oldStringValue = getAsString(context, component, oldObjectValue);
+  @Override public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+    if (component instanceof EditableValueHolder) {
+      String newStringValue = submittedValue;
+      Object oldObjectValue = ((EditableValueHolder) component).getValue();
+      String oldStringValue = getAsString(context, component, oldObjectValue);
+      if (newStringValue == null ? oldStringValue == null : newStringValue.equals(oldStringValue)) {
+        return oldObjectValue;
+      }
+    }
+    return getAsChangedObject(context, component, submittedValue);
+  }
 
-			if (newStringValue == null ? oldStringValue == null : newStringValue.equals(oldStringValue)) {
-				return oldObjectValue;
-			}
-		}
-
-		return getAsChangedObject(context, component, submittedValue);
-	}
-
-	/**
+  /**
 	 * Use this method instead of {@link #getAsObject(FacesContext, UIComponent, String)} if you intend to perform the
 	 * conversion only when the submitted value is really changed as compared to the model value.
 	 * @param context The involved faces context.
@@ -86,6 +68,5 @@ public abstract class ValueChangeConverter implements Converter {
 	 * @return The converted value, exactly like as when you use {@link #getAsObject(FacesContext, UIComponent, String)}
 	 * the usual way.
 	 */
-	public abstract Object getAsChangedObject(FacesContext context, UIComponent component, String submittedValue);
-
+  public abstract Object getAsChangedObject(FacesContext context, UIComponent component, String submittedValue);
 }

@@ -1,22 +1,7 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.filter;
-
-import static org.omnifaces.util.Utils.UTF_8;
-
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.IOException;
 import java.nio.charset.Charset;
-
 import javax.faces.context.ExternalContext;
 import javax.faces.context.PartialViewContext;
 import javax.servlet.FilterChain;
@@ -76,50 +61,35 @@ import javax.servlet.http.HttpSession;
  * @since 1.2
  */
 public class CharacterEncodingFilter extends HttpFilter {
+  private static final String INIT_PARAM_ENCODING = "encoding";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final Charset DEFAULT_ENCODING = UTF_8;
 
-	private static final String INIT_PARAM_ENCODING = "encoding";
-	private static final Charset DEFAULT_ENCODING = UTF_8;
-	private static final String ERROR_ENCODING =
-		"The 'encoding' init param must represent a valid charset. Encountered an invalid charset of '%s'.";
+  private static final String ERROR_ENCODING = "The \'encoding\' init param must represent a valid charset. Encountered an invalid charset of \'%s\'.";
 
-	// Vars -----------------------------------------------------------------------------------------------------------
+  private Charset encoding = DEFAULT_ENCODING;
 
-	private Charset encoding = DEFAULT_ENCODING;
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Initializes the filter parameters.
 	 */
-	@Override
-	public void init() throws ServletException {
-		String encodingParam = getInitParameter(INIT_PARAM_ENCODING);
+  @Override public void init() throws ServletException {
+    String encodingParam = getInitParameter(INIT_PARAM_ENCODING);
+    if (encodingParam != null) {
+      try {
+        encoding = Charset.forName(encodingParam);
+      } catch (Exception e) {
+        throw new ServletException(String.format(ERROR_ENCODING, encodingParam), e);
+      }
+    }
+  }
 
-		if (encodingParam != null) {
-			try {
-				encoding = Charset.forName(encodingParam);
-			}
-			catch (Exception e) {
-				throw new ServletException(String.format(ERROR_ENCODING, encodingParam), e);
-			}
-		}
-	}
-
-	/**
+  /**
 	 * Perform the filtering job. Only if the request character encoding has not been set yet, then set it.
 	 */
-	@Override
-	public void doFilter
-		(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain)
-			throws ServletException, IOException
-	{
-		if (request.getCharacterEncoding() == null) {
-			request.setCharacterEncoding(encoding.name());
-		}
-
-		chain.doFilter(request, response);
-	}
-
+  @Override public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {
+    if (request.getCharacterEncoding() == null) {
+      request.setCharacterEncoding(encoding.name());
+    }
+    chain.doFilter(request, response);
+  }
 }

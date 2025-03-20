@@ -1,22 +1,7 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.taghandler;
-
 import static java.lang.Boolean.TRUE;
 import static org.omnifaces.util.Faces.setApplicationAttribute;
-
 import java.io.IOException;
-
 import javax.faces.application.ViewExpiredException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
@@ -26,7 +11,6 @@ import javax.faces.view.facelets.ComponentHandler;
 import javax.faces.view.facelets.FaceletContext;
 import javax.faces.view.facelets.TagConfig;
 import javax.faces.view.facelets.TagHandler;
-
 import org.omnifaces.viewhandler.RestorableViewHandler;
 
 /**
@@ -68,48 +52,56 @@ import org.omnifaces.viewhandler.RestorableViewHandler;
  * statelessness should not form any problem at all. So, if you have at least Mojarra 2.1.19 at hands, use the
  * <code>transient="true"</code> instead.
  *
+ * <h3>Mojarra's new stateless mode</h3>
+ * <p>
+ * Since Mojarra 2.1.19, about 2 months after OmniFaces introduced the <code>&lt;o:enableRestorableView&gt;</code>,
+ * it's possible to enable a stateless mode on the view by simply setting its <code>transient</code> attribute to
+ * <code>true</code>:
+ * <pre>
+ * &lt;f:view transient="true"&gt;
+ *     ...
+ * &lt;/f:view&gt;
+ * </pre>
+ * <p>
+ * This goes actually a step further than <code>&lt;o:enableRestorableView&gt;</code> as no state would be saved at all.
+ * However, on those kind of pages where <code>&lt;o:enableRestorableView&gt;</code> would work just fine, this
+ * statelessness should not form any problem at all. So, if you have at least Mojarra 2.1.19 at hands, use the
+ * <code>transient="true"</code> instead.
+ *
  * @author Bauke Scholtz
  * @since 1.3
  * @see RestorableViewHandler
  */
 public class EnableRestorableView extends TagHandler {
+  private static final String ERROR_INVALID_PARENT = "EnableRestorableView must be a child of UIViewRoot. Encountered parent of type \'%s\'." + " It is recommended to enclose o:enableRestorableView in f:metadata.";
 
-	// Constants ------------------------------------------------------------------------------------------------------
-
-	private static final String ERROR_INVALID_PARENT =
-		"EnableRestorableView must be a child of UIViewRoot. Encountered parent of type '%s'."
-			+ " It is recommended to enclose o:enableRestorableView in f:metadata.";
-
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * The tag constructor.
 	 * @param config The tag config.
 	 */
-	public EnableRestorableView(TagConfig config) {
-		super(config);
-		setApplicationAttribute(EnableRestorableView.class.getName(), TRUE);
-	}
+  public EnableRestorableView(TagConfig config) {
+    super(config);
+    setApplicationAttribute(
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/left.java
+    RestorableViewHandler
+=======
+    EnableRestorableView
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/EnableRestorableView.java/right.java
+    .class.getName(), TRUE);
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Enable the current view to be restorable. This basically sets a specific view attribute which the
 	 * {@link RestorableViewHandler} could intercept on.
 	 * @throws IllegalArgumentException When given parent is not an instance of {@link UIViewRoot}.
 	 */
-	@Override
-	public void apply(FaceletContext context, final UIComponent parent) throws IOException {
-		if (!(parent instanceof UIViewRoot)) {
-			throw new IllegalArgumentException(
-				String.format(ERROR_INVALID_PARENT, parent != null ? parent.getClass().getName() : null));
-		}
-
-		if (!ComponentHandler.isNew(parent)) {
-			return;
-		}
-
-		parent.getAttributes().put(EnableRestorableView.class.getName(), TRUE);
-	}
-
+  @Override public void apply(FaceletContext context, final UIComponent parent) throws IOException {
+    if (!(parent instanceof UIViewRoot)) {
+      throw new IllegalArgumentException(String.format(ERROR_INVALID_PARENT, parent != null ? parent.getClass().getName() : null));
+    }
+    if (!ComponentHandler.isNew(parent)) {
+      return;
+    }
+    parent.getAttributes().put(EnableRestorableView.class.getName(), TRUE);
+  }
 }

@@ -1,25 +1,10 @@
-/*
- * Copyright 2014 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.exceptionhandler;
-
 import java.util.Iterator;
-
 import javax.faces.FacesException;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ExceptionQueuedEvent;
-
 import org.omnifaces.util.Messages;
 
 /**
@@ -56,50 +41,39 @@ import org.omnifaces.util.Messages;
  * @since 1.8
  */
 public class FacesMessageExceptionHandler extends ExceptionHandlerWrapper {
+  private ExceptionHandler wrapped;
 
-	// Variables ------------------------------------------------------------------------------------------------------
-
-	private ExceptionHandler wrapped;
-
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Construct a new faces message exception handler around the given wrapped exception handler.
 	 * @param wrapped The wrapped exception handler.
 	 */
-	public FacesMessageExceptionHandler(ExceptionHandler wrapped) {
-		this.wrapped = wrapped;
-	}
+  public FacesMessageExceptionHandler(ExceptionHandler wrapped) {
+    this.wrapped = wrapped;
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Set every exception as a global FATAL faces message.
 	 */
-	@Override
-	public void handle() throws FacesException {
-		for (Iterator<ExceptionQueuedEvent> iter = getUnhandledExceptionQueuedEvents().iterator(); iter.hasNext();) {
-			Messages.create(createFatalMessage(iter.next().getContext().getException())).fatal().add();
-			iter.remove();
-		}
+  @Override public void handle() throws FacesException {
+    for (Iterator<ExceptionQueuedEvent> iter = getUnhandledExceptionQueuedEvents().iterator(); iter.hasNext(); ) {
+      Messages.create(createFatalMessage(iter.next().getContext().getException())).fatal().add();
+      iter.remove();
+    }
+    wrapped.handle();
+  }
 
-		wrapped.handle();
-	}
-
-	/**
+  /**
 	 * Create fatal message based on given exception which will in turn be passed to
 	 * {@link FacesContext#addMessage(String, javax.faces.application.FacesMessage)}.
 	 * The default implementation returns {@link Throwable#toString()}.
 	 * @param exception The exception to create fatal message for.
 	 * @return The fatal message created based on the given exception.
 	 */
-	protected String createFatalMessage(Throwable exception) {
-		return exception.toString();
-	}
+  protected String createFatalMessage(Throwable exception) {
+    return exception.toString();
+  }
 
-	@Override
-	public ExceptionHandler getWrapped() {
-		return wrapped;
-	}
-
+  @Override public ExceptionHandler getWrapped() {
+    return wrapped;
+  }
 }

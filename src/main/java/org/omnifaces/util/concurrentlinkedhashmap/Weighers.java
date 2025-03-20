@@ -1,24 +1,5 @@
-/*
- * Copyright 2010 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * REPACKAGED BY OMNIFACES, BUT NO CODE CHANGES HAVE BEEN MADE.
- */
 package org.omnifaces.util.concurrentlinkedhashmap;
-
 import static org.omnifaces.util.concurrentlinkedhashmap.ConcurrentLinkedHashMap.checkNotNull;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,9 +15,8 @@ import java.util.Set;
  *      http://code.google.com/p/concurrentlinkedhashmap/</a>
  */
 public final class Weighers {
-
   private Weighers() {
-	throw new AssertionError();
+    throw new AssertionError();
   }
 
   /**
@@ -48,11 +28,8 @@ public final class Weighers {
    * @param weigher the weigher to be "wrapped" in a entry weigher.
    * @return A entry weigher view of the specified weigher.
    */
-  public static <K, V> EntryWeigher<K, V> asEntryWeigher(
-	  final Weigher<? super V> weigher) {
-	return (weigher == singleton())
-		? Weighers.<K, V>entrySingleton()
-		: new EntryWeigherView<K, V>(weigher);
+  public static <K extends java.lang.Object, V extends java.lang.Object> EntryWeigher<K, V> asEntryWeigher(final Weigher<? super V> weigher) {
+    return (weigher == singleton()) ? Weighers.<K, V>entrySingleton() : new EntryWeigherView<K, V>(weigher);
   }
 
   /**
@@ -64,9 +41,8 @@ public final class Weighers {
    * @param <V> The generic map value type.
    * @return A weigher where a value takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <K, V> EntryWeigher<K, V> entrySingleton() {
-	return (EntryWeigher<K, V>) SingletonEntryWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <K extends java.lang.Object, V extends java.lang.Object> EntryWeigher<K, V> entrySingleton() {
+    return (EntryWeigher<K, V>) SingletonEntryWeigher.INSTANCE;
   }
 
   /**
@@ -77,9 +53,8 @@ public final class Weighers {
    * @param <V> The generic map value type.
    * @return A weigher where a value takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <V> Weigher<V> singleton() {
-	return (Weigher<V>) SingletonWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <V extends java.lang.Object> Weigher<V> singleton() {
+    return (Weigher<V>) SingletonWeigher.INSTANCE;
   }
 
   /**
@@ -98,7 +73,7 @@ public final class Weighers {
    * @return A weigher where each byte takes one unit of capacity.
    */
   public static Weigher<byte[]> byteArray() {
-	return ByteArrayWeigher.INSTANCE;
+    return ByteArrayWeigher.INSTANCE;
   }
 
   /**
@@ -116,9 +91,8 @@ public final class Weighers {
    * @param <E> The generic iterable element type.
    * @return A weigher where each element takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <E> Weigher<? super Iterable<E>> iterable() {
-	return (Weigher<Iterable<E>>) (Weigher<?>) IterableWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Weigher<? super Iterable<E>> iterable() {
+    return (Weigher<Iterable<E>>) (Weigher<?>) IterableWeigher.INSTANCE;
   }
 
   /**
@@ -135,9 +109,8 @@ public final class Weighers {
    * @param <E> The generic collection element type.
    * @return A weigher where each element takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <E> Weigher<? super Collection<E>> collection() {
-	return (Weigher<Collection<E>>) (Weigher<?>) CollectionWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Weigher<? super Collection<E>> collection() {
+    return (Weigher<Collection<E>>) (Weigher<?>) CollectionWeigher.INSTANCE;
   }
 
   /**
@@ -154,9 +127,8 @@ public final class Weighers {
    * @param <E> The generic list element type.
    * @return A weigher where each element takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <E> Weigher<? super List<E>> list() {
-	return (Weigher<List<E>>) (Weigher<?>) ListWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Weigher<? super List<E>> list() {
+    return (Weigher<List<E>>) (Weigher<?>) ListWeigher.INSTANCE;
   }
 
   /**
@@ -173,9 +145,8 @@ public final class Weighers {
    * @param <E> The generic set element type.
    * @return A weigher where each element takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <E> Weigher<? super Set<E>> set() {
-	return (Weigher<Set<E>>) (Weigher<?>) SetWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Weigher<? super Set<E>> set() {
+    return (Weigher<Set<E>>) (Weigher<?>) SetWeigher.INSTANCE;
   }
 
   /**
@@ -193,103 +164,102 @@ public final class Weighers {
    * @param <B> The generic map value type.
    * @return A weigher where each entry takes one unit of capacity.
    */
-  @SuppressWarnings("unchecked")
-  public static <A, B> Weigher<? super Map<A, B>> map() {
-	return (Weigher<Map<A, B>>) (Weigher<?>) MapWeigher.INSTANCE;
+  @SuppressWarnings(value = { "unchecked" }) public static <A extends java.lang.Object, B extends java.lang.Object> Weigher<? super Map<A, B>> map() {
+    return (Weigher<Map<A, B>>) (Weigher<?>) MapWeigher.INSTANCE;
   }
 
-  private static final class EntryWeigherView<K, V> implements EntryWeigher<K, V>, Serializable {
-	static final long serialVersionUID = 1;
-	private final Weigher<? super V> weigher;
+  private static final class EntryWeigherView<K extends java.lang.Object, V extends java.lang.Object> implements EntryWeigher<K, V>, Serializable {
+    static final long serialVersionUID = 1;
 
-	EntryWeigherView(Weigher<? super V> weigher) {
-	  checkNotNull(weigher);
-	  this.weigher = weigher;
-	}
+    private final Weigher<? super V> weigher;
 
-	@Override
-	public int weightOf(K key, V value) {
-	  return weigher.weightOf(value);
-	}
+    EntryWeigherView(Weigher<? super V> weigher) {
+      checkNotNull(weigher);
+      this.weigher = weigher;
+    }
+
+    @Override public int weightOf(K key, V value) {
+      return weigher.weightOf(value);
+    }
   }
 
   private enum SingletonEntryWeigher implements EntryWeigher<Object, Object> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Object key, Object value) {
-	  return 1;
-	}
+    @Override public int weightOf(Object key, Object value) {
+      return 1;
+    }
   }
 
   private enum SingletonWeigher implements Weigher<Object> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Object value) {
-	  return 1;
-	}
+    @Override public int weightOf(Object value) {
+      return 1;
+    }
   }
 
   private enum ByteArrayWeigher implements Weigher<byte[]> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(byte[] value) {
-	  return value.length;
-	}
+    @Override public int weightOf(byte[] value) {
+      return value.length;
+    }
   }
 
   private enum IterableWeigher implements Weigher<Iterable<?>> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Iterable<?> values) {
-	  if (values instanceof Collection<?>) {
-		return ((Collection<?>) values).size();
-	  }
-	  int size = 0;
-	  for (Iterator<?> i = values.iterator(); i.hasNext();) {
-		i.next();
-		size++;
-	  }
-	  return size;
-	}
+    @Override public int weightOf(Iterable<?> values) {
+      if (values instanceof Collection<?>) {
+        return ((Collection<?>) values).size();
+      }
+      int size = 0;
+      for (Iterator<?> i = values.iterator(); i.hasNext(); ) {
+        i.next();
+        size++;
+      }
+      return size;
+    }
   }
 
   private enum CollectionWeigher implements Weigher<Collection<?>> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Collection<?> values) {
-	  return values.size();
-	}
+    @Override public int weightOf(Collection<?> values) {
+      return values.size();
+    }
   }
 
   private enum ListWeigher implements Weigher<List<?>> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(List<?> values) {
-	  return values.size();
-	}
+    @Override public int weightOf(List<?> values) {
+      return values.size();
+    }
   }
 
   private enum SetWeigher implements Weigher<Set<?>> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Set<?> values) {
-	  return values.size();
-	}
+    @Override public int weightOf(Set<?> values) {
+      return values.size();
+    }
   }
 
   private enum MapWeigher implements Weigher<Map<?, ?>> {
-	INSTANCE;
+    INSTANCE
+    ;
 
-	@Override
-	public int weightOf(Map<?, ?> values) {
-	  return values.size();
-	}
+    @Override public int weightOf(Map<?, ?> values) {
+      return values.size();
+    }
   }
 }

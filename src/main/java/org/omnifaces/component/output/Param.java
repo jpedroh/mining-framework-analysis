@@ -1,20 +1,6 @@
-/*
- * Copyright 2013 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.output;
-
 import java.io.IOException;
 import java.io.StringWriter;
-
 import javax.faces.FacesException;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIParameter;
@@ -22,7 +8,6 @@ import javax.faces.component.ValueHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.convert.Converter;
-
 import org.omnifaces.component.ParamHolder;
 
 /**
@@ -53,80 +38,54 @@ import org.omnifaces.component.ParamHolder;
  * @author Bauke Scholtz
  * @since 1.4
  */
-@FacesComponent(Param.COMPONENT_TYPE)
-public class Param extends UIParameter implements ParamHolder {
+@FacesComponent(value = Param.COMPONENT_TYPE) public class Param extends UIParameter implements ParamHolder {
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Param";
 
-	// Public constants -----------------------------------------------------------------------------------------------
+  private enum PropertyKeys {
+    converter
+  }
 
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.output.Param";
+  private Converter localConverter;
 
-	// Private constants ----------------------------------------------------------------------------------------------
+  @Override public Converter getConverter() {
+    return localConverter != null ? localConverter : (Converter) getStateHelper().eval(PropertyKeys.converter);
+  }
 
-	private enum PropertyKeys {
-		// Cannot be uppercased. They have to exactly match the attribute names.
-		converter;
-	}
+  @Override public void setConverter(Converter converter) {
+    this.localConverter = converter;
+  }
 
-	// Properties -----------------------------------------------------------------------------------------------------
+  @Override public Object getLocalValue() {
+    return super.getValue();
+  }
 
-	private Converter localConverter;
+  @Override public Object getValue() {
+    FacesContext context = getFacesContext();
+    Converter converter = getConverter();
+    Object value = getLocalValue();
+    if (value == null && getChildCount() > 0) {
+      ResponseWriter originalResponseWriter = context.getResponseWriter();
+      StringWriter output = new StringWriter();
+      context.setResponseWriter(originalResponseWriter.cloneWithWriter(output));
+      try {
+        super.encodeChildren(context);
+      } catch (IOException e) {
+        throw new FacesException(e);
+      } finally {
+        context.setResponseWriter(originalResponseWriter);
+      }
+      value = output.toString();
+    }
+    if (converter == null && value != null) {
+      converter = context.getApplication().createConverter(value.getClass());
+    }
+    if (converter != null) {
+      return converter.getAsString(context, this, value);
+    } else {
+      return value;
+    }
+  }
 
-	// Attribute getters/setters --------------------------------------------------------------------------------------
-
-	@Override
-	public Converter getConverter() {
-		return localConverter != null ? localConverter : (Converter) getStateHelper().eval(PropertyKeys.converter);
-	}
-
-	@Override
-	public void setConverter(Converter converter) {
-		this.localConverter = converter;
-	}
-
-	@Override
-	public Object getLocalValue() {
-		return super.getValue();
-	}
-
-	@Override
-	public Object getValue() {
-		FacesContext context = getFacesContext();
-		Converter converter = getConverter();
-		Object value = getLocalValue();
-
-		if (value == null && getChildCount() > 0) {
-			ResponseWriter originalResponseWriter = context.getResponseWriter();
-			StringWriter output = new StringWriter();
-			context.setResponseWriter(originalResponseWriter.cloneWithWriter(output));
-
-			try {
-				super.encodeChildren(context);
-			}
-			catch (IOException e) {
-				throw new FacesException(e);
-			}
-			finally {
-				context.setResponseWriter(originalResponseWriter);
-			}
-
-			value = output.toString();
-		}
-
-		if (converter == null && value != null) {
-			converter = context.getApplication().createConverter(value.getClass());
-		}
-
-		if (converter != null) {
-			return converter.getAsString(context, this, value);
-		}
-		else {
-			return value;
-		}
-	}
-
-	@Override
-	public void encodeAll(FacesContext context) throws IOException {
-		// This override which does nothing effectively blocks the children from being encoded during JSF render.
-	}
-
+  @Override public void encodeAll(FacesContext context) throws IOException {
+  }
 }

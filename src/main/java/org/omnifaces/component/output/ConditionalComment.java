@@ -1,25 +1,9 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.output;
-
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.io.IOException;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-
 import org.omnifaces.util.State;
 
 /**
@@ -44,9 +28,7 @@ import org.omnifaces.util.State;
  * set to <code>true</code> then it will even not be rendered at all. You would need to workaround this with an ugly
  * <code>&lt;h:outputText escape="false"&gt;</code>.
  * <pre>
- * &lt;h:outputText
- *     value="&amp;lt;!--[if lte IE 7]&amp;gt;&amp;lt;link rel=&amp;quot;stylesheet&amp;quot; href=&amp;quot;ie6-ie7.css&amp;quot; /&amp;gt;&amp;lt;![endif]--&amp;gt;"
- *     escape="false" /&gt;
+ * &lt;h:outputText value="&amp;lt;!--[if lte IE 7]&amp;gt;&amp;lt;link rel=&amp;quot;stylesheet&amp;quot; href=&amp;quot;ie6-ie7.css&amp;quot; /&amp;gt;&amp;lt;![endif]--&amp;gt;" escape="false" /&gt;
  * </pre>
  * <p>This component is designed to solve this problem.
  * <pre>
@@ -59,69 +41,73 @@ import org.omnifaces.util.State;
  *
  * @author Bauke Scholtz
  */
-@FacesComponent(ConditionalComment.COMPONENT_TYPE)
-public class ConditionalComment extends OutputFamily {
+@FacesComponent(value = ConditionalComment.COMPONENT_TYPE) public class ConditionalComment extends OutputFamily {
+  /** The component type. */
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.output.ConditionalComment";
 
-	// Public constants -----------------------------------------------------------------------------------------------
+  private static final String ERROR_MISSING_IF = "ConditionalComment attribute \'if\' must be specified.";
 
-	/** The component type. */
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.output.ConditionalComment";
+  private enum PropertyKeys {
+    IF
+    ;
 
-	// Private constants ----------------------------------------------------------------------------------------------
+    @Override public String toString() {
+      return name().toLowerCase();
+    }
+  }
 
-	private static final String ERROR_MISSING_IF =
-		"ConditionalComment attribute 'if' must be specified.";
+  private final State state = new State(getStateHelper());
 
-	private enum PropertyKeys {
-		IF;
-		@Override public String toString() { return name().toLowerCase(); }
-	}
-
-	// Variables ------------------------------------------------------------------------------------------------------
-
-	private final State state = new State(getStateHelper());
-
-	// UIComponent overrides ------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * @throws IllegalArgumentException When <code>if</code> attribute is not specified.
 	 */
-	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
-		String condition = getIf();
+  @Override public void encodeBegin(FacesContext context) throws IOException {
+    String 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/left.java
+    _if = getIf()
+=======
+    condition = getIf()
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/right.java
+    ;
+    if (isEmpty(
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/left.java
+    _if
+=======
+    condition
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/right.java
+    )) {
+      throw new IllegalArgumentException(ERROR_MISSING_IF);
+    }
+    ResponseWriter writer = context.getResponseWriter();
+    writer.write("<!--[if ");
+    writer.write(
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/left.java
+    _if
+=======
+    condition
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/output/ConditionalComment.java/right.java
+    );
+    writer.write("]>");
+  }
 
-		if (isEmpty(condition)) {
-			throw new IllegalArgumentException(ERROR_MISSING_IF);
-		}
+  @Override public void encodeEnd(FacesContext context) throws IOException {
+    ResponseWriter writer = context.getResponseWriter();
+    writer.write("<![endif]-->");
+  }
 
-		ResponseWriter writer = context.getResponseWriter();
-		writer.write("<!--[if ");
-		writer.write(condition);
-		writer.write("]>");
-	}
-
-	@Override
-	public void encodeEnd(FacesContext context) throws IOException {
-		ResponseWriter writer = context.getResponseWriter();
-		writer.write("<![endif]-->");
-	}
-
-	// Attribute getters/setters --------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the if condition.
 	 * @return The if condition.
 	 */
-	public String getIf() {
-		return state.get(PropertyKeys.IF);
-	}
+  public String getIf() {
+    return state.get(PropertyKeys.IF);
+  }
 
-	/**
+  /**
 	 * Sets the if condition.
-	 * @param condition The if condition.
+	 * @param _if The if condition.
 	 */
-	public void setIf(String condition) {
-		state.put(PropertyKeys.IF, condition);
-	}
-
+  public void setIf(String condition) {
+    state.put(PropertyKeys.IF, condition);
+  }
 }

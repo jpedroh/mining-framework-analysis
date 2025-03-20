@@ -1,24 +1,9 @@
-/*
- * Copyright 2014 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.taghandler;
-
 import static org.omnifaces.util.Utils.unmodifiableSet;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import javax.faces.component.UIComponent;
 import javax.faces.view.facelets.ComponentHandler;
 import javax.faces.view.facelets.FaceletContext;
@@ -79,86 +64,79 @@ import javax.faces.view.facelets.TagHandler;
  * @since 1.8
  */
 public class MassAttribute extends TagHandler {
+  private static final Set<String> ILLEGAL_NAMES = unmodifiableSet("id", "binding");
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final String ERROR_ILLEGAL_NAME = "The \'name\' attribute may not be set to \'id\' or \'binding\'.";
 
-	private static final Set<String> ILLEGAL_NAMES = unmodifiableSet("id", "binding");
-	private static final String ERROR_ILLEGAL_NAME = "The 'name' attribute may not be set to 'id' or 'binding'.";
-	private static final String ERROR_UNAVAILABLE_TARGET = "The 'target' attribute must represent a valid class name."
-		+ " Encountered '%s' which cannot be found in the classpath.";
-	private static final String ERROR_INVALID_TARGET = "The 'target' attribute must represent an UIComponent class."
-		+ " Encountered '%s' which is not an UIComponent class.";
+  private static final String ERROR_UNAVAILABLE_TARGET = "The \'target\' attribute must represent a valid class name." + " Encountered \'%s\' which cannot be found in the classpath.";
 
-	// Properties -----------------------------------------------------------------------------------------------------
+  private static final String ERROR_INVALID_TARGET = "The \'target\' attribute must represent an UIComponent class." + " Encountered \'%s\' which is not an UIComponent class.";
 
-	private String name;
-	private TagAttribute value;
-	private Class<UIComponent> targetClass;
+  private String name;
 
-	// Constructors ---------------------------------------------------------------------------------------------------
+  private TagAttribute value;
 
-	/**
+  private Class<UIComponent> targetClass;
+
+  /**
 	 * The tag constructor.
 	 * @param config The tag config.
 	 */
-	@SuppressWarnings("unchecked")
-	public MassAttribute(TagConfig config) {
-		super(config);
-		name = getRequiredAttribute("name").getValue();
+  @SuppressWarnings(value = { "unchecked" }) public MassAttribute(TagConfig config) {
+    super(config);
+    name = getRequiredAttribute("name").getValue();
+    if (ILLEGAL_NAMES.contains(name)) {
+      throw new IllegalArgumentException(ERROR_ILLEGAL_NAME);
+    }
+    value = getRequiredAttribute("value");
+    TagAttribute target = getAttribute("target");
+    if (target != null) {
+      String className = target.getValue();
+      Class<?> cls = null;
+      try {
+        cls = Class.forName(className);
+      } catch (ClassNotFoundException e) {
+        throw new IllegalArgumentException(String.format(ERROR_UNAVAILABLE_TARGET, className), e);
+      }
+      if (!UIComponent.class.isAssignableFrom(cls)) {
+        throw new IllegalArgumentException(String.format(ERROR_INVALID_TARGET, cls));
+      }
+      targetClass = (Class<UIComponent>) cls;
+    }
+  }
 
-		if (ILLEGAL_NAMES.contains(name)) {
-			throw new IllegalArgumentException(ERROR_ILLEGAL_NAME);
-		}
+  @Override public void apply(FaceletContext context, UIComponent parent) throws IOException {
+    List<UIComponent> oldChildren = 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/left.java
+    new ArrayList<UIComponent>(parent.getChildren())
+=======
+    new ArrayList<>(parent.getChildren())
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/right.java
+    ;
+    nextHandler.apply(context, parent);
+    if (ComponentHandler.isNew(parent)) {
+      List<UIComponent> newChildren = 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/left.java
+      new ArrayList<UIComponent>(parent.getChildren())
+=======
+      new ArrayList<>(parent.getChildren())
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/taghandler/MassAttribute.java/right.java
+      ;
+      newChildren.removeAll(oldChildren);
+      applyMassAttribute(context, newChildren);
+    }
+  }
 
-		value = getRequiredAttribute("value");
-		TagAttribute target = getAttribute("target");
-
-		if (target != null) {
-			String className = target.getValue();
-			Class<?> cls = null;
-
-			try {
-				cls = Class.forName(className);
-			}
-			catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException(String.format(ERROR_UNAVAILABLE_TARGET, className), e);
-			}
-
-			if (!UIComponent.class.isAssignableFrom(cls)) {
-				throw new IllegalArgumentException(String.format(ERROR_INVALID_TARGET, cls));
-			}
-
-			targetClass = (Class<UIComponent>) cls;
-		}
-	}
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	@Override
-	public void apply(FaceletContext context, UIComponent parent) throws IOException {
-		List<UIComponent> oldChildren = new ArrayList<UIComponent>(parent.getChildren());
-		nextHandler.apply(context, parent);
-
-		if (ComponentHandler.isNew(parent)) {
-			List<UIComponent> newChildren = new ArrayList<UIComponent>(parent.getChildren());
-			newChildren.removeAll(oldChildren);
-			applyMassAttribute(context, newChildren);
-		}
-	}
-
-	private void applyMassAttribute(FaceletContext context, List<UIComponent> children) {
-		for (UIComponent component : children) {
-			if ((targetClass == null || targetClass.isAssignableFrom(component.getClass())) && component.getValueExpression(name) == null) {
-				Object literalValue = component.getAttributes().get(name);
-
-				if (literalValue == null || literalValue instanceof Boolean) {
-					Class<?> type = (literalValue == null) ? Object.class : Boolean.class;
-					component.setValueExpression(name, value.getValueExpression(context, type));
-				}
-			}
-
-			applyMassAttribute(context, component.getChildren());
-		}
-	}
-
+  private void applyMassAttribute(FaceletContext context, List<UIComponent> children) {
+    for (UIComponent component : children) {
+      if ((targetClass == null || targetClass.isAssignableFrom(component.getClass())) && component.getValueExpression(name) == null) {
+        Object literalValue = component.getAttributes().get(name);
+        if (literalValue == null || literalValue instanceof Boolean) {
+          Class<?> type = (literalValue == null) ? Object.class : Boolean.class;
+          component.setValueExpression(name, value.getValueExpression(context, type));
+        }
+      }
+      applyMassAttribute(context, component.getChildren());
+    }
+  }
 }

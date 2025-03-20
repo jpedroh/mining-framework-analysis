@@ -1,33 +1,17 @@
-/*
- * Copyright 2013 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.resourcehandler;
-
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static org.omnifaces.util.Faces.getMapping;
 import static org.omnifaces.util.Faces.isPrefixMapping;
 import static org.omnifaces.util.Utils.stream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
-
 import javax.faces.application.Resource;
 import javax.faces.application.ResourceHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.webapp.FacesServlet;
-
 import org.omnifaces.util.Hacks;
 
 /**
@@ -106,107 +90,109 @@ import org.omnifaces.util.Hacks;
  *
  * @author Bauke Scholtz
  * @since 1.4
- * @see RemappedResource
- * @see DefaultResourceHandler
  */
 public class UnmappedResourceHandler extends DefaultResourceHandler {
-
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Creates a new instance of this unmapped resource handler which wraps the given resource handler.
 	 * @param wrapped The resource handler to be wrapped.
 	 */
-	public UnmappedResourceHandler(ResourceHandler wrapped) {
-		super(wrapped);
-	}
+  public UnmappedResourceHandler(ResourceHandler wrapped) {
+    super(wrapped);
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
 
-	/**
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/resourcehandler/UnmappedResourceHandler.java/left.java
+  /**
+	 * Delegate to {@link #createResource(String, String, String)} of the wrapped resource handler. If it returns
+	 * non-<code>null</code>, then return a new instanceof {@link UnmappedResource}.
+	 */
+  @Override public Resource createResource(String resourceName, String libraryName, String contentType) {
+    Resource resource = super.createResource(resourceName, libraryName, contentType);
+    return (resource == null) ? null : new DefaultResource(resource) {
+      @Override public String getRequestPath() {
+        String path = super.getRequestPath();
+        String mapping = getMapping();
+        if (isPrefixMapping(mapping)) {
+          return path.replaceFirst(mapping, "");
+        } else {
+          if (path.contains("?")) {
+            return path.replace(mapping + "?", "?");
+          } else {
+            return path.substring(0, path.length() - mapping.length());
+          }
+        }
+      }
+    };
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+  /**
 	 * If the given resource is not <code>null</code>, then decorate it as an unmapped resource.
 	 */
-	@Override
-	public Resource decorateResource(Resource resource) {
-		if (resource == null) {
-			return resource;
-		}
+  @Override public Resource decorateResource(Resource resource) {
+    if (resource == null) {
+      return resource;
+    }
+    String unmappedRequestPath = unmapRequestPath(resource.getRequestPath());
+    return new RemappedResource(resource, unmappedRequestPath);
+  }
 
-		String unmappedRequestPath = unmapRequestPath(resource.getRequestPath());
-		return new RemappedResource(resource, unmappedRequestPath);
-	}
-
-	/**
-	 * Returns <code>true</code> if {@link ExternalContext#getRequestServletPath()} equals
+  /**
+	 * Returns <code>true</code> if {@link ExternalContext#getRequestServletPath()} starts with value of
 	 * {@link ResourceHandler#RESOURCE_IDENTIFIER}.
 	 */
-	@Override
-	public boolean isResourceRequest(FacesContext context) {
-		return RESOURCE_IDENTIFIER.equals(context.getExternalContext().getRequestServletPath());
-	}
+  @Override public boolean isResourceRequest(FacesContext context) {
+    return RESOURCE_IDENTIFIER.equals(context.getExternalContext().getRequestServletPath());
+  }
 
-	@Override
-	public void handleResourceRequest(FacesContext context) throws IOException {
-		Resource resource = createResource(context);
+  @Override public void handleResourceRequest(FacesContext context) throws IOException {
+    Resource resource = createResource(context);
+    if (resource == null) {
+      super.handleResourceRequest(context);
+      return;
+    }
+    ExternalContext externalContext = context.getExternalContext();
+    if (!resource.userAgentNeedsUpdate(context)) {
+      externalContext.setResponseStatus(SC_NOT_MODIFIED);
+      return;
+    }
+    InputStream inputStream = resource.getInputStream();
+    if (inputStream == null) {
+      externalContext.setResponseStatus(SC_NOT_FOUND);
+      return;
+    }
+    externalContext.setResponseContentType(resource.getContentType());
+    for (Entry<String, String> header : resource.getResponseHeaders().entrySet()) {
+      externalContext.setResponseHeader(header.getKey(), header.getValue());
+    }
+    stream(inputStream, externalContext.getResponseOutputStream());
+  }
 
-		if (resource == null) {
-			super.handleResourceRequest(context);
-			return;
-		}
+  private static String unmapRequestPath(String path) {
+    String mapping = getMapping();
+    if (isPrefixMapping(mapping)) {
+      return path.replaceFirst(mapping, "");
+    } else {
+      if (path.contains("?")) {
+        return path.replace(mapping + "?", "?");
+      } else {
+        return path.substring(0, path.length() - mapping.length());
+      }
+    }
+  }
 
-		ExternalContext externalContext = context.getExternalContext();
-
-		if (!resource.userAgentNeedsUpdate(context)) {
-			externalContext.setResponseStatus(SC_NOT_MODIFIED);
-			return;
-		}
-
-		InputStream inputStream = resource.getInputStream();
-
-		if (inputStream == null) {
-			externalContext.setResponseStatus(SC_NOT_FOUND);
-			return;
-		}
-
-		externalContext.setResponseContentType(resource.getContentType());
-
-		for (Entry<String, String> header : resource.getResponseHeaders().entrySet()) {
-			externalContext.setResponseHeader(header.getKey(), header.getValue());
-		}
-
-		stream(inputStream, externalContext.getResponseOutputStream());
-	}
-
-	// Helpers --------------------------------------------------------------------------------------------------------
-
-	private static String unmapRequestPath(String path) {
-		String mapping = getMapping();
-
-		if (isPrefixMapping(mapping)) {
-			return path.replaceFirst(mapping, "");
-		}
-		else if (path.contains("?")) {
-			return path.replace(mapping + "?", "?");
-		}
-		else {
-			return path.substring(0, path.length() - mapping.length());
-		}
-	}
-
-	private static Resource createResource(FacesContext context) {
-		if (Hacks.isPrimeFacesDynamicResourceRequest(context)) {
-			return null;
-		}
-
-		String pathInfo = context.getExternalContext().getRequestPathInfo();
-		String resourceName = (pathInfo != null) ? pathInfo.substring(1) : "";
-
-		if (resourceName.isEmpty()) {
-			return null;
-		}
-
-		String libraryName = context.getExternalContext().getRequestParameterMap().get("ln");
-		return context.getApplication().getResourceHandler().createResource(resourceName, libraryName);
-	}
-
+  private static Resource createResource(FacesContext context) {
+    if (Hacks.isPrimeFacesDynamicResourceRequest(context)) {
+      return null;
+    }
+    String pathInfo = context.getExternalContext().getRequestPathInfo();
+    String resourceName = (pathInfo != null) ? pathInfo.substring(1) : "";
+    if (resourceName.isEmpty()) {
+      return null;
+    }
+    String libraryName = context.getExternalContext().getRequestParameterMap().get("ln");
+    return context.getApplication().getResourceHandler().createResource(resourceName, libraryName);
+  }
 }

@@ -1,32 +1,16 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.filter;
-
 import static org.omnifaces.util.Utils.unmodifiableSet;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.omnifaces.servlet.GzipHttpServletResponse;
 import org.omnifaces.servlet.HttpServletResponseOutputWrapper;
 
@@ -82,23 +66,22 @@ import org.omnifaces.servlet.HttpServletResponseOutputWrapper;
  * as follows:
  * <pre>
  * &lt;init-param&gt;
- *     &lt;description&gt;The threshold size in bytes. Must be a number between 0 and 9999. Defaults to 150.&lt;/description&gt;
+ *     &lt;description&gt;The threshold size in bytes. Must be a number between 0 and 9999. Defaults to 500.&lt;/description&gt;
  *     &lt;param-name&gt;threshold&lt;/param-name&gt;
- *     &lt;param-value&gt;150&lt;/param-value&gt;
+ *     &lt;param-value&gt;500&lt;/param-value&gt;
  * &lt;/init-param&gt;
  * &lt;init-param&gt;
  *     &lt;description&gt;The mimetypes which needs to be compressed. Must be a commaseparated string. Defaults to the below values.&lt;/description&gt;
  *     &lt;param-name&gt;mimetypes&lt;/param-name&gt;
  *     &lt;param-value&gt;
  *         text/plain, text/html, text/xml, text/css, text/javascript, text/csv, text/rtf,
- *         application/xml, application/xhtml+xml, application/javascript, application/json,
- *         image/svg+xml
+ *         application/xml, application/xhtml+xml, application/javascript, application/json
  *     &lt;/param-value&gt;
  * &lt;/init-param&gt;
  * </pre>
  * <p>
- * The default <code>threshold</code> is thus 150 bytes. This means that when the response is not larger than 150 bytes,
- * then it will not be compressed with GZIP. Only when it's larger than 150 bytes, then it will be compressed. A
+ * The default <code>threshold</code> is thus 500 bytes. This means that when the response is not larger than 500 bytes,
+ * then it will not be compressed with GZIP. Only when it's larger than 500 bytes, then it will be compressed. A
  * threshold of between 150 and 1000 bytes is recommended due to overhead and latency of compression/decompression.
  * The value must be a number between 0 and 9999. A value larger than 2000 is not recommended.
  * <p>
@@ -109,90 +92,65 @@ import org.omnifaces.servlet.HttpServletResponseOutputWrapper;
  *
  * @author Bauke Scholtz
  * @since 1.1
- * @see GzipHttpServletResponse
- * @see HttpServletResponseOutputWrapper
  */
 public class GzipResponseFilter extends HttpFilter {
+  private static final String INIT_PARAM_THRESHOLD = "threshold";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final String INIT_PARAM_MIMETYPES = "mimetypes";
 
-	private static final String INIT_PARAM_THRESHOLD = "threshold";
-	private static final String INIT_PARAM_MIMETYPES = "mimetypes";
+  private static final int DEFAULT_THRESHOLD = 150;
 
-	private static final int DEFAULT_THRESHOLD = 150;
-	private static final Set<String> DEFAULT_MIMETYPES = unmodifiableSet(
-		"text/plain", "text/html", "text/xml", "text/css", "text/javascript", "text/csv", "text/rtf",
-		"application/xml", "application/xhtml+xml", "application/javascript", "application/json",
-		"image/svg+xml"
-	);
+  private static final Set<String> DEFAULT_MIMETYPES = unmodifiableSet("text/plain", "text/html", "text/xml", "text/css", "text/javascript", "text/csv", "text/rtf", "application/xml", "application/xhtml+xml", "application/javascript", "application/json", "image/svg+xml");
 
-	private static final String ERROR_THRESHOLD = "The 'threshold' init param must be a number between 0 and 9999."
-		+ " Encountered an invalid value of '%s'.";
+  private static final String ERROR_THRESHOLD = "The \'threshold\' init param must be a number between 0 and 9999." + " Encountered an invalid value of \'%s\'.";
 
-	// Vars -----------------------------------------------------------------------------------------------------------
+  private Set<String> mimetypes = DEFAULT_MIMETYPES;
 
-	private Set<String> mimetypes = DEFAULT_MIMETYPES;
-	private int threshold = DEFAULT_THRESHOLD;
+  private int threshold = DEFAULT_THRESHOLD;
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Initializes the filter parameters.
 	 */
-	@Override
-	public void init() throws ServletException {
-		String thresholdParam = getInitParameter(INIT_PARAM_THRESHOLD);
+  @Override public void init() throws ServletException {
+    String thresholdParam = getInitParameter(INIT_PARAM_THRESHOLD);
+    if (thresholdParam != null) {
+      if (!thresholdParam.matches("[0-9]{1,4}")) {
+        throw new ServletException(String.format(ERROR_THRESHOLD, thresholdParam));
+      } else {
+        threshold = Integer.valueOf(thresholdParam);
+      }
+    }
+    String mimetypesParam = getInitParameter(INIT_PARAM_MIMETYPES);
+    if (mimetypesParam != null) {
+      mimetypes = new HashSet<>(Arrays.asList(mimetypesParam.split("\\s*,\\s*")));
+    }
+  }
 
-		if (thresholdParam != null) {
-			if (!thresholdParam.matches("[0-9]{1,4}")) {
-				throw new ServletException(String.format(ERROR_THRESHOLD, thresholdParam));
-			}
-			else {
-				threshold = Integer.valueOf(thresholdParam);
-			}
-		}
-
-		String mimetypesParam = getInitParameter(INIT_PARAM_MIMETYPES);
-
-		if (mimetypesParam != null) {
-			mimetypes = new HashSet<String>(Arrays.asList(mimetypesParam.split("\\s*,\\s*")));
-		}
-	}
-
-	/**
+  /**
 	 * Perform the filtering job. Only if the client accepts GZIP based on the request headers, then wrap the response
 	 * in a {@link GzipHttpServletResponse} and pass it through the filter chain.
 	 */
-	@Override
-	public void doFilter
-		(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain)
-			throws ServletException, IOException
-	{
-		if (acceptsGzip(request)) {
-			GzipHttpServletResponse gzipResponse = new GzipHttpServletResponse(response, threshold, mimetypes);
-			chain.doFilter(request, gzipResponse);
-			gzipResponse.close(); // Mandatory for the case the threshold limit hasn't been reached.
-		}
-		else {
-			chain.doFilter(request, response);
-		}
-	}
+  @Override public void doFilter(HttpServletRequest request, HttpServletResponse response, HttpSession session, FilterChain chain) throws ServletException, IOException {
+    if (acceptsGzip(request)) {
+      GzipHttpServletResponse gzipResponse = new GzipHttpServletResponse(response, threshold, mimetypes);
+      chain.doFilter(request, gzipResponse);
+      gzipResponse.close();
+    } else {
+      chain.doFilter(request, response);
+    }
+  }
 
-	// Helpers --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns whether the given request indicates that the client accepts GZIP encoding.
 	 * @param request The request to be checked.
 	 * @return <code>true</code> if the client accepts GZIP encoding, otherwise <code>false</code>.
 	 */
-	private static boolean acceptsGzip(HttpServletRequest request) {
-		for (Enumeration<String> e = request.getHeaders("Accept-Encoding"); e.hasMoreElements();) {
-			if (e.nextElement().contains("gzip")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
+  private static boolean acceptsGzip(HttpServletRequest request) {
+    for (Enumeration<String> e = request.getHeaders("Accept-Encoding"); e.hasMoreElements(); ) {
+      if (e.nextElement().contains("gzip")) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

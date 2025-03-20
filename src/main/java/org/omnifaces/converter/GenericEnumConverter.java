@@ -1,21 +1,7 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.converter;
-
 import static org.omnifaces.util.Faces.getViewAttribute;
 import static org.omnifaces.util.Faces.setViewAttribute;
 import static org.omnifaces.util.Messages.createError;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectMany;
 import javax.faces.context.FacesContext;
@@ -37,7 +23,7 @@ import javax.faces.convert.FacesConverter;
  * restrictions (e.g. JPA <code>@ElementCollection</code>, etc), then you'd need to create an explicit converter for the
  * enum type like follows:
  * <pre>
- * &#64;FacesConverter("roleConverter")
+ * {@literal @}FacesConverter("roleConverter")
  * public class RoleConverter extends EnumConverter {
  *     public RoleConverter() {
  *         super(Role.class);
@@ -55,7 +41,6 @@ import javax.faces.convert.FacesConverter;
  * to create a new enum converter every time.
  *
  * <h3>Usage</h3>
- * <p>
  * This converter is available by converter ID <code>omnifaces.GenericEnumConverter</code>. Just specify it in the
  * <code>converter</code> attribute of the multi-selection component holding <code>&lt;f:selectItems&gt;</code>.
  * example:
@@ -71,49 +56,35 @@ import javax.faces.convert.FacesConverter;
  * @author Bauke Scholtz
  * @since 1.2
  */
-@FacesConverter(value = "omnifaces.GenericEnumConverter")
-public class GenericEnumConverter implements Converter {
+@FacesConverter(value = "omnifaces.GenericEnumConverter") public class GenericEnumConverter implements Converter {
+  private static final String ATTRIBUTE_ENUM_TYPE = "GenericEnumConverter.%s";
 
-	// Constants ------------------------------------------------------------------------------------------------------
+  private static final String ERROR_NO_ENUM_TYPE = "Given type \'\'{0}\'\' is not an enum.";
 
-	private static final String ATTRIBUTE_ENUM_TYPE = "GenericEnumConverter.%s";
-	private static final String ERROR_NO_ENUM_TYPE = "Given type ''{0}'' is not an enum.";
-	private static final String ERROR_NO_ENUM_VALUE = "Given value ''{0}'' is not an enum of type ''{1}''.";
+  private static final String ERROR_NO_ENUM_VALUE = "Given value \'\'{0}\'\' is not an enum of type \'\'{1}\'\'.";
 
-	// Actions --------------------------------------------------------------------------------------------------------
+  @Override @SuppressWarnings(value = { "rawtypes", "unchecked" }) public String getAsString(FacesContext context, UIComponent component, Object modelValue) {
+    if (modelValue == null) {
+      return "-";
+    }
+    if (modelValue instanceof Enum) {
+      Class<Enum> enumType = ((Enum) modelValue).getDeclaringClass();
+      setViewAttribute(String.format(ATTRIBUTE_ENUM_TYPE, component.getClientId(context)), enumType);
+      return ((Enum) modelValue).name();
+    } else {
+      throw new ConverterException(createError(ERROR_NO_ENUM_TYPE, modelValue.getClass()));
+    }
+  }
 
-	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String getAsString(FacesContext context, UIComponent component, Object modelValue) {
-		if (modelValue == null) {
-			return "-";
-		}
-
-		if (modelValue instanceof Enum) {
-			Class<Enum> enumType = ((Enum) modelValue).getDeclaringClass();
-			setViewAttribute(String.format(ATTRIBUTE_ENUM_TYPE, component.getClientId(context)), enumType);
-			return ((Enum) modelValue).name();
-		}
-		else {
-			throw new ConverterException(createError(ERROR_NO_ENUM_TYPE, modelValue.getClass()));
-		}
-	}
-
-	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
-		if (submittedValue == null || submittedValue.isEmpty() || submittedValue.equals("-")) {
-			return null;
-		}
-
-		Class<Enum> enumType = getViewAttribute(String.format(ATTRIBUTE_ENUM_TYPE, component.getClientId(context)));
-
-		try {
-			return Enum.valueOf(enumType, submittedValue);
-		}
-		catch (IllegalArgumentException e) {
-			throw new ConverterException(createError(ERROR_NO_ENUM_VALUE, submittedValue, enumType), e);
-		}
-	}
-
+  @Override @SuppressWarnings(value = { "rawtypes", "unchecked" }) public Object getAsObject(FacesContext context, UIComponent component, String submittedValue) {
+    if (submittedValue == null || submittedValue.isEmpty() || submittedValue.equals("-")) {
+      return null;
+    }
+    Class<Enum> enumType = getViewAttribute(String.format(ATTRIBUTE_ENUM_TYPE, component.getClientId(context)));
+    try {
+      return Enum.valueOf(enumType, submittedValue);
+    } catch (IllegalArgumentException e) {
+      throw new ConverterException(createError(ERROR_NO_ENUM_VALUE, submittedValue, enumType), e);
+    }
+  }
 }

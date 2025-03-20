@@ -1,24 +1,9 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.script;
-
 import static java.lang.Boolean.TRUE;
 import static org.omnifaces.util.Components.getCurrentForm;
-
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
-
 import javax.faces.application.ResourceDependencies;
 import javax.faces.application.ResourceDependency;
 import javax.faces.component.FacesComponent;
@@ -30,7 +15,6 @@ import javax.faces.component.visit.VisitContext;
 import javax.faces.component.visit.VisitHint;
 import javax.faces.component.visit.VisitResult;
 import javax.faces.context.FacesContext;
-
 import org.omnifaces.util.State;
 
 /**
@@ -70,39 +54,27 @@ import org.omnifaces.util.State;
  * </pre>
  *
  * @author Bauke Scholtz
- * @see OnloadScript
  */
-@FacesComponent(Highlight.COMPONENT_TYPE)
-@ResourceDependencies({
-	@ResourceDependency(library="javax.faces", name="jsf.js", target="head"), // Required for jsf.ajax.addOnEvent.
-	@ResourceDependency(library="omnifaces", name="omnifaces.js", target="head") // Specifically highlight.js.
-})
-public class Highlight extends OnloadScript {
+@FacesComponent(value = Highlight.COMPONENT_TYPE) @ResourceDependencies(value = { @ResourceDependency(library = "javax.faces", name = "jsf.js", target = "head"), @ResourceDependency(library = "omnifaces", name = "omnifaces.js", target = "head") }) public class Highlight extends OnloadScript {
+  /** The standard component type. */
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.script.Highlight";
 
-	// Public constants -----------------------------------------------------------------------------------------------
+  private static final Set<VisitHint> VISIT_HINTS = EnumSet.of(VisitHint.SKIP_UNRENDERED);
 
-	/** The standard component type. */
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.script.Highlight";
+  private static final String DEFAULT_STYLECLASS = "error";
 
-	// Private constants ----------------------------------------------------------------------------------------------
+  private static final Boolean DEFAULT_FOCUS = TRUE;
 
-	private static final Set<VisitHint> VISIT_HINTS = EnumSet.of(VisitHint.SKIP_UNRENDERED);
-	private static final String DEFAULT_STYLECLASS = "error";
-	private static final Boolean DEFAULT_FOCUS = TRUE;
-	private static final String SCRIPT = "OmniFaces.Highlight.addErrorClass([%s], '%s', %s);";
+  private static final String SCRIPT = "OmniFaces.Highlight.addErrorClass([%s], \'%s\', %s);";
 
-	private enum PropertyKeys {
-		// Cannot be uppercased. They have to exactly match the attribute names.
-		styleClass, focus
-	}
+  private enum PropertyKeys {
+    styleClass,
+    focus
+  }
 
-	// Variables ------------------------------------------------------------------------------------------------------
+  private final State state = new State(getStateHelper());
 
-	private final State state = new State(getStateHelper());
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Visit all components of the current {@link UIForm}, check if they are an instance of {@link UIInput} and are not
 	 * {@link UIInput#isValid()} and finally append them to an array in JSON format and render the script.
 	 * <p>
@@ -113,69 +85,59 @@ public class Highlight extends OnloadScript {
 	 * don't want the changed style class to be saved in the server side view state as it may result in potential
 	 * inconsistencies because it's supposed to be an one-time change.
 	 */
-	@Override
-	public void encodeChildren(FacesContext context) throws IOException {
-		if (context.isPostback() && context.isValidationFailed()) {
-			UIForm form = getCurrentForm();
+  @Override public void encodeChildren(FacesContext context) throws IOException {
+    if (context.isPostback() && context.isValidationFailed()) {
+      UIForm form = getCurrentForm();
+      if (form != null) {
+        final StringBuilder clientIdsAsJSON = new StringBuilder();
+        form.visitTree(VisitContext.createVisitContext(context, null, VISIT_HINTS), new VisitCallback() {
+          @Override public VisitResult visit(VisitContext context, UIComponent component) {
+            if (component instanceof UIInput && !((UIInput) component).isValid()) {
+              if (clientIdsAsJSON.length() > 0) {
+                clientIdsAsJSON.append(',');
+              }
+              String clientId = component.getClientId(context.getFacesContext());
+              clientIdsAsJSON.append('\"').append(clientId).append('\"');
+            }
+            return VisitResult.ACCEPT;
+          }
+        });
+        if (clientIdsAsJSON.length() > 0) {
+          context.getResponseWriter().write(String.format(SCRIPT, clientIdsAsJSON, getStyleClass(), isFocus()));
+        }
+      }
+    }
+  }
 
-			if (form != null) {
-				final StringBuilder clientIdsAsJSON = new StringBuilder();
-				form.visitTree(VisitContext.createVisitContext(context, null, VISIT_HINTS), new VisitCallback() {
-
-					@Override
-					public VisitResult visit(VisitContext context, UIComponent component) {
-						if (component instanceof UIInput && !((UIInput) component).isValid()) {
-							if (clientIdsAsJSON.length() > 0) {
-								clientIdsAsJSON.append(',');
-							}
-
-							String clientId = component.getClientId(context.getFacesContext());
-							clientIdsAsJSON.append('"').append(clientId).append('"');
-						}
-
-						return VisitResult.ACCEPT;
-					}
-				});
-
-				if (clientIdsAsJSON.length() > 0) {
-					context.getResponseWriter().write(String.format(SCRIPT, clientIdsAsJSON, getStyleClass(), isFocus()));
-				}
-			}
-		}
-	}
-
-	// Getters/setters ------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the error style class which is to be applied on invalid inputs. Defaults to <code>error</code>.
 	 * @return The error style class which is to be applied on invalid inputs.
 	 */
-	public String getStyleClass() {
-		return state.get(PropertyKeys.styleClass, DEFAULT_STYLECLASS);
-	}
+  public String getStyleClass() {
+    return state.get(PropertyKeys.styleClass, DEFAULT_STYLECLASS);
+  }
 
-	/**
+  /**
 	 * Sets the error style class which is to be applied on invalid inputs.
 	 * @param styleClass The error style class which is to be applied on invalid inputs.
 	 */
-	public void setStyleClass(String styleClass) {
-		state.put(PropertyKeys.styleClass, styleClass);
-	}
+  public void setStyleClass(String styleClass) {
+    state.put(PropertyKeys.styleClass, styleClass);
+  }
 
-	/**
+  /**
 	 * Returns whether the first error element should gain focus. Defaults to <code>true</code>.
 	 * @return Whether the first error element should gain focus.
 	 */
-	public Boolean isFocus() {
-		return state.get(PropertyKeys.focus, DEFAULT_FOCUS);
-	}
+  public Boolean isFocus() {
+    return state.get(PropertyKeys.focus, DEFAULT_FOCUS);
+  }
 
-	/**
+  /**
 	 * Sets whether the first error element should gain focus.
 	 * @param focus Whether the first error element should gain focus.
 	 */
-	public void setFocus(Boolean focus) {
-		state.put(PropertyKeys.focus, focus);
-	}
-
+  public void setFocus(Boolean focus) {
+    state.put(PropertyKeys.focus, focus);
+  }
 }

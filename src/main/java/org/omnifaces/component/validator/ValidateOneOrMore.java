@@ -1,25 +1,9 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.validator;
-
 import static org.omnifaces.util.Utils.isEmpty;
-
 import java.util.List;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-
 import org.omnifaces.validator.MultiFieldValidator;
 
 /**
@@ -33,32 +17,20 @@ import org.omnifaces.validator.MultiFieldValidator;
  * For general usage instructions, refer {@link ValidateMultipleFields} documentation.
  *
  * @author Bauke Scholtz
- * @see ValidateMultipleFields
- * @see ValidatorFamily
- * @see MultiFieldValidator
  */
-@FacesComponent(ValidateOneOrMore.COMPONENT_TYPE)
-public class ValidateOneOrMore extends ValidateMultipleFields {
+@FacesComponent(value = ValidateOneOrMore.COMPONENT_TYPE) public class ValidateOneOrMore extends ValidateMultipleFields {
+  /** The standard component type. */
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.validator.ValidateOneOrMore";
 
-	// Public constants -----------------------------------------------------------------------------------------------
-
-	/** The standard component type. */
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.validator.ValidateOneOrMore";
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Validate if at least one is filled out.
 	 */
-	@Override
-	public boolean validateValues(FacesContext context, List<UIInput> inputs, List<Object> values) {
-		for (Object value : values) {
-			if (!isEmpty(value)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
+  @Override public boolean validateValues(FacesContext context, List<UIInput> inputs, List<Object> values) {
+    for (Object value : values) {
+      if (!isEmpty(value)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

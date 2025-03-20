@@ -1,28 +1,12 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.validator;
-
 import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
-
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-
 import org.omnifaces.util.Callback;
 import org.omnifaces.util.State;
 import org.omnifaces.validator.MultiFieldValidator;
@@ -51,125 +35,121 @@ import org.omnifaces.validator.MultiFieldValidator;
  * For general usage instructions, refer {@link ValidateMultipleFields} documentation.
  *
  * @author Bauke Scholtz
- * @see ValidateMultipleFields
- * @see ValidatorFamily
- * @see MultiFieldValidator
  */
-@FacesComponent(ValidateOrder.COMPONENT_TYPE)
-@SuppressWarnings({ "unchecked", "rawtypes" }) // We don't care about the actual Comparable type.
-public class ValidateOrder extends ValidateMultipleFields {
+@FacesComponent(value = ValidateOrder.COMPONENT_TYPE) @SuppressWarnings(value = { "unchecked", "rawtypes" }) public class ValidateOrder extends ValidateMultipleFields {
+  /** The standard component type. */
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.validator.ValidateOrder";
 
-	// Public constants -----------------------------------------------------------------------------------------------
+  private enum Type {
+    LT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
+      private static final long serialVersionUID = 1L;
 
-	/** The standard component type. */
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.validator.ValidateOrder";
+      @Override public Boolean invoke(List<Comparable> values) {
+        return new ArrayList<>(
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/left.java
+        new TreeSet<Comparable>(values)
+=======
+        new TreeSet<>(values)
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/right.java
+        ).equals(values);
+      }
+    }),
+    LTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
+      private static final long serialVersionUID = 1L;
 
-	// Private constants ----------------------------------------------------------------------------------------------
+      @Override public Boolean invoke(List<Comparable> values) {
+        List<Comparable> sortedValues = new ArrayList<>(values);
+        Collections.sort(sortedValues);
+        return sortedValues.equals(values);
+      }
+    }),
+    GT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
+      private static final long serialVersionUID = 1L;
 
-	private enum Type {
-		LT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public Boolean invoke(List<Comparable> values) {
-				return new ArrayList<Comparable>(new TreeSet<Comparable>(values)).equals(values);
-			}
-		}),
+      @Override public Boolean invoke(List<Comparable> values) {
+        List<Comparable> sortedValues = new ArrayList<>(
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/left.java
+        new TreeSet<Comparable>(values)
+=======
+        new TreeSet<>(values)
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/right.java
+        );
+        Collections.reverse(sortedValues);
+        return sortedValues.equals(values);
+      }
+    }),
+    GTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
+      private static final long serialVersionUID = 1L;
 
-		LTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public Boolean invoke(List<Comparable> values) {
-				List<Comparable> sortedValues = new ArrayList<Comparable>(values);
-				Collections.sort(sortedValues);
-				return sortedValues.equals(values);
-			}
-		}),
+      @Override public Boolean invoke(List<Comparable> values) {
+        List<Comparable> sortedValues = new ArrayList<>(values);
+        Collections.sort(sortedValues, Collections.reverseOrder());
+        return sortedValues.equals(values);
+      }
+    })
+    ;
 
-		GT(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public Boolean invoke(List<Comparable> values) {
-				List<Comparable> sortedValues = new ArrayList<Comparable>(new TreeSet<Comparable>(values));
-				Collections.reverse(sortedValues);
-				return sortedValues.equals(values);
-			}
-		}),
+    private Callback.ReturningWithArgument<Boolean, List<Comparable>> callback;
 
-		GTE(new Callback.ReturningWithArgument<Boolean, List<Comparable>>() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public Boolean invoke(List<Comparable> values) {
-				List<Comparable> sortedValues = new ArrayList<Comparable>(values);
-				Collections.sort(sortedValues, Collections.reverseOrder());
-				return sortedValues.equals(values);
-			}
-		});
+    private Type(Callback.ReturningWithArgument<Boolean, List<Comparable>> callback) {
+      this.callback = callback;
+    }
 
-		private Callback.ReturningWithArgument<Boolean, List<Comparable>> callback;
+    public boolean validateOrder(List<Comparable> values) {
+      return callback.invoke(values);
+    }
+  }
 
-		private Type(Callback.ReturningWithArgument<Boolean, List<Comparable>> callback) {
-			this.callback = callback;
-		}
+  private static final String DEFAULT_TYPE = Type.LT.name();
 
-		public boolean validateOrder(List<Comparable> values) {
-			return callback.invoke(values);
-		}
-	}
+  private static final String ERROR_INVALID_TYPE = "Invalid type \'%s\'. Only \'lt\', \'lte\', \'gt\' and \'gte\' are allowed.";
 
-	private static final String DEFAULT_TYPE = Type.LT.name();
-	private static final String ERROR_INVALID_TYPE = "Invalid type '%s'. Only 'lt', 'lte', 'gt' and 'gte' are allowed.";
-	private static final String ERROR_VALUES_NOT_COMPARABLE = "All values must implement java.lang.Comparable.";
+  private static final String ERROR_VALUES_NOT_COMPARABLE = "All values must implement java.lang.Comparable.";
 
-	private enum PropertyKeys {
-		// Cannot be uppercased. They have to exactly match the attribute names.
-		type;
-	}
+  private enum PropertyKeys {
+    type
+  }
 
-	// Variables ------------------------------------------------------------------------------------------------------
+  private final State state = new State(getStateHelper());
 
-	private final State state = new State(getStateHelper());
-
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Validate if all values are in specified order.
 	 */
-	@Override
-	public boolean validateValues(FacesContext context, List<UIInput> components, List<Object> values) {
-		try {
-			Object tmp = values; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=158870
-			List<Comparable> comparableValues = new ArrayList<Comparable>((List<Comparable>) tmp);
-			comparableValues.removeAll(asList(null, "")); // Empty checking job is up to required="true".
-			return Type.valueOf(getType().toUpperCase()).validateOrder(comparableValues);
-		}
-		catch (ClassCastException e) {
-			throw new IllegalArgumentException(ERROR_VALUES_NOT_COMPARABLE, e);
-		}
-	}
+  @Override public boolean validateValues(FacesContext context, List<UIInput> components, List<Object> values) {
+    try {
+      Object tmp = values;
+      List<Comparable> comparableValues = 
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/left.java
+      new ArrayList<Comparable>((List<Comparable>) tmp)
+=======
+      new ArrayList<>((List<Comparable>) tmp)
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/54a7f76c73dc469f57484ebdcdf2203dc9f3a193/src/main/java/org/omnifaces/component/validator/ValidateOrder.java/right.java
+      ;
+      comparableValues.removeAll(asList(null, ""));
+      return Type.valueOf(getType().toUpperCase()).validateOrder(comparableValues);
+    } catch (ClassCastException e) {
+      throw new IllegalArgumentException(ERROR_VALUES_NOT_COMPARABLE, e);
+    }
+  }
 
-	// Getters/setters ------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Returns the ordering type to be used.
 	 * @return The ordering type to be used.
 	 */
-	public String getType() {
-		return state.get(PropertyKeys.type, DEFAULT_TYPE);
-	}
+  public String getType() {
+    return state.get(PropertyKeys.type, DEFAULT_TYPE);
+  }
 
-	/**
+  /**
 	 * Sets the ordering type to be used.
 	 * @param type The ordering type to be used.
 	 */
-	public void setType(String type) {
-		try {
-			Type.valueOf(type.toUpperCase());
-		}
-		catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(String.format(ERROR_INVALID_TYPE, type), e);
-		}
-
-		state.put(PropertyKeys.type, type);
-	}
-
+  public void setType(String type) {
+    try {
+      Type.valueOf(type.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException(String.format(ERROR_INVALID_TYPE, type), e);
+    }
+    state.put(PropertyKeys.type, type);
+  }
 }

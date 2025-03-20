@@ -1,17 +1,4 @@
-/*
- * Copyright 2014 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.component.script;
-
 import javax.faces.application.ResourceDependency;
 import javax.faces.component.FacesComponent;
 import javax.faces.event.AbortProcessingException;
@@ -20,14 +7,13 @@ import javax.faces.event.ListenerFor;
 import javax.faces.event.ListenersFor;
 import javax.faces.event.PostAddToViewEvent;
 import javax.faces.event.PostRestoreStateEvent;
-
 import org.omnifaces.renderer.DeferredScriptRenderer;
 import org.omnifaces.resourcehandler.ResourceIdentifier;
 import org.omnifaces.util.Hacks;
 
 /**
  * <p>
- * The <code>&lt;o:deferredScript&gt;</code> is a component based on the standard <code>&lt;h:outputScript&gt;</code>
+ * The <strong>&lt;o:deferredScript&gt;</strong> is a component based on the standard <code>&lt;h:outputScript&gt;</code>
  * which defers the loading of the given script resource to the window load event. In other words, the given script
  * resource is only loaded when the window is really finished with loading. So, the enduser can start working with the
  * webpage without waiting for the additional scripts to be loaded. Usually, it are those kind of scripts which are just
@@ -49,38 +35,22 @@ import org.omnifaces.util.Hacks;
  *
  * @author Bauke Scholtz
  * @since 1.8
- * @see DeferredScriptRenderer
  */
-@FacesComponent(DeferredScript.COMPONENT_TYPE)
-@ResourceDependency(library="omnifaces", name="omnifaces.js", target="head")
-@ListenersFor({
-	@ListenerFor(systemEventClass=PostAddToViewEvent.class),
-	@ListenerFor(systemEventClass=PostRestoreStateEvent.class)
-})
-public class DeferredScript extends ScriptFamily {
+@FacesComponent(value = DeferredScript.COMPONENT_TYPE) @ResourceDependency(library = "omnifaces", name = "omnifaces.js", target = "head") @ListenersFor(value = { @ListenerFor(systemEventClass = PostAddToViewEvent.class), @ListenerFor(systemEventClass = PostRestoreStateEvent.class) }) public class DeferredScript extends ScriptFamily {
+  /** The standard component type. */
+  public static final String COMPONENT_TYPE = "org.omnifaces.component.script.DeferredScript";
 
-	// Public constants -----------------------------------------------------------------------------------------------
-
-	/** The standard component type. */
-	public static final String COMPONENT_TYPE = "org.omnifaces.component.script.DeferredScript";
-
-	// Constructors ---------------------------------------------------------------------------------------------------
-
-	/**
+  /**
 	 * Construct a new {@link DeferredScript} component whereby the renderer type is set to
 	 * {@link DeferredScriptRenderer#RENDERER_TYPE}.
 	 */
-	public DeferredScript() {
-		setRendererType(DeferredScriptRenderer.RENDERER_TYPE);
-	}
+  public DeferredScript() {
+    setRendererType(DeferredScriptRenderer.RENDERER_TYPE);
+  }
 
-	// Actions --------------------------------------------------------------------------------------------------------
-
-	@Override
-	public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
-		if (moveToBody(event, this)) {
-			Hacks.setScriptResourceRendered(getFacesContext(), new ResourceIdentifier(this));
-		}
-	}
-
+  @Override public void processEvent(ComponentSystemEvent event) throws AbortProcessingException {
+    if (moveToBody(event, this)) {
+      Hacks.setScriptResourceRendered(getFacesContext(), new ResourceIdentifier(this));
+    }
+  }
 }

@@ -1,22 +1,8 @@
-/*
- * Copyright 2012 OmniFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package org.omnifaces.converter;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-
 import org.omnifaces.util.selectitems.SelectItemsCollector;
 import org.omnifaces.util.selectitems.SelectItemsUtils;
 
@@ -44,7 +30,7 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  * the instance during the conversion. This is sufficient if your (abstract base) entity has a
  * <code>toString()</code> implementation which looks something like this:
  * <pre>
- * &#64;Override
+ * {@literal @}Override
  * public String toString() {
  *     return String.format("%s[id=%d]", getClass().getSimpleName(), getId());
  * }
@@ -63,10 +49,10 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  * <code>SelectItemsConverter</code> class and override <b>only</b> the <code>getAsString</code> method wherein
  * the desired implementation is provided. For example:
  * <pre>
- * &#64;FacesConverter("exampleEntitySelectItemsConverter")
+ * {@literal @}FacesConverter("exampleEntitySelectItemsConverter")
  * public class ExampleEntitySelectItemsConverter extends SelectItemsConverter {
  *
- *     &#64;Override
+ *     {@literal @}Override
  *     public String getAsString(FacesContext context, UIComponent component, Object value) {
  *         Long id = (value instanceof ExampleEntity) ? ((ExampleEntity) value).getId() : null;
  *         return (id != null) ? String.valueOf(id) : null;
@@ -84,24 +70,16 @@ import org.omnifaces.util.selectitems.SelectItemsUtils;
  * of the selected item in the list instead of the {@link #toString()} of the selected item.
  *
  * @author Arjan Tijms
- * @see SelectItemsUtils
- * @see SelectItemsCollector
  */
-@FacesConverter("omnifaces.SelectItemsConverter")
-public class SelectItemsConverter implements Converter {
+@FacesConverter(value = "omnifaces.SelectItemsConverter") public class SelectItemsConverter implements Converter {
+  @Override public Object getAsObject(FacesContext context, UIComponent component, String value) {
+    return SelectItemsUtils.findValueByStringConversion(context, component, value, this);
+  }
 
-	@Override
-	public Object getAsObject(FacesContext context, UIComponent component, String value) {
-		return SelectItemsUtils.findValueByStringConversion(context, component, value, this);
-	}
-
-	@Override
-	public String getAsString(FacesContext context, UIComponent component, Object value) {
-		if (value == null) {
-			return "";
-		}
-
-		return value.toString();
-	}
-
+  @Override public String getAsString(FacesContext context, UIComponent component, Object value) {
+    if (value == null) {
+      return "";
+    }
+    return value.toString();
+  }
 }
