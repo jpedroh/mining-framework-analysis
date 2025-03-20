@@ -286,6 +286,14 @@ public class Args {
 				host, port, namespace));
 		}
 
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/test/src/com/aerospike/test/util/Args.java/left.java
+		//singleBin = parseBoolean(namespaceTokens, "single-bin");
+
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/test/src/com/aerospike/test/util/Args.java/base.java
+		singleBin = parseBoolean(namespaceTokens, "single-bin");
+
+=======
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/test/src/com/aerospike/test/util/Args.java/right.java
 		int nsup = parseInt(namespaceTokens, "nsup-period");
 
 		if (nsup == 0) {

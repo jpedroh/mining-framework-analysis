@@ -27,7 +27,7 @@ import com.aerospike.client.listener.RecordListener;
 public final class AsyncOperate extends AsyncRead {
 	private final OperateArgs args;
 
-	public AsyncOperate(Cluster cluster, RecordListener listener, Key key, OperateArgs args) {
+	public AsyncOperate(Cluster cluster,RecordListener listener, Key key, OperateArgs args) {
 		super(cluster, listener, args.writePolicy, key, args.getPartition(cluster, key), true);
 		this.args = args;
 	}

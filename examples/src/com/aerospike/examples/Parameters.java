@@ -16,6 +16,8 @@
  */
 package com.aerospike.examples;
 
+import com.aerospike.client.IAerospikeClient;
+
 import com.aerospike.client.async.EventLoopType;
 import com.aerospike.client.policy.AuthMode;
 import com.aerospike.client.policy.Policy;
@@ -40,7 +42,6 @@ public class Parameters {
 	int maxCommandsInProcess;
 	int maxCommandsInQueue;
 	boolean useProxyClient;
-
 	protected Parameters(TlsPolicy policy, String host, int port, String user, String password, AuthMode authMode, String namespace, String set) {
 		this.host = host;
 		this.port = port;
@@ -51,10 +52,64 @@ public class Parameters {
 		this.set = set;
 		this.tlsPolicy = policy;
 	}
-
 	/**
 	 * Some database calls need to know how the server is configured.
 	 */
+	protected void setServerSpecific(IAerospikeClient client) throws Exception {
+		if (useProxyClient) {
+			// Proxy client does not support querying nodes directly for their configuration.
+			return;
+		}
+
+		Node node = client.getNodes()[0];
+		String featuresFilter = "features";
+		String namespaceFilter = "namespace/" + namespace;
+		Map<String,String> tokens = Info.request(null, node, featuresFilter, namespaceFilter);
+
+		/* Client requires server 4.9+, so all these features are supported.
+		String features = tokens.get(featuresFilter);
+		hasGeo = false;
+		hasUdf = false;
+		hasCDTList = false;
+		hasCDTMap = false;
+
+		if (features != null) {
+			String[] list = features.split(";");
+
+			for (String s : list) {
+				if (s.equals("geo")) {
+					hasGeo = true;
+				}
+				else if (s.equals("udf")) {
+					hasUdf = true;
+				}
+				else if (s.equals("cdt-list")) {
+					hasCDTList = true;
+				}
+				else if (s.equals("cdt-map")) {
+					hasCDTMap = true;
+				}
+			}
+		}
+		*/
+
+		String namespaceTokens = tokens.get(namespaceFilter);
+
+		if (namespaceTokens == null) {
+			throw new Exception(String.format(
+				"Failed to get namespace info: host=%s port=%d namespace=%s",
+				host, port, namespace));
+		}
+
+		singleBin = parseBoolean(namespaceTokens, "single-bin");
+	}
+	@Override
+	public String toString() {
+		return "Parameters: host=" + host +
+				" port=" + port +
+				" ns=" + namespace +
+				" set=" + set;
+	}
 	/*
 	protected void setServerSpecific(AerospikeClient client) throws Exception {
 		Node node = client.getNodes()[0];
@@ -97,7 +152,6 @@ public class Parameters {
 		}
 	}
 	*/
-
 	/*
 	private static boolean parseBoolean(String namespaceTokens, String name) {
 		String search = name + '=';
@@ -118,12 +172,4 @@ public class Parameters {
 		return Boolean.parseBoolean(value);
 	}
 	*/
-
-	@Override
-	public String toString() {
-		return "Parameters: host=" + host +
-				" port=" + port +
-				" ns=" + namespace +
-				" set=" + set;
-	}
 }

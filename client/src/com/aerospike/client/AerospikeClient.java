@@ -1850,7 +1850,7 @@ public class AerospikeClient implements IAerospikeClient, Closeable {
 		}
 
 		OperateArgs args = new OperateArgs(policy, writePolicyDefault, operatePolicyReadDefault, key, operations);
-		AsyncOperate command = new AsyncOperate(cluster, listener, key, args);
+		AsyncOperate command = new AsyncOperate(cluster,listener, key, args);
 		eventLoop.execute(cluster, command);
 	}
 

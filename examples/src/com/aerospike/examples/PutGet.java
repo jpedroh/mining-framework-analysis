@@ -31,8 +31,26 @@ public class PutGet extends Example {
 	 * Write and read a bin value.
 	 */
 	@Override
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/left.java
 	public void runExample(IAerospikeClient client, Parameters params) throws Exception {
+		if (params.singleBin) {
+			runSingleBinTest(client, params);
+		}
+		else {
+			runMultiBinTest(client, params);
+		}
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/base.java
+	public void runExample(AerospikeClient client, Parameters params) throws Exception {
+		if (params.singleBin) {
+			runSingleBinTest(client, params);
+		}
+		else {
+			runMultiBinTest(client, params);
+		}
+=======
+	public void runExample(AerospikeClient client, Parameters params) throws Exception {
 		runMultiBinTest(client, params);
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/right.java
 		runGetHeaderTest(client, params);
 	}
 
@@ -60,6 +78,58 @@ public class PutGet extends Example {
 
 		validateBin(key, bin1, record);
 		validateBin(key, bin2, record);
+<<<<<<< /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/left.java
+	}
+
+	/**
+	 * Execute put and get on a server configured as single-bin.
+	 */
+	private void runSingleBinTest(IAerospikeClient client, Parameters params) throws Exception {
+		Key key = new Key(params.namespace, params.set, "putgetkey");
+		Bin bin = new Bin("", "value");
+
+		console.info("Single Bin Put: namespace=%s set=%s key=%s value=%s",
+			key.namespace, key.setName, key.userKey, bin.value);
+
+		client.put(params.writePolicy, key, bin);
+
+		console.info("Single Bin Get: namespace=%s set=%s key=%s", key.namespace, key.setName, key.userKey);
+
+		Record record = client.get(params.policy, key);
+
+		if (record == null) {
+			throw new Exception(String.format(
+				"Failed to get: namespace=%s set=%s key=%s", key.namespace, key.setName, key.userKey));
+		}
+
+		validateBin(key, bin, record);
+||||||| /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/base.java
+	}
+
+	/**
+	 * Execute put and get on a server configured as single-bin.
+	 */
+	private void runSingleBinTest(AerospikeClient client, Parameters params) throws Exception {
+		Key key = new Key(params.namespace, params.set, "putgetkey");
+		Bin bin = new Bin("", "value");
+
+		console.info("Single Bin Put: namespace=%s set=%s key=%s value=%s",
+			key.namespace, key.setName, key.userKey, bin.value);
+
+		client.put(params.writePolicy, key, bin);
+
+		console.info("Single Bin Get: namespace=%s set=%s key=%s", key.namespace, key.setName, key.userKey);
+
+		Record record = client.get(params.policy, key);
+
+		if (record == null) {
+			throw new Exception(String.format(
+				"Failed to get: namespace=%s set=%s key=%s", key.namespace, key.setName, key.userKey));
+		}
+
+		validateBin(key, bin, record);
+=======
+>>>>>>> /usr/src/app/output/aerospike/aerospike-client-java/7d8ed0bd0bed83cf7595427938f6f24ac8acbd83/examples/src/com/aerospike/examples/PutGet.java/right.java
 	}
 
 	private void validateBin(Key key, Bin bin, Record record) {
