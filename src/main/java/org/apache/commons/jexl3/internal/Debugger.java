@@ -34,17 +34,24 @@ import java.util.regex.Pattern;
  */
 public class Debugger extends ParserVisitor implements JexlInfo.Detail {
     /** The builder to compose messages. */
+    /** The builder to compose messages. */
     protected final StringBuilder builder = new StringBuilder();
+    /** The cause of the issue to debug. */
     /** The cause of the issue to debug. */
     protected JexlNode cause = null;
     /** The starting character location offset of the cause in the builder. */
+    /** The starting character location offset of the cause in the builder. */
     protected int start = 0;
+    /** The ending character location offset of the cause in the builder. */
     /** The ending character location offset of the cause in the builder. */
     protected int end = 0;
     /** The indentation level. */
+    /** The indentation level. */
     protected int indentLevel = 0;
     /** Perform indentation?. */
+    /** Perform indentation?. */
     protected int indent = 2;
+    /** accept() relative depth. */
     /** accept() relative depth. */
     protected int depth = Integer.MAX_VALUE;
 
