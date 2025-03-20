@@ -135,8 +135,12 @@ public class FindDeadCodeOnlyMojo extends AbstractSlf4jMojo {
                 new FacesConfigXmlAnalyzer(),
                 new HibernateAnnotationsAnalyzer(),
                 new JeeAnnotationsAnalyzer(),
-                new JettyXmlAnalyzer(),
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/5aee1194b7e224d667ec4053676fd48f72cd2317/src/main/java/de/is24/deadcode4j/plugin/FindDeadCodeOnlyMojo.java/left.java
                 new ReferenceToConstantsAnalyzer(),
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/5aee1194b7e224d667ec4053676fd48f72cd2317/src/main/java/de/is24/deadcode4j/plugin/FindDeadCodeOnlyMojo.java/base.java
+=======
+                new JettyXmlAnalyzer(),
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/5aee1194b7e224d667ec4053676fd48f72cd2317/src/main/java/de/is24/deadcode4j/plugin/FindDeadCodeOnlyMojo.java/right.java
                 new ServletContainerInitializerAnalyzer(),
                 new SpringAnnotationsAnalyzer(),
                 new SpringDataCustomRepositoriesAnalyzer(),
