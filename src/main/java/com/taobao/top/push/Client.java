@@ -30,11 +30,16 @@ public class Client {
 	private MessageStateHandler messageStateHandler;
 	private ClientStateHandler clientStateHandler;
 
+<<<<<<< /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/left.java
+	private Map<String, Object> state;
+||||||| /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/base.java
+=======
 	private Map<Object, Object> state;
+>>>>>>> /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/right.java
 
 	public Client(LoggerFactory factory, Object id) {
-		this(factory, id, null, null);
-	}
+	this(factory, id, null, null);
+}
 
 	public Client(LoggerFactory factory,
 			Object id,
@@ -47,7 +52,12 @@ public class Client {
 		this.pendingMessages = new ConcurrentLinkedQueue<Object>();
 		this.messageStateHandler = messageStateHandler;
 		this.clientStateHandler = clientStateHandler;
+<<<<<<< /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/left.java
 		this.state = new ConcurrentHashMap<String, Object>();
+||||||| /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/base.java
+=======
+		this.state = new ConcurrentHashMap<Object, Object>();
+>>>>>>> /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/right.java
 	}
 
 	public void setMaxPendingCount(int value) {
@@ -58,13 +68,20 @@ public class Client {
 		return this.id;
 	}
 
+<<<<<<< /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/left.java
+	public Map<String, Object> getState() {
+		return this.state;
+	}
+||||||| /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/base.java
+=======
 	public Map<Object, Object> getState() {
 		return this.state;
 	}
+>>>>>>> /usr/src/app/output/wsky/top-push/0ac546979c7028031ed0a6185c669e92174f774d/src/main/java/com/taobao/top/push/Client.java/right.java
 
 	public long getTotalSendMessageCount() {
-		return this.totalSendMessageCount;
-	}
+	return this.totalSendMessageCount;
+}
 
 	public int getPendingMessagesCount() {
 		// size() is O(n)
