@@ -15,7 +15,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BookMeta.Generation;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -502,7 +501,7 @@ public class RemoteSession {
 					sign.update();
 				}
 			
-			// world.addBookToChest
+			// world.addBookToChest		Author: Tim Cummings https://www.triptera.com.au/wordpress/
 			} else if (c.equals("world.addBookToChest")) {
 				Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
 				Block thisBlock = world.getBlockAt(loc);
