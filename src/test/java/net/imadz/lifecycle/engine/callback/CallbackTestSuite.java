@@ -41,5 +41,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ CallbackExtendedAndOverrideTests.class, PostStateChangePositiveTests.class, PreStateChangePositiveTests.class, PostStateChangeByPriorityPositiveTests.class, OnEventCallbackPositiveTests.class })
+<<<<<<< /usr/src/app/output/zhongdj/lifecycle/39a2a8f6f0a2ec3438245cb3df6adbcd827aef55/src/test/java/net/imadz/lifecycle/engine/callback/CallbackTestSuite.java/left.java
+@SuiteClasses({ CallbackExtendedAndOverrideTests.class, PostStateChangePositiveTests.class, PreStateChangePositiveTests.class, OnEventCallbackPositiveTests.class })
+||||||| /usr/src/app/output/zhongdj/lifecycle/39a2a8f6f0a2ec3438245cb3df6adbcd827aef55/src/test/java/net/imadz/lifecycle/engine/callback/CallbackTestSuite.java/base.java
+@SuiteClasses({ CallbackExtendedAndOverrideTests.class, PostStateChangePositiveTests.class, PreStateChangePositiveTests.class })
+=======
+@SuiteClasses({ CallbackExtendedAndOverrideTests.class, PostStateChangePositiveTests.class, PreStateChangePositiveTests.class, PostStateChangeByPriorityPositiveTests.class })
+>>>>>>> /usr/src/app/output/zhongdj/lifecycle/39a2a8f6f0a2ec3438245cb3df6adbcd827aef55/src/test/java/net/imadz/lifecycle/engine/callback/CallbackTestSuite.java/right.java
 public class CallbackTestSuite {}
