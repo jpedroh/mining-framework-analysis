@@ -104,7 +104,7 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		int actIndex = 0;
 //		logger.info("start");
 		for(TourActivity nextAct : currentRoute.getTourActivities().getActivities()){
-//			logger.info("prevActStartTime="+prevActStartTime);
+		//			logger.info("prevActStartTime="+prevActStartTime);
 			if(neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), prevAct.getLocationId()) && neighborhood.areNeighbors(deliveryAct2Insert.getLocationId(), nextAct.getLocationId())){
 				Marginals mc = calculate(insertionContext, prevAct, nextAct, deliveryAct2Insert, prevActStartTime);
 				if(mc != null){ 
@@ -115,13 +115,19 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 					}
 				}
 			}
-
+<<<<<<< /usr/src/app/output/jsprit/jsprit/f1bb6c7bd0eb9181aab31f2661f497eea2519cd6/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/left.java
+			prevActStartTime = CalcUtils.getStartTimeAtAct(prevActStartTime, transportCosts.getTransportTime(prevAct.getLocationId(), nextAct.getLocationId(), prevActStartTime, newDriver, newVehicle), nextAct);
+			prevAct = nextAct;
+||||||| /usr/src/app/output/jsprit/jsprit/f1bb6c7bd0eb9181aab31f2661f497eea2519cd6/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/base.java
+			prevAct = nextAct;
+			prevActStartTime = CalcUtils.getStartTimeAtAct(prevActStartTime, transportCosts.getTransportTime(prevAct.getLocationId(), nextAct.getLocationId(), prevActStartTime, newDriver, newVehicle), nextAct);
+=======
 			double nextActArrTime = prevActStartTime + transportCosts.getTransportTime(prevAct.getLocationId(), nextAct.getLocationId(), prevActStartTime, newDriver, newVehicle);
 			double nextActEndTime = CalcUtils.getActivityEndTime(nextActArrTime, nextAct);
 			
 			prevActStartTime = nextActEndTime;
-
 			prevAct = nextAct;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/f1bb6c7bd0eb9181aab31f2661f497eea2519cd6/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/right.java
 			actIndex++;
 		}
 //		logger.info("prevActStartTime="+prevActStartTime);
