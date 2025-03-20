@@ -1,26 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * The modifications to the upstream file is Copyright 2014 Spotify AB.
- * The original upstream file can be found at
- * https://github.com/apache/cassandra/blob/trunk/src/java/org/apache/cassandra/hadoop/cql3/CqlBulkRecordWriter.java
- */
 package com.spotify.hdfs2cass.cassandra.cql;
-
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.spotify.hdfs2cass.cassandra.thrift.ProgressHeartbeat;
@@ -39,7 +17,6 @@ import org.apache.crunch.CrunchRuntimeException;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -56,26 +33,27 @@ import java.util.concurrent.Future;
  * </p>
  */
 public class CrunchCqlBulkRecordWriter extends AbstractBulkRecordWriter<Object, List<ByteBuffer>> {
-
   private static final Logger LOG = LoggerFactory.getLogger(CrunchCqlBulkRecordWriter.class);
 
   private String keyspace;
+
   private final ProgressHeartbeat heartbeat;
 
   private String columnFamily;
+
   private String schema;
+
   private String insertStatement;
+
   private File outputDir;
 
-  public CrunchCqlBulkRecordWriter(TaskAttemptContext context)  {
+  public CrunchCqlBulkRecordWriter(TaskAttemptContext context) {
     super(context);
     setConfigs();
     heartbeat = new ProgressHeartbeat(context, 120);
   }
 
-  private void setConfigs() 
-  {
-    // if anything is missing, exceptions will be thrown here, instead of on write()
+  private void setConfigs() {
     keyspace = ConfigHelper.getOutputKeyspace(conf);
     columnFamily = CrunchConfigHelper.getOutputColumnFamily(conf);
     schema = CrunchCqlBulkOutputFormat.getColumnFamilySchema(conf, columnFamily);
@@ -83,32 +61,23 @@ public class CrunchCqlBulkRecordWriter extends AbstractBulkRecordWriter<Object, 
     outputDir = getColumnFamilyDirectory();
   }
 
-  private void prepareWriter()  {
+  private void prepareWriter() {
     try {
       if (writer == null) {
-        writer = CQLSSTableWriter.builder()
-            .forTable(schema)
-            .using(insertStatement)
-            .withPartitioner(ConfigHelper.getOutputPartitioner(conf))
-            .inDirectory(outputDir)
-            .withBufferSizeInMB(Integer.parseInt(conf.get(BUFFER_SIZE_IN_MB, "64")))
-            .build();
+        writer = CQLSSTableWriter.builder().forTable(schema).using(insertStatement).withPartitioner(ConfigHelper.getOutputPartitioner(conf)).inDirectory(outputDir).withBufferSizeInMB(Integer.parseInt(conf.get(BUFFER_SIZE_IN_MB, "64"))).build();
       }
       if (loader == null) {
         CrunchExternalClient externalClient = new CrunchExternalClient(conf);
         externalClient.addKnownCfs(keyspace, schema);
-        this.loader = new SSTableLoader(outputDir, externalClient,
-            new BulkRecordWriter.NullOutputHandler());
+        this.loader = new SSTableLoader(outputDir, externalClient, new BulkRecordWriter.NullOutputHandler());
       }
     } catch (Exception e) {
       throw new CrunchRuntimeException(e);
     }
   }
 
-  @Override
-  public void write(Object key, List<ByteBuffer> values)  {
+  @Override public void write(Object key, List<ByteBuffer> values) {
     prepareWriter();
-    // To ensure Crunch doesn't reuse CQLSSTableWriter's objects
     List<ByteBuffer> bb = Lists.newArrayList();
     for (ByteBuffer v : values) {
       bb.add(ByteBufferUtil.clone(v));
@@ -116,20 +85,21 @@ public class CrunchCqlBulkRecordWriter extends AbstractBulkRecordWriter<Object, 
     values = bb;
     try {
       ((CQLSSTableWriter) writer).rawAddRow(values);
-      if (null != progress)
+      if (null != progress) {
         progress.progress();
-      if (null != context)
+      }
+      if (null != context) {
         HadoopCompat.progress(context);
+      }
     } catch (InvalidRequestException | IOException e) {
       LOG.error(e.getMessage());
       throw new CrunchRuntimeException("Error adding row : " + e.getMessage());
     }
   }
 
-  private File getColumnFamilyDirectory()  {
+  private File getColumnFamilyDirectory() {
     try {
-      File dir = new File(String.format("%s%s%s%s%s",
-          getOutputLocation(), File.separator, keyspace, File.separator, columnFamily));
+      File dir = new File(String.format("%s%s%s%s%s", getOutputLocation(), File.separator, keyspace, File.separator, columnFamily));
       if (!dir.exists() && !dir.mkdirs()) {
         throw new CrunchRuntimeException("Failed to created output directory: " + dir);
       }
@@ -139,24 +109,21 @@ public class CrunchCqlBulkRecordWriter extends AbstractBulkRecordWriter<Object, 
     }
   }
 
-  @Override
-  public void close(TaskAttemptContext context) throws InterruptedException {
+  @Override public void close(TaskAttemptContext context) throws InterruptedException {
     close();
   }
 
-  @Deprecated
-  public void close(org.apache.hadoop.mapred.Reporter reporter)  {
+  @Deprecated public void close(org.apache.hadoop.mapred.Reporter reporter) {
     close();
   }
 
-  private void close()  {
+  private void close() {
     LOG.info("SSTables built. Now starting streaming");
     heartbeat.startHeartbeat();
     try {
       if (writer != null) {
         writer.close();
-        Future<StreamState> future =
-            loader.stream(Collections.<InetAddress>emptySet(), new ProgressIndicator());
+        Future<StreamState> future = loader.stream(Collections.<InetAddress>emptySet(), new ProgressIndicator());
         try {
           StreamState streamState = Uninterruptibles.getUninterruptibly(future);
           if (streamState.hasFailedSession()) {
@@ -165,11 +132,10 @@ public class CrunchCqlBulkRecordWriter extends AbstractBulkRecordWriter<Object, 
             LOG.info("Streaming finished successfully");
           }
         } catch (ExecutionException e) {
-          throw new CrunchRuntimeException("Streaming to the following hosts failed: " +
-              loader.getFailedHosts(), e);
+          throw new CrunchRuntimeException("Streaming to the following hosts failed: " + loader.getFailedHosts(), e);
         }
       } else {
-        LOG.info("SSTableWriter wasn't instantiated, no streaming happened.");
+        LOG.info("SSTableWriter wasn\'t instantiated, no streaming happened.");
       }
     } catch (IOException e) {
       throw new CrunchRuntimeException(e);
