@@ -275,7 +275,7 @@ public class PebbleEngine {
 
         private boolean cacheActive = true;
 
-        private Cache<CacheKey, Object> tagCache;
+      private Cache<CacheKey, Object> tagCache;
 
         private EscaperExtension escaperExtension = new EscaperExtension();
 
@@ -519,7 +519,7 @@ public class PebbleEngine {
             }
 
           return new PebbleEngine(this.loader, this.syntax, this.strictVariables, this.defaultLocale, this.tagCache, this.templateCache,
-                  this.executorService, extensions, this.allowGetClass);
+                  this.executorService, extensions, allowGetClass);
         }
     }
 }
