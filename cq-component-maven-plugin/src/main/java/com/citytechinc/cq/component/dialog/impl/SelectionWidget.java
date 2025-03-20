@@ -1,49 +1,46 @@
 package com.citytechinc.cq.component.dialog.impl;
-
 import java.util.List;
 import java.util.Map;
-
 import com.citytechinc.cq.component.annotations.config.Widget;
 import com.citytechinc.cq.component.annotations.widgets.Selection;
 import com.citytechinc.cq.component.dialog.AbstractWidget;
 import com.citytechinc.cq.component.dialog.DialogElement;
 import com.citytechinc.cq.component.dialog.maker.impl.SelectionWidgetMaker;
 
-@Widget(annotationClass =Selection.class, makerClass =SelectionWidgetMaker.class, xtypes = SelectionWidget.XTYPE)
-public class SelectionWidget extends AbstractWidget {
+@Widget(annotationClass = Selection.class, makerClass = SelectionWidgetMaker.class, xtypes = SelectionWidget.XTYPE) public class SelectionWidget extends AbstractWidget {
+  public static final String XTYPE = "selection";
 
-	public static final String XTYPE = "selection";
-	private static final String PRIMARY_TYPE = "cq:Widget";
-	private final String type;
-	private final String options;
-	private final String optionsProvider;
-	private final String sortDir;
+  private static final String PRIMARY_TYPE = "cq:Widget";
 
-	public SelectionWidget(String type, String name, String fieldLabel, String fieldName, String fieldDescription,
-		Boolean required, boolean hideLabel, String defaultValue, Map<String, String> additionalProperties,
-		List<DialogElement> options, String optionsUrl, String optionsProvider, String sortDir) {
-		super(XTYPE, fieldLabel, fieldDescription, !required, hideLabel, defaultValue, name, PRIMARY_TYPE, null,
-			fieldName, additionalProperties, options);
+  private final String type;
 
-		this.type = type;
-		this.options = optionsUrl;
-		this.optionsProvider = optionsProvider;
-		this.sortDir = sortDir;
-	}
+  private final String options;
 
-	public String getType() {
-		return type;
-	}
+  private final String optionsProvider;
 
-	public String getOptions() {
-		return options;
-	}
+  private final String sortDir;
 
-	public String getOptionsProvider() {
-		return optionsProvider;
-	}
+  public SelectionWidget(String type, String name, String fieldLabel, String fieldName, String fieldDescription, Boolean required, boolean hideLabel, String defaultValue, Map<String, String> additionalProperties, List<DialogElement> options, String optionsUrl, String optionsProvider, String sortDir) {
+    super(XTYPE, fieldLabel, fieldDescription, !required, hideLabel, defaultValue, name, PRIMARY_TYPE, null, fieldName, additionalProperties, options);
+    this.type = type;
+    this.options = optionsUrl;
+    this.optionsProvider = optionsProvider;
+    this.sortDir = sortDir;
+  }
 
-	public String getSortDir() {
-		return sortDir;
-	}
+  public String getType() {
+    return type;
+  }
+
+  public String getOptions() {
+    return options;
+  }
+
+  public String getOptionsProvider() {
+    return optionsProvider;
+  }
+
+  public String getSortDir() {
+    return sortDir;
+  }
 }
