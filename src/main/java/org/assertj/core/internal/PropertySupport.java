@@ -1,28 +1,11 @@
-/*
- * Created on Jun 26, 2010
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- * 
- * Copyright @2010-2011 the original author or authors.
- */
 package org.assertj.core.internal;
-
 import static java.lang.String.format;
 import static java.util.Collections.*;
 import static org.assertj.core.util.Iterables.isNullOrEmpty;
 import static org.assertj.core.util.introspection.Introspection.getProperty;
-
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.assertj.core.util.VisibleForTesting;
 import org.assertj.core.util.introspection.IntrospectionError;
 
@@ -35,7 +18,6 @@ import org.assertj.core.util.introspection.IntrospectionError;
  * @author Florent Biville
  */
 public class PropertySupport {
-
   private static final String SEPARATOR = ".";
 
   private static final PropertySupport INSTANCE = new PropertySupport();
@@ -49,11 +31,9 @@ public class PropertySupport {
     return INSTANCE;
   }
 
-  @VisibleForTesting
-  JavaBeanDescriptor javaBeanDescriptor = new JavaBeanDescriptor();
+  @VisibleForTesting JavaBeanDescriptor javaBeanDescriptor = new JavaBeanDescriptor();
 
-  @VisibleForTesting
-  PropertySupport() {
+  @VisibleForTesting PropertySupport() {
   }
 
   /**
@@ -69,14 +49,13 @@ public class PropertySupport {
    * @throws IntrospectionError if an element in the given {@code Iterable} does not have a property with a matching
    *           name.
    */
-  public <T> List<T> propertyValues(String propertyName, Class<T> clazz, Iterable<?> target) {
+  public <T extends java.lang.Object> List<T> propertyValues(String propertyName, Class<T> clazz, Iterable<?> target) {
     if (isNullOrEmpty(target)) {
       return emptyList();
     }
     if (isNestedProperty(propertyName)) {
       String firstPropertyName = popPropertyNameFrom(propertyName);
       Iterable<Object> propertyValues = propertyValues(firstPropertyName, Object.class, target);
-      // extract next sub-property values until reaching the last sub-property
       return propertyValues(nextPropertyNameFrom(propertyName), clazz, propertyValues);
     }
     return simplePropertyValues(propertyName, clazz, target);
@@ -93,11 +72,11 @@ public class PropertySupport {
    * @return a the values of the given property name
    * @throws IntrospectionError if the given target does not have a property with a matching name.
    */
-  public static <T> T propertyValueOf(String propertyName, Object target, Class<T> clazz) {
+  public static <T extends java.lang.Object> T propertyValueOf(String propertyName, Object target, Class<T> clazz) {
     return instance().propertyValueOf(propertyName, clazz, target);
   }
 
-  private <T> List<T> simplePropertyValues(String propertyName, Class<T> clazz, Iterable<?> target) {
+  private <T extends java.lang.Object> List<T> simplePropertyValues(String propertyName, Class<T> clazz, Iterable<?> target) {
     List<T> propertyValues = new ArrayList<T>();
     for (Object e : target) {
       propertyValues.add(e == null ? null : propertyValue(propertyName, clazz, e));
@@ -149,16 +128,15 @@ public class PropertySupport {
    * @return a the values of the given property name
    * @throws IntrospectionError if the given target does not have a property with a matching name.
    */
-  public <T> T propertyValue(String propertyName, Class<T> clazz, Object target) {
+  public <T extends java.lang.Object> T propertyValue(String propertyName, Class<T> clazz, Object target) {
     PropertyDescriptor descriptor = getProperty(propertyName, target);
     try {
       return clazz.cast(javaBeanDescriptor.invokeReadMethod(descriptor, target));
     } catch (ClassCastException e) {
-      String msg = format("Unable to obtain the value of the property <'%s'> from <%s> - wrong property type specified <%s>",
-                          propertyName, target, clazz);
+      String msg = format("Unable to obtain the value of the property <\'%s\'> from <%s> - wrong property type specified <%s>", propertyName, target, clazz);
       throw new IntrospectionError(msg, e);
     } catch (Throwable unexpected) {
-      String msg = format("Unable to obtain the value of the property <'%s'> from <%s>", propertyName, target);
+      String msg = format("Unable to obtain the value of the property <\'%s\'> from <%s>", propertyName, target);
       throw new IntrospectionError(msg, unexpected);
     }
   }
@@ -175,14 +153,13 @@ public class PropertySupport {
    * @return the value of the given property name given target.
    * @throws IntrospectionError if target object does not have a property with a matching name.
    */
-  public <T> T propertyValueOf(String propertyName, Class<T> clazz, Object target) {
-    // returns null if target is null as we can't extract a property from a null object
-    if (target == null) return null;
-
+  public <T extends java.lang.Object> T propertyValueOf(String propertyName, Class<T> clazz, Object target) {
+    if (target == null) {
+      return null;
+    }
     if (isNestedProperty(propertyName)) {
       String firstPropertyName = popPropertyNameFrom(propertyName);
       Object propertyValue = propertyValue(firstPropertyName, Object.class, target);
-      // extract next sub-property values until reaching the last sub-property
       return propertyValueOf(nextPropertyNameFrom(propertyName), clazz, propertyValue);
     }
     return propertyValue(propertyName, clazz, target);
@@ -194,5 +171,4 @@ public class PropertySupport {
   public List<Object> propertyValues(String fieldOrPropertyName, Iterable<?> objects) {
     return propertyValues(fieldOrPropertyName, Object.class, objects);
   }
-
 }
