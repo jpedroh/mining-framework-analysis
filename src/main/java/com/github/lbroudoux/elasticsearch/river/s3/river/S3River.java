@@ -239,8 +239,8 @@ public class S3River extends AbstractRiverComponent implements River{
             feedThread.start();
             riverStatus = RiverStatus.RUNNING;
          }
-      });   
-      
+      });
+
    }
    
    @Override
@@ -513,7 +513,13 @@ public class S3River extends AbstractRiverComponent implements River{
                   // Parse content using Tika directly.
                   Metadata fileMetadata = new Metadata();
                   String parsedContent = TikaHolder.tika().parseToString(
-                        new BytesStreamInput(fileContent, false), fileMetadata, indexedChars);
+<<<<<<< /usr/src/app/output/lbroudoux/es-amazon-s3-river/2aa45336dcc877155d7df5063071f37a86368271/src/main/java/com/github/lbroudoux/elasticsearch/river/s3/river/S3River.java/left.java
+                        new BytesStreamInput(fileContent, false), new Metadata(), indexedChars);
+||||||| /usr/src/app/output/lbroudoux/es-amazon-s3-river/2aa45336dcc877155d7df5063071f37a86368271/src/main/java/com/github/lbroudoux/elasticsearch/river/s3/river/S3River.java/base.java
+                        new BytesStreamInput(fileContent, false), new Metadata());
+=======
+                        new BytesStreamInput(fileContent, false), fileMetadata);
+>>>>>>> /usr/src/app/output/lbroudoux/es-amazon-s3-river/2aa45336dcc877155d7df5063071f37a86368271/src/main/java/com/github/lbroudoux/elasticsearch/river/s3/river/S3River.java/right.java
 
                   // Store Tika metadatas into a map.
                   Map<String, Object> fileMetadataMap = new HashMap<String, Object>();
