@@ -14,6 +14,9 @@
 
 package org.organicdesign.fp.ephemeral;
 
+import org.organicdesign.fp.Sentinel;
+import org.organicdesign.fp.Transformable;
+
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -21,7 +24,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.organicdesign.fp.Option;
-import org.organicdesign.fp.Transformable;
 
 /**
  A lightweight, one-time view that lazy, thread-safe operations can be built from.  Because there
@@ -80,10 +82,11 @@ public interface View<T> extends Transformable<T> {
      */
     @Override
     @Deprecated
-    default Option<T> firstMatching(Predicate<T> pred) {
+    default T firstMatching(Predicate<T> pred) {
         Option<T> item = next();
         while (item.isSome()) {
-            if (pred.test(item.get())) { return item; }
+            T t = item.get();
+            if (pred.test(t)) { return t; }
             item = next();
         }
         return null;
