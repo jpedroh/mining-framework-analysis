@@ -1,23 +1,13 @@
-/**
- * Copyright (c) 2011, Peace Technology, Inc.
- * $Author:$
- * $Revision:$
- * $Date:$
- * $NoKeywords$
- */
-
 package htm.utils;
-
 import java.math.BigDecimal;
 
 public class MathUtils {
-//  private MathUtils() {
-//  }
-
   static public double findMax(Double... values) {
     double max = Double.MIN_VALUE;
     for (double d : values) {
-      if (d > max) max = d;
+      if (d > max) {
+        max = d;
+      }
     }
     return max;
   }
@@ -25,7 +15,9 @@ public class MathUtils {
   static public double findMin(Double... values) {
     double min = Double.MAX_VALUE;
     for (double d : values) {
-      if (d < min) min = d;
+      if (d < min) {
+        min = d;
+      }
     }
     return min;
   }
@@ -35,14 +27,15 @@ public class MathUtils {
   }
 
   public static boolean inRange(double value, double lowerBound, double upperBound) {
-     return (lowerBound <= value && value <= upperBound);
-   }
-
-  public static double round(double value, int places) {
-      if (places < 0) throw new IllegalArgumentException("places should not be negative");
-      BigDecimal bd = new BigDecimal(value);
-      bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
-      return bd.doubleValue();
+    return (lowerBound <= value && value <= upperBound);
   }
 
+  public static double round(double value, int places) {
+    if (places < 0) {
+      throw new IllegalArgumentException("places should not be negative");
+    }
+    BigDecimal bd = new BigDecimal(value);
+    bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+    return bd.doubleValue();
+  }
 }
