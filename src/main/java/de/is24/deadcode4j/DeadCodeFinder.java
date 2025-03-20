@@ -10,10 +10,14 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static de.is24.deadcode4j.Utils.getOrAddMappedSet;
+import static java.util.Map.Entry;
 
 /**
  * The <code>DeadCodeFinder</code> ties everything together in order to ultimately find dead code.
@@ -36,14 +40,22 @@ public class DeadCodeFinder {
 
     @Nonnull
     private AnalyzedCode analyzeCode(@Nonnull Iterable<Module> modules) {
-        CodeContext codeContext = new CodeContext();
+        List<AnalyzedCode> analyzedCode = newArrayList();
         for (Module module : modules) {
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/69518ebbfef40f661ff6ab30ea9ab758a81509c7/src/main/java/de/is24/deadcode4j/DeadCodeFinder.java/left.java
+            CodeContext codeContext = new CodeContext(codeRepository.getClassPath());
+            analyzeRepository(codeContext, codeRepository);
+            analyzedCode.add(codeContext.getAnalyzedCode());
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/69518ebbfef40f661ff6ab30ea9ab758a81509c7/src/main/java/de/is24/deadcode4j/DeadCodeFinder.java/base.java
+            analyzeRepository(codeContext, codeRepository);
+=======
             for (Repository repository : module.getAllRepositories()) {
                 analyzeRepository(codeContext, repository);
             }
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/69518ebbfef40f661ff6ab30ea9ab758a81509c7/src/main/java/de/is24/deadcode4j/DeadCodeFinder.java/right.java
         }
 
-        return codeContext.getAnalyzedCode();
+        return merge(analyzedCode);
     }
 
     @Nonnull
@@ -74,6 +86,19 @@ public class DeadCodeFinder {
         List<String> deadClasses = newArrayList(analyzedCode.getAnalyzedClasses());
         deadClasses.removeAll(classesInUse);
         return deadClasses;
+    }
+
+    private AnalyzedCode merge(List<AnalyzedCode> analyzedCode) {
+        Set<String> analyzedClasses = newHashSet();
+        Map<String, Set<String>> dependencies = newHashMap();
+        for (AnalyzedCode code : analyzedCode) {
+            analyzedClasses.addAll(code.getAnalyzedClasses());
+            for (Entry<String, Set<String>> dependencyEntry : code.getCodeDependencies().entrySet()) {
+                Set<String> knownDependencies = getOrAddMappedSet(dependencies, dependencyEntry.getKey());
+                knownDependencies.addAll(dependencyEntry.getValue());
+            }
+        }
+        return new AnalyzedCode(analyzedClasses, dependencies);
     }
 
     private static class RepositoryAnalyzer extends DirectoryWalker<Void> {
