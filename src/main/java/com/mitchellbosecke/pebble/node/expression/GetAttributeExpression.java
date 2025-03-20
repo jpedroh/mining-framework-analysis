@@ -70,8 +70,22 @@ public class GetAttributeExpression implements Expression<Object> {
                         "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
                         rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
             } else {
+<<<<<<< /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
                 throw new RootAttributeNotFoundException(null,
                         "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
+||||||| /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+                if (attributeName.equals("class") || attributeName.equals("getClass")) {
+                    throw new ClassAccessException(this.lineNumber, this.filename);
+                } else {
+                    throw new AttributeNotFoundException(null, String.format(
+                            "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
+                            attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
+                }
+=======
+                throw new AttributeNotFoundException(null, String.format(
+                        "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
+                        attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
+>>>>>>> /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
             }
         }
 
@@ -120,6 +134,313 @@ public class GetAttributeExpression implements Expression<Object> {
             }
         }
         return argumentValues;
+<<<<<<< /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+||||||| /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+    }
+
+    /**
+     * Performs the actual reflection to obtain a "Member" from a class.
+     *
+     * @param object
+     * @param attributeName
+     * @param parameterTypes
+     * @return
+     */
+    private Member reflect(Object object, String attributeName, Class<?>[] parameterTypes, boolean allowGetClass) {
+
+        Class<?> clazz = object.getClass();
+
+        Member result = null;
+
+        // capitalize first letter of attribute for the following attempts
+        String attributeCapitalized = Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
+
+        // check get method
+        result = this.findMethod(clazz, "get" + attributeCapitalized, parameterTypes, allowGetClass);
+
+        // check is method
+        if (result == null) {
+            result = this.findMethod(clazz, "is" + attributeCapitalized, parameterTypes, allowGetClass);
+        }
+
+        // check has method
+        if (result == null) {
+            result = this.findMethod(clazz, "has" + attributeCapitalized, parameterTypes, allowGetClass);
+        }
+
+        // check if attribute is a public method
+        if (result == null) {
+            result = this.findMethod(clazz, attributeName, parameterTypes, allowGetClass);
+        }
+
+        // public field
+        if (result == null) {
+            try {
+                result = clazz.getField(attributeName);
+            } catch (NoSuchFieldException | SecurityException e) {
+            }
+        }
+
+        if (result != null) {
+            ((AccessibleObject) result).setAccessible(true);
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds an appropriate method by comparing if parameter types are
+     * compatible. This is more relaxed than class.getMethod.
+     *
+     * @param clazz
+     * @param name
+     * @param requiredTypes
+     * @return
+     */
+    private Method findMethod(Class<?> clazz, String name, Class<?>[] requiredTypes, boolean allowGetClass) {
+        if (name.equals("getClass")) {
+            if (!allowGetClass) {
+                throw new ClassAccessException(this.lineNumber, this.filename);
+            }
+            return null;
+        }
+
+        Method result = null;
+
+        Method[] candidates = clazz.getMethods();
+
+        for (Method candidate : candidates) {
+            if (!candidate.getName().equalsIgnoreCase(name)) {
+                continue;
+            }
+
+            Class<?>[] types = candidate.getParameterTypes();
+
+            if (types.length != requiredTypes.length) {
+                continue;
+            }
+
+            boolean compatibleTypes = true;
+            for (int i = 0; i < types.length; i++) {
+                if (requiredTypes[i] != null && !this.widen(types[i]).isAssignableFrom(requiredTypes[i])) {
+                    compatibleTypes = false;
+                    break;
+                }
+            }
+
+            if (compatibleTypes) {
+                result = candidate;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Performs a widening conversion (primitive to boxed type)
+     *
+     * @param clazz
+     * @return
+     */
+    private Class<?> widen(Class<?> clazz) {
+        Class<?> result = clazz;
+        if (clazz == int.class) {
+            result = Integer.class;
+        } else if (clazz == long.class) {
+            result = Long.class;
+        } else if (clazz == double.class) {
+            result = Double.class;
+        } else if (clazz == float.class) {
+            result = Float.class;
+        } else if (clazz == short.class) {
+            result = Short.class;
+        } else if (clazz == byte.class) {
+            result = Byte.class;
+        } else if (clazz == boolean.class) {
+            result = Boolean.class;
+        }
+        return result;
+    }
+
+    private class MemberCacheKey {
+        private final Class<?> clazz;
+        private final String attributeName;
+
+        private MemberCacheKey(Class<?> clazz, String attributeName) {
+            this.clazz = clazz;
+            this.attributeName = attributeName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || this.getClass() != o.getClass()) return false;
+
+            MemberCacheKey that = (MemberCacheKey) o;
+
+            if (!this.clazz.equals(that.clazz)) return false;
+            return this.attributeName.equals(that.attributeName);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = this.clazz.hashCode();
+            result = 31 * result + this.attributeName.hashCode();
+            return result;
+        }
+=======
+    }
+
+    /**
+     * Performs the actual reflection to obtain a "Member" from a class.
+     *
+     * @param object
+     * @param attributeName
+     * @param parameterTypes
+     * @return
+     */
+    private Member reflect(Object object, String attributeName, Class<?>[] parameterTypes, boolean allowGetClass) {
+
+        Class<?> clazz = object.getClass();
+
+        Member result = null;
+
+        // capitalize first letter of attribute for the following attempts
+        String attributeCapitalized = Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
+
+        // check get method
+        result = this.findMethod(clazz, "get" + attributeCapitalized, parameterTypes, allowGetClass);
+
+        // check is method
+        if (result == null) {
+            result = this.findMethod(clazz, "is" + attributeCapitalized, parameterTypes, allowGetClass);
+        }
+
+        // check has method
+        if (result == null) {
+            result = this.findMethod(clazz, "has" + attributeCapitalized, parameterTypes, allowGetClass);
+        }
+
+        // check if attribute is a public method
+        if (result == null) {
+            result = this.findMethod(clazz, attributeName, parameterTypes, allowGetClass);
+        }
+
+        // public field
+        if (result == null) {
+            try {
+                result = clazz.getField(attributeName);
+            } catch (NoSuchFieldException | SecurityException e) {
+            }
+        }
+
+        if (result != null) {
+            ((AccessibleObject) result).setAccessible(true);
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds an appropriate method by comparing if parameter types are
+     * compatible. This is more relaxed than class.getMethod.
+     *
+     * @param clazz
+     * @param name
+     * @param requiredTypes
+     * @return
+     */
+    private Method findMethod(Class<?> clazz, String name, Class<?>[] requiredTypes, boolean allowGetClass) {
+        if (!allowGetClass && name.equals("getClass")) {
+            throw new ClassAccessException(this.lineNumber, this.filename);
+        }
+
+        Method result = null;
+
+        Method[] candidates = clazz.getMethods();
+
+        for (Method candidate : candidates) {
+            if (!candidate.getName().equalsIgnoreCase(name)) {
+                continue;
+            }
+
+            Class<?>[] types = candidate.getParameterTypes();
+
+            if (types.length != requiredTypes.length) {
+                continue;
+            }
+
+            boolean compatibleTypes = true;
+            for (int i = 0; i < types.length; i++) {
+                if (requiredTypes[i] != null && !this.widen(types[i]).isAssignableFrom(requiredTypes[i])) {
+                    compatibleTypes = false;
+                    break;
+                }
+            }
+
+            if (compatibleTypes) {
+                result = candidate;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Performs a widening conversion (primitive to boxed type)
+     *
+     * @param clazz
+     * @return
+     */
+    private Class<?> widen(Class<?> clazz) {
+        Class<?> result = clazz;
+        if (clazz == int.class) {
+            result = Integer.class;
+        } else if (clazz == long.class) {
+            result = Long.class;
+        } else if (clazz == double.class) {
+            result = Double.class;
+        } else if (clazz == float.class) {
+            result = Float.class;
+        } else if (clazz == short.class) {
+            result = Short.class;
+        } else if (clazz == byte.class) {
+            result = Byte.class;
+        } else if (clazz == boolean.class) {
+            result = Boolean.class;
+        }
+        return result;
+    }
+
+    private class MemberCacheKey {
+        private final Class<?> clazz;
+        private final String attributeName;
+
+        private MemberCacheKey(Class<?> clazz, String attributeName) {
+            this.clazz = clazz;
+            this.attributeName = attributeName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || this.getClass() != o.getClass()) return false;
+
+            MemberCacheKey that = (MemberCacheKey) o;
+
+            if (!this.clazz.equals(that.clazz)) return false;
+            return this.attributeName.equals(that.attributeName);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = this.clazz.hashCode();
+            result = 31 * result + this.attributeName.hashCode();
+            return result;
+        }
+>>>>>>> /usr/src/app/output/mbosecke/pebble/db486e71ca089ecd959bc8d25d53748f52a5afe2/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
     }
 
     @Override
