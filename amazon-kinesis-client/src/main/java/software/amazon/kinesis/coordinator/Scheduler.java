@@ -14,25 +14,12 @@
  */
 
 package software.amazon.kinesis.coordinator;
-
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import com.google.common.annotations.VisibleForTesting;
 import io.reactivex.plugins.RxJavaPlugins;
 import lombok.AccessLevel;
@@ -44,8 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.utils.Validate;
 import software.amazon.kinesis.checkpoint.CheckpointConfig;
 import software.amazon.kinesis.checkpoint.ShardRecordProcessorCheckpointer;
-import software.amazon.kinesis.common.InitialPositionInStreamExtended;
-import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.common.StreamConfig;
 import software.amazon.kinesis.common.StreamIdentifier;
 import software.amazon.kinesis.leases.Lease;
@@ -58,10 +43,10 @@ import software.amazon.kinesis.leases.ShardInfo;
 import software.amazon.kinesis.leases.ShardPrioritization;
 import software.amazon.kinesis.leases.ShardSyncTask;
 import software.amazon.kinesis.leases.ShardSyncTaskManager;
-import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.leases.dynamodb.DynamoDBLeaseCoordinator;
 import software.amazon.kinesis.leases.dynamodb.DynamoDBLeaseSerializer;
 import software.amazon.kinesis.leases.dynamodb.DynamoDBMultiStreamLeaseSerializer;
+import software.amazon.kinesis.leases.HierarchicalShardSyncer;
 import software.amazon.kinesis.leases.exceptions.DependencyException;
 import software.amazon.kinesis.leases.exceptions.InvalidStateException;
 import software.amazon.kinesis.leases.exceptions.LeasingException;
@@ -74,7 +59,6 @@ import software.amazon.kinesis.lifecycle.ShutdownNotification;
 import software.amazon.kinesis.lifecycle.ShutdownReason;
 import software.amazon.kinesis.lifecycle.TaskResult;
 import software.amazon.kinesis.metrics.CloudWatchMetricsFactory;
-import software.amazon.kinesis.metrics.MetricsCollectingTaskDecorator;
 import software.amazon.kinesis.metrics.MetricsConfig;
 import software.amazon.kinesis.metrics.MetricsFactory;
 import software.amazon.kinesis.processor.Checkpointer;
@@ -136,14 +120,12 @@ public class Scheduler implements Runnable {
     private final LeaseCoordinator leaseCoordinator;
     private final Function<StreamIdentifier, ShardSyncTaskManager> shardSyncTaskManagerProvider;
     private final Map<StreamIdentifier, ShardSyncTaskManager> streamToShardSyncTaskManagerMap = new HashMap<>();
-    private final ShardSyncTaskManager shardSyncTaskManager;
     private final PeriodicShardSyncManager leaderElectedPeriodicShardSyncManager;
     private final ShardPrioritization shardPrioritization;
     private final boolean cleanupLeasesUponShardCompletion;
     private final boolean skipShardSyncAtWorkerInitializationIfLeasesExist;
     private final GracefulShutdownCoordinator gracefulShutdownCoordinator;
     private final WorkerStateChangeListener workerStateChangeListener;
-    private final InitialPositionInStreamExtended initialPosition;
     private final MetricsFactory metricsFactory;
     private final long failoverTimeMillis;
     private final long taskBackoffTimeMillis;
@@ -263,13 +245,18 @@ public class Scheduler implements Runnable {
             this.workerStateChangeListener = this.coordinatorConfig.coordinatorFactory()
                     .createWorkerStateChangeListener();
         }
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/left.java
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/base.java
+        this.initialPosition = retrievalConfig.initialPositionInStreamExtended();
+=======
         this.leaderDecider = new DeterministicShuffleShardSyncLeaderDecider(leaseRefresher,
                 Executors.newSingleThreadScheduledExecutor(), PERIODIC_SHARD_SYNC_MAX_WORKERS_DEFAULT);
         this.initialPosition = retrievalConfig.initialPositionInStreamExtended();
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/right.java
         this.failoverTimeMillis = this.leaseManagementConfig.failoverTimeMillis();
         this.taskBackoffTimeMillis = this.lifecycleConfig.taskBackoffTimeMillis();
-//        this.retryGetRecordsInSeconds = this.retrievalConfig.retryGetRecordsInSeconds();
-//        this.maxGetRecordsThreadPool = this.retrievalConfig.maxGetRecordsThreadPool();
+    //        this.retryGetRecordsInSeconds = this.retrievalConfig.retryGetRecordsInSeconds();
+    //        this.maxGetRecordsThreadPool = this.retrievalConfig.maxGetRecordsThreadPool();
         this.listShardsBackoffTimeMillis = this.retrievalConfig.listShardsBackoffTimeInMillis();
         this.maxListShardsRetryAttempts = this.retrievalConfig.maxListShardsRetryAttempts();
         this.shardDetectorProvider = streamIdentifier -> createOrGetShardSyncTaskManager(streamIdentifier).shardDetector();
@@ -322,9 +309,9 @@ public class Scheduler implements Runnable {
 
                     TaskResult result;
                     if (!skipShardSyncAtWorkerInitializationIfLeasesExist || leaseRefresher.isLeaseTableEmpty()) {
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/left.java
                         // TODO: Resume the shard sync from failed stream in the next attempt, to avoid syncing
                         // TODO: for already synced streams
-                        waitUntilLeaseTableIsReady();
                         for(Map.Entry<StreamIdentifier, StreamConfig> streamConfigEntry : currentStreamConfigMap.entrySet()) {
                             final StreamIdentifier streamIdentifier = streamConfigEntry.getKey();
                             log.info("Syncing Kinesis shard info for " + streamIdentifier);
@@ -340,22 +327,53 @@ public class Scheduler implements Runnable {
                                 throw result.getException();
                             }
                         }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/base.java
+                        log.info("Syncing Kinesis shard info");
+                        ShardSyncTask shardSyncTask = new ShardSyncTask(shardDetector, leaseRefresher, initialPosition,
+                                cleanupLeasesUponShardCompletion, ignoreUnexpetedChildShards, 0L, hierarchicalShardSyncer,
+                                metricsFactory);
+                        result = new MetricsCollectingTaskDecorator(shardSyncTask, metricsFactory).call();
+=======
+                        waitUntilLeaseTableIsReady();
+                        log.info("Syncing Kinesis shard info");
+                        result = leaderElectedPeriodicShardSyncManager.syncShardsOnce();
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/right.java
                     } else {
                         log.info("Skipping shard sync per configuration setting (and lease table is not empty)");
                     }
 
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/left.java
                     // If we reach this point, then we either skipped the lease sync or did not have any exception
                     // for any of the shard sync in the previous attempt.
                     if (!leaseCoordinator.isRunning()) {
                         log.info("Starting LeaseCoordinator");
                         leaseCoordinator.start();
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/base.java
+                    if (result == null || result.getException() == null) {
+                        if (!leaseCoordinator.isRunning()) {
+                            log.info("Starting LeaseCoordinator");
+                            leaseCoordinator.start();
+                        } else {
+                            log.info("LeaseCoordinator is already running. No need to start it.");
+                        }
+                        isDone = true;
+=======
+                    if (result == null || result.getException() == null) {
+                        if (!leaseCoordinator.isRunning()) {
+                            log.info("Starting LeaseCoordinator");
+                            leaseCoordinator.start();
+                        } else {
+                            log.info("LeaseCoordinator is already running. No need to start it.");
+                        }
+                        log.info("Scheduling periodicShardSync)");
+                        // leaderElectedPeriodicShardSyncManager.start();
+                        // TODO: enable periodicShardSync after https://github.com/jushkem/amazon-kinesis-client/pull/2 is merged
+                        waitUntilHashRangeCovered();
+                        isDone = true;
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/6c4297f5b37241db392f5a8e9bc2f3c02eedc5f6/amazon-kinesis-client/src/main/java/software/amazon/kinesis/coordinator/Scheduler.java/right.java
                     } else {
                         log.info("LeaseCoordinator is already running. No need to start it.");
                     }
-                    log.info("Scheduling periodicShardSync)");
-                    // leaderElectedPeriodicShardSyncManager.start();
-                    // TODO: enable periodicShardSync after https://github.com/jushkem/amazon-kinesis-client/pull/2 is merged
-                    waitUntilHashRangeCovered();
                     isDone = true;
                 } catch (LeasingException e) {
                     log.error("Caught exception when initializing LeaseCoordinator", e);
@@ -726,7 +744,7 @@ public class Scheduler implements Runnable {
     }
 
     private PeriodicShardSyncManager buildPeriodicShardSyncManager() {
-        final ShardSyncTask shardSyncTask = new ShardSyncTask(shardDetectorProvider.apply(getStreamIdentifier), leaseRefresher, initialPosition,
+        final ShardSyncTask shardSyncTask = new ShardSyncTask(shardDetector, leaseRefresher, initialPosition,
                 cleanupLeasesUponShardCompletion, ignoreUnexpetedChildShards, 0L, hierarchicalShardSyncer,
                 metricsFactory);
         return new PeriodicShardSyncManager(leaseManagementConfig.workerIdentifier(),

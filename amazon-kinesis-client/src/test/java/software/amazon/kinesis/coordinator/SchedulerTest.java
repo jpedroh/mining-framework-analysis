@@ -335,7 +335,6 @@ public class SchedulerTest {
                 .forEach(shardDetector -> verify(shardDetector, atMost(5)).listShards());
     }
 
-
     @Test
     public final void testMultiStreamConsumersAreBuiltOncePerAccountStreamShard() throws KinesisClientLibException {
         final String shardId = "shardId-000000000000";
@@ -382,7 +381,7 @@ public class SchedulerTest {
         coordinatorConfig.maxInitializationAttempts(maxInitializationAttempts);
         coordinatorConfig.skipShardSyncAtWorkerInitializationIfLeasesExist(false);
         scheduler = new Scheduler(checkpointConfig, coordinatorConfig, leaseManagementConfig, lifecycleConfig,
-                                  metricsConfig, processorConfig, retrievalConfig);
+                metricsConfig, processorConfig, retrievalConfig);
 
         doNothing().when(leaseCoordinator).initialize();
         when(dynamoDBLeaseRefresher.isLeaseTableEmpty()).thenReturn(true);
@@ -401,7 +400,7 @@ public class SchedulerTest {
         coordinatorConfig.maxInitializationAttempts(maxInitializationAttempts);
         coordinatorConfig.skipShardSyncAtWorkerInitializationIfLeasesExist(false);
         scheduler = new Scheduler(checkpointConfig, coordinatorConfig, leaseManagementConfig, lifecycleConfig,
-                                  metricsConfig, processorConfig, retrievalConfig);
+                metricsConfig, processorConfig, retrievalConfig);
 
         doNothing().when(leaseCoordinator).initialize();
         when(dynamoDBLeaseRefresher.isLeaseTableEmpty()).thenReturn(false);
