@@ -37,6 +37,42 @@ public class BungeeCordLauncher
             return;
         }
 
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/62c7678c3e748660d3f87099fdac3e93e688855b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/left.java
+||||||| /usr/src/app/output/spigotmc/bungeecord/62c7678c3e748660d3f87099fdac3e93e688855b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/base.java
+        if ( BungeeCord.class.getPackage().getSpecificationVersion() != null && System.getProperty( "IReallyKnowWhatIAmDoingISwear" ) == null )
+        {
+            Date buildDate = new SimpleDateFormat( "yyyyMMdd" ).parse( BungeeCord.class.getPackage().getSpecificationVersion() );
+
+            Calendar deadline = Calendar.getInstance();
+            deadline.add( Calendar.WEEK_OF_YEAR, -4 );
+            if ( buildDate.before( deadline.getTime() ) )
+            {
+                System.err.println( "*** Warning, this build is outdated ***" );
+                System.err.println( "*** Please download a new build from http://ci.md-5.net/job/BungeeCord ***" );
+                System.err.println( "*** You will get NO support regarding this build ***" );
+                System.err.println( "*** Server will start in 10 seconds ***" );
+                Thread.sleep( TimeUnit.SECONDS.toMillis( 10 ) );
+            }
+        }
+
+=======
+        if ( BungeeCord.class.getPackage().getSpecificationVersion() != null && System.getProperty( "IReallyKnowWhatIAmDoingISwear" ) == null )
+        {
+            Date buildDate = new SimpleDateFormat( "yyyyMMdd" ).parse( BungeeCord.class.getPackage().getSpecificationVersion() );
+
+            Calendar deadline = Calendar.getInstance();
+            deadline.add( Calendar.WEEK_OF_YEAR, -8 );
+            if ( buildDate.before( deadline.getTime() ) )
+            {
+                System.err.println( "*** Warning, this build is outdated ***" );
+                System.err.println( "*** Please download a new build from http://ci.md-5.net/job/BungeeCord ***" );
+                System.err.println( "*** You will get NO support regarding this build ***" );
+                System.err.println( "*** Server will start in 10 seconds ***" );
+                Thread.sleep( TimeUnit.SECONDS.toMillis( 10 ) );
+            }
+        }
+
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/62c7678c3e748660d3f87099fdac3e93e688855b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java/right.java
         BungeeCord bungee = new BungeeCord();
         ProxyServer.setInstance( bungee );
         bungee.getLogger().log( Level.WARNING, "Включаю BungeCord BotFilter {0} от vk.com/Leymooo_s", bungee.getGameVersion() );//BotFilter
