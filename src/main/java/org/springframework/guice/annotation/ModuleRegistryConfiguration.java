@@ -107,7 +107,6 @@ public class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostPr
             else if(beansOfType.size() == 1) {
                  InjectorFactory injectorFactory = beansOfType.values().iterator().next();
                  injector = injectorFactory.createInjector(modules);
-                 ((ConfigurableListableBeanFactory) registry).registerSingleton(Injector.class.getName(), injector);
             }
         } catch (NoSuchBeanDefinitionException e) {
             
@@ -116,6 +115,7 @@ public class ModuleRegistryConfiguration implements BeanDefinitionRegistryPostPr
             injector = createInjector(modules);
         }
         mapBindings(injector, registry);
+    	((ConfigurableListableBeanFactory) registry).registerSingleton(Injector.class.getName(), injector);
     }
 
 	@Override
