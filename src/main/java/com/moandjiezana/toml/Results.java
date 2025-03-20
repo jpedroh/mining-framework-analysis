@@ -50,33 +50,6 @@ class Results {
         .append('\n');
     }
     
-    void invalidIdentifier(Identifier identifier, int line) {
-      if (identifier.isKey()) {
-        invalidKey(identifier.getName(), line);
-      } else if (identifier.isTable()) {
-        invalidTable(identifier.getName(), line);
-      } else if (identifier.isTableArray()) {
-        invalidTableArray(identifier.getName(), line);
-      }
-    }
-    
-    void invalidTextAfterIdentifier(Identifier identifier, char text, int line) {
-      if (identifier.isKey() && text == '\n') {
-        sb.append("Key ")
-          .append(identifier.getName())
-          .append(" is not followed by an equals sign on line ")
-          .append(line)
-          .append('\n');
-      } else {
-        sb.append("Invalid text after key ")
-          .append(identifier.getName())
-          .append(" on line ")
-          .append(line)
-          .append(". Make sure to terminate the value or add a comment (#).")
-          .append('\n');
-      }
-    }
-    
     void invalidKey(String key, int line) {
       sb.append("Invalid key");
       if (line > -1) {
@@ -106,6 +79,18 @@ class Results {
         .append('\n');
     }
     
+<<<<<<< /usr/src/app/output/mwanji/toml4j/c4027ed2d5a685734a83306fdd1a4ed41f473f60/src/main/java/com/moandjiezana/toml/Results.java/left.java
+    void unterminated(String key, String multiline, int line) {
+      sb.append("Unterminated multiline value on line ")
+        .append(line)
+        .append(": ")
+        .append(key)
+        .append(" = ")
+        .append(multiline.trim())
+        .append('\n');
+    }
+||||||| /usr/src/app/output/mwanji/toml4j/c4027ed2d5a685734a83306fdd1a4ed41f473f60/src/main/java/com/moandjiezana/toml/Results.java/base.java
+=======
     void unterminated(String key, String value, int line) {
       sb.append("Unterminated value on line ")
         .append(line)
@@ -115,6 +100,7 @@ class Results {
         .append(value.trim())
         .append('\n');
     }
+>>>>>>> /usr/src/app/output/mwanji/toml4j/c4027ed2d5a685734a83306fdd1a4ed41f473f60/src/main/java/com/moandjiezana/toml/Results.java/right.java
     
     boolean hasErrors() {
       return sb.length() > 0;
@@ -124,8 +110,36 @@ class Results {
     public String toString() {
       return sb.toString();
     }
+    
+    void invalidIdentifier(Identifier identifier, int line) {
+      if (identifier.isKey()) {
+        invalidKey(identifier.getName(), line);
+      } else if (identifier.isTable()) {
+        invalidTable(identifier.getName(), line);
+      } else if (identifier.isTableArray()) {
+        invalidTableArray(identifier.getName(), line);
+      }
+    }
+    
+    void invalidTextAfterIdentifier(Identifier identifier, char text, int line) {
+      if (identifier.isKey() && text == '\n') {
+        sb.append("Key ")
+          .append(identifier.getName())
+          .append(" is not followed by an equals sign on line ")
+          .append(line)
+          .append('\n');
+      } else {
+        sb.append("Invalid text after key ")
+          .append(identifier.getName())
+          .append(" on line ")
+          .append(line)
+          .append(". Make sure to terminate the value or add a comment (#).")
+          .append('\n');
+      }
+    }
   }
-    Set<String> tables = new HashSet<String>();
+  
+  Set<String> tables = new HashSet<String>();
   final Errors errors = new Errors();
   private Deque<Container> stack = new ArrayDeque<Container>();
 
