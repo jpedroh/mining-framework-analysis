@@ -1,173 +1,90 @@
-/*
- * Copyright 2011-2013, by Vladimir Kostyukov and Contributors.
- * 
- * This file is part of la4j project (http://la4j.org)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * You may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * Contributor(s): -
- * 
- */
-
 package org.la4j.vector.sparse;
-
 import org.junit.Test;
 import org.la4j.vector.AbstractVectorTest;
 import org.la4j.vector.Vectors;
 import org.la4j.vector.functor.VectorAccumulator;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public abstract class SparseVectorTest extends AbstractVectorTest {
+  @Test public void testCardinality() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 0.0, 0.0, 0.0, 1.0 });
+    assertEquals(1, a.cardinality());
+  }
 
-    @Test
-    public void testCardinality() {
+  @Test public void testFoldNonZero_5() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 2.0, 0.0, 5.0, 0.0, 2.0 });
+    VectorAccumulator sum = Vectors.asSumAccumulator(0.0);
+    VectorAccumulator product = Vectors.asProductAccumulator(1.0);
+    assertEquals(9.0, a.foldNonZero(sum), Vectors.EPS);
+    assertEquals(9.0, a.foldNonZero(sum), Vectors.EPS);
+    assertEquals(20.0, a.foldNonZero(product), Vectors.EPS);
+    assertEquals(20.0, a.foldNonZero(product), Vectors.EPS);
+  }
 
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 0.0, 0.0, 0.0, 1.0 }
-        );
+  @Test public void testIsZeroAt_4() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 1.0, 0.0, 0.0, 4.0 });
+    assertTrue(a.isZeroAt(1));
+    assertFalse(a.isZeroAt(3));
+  }
 
-        assertEquals(1, a.cardinality());
+  @Test public void testNonZeroAt_6() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 5.0, 2.0, 0.0, 0.0, 0.0 });
+    assertTrue(a.nonZeroAt(1));
+    assertFalse(a.nonZeroAt(3));
+  }
+
+  @Test public void testGetOrElse_5() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 });
+    assertEquals(0.0, a.getOrElse(1, 0.0), Vectors.EPS);
+    assertEquals(1.0, a.getOrElse(2, 3.14), Vectors.EPS);
+    assertEquals(4.2, a.getOrElse(3, 4.2), Vectors.EPS);
+  }
+
+  public void testGet_IndexChecks() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 });
+    try {
+      a.get(-1);
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
-
-    @Test
-    public void testFoldNonZero_5() {
-
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 2.0, 0.0, 5.0, 0.0, 2.0 }
-        );
-
-        VectorAccumulator sum = Vectors.asSumAccumulator(0.0);
-        VectorAccumulator product = Vectors.asProductAccumulator(1.0);
-
-        assertEquals(9.0, a.foldNonZero(sum), Vectors.EPS);
-        // check whether the accumulator were flushed
-        assertEquals(9.0, a.foldNonZero(sum), Vectors.EPS);
-
-        assertEquals(20.0, a.foldNonZero(product), Vectors.EPS);
-        // check whether the accumulator were flushed
-        assertEquals(20.0, a.foldNonZero(product), Vectors.EPS);
+    try {
+      a.get(a.length());
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
+    assertEquals(1.0, a.get(2));
+  }
 
-    @Test
-    public void testIsZeroAt_4() {
-
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 1.0, 0.0, 0.0, 4.0 }
-        );
-
-        assertTrue(a.isZeroAt(1));
-        assertFalse(a.isZeroAt(3));
+  public void testGetOrElse_IndexChecks() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 });
+    try {
+      a.get(-1);
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
-
-    @Test
-    public void testNonZeroAt_6() {
-
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 5.0, 2.0, 0.0, 0.0, 0.0 }
-        );
-
-        assertTrue(a.nonZeroAt(1));
-        assertFalse(a.nonZeroAt(3));
+    try {
+      a.get(a.length());
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
+    assertEquals(1.0, a.get(2));
+  }
 
-    @Test
-    public void testGetOrElse_5() {
-
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }
-        );
-
-        assertEquals(0.0, a.getOrElse(1, 0.0), Vectors.EPS);
-        assertEquals(1.0, a.getOrElse(2, 3.14), Vectors.EPS);
-        assertEquals(4.2, a.getOrElse(3, 4.2), Vectors.EPS);
+  public void testSet_IndexChecks() {
+    SparseVector a = (SparseVector) factory().createVector(new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 });
+    try {
+      a.set(-1, 1.0);
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
-    
-    public void testGet_IndexChecks() {
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }
-        );
-        
-        // Test negative index
-        try {
-        	a.get(-1);
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test too large of an index
-        try {
-        	a.get(a.length());
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test valid index
-        assertEquals(1.0, a.get(2));
+    try {
+      a.set(a.length(), 1.0);
+      fail("Expected IndexOutOfBoundsException to be thrown.");
+    } catch (IndexOutOfBoundsException e) {
     }
-    
-    public void testGetOrElse_IndexChecks() {
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }
-        );
-        
-        // Test negative index
-        try {
-        	a.get(-1);
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test too large of an index
-        try {
-        	a.get(a.length());
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test valid index
-        assertEquals(1.0, a.get(2));
-    }
-    
-    public void testSet_IndexChecks() {
-        SparseVector a = (SparseVector) factory().createVector(
-                new double[] { 0.0, 0.0, 1.0, 0.0, 0.0 }
-        );
-        
-        // Test negative index
-        try {
-        	a.set(-1, 1.0);
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test too large of an index
-        try {
-        	a.set(a.length(), 1.0);
-        	fail("Expected IndexOutOfBoundsException to be thrown.");
-        } catch (IndexOutOfBoundsException e) {
-        	// Intended behavior
-        }
-        
-        // Test valid index
-        a.set(0, 1.0);
-        assertEquals(1.0, a.get(0));
-    }
+    a.set(0, 1.0);
+    assertEquals(1.0, a.get(0));
+  }
 }
