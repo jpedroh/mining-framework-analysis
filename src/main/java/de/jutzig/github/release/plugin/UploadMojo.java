@@ -1,21 +1,4 @@
 package de.jutzig.github.release.plugin;
-
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +6,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.FileSet;
@@ -55,230 +37,227 @@ import org.kohsuke.github.GitHub;
  * 
  * @phase deploy
  */
-public class UploadMojo extends AbstractMojo implements Contextualizable{
-
-	/**
+public class UploadMojo extends AbstractMojo implements Contextualizable {
+  /**
 	 * Server id for github access.
 	 * 
 	 * @parameter expression="github"
 	 * @required
 	 */
-	private String serverId;
+  private String serverId;
 
-	/**
+  /**
 	 * The tag name this release is based on.
 	 * 
 	 * @parameter expression="${project.version}"
 	 */
-	private String tag;
+  private String tag;
 
-	/**
+  /**
 	 * The name of the release
 	 * 
 	 * @parameter expression="${release.name}"
 	 */
-	private String releaseName;
+  private String releaseName;
 
-	/**
+  /**
 	 * The release description
 	 * 
 	 * @parameter expression="${project.description}"
 	 */
-	private String description;
+  private String description;
 
-	/**
+  /**
 	 * The github id of the project. By default initialized from the project scm connection
 	 * 
 	 * @parameter default-value="${project.scm.connection}" expression="${release.repositoryId}"
 	 * @required
 	 */
-	private String repositoryId;
+  private String repositoryId;
 
-	 /**
+  /**
 	 * The Maven settings
 	 *
 	 * @parameter expression="${settings}
 	 */
-	private Settings settings;
+  private Settings settings;
 
-	/**
+  /**
 	 * The Maven session
 	 *
 	 * @parameter expression="${session}"
 	 */
-	private MavenSession session;
+  private MavenSession session;
 
-	/**
+  /**
 	 * The file to upload to the release. Default is ${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging} (the main artifact)
 	 *
 	 * @parameter default-value="${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}" expression="${release.artifact}"
+	 * @required
 	 */
-	private String artifact;
+  private String artifact;
 
-	/**
-	 * A specific <code>fileSet</code> rule to select files and directories for upload to the release.
-	 *
-	 * @parameter
-	 */
-	private FileSet fileSet;
-
-	/**
-	 * A list of <code>fileSet</code> rules to select files and directories for upload to the release.
-	 *
-	 * @parameter
-	 */
-	private List<FileSet> fileSets;
-
-    /**
+  /**
      * Flag to indicate to overwrite the asset in the release if it already exists. Default is false
      *
      * @parameter default-value=false
      */
-    private Boolean overwriteArtifact;
+  private Boolean overwriteArtifact;
 
-	@Requirement
-	private PlexusContainer container;
+  /**
+	 * A specific <code>fileSet</code> rule to select files and directories for upload to the release.
+	 *
+	 * @parameter
+	 */
+  private static final 
+<<<<<<< /usr/src/app/output/jutzig/github-release-plugin/00ea032304dba5f66b524a6828b2b604b0375076/src/main/java/de/jutzig/github/release/plugin/UploadMojo.java/left.java
+  Pattern
+=======
+  FileSet
+>>>>>>> /usr/src/app/output/jutzig/github-release-plugin/00ea032304dba5f66b524a6828b2b604b0375076/src/main/java/de/jutzig/github/release/plugin/UploadMojo.java/right.java
+   
+<<<<<<< /usr/src/app/output/jutzig/github-release-plugin/00ea032304dba5f66b524a6828b2b604b0375076/src/main/java/de/jutzig/github/release/plugin/UploadMojo.java/left.java
+  REPOSITORY_PATTERN = Pattern.compile("^(scm:git[:|])?" + "(https?://github\\.com/|git@github\\.com:)" + "([^/]+/[^/]*?)" + "(\\.git)?$", Pattern.CASE_INSENSITIVE)
+=======
+  fileSet
+>>>>>>> /usr/src/app/output/jutzig/github-release-plugin/00ea032304dba5f66b524a6828b2b604b0375076/src/main/java/de/jutzig/github/release/plugin/UploadMojo.java/right.java
+  ;
 
-	/**
+  /**
+	 * A list of <code>fileSet</code> rules to select files and directories for upload to the release.
+	 *
+	 * @parameter
+	 */
+  private List<FileSet> fileSets;
+
+  @Requirement private PlexusContainer container;
+
+  /**
 	 * If this is a prerelease. By default it will use <code>true</code> if the tag ends in -SNAPSHOT
 	 *
 	 * @parameter
 	 * 
 	 */
-	private Boolean prerelease;
+  private Boolean prerelease;
 
-	public void execute() throws MojoExecutionException {
-		if(releaseName==null)
-			releaseName = tag;
-		if(prerelease==null)
-			prerelease = tag.endsWith("-SNAPSHOT");
-		repositoryId = computeRepositoryId(repositoryId);
-		GHRelease release = null;
-		try {
-			GitHub gitHub = createGithub(serverId);
-			GHRepository repository = gitHub.getRepository(repositoryId);
-			release = findRelease(repository,releaseName);
-			if(release==null) {
-				getLog().info("Creating release "+releaseName);
-				GHReleaseBuilder builder = repository.createRelease(tag);
-				if(description!=null)
-					builder.body(description);
-				builder.prerelease(prerelease);
-				builder.name(releaseName);
-				release = builder.create();
-			}
-			else {
-				getLog().info("Release "+releaseName+" already exists. Not creating");
-			}
-		} catch (IOException e) {
-            getLog().error(e);
-            throw new MojoExecutionException("Failed to create release", e);
+  public void execute() throws MojoExecutionException {
+    if (releaseName == null) {
+      releaseName = tag;
+    }
+    if (prerelease == null) {
+      prerelease = tag.endsWith("-SNAPSHOT");
+    }
+    repositoryId = computeRepositoryId(repositoryId);
+    GHRelease release = null;
+    try {
+      GitHub gitHub = createGithub(serverId);
+      GHRepository repository = gitHub.getRepository(repositoryId);
+      release = findRelease(repository, releaseName);
+      if (release == null) {
+        getLog().info("Creating release " + releaseName);
+        GHReleaseBuilder builder = repository.createRelease(tag);
+        if (description != null) {
+          builder.body(description);
         }
-		try {
-			if(artifact != null && !artifact.trim().isEmpty()) {
-				File asset = new File(artifact);
-				if(asset.exists())
-					uploadAsset(release, asset);
-			}
+        builder.prerelease(prerelease);
+        builder.name(releaseName);
+        release = builder.create();
+      } else {
+        getLog().info("Release " + releaseName + " already exists. Not creating");
+      }
+    } catch (IOException e) {
+      getLog().error(e);
+      throw new MojoExecutionException("Failed to create release", e);
+    }
+    try {
+      if (artifact != null && !artifact.trim().isEmpty()) {
+        File asset = new File(artifact);
+        if (asset.exists()) {
+          uploadAsset(release, asset);
+        }
+      }
+      if (fileSet != null) {
+        uploadAssets(release, fileSet);
+      }
+      if (fileSets != null) {
+        for (FileSet set : fileSets) {
+          uploadAssets(release, set);
+        }
+      }
+    } catch (IOException e) {
+      getLog().error(e);
+      throw new MojoExecutionException("Failed to upload assets", e);
+    }
+  }
 
-			if(fileSet != null)
-				uploadAssets(release, fileSet);
+  private void uploadAsset(GHRelease release, File asset) throws IOException {
+    getLog().info("Processing asset " + asset.getPath());
+    URL url = new URL(MessageFormat.format("https://uploads.github.com/repos/{0}/releases/{1}/assets?name={2}", repositoryId, Long.toString(release.getId()), asset.getName()));
+    List<GHAsset> existingAssets = release.getAssets();
+    for (GHAsset a : existingAssets) {
+      if (a.getName().equals(asset.getName()) && overwriteArtifact) {
+        getLog().info("  Deleting existing asset");
+        a.delete();
+      }
+    }
+    getLog().info("  Upload asset");
+    release.uploadAsset(asset, "application/zip");
+  }
 
-			if(fileSets != null)
-				for (FileSet set : fileSets)
-					uploadAssets(release, set);
+  private void uploadAssets(GHRelease release, FileSet fileset) throws IOException {
+    List<File> assets = FileUtils.getFiles(new File(fileset.getDirectory()), StringUtils.join(fileset.getIncludes(), ','), StringUtils.join(fileset.getExcludes(), ','));
+    for (File asset : assets) {
+      uploadAsset(release, asset);
+    }
+  }
 
-		} catch (IOException e) {
-		    
-			getLog().error(e);
-			throw new MojoExecutionException("Failed to upload assets", e);
-		}
+  private GHRelease findRelease(GHRepository repository, String releaseName2) throws IOException {
+    List<GHRelease> releases = repository.getReleases();
+    for (GHRelease ghRelease : releases) {
+      if (ghRelease.getName().equals(releaseName2)) {
+        return ghRelease;
+      }
+    }
+    return null;
+  }
 
-	}
+  public static String computeRepositoryId(String id) {
+    Matcher matcher = REPOSITORY_PATTERN.matcher(id);
+    if (matcher.matches()) {
+      return matcher.group(3);
+    } else {
+      return id;
+    }
+  }
 
-	private void uploadAsset(GHRelease release, File asset) throws IOException {
-		getLog().info("Processing asset "+asset.getPath());
-		URL url = new URL(MessageFormat.format("https://uploads.github.com/repos/{0}/releases/{1}/assets?name={2}",repositoryId,Long.toString(release.getId()),asset.getName()));
+  public GitHub createGithub(String serverId) throws MojoExecutionException, IOException {
+    Server server = getServer(settings, serverId);
+    if (server == null) {
+      throw new MojoExecutionException(MessageFormat.format("Server \'\'{0}\'\' not found in settings", serverId));
+    }
+    getLog().debug(MessageFormat.format("Using \'\'{0}\'\' server credentials", serverId));
+    try {
+      SettingsDecrypter settingsDecrypter = container.lookup(SettingsDecrypter.class);
+      SettingsDecryptionResult result = settingsDecrypter.decrypt(new DefaultSettingsDecryptionRequest(server));
+      server = result.getServer();
+    } catch (ComponentLookupException cle) {
+      throw new MojoExecutionException("Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle);
+    }
+    String serverUsername = server.getUsername();
+    String serverPassword = server.getPassword();
+    String serverAccessToken = server.getPrivateKey();
+    if (StringUtils.isNotEmpty(serverUsername) && StringUtils.isNotEmpty(serverPassword)) {
+      return GitHub.connectUsingPassword(serverUsername, serverPassword);
+    } else {
+      if (StringUtils.isNotEmpty(serverAccessToken)) {
+        return GitHub.connectUsingOAuth(serverAccessToken);
+      } else {
+        throw new MojoExecutionException("Configuration for server " + serverId + " has no login credentials");
+      }
+    }
+  }
 
-		List<GHAsset> existingAssets = release.getAssets();
-		for ( GHAsset a : existingAssets ){
-			if (a.getName().equals( asset.getName() ) && overwriteArtifact){
-				getLog().info("  Deleting existing asset");
-				a.delete();
-			}
-		}
-
-		getLog().info("  Upload asset");
-		// for some reason this doesn't work currently
-		release.uploadAsset(asset, "application/zip");
-	}
-
-	private void uploadAssets(GHRelease release, FileSet fileset) throws IOException {
-		List<File> assets = FileUtils.getFiles(
-				new File(fileset.getDirectory()),
-				StringUtils.join(fileset.getIncludes(), ','),
-				StringUtils.join(fileset.getExcludes(), ',')
-		);
-		for (File asset : assets)
-			uploadAsset(release, asset);
-	}
-
-	private GHRelease findRelease(GHRepository repository, String releaseName2) throws IOException {
-		List<GHRelease> releases = repository.getReleases();
-		for (GHRelease ghRelease : releases) {
-			if(ghRelease.getName().equals(releaseName2)) {
-				return ghRelease;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @see <a href="https://maven.apache.org/scm/scm-url-format.html">SCM URL Format</a>
-	 */
-	private static final Pattern REPOSITORY_PATTERN = Pattern.compile(
-			"^(scm:git[:|])?" +								//Maven prefix for git SCM
-			"(https?://github\\.com/|git@github\\.com:)" +	//GitHub prefix for HTTP/HTTPS/SSH/Subversion scheme
-			"([^/]+/[^/]*?)" +								//Repository ID
-			"(\\.git)?$"									//Optional suffix ".git"
-	, Pattern.CASE_INSENSITIVE);
-
-	public static String computeRepositoryId(String id) {
-		Matcher matcher = REPOSITORY_PATTERN.matcher(id);
-		if (matcher.matches()) {
-			return matcher.group(3);
-		} else {
-			return id;
-		}
-	}
-
-	public GitHub createGithub(String serverId) throws MojoExecutionException, IOException {
-		Server server = getServer(settings, serverId);
-		if (server == null)
-			throw new MojoExecutionException(MessageFormat.format("Server ''{0}'' not found in settings", serverId));
-
-		getLog().debug(MessageFormat.format("Using ''{0}'' server credentials", serverId));
-
-		try {
-			SettingsDecrypter settingsDecrypter = container.lookup(SettingsDecrypter.class);
-			SettingsDecryptionResult result = settingsDecrypter.decrypt(new DefaultSettingsDecryptionRequest(server));
-			server = result.getServer();
-		} catch (ComponentLookupException cle) {
-			throw new MojoExecutionException("Unable to lookup SettingsDecrypter: " + cle.getMessage(), cle);
-		}
-
-		String serverUsername = server.getUsername();
-		String serverPassword = server.getPassword();
-		String serverAccessToken = server.getPrivateKey();
-		if (StringUtils.isNotEmpty(serverUsername) && StringUtils.isNotEmpty(serverPassword))
-			return GitHub.connectUsingPassword(serverUsername, serverPassword);
-		else if (StringUtils.isNotEmpty(serverAccessToken))
-			return GitHub.connectUsingOAuth(serverAccessToken);
-		else
-			throw new MojoExecutionException("Configuration for server " + serverId + " has no login credentials");
-	}
-
-	/**
+  /**
 	 * Get server with given id
 	 * 
 	 * @param settings
@@ -286,20 +265,23 @@ public class UploadMojo extends AbstractMojo implements Contextualizable{
 	 *            must be non-null and non-empty
 	 * @return server or null if none matching
 	 */
-	protected Server getServer(final Settings settings, final String serverId) {
-		if (settings == null)
-			return null;
-		List<Server> servers = settings.getServers();
-		if (servers == null || servers.isEmpty())
-			return null;
+  protected Server getServer(final Settings settings, final String serverId) {
+    if (settings == null) {
+      return null;
+    }
+    List<Server> servers = settings.getServers();
+    if (servers == null || servers.isEmpty()) {
+      return null;
+    }
+    for (Server server : servers) {
+      if (serverId.equals(server.getId())) {
+        return server;
+      }
+    }
+    return null;
+  }
 
-		for (Server server : servers)
-			if (serverId.equals(server.getId()))
-				return server;
-		return null;
-	}
-
-	public void contextualize(Context context) throws ContextException {
-		container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-	}
+  public void contextualize(Context context) throws ContextException {
+    container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
+  }
 }
