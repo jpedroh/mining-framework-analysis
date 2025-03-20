@@ -1,30 +1,7 @@
-/*
- * #%~
- * The VDM Type Checker
- * %%
- * Copyright (C) 2008 - 2014 Overture
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #~%
- */
 package org.overture.typechecker.assistant;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.overture.ast.analysis.AnalysisAdaptor;
 import org.overture.ast.analysis.AnswerAdaptor;
 import org.overture.ast.analysis.intf.IAnalysis;
@@ -91,326 +68,203 @@ import org.overture.typechecker.utilities.type.ConcreateTypeImplementor;
 import org.overture.typechecker.utilities.type.PTypeResolver;
 import org.overture.typechecker.utilities.type.QualifiedDefinition;
 
-//TODO Add assistant Javadoc
 /**
  * The Interface specifying what is offered by the Overture TC assistant functionalities.
  * 
  * @author ldc
  */
-public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
-{
+public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory {
+  AExplicitFunctionDefinitionAssistantTC createAExplicitFunctionDefinitionAssistant();
 
-//	ABusClassDefinitionAssistantTC createABusClassDefinitionAssistant();
+  AExplicitOperationDefinitionAssistantTC createAExplicitOperationDefinitionAssistant();
 
-//	ACpuClassDefinitionAssistantTC createACpuClassDefinitionAssistant();
+  AImplicitFunctionDefinitionAssistantTC createAImplicitFunctionDefinitionAssistant();
 
-	AExplicitFunctionDefinitionAssistantTC createAExplicitFunctionDefinitionAssistant();
+  AImplicitOperationDefinitionAssistantTC createAImplicitOperationDefinitionAssistant();
 
-	AExplicitOperationDefinitionAssistantTC createAExplicitOperationDefinitionAssistant();
+  PAccessSpecifierAssistantTC createPAccessSpecifierAssistant();
 
-	AImplicitFunctionDefinitionAssistantTC createAImplicitFunctionDefinitionAssistant();
+  PDefinitionAssistantTC createPDefinitionAssistant();
 
-	AImplicitOperationDefinitionAssistantTC createAImplicitOperationDefinitionAssistant();
+  PDefinitionListAssistantTC createPDefinitionListAssistant();
 
-	// AImportedDefinitionAssistantTC createAImportedDefinitionAssistant();
+  PDefinitionSet createPDefinitionSet();
 
-	//AInstanceVariableDefinitionAssistantTC createAInstanceVariableDefinitionAssistant();
+  SClassDefinitionAssistantTC createSClassDefinitionAssistant();
 
-	//ALocalDefinitionAssistantTC createALocalDefinitionAssistant();
+  SFunctionDefinitionAssistantTC createSFunctionDefinitionAssistant();
 
-	//AStateDefinitionAssistantTC createAStateDefinitionAssistant();
+  AModuleImportsAssistantTC createAModuleImportsAssistant();
 
-	// ASystemClassDefinitionAssistantTC createASystemClassDefinitionAssistant();
+  AModuleExportsAssistantTC createAModuleExportsAssistant();
 
-//	AThreadDefinitionAssistantTC createAThreadDefinitionAssistant();
+  AModuleModulesAssistantTC createAModuleModulesAssistant();
 
-//	ATypeDefinitionAssistantTC createATypeDefinitionAssistant();
+  APatternTypePairAssistant createAPatternTypePairAssistant();
 
-	// AValueDefinitionAssistantTC createAValueDefinitionAssistant();
+  ATypeBindAssistantTC createATypeBindAssistant();
 
-	PAccessSpecifierAssistantTC createPAccessSpecifierAssistant();
+  PatternListTC createPatternList();
 
-	PDefinitionAssistantTC createPDefinitionAssistant();
+  PBindAssistantTC createPBindAssistant();
 
-	PDefinitionListAssistantTC createPDefinitionListAssistant();
+  PMultipleBindAssistantTC createPMultipleBindAssistant();
 
-	PDefinitionSet createPDefinitionSet();
+  PPatternAssistantTC createPPatternAssistant();
 
-//	PTraceDefinitionAssistantTC createPTraceDefinitionAssistant();
+  PPatternListAssistantTC createPPatternListAssistant();
 
-	SClassDefinitionAssistantTC createSClassDefinitionAssistant();
+  AClassTypeAssistantTC createAClassTypeAssistant();
 
-	SFunctionDefinitionAssistantTC createSFunctionDefinitionAssistant();
-	
-	// expression
-	//AApplyExpAssistantTC createAApplyExpAssistant();
+  AFunctionTypeAssistantTC createAFunctionTypeAssistant();
 
-	//ACaseAlternativeAssistantTC createACaseAlternativeAssistant();
+  AOperationTypeAssistantTC createAOperationTypeAssistant();
 
-	//PExpAssistantTC createPExpAssistant();
+  ARecordInvariantTypeAssistantTC createARecordInvariantTypeAssistant();
 
-//	SBinaryExpAssistantTC createSBinaryExpAssistant();
+  PTypeAssistantTC createPTypeAssistant();
 
-	// module
+  IAnswer<List<PDefinition>> getDefinitionCollector();
 
-	//AFromModuleImportsAssistantTC createAFromModuleImportsAssistant();
+  IAnswer<PType> getDefinitionTypeFinder();
 
-	//AModuleExportsAssistantTC createAModuleExportsAssistant();
+  IQuestionAnswer<Object, Boolean> getDefinitionEqualityChecker();
 
-	AModuleImportsAssistantTC createAModuleImportsAssistant();
+  AnswerAdaptor<Boolean> getMapBasisChecker();
 
-	AModuleExportsAssistantTC createAModuleExportsAssistant();
+  IAnswer<LexNameList> getVariableNameCollector();
 
-	AModuleModulesAssistantTC createAModuleModulesAssistant();
+  IAnswer<PDefinition> getSelfDefinitionFinder();
 
-	//PExportAssistantTC createPExportAssistant();
+  IAnswer<PTypeSet> getExitTypeCollector();
 
-	//PImportAssistantTC createPImportAssistant();
+  IQuestionAnswer<DefinitionFinder.Newquestion, PDefinition> getDefinitionFinder();
 
-	// pattern
-	// ABooleanPatternAssistantTC createABooleanPatternAssistant();
+  IQuestionAnswer<NameFinder.Newquestion, PDefinition> getNameFinder();
 
-	// ACharacterPatternAssistantTC createACharacterPatternAssistant();
+  AnswerAdaptor<Boolean> getFunctionChecker();
 
-	// AConcatenationPatternAssistantTC createAConcatenationPatternAssistant();
-	
-	// AExpressionPatternAssistantTC createAExpressionPatternAssistant();
+  IAnswer<Boolean> getOperationChecker();
 
-//	AMapletPatternMapletAssistantTC createAMapletPatternMapletAssistant();
+  IAnswer<String> getKindFinder();
 
-	// AMapPatternAssistantTC createAMapPatternAssistant();
+  IAnswer<Boolean> getUpdatableChecker();
 
-	// AMapUnionPatternAssistantTC createAMapUnionPatternAssistant();
+  IAnswer<Boolean> getCallableOperationChecker();
 
-	APatternTypePairAssistant createAPatternTypePairAssistant();
+  AnalysisAdaptor getUsedMarker();
 
-	// ARecordPatternAssistantTC createARecordPatternAssistant();
+  IQuestion<Environment> getImplicitDefinitionFinder();
 
-	// ASeqPatternAssistantTC createASeqPatternAssistant();
+  IAnswer<Boolean> getUsedChecker();
 
-	//ASetBindAssistantTC createASetBindAssistant();
+  IAnswer<Boolean> getPTypeFunctionChecker();
 
-	// ASetPatternAssistantTC createASetPatternAssistant();
+  AnalysisAdaptor getUnusedChecker();
 
-	// ATuplePatternAssistantTC createATuplePatternAssistant();
+  IAnswer<PDefinition> getDereferer();
 
-	ATypeBindAssistantTC createATypeBindAssistant();
+  IQuestion<DefinitionTypeResolver.NewQuestion> getDefinitionTypeResolver();
 
-	// AUnionPatternAssistantTC createAUnionPatternAssistant();
+  IAnswer<SMapType> getMapTypeFinder();
 
-	PatternListTC createPatternList();
+  IAnswer<SSeqType> getSeqTypeFinder();
 
-	PBindAssistantTC createPBindAssistant();
+  AnswerAdaptor<Boolean> getSeqBasisChecker();
 
-	PMultipleBindAssistantTC createPMultipleBindAssistant();
+  IAnswer<AOperationType> getOperationTypeFinder();
 
-	PPatternAssistantTC createPPatternAssistant();
+  AnswerAdaptor<Boolean> getOperationBasisChecker();
 
-	//PPatternBindAssistantTC createPPatternBindAssistant();
+  AnswerAdaptor<Boolean> getSetBasisChecker();
 
-	PPatternListAssistantTC createPPatternListAssistant();
+  IAnswer<SSetType> getSetTypeFinder();
 
-	// statement
-	// AAlwaysStmAssistantTC createAAlwaysStmAssistant();
-	// AAssignmentStmAssistantTC createAAssignmentStmAssistant();
-//	ABlockSimpleBlockStmAssistantTC createABlockSimpleBlockStmAssistant();
+  AnswerAdaptor<Boolean> getRecordBasisChecker();
 
-//	ACallObjectStatementAssistantTC createACallObjectStatementAssistant();
+  AnswerAdaptor<Boolean> getTagBasisChecker();
 
-//	ACallStmAssistantTC createACallStmAssistant();
+  IAnswer<ARecordInvariantType> getRecordTypeFinder();
 
-	// ACaseAlternativeStmAssistantTC createACaseAlternativeStmAssistant();
-	// ACasesStmAssistantTC createACasesStmAssistant();
-	// AElseIfStmAssistantTC createAElseIfStmAssistant();
-	// AExitStmAssistantTC createAExitStmAssistant();
-//	AExternalClauseAssistantTC createAExternalClauseAssistant();
+  AnswerAdaptor<Boolean> getClassBasisChecker(Environment env);
 
-	// AForAllStmAssistantTC createAForAllStmAssistant();
-	// AForIndexStmAssistantTC createAForIndexStmAssistant();
-	// AForPatternBindStmAssitantTC createAForPatternBindStmAssitant();
-	// AIfStmAssistantTC createAIfStmAssistant();
-	// ALetBeStStmAssistantTC createALetBeStStmAssistant();
-//	ANonDeterministicSimpleBlockStmAssistantTC createANonDeterministicSimpleBlockStmAssistant();
+  IAnswer<AClassType> getClassTypeFinder(Environment env);
 
-	// AReturnStmAssistantTC createAReturnStmAssistant();
-	// ATixeStmAssistantTC createATixeStmAssistant();
-	// ATrapStmAssistantTC createATrapStmAssistant();
-	// AWhileStmAssistantTC createAWhileStmAssistant();
-//	PStateDesignatorAssistantTC createPStateDesignatorAssistant();
+  IAnswer<AProductType> getProductTypeFinder();
 
-	//PStmAssistantTC createPStmAssistant();
+  AnswerAdaptor<Boolean> getProductBasisChecker();
 
-	// SLetDefStmAssistantTC createSLetDefStmAssistant();
-	// SSimpleBlockStmAssistantTC createSSimpleBlockStmAssistant();
+  IAnswer<String> getTypeDisplayer();
 
-	// Type
-//	AApplyObjectDesignatorAssistantTC createAApplyObjectDesignatorAssistant();
+  AnalysisAdaptor getTypeUnresolver();
 
-	// ABracketTypeAssistantTC createABracketTypeAssistant();
+  IQuestionAnswer<AAccessSpecifierAccessSpecifier, Boolean> getNarrowerThanComparator();
 
-	AClassTypeAssistantTC createAClassTypeAssistant();
+  IAnswer<AUnionType> getUnionTypeFinder();
 
-	AFunctionTypeAssistantTC createAFunctionTypeAssistant();
+  IQuestionAnswer<Object, Boolean> getTypeEqualityChecker();
 
-	AOperationTypeAssistantTC createAOperationTypeAssistant();
+  AnswerAdaptor<Boolean> getUnionBasisChecker();
 
-//	APatternListTypePairAssistantTC createAPatternListTypePairAssistant();
+  IAnswer<AFunctionType> getFunctionTypeFinder();
 
-	ARecordInvariantTypeAssistantTC createARecordInvariantTypeAssistant();
+  IQuestionAnswer<PTypeResolver.Newquestion, PType> getPTypeResolver();
 
-//	AUnionTypeAssistantTC createAUnionTypeAssistant();
+  IQuestionAnswer<ConcreateTypeImplementor.Newquestion, PType> getConcreateTypeImplementor();
 
-	PTypeAssistantTC createPTypeAssistant();
+  IQuestionAnswer<String, PType> getPTypeFinder();
 
-	// visitors
+  IQuestionAnswer<Integer, Boolean> getProductExtendedChecker();
 
-	// SSeqTypeAssistantTC createSSeqTypeAssistant();
+  IQuestionAnswer<Integer, AProductType> getProductExtendedTypeFinder();
 
-	// stuff to delete ends here
+  IQuestionAnswer<Class<? extends PType>, Boolean> getPTypeExtendedChecker();
 
-	// visitor getters that we will actually keep
+  IAnswer<Boolean> getVoidExistanceChecker();
 
-	IAnswer<List<PDefinition>> getDefinitionCollector();
+  IAnswer<Boolean> getVoidBasisChecker();
 
-	IAnswer<PType> getDefinitionTypeFinder();
+  IAnswer<PType> getPossibleTypeFinder();
 
-	IQuestionAnswer<Object, Boolean> getDefinitionEqualityChecker();
+  IAnswer<Boolean> getSimplePatternChecker();
 
-	AnswerAdaptor<Boolean> getMapBasisChecker();
+  IAnswer<Boolean> getAlwaysMatchingPatternChecker();
 
-	IAnswer<LexNameList> getVariableNameCollector();
+  AnalysisAdaptor getPatternUnresolver();
 
-	IAnswer<PDefinition> getSelfDefinitionFinder();
+  IQuestion<PatternResolver.NewQuestion> getPatternResolver();
 
-	IAnswer<PTypeSet> getExitTypeCollector();
+  IQuestionAnswer<AllDefinitionLocator.NewQuestion, List<PDefinition>> getAllDefinitionLocator();
 
-	IQuestionAnswer<DefinitionFinder.Newquestion, PDefinition> getDefinitionFinder();
+  IAnswer<PType> getPossibleBindTypeFinder();
 
-	IQuestionAnswer<NameFinder.Newquestion, PDefinition> getNameFinder();
+  IAnswer<List<PMultipleBind>> getMultipleBindLister();
 
-	AnswerAdaptor<Boolean> getFunctionChecker();
+  IAnswer<ILexNameToken> getPreNameFinder();
 
-	IAnswer<Boolean> getOperationChecker();
+  IQuestionAnswer<LinkedList<PDefinition>, Collection<? extends PDefinition>> getExportDefinitionFinder();
 
-	IAnswer<String> getKindFinder();
+  IAnswer<Collection<? extends PDefinition>> getExportDefinitionListFinder();
 
-	IAnswer<Boolean> getUpdatableChecker();
+  IQuestionAnswer<AModuleModules, List<PDefinition>> getImportDefinitionFinder();
 
-	IAnswer<Boolean> getCallableOperationChecker();
+  IAnswer<PTypeList> getComposeTypeCollector();
 
-	AnalysisAdaptor getUsedMarker();
+  TypeComparator getTypeComparator();
 
-	IQuestion<Environment> getImplicitDefinitionFinder();
+  LexNameTokenAssistant getLexNameTokenAssistant();
 
-	IAnswer<Boolean> getUsedChecker();
+  IQuestionAnswer<TypeCheckInfo, List<QualifiedDefinition>> getQualificationVisitor();
 
-	IAnswer<Boolean> getPTypeFunctionChecker();
+  IAnswer<Boolean> getInstanceVariableChecker();
 
-	AnalysisAdaptor getUnusedChecker();
+  IAnswer<Boolean> getTypeDefinitionChecker();
 
-	IAnswer<PDefinition> getDereferer();
+  IQuestionAnswer<ILexLocation, Boolean> getIsOrderedVisitor();
 
-	IQuestion<DefinitionTypeResolver.NewQuestion> getDefinitionTypeResolver();
+  IQuestionAnswer<FreeVarInfo, LexNameSet> getFreeVariablesChecker();
 
-	IAnswer<SMapType> getMapTypeFinder();
+  IQuestionAnswer<ILexLocation, Boolean> getIsEqVisitor();
 
-	IAnswer<SSeqType> getSeqTypeFinder();
-
-	AnswerAdaptor<Boolean> getSeqBasisChecker();
-
-	IAnswer<AOperationType> getOperationTypeFinder();
-
-	AnswerAdaptor<Boolean> getOperationBasisChecker();
-
-	AnswerAdaptor<Boolean> getSetBasisChecker();
-
-	IAnswer<SSetType> getSetTypeFinder();
-
-	AnswerAdaptor<Boolean> getRecordBasisChecker();
-
-	AnswerAdaptor<Boolean> getTagBasisChecker();
-
-	IAnswer<ARecordInvariantType> getRecordTypeFinder();
-
-	AnswerAdaptor<Boolean> getClassBasisChecker(Environment env);
-
-	IAnswer<AClassType> getClassTypeFinder(Environment env);
-
-	IAnswer<AProductType> getProductTypeFinder();
-
-	AnswerAdaptor<Boolean> getProductBasisChecker();
-
-	IAnswer<String> getTypeDisplayer();
-
-	AnalysisAdaptor getTypeUnresolver();
-
-	IQuestionAnswer<AAccessSpecifierAccessSpecifier, Boolean> getNarrowerThanComparator();
-
-	IAnswer<AUnionType> getUnionTypeFinder();
-
-	IQuestionAnswer<Object, Boolean> getTypeEqualityChecker();
-
-	AnswerAdaptor<Boolean> getUnionBasisChecker();
-
-	IAnswer<AFunctionType> getFunctionTypeFinder();
-
-	IQuestionAnswer<PTypeResolver.Newquestion, PType> getPTypeResolver();
-
-	IQuestionAnswer<ConcreateTypeImplementor.Newquestion, PType> getConcreateTypeImplementor();
-
-	IQuestionAnswer<String, PType> getPTypeFinder();
-
-	IQuestionAnswer<Integer, Boolean> getProductExtendedChecker();
-
-	IQuestionAnswer<Integer, AProductType> getProductExtendedTypeFinder();
-
-	IQuestionAnswer<Class<? extends PType>, Boolean> getPTypeExtendedChecker();
-
-	IAnswer<Boolean> getVoidExistanceChecker();
-
-	IAnswer<Boolean> getVoidBasisChecker();
-
-	IAnswer<PType> getPossibleTypeFinder();
-
-	IAnswer<Boolean> getSimplePatternChecker();
-
-	IAnswer<Boolean> getAlwaysMatchingPatternChecker();
-
-	AnalysisAdaptor getPatternUnresolver();
-
-	IQuestion<PatternResolver.NewQuestion> getPatternResolver();
-
-	IQuestionAnswer<AllDefinitionLocator.NewQuestion, List<PDefinition>> getAllDefinitionLocator();
-
-	IAnswer<PType> getPossibleBindTypeFinder();
-
-	IAnswer<List<PMultipleBind>> getMultipleBindLister();
-
-	IAnswer<ILexNameToken> getPreNameFinder();
-
-	IQuestionAnswer<LinkedList<PDefinition>, Collection<? extends PDefinition>> getExportDefinitionFinder();
-
-	IAnswer<Collection<? extends PDefinition>> getExportDefinitionListFinder();
-
-	IQuestionAnswer<AModuleModules, List<PDefinition>> getImportDefinitionFinder();
-
-	IAnswer<PTypeList> getComposeTypeCollector();
-
-	TypeComparator getTypeComparator();
-
-	LexNameTokenAssistant getLexNameTokenAssistant();
-
-	IQuestionAnswer<TypeCheckInfo, List<QualifiedDefinition>> getQualificationVisitor();
-	
-	IAnswer<Boolean> getInstanceVariableChecker();
-
-	IAnswer<Boolean> getTypeDefinitionChecker();
-
-	IQuestionAnswer<FreeVarInfo, LexNameSet> getFreeVariablesChecker();
-
-	IQuestionAnswer<ILexLocation,Boolean> getIsOrderedVisitor();
-
-	IQuestionAnswer<ILexLocation,Boolean> getIsEqVisitor();
-
-	IQuestion<TypeCheckInfo> getMultipleEqualityChecker();
+  IQuestion<TypeCheckInfo> getMultipleEqualityChecker();
 }
