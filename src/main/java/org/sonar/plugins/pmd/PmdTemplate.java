@@ -39,7 +39,31 @@ import org.sonar.api.utils.log.Loggers;
 public class PmdTemplate {
 
     private static final Logger LOG = Loggers.get(PmdTemplate.class);
+
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-pmd/933775819973c32cc8a831ea756e9a6c7a10f113/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/left.java
+  private static final Map<String, String> JAVA_VERSIONS = ImmutableMap.<String, String>builder()
+    .put("1.1", "1.3")
+    .put("1.2", "1.3")
+    .put("5", "1.5")
+    .put("6", "1.6")
+    .put("7", "1.7")
+    .put("8", "1.8")
+    .put("9", "9")
+    .put("10", "10")
+    .put("11", "11")
+    .build();
+||||||| /usr/src/app/output/sonarcommunity/sonar-pmd/933775819973c32cc8a831ea756e9a6c7a10f113/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/base.java
+  private static final Map<String, String> JAVA_VERSIONS = ImmutableMap.<String, String>builder()
+    .put("1.1", "1.3")
+    .put("1.2", "1.3")
+    .put("5", "1.5")
+    .put("6", "1.6")
+    .put("7", "1.7")
+    .put("8", "1.8")
+    .build();
+=======
     private static final Map<String, String> JAVA_VERSIONS = prepareVersions();
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-pmd/933775819973c32cc8a831ea756e9a6c7a10f113/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/right.java
 
     private static Map<String, String> prepareVersions() {
         final Map<String, String> versions = new HashMap<>();
@@ -49,10 +73,7 @@ public class PmdTemplate {
         versions.put("6", "1.6");
         versions.put("7", "1.7");
         versions.put("8", "1.8");
-        versions.put("9", "9");
-        versions.put("10", "10");
-        versions.put("11", "11");
-  
+
         return versions;
     }
 

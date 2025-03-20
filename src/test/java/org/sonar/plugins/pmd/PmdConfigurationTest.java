@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-class PmdConfigurationTest {
+ class PmdConfigurationTest {
 
     private static final File WORK_DIR = new File("test-work-dir");
 
@@ -96,6 +96,7 @@ class PmdConfigurationTest {
     @Test
     void should_dump_xml_report() throws IOException {
         when(fs.workDir()).thenReturn(WORK_DIR);
+
         settings.setProperty(PmdConfiguration.PROPERTY_GENERATE_XML, true);
         Path reportFile = configuration.dumpXmlReport(new Report());
 
