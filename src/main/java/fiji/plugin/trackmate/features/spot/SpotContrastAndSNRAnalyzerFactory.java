@@ -1,23 +1,19 @@
 package fiji.plugin.trackmate.features.spot;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.ImageIcon;
-
-import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
-
-import fiji.plugin.trackmate.Dimension;
-import fiji.plugin.trackmate.Model;
-import fiji.plugin.trackmate.Spot;
 import net.imagej.ImgPlus;
+import fiji.plugin.trackmate.Dimension;
 import net.imglib2.meta.view.HyperSliceImgPlus;
+import fiji.plugin.trackmate.Model;
 import net.imglib2.type.NativeType;
+import fiji.plugin.trackmate.Spot;
 import net.imglib2.type.numeric.RealType;
+import org.scijava.Priority;
 
 /**
  * A factory for {@link SpotContrastAndSNRAnalyzer}s. Because the analyzers of
@@ -27,117 +23,87 @@ import net.imglib2.type.numeric.RealType;
  *
  * @author Jean- Yves Tinevez
  */
-@SuppressWarnings( "deprecation" )
-@Plugin( type = SpotAnalyzerFactory.class, priority = Priority.LOW )
-public class SpotContrastAndSNRAnalyzerFactory< T extends RealType< T > & NativeType< T >> implements SpotAnalyzerFactory< T >
-{
+@SuppressWarnings(value = { "deprecation" }) @Plugin(type = SpotAnalyzerFactory.class, priority = 
+<<<<<<< /usr/src/app/output/fiji/trackmate/5e16de8e9ffcc87470a5817ae5ae92ecbf6ab30b/src/main/java/fiji/plugin/trackmate/features/spot/SpotContrastAndSNRAnalyzerFactory.java/left.java
+-1d
+=======
+Priority.LOW
+>>>>>>> /usr/src/app/output/fiji/trackmate/5e16de8e9ffcc87470a5817ae5ae92ecbf6ab30b/src/main/java/fiji/plugin/trackmate/features/spot/SpotContrastAndSNRAnalyzerFactory.java/right.java
+) public class SpotContrastAndSNRAnalyzerFactory<T extends RealType<T> & NativeType<T>> implements SpotAnalyzerFactory<T> {
+  /** The single feature key name that this analyzer computes. */
+  public static final String CONTRAST = "CONTRAST";
 
-	/*
-	 * FIELDS
-	 */
+  public static final String SNR = "SNR";
 
-	/** The single feature key name that this analyzer computes. */
-	public static final String CONTRAST = "CONTRAST";
+  public static final ArrayList<String> FEATURES = new ArrayList<>(2);
 
-	public static final String SNR = "SNR";
+  public static final HashMap<String, String> FEATURE_NAMES = new HashMap<>(2);
 
-	public static final ArrayList< String > FEATURES = new ArrayList< >( 2 );
+  public static final HashMap<String, String> FEATURE_SHORT_NAMES = new HashMap<>(2);
 
-	public static final HashMap< String, String > FEATURE_NAMES = new HashMap< >( 2 );
+  public static final HashMap<String, Dimension> FEATURE_DIMENSIONS = new HashMap<>(2);
 
-	public static final HashMap< String, String > FEATURE_SHORT_NAMES = new HashMap< >( 2 );
+  public static final Map<String, Boolean> IS_INT = new HashMap<>(2);
 
-	public static final HashMap< String, Dimension > FEATURE_DIMENSIONS = new HashMap< >( 2 );
+  static {
+    FEATURES.add(CONTRAST);
+    FEATURES.add(SNR);
+    FEATURE_NAMES.put(CONTRAST, "Contrast");
+    FEATURE_NAMES.put(SNR, "Signal/Noise ratio");
+    FEATURE_SHORT_NAMES.put(CONTRAST, "Constrast");
+    FEATURE_SHORT_NAMES.put(SNR, "SNR");
+    FEATURE_DIMENSIONS.put(CONTRAST, Dimension.NONE);
+    FEATURE_DIMENSIONS.put(SNR, Dimension.NONE);
+    IS_INT.put(CONTRAST, Boolean.FALSE);
+    IS_INT.put(SNR, Boolean.FALSE);
+  }
 
-	public static final Map< String, Boolean > IS_INT = new HashMap< >( 2 );
+  public static final String KEY = "Spot contrast and SNR";
 
-	static
-	{
-		FEATURES.add( CONTRAST );
-		FEATURES.add( SNR );
-		FEATURE_NAMES.put( CONTRAST, "Contrast" );
-		FEATURE_NAMES.put( SNR, "Signal/Noise ratio" );
-		FEATURE_SHORT_NAMES.put( CONTRAST, "Constrast" );
-		FEATURE_SHORT_NAMES.put( SNR, "SNR" );
-		FEATURE_DIMENSIONS.put( CONTRAST, Dimension.NONE );
-		FEATURE_DIMENSIONS.put( SNR, Dimension.NONE );
-		IS_INT.put( CONTRAST, Boolean.FALSE );
-		IS_INT.put( SNR, Boolean.FALSE );
-	}
+  @Override public SpotContrastAndSNRAnalyzer<T> getAnalyzer(final Model model, final ImgPlus<T> img, final int frame, final int channel) {
+    final ImgPlus<T> imgC = HyperSliceImgPlus.fixChannelAxis(img, channel);
+    final ImgPlus<T> imgCT = HyperSliceImgPlus.fixTimeAxis(imgC, frame);
+    final Iterator<Spot> spots = model.getSpots().iterator(frame, false);
+    return new SpotContrastAndSNRAnalyzer<>(imgCT, spots);
+  }
 
-	public static final String KEY = "Spot contrast and SNR";
+  @Override public String getKey() {
+    return KEY;
+  }
 
+  @Override public List<String> getFeatures() {
+    return FEATURES;
+  }
 
-	/*
-	 * METHODS
-	 */
+  @Override public Map<String, String> getFeatureShortNames() {
+    return FEATURE_SHORT_NAMES;
+  }
 
-	@Override
-	public SpotContrastAndSNRAnalyzer< T > getAnalyzer( final Model model, final ImgPlus< T > img, final int frame, final int channel )
-	{
-		final ImgPlus< T > imgC = HyperSliceImgPlus.fixChannelAxis( img, channel );
-		final ImgPlus< T > imgCT = HyperSliceImgPlus.fixTimeAxis( imgC, frame );
-		final Iterator< Spot > spots = model.getSpots().iterator( frame, false );
-		return new SpotContrastAndSNRAnalyzer< >( imgCT, spots );
-	}
+  @Override public Map<String, String> getFeatureNames() {
+    return FEATURE_NAMES;
+  }
 
-	@Override
-	public String getKey()
-	{
-		return KEY;
-	}
+  @Override public Map<String, Dimension> getFeatureDimensions() {
+    return FEATURE_DIMENSIONS;
+  }
 
-	@Override
-	public List< String > getFeatures()
-	{
-		return FEATURES;
-	}
+  @Override public String getInfoText() {
+    return null;
+  }
 
-	@Override
-	public Map< String, String > getFeatureShortNames()
-	{
-		return FEATURE_SHORT_NAMES;
-	}
+  @Override public ImageIcon getIcon() {
+    return null;
+  }
 
-	@Override
-	public Map< String, String > getFeatureNames()
-	{
-		return FEATURE_NAMES;
-	}
+  @Override public String getName() {
+    return KEY;
+  }
 
-	@Override
-	public Map< String, Dimension > getFeatureDimensions()
-	{
-		return FEATURE_DIMENSIONS;
-	}
+  @Override public Map<String, Boolean> getIsIntFeature() {
+    return IS_INT;
+  }
 
-	@Override
-	public String getInfoText()
-	{
-		return null;
-	}
-
-	@Override
-	public ImageIcon getIcon()
-	{
-		return null;
-	}
-
-	@Override
-	public String getName()
-	{
-		return KEY;
-	}
-
-	@Override
-	public Map< String, Boolean > getIsIntFeature()
-	{
-		return IS_INT;
-	}
-
-	@Override
-	public boolean isManualFeature()
-	{
-		return false;
-	}
+  @Override public boolean isManualFeature() {
+    return false;
+  }
 }
