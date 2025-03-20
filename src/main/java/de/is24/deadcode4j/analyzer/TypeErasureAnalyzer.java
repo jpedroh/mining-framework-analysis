@@ -4,22 +4,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import de.is24.deadcode4j.AnalysisContext;
 import de.is24.deadcode4j.analyzer.javassist.ClassPoolAccessor;
-import de.is24.javaparser.FixedVoidVisitorAdapter;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.ImportDeclaration;
-import japa.parser.ast.Node;
 import japa.parser.ast.TypeParameter;
 import japa.parser.ast.body.*;
 import japa.parser.ast.type.*;
 import javassist.CtClass;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 import static com.google.common.base.Predicates.and;
@@ -35,6 +27,11 @@ import static de.is24.javaparser.ImportDeclarations.isStatic;
 import static de.is24.javaparser.Nodes.getTypeName;
 import static de.is24.javaparser.Nodes.prepend;
 import static java.util.Collections.emptySet;
+import de.is24.javaparser.FixedVoidVisitorAdapter;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import static java.util.Collections.singleton;
 
 /**
@@ -79,8 +76,61 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
     }
 
     @Override
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/left.java
     protected void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+        compilationUnit.accept(new TypeRecordingVisitor() {
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/base.java
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "The MavenProject does not provide the proper encoding")
+    public void doAnalysis(@Nonnull AnalysisContext analysisContext, @Nonnull File file) {
+        if (file.getName().endsWith(".java")) {
+            logger.debug("Analyzing Java file [{}]...", file);
+            final CompilationUnit compilationUnit;
+            Reader reader = null;
+            try {
+                reader = analysisContext.getModule().getEncoding() != null
+                        ? new InputStreamReader(new FileInputStream(file), analysisContext.getModule().getEncoding())
+                        : new FileReader(file);
+                compilationUnit = JavaParser.parse(reader, false);
+            } catch (TokenMgrError e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse [" + file + "]!", e);
+            } finally {
+                closeQuietly(reader);
+            }
+            analyzeCompilationUnit(analysisContext, compilationUnit);
+        }
+    }
+
+    private void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
+        compilationUnit.accept(new TypeRecordingVisitor() {
+=======
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "The MavenProject does not provide the proper encoding")
+    public void doAnalysis(@Nonnull AnalysisContext analysisContext, @Nonnull File file) {
+        if (!file.getName().endsWith(".java")) {
+            return;
+        }
+        logger.debug("Analyzing Java file [{}]...", file);
+        final CompilationUnit compilationUnit;
+        Reader reader = null;
+        try {
+            reader = analysisContext.getModule().getEncoding() != null
+                    ? new InputStreamReader(new FileInputStream(file), analysisContext.getModule().getEncoding())
+                    : new FileReader(file);
+            compilationUnit = JavaParser.parse(reader, false);
+        } catch (TokenMgrError e) {
+            throw new RuntimeException("Failed to parse [" + file + "]!", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse [" + file + "]!", e);
+        } finally {
+            closeQuietly(reader);
+        }
+        analyzeCompilationUnit(analysisContext, compilationUnit);
+    }
+
+    private void analyzeCompilationUnit(@Nonnull final AnalysisContext analysisContext, @Nonnull final CompilationUnit compilationUnit) {
         compilationUnit.accept(new TypeParameterRecordingVisitor<Void>() {
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/right.java
             private final ClassPoolAccessor classPoolAccessor = classPoolAccessorFor(analysisContext);
             private final Map<String, Set<String>> processedReferences = newHashMap();
 
@@ -157,12 +207,119 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
                 } else {
                     logger.debug("Could not resolve Type Argument [{}] used by [{}].", referencedTypeQualifier, depender);
                 }
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/left.java
+                for (Set<String> definedTypeNames : this.definedTypeParameters) {
+                    if (definedTypeNames.contains(nestedClassOrInterface.getName())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Nonnull
+            private String getQualifier(@Nonnull ClassOrInterfaceType classOrInterfaceType) {
+                StringBuilder buffy = new StringBuilder(classOrInterfaceType.getName());
+                while ((classOrInterfaceType = classOrInterfaceType.getScope()) != null) {
+                    buffy.insert(0, '.');
+                    buffy.insert(0, classOrInterfaceType.getName());
+                }
+                return buffy.toString();
+            }
+
+            private void resolveTypeReferences() {
+                for (Entry<String, Set<String>> typeReference : this.typeReferences.entrySet()) {
+                    String referencedType = typeReference.getKey();
+                    @SuppressWarnings("unchecked")
+                    Optional<String> resolvedClass = or(
+                            resolveFullyQualifiedClass(),
+                            resolveInnerType(),
+                            resolveImport(),
+                            resolvePackageType(),
+                            resolveAsteriskImports(),
+                            resolveJavaLangType()
+                    ).apply(referencedType);
+                    assert resolvedClass != null;
+                    if (resolvedClass.isPresent()) {
+                        for (String depender : typeReference.getValue()) {
+                            analysisContext.addDependencies(depender, resolvedClass.get());
+                        }
+                    } else {
+                        logger.debug("Could not resolve Type Argument [{}] used by [{}].", referencedType, typeReference.getValue());
+                    }
+                }
+            }
+
+            @Nonnull
+            private Function<String, Optional<String>> resolveFullyQualifiedClass() {
+                return new Function<String, Optional<String>>() {
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/base.java
+                for (Set<String> definedTypeNames : this.definedTypeParameters) {
+                    if (definedTypeNames.contains(nestedClassOrInterface.getName())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Nonnull
+            private String getTypeName(@Nonnull ClassOrInterfaceType classOrInterfaceType) {
+                StringBuilder buffy = new StringBuilder();
+                Node node = classOrInterfaceType;
+                while ((node = node.getParentNode()) != null) {
+                    if (!TypeDeclaration.class.isInstance(node)) {
+                        continue;
+                    }
+                    if (buffy.length() > 0)
+                        buffy.insert(0, '$');
+                    buffy.insert(0, TypeDeclaration.class.cast(node).getName());
+                }
+                return prependPackageName(buffy).toString();
+            }
+
+            @Nonnull
+            private String getQualifier(@Nonnull ClassOrInterfaceType classOrInterfaceType) {
+                StringBuilder buffy = new StringBuilder(classOrInterfaceType.getName());
+                while ((classOrInterfaceType = classOrInterfaceType.getScope()) != null) {
+                    buffy.insert(0, '.');
+                    buffy.insert(0, classOrInterfaceType.getName());
+                }
+                return buffy.toString();
+            }
+
+            private void resolveTypeReferences() {
+                for (Entry<String, Set<String>> typeReference : this.typeReferences.entrySet()) {
+                    String referencedType = typeReference.getKey();
+                    @SuppressWarnings("unchecked")
+                    Optional<String> resolvedClass = or(
+                            resolveFullyQualifiedClass(),
+                            resolveInnerType(),
+                            resolveImport(),
+                            resolvePackageType(),
+                            resolveAsteriskImports(),
+                            resolveJavaLangType()
+                    ).apply(referencedType);
+                    assert resolvedClass != null;
+                    if (resolvedClass.isPresent()) {
+                        for (String depender : typeReference.getValue()) {
+                            analysisContext.addDependencies(depender, resolvedClass.get());
+                        }
+                    } else {
+                        logger.debug("Could not resolve Type Argument [{}] used by [{}].", referencedType, typeReference.getValue());
+                    }
+                }
+            }
+
+            @Nonnull
+            private Function<String, Optional<String>> resolveFullyQualifiedClass() {
+                return new Function<String, Optional<String>>() {
+=======
                 getOrAddMappedSet(this.processedReferences, depender).add(referencedTypeQualifier);
             }
 
             @Nonnull
             private Function<ClassOrInterfaceType, Optional<String>> resolveFullyQualifiedClass() {
                 return new Function<ClassOrInterfaceType, Optional<String>>() {
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/right.java
                     @Nonnull
                     @Override
                     public Optional<String> apply(@SuppressWarnings("NullableProblems") @Nonnull ClassOrInterfaceType typeReference) {
@@ -354,10 +511,40 @@ public class TypeErasureAnalyzer extends JavaFileAnalyzer {
 
             @Nonnull
             private StringBuilder prependPackageName(@Nonnull StringBuilder buffy) {
+<<<<<<< /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/left.java
+                if (compilationUnit.getPackage() == null) {
+                    return buffy;
+                }
+                return prepend(compilationUnit.getPackage().getName(), buffy);
+            }
+||||||| /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/base.java
+                if (compilationUnit.getPackage() == null) {
+                    return buffy;
+                }
+                return prepend(compilationUnit.getPackage().getName(), buffy);
+            }
+
+            private StringBuilder prepend(NameExpr nameExpr, StringBuilder buffy) {
+                for (; ; ) {
+                    if (buffy.length() > 0) {
+                        buffy.insert(0, '.');
+                    }
+                    buffy.insert(0, nameExpr.getName());
+                    if (!QualifiedNameExpr.class.isInstance(nameExpr)) {
+                        break;
+                    }
+                    nameExpr = QualifiedNameExpr.class.cast(nameExpr).getQualifier();
+                }
+                return buffy;
+            }
+
+=======
                 return compilationUnit.getPackage() == null
                         ? buffy
                         : prepend(compilationUnit.getPackage().getName(), buffy);
             }
+
+>>>>>>> /usr/src/app/output/immobilienscout24/deadcode4j/4a894fe5616a8290f6f5e1458b3e077c0d5e2106/src/main/java/de/is24/deadcode4j/analyzer/TypeErasureAnalyzer.java/right.java
 
         }, null);
     }
