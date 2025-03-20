@@ -245,12 +245,26 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                         performer = new SimpleReferencePerformer(processor, subject, predicate);
                         
                         if((parentTriplesMap.getLogicalSource().getReference()).equals(map.getLogicalSource().getReference())){
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/left.java
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - same reference");
+||||||| /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/base.java
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - same referenece");
+=======
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/right.java
                             performer.perform(node, dataset, parentTriplesMap);
                         }
                         else{
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/left.java
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different reference");
+                            processor.execute_node(dataset, map, parentTriplesMap, performer, node);
+||||||| /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/base.java
+                            log.info("[AbstractRMLProcessorProcessor:processPredicateObjectMap] SimpleReferencePerformer - different referenece");
+                            processor.execute_node(dataset, map, parentTriplesMap, performer, node);
+=======
                             int end = map.getLogicalSource().getReference().length();
                             String expression = parentTriplesMap.getLogicalSource().getReference().toString().substring(end);
                             processor.execute_node(dataset, expression, parentTriplesMap, performer, node);
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/right.java
                         }
                     }
                     //Conditions
@@ -273,7 +287,18 @@ public abstract class AbstractRMLProcessor implements RMLProcessor {
                             }
                         }
                     }
+<<<<<<< /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/left.java
+                    
+                    //processor.execute(dataset, parentTriplesMap, performer, fileName);
 
+||||||| /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/base.java
+                
+                    processor.execute(dataset, parentTriplesMap, performer, fileName);
+
+                    //processor.execute(dataset, parentTriplesMap, performer, fileName);
+
+=======
+>>>>>>> /usr/src/app/output/mmlab/rmlprocessor/01b2eeca36996539e46e5842a23d5e30c7e2295f/src/main/java/be/ugent/mmlab/rml/processor/AbstractRMLProcessor.java/right.java
                 }
 
                 //process the objectmaps
