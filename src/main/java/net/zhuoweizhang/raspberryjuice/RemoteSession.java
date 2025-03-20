@@ -431,6 +431,51 @@ public class RemoteSession {
 				
 			// world.setSign		Author: Tim Cummings https://www.triptera.com.au/wordpress/
 			} else if (c.equals("world.setSign")) {
+<<<<<<< /usr/src/app/output/zhuowei/raspberryjuice/b217e89f5d8ef404aff86b5d889027bb386a598c/src/main/java/net/zhuoweizhang/raspberryjuice/RemoteSession.java/left.java
+				Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
+				Block thisBlock = world.getBlockAt(loc);
+				//blockType should be 68 for wall sign or 63 for standing sign
+				int blockType = Integer.parseInt(args[3]);  
+				//facing direction for wall sign : 2=north, 3=south, 4=west, 5=east
+				//rotation 0 - to 15 for standing sign : 0=south, 4=west, 8=north, 12=east
+				byte blockData = Byte.parseByte(args[4]); 
+				if ((thisBlock.getTypeId() != blockType) || (thisBlock.getData() != blockData)) {
+					thisBlock.setTypeIdAndData(blockType, blockData, true);
+				}
+				//plugin.getLogger().info("Creating sign at " + loc + ", class=" + thisBlock.getState().getClass().getCanonicalName());
+				if ( thisBlock.getState() instanceof Sign ) {
+					Sign sign = (Sign) thisBlock.getState();
+					for ( int i = 5; i-5 < 4 && i < args.length; i++) {
+						sign.setLine(i-5, args[i]);
+					}
+					sign.update();
+				}
+||||||| /usr/src/app/output/zhuowei/raspberryjuice/b217e89f5d8ef404aff86b5d889027bb386a598c/src/main/java/net/zhuoweizhang/raspberryjuice/RemoteSession.java/base.java
+				          Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
+				          Block thisBlock = world.getBlockAt(loc);
+				          //blockType should be 68 for wall sign or 63 for standing sign
+				          int blockType = Integer.parseInt(args[3]);  
+				          //facing direction for wall sign : 2=north, 3=south, 4=west, 5=east
+				          //rotation 0 - to 15 for standing sign : 0=south, 4=west, 8=north, 12=east
+				          byte blockData = Byte.parseByte(args[4]); 
+				          if ((thisBlock.getTypeId() != blockType) || (thisBlock.getData() != blockData)) {
+				            thisBlock.setTypeIdAndData(blockType, blockData, true);
+				          }
+				          //plugin.getLogger().info("Creating sign at " + loc + ", class=" + thisBlock.getState().getClass().getCanonicalName());
+				          if ( thisBlock.getState() instanceof Sign ) {
+				            Sign sign = (Sign) thisBlock.getState();
+				            for ( int i = 5; i-5 < 4 && i < args.length; i++) {
+				              sign.setLine(i-5, args[i]);
+				            }
+				            sign.update();
+				          }
+				          // world.setEntity
+			          } else if (c.equals("world.setEntity")) {
+			              Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
+			              world.spawnEntity(loc, plugin.entityType.FromId(Integer.parseInt(args[3])));
+			              plugin.getLogger().info("Spawned requested entity: " + args[3]);						
+			// not a command which is supported
+=======
 				Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
 				Block thisBlock = world.getBlockAt(loc);
 				//blockType should be 68 for wall sign or 63 for standing sign
@@ -449,13 +494,14 @@ public class RemoteSession {
 					}
 					sign.update();
 				}
-			
+
 			// world.spawnEntity		Author: pxai (edited by Tim Cummings)
 			} else if (c.equals("world.spawnEntity")) {
 				Location loc = parseRelativeBlockLocation(args[0], args[1], args[2]);
 				world.spawnEntity(loc, EntityType.fromId(Integer.parseInt(args[3])));
 				//plugin.getLogger().info("Spawned requested entity: " + args[3]);						
 			// not a command which is supported
+>>>>>>> /usr/src/app/output/zhuowei/raspberryjuice/b217e89f5d8ef404aff86b5d889027bb386a598c/src/main/java/net/zhuoweizhang/raspberryjuice/RemoteSession.java/right.java
 			} else {
 				plugin.getLogger().warning(c + " is not supported.");
 				send("Fail");
