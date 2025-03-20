@@ -1,35 +1,29 @@
 package com.pengyifan.commons.lang;
-
 import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * @deprecated Not really useful.
  */
-@Deprecated
-public final class XmlFormatter {
-
+@Deprecated public final class XmlFormatter {
   public static XmlFormatter newFormatter() {
     return new XmlFormatter(65, true, 2);
   }
 
   private final int lineWidth;
+
   private final boolean isIndenting;
 
   private final int indent;
@@ -74,16 +68,13 @@ public final class XmlFormatter {
       dbf.setValidating(false);
       DocumentBuilder db = dbf.newDocumentBuilder();
       db.setEntityResolver(new EntityResolver() {
-
-        @Override
-        public InputSource resolveEntity(String publicId, String systemId)
-            throws SAXException, IOException {
+        @Override public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
           return new InputSource(new StringReader(""));
         }
       });
       InputSource is = new InputSource(new StringReader(in));
       return db.parse(is);
-    } catch (ParserConfigurationException|SAXException|IOException e) {
+    } catch (ParserConfigurationException | SAXException | IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -98,10 +89,7 @@ public final class XmlFormatter {
   }
 
   public XmlFormatter withLineWidth(int lineWidth) {
-    checkArgument(
-        lineWidth >= 0,
-        "Line width should not be negative: %s",
-        lineWidth);
+    checkArgument(lineWidth >= 0, "Line width should not be negative: %s", lineWidth);
     return new XmlFormatter(lineWidth, this.isIndenting, this.indent);
   }
 }

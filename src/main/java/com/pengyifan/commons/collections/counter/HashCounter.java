@@ -1,13 +1,10 @@
 package com.pengyifan.commons.collections.counter;
-
 import java.util.HashMap;
 
 /**
  * @deprecated Use {@link com.google.common.collect.HashMultiset} instead.
  */
-@Deprecated
-public class HashCounter<K> extends Counter<K> {
-
+@Deprecated public class HashCounter<K extends java.lang.Object> extends Counter<K> {
   /**
    * Constructs a new (empty) Counter.
    */
@@ -26,8 +23,7 @@ public class HashCounter<K> extends Counter<K> {
     addAll(counter);
   }
 
-  @Override
-  public Object clone() {
+  @Override public Object clone() {
     return new HashCounter<>(this);
   }
 }

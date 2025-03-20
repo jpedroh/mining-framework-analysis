@@ -1,14 +1,11 @@
 package com.pengyifan.commons.collections.counter;
-
 import java.util.Comparator;
 import java.util.TreeMap;
 
 /**
  * @deprecated Use {@link com.google.common.collect.TreeMultiset} instead.
  */
-@Deprecated
-public class TreeCounter<K> extends Counter<K> {
-
+@Deprecated public class TreeCounter<K extends java.lang.Object> extends Counter<K> {
   /**
    * Constructs a new (empty) Counter.
    */
@@ -45,8 +42,7 @@ public class TreeCounter<K> extends Counter<K> {
     addAll(counter);
   }
 
-  @Override
-  public Object clone() {
+  @Override public Object clone() {
     return new TreeCounter<>(this);
   }
 }
