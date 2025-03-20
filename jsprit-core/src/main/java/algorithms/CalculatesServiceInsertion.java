@@ -19,6 +19,7 @@ package algorithms;
 import org.apache.log4j.Logger;
 
 import util.Neighborhood;
+import algorithms.ActivityInsertionCostCalculator.Marginals;
 import algorithms.ActivityInsertionCostsCalculator.ActivityInsertionCosts;
 import basics.Job;
 import basics.Service;
@@ -49,7 +50,13 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		}
 	};
 	
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/left.java
+	private ActivityInsertionCostCalculator activityInsertionCostsCalculator;
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/base.java
+	private MarginalsCalculus activityInsertionCostsCalculator;
+=======
 	private ActivityInsertionCostsCalculator activityInsertionCostsCalculator;
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/right.java
 	
 	private VehicleRoutingTransportCosts transportCosts;
 	
@@ -60,9 +67,13 @@ final class CalculatesServiceInsertion implements JobInsertionCalculator{
 		logger.info("initialise neighborhood " + neighborhood);
 	}
 	
-
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/left.java
+	public CalculatesServiceInsertion(VehicleRoutingTransportCosts routingCosts, ActivityInsertionCostCalculator marginalsCalculus, HardRouteLevelConstraint hardRouteLevelConstraint) {
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/base.java
+	public CalculatesServiceInsertion(VehicleRoutingTransportCosts routingCosts, MarginalsCalculus marginalsCalculus, HardRouteLevelConstraint hardRouteLevelConstraint) {
+=======
 	public CalculatesServiceInsertion(VehicleRoutingTransportCosts routingCosts, ActivityInsertionCostsCalculator activityInsertionCostsCalculator, HardRouteLevelConstraint hardRouteLevelConstraint) {
-
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertion.java/right.java
 		super();
 		this.activityInsertionCostsCalculator = activityInsertionCostsCalculator;
 		this.hardRouteLevelConstraint = hardRouteLevelConstraint;

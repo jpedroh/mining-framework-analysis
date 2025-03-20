@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import util.Neighborhood;
 import algorithms.ActivityInsertionCostsCalculator.ActivityInsertionCosts;
+import algorithms.HardConstraints.HardRouteLevelConstraint;
 import basics.Job;
 import basics.Service;
 import basics.costs.VehicleRoutingActivityCosts;
@@ -149,9 +150,26 @@ final class CalculatesServiceInsertionOnRouteLevel implements JobInsertionCalcul
 		TourActivities tour = currentRoute.getTourActivities();
 		double best_insertion_costs = best_known_insertion_costs;
 		Service service = (Service)jobToInsert;
-
 		
 		/**
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/left.java
+		 * pre-check whether vehicle-capacity of new vehicle is sufficient to load service.
+		 */
+		if(states.getRouteState(currentRoute, StateIdFactory.LOAD).toDouble() + service.getCapacityDemand() > newVehicle.getCapacity()){
+			return InsertionData.noInsertionFound();
+		}
+		
+		/**
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/base.java
+		 * pre-check whether vehicle-capacity of new vehicle is sufficient to load service.
+		 */
+		if(states.getRouteState(currentRoute, StateTypes.LOAD).toDouble() + service.getCapacityDemand() > newVehicle.getCapacity()){
+			return InsertionData.noInsertionFound();
+		}
+		
+		/**
+=======
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/right.java
 		 * some inis
 		 */
 		TourActivity serviceAct2Insert = tourActivityFactory.createActivity(service);
@@ -253,8 +271,62 @@ final class CalculatesServiceInsertionOnRouteLevel implements JobInsertionCalcul
 				best_insertion_costs = insertion.getInsertionCost();
 			}
 		}
-		else{
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/left.java
 		
+		for(int i=0;i<memorySize;i++){
+			InsertionData data = bestInsertionsQueue.poll();
+			if(data == null){
+				continue;
+			}
+			/**
+			 * build tour with new activity.
+			 */
+			List<TourActivity> wholeTour = new ArrayList<TourActivity>();
+			wholeTour.add(start);
+			wholeTour.addAll(currentRoute.getTourActivities().getActivities());
+			wholeTour.add(end);
+			wholeTour.add(data.getDeliveryInsertionIndex()+1, serviceAct2Insert);
+			
+			/**
+			 * compute cost-diff of tour with and without new activity --> insertion_costs
+			 */
+			double insertion_costs = auxilliaryPathCostCalculator.costOfPath(wholeTour, start.getEndTime(), newDriver, newVehicle) - states.getRouteState(currentRoute,StateIdFactory.COSTS).toDouble();
+			
+			/**
+			 * if better than best known, make it the best known
+			 */
+			if(insertion_costs < best_insertion_costs){
+				best_insertion_index = data.getDeliveryInsertionIndex();
+				best_insertion_costs = insertion_costs;
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/base.java
+		
+		for(int i=0;i<memorySize;i++){
+			InsertionData data = bestInsertionsQueue.poll();
+			if(data == null){
+				continue;
+			}
+			/**
+			 * build tour with new activity.
+			 */
+			List<TourActivity> wholeTour = new ArrayList<TourActivity>();
+			wholeTour.add(start);
+			wholeTour.addAll(currentRoute.getTourActivities().getActivities());
+			wholeTour.add(end);
+			wholeTour.add(data.getDeliveryInsertionIndex()+1, serviceAct2Insert);
+			
+			/**
+			 * compute cost-diff of tour with and without new activity --> insertion_costs
+			 */
+			double insertion_costs = auxilliaryPathCostCalculator.costOfPath(wholeTour, start.getEndTime(), newDriver, newVehicle) - states.getRouteState(currentRoute,StateTypes.COSTS).toDouble();
+			
+			/**
+			 * if better than best known, make it the best known
+			 */
+			if(insertion_costs < best_insertion_costs){
+				best_insertion_index = data.getDeliveryInsertionIndex();
+				best_insertion_costs = insertion_costs;
+=======
+		else{
 			for(int i=0;i<memorySize;i++){
 				InsertionData data = bestInsertionsQueue.poll();
 				if(data == null){
@@ -272,7 +344,7 @@ final class CalculatesServiceInsertionOnRouteLevel implements JobInsertionCalcul
 				/**
 				 * compute cost-diff of tour with and without new activity --> insertion_costs
 				 */
-				double insertion_costs = auxilliaryPathCostCalculator.costOfPath(wholeTour, start.getEndTime(), newDriver, newVehicle) - stateManager.getRouteState(currentRoute,StateIdFactory.COSTS).toDouble();
+				double insertion_costs = auxilliaryPathCostCalculator.costOfPath(wholeTour, start.getEndTime(), newDriver, newVehicle) - stateManager.getRouteState(currentRoute,StateTypes.COSTS).toDouble();
 
 				/**
 				 * if better than best known, make it the best known
@@ -281,6 +353,7 @@ final class CalculatesServiceInsertionOnRouteLevel implements JobInsertionCalcul
 					best_insertion_index = data.getDeliveryInsertionIndex();
 					best_insertion_costs = insertion_costs;
 				}
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatesServiceInsertionOnRouteLevel.java/right.java
 			}
 		}
 		if(best_insertion_index == InsertionData.NO_INDEX) return InsertionData.noInsertionFound();

@@ -57,10 +57,14 @@ public class BuildCVRPAlgoFromScratchTest {
 				return true;
 			}
 		};
-
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/test/java/algorithms/BuildCVRPAlgoFromScratchTest.java/left.java
+		ActivityInsertionCostCalculator marginalCalculus = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), hardActLevelConstraint);
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/test/java/algorithms/BuildCVRPAlgoFromScratchTest.java/base.java
+		MarginalsCalculus marginalCalculus = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), hardActLevelConstraint);
+=======
 		ActivityInsertionCostsCalculator marginalCalculus = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), hardActLevelConstraint);
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/test/java/algorithms/BuildCVRPAlgoFromScratchTest.java/right.java
 		CalculatesServiceInsertion serviceInsertion = new CalculatesServiceInsertion(vrp.getTransportCosts(), marginalCalculus, new HardLoadConstraint(stateManager));
-
 		
 		VehicleFleetManager fleetManager = new InfiniteVehicles(vrp.getVehicles());
 		JobInsertionCalculator finalServiceInsertion = new CalculatesVehTypeDepServiceInsertion(fleetManager, serviceInsertion);

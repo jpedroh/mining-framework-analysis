@@ -17,7 +17,6 @@
 package algorithms;
 
 import java.util.Collection;
-
 import basics.Job;
 import basics.VehicleRoutingProblemSolution;
 import basics.algo.InsertionListener;

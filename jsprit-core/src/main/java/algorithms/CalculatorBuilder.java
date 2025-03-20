@@ -214,8 +214,13 @@ class CalculatorBuilder {
 	private CalculatorPlusListeners createStandardLocal(VehicleRoutingProblem vrp, StateManager statesManager){
 		if(constraintManager == null) throw new IllegalStateException("constraint-manager is null");
  		
+<<<<<<< /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatorBuilder.java/left.java
+		ActivityInsertionCostCalculator defaultCalc = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), constraintManager);
+||||||| /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatorBuilder.java/base.java
+		MarginalsCalculus defaultCalc = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), constraintManager);
+=======
 		ActivityInsertionCostsCalculator defaultCalc = new LocalActivityInsertionCostsCalculator(vrp.getTransportCosts(), vrp.getActivityCosts(), constraintManager);
-
+>>>>>>> /usr/src/app/output/jsprit/jsprit/e21d1ff7c5a66960a6eabd7e225d73d757c5ad0a/jsprit-core/src/main/java/algorithms/CalculatorBuilder.java/right.java
 		JobInsertionCalculator standardServiceInsertion = new CalculatesServiceInsertion(vrp.getTransportCosts(), defaultCalc, constraintManager);
 		
 		((CalculatesServiceInsertion) standardServiceInsertion).setNeighborhood(vrp.getNeighborhood());
