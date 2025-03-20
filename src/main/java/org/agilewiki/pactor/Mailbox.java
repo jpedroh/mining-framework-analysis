@@ -1,4 +1,3 @@
-
 package org.agilewiki.pactor;
 
 /**
@@ -11,40 +10,38 @@ package org.agilewiki.pactor;
  * Request are submitted to the MailboxFactory which internally calls the mailbox thread to consume the Request.
  * </p>
  */
-
 public interface Mailbox {
-	
-    /**
+  /**
      * Creates the mailbox.
      *
      */
-    Mailbox createMailbox();
+  Mailbox createMailbox();
 
-    /**
+  /**
      * Adds the autoclosable resources.
      *
      * @param closeable TBD.
      */
-    void addAutoClosable(final AutoCloseable closeable);
+  void addAutoClosable(final AutoCloseable closeable);
 
-    /**
+  /**
      * The shutdown should make sure that the a lightweight thread
      * executing the messages associated with this mailbox is terminated. This 
      * should be executed after the Request is send to the mailbox.
      *
-     */    
-    void shutdown();
+     */
+  void shutdown();
 
-    /**
+  /**
      * This should send the Request to the associated mailbox's queue in asynchronous
      * mode.
      *
      * @param request Request Object that should encapsulate the Requested Information
      * to be processed.
-     */        
-    void send(final Request<?> request) throws Exception;
+     */
+  void send(final Request<?> request) throws Exception;
 
-    /**
+  /**
      * This should send the Request to the associated mailbox's queue with specific return 
      * type which is encapsulated in ResponseProcessor. reply with VoidResponseProcessor
      * will act same as the send method.
@@ -54,12 +51,10 @@ public interface Mailbox {
      * to be processed.
      * @param source The mailbox reference where the Response Message should be dispatched.
      * @param responseProcessor The response processor implementation.
-     */ 
-    <E> void reply(final Request<E> request, final Mailbox source,
-            final ResponseProcessor<E> responseProcessor)
-            throws Exception;
+     */
+  <E extends java.lang.Object> void reply(final Request<E> request, final Mailbox source, final ResponseProcessor<E> responseProcessor) throws Exception;
 
-    /**
+  /**
      * This should send the Request to the associated mailbox's queue in synchronous mode. 
      * The thread that invokes this operation will wait for process to be executed and 
      * response to be send back the invoking thread.
@@ -67,7 +62,7 @@ public interface Mailbox {
      * @param request Request Object that should encapsulate the Requested Information
      * to be processed.
      */
-    <E> E pend(final Request<E> request) throws Exception;
+  <E extends java.lang.Object> E pend(final Request<E> request) throws Exception;
 
-    ExceptionHandler setExceptionHandler(final ExceptionHandler exceptionHandler);
+  ExceptionHandler setExceptionHandler(final ExceptionHandler exceptionHandler);
 }
