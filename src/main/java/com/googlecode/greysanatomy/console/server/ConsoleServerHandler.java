@@ -16,29 +16,22 @@ import com.googlecode.greysanatomy.util.JvmUtils.ShutdownHook;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-<<<<<<< HEAD
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.instrument.Instrumentation;
-=======
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.instrument.Instrumentation;
-import java.nio.CharBuffer;
->>>>>>> pr/8
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-
 import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.*;
 import static com.googlecode.greysanatomy.probe.ProbeJobs.createJob;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.CharBuffer;
 
 /**
- * ¿ØÖÆÌ¨·þÎñ¶Ë´¦ÀíÆ÷
+ * ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½
  *
  * @author vlinux
  */
@@ -77,11 +70,8 @@ public class ConsoleServerHandler {
 
     }
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/server/ConsoleServerHandler.java/left.java
     public RespResult postCmd(final ReqCmd cmd) {
-=======
-    public RespResult postCmd(final ReqCmd cmd) throws IOException {
->>>>>>> pr/8
         final RespResult respResult = new RespResult();
         respResult.setSessionId(cmd.getGaSessionId());
         respResult.setJobId(createJob());
@@ -89,41 +79,29 @@ public class ConsoleServerHandler {
 
             @Override
             public void run() {
-                // ÆÕÍ¨ÃüÁîÇëÇó
+                // ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 final Info info = new Info(inst, respResult.getSessionId(), respResult.getJobId());
                 final Sender sender = new Sender() {
 
                     @Override
                     public void send(boolean isF, String message) {
-<<<<<<< HEAD
                         write(respResult.getSessionId(), respResult.getJobId(), isF, message);
-=======
-                        write(respResult.getJobId(), isF, message);
->>>>>>> pr/8
                     }
                 };
 
                 try {
                     final Command command = Commands.getInstance().newRiscCommand(cmd.getCommand());
-                    // ÃüÁî²»´æÔÚ
+                    // ï¿½ï¿½ï¿½î²»ï¿½ï¿½ï¿½ï¿½
                     if (null == command) {
-<<<<<<< HEAD
                         write(respResult.getSessionId(), respResult.getJobId(), true, "command not found!");
-=======
-                        write(respResult.getJobId(), true, "command not found!");
->>>>>>> pr/8
                         return;
                     }
                     final Action action = command.getAction();
                     action.action(consoleServer, info, sender);
                 } catch (Throwable t) {
-                    // Ö´ÐÐÃüÁîÊ§°Ü
+                    // Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
                     logger.warn("do action failed.", t);
-<<<<<<< HEAD
                     write(respResult.getSessionId(), respResult.getJobId(), true, "do action failed. cause:" + t.getMessage());
-=======
-                    write(respResult.getJobId(), true, "do action failed. cause : " + t.getMessage());
->>>>>>> pr/8
                     return;
                 }
             }
@@ -131,6 +109,47 @@ public class ConsoleServerHandler {
         });
         return respResult;
     }
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/server/ConsoleServerHandler.java/base.java
+=======
+    public RespResult postCmd(final ReqCmd cmd) throws IOException {
+        final RespResult respResult = new RespResult();
+        respResult.setSessionId(cmd.getGaSessionId());
+        respResult.setJobId(createJob());
+        workers.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                // ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                final Info info = new Info(inst, respResult.getSessionId(), respResult.getJobId());
+                final Sender sender = new Sender() {
+
+                    @Override
+                    public void send(boolean isF, String message) {
+                        write(respResult.getJobId(), isF, message);
+                    }
+                };
+
+                try {
+                    final Command command = Commands.getInstance().newRiscCommand(cmd.getCommand());
+                    // ï¿½ï¿½ï¿½î²»ï¿½ï¿½ï¿½ï¿½
+                    if (null == command) {
+                        write(respResult.getJobId(), true, "command not found!");
+                        return;
+                    }
+                    final Action action = command.getAction();
+                    action.action(consoleServer, info, sender);
+                } catch (Throwable t) {
+                    // Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
+                    logger.warn("do action failed.", t);
+                    write(respResult.getJobId(), true, "do action failed. cause : " + t.getMessage());
+                    return;
+                }
+            }
+
+        });
+        return respResult;
+    }
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/server/ConsoleServerHandler.java/right.java
 
     public long register() {
         return registSession();
@@ -150,49 +169,140 @@ public class ConsoleServerHandler {
     }
 
     /**
-     * ¸ÉµôÒ»¸öJob
+     * ï¿½Éµï¿½Ò»ï¿½ï¿½Job
      *
      * @param req
      */
+
     public void killJob(ReqKillJob req) {
         unRegistJob(req.getGaSessionId(), req.getJobId());
     }
 
     /**
-     * »á»°ÐÄÌø
+     * ï¿½á»°ï¿½ï¿½ï¿½ï¿½
      *
      * @param req
      * @return
      */
-    public boolean sessionHeartBeat(ReqHeart req) {
-        return heartBeatSession(req.getGaSessionId());
-    }
 
-<<<<<<< HEAD
-    private final String REST_DIR = System.getProperty("java.io.tmpdir")//Ö´ÐÐ½á¹ûÊä³öÎÄ¼þÂ·¾¶
-            + File.separator + "greysdata" + File.separator;
-    private final String REST_FILE_EXT = ".ga";                            //´æ´¢ÖÐ¼ä½á¹ûµÄÁÙÊ±ÎÄ¼þºó×ºÃû
-=======
->>>>>>> pr/8
-    private final String END_MASK = "" + (char) 29;                        //ÓÃÓÚ±ê¼ÇÎÄ¼þ½áÊøµÄ±êÊ¶·û
+	public boolean sessionHeartBeat(ReqHeart req) {
+	    return heartBeatSession(req.getGaSessionId());
+	}
+
+	private final String REST_DIR = System.getProperty("java.io.tmpdir")//Ö´ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+	        + File.separator + "greysdata" + File.separator;
+
+//ï¿½æ´¢ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ä¼ï¿½ï¿½ï¿½×ºï¿½ï¿½
+
+	private final String END_MASK = "" + (char) 29;
+
+//ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½Ê¶ï¿½ï¿½
 
     /**
-     * Ð´½á¹û
+     * Ð´ï¿½ï¿½ï¿½
      *
-<<<<<<< HEAD
      * @param gaSessionId
-=======
->>>>>>> pr/8
      * @param jobId
      * @param isF
      * @param message
      */
-<<<<<<< HEAD
-    private void write(long gaSessionId, String jobId, boolean isF, String message) {
-=======
+
+	private void write(long gaSessionId, String jobId, boolean isF, String message) {
+	    //TODO ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½Ó°ï¿½ì±»probeï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
+	    if (isF) {
+	        message += END_MASK;
+	    }
+
+	    if (StringUtils.isEmpty(message)) {
+	        return;
+	    }
+
+	    RandomAccessFile rf = null;
+
+	    try {
+	        new File(REST_DIR).mkdir();
+	        rf = new RandomAccessFile(getExecuteFilePath(jobId), "rw");
+	        rf.seek(rf.length());
+	        rf.write(message.getBytes());
+	    } catch (IOException e) {
+	        logger.warn("jobFile write error!", e);
+	        return;
+	    } finally {
+	        if (null != rf) {
+	            try {
+	                rf.close();
+	            } catch (Exception e) {
+	                //
+	            }
+	        }
+	    }
+	}
+
+    /**
+     * ï¿½ï¿½jobï¿½Ä½ï¿½ï¿½
+     *
+     * @param jobId
+     * @param pos
+     * @param respResult
+     */
+
+	private void read(String jobId, int pos, RespResult respResult) {
+	    int newPos = pos;
+	    final StringBuilder sb = new StringBuilder();
+	    RandomAccessFile rf = null;
+	    try {
+	        rf = new RandomAccessFile(getExecuteFilePath(jobId), "r");
+	        rf.seek(pos);
+	        byte[] buffer = new byte[10000];
+	        int len = 0;
+	        while ((len = rf.read(buffer)) != -1) {
+	            newPos += len;
+	            sb.append(new String(buffer, 0, len));
+	        }
+	        respResult.setPos(newPos);
+	        respResult.setMessage(sb.toString());
+	    } catch (FileNotFoundException fnfe) {
+	        logger.info("jobId={} was not ready yet.",jobId);
+	    } catch (IOException e) {
+	        logger.warn("jobId={}'s file read error!", jobId, e);
+	        return;
+	    } finally {
+	        if (null != rf) {
+	            try {
+	                rf.close();
+	            } catch (Exception e) {
+	                //
+	            }
+	        }
+	    }
+
+	}
+
+    /**
+     * ï¿½Éµï¿½Ò»ï¿½ï¿½Job
+     *
+     * @param req
+     */
+
+    /**
+     * ï¿½á»°ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param req
+     * @return
+     */
+
+//ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½Ê¶ï¿½ï¿½
+
+    /**
+     * Ð´ï¿½ï¿½ï¿½
+     *
+     * @param jobId
+     * @param isF
+     * @param message
+     */
+
     private void write(int jobId, boolean isF, String message) {
->>>>>>> pr/8
-        //TODO ÕâÀïÓÃ¶ÓÁÐÀ´×ö»º´æ£¬¸ÄÉÆÐ´ÎÄ¼þÐÔÄÜ£¬·ñÔò¿ÉÄÜ»áÓ°Ïì±»probe´úÂëµÄÐ§ÂÊ
+        //TODO ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½Ó°ï¿½ì±»probeï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
         if (isF) {
             message += END_MASK;
         }
@@ -201,27 +311,6 @@ public class ConsoleServerHandler {
             return;
         }
 
-<<<<<<< HEAD
-        RandomAccessFile rf = null;
-
-        try {
-            new File(REST_DIR).mkdir();
-            rf = new RandomAccessFile(getExecuteFilePath(jobId), "rw");
-            rf.seek(rf.length());
-            rf.write(message.getBytes());
-        } catch (IOException e) {
-            logger.warn("jobFile write error!", e);
-            return;
-        } finally {
-            if (null != rf) {
-                try {
-                    rf.close();
-                } catch (Exception e) {
-                    //
-                }
-            }
-        }
-=======
         final Writer writer = ProbeJobs.getJobWriter(jobId);
         if (null != writer) {
             try {
@@ -233,45 +322,16 @@ public class ConsoleServerHandler {
         }
 
 
->>>>>>> pr/8
     }
 
     /**
-     * ¶ÁjobµÄ½á¹û
+     * ï¿½ï¿½jobï¿½Ä½ï¿½ï¿½
      *
      * @param jobId
      * @param pos
      * @param respResult
      */
-<<<<<<< HEAD
-    private void read(String jobId, int pos, RespResult respResult) {
-        int newPos = pos;
-        final StringBuilder sb = new StringBuilder();
-        RandomAccessFile rf = null;
-        try {
-            rf = new RandomAccessFile(getExecuteFilePath(jobId), "r");
-            rf.seek(pos);
-            byte[] buffer = new byte[10000];
-            int len = 0;
-            while ((len = rf.read(buffer)) != -1) {
-                newPos += len;
-                sb.append(new String(buffer, 0, len));
-            }
-            respResult.setPos(newPos);
-            respResult.setMessage(sb.toString());
-        } catch (FileNotFoundException fnfe) {
-            logger.info("jobId={} was not ready yet.",jobId);
-        } catch (IOException e) {
-            logger.warn("jobId={}'s file read error!", jobId, e);
-            return;
-        } finally {
-            if (null != rf) {
-                try {
-                    rf.close();
-                } catch (Exception e) {
-                    //
-                }
-=======
+
     private void read(int jobId, int pos, RespResult respResult) {
 
         final CharBuffer buffer = CharBuffer.allocate(4028);
@@ -284,19 +344,11 @@ public class ConsoleServerHandler {
                 respResult.setMessage(buffer.toString());
             } catch (IOException e) {
                 logger.warn("read job failed, jobId={}.", jobId, e);
->>>>>>> pr/8
             }
         }
 
     }
 
-<<<<<<< HEAD
-    private String getExecuteFilePath(String jobId) {
-        return REST_DIR + jobId + REST_FILE_EXT;
-    }
-
-=======
->>>>>>> pr/8
     private boolean isFinish(String message) {
         return !StringUtils.isEmpty(message) ? message.endsWith(END_MASK) : false;
     }

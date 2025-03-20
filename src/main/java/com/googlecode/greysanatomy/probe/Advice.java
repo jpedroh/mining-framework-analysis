@@ -1,53 +1,43 @@
 package com.googlecode.greysanatomy.probe;
 
 /**
- * Í¨Öªµã
+ * Í¨Öªï¿½ï¿½
  *
  * @author vlinux
  */
 public class Advice {
 
     /**
-     * Ì½²âÄ¿±ê
+     * Ì½ï¿½ï¿½Ä¿ï¿½ï¿½
      *
      * @author vlinux
      */
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/Advice.java/left.java
     public static class Target {
 
-<<<<<<< HEAD
         /*
-         * Ì½²âÄ¿±êÀà
+         * Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
          */
         private final Class<?> targetClass;
 
         /*
-         * Ì½²âÄ¿±êÐÐÎª(method/constructor)
+         * Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Îª(method/constructor)
          */
         private final TargetBehavior targetBehavior;
 
         /*
-         * Ì½²âÄ¿±êÊµÀý
+         * Ì½ï¿½ï¿½Ä¿ï¿½ï¿½Êµï¿½ï¿½
          */
         private final Object targetThis;
 
         public Target(Class<?> targetClass, TargetBehavior targetBehavior, Object targetThis) {
             this.targetClass = targetClass;
             this.targetBehavior = targetBehavior;
-=======
-        private final String targetClassName;
-        private final String targetBehaviorName;
-        private final Object targetThis;
-
-        public Target(String targetClassName, String targetBehaviorName, Object targetThis) {
-            this.targetClassName = targetClassName;
-            this.targetBehaviorName = targetBehaviorName;
->>>>>>> pr/8
             this.targetThis = targetThis;
         }
 
         /**
-<<<<<<< HEAD
-         * »ñÈ¡Ì½²âÄ¿±êÀà
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
          *
          * @return
          */
@@ -56,226 +46,312 @@ public class Advice {
         }
 
         /**
-         * »ñÈ¡Ì½²âÄ¿±êÐÐÎª(method/constructor)
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Îª(method/constructor)
          *
          * @return
          */
         public TargetBehavior getTargetBehavior() {
             return targetBehavior;
-=======
-         * »ñÈ¡Ì½²âÄ¿±êÀàÃû³Æ
-         *
-         * @return ±»Ì½²âµÄÄ¿±êÀàÃû³Æ
-         */
-        public String getTargetClassName() {
-            return targetClassName;
         }
 
         /**
-         * »ñÈ¡Ì½²âÄ¿±êÐÐÎª(method/constructor)Ãû³Æ
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½Êµï¿½ï¿½
          *
-         * @return ±»Ì½²âµÄÐÐÎªÃû³Æ
-         */
-        public String getTargetBehaviorName() {
-            return targetBehaviorName;
->>>>>>> pr/8
-        }
-
-        /**
-         * »ñÈ¡Ì½²âÄ¿±êÊµÀý
-         *
-<<<<<<< HEAD
          * @return
-=======
-         * @return ±»Ì½²âÄ¿±êÊµÀý
->>>>>>> pr/8
          */
         public Object getTargetThis() {
             return targetThis;
         }
 
     }
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/Advice.java/base.java
+    public static class Target {
 
-<<<<<<< HEAD
-    /**
-     * Ì½²âÄ¿±êÐÐÎª(method/constructur)
-     *
-     * @author vlinux
-     */
-    public static interface TargetBehavior {
+		/**
+		 * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
+		 * @return
+		 */
+		public Class<?> getTargetClass() {
+			return targetClass;
+		}
 
-        /**
-         * »ñÈ¡ÐÐÎªµÄÃû³Æ
-         *
-         * @return
-         */
-        String getName();
+		/**
+		 * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Îª(method/constructor)
+		 * @return
+		 */
+		public TargetBehavior getTargetBehavior() {
+			return targetBehavior;
+		}
 
-    }
-
-    /**
-     * Ì½²âÐÐÎª£º¹¹Ôìº¯ÊýÌ½²â
-     *
-     * @author vlinux
-     */
-    public static class TargetConstructor implements TargetBehavior {
-
-        private final Constructor<?> constructor;
-
-        public TargetConstructor(Constructor<?> constructor) {
-            this.constructor = constructor;
-        }
-
-        @Override
-        public String getName() {
-            return "<init>";
-        }
-
-        /**
-         * »ñÈ¡¹¹Ôìº¯Êý
-         *
-         * @return
-         */
-        public Constructor<?> getConstructor() {
-            return constructor;
-        }
-
-    }
-
-    /**
-     * Ì½²âÐÐÎª£º·½·¨Ì½²â
-     *
-     * @author vlinux
-     */
-    public static class TargetMethod implements TargetBehavior {
-
-        private final Method method;
-
-        public TargetMethod(Method method) {
-            this.method = method;
-        }
-
-        @Override
-        public String getName() {
-            return method.getName();
-        }
-
-        /**
-         * »ñÈ¡·½·¨Ìå
-         *
-         * @return
-         */
-        public Method getMethod() {
-            return method;
-        }
-
-    }
-
-
+		/**
+		 * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½Êµï¿½ï¿½
+		 * @return
+		 */
+		public Object getTargetThis() {
+			return targetThis;
+		}
+		
+	}
 =======
->>>>>>> pr/8
-    private final Target target;        // Ì½²âÄ¿±ê
-    private final Object[] parameters;    // µ÷ÓÃ²ÎÊý
-    private final boolean isFinished;    // ÊÇ·ñµ½doFinish·½·¨
+    public static class Target {
 
-    private Object returnObj;            // ·µ»ØÖµ£¬Èç¹ûÄ¿±ê·½·¨ÒÔÅ×Òì³£µÄÐÎÊ½½áÊø£¬Ôò´ËÖµÎªnull
-    private Throwable throwException;    // Å×³öÒì³££¬Èç¹ûÄ¿±ê·½·¨ÒÔÕý³£·½Ê½½áÊø£¬Ôò´ËÖµÎªnull
+        private final String targetClassName;
+        private final String targetBehaviorName;
+        private final Object targetThis;
 
-<<<<<<< HEAD
+        public Target(String targetClassName, String targetBehaviorName, Object targetThis) {
+            this.targetClassName = targetClassName;
+            this.targetBehaviorName = targetBehaviorName;
+            this.targetThis = targetThis;
+        }
+
+        /**
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         *
+         * @return ï¿½ï¿½Ì½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+         */
+        public String getTargetClassName() {
+            return targetClassName;
+        }
+
+        /**
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Îª(method/constructor)ï¿½ï¿½ï¿½ï¿½
+         *
+         * @return ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
+         */
+        public String getTargetBehaviorName() {
+            return targetBehaviorName;
+        }
+
+        /**
+         * ï¿½ï¿½È¡Ì½ï¿½ï¿½Ä¿ï¿½ï¿½Êµï¿½ï¿½
+         *
+         * @return ï¿½ï¿½Ì½ï¿½ï¿½Ä¿ï¿½ï¿½Êµï¿½ï¿½
+         */
+        public Object getTargetThis() {
+            return targetThis;
+        }
+
+    }
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/Advice.java/right.java
+
     /**
-     * Ì½²âÆ÷¹¹Ôìº¯Êý
+     * Ì½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Îª(method/constructur)
+     *
+     * @author vlinux
+     */
+
+	public static interface TargetBehavior {
+
+	    /**
+	     * ï¿½ï¿½È¡ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	     *
+	     * @return
+	     */
+	    String getName();
+
+	}
+
+    /**
+     * Ì½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½Ì½ï¿½ï¿½
+     *
+     * @author vlinux
+     */
+
+	public static class TargetConstructor implements TargetBehavior {
+
+	    private final Constructor<?> constructor;
+
+	    public TargetConstructor(Constructor<?> constructor) {
+	        this.constructor = constructor;
+	    }
+
+	    @Override
+	    public String getName() {
+	        return "<init>";
+	    }
+
+	    /**
+	     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+	     *
+	     * @return
+	     */
+	    public Constructor<?> getConstructor() {
+	        return constructor;
+	    }
+
+	}
+
+    /**
+     * Ì½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½
+     *
+     * @author vlinux
+     */
+
+	public static class TargetMethod implements TargetBehavior {
+
+	    private final Method method;
+
+	    public TargetMethod(Method method) {
+	        this.method = method;
+	    }
+
+	    @Override
+	    public String getName() {
+	        return method.getName();
+	    }
+
+	    /**
+	     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	     *
+	     * @return
+	     */
+	    public Method getMethod() {
+	        return method;
+	    }
+
+	}
+
+	private final Target target;
+
+// Ì½ï¿½ï¿½Ä¿ï¿½ï¿½
+
+	private final Object[] parameters;
+
+// ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½
+
+	private final boolean isFinished;
+
+// ï¿½Ç·ï¿½doFinishï¿½ï¿½ï¿½ï¿½
+
+	private Object returnObj;
+
+// ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎªnull
+
+	private Throwable throwException;
+
+// ï¿½×³ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎªnull
+
+    /**
+     * Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
      *
      * @param target
      * @param parameters
      * @param isFinished
      */
-=======
->>>>>>> pr/8
-    public Advice(Target target, Object[] parameters, boolean isFinished) {
-        this.target = target;
-        this.parameters = parameters;
-        this.isFinished = isFinished;
-    }
+
+	public Advice(Target target, Object[] parameters, boolean isFinished) {
+	    this.target = target;
+	    this.parameters = parameters;
+	    this.isFinished = isFinished;
+	}
 
     /**
-     * ÊÇ·ñÒÔÅ×³öÒì³£½áÊø
+     * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½
      *
-     * @return true:ÒÔÅ×Òì³£ÐÎÊ½½áÊø/false:ÒÔ·ÇÅ×Òì³£ÐÎÊ½½áÊø£¬»òÉÐÎ´½áÊø
+     * @return true:ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½/false:ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
      */
-    public boolean isThrowException() {
-        return isFinished() && null != throwException;
-    }
+
+	public boolean isThrowException() {
+	    return isFinished() && null != throwException;
+	}
 
     /**
-     * ÊÇ·ñÒÔÕý³£·µ»Ø½áÊø
+     * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½
      *
-     * @return true:ÒÔÕý³£·µ»ØÐÎÊ½½áÊø/false:ÒÔ·ÇÕý³£·µ»ØÐÎÊ½½áÊø£¬»òÉÐÎ´½áÊø
+     * @return true:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½/false:ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
      */
-    public boolean isReturn() {
-        return isFinished() && !isThrowException();
-    }
+
+	public boolean isReturn() {
+	    return isFinished() && !isThrowException();
+	}
 
     /**
-     * ÊÇ·ñÒÑ¾­½áÊø
+     * ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
      *
-     * @return true:ÒÑ¾­½áÊø/false:ÉÐÎ´½áÊø
+     * @return true:ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½/false:ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
      */
-    public boolean isFinished() {
-        return isFinished;
-    }
 
-    public Target getTarget() {
-        return target;
-    }
+	public boolean isFinished() {
+	    return isFinished;
+	}
 
-    public Object getReturnObj() {
-        return returnObj;
-    }
+	public Target getTarget() {
+	    return target;
+	}
 
-    public void setReturnObj(Object returnObj) {
-        this.returnObj = returnObj;
-    }
+	public Object getReturnObj() {
+	    return returnObj;
+	}
 
-    public Throwable getThrowException() {
-        return throwException;
-    }
+	public void setReturnObj(Object returnObj) {
+	    this.returnObj = returnObj;
+	}
 
-    public void setThrowException(Throwable throwException) {
-        this.throwException = throwException;
-    }
+	public Throwable getThrowException() {
+	    return throwException;
+	}
 
-    public Object[] getParameters() {
-        return parameters;
-    }
+	public void setThrowException(Throwable throwException) {
+	    this.throwException = throwException;
+	}
+
+	public Object[] getParameters() {
+	    return parameters;
+	}
 
     /**
-     * getParameters()·½·¨µÄ±ðÃû£¬Ô­À´µÄÃû×ÖÌ«TM³¤ÁË
-<<<<<<< HEAD
+     * getParameters()ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì«TMï¿½ï¿½ï¿½ï¿½
      * @return
      */
+
     public Object[] getParams() {return parameters;}
 
     /**
-     * getThrowException()·½·¨µÄ±ðÃû
+     * getThrowException()ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
      * @return
      */
+
     public Throwable getThrowExp() {return throwException;}
-=======
-     *
-     * @return ²ÎÊýÁÐ±í
-     */
-    public Object[] getParams() {
-        return parameters;
-    }
+
+// Ì½ï¿½ï¿½Ä¿ï¿½ï¿½
+
+// ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½
+
+// ï¿½Ç·ï¿½doFinishï¿½ï¿½ï¿½ï¿½
+
+// ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎªnull
+
+// ï¿½×³ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê·½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÎªnull
 
     /**
-     * getThrowException()·½·¨µÄ±ðÃû
+     * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½
      *
-     * @return Òì³£¶ÔÏó
+     * @return true:ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½/false:ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
      */
-    public Throwable getThrowExp() {
-        return throwException;
-    }
->>>>>>> pr/8
+
+    /**
+     * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½
+     *
+     * @return true:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½/false:ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
+     */
+
+    /**
+     * ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @return true:ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½/false:ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
+     */
+
+    /**
+     * getParameters()ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì«TMï¿½ï¿½ï¿½ï¿½
+     *
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+     */
+
+    /**
+     * getThrowException()ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+     *
+     * @return ï¿½ì³£ï¿½ï¿½ï¿½ï¿½
+     */
 
 }

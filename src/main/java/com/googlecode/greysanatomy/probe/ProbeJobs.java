@@ -3,11 +3,7 @@ package com.googlecode.greysanatomy.probe;
 import com.googlecode.greysanatomy.console.command.JavaScriptCommand.JLS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-<<<<<<< HEAD
-=======
 import java.io.*;
->>>>>>> pr/8
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +11,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-<<<<<<< HEAD
-public class ProbeJobs {
+public final class ProbeJobs {
 
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/ProbeJobs.java/left.java
     private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
 
     /**
-     * ÈÎÎñ
+     * ï¿½ï¿½ï¿½ï¿½
      *
      * @author vlinux
      */
@@ -35,7 +31,7 @@ public class ProbeJobs {
 
 
     /**
-     * ×¢²áÕìÌýÆ÷
+     * ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param listener
      */
@@ -48,7 +44,7 @@ public class ProbeJobs {
     }
 
     /**
-     * ´´½¨Ò»¸öjob
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @return
      */
@@ -62,7 +58,7 @@ public class ProbeJobs {
     }
 
     /**
-     * ¼¤»îÒ»¸öjob
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @param id
      */
@@ -74,7 +70,7 @@ public class ProbeJobs {
     }
 
     /**
-     * ÅÐ¶ÏjobÊÇ·ñ»¹¿ÉÒÔ¼ÌÐø¹¤×÷
+     * ï¿½Ð¶ï¿½jobï¿½Ç·ñ»¹¿ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param id
      * @return
@@ -85,7 +81,7 @@ public class ProbeJobs {
     }
 
     /**
-     * É±ËÀÒ»¸öjob
+     * É±ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @param id
      */
@@ -103,7 +99,7 @@ public class ProbeJobs {
     }
 
     /**
-     * ·µ»Ø´æ»îµÄjobId
+     * ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½jobId
      *
      * @return
      */
@@ -118,7 +114,7 @@ public class ProbeJobs {
     }
 
     /**
-     * ·µ»Øµ±Ç°µÄÌ½²â¼àÌýÆ÷ÁÐ±í
+     * ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
      *
      * @param id
      * @return
@@ -132,7 +128,7 @@ public class ProbeJobs {
     }
 
     /**
-     * jobÊÇ·ñÊµÏÖÁËÖ¸¶¨µÄlistener
+     * jobï¿½Ç·ï¿½Êµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½listener
      *
      * @param id
      * @param classListener
@@ -146,20 +142,139 @@ public class ProbeJobs {
 
     }
 
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/ProbeJobs.java/base.java
+	private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
+	
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½
+	 * @author vlinux
+	 *
+	 */
+	private static class Job {
+		private String id;
+		private boolean isAlive;
+		private JobListener listener;
+	}
+	
+	private static final Map<String,Job> jobs = new ConcurrentHashMap<String, Job>();
+	
+	
+	/**
+	 * ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param listener
+	 */
+	public static void register(String id, JobListener listener) {
+		Job job = jobs.get(id);
+		if( null != job ) {
+			job.listener = listener;
+			listener.create();
+		}
+	}
+	
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
+	 * @return
+	 */
+	public static String createJob() {
+		final String id = UUID.randomUUID().toString();
+		Job job = new Job();
+		job.id = id;
+		job.isAlive = false;
+		jobs.put(id, job);
+		return id;
+	}
+	
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
+	 * @param id
+	 */
+	public static void activeJob(String id) {
+		Job job = jobs.get(id);
+		if( null != job ) {
+			job.isAlive = true;
+		}
+	}
+	
+	/**
+	 * ï¿½Ð¶ï¿½jobï¿½Ç·ñ»¹¿ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param id
+	 * @return
+	 */
+	public static boolean isJobAlive(String id) {
+		Job job = jobs.get(id);
+		return null != job && job.isAlive;
+	}
+	
+	/**
+	 * É±ï¿½ï¿½Ò»ï¿½ï¿½job
+	 * @param id
+	 */
+	public static void killJob(String id) {
+		Job job = jobs.get(id);
+		if( null != job ) {
+			job.isAlive = false;
+			try {
+				job.listener.destroy();
+			}catch(Throwable t) {
+				logger.warn("destroy listener failed, jobId={}", id, t);
+			}
+			JLS.removeJob(id);
+		}
+	}
+	
+	/**
+	 * ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½jobId
+	 * @return
+	 */
+	public static List<String> listAliveJobIds() {
+		final List<String> jobIds = new ArrayList<String>();
+		for(Job job : jobs.values()) {
+			if( job.isAlive ) {
+				jobIds.add(job.id);
+			}
+		}
+		return jobIds;
+	}
+	
+	/**
+	 * ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+	 * @param id
+	 * @return
+	 */
+	public static JobListener getJobListeners(String id) {
+		if( jobs.containsKey(id) ) {
+			return jobs.get(id).listener;
+		} else {
+			return null; 
+		}
+	}
+	
+	/**
+	 * jobï¿½Ç·ï¿½Êµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½listener
+	 * @param id
+	 * @param classListener
+	 * @return
+	 */
+	public static boolean isListener(String id, Class<? extends JobListener> classListener) {
+		
+		final JobListener jobListener = getJobListeners(id);
+		return null != jobListener 
+				&& classListener.isAssignableFrom(jobListener.getClass());
+		
+	}
+	
 =======
-public final class ProbeJobs {
-
     private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
 
-    private static final String REST_DIR = System.getProperty("java.io.tmpdir")//Ö´ÐÐ½á¹ûÊä³öÎÄ¼þÂ·¾¶
+    private static final String REST_DIR = System.getProperty("java.io.tmpdir")//Ö´ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½
             + File.separator + "greysdata"
             + File.separator + UUID.randomUUID().toString()
             + File.separator
             ;
-    private static final String REST_FILE_EXT = ".ga";                            //´æ´¢ÖÐ¼ä½á¹ûµÄÁÙÊ±ÎÄ¼þºó×ºÃû
+    private static final String REST_FILE_EXT = ".ga";                            //ï¿½æ´¢ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ä¼ï¿½ï¿½ï¿½×ºï¿½ï¿½
 
     /**
-     * ÈÎÎñ
+     * ï¿½ï¿½ï¿½ï¿½
      *
      * @author vlinux
      */
@@ -171,10 +286,10 @@ public final class ProbeJobs {
 
         private final File jobFile;
 
-        // JOBÎÄ¼þ¶Á
+        // JOBï¿½Ä¼ï¿½ï¿½ï¿½
         private final Reader jobReader;
 
-        // JOBÎÄ¼þÐ´
+        // JOBï¿½Ä¼ï¿½Ð´
         private final Writer jobWriter;
 
 
@@ -197,7 +312,7 @@ public final class ProbeJobs {
 
 
     /**
-     * ×¢²áÕìÌýÆ÷
+     * ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param listener
      */
@@ -210,7 +325,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * ´´½¨Ò»¸öjob
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @return
      */
@@ -223,7 +338,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * ¼¤»îÒ»¸öjob
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @param id
      */
@@ -235,10 +350,10 @@ public final class ProbeJobs {
     }
 
     /**
-     * ÅÐ¶ÏjobÊÇ·ñ»¹¿ÉÒÔ¼ÌÐø¹¤×÷
+     * ï¿½Ð¶ï¿½jobï¿½Ç·ñ»¹¿ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param id
-     * @return true¿ÉÒÔ¼ÌÐø¹¤×÷,false²»¿ÉÒÔ
+     * @return trueï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,falseï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public static boolean isJobAlive(int id) {
         Job job = jobs.get(id);
@@ -246,7 +361,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * ÅÐ¶ÏjobÊÇ·ñÒÑ¾­±»kill
+     * ï¿½Ð¶ï¿½jobï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½kill
      * @param id
      * @return
      */
@@ -256,7 +371,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * É±ËÀÒ»¸öjob
+     * É±ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @param id
      */
@@ -282,7 +397,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * ·µ»Ø´æ»îµÄjobId
+     * ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½jobId
      *
      * @return
      */
@@ -313,7 +428,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * ·µ»Øµ±Ç°µÄÌ½²â¼àÌýÆ÷ÁÐ±í
+     * ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
      *
      * @param id
      * @return
@@ -327,7 +442,7 @@ public final class ProbeJobs {
     }
 
     /**
-     * jobÊÇ·ñÊµÏÖÁËÖ¸¶¨µÄlistener
+     * jobï¿½Ç·ï¿½Êµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½listener
      *
      * @param id
      * @param classListener
@@ -341,5 +456,5 @@ public final class ProbeJobs {
 
     }
 
->>>>>>> pr/8
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/probe/ProbeJobs.java/right.java
 }

@@ -1,11 +1,6 @@
 package com.googlecode.greysanatomy.console.command;
 
 import com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.TransformResult;
-<<<<<<< HEAD
-import com.googlecode.greysanatomy.console.command.annotation.Arg;
-import com.googlecode.greysanatomy.console.command.annotation.Cmd;
-=======
->>>>>>> pr/8
 import com.googlecode.greysanatomy.console.command.annotation.RiscCmd;
 import com.googlecode.greysanatomy.console.command.annotation.RiscIndexArg;
 import com.googlecode.greysanatomy.console.server.ConsoleServer;
@@ -20,33 +15,24 @@ import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.regis
 import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
 
 /**
- * JstackÃüÁî<br/>
- * ¸ºÔðÊä³öµ±Ç°·½·¨Ö´ÐÐÉÏÏÂÎÄ
+ * Jstackï¿½ï¿½ï¿½ï¿½<br/>
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *
  * @author vlinux
  */
-<<<<<<< HEAD
-@Cmd("jstack")
-@RiscCmd(named = "jstack", sort = 7, desc = "The call stack output buried point method in each thread.")
-public class JstackCommand extends Command {
-
-    @Arg(name = "class", isRequired = true)
-    @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
-    private String classRegex;
-
-    @Arg(name = "method")
-=======
 @RiscCmd(named = "jstack", sort = 7, desc = "The call stack output buried point method in each thread.",
         eg = {
                 "jstack org\\.apache\\.commons\\.lang\\.StringUtils isEmpty",
                 "jstack .*StringUtils isEmpty"
         })
+@RiscCmd(named = "jstack", sort = 7, desc = "The call stack output buried point method in each thread.")
 public class JstackCommand extends Command {
 
     @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
+    @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
     private String classRegex;
 
->>>>>>> pr/8
+    @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
     @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
     private String methodRegex;
 
@@ -70,10 +56,10 @@ public class JstackCommand extends Command {
 
                 }, info);
 
-                // ×¢²áÈÎÎñ
+                // ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 registJob(info.getSessionId(), result.getId());
 
-                // ¼¤»îÈÎÎñ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 activeJob(result.getId());
 
                 final StringBuilder message = new StringBuilder();
@@ -81,10 +67,7 @@ public class JstackCommand extends Command {
                 message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n",
                         result.getModifiedClasses().size(),
                         result.getModifiedBehaviors().size()));
-<<<<<<< HEAD
-=======
                 message.append(GaStringUtils.ABORT_MSG).append("\n");
->>>>>>> pr/8
                 sender.send(false, message.toString());
 
             }

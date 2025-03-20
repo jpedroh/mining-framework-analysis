@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.googlecode.greysanatomy.probe.ProbeJobs.killJob;
 
 /**
- * 服务端当前连接上session的job持有信息
+ * 锟斤拷锟斤拷说锟角帮拷锟斤拷锟斤拷锟絪ession锟斤拷job锟斤拷锟斤拷锟斤拷息
  *
  * @author chengtongda
  */
@@ -23,11 +23,11 @@ public class SessionJobsHolder {
 
     private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
 
-    // 会话信息
+    // 锟结话锟斤拷息
     private final static Map<Long, GaSession> sessionHolder = new ConcurrentHashMap<Long, GaSession>();
 
     static {
-        //session生存检测
+        //session锟斤拷锟斤拷锟斤拷
         Thread sessionHearCheck = new Thread("ga-console-server-heartCheck") {
 
             private final long tip = 3000;
@@ -43,12 +43,12 @@ public class SessionJobsHolder {
                     long currentMills = System.currentTimeMillis();
                     Set<Long> deadSessionIds = new HashSet<Long>();
                     for (GaSession session : sessionHolder.values()) {
-                        //如果已经超过session失效阀值，则kill掉session
+                        //锟斤拷锟斤拷丫锟斤拷锟斤拷锟絪ession失效锟斤拷值锟斤拷锟斤拷kill锟斤拷session
                         if (currentMills - session.getLastModified() > tip) {
                             deadSessionIds.add(session.getSessionId());
                         }
                     }
-                    //将失效的session全部kill掉
+                    //锟斤拷失效锟斤拷session全锟斤拷kill锟斤拷
                     for (Long deadSessionId : deadSessionIds) {
                         unRegistSession(deadSessionId);
                     }
@@ -61,7 +61,7 @@ public class SessionJobsHolder {
     }
 
     /**
-     * 注册一个会话
+     * 注锟斤拷一锟斤拷锟结话
      */
     public static synchronized long registSession() {
         GaSession session = new GaSession();
@@ -71,14 +71,14 @@ public class SessionJobsHolder {
     }
 
     /**
-     * session心跳
-     *
-     * @param gaSessionId
-     * @return false为session已失效
-     */
+	 * session锟斤拷锟斤拷
+	 *
+	 * @param gaSessionId
+	 * @return false为session锟斤拷失效
+	 */
     public static synchronized boolean heartBeatSession(long gaSessionId) {
         GaSession holderSession = sessionHolder.get(gaSessionId);
-        //注销任务则不需要判断会话是否还在，即使不在也可以注销
+        //注锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷要锟叫断会话锟角凤拷锟节ｏ拷锟斤拷使锟斤拷锟斤拷也锟斤拷锟斤拷注锟斤拷
         if (holderSession == null || !holderSession.isAlive()) {
             return false;
         }
@@ -87,31 +87,20 @@ public class SessionJobsHolder {
     }
 
     /**
-     * 注销一个任务
-     *
-     * @param gaSessionId
-     * @param jobId
-     */
-<<<<<<< HEAD
-    public static synchronized void unRegistJob(long gaSessionId, String jobId) {
-        GaSession holderSession = sessionHolder.get(gaSessionId);
-        //注销任务则不需要判断会话是否还在，即使不在也可以注销
-        if (holderSession != null) {
-            final Iterator<String> it = holderSession.getJobIds().iterator();
-            while (it.hasNext()) {
-                String id = it.next();
-                if (StringUtils.equals(id, jobId)) {
-=======
+	 * 注锟斤拷一锟斤拷锟斤拷锟斤拷
+	 *
+	 * @param gaSessionId
+	 * @param jobId
+	 */
     public static synchronized void unRegistJob(long gaSessionId, int jobId) {
         GaSession holderSession = sessionHolder.get(gaSessionId);
-        //注销任务则不需要判断会话是否还在，即使不在也可以注销
+        //注锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷要锟叫断会话锟角凤拷锟节ｏ拷锟斤拷使锟斤拷锟斤拷也锟斤拷锟斤拷注锟斤拷
         if (holderSession != null) {
             final Iterator<Integer> it = holderSession.getJobIds().iterator();
             while (it.hasNext()) {
                 final int id = it.next();
 //                if (StringUtils.equals(id, jobId)) {
-                if( id == jobId ) {
->>>>>>> pr/8
+                if ( id == jobId ) {
                     killJob(id);
                     it.remove();
                     logger.info("unRegist job={} for session={}", id, gaSessionId);
@@ -121,17 +110,13 @@ public class SessionJobsHolder {
     }
 
     /**
-     * 注册一个job
+     * 注锟斤拷一锟斤拷job
      *
-     * @param sessionId
+	 * @param sessionId
      * @param jobId
      * @throws SessionTimeOutException
      */
-<<<<<<< HEAD
-    public static synchronized void registJob(long sessionId, String jobId) throws SessionTimeOutException {
-=======
     public static synchronized void registJob(long sessionId, int jobId) throws SessionTimeOutException {
->>>>>>> pr/8
         GaSession holderSession = sessionHolder.get(sessionId);
         if (holderSession == null || !holderSession.isAlive()) {
             throw new SessionTimeOutException("session is not exsit!");
@@ -141,21 +126,17 @@ public class SessionJobsHolder {
     }
 
     /**
-     * 注销一个会话
-     *
-     * @param gaSessionId
-     */
+	 * 注锟斤拷一锟斤拷锟结话
+	 *
+	 * @param gaSessionId
+	 */
     public static synchronized void unRegistSession(long gaSessionId) {
         GaSession holderSession = sessionHolder.get(gaSessionId);
         if (holderSession == null) {
             return;
         }
         holderSession.setAlive(false);
-<<<<<<< HEAD
-        final Iterator<String> it = holderSession.getJobIds().iterator();
-=======
         final Iterator<Integer> it = holderSession.getJobIds().iterator();
->>>>>>> pr/8
         while (it.hasNext()) {
             killJob(it.next());
         }

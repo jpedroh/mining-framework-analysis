@@ -1,33 +1,20 @@
 package com.googlecode.greysanatomy.probe;
-
-import com.googlecode.greysanatomy.probe.Advice.Target;
-<<<<<<< HEAD
-import com.googlecode.greysanatomy.probe.Advice.TargetBehavior;
-import com.googlecode.greysanatomy.probe.Advice.TargetConstructor;
-import com.googlecode.greysanatomy.probe.Advice.TargetMethod;
-import com.googlecode.greysanatomy.util.GaCheckUtils;
-=======
->>>>>>> pr/8
 import javassist.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-<<<<<<< HEAD
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-=======
->>>>>>> pr/8
 import static com.googlecode.greysanatomy.probe.ProbeJobs.getJobListeners;
 import static com.googlecode.greysanatomy.probe.ProbeJobs.isListener;
 import static java.lang.String.format;
 import static javassist.Modifier.*;
+import com.googlecode.greysanatomy.probe.Advice.Target;
 
 /**
- * Ì½²âµã´¥·¢Õß<br/>
- * ÔÚÂñµÄµãÖÐ£¬Ò»¹²ÓÐ4ÖÖÌ½²âµã£¬ËûÃÇ·Ö±ð¶ÔÓ¦<br/>
+ * Ì½ï¿½ï¿½ã´¥ï¿½ï¿½ï¿½ï¿½<br/>
+ * ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½Ð£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½Ì½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½Ç·Ö±ï¿½ï¿½Ó¦<br/>
  * fucntion f()
  * {
  * // probe:_before()
@@ -52,29 +39,16 @@ public class Probes {
     private static final String jobsClass = "com.googlecode.greysanatomy.probe.ProbeJobs";
     private static final String probesClass = "com.googlecode.greysanatomy.probe.Probes";
 
-<<<<<<< HEAD
-    private static final Map<String, Class<?>> cacheForGetClassByName = new ConcurrentHashMap<String, Class<?>>();
-    private static final Map<GetBehaviorKey, Method> cacheForGetMethodByName = new ConcurrentHashMap<GetBehaviorKey, Method>();
-    private static final Map<GetBehaviorKey, Constructor<?>> cacheForGetConstructorByParamTypes = new ConcurrentHashMap<GetBehaviorKey, Constructor<?>>();
-
 
     /**
-     * ¸ù¾Ý´«ÈëµÄ²ÎÊý¾ö¶¨×îÖÕ²ÉÓÃBehaveior
+     * ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ²ï¿½ï¿½ï¿½Behaveior
      *
      * @param targetConstructor
      * @param targetMethod
      * @return
      */
-    private static TargetBehavior newTargetBehavior(Constructor<?> targetConstructor, Method targetMethod) {
-        if (null != targetConstructor) {
-            return new TargetConstructor(targetConstructor);
-        } else {
-            return new TargetMethod(targetMethod);
-        }
-    }
-
     /**
-     * ¹¹ÔìTarget
+     * ï¿½ï¿½ï¿½ï¿½Target
      *
      * @param targetClass
      * @param targetConstructor
@@ -82,12 +56,8 @@ public class Probes {
      * @param targetThis
      * @return
      */
-    private static Target newTarget(Class<?> targetClass, Constructor<?> targetConstructor, Method targetMethod, Object targetThis) {
-        return new Target(targetClass, newTargetBehavior(targetConstructor, targetMethod), targetThis);
-    }
-
     /**
-     * Ö´ÐÐÇ°ÖÃ
+     * Ö´ï¿½ï¿½Ç°ï¿½ï¿½
      *
      * @param id
      * @param targetClass
@@ -96,30 +66,18 @@ public class Probes {
      * @param targetThis
      * @param args
      */
-    public static void doBefore(String id, Class<?> targetClass, Constructor<?> targetConstructor, Method targetMethod, Object targetThis, Object[] args) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClass, targetConstructor, targetMethod, targetThis), args, false);
-=======
-    private static Target newTarget(String targetClassName, String targetBehaviorName, Object targetThis) {
-        return new Target(targetClassName, targetBehaviorName, targetThis);
-    }
-
-    public static void doBefore(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
->>>>>>> pr/8
-                ((AdviceListener) getJobListeners(id)).onBefore(p);
-            } catch (Throwable t) {
-                logger.warn("error at doBefore", t);
-            }
-        }
-    }
-
-<<<<<<< HEAD
+	public static void doBefore(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args) {
+	    if (isListener(id, AdviceListener.class)) {
+	        try {
+	            Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
+	            ((AdviceListener) getJobListeners(id)).onBefore(p);
+	        } catch (Throwable t) {
+	            logger.warn("error at doBefore", t);
+	        }
+	    }
+	}
     /**
-     * Ö´ÐÐ³É¹¦
+     * Ö´ï¿½Ð³É¹ï¿½
      *
      * @param id
      * @param targetClass
@@ -129,33 +87,21 @@ public class Probes {
      * @param args
      * @param returnObj
      */
-    public static void doSuccess(String id, Class<?> targetClass, Constructor<?> targetConstructor, Method targetMethod, Object targetThis, Object[] args, Object returnObj) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClass, targetConstructor, targetMethod, targetThis), args, false);
-=======
-    public static void doSuccess(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Object returnObj) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
->>>>>>> pr/8
-                p.setReturnObj(returnObj);
-                ((AdviceListener) getJobListeners(id)).onSuccess(p);
-            } catch (Throwable t) {
-                logger.warn("error at onSuccess", t);
-            }
-<<<<<<< HEAD
-            doFinish(id, targetClass, targetConstructor, targetMethod, targetThis, args, returnObj, null);
-=======
-            doFinish(id, targetClassName, targetBehaviorName, targetThis, args, returnObj, null);
->>>>>>> pr/8
-        }
+	public static void doSuccess(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Object returnObj) {
+	    if (isListener(id, AdviceListener.class)) {
+	        try {
+	            Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
+	            p.setReturnObj(returnObj);
+	            ((AdviceListener) getJobListeners(id)).onSuccess(p);
+	        } catch (Throwable t) {
+	            logger.warn("error at onSuccess", t);
+	        }
+	        doFinish(id, targetClassName, targetBehaviorName, targetThis, args, returnObj, null);
+	    }
 
-    }
-
-<<<<<<< HEAD
+	}
     /**
-     * Ö´ÐÐÒì³£
+     * Ö´ï¿½ï¿½ï¿½ì³£
      *
      * @param id
      * @param targetClass
@@ -165,33 +111,21 @@ public class Probes {
      * @param args
      * @param throwException
      */
-    public static void doException(String id, Class<?> targetClass, Constructor<?> targetConstructor, Method targetMethod, Object targetThis, Object[] args, Throwable throwException) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClass, targetConstructor, targetMethod, targetThis), args, false);
-=======
-    public static void doException(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Throwable throwException) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
->>>>>>> pr/8
-                p.setThrowException(throwException);
-                ((AdviceListener) getJobListeners(id)).onException(p);
-            } catch (Throwable t) {
-                logger.warn("error at onException", t);
-            }
-<<<<<<< HEAD
-            doFinish(id, targetClass, targetConstructor, targetMethod, targetThis, args, null, throwException);
-=======
-            doFinish(id, targetClassName, targetBehaviorName, targetThis, args, null, throwException);
->>>>>>> pr/8
-        }
+	public static void doException(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Throwable throwException) {
+	    if (isListener(id, AdviceListener.class)) {
+	        try {
+	            Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, false);
+	            p.setThrowException(throwException);
+	            ((AdviceListener) getJobListeners(id)).onException(p);
+	        } catch (Throwable t) {
+	            logger.warn("error at onException", t);
+	        }
+	        doFinish(id, targetClassName, targetBehaviorName, targetThis, args, null, throwException);
+	    }
 
-    }
-
-<<<<<<< HEAD
+	}
     /**
-     * Ö´ÐÐÍê³É
+     * Ö´ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param id
      * @param targetClass
@@ -202,109 +136,32 @@ public class Probes {
      * @param throwException
      * @Param targetConstructor
      */
-    public static void doFinish(String id, Class<?> targetClass, Constructor<?> targetConstructor, Method targetMethod, Object targetThis, Object[] args, Object returnObj, Throwable throwException) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClass, targetConstructor, targetMethod, targetThis), args, true);
-=======
-    public static void doFinish(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Object returnObj, Throwable throwException) {
-        if (isListener(id, AdviceListener.class)) {
-            try {
-                Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, true);
->>>>>>> pr/8
-                p.setThrowException(throwException);
-                p.setReturnObj(returnObj);
-                ((AdviceListener) getJobListeners(id)).onFinish(p);
-            } catch (Throwable t) {
-                logger.warn("error at onFinish", t);
-            }
-        }
-    }
-
-
+	public static void doFinish(int id, String targetClassName, String targetBehaviorName, Object targetThis, Object[] args, Object returnObj, Throwable throwException) {
+	    if (isListener(id, AdviceListener.class)) {
+	        try {
+	            Advice p = new Advice(newTarget(targetClassName, targetBehaviorName, targetThis), args, true);
+	            p.setThrowException(throwException);
+	            p.setReturnObj(returnObj);
+	            ((AdviceListener) getJobListeners(id)).onFinish(p);
+	        } catch (Throwable t) {
+	            logger.warn("error at onFinish", t);
+	        }
+	    }
+	}
     /**
-<<<<<<< HEAD
-     * »ñÈ¡ÀàÐÅÏ¢
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ï¢
      *
      * @param name
      * @return
      * @throws ClassNotFoundException
      */
-    public static Class<?> getClassByName(String name) throws ClassNotFoundException {
-        if (cacheForGetClassByName.containsKey(name)) {
-            return cacheForGetClassByName.get(name);
-        }
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        final Class<?> clazz;
-        if (null != loader) {
-            clazz = loader.loadClass(name);
-        } else {
-            clazz = java.lang.Class.forName(name);
-        }//if
-        cacheForGetClassByName.put(name, clazz);
-        return clazz;
-    }
-
     /**
-     * »ñÈ¡ÐÐÎªµÄ»º´æKey
+     * ï¿½ï¿½È¡ï¿½ï¿½Îªï¿½Ä»ï¿½ï¿½ï¿½Key
      *
      * @author vlinux
      */
-    private static class GetBehaviorKey {
-
-        private final String className;
-        private final String behaviorName;
-        private final Class<?>[] paramTypes;
-
-        private GetBehaviorKey(String className, String behaviorName, Class<?>[] paramTypes) {
-            this.className = className;
-            this.behaviorName = behaviorName;
-            this.paramTypes = paramTypes;
-        }
-
-        public int hashCode() {
-            int hc = className.hashCode() + behaviorName.hashCode();
-            if (null != paramTypes) {
-                for (Class<?> c : paramTypes) {
-                    hc += c.hashCode();
-                }
-            }
-            return hc;
-        }
-
-        public boolean equals(Object obj) {
-            if (null == obj
-                    || !(obj instanceof GetBehaviorKey)) {
-                return false;
-            }
-
-            GetBehaviorKey o = (GetBehaviorKey) obj;
-
-            if (!className.equals(o.className)
-                    || !behaviorName.equals(o.behaviorName)) {
-                return false;
-            }
-            if (null != paramTypes) {
-                if (null == o.paramTypes
-                        || paramTypes.length != o.paramTypes.length) {
-                    return false;
-                }
-                for (int i = 0; i < paramTypes.length; i++) {
-                    if (!paramTypes[i].equals(o.paramTypes[i])) {
-                        return false;
-                    }
-                }
-            } else {
-                if (null != o.paramTypes) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
     /**
-     * Í¨¹ý·½·¨ÃûºÍ²ÎÊýÁÐ±í»ñÈ¡·½·¨
+     * Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
      *
      * @param className
      * @param methodName
@@ -314,19 +171,8 @@ public class Probes {
      * @throws SecurityException
      * @throws NoSuchMethodException
      */
-    public static Method getMethodByNameAndParamTypes(String className, String methodName, Class<?>... paramTypes) throws ClassNotFoundException, SecurityException, NoSuchMethodException {
-        final GetBehaviorKey gmd = new GetBehaviorKey(className, methodName, paramTypes);
-        if (cacheForGetMethodByName.containsKey(gmd)) {
-            return cacheForGetMethodByName.get(gmd);
-        }
-        final Class<?> clazz = getClassByName(className);
-        Method method = clazz.getDeclaredMethod(methodName, paramTypes);
-        cacheForGetMethodByName.put(gmd, method);
-        return method;
-    }
-
     /**
-     * Í¨¹ý²ÎÊýÁÐ±í»ñÈ¡¹¹Ôìº¯Êý
+     * Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½È¡ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
      *
      * @param className
      * @param paramTypes
@@ -335,203 +181,149 @@ public class Probes {
      * @throws SecurityException
      * @throws NoSuchMethodException
      */
-    public static Constructor<?> getConstructorByParamTypes(String className, Class<?>... paramTypes) throws ClassNotFoundException, SecurityException, NoSuchMethodException {
-        final GetBehaviorKey key = new GetBehaviorKey(className, "<init>", paramTypes);
-        if (cacheForGetConstructorByParamTypes.containsKey(key)) {
-            return cacheForGetConstructorByParamTypes.get(key);
-        }
-        final Class<?> clazz = getClassByName(className);
-        final Constructor<?> constructor = clazz.getDeclaredConstructor(paramTypes);
-        cacheForGetConstructorByParamTypes.put(key, constructor);
-        return constructor;
-    }
-
     /**
-     * »ñÈ¡CtBehaviorËù·â×°µÄ²ÎÊýÐÅÏ¢,×Ö·û´®»¯,ÓÃÓÚjavassist
+     * ï¿½ï¿½È¡CtBehaviorï¿½ï¿½ï¿½ï¿½×°ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢,ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½javassist
      *
      * @param cb
      * @return
      * @throws NotFoundException
      */
-    private static String toJavassistStringParamTypes(CtBehavior cb) throws NotFoundException {
-        StringBuilder sb = new StringBuilder();
-        CtClass[] ccs = cb.getParameterTypes();
-        final String returnStr;
-        if (null != ccs && ccs.length > 0) {
-            for (CtClass cc : ccs) {
-
-                String name = cc.getName();
-                if (cc.isArray()
-                        || GaCheckUtils.isIn(name, "long", "int", "double", "float", "char", "byte", "short", "boolean")) {
-                    sb.append(name).append(".class");
-                } else {
-                    sb.append(format("%s.getClassByName(\"%s\")", probesClass, name));
-                }//if
-
-                sb.append(",");
-
-            }
-            sb.deleteCharAt(sb.length() - 1);
-            returnStr = format("new Class[]{%s}", sb.toString());
-        } else {
-            returnStr = "null";
-        }
-        return returnStr;
-    }
-
     /**
-=======
->>>>>>> pr/8
-     * ÊÇ·ñ¹ýÂËµôµ±Ç°Ì½²âµÄÄ¿±ê
+     * ï¿½Ç·ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ç°Ì½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
      *
      * @param cc
      * @param cb
      * @return
      */
-    private static boolean isIngore(CtClass cc, CtBehavior cb) {
+	private static boolean isIngore(CtClass cc, CtBehavior cb) {
 
-        final int ccMod = cc.getModifiers();
-        final int cbMod = cb.getModifiers();
+	    final int ccMod = cc.getModifiers();
+	    final int cbMod = cb.getModifiers();
 
-<<<<<<< HEAD
-        // ¹ýÂËµô½Ó¿Ú
-        if (isInterface(ccMod)) {
-            return true;
-        }
+	    if (isInterface(ccMod)
+	            || isAbstract(cbMod)
+	            || cc.getName().startsWith("com.googlecode.greysanatomy.")) {
+	        return true;
+	    }
 
-        // ¹ýÂËµô³éÏó·½·¨
-        if (isAbstract(cbMod)) {
-            return true;
-        }
+	    return false;
 
-        // ¹ýÂËµô×Ô¼º£¬±ÜÃâµÝ¹éµ÷ÓÃ
-        if (cc.getName().startsWith("com.googlecode.greysanatomy.")) {
-=======
-        if (isInterface(ccMod)
-                || isAbstract(cbMod)
-                || cc.getName().startsWith("com.googlecode.greysanatomy.")) {
->>>>>>> pr/8
-            return true;
-        }
-
-        return false;
-
-    }
-
-
+	}
     /**
-     * ÂñµãÌ½²âÆ÷
+     * ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½
      *
      * @param id
      * @param cc
      * @param cb
      * @throws CannotCompileException
      * @throws NotFoundException
-<<<<<<< HEAD
      * @throws ClassNotFoundException
      */
-    public static void mine(String id, CtClass cc, CtBehavior cb) throws CannotCompileException, NotFoundException, ClassNotFoundException {
-=======
+	public static void mine(String id, CtClass cc, CtBehavior cb) throws CannotCompileException, NotFoundException, ClassNotFoundException {
+
+	    if (isIngore(cc, cb)) {
+	        return;
+	    }
+
+	    // Ä¿ï¿½ï¿½ï¿½ï¿½
+	    final String javassistClass = format("(%s.getClassByName(\"%s\"))",
+	            probesClass,
+	            cc.getName());
+
+	    // Ä¿ï¿½ê·½ï¿½ï¿½
+	    final String javassistMethod = cb.getMethodInfo().isMethod()
+	            ? format("%s.getMethodByNameAndParamTypes(\"%s\",\"%s\",%s)",
+	            probesClass,
+	            cc.getName(),
+	            cb.getMethodInfo().getName(),
+	            toJavassistStringParamTypes(cb))
+	            : "null";
+
+	    // Ä¿ï¿½ê¹¹ï¿½ìº¯ï¿½ï¿½
+	    final String javassistConstructor = cb.getMethodInfo().isConstructor()
+	            ? format("%s.getConstructorByParamTypes(\"%s\",%s)",
+	            probesClass,
+	            cc.getName(),
+	            toJavassistStringParamTypes(cb))
+	            : "null";
+
+	    // Ä¿ï¿½ï¿½Êµï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªnull
+	    final String javassistThis = isStatic(cb.getModifiers()) ? "null" : "this";
+
+	    // ï¿½ï¿½ï¿½Í¨Öª
+	    if (isListener(id, AdviceListener.class)) {
+	        // ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½insertBeforeï¿½ï¿½,ï¿½ï¿½ï¿½Ô¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½beforeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½doCacheï¿½ï¿½
+	        if (cb.getMethodInfo().isMethod()) {
+	            mineProbeForMethod(cb, id, javassistClass, javassistConstructor, javassistMethod, javassistThis);
+	        } else if (cb.getMethodInfo().isConstructor()) {
+	            mineProbeForConstructor(cb, id, javassistClass, javassistConstructor, javassistMethod, javassistThis);
+	        }
+	    }
+
+	}
+    /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param cb
+     * @param id
+     * @param javassistClass
+     * @param javassistConstructor
+     * @param javassistMethod
+     * @param javassistThis
+     * @throws CannotCompileException
+     * @throws NotFoundException
+     */
+    /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param cb
+     * @param id
+     * @param javassistClass
+     * @param javassistConstructor
+     * @param javassistMethod
+     * @param javassistThis
+     * @throws CannotCompileException
+     * @throws NotFoundException
+     */
+    private static Target newTarget(String targetClassName, String targetBehaviorName, Object targetThis) {
+        return new Target(targetClassName, targetBehaviorName, targetThis);
+    }
+    /**
+     * ï¿½Ç·ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½Ç°Ì½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+     *
+     * @param cc
+     * @param cb
+     * @return
+     */
+    /**
+     * ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param id
+     * @param cc
+     * @param cb
+     * @throws CannotCompileException
+     * @throws NotFoundException
      */
     public static void mine(int id, CtClass cc, CtBehavior cb) throws CannotCompileException, NotFoundException {
->>>>>>> pr/8
 
         if (isIngore(cc, cb)) {
             return;
         }
 
-<<<<<<< HEAD
-        // Ä¿±êÀà
-        final String javassistClass = format("(%s.getClassByName(\"%s\"))",
-                probesClass,
-                cc.getName());
-
-        // Ä¿±ê·½·¨
-        final String javassistMethod = cb.getMethodInfo().isMethod()
-                ? format("%s.getMethodByNameAndParamTypes(\"%s\",\"%s\",%s)",
-                probesClass,
-                cc.getName(),
-                cb.getMethodInfo().getName(),
-                toJavassistStringParamTypes(cb))
-                : "null";
-
-        // Ä¿±ê¹¹Ôìº¯Êý
-        final String javassistConstructor = cb.getMethodInfo().isConstructor()
-                ? format("%s.getConstructorByParamTypes(\"%s\",%s)",
-                probesClass,
-                cc.getName(),
-                toJavassistStringParamTypes(cb))
-                : "null";
-
-=======
->>>>>>> pr/8
-        // Ä¿±êÊµÀý,Èç¹ûÊÇ¾²Ì¬·½·¨£¬ÔòÎªnull
+        // Ä¿ï¿½ï¿½Êµï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªnull
         final String javassistThis = isStatic(cb.getModifiers()) ? "null" : "this";
 
-        // ÂñµãÍ¨Öª
+        // ï¿½ï¿½ï¿½Í¨Öª
         if (isListener(id, AdviceListener.class)) {
-            // ¹¹Ôìº¯ÊýÔÚÕâÀïÊÇ²»ÄÜ×öinsertBeforeµÄ,ËùÒÔ¹¹Ôìº¯ÊýµÄbeforeÊÇ×öÔÚdoCacheÖÐ
+            // ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½insertBeforeï¿½ï¿½,ï¿½ï¿½ï¿½Ô¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½beforeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½doCacheï¿½ï¿½
             if (cb.getMethodInfo().isMethod()) {
-<<<<<<< HEAD
-                mineProbeForMethod(cb, id, javassistClass, javassistConstructor, javassistMethod, javassistThis);
-            } else if (cb.getMethodInfo().isConstructor()) {
-                mineProbeForConstructor(cb, id, javassistClass, javassistConstructor, javassistMethod, javassistThis);
-=======
                 mineProbeForMethod(cb, id, cc.getName(), cb.getName(), javassistThis);
             } else if (cb.getMethodInfo().isConstructor()) {
                 mineProbeForConstructor(cb, id, cc.getName(), cb.getName(), javassistThis);
->>>>>>> pr/8
             }
         }
 
     }
-
-<<<<<<< HEAD
-    /**
-     * ¸ø¹¹Ôìº¯ÊýÂñµã
-     *
-     * @param cb
-     * @param id
-     * @param javassistClass
-     * @param javassistConstructor
-     * @param javassistMethod
-     * @param javassistThis
-     * @throws CannotCompileException
-     * @throws NotFoundException
-     */
-    private static void mineProbeForConstructor(CtBehavior cb, String id, String javassistClass, String javassistConstructor, String javassistMethod, String javassistThis) throws CannotCompileException, NotFoundException {
-        cb.addCatch(format("{if(%s.isJobAlive(\"%s\")){%s.doBefore(\"%s\",%s,%s,%s,%s,$args);%s.doException(\"%s\",%s,%s,%s,%s,$args,$e);}throw $e;}",
-                        jobsClass, id,
-                        probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis,
-                        probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis),
-                ClassPool.getDefault().get("java.lang.Throwable"));
-        cb.insertAfter(format("{if(%s.isJobAlive(\"%s\")){%s.doBefore(\"%s\",%s,%s,%s,%s,$args);%s.doSuccess(\"%s\",%s,%s,%s,%s,$args,($w)$_);}}",
-                jobsClass, id,
-                probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis,
-                probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis));
-    }
-
-    /**
-     * ¸ø·½·¨ÌåÂñµã
-     *
-     * @param cb
-     * @param id
-     * @param javassistClass
-     * @param javassistConstructor
-     * @param javassistMethod
-     * @param javassistThis
-     * @throws CannotCompileException
-     * @throws NotFoundException
-     */
-    private static void mineProbeForMethod(CtBehavior cb, String id, String javassistClass, String javassistConstructor, String javassistMethod, String javassistThis) throws CannotCompileException, NotFoundException {
-        cb.insertBefore(format("{if(%s.isJobAlive(\"%s\"))%s.doBefore(\"%s\",%s,%s,%s,%s,$args);}",
-                jobsClass, id, probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis));
-        cb.addCatch(format("{if(%s.isJobAlive(\"%s\"))%s.doException(\"%s\",%s,%s,%s,%s,$args,$e);throw $e;}",
-                        jobsClass, id, probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis),
-                ClassPool.getDefault().get("java.lang.Throwable"));
-        cb.insertAfter(format("{if(%s.isJobAlive(\"%s\"))%s.doSuccess(\"%s\",%s,%s,%s,%s,$args,($w)$_);}",
-                jobsClass, id, probesClass, id, javassistClass, javassistConstructor, javassistMethod, javassistThis));
-=======
     private static void mineProbeForConstructor(CtBehavior cb, int id, String targetClassName, String targetBehaviorName, String javassistThis) throws CannotCompileException, NotFoundException {
         cb.addCatch(format("{if(%s.isJobAlive(%s)){%s.doBefore(%s,\"%s\",\"%s\",%s,$args);%s.doException(%s,\"%s\",\"%s\",%s,$args,$e);}throw $e;}",
                         jobsClass, id,
@@ -539,14 +331,13 @@ public class Probes {
                         probesClass, id, targetClassName, targetBehaviorName, javassistThis),
                 ClassPool.getDefault().get("java.lang.Throwable"));
 
-        // TODO : Ææ¹Ö£¬ÎªÉ¶ÕâÀïÒªdoBeforeÁ½´Î?
+        // TODO : ï¿½ï¿½Ö£ï¿½ÎªÉ¶ï¿½ï¿½ï¿½ï¿½ÒªdoBeforeï¿½ï¿½ï¿½ï¿½?
         cb.insertAfter(format("{if(%s.isJobAlive(%s)){%s.doBefore(%s,\"%s\",\"%s\",%s,$args);%s.doSuccess(%s,\"%s\",\"%s\",%s,$args,($w)$_);}}",
                 jobsClass, id,
                 probesClass, id, targetClassName, targetBehaviorName, javassistThis,
                 probesClass, id, targetClassName, targetBehaviorName, javassistThis));
 
     }
-
     private static void mineProbeForMethod(CtBehavior cb, int id, String targetClassName, String targetBehaviorName, String javassistThis) throws CannotCompileException, NotFoundException {
 
         cb.insertBefore(format("{if(%s.isJobAlive(%s))%s.doBefore(%s,\"%s\",\"%s\",%s,$args);}",
@@ -561,7 +352,6 @@ public class Probes {
         cb.insertAfter(format("{if(%s.isJobAlive(%s))%s.doSuccess(%s,\"%s\",\"%s\",%s,$args,($w)$_);}",
                 jobsClass, id,
                 probesClass, id, targetClassName, targetBehaviorName, javassistThis));
->>>>>>> pr/8
     }
 
 }

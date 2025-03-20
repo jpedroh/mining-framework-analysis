@@ -1,40 +1,28 @@
 package com.googlecode.greysanatomy.console.command;
 
-<<<<<<< HEAD
 import com.googlecode.greysanatomy.console.command.annotation.Arg;
-=======
->>>>>>> pr/8
 import com.googlecode.greysanatomy.console.server.ConsoleServer;
 
 import java.lang.instrument.Instrumentation;
 
 /**
- * ³éÏóÃüÁîÀà
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *
  * @author vlinux
  */
 public abstract class Command {
 
     /**
-<<<<<<< HEAD
-     * ÖØ¶¨ÏòÂ·¾¶
-     */
-    @Arg(name = "o", isRequired = false)
-    String redirectPath;
-
-    /**
-=======
->>>>>>> pr/8
-     * ÐÅÏ¢·¢ËÍÕß
+     * ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
-     * @author vlinux
+	 * @author vlinux
      */
     public static interface Sender {
 
         /**
-         * ·¢ËÍÐÅÏ¢
+         * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
          *
-         * @param isF
+		 * @param isF
          * @param message
          */
         void send(boolean isF, String message);
@@ -43,24 +31,18 @@ public abstract class Command {
 
 
     /**
-     * ÃüÁîÐÅÏ¢
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
      *
-     * @author vlinux
+	 * @author vlinux
      * @author chengtongda
      */
     public static class Info {
 
         private final Instrumentation inst;
         private final long sessionId;
-<<<<<<< HEAD
-        private final String jobId;
-
-        public Info(Instrumentation inst, long sessionId, String jobId) {
-=======
         private final int jobId;
 
         public Info(Instrumentation inst, long sessionId, int jobId) {
->>>>>>> pr/8
             this.inst = inst;
             this.sessionId = sessionId;
             this.jobId = jobId;
@@ -74,51 +56,36 @@ public abstract class Command {
             return sessionId;
         }
 
-<<<<<<< HEAD
-        public String getJobId() {
-=======
         public int getJobId() {
->>>>>>> pr/8
             return jobId;
         }
 
     }
 
     /**
-     * ÃüÁî¶¯×÷
+     * ï¿½ï¿½ï¿½î¶¯ï¿½ï¿½
      *
-     * @author vlinux
+	 * @author vlinux
      */
     public interface Action {
 
         /**
-         * Ö´ÐÐ¶¯×÷
+         * Ö´ï¿½Ð¶ï¿½ï¿½ï¿½
          *
          * @param consoleServer
-         * @param info
+		 * @param info
          * @param sender
          * @throws Throwable
          */
-        void action(ConsoleServer consoleServer, Info info, Sender sender) throws Throwable;
+        void action(ConsoleServer consoleServer,Info info, Sender sender) throws Throwable;
 
     }
 
     /**
-     * »ñÈ¡ÃüÁî¶¯×÷
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½î¶¯ï¿½ï¿½
      *
-     * @return
+	 * @return
      */
     abstract public Action getAction();
 
-<<<<<<< HEAD
-    public String getRedirectPath() {
-        return redirectPath;
-    }
-
-    public void setRedirectPath(String redirectPath) {
-        this.redirectPath = redirectPath;
-    }
-
-=======
->>>>>>> pr/8
 }

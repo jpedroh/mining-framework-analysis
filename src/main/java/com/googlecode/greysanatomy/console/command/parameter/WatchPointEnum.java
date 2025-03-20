@@ -1,8 +1,9 @@
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/parameter/WatchPointEnum.java/left.java
 package com.googlecode.greysanatomy.console.command.parameter;
 
 /**
- * watchÃüÁî
- * ¹Û²âµã²ÎÊýÃ¶¾ÙÀà
+ * watchï¿½ï¿½ï¿½ï¿½
+ * ï¿½Û²ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½
  *
  * @author jiangyi
  */
@@ -13,3 +14,22 @@ public enum WatchPointEnum {
     finish();
 
 }
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/parameter/WatchPointEnum.java/base.java
+package com.googlecode.greysanatomy.console.command.parameter;
+
+/**
+ * watchï¿½ï¿½ï¿½ï¿½
+ * ï¿½Û²ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½
+ * @author jiangyi
+ *
+ */
+public enum WatchPointEnum {
+	
+	before(),
+	
+	finish();
+	
+}
+=======
+fatal: path 'src/main/java/com/googlecode/greysanatomy/console/command/parameter/WatchPointEnum.java' does not exist in '0bee9a9d50380719ed4e8fe485a1bf1988fa4bf5'
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/parameter/WatchPointEnum.java/right.java

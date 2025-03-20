@@ -1,52 +1,20 @@
 package com.googlecode.greysanatomy.console.command;
-
-import com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.TransformResult;
-<<<<<<< HEAD
 import com.googlecode.greysanatomy.console.command.annotation.*;
-import com.googlecode.greysanatomy.console.command.parameter.WatchPointEnum;
-=======
+import com.googlecode.greysanatomy.console.server.ConsoleServer;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.lang.instrument.Instrumentation;
+import static com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.transform;
+import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.registJob;
+import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
+import com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.TransformResult;
 import com.googlecode.greysanatomy.console.command.annotation.RiscCmd;
 import com.googlecode.greysanatomy.console.command.annotation.RiscIndexArg;
 import com.googlecode.greysanatomy.console.command.annotation.RiscNamedArg;
->>>>>>> pr/8
-import com.googlecode.greysanatomy.console.server.ConsoleServer;
 import com.googlecode.greysanatomy.probe.Advice;
 import com.googlecode.greysanatomy.probe.AdviceListenerAdapter;
 import com.googlecode.greysanatomy.util.GaStringUtils;
-<<<<<<< HEAD
-
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import java.lang.instrument.Instrumentation;
-
-import static com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.transform;
-import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.registJob;
-import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
-
-@Cmd("watch")
-@RiscCmd(named = "watch", sort = 4, desc = "The call context information buried point observation methods.")
-public class WatchCommand extends Command {
-
-    @Arg(name = "class", isRequired = true)
-    @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
-    private String classRegex;
-
-    @Arg(name = "method", isRequired = true)
-    @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
-    private String methodRegex;
-
-    @Arg(name = "exp", isRequired = true)
-=======
-
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import java.lang.instrument.Instrumentation;
-
-import static com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.transform;
-import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.registJob;
-import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
 
 @RiscCmd(named = "watch", sort = 4, desc = "The call context information buried point observation methods.",
         eg = {
@@ -55,6 +23,7 @@ import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
                 "watch -bf .*StringUtils isEmpty p.params[0]",
                 "watch .*StringUtils isEmpty p.params[0]",
         })
+@RiscCmd(named = "watch", sort = 4, desc = "The call context information buried point observation methods.")
 public class WatchCommand extends Command {
 
     @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
@@ -63,7 +32,7 @@ public class WatchCommand extends Command {
     @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
     private String methodRegex;
 
->>>>>>> pr/8
+    @Arg(name = "exp", isRequired = true)
     @RiscIndexArg(index = 2, name = "express",
             description = "expression, write by javascript. use 'p.' before express",
             description2 = ""
@@ -84,56 +53,58 @@ public class WatchCommand extends Command {
                     + "         \\+- targetThis  : the object entity\n"
                     + "         \\+- targetClass : the object's class"
     )
-
     private String expression;
 
-<<<<<<< HEAD
-    @Arg(name = "watch-point", isRequired = false)
-    private WatchPointEnum watchPoint = WatchPointEnum.before;
-
-=======
->>>>>>> pr/8
     @RiscNamedArg(named = "b", description = "is watch on before")
     private boolean isBefore = true;
 
     @RiscNamedArg(named = "f", description = "is watch on finish")
     private boolean isFinish = false;
 
-<<<<<<< HEAD
-=======
     @RiscNamedArg(named = "e", description = "is watch on exception")
     private boolean isException = false;
 
     @RiscNamedArg(named = "s", description = "is watch on success")
     private boolean isSuccess = false;
 
->>>>>>> pr/8
     @Override
     public Action getAction() {
         return new Action() {
 
             @Override
             public void action(final ConsoleServer consoleServer, Info info, final Sender sender) throws Throwable {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/left.java
                 ScriptEngine jsEngine = new ScriptEngineManager().getEngineByExtension("js");
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/base.java
+            	ScriptEngine jsEngine = new ScriptEngineManager().getEngineByExtension("js");
+            	
+            	jsEngine.eval("function printWatch(p,o){try{o.send(false, " + expression + "+'\\n');}catch(e){o.send(false, e.message+'\\n');}}");
+            	final Invocable invoke = (Invocable) jsEngine;
+            	
+            	final Instrumentation inst = info.getInst();
+            	final TransformResult result = transform(inst, classRegex, methodRegex, new AdviceListenerAdapter() {
+            		
+            		@Override
+            		public void onBefore(Advice p) {
+            			if(watchPoint == WatchPointEnum.before){
+            				try { invoke.invokeFunction("printWatch", p, sender); } catch (Exception e) { }
+            			}
+            		}
 =======
                 final ScriptEngine jsEngine = new ScriptEngineManager().getEngineByExtension("js");
->>>>>>> pr/8
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/right.java
 
                 jsEngine.eval("function printWatch(p,o){try{o.send(false, " + expression + "+'\\n');}catch(e){o.send(false, e.message+'\\n');}}");
                 final Invocable invoke = (Invocable) jsEngine;
 
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/left.java
                 final Instrumentation inst = info.getInst();
                 final TransformResult result = transform(inst, classRegex, methodRegex, new AdviceListenerAdapter() {
 
                     @Override
                     public void onBefore(Advice p) {
-<<<<<<< HEAD
                         if (watchPoint == WatchPointEnum.before
                                 && isBefore) {
-=======
-                        if (isBefore) {
->>>>>>> pr/8
                             try {
                                 invoke.invokeFunction("printWatch", p, sender);
                             } catch (Exception e) {
@@ -143,10 +114,58 @@ public class WatchCommand extends Command {
 
                     @Override
                     public void onFinish(Advice p) {
-<<<<<<< HEAD
                         if (watchPoint == WatchPointEnum.finish
                                 || isFinish) {
+                            try {
+                                invoke.invokeFunction("printWatch", p, sender);
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+
+                }, info);
+
+                // ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                registJob(info.getSessionId(), result.getId());
+
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                activeJob(result.getId());
+
+                final StringBuilder message = new StringBuilder();
+                message.append(GaStringUtils.LINE);
+                message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n",
+                        result.getModifiedClasses().size(),
+                        result.getModifiedBehaviors().size()));
+                sender.send(false, message.toString());
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/base.java
+            	// ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            	registJob(info.getSessionId(), result.getId());
+            	
+            	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            	activeJob(result.getId());
+            	
+            	final StringBuilder message = new StringBuilder();
+            	message.append(GaStringUtils.LINE);
+            	message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n", 
+            			result.getModifiedClasses().size(),
+            			result.getModifiedBehaviors().size()));
+            	sender.send(false, message.toString());
 =======
+                final Instrumentation inst = info.getInst();
+                final TransformResult result = transform(inst, classRegex, methodRegex, new AdviceListenerAdapter() {
+
+                    @Override
+                    public void onBefore(Advice p) {
+                        if (isBefore) {
+                            try {
+                                invoke.invokeFunction("printWatch", p, sender);
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFinish(Advice p) {
                         if (isFinish) {
                             try {
                                 invoke.invokeFunction("printWatch", p, sender);
@@ -168,7 +187,6 @@ public class WatchCommand extends Command {
                     @Override
                     public void onSuccess(Advice p) {
                         if (isSuccess) {
->>>>>>> pr/8
                             try {
                                 invoke.invokeFunction("printWatch", p, sender);
                             } catch (Exception e) {
@@ -178,10 +196,10 @@ public class WatchCommand extends Command {
 
                 }, info);
 
-                // ×¢²áÈÎÎñ
+                // ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 registJob(info.getSessionId(), result.getId());
 
-                // ¼¤»îÈÎÎñ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 activeJob(result.getId());
 
                 final StringBuilder message = new StringBuilder();
@@ -189,11 +207,9 @@ public class WatchCommand extends Command {
                 message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n",
                         result.getModifiedClasses().size(),
                         result.getModifiedBehaviors().size()));
-<<<<<<< HEAD
-=======
                 message.append(GaStringUtils.ABORT_MSG).append("\n");
->>>>>>> pr/8
                 sender.send(false, message.toString());
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/WatchCommand.java/right.java
             }
 
         };

@@ -1,3 +1,4 @@
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/annotation/Arg.java/left.java
 package com.googlecode.greysanatomy.console.command.annotation;
 
 import java.lang.annotation.ElementType;
@@ -10,31 +11,71 @@ import java.lang.annotation.Target;
 public @interface Arg {
 
     /**
-     * ÔÚÃüÁîÐÐÖÐµÄ²ÎÊýÃû³Æ
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
-     * @return ²ÎÊýÃû³Æ
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public String name();
 
     /**
-     * ÊÇ·ñ±ØÌî
+     * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
      *
      * @return
      */
     public boolean isRequired() default true;
 
     /**
-     * ²ÎÊý×¢ÊÍ
+     * ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
      *
      * @return
      */
     public String description() default "";
 
     /**
-     * ²ÎÊýÐ£Ñé
+     * ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½
      *
      * @return
      */
     public ArgVerifier[] verify() default {};
 
 }
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/annotation/Arg.java/base.java
+package com.googlecode.greysanatomy.console.command.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Arg {
+
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 */
+	public String name();
+	
+	/**
+	 * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+	 * @return
+	 */
+	public boolean isRequired() default true;
+	
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
+	 * @return
+	 */
+	public String description() default "";
+	
+	/**
+	 * ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½
+	 * @return
+	 */
+	public ArgVerifier[] verify() default {};
+	
+}
+=======
+fatal: path 'src/main/java/com/googlecode/greysanatomy/console/command/annotation/Arg.java' does not exist in '0bee9a9d50380719ed4e8fe485a1bf1988fa4bf5'
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/command/annotation/Arg.java/right.java

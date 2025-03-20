@@ -9,7 +9,7 @@ import java.net.URLEncoder;
 import java.util.Scanner;
 
 /**
- * ×Ö·û´®²Ù×÷¹¤¾ßÀà
+ * ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *
  * @author vlinux
  */
@@ -17,13 +17,8 @@ public class GaStringUtils {
 
     public static final String LINE = "---------------------------------------------------------------\n";
 
-<<<<<<< HEAD
-=======
-    public static final String ABORT_MSG = "Press Ctrl+D to abort this job.";
-
->>>>>>> pr/8
     /**
-     * ½øÐÐURL-ENCODE
+     * ï¿½ï¿½ï¿½ï¿½URL-ENCODE
      *
      * @param str
      * @return
@@ -35,9 +30,8 @@ public class GaStringUtils {
         }
         return URLEncoder.encode(str, "utf-8");
     }
-
     /**
-     * ½øÐÐURL-DECODE
+     * ï¿½ï¿½ï¿½ï¿½URL-DECODE
      *
      * @param str
      * @return
@@ -49,80 +43,108 @@ public class GaStringUtils {
         }
         return URLDecoder.decode(str, "utf-8");
     }
-
     /**
-     * ´´½¨Ò»¸ö×Ö·û´®
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
      *
      * @param obj
      * @return
      */
-    public static String newString(Object obj) {
-        if (null == obj) {
-            return StringUtils.EMPTY;
-        }
-        return obj.toString();
-    }
-
+	public static String newString(Object obj) {
+	    if (null == obj) {
+	        return StringUtils.EMPTY;
+	    }
+	    return obj.toString();
+	}
     /**
      * Õ¹Ê¾logo
      *
      * @return
      */
-    public static String getLogo() {
-        final StringBuilder logoSB = new StringBuilder();
-        final Scanner scanner = new Scanner(Object.class.getResourceAsStream("/com/googlecode/greysanatomy/res/logo.txt"));
-        while (scanner.hasNextLine()) {
-            logoSB.append(scanner.nextLine()).append("\n");
-        }
-        return logoSB.toString();
-    }
-
+	public static String getLogo() {
+	    final StringBuilder logoSB = new StringBuilder();
+	    final Scanner scanner = new Scanner(Object.class.getResourceAsStream("/com/googlecode/greysanatomy/res/logo.txt"));
+	    while (scanner.hasNextLine()) {
+	        logoSB.append(scanner.nextLine()).append("\n");
+	    }
+	    return logoSB.toString();
+	}
     /**
-     * ÓÒÌî³ä
+     * ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param sb
      * @param c
      * @param str
      */
-    public static void rightFill(StringBuilder sb, int c, String str) {
-        for (int i = 0; i < c; i++) {
-            sb.append(str);
-        }
-    }
-
+	public static void rightFill(StringBuilder sb, int c, String str) {
+	    for (int i = 0; i < c; i++) {
+	        sb.append(str);
+	    }
+	}
     /**
-     * »ñÈ¡·½·¨Ö´ÐÐ¶ÑÕ»ÐÅÏ¢
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¶ï¿½Õ»ï¿½ï¿½Ï¢
      *
      * @return
      */
-    public static String getStack() {
-        final StackTraceElement[] stes = Thread.currentThread().getStackTrace();
-        final StringBuilder stSB = new StringBuilder()
-                .append("Thread Info:").append(Thread.currentThread().getName()).append("\n");
+	public static String getStack() {
+	    final StackTraceElement[] stes = Thread.currentThread().getStackTrace();
+	    final StringBuilder stSB = new StringBuilder()
+	            .append("Thread Info:").append(Thread.currentThread().getName()).append("\n");
 
-        if (ArrayUtils.isEmpty(stes)
-                || stes.length == 1) {
-            return stSB.toString();
-        }
+	    if (ArrayUtils.isEmpty(stes)
+	            || stes.length == 1) {
+	        return stSB.toString();
+	    }
 
-        for (int index = 4; index < stes.length; index++) {
-            final StackTraceElement ste = stes[index];
-            stSB.append(index == 2 ? "  " : "    at ")
-                    .append(ste.getClassName()).append(".")
-                    .append(ste.getMethodName())
-                    .append("(").append(ste.getFileName()).append(":").append(ste.getLineNumber()).append(")\n");
-        }
+	    for (int index = 4; index < stes.length; index++) {
+	        final StackTraceElement ste = stes[index];
+	        stSB.append(index == 2 ? "  " : "    at ")
+	                .append(ste.getClassName()).append(".")
+	                .append(ste.getMethodName())
+	                .append("(").append(ste.getFileName()).append(":").append(ste.getLineNumber()).append(")\n");
+	    }
 
-        return stSB.toString();
-    }
-
-<<<<<<< HEAD
-    public static void main(String... args) {
-        System.out.println(getStack());
-=======
-
+	    return stSB.toString();
+	}
+    public static final String ABORT_MSG = "Press Ctrl+D to abort this job.";
     /**
-     * ½ø¶ÈÌõ
+     * ï¿½ï¿½ï¿½ï¿½URL-ENCODE
+     *
+     * @param str
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    /**
+     * ï¿½ï¿½ï¿½ï¿½URL-DECODE
+     *
+     * @param str
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    /**
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+     *
+     * @param obj
+     * @return
+     */
+    /**
+     * Õ¹Ê¾logo
+     *
+     * @return
+     */
+    /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param sb
+     * @param c
+     * @param str
+     */
+    /**
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¶ï¿½Õ»ï¿½ï¿½Ï¢
+     *
+     * @return
+     */
+    /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param name
      * @param progress
@@ -146,9 +168,8 @@ public class GaStringUtils {
         return sb.toString();
 
     }
-
     /**
-     * ²úÉúÕªÒª
+     * ï¿½ï¿½ï¿½ï¿½ÕªÒª
      *
      * @param str
      * @param length
@@ -168,7 +189,6 @@ public class GaStringUtils {
 
         return sb.toString();
 
->>>>>>> pr/8
     }
 
 }

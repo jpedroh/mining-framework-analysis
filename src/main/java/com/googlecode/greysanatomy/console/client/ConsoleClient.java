@@ -8,12 +8,11 @@ import com.googlecode.greysanatomy.exception.ConsoleException;
 import com.googlecode.greysanatomy.exception.PIDNotMatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.rmi.Naming;
 
 /**
- * ¿ØÖÆÌ¨¿Í»§¶Ë
+ * ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½Í»ï¿½ï¿½ï¿½
  *
  * @author chengtongda
  */
@@ -25,27 +24,45 @@ public class ConsoleClient {
     private final long sessionId;
 
     private ConsoleClient(Configer configer) throws Exception {
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/client/ConsoleClient.java/left.java
         this.consoleServer = (ConsoleServerService) Naming.lookup(String.format("rmi://%s:%d/RMI_GREYS_ANATOMY",
                 configer.getTargetIp(),
                 configer.getTargetPort()));
 
-        // ¼ì²éPIDÊÇ·ñÕýÈ·
-<<<<<<< HEAD
+        // ï¿½ï¿½ï¿½PIDï¿½Ç·ï¿½ï¿½ï¿½È·
         if( !consoleServer.checkPID(configer.getJavaPid()) ) {
-=======
-        if (!consoleServer.checkPID(configer.getJavaPid())) {
->>>>>>> pr/8
             throw new PIDNotMatchException();
         }
 
         this.sessionId = this.consoleServer.register();
         new GreysAnatomyConsole(configer, sessionId).start(consoleServer);
-//        new RISCGreysAnatomyConsole(configer, sessionId).start(consoleServer);
+    //        new RISCGreysAnatomyConsole(configer, sessionId).start(consoleServer);
         heartBeat();
+||||||| /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/client/ConsoleClient.java/base.java
+    	this.consoleServer = (ConsoleServerService)Naming.lookup("rmi://127.0.0.1:"+configer.getConsolePort()+"/RMI_GREYS_ANATOMY");
+    	this.sessionId = this.consoleServer.register();
+    	final GreysAnatomyConsole console = new GreysAnatomyConsole(configer, sessionId);
+    	console.start(consoleServer);
+    	heartBeat();
+=======
+        this.consoleServer = (ConsoleServerService) Naming.lookup(String.format("rmi://%s:%d/RMI_GREYS_ANATOMY",
+                configer.getTargetIp(),
+                configer.getTargetPort()));
+
+        // ï¿½ï¿½ï¿½PIDï¿½Ç·ï¿½ï¿½ï¿½È·
+        if (!consoleServer.checkPID(configer.getJavaPid())) {
+            throw new PIDNotMatchException();
+        }
+
+        this.sessionId = this.consoleServer.register();
+        new GreysAnatomyConsole(configer, sessionId).start(consoleServer);
+    //        new RISCGreysAnatomyConsole(configer, sessionId).start(consoleServer);
+        heartBeat();
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/client/ConsoleClient.java/right.java
     }
 
     /**
-     * Æô¶¯ÐÄÌøÕì²âÏß³Ì
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
      */
     private void heartBeat() {
         Thread heartBeatDaemon = new Thread("ga-console-client-heartbeat") {
@@ -59,7 +76,7 @@ public class ConsoleClient {
                         //
                     }
                     if (null == consoleServer) {
-                        // Á´½ÓÒÑ¹Ø±Õ£¬¿Í»§¶ËÁô×ÅÒ²Ã»É¶ÒâË¼ÁË£¬ÔÚÕâÀïÍË³öJVM
+                        // ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹Ø±Õ£ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²Ã»É¶ï¿½ï¿½Ë¼ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½JVM
                         logger.info("disconnect to ga-console-server, shutdown jvm.");
                         System.exit(0);
                         break;
@@ -68,9 +85,9 @@ public class ConsoleClient {
                         try {
                             hearBeatResult = consoleServer.sessionHeartBeat(new ReqHeart(sessionId));
                         } catch (Exception e) {
-                            //
-                        }
-                        //Èç¹ûÐÄÌøÊ§°Ü£¬ÔòËµÃ÷³¬Ê±ÁË£¬ÄÇ¾Ígg°É
+                            // 
+						}
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ë£ï¿½ï¿½Ç¾ï¿½ggï¿½ï¿½
                         if (!hearBeatResult) {
                             logger.info("session time out to ga-console-server, shutdown jvm.");
                             System.exit(0);
@@ -85,15 +102,15 @@ public class ConsoleClient {
         heartBeatDaemon.start();
     }
 
-    private static volatile ConsoleClient instance;
+    private static volatile volatile ConsoleClient instance;
 
     /**
-     * µ¥Àý¿ØÖÆÌ¨¿Í»§¶Ë
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½Í»ï¿½ï¿½ï¿½
      *
-     * @param configer
+	 * @param configer
      * @throws ConsoleException
-     * @throws IOException
-     */
+     * @throws IOException 
+	 */
     public static synchronized void getInstance(Configer configer) throws Exception {
         if (null == instance) {
             instance = new ConsoleClient(configer);

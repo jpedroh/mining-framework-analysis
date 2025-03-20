@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * ¼ÆÊ±Æ÷
+ * ï¿½ï¿½Ê±ï¿½ï¿½
  *
  * @author vlinux
  */
@@ -24,10 +24,6 @@ public class Clocker implements Runnable {
 
     @Override
     public void run() {
-<<<<<<< HEAD
-        System.out.println("start");
-=======
->>>>>>> pr/8
         while (true) {
 
             lock.lock();
@@ -48,9 +44,9 @@ public class Clocker implements Runnable {
     }
 
     /**
-     * »ñÈ¡¼ÆÊ±Æ÷µ±Ç°Ê±¼ä
+     * ï¿½ï¿½È¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½
      *
-     * @return
+	 * @return
      */
     public long getCurrentTimeMillis() {
         return timestamp.get();
@@ -60,9 +56,9 @@ public class Clocker implements Runnable {
     private static volatile Clocker clocker = new Clocker();
 
     /**
-     * »ñÈ¡µ¥ÀýµÄclocker
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clocker
      *
-     * @return
+	 * @return
      */
     public static Clocker current() {
         return clocker;
