@@ -52,12 +52,32 @@ public interface Content extends Comparable<Content>,
     JsonReadable, JsonPatchable {
 
     /**
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/Content.java/left.java
      * Get content path.
      * @return Content path
      */
     @NotNull(message = "contentPath is never NULL")
     String contentPath();
 
+    /**
+||||||| /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/Content.java/base.java
+=======
+     * Get content path.
+     * @return Content path
+     */
+    @NotNull(message = "contentPath is never NULL")
+    String contentPath();
+
+    /**
+     * Get the name of the commit/branch/tag.
+     * @return Content ref
+     */
+    String ref();
+
+    /**
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/Content.java/right.java
+     * Smart Content with extra features.
+     */
     @Immutable
     @ToString
     @Loggable(Loggable.DEBUG)
@@ -77,11 +97,23 @@ public interface Content extends Comparable<Content>,
             final Content cont) {
             this.content = cont;
         }
+
         @Override
         @NotNull(message = "contentPath is never NULL")
         public String contentPath() {
             return this.contentPath();
         }
+
+        @Override
+        public String ref() {
+            return this.ref();
+        }
+        @Override
+        @NotNull(message = "contentPath is never NULL")
+        public String contentPath() {
+            return this.contentPath();
+        }
+
         /**
          * Get its name.
          * @return Name of content

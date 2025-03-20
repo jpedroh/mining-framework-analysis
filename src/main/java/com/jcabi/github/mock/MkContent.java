@@ -44,7 +44,13 @@ import lombok.ToString;
  * @version $Id$
  * @todo #166 Content mock should be implemented.
  *  Need to implement the methods of MkContent: 1) compareTo,
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/mock/MkContent.java/left.java
  *  2) json, 3) patch, 4) contentPath
+||||||| /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/mock/MkContent.java/base.java
+ *  2) json, 3) patch
+=======
+ *  2) json, 3) patch, 4) contentPath, 5) ref
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/mock/MkContent.java/right.java
  *  Don't forget to update the unit test class {@link MkContent}.
  *  See http://developer.github.com/v3/repos/contents
  * @since 0.8
@@ -74,5 +80,10 @@ final class MkContent implements Content {
     @Override
     public String contentPath() {
         throw new UnsupportedOperationException("MkContent#contentPath()");
+    }
+
+    @Override
+    public String ref() {
+        throw new UnsupportedOperationException("MkContent#ref()");
     }
 }

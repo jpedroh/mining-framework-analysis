@@ -50,24 +50,21 @@ import lombok.EqualsAndHashCode;
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
-@EqualsAndHashCode(of = { "entry", "request", "owner" })
+@EqualsAndHashCode(of = { "entry", "request", "owner" , "request" })
 public final class RtContents implements Contents {
 
     /**
      * API entry point.
      */
     private final transient Request entry;
-
-    /**
-     * RESTful request.
-     */
-    private final transient Request request;
-
     /**
      * Repository.
      */
     private final transient Repo owner;
-
+    /**
+     * RESTful request.
+     */
+    private final transient Request request;
     /**
      * Public ctor.
      * @param req RESTful API entry point
@@ -76,24 +73,37 @@ public final class RtContents implements Contents {
     public RtContents(final Request req, final Repo repo) {
         this.entry = req;
         this.owner = repo;
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/left.java
         this.request = req.uri()
             .path("/repos")
             .path(repo.coordinates().user())
             .path(repo.coordinates().repo())
             .path("/contents")
             .back();
+||||||| /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/base.java
+=======
+        final Coordinates coords = repo.coordinates();
+        this.request = req.uri().path("/repos").path(coords.user())
+            .path(coords.repo())
+            .back();
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/right.java
     }
-
     @Override
     public Repo repo() {
         return this.owner;
     }
-
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/left.java
     @Override
     public Content readme() {
         return new RtReadme(this.entry, this.owner);
     }
-
+||||||| /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/base.java
+=======
+    @Override
+    public Content readme() {
+        return new RtReadme(this.request);
+    }
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/main/java/com/jcabi/github/RtContents.java/right.java
     @Override
     public Commit remove(
         @NotNull(message = "path is never NULL") final String path,
@@ -117,5 +127,13 @@ public final class RtContents implements Contents {
                 .readObject().getJsonObject("commit").getString("sha")
         );
     }
+    /**
+     * RESTful request.
+     */
+    /**
+     * Public ctor.
+     * @param repo Repository
+     * @param req Request
+     */
 
 }

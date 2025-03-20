@@ -35,6 +35,7 @@ import com.rexsl.test.mock.MkContainer;
 import com.rexsl.test.mock.MkGrizzlyContainer;
 import com.rexsl.test.mock.MkQuery;
 import com.rexsl.test.request.ApacheRequest;
+import com.rexsl.test.request.FakeRequest;
 import java.net.HttpURLConnection;
 import javax.json.Json;
 import org.hamcrest.MatcherAssert;
@@ -63,7 +64,13 @@ public final class RtContentsTest {
                 "{\"path\": \"README.md\"}")
         ).start();
         final Contents contents = new RtContents(
-            new ApacheRequest(container.home()), RtContentsTest.repo()
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/test/java/com/jcabi/github/RtContentsTest.java/left.java
+            new ApacheRequest(container.home()),RtContentsTest.repo()
+||||||| /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/test/java/com/jcabi/github/RtContentsTest.java/base.java
+            RtContentsTest.repo()
+=======
+            new FakeRequest(),RtContentsTest.repo()
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/25f907f6579e89ddd5f7aaccd2507a89a56b94c2/src/test/java/com/jcabi/github/RtContentsTest.java/right.java
         );
         MatcherAssert.assertThat(
             contents.readme(),
