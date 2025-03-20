@@ -51,7 +51,13 @@ public class SoundManager {
 						entities = (EntityManager.getInstance().getAllEntitiesWithComponents(CatPropertyComponent.class));
 						int playerEntityID = entities.first();
 						CatPropertyComponent playerProperties = EntityManager.getInstance().getComponent(playerEntityID, CatPropertyComponent.class);
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/b32b56644c29a6ed63303f639c483e935734c742/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/left.java
 						if (playerProperties.state != CatStateEnum.WALK) {
+||||||| /usr/src/app/output/lusito/gamedevweek/b32b56644c29a6ed63303f639c483e935734c742/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/base.java
+						if (cp.state != CatStateEnum.WALK) {
+=======
+						if (cp.getState() != CatStateEnum.WALK) {
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/b32b56644c29a6ed63303f639c483e935734c742/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/right.java
 							SoundManager.loop.stop();
 							SoundManager.isLooping = false;
 						}
