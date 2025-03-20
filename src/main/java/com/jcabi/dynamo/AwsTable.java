@@ -186,6 +186,42 @@ final class AwsTable implements Table {
         }
     }
 
+<<<<<<< /usr/src/app/output/jcabi/jcabi-dynamo/a3e4660c7f264db9a33a64604ecc70a35afabe0e/src/main/java/com/jcabi/dynamo/AwsTable.java/left.java
+    /**
+     * Print consumed capacity nicely.
+     * @param capacity Consumed capacity or NULL
+     * @return Suffix to add to a log line
+     */
+    public static String print(
+        final ConsumedCapacity capacity) {
+        final String txt;
+        if (capacity == null) {
+            txt = "no units";
+        } else {
+            txt = String.format("%.2f units", capacity.getCapacityUnits());
+        }
+        return txt;
+    }
+
+||||||| /usr/src/app/output/jcabi/jcabi-dynamo/a3e4660c7f264db9a33a64604ecc70a35afabe0e/src/main/java/com/jcabi/dynamo/AwsTable.java/base.java
+    /**
+     * Print consumed capacity nicely.
+     * @param capacity Consumed capacity or NULL
+     * @return Suffix to add to a log line
+     */
+    public static String print(
+        final ConsumedCapacity capacity) {
+        final String txt;
+        if (capacity == null) {
+            txt = "";
+        } else {
+            txt = String.format("%.2f units", capacity.getCapacityUnits());
+        }
+        return txt;
+    }
+
+=======
+>>>>>>> /usr/src/app/output/jcabi/jcabi-dynamo/a3e4660c7f264db9a33a64604ecc70a35afabe0e/src/main/java/com/jcabi/dynamo/AwsTable.java/right.java
     @Override
     public void delete(final Map<String, AttributeValue> attributes)
         throws IOException {

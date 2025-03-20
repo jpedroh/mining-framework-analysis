@@ -148,16 +148,14 @@ public final class ScanValve implements Valve {
                 .withSelect(Select.COUNT)
                 .withLimit(Integer.MAX_VALUE);
             final long start = System.currentTimeMillis();
-            final ScanResult result = aws.scan(request);
-            final int count = result.getCount();
+            final ScanResult rslt = aws.scan(request);
+            final int count = rslt.getCount();
             Logger.info(
                 this,
                 // @checkstyle LineLength (1 line)
                 "#total(): COUNT=%d in '%s' using %s, %s, in %[ms]s",
                 count, request.getTableName(), request.getFilterExpression(),
-                new PrintableConsumedCapacity(
-                    result.getConsumedCapacity()
-                ).print(),
+                AwsTable.print(rslt.getConsumedCapacity()),
                 System.currentTimeMillis() - start
             );
             return count;
