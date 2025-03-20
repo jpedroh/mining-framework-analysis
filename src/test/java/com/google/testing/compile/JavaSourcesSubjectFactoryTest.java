@@ -36,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.truth0.FailureStrategy;
 import org.truth0.TestVerb;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
