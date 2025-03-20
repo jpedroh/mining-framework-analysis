@@ -8,13 +8,6 @@
  ******************************************************************************/
 package com.mitchellbosecke.pebble.node;
 
-import com.mitchellbosecke.pebble.error.PebbleException;
-import com.mitchellbosecke.pebble.extension.NodeVisitor;
-import com.mitchellbosecke.pebble.node.expression.Expression;
-import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
-import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-import com.mitchellbosecke.pebble.template.ScopeChain;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Array;
@@ -23,6 +16,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.mitchellbosecke.pebble.error.PebbleException;
+import com.mitchellbosecke.pebble.extension.NodeVisitor;
+import com.mitchellbosecke.pebble.node.expression.Expression;
+import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
+import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 /**
  * Represents a "for" loop within the template.
