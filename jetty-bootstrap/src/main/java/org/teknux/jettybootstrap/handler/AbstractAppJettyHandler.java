@@ -1,62 +1,129 @@
-/*******************************************************************************
- * (C) Copyright 2014 Teknux.org (http://teknux.org/).
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *  
- * Contributors:
- *      "Pierre PINON"
- *      "Francois EYL"
- *      "Laurent MARCHAL"
- *  
- *******************************************************************************/
 package org.teknux.jettybootstrap.handler;
-
 import java.text.MessageFormat;
-
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.teknux.jettybootstrap.JettyBootstrapException;
 
-
 abstract public class AbstractAppJettyHandler extends AbstractJettyHandler {
-	private String contextPath = null;
 
-	public String getContextPath() {
-		return contextPath;
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  private final static Logger logger = LoggerFactory.getLogger(AbstractAppJettyHandler.class);
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/right.java
 
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
-	}
 
-    @Override
-	protected Handler createHandler() throws JettyBootstrapException {
-		WebAppContext webAppContext = new WebAppContext();
+  private String contextPath = null;
 
-		return initWebAppContext(webAppContext);
-	}
-	
-	/**
+  public String getContextPath() {
+    return contextPath;
+  }
+
+  public void setContextPath(String contextPath) {
+    this.contextPath = contextPath;
+  }
+
+  @Override protected Handler createHandler() throws JettyBootstrapException {
+    WebAppContext webAppContext = new WebAppContext();
+    return initWebAppContext(webAppContext);
+  }
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  public static String[] addConfigurationClasses(String[] defaultConfigurationClasses, AdditionalWebAppJettyConfigurationClass[] additionalsWebappConfigurationClasses) {
+    List<String> configurationClasses = new ArrayList<String>(Arrays.asList(defaultConfigurationClasses));
+    for (AdditionalWebAppJettyConfigurationClass additionalWebappConfigurationClass : additionalsWebappConfigurationClasses) {
+      if (additionalWebappConfigurationClass.getClasses() == null || additionalWebappConfigurationClass.getPosition() == null) {
+        logger.warn("Bad support class name");
+      } else {
+        if (classesExists(additionalWebappConfigurationClass.getClasses())) {
+          int index = 0;
+          if (additionalWebappConfigurationClass.getReferenceClass() == null) {
+            if (additionalWebappConfigurationClass.getPosition() == Position.AFTER) {
+              index = configurationClasses.size();
+            }
+          } else {
+            index = configurationClasses.indexOf(additionalWebappConfigurationClass.getReferenceClass());
+            if (index == -1) {
+              if (additionalWebappConfigurationClass.getPosition() == Position.AFTER) {
+                logger.warn("[{}] reference unreachable, add at the end", additionalWebappConfigurationClass.getReferenceClass());
+                index = configurationClasses.size();
+              } else {
+                logger.warn("[{}] reference unreachable, add at the top", additionalWebappConfigurationClass.getReferenceClass());
+                index = 0;
+              }
+            } else {
+              if (additionalWebappConfigurationClass.getPosition() == Position.AFTER) {
+                index++;
+              }
+            }
+          }
+          configurationClasses.addAll(index, additionalWebappConfigurationClass.getClasses());
+          for (String className : additionalWebappConfigurationClass.getClasses()) {
+            logger.debug("[{}] support added", className);
+          }
+        } else {
+          for (String className : additionalWebappConfigurationClass.getClasses()) {
+            logger.debug("[{}] not available", className);
+          }
+        }
+      }
+    }
+    for (String configurationClasse : configurationClasses) {
+      logger.trace("Jetty WebAppContext Configuration => " + configurationClasse);
+    }
+    return configurationClasses.toArray(new String[configurationClasses.size()]);
+  }
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/right.java
+
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  public static boolean classesExists(List<String> classNames) {
+    for (String className : classNames) {
+      try {
+        Class.forName(className);
+      } catch (ClassNotFoundException e) {
+        return false;
+      }
+    }
+    return true;
+  }
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/right.java
+
+
+  /**
 	 * The name of Temporary Application directory
 	 * 
 	 * @return name
 	 */
-	abstract public String getAppTempDirName();
+  abstract public String getAppTempDirName();
 
-	abstract protected WebAppContext initWebAppContext(WebAppContext webAppContext);
+  abstract protected WebAppContext initWebAppContext(WebAppContext webAppContext);
 
-	@Override
-	public String toString() {
-		return MessageFormat.format("{0} on contextPath [{1}]", super.toString(), getContextPath());
-	}
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+	 * Create constraint which redirect to Secure Port
+	 * 
+	 * @return @ConstraintSecurityHandler
+	 */
+  public static ConstraintSecurityHandler getConstraintSecurityHandlerConfidential() {
+    Constraint constraint = new Constraint();
+    constraint.setDataConstraint(Constraint.DC_CONFIDENTIAL);
+    ConstraintMapping constraintMapping = new ConstraintMapping();
+    constraintMapping.setConstraint(constraint);
+    constraintMapping.setPathSpec("/*");
+    ConstraintSecurityHandler constraintSecurityHandler = new ConstraintSecurityHandler();
+    constraintSecurityHandler.addConstraintMapping(constraintMapping);
+    return constraintSecurityHandler;
+  }
+>>>>>>> /usr/src/app/output/teknux-org/jetty-bootstrap/2852e8553b9363628dc21c1186599e714ee1cdad/jetty-bootstrap/src/main/java/org/teknux/jettybootstrap/handler/AbstractAppJettyHandler.java/right.java
+
+
+  @Override public String toString() {
+    return MessageFormat.format("{0} on contextPath [{1}]", super.toString(), getContextPath());
+  }
 }
