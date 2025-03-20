@@ -15,7 +15,6 @@ import de.hochschuletrier.gdw.ss14.ecs.components.EnemyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.InputComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.LaserPointerComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.MovementComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.ParticleEmitterComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.PlayerComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.RenderComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ShadowComponent;
@@ -74,13 +73,16 @@ public class EntityFactory{
         CatPropertyComponent catProperties = new CatPropertyComponent();
         catProperties.state = CatStateEnum.IDLE;
         
-        ShadowComponent shadow = new ShadowComponent();
-        shadow.alpha = 0.5f;
-        shadow.z = 1.0f;
-        
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/left.java
         ParticleEmitterComponent particleEmitComp = new ParticleEmitterComponent();
         particleEmitComp.particleTintColor = new Color(1,0,0,1);
         particleEmitComp.emitRadius = 10f;
+||||||| /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/base.java
+=======
+        ShadowComponent shadow = new ShadowComponent();
+        shadow.alpha = 0.5f;
+        shadow.z = 1.0f;
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/right.java
 
         manager.addComponent(entity, catProperties);
         manager.addComponent(entity, catAnimation);
@@ -91,8 +93,12 @@ public class EntityFactory{
         manager.addComponent(entity, catInput);
         manager.addComponent(entity, new PlayerComponent());
         manager.addComponent(entity, cam);
-        manager.addComponent(entity, shadow);
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/left.java
         manager.addComponent(entity, particleEmitComp);
+||||||| /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/base.java
+=======
+        manager.addComponent(entity, shadow);
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/6873b1049deaa3df2ece0db0f0e0c23b052f668c/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/right.java
         //manager.addComponent(entity, new ConePhysicsComponent(catPhysix.getPosition(), 100,100,100));
         //manager.addComponent(entity, new HitAnimationComponent());
 

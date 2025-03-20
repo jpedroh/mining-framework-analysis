@@ -38,6 +38,7 @@ public class RenderSystem extends ECSystem {
     @Override
     public void render() {
         Array<Integer> entites = entityManager.getAllEntitiesWithComponents(RenderComponent.class, PhysicsComponent.class);
+        
 
         RenderComponent renderCompo;
         PhysicsComponent physicsCompo;
