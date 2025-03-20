@@ -1,30 +1,9 @@
-/**
- * The MIT License
- *
- * <p>Copyright (c) 2013-2019 Jeevanandam M. (jeeva@myjeeva.com)
- *
- * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * <p>The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 package com.myjeeva.digitalocean.pojo;
-
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-import com.myjeeva.digitalocean.common.CertificateState;
 import java.util.Date;
+import com.google.gson.annotations.SerializedName;
 import java.util.List;
+import com.myjeeva.digitalocean.common.CertificateState;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
@@ -34,76 +13,50 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
  * @since v2.12
  */
 public class Certificate extends Base {
-
   private static final long serialVersionUID = -7525532097995479493L;
 
   private String id;
 
   @Expose private String name;
 
-  @SerializedName("not_after")
-  private String notAfter;
+  @SerializedName(value = "not_after") private String notAfter;
 
-  @SerializedName("sha1_fingerprint")
-  private String sha1Fingerprint;
+  @SerializedName(value = "sha1_fingerprint") private String sha1Fingerprint;
 
-  @SerializedName("created_at")
-  private Date createdDate;
+  @SerializedName(value = "created_at") private Date createdDate;
 
-  @Expose
-  @SerializedName("private_key")
-  private String privateKey;
+  @Expose @SerializedName(value = "private_key") private String privateKey;
 
-  @Expose
-  @SerializedName("leaf_certificate")
-  private String leafCertificate;
+  @Expose @SerializedName(value = "leaf_certificate") private String leafCertificate;
 
-  @Expose
-  @SerializedName("certificate_chain")
-  private String certificateChain;
+  @Expose @SerializedName(value = "certificate_chain") private String certificateChain;
 
   @Expose private CertificateState state;
 
-  @Expose
-  @SerializedName("dns_names")
-  private List<String> dnsNames;
+  @Expose @SerializedName(value = "dns_names") private List<String> dnsNames;
 
   @Expose private String type;
 
   /** Default Constructor. */
   public Certificate() {
-    // default constructor
   }
 
-  /**
-   * Constructor for new certificate create request.
-   * @param name the name for the certificate
-   * @param privateKey the private key
-   * @param leafCertificate the leaf certificate
-   * @param certificateChain the certificate chain
-   */
-  public Certificate(String name, String privateKey, String leafCertificate,
-      String certificateChain) {
+  /** Constructor for new certificate create request. */
+  public Certificate(String name, String privateKey, String leafCertificate, String certificateChain) {
     this.name = name;
     this.privateKey = privateKey;
     this.leafCertificate = leafCertificate;
     this.certificateChain = certificateChain;
   }
-  
-  /**
-   * Constructor for new Let's Encrypt certificate create request.
-   * @param name the name for the certificate
-   * @param type the type of the certificate
-   * @param dnsNames list of dns names
-   */
+
+  /** Constructor for new Let's Encrypt certificate create request. */
   public Certificate(String name, String type, List<String> dnsNames) {
     this.name = name;
     this.type = type;
     this.dnsNames = dnsNames;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return ReflectionToStringBuilder.toString(this);
   }
 

@@ -1,15 +1,8 @@
-/**
- * Copyright (c) Jeevanandam M. (https://github.com/jeevatkm)
- *
- * <p>digitalocean-api-client source code and usage is governed by a MIT style license that can be
- * found in the LICENSE file
- */
 package com.myjeeva.digitalocean.pojo;
-
 import com.google.gson.annotations.Expose;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.myjeeva.digitalocean.common.ActionType;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Volume action is to create new volume.
@@ -18,28 +11,18 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
  * @since v2.7
  */
 public class VolumeAction {
-
   @Expose private ActionType type;
 
-  @Expose
-  @SerializedName("droplet_id")
-  private Integer dropletId;
+  @Expose @SerializedName(value = "droplet_id") private Integer dropletId;
 
-  @Expose
-  @SerializedName("region")
-  private String regionSlug;
+  @Expose @SerializedName(value = "region") private String regionSlug;
 
-  @Expose
-  @SerializedName("volume_name")
-  private String volumeName;
+  @Expose @SerializedName(value = "volume_name") private String volumeName;
 
-  @Expose
-  @SerializedName("size_gigabytes")
-  private Double size;
+  @Expose @SerializedName(value = "size_gigabytes") private Double size;
 
   /** Constructor */
   public VolumeAction() {
-    // Default Constructor
   }
 
   /**
@@ -70,11 +53,10 @@ public class VolumeAction {
    * @param type action type of the volume
    * @param dropletId is to attach/detach volume from droplet
    * @param regionSlug short name of region
-   * @param volumeName name of the volume
+   * @param volumeName
    * @param size volume size in GB
    */
-  public VolumeAction(
-      ActionType type, Integer dropletId, String regionSlug, String volumeName, Double size) {
+  public VolumeAction(ActionType type, Integer dropletId, String regionSlug, String volumeName, Double size) {
     this.type = type;
     this.dropletId = dropletId;
     this.regionSlug = regionSlug;
@@ -82,8 +64,7 @@ public class VolumeAction {
     this.size = size;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return ReflectionToStringBuilder.toString(this);
   }
 
