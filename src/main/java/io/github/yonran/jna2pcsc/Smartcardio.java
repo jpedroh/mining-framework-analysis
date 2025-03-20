@@ -85,13 +85,6 @@ public class Smartcardio extends Provider {
 		 * permission.
 		 * </ul>
 		 */
-		public static JnaTerminalFactorySpi establishContext() throws CardException {
-			Winscard.WinscardLibInfo libInfo = Winscard.openLib();
-			Winscard.SCardContextByReference phContext = new Winscard.SCardContextByReference();
-			check("SCardEstablishContext", libInfo.lib.SCardEstablishContext(SCARD_SCOPE_SYSTEM, null, null, phContext));
-			Winscard.SCardContext scardContext = phContext.getValue();
-			return new JnaTerminalFactorySpi(libInfo, scardContext);
-		}
 		@Override public CardTerminals engineTerminals() {
 			return new JnaCardTerminals(libInfo, scardContext);
 		}
@@ -109,7 +102,8 @@ public class Smartcardio extends Provider {
 	public static class JnaCardTerminals extends CardTerminals {
 		private final Winscard.SCardContext scardContext;
 		private final Winscard.WinscardLibInfo libInfo;
-
+	    // terminal state used by waitForCard()
+	    private final Map<String, Integer> stateMap;
 		/** The readers that waitForChange observed in its last invocation. */
 		private final List<SCardReaderState> knownReaders;
 		/**
@@ -127,6 +121,10 @@ public class Smartcardio extends Provider {
 		public JnaCardTerminals(Winscard.WinscardLibInfo libInfo, Winscard.SCardContext scardContext) {
 			this.libInfo = libInfo;
 			this.scardContext = scardContext;
+<<<<<<< /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/left.java
+			this.stateMap = new Hashtable<String, Integer>();
+||||||| /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/base.java
+=======
 			this.knownReaders = new ArrayList<SCardReaderState>();
 			this.zombieReaders = new ArrayList<SCardReaderState>();
 			if (usePnp) {
@@ -134,6 +132,7 @@ public class Smartcardio extends Provider {
 				pnpReaderState.setReaderName(WinscardConstants.PNP_READER_ID);
 				knownReaders.add(pnpReaderState);
 			}
+>>>>>>> /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/right.java
 		}
 		@Override public List<CardTerminal> list(State state) throws CardException {
 			if (null == state)
@@ -224,82 +223,68 @@ public class Smartcardio extends Provider {
 				throw new IllegalStateException();
 			}
 		}
-		
-		/**
-		 * Helper function for {@link #waitForChange(long)}. Lists the readers
-		 * and updates 3 variables:
-		 * <ul>
-		 * <li>Any new readers are appended to {@link #knownReaders}.
-		 * <li>Any old readers are moved from {@link #knownReaders} to
-		 * {@link #zombieReaders}.
-		 * <li>If any change is made, {@link #knownReadersChanged} is set so
-		 * that the JNA array-of-struct can be reallocated.
-		 * </ul>
-		 * 
-		 * @return true if a reader was added or removed.
-		 */
-		private boolean updateKnownReaders() throws JnaPCSCException {
-			boolean isReaderAddedOrRemoved = false;
-			List<String> currentReaderNames = listReaderNames();
-			HashSet<String> existingReaderNames = new HashSet<String>(knownReaders.size() - (usePnp?1:0));
-			Iterator<SCardReaderState> it = knownReaders.iterator();
-			if (usePnp) it.next();
-			while (it.hasNext()) {
-				SCardReaderState reader = it.next();
-				existingReaderNames.add(reader.getReaderName());
-				if (currentReaderNames.contains(reader.getReaderName()))
-					continue;
-				it.remove();
-				reader.setEventState(0);
-				zombieReaders.add(reader);
-				isReaderAddedOrRemoved = true;
-			}
-			List<String> newReadersNames = new ArrayList<String>();
-			for (String readerName: currentReaderNames) {
-				if (existingReaderNames.contains(readerName))
-					continue;
-				newReadersNames.add(readerName);
-			}
-			if (! newReadersNames.isEmpty()) {
-				SCardReaderState[] newReaders = libInfo.createSCardReaderStateArray(newReadersNames.size());
-				libInfo.createSCardReaderState().toArray(newReaders);
-				for (int i = 0; i < newReaders.length; i++)
-					newReaders[i].setReaderName(newReadersNames.get(i));
-				check("SCardGetStatusChange", libInfo.lib.SCardGetStatusChange(scardContext, 0, newReaders, newReaders.length));
-				knownReaders.addAll(Arrays.asList(newReaders));
-				isReaderAddedOrRemoved = true;
-			}
-			if (isReaderAddedOrRemoved)
-				knownReadersChanged = true;
-			return isReaderAddedOrRemoved;
-		}
+	
+		// heavily inspired by OpenJDK sun.security.smartcardio.PCSCTerminals
+<<<<<<< /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/left.java
+		@Override public boolean waitForChange(long timeoutMs) throws CardException {
 
-		/**
-		 * Block until any card is inserted or removed, or until the timeout.
-		 * 
-		 * <p>
-		 * Deviation from the Sun version: the first
-		 * {@link #waitForChange(long)} call always returns immediately. In
-		 * Sun's version, if the card is inserted between your {@link #list()}
-		 * call and the first {@link #waitForChange(long)} call, then your
-		 * application can wait forever.
-		 * 
-		 * <p>
-		 * Note: this method returns early when any smartcard state has changed
-		 * (e.g. smartcard becomes in-use or idle). The caller cannot observe
-		 * these changes though. So the caller should be able to handle changes
-		 * that appear spurious.
-		 * 
-		 * <p>
-		 * Likely exceptions
-		 * <ul>
-		 * <li>JnaPCSCException(
-		 * {@link WinscardConstants#SCARD_E_SERVICE_STOPPED}) On Windows 8+, the
-		 * service shuts down immediately when the last reader is unplugged.
-		 * Then, you have to start polling because there is no daemon to
-		 * subscribe to.
-		 * </ul>
-		 */
+			if (timeoutMs == 0) {
+				timeoutMs = TIMEOUT_INFINITE;
+			}
+			
+			// list the readers and their states
+			IntByReference pcchReaders = new IntByReference();
+			long err = libInfo.lib.SCardListReaders(scardContext, null, null, pcchReaders).longValue();
+			byte[] mszReaders = null;
+			if (err == SCARD_S_SUCCESS) {
+				mszReaders = new byte[pcchReaders.getValue()];
+				err = libInfo.lib.SCardListReaders(scardContext, null, ByteBuffer.wrap(mszReaders), pcchReaders).longValue();
+			}
+
+			switch ((int)err) {
+			case SCARD_S_SUCCESS:
+				break;
+			case SCARD_E_NO_READERS_AVAILABLE:
+			case SCARD_E_READER_UNAVAILABLE:
+				throw new IllegalStateException("No terminals available"); // emulate OpenJDK PSCSTerminals behavior
+			}
+
+			// populate the reader states
+			List<String> readerNames = pcsc_multi2jstring(mszReaders);
+			if (readerNames.size() == 0) {
+				throw new IllegalStateException("No terminals available"); // emulate OpenJDK PSCSTerminals behavior
+			}
+			
+			// get reader states for available readers, honoring previous states
+			Winscard.SCardReaderState[] readerStates = (Winscard.SCardReaderState[])new Winscard.SCardReaderState().toArray(readerNames.size());
+			for (int i = 0; i < readerNames.size(); i++) {
+				final String readerName = readerNames.get(i);
+				Integer readerState = stateMap.get(readerName);
+				if (readerState == null) {
+					readerState = Integer.valueOf(0); // SCARD_STATE_UNAWARE
+					stateMap.put(readerName, readerState);
+				}
+				readerStates[i].szReader = readerName;
+				readerStates[i].dwCurrentState = readerState.intValue();
+			}
+
+			err = libInfo.lib.SCardGetStatusChange(scardContext, (int)timeoutMs, readerStates, readerStates.length).longValue();
+			switch ((int)err) {
+			case SCARD_S_SUCCESS:
+				// update states
+				stateMap.clear();
+				for (Winscard.SCardReaderState freshState : readerStates) {
+					stateMap.put(freshState.szReader, Integer.valueOf(freshState.dwEventState));
+				}
+				break;
+			default:
+				throw new IllegalStateException("No terminals available"); // emulate OpenJDK PSCSTerminals behavior
+			}
+			
+			return true;
+		}
+||||||| /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/base.java
+=======
 		@Override public boolean waitForChange(long timeoutMs) throws CardException {
 			if (timeoutMs < 0)
 				throw new IllegalArgumentException("Negative timeout " + timeoutMs);
@@ -353,6 +338,81 @@ public class Smartcardio extends Provider {
 			}
 			return true;
 		}
+>>>>>>> /usr/src/app/output/jnasmartcardio/jnasmartcardio/d2203a3c4b2373e013348cd1f2c167a8343ee344/src/main/java/io/github/yonran/jna2pcsc/Smartcardio.java/right.java
+		/**
+		 * Helper function for {@link #waitForChange(long)}. Lists the readers
+		 * and updates 3 variables:
+		 * <ul>
+		 * <li>Any new readers are appended to {@link #knownReaders}.
+		 * <li>Any old readers are moved from {@link #knownReaders} to
+		 * {@link #zombieReaders}.
+		 * <li>If any change is made, {@link #knownReadersChanged} is set so
+		 * that the JNA array-of-struct can be reallocated.
+		 * </ul>
+		 * 
+		 * @return true if a reader was added or removed.
+		 */
+		private boolean updateKnownReaders() throws JnaPCSCException {
+			boolean isReaderAddedOrRemoved = false;
+			List<String> currentReaderNames = listReaderNames();
+			HashSet<String> existingReaderNames = new HashSet<String>(knownReaders.size() - (usePnp?1:0));
+			Iterator<SCardReaderState> it = knownReaders.iterator();
+			if (usePnp) it.next();
+			while (it.hasNext()) {
+				SCardReaderState reader = it.next();
+				existingReaderNames.add(reader.getReaderName());
+				if (currentReaderNames.contains(reader.getReaderName()))
+					continue;
+				it.remove();
+				reader.setEventState(0);
+				zombieReaders.add(reader);
+				isReaderAddedOrRemoved = true;
+			}
+			List<String> newReadersNames = new ArrayList<String>();
+			for (String readerName: currentReaderNames) {
+				if (existingReaderNames.contains(readerName))
+					continue;
+				newReadersNames.add(readerName);
+			}
+			if (! newReadersNames.isEmpty()) {
+				SCardReaderState[] newReaders = libInfo.createSCardReaderStateArray(newReadersNames.size());
+				libInfo.createSCardReaderState().toArray(newReaders);
+				for (int i = 0; i < newReaders.length; i++)
+					newReaders[i].setReaderName(newReadersNames.get(i));
+				check("SCardGetStatusChange", libInfo.lib.SCardGetStatusChange(scardContext, 0, newReaders, newReaders.length));
+				knownReaders.addAll(Arrays.asList(newReaders));
+				isReaderAddedOrRemoved = true;
+			}
+			if (isReaderAddedOrRemoved)
+				knownReadersChanged = true;
+			return isReaderAddedOrRemoved;
+		}
+		/**
+		 * Block until any card is inserted or removed, or until the timeout.
+		 * 
+		 * <p>
+		 * Deviation from the Sun version: the first
+		 * {@link #waitForChange(long)} call always returns immediately. In
+		 * Sun's version, if the card is inserted between your {@link #list()}
+		 * call and the first {@link #waitForChange(long)} call, then your
+		 * application can wait forever.
+		 * 
+		 * <p>
+		 * Note: this method returns early when any smartcard state has changed
+		 * (e.g. smartcard becomes in-use or idle). The caller cannot observe
+		 * these changes though. So the caller should be able to handle changes
+		 * that appear spurious.
+		 * 
+		 * <p>
+		 * Likely exceptions
+		 * <ul>
+		 * <li>JnaPCSCException(
+		 * {@link WinscardConstants#SCARD_E_SERVICE_STOPPED}) On Windows 8+, the
+		 * service shuts down immediately when the last reader is unplugged.
+		 * Then, you have to start polling because there is no daemon to
+		 * subscribe to.
+		 * </ul>
+		 */
 	}
 
 	public static class JnaCardTerminal extends CardTerminal {
