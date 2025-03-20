@@ -98,7 +98,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
 
     @Attribute(required = false)
     private VisionCalibration visionCalibration = VisionCalibration.None;
-    
+
     public enum VisionCalibrationTrigger {
         Manual, MachineHome, NozzleTipChange
     }
@@ -121,10 +121,10 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
     private Length visionTemplateTolerance = new Length(4, LengthUnit.Millimeters);
 
     @Attribute(required = false)
-    private int visionCalibrationMaxPasses = 3; 
+    private int visionCalibrationMaxPasses = 3;
 
     @Element(required = false)
-    private Length visionCalibrationTolerance = new Length(0.7, LengthUnit.Millimeters); 
+    private Length visionCalibrationTolerance = new Length(0.7, LengthUnit.Millimeters);
 
     @Element(required = false)
     private TemplateImage visionTemplateImageEmpty = null;
