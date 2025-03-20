@@ -39,6 +39,11 @@ public class PlayerMovementSystem extends ECSystem
             CatPropertyComponent catStateCompo = entityManager.getComponent(integer, CatPropertyComponent.class);
 
 
+            if (!catStateCompo.canSeeLaserPointer)
+            {
+                return;
+            }
+
             // update states
             if (moveCompo.velocity == 0)
             {
