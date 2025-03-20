@@ -10,8 +10,8 @@ package javax.money.function;
 
 import java.math.BigDecimal;
 
-import javax.money.MonetaryAmount;
 import javax.money.MonetaryOperator;
+import javax.money.MonetaryAmount;
 
 /**
  * This class allows to extract the minor part of a {@link MonetaryAmount}

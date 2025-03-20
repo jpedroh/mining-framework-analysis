@@ -124,6 +124,4 @@ public final class MajorPart implements MonetaryOperator {
 		return number.setScale(0, RoundingMode.DOWN).intValueExact();
 	}
 
-
 }
-
