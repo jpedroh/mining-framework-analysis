@@ -257,19 +257,23 @@ public class SubnetUtils {
 
             /*
              * Create a binary netmask from the number of bits specification /x
-             * 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/apache/commons-net/dd3ac0cb33efc4a13ede54afba8c52a962e44bd4/src/main/java/org/apache/commons/net/util/SubnetUtils.java/left.java
+             *  
              * An IPv4 netmask consists of 32 bits, a contiguous sequence of ones followed by a block of zeros.
              * So, it is obtained by shifting an unsigned integer (32 bits) to the left by
              * the length of the zero blocks (32 - the # bits specification).
-             * 
+             *  
+             * Note that rotation a int value by 32 is no operation.
+||||||| /usr/src/app/output/apache/commons-net/dd3ac0cb33efc4a13ede54afba8c52a962e44bd4/src/main/java/org/apache/commons/net/util/SubnetUtils.java/base.java
+             * The maximum binary netmask (a 32-bit long) << NBITS - the # bits specification
 =======
+             *  
              * An IPv4 netmask consists of 32 bits, a contiguous sequence of followed by a block of zeros.
              * So, it is obtained by shifting an unsigned integer (32 bits) to the left by
              * the length of the zero blocks (32 - the # bits specification).
              *
->>>>>>> origin/trunk
              * Note that rotation a int value by 32 is no operation.
+>>>>>>> /usr/src/app/output/apache/commons-net/dd3ac0cb33efc4a13ede54afba8c52a962e44bd4/src/main/java/org/apache/commons/net/util/SubnetUtils.java/right.java
              */
             netmask = (int) (0x0FFFFFFFFL << NBITS - rangeCheck(Integer.parseInt(matcher.group(5)), 0, NBITS));
 
