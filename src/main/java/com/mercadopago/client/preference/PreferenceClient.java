@@ -1,9 +1,7 @@
 package com.mercadopago.client.preference;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeElementsResourcesPageFromJson;
 import static com.mercadopago.serialization.Serializer.deserializeFromJson;
-
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
@@ -72,15 +70,11 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences_id/get">api
    *     docs</a>
    */
-  public Preference get(String id, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Preference get(String id, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get preference request");
-    MPResponse response =
-        send(String.format(URL_WITH_ID, id), HttpMethod.GET, null, null, requestOptions);
-
+    MPResponse response = send(String.format(URL_WITH_ID, id), HttpMethod.GET, null, null, requestOptions);
     Preference result = deserializeFromJson(Preference.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -109,21 +103,12 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences/post">api
    *     docs</a>
    */
-  public Preference create(PreferenceRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Preference create(PreferenceRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending create preference request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri("/checkout/preferences")
-            .method(HttpMethod.POST)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri("/checkout/preferences").method(HttpMethod.POST).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     Preference result = deserializeFromJson(Preference.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -138,8 +123,7 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences_id/put">api
    *     docs</a>
    */
-  public Preference update(String id, PreferenceRequest request)
-      throws MPException, MPApiException {
+  public Preference update(String id, PreferenceRequest request) throws MPException, MPApiException {
     return this.update(id, request, null);
   }
 
@@ -155,21 +139,12 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences_id/put">api
    *     docs</a>
    */
-  public Preference update(String id, PreferenceRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Preference update(String id, PreferenceRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending update preference request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri(String.format(URL_WITH_ID, id))
-            .method(HttpMethod.PUT)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri(String.format(URL_WITH_ID, id)).method(HttpMethod.PUT).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     Preference result = deserializeFromJson(Preference.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -183,8 +158,7 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences_search/get">api
    *     docs</a>
    */
-  public MPElementsResourcesPage<PreferenceSearch> search(MPSearchRequest request)
-      throws MPException, MPApiException {
+  public MPElementsResourcesPage<PreferenceSearch> search(MPSearchRequest request) throws MPException, MPApiException {
     return this.search(request, null);
   }
 
@@ -199,17 +173,12 @@ public class PreferenceClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/preferences/_checkout_preferences_search/get">api
    *     docs</a>
    */
-  public MPElementsResourcesPage<PreferenceSearch> search(
-      MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
+  public MPElementsResourcesPage<PreferenceSearch> search(MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending search preference request");
-
     MPResponse response = search("/checkout/preferences/search", request, requestOptions);
-
-    Type responseType = new TypeToken<MPElementsResourcesPage<PreferenceSearch>>() {}.getType();
-    MPElementsResourcesPage<PreferenceSearch> result =
-        deserializeElementsResourcesPageFromJson(responseType, response.getContent());
+    Type responseType = new TypeToken<MPElementsResourcesPage<PreferenceSearch>>() { }.getType();
+    MPElementsResourcesPage<PreferenceSearch> result = deserializeElementsResourcesPageFromJson(responseType, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 }

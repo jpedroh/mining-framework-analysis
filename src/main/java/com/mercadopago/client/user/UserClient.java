@@ -1,7 +1,5 @@
 package com.mercadopago.client.user;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;

@@ -1,8 +1,6 @@
 package com.mercadopago.client.identificationtype;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeListFromJson;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -61,17 +59,11 @@ public class IdentificationTypeClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/identification_types/_identification_types/get">api
    *     docs</a>
    */
-  public MPResourceList<IdentificationType> list(MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MPResourceList<IdentificationType> list(MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending list identification types");
-
-    MPResponse response =
-        list("/v1/identification_types", HttpMethod.GET, null, null, requestOptions);
-
-    MPResourceList<IdentificationType> identificationTypes =
-        deserializeListFromJson(IdentificationType.class, response.getContent());
+    MPResponse response = list("/v1/identification_types", HttpMethod.GET, null, null, requestOptions);
+    MPResourceList<IdentificationType> identificationTypes = deserializeListFromJson(IdentificationType.class, response.getContent());
     identificationTypes.setResponse(response);
-
     return identificationTypes;
   }
 }

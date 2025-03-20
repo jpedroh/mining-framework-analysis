@@ -1,7 +1,5 @@
 package com.mercadopago.client.oauth;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.client.user.UserClient;
@@ -59,8 +57,7 @@ public class OauthClient extends MercadoPagoClient {
    * @return URL to perform authorization
    * @throws MPException an error if the request fails
    */
-  public String getAuthorizationURL(String appId, String redirectUri)
-      throws MPException, MPApiException {
+  public String getAuthorizationURL(String appId, String redirectUri) throws MPException, MPApiException {
     return this.getAuthorizationURL(appId, redirectUri, null);
   }
 
@@ -73,26 +70,18 @@ public class OauthClient extends MercadoPagoClient {
    * @return URL to perform authorization
    * @throws MPException an error if the request fails
    */
-  public String getAuthorizationURL(
-      String appId, String redirectUri, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public String getAuthorizationURL(String appId, String redirectUri, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get oauth authorization url request");
-
     User user = userClient.get(requestOptions);
-
     if (Objects.isNull(user) || user.getCountryId().isEmpty()) {
       return null;
     }
-
     HashMap<String, Object> queryParams = new HashMap<>();
     queryParams.put("client_id", appId);
     queryParams.put("response_type", "code");
     queryParams.put("platform_id", "mp");
     queryParams.put("redirect_uri", redirectUri);
-
-    return UrlFormatter.format(
-        String.format("%s.%s/authorization", authHost, user.getCountryId().toLowerCase()),
-        queryParams);
+    return UrlFormatter.format(String.format("%s.%s/authorization", authHost, user.getCountryId().toLowerCase()), queryParams);
   }
 
   /**
@@ -107,8 +96,7 @@ public class OauthClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/oauth/_oauth_token/post">api
    *     docs</a>
    */
-  public CreateOauthCredential createCredential(String authorizationCode, String redirectUri)
-      throws MPException, MPApiException {
+  public CreateOauthCredential createCredential(String authorizationCode, String redirectUri) throws MPException, MPApiException {
     return this.createCredential(authorizationCode, redirectUri, null);
   }
 
@@ -125,25 +113,13 @@ public class OauthClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/oauth/_oauth_token/post">api
    *     docs</a>
    */
-  public CreateOauthCredential createCredential(
-      String authorizationCode, String redirectUri, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public CreateOauthCredential createCredential(String authorizationCode, String redirectUri, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending create oauth credential request");
-    CreateOauthCredentialRequest request =
-        CreateOauthCredentialRequest.builder()
-            .clientSecret(getAccessToken(requestOptions))
-            .code(authorizationCode)
-            .redirectUri(redirectUri)
-            .build();
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            path, HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
+    CreateOauthCredentialRequest request = CreateOauthCredentialRequest.builder().clientSecret(getAccessToken(requestOptions)).code(authorizationCode).redirectUri(redirectUri).build();
+    MPRequest mpRequest = MPRequest.buildRequest(path, HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
     MPResponse response = send(mpRequest);
-
-    CreateOauthCredential credential =
-        Serializer.deserializeFromJson(CreateOauthCredential.class, response.getContent());
+    CreateOauthCredential credential = Serializer.deserializeFromJson(CreateOauthCredential.class, response.getContent());
     credential.setResponse(response);
-
     return credential;
   }
 
@@ -157,8 +133,7 @@ public class OauthClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/oauth/_oauth_token/post">api
    *     docs</a>
    */
-  public RefreshOauthCredential refreshCredential(String refreshToken)
-      throws MPException, MPApiException {
+  public RefreshOauthCredential refreshCredential(String refreshToken) throws MPException, MPApiException {
     return this.refreshCredential(refreshToken, null);
   }
 
@@ -173,29 +148,17 @@ public class OauthClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/oauth/_oauth_token/post">api
    *     docs</a>
    */
-  public RefreshOauthCredential refreshCredential(
-      String refreshToken, MPRequestOptions requestOptions) throws MPException, MPApiException {
+  public RefreshOauthCredential refreshCredential(String refreshToken, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending refresh oauth credential request");
-    RefreshOauthCredentialRequest request =
-        RefreshOauthCredentialRequest.builder()
-            .clientSecret(getAccessToken(requestOptions))
-            .refreshToken(refreshToken)
-            .build();
-
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            path, HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
+    RefreshOauthCredentialRequest request = RefreshOauthCredentialRequest.builder().clientSecret(getAccessToken(requestOptions)).refreshToken(refreshToken).build();
+    MPRequest mpRequest = MPRequest.buildRequest(path, HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
     MPResponse response = send(mpRequest);
-    RefreshOauthCredential credential =
-        Serializer.deserializeFromJson(RefreshOauthCredential.class, response.getContent());
+    RefreshOauthCredential credential = Serializer.deserializeFromJson(RefreshOauthCredential.class, response.getContent());
     credential.setResponse(response);
-
     return credential;
   }
 
   private String getAccessToken(MPRequestOptions requestOptions) {
-    return Objects.isNull(requestOptions)
-        ? MercadoPagoConfig.getAccessToken()
-        : requestOptions.getAccessToken();
+    return Objects.isNull(requestOptions) ? MercadoPagoConfig.getAccessToken() : requestOptions.getAccessToken();
   }
 }

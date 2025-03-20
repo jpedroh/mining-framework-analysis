@@ -1,9 +1,7 @@
 package com.mercadopago.client.merchantorder;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeElementsResourcesPageFromJson;
 import static com.mercadopago.serialization.Serializer.deserializeFromJson;
-
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
@@ -71,20 +69,12 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/get">api
    *     docs</a>
    */
-  public MerchantOrder get(Long id, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder get(Long id, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri(String.format(URL_WITH_ID, id.toString()))
-            .method(HttpMethod.GET)
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri(String.format(URL_WITH_ID, id.toString())).method(HttpMethod.GET).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -98,8 +88,7 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api
    *     docs</a>
    */
-  public MerchantOrder create(MerchantOrderCreateRequest request)
-      throws MPException, MPApiException {
+  public MerchantOrder create(MerchantOrderCreateRequest request) throws MPException, MPApiException {
     return this.create(request, null);
   }
 
@@ -114,21 +103,12 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders/post">api
    *     docs</a>
    */
-  public MerchantOrder create(MerchantOrderCreateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder create(MerchantOrderCreateRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending create merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri("/merchant_orders")
-            .method(HttpMethod.POST)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri("/merchant_orders").method(HttpMethod.POST).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -143,8 +123,7 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api
    *     docs</a>
    */
-  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request)
-      throws MPException, MPApiException {
+  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request) throws MPException, MPApiException {
     return this.update(id, request, null);
   }
 
@@ -160,22 +139,12 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_id/put">api
    *     docs</a>
    */
-  public MerchantOrder update(
-      Long id, MerchantOrderUpdateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MerchantOrder update(Long id, MerchantOrderUpdateRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending update merchant order request");
-
-    MPRequest mpRequest =
-        MPRequest.builder()
-            .uri(String.format(URL_WITH_ID, id.toString()))
-            .method(HttpMethod.PUT)
-            .payload(Serializer.serializeToJson(request))
-            .build();
-
+    MPRequest mpRequest = MPRequest.builder().uri(String.format(URL_WITH_ID, id.toString())).method(HttpMethod.PUT).payload(Serializer.serializeToJson(request)).build();
     MPResponse response = send(mpRequest, requestOptions);
     MerchantOrder result = deserializeFromJson(MerchantOrder.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -189,8 +158,7 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api
    *     docs</a>
    */
-  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request)
-      throws MPException, MPApiException {
+  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request) throws MPException, MPApiException {
     return this.search(request, null);
   }
 
@@ -205,17 +173,12 @@ public class MerchantOrderClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/merchant_orders/_merchant_orders_search/get">api
    *     docs</a>
    */
-  public MPElementsResourcesPage<MerchantOrder> search(
-      MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
+  public MPElementsResourcesPage<MerchantOrder> search(MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending search merchant order request");
-
     MPResponse response = search("/merchant_orders/search", request, requestOptions);
-
-    Type responseType = new TypeToken<MPElementsResourcesPage<MerchantOrder>>() {}.getType();
-    MPElementsResourcesPage<MerchantOrder> result =
-        deserializeElementsResourcesPageFromJson(responseType, response.getContent());
+    Type responseType = new TypeToken<MPElementsResourcesPage<MerchantOrder>>() { }.getType();
+    MPElementsResourcesPage<MerchantOrder> result = deserializeElementsResourcesPageFromJson(responseType, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 }

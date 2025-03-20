@@ -1,7 +1,5 @@
 package com.mercadopago.client.cardtoken;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -54,10 +52,9 @@ public class CardTokenClient extends MercadoPagoClient {
    * @param requestOptions metadata to customize the request
    * @return card token information
    */
-  public CardToken get(String id, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    MPResponse response =
-        send(String.format("/v1/card_tokens/%s", id), HttpMethod.GET, null, null, requestOptions);
+  public CardToken get(String id, MPRequestOptions requestOptions) throws MPException, MPApiException {
+    LOGGER.info("Sending get card token request");
+    MPResponse response = send(String.format("/v1/card_tokens/%s", id), HttpMethod.GET, null, null, requestOptions);
     CardToken cardToken = Serializer.deserializeFromJson(CardToken.class, response.getContent());
     cardToken.setResponse(response);
     return cardToken;
@@ -82,15 +79,9 @@ public class CardTokenClient extends MercadoPagoClient {
    * @return card token information
    * @throws MPException an error if the request fails
    */
-  public CardToken create(CardTokenRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
-    MPResponse response =
-        send(
-            "/v1/card_tokens",
-            HttpMethod.POST,
-            Serializer.serializeToJson(request),
-            null,
-            requestOptions);
+  public CardToken create(CardTokenRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
+    LOGGER.info("Sending create card token request");
+    MPResponse response = send("/v1/card_tokens", HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
     CardToken cardToken = Serializer.deserializeFromJson(CardToken.class, response.getContent());
     cardToken.setResponse(response);
     return cardToken;

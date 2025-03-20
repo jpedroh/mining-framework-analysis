@@ -1,8 +1,6 @@
 package com.mercadopago.client.paymentmethod;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeListFromJson;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -61,16 +59,11 @@ public class PaymentMethodClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/payment_methods/_payment_methods/get">api
    *     docs</a>
    */
-  public MPResourceList<PaymentMethod> list(MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MPResourceList<PaymentMethod> list(MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending list payment method");
-
     MPResponse response = list("/v1/payment_methods", HttpMethod.GET, null, null, requestOptions);
-
-    MPResourceList<PaymentMethod> paymentMethods =
-        deserializeListFromJson(PaymentMethod.class, response.getContent());
+    MPResourceList<PaymentMethod> paymentMethods = deserializeListFromJson(PaymentMethod.class, response.getContent());
     paymentMethods.setResponse(response);
-
     return paymentMethods;
   }
 }
