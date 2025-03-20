@@ -82,8 +82,12 @@ public class ReferenceLoosePartFeeder extends ReferenceFeeder {
     private Location getPickLocation(Camera camera) throws Exception {
         // Process the pipeline to extract RotatedRect results
         pipeline.setCamera(camera);
+<<<<<<< /usr/src/app/output/openpnp/openpnp/3bce6e43e27344d6140fe166b5322cfa77844280/src/main/java/org/openpnp/machine/reference/feeder/ReferenceLoosePartFeeder.java/left.java
         pipeline.setNozzle(nozzle);
+||||||| /usr/src/app/output/openpnp/openpnp/3bce6e43e27344d6140fe166b5322cfa77844280/src/main/java/org/openpnp/machine/reference/feeder/ReferenceLoosePartFeeder.java/base.java
+=======
         pipeline.setFeeder(this);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/3bce6e43e27344d6140fe166b5322cfa77844280/src/main/java/org/openpnp/machine/reference/feeder/ReferenceLoosePartFeeder.java/right.java
         pipeline.process();
         // Grab the results
         List<RotatedRect> results = (List<RotatedRect>) pipeline.getResult("results").model;
