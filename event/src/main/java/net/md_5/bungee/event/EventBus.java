@@ -150,10 +150,17 @@ public class EventBus
                     {
                         continue;
                     }
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/30bea1c1aeb2cff8fbdd1f75856068426dd38171/event/src/main/java/net/md_5/bungee/event/EventBus.java/left.java
                     Consumer<Object>[] baked = entry.getValue().stream()
                             .map( method -> createMethodInvoker( listener, method ) )
                             .toArray( Consumer[]::new );
                     prioritiesMap.computeIfAbsent( entry.getKey(), k -> new HashMap<>() ).put( listener, baked );
+||||||| /usr/src/app/output/spigotmc/bungeecord/30bea1c1aeb2cff8fbdd1f75856068426dd38171/event/src/main/java/net/md_5/bungee/event/EventBus.java/base.java
+                    Method[] baked = new Method[ entry.getValue().size() ];
+                    currentPriorityMap.put( listener, entry.getValue().toArray( baked ) );
+=======
+                    currentPriorityMap.put( listener, entry.getValue().toArray( new Method[ 0 ] ) );
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/30bea1c1aeb2cff8fbdd1f75856068426dd38171/event/src/main/java/net/md_5/bungee/event/EventBus.java/right.java
                 }
                 bakeHandlers( e.getKey() );
             }
