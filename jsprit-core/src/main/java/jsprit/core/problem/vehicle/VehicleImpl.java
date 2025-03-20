@@ -17,6 +17,10 @@
 package jsprit.core.problem.vehicle;
 
 import jsprit.core.problem.AbstractVehicle;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import jsprit.core.problem.Skills;
 import jsprit.core.util.Coordinate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,6 +79,8 @@ public class VehicleImpl extends AbstractVehicle{
 		private boolean returnToDepot = true;
 		
 		private VehicleType type = VehicleTypeImpl.Builder.newInstance("default").build();
+
+        private Skills.Builder skillBuilder = Skills.Builder.newInstance();
 		
 		/**
 		 * Constructs the builder with the vehicleId.
@@ -229,6 +235,17 @@ public class VehicleImpl extends AbstractVehicle{
 		 * @return vehicle builder
 		 */
 		public static Builder newInstance(String vehicleId){ return new Builder(vehicleId); }
+
+		/**
+		 * Adds skill and returns builder.
+		 * 
+		 * @param skill
+		 * @return
+		 */
+		public Builder addSkill(String skill) {
+			skillBuilder.addSkill(skill);
+			return this;
+		}
 		
 	}
 
@@ -243,13 +260,17 @@ public class VehicleImpl extends AbstractVehicle{
 		return new NoVehicle();
 	}
 	
+	public static VehicleImpl copyAndCreateVehicle(Vehicle vehicleToCopy){
+		return new VehicleImpl(vehicleToCopy);
+	}
+//	
+	public static VehicleImpl copyAndCreateVehicleWithNewType(Vehicle vehicleToCopy, VehicleType newType){
+		return new VehicleImpl(vehicleToCopy, newType);
+	}
+//	
 	private final String id;
 
 	private final VehicleType type;
-
-	private final String locationId;
-
-	private final Coordinate coord;
 
 	private final double earliestDeparture;
 
@@ -264,12 +285,12 @@ public class VehicleImpl extends AbstractVehicle{
 	private final Coordinate startLocationCoord;
 
 	private final String startLocationId;
+	
+	private final Skills skills;
 
 	private VehicleImpl(Builder builder){
 		id = builder.id;
 		type = builder.type;
-		coord = builder.locationCoord;
-		locationId = builder.locationId;
 		earliestDeparture = builder.earliestStart;
 		latestArrival = builder.latestArrival;
 		returnToDepot = builder.returnToDepot;
@@ -277,7 +298,48 @@ public class VehicleImpl extends AbstractVehicle{
 		startLocationCoord = builder.startLocationCoord;
 		endLocationId = builder.endLocationId;
 		endLocationCoord = builder.endLocationCoord;
+<<<<<<< /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleImpl.java/left.java
         setVehicleIdentifier(new VehicleTypeKey(type.getTypeId(),startLocationId,endLocationId,earliestDeparture,latestArrival));
+||||||| /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleImpl.java/base.java
+=======
+        skills = builder.skillBuilder.build();
+>>>>>>> /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/vehicle/VehicleImpl.java/right.java
+	}
+	
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param vehicle
+	 */
+	private VehicleImpl(Vehicle vehicle){
+		id = vehicle.getId();
+		type = vehicle.getType();
+		startLocationId = vehicle.getStartLocationId();
+		startLocationCoord = vehicle.getStartLocationCoordinate();
+		endLocationId = vehicle.getEndLocationId();
+		endLocationCoord = vehicle.getEndLocationCoordinate();
+		earliestDeparture = vehicle.getEarliestDeparture();
+		latestArrival = vehicle.getLatestArrival();
+		returnToDepot = vehicle.isReturnToDepot();
+		skills = vehicle.getSkills();
+	}
+	
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param vehicle
+	 */
+	private VehicleImpl(Vehicle vehicle, VehicleType newType){
+		id = vehicle.getId();
+		this.type = newType;
+		startLocationId = vehicle.getStartLocationId();
+		startLocationCoord = vehicle.getStartLocationCoordinate();
+		endLocationId = vehicle.getEndLocationId();
+		endLocationCoord = vehicle.getEndLocationCoordinate();
+		earliestDeparture = vehicle.getEarliestDeparture();
+		latestArrival = vehicle.getLatestArrival();
+		returnToDepot = vehicle.isReturnToDepot();
+		skills = vehicle.getSkills();
 	}
 	
 	/**
@@ -287,7 +349,9 @@ public class VehicleImpl extends AbstractVehicle{
 	 */
 	@Override
 	public String toString() {
-		return "[id="+id+"][type="+type+"][locationId="+locationId+"][coord=" + coord + "][isReturnToDepot=" + isReturnToDepot() + "]";
+		return "[id="+id+"][type="+type+"][startLocationId="+startLocationId+"][startLocationCoord=" + startLocationCoord + "]" +
+				"[endLocationId="+endLocationId+"][endLocationCoord=" + endLocationCoord + "]" +
+				"[isReturnToDepot=" + isReturnToDepot() + "]";
 	}
 
 	@Override
@@ -371,7 +435,9 @@ public class VehicleImpl extends AbstractVehicle{
 		return true;
 	}
 
-	
-	
-	
+	@Override
+	public Skills getSkills() {
+		return skills;
+	}
+
 }

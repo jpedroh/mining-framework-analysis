@@ -164,12 +164,12 @@ public class VehicleRoutingProblem {
 		}
 
         private void incJobIndexCounter(){
-            jobIndexCounter++;
-        }
+	    jobIndexCounter++;
+	}
 
         private void incActivityIndexCounter(){
-            activityIndexCounter++;
-        }
+	    activityIndexCounter++;
+	}
 
         private void incVehicleTypeIdIndexCounter() { vehicleTypeIdIndexCounter++; }
 
@@ -239,28 +239,28 @@ public class VehicleRoutingProblem {
 		 */
         @Deprecated
 		public Builder addJob(Job job) {
-            if(!(job instanceof AbstractJob)) throw new IllegalArgumentException("job must be of type AbstractJob");
-            return addJob((AbstractJob)job);
+	    if(!(job instanceof AbstractJob)) throw new IllegalArgumentException("job must be of type AbstractJob");
+	    return addJob((AbstractJob)job);
 		}
 
         /**
-         * Adds a job which is either a service or a shipment.
-         *
-         * <p>Note that job.getId() must be unique, i.e. no job (either it is a shipment or a service) is allowed to have an already allocated id.
-         *
-         * @param job job to be added
-         * @return this builder
-         * @throws IllegalStateException if job is neither a shipment nor a service, or jobId has already been added.
-         */
+	 * Adds a job which is either a service or a shipment.
+	 *
+	 * <p>Note that job.getId() must be unique, i.e. no job (either it is a shipment or a service) is allowed to have an already allocated id.
+	 *
+	 * @param job job to be added
+	 * @return this builder
+	 * @throws IllegalStateException if job is neither a shipment nor a service, or jobId has already been added.
+	 */
         public Builder addJob(AbstractJob job) {
-            if(tentativeJobs.containsKey(job.getId())) throw new IllegalStateException("jobList already contains a job with id " + job.getId() + ". make sure you use unique ids for your jobs (i.e. service and shipments)");
-            if(!(job instanceof Service || job instanceof Shipment)) throw new IllegalStateException("job must be either a service or a shipment");
-            job.setIndex(jobIndexCounter);
-            incJobIndexCounter();
-            tentativeJobs.put(job.getId(), job);
-            addLocationToTentativeLocations(job);
-            return this;
-        }
+	    if(tentativeJobs.containsKey(job.getId())) throw new IllegalStateException("jobList already contains a job with id " + job.getId() + ". make sure you use unique ids for your jobs (i.e. service and shipments)");
+	    if(!(job instanceof Service || job instanceof Shipment)) throw new IllegalStateException("job must be either a service or a shipment");
+	    job.setIndex(jobIndexCounter);
+	    incJobIndexCounter();
+	    tentativeJobs.put(job.getId(), job);
+	    addLocationToTentativeLocations(job);
+	    return this;
+	}
 		
 		private void addLocationToTentativeLocations(Job job) {
 			if(job instanceof Service) {
@@ -333,45 +333,45 @@ public class VehicleRoutingProblem {
 		 */
         @Deprecated
 		public Builder addVehicle(Vehicle vehicle) {
-            if(!(vehicle instanceof AbstractVehicle)) throw new IllegalStateException("vehicle must be an AbstractVehicle");
-            return addVehicle((AbstractVehicle)vehicle);
+	    if(!(vehicle instanceof AbstractVehicle)) throw new IllegalStateException("vehicle must be an AbstractVehicle");
+	    return addVehicle((AbstractVehicle)vehicle);
 		}
 
         /**
-         * Adds a vehicle.
-         *
-         *
-         * @param vehicle vehicle to be added
-         * @return this builder
-         */
+	 * Adds a vehicle.
+	 *
+	 *
+	 * @param vehicle vehicle to be added
+	 * @return this builder
+	 */
         public Builder addVehicle(AbstractVehicle vehicle) {
-            if(!uniqueVehicles.contains(vehicle)){
-                vehicle.setIndex(vehicleIndexCounter);
-                incVehicleIndexCounter();
-            }
-            if(typeKeyIndices.containsKey(vehicle.getVehicleTypeIdentifier())){
-                vehicle.getVehicleTypeIdentifier().setIndex(typeKeyIndices.get(vehicle.getVehicleTypeIdentifier()));
-            }
-            else {
-                vehicle.getVehicleTypeIdentifier().setIndex(vehicleTypeIdIndexCounter);
-                typeKeyIndices.put(vehicle.getVehicleTypeIdentifier(),vehicleTypeIdIndexCounter);
-                incVehicleTypeIdIndexCounter();
-            }
-            uniqueVehicles.add(vehicle);
-            if(!vehicleTypes.contains(vehicle.getType())){
-                vehicleTypes.add(vehicle.getType());
-            }
-            String startLocationId = vehicle.getStartLocationId();
-            tentative_coordinates.put(startLocationId, vehicle.getStartLocationCoordinate());
-            if(!vehicle.getEndLocationId().equals(startLocationId)){
-                tentative_coordinates.put(vehicle.getEndLocationId(), vehicle.getEndLocationCoordinate());
-            }
-            return this;
-        }
+	    if(!uniqueVehicles.contains(vehicle)){
+	        vehicle.setIndex(vehicleIndexCounter);
+	        incVehicleIndexCounter();
+	    }
+	    if(typeKeyIndices.containsKey(vehicle.getVehicleTypeIdentifier())){
+	        vehicle.getVehicleTypeIdentifier().setIndex(typeKeyIndices.get(vehicle.getVehicleTypeIdentifier()));
+	    }
+	    else {
+	        vehicle.getVehicleTypeIdentifier().setIndex(vehicleTypeIdIndexCounter);
+	        typeKeyIndices.put(vehicle.getVehicleTypeIdentifier(),vehicleTypeIdIndexCounter);
+	        incVehicleTypeIdIndexCounter();
+	    }
+	    uniqueVehicles.add(vehicle);
+	    if(!vehicleTypes.contains(vehicle.getType())){
+	        vehicleTypes.add(vehicle.getType());
+	    }
+	    String startLocationId = vehicle.getStartLocationId();
+	    tentative_coordinates.put(startLocationId, vehicle.getStartLocationCoordinate());
+	    if(!vehicle.getEndLocationId().equals(startLocationId)){
+	        tentative_coordinates.put(vehicle.getEndLocationId(), vehicle.getEndLocationCoordinate());
+	    }
+	    return this;
+	}
 
         private void incVehicleIndexCounter() {
-            vehicleIndexCounter++;
-        }
+	    vehicleIndexCounter++;
+	}
 
         /**
 		 * Sets the activity-costs.
@@ -420,31 +420,47 @@ public class VehicleRoutingProblem {
 			Set<VehicleTypeKey> vehicleTypeKeys = new HashSet<VehicleTypeKey>();
 			List<Vehicle> uniqueVehicles = new ArrayList<Vehicle>();
 			for(Vehicle v : this.uniqueVehicles){
-				VehicleTypeKey key = new VehicleTypeKey(v.getType().getTypeId(),v.getStartLocationId(),v.getEndLocationId(),v.getEarliestDeparture(),v.getLatestArrival());
-				if(!vehicleTypeKeys.contains(key)){
-					uniqueVehicles.add(v);
-					vehicleTypeKeys.add(key);
-				}
-			}
+		VehicleTypeKey key = new VehicleTypeKey(v.getType().getTypeId(),v.getStartLocationId(),v.getEndLocationId(),v.getEarliestDeparture(),v.getLatestArrival());
+		if(!vehicleTypeKeys.contains(key)){
+			uniqueVehicles.add(v);
+			vehicleTypeKeys.add(key);
+		}
+	}
 			for(Vehicle v : uniqueVehicles){
-				double fixed = v.getType().getVehicleCostParams().fix * penaltyFactor;
-				if(penaltyFixedCosts!=null){
-					fixed = penaltyFixedCosts;
-				}
-				VehicleTypeImpl t = VehicleTypeImpl.Builder.newInstance(v.getType().getTypeId())
-						.setCostPerDistance(penaltyFactor*v.getType().getVehicleCostParams().perDistanceUnit)
-						.setCostPerTime(penaltyFactor*v.getType().getVehicleCostParams().perTimeUnit)
-						.setFixedCost(fixed)
-						.setCapacityDimensions(v.getType().getCapacityDimensions())
-						.build();
-				PenaltyVehicleType penType = new PenaltyVehicleType(t,penaltyFactor);
-				String vehicleId = v.getId();
-				VehicleImpl penVehicle = VehicleImpl.Builder.newInstance(vehicleId).setEarliestStart(v.getEarliestDeparture())
-						.setLatestArrival(v.getLatestArrival()).setStartLocationCoordinate(v.getStartLocationCoordinate()).setStartLocationId(v.getStartLocationId())
-						.setEndLocationId(v.getEndLocationId()).setEndLocationCoordinate(v.getEndLocationCoordinate())
-						.setReturnToDepot(v.isReturnToDepot()).setType(penType).build();
-				addVehicle(penVehicle);
-			}
+		double fixed = v.getType().getVehicleCostParams().fix * penaltyFactor;
+		if(penaltyFixedCosts!=null){
+			fixed = penaltyFixedCosts;
+		}
+		VehicleTypeImpl t = VehicleTypeImpl.Builder.newInstance(v.getType().getTypeId())
+				.setCostPerDistance(penaltyFactor*v.getType().getVehicleCostParams().perDistanceUnit)
+				.setCostPerTime(penaltyFactor*v.getType().getVehicleCostParams().perTimeUnit)
+				.setFixedCost(fixed)
+				.setCapacityDimensions(v.getType().getCapacityDimensions())
+				.build();
+		PenaltyVehicleType penType = new PenaltyVehicleType(t,penaltyFactor);
+<<<<<<< /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/VehicleRoutingProblem.java/left.java
+		String vehicleId = v.getId();
+		VehicleImpl penVehicle = VehicleImpl.Builder.newInstance(vehicleId).setEarliestStart(v.getEarliestDeparture())
+				.setLatestArrival(v.getLatestArrival()).setStartLocationCoordinate(v.getStartLocationCoordinate()).setStartLocationId(v.getStartLocationId())
+				.setEndLocationId(v.getEndLocationId()).setEndLocationCoordinate(v.getEndLocationCoordinate())
+				.setReturnToDepot(v.isReturnToDepot()).setType(penType).build();
+||||||| /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/VehicleRoutingProblem.java/base.java
+		String vehicleId = v.getId();
+	//				String vehicleId = "penaltyVehicle_" + new VehicleTypeKey(v.getType().getTypeId(),v.getStartLocationId(),v.getEndLocationId(),v.getEarliestDeparture(),v.getLatestArrival()).toString();
+		Vehicle penVehicle = VehicleImpl.Builder.newInstance(vehicleId).setEarliestStart(v.getEarliestDeparture())
+				.setLatestArrival(v.getLatestArrival()).setStartLocationCoordinate(v.getStartLocationCoordinate()).setStartLocationId(v.getStartLocationId())
+				.setEndLocationId(v.getEndLocationId()).setEndLocationCoordinate(v.getEndLocationCoordinate())
+				.setReturnToDepot(v.isReturnToDepot()).setType(penType).build();
+=======
+		Vehicle penVehicle = VehicleImpl.copyAndCreateVehicleWithNewType(v, penType);
+	//				String vehicleId = v.getId();
+	//				Vehicle penVehicle = VehicleImpl.Builder.newInstance(vehicleId).setEarliestStart(v.getEarliestDeparture())
+	//						.setLatestArrival(v.getLatestArrival()).setStartLocationCoordinate(v.getStartLocationCoordinate()).setStartLocationId(v.getStartLocationId())
+	//						.setEndLocationId(v.getEndLocationId()).setEndLocationCoordinate(v.getEndLocationCoordinate())
+	//						.setReturnToDepot(v.isReturnToDepot()).setType(penType).build();
+>>>>>>> /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/problem/VehicleRoutingProblem.java/right.java
+		addVehicle(penVehicle);
+	}
 		}
 
 
@@ -509,8 +525,8 @@ public class VehicleRoutingProblem {
 		 */
         @Deprecated
 		public Builder addConstraint(jsprit.core.problem.constraint.Constraint constraint){
-            //noinspection deprecation
-            constraints.add(constraint);
+	    //noinspection deprecation
+	    constraints.add(constraint);
 			return this;
 		}
 		

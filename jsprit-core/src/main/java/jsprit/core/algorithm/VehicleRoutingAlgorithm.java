@@ -105,7 +105,13 @@ public class VehicleRoutingAlgorithm {
 	/**
 	 * Adds solution to the collection of initial solutions.
 	 * 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/left.java
 	 * @param solution the solution to be added
+||||||| /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/base.java
+	 * @param solution
+=======
+	 * @param solution to the set of initialSolutions
+>>>>>>> /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/right.java
 	 */
 	public void addInitialSolution(VehicleRoutingProblemSolution solution){
         verify(solution);
@@ -138,7 +144,13 @@ public class VehicleRoutingAlgorithm {
     /**
 	 * Sets premature termination.
 	 *
+<<<<<<< /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/left.java
 	 * @param prematureAlgorithmTermination the termination criterion
+||||||| /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/base.java
+	 * @param prematureAlgorithmTermination
+=======
+	 * @param prematureAlgorithmTermination that terminates the algorithm according to its termination criterion
+>>>>>>> /usr/src/app/output/jsprit/jsprit/9c4bd498c41594d2634c177e7309e0e365c58859/jsprit-core/src/main/java/jsprit/core/algorithm/VehicleRoutingAlgorithm.java/right.java
 	 */
 	public void setPrematureAlgorithmTermination(PrematureAlgorithmTermination prematureAlgorithmTermination){
 		this.prematureAlgorithmTermination = prematureAlgorithmTermination;

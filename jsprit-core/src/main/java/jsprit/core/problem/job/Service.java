@@ -17,7 +17,12 @@
 package jsprit.core.problem.job;
 
 import jsprit.core.problem.AbstractJob;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import jsprit.core.problem.Capacity;
+import jsprit.core.problem.Skills;
 import jsprit.core.problem.solution.route.activity.TimeWindow;
 import jsprit.core.util.Coordinate;
 
@@ -67,6 +72,8 @@ public class Service extends AbstractJob {
 		protected Capacity.Builder capacityBuilder = Capacity.Builder.newInstance();
 		
 		protected Capacity capacity;
+		
+		protected Skills.Builder skillBuilder = Skills.Builder.newInstance();
 		
 		/**
 		 * Constructs the builder.
@@ -180,6 +187,11 @@ public class Service extends AbstractJob {
 			capacity = capacityBuilder.build();
 			return new Service(this);
 		}
+
+		public Builder addSkill(String string) {
+			skillBuilder.addSkill(string);
+			return this;
+		}
 		
 	}
 	
@@ -197,6 +209,8 @@ public class Service extends AbstractJob {
 	private final TimeWindow timeWindow;
 	
 	private final Capacity size;
+	
+	private final Skills skills;
 
 	Service(Builder builder){
 		id = builder.id;
@@ -206,6 +220,7 @@ public class Service extends AbstractJob {
 		timeWindow = builder.timeWindow;
 		type = builder.type;
 		size = builder.capacity;
+		skills = builder.skillBuilder.build();
 	}
 
 	@Override
@@ -300,5 +315,15 @@ public class Service extends AbstractJob {
 	public Capacity getSize() {
 		return size;
 	}
+
+	/**
+	 * Returns set of required skills. All skills are in lower case.
+	 * 
+	 * @return
+	 */
+	public Skills getRequiredSkills() {
+		return skills;
+	}
 	
+
 }
