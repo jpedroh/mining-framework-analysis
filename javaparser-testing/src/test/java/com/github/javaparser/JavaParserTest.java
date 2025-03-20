@@ -37,9 +37,8 @@ import com.github.javaparser.ast.type.Type;
 import org.junit.Test;
 
 import java.util.Optional;
-
-import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Providers.*;
+import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.Range.range;
 import static com.github.javaparser.utils.TestUtils.assertInstanceOf;
 import static com.github.javaparser.utils.Utils.EOL;
