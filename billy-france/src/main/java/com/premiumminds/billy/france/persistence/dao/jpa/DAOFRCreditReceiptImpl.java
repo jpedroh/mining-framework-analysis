@@ -1,29 +1,11 @@
-/*
- * Copyright (C) 2017 Premium Minds.
- *
- * This file is part of billy france (FR Pack).
- *
- * billy france (FR Pack) is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * billy france (FR Pack) is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with billy france (FR Pack). If not, see <http://www.gnu.org/licenses/>.
- */
 package com.premiumminds.billy.france.persistence.dao.jpa;
-
 import java.util.ArrayList;
+import com.querydsl.jpa.JPAExpressions;
 import java.util.List;
+import com.querydsl.jpa.JPQLQuery;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-
 import com.premiumminds.billy.core.services.StringID;
 import com.premiumminds.billy.core.services.entities.Business;
 import com.premiumminds.billy.core.services.entities.documents.GenericInvoice;
@@ -35,51 +17,26 @@ import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditReceip
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRCreditReceiptEntryEntity;
 import com.premiumminds.billy.france.persistence.entities.jpa.QJPAFRGenericInvoiceEntity;
 import com.premiumminds.billy.france.services.entities.FRCreditReceipt;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 
-public class DAOFRCreditReceiptImpl extends
-        AbstractDAOFRGenericInvoiceImpl<FRCreditReceiptEntity, JPAFRCreditReceiptEntity> implements DAOFRCreditReceipt {
+public class DAOFRCreditReceiptImpl extends AbstractDAOFRGenericInvoiceImpl<FRCreditReceiptEntity, JPAFRCreditReceiptEntity> implements DAOFRCreditReceipt {
+  @Inject public DAOFRCreditReceiptImpl(Provider<EntityManager> emProvider) {
+    super(emProvider);
+  }
 
-    @Inject
-    public DAOFRCreditReceiptImpl(Provider<EntityManager> emProvider) {
-        super(emProvider);
-    }
+  @Override public FRCreditReceiptEntity getEntityInstance() {
+    return new JPAFRCreditReceiptEntity();
+  }
 
-    @Override
-    public FRCreditReceiptEntity getEntityInstance() {
-        return new JPAFRCreditReceiptEntity();
-    }
+  @Override protected Class<JPAFRCreditReceiptEntity> getEntityClass() {
+    return JPAFRCreditReceiptEntity.class;
+  }
 
-    @Override
-    protected Class<JPAFRCreditReceiptEntity> getEntityClass() {
-        return JPAFRCreditReceiptEntity.class;
-    }
-
-    @Override
-    public List<FRCreditReceipt> findByReferencedDocument(StringID<Business> uidCompany, StringID<GenericInvoice> uidInvoice) {
-        QJPAFRCreditReceiptEntity creditReceipt = QJPAFRCreditReceiptEntity.jPAFRCreditReceiptEntity;
-        QJPAFRCreditReceiptEntryEntity entry = QJPAFRCreditReceiptEntryEntity.jPAFRCreditReceiptEntryEntity;
-        QJPAFRGenericInvoiceEntity receipt = QJPAFRGenericInvoiceEntity.jPAFRGenericInvoiceEntity;
-
-        final JPQLQuery<String> invQ = JPAExpressions
-            .select(receipt.uid)
-            .from(receipt)
-            .where(receipt.uid.eq(uidInvoice.getIdentifier()));
-
-        final JPQLQuery<String> entQ = JPAExpressions
-            .select(entry.uid)
-            .from(entry)
-            .where(this.toDSL(entry.receiptReference, QJPAFRGenericInvoiceEntity.class).uid.in(invQ));
-
-        return new ArrayList<>(this
-            .createQuery()
-            .from(creditReceipt)
-            .where(this.toDSL(creditReceipt.business, QJPAFRBusinessEntity.class).uid
-                       .eq(uidCompany.getIdentifier())
-                       .and(this.toDSL(creditReceipt.entries.any(), QJPAFRCreditReceiptEntryEntity.class).uid.in(entQ)))
-            .select(creditReceipt)
-            .fetch());
-    }
-
+  @Override public List<FRCreditReceipt> findByReferencedDocument(StringID<Business> uidCompany, StringID<GenericInvoice> uidInvoice) {
+    QJPAFRCreditReceiptEntity creditReceipt = QJPAFRCreditReceiptEntity.jPAFRCreditReceiptEntity;
+    QJPAFRCreditReceiptEntryEntity entry = QJPAFRCreditReceiptEntryEntity.jPAFRCreditReceiptEntryEntity;
+    QJPAFRGenericInvoiceEntity receipt = QJPAFRGenericInvoiceEntity.jPAFRGenericInvoiceEntity;
+    final JPQLQuery<String> invQ = JPAExpressions.select(receipt.uid).from(receipt).where(receipt.uid.eq(uidInvoice.getIdentifier()));
+    final JPQLQuery<String> entQ = JPAExpressions.select(entry.uid).from(entry).where(this.toDSL(entry.receiptReference, QJPAFRGenericInvoiceEntity.class).uid.in(invQ));
+    return new ArrayList<>(this.createQuery().from(creditReceipt).where(this.toDSL(creditReceipt.business, QJPAFRBusinessEntity.class).uid.eq(uidCompany.getIdentifier()).and(this.toDSL(creditReceipt.entries.any(), QJPAFRCreditReceiptEntryEntity.class).uid.in(entQ))).select(creditReceipt).fetch());
+  }
 }
