@@ -63,9 +63,10 @@ public class CSVRecordTest {
         }
     }
 
-    private Map<String, Integer> headerMap;
-    private CSVRecord record, recordWithHeader;
     private String[] values;
+
+    private CSVRecord record, recordWithHeader;
+    private Map<String, Integer> headerMap;
 
     @BeforeEach
     public void setUp() throws Exception {
