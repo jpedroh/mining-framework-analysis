@@ -2119,12 +2119,12 @@ public final class CSVFormat implements Serializable {
             if (c == quote) {
                 // write out segment up until this char
                 if (pos > 0) {
-                    appendable.append(builder.substring(0, pos));
-                    appendable.append(quote);
+                    append(builder.substring(0, pos), appendable);
+                    append(quote, appendable);
                     builder.setLength(0);
                     pos = -1;
                 }
-                appendable.append((char) c);
+                append((char) c, appendable);
             }
             pos++;
         }
