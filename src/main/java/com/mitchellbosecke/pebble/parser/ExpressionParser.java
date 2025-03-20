@@ -469,12 +469,41 @@ public class ExpressionParser {
 
             node = new GetAttributeExpression(node, new LiteralStringExpression(token.getValue()), args, stream.getFilename(), token.getLineNumber());
 
-
         } else if (stream.current().test(Token.Type.PUNCTUATION, "[")) {
             // skip over opening '[' bracket
             stream.next();
 
-            node = new GetAttributeExpression(node, parseExpression(), stream.getFilename(), stream.current().getLineNumber());
+<<<<<<< /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/parser/ExpressionParser.java/left.java
+            node = new GetAttributeExpression(node, parseExpression());
+
+           //stream.next();
+||||||| /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/parser/ExpressionParser.java/base.java
+            // treat the string value inside the brackets just the same as we
+            // would an attribute name following a '.', except that the
+            // attribute name gathered this way is NOT held to the same naming
+            // restrictions (e.g. can include hyphens '-')
+            Token token = stream.current();
+            if (token.test(Type.STRING) || token.test(Type.NUMBER)) {
+                node = new GetAttributeExpression(node, token.getValue());
+            } else {
+                throw new ParserException(null, "Only strings and numbers allowed within square brackets.",
+                        token.getLineNumber(), stream.getFilename());
+            }
+            stream.next();
+=======
+            // treat the string value inside the brackets just the same as we
+            // would an attribute name following a '.', except that the
+            // attribute name gathered this way is NOT held to the same naming
+            // restrictions (e.g. can include hyphens '-')
+            Token token = stream.current();
+            if (token.test(Type.STRING) || token.test(Type.NUMBER)) {
+                node = new GetAttributeExpression(node, token.getValue(), stream.getFilename(), token.getLineNumber());
+            } else {
+                throw new ParserException(null, "Only strings and numbers allowed within square brackets.",
+                        token.getLineNumber(), stream.getFilename());
+            }
+            stream.next();
+>>>>>>> /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/parser/ExpressionParser.java/right.java
 
             // move past the closing ']' bracket
             stream.expect(Token.Type.PUNCTUATION, "]");

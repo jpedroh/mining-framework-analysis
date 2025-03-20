@@ -1,14 +1,20 @@
 /*******************************************************************************
  * This file is part of Pebble.
-<<<<<<< HEAD
- * <p>
- * Copyright (c) 2014 by Mitchell Bösecke
- * <p>
+<<<<<<< /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+ * <p> 
+||||||| /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+ *  
 =======
- *
+ * 
+>>>>>>> /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
  * Copyright (c) 2014 by Mitchell Bösecke
- *
->>>>>>> d6a41085fe86ce30f23d3b7929ad492343ff01b7
+<<<<<<< /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+ * <p> 
+||||||| /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/base.java
+ *  
+=======
+ * 
+>>>>>>> /usr/src/app/output/mbosecke/pebble/549bdec272479087af0ff89e129ee8a90ee7bd71/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
@@ -62,8 +68,8 @@ public class GetAttributeExpression implements Expression<Object> {
         this(node, attributeNameExpression, null, filename, lineNumber);
     }
 
-    public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, ArgumentsNode args, String filename, int lineNumber) {
-
+    public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, ArgumentsNode args, String filename,
+            int lineNumber) {
         this.node = node;
         this.attributeNameExpression = attributeNameExpression;
         this.args = args;
@@ -149,18 +155,15 @@ public class GetAttributeExpression implements Expression<Object> {
         } else if (context.isStrictVariables()) {
             if (object == null) {
                 final String rootPropertyName = ((ContextVariableExpression) node).getName();
-
                 throw new RootAttributeNotFoundException(
-                        null,
-                        String.format(
-                                "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
-                                rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+                        null, String.format(
+                        "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
+                        rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
             } else {
                 throw new AttributeNotFoundException(
-                        null,
-                        String.format(
-                                "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
-                                attributeName, object.getClass().getName()), attributeName, this.lineNumber,
+                        null, String.format(
+                        "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
+                        attributeName, object.getClass().getName()), attributeName, this.lineNumber,
                         this.filename);
             }
         }
