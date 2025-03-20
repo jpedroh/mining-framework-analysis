@@ -1,5 +1,4 @@
 package com.tumblr.jumblr.types;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tumblr.jumblr.responses.PostDeserializer;
@@ -15,85 +14,72 @@ import org.junit.Test;
  * @author jc
  */
 public class PhotoPostTest extends TypeTest {
+  private String caption = "hello";
 
-    private String caption = "hello";
-    private Integer width = 300, height = 500;
+  private Integer width = 300, height = 500;
 
-    private String photos = "[{\"caption\":\"caption1\",\"alt_sizes\":[{\"url\":\"url\",\"width\":400,\"height\":401}],\"original_size\":{\"width\":1,\"height\":2}}]";
+  private String photos = "[{\"caption\":\"caption1\",\"alt_sizes\":[{\"url\":\"url\",\"width\":400,\"height\":401}],\"original_size\":{\"width\":1,\"height\":2}}]";
 
-    private PhotoPost post;
+  private PhotoPost post;
 
-    @Before
-    public void setup() {
-        Map<String, Object> flat = new HashMap<String, Object>();
-        flat.put("type", "photo");
-        flat.put("caption", caption);
-        flat.put("width", width);
-        flat.put("height", height);
-        flat.put("photos", photos);
-        Gson gson = new GsonBuilder().registerTypeAdapter(Post.class, new PostDeserializer()).create();
-        post = (PhotoPost) gson.fromJson(flatSerialize(flat), Post.class);
-    }
+  @Before public void setup() {
+    Map<String, Object> flat = new HashMap<String, Object>();
+    flat.put("type", "photo");
+    flat.put("caption", caption);
+    flat.put("width", width);
+    flat.put("height", height);
+    flat.put("photos", photos);
+    Gson gson = new GsonBuilder().registerTypeAdapter(Post.class, new PostDeserializer()).create();
+    post = (PhotoPost) gson.fromJson(flatSerialize(flat), Post.class);
+  }
 
-    @Test
-    public void testReaders() {
-        assertEquals(caption, post.getCaption());
-        assertEquals(width, post.getWidth());
-        assertEquals(height, post.getHeight());
-        assertEquals(false, post.isPhotoset());
+  @Test public void testReaders() {
+    assertEquals(caption, post.getCaption());
+    assertEquals(width, post.getWidth());
+    assertEquals(height, post.getHeight());
+    assertEquals(false, post.isPhotoset());
+    Photo photo = post.getPhotos().get(0);
+    assertEquals("caption1", photo.getCaption());
+    PhotoSize size = photo.getSizes().get(0);
+    assertEquals(400, size.getWidth());
+    assertEquals(401, size.getHeight());
+    assertEquals("url", size.getUrl());
+  }
 
-        Photo photo = post.getPhotos().get(0);
-        assertEquals("caption1", photo.getCaption());
+  @Test(expected = IllegalArgumentException.class) public void setDataWithSource() {
+    post.setData(new File("some_path"));
+    post.setSource("something");
+  }
 
-        PhotoSize size = photo.getSizes().get(0);
-        assertEquals(400, size.getWidth());
-        assertEquals(401, size.getHeight());
-        assertEquals("url", size.getUrl());
-    }
+  @Test public void setDataWithoutSource() {
+    File file = new File("some_path");
+    post.setData(file);
+    Map<String, Object> detail = post.detail();
+    assertEquals(file, detail.get("data[0]"));
+    this.setup();
+  }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void setDataWithSource() {
-        post.setData(new File("some_path"));
-        post.setSource("something");
-    }
+  @Test(expected = IllegalArgumentException.class) public void setSourceWithData() {
+    post.setSource("something");
+    post.setData(new File("some_path"));
+  }
 
-    @Test
-    public void setDataWithoutSource() {
-        File file = new File("some_path");
-        post.setData(file);
-        Map<String, Object> detail = post.detail();
-        assertEquals(file, detail.get("data[0]"));
-        // clear
-        this.setup();
-    }
+  @Test public void setSourceWithoutData() {
+    String embedCode = "external";
+    post.setSource(embedCode);
+    Map<String, Object> detail = post.detail();
+    assertEquals(embedCode, detail.get("source[0]"));
+    this.setup();
+  }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void setSourceWithData() {
-        post.setSource("something");
-        post.setData(new File("some_path"));
-    }
-
-    @Test
-    public void setSourceWithoutData() {
-        String embedCode = "external";
-        post.setSource(embedCode);
-        Map<String, Object> detail = post.detail();
-        assertEquals(embedCode, detail.get("source[0]"));
-        // clear
-        this.setup();
-    }
-
-    @Test
-    public void testOtherDetail() {
-        post.setCaption("test_caption");
-        post.setLinkUrl("link url");
-
-        Map<String, Object> detail = post.detail();
-        assertEquals("test_caption", detail.get("caption"));
-        assertEquals("link url", detail.get("link"));
-        assertEquals("photo", detail.get("type"));
-        assertEquals(1, post.getPhotos().get(0).getOriginalSize().getWidth());
-        assertEquals(2, post.getPhotos().get(0).getOriginalSize().getHeight());
-    }
-
+  @Test public void testOtherDetail() {
+    post.setCaption("test_caption");
+    post.setLinkUrl("link url");
+    Map<String, Object> detail = post.detail();
+    assertEquals("test_caption", detail.get("caption"));
+    assertEquals("link url", detail.get("link"));
+    assertEquals("photo", detail.get("type"));
+    assertEquals(1, post.getPhotos().get(0).getOriginalSize().getWidth());
+    assertEquals(2, post.getPhotos().get(0).getOriginalSize().getHeight());
+  }
 }
