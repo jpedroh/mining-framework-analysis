@@ -89,6 +89,7 @@ public class ReferenceBottomVision implements PartAlignment {
         }
     }
     
+<<<<<<< /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/left.java
     public Location getCameraLocationAtPartHeight(Part part, Camera camera, Nozzle nozzle, double angle) {
         return camera.getLocation(nozzle)
                 .add(new Location(part.getHeight()
@@ -98,6 +99,18 @@ public class ReferenceBottomVision implements PartAlignment {
                         0.0))
                 .derive(null, null, null, angle);
     }
+||||||| /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/base.java
+=======
+    public Location getCameraLocationAtPartHeight(Part part, Camera camera, double angle) {
+        return camera.getLocation()
+                .add(new Location(part.getHeight()
+                        .getUnits(),
+                        0.0, 0.0, part.getHeight()
+                        .getValue(),
+                        0.0))
+                .derive(null, null, null, angle);
+    }
+>>>>>>> /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/right.java
 
     private PartAlignmentOffset findOffsetsPreRotate(Part part, BoardLocation boardLocation,
             Location placementLocation, Nozzle nozzle, Camera camera, PartSettings partSettings)
@@ -109,7 +122,13 @@ public class ReferenceBottomVision implements PartAlignment {
         }
         wantedAngle = angleNorm(wantedAngle, 180.);
         // Wanted location.
+<<<<<<< /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/left.java
         Location wantedLocation = getCameraLocationAtPartHeight(part, camera, nozzle, wantedAngle);
+||||||| /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/base.java
+        Location wantedLocation = angle;
+=======
+        Location wantedLocation = getCameraLocationAtPartHeight(part, camera, wantedAngle);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/right.java
                 
         Location nozzleLocation = wantedLocation;
         MovableUtils.moveToLocationAtSafeZ(nozzle, nozzleLocation);
@@ -189,9 +208,24 @@ public class ReferenceBottomVision implements PartAlignment {
                     throws Exception {
         // Create a location that is the Camera's X, Y, it's Z + part height
         // and a rotation of 0, unless preRotate is enabled
+<<<<<<< /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/left.java
         Location wantedLocation = getCameraLocationAtPartHeight(part, camera, nozzle, 0.);
         
         MovableUtils.moveToLocationAtSafeZ(nozzle, wantedLocation);
+||||||| /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/base.java
+        Location startLocation = camera.getLocation();
+        Length partHeight = part.getHeight();
+        Location partHeightLocation =
+                new Location(partHeight.getUnits(), 0, 0, partHeight.getValue(), 0);
+        startLocation = startLocation.add(partHeightLocation)
+                                     .derive(null, null, null, 0.);
+
+        MovableUtils.moveToLocationAtSafeZ(nozzle, startLocation);
+=======
+        Location wantedLocation = getCameraLocationAtPartHeight(part, camera, 0.);
+        
+        MovableUtils.moveToLocationAtSafeZ(nozzle, wantedLocation);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/right.java
 
         try (CvPipeline pipeline = partSettings.getPipeline()) {
             RotatedRect rect = processPipelineAndGetResult(pipeline, camera, part, nozzle);

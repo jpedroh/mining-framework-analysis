@@ -90,7 +90,6 @@ public class VisionUtils {
     public static Location getPixelLocation(Camera camera, HeadMountable tool, double x, double y) {
         return camera.getLocation(tool).add(getPixelCenterOffsets(camera, x, y));
     }
-
     /**
      * Get an angle in the OpenPNP coordinate system from an angle in the camera pixel  
      * coordinate system. 
@@ -107,7 +106,20 @@ public class VisionUtils {
     public static double getPixelAngle(Camera camera, double angle) {
         return -angle;
     }
-    
+    /**
+     * Get an angle in the OpenPNP coordinate system from an angle in the camera pixel  
+     * coordinate system. 
+     * The angle needs to be sign reversed to reflect the fact that the Z and Y axis are sign reversed.
+     * OpenPNP uses a coordinate system with Z pointing towards the viewer, Y pointing up. OpenCV
+     * however uses one with Z pointing away from the viewer, Y pointing downwards. Right-handed
+     * rotation must be sign-reversed.   
+     * See {@link VisionUtils#getPixelCenterOffsets(Camera, double, double)}.
+     * 
+     * @param camera
+     * @param angle
+     * @return
+     */
+
     public static List<Location> sortLocationsByDistance(final Location origin,
             List<Location> locations) {
         // sort the results by distance from center ascending

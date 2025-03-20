@@ -153,8 +153,16 @@ public class ReferenceBottomVisionPartConfigurationWizard extends AbstractConfig
         }
 
         // position the part over camera center
-        Location cameraLocation = bottomVision.getCameraLocationAtPartHeight(part, 
+        Location cameraLocation = bottomVision
+<<<<<<< /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceBottomVisionPartConfigurationWizard.java/left.java
+                                             .getCameraLocationAtPartHeight(part, 
                 VisionUtils.getBottomVisionCamera(), nozzle, 0.);
+||||||| /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceBottomVisionPartConfigurationWizard.java/base.java
+                                             .getCameraLocationAtPartHeight();
+=======
+                                             .getCameraLocationAtPartHeight(part, 
+                VisionUtils.getBottomVisionCamera(), 0.);
+>>>>>>> /usr/src/app/output/openpnp/openpnp/db3203525ab5fe997c4cf7f90dce74d9d5c74943/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceBottomVisionPartConfigurationWizard.java/right.java
 
         if (alignmentOffset.getPreRotated()) {
             // See https://github.com/openpnp/openpnp/pull/590 for explanations of the magic
