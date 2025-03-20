@@ -831,7 +831,7 @@ public class BendingPlayer {
 	public static Map<UUID, BendingPlayer> getPlayers() {
 		return PLAYERS;
 	}
-
+	
 	
 	/**
 	 * Gets the bukkit player object {@link BendingPlayer}.
