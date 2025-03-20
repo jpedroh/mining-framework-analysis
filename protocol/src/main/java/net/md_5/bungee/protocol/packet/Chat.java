@@ -37,6 +37,13 @@ public class Chat extends DefinedPacket
         this.sender = sender == null ? EMPTY_UUID : sender;
     }
 
+    public Chat(String message, byte position, UUID sender)
+    {
+        this.message = message;
+        this.position = position;
+        this.sender = sender == null ? EMPTY_UUID : sender;
+    }
+
     @Override
     public void read(ByteBuf buf, ProtocolConstants.Direction direction, int protocolVersion)
     {
