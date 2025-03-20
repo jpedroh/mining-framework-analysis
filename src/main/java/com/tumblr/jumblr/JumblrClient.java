@@ -8,6 +8,8 @@ import org.scribe.model.Token;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +35,31 @@ public class JumblrClient {
      * @param consumerSecret The consumer secret for the client
      */
     public JumblrClient(String consumerKey, String consumerSecret) {
+        this(consumerKey, consumerSecret, (URI) null);
+    }
+
+    /**
+     * Instantiate a new Jumblr Client with no token
+     * @param consumerKey The consumer key for the client
+     * @param consumerSecret The consumer secret for the client
+     * @param callbackUrl The callbackUrl for authentication requests
+     */
+    public JumblrClient(String consumerKey, String consumerSecret, URI callbackUrl) {
         this();
+        this.requestBuilder.setCallback(callbackUrl);
         this.requestBuilder.setConsumer(consumerKey, consumerSecret);
         this.apiKey = consumerKey;
+    }
+
+    /**
+     * Instantiate a new Jumblr Client with no token
+     * @param consumerKey The consumer key for the client
+     * @param consumerSecret The consumer secret for the client
+     * @param callbackUrl The callbackUrl for authentication requests
+     * @throws URISyntaxException 
+     */
+    public JumblrClient(String consumerKey, String consumerSecret, String callbackUrl) throws URISyntaxException {
+        this(consumerKey, consumerSecret, new URI(callbackUrl));
     }
 
     /**
@@ -400,6 +424,14 @@ public class JumblrClient {
 
     public void setRequestBuilder(RequestBuilder builder) {
         this.requestBuilder = builder;
+    }
+    
+    /**
+     * Attempts to authenticate by opening the browser and starting a server to handle the callback.
+     * @return true on success, false on failure
+     */
+    public boolean authenticate() {
+        return requestBuilder.authenticate();
     }
 
     public RequestBuilder getRequestBuilder() {

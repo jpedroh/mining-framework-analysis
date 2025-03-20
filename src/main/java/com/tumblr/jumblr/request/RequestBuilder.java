@@ -11,6 +11,9 @@ import com.tumblr.jumblr.responses.ResponseWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.TumblrApi;
@@ -18,6 +21,7 @@ import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
+import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 /**
@@ -31,10 +35,24 @@ public class RequestBuilder {
     private String hostname = "api.tumblr.com";
     private String xauthEndpoint = "https://www.tumblr.com/oauth/access_token";
     private String version = "0.0.11";
+    private Token requestToken;
+    private URI callbackUrl;
+
     private final JumblrClient client;
 
     public RequestBuilder(JumblrClient client) {
         this.client = client;
+        try {
+            ServerSocket s = new ServerSocket(0);
+            int port = s.getLocalPort();
+            s.close();
+            callbackUrl = new URI("http", null, "127.0.0.1", port, "/", null, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        System.out.println(callbackUrl);
     }
 
     public String getRedirectUrl(String path) {
@@ -121,19 +139,57 @@ public class RequestBuilder {
         return request;
     }
 
+    public void setCallback(URI callbackUrl) {
+        if (callbackUrl != null) {
+            this.callbackUrl = callbackUrl;
+        }
+    }
+
     public void setConsumer(String consumerKey, String consumerSecret) {
         service = new ServiceBuilder().
         provider(TumblrApi.class).
         apiKey(consumerKey).apiSecret(consumerSecret).
+        callback(callbackUrl.toString()).
         build();
     }
 
-    public void setToken(String token, String tokenSecret) {
-        this.token = new Token(token, tokenSecret);
+    private void setToken(Token token) {
+        this.token = token;
     }
 
     public void setToken(final Token token) {
         this.token = token;
+    }
+
+    public void setToken(String token, String tokenSecret) {
+        setToken(new Token(token, tokenSecret));
+    }
+
+    private void verify(Verifier verifier) {
+        setToken(service.getAccessToken(service.getRequestToken(), verifier));
+    }
+
+    public void verify(String verifier) {
+        verify(new Verifier(verifier));
+    }
+
+    public String getAuthorizationUrl() {
+        return service.getAuthorizationUrl(requestToken);
+    }
+
+    public boolean authenticate() {
+        Token verifier;
+        try {
+            verifier = Authenticator.autoAuthenticate(service, "oauth_verifier", callbackUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (verifier == null) { return false; }
+
+        setToken(verifier);
+        return true;
     }
 
     /* package-visible for testing */ ResponseWrapper clear(Response response) {
