@@ -1,11 +1,9 @@
 package com.mercadopago.client.cardtoken;
-
 import static com.mercadopago.net.HttpStatus.CREATED;
 import static com.mercadopago.net.HttpStatus.OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import com.mercadopago.BaseClientIT;
 import com.mercadopago.client.customer.CustomerCardCreateRequest;
 import com.mercadopago.client.customer.CustomerClient;
@@ -20,15 +18,15 @@ import org.junit.jupiter.api.Test;
 /** CardTokenClientIT class. */
 public class CardTokenClientIT extends BaseClientIT {
   private final CustomerClient customerClient = new CustomerClient();
+
   private final CardTokenClient tokenClient = new CardTokenClient();
+
   private final CardTokenTestClient cardTokenTestClient = new CardTokenTestClient();
 
-  @Test
-  public void getCardTokenSuccess() {
+  @Test public void getCardTokenSuccess() {
     try {
       CardToken createdCardToken = cardTokenTestClient.createTestCardToken("approved");
       CardToken token = tokenClient.get(createdCardToken.getId());
-
       assertNotNull(token);
       assertEquals(OK, token.getResponse().getStatusCode());
       assertEquals(createdCardToken.getId(), token.getId());
@@ -39,12 +37,10 @@ public class CardTokenClientIT extends BaseClientIT {
     }
   }
 
-  @Test
-  public void getCardTokenWithRequestOptionsSuccess() {
+  @Test public void getCardTokenWithRequestOptionsSuccess() {
     try {
       CardToken createdCardToken = cardTokenTestClient.createTestCardToken("approved");
       CardToken token = tokenClient.get(createdCardToken.getId(), buildRequestOptions());
-
       assertNotNull(token);
       assertEquals(OK, token.getResponse().getStatusCode());
       assertEquals(createdCardToken.getId(), token.getId());
@@ -55,31 +51,21 @@ public class CardTokenClientIT extends BaseClientIT {
     }
   }
 
-  @Test
-  public void createCardTokenSuccess() {
+  @Test public void createCardTokenSuccess() {
     try {
       CustomerRequest customerRequest = buildCustomerRequest();
       Customer customer = customerClient.create(customerRequest);
-
       try {
         CustomerCardCreateRequest cardCreateRequest = buildCardCreateRequest();
         CustomerCard customerCard = customerClient.createCard(customer.getId(), cardCreateRequest);
-
-        CardTokenRequest cardTokenRequest =
-            CardTokenRequest.builder()
-                .cardId(customerCard.getId())
-                .customerId(customer.getId())
-                .securityCode("123")
-                .build();
-
+        CardTokenRequest cardTokenRequest = CardTokenRequest.builder().cardId(customerCard.getId()).customerId(customer.getId()).securityCode("123").build();
         CardToken token = tokenClient.create(cardTokenRequest);
-
         assertNotNull(token);
         assertNotNull(token.getResponse());
         assertEquals(CREATED, token.getResponse().getStatusCode());
         assertNotNull(token.getId());
         assertEquals(customerCard.getId(), token.getCardId());
-      } finally {
+      }  finally {
         customerClient.delete(customer.getId());
       }
     } catch (MPApiException mpApiException) {
@@ -89,30 +75,21 @@ public class CardTokenClientIT extends BaseClientIT {
     }
   }
 
-  @Test
-  public void createCardTokenWithRequestOptionsSuccess() {
+  @Test public void createCardTokenWithRequestOptionsSuccess() {
     try {
       CustomerRequest customerRequest = buildCustomerRequest();
       Customer customer = customerClient.create(customerRequest);
-
       try {
         CustomerCardCreateRequest cardCreateRequest = buildCardCreateRequest();
         CustomerCard customerCard = customerClient.createCard(customer.getId(), cardCreateRequest);
-
-        CardTokenRequest cardTokenRequest =
-            CardTokenRequest.builder()
-                .cardId(customerCard.getId())
-                .customerId(customer.getId())
-                .securityCode("123")
-                .build();
-
+        CardTokenRequest cardTokenRequest = CardTokenRequest.builder().cardId(customerCard.getId()).customerId(customer.getId()).securityCode("123").build();
         CardToken token = tokenClient.create(cardTokenRequest, buildRequestOptions());
         assertNotNull(token);
         assertNotNull(token.getResponse());
         assertEquals(CREATED, token.getResponse().getStatusCode());
         assertNotNull(token.getId());
         assertEquals(customerCard.getId(), token.getCardId());
-      } finally {
+      }  finally {
         customerClient.delete(customer.getId());
       }
     } catch (MPApiException mpApiException) {
