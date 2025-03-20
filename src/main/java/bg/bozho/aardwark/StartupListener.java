@@ -182,15 +182,18 @@ public class StartupListener implements ServletContextListener {
                                 Path eventPath = watchableDirectory.getDirectory().resolve(filename);
                                 Path target = determineTarget(watchableDirectory.getWebappName(), eventPath, watchableDirectory.getProjectPath());
                                 if (target != null) {
-                                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+                                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE
+                                            || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                                         // make sure directory structure is in place
                                         target.toFile().mkdirs();
-                                        if (!Files.isDirectory(target)) {
+                                        if (!target.toFile().isDirectory()) {
                                             Files.copy(eventPath, target, StandardCopyOption.REPLACE_EXISTING);
                                         }
                                     }
-                                    if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE && !Files.isDirectory(target)) {
-                                        Files.deleteIfExists(determineTarget(watchableDirectory.getWebappName(), eventPath, watchableDirectory.getProjectPath()));
+                                    if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                                        if (!target.toFile().isDirectory()) {
+                                            Files.deleteIfExists(determineTarget(watchableDirectory.getWebappName(), eventPath, watchableDirectory.getProjectPath()));
+                                        }
                                     }
                                 }
                             } catch (IOException ex) {
