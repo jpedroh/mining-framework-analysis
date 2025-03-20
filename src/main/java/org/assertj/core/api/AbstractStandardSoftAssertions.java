@@ -1,17 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +7,6 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -29,10 +16,8 @@ import java.util.function.DoublePredicate;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public abstract class AbstractStandardSoftAssertions extends Java6AbstractStandardSoftAssertions {
-
   /**
    * Creates a new, proxied instance of a {@link PathAssert}
    *
@@ -51,8 +36,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    *
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> OptionalAssert<T> assertThat(Optional<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> OptionalAssert<T> assertThat(Optional<T> actual) {
     return proxy(OptionalAssert.class, Optional.class, actual);
   }
 
@@ -64,7 +48,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    * @return the created assertion object.
    */
   public OptionalDoubleAssert assertThat(OptionalDouble actual) {
-      return proxy(OptionalDoubleAssert.class, OptionalDouble.class, actual);
+    return proxy(OptionalDoubleAssert.class, OptionalDouble.class, actual);
   }
 
   /**
@@ -75,7 +59,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    * @return the created assertion object.
    */
   public OptionalLongAssert assertThat(OptionalLong actual) {
-      return proxy(OptionalLongAssert.class, OptionalLong.class, actual);
+    return proxy(OptionalLongAssert.class, OptionalLong.class, actual);
   }
 
   /**
@@ -86,7 +70,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    * @return the created assertion object.
    */
   public OptionalIntAssert assertThat(OptionalInt actual) {
-      return proxy(OptionalIntAssert.class, OptionalInt.class, actual);
+    return proxy(OptionalIntAssert.class, OptionalInt.class, actual);
   }
 
   /**
@@ -136,7 +120,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    * @return the created assertion object.
    */
   public OffsetTimeAssert assertThat(OffsetTime actual) {
-      return proxy(OffsetTimeAssert.class, OffsetTime.class, actual);
+    return proxy(OffsetTimeAssert.class, OffsetTime.class, actual);
   }
 
   /**
@@ -157,8 +141,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    *
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> CompletableFutureAssert<T> assertThat(CompletableFuture<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> CompletableFutureAssert<T> assertThat(CompletableFuture<T> actual) {
     return proxy(CompletableFutureAssert.class, CompletableFuture.class, actual);
   }
 
@@ -172,8 +155,7 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    *
    * @since 3.5.0
    */
-  @SuppressWarnings("unchecked")
-  public <T> PredicateAssert<T> assertThat(Predicate<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> PredicateAssert<T> assertThat(Predicate<T> actual) {
     return proxy(PredicateAssert.class, Predicate.class, actual);
   }
 
@@ -209,20 +191,4 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public LongPredicateAssert assertThat(LongPredicate actual) {
     return proxy(LongPredicateAssert.class, LongPredicate.class, actual);
   }
-
-  /**
-   * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
-   * <p>
-   * <b>Be aware that to create the returned {@link ListAssert} the given the {@link Stream} is consumed so it won't be
-   * possible to use it again.</b> Calling multiple methods on the returned {@link ListAssert} is safe as it only
-   * interacts with the {@link List} built from the {@link Stream}.
-   *
-   * @param actual the actual {@link Stream} value.
-   * @return the created assertion object.
-   */
-  @SuppressWarnings("unchecked")
-  public <ELEMENT> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
-    return proxy(ListAssert.class, Stream.class, actual);
-  }
-
 }

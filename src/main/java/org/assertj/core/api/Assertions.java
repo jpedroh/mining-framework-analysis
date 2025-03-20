@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2016 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.data.Percentage.withPercentage;
 import static org.assertj.core.presentation.StandardRepresentation.STANDARD_REPRESENTATION;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -45,7 +31,6 @@ import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.exception.RuntimeIOException;
 import org.assertj.core.api.filter.FilterOperator;
@@ -84,11 +69,11 @@ import org.assertj.core.util.introspection.FieldSupport;
  * List&lt;Employee&gt; newEmployees = employees.hired(TODAY);
  * {@link Assertions#assertThat(Iterable) assertThat}(newEmployees).{@link IterableAssert#hasSize(int) hasSize}(6);</code></pre>
  * <p/>
- * This class only contains all <code>assertThat</code> methods, if you have ambiguous method compilation error, use either {@link AssertionsForClassTypes} or {@link AssertionsForInterfaceTypes}
+ * This class only contains all <code>assertThat</code> methods, if you have ambiguous method compilation error, use either {@link AssertionsForClassTypes} or {@link AssertionsForInterfaceTypes} 
  * and if you need both, fully qualify you assertThat method.
  * <p/>
- * Java 8 is picky when choosing the right <code>assertThat</code> method if the object under test is generic and bounded,
- * for example if foo is instance of T that extends Exception, java 8  will complain that it can't resolve
+ * Java 8 is picky when choosing the right <code>assertThat</code> method if the object under test is generic and bounded, 
+ * for example if foo is instance of T that extends Exception, java 8  will complain that it can't resolve 
  * the proper <code>assertThat</code> method (normally <code>assertThat(Throwable)</code> as foo might implement an interface like List,
  * if that occurred <code>assertThat(List)</code> would also be a possible choice - thus confusing java 8.
  * <p>
@@ -107,7 +92,6 @@ import org.assertj.core.util.introspection.FieldSupport;
  * @author William Delanoue
  */
 public class Assertions {
-
   /**
    * Create assertion for {@link Predicate}.
    *
@@ -117,7 +101,7 @@ public class Assertions {
    *
    * @since 3.5.0
    */
-  public static <T> PredicateAssert<T> assertThat(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> assertThat(Predicate<T> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
@@ -162,7 +146,7 @@ public class Assertions {
    *
    * @return the created assertion object.
    */
-  public static <T> CompletableFutureAssert<T> assertThat(CompletableFuture<T> actual) {
+  public static <T extends java.lang.Object> CompletableFutureAssert<T> assertThat(CompletableFuture<T> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -174,7 +158,7 @@ public class Assertions {
    *
    * @return the created assertion object.
    */
-  public static <T> OptionalAssert<T> assertThat(Optional<T> actual) {
+  public static <T extends java.lang.Object> OptionalAssert<T> assertThat(Optional<T> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -352,6 +336,17 @@ public class Assertions {
   }
 
   /**
+   * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
+   * standard comparison semantics.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+
+  /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
    * @param actual the actual value.
@@ -389,6 +384,16 @@ public class Assertions {
    */
   public static AbstractInputStreamAssert<?, ? extends InputStream> assertThat(InputStream actual) {
     return AssertionsForClassTypes.assertThat(actual);
+  }
+
+  /**
+   * Creates a new instance of {@link PathAssert}
+   *
+   * @param actual the path to test
+   * @return the created assertion object
+   */
+  public static AbstractPathAssert<?> assertThat(Path actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
   /**
@@ -452,8 +457,8 @@ public class Assertions {
   }
 
   /**
-   * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
-   * in order to perform assertions on it.
+   * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element 
+   * in order to perform assertions on it. 
    * <p>
    * Navigational methods provided:<ul>
    * <li>{@link AbstractIterableAssert#first() first()}</li>
@@ -461,12 +466,12 @@ public class Assertions {
    * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
    * </ul>
    * <p>
-   * The available assertions after navigating to an element depend on the {@code ELEMENT_ASSERT} parameter of the given
+   * The available assertions after navigating to an element depend on the {@code ELEMENT_ASSERT} parameter of the given 
    * {@link AssertFactory AssertFactory&lt;ELEMENT, ELEMENT_ASSERT&gt;} (AssertJ can't figure it out because of Java type erasure).
    * <p>
    * Example with {@code String} element assertions:
    * <pre><code class='java'> Iterable&lt;String&gt; hobbits = newHashSet("frodo", "sam", "pippin");
-   *
+   * 
    * // build an AssertFactory for StringAssert (much nicer with Java 8 lambdas)
    * AssertFactory&lt;String, StringAssert&gt; stringAssertFactory = new AssertFactory&lt;String, StringAssert&gt;() {
    *   {@literal @}Override
@@ -474,7 +479,7 @@ public class Assertions {
    *     return new StringAssert(string);
    *   }
    * };
-   *
+   * 
    * // assertion succeeds with String assertions chained after first()
    * assertThat(hobbits, stringAssertFactory).first()
    *                                         .startsWith("fro")
@@ -484,16 +489,23 @@ public class Assertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-//@format:off
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual,
-                                                                                 AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(Iterable<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
 
   /**
-   * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
-   * in order to perform assertions on it.
+   * Creates a new instance of <code>{@link IterableAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static <ELEMENT extends java.lang.Object> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterable<? extends ELEMENT> actual) {
+    return new IterableAssert<>(actual);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element 
+   * in order to perform assertions on it. 
    * <p>
    * Navigational methods provided:<ul>
    * <li>{@link AbstractIterableAssert#first() first()}</li>
@@ -501,12 +513,12 @@ public class Assertions {
    * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
    * </ul>
    * <p>
-   * The available assertions after navigating to an element depend on the given {@code assertClass}
+   * The available assertions after navigating to an element depend on the given {@code assertClass} 
    * (AssertJ can't find the element assert type by itself because of Java type erasure).
    * <p>
    * Example with {@code String} element assertions:
    * <pre><code class='java'> Iterable&lt;String&gt; hobbits = newHashSet("frodo", "sam", "pippin");
-   *
+   * 
    * // assertion succeeds with String assertions chained after first()
    * assertThat(hobbits, StringAssert.class).first()
    *                                        .startsWith("fro")
@@ -516,83 +528,99 @@ public class Assertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual,
-                                                                                          Class<ELEMENT_ASSERT> assertClass) {
-           return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
-   * in order to perform assertions on it.
-   * <p>
-   * Navigational methods provided:<ul>
-   * <li>{@link AbstractIterableAssert#first() first()}</li>
-   * <li>{@link AbstractIterableAssert#last() last()}</li>
-   * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
-   * </ul>
-   * <p>
-   * The available assertions after navigating to an element depend on the {@code ELEMENT_ASSERT} parameter of the given
-   * {@link AssertFactory AssertFactory&lt;ELEMENT, ELEMENT_ASSERT&gt;} (AssertJ can't figure it out because of Java type erasure).
-   * <p>
-   * Example with {@code String} element assertions:
-   * <pre><code class='java'> List&lt;String&gt; hobbits = newArrayList("frodo", "sam", "pippin");
-   *
-   * // build an AssertFactory for StringAssert (much nicer with Java 8 lambdas)
-   * AssertFactory&lt;String, StringAssert&gt; stringAssertFactory = new AssertFactory&lt;String, StringAssert&gt;() {
-   *   {@literal @}Override
-   *   public StringAssert createAssert(String string) {
-   *     return new StringAssert(string);
-   *   }
-   * };
-   *
-   * // assertion succeeds with String assertions chained after first()
-   * assertThat(hobbits, stringAssertFactory).first()
-   *                                         .startsWith("fro")
-   *                                         .endsWith("do");</code></pre>
-   *
-   * @param actual the actual value.
-   * @param assertFactory the factory used to create the elements assert instance.
-   * @return the created assertion object.
-   */
-  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                        AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
-    return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> tallowing to navigate to any {@code List} element
-   * in order to perform assertions on it.
-   * <p>
-   * Navigational methods provided:<ul>
-   * <li>{@link AbstractIterableAssert#first() first()}</li>
-   * <li>{@link AbstractIterableAssert#last() last()}</li>
-   * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
-   * </ul>
-   * <p>
-   * The available assertions after navigating to an element depend on the given {@code assertClass}
-   * (AssertJ can't find the element assert type by itself because of Java type erasure).
-   * <p>
-   * Example with {@code String} element assertions:
-   * <pre><code class='java'> List&lt;String&gt; hobbits = newArrayList("frodo", "sam", "pippin");
-   *
-   * // assertion succeeds with String assertions chained after first()
-   * assertThat(hobbits, StringAssert.class).first()
-   *                                        .startsWith("fro")
-   *                                        .endsWith("do");</code></pre>
-   *
-   * @param actual the actual value.
-   * @param assertClass the class used to create the elements assert instance.
-   * @return the created assertion object.
-   */
-  public static <ELEMENT, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual,
-                                                                                      Class<ELEMENT_ASSERT> assertClass) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(ACTUAL actual, Class<ELEMENT_ASSERT> assertClass) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
 
-//@format:on
+  /**
+   * Creates a new instance of <code>{@link IterableAssert}</code>.
+   * <p>
+   * <b>Be aware that calls to most methods on returned IterableAssert will consume Iterator so it won't be possible to
+   * iterate over it again.</b> Calling multiple methods on returned IterableAssert is safe as Iterator's elements are
+   * cached by IterableAssert first time Iterator is consumed.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static <ELEMENT extends java.lang.Object> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element 
+   * in order to perform assertions on it. 
+   * <p>
+   * Navigational methods provided:<ul>
+   * <li>{@link AbstractIterableAssert#first() first()}</li>
+   * <li>{@link AbstractIterableAssert#last() last()}</li>
+   * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
+   * </ul>
+   * <p>
+   * The available assertions after navigating to an element depend on the {@code ELEMENT_ASSERT} parameter of the given 
+   * {@link AssertFactory AssertFactory&lt;ELEMENT, ELEMENT_ASSERT&gt;} (AssertJ can't figure it out because of Java type erasure).
+   * <p>
+   * Example with {@code String} element assertions:
+   * <pre><code class='java'> List&lt;String&gt; hobbits = newArrayList("frodo", "sam", "pippin");
+   * 
+   * // build an AssertFactory for StringAssert (much nicer with Java 8 lambdas)
+   * AssertFactory&lt;String, StringAssert&gt; stringAssertFactory = new AssertFactory&lt;String, StringAssert&gt;() {
+   *   {@literal @}Override
+   *   public StringAssert createAssert(String string) {
+   *     return new StringAssert(string);
+   *   }
+   * };
+   * 
+   * // assertion succeeds with String assertions chained after first()
+   * assertThat(hobbits, stringAssertFactory).first()
+   *                                         .startsWith("fro")
+   *                                         .endsWith("do");</code></pre>
+   *
+   * @param actual the actual value.
+   * @param assertFactory the factory used to create the elements assert instance.
+   * @return the created assertion object.
+   */
+  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+    return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link ListAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static <ELEMENT extends java.lang.Object> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> tallowing to navigate to any {@code List} element 
+   * in order to perform assertions on it. 
+   * <p>
+   * Navigational methods provided:<ul>
+   * <li>{@link AbstractIterableAssert#first() first()}</li>
+   * <li>{@link AbstractIterableAssert#last() last()}</li>
+   * <li>{@link AbstractIterableAssert#element(int) element(index)}</li>
+   * </ul>
+   * <p>
+   * The available assertions after navigating to an element depend on the given {@code assertClass} 
+   * (AssertJ can't find the element assert type by itself because of Java type erasure).
+   * <p>
+   * Example with {@code String} element assertions:
+   * <pre><code class='java'> List&lt;String&gt; hobbits = newArrayList("frodo", "sam", "pippin");
+   * 
+   * // assertion succeeds with String assertions chained after first()
+   * assertThat(hobbits, StringAssert.class).first()
+   *                                        .startsWith("fro")
+   *                                        .endsWith("do");</code></pre>
+   *
+   * @param actual the actual value.
+   * @param assertClass the class used to create the elements assert instance.
+   * @return the created assertion object.
+   */
+  public static <ELEMENT extends java.lang.Object, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> assertThat(List<? extends ELEMENT> actual, Class<ELEMENT_ASSERT> assertClass) {
+    return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
+  }
 
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
@@ -630,7 +658,7 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+  public static <T extends java.lang.Object> AbstractObjectAssert<?, T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
 
@@ -640,8 +668,63 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectArrayAssert<?, T> assertThat(T[] actual) {
+  public static <T extends java.lang.Object> AbstractObjectArrayAssert<?, T> assertThat(T[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
+  }
+
+  /**
+   * Returns the given assertion. This method improves code readability by surrounding the given assertion with
+   * <code>assertThat</code>.
+   * <p>
+   * Consider for example the following MyButton and MyButtonAssert classes:
+   * <pre><code class='java'> public class MyButton extends JButton {
+   *
+   *   private boolean blinking;
+   *
+   *   public boolean isBlinking() { return this.blinking; }
+   *
+   *   public void setBlinking(boolean blink) { this.blinking = blink; }
+   *
+   * }
+   *
+   * private static class MyButtonAssert implements AssertDelegateTarget {
+   *
+   *   private MyButton button;
+   *   MyButtonAssert(MyButton button) { this.button = button; }
+   *
+   *   void isBlinking() {
+   *     // standard assertion from core Assertions.assertThat
+   *     assertThat(button.isBlinking()).isTrue();
+   *   }
+   *
+   *   void isNotBlinking() {
+   *     // standard assertion from core Assertions.assertThat
+   *     assertThat(button.isBlinking()).isFalse();
+   *   }
+   * }</code></pre>
+   *
+   * As MyButtonAssert implements AssertDelegateTarget, you can use <code>assertThat(buttonAssert).isBlinking();</code>
+   * instead of <code>buttonAssert.isBlinking();</code> to have easier to read assertions:
+   * <pre><code class='java'> {@literal @}Test
+   * public void AssertDelegateTarget_example() {
+   *
+   *   MyButton button = new MyButton();
+   *   MyButtonAssert buttonAssert = new MyButtonAssert(button);
+   *
+   *   // you can encapsulate MyButtonAssert assertions methods within assertThat
+   *   assertThat(buttonAssert).isNotBlinking(); // same as : buttonAssert.isNotBlinking();
+   *
+   *   button.setBlinking(true);
+   *
+   *   assertThat(buttonAssert).isBlinking(); // same as : buttonAssert.isBlinking();
+   * }</code></pre>
+   * 
+   * @param <T> the generic type of the user-defined assert.
+   * @param assertion the assertion to return.
+   * @return the given assertion.
+   */
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
   }
 
   /**
@@ -655,6 +738,21 @@ public class Assertions {
   }
 
   /**
+   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
+   * 
+   * <p>
+   * Read the comments on {@link AssertProvider} for an example of its usage.
+   * </p>
+   * 
+   * @param component
+   *          the component that creates its own assert
+   * @return the associated {@link Assert} of the given component
+   */
+  public static <T extends java.lang.Object> T assertThat(final AssertProvider<T> component) {
+    return AssertionsForInterfaceTypes.assertThat(component);
+  }
+
+  /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
    * @param actual the actual value.
@@ -662,6 +760,19 @@ public class Assertions {
    */
   public static AbstractShortAssert<?> assertThat(Short actual) {
     return AssertionsForClassTypes.assertThat(actual);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link MapAssert}</code>.
+   * <p>
+   * Returned type is {@link MapAssert} as it overrides method to annotate them with {@link SafeVarargs} avoiding
+   * annoying warnings.
+   * 
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> assertThat(Map<K, V> actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
   /**
@@ -682,6 +793,16 @@ public class Assertions {
    */
   public static AbstractCharSequenceAssert<?, String> assertThat(String actual) {
     return AssertionsForClassTypes.assertThat(actual);
+  }
+
+  /**
+   * Creates a new instance of <code>{@link CharSequenceAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
   }
 
   /**
@@ -766,23 +887,23 @@ public class Assertions {
 
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
-   *
+   * 
    * <p>
    * Example :
    * </p>
-   *
+   * 
    * <pre><code class='java'>{@literal @}Test
    * public void testException() {
    *   assertThatThrownBy(() -> { throw new Exception("boom!"); }).isInstanceOf(Exception.class)
    *                                                              .hasMessageContaining("boom");
    * }</code></pre>
-   *
-   * If the provided {@link ThrowingCallable} does not raise an exception, an error is immediately raised,
-   * in that case the test description provided with {@link AbstractAssert#as(String, Object...) as(String, Object...)} is not honored.
-   * To use a test description, use {@link #catchThrowable(ThrowingCallable) catchThrowable} as shown below.
-   * <pre><code class='java'> // assertion will fail but "display me" won't appear in the error
+   * 
+   * If the provided {@link ThrowingCallable} does not raise an exception, an error is immediately raised, 
+   * in that case the test description provided with {@link AbstractAssert#as(String, Object...) as(String, Object...)} is not honored. 
+   * To use a test description, use {@link #catchThrowable(ThrowingCallable) catchThrowable} as shown below.  
+   * <pre><code class='java'> // assertion will fail but "display me" won't appear in the error 
    * assertThatThrownBy(() -> { // do nothing }).as("display me").isInstanceOf(Exception.class);
-   *
+   * 
    * // assertion will fail AND "display me" will appear in the error
    * Throwable thrown = catchThrowable(() -> { // do nothing });
    * assertThat(thrown).as("display me").isInstanceOf(Exception.class); </code></pre>
@@ -800,11 +921,11 @@ public class Assertions {
    * <p>
    * This caught {@link Throwable} can then be asserted.
    * </p>
-   *
+   * 
    * <p>
    * Example:
    * </p>
-   *
+   * 
    * <pre><code class='java'> {@literal @}Test
    * public void testException() {
    *   // when
@@ -823,7 +944,7 @@ public class Assertions {
   }
 
   /**
-   * Entry point to check that an exception of type T is thrown by a given {@code throwingCallable}
+   * Entry point to check that an exception of type T is thrown by a given {@code throwingCallable}  
    * which allows to chain assertions on the thrown exception.
    * <p>
    * Example:
@@ -838,10 +959,6 @@ public class Assertions {
   public static <T extends Throwable> ThrowableTypeAssert<T> assertThatExceptionOfType(final Class<? extends T> exceptionType) {
     return AssertionsForClassTypes.assertThatExceptionOfType(exceptionType);
   }
-
-  // -------------------------------------------------------------------------------------------------
-  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
-  // -------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Fail#setRemoveAssertJRelatedElementsFromStackTrace(boolean)} so that Assertions offers a
@@ -890,32 +1007,28 @@ public class Assertions {
    * is less than this parameter) or it will be formatted with one element per line.
    * <p>
    * The following array will be formatted on one line as its length < 80
-   *
+   * 
    * <pre><code class='java'> String[] greatBooks = array("A Game of Thrones", "The Lord of the Rings", "Assassin's Apprentice");
-   *
+   * 
    * // formatted as:
-   *
+   * 
    * ["A Game of Thrones", "The Lord of the Rings", "Assassin's Apprentice"]</code></pre>
    * whereas this array is formatted on multiple lines (one element per line)
-   *
+   * 
    * <pre><code class='java'> String[] greatBooks = array("A Game of Thrones", "The Lord of the Rings", "Assassin's Apprentice", "Guards! Guards! (Discworld)");
-   *
+   * 
    * // formatted as:
-   *
+   * 
    * ["A Game of Thrones",
    *  "The Lord of the Rings",
    *  "Assassin's Apprentice",
    *  "Guards! Guards! (Discworld)"]</code></pre>
-   *
+   * 
    * @param maxLengthForSingleLineDescription the maximum length for an iterable/array to be displayed on one line
    */
   public static void setMaxLengthForSingleLineDescription(int maxLengthForSingleLineDescription) {
     StandardRepresentation.setMaxLengthForSingleLineDescription(maxLengthForSingleLineDescription);
   }
-
-  // ------------------------------------------------------------------------------------------------------
-  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
@@ -938,7 +1051,7 @@ public class Assertions {
    *           .contains(&quot;Hobbit&quot;, &quot;Elf&quot;)
    *           .doesNotContain(&quot;Orc&quot;);</code></pre>
    */
-  public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
+  public static <T extends java.lang.Object> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
 
@@ -1008,10 +1121,6 @@ public class Assertions {
     FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(K key, V value)} so that Assertions offers a full feature entry point to
    * all
@@ -1019,12 +1128,12 @@ public class Assertions {
    * <p>
    * Typical usage is to call <code>entry</code> in MapAssert <code>contains</code> assertion, see examples below :
    * <p>
-   *
+   * 
    * <pre><code class='java'> Map<Ring, TolkienCharacter> ringBearers = ... // init omitted
-   *
+   * 
    * assertThat(ringBearers).contains(entry(oneRing, frodo), entry(nenya, galadriel));</code></pre>
    */
-  public static <K, V> MapEntry<K, V> entry(K key, V value) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapEntry<K, V> entry(K key, V value) {
     return MapEntry.entry(key, value);
   }
 
@@ -1196,10 +1305,6 @@ public class Assertions {
     return withPercentage(value);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -1209,8 +1314,7 @@ public class Assertions {
    * @throws NullPointerException if the given array is {@code null}.
    * @throws NullPointerException if any of the elements in the given array is {@code null}.
    */
-  @SafeVarargs
-  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> allOf(Condition<? super T>... conditions) {
     return AllOf.allOf(conditions);
   }
 
@@ -1223,7 +1327,7 @@ public class Assertions {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return AllOf.allOf(conditions);
   }
 
@@ -1233,11 +1337,10 @@ public class Assertions {
    * <p>
    * Typical usage (<code>jedi</code> and <code>sith</code> are {@link Condition}) :
    * <p>
-   *
+   * 
    * <pre><code class='java'> assertThat(&quot;Vader&quot;).is(anyOf(jedi, sith));</code></pre>
    */
-  @SafeVarargs
-  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> anyOf(Condition<? super T>... conditions) {
     return AnyOf.anyOf(conditions);
   }
 
@@ -1250,7 +1353,7 @@ public class Assertions {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return AnyOf.anyOf(conditions);
   }
 
@@ -1260,7 +1363,7 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return DoesNotHave.doesNotHave(condition);
   }
 
@@ -1270,13 +1373,9 @@ public class Assertions {
    * @param condition the condition to inverse.
    * @return The Not condition created.
    */
-  public static <T> Not<T> not(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> Not<T> not(Condition<? super T> condition) {
     return Not.not(condition);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
@@ -1286,16 +1385,16 @@ public class Assertions {
    * <p>
    * Typical usage with {@link Condition} :
    * <p>
-   *
+   * 
    * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
    * <p>
    * and with filter language based on java bean property :
    * <p>
-   *
+   * 
    * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
    *           .containsOnly(james, rose);</code></pre>
    */
-  public static <E> Filters<E> filter(E[] array) {
+  public static <E extends java.lang.Object> Filters<E> filter(E[] array) {
     return Filters.filter(array);
   }
 
@@ -1307,16 +1406,16 @@ public class Assertions {
    * <p>
    * Typical usage with {@link Condition} :
    * <p>
-   *
+   * 
    * <pre><code class='java'> assertThat(filter(players).being(potentialMVP).get()).containsOnly(james, rose);</code></pre>
    * <p>
    * and with filter language based on java bean property :
    * <p>
-   *
+   * 
    * <pre><code class='java'> assertThat(filter(players).with(&quot;pointsPerGame&quot;).greaterThan(20).and(&quot;assistsPerGame&quot;).greaterThan(7).get())
    *            .containsOnly(james, rose);</code></pre>
    */
-  public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
+  public static <E extends java.lang.Object> Filters<E> filter(Iterable<E> iterableToFilter) {
     return Filters.filter(iterableToFilter);
   }
 
@@ -1326,17 +1425,17 @@ public class Assertions {
    * value matches one of the given values.
    * <p>
    * As often, an example helps:
-   *
+   * 
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
-   *
+   * 
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
+   * 
    * assertThat(employees).filteredOn("age", in(800, 26))
    *                      .containsOnly(yoda, obiwan, luke);</code></pre>
-   *
+   * 
    * @param values values to match (one match is sufficient)
    * @return the created "in" filter
    */
@@ -1350,17 +1449,17 @@ public class Assertions {
    * value matches does not match any of the given values.
    * <p>
    * As often, an example helps:
-   *
+   * 
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
-   *
+   * 
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
+   * 
    * assertThat(employees).filteredOn("age", notIn(800, 50))
    *                      .containsOnly(luke);</code></pre>
-   *
+   * 
    * @param valuesNotToMatch values not to match (none of the values must match)
    * @return the created "not in" filter
    */
@@ -1374,27 +1473,23 @@ public class Assertions {
    * value matches does not match the given value.
    * <p>
    * As often, an example helps:
-   *
+   * 
    * <pre><code class='java'> Employee yoda   = new Employee(1L, new Name("Yoda"), 800);
    * Employee obiwan = new Employee(2L, new Name("Obiwan"), 800);
    * Employee luke   = new Employee(3L, new Name("Luke", "Skywalker"), 26);
    * Employee noname = new Employee(4L, null, 50);
-   *
+   * 
    * List&lt;Employee&gt; employees = newArrayList(yoda, luke, obiwan, noname);
-   *
+   * 
    * assertThat(employees).filteredOn("age", not(800))
    *                      .containsOnly(luke, noname);</code></pre>
-   *
+   * 
    * @param valueNotToMatch the value not to match
    * @return the created "not" filter
    */
   public static NotFilter not(Object valueNotToMatch) {
     return NotFilter.not(valueNotToMatch);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // File methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
@@ -1488,10 +1583,6 @@ public class Assertions {
     return Files.linesOf(file, charsetName);
   }
 
-  // --------------------------------------------------------------------------------------------------
-  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -1581,10 +1672,6 @@ public class Assertions {
     return URLs.linesOf(url, charsetName);
   }
 
-  // --------------------------------------------------------------------------------------------------
-  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
-
   /**
    * Instead of using default strict date/time parsing, it is possible to use lenient parsing mode for default date
    * formats parser to interpret inputs that do not precisely match supported date formats (lenient parsing).
@@ -1594,7 +1681,7 @@ public class Assertions {
    * <p>
    * Example:
    * </p>
-   *
+   * 
    * <pre><code class='java'> final Date date = Dates.parse("2001-02-03");
    * final Date dateTime = parseDatetime("2001-02-03T04:05:06");
    * final Date dateTimeWithMs = parseDatetimeWithMs("2001-02-03T04:05:06.700");
@@ -1688,7 +1775,7 @@ public class Assertions {
    * {@link org.assertj.core.api.AbstractDateAssert#withDefaultDateFormatsOnly()}.
    * <p>
    * Code examples:
-   *
+   * 
    * <pre><code class='java'> Date date = ... // set to 2003 April the 26th
    * assertThat(date).isEqualTo("2003-04-26");
    *
@@ -1739,165 +1826,17 @@ public class Assertions {
   }
 
   /**
-   * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
-   *
-   * <p>
-   * Read the comments on {@link AssertProvider} for an example of its usage.
-   * </p>
-   *
-   * @param component
-   *          the component that creates its own assert
-   * @return the associated {@link Assert} of the given component
-   */
-  public static <T> T assertThat(final AssertProvider<T> component) {
-    return AssertionsForInterfaceTypes.assertThat(component);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link CharSequenceAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractCharSequenceAssert<?, ? extends CharSequence> assertThat(CharSequence actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link IterableAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterable<? extends ELEMENT> actual) {
-    return new IterableAssert<>(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link IterableAssert}</code>.
-   * <p>
-   * <b>Be aware that calls to most methods on returned IterableAssert will consume Iterator so it won't be possible to
-   * iterate over it again.</b> Calling multiple methods on returned IterableAssert is safe as Iterator's elements are
-   * cached by IterableAssert first time Iterator is consumed.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static <ELEMENT> AbstractIterableAssert<?, Iterable<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Iterator<? extends ELEMENT> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link ListAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(List<? extends ELEMENT> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
    * <p>
-   * <b>Be aware that to create the returned {@link ListAssert} the given the {@link Stream} is consumed so it won't be
-   * possible to use it again.</b> Calling multiple methods on the returned {@link ListAssert} is safe as it only
+   * <b>Be aware that to create the returned {@link ListAssert} the given the {@link Stream} is consumed so it won't be 
+   * possible to use it again.</b> Calling multiple methods on the returned {@link ListAssert} is safe as it only 
    * interacts with the {@link List} built from the {@link Stream}.
    *
    * @param actual the actual {@link Stream} value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> assertThat(Stream<? extends ELEMENT> actual) {
     return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of {@link PathAssert}
-   *
-   * @param actual the path to test
-   * @return the created assertion object
-   */
-  public static AbstractPathAssert<?> assertThat(Path actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link MapAssert}</code>.
-   * <p>
-   * Returned type is {@link MapAssert} as it overrides method to annotate them with {@link SafeVarargs} avoiding
-   * annoying warnings.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static <K, V> MapAssert<K, V> assertThat(Map<K, V> actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link GenericComparableAssert}</code> with
-   * standard comparison semantics.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
-
-  /**
-   * Returns the given assertion. This method improves code readability by surrounding the given assertion with
-   * <code>assertThat</code>.
-   * <p>
-   * Consider for example the following MyButton and MyButtonAssert classes:
-   * <pre><code class='java'> public class MyButton extends JButton {
-   *
-   *   private boolean blinking;
-   *
-   *   public boolean isBlinking() { return this.blinking; }
-   *
-   *   public void setBlinking(boolean blink) { this.blinking = blink; }
-   *
-   * }
-   *
-   * private static class MyButtonAssert implements AssertDelegateTarget {
-   *
-   *   private MyButton button;
-   *   MyButtonAssert(MyButton button) { this.button = button; }
-   *
-   *   void isBlinking() {
-   *     // standard assertion from core Assertions.assertThat
-   *     assertThat(button.isBlinking()).isTrue();
-   *   }
-   *
-   *   void isNotBlinking() {
-   *     // standard assertion from core Assertions.assertThat
-   *     assertThat(button.isBlinking()).isFalse();
-   *   }
-   * }</code></pre>
-   *
-   * As MyButtonAssert implements AssertDelegateTarget, you can use <code>assertThat(buttonAssert).isBlinking();</code>
-   * instead of <code>buttonAssert.isBlinking();</code> to have easier to read assertions:
-   * <pre><code class='java'> {@literal @}Test
-   * public void AssertDelegateTarget_example() {
-   *
-   *   MyButton button = new MyButton();
-   *   MyButtonAssert buttonAssert = new MyButtonAssert(button);
-   *
-   *   // you can encapsulate MyButtonAssert assertions methods within assertThat
-   *   assertThat(buttonAssert).isNotBlinking(); // same as : buttonAssert.isNotBlinking();
-   *
-   *   button.setBlinking(true);
-   *
-   *   assertThat(buttonAssert).isBlinking(); // same as : buttonAssert.isBlinking();
-   * }</code></pre>
-   *
-   * @param <T> the generic type of the user-defined assert.
-   * @param assertion the assertion to return.
-   * @return the given assertion.
-   */
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
   }
 
   /**
@@ -1909,35 +1848,35 @@ public class Assertions {
    * <pre><code class='java'> private class Example {}
    *
    * private class CustomRepresentation extends StandardRepresentation {
-   *
-   *   // override needed to hook specific formatting
+   * 
+   *   // override needed to hook specific formatting  
    *   {@literal @}Override
    *   public String toStringOf(Object o) {
    *     if (o instanceof Example) return "Example";
-   *     // fallback to default formatting.
+   *     // fallback to default formatting.  
    *     return super.toStringOf(o);
    *   }
-   *
-   *   // change String representation
+   *   
+   *   // change String representation  
    *   {@literal @}Override
    *   protected String toStringOf(String s) {
    *     return "$" + s + "$";
    *   }
    * }
-   *
+   * 
    * Assertions.useRepresentation(new CustomRepresentation());
    * Example example = new Example();
    * // this assertion fails with error : "expected:<[null]> but was:<[Example]>"
    * assertThat(example).isNull(); // example is not null !
-   *
-   * // this one fails ...
+   * 
+   * // this one fails ... 
    * assertThat("foo").startsWith("bar");
    * // ... with error :
    * Expecting:
    *  <$foo$>
    * to start with:
    *  <$bar$></code></pre>
-   *
+   *  
    * @since 2.5.0 / 3.5.0
    */
   public static void useRepresentation(Representation customRepresentation) {
@@ -1947,8 +1886,8 @@ public class Assertions {
   /**
    * Assertions error messages uses a {@link Representation} to format the different types involved, using this method
    * you can control the formatting of a given type by providing a specific formatter.
-   *
-   *
+   * 
+   *  
    * <p>
    * Registering a formatter makes it available for all AssertJ {@link Representation}:
    * <ul>
@@ -1959,21 +1898,21 @@ public class Assertions {
    * </ul>
    * <p>
    * Example :
-   * <pre><code class='java'> // without specific formatter
+   * <pre><code class='java'> // without specific formatter 
    * assertThat(STANDARD_REPRESENTATION.toStringOf(123L)).isEqualTo("123L");
-   *
+   * 
    * // register a formatter for Long
    * Assertions.registerFormatterForType(Long.class, value -> "$" + value + "$");
    *
    * // now Long will be formatted between in $$ in error message.
    * assertThat(STANDARD_REPRESENTATION.toStringOf(longNumber)).isEqualTo("$123$");
-   *
-   * // fails with error : expected:<$456$> but was:<$123$>
+   * 
+   * // fails with error : expected:<$456$> but was:<$123$> 
    * assertThat(123L).isEqualTo(456L);</code></pre>
-   *
+   * 
    * @param type
    * @param formatter
-   *
+   * 
    * @since 3.5.0
    */
   public static void registerFormatterForType(Class<?> type, Function<Object, String> formatter) {
@@ -1982,7 +1921,7 @@ public class Assertions {
 
   /**
    * Fallback to use {@link StandardRepresentation} to revert the effect of calling {@link #useRepresentation(Representation)}.
-   *
+   * 
    * @since 2.5.0 / 3.5.0
    */
   public static void useDefaultRepresentation() {
@@ -1993,6 +1932,6 @@ public class Assertions {
   /**
    * Creates a new </code>{@link Assertions}</code>.
    */
-  protected Assertions() {}
-
+  protected Assertions() {
+  }
 }
