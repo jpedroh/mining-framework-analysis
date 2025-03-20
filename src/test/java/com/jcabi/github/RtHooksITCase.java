@@ -1,38 +1,8 @@
-/**
- * Copyright (c) 2012-2013, JCabi.com
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met: 1) Redistributions of source code must retain the above
- * copyright notice, this list of conditions and the following
- * disclaimer. 2) Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided
- * with the distribution. 3) Neither the name of the jcabi.com nor
- * the names of its contributors may be used to endorse or promote
- * products derived from this software without specific prior written
- * permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
- * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package com.jcabi.github;
-
 import java.io.IOException;
 import java.util.Collections;
-import org.apache.commons.collections.CollectionUtils;
 import javax.json.Json;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -48,116 +18,91 @@ import org.junit.Test;
  * @checkstyle MultipleStringLiteralsCheck (200 lines)
  * @todo #165 RtHooks should be able to create a hook in real repository
  *  When done, remove this puzzle and Ignore annotation from the method.
+ * @todo #159 Need to implement integration test case where RtHooks can obtain
+ *  a list of hooks from a real repository. Add the implementation in
+ *  canFetchAllHooks(). When done, remove this puzzle and Ignore annotation from
+ *  the method.
  */
 public final class RtHooksITCase {
-
-    /**
+  /**
      * RtHooks can iterate hooks.
      * @throws Exception If some problem inside
      */
-    @Test
-    public void canFetchAllHooks() throws Exception {
-        final Hooks hooks = repo().hooks();
-        int number = -1;
-        try {
-            if (!hooks.iterate().iterator().hasNext()) {
-                final Hook created = hooks.create(
-                    "geocommit",
-                    Collections.singletonMap("active", "true")
-                );
-                number = created.number();
-            }
-            MatcherAssert.assertThat(
-                CollectionUtils.size(hooks.iterate().iterator()),
-                Matchers.greaterThan(0)
-            );
-        } finally {
-            if (number != -1) {
-                hooks.remove(number);
-            }
-        }
+  @Test public void canFetchAllHooks() throws Exception {
+    final Hooks hooks = repo().hooks();
+    int number = -1;
+    try {
+      if (!hooks.iterate().iterator().hasNext()) {
+        final Hook created = hooks.create("geocommit", Collections.singletonMap("active", "true"));
+        number = created.number();
+      }
+      MatcherAssert.assertThat(CollectionUtils.size(hooks.iterate().iterator()), Matchers.greaterThan(0));
+    }  finally {
+      if (number != -1) {
+        hooks.remove(number);
+      }
     }
+  }
 
-    /**
+  /**
      * RtHooks can create a hook.
      * @throws Exception If some problem inside
      */
-    @Test
-    @Ignore
-    public void canCreateAHook() throws Exception {
-        // to be implemented
-    }
+  @Test @Ignore public void canCreateAHook() throws Exception {
+  }
 
-    /**
+  /**
      * RtHooks can fetch a single hook.
      *
      * @throws Exception If some problem inside.
      */
-    @Test
-    public void canFetchSingleHook() throws Exception {
-        final Repos repos = RtHooksITCase.repos();
-        final Repo repo = RtHooksITCase.repo(repos);
-        try {
-            final Hooks hooks = repo.hooks();
-            final int number = hooks.create(
-                "geocommit", Collections.<String, String>emptyMap()
-            ).number();
-            MatcherAssert.assertThat(
-                hooks.get(number).json().getInt("id"),
-                Matchers.equalTo(number)
-            );
-        } finally {
-            repos.remove(repo.coordinates());
-        }
+  @Test public void canFetchSingleHook() throws Exception {
+    final Repos repos = RtHooksITCase.repos();
+    final Repo repo = RtHooksITCase.repo(repos);
+    try {
+      final Hooks hooks = repo.hooks();
+      final int number = hooks.create("geocommit", Collections.<String, String>emptyMap()).number();
+      MatcherAssert.assertThat(hooks.get(number).json().getInt("id"), Matchers.equalTo(number));
+    }  finally {
+      repos.remove(repo.coordinates());
     }
+  }
 
-    /**
+  /**
      * RtHooks can remove a hook by ID.
      *
      * @throws Exception If something goes wrong.
      */
-    @Test
-    public void canRemoveHook() throws Exception {
-        final Repos repos = RtHooksITCase.repos();
-        final Repo repo = RtHooksITCase.repo(repos);
-        try {
-            final Hooks hooks = repo.hooks();
-            final Hook hook = hooks.create(
-                "geocommit", Collections.<String, String>emptyMap()
-            );
-            hooks.remove(hook.number());
-            MatcherAssert.assertThat(
-                hooks.iterate(),
-                Matchers.not(Matchers.hasItem(hook))
-            );
-        } finally {
-            repos.remove(repo.coordinates());
-        }
+  @Test public void canRemoveHook() throws Exception {
+    final Repos repos = RtHooksITCase.repos();
+    final Repo repo = RtHooksITCase.repo(repos);
+    try {
+      final Hooks hooks = repo.hooks();
+      final Hook hook = hooks.create("geocommit", Collections.<String, String>emptyMap());
+      hooks.remove(hook.number());
+      MatcherAssert.assertThat(hooks.iterate(), Matchers.not(Matchers.hasItem(hook)));
+    }  finally {
+      repos.remove(repo.coordinates());
     }
+  }
 
-    /**
+  /**
      * Return repos for tests.
      * @return Repos
      */
-    private static Repos repos() {
-        final String key = System.getProperty("failsafe.github.key");
-        Assume.assumeThat(key, Matchers.notNullValue());
-        return new RtGithub(key).repos();
-    }
+  private static Repos repos() {
+    final String key = System.getProperty("failsafe.github.key");
+    Assume.assumeThat(key, Matchers.notNullValue());
+    return new RtGithub(key).repos();
+  }
 
-    /**
+  /**
      * Create a new repo with random name.
      * @param repos Repos
      * @return Repository
      * @throws IOException If there is any I/O problem
      */
-    private static Repo repo(final Repos repos) throws IOException {
-        return repos.create(
-            Json.createObjectBuilder().add(
-                // @checkstyle MagicNumber (1 line)
-                "name", RandomStringUtils.randomNumeric(5)
-            ).build()
-        );
-    }
-
+  private static Repo repo(final Repos repos) throws IOException {
+    return repos.create(Json.createObjectBuilder().add("name", RandomStringUtils.randomNumeric(5)).build());
+  }
 }
