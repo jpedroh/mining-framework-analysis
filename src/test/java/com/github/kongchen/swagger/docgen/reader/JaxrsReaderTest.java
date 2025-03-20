@@ -3,24 +3,17 @@ package com.github.kongchen.swagger.docgen.reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.maven.plugin.logging.Log;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,25 +21,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.models.ArrayModel;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.RefParameter;
 import net.javacrumbs.jsonunit.JsonAssert;
-
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.core.MediaType;
+import org.mockito.MockitoAnnotations;
+import io.swagger.annotations.ApiParam;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.parameters.BodyParameter;
 
 public class JaxrsReaderTest {
     @Mock
@@ -137,6 +133,21 @@ public class JaxrsReaderTest {
     }
 
     @Test
+    public void discoverSubResource() {
+        Swagger result = reader.read(SomeResource.class);
+        assertSwaggerPath(result.getPath("/resource/explicit/name").getGet(), result, "/resource/implicit/name");
+    }
+
+    private void assertSwaggerPath(Operation expectedOperation, Swagger result, String expectedPath) {
+        assertNotNull(result, "No Swagger object created");
+        assertFalse(result.getPaths().isEmpty(), "Should contain operation paths");
+        assertTrue(result.getPaths().containsKey(expectedPath), "Expected path missing");
+        io.swagger.models.Path path = result.getPaths().get(expectedPath);
+        assertFalse(path.getOperations().isEmpty(), "Should be a get operation");
+        assertEquals(expectedOperation, path.getGet(), "Should contain operation");
+    }
+
+    @Test
     public void createCommonParameters() throws Exception {
         reader = new JaxrsReader(new Swagger(), Mockito.mock(Log.class));
         Swagger result = reader.read(CommonParametersApi.class);
@@ -185,20 +196,6 @@ public class JaxrsReaderTest {
             exception = e;
         }
         assertNotNull(exception);
-    }
-
-    public void discoverSubResource() {
-        Swagger result = reader.read(SomeResource.class);
-        assertSwaggerPath(result.getPath("/resource/explicit/name").getGet(), result, "/resource/implicit/name");
-    }
-
-    private void assertSwaggerPath(Operation expectedOperation, Swagger result, String expectedPath) {
-        assertNotNull(result, "No Swagger object created");
-        assertFalse(result.getPaths().isEmpty(), "Should contain operation paths");
-        assertTrue(result.getPaths().containsKey(expectedPath), "Expected path missing");
-        io.swagger.models.Path path = result.getPaths().get(expectedPath);
-        assertFalse(path.getOperations().isEmpty(), "Should be a get operation");
-        assertEquals(expectedOperation, path.getGet(), "Should contain operation");
     }
 
     @Api(tags = "atag")
@@ -269,6 +266,7 @@ public class JaxrsReaderTest {
         }
     }
 
+
     @Api(value = "v1")
     @Path("/apath")
     static class AnApiWithOctetStream {
@@ -306,4 +304,5 @@ public class JaxrsReaderTest {
             return toString();
         }
     }
+
 }
