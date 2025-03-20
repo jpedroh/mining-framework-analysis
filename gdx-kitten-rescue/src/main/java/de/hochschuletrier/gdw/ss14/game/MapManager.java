@@ -307,14 +307,22 @@ public class MapManager
                                 // TODO: add object with entityFactory here
                                 break;
 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/MapManager.java/left.java
                             case "finish":
                                 // TODO: add object with entityFactory here
-//                                EntityFactory.constructMapChangeObj(pos, width, height, nextMap);
+                        //                                EntityFactory.constructMapChangeObj(pos, width, height, nextMap);
                                 break;
-// isn't an object
-//                            case "door":category
-//                                // TODO: add object with entityFactory here
-//                                break;
+||||||| /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/MapManager.java/base.java
+                        // isn't an object
+                        //                            case "door":
+                        //                                // TODO: add object with entityFactory here
+                        //                                break;
+=======
+                        // isn't an object
+                        //                            case "door":category
+                        //                                // TODO: add object with entityFactory here
+                        //                                break;
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/MapManager.java/right.java
 
                             case "catbox":
                                 EntityFactory.constructCatbox(pos, mask, category);

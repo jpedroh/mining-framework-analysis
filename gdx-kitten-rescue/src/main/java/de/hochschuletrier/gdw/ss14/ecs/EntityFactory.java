@@ -27,7 +27,6 @@ import de.hochschuletrier.gdw.ss14.ecs.components.DogPropertyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.EnemyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ExitMapPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ExitMapPropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.FinishPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.GroundPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.GroundPropertyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.InputComponent;
@@ -41,7 +40,6 @@ import de.hochschuletrier.gdw.ss14.ecs.components.ParticleEmitterComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.PlayerComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.RenderComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ShadowComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.StairComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.StairsPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.WoolPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.WoolPropertyComponent;
@@ -361,7 +359,6 @@ public class EntityFactory{
         exit.initPhysics(phyManager);
         manager.addComponent(entity, exit);
     }
-
     public static void constructFinish(Vector2 pos, float width, float height)
     {
         int entity = manager.createEntity();

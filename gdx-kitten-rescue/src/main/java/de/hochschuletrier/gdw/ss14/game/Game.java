@@ -139,14 +139,19 @@ public class Game {
         //int dogEntity2 = EntityFactory.constructDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
         //int dogEntity3 = EntityFactory.constructSmartDog(new Vector2(500, 350), 60.0f, 40.0f, 0, 100f);
 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
         EntityFactory.constructLaserPointer(new Vector2(300,0));
         EntityFactory.constructWool(new Vector2(3000,100));
+||||||| /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+        EntityFactory.constructLaserPointer(new Vector2(300,0));
+=======
         if (InputManager.getInstance().getInputDevice().getDeviceType() == DeviceType.MOUSE) {
             InputMouse mouse = (InputMouse) InputManager.getInstance().getInputDevice();
             EntityFactory.constructLaserPointer(mouse.getCursorPosition());
         } else {
             EntityFactory.constructLaserPointer(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2));
         }
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/2b8368e72b1c86feb0f0c8df2780a326352dcdb2/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
         
 //        int dogEntity3 = EntityFactory.constructDog(new Vector2(40,200), 60.0f, 40.0f, 0, 100f);
 //        int dogEntity4 = EntityFactory.constructDog(new Vector2(100, 350), 60.0f, 40.0f, 0, 100f);
