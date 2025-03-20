@@ -14,16 +14,13 @@ package org.assertj.core.api;
 
 import static org.assertj.core.error.ShouldStartWith.shouldStartWith;
 import static org.assertj.core.internal.CommonValidations.checkIsNotNull;
-
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.assertj.core.internal.Failures;
 import org.assertj.core.util.VisibleForTesting;
-
 /**
  * Assertion methods for {@link List}s.
  * <p>
@@ -146,9 +143,9 @@ public class ListAssert<ELEMENT> extends
     return super.isNotSameAs(expected);
   }
 
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/b36e8eaedb5eff543436358200741fa9ce3d47bd/src/main/java/org/assertj/core/api/ListAssert.java/left.java
   @Override
-  @SafeVarargs
-  public final ListAssert<ELEMENT> startsWith(ELEMENT... sequence) {
+  public ListAssert<ELEMENT> startsWith(@SuppressWarnings("unchecked") ELEMENT... sequence) {
     if (!(actual instanceof ListFromStream)) {
       return super.startsWith(sequence);
     }
@@ -171,6 +168,14 @@ public class ListAssert<ELEMENT> extends
     }
     return myself;
   }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/b36e8eaedb5eff543436358200741fa9ce3d47bd/src/main/java/org/assertj/core/api/ListAssert.java/base.java
+=======
+  @Override
+  @SafeVarargs
+  public final ListAssert<ELEMENT> startsWith(ELEMENT... sequence) {
+    return super.startsWith(sequence);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/b36e8eaedb5eff543436358200741fa9ce3d47bd/src/main/java/org/assertj/core/api/ListAssert.java/right.java
 
   private AssertionError actualDoesNotStartWithSequence(AssertionInfo info, Object[] sequence) {
     return Failures.instance()
