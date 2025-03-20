@@ -40,9 +40,17 @@ public class Item implements MucStatusJudge {
 		this.config = mucGroupContext.find(this.group);
 	}
 
+<<<<<<< /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/protocol/muc/Item.java/left.java
 	private boolean hidden() {
 		return this.config.allowed(MucGroupConfig.HIDDEN, this.group);
 	}
+||||||| /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/protocol/muc/Item.java/base.java
+=======
+	@XmlAttribute
+	public String getJid() {
+		return this.config.allowed(MucGroupConfig.HIDDEN, this.group) ? null : this.jid;
+	}
+>>>>>>> /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/protocol/muc/Item.java/right.java
 
 	public boolean equals(String jid) {
 		return this.jid.equals(jid);

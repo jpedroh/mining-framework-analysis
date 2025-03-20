@@ -22,11 +22,35 @@ public class PresenceMucLeave2AllProcessor extends ProxyProcessor {
 
 	private final MucStatusCollector mucStatusCollector;
 
+<<<<<<< /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/left.java
 	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext, MucStatusCollector mucStatusCollector) {
 		super();
 		this.mucGroupContext = mucGroupContext;
 		this.mucStatusCollector = mucStatusCollector;
 	}
+||||||| /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/base.java
+	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext, MucStatusCollector mucStatusCollector) 
+=======
+	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext, MucStatusCollector mucStatusCollector) {
+		super();
+		this.mucGroupContext = mucGroupContext;
+	}
+>>>>>>> /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/right.java
+
+<<<<<<< /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/left.java
+	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext) {
+		super();
+		this.mucGroupContext = mucGroupContext;
+		this.mucStatusCollector = mucStatusCollector;
+	}
+||||||| /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/base.java
+	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext) 
+=======
+	public PresenceMucLeave2AllProcessor(MucGroupContext mucGroupContext) {
+		super();
+		this.mucGroupContext = mucGroupContext;
+	}
+>>>>>>> /usr/src/app/output/kimshen/sissi/c00c2e6554f121dc4bbb4fb2549738e1b1ec639f/src/main/java/com/sissi/pipeline/in/presence/muc/PresenceMucLeave2AllProcessor.java/right.java
 
 	@Override
 	public boolean input(JIDContext context, Protocol protocol) {
@@ -35,7 +59,7 @@ public class PresenceMucLeave2AllProcessor extends ProxyProcessor {
 		Presence presence = new Presence();
 		for (Relation each : super.myRelations(group)) {
 			RelationMuc relation = RelationMuc.class.cast(each);
-			super.findOne(super.build(relation.getJID()), true).write(presence.clear().add(new XUser().setItem(new Item(group, ourRelation, this.mucGroupContext), this.mucStatusCollector)).setType(PresenceType.UNAVAILABLE).setFrom(protocol.getTo()));
+			super.findOne(super.build(relation.getJID()), true).write(presence.clear().add(new XUser().setItem(new Item(group,ourRelation, this.mucGroupContext), this.mucStatusCollector)).setType(PresenceType.UNAVAILABLE).setFrom(protocol.getTo()));
 		}
 		return true;
 	}
