@@ -388,6 +388,33 @@ public abstract class JexlParser extends StringParser {
      */
     protected void declareFunction(final ASTVar variable, final Token token, Scope scope) {
         final String name = token.image;
+        final int symbol = scope.declareVariable(name);
+        variable.setSymbol(symbol, name);
+        if (scope.isCapturedSymbol(symbol)) {
+            variable.setCaptured(true);
+        }
+        // lexical feature error
+        if (!declareSymbol(symbol)) {
+            if (getFeatures().isLexical()) {
+                throw new JexlException(variable, name + ": variable is already declared");
+            }
+            variable.setRedefined(true);
+        }
+    }
+
+    /**
+     * Declares a local function.
+     * @param variable the identifier used to declare
+     * @param token      the variable name toekn
+     */
+<<<<<<< /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/left.java
+    protected void declareFunction(final ASTVar variable, final Token token, Scope scope) {
+||||||| /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/base.java
+    protected void declareFunction(final ASTVar variable, final Token token) {
+=======
+    protected void declareFunction(final ASTVar variable, final Token token, boolean lexical) {
+>>>>>>> /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/parser/JexlParser.java/right.java
+        final String name = token.image;
         // function foo() ... <=> const foo = ()->...
         if (scope == null) {
             scope = new Scope(null);

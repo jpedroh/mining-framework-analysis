@@ -451,14 +451,12 @@ public final class JexlFeatures {
         setFeature(THIN_ARROW, flag);
         return this;
     }
-
     /**
      * @return true if thin-arrow lambda syntax is enabled, false otherwise
      */
     public boolean supportsThinArrow() {
         return getFeature(THIN_ARROW);
     }
-
     /**
      * Sets whether fat-arrow lambda syntax is enabled.
      * <p>
@@ -471,13 +469,34 @@ public final class JexlFeatures {
         setFeature(FAT_ARROW, flag);
         return this;
     }
-
     /**
      * @return true if fat-arrow lambda syntax is enabled, false otherwise
      */
     public boolean supportsFatArrow() {
         return getFeature(FAT_ARROW);
     }
+    /**
+     * Sets whether thin-arrow lambda syntax is enabled.
+     * <p>
+     * When disabled, parsing a script/expression using syntactic thin-arrow (->)
+     * will throw a parsing exception.
+     * @param flag true to enable, false to disable
+     * @return this features instance
+     */
+    /**
+     * @return true if thin-arrow lambda syntax is enabled, false otherwise
+     */
+    /**
+     * Sets whether fat-arrow lambda syntax is enabled.
+     * <p>
+     * When disabled, parsing a script/expression using syntactic fat-arrow (=>)
+     * will throw a parsing exception.
+     * @param flag true to enable, false to disable
+     * @return this features instance
+     */
+    /**
+     * @return true if fat-arrow lambda syntax is enabled, false otherwise
+     */
 
     /**
      * Sets whether pragma constructs are enabled.

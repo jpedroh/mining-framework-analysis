@@ -983,6 +983,7 @@ public class Interpreter extends InterpreterBase {
     @Override
     protected Object visit(final ASTJexlScript script, final Object data) {
         if (script instanceof ASTJexlLambda && !((ASTJexlLambda) script).isTopLevel()) {
+<<<<<<< /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/internal/Interpreter.java/left.java
             Closure closure = new Closure(this, (ASTJexlLambda) script);
             // if the function is named, assign in the local frame
             JexlNode child0 = script.jjtGetChild(0);
@@ -995,6 +996,19 @@ public class Interpreter extends InterpreterBase {
                 closure.setCaptured(symbol, closure);
             }
             return closure;
+||||||| /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/internal/Interpreter.java/base.java
+            return new Closure(this, (ASTJexlLambda) script);
+=======
+            Closure closure = new Closure(this, (ASTJexlLambda) script);
+            // if the function is named, assign in the local frame
+            JexlNode child0 = script.jjtGetChild(0);
+            if (child0 instanceof ASTVar) {
+                ASTVar var = (ASTVar) child0;
+                this.visit(var, data);
+                frame.set(var.getSymbol(), closure);
+            }
+            return closure;
+>>>>>>> /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/main/java/org/apache/commons/jexl3/internal/Interpreter.java/right.java
         }
         block = new LexicalFrame(frame, block).defineArgs();
         try {

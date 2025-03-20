@@ -1400,8 +1400,8 @@ public class JexlArithmetic {
             }
             if (isNumberable(left) || isNumberable(right)) {
                 try {
-                    final long lhs = toLong(left);
-                    final long rhs = toLong(right);
+                    final long lhs = toLong(left instanceof String? Double.parseDouble((String) left) : left);
+                    final long rhs = toLong(right instanceof String? Double.parseDouble((String) right) : right);
                     return Long.compare(lhs, rhs);
                 } catch(ArithmeticException xconvert) {
                     // ignore it, continue in sequence

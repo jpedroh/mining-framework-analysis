@@ -66,6 +66,7 @@ public class OptionalTest {
         }
     }
 
+<<<<<<< /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/test/java/org/apache/commons/jexl3/jexl342/OptionalTest.java/left.java
     @Test
     public void testStream() {
         String src = "[1, 2, 3, ...].map(x -> x * x).reduce((acc, x)->acc + x)";
@@ -81,6 +82,23 @@ public class OptionalTest {
         //Optional<?> result = (Optional<?>) script.execute(context, Arrays.asList(1, 2, 3));
         //Assert.assertEquals(14, result.get());
     }
+||||||| /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/test/java/org/apache/commons/jexl3/jexl342/OptionalTest.java/base.java
+=======
+    @Test
+    public void testStream() {
+        String src = "[1, 2, 3, ...].map(x -> x * x).reduce((acc, x)->acc + x).intValue()";
+        JexlBuilder builder = new JexlBuilder();
+        JexlUberspect uber = builder.create().getUberspect();
+        JexlEngine jexl = builder.uberspect(new ReferenceUberspect(uber)).safe(false).create();
+        JexlInfo info = new JexlInfo("testStream", 1, 1);
+        MapContext context = new StreamContext();
+        JexlScript script = jexl.createScript(src, "list");
+        Object result = script.execute(context, Arrays.asList(1, 2, 3));
+        Assert.assertEquals(14, result);
+        //Optional<?> result = (Optional<?>) script.execute(context, Arrays.asList(1, 2, 3));
+        //Assert.assertEquals(14, result.get());
+    }
+>>>>>>> /usr/src/app/output/apache/commons-jexl/247bbdd4815bad2deffcf37089bf90c128dc1f20/src/test/java/org/apache/commons/jexl3/jexl342/OptionalTest.java/right.java
 
     @Test
     public void testOptionalArgs() {
@@ -95,6 +113,21 @@ public class OptionalTest {
         Optional<Integer> x = Optional.of(21);
         Object result = script.execute(context, x);
         Assert.assertEquals(42, result);
+    }
+
+    public static class OptionalArithmetic extends JexlArithmetic {
+        public OptionalArithmetic(boolean astrict) {
+            super(astrict);
+        }
+        public Object add(Optional<?> lhs, Optional<?> rhs) {
+            return add(lhs.get(), rhs.get());
+        }
+        public Object add(Object lhs, Optional<?> rhs) {
+            return add(lhs, rhs.get());
+        }
+        public Object add(Optional<?> lhs, Object rhs) {
+            return add(lhs, rhs);
+        }
     }
 
     @Test
