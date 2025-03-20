@@ -1,7 +1,5 @@
 package com.github.marschall.memoryfilesystem;
-
 import static com.github.marschall.memoryfilesystem.AutoReleaseLock.autoRelease;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,11 +47,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
-
 import javax.annotation.PreDestroy;
 
 class MemoryFileSystem extends FileSystem {
-
   private static final Set<String> UNSUPPORTED_INITIAL_ATTRIBUES;
 
   private final String key;
@@ -80,10 +76,8 @@ class MemoryFileSystem extends FileSystem {
 
   private final EmptyPath emptyPath;
 
-  // computes the file name to be stored of a file
   private final StringTransformer storeTransformer;
 
-  // computes the look up key of a file name
   private final StringTransformer lookUpTransformer;
 
   private final Collator collator;
@@ -111,10 +105,7 @@ class MemoryFileSystem extends FileSystem {
     UNSUPPORTED_INITIAL_ATTRIBUES = Collections.unmodifiableSet(unsupported);
   }
 
-  MemoryFileSystem(String key, String separator, PathParser pathParser, MemoryFileSystemProvider provider, MemoryFileStore store,
-          MemoryUserPrincipalLookupService userPrincipalLookupService, ClosedFileSystemChecker checker, StringTransformer storeTransformer,
-          StringTransformer lookUpTransformer, Collator collator, Set<Class<? extends FileAttributeView>> additionalViews,
-          Set<PosixFilePermission> umask) {
+  MemoryFileSystem(String key, String separator, PathParser pathParser, MemoryFileSystemProvider provider, MemoryFileStore store, MemoryUserPrincipalLookupService userPrincipalLookupService, ClosedFileSystemChecker checker, StringTransformer storeTransformer, StringTransformer lookUpTransformer, Collator collator, Set<Class<? extends FileAttributeView>> additionalViews, Set<PosixFilePermission> umask) {
     this.key = key;
     this.separator = separator;
     this.pathParser = pathParser;
@@ -180,7 +171,6 @@ class MemoryFileSystem extends FileSystem {
     return this.emptyPath;
   }
 
-
   /**
    * Sets the root directories.
    * 
@@ -197,17 +187,19 @@ class MemoryFileSystem extends FileSystem {
   private Map<String, Root> buildRootsByKey(Collection<Root> rootDirectories) {
     if (rootDirectories.isEmpty()) {
       throw new IllegalArgumentException("a file system root must be present");
-    } else if (rootDirectories.size() == 1) {
-      Root root = rootDirectories.iterator().next();
-      String key = this.lookUpTransformer.transform(root.getKey());
-      return Collections.singletonMap(key, root);
     } else {
-      Map<String, Root> map = new HashMap<>(rootDirectories.size());
-      for (Root root : rootDirectories) {
+      if (rootDirectories.size() == 1) {
+        Root root = rootDirectories.iterator().next();
         String key = this.lookUpTransformer.transform(root.getKey());
-        map.put(key, root);
+        return Collections.singletonMap(key, root);
+      } else {
+        Map<String, Root> map = new HashMap<>(rootDirectories.size());
+        for (Root root : rootDirectories) {
+          String key = this.lookUpTransformer.transform(root.getKey());
+          map.put(key, root);
+        }
+        return map;
       }
-      return map;
     }
   }
 
@@ -230,13 +222,11 @@ class MemoryFileSystem extends FileSystem {
     return this.defaultPath;
   }
 
-
   BlockChannel newFileChannel(AbstractPath path, Set<? extends OpenOption> options, FileAttribute<?>... attrs) throws IOException {
     this.checker.check();
     MemoryFile file = this.getFile(path, options, attrs);
     return file.newChannel(options, path);
   }
-
 
   InputStream newInputStream(AbstractPath path, OpenOption... options) throws IOException {
     this.checker.check();
@@ -252,7 +242,6 @@ class MemoryFileSystem extends FileSystem {
     MemoryFile file = this.getFile(path, optionsSet);
     return file.newInputStream(optionsSet, path);
   }
-
 
   OutputStream newOutputStream(AbstractPath path, OpenOption... options) throws IOException {
     this.checker.check();
@@ -274,7 +263,7 @@ class MemoryFileSystem extends FileSystem {
       for (FileAttribute<?> attribute : attrs) {
         String attributeName = attribute.name();
         if (UNSUPPORTED_INITIAL_ATTRIBUES.contains(attributeName)) {
-          throw new UnsupportedOperationException("'" + attributeName + "' not supported as initial attribute");
+          throw new UnsupportedOperationException("\'" + attributeName + "\' not supported as initial attribute");
         }
       }
     }
@@ -287,11 +276,8 @@ class MemoryFileSystem extends FileSystem {
     }
     final ElementPath elementPath = (ElementPath) absolutePath;
     MemoryDirectory rootDirectory = this.getRootDirectory(absolutePath);
-
     return this.withWriteLockOnLastDo(rootDirectory, (AbstractPath) absolutePath.getParent(), Options.isFollowSymLinks(options), new MemoryDirectoryBlock<MemoryFile>() {
-
-      @Override
-      public MemoryFile value(MemoryDirectory directory) throws IOException {
+      @Override public MemoryFile value(MemoryDirectory directory) throws IOException {
         boolean isCreateNew = options.contains(StandardOpenOption.CREATE_NEW);
         String fileName = elementPath.getLastNameElement();
         String key = MemoryFileSystem.this.lookUpTransformer.transform(fileName);
@@ -300,7 +286,6 @@ class MemoryFileSystem extends FileSystem {
           MemoryFile file = new MemoryFile(name, MemoryFileSystem.this.newEntryCreationContext());
           checkSupportedInitialAttributes(attrs);
           AttributeAccessors.setAttributes(file, attrs);
-          // will throw an exception if already present
           directory.addEntry(key, file);
           return file;
         } else {
@@ -323,20 +308,16 @@ class MemoryFileSystem extends FileSystem {
           } else {
             throw new IOException("file is a directory");
           }
-
         }
       }
     });
-
   }
 
   DirectoryStream<Path> newDirectoryStream(final AbstractPath abstractPath, final Filter<? super Path> filter) throws IOException {
     final AbstractPath absolutePath = (AbstractPath) abstractPath.toAbsolutePath().normalize();
     MemoryDirectory root = this.getRootDirectory(absolutePath);
     return this.withReadLockDo(root, abstractPath, false, new MemoryEntryBlock<DirectoryStream<Path>>() {
-
-      @Override
-      public DirectoryStream<Path> value(MemoryEntry entry) throws IOException {
+      @Override public DirectoryStream<Path> value(MemoryEntry entry) throws IOException {
         if (!(entry instanceof MemoryDirectory)) {
           throw new NotDirectoryException(abstractPath.toString());
         }
@@ -346,30 +327,23 @@ class MemoryFileSystem extends FileSystem {
     });
   }
 
-
   void createDirectory(AbstractPath path, final FileAttribute<?>... attrs) throws IOException {
     this.createFile(path, new MemoryEntryCreator() {
-
-      @Override
-      public MemoryEntry create(String name) throws IOException {
+      @Override public MemoryEntry create(String name) throws IOException {
         MemoryDirectory directory = new MemoryDirectory(name, MemoryFileSystem.this.newEntryCreationContext());
         AttributeAccessors.setAttributes(directory, attrs);
         return directory;
       }
-
     });
   }
 
   void createSymbolicLink(AbstractPath link, final AbstractPath target, final FileAttribute<?>... attrs) throws IOException {
     this.createFile(link, new MemoryEntryCreator() {
-
-      @Override
-      public MemoryEntry create(String name) throws IOException {
+      @Override public MemoryEntry create(String name) throws IOException {
         MemorySymbolicLink symbolicLink = new MemorySymbolicLink(name, target, MemoryFileSystem.this.newEntryCreationContext());
         AttributeAccessors.setAttributes(symbolicLink, attrs);
         return symbolicLink;
       }
-
     });
   }
 
@@ -381,11 +355,8 @@ class MemoryFileSystem extends FileSystem {
     }
     final ElementPath elementPath = (ElementPath) absolutePath;
     MemoryDirectory rootDirectory = this.getRootDirectory(elementPath);
-
     this.withWriteLockOnLastDo(rootDirectory, (AbstractPath) elementPath.getParent(), true, new MemoryDirectoryBlock<Void>() {
-
-      @Override
-      public Void value(MemoryDirectory directory) throws IOException {
+      @Override public Void value(MemoryDirectory directory) throws IOException {
         String name = MemoryFileSystem.this.storeTransformer.transform(elementPath.getLastNameElement());
         MemoryEntry newEntry = creator.create(name);
         String key = MemoryFileSystem.this.lookUpTransformer.transform(newEntry.getOriginalName());
@@ -393,17 +364,14 @@ class MemoryFileSystem extends FileSystem {
         return null;
       }
     });
-
   }
 
-  Path toRealPath(AbstractPath abstractPath, LinkOption... options)throws IOException  {
+  Path toRealPath(AbstractPath abstractPath, LinkOption... options) throws IOException {
     this.checker.check();
     AbstractPath absolutePath = (AbstractPath) abstractPath.toAbsolutePath().normalize();
     boolean followSymLinks = Options.isFollowSymLinks(options);
     Set<MemorySymbolicLink> encounteredSymlinks;
     if (followSymLinks) {
-      // we don't expect to encounter many symlinks so we initialize to a lower than the default value of 16
-      // TODO optimized set
       encounteredSymlinks = new HashSet<>(4);
     } else {
       encounteredSymlinks = Collections.emptySet();
@@ -412,71 +380,63 @@ class MemoryFileSystem extends FileSystem {
     return this.toRealPath(root, absolutePath, encounteredSymlinks, followSymLinks);
   }
 
-
   private Path toRealPath(MemoryDirectory root, AbstractPath path, Set<MemorySymbolicLink> encounteredLinks, boolean followSymLinks) throws IOException {
     if (path.isRoot()) {
       return path.getRoot();
-    } else if (path instanceof ElementPath) {
-      Path symLinkTarget = null;
-
-      ElementPath elementPath = (ElementPath) path;
-      List<String> nameElements = elementPath.getNameElements();
-      List<String> realPath = new ArrayList<>(nameElements.size());
-      List<AutoRelease> locks = new ArrayList<>(nameElements.size() + 1);
-      try {
-        locks.add(root.readLock());
-        MemoryDirectory parent = root;
-        for (int i = 0; i < nameElements.size(); ++i) {
-          String fileName = nameElements.get(i);
-          String key = this.lookUpTransformer.transform(fileName);
-          MemoryEntry current = parent.getEntryOrException(key, path);
-          locks.add(current.readLock());
-          realPath.add(current.getOriginalName());
-
-          if (followSymLinks && current instanceof MemorySymbolicLink) {
-            MemorySymbolicLink link = (MemorySymbolicLink) current;
-            if (!encounteredLinks.add(link)) {
-              // TODO better error message
-              throw new FileSystemLoopException(path.toString());
-            }
-            symLinkTarget = link.getTarget();
-          }
-
-          if (i == nameElements.size() - 1) {
-            continue;
-          } else if (current instanceof MemoryDirectory) {
-            parent = (MemoryDirectory) current;
-          } else {
-            //TODO construct better error message
-            throw new NotDirectoryException(path.toString());
-          }
-
-        }
-      } finally {
-        for (int i = locks.size() - 1; i >= 0; --i) {
-          AutoRelease lock = locks.get(i);
-          lock.close();
-        }
-      }
-      if (symLinkTarget == null) {
-        return AbsolutePath.createAboslute(this, (Root) path.getRoot(), realPath);
-      } else {
-        return this.toRealPath(root, (AbstractPath) symLinkTarget, encounteredLinks, followSymLinks);
-      }
-
     } else {
-      throw new IllegalArgumentException("unknown path type" + path);
+      if (path instanceof ElementPath) {
+        Path symLinkTarget = null;
+        ElementPath elementPath = (ElementPath) path;
+        List<String> nameElements = elementPath.getNameElements();
+        List<String> realPath = new ArrayList<>(nameElements.size());
+        List<AutoRelease> locks = new ArrayList<>(nameElements.size() + 1);
+        try {
+          locks.add(root.readLock());
+          MemoryDirectory parent = root;
+          for (int i = 0; i < nameElements.size(); ++i) {
+            String fileName = nameElements.get(i);
+            String key = this.lookUpTransformer.transform(fileName);
+            MemoryEntry current = parent.getEntryOrException(key, path);
+            locks.add(current.readLock());
+            realPath.add(current.getOriginalName());
+            if (followSymLinks && current instanceof MemorySymbolicLink) {
+              MemorySymbolicLink link = (MemorySymbolicLink) current;
+              if (!encounteredLinks.add(link)) {
+                throw new FileSystemLoopException(path.toString());
+              }
+              symLinkTarget = link.getTarget();
+            }
+            if (i == nameElements.size() - 1) {
+              continue;
+            } else {
+              if (current instanceof MemoryDirectory) {
+                parent = (MemoryDirectory) current;
+              } else {
+                throw new NotDirectoryException(path.toString());
+              }
+            }
+          }
+        }  finally {
+          for (int i = locks.size() - 1; i >= 0; --i) {
+            AutoRelease lock = locks.get(i);
+            lock.close();
+          }
+        }
+        if (symLinkTarget == null) {
+          return AbsolutePath.createAboslute(this, (Root) path.getRoot(), realPath);
+        } else {
+          return this.toRealPath(root, (AbstractPath) symLinkTarget, encounteredLinks, followSymLinks);
+        }
+      } else {
+        throw new IllegalArgumentException("unknown path type" + path);
+      }
     }
   }
 
   void checkAccess(AbstractPath path, final AccessMode... modes) throws IOException {
     this.checker.check();
-    // java.nio.file.spi.FileSystemProvider#checkAccess(Path, AccessMode...)
-    // says we should follow symbolic links
     this.accessFileReading(path, true, new MemoryEntryBlock<Void>() {
-
-      @Override
-      public Void value(MemoryEntry entry) throws IOException {
+      @Override public Void value(MemoryEntry entry) throws IOException {
         entry.checkAccess(modes);
         return null;
       }
@@ -486,9 +446,7 @@ class MemoryFileSystem extends FileSystem {
   <A extends BasicFileAttributes> A readAttributes(AbstractPath path, final Class<A> type, LinkOption... options) throws IOException {
     this.checker.check();
     return this.accessFileReading(path, Options.isFollowSymLinks(options), new MemoryEntryBlock<A>() {
-
-      @Override
-      public A value(MemoryEntry entry) throws IOException {
+      @Override public A value(MemoryEntry entry) throws IOException {
         return entry.readAttributes(type);
       }
     });
@@ -496,15 +454,13 @@ class MemoryFileSystem extends FileSystem {
 
   <V extends FileAttributeView> V getLazyFileAttributeView(AbstractPath path, final Class<V> type, LinkOption... options) {
     InvocationHandler handler = new LazyFileAttributeView<>(path, type, options);
-    Object proxy = Proxy.newProxyInstance(MemoryFileSystem.class.getClassLoader(), new Class<?>[]{type}, handler);
+    Object proxy = Proxy.newProxyInstance(MemoryFileSystem.class.getClassLoader(), new Class<?>[] { type }, handler);
     return type.cast(proxy);
   }
 
   <V extends FileAttributeView> V getFileAttributeView(AbstractPath path, final Class<V> type, LinkOption... options) throws IOException {
     return this.accessFileReading(path, Options.isFollowSymLinks(options), new MemoryEntryBlock<V>() {
-
-      @Override
-      public V value(MemoryEntry entry) throws IOException {
+      @Override public V value(MemoryEntry entry) throws IOException {
         return entry.getFileAttributeView(type);
       }
     });
@@ -513,9 +469,7 @@ class MemoryFileSystem extends FileSystem {
   Map<String, Object> readAttributes(AbstractPath path, final String attributes, LinkOption... options) throws IOException {
     this.checker.check();
     return this.accessFileReading(path, Options.isFollowSymLinks(options), new MemoryEntryBlock<Map<String, Object>>() {
-
-      @Override
-      public Map<String, Object> value(MemoryEntry entry) throws IOException {
+      @Override public Map<String, Object> value(MemoryEntry entry) throws IOException {
         return AttributeAccessors.readAttributes(entry, attributes);
       }
     });
@@ -524,25 +478,22 @@ class MemoryFileSystem extends FileSystem {
   void setAttribute(AbstractPath path, final String attribute, final Object value, LinkOption... options) throws IOException {
     this.checker.check();
     this.accessFileWriting(path, Options.isFollowSymLinks(options), new MemoryEntryBlock<Void>() {
-
-      @Override
-      public Void value(MemoryEntry entry) throws IOException {
-        // TODO write lock?
+      @Override public Void value(MemoryEntry entry) throws IOException {
         AttributeAccessors.setAttribute(entry, attribute, value);
         return null;
       }
     });
   }
 
-  private <R> R accessFileReading(AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
+  private <R extends java.lang.Object> R accessFileReading(AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
     return this.accessFile(path, followSymLinks, LockType.READ, callback);
   }
 
-  private <R> R accessFileWriting(AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
+  private <R extends java.lang.Object> R accessFileWriting(AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
     return this.accessFile(path, followSymLinks, LockType.WRITE, callback);
   }
 
-  private <R> R accessFile(AbstractPath path, boolean followSymLinks, LockType lockType, MemoryEntryBlock<? extends R> callback) throws IOException {
+  private <R extends java.lang.Object> R accessFile(AbstractPath path, boolean followSymLinks, LockType lockType, MemoryEntryBlock<? extends R> callback) throws IOException {
     this.checker.check();
     AbstractPath absolutePath = (AbstractPath) path.toAbsolutePath().normalize();
     MemoryDirectory directory = this.getRootDirectory(absolutePath);
@@ -566,8 +517,7 @@ class MemoryFileSystem extends FileSystem {
     }
   }
 
-
-  private <R> R withWriteLockOnLastDo(MemoryDirectory root, final AbstractPath path,  boolean followSymLinks, final MemoryDirectoryBlock<R> callback) throws IOException {
+  private <R extends java.lang.Object> R withWriteLockOnLastDo(MemoryDirectory root, final AbstractPath path, boolean followSymLinks, final MemoryDirectoryBlock<R> callback) throws IOException {
     Set<MemorySymbolicLink> encounteredSymlinks;
     if (followSymLinks) {
       encounteredSymlinks = new HashSet<>(4);
@@ -575,19 +525,16 @@ class MemoryFileSystem extends FileSystem {
       encounteredSymlinks = Collections.emptySet();
     }
     return this.withLockDo(root, path, encounteredSymlinks, followSymLinks, LockType.WRITE, new MemoryEntryBlock<R>() {
-
-      @Override
-      public R value(MemoryEntry entry) throws IOException {
+      @Override public R value(MemoryEntry entry) throws IOException {
         if (!(entry instanceof MemoryDirectory)) {
           throw new NotDirectoryException(path.toString());
         }
         return callback.value((MemoryDirectory) entry);
       }
     });
-
   }
 
-  private <R> R withReadLockDo(MemoryDirectory root, AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
+  private <R extends java.lang.Object> R withReadLockDo(MemoryDirectory root, AbstractPath path, boolean followSymLinks, MemoryEntryBlock<? extends R> callback) throws IOException {
     Set<MemorySymbolicLink> encounteredSymlinks;
     if (followSymLinks) {
       encounteredSymlinks = new HashSet<>(4);
@@ -597,66 +544,62 @@ class MemoryFileSystem extends FileSystem {
     return this.withLockDo(root, path, encounteredSymlinks, followSymLinks, LockType.READ, callback);
   }
 
-
-  private <R> R withLockDo(MemoryDirectory root, AbstractPath path, Set<MemorySymbolicLink> encounteredLinks, boolean followSymLinks, LockType lockType, MemoryEntryBlock<? extends R> callback) throws IOException {
+  private <R extends java.lang.Object> R withLockDo(MemoryDirectory root, AbstractPath path, Set<MemorySymbolicLink> encounteredLinks, boolean followSymLinks, LockType lockType, MemoryEntryBlock<? extends R> callback) throws IOException {
     if (path.isRoot()) {
       try (AutoRelease lock = root.readLock()) {
         return callback.value(root);
       }
-    } else if (path instanceof ElementPath) {
-      R result = null;
-      Path symLinkTarget = null;
-
-      ElementPath elementPath = (ElementPath) path;
-      List<String> nameElements = elementPath.getNameElements();
-      List<AutoRelease> locks = new ArrayList<>(nameElements.size() + 1);
-      try {
-        locks.add(root.readLock());
-        MemoryDirectory parent = root;
-        for (int i = 0; i < nameElements.size(); ++i) {
-          String fileName = nameElements.get(i);
-          String key = this.lookUpTransformer.transform(fileName);
-          MemoryEntry current = parent.getEntryOrException(key, path);
-          boolean isLast = i == nameElements.size() - 1;
-          if (isLast && lockType == LockType.WRITE) {
-            locks.add(current.writeLock());
-          } else {
-            locks.add(current.readLock());
-          }
-
-          if (followSymLinks && current instanceof MemorySymbolicLink) {
-            MemorySymbolicLink link = (MemorySymbolicLink) current;
-            if (!encounteredLinks.add(link)) {
-              // TODO better error message
-              throw new FileSystemLoopException(path.toString());
-            }
-            symLinkTarget = link.getTarget();
-          }
-
-          if (isLast) {
-            result = callback.value(current);
-          } else if (current instanceof MemoryDirectory) {
-            parent = (MemoryDirectory) current;
-          } else {
-            //TODO construct better error message
-            throw new NotDirectoryException(path.toString());
-          }
-
-        }
-      } finally {
-        for (int i = locks.size() - 1; i >= 0; --i) {
-          AutoRelease lock = locks.get(i);
-          lock.close();
-        }
-      }
-      if (symLinkTarget == null) {
-        return result;
-      } else {
-        return this.withLockDo(root, (AbstractPath) symLinkTarget, encounteredLinks, followSymLinks, lockType, callback);
-      }
-
     } else {
-      throw new IllegalArgumentException("unknown path type" + path);
+      if (path instanceof ElementPath) {
+        R result = null;
+        Path symLinkTarget = null;
+        ElementPath elementPath = (ElementPath) path;
+        List<String> nameElements = elementPath.getNameElements();
+        List<AutoRelease> locks = new ArrayList<>(nameElements.size() + 1);
+        try {
+          locks.add(root.readLock());
+          MemoryDirectory parent = root;
+          for (int i = 0; i < nameElements.size(); ++i) {
+            String fileName = nameElements.get(i);
+            String key = this.lookUpTransformer.transform(fileName);
+            MemoryEntry current = parent.getEntryOrException(key, path);
+            boolean isLast = i == nameElements.size() - 1;
+            if (isLast && lockType == LockType.WRITE) {
+              locks.add(current.writeLock());
+            } else {
+              locks.add(current.readLock());
+            }
+            if (followSymLinks && current instanceof MemorySymbolicLink) {
+              MemorySymbolicLink link = (MemorySymbolicLink) current;
+              if (!encounteredLinks.add(link)) {
+                throw new FileSystemLoopException(path.toString());
+              }
+              symLinkTarget = link.getTarget();
+            }
+            if (isLast) {
+              result = callback.value(current);
+            } else {
+              if (current instanceof MemoryDirectory) {
+                parent = (MemoryDirectory) current;
+              } else {
+                throw new NotDirectoryException(path.toString());
+              }
+            }
+          }
+        }  finally {
+          for (int i = locks.size() - 1; i >= 0; --i) {
+            AutoRelease lock = locks.get(i);
+            lock.close();
+          }
+        }
+        if (symLinkTarget == null) {
+          return result;
+        } else {
+          return this.withLockDo(root, (AbstractPath) symLinkTarget, encounteredLinks, followSymLinks, lockType, callback);
+        }
+      } else {
+        throw new IllegalArgumentException("unknown path type" + path);
+      }
     }
   }
 
@@ -664,68 +607,50 @@ class MemoryFileSystem extends FileSystem {
     Path root = path.getRoot();
     MemoryDirectory directory = this.roots.get(root);
     if (directory == null) {
-      throw new NoSuchFileException(path.toString(), null, "the root doesn't exist");
+      throw new NoSuchFileException(path.toString(), null, "the root doesn\'t exist");
     }
     return directory;
   }
 
   void copyOrMove(AbstractPath source, AbstractPath target, TwoPathOperation operation, CopyOption... options) throws IOException {
     try (AutoRelease autoRelease = autoRelease(this.pathOrderingLock.writeLock())) {
-
       EndPointCopyContext sourceContext = this.buildEndpointCopyContext(source);
       EndPointCopyContext targetContext = this.buildEndpointCopyContext(target);
-
       int order = this.orderPaths(sourceContext, targetContext);
       final CopyContext copyContext = buildCopyContext(sourceContext, targetContext, operation, options, order);
-
       MemoryDirectory firstRoot = this.getRootDirectory(copyContext.first.parent);
       final MemoryDirectory secondRoot = this.getRootDirectory(copyContext.second.parent);
       this.withWriteLockOnLastDo(firstRoot, copyContext.first.parent, copyContext.firstFollowSymLinks, new MemoryDirectoryBlock<Void>() {
-
-        @Override
-        public Void value(final MemoryDirectory firstDirectory) throws IOException {
+        @Override public Void value(final MemoryDirectory firstDirectory) throws IOException {
           MemoryFileSystem.this.withWriteLockOnLastDo(secondRoot, copyContext.second.parent, copyContext.secondFollowSymLinks, new MemoryDirectoryBlock<Void>() {
-
-            @Override
-            public Void value(MemoryDirectory secondDirectory) throws IOException {
+            @Override public Void value(MemoryDirectory secondDirectory) throws IOException {
               handleTwoPathOperation(copyContext, firstDirectory, secondDirectory);
               return null;
             }
-
           });
           return null;
         }
-
       });
-
     }
   }
 
   static void copyOrMoveBetweenFileSystems(MemoryFileSystem sourceFileSystem, MemoryFileSystem targetFileSystem, AbstractPath source, AbstractPath target, TwoPathOperation operation, CopyOption... options) throws IOException {
     EndPointCopyContext sourceContext = sourceFileSystem.buildEndpointCopyContext(source);
     EndPointCopyContext targetContext = targetFileSystem.buildEndpointCopyContext(target);
-
     int order = orderFileSystems(sourceContext, targetContext);
     final CopyContext copyContext = buildCopyContext(sourceContext, targetContext, operation, options, order);
-
     MemoryDirectory firstRoot = sourceFileSystem.getRootDirectory(copyContext.first.parent);
     final MemoryDirectory secondRoot = targetFileSystem.getRootDirectory(copyContext.second.parent);
     copyContext.first.path.getMemoryFileSystem().withWriteLockOnLastDo(firstRoot, copyContext.first.parent, copyContext.firstFollowSymLinks, new MemoryDirectoryBlock<Void>() {
-
-      @Override
-      public Void value(final MemoryDirectory firstDirectory) throws IOException {
+      @Override public Void value(final MemoryDirectory firstDirectory) throws IOException {
         copyContext.second.path.getMemoryFileSystem().withWriteLockOnLastDo(secondRoot, copyContext.second.parent, copyContext.secondFollowSymLinks, new MemoryDirectoryBlock<Void>() {
-
-          @Override
-          public Void value(MemoryDirectory secondDirectory) throws IOException {
+          @Override public Void value(MemoryDirectory secondDirectory) throws IOException {
             handleTwoPathOperation(copyContext, firstDirectory, secondDirectory);
             return null;
           }
-
         });
         return null;
       }
-
     });
   }
 
@@ -752,7 +677,6 @@ class MemoryFileSystem extends FileSystem {
   }
 
   private EndPointCopyContext buildEndpointCopyContext(AbstractPath path) {
-    // TODO check for root
     ElementPath absolutePath = (ElementPath) path.toAbsolutePath().normalize();
     AbstractPath parent = (AbstractPath) absolutePath.getParent();
     String elementName = absolutePath.getLastNameElement();
@@ -760,9 +684,10 @@ class MemoryFileSystem extends FileSystem {
   }
 
   static final class EndPointCopyContext {
-
     final AbstractPath path;
+
     final AbstractPath parent;
+
     final String elementName;
 
     EndPointCopyContext(AbstractPath path, AbstractPath parent, String elementName) {
@@ -770,14 +695,12 @@ class MemoryFileSystem extends FileSystem {
       this.parent = parent;
       this.elementName = elementName;
     }
-
   }
 
   private static CopyContext buildCopyContext(EndPointCopyContext source, EndPointCopyContext target, TwoPathOperation operation, CopyOption[] options, int order) {
     boolean followSymLinks = Options.isFollowSymLinks(options);
     boolean replaceExisting = Options.isReplaceExisting(options);
     boolean copyAttribues = Options.isCopyAttribues(options);
-
     EndPointCopyContext first;
     EndPointCopyContext second;
     boolean firstFollowSymLinks;
@@ -796,26 +719,31 @@ class MemoryFileSystem extends FileSystem {
       secondFollowSymLinks = followSymLinks;
       inverted = true;
     }
-
-    return new CopyContext(operation, source, target, first, second, firstFollowSymLinks, secondFollowSymLinks,
-            inverted, replaceExisting, copyAttribues);
+    return new CopyContext(operation, source, target, first, second, firstFollowSymLinks, secondFollowSymLinks, inverted, replaceExisting, copyAttribues);
   }
 
   static final class CopyContext {
-
     final EndPointCopyContext source;
+
     final EndPointCopyContext target;
+
     final EndPointCopyContext first;
+
     final EndPointCopyContext second;
+
     final boolean firstFollowSymLinks;
+
     final boolean secondFollowSymLinks;
+
     private final boolean inverted;
+
     final boolean replaceExisting;
+
     final boolean copyAttribues;
+
     final TwoPathOperation operation;
 
-    CopyContext(TwoPathOperation operation, EndPointCopyContext source, EndPointCopyContext target, EndPointCopyContext first, EndPointCopyContext second,
-            boolean firstFollowSymLinks, boolean secondFollowSymLinks, boolean inverted, boolean replaceExisting, boolean copyAttribues) {
+    CopyContext(TwoPathOperation operation, EndPointCopyContext source, EndPointCopyContext target, EndPointCopyContext first, EndPointCopyContext second, boolean firstFollowSymLinks, boolean secondFollowSymLinks, boolean inverted, boolean replaceExisting, boolean copyAttribues) {
       this.operation = operation;
       this.source = source;
       this.target = target;
@@ -843,11 +771,7 @@ class MemoryFileSystem extends FileSystem {
         return firstDirectory;
       }
     }
-
-
-
   }
-
 
   void delete(final AbstractPath abstractPath) throws IOException {
     try (AutoRelease autoRelease = autoRelease(this.pathOrderingLock.readLock())) {
@@ -857,11 +781,8 @@ class MemoryFileSystem extends FileSystem {
       }
       final ElementPath elementPath = (ElementPath) absolutePath;
       MemoryDirectory rootDirectory = this.getRootDirectory(elementPath);
-
       this.withWriteLockOnLastDo(rootDirectory, (AbstractPath) elementPath.getParent(), true, new MemoryDirectoryBlock<Void>() {
-
-        @Override
-        public Void value(MemoryDirectory directory) throws IOException {
+        @Override public Void value(MemoryDirectory directory) throws IOException {
           String fileName = elementPath.getLastNameElement();
           String key = MemoryFileSystem.this.lookUpTransformer.transform(fileName);
           MemoryEntry child = directory.getEntryOrException(key, abstractPath);
@@ -885,80 +806,56 @@ class MemoryFileSystem extends FileSystem {
     }
   }
 
-
-  @Override
-  public FileSystemProvider provider() {
+  @Override public FileSystemProvider provider() {
     this.checker.check();
     return this.provider;
   }
 
-
-  @Override
-  @PreDestroy // closing twice is explicitly allowed by the contract
-  public void close() throws IOException {
+  @Override @PreDestroy public void close() throws IOException {
     this.checker.close();
     this.provider.close(this);
   }
 
-
-  @Override
-  public boolean isOpen() {
+  @Override public boolean isOpen() {
     return this.checker.isOpen();
   }
 
-
-  @Override
-  public boolean isReadOnly() {
+  @Override public boolean isReadOnly() {
     this.checker.check();
     return this.store.isReadOnly();
   }
 
-
-  @Override
-  public String getSeparator() {
+  @Override public String getSeparator() {
     this.checker.check();
     return this.separator;
   }
 
-
-  @Override
-  public Iterable<Path> getRootDirectories() {
+  @Override public Iterable<Path> getRootDirectories() {
     this.checker.check();
-    // this is fine because the iterator does not support modification
     return (Iterable<Path>) ((Object) this.roots.keySet());
   }
 
-
-  @Override
-  public Iterable<FileStore> getFileStores() {
+  @Override public Iterable<FileStore> getFileStores() {
     this.checker.check();
     return this.stores;
   }
 
-
-  @Override
-  public Set<String> supportedFileAttributeViews() {
+  @Override public Set<String> supportedFileAttributeViews() {
     this.checker.check();
     return this.supportedFileAttributeViews;
   }
 
-
-  @Override
-  public AbstractPath getPath(String first, String... more) {
+  @Override public AbstractPath getPath(String first, String... more) {
     this.checker.check();
-    // TODO check for maximum length
     return this.pathParser.parse(this.rootByKey, first, more);
   }
 
-
-  @Override
-  public PathMatcher getPathMatcher(String syntaxAndPattern) {
+  @Override public PathMatcher getPathMatcher(String syntaxAndPattern) {
     this.checker.check();
     int colonIndex = syntaxAndPattern.indexOf(':');
     if (colonIndex <= 0 || colonIndex == syntaxAndPattern.length() - 1) {
       throw new IllegalArgumentException("syntaxAndPattern must have form \"syntax:pattern\" but was \"" + syntaxAndPattern + "\"");
     }
-
     String syntax = syntaxAndPattern.substring(0, colonIndex);
     String pattern = syntaxAndPattern.substring(colonIndex + 1);
     if (syntax.equalsIgnoreCase(GlobPathMatcher.name())) {
@@ -969,25 +866,18 @@ class MemoryFileSystem extends FileSystem {
       Pattern regex = Pattern.compile(pattern);
       return new RegexPathMatcher(regex);
     }
-
     throw new UnsupportedOperationException("unsupported syntax \"" + syntax + "\"");
   }
 
-
-  @Override
-  public UserPrincipalLookupService getUserPrincipalLookupService() {
+  @Override public UserPrincipalLookupService getUserPrincipalLookupService() {
     this.checker.check();
     return this.userPrincipalLookupService;
   }
 
-
-  @Override
-  public WatchService newWatchService() throws IOException {
+  @Override public WatchService newWatchService() throws IOException {
     this.checker.check();
-    // TODO make configurable
     throw new UnsupportedOperationException();
   }
-
 
   FileStore getFileStore() {
     return this.store;
@@ -998,23 +888,20 @@ class MemoryFileSystem extends FileSystem {
   }
 
   boolean isHidden(AbstractPath abstractPath) throws IOException {
-    // Posix seems to check only the file name
-    // TODO write test
-    return this.accessFileReading(abstractPath, false, new MemoryEntryBlock<Boolean>(){
-
-      @Override
-      public Boolean value(MemoryEntry entry) throws IOException {
+    return this.accessFileReading(abstractPath, false, new MemoryEntryBlock<Boolean>() {
+      @Override public Boolean value(MemoryEntry entry) throws IOException {
         Set<String> supportedFileAttributeViews = MemoryFileSystem.this.supportedFileAttributeViews();
         if (supportedFileAttributeViews.contains(FileAttributeViews.POSIX)) {
           String originalName = entry.getOriginalName();
           return !originalName.isEmpty() && originalName.charAt(0) == '.';
-        } else if (supportedFileAttributeViews.contains(FileAttributeViews.DOS)) {
-          return entry.readAttributes(DosFileAttributes.class).isHidden();
         } else {
-          return false;
+          if (supportedFileAttributeViews.contains(FileAttributeViews.DOS)) {
+            return entry.readAttributes(DosFileAttributes.class).isHidden();
+          } else {
+            return false;
+          }
         }
       }
-
     });
   }
 
@@ -1024,19 +911,23 @@ class MemoryFileSystem extends FileSystem {
       try (AutoRelease lock = sourceFile.readLock()) {
         return new MemoryFile(targetElementName, this.newEntryCreationContext(), sourceFile);
       }
-    } else if (sourceEntry instanceof MemoryDirectory) {
-      MemoryDirectory sourceDirectory = (MemoryDirectory) sourceEntry;
-      try (AutoRelease lock = sourceDirectory.readLock()) {
-        sourceDirectory.checkEmpty(absoluteTargetPath);
-        return new MemoryDirectory(targetElementName, MemoryFileSystem.this.newEntryCreationContext());
-      }
-    } else if (sourceEntry instanceof MemorySymbolicLink) {
-      MemorySymbolicLink sourceLink = (MemorySymbolicLink) sourceEntry;
-      try (AutoRelease lock = sourceLink.readLock()) {
-        return new MemorySymbolicLink(targetElementName, (AbstractPath) sourceLink.getTarget(), MemoryFileSystem.this.newEntryCreationContext());
-      }
     } else {
-      throw new AssertionError("unknown entry type:" + sourceEntry);
+      if (sourceEntry instanceof MemoryDirectory) {
+        MemoryDirectory sourceDirectory = (MemoryDirectory) sourceEntry;
+        try (AutoRelease lock = sourceDirectory.readLock()) {
+          sourceDirectory.checkEmpty(absoluteTargetPath);
+          return new MemoryDirectory(targetElementName, MemoryFileSystem.this.newEntryCreationContext());
+        }
+      } else {
+        if (sourceEntry instanceof MemorySymbolicLink) {
+          MemorySymbolicLink sourceLink = (MemorySymbolicLink) sourceEntry;
+          try (AutoRelease lock = sourceLink.readLock()) {
+            return new MemorySymbolicLink(targetElementName, (AbstractPath) sourceLink.getTarget(), MemoryFileSystem.this.newEntryCreationContext());
+          }
+        } else {
+          throw new AssertionError("unknown entry type:" + sourceEntry);
+        }
+      }
     }
   }
 
@@ -1048,14 +939,12 @@ class MemoryFileSystem extends FileSystem {
     final ElementPath elementPath = (ElementPath) absolutePath;
     MemoryDirectory rootDirectory = this.getRootDirectory(absolutePath);
     return this.withWriteLockOnLastDo(rootDirectory, (AbstractPath) absolutePath.getParent(), true, new MemoryDirectoryBlock<MemorySymbolicLink>() {
-
-      @Override
-      public MemorySymbolicLink value(MemoryDirectory directory) throws IOException {
+      @Override public MemorySymbolicLink value(MemoryDirectory directory) throws IOException {
         String fileName = elementPath.getLastNameElement();
         String key = MemoryFileSystem.this.lookUpTransformer.transform(fileName);
         MemoryEntry storedEntry = directory.getEntry(key);
         if (storedEntry == null) {
-          throw new NoSuchFileException(path.toString(), null, "the file doesn't exist");
+          throw new NoSuchFileException(path.toString(), null, "the file doesn\'t exist");
         }
         if (!(storedEntry instanceof MemorySymbolicLink)) {
           throw new IOException("file is not a symbolic link");
@@ -1066,31 +955,23 @@ class MemoryFileSystem extends FileSystem {
   }
 
   static void handleTwoPathOperation(CopyContext copyContext, MemoryDirectory firstDirectory, MemoryDirectory secondDirectory) throws IOException {
-
     EndPointCopyContext sourceContext = copyContext.source;
     EndPointCopyContext targetContext = copyContext.target;
     MemoryDirectory sourceParent = copyContext.getSourceParent(firstDirectory, secondDirectory);
     MemoryDirectory targetParent = copyContext.getTargetParent(firstDirectory, secondDirectory);
-
     StringTransformer sourceTransformer = sourceContext.path.getMemoryFileSystem().lookUpTransformer;
     String sourceElementName = sourceTransformer.transform(sourceContext.elementName);
     MemoryEntry sourceEntry = sourceParent.getEntryOrException(sourceElementName, sourceContext.path);
-
     StringTransformer targetTransformer = targetContext.path.getMemoryFileSystem().lookUpTransformer;
     String targetElementName = targetTransformer.transform(targetContext.elementName);
     MemoryEntry targetEntry = targetParent.getEntry(targetElementName);
-
     if (sourceEntry == targetEntry) {
-      // source and target are the same, do nothing
-      // the way I read Files#copy this is the intention of the spec
       return;
     }
-
     if (targetEntry != null) {
       if (!copyContext.replaceExisting) {
         throw new FileAlreadyExistsException(targetContext.path.toString());
       }
-
       if (targetEntry instanceof MemoryDirectory) {
         MemoryDirectory targetDirectory = (MemoryDirectory) targetEntry;
         try (AutoRelease lock = targetDirectory.readLock()) {
@@ -1099,7 +980,6 @@ class MemoryFileSystem extends FileSystem {
       }
       targetParent.removeEntry(targetElementName);
     }
-
     if (copyContext.operation.isMove()) {
       sourceParent.removeEntry(sourceElementName);
       targetParent.addEntry(targetElementName, sourceEntry);
@@ -1112,16 +992,17 @@ class MemoryFileSystem extends FileSystem {
     }
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return MemoryFileSystem.class.getSimpleName() + '[' + this.key + ']';
   }
 
   class LazyFileAttributeView<V extends FileAttributeView> implements InvocationHandler {
-
     private final AbstractPath path;
+
     private final LinkOption[] options;
+
     private final Class<V> type;
+
     private final AtomicReference<V> attributeView;
 
     LazyFileAttributeView(AbstractPath path, Class<V> type, LinkOption... options) {
@@ -1131,36 +1012,35 @@ class MemoryFileSystem extends FileSystem {
       this.attributeView = new AtomicReference<>();
     }
 
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       String methodName = method.getName();
       switch (methodName) {
         case "name":
-          if (args != null && args.length > 0) {
-            throw new AssertionError("#name() not expected to have any arguments");
-          }
-          return FileAttributeViews.mapAttributeView(this.type);
+        if (args != null && args.length > 0) {
+          throw new AssertionError("#name() not expected to have any arguments");
+        }
+        return FileAttributeViews.mapAttributeView(this.type);
         case "toString":
-          if (args != null && args.length > 0) {
-            throw new AssertionError("#toString() not expected to have any arguments");
-          }
-          return this.type.toString();
+        if (args != null && args.length > 0) {
+          throw new AssertionError("#toString() not expected to have any arguments");
+        }
+        return this.type.toString();
         case "equals":
-          if (args == null || args.length != 1) {
-            throw new AssertionError("#equals() expected to exactly one argument");
-          }
-          return proxy == args[0];
+        if (args == null || args.length != 1) {
+          throw new AssertionError("#equals() expected to exactly one argument");
+        }
+        return proxy == args[0];
         case "hashCode":
-          if (args != null && args.length > 0) {
-            throw new AssertionError("#hashCode() not expected to have any arguments");
-          }
-          return System.identityHashCode(proxy);
+        if (args != null && args.length > 0) {
+          throw new AssertionError("#hashCode() not expected to have any arguments");
+        }
+        return System.identityHashCode(proxy);
         default:
-          try {
-            return method.invoke(this.getView(), args);
-          } catch (InvocationTargetException e) {
-            throw e.getCause();
-          }
+        try {
+          return method.invoke(this.getView(), args);
+        } catch (InvocationTargetException e) {
+          throw e.getCause();
+        }
       }
     }
 
@@ -1178,31 +1058,22 @@ class MemoryFileSystem extends FileSystem {
         }
       }
     }
-
   }
 
-
-  interface MemoryEntryBlock<R> {
-
+  interface MemoryEntryBlock<R extends java.lang.Object> {
     R value(MemoryEntry entry) throws IOException;
-
   }
 
-  interface MemoryDirectoryBlock<R> {
-
+  interface MemoryDirectoryBlock<R extends java.lang.Object> {
     R value(MemoryDirectory entry) throws IOException;
-
   }
 
   interface MemoryEntryCreator {
-
     MemoryEntry create(String name) throws IOException;
-
   }
 
   enum LockType {
     READ,
-    WRITE;
+    WRITE
   }
-
 }
