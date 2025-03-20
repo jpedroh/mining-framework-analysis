@@ -144,7 +144,7 @@ public final class StaticImports {
      few methods in this project that support varargs.
      */
     @SafeVarargs
-    public static <T> MutableList<T> mutableVec(T... items) {
+    static public <T> MutableList<T> mutableVec(T... items) {
         MutableList<T> ret = PersistentVector.emptyMutable();
         if (items == null) { return ret; }
         for (T t : items) {
@@ -232,26 +232,12 @@ public final class StaticImports {
         return PersistentVector.ofIter(Arrays.asList(items));
     }
 
-    /**
-     If you need to wrap a regular Java collection or other iterable outside this project to perform
-     a transformation on it, this method is the most convenient, efficient way to do so.
-     */
+    /** Wrap a regular Java collection or other iterable outside this project to perform a transformation on it. */
     public static <T> UnmodIterable<T> xform(Iterable<T> iterable) { return Xform.of(iterable); }
-
-    /**
-     If you need to wrap a regular Java array outside this project to perform
-     a transformation on it, this method is the most convenient, efficient way to do so.
-     */
-    @SafeVarargs
-    public static <T> UnmodIterable<T> xformArray(T... items) {
-        return Xform.of(Arrays.asList(items));
-    }
 
     // TODO: Enable this to make Maps, Strings, and StringBuilders work like other collections.
 //    /** Wrap a Java.util.Map to perform a transformation on it. */
-//    public static <K,V> UnmodIterable<Map.Entry<K,V>> xform(Map<K,V> map) {
-//        return Xform.of(map.entrySet());
-//    }
+//    public static <K,V> Transformable<Map.Entry<K,V>> xform(Map<K,V> map) { return Xform.of(map.entrySet()); }
 //
 //    /** Wrap a String to perform a transformation on it. */
 //    public static Transformable<Character> xform(CharSequence seq) {
@@ -272,4 +258,12 @@ public final class StaticImports {
 //            }
 //        });
 //    }
+    /**
+     If you need to wrap a regular Java array outside this project to perform
+     a transformation on it, this method is the most convenient, efficient way to do so.
+     */
+    @SafeVarargs
+    public static <T> UnmodIterable<T> xformArray(T... items) {
+        return Xform.of(Arrays.asList(items));
+    }
 }
