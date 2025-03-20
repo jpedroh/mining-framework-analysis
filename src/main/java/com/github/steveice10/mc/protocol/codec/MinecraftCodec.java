@@ -197,7 +197,13 @@ public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
             .protocolVersion(761)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
+<<<<<<< /usr/src/app/output/steveice10/mcprotocollib/8a7d7b196b5c9f4b309777d5d411d8a1524d81e3/src/main/java/com/github/steveice10/mc/protocol/codec/MinecraftCodec.java/left.java
+            .minecraftVersion("1.19.2")
+||||||| /usr/src/app/output/steveice10/mcprotocollib/8a7d7b196b5c9f4b309777d5d411d8a1524d81e3/src/main/java/com/github/steveice10/mc/protocol/codec/MinecraftCodec.java/base.java
+            .minecraftVersion("1.19.1")
+=======
             .minecraftVersion("1.19.3")
+>>>>>>> /usr/src/app/output/steveice10/mcprotocollib/8a7d7b196b5c9f4b309777d5d411d8a1524d81e3/src/main/java/com/github/steveice10/mc/protocol/codec/MinecraftCodec.java/right.java
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
