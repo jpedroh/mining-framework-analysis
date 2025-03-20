@@ -19,34 +19,26 @@ import static org.junit.Assert.assertEquals;
 @RunWith(JCUnit8.class)
 public class BankAccountExample2 {
 
-  private final BankAccount2 anotherAccount = BankAccount2.open();
   private       BankAccount2 myAccount;
-
-  private static int calculateBalance(List<String> scenario,
-      int amountOfDeposit,
-      int amountOfWithdraw,
-      int amountOfTransfer) {
-    int balance = 0;
-    for (String op : scenario) {
-      if ("deposit".equals(op)) {
-        balance += amountOfDeposit;
-      } else if ("withdraw".equals(op)) {
-        balance -= amountOfWithdraw;
-      } else if ("transfer".equals(op)) {
-        balance -= amountOfTransfer;
-      }
-      if (balance < 0) {
-        return balance;
-      }
-    }
-    return balance;
-  }
+  private final BankAccount2 anotherAccount = BankAccount2.open();
 
   @ParameterSource
   public CallSequenceRegexParameter.Descriptor scenario() {
     return CallSequenceRegexParameter.Descriptor.of("open deposit(deposit|withdraw|transfer){0,2}getBalance")
-        .parameters("open", ParameterUtils.simple(asList("Steve Smith", "Scot Tiger")).create(""))
-        .parameters("deposit", ParameterUtils.simple(asList(0, 1, 1_000_000)).create(""));
+<<<<<<< /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/left.java
+        .parameters("open",  SimpleParameter.Descriptor.of(asList("Steve Smith", "Scot Tiger")).create(""))
+||||||| /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/base.java
+        .parameters("open",  Simple.Factory.of(asList("Steve Smith", "Scot Tiger")).create(""))
+=======
+        .parameters("open",  ParameterUtils.simple(asList("Steve Smith", "Scot Tiger")).create(""))
+>>>>>>> /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/right.java
+<<<<<<< /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/left.java
+        .parameters("deposit",  SimpleParameter.Descriptor.of(asList(0, 1, 1_000_000)).create(""));
+||||||| /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/base.java
+        .parameters("deposit",  Simple.Factory.of(asList(0, 1, 1_000_000)).create(""));
+=======
+        .parameters("deposit",  ParameterUtils.simple(asList(0, 1, 1_000_000)).create(""));
+>>>>>>> /usr/src/app/output/dakusui/jcunit/1894b180ff4208944a66ca25117bdf473634094c/src/test/java/com/github/dakusui/jcunitx/examples/bankaccount2/BankAccountExample2.java/right.java
 
   }
 
@@ -112,6 +104,26 @@ public class BankAccountExample2 {
       @From("transferAmount") int amountOfTransfer
   ) {
     return calculateBalance(scenario, amountOfDeposit, amountOfWithdraw, amountOfTransfer) >= 0;
+  }
+
+  private static int calculateBalance(List<String> scenario,
+      int amountOfDeposit,
+      int amountOfWithdraw,
+      int amountOfTransfer) {
+    int balance = 0;
+    for (String op : scenario) {
+      if ("deposit".equals(op)) {
+        balance += amountOfDeposit;
+      } else if ("withdraw".equals(op)) {
+        balance -= amountOfWithdraw;
+      } else if ("transfer".equals(op)) {
+        balance -= amountOfTransfer;
+      }
+      if (balance < 0) {
+        return balance;
+      }
+    }
+    return balance;
   }
 
   @Test
