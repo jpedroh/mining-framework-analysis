@@ -63,9 +63,7 @@ public class ProjParser {
                         args = readRegistry(reader, crsCode, regexPattern);
 
                 } finally {
-                        if (reader != null) {
                                 reader.close();
-                        }
                 }
                 return args;
         }
@@ -92,15 +90,19 @@ public class ProjParser {
                         } else if (line.startsWith("<") && line.endsWith(">")) {
                                 String[] tokens = line.split(regex);
                                 Map<String, String> v = new HashMap<String, String>();
-                                String crsID;
+                                String crsID = null;
                                 boolean crsFounded = true;
                                 for (String token : tokens) {
                                         if (token.startsWith("<") && token.endsWith(">")
                                                 && token.length() > 2) {
                                                 crsID = token.substring(1, token.length() - 1);
                                                 if (!crsID.toLowerCase().equals(nameOfCRS.toLowerCase())) {
-                                                        crsFounded = false;
-                                                        crsName = null;
+<<<<<<< /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/left.java
+                                                    crsName = null;
+||||||| /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/base.java
+=======
+                                                    crsFounded = false;
+>>>>>>> /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/right.java
                                                         break;
                                                 }
                                         } else if (token.equals("<>")) {
@@ -119,7 +121,13 @@ public class ProjParser {
                                         }
                                 }
                                 // found requested CRS?
+<<<<<<< /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/left.java
+                                if (nameOfCRS.equals(crsID)) {
+||||||| /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/base.java
+                                if (crsID.equals(nameOfCRS)) {
+=======
                                 if (crsFounded) {
+>>>>>>> /usr/src/app/output/irstv/cts/a98fe4f82bac767864af1fead47b8d14a77e0a58/src/main/java/org/cts/parser/proj/ProjParser.java/right.java
                                     if (!v.containsKey(ProjKeyParameters.title)&&crsName!=null) {
                                         v.put(ProjKeyParameters.title, crsName);
                                     }
