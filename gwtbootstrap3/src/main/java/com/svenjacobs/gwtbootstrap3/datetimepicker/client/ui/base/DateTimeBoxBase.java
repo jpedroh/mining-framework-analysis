@@ -97,17 +97,31 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
         textBox.setAlignment(align);
     }
 
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     @Override
     public void setPlaceholder(final String placeHolder) {
         textBox.setPlaceholder(placeHolder);
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setPlaceHolder(String placeHolder) {
+        textBox.setPlaceHolder(placeHolder);
+=======
+    public void setPlaceHolder(final String placeHolder) {
+        textBox.setPlaceHolder(placeHolder);
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     @Override
     public String getPlaceholder() {
         return textBox.getPlaceholder();
     }
 
     public void setReadOnly(final boolean readOnly) {
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setReadOnly(boolean readOnly) {
+=======
+    public void setReadOnly(final boolean readOnly) {
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
         textBox.setReadOnly(readOnly);
     }
 
@@ -143,33 +157,81 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setDateIcon(final Icon icon) {
         dateIconClass = icon.getStyleName();
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setDateIcon(Icon icon) {
+        this.dateIconClass = icon.getStyleName();
+=======
+    public void setDateIcon(final Icon icon) {
+        this.dateIconClass = icon.getStyleName();
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setDownIcon(final Icon icon) {
         downIconClass = icon.getStyleName();
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setDownIcon(Icon icon) {
+        this.downIconClass = icon.getStyleName();
+=======
+    public void setDownIcon(final Icon icon) {
+        this.downIconClass = icon.getStyleName();
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setTimeIcon(final Icon icon) {
         timeIconClass = icon.getStyleName();
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setTimeIcon(Icon icon) {
+        this.timeIconClass = icon.getStyleName();
+=======
+    public void setTimeIcon(final Icon icon) {
+        this.timeIconClass = icon.getStyleName();
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setUpIcon(final Icon icon) {
         upIconClass = icon.getStyleName();
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setUpIcon(Icon icon) {
+        this.upIconClass = icon.getStyleName();
+=======
+    public void setUpIcon(final Icon icon) {
+        this.upIconClass = icon.getStyleName();
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setShowDatePicker(final boolean showDatePicker) {
         showDate = showDatePicker;
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setShowDatePicker(boolean showDatePicker) {
+        this.showDate = showDatePicker;
+=======
+    public void setShowDatePicker(final boolean showDatePicker) {
+        this.showDate = showDatePicker;
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     public void setShowTimePicker(final boolean showTimePicker) {
         showTime = showTimePicker;
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    public void setShowTimePicker(boolean showTimePicker) {
+        this.showTime = showTimePicker;
+=======
+    public void setShowTimePicker(final boolean showTimePicker) {
+        this.showTime = showTimePicker;
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     @Override
@@ -299,9 +361,20 @@ public class DateTimeBoxBase extends Widget implements HasValue<Date>, HasEnable
         configure(this);
     }
 
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/left.java
     protected void configure(final Widget w) {
         w.getElement().setAttribute("data-format", format);
+        configure(w.getElement(), showTime, showDate, useStrict, timeIconClass, dateIconClass, upIconClass,
+                downIconClass);
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/base.java
+    protected void configure(Widget w) {
+        w.getElement().setAttribute("data-date-format", format);
         configure(w.getElement(), showTime, showDate, useStrict, timeIconClass, dateIconClass, upIconClass, downIconClass);
+=======
+    protected void configure(final Widget w) {
+        w.getElement().setAttribute("data-date-format", format);
+        configure(w.getElement(), showTime, showDate, useStrict, timeIconClass, dateIconClass, upIconClass, downIconClass);
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/datetimepicker/client/ui/base/DateTimeBoxBase.java/right.java
     }
 
     protected void execute(final String cmd) {

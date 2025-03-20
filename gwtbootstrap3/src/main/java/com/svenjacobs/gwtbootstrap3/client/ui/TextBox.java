@@ -41,7 +41,63 @@ public class TextBox extends TextBoxBase {
         setStyleName(Styles.FORM_CONTROL);
     }
 
+<<<<<<< /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/client/ui/TextBox.java/left.java
     public void clear() {
         super.setValue(null);
+||||||| /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/client/ui/TextBox.java/base.java
+    public void setPlaceHolder(final String placeHolder) {
+        getElement().setAttribute("placeholder", placeHolder != null ? placeHolder : "");
+    }
+
+    public void setAutoComplete(final boolean autoComplete) {
+        getElement().setAttribute("autocomplete", autoComplete ? "on" : "off");
+    }
+
+    @Override
+    public void setId(final String id) {
+        idMixin.setId(id);
+    }
+
+    @Override
+    public String getId() {
+        return idMixin.getId();
+    }
+
+    @Override
+    public void setVisibleOn(String deviceSizeString) {
+        StyleHelper.setVisibleOn(this, deviceSizeString);
+    }
+
+    @Override
+    public void setHiddenOn(String deviceSizeString) {
+        StyleHelper.setHiddenOn(this, deviceSizeString);
+=======
+    public void setPlaceHolder(final String placeHolder) {
+        getElement().setAttribute("placeholder", placeHolder != null ? placeHolder : "");
+    }
+
+    public void setAutoComplete(final boolean autoComplete) {
+        getElement().setAttribute("autocomplete", autoComplete ? "on" : "off");
+    }
+
+    @Override
+    public void setId(final String id) {
+        idMixin.setId(id);
+    }
+
+    @Override
+    public String getId() {
+        return idMixin.getId();
+    }
+
+    @Override
+    public void setVisibleOn(final String deviceSizeString) {
+        StyleHelper.setVisibleOn(this, deviceSizeString);
+    }
+
+    @Override
+    public void setHiddenOn(final String deviceSizeString) {
+        StyleHelper.setHiddenOn(this, deviceSizeString);
+>>>>>>> /usr/src/app/output/gwtbootstrap3/gwtbootstrap3/4fc9137691f262d79c1f7844d85659dea906122c/gwtbootstrap3/src/main/java/com/svenjacobs/gwtbootstrap3/client/ui/TextBox.java/right.java
     }
 }

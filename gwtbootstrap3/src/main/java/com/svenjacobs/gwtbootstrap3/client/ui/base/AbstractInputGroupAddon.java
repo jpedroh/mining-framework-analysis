@@ -21,7 +21,6 @@ package com.svenjacobs.gwtbootstrap3.client.ui.base;
  */
 
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.user.client.ui.ComplexPanel;
 import com.svenjacobs.gwtbootstrap3.client.ui.HasResponsiveness;
 import com.svenjacobs.gwtbootstrap3.client.ui.base.helper.StyleHelper;
 
