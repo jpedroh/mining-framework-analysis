@@ -73,7 +73,6 @@ public class BestInsertionBuilder {
 		return this;
 	}
 	
-	
 	public InsertionStrategy build() {
 		List<InsertionListener> iListeners = new ArrayList<InsertionListener>();
 		List<PrioritizedVRAListener> algorithmListeners = new ArrayList<PrioritizedVRAListener>();
@@ -94,15 +93,24 @@ public class BestInsertionBuilder {
 		}
 		JobInsertionCostsCalculator jobInsertions = calcBuilder.build();
 		InsertionStrategy bestInsertion;
+<<<<<<< /usr/src/app/output/jsprit/jsprit/d1dac2d622e978ac839e3ba49cc8037b40ae5762/jsprit-core/src/main/java/algorithms/BestInsertionBuilder.java/left.java
 		if(executor == null){
 			bestInsertion = new BestInsertion(jobInsertions);
 			
 		}
 		else{
-
-			bestInsertion = new BestInsertionConcurrent(jobInsertions,executor,nuOfThreads);
-
+			bestInsertion = new BestInsertionConc(jobInsertions,executor,nuOfThreads);
 		}
+||||||| /usr/src/app/output/jsprit/jsprit/d1dac2d622e978ac839e3ba49cc8037b40ae5762/jsprit-core/src/main/java/algorithms/BestInsertionBuilder.java/base.java
+=======
+		if(executor == null){
+			bestInsertion = new BestInsertion(jobInsertions);
+			
+		}
+		else{
+			bestInsertion = new BestInsertionConcurrent(jobInsertions,executor,nuOfThreads);
+		}
+>>>>>>> /usr/src/app/output/jsprit/jsprit/d1dac2d622e978ac839e3ba49cc8037b40ae5762/jsprit-core/src/main/java/algorithms/BestInsertionBuilder.java/right.java
 		for(InsertionListener l : iListeners) bestInsertion.addListener(l);
 		return bestInsertion;
 	}
