@@ -99,8 +99,8 @@ public class ReferenceBottomVision implements PartAlignment {
                                                                      0.0))
                                                              .derive(null, null, null, angle));
             CvPipeline pipeline = partSettings.getPipeline();
-            pipeline.setProperty("camera", camera);
-            pipeline.setProperty("nozzle", nozzle);
+            pipeline.setCamera(camera);
+            pipeline.setNozzle(nozzle);
             pipeline.process();
             if (!((pipeline.getResult("result")).model instanceof RotatedRect)) {
                 throw new Exception("Bottom vision alignment failed for part " + part.getId()
