@@ -1,7 +1,6 @@
 package com.wordnik.jaxrs;
-
+import javax.ws.rs.QueryParam;
 import io.swagger.annotations.ApiParam;
-
 import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import java.util.List;
@@ -10,83 +9,95 @@ import java.util.List;
  * @author chekong on 15/5/9.
  */
 public class MyBean extends MyParentBean {
+  @ApiParam(value = "ID of pet that needs to be updated", required = true) @PathParam(value = "petId") private String petId;
 
-    @ApiParam(value = "ID of pet that needs to be updated", required = true)
-    @PathParam("petId")
-    private String petId;
+  @ApiParam(value = "Updated name of the pet", required = false, defaultValue = "defaultValue") @FormParam(value = "name") private String name;
 
-    @ApiParam(value = "Updated name of the pet", required = false, defaultValue = "defaultValue")
-    @FormParam("name")
-    private String name;
+  @ApiParam(value = "Updated status of the pet", required = false, allowableValues = "value1, value2") @FormParam(value = "status") private String status;
 
-    @ApiParam(value = "Updated status of the pet", required = false, allowableValues = "value1, value2")
-    @FormParam("status")
-    private String status;
+  @HeaderParam(value = "myHeader") private String myHeader;
 
-    @HeaderParam("myHeader")
-    private String myHeader;
+  @HeaderParam(value = "intValue") private int intValue;
 
-    @HeaderParam("intValue")
-    private int intValue;
+  @QueryParam(value = "listValue") private List<String> listValue;
 
-    @ApiParam(value = "hidden", hidden = true)
-    @QueryParam(value = "hiddenValue")
-    private String hiddenValue;
+  @ApiParam(value = 
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/left.java
+  "hidden"
+=======
+  "testIntegerAllowableValues"
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/right.java
+  , 
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/left.java
+  hidden = true
+=======
+  defaultValue = "25"
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/right.java
+  , allowableValues = "25, 50, 100") @QueryParam(value = 
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/left.java
+  "hiddenValue"
+=======
+  "testIntegerAllowableValues"
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/right.java
+  ) private @DefaultValue(value = "25") public 
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/left.java
+  String
+=======
+  Integer
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/right.java
+   
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/left.java
+  hiddenValue
+=======
+  testIntegerAllowableValues
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/a0f0c8d4d9a98c1d7c9e469f47e215328eb7c3e6/src/test/java/com/wordnik/jaxrs/MyBean.java/right.java
+  ;
 
-    @QueryParam(value = "listValue")
-    private List<String> listValue;
+  public String getMyheader() {
+    return myHeader;
+  }
 
-    @ApiParam(value = "testIntegerAllowableValues", defaultValue = "25", allowableValues = "25, 50, 100")
-    @QueryParam("testIntegerAllowableValues")
-    @DefaultValue("25")
-    public Integer testIntegerAllowableValues;
+  public void setmyHeader(String myHeader) {
+    this.myHeader = myHeader;
+  }
 
-    public String getMyheader() {
-        return myHeader;
-    }
+  public String getPetId() {
+    return petId;
+  }
 
-    public void setmyHeader(String myHeader) {
-        this.myHeader = myHeader;
-    }
+  public void setPetId(String petId) {
+    this.petId = petId;
+  }
 
-    public String getPetId() {
-        return petId;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setPetId(String petId) {
-        this.petId = petId;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public int getIntValue() {
+    return intValue;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setIntValue(int intValue) {
+    this.intValue = intValue;
+  }
 
-    public int getIntValue() {
-        return intValue;
-    }
+  public List<String> getListValue() {
+    return listValue;
+  }
 
-    public void setIntValue(int intValue) {
-        this.intValue = intValue;
-    }
-
-    public List<String> getListValue() {
-        return listValue;
-    }
-
-    public void setListValue(List<String> listValue) {
-        this.listValue = listValue;
-    }
-
+  public void setListValue(List<String> listValue) {
+    this.listValue = listValue;
+  }
 }
