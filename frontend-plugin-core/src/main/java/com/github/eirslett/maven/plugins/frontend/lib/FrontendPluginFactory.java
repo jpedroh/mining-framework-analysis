@@ -1,87 +1,88 @@
 package com.github.eirslett.maven.plugins.frontend.lib;
-
 import java.io.File;
 
 public final class FrontendPluginFactory {
-    
-    private static final Platform defaultPlatform = Platform.guess();
-    private static final String DEFAULT_CACHE_PATH = "cache";
+  private static final Platform defaultPlatform = Platform.guess();
 
-    private final File workingDirectory;
-    private final File installDirectory;
-    private final CacheResolver cacheResolver;
+  private static final String DEFAULT_CACHE_PATH = "cache";
 
-    public FrontendPluginFactory(File workingDirectory, File installDirectory){
-        this(workingDirectory, installDirectory, getDefaultCacheResolver(installDirectory));
-    }
+  private final File workingDirectory;
 
-    public FrontendPluginFactory(File workingDirectory, File installDirectory, CacheResolver cacheResolver){
-        this.workingDirectory = workingDirectory;
-        this.installDirectory = installDirectory;
-        this.cacheResolver = cacheResolver;
-    }
+  private final File installDirectory;
 
-    public NodeInstaller getNodeInstaller(ProxyConfig proxy) {
-        return new NodeInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
-    }
+  private final CacheResolver cacheResolver;
 
-    public NPMInstaller getNPMInstaller(ProxyConfig proxy) {
-        return new NPMInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
-    }
+  public FrontendPluginFactory(File workingDirectory, File installDirectory) {
+    this(workingDirectory, installDirectory, getDefaultCacheResolver(installDirectory));
+  }
 
-    public YarnInstaller getYarnInstaller(ProxyConfig proxy) {
-        return new YarnInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
-    }
-    
-    public BowerRunner getBowerRunner(ProxyConfig proxy) {
-        return new DefaultBowerRunner(getExecutorConfig(), proxy);
-    }    
+  public FrontendPluginFactory(File workingDirectory, File installDirectory, CacheResolver cacheResolver) {
+    this.workingDirectory = workingDirectory;
+    this.installDirectory = installDirectory;
+    this.cacheResolver = cacheResolver;
+  }
 
-    public JspmRunner getJspmRunner() {
-        return new DefaultJspmRunner(getExecutorConfig());
-    }
+  public NodeInstaller getNodeInstaller(ProxyConfig proxy) {
+    return new NodeInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
+  }
 
-    public NpmRunner getNpmRunner(ProxyConfig proxy, String npmRegistryURL) {
-        return new DefaultNpmRunner(getExecutorConfig(), proxy, npmRegistryURL);
-    }
+  public NPMInstaller getNPMInstaller(ProxyConfig proxy) {
+    return new NPMInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
+  }
 
-    public YarnRunner getYarnRunner(ProxyConfig proxy, String npmRegistryURL) {
-        return new DefaultYarnRunner(new InstallYarnExecutorConfig(getInstallConfig()), proxy, npmRegistryURL);
-    }
+  public YarnInstaller getYarnInstaller(ProxyConfig proxy) {
+    return new YarnInstaller(getInstallConfig(), new DefaultArchiveExtractor(), new DefaultFileDownloader(proxy));
+  }
 
-    public GruntRunner getGruntRunner(){
-        return new DefaultGruntRunner(getExecutorConfig());
-    }
+  public BowerRunner getBowerRunner(ProxyConfig proxy) {
+    return new DefaultBowerRunner(getExecutorConfig(), proxy);
+  }
 
-    public EmberRunner getEmberRunner() {
-        return new DefaultEmberRunner(getExecutorConfig());
-    }
+  public JspmRunner getJspmRunner() {
+    return new DefaultJspmRunner(getExecutorConfig());
+  }
 
-    public KarmaRunner getKarmaRunner(){
-        return new DefaultKarmaRunner(getExecutorConfig());
-    }
+  public NpmRunner getNpmRunner(ProxyConfig proxy, String npmRegistryURL) {
+    return new DefaultNpmRunner(getExecutorConfig(), proxy, npmRegistryURL);
+  }
 
-    public GulpRunner getGulpRunner(){
-        return new DefaultGulpRunner(getExecutorConfig());
-    }
-    
-    public TypescriptRunner getTypescriptRunner() {
-    	return new DefaultTypescriptRunner(getExecutorConfig());
-    }
+  public YarnRunner getYarnRunner(ProxyConfig proxy, String npmRegistryURL) {
+    return new DefaultYarnRunner(new InstallYarnExecutorConfig(getInstallConfig()), proxy, npmRegistryURL);
+  }
 
-    public WebpackRunner getWebpackRunner(){
-        return new DefaultWebpackRunner(getExecutorConfig());
-    }
+  public GruntRunner getGruntRunner() {
+    return new DefaultGruntRunner(getExecutorConfig());
+  }
 
-    private NodeExecutorConfig getExecutorConfig() {
-        return new InstallNodeExecutorConfig(getInstallConfig());
-    }
+  public EmberRunner getEmberRunner() {
+    return new DefaultEmberRunner(getExecutorConfig());
+  }
 
-    private InstallConfig getInstallConfig() {
-        return new DefaultInstallConfig(installDirectory, workingDirectory, cacheResolver, defaultPlatform);
-    }
+  public KarmaRunner getKarmaRunner() {
+    return new DefaultKarmaRunner(getExecutorConfig());
+  }
 
-    private static final CacheResolver getDefaultCacheResolver(File root) {
-        return new DirectoryCacheResolver(new File(root, DEFAULT_CACHE_PATH));
-    }
+  public GulpRunner getGulpRunner() {
+    return new DefaultGulpRunner(getExecutorConfig());
+  }
+
+  public TypescriptRunner getTypescriptRunner() {
+    return new DefaultTypescriptRunner(getExecutorConfig());
+  }
+
+  public WebpackRunner getWebpackRunner() {
+    return new DefaultWebpackRunner(getExecutorConfig());
+  }
+
+  private NodeExecutorConfig getExecutorConfig() {
+    return new InstallNodeExecutorConfig(getInstallConfig());
+  }
+
+  private InstallConfig getInstallConfig() {
+    return new DefaultInstallConfig(installDirectory, workingDirectory, cacheResolver, defaultPlatform);
+  }
+
+  private static final CacheResolver getDefaultCacheResolver(File root) {
+    return new DirectoryCacheResolver(new File(root, DEFAULT_CACHE_PATH));
+  }
 }
