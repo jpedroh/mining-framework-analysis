@@ -173,7 +173,7 @@ public class IOStream implements EventHandler {
 	 */
 	private void handleRead() throws Exception {
 		readBuffer.mark();
-		streamRead.mark();
+		//streamRead.mark();
 		stream.mark();
 		int read;
 		while ((read = client.read(readBuffer)) > 0) {
@@ -182,9 +182,14 @@ public class IOStream implements EventHandler {
 			ByteBuffer dupReadBuffer = readBuffer.duplicate();
 			dupReadBuffer.reset();
 			decoder.decode(dupReadBuffer, stream, true);
-			decoder.flush(stream);
+			stream.position(read);
+<<<<<<< /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/left.java
+			//decoder.flush(stream);
+||||||| /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/base.java
+=======
 			if (stream.position() != stream.limit())
 				stream.position(stream.position() + read);
+>>>>>>> /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/right.java
 			readBuffer.mark();
 		}
 
@@ -195,8 +200,16 @@ public class IOStream implements EventHandler {
 			close();
 			return;
 		} else {
+<<<<<<< /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/left.java
+			//stream.reset();
+			//streamRead.reset();
+||||||| /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/base.java
+			stream.reset();
+			streamRead.reset();
+=======
 			// stream.reset();
 			streamRead.reset();
+>>>>>>> /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/right.java
 		}
 
 		// If delimiter is still present, callback should be excecuted if the
@@ -235,7 +248,13 @@ public class IOStream implements EventHandler {
 			String found = sStream.substring(0, index + searchString.length());
 			int forwardPosition = index + searchString.length() - 1;
 			streamRead.position(forwardPosition);
+<<<<<<< /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/left.java
+			//stream.position(forwardPosition);
+||||||| /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/base.java
+			stream.position(forwardPosition);
+=======
 			// stream.position(forwardPosition);
+>>>>>>> /usr/src/app/output/paulosuzart/jtornado/752fdf5c715aa6e96a6cc74d876e2a7b83a91c2d/src/main/java/org/jtornadoweb/IOStream.java/right.java
 			return found;
 		}
 		return "";
