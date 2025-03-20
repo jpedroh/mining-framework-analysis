@@ -274,10 +274,10 @@ public enum Protocol
                     map( ProtocolConstants.MINECRAFT_1_17, 0x1E )
             );
             TO_CLIENT.registerPacket(
-                    ViewDistance.class,
-                    map( ProtocolConstants.MINECRAFT_1_14, 0x41 ),
-                    map( ProtocolConstants.MINECRAFT_1_15, 0x42 ),
-                    map( ProtocolConstants.MINECRAFT_1_16, 0x41 ),
+                ViewDistance.class, ViewDistance::new,
+                map( ProtocolConstants.MINECRAFT_1_14, 0x41 ),
+                map( ProtocolConstants.MINECRAFT_1_15, 0x42 ),
+                map( ProtocolConstants.MINECRAFT_1_16, 0x41 ),
                     map( ProtocolConstants.MINECRAFT_1_17, 0x4A )
             );
 

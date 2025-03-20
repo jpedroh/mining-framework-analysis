@@ -96,12 +96,12 @@ import net.md_5.bungee.query.RemoteQuery;
 import net.md_5.bungee.scheduler.BungeeScheduler;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.fusesource.jansi.AnsiConsole;
-import org.slf4j.impl.JDK14LoggerFactory;
 import ru.leymooo.botfilter.BotFilter;
 import ru.leymooo.botfilter.BotFilterCommand;
 import ru.leymooo.botfilter.BotFilterThread;
 import ru.leymooo.botfilter.config.Settings;
 import ru.leymooo.botfilter.utils.FakeOnlineUtils;
+import org.slf4j.impl.JDK14LoggerFactory;
 
 /**
  * Main BungeeCord proxy class.
