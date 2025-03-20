@@ -128,13 +128,27 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
         @SuppressWarnings("unchecked")
         final TemporalDataModelIF<U, I>[] splits = new TemporalDataModelIF[2 * nFolds];
         for (int i = 0; i < nFolds; i++) {
+<<<<<<< /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/left.java
+            splits[2 * i] = new DataModel<U, I>(); // training
+            splits[2 * i + 1] = new DataModel<U, I>(); // test
+||||||| /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/base.java
+            splits[2 * i] = new DataModel<Long, Long>(); // training
+            splits[2 * i + 1] = new DataModel<Long, Long>(); // test
+=======
             splits[2 * i] = new TemporalDataModel<>(); // training
             splits[2 * i + 1] = new TemporalDataModel<>(); // test
+>>>>>>> /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/right.java
         }
         if (perUser) {
             int n = 0;
             for (U user : data.getUsers()) {
+<<<<<<< /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/left.java
+                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
+||||||| /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/base.java
+                List<I> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+=======
                 List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+>>>>>>> /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/right.java
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
@@ -161,11 +175,23 @@ public class CrossValidationSplitter<U, I> implements Splitter<U, I> {
                 }
             }
         } else {
+<<<<<<< /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/left.java
+            List<U> users = new ArrayList<U>(data.getUsers());
+||||||| /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/base.java
+            List<U> users = new ArrayList<Long>(data.getUsers());
+=======
             List<U> users = new ArrayList<>(data.getUsers());
+>>>>>>> /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/right.java
             Collections.shuffle(users, rnd);
             int n = 0;
             for (U user : users) {
+<<<<<<< /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/left.java
+                List<I> items = new ArrayList<I>(data.getUserItemPreferences().get(user).keySet());
+||||||| /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/base.java
+                List<I> items = new ArrayList<Long>(data.getUserItemPreferences().get(user).keySet());
+=======
                 List<I> items = new ArrayList<>(data.getUserItemPreferences().get(user).keySet());
+>>>>>>> /usr/src/app/output/recommenders/rival/aefae91d1ce70013519cfa0bc0132c5279c0fb2c/rival-split/src/main/java/net/recommenders/rival/split/splitter/CrossValidationSplitter.java/right.java
                 Collections.shuffle(items, rnd);
                 for (I item : items) {
                     Double pref = data.getUserItemPreferences().get(user).get(item);
