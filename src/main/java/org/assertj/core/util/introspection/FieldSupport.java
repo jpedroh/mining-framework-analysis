@@ -1,24 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.util.introspection;
-
 import static java.lang.String.format;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.assertj.core.util.ArrayWrapperList.wrap;
 import static org.assertj.core.util.Iterables.isNullOrEmpty;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +13,10 @@ import java.util.List;
  * Utility methods for fields access.
  *
  * @author Joel Costigliola
- */
-public enum FieldSupport {
-
+ */public enum FieldSupport {
   EXTRACTION(true),
-  COMPARISON(true);
+  COMPARISON(true)
+  ;
 
   private static final String SEPARATOR = ".";
 
@@ -43,7 +28,7 @@ public enum FieldSupport {
    * @return the instance dedicated to extraction of fields.
    */
   public static FieldSupport extraction() {
-	return EXTRACTION;
+    return EXTRACTION;
   }
 
   /**
@@ -52,20 +37,20 @@ public enum FieldSupport {
    * @return the instance dedicated to comparison of fields.
    */
   public static FieldSupport comparison() {
-	return COMPARISON;
+    return COMPARISON;
   }
-  
+
   /**
    * Build a new {@link FieldSupport}
    *
    * @param allowUsingPrivateFields whether to read private fields or not.
    */
   FieldSupport(boolean allowUsingPrivateFields) {
-	this.allowUsingPrivateFields = allowUsingPrivateFields;
+    this.allowUsingPrivateFields = allowUsingPrivateFields;
   }
-  
+
   public boolean isAllowedToUsePrivateFields() {
-	return allowUsingPrivateFields;
+    return allowUsingPrivateFields;
   }
 
   /**
@@ -79,11 +64,9 @@ public enum FieldSupport {
    *
    * @deprecated Use {@link #setAllowUsingPrivateFields(boolean)} instead
    */
-  @Deprecated
-  public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
-	EXTRACTION.setAllowUsingPrivateFields(allowExtractingPrivateFields);
+  @Deprecated public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
+    EXTRACTION.setAllowUsingPrivateFields(allowExtractingPrivateFields);
   }
-
 
   /**
    * Sets whether the use of private fields is allowed.
@@ -92,7 +75,7 @@ public enum FieldSupport {
    * @param allowUsingPrivateFields allow private fields extraction and comparison. Default {@code true}.
    */
   public void setAllowUsingPrivateFields(boolean allowUsingPrivateFields) {
-	this.allowUsingPrivateFields = allowUsingPrivateFields;
+    this.allowUsingPrivateFields = allowUsingPrivateFields;
   }
 
   /**
@@ -108,20 +91,20 @@ public enum FieldSupport {
    *         {@code Iterable}.
    * @throws IntrospectionError if an element in the given {@code Iterable} does not have a field with a matching name.
    */
-  public <T> List<T> fieldValues(String fieldName, Class<T> fieldClass, Iterable<?> target) {
-	if (isNullOrEmpty(target)) return emptyList();
-
-	if (isNestedField(fieldName)) {
-	  String firstFieldName = popFieldNameFrom(fieldName);
-	  Iterable<Object> fieldValues = fieldValues(firstFieldName, Object.class, target);
-	  // extract next sub-field values until reaching the last sub-field
-	  return fieldValues(nextFieldNameFrom(fieldName), fieldClass, fieldValues);
-	}
-	return simpleFieldValues(fieldName, fieldClass, target);
+  public <T extends java.lang.Object> List<T> fieldValues(String fieldName, Class<T> fieldClass, Iterable<?> target) {
+    if (isNullOrEmpty(target)) {
+      return emptyList();
+    }
+    if (isNestedField(fieldName)) {
+      String firstFieldName = popFieldNameFrom(fieldName);
+      Iterable<Object> fieldValues = fieldValues(firstFieldName, Object.class, target);
+      return fieldValues(nextFieldNameFrom(fieldName), fieldClass, fieldValues);
+    }
+    return simpleFieldValues(fieldName, fieldClass, target);
   }
 
   public List<Object> fieldValues(String fieldName, Iterable<?> target) {
-	return fieldValues(fieldName, Object.class, target);
+    return fieldValues(fieldName, Object.class, target);
   }
 
   /**
@@ -137,30 +120,30 @@ public enum FieldSupport {
    *         {@code Iterable}.
    * @throws IntrospectionError if an element in the given {@code Iterable} does not have a field with a matching name.
    */
-  public <T> List<T> fieldValues(String fieldName, Class<T> fieldClass, Object[] target) {
-	return fieldValues(fieldName, fieldClass, wrap(target));
+  public <T extends java.lang.Object> List<T> fieldValues(String fieldName, Class<T> fieldClass, Object[] target) {
+    return fieldValues(fieldName, fieldClass, wrap(target));
   }
 
-  private <T> List<T> simpleFieldValues(String fieldName, Class<T> clazz, Iterable<?> target) {
-	List<T> fieldValues = new ArrayList<T>();
-	for (Object e : target) {
-	  fieldValues.add(e == null ? null : fieldValue(fieldName, clazz, e));
-	}
-	return unmodifiableList(fieldValues);
+  private <T extends java.lang.Object> List<T> simpleFieldValues(String fieldName, Class<T> clazz, Iterable<?> target) {
+    List<T> fieldValues = new ArrayList<T>();
+    for (Object e : target) {
+      fieldValues.add(e == null ? null : fieldValue(fieldName, clazz, e));
+    }
+    return unmodifiableList(fieldValues);
   }
 
   private String popFieldNameFrom(String fieldNameChain) {
-	if (!isNestedField(fieldNameChain)) {
-	  return fieldNameChain;
-	}
-	return fieldNameChain.substring(0, fieldNameChain.indexOf(SEPARATOR));
+    if (!isNestedField(fieldNameChain)) {
+      return fieldNameChain;
+    }
+    return fieldNameChain.substring(0, fieldNameChain.indexOf(SEPARATOR));
   }
 
   private String nextFieldNameFrom(String fieldNameChain) {
-	if (!isNestedField(fieldNameChain)) {
-	  return "";
-	}
-	return fieldNameChain.substring(fieldNameChain.indexOf(SEPARATOR) + 1);
+    if (!isNestedField(fieldNameChain)) {
+      return "";
+    }
+    return fieldNameChain.substring(fieldNameChain.indexOf(SEPARATOR) + 1);
   }
 
   /**
@@ -177,7 +160,7 @@ public enum FieldSupport {
    * </code></pre>
    */
   private boolean isNestedField(String fieldName) {
-	return fieldName.contains(SEPARATOR) && !fieldName.startsWith(SEPARATOR) && !fieldName.endsWith(SEPARATOR);
+    return fieldName.contains(SEPARATOR) && !fieldName.startsWith(SEPARATOR) && !fieldName.endsWith(SEPARATOR);
   }
 
   /**
@@ -196,40 +179,38 @@ public enum FieldSupport {
    * @return the value of the given field name
    * @throws IntrospectionError if the given target does not have a field with a matching name.
    */
-  public <T> T fieldValue(String fieldName, Class<T> fieldClass, Object target) {
-	if (target == null) return null;
-
-	if (isNestedField(fieldName)) {
-	  String outerFieldName = popFieldNameFrom(fieldName);
-	  Object outerFieldValue = readSimpleField(outerFieldName, Object.class, target);
-	  // extract next sub-field values until reaching the last sub-field
-	  return fieldValue(nextFieldNameFrom(fieldName), fieldClass, outerFieldValue);
-	}
-	return readSimpleField(fieldName, fieldClass, target);
+  public <T extends java.lang.Object> T fieldValue(String fieldName, Class<T> fieldClass, Object target) {
+    if (target == null) {
+      return null;
+    }
+    if (isNestedField(fieldName)) {
+      String outerFieldName = popFieldNameFrom(fieldName);
+      Object outerFieldValue = readSimpleField(outerFieldName, Object.class, target);
+      return fieldValue(nextFieldNameFrom(fieldName), fieldClass, outerFieldValue);
+    }
+    return readSimpleField(fieldName, fieldClass, target);
   }
 
-  private <T> T readSimpleField(String fieldName, Class<T> clazz, Object target) {
-	try {
-	  Object readField = FieldUtils.readField(target, fieldName, allowUsingPrivateFields);
-	  return clazz.cast(readField);
-	} catch (ClassCastException e) {
-	  String msg = format("Unable to obtain the value of the field <'%s'> from <%s> - wrong field type specified <%s>",
-		                  fieldName, target, clazz);
-	  throw new IntrospectionError(msg, e);
-	} catch (IllegalAccessException iae) {
-	  String msg = format("Unable to obtain the value of the field <'%s'> from <%s>, check that field is public.",
-		                  fieldName, target);
-	  throw new IntrospectionError(msg, iae);
-	} catch (Throwable unexpected) {
-	  String msg = format("Unable to obtain the value of the field <'%s'> from <%s>", fieldName, target);
-	  throw new IntrospectionError(msg, unexpected);
-	}
+  private <T extends java.lang.Object> T readSimpleField(String fieldName, Class<T> clazz, Object target) {
+    try {
+      Object readField = FieldUtils.readField(target, fieldName, allowUsingPrivateFields);
+      return clazz.cast(readField);
+    } catch (ClassCastException e) {
+      String msg = format("Unable to obtain the value of the field <\'%s\'> from <%s> - wrong field type specified <%s>", fieldName, target, clazz);
+      throw new IntrospectionError(msg, e);
+    } catch (IllegalAccessException iae) {
+      String msg = format("Unable to obtain the value of the field <\'%s\'> from <%s>, check that field is public.", fieldName, target);
+      throw new IntrospectionError(msg, iae);
+    } catch (Throwable unexpected) {
+      String msg = format("Unable to obtain the value of the field <\'%s\'> from <%s>", fieldName, target);
+      throw new IntrospectionError(msg, unexpected);
+    }
   }
 
   public boolean isAllowedToRead(Field field) {
-	if (allowUsingPrivateFields) return true;
-	// only read public field
-    return isPublic(field.getModifiers()); 
+    if (allowUsingPrivateFields) {
+      return true;
+    }
+    return isPublic(field.getModifiers());
   }
-
 }

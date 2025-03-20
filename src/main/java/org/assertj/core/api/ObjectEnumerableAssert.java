@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.HashSet;
 
 /**
@@ -29,8 +16,7 @@ import java.util.HashSet;
  * @author Joel Costigliola
  * @author Nicolas François
  */
-public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T> extends EnumerableAssert<S, T> {
-
+public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, T extends java.lang.Object> extends EnumerableAssert<S, T> {
   /**
    * Verifies that the actual group contains the given values, in any order.
    * 
@@ -41,7 +27,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain the given values.
    */
-  S contains(@SuppressWarnings("unchecked") T... values);
+  S contains(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, in any order.
@@ -54,7 +40,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more values than the given ones.
    */
-  S containsOnly(@SuppressWarnings("unchecked") T... values);
+  S containsOnly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual array contains the given values only once.
@@ -81,7 +67,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more than once these values.
    */
-  S containsOnlyOnce(@SuppressWarnings("unchecked") T... values);
+  S containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in order</b>.<br>
@@ -108,7 +94,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    *           contains some or none of the given values, or the actual group contains more values than the given ones
    *           or values are the same but the order is not.
    */
-  S containsExactly(@SuppressWarnings("unchecked") T... values);
+  S containsExactly(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group contains the given sequence, without any other values between them.
@@ -134,7 +120,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given sequence.
    */
-  S containsSequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains the given subsequence (possibly with other values between them).
@@ -160,7 +146,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given subsequence.
    */
-  S containsSubsequence(@SuppressWarnings("unchecked") T... sequence);
+  S containsSubsequence(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group does not contain the given values.
@@ -172,7 +158,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains any of the given values.
    */
-  S doesNotContain(@SuppressWarnings("unchecked") T... values);
+  S doesNotContain(@SuppressWarnings(value = { "unchecked" }) T... values);
 
   /**
    * Verifies that the actual group does not contain duplicates.
@@ -195,7 +181,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not start with the given sequence of objects.
    */
-  S startsWith(@SuppressWarnings("unchecked") T... sequence);
+  S startsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group ends with the given sequence of objects, without any other objects between them.
@@ -209,7 +195,7 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not end with the given sequence of objects.
    */
-  S endsWith(@SuppressWarnings("unchecked") T... sequence);
+  S endsWith(@SuppressWarnings(value = { "unchecked" }) T... sequence);
 
   /**
    * Verifies that the actual group contains at least a null element.
@@ -300,7 +286,6 @@ public interface ObjectEnumerableAssert<S extends ObjectEnumerableAssert<S, T>, 
    */
   S areAtLeastOne(Condition<? super T> condition);
 
-  
   /**
    * Verifies that there is <b>at most</b> <i>n</i> elements in the actual group satisfying the given condition.
    * 

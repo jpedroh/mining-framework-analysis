@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.internal;
-
 import static org.assertj.core.error.ShouldBeAnnotation.shouldBeAnnotation;
 import static org.assertj.core.error.ShouldBeAnnotation.shouldNotBeAnnotation;
 import static org.assertj.core.error.ShouldBeAssignableFrom.shouldBeAssignableFrom;
@@ -21,12 +8,10 @@ import static org.assertj.core.error.ShouldHaveAnnotations.shouldHaveAnnotations
 import static org.assertj.core.error.ShouldHaveFields.shouldHaveDeclaredFields;
 import static org.assertj.core.error.ShouldHaveFields.shouldHaveFields;
 import static org.assertj.core.util.Sets.newLinkedHashSet;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import org.assertj.core.api.AssertionInfo;
 import org.assertj.core.util.VisibleForTesting;
 
@@ -36,7 +21,6 @@ import org.assertj.core.util.VisibleForTesting;
  * @author William Delanoue
  */
 public class Classes {
-
   private static final Classes INSTANCE = new Classes();
 
   /**
@@ -45,11 +29,10 @@ public class Classes {
    * @return the singleton instance of this class.
    */
   public static Classes instance() {
-	return INSTANCE;
+    return INSTANCE;
   }
 
-  @VisibleForTesting
-  Failures failures = Failures.instance();
+  @VisibleForTesting Failures failures = Failures.instance();
 
   /**
    * Verifies that the actual {@code Class} is assignable from all the {@code others} classes.
@@ -62,21 +45,19 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} is not assignable from all of the {@code others} classes.
    */
   public void assertIsAssignableFrom(AssertionInfo info, Class<?> actual, Class<?>... others) {
-	assertNotNull(info, actual);
-
-	Set<Class<?>> expected = newLinkedHashSet(others);
-	Set<Class<?>> missing = new LinkedHashSet<Class<?>>();
-	for (Class<?> other : expected) {
-	  classParameterIsNotNull(other);
-	  if (!actual.isAssignableFrom(other)) {
-		missing.add(other);
-	  }
-	}
-
-	if (missing.isEmpty()) {
-	  return;
-	}
-	throw failures.failure(info, shouldBeAssignableFrom(actual, expected, missing));
+    assertNotNull(info, actual);
+    Set<Class<?>> expected = newLinkedHashSet(others);
+    Set<Class<?>> missing = new LinkedHashSet<Class<?>>();
+    for (Class<?> other : expected) {
+      classParameterIsNotNull(other);
+      if (!actual.isAssignableFrom(other)) {
+        missing.add(other);
+      }
+    }
+    if (missing.isEmpty()) {
+      return;
+    }
+    throw failures.failure(info, shouldBeAssignableFrom(actual, expected, missing));
   }
 
   /**
@@ -88,12 +69,11 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} is an interface.
    */
   public void assertIsNotInterface(AssertionInfo info, Class<?> actual) {
-	assertNotNull(info, actual);
-
-	if (!actual.isInterface()) {
-	  return;
-	}
-	throw failures.failure(info, shouldNotBeInterface(actual));
+    assertNotNull(info, actual);
+    if (!actual.isInterface()) {
+      return;
+    }
+    throw failures.failure(info, shouldNotBeInterface(actual));
   }
 
   /**
@@ -105,12 +85,11 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} is not an interface.
    */
   public void assertIsInterface(AssertionInfo info, Class<?> actual) {
-	assertNotNull(info, actual);
-
-	if (actual.isInterface()) {
-	  return;
-	}
-	throw failures.failure(info, shouldBeInterface(actual));
+    assertNotNull(info, actual);
+    if (actual.isInterface()) {
+      return;
+    }
+    throw failures.failure(info, shouldBeInterface(actual));
   }
 
   /**
@@ -122,12 +101,11 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} is an annotation.
    */
   public void assertIsNotAnnotation(AssertionInfo info, Class<?> actual) {
-	assertNotNull(info, actual);
-
-	if (!actual.isAnnotation()) {
-	  return;
-	}
-	throw failures.failure(info, shouldNotBeAnnotation(actual));
+    assertNotNull(info, actual);
+    if (!actual.isAnnotation()) {
+      return;
+    }
+    throw failures.failure(info, shouldNotBeAnnotation(actual));
   }
 
   /**
@@ -139,12 +117,11 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} is not an annotation.
    */
   public void assertIsAnnotation(AssertionInfo info, Class<?> actual) {
-	assertNotNull(info, actual);
-
-	if (actual.isAnnotation()) {
-	  return;
-	}
-	throw failures.failure(info, shouldBeAnnotation(actual));
+    assertNotNull(info, actual);
+    if (actual.isAnnotation()) {
+      return;
+    }
+    throw failures.failure(info, shouldBeAnnotation(actual));
   }
 
   /**
@@ -156,22 +133,20 @@ public class Classes {
    * @throws AssertionError if {@code actual} is {@code null}.
    * @throws AssertionError if the actual {@code Class} doesn't contains all of these annotations.
    */
-  public void assertContainsAnnotations(AssertionInfo info, Class<?> actual,
-	                                    @SuppressWarnings("unchecked") Class<? extends Annotation>... annotations) {
-	assertNotNull(info, actual);
-	Set<Class<? extends Annotation>> expected = newLinkedHashSet(annotations);
-	Set<Class<? extends Annotation>> missing = new LinkedHashSet<Class<? extends Annotation>>();
-	for (Class<? extends Annotation> other : expected) {
-	  classParameterIsNotNull(other);
-	  if (actual.getAnnotation(other) == null) {
-		missing.add(other);
-	  }
-	}
-
-	if (missing.isEmpty()) {
-	  return;
-	}
-	throw failures.failure(info, shouldHaveAnnotations(actual, expected, missing));
+  public void assertContainsAnnotations(AssertionInfo info, Class<?> actual, @SuppressWarnings(value = { "unchecked" }) Class<? extends Annotation>... annotations) {
+    assertNotNull(info, actual);
+    Set<Class<? extends Annotation>> expected = newLinkedHashSet(annotations);
+    Set<Class<? extends Annotation>> missing = new LinkedHashSet<Class<? extends Annotation>>();
+    for (Class<? extends Annotation> other : expected) {
+      classParameterIsNotNull(other);
+      if (actual.getAnnotation(other) == null) {
+        missing.add(other);
+      }
+    }
+    if (missing.isEmpty()) {
+      return;
+    }
+    throw failures.failure(info, shouldHaveAnnotations(actual, expected, missing));
   }
 
   /**
@@ -184,22 +159,23 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} doesn't contains all of the field.
    */
   public void assertHasFields(AssertionInfo info, Class<?> actual, String... fields) {
-	assertNotNull(info, actual);
-	Set<String> expectedFieldNames = newLinkedHashSet(fields);
-	Set<String> missingFieldNames = newLinkedHashSet();
-	Set<String> actualFieldNames = fieldsToName(actual.getFields());
-	if (noMissingFields(actualFieldNames, expectedFieldNames, missingFieldNames)) return;
-	throw failures.failure(info, shouldHaveFields(actual, expectedFieldNames, missingFieldNames));
+    assertNotNull(info, actual);
+    Set<String> expectedFieldNames = newLinkedHashSet(fields);
+    Set<String> missingFieldNames = newLinkedHashSet();
+    Set<String> actualFieldNames = fieldsToName(actual.getFields());
+    if (noMissingFields(actualFieldNames, expectedFieldNames, missingFieldNames)) {
+      return;
+    }
+    throw failures.failure(info, shouldHaveFields(actual, expectedFieldNames, missingFieldNames));
   }
 
-  private static boolean noMissingFields(Set<String> actualFieldNames, Set<String> expectedFieldNames,
-	                                     Set<String> missingFieldNames) {
-	for (String field : expectedFieldNames) {
-	  if (!actualFieldNames.contains(field)) {
-		missingFieldNames.add(field);
-	  }
-	}
-	return missingFieldNames.isEmpty();
+  private static boolean noMissingFields(Set<String> actualFieldNames, Set<String> expectedFieldNames, Set<String> missingFieldNames) {
+    for (String field : expectedFieldNames) {
+      if (!actualFieldNames.contains(field)) {
+        missingFieldNames.add(field);
+      }
+    }
+    return missingFieldNames.isEmpty();
   }
 
   /**
@@ -212,24 +188,26 @@ public class Classes {
    * @throws AssertionError if the actual {@code Class} doesn't contains all of the field.
    */
   public void assertHasDeclaredFields(AssertionInfo info, Class<?> actual, String... fields) {
-	assertNotNull(info, actual);
-	Set<String> expectedFieldNames = newLinkedHashSet(fields);
-	Set<String> missingFieldNames = newLinkedHashSet();
-	Set<String> actualFieldNames = fieldsToName(actual.getDeclaredFields());
-	if (noMissingFields(actualFieldNames, expectedFieldNames, missingFieldNames)) return;
-	throw failures.failure(info, shouldHaveDeclaredFields(actual, expectedFieldNames, missingFieldNames));
+    assertNotNull(info, actual);
+    Set<String> expectedFieldNames = newLinkedHashSet(fields);
+    Set<String> missingFieldNames = newLinkedHashSet();
+    Set<String> actualFieldNames = fieldsToName(actual.getDeclaredFields());
+    if (noMissingFields(actualFieldNames, expectedFieldNames, missingFieldNames)) {
+      return;
+    }
+    throw failures.failure(info, shouldHaveDeclaredFields(actual, expectedFieldNames, missingFieldNames));
   }
 
   private static Set<String> fieldsToName(Field[] fields) {
-	Set<String> fieldsName = new LinkedHashSet<String>();
-	for (Field field : fields) {
-	  fieldsName.add(field.getName());
-	}
-	return fieldsName;
+    Set<String> fieldsName = new LinkedHashSet<String>();
+    for (Field field : fields) {
+      fieldsName.add(field.getName());
+    }
+    return fieldsName;
   }
 
   private static void assertNotNull(AssertionInfo info, Class<?> actual) {
-	Objects.instance().assertNotNull(info, actual);
+    Objects.instance().assertNotNull(info, actual);
   }
 
   /**
@@ -240,8 +218,8 @@ public class Classes {
    * @throws NullPointerException with an explicit message if the given class is null
    */
   private static void classParameterIsNotNull(Class<?> clazz) {
-	if (clazz == null)
-	  throw new NullPointerException("The class to compare actual with should not be null");
+    if (clazz == null) {
+      throw new NullPointerException("The class to compare actual with should not be null");
+    }
   }
-
 }

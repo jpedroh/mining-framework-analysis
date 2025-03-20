@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.condition;
-
 import org.assertj.core.api.Condition;
 
 /**
@@ -21,8 +8,7 @@ import org.assertj.core.api.Condition;
  * @author Yvonne Wang
  * @author Mikhail Mazursky
  */
-public class AllOf<T> extends Join<T> {
-
+public class AllOf<T extends java.lang.Object> extends Join<T> {
   /**
    * Creates a new <code>{@link AllOf}</code>
    * @param <T> the type of object the given condition accept.
@@ -31,8 +17,7 @@ public class AllOf<T> extends Join<T> {
    * @throws NullPointerException if the given array is {@code null}.
    * @throws NullPointerException if any of the elements in the given array is {@code null}.
    */
-  @SafeVarargs
-  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> allOf(Condition<? super T>... conditions) {
     return new AllOf<T>(conditions);
   }
 
@@ -44,12 +29,11 @@ public class AllOf<T> extends Join<T> {
    * @throws NullPointerException if the given iterable is {@code null}.
    * @throws NullPointerException if any of the elements in the given iterable is {@code null}.
    */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return new AllOf<T>(conditions);
   }
 
-  @SafeVarargs
-  private AllOf(Condition<? super T>... conditions) {
+  @SafeVarargs private AllOf(Condition<? super T>... conditions) {
     super(conditions);
   }
 
@@ -58,15 +42,16 @@ public class AllOf<T> extends Join<T> {
   }
 
   /** {@inheritDoc} */
-  @Override
-  public boolean matches(T value) {
-    for (Condition<? super T> condition : conditions)
-      if (!condition.matches(value)) return false;
+  @Override public boolean matches(T value) {
+    for (Condition<? super T> condition : conditions) {
+      if (!condition.matches(value)) {
+        return false;
+      }
+    }
     return true;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return String.format("all of:<%s>", conditions);
   }
 }

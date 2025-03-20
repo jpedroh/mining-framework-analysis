@@ -1,19 +1,5 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2014 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.lang.annotation.Annotation;
-
 import org.assertj.core.internal.Classes;
 
 /**
@@ -27,7 +13,6 @@ import org.assertj.core.internal.Classes;
  * @author Mikhail Mazursky
  */
 public abstract class AbstractClassAssert<S extends AbstractClassAssert<S>> extends AbstractAssert<S, Class<?>> {
-
   Classes classes = Classes.instance();
 
   protected AbstractClassAssert(Class<?> actual, Class<?> selfType) {
@@ -181,7 +166,7 @@ public abstract class AbstractClassAssert<S extends AbstractClassAssert<S>> exte
    * @throws AssertionError if {@code actual} is {@code null}.
    * @throws AssertionError if the actual {@code Class} doesn't contains all of these annotations.
    */
-  public S hasAnnotations(@SuppressWarnings("unchecked") Class<? extends Annotation>... annotations) {
+  public S hasAnnotations(@SuppressWarnings(value = { "unchecked" }) Class<? extends Annotation>... annotations) {
     classes.assertContainsAnnotations(info, actual, annotations);
     return myself;
   }
@@ -207,8 +192,7 @@ public abstract class AbstractClassAssert<S extends AbstractClassAssert<S>> exte
    * @throws AssertionError if {@code actual} is {@code null}.
    * @throws AssertionError if the actual {@code Class} doesn't contains all of these annotations.
    */
-  @SuppressWarnings("unchecked")
-  public S hasAnnotation(Class<? extends Annotation> annotation) {
+  @SuppressWarnings(value = { "unchecked" }) public S hasAnnotation(Class<? extends Annotation> annotation) {
     classes.assertContainsAnnotations(info, actual, annotation);
     return myself;
   }
