@@ -1,95 +1,88 @@
 package net.md_5.bungee.api;
-
-import java.util.Collection;
-import java.util.Map;
 import net.md_5.bungee.api.config.ListenerInfo;
+import java.util.Collection;
 import net.md_5.bungee.api.config.ServerInfo;
+import java.util.Map;
 
 /**
  * Core configuration adaptor for the proxy api.
  *
  * @deprecated This class is subject to rapid change between releases
  */
-@Deprecated
-public interface ProxyConfig
-{
-
-    /**
+@Deprecated public interface ProxyConfig {
+  /**
      * Time before users are disconnected due to no network activity.
      */
-    int getTimeout();
+  int getTimeout();
 
-    /**
+  /**
      * UUID used for metrics.
      */
-    String getUuid();
+  String getUuid();
 
-    /**
+  /**
      * Set of all listeners.
      */
-    Collection<ListenerInfo> getListeners();
+  Collection<ListenerInfo> getListeners();
 
-    /**
+  /**
      * Set of all servers.
      */
-    Map<String, ServerInfo> getServers();
+  Map<String, ServerInfo> getServers();
 
-    /**
+  /**
      * Does the server authenticate with mojang
      */
-    boolean isOnlineMode();
+  boolean isOnlineMode();
 
-    /**
+  /**
      * Whether proxy commands are logged to the proxy log
      */
-    boolean isLogCommands();
+  boolean isLogCommands();
 
-    /**
+  /**
      * Returns the player max.
      */
-    int getPlayerLimit();
+  int getPlayerLimit();
 
-    /**
+  /**
      * A collection of disabled commands.
      */
-    Collection<String> getDisabledCommands();
+  Collection<String> getDisabledCommands();
 
-    /**
+  /**
      * The connection throttle delay.
      */
-    @Deprecated
-    int getThrottle();
+  @Deprecated int getThrottle();
 
-    /**
+  /**
      * Whether the proxy will parse IPs with spigot or not
      */
-    @Deprecated
-    boolean isIpForward();
+  @Deprecated boolean isIpForward();
 
-    /**
+  /**
      * The encoded favicon.
      *
      * @deprecated Use #getFaviconObject instead.
      */
-    @Deprecated
-    String getFavicon();
+  @Deprecated String getFavicon();
 
-    /**
+  /**
      * The favicon used for the server ping list.
      */
-    Favicon getFaviconObject();
+  Favicon getFaviconObject();
 
-    /**
+  /**
      * Gets the URL of the default proxy resource pack.
      *
      * @return default resource pack
      */
-    String getResourcePack();
+  String getResourcePack();
 
-    /**
+  /**
      * Gets the hash of the default proxy resource pack.
      *
      * @return default resource pack hash
      */
-    String getResourcePackHash();
+  String getResourcePackHash();
 }

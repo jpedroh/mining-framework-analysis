@@ -1,5 +1,4 @@
 package net.md_5.bungee.api.connection;
-
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -18,88 +17,68 @@ import net.md_5.bungee.api.score.Scoreboard;
  * Represents a player who's connection is being connected to somewhere else,
  * whether it be a remote or embedded server.
  */
-public interface ProxiedPlayer extends Connection, CommandSender
-{
+public interface ProxiedPlayer extends Connection, CommandSender {
+  public enum ChatMode {
+    SHOWN,
+    COMMANDS_ONLY,
+    HIDDEN
+  }
 
-    /**
-     * Represents the player's chat state.
-     */
-    public enum ChatMode
-    {
+  public enum MainHand {
+    LEFT,
+    RIGHT
+  }
 
-        /**
-         * The player will see all chat.
-         */
-        SHOWN,
-        /**
-         * The player will only see everything except messages marked as chat.
-         */
-        COMMANDS_ONLY,
-        /**
-         * The chat is completely disabled, the player won't see anything.
-         */
-        HIDDEN;
-
-    }
-
-    public enum MainHand
-    {
-
-        LEFT,
-        RIGHT;
-    }
-
-    /**
+  /**
      * Gets this player's display name.
      *
      * @return the players current display name
      */
-    String getDisplayName();
+  String getDisplayName();
 
-    /**
+  /**
      * Sets this players display name to be used as their nametag and tab list
      * name.
      *
      * @param name the name to set
      */
-    void setDisplayName(String name);
+  void setDisplayName(String name);
 
-    /**
+  /**
      * Send a message to the specified screen position of this player.
      *
      * @param position the screen position
      * @param message the message to send
      */
-    public void sendMessage(ChatMessageType position, BaseComponent... message);
+  public void sendMessage(ChatMessageType position, BaseComponent... message);
 
-    /**
+  /**
      * Send a message to the specified screen position of this player.
      *
      * @param position the screen position
      * @param message the message to send
      */
-    public void sendMessage(ChatMessageType position, BaseComponent message);
+  public void sendMessage(ChatMessageType position, BaseComponent message);
 
-    /**
+  /**
      * Connects / transfers this user to the specified connection, gracefully
      * closing the current one. Depending on the implementation, this method
      * might return before the user has been connected.
      *
      * @param target the new server to connect to
      */
-    void connect(ServerInfo target);
+  void connect(ServerInfo target);
 
-    /**
+  /**
      * Connects / transfers this user to the specified connection, gracefully
      * closing the current one. Depending on the implementation, this method
      * might return before the user has been connected.
      *
-     * @param target the new server to connect to
      * @param reason the reason for connecting to the new server
      */
-    void connect(ServerInfo target, ServerConnectEvent.Reason reason);
+  void connect(ServerInfo target, ServerConnectEvent.Reason reason);
 
-    /**
+  /**
      * Connects / transfers this user to the specified connection, gracefully
      * closing the current one. Depending on the implementation, this method
      * might return before the user has been connected.
@@ -107,11 +86,11 @@ public interface ProxiedPlayer extends Connection, CommandSender
      * @param target the new server to connect to
      * @param callback the method called when the connection is complete, or
      * when an exception is encountered. The boolean parameter denotes success
-     * (true) or failure (false).
+     * or failure.
      */
-    void connect(ServerInfo target, Callback<Boolean> callback);
+  void connect(ServerInfo target, Callback<Boolean> callback);
 
-    /**
+  /**
      * Connects / transfers this user to the specified connection, gracefully
      * closing the current one. Depending on the implementation, this method
      * might return before the user has been connected.
@@ -119,163 +98,158 @@ public interface ProxiedPlayer extends Connection, CommandSender
      * @param target the new server to connect to
      * @param callback the method called when the connection is complete, or
      * when an exception is encountered. The boolean parameter denotes success
-     * (true) or failure (false).
+     * or failure.
      * @param reason the reason for connecting to the new server
      */
-    void connect(ServerInfo target, Callback<Boolean> callback, ServerConnectEvent.Reason reason);
+  void connect(ServerInfo target, Callback<Boolean> callback, ServerConnectEvent.Reason reason);
 
-    /**
+  /**
      * Connects / transfers this user to the specified connection, gracefully
      * closing the current one. Depending on the implementation, this method
      * might return before the user has been connected.
      *
      * @param request request to connect with
      */
-    void connect(ServerConnectRequest request);
+  void connect(ServerConnectRequest request);
 
-    /**
+  /**
      * Gets the server this player is connected to.
      *
      * @return the server this player is connected to
      */
-    Server getServer();
+  Server getServer();
 
-    /**
+  /**
      * Gets the ping time between the proxy and this connection.
      *
      * @return the current ping time
      */
-    int getPing();
+  int getPing();
 
-    /**
+  /**
      * Send a plugin message to this player.
-     *
-     * In recent Minecraft versions channel names must contain a colon separator
-     * and consist of [a-z0-9/._-]. This will be enforced in a future version.
-     * The "BungeeCord" channel is an exception and may only take this form.
      *
      * @param channel the channel to send this data via
      * @param data the data to send
      */
-    void sendData(String channel, byte[] data);
+  void sendData(String channel, byte[] data);
 
-    /**
+  /**
      * Get the pending connection that belongs to this player.
      *
      * @return the pending connection that this player used
      */
-    PendingConnection getPendingConnection();
+  PendingConnection getPendingConnection();
 
-    /**
+  /**
      * Make this player chat (say something), to the server he is currently on.
      *
      * @param message the message to say
      */
-    void chat(String message);
+  void chat(String message);
 
-    /**
+  /**
      * Get the server which this player will be sent to next time the log in.
      *
      * @return the server, or null if default
      */
-    ServerInfo getReconnectServer();
+  ServerInfo getReconnectServer();
 
-    /**
+  /**
      * Set the server which this player will be sent to next time the log in.
      *
      * @param server the server to set
      */
-    void setReconnectServer(ServerInfo server);
+  void setReconnectServer(ServerInfo server);
 
-    /**
+  /**
      * Get this connection's UUID, if set.
      *
      * @return the UUID
      * @deprecated In favour of {@link #getUniqueId()}
      */
-    @Deprecated
-    String getUUID();
+  @Deprecated String getUUID();
 
-    /**
+  /**
      * Get this connection's UUID, if set.
      *
      * @return the UUID
      */
-    UUID getUniqueId();
+  UUID getUniqueId();
 
-    /**
+  /**
      * Gets this player's locale.
      *
      * @return the locale
      */
-    Locale getLocale();
+  Locale getLocale();
 
-    /**
+  /**
      * Gets this player's view distance.
      *
      * @return the view distance, or a reasonable default
      */
-    byte getViewDistance();
+  byte getViewDistance();
 
-    /**
+  /**
      * Gets this player's chat mode.
      *
      * @return the chat flags set, or a reasonable default
      */
-    ChatMode getChatMode();
+  ChatMode getChatMode();
 
-    /**
+  /**
      * Gets if this player has chat colors enabled or disabled.
      *
      * @return if chat colors are enabled
      */
-    boolean hasChatColors();
+  boolean hasChatColors();
 
-    /**
+  /**
      * Gets this player's skin settings.
      *
      * @return the players skin setting
      */
-    SkinConfiguration getSkinParts();
+  SkinConfiguration getSkinParts();
 
-    /**
+  /**
      * Gets this player's main hand setting.
      *
      * @return main hand setting
      */
-    MainHand getMainHand();
+  MainHand getMainHand();
 
-    /**
+  /**
      * Set the header and footer displayed in the tab player list.
      *
      * @param header The header for the tab player list, null to clear it.
      * @param footer The footer for the tab player list, null to clear it.
      */
-    void setTabHeader(BaseComponent header, BaseComponent footer);
+  void setTabHeader(BaseComponent header, BaseComponent footer);
 
-    /**
+  /**
      * Set the header and footer displayed in the tab player list.
      *
      * @param header The header for the tab player list, null to clear it.
      * @param footer The footer for the tab player list, null to clear it.
      */
-    void setTabHeader(BaseComponent[] header, BaseComponent[] footer);
+  void setTabHeader(BaseComponent[] header, BaseComponent[] footer);
 
-    /**
+  /**
      * Clears the header and footer displayed in the tab player list.
      */
-    void resetTabHeader();
+  void resetTabHeader();
 
-    /**
+  /**
      * Sends a {@link Title} to this player. This is the same as calling
      * {@link Title#send(ProxiedPlayer)}.
      *
      * @param title The title to send to the player.
      * @see Title
      */
-    void sendTitle(Title title);
+  void sendTitle(Title title);
 
-    /**
+  /**
      * Sends a resource pack to this player.
      * <p>
      * Hash is the SHA-1 digest of the resource pack. It's recommended to specify this.
@@ -286,9 +260,9 @@ public interface ProxiedPlayer extends Connection, CommandSender
      * @param hash optional resource pack hash
      * @throws IllegalArgumentException if hash is longer than 40 characters
      */
-    void sendResourcePack(String url, String hash) throws IllegalArgumentException;
+  void sendResourcePack(String url, String hash) throws IllegalArgumentException;
 
-    /**
+  /**
      * Gets the player's currently loaded resource pack hash that was applied by a proxy or server.
      * <p>
      * Hash is returned as a 40 digit lowercase hexadecimal SHA-1 value
@@ -296,16 +270,16 @@ public interface ProxiedPlayer extends Connection, CommandSender
      *
      * @return hash if resource pack is set, otherwise null
      */
-    String getResourcePackHash();
+  String getResourcePackHash();
 
-    /**
+  /**
      * Returns if the client has a successfully loaded resource pack.
      *
      * @return true if has resource pack
      */
-    boolean hasResourcePack();
+  boolean hasResourcePack();
 
-    /**
+  /**
      * Gets whether this player is using a FML client.
      * <p>
      * This method is only reliable if BungeeCord links Minecraft 1.8 servers
@@ -318,9 +292,9 @@ public interface ProxiedPlayer extends Connection, CommandSender
      * @return <code>true</code> if it is known that the user is using a FML
      * client, <code>false</code> otherwise.
      */
-    boolean isForgeUser();
+  boolean isForgeUser();
 
-    /**
+  /**
      * Gets this player's Forge Mod List, if the player has sent this
      * information during the lifetime of their connection to Bungee. There is
      * no guarantee that information is available at any time, as it is only
@@ -343,12 +317,12 @@ public interface ProxiedPlayer extends Connection, CommandSender
      * the value is the version. Returns an empty list if the FML handshake has
      * not occurred for this {@link ProxiedPlayer} yet.
      */
-    Map<String, String> getModList();
+  Map<String, String> getModList();
 
-    /**
+  /**
      * Get the {@link Scoreboard} that belongs to this player.
      *
      * @return this player's {@link Scoreboard}
      */
-    Scoreboard getScoreboard();
+  Scoreboard getScoreboard();
 }
