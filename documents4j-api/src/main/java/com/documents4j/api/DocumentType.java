@@ -27,7 +27,6 @@ public class DocumentType implements Serializable, Comparable<DocumentType> {
     public static final DocumentType PPTX = new DocumentType(Value.APPLICATION, Value.PPTX);
     public static final DocumentType PPT = new DocumentType(Value.APPLICATION, Value.PPT);
 
-
     private final String type;
 
     private final String subtype;
