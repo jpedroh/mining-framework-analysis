@@ -307,7 +307,19 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 		}
 
 		this.shutDownStarted = true;
+<<<<<<< /usr/src/app/output/relayrides/pushy/efd678fbd977b2bb60e2a04954dbdca6143fd077/src/main/java/com/relayrides/pushy/apns/PushManager.java/left.java
 		this.dispatchThread.interrupt();
+||||||| /usr/src/app/output/relayrides/pushy/efd678fbd977b2bb60e2a04954dbdca6143fd077/src/main/java/com/relayrides/pushy/apns/PushManager.java/base.java
+		for (final ApnsConnection<T> connection : this.activeConnections) {
+			connection.shutdownGracefully();
+		}
+=======
+		synchronized (this.activeConnections) {
+			for (final ApnsConnection<T> connection : this.activeConnections) {
+				connection.shutdownGracefully();
+			}
+		}
+>>>>>>> /usr/src/app/output/relayrides/pushy/efd678fbd977b2bb60e2a04954dbdca6143fd077/src/main/java/com/relayrides/pushy/apns/PushManager.java/right.java
 
 		final Date deadline = timeout > 0 ? new Date(System.currentTimeMillis() + timeout) : null;
 
@@ -323,10 +335,8 @@ public class PushManager<T extends ApnsPushNotification> implements ApnsConnecti
 			assert this.activeConnections.isEmpty();
 		}
 
-		synchronized (this.activeConnections) {
-			for (final ApnsConnection<T> connection : this.activeConnections) {
-				connection.shutdownImmediately();
-			}
+		for (final ApnsConnection<T> connection : this.activeConnections) {
+			connection.shutdownImmediately();
 		}
 
 		this.rejectedNotificationListeners.clear();
