@@ -155,7 +155,6 @@ public class GatewayDiscover {
             //,"upnp:rootdevice"
         });
     }
-
     /**
      * Constructor of the gateway discover service.
      * 
@@ -164,7 +163,6 @@ public class GatewayDiscover {
     public GatewayDiscover(String st) {
         this(new String[]{st});
     }
-    
     /**
      * Constructor.
      * 
@@ -173,6 +171,31 @@ public class GatewayDiscover {
     public GatewayDiscover (String[] types)
     {
         this.searchTypes = types;
+    }
+    /**
+     * Constructor.
+     * 
+     * By default it's looking for 3 types of gateways.
+     * 
+     */
+
+    /**
+     * Constructor of the gateway discover service.
+     * 
+     * @param st The search type you are looking for
+     */
+    public GatewayDiscover(String st) {
+		this(new String[]{st});
+	}
+    
+    /**
+     * Constructor.
+     * 
+     * @param types The search types the discover have to look for
+     */
+    public GatewayDiscover (String[] types)
+    {
+    	this.searchTypes = types;
     }
 
 	/**
