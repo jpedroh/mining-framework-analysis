@@ -1,28 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.chaoticity.dependensee;
-
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.trees.*;
 import java.io.File;
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.List;
 import org.junit.After;
-import org.junit.AfterClass;
+import java.io.StringReader;
 import org.junit.Before;
+import java.util.Collection;
 import org.junit.BeforeClass;
+import java.util.List;
 import org.junit.Test;
 
 /**
@@ -30,55 +19,52 @@ import org.junit.Test;
  * @author Awais Athar
  */
 public class MainTest {
+  public MainTest() {
+  }
 
-    public MainTest() {
+  @BeforeClass public static void setUpClass() {
+  }
+
+  public static void tearDownClass() {
+    File f = new File("image.png");
+    if (f.exists()) {
+      f.delete();
     }
+  }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+  @Before public void setUp() {
+  }
 
-    @AfterClass
-    public static void tearDownClass() {
-        File f = new File("image.png");
-        if (f.exists()) {
-           f.delete();
-        }
-    }
+  @After public void tearDown() {
+  }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    /**
+  /**
      * Test of writeImage method, of class Main.
      */
+  @Test public void testWriteImage() throws Exception {
+    String text = 
+<<<<<<< /usr/src/app/output/awaisathar/dependensee/38b5080a19a4b08f68e6255427afa7d8d57caae4/src/test/java/com/chaoticity/dependensee/MainTest.java/left.java
+    "A quick brown fox jumped over the lazy dog."
+=======
+    "They buy and sell books."
+>>>>>>> /usr/src/app/output/awaisathar/dependensee/38b5080a19a4b08f68e6255427afa7d8d57caae4/src/test/java/com/chaoticity/dependensee/MainTest.java/right.java
+    ;
+    TreebankLanguagePack tlp = new PennTreebankLanguagePack();
+    GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+    LexicalizedParser lp = LexicalizedParser.loadModel();
+    lp.setOptionFlags(new String[] { "-maxLength", "500", "-retainTmpSubcategories" });
+    TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
+    List<CoreLabel> wordList = tokenizerFactory.getTokenizer(new StringReader(text)).tokenize();
+    Tree tree = lp.apply(wordList);
+    GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
+    Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
+    Main.writeImage(tdl, "image.png", 3);
+    assert (new File("image.png").exists());
+  }
 
-    @Test
-    public void testWriteImage() throws Exception {
-        String text = "A quick brown fox jumped over the lazy dog.";
-        TreebankLanguagePack tlp = new PennTreebankLanguagePack();
-        GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-        LexicalizedParser lp = LexicalizedParser.loadModel();
-        lp.setOptionFlags(new String[]{"-maxLength", "500", "-retainTmpSubcategories"});
-        TokenizerFactory<CoreLabel> tokenizerFactory =
-                PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
-        List<CoreLabel> wordList = tokenizerFactory.getTokenizer(new StringReader(text)).tokenize();
-        Tree tree = lp.apply(wordList);
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
-        Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
-        Main.writeImage(tdl, "image.png", 3);
-        assert (new File("image.png").exists());
-    }
-
-    @Test
-    public void testWriteFromCoNLLFile() throws Exception {
-        String infile="conll.txt";
-        Main.writeFromCONLLFile("conll.txt","image.png");
-        assert (new File("image.png").exists());
-    }
+  @Test public void testWriteFromCoNLLFile() throws Exception {
+    String infile = "conll.txt";
+    Main.writeFromCONLLFile("conll.txt", "image.png");
+    assert (new File("image.png").exists());
+  }
 }
