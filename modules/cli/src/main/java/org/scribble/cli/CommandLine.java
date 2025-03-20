@@ -81,6 +81,7 @@ public class CommandLine implements Runnable
 		}
 	}
 	
+	// FIXME: output all relevant projections
 	// FIXME: option to write to file, like classes
 	private void outputProjections(Job job)
 	{
@@ -91,6 +92,7 @@ public class CommandLine implements Runnable
 		System.out.println("\n" + projections.values().stream().map((p) -> p.toString()).collect(Collectors.joining("\n\n")));
 	}
 
+	// FIXME: output all relevant Graphs
 	private void outputGraph(Job job) throws ScribbleException
 	{
 		JobContext jcontext = job.getContext();
