@@ -108,8 +108,10 @@ public final class MkContents implements Contents {
     }
 
     @Override
-    @NotNull(message = "the content is never NULL")
-    public Content readme(final String branch)
+    @NotNull(message = "content is never NULL")
+    public Content readme(@NotNull(message = "branch can't be NULL")
+        final String branch
+    )
         throws IOException {
         return new MkContent(this.storage, this.self, this.coords, branch);
     }
