@@ -34,7 +34,13 @@ public class RetrievalConfig {
      */
     public static final String KINESIS_CLIENT_LIB_USER_AGENT = "amazon-kinesis-client-library-java";
 
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/84f2b673f920b265ad970d1819760c623805865b/amazon-kinesis-client/src/main/java/software/amazon/kinesis/retrieval/RetrievalConfig.java/left.java
     public static final String KINESIS_CLIENT_LIB_USER_AGENT_VERSION = "2.0.3-experimental-6";
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/84f2b673f920b265ad970d1819760c623805865b/amazon-kinesis-client/src/main/java/software/amazon/kinesis/retrieval/RetrievalConfig.java/base.java
+    public static final String KINESIS_CLIENT_LIB_USER_AGENT_VERSION = "2.0.3-experimental-4";
+=======
+    public static final String KINESIS_CLIENT_LIB_USER_AGENT_VERSION = "2.0.3-experimental-5";
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/84f2b673f920b265ad970d1819760c623805865b/amazon-kinesis-client/src/main/java/software/amazon/kinesis/retrieval/RetrievalConfig.java/right.java
 
     /**
      * Client used to make calls to Kinesis for records retrieval
