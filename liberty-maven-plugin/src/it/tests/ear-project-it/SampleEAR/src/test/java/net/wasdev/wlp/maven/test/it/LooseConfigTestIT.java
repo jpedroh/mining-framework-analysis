@@ -27,7 +27,6 @@ import javax.xml.xpath.XPathFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
 
 import static junit.framework.Assert.*;
 
@@ -76,14 +75,18 @@ public class LooseConfigTestIT {
                 nodes.item(0).getAttributes().getNamedItem("targetInArchive").getNodeValue());
         assertEquals("archive targetInArchive attribute value", "/modules/web.war", 
                 nodes.item(1).getAttributes().getNamedItem("targetInArchive").getNodeValue());
+<<<<<<< /usr/src/app/output/wasdev/ci.maven/b7c37eab73d658f90da6b0a6e9149b26a00bb332/liberty-maven-plugin/src/it/tests/ear-project-it/SampleEAR/src/test/java/net/wasdev/wlp/maven/test/it/LooseConfigTestIT.java/left.java
         assertEquals("archive targetInArchive attribute value", "/SampleWAR2.war", 
                 nodes.item(2).getAttributes().getNamedItem("targetInArchive").getNodeValue());
+||||||| /usr/src/app/output/wasdev/ci.maven/b7c37eab73d658f90da6b0a6e9149b26a00bb332/liberty-maven-plugin/src/it/tests/ear-project-it/SampleEAR/src/test/java/net/wasdev/wlp/maven/test/it/LooseConfigTestIT.java/base.java
+=======
         
         expression = "/archive/archive/file";
         nodes = (NodeList) xPath.compile(expression).evaluate(inputDoc, XPathConstants.NODESET);
-        assertEquals("Number of <archive/> element ==>", 5, nodes.getLength());
+        assertEquals("Number of <archive/> element ==>", 3, nodes.getLength());
         // test runtime scope dependency to be incldued in the ?WEB-INF/lib
         assertEquals("file targetInArchive attribute value", "/WEB-INF/lib/log4j-1.2.17.jar", 
                 nodes.item(2).getAttributes().getNamedItem("targetInArchive").getNodeValue());
+>>>>>>> /usr/src/app/output/wasdev/ci.maven/b7c37eab73d658f90da6b0a6e9149b26a00bb332/liberty-maven-plugin/src/it/tests/ear-project-it/SampleEAR/src/test/java/net/wasdev/wlp/maven/test/it/LooseConfigTestIT.java/right.java
     }
 }
