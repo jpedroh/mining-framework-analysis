@@ -148,8 +148,8 @@ public class DocumentService {
 	public static final String IMMUTABLE = "$immutable";
 	public static final String VERSION = "$version";
 
-	private static final String REGEX_UUID = "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})|([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-[0-9]{13,15})";
-	private static final String REGEX_OLDUID = "([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)";
+    private static final String REGEX_UUID = "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})|([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}-[0-9]{13,15})";
+    private static final String REGEX_OLDUID = "([0-9a-f]{8}-.*|[0-9a-f]{11}-.*)";
 
 	public static final String USER_GROUP_LIST = "org.imixs.USER.GROUPLIST";
 
@@ -993,67 +993,80 @@ public class DocumentService {
 	 * @return - result set
 	 * 
 	 */
-	@TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
-	public List<ItemCollection> getDocumentsByQuery(String query, int firstResult, int maxResult) {
-		boolean debug = logger.isLoggable(Level.FINE);
-		List<ItemCollection> result = new ArrayList<ItemCollection>();
-		Query q = manager.createQuery(query);
+    /**
+     * Returns all documents of by JPQL statement.
+     * <p>
+     * The Transactiontype REQUIRES_NEW ensure that during the processing lifecycle
+     * an external service call did not overwrite the current document jpa object
+     * (see Issue #634)
+     * 
+     * @param query       - JPQL statement
+     * @param firstResult - first result
+     * @param maxResult   - maximum result set
+     * @return - result set
+     * 
+     */
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+    public List<ItemCollection> getDocumentsByQuery(String query, int firstResult, int maxResult) {
+    	boolean debug = logger.isLoggable(Level.FINE);
+    	List<ItemCollection> result = new ArrayList<ItemCollection>();
+    	Query q = manager.createQuery(query);
 
-		// setMaxResults ?
-		if (maxResult > 0) {
-			q.setMaxResults(maxResult);
-		}
-		// setFirstResult?
-		if (firstResult > 0) {
-			q.setFirstResult(firstResult);
-		}
+    	// setMaxResults ?
+    	if (maxResult > 0) {
+    		q.setMaxResults(maxResult);
+    	}
+    	// setFirstResult?
+    	if (firstResult > 0) {
+    		q.setFirstResult(firstResult);
+    	}
 
-		long l = System.currentTimeMillis();
-		@SuppressWarnings("unchecked")
-		Collection<Document> documentList = q.getResultList();
+    	long l = System.currentTimeMillis();
+    	@SuppressWarnings("unchecked")
+    	Collection<Document> documentList = q.getResultList();
 
-		if (documentList == null) {
-			if (debug) {
-				logger.finest("......getDocumentsByQuery - no ducuments found.");
-			}
-			return result;
-		}
+    	if (documentList == null) {
+    		if (debug) {
+    			logger.finest("......getDocumentsByQuery - no ducuments found.");
+    		}
+    		return result;
+    	}
 
-		// filter result set by read access
-		for (Document doc : documentList) {
-			if (isCallerReader(doc)) {
+    	// filter result set by read access
+    	for (Document doc : documentList) {
+    		if (isCallerReader(doc)) {
 
-				ItemCollection _tmp = null;
+    			ItemCollection _tmp = null;
 
-				if (doc.isPending()) {
-					// we clone but do not detach
-					if (debug) {
-						logger.finest(
-								"......clone manged entity '" + doc.getId() + "' pending status=" + doc.isPending());
-					}
-					_tmp = new ItemCollection(doc.getData());
-				} else {
-					// the document is not managed, so we detach it
-					_tmp = new ItemCollection();
-					_tmp.setAllItems(doc.getData());
-					manager.detach(doc);
-				}
+    			if (doc.isPending()) {
+    				// we clone but do not detach
+    				if (debug) {
+    					logger.finest(
+    							"......clone manged entity '" + doc.getId() + "' pending status=" + doc.isPending());
+    				}
+    				_tmp = new ItemCollection(doc.getData());
+    			} else {
+    				// the document is not managed, so we detach it
+    				_tmp = new ItemCollection();
+    				_tmp.setAllItems(doc.getData());
+    				manager.detach(doc);
+    			}
 
-				updateMetaData(_tmp, doc);
+    			updateMetaData(_tmp, doc);
 
-				result.add(_tmp);
-				// issue #647
-				if (documentEvents != null) {
-					documentEvents.fire(new DocumentEvent(_tmp, DocumentEvent.ON_DOCUMENT_LOAD));
-				}
-			}
-		}
-		if (debug) {
-			logger.fine("...getDocumentsByQuery - found " + documentList.size() + " documents in "
-					+ (System.currentTimeMillis() - l) + " ms");
-		}
-		return result;
-	}
+    			result.add(_tmp);
+    			// issue #647 
+                if (documentEvents != null) {
+    			documentEvents.fire(new DocumentEvent(_tmp, DocumentEvent.ON_DOCUMENT_LOAD));
+    		}
+    		}
+    	}
+    	if (debug) {
+    		logger.fine("...getDocumentsByQuery - found " + documentList.size() + " documents in "
+    				+ (System.currentTimeMillis() - l) + " ms");
+    	}
+    	return result;
+    }
 
 	/**
 	 * This method creates a backup of the result set form a Lucene search query.
@@ -1311,7 +1324,7 @@ public class DocumentService {
 		return true;
 	}
 
-	 /**
+    /**
      * This method returns true if the given id is a valid UUID or SnapshotID (UUI +
      * timestamp
      * <p>
