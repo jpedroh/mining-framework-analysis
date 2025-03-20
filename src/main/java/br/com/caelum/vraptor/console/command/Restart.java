@@ -1,47 +1,35 @@
 package br.com.caelum.vraptor.console.command;
-
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class Restart implements Command {
+  @Override public void execute() throws Exception {
+    new Maven().execute(new CommandLine("compile"));
+    if (new File("jetty").exists()) {
+      customJetty();
+    } else {
+      RunningServer.restart();
+    }
+  }
 
-	@Override
-	public void execute() throws Exception {
-		new Maven().execute(new CommandLine("compile"));
-		if (new File("jetty").exists()) {
-			customJetty();
-		} else {
-			RunningServer.restart();
-		}
-	}
 
-	private void customNotImplementedJetty() throws MalformedURLException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
-		// use esse diretorio
-		URLClassLoader loader = new URLClassLoader(
-				new URL[] { new File("jetty").toURL() }, this.getClass()
-						.getClassLoader());
-		Class<?> type;
-		try {
-			type = loader.loadClass(this.getClass().getPackage().getName()
-					+ ".Main");
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-		Method method = type.getMethod("main", new Class[] { String[].class });
-		Object instance = type.newInstance();
-		method.invoke(instance, new String[] {});
-	}
+<<<<<<< /usr/src/app/output/caelum/vraptor-console/75017316626095be7d4b6cbb4c1532561e1ff8a1/src/main/java/br/com/caelum/vraptor/console/command/Restart.java/left.java
+  private void customNotImplementedJetty() throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    URLClassLoader loader = new URLClassLoader(new URL[] { new File("jetty").toURL() }, this.getClass().getClassLoader());
+    Class<?> type;
+    try {
+      type = loader.loadClass(this.getClass().getPackage().getName() + ".Main");
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    Method method = type.getMethod("main", new Class[] { String[].class });
+    Object instance = type.newInstance();
+    method.invoke(instance, new String[] {  });
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-	private void customJetty() {
-		throw new UnsupportedOperationException(
-				"/jetty dir found, but we haven't implemented "
-						+ "custom jetty servers support, contact the developers for more info");
-	}
 
+  private void customJetty() {
+    throw new UnsupportedOperationException("/jetty dir found, but we haven\'t implemented " + "custom jetty servers support, contact the developers for more info");
+  }
 }
