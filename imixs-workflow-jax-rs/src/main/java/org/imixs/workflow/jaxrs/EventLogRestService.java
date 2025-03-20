@@ -44,17 +44,18 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 import org.imixs.workflow.ItemCollection;
 import org.imixs.workflow.engine.EventLogService;
 import org.imixs.workflow.engine.index.SearchService;
 import org.imixs.workflow.engine.jpa.EventLog;
 import org.imixs.workflow.xml.XMLDataCollection;
 import org.imixs.workflow.xml.XMLDataCollectionAdapter;
-
 import jakarta.ejb.Stateless;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
+import javax.ws.rs.PUT;
+import org.imixs.workflow.xml.XMLDocument;
+import org.imixs.workflow.xml.XMLDocumentAdapter;
 
 /**
  * The EventLogRestService supports methods to access the event log entries by
