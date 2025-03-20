@@ -20,21 +20,12 @@ import de.hochschuletrier.gdw.ss14.physics.ICatStateListener;
 import de.hochschuletrier.gdw.ss14.physics.ICollisionListener;
 import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
 import de.hochschuletrier.gdw.ss14.states.GroundTypeState;
-import de.hochschuletrier.gdw.ss14.states.DogStateEnum;
 import de.hochschuletrier.gdw.ss14.states.JumpableState;
 import de.hochschuletrier.gdw.ss14.states.ParticleEmitterTypeEnum;
-
+import de.hochschuletrier.gdw.ss14.ecs.components.GroundPhysicsComponent;
+import de.hochschuletrier.gdw.ss14.ecs.components.GroundPropertyComponent;
+import de.hochschuletrier.gdw.ss14.states.DogStateEnum;
 import java.util.ArrayList;
-
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixBody;
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixBodyDef;
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixFixtureDef;
-import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.LightComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.RenderComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.ShadowComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.WoolPhysicsComponent;
 
 public class EntityFactory{
 

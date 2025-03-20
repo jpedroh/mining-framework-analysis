@@ -44,6 +44,7 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
         Object o = contact.getOtherPhysixBody().getFixtureList().get(0).getUserData();
         PhysixEntity other = contact.getOtherPhysixBody().getOwner();
 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
         /////////////
         // get all neccessary information
         Array<Integer> physicEntities = entityManager.getAllEntitiesWithComponents(PhysicsComponent.class);
@@ -102,6 +103,13 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
         }
         
         /////////
+||||||| /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+        if(other instanceof CatPhysicsComponent){
+            logger.debug("cat collides with dog ... or another cat");
+=======
+        if(other instanceof RectPhysicsComponent){
+            logger.debug("cat collides with dog ... or another cat");
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
 
     }
 
@@ -139,7 +147,7 @@ public class CatContactSystem extends ECSystem implements ICollisionListener{
 if(other instanceof CatPhysicsComponent){
             logger.debug("cat collides with dog ... or another cat");
 
-        }else if(other instanceof ConePhysicsComponent){
+        }else if(other instanceof CatPhysicsComponent){
             logger.debug("cat collides with sight-cone");
             phyManager.getWorld().rayCast(rcp, other.getPosition(), owner.getPosition());
             if(rcp.m_hit && rcp.m_fraction <= ((CatPhysicsComponent)other).coneRadius){
@@ -159,6 +167,7 @@ if(other instanceof CatPhysicsComponent){
             Array<Integer> compos = entityManager.getAllEntitiesWithComponents(PlayerComponent.class);
             CatPropertyComponent player = entityManager.getComponent(compos.get(0), CatPropertyComponent.class);
             player.isInfluenced = true;
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
             
         }else if(other instanceof JumpablePhysicsComponent || other instanceof GroundPhysicsComponent){
             if(contact.getMyFixture().getUserData() != null
@@ -169,9 +178,20 @@ if(other instanceof CatPhysicsComponent){
             
             // search for all entities with physic components
             Array<Integer> compos = entityManager.getAllEntitiesWithComponents(PhysicsComponent.class);
+||||||| /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+            
+        }else if(other instanceof JumpablePhysicsComponent){
+            Array<Integer> compos = entityManager.getAllEntitiesWithComponents(JumpablePropertyComponent.class);
+=======
+            ((WoolPhysicsComponent) other).isSeen = true;
+            logger.debug("WOOOOOOOOOOOOOOOLL");
+        }else if(other instanceof JumpablePhysicsComponent){
+            Array<Integer> compos = entityManager.getAllEntitiesWithComponents(JumpablePropertyComponent.class);
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
             for (Integer p : compos) {
                 // check if we got the one, we collided with
                 PhysicsComponent puddlecompo = entityManager.getComponent(p, PhysicsComponent.class);
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
                 if(puddlecompo == other){
                     Component property;
                     property = entityManager.getComponent(p, JumpablePropertyComponent.class);
@@ -192,10 +212,89 @@ if(other instanceof CatPhysicsComponent){
                     else if( property instanceof GroundPropertyComponent){
                         Array<Integer> entities = entityManager.getAllEntitiesWithComponents(PlayerComponent.class, PhysicsComponent.class);
                         if(entities.size > 0)
+||||||| /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+                if(puddlecompo == other && property.type == JumpableState.deadzone){
+                    boolean isCatInZone = false;
+                    if(contact.getMyFixture().getUserData() == null) return;
+                    if(contact.getMyFixture().getUserData().equals("masscenter")){
+                        isCatInZone = true;
+                    }
+                    if(isCatInZone){
+                        // cat fall down
+                        Array<Integer> entities = entityManager.getAllEntitiesWithComponents(PlayerComponent.class, PhysicsComponent.class);
+
+                        if(entities.size > 0)
+=======
+                if(puddlecompo == other)
+                {
+                    if(property.type == JumpableState.deadzone)
+                    {
+                        boolean isCatInZone = false;
+                        if (contact.getMyFixture().getUserData() == null) return;
+                        if (contact.getMyFixture().getUserData().equals("masscenter"))
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
                         {
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
                             int player = entities.first();
                             CatPropertyComponent catPropertyComponent = entityManager.getComponent(player, CatPropertyComponent.class);
                             catPropertyComponent.groundWalking = ((GroundPropertyComponent) property).type;
+||||||| /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+                            int player = entities.first();
+                            CatPropertyComponent catPropertyComponent = entityManager.getComponent(player, CatPropertyComponent.class);
+
+                            //catPropertyComponent.isAlive = false;
+                            catPropertyComponent.setState(CatStateEnum.FALL);
+=======
+                            isCatInZone = true;
+                        }
+                        if (isCatInZone)
+                        {
+                            // cat fall down
+                            Array<Integer> entities = entityManager.getAllEntitiesWithComponents(PlayerComponent.class, PhysicsComponent.class);
+
+                            if (entities.size > 0)
+                            {
+                                int player = entities.first();
+                                CatPropertyComponent catPropertyComponent = entityManager.getComponent(player, CatPropertyComponent.class);
+
+                                //catPropertyComponent.isAlive = false;
+                                catPropertyComponent.setState(CatStateEnum.FALL);
+                            }
+
+
+                            if (entities.size > 0)
+                            {
+                                int player = entities.first();
+                                CatPropertyComponent catPropertyComponent = entityManager.getComponent(player, CatPropertyComponent.class);
+
+                                //catPropertyComponent.isAlive = false;
+                                catPropertyComponent.setState(CatStateEnum.FALL);
+                            }
+
+                        }
+                    } // end dead zone check
+                    else if(property.type == JumpableState.waterpuddle || property.type == JumpableState.bloodpuddle)
+                    {
+                        // TODO: DRY!
+                        boolean isCatInZone = false;
+                        if (contact.getMyFixture().getUserData() == null) return;
+                        if (contact.getMyFixture().getUserData().equals("masscenter"))
+                        {
+                            isCatInZone = true;
+                        }
+                        if (isCatInZone)
+                        {
+                            // cat fall down
+                            Array<Integer> entities = entityManager.getAllEntitiesWithComponents(PlayerComponent.class, PhysicsComponent.class);
+
+                            if (entities.size > 0)
+                            {
+                                int player = entities.first();
+                                CatPropertyComponent catPropertyComponent = entityManager.getComponent(player, CatPropertyComponent.class);
+
+                                catPropertyComponent.isAlive = false;
+                            }
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
                         }
                     }
                 } // end if other
@@ -249,4 +348,67 @@ if(other instanceof CatPhysicsComponent){
             // TODO: change floor here.
         }
 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/left.java
 */
+||||||| /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/base.java
+    }
+
+    @Override
+    public void update(float delta) {}
+
+    @Override
+    public void render() {}
+
+    @Override
+    public void fireEndCollision(PhysixContact contact) {
+        // TODO Auto-generated method stub
+        PhysixBody owner = contact.getMyPhysixBody();//.getOwner();
+        Object o = contact.getOtherPhysixBody().getFixtureList().get(0).getUserData();
+        PhysixEntity other = contact.getOtherPhysixBody().getOwner();
+        
+        if(other instanceof WoolPhysicsComponent){
+            ((WoolPhysicsComponent) other).isSeen = false;
+            Array<Integer> compos = entityManager.getAllEntitiesWithComponents(PlayerComponent.class);
+            CatPropertyComponent player = entityManager.getComponent(compos.get(0), CatPropertyComponent.class);
+            player.isInfluenced = false;
+            
+        }
+        
+        if(other instanceof ConePhysicsComponent){
+            EnemyComponent.seeCat = false;
+        }
+        
+    }
+}
+=======
+    }
+
+    @Override
+    public void update(float delta) {}
+
+    @Override
+    public void render() {}
+
+    @Override
+    public void fireEndCollision(PhysixContact contact) {
+        // TODO Auto-generated method stub
+        PhysixBody owner = contact.getMyPhysixBody();//.getOwner();
+        Object o = contact.getOtherPhysixBody().getFixtureList().get(0).getUserData();
+        PhysixEntity other = contact.getOtherPhysixBody().getOwner();
+        
+        if(other instanceof WoolPhysicsComponent){
+            
+            Array<Integer> compos = entityManager.getAllEntitiesWithComponents(PlayerComponent.class);
+            CatPropertyComponent player = entityManager.getComponent(compos.get(0), CatPropertyComponent.class);
+            ((WoolPhysicsComponent) other).isSeen = false;
+            player.isInfluenced = false;
+            
+        }
+        
+        if(other instanceof CatPhysicsComponent){
+            EnemyComponent.seeCat = false;
+        }
+        
+    }
+}
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/83315ff1e11f8b4e9c3f0c24427fefda9b9f087a/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/CatContactSystem.java/right.java
