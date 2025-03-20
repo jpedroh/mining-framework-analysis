@@ -194,6 +194,16 @@ public class ResizerNodeTest extends MessagingBaseTest {
 	}
 
 	@Test
+	public void testMetricsResizeRequest() throws Exception {
+		message = messageBuilder.configureResizeMessage().build();
+		when(session.createMessage(any(Boolean.class))).thenReturn(Mockito.mock(ClientMessage.class), sessionMessage);
+
+		cut.onMessage(message);
+
+		assertThat(metrics.getMeters().get(ResizerNode.METRIC_NAME_RESIZE_MESSAGES).getCount(),
+				is(1L));
+	}
+	@Test
 	public void testBufferResize() throws Exception {
 		message = new MessageFactory(session).resizeRequest(Paths.get("foo"), null);
 		
@@ -206,16 +216,5 @@ public class ResizerNodeTest extends MessagingBaseTest {
 		cut.onMessage(message);
 
 		assertThat(cut.getBufferResizes(), is(1L));
-	}
-
-	@Test
-	public void testMetricsResizeRequest() throws Exception {
-		message = messageBuilder.configureResizeMessage().build();
-		when(session.createMessage(any(Boolean.class))).thenReturn(Mockito.mock(ClientMessage.class), sessionMessage);
-
-		cut.onMessage(message);
-
-		assertThat(metrics.getMeters().get(ResizerNode.METRIC_NAME_RESIZE_MESSAGES).getCount(),
-				is(1L));
 	}
 }

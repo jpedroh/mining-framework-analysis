@@ -63,10 +63,10 @@ public class ResizerNode implements MessageHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResizerNode.class);
 
 	private static final String DUMMY = "";
-	private static final int INITIAL_BUFFER_SIZE = 1024 * 1024 * 5;
 
 	public static final String METRIC_NAME_RESIZE_MESSAGES = MetricRegistry.name(ResizerNode.class, "resize",
 			"messages");
+	private static final int INITIAL_BUFFER_SIZE = 1024 * 1024 * 5;
 
 	private final ClientConsumer consumer;
 	private final ClientProducer producer;
@@ -76,8 +76,8 @@ public class ResizerNode implements MessageHandler {
 	private final AtomicLong resizeSensing = new AtomicLong();
 
 	private final Cache<String, String> pendingCache;
-	private ByteBuffer messageBuffer;
 	private final Meter resizeRequests;
+	private ByteBuffer messageBuffer;
 
 	/**
 	 * Create a new consumer for hash messages. Uses the default addresses for queues.
