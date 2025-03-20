@@ -9,7 +9,7 @@ import com.taobao.top.link.endpoint.MessageHandler;
 public class ServerMessageHandler implements MessageHandler {
 	@Override
 	public void onMessage(Map<String, String> message, Identity messageFrom) {
-		System.out.println("onMessage:" + message);
+		// System.out.println("onMessage:" + message);
 	}
 
 	@Override
