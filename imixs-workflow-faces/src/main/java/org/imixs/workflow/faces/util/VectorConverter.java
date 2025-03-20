@@ -44,8 +44,10 @@ import jakarta.faces.convert.FacesConverter;
  * <p>
  * usage:
  * <p>
- * <code><h:inputTextarea value="#{value}" converter="org.imixs.VectorConverter" /></code>
+ * <code><h:inputTextarea value="#{value}" converter= "org.imixs.VectorConverter" /></code>
  * 
+ * 
+ *
  *
  */
 @SuppressWarnings("rawtypes")
