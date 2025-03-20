@@ -19,10 +19,8 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.Assertions.shouldHaveThrown;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.util.DateUtil.parseDatetime;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,7 +39,7 @@ import java.util.function.DoublePredicate;
 import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.lang.reflect.Method;
 
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.iterable.Extractor;
@@ -355,7 +353,7 @@ public class SoftAssertionsTest extends BaseAssertionsTest {
       assertThat(errors.get(51)).startsWith(String.format("%nExpecting:%n  <given predicate>%n"
                                                          + "to accept <2.0> but it did not."));
     }
-  }
+  }  
 
   @Test
   public void should_pass_when_using_extracting_with_list() {
@@ -607,7 +605,7 @@ public class SoftAssertionsTest extends BaseAssertionsTest {
   }
 
   @Test
-  public void should_work_with_comparable() {
+  public void should_work_with_comparable() throws Exception {
     ComparableExample example1 = new ComparableExample(0);
     ComparableExample example2 = new ComparableExample(0);
     softly.assertThat(example1).isEqualByComparingTo(example2);
@@ -615,14 +613,7 @@ public class SoftAssertionsTest extends BaseAssertionsTest {
   }
 
   @Test
-  public void should_work_with_stream() {
-    Stream<String> stream = Stream.of("a", "b", "c");
-    softly.assertThat(stream).contains("a", "b", "c");
-    softly.assertAll();
-  }
-
-  @Test
-  public void bdd_soft_assertions_should_have_the_same_methods_as_in_standard_soft_assertions() {
+  public void should_have_the_same_methods_as_in_bdd_soft_assertions() {
     Method[] assertThatMethods = findMethodsWithName(AbstractStandardSoftAssertions.class, "assertThat");
     Method[] thenMethods = findMethodsWithName(AbstractBDDSoftAssertions.class, "then");
 

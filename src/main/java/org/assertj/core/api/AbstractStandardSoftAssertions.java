@@ -12,24 +12,39 @@
  */
 package org.assertj.core.api;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+
 import java.nio.file.Path;
+
 import java.time.LocalDate;
+
 import java.time.LocalDateTime;
+
 import java.time.LocalTime;
+
 import java.time.OffsetDateTime;
+
 import java.time.OffsetTime;
+
 import java.time.ZonedDateTime;
-import java.util.List;
+
 import java.util.Optional;
+
 import java.util.OptionalDouble;
+
 import java.util.OptionalInt;
+
 import java.util.OptionalLong;
+
 import java.util.concurrent.CompletableFuture;
+
 import java.util.function.DoublePredicate;
+
 import java.util.function.IntPredicate;
+
 import java.util.function.LongPredicate;
+
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public abstract class AbstractStandardSoftAssertions extends Java6AbstractStandardSoftAssertions {
 
@@ -44,6 +59,54 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   }
 
   /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
    * Create assertion for {@link java.util.Optional}.
    *
    * @param actual the actual value.
@@ -55,7 +118,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public <T> OptionalAssert<T> assertThat(Optional<T> actual) {
     return proxy(OptionalAssert.class, Optional.class, actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalDouble}.
    *
@@ -66,7 +128,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public OptionalDoubleAssert assertThat(OptionalDouble actual) {
       return proxy(OptionalDoubleAssert.class, OptionalDouble.class, actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalLong}.
    *
@@ -77,7 +138,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public OptionalLongAssert assertThat(OptionalLong actual) {
       return proxy(OptionalLongAssert.class, OptionalLong.class, actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalInt}.
    *
@@ -88,7 +148,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public OptionalIntAssert assertThat(OptionalInt actual) {
       return proxy(OptionalIntAssert.class, OptionalInt.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
@@ -98,7 +157,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public LocalDateAssert assertThat(LocalDate actual) {
     return proxy(LocalDateAssert.class, LocalDate.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
@@ -108,7 +166,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public LocalDateTimeAssert assertThat(LocalDateTime actual) {
     return proxy(LocalDateTimeAssert.class, LocalDateTime.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
@@ -118,7 +175,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public ZonedDateTimeAssert assertThat(ZonedDateTime actual) {
     return proxy(ZonedDateTimeAssert.class, ZonedDateTime.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -128,7 +184,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public LocalTimeAssert assertThat(LocalTime actual) {
     return proxy(LocalTimeAssert.class, LocalTime.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
    *
@@ -138,7 +193,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public OffsetTimeAssert assertThat(OffsetTime actual) {
       return proxy(OffsetTimeAssert.class, OffsetTime.class, actual);
   }
-
   /**
    * Creates a new instance of <code>{@link OffsetDateTimeAssert}</code>.
    *
@@ -148,7 +202,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public OffsetDateTimeAssert assertThat(OffsetDateTime actual) {
     return proxy(OffsetDateTimeAssert.class, OffsetDateTime.class, actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.CompletableFuture}.
    *
@@ -161,7 +214,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public <T> CompletableFutureAssert<T> assertThat(CompletableFuture<T> actual) {
     return proxy(CompletableFutureAssert.class, CompletableFuture.class, actual);
   }
-
   /**
    * Create assertion for {@link Predicate}.
    *
@@ -176,7 +228,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public <T> PredicateAssert<T> assertThat(Predicate<T> actual) {
     return proxy(PredicateAssert.class, Predicate.class, actual);
   }
-
   /**
    * Create assertion for {@link IntPredicate}.
    *
@@ -187,7 +238,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public IntPredicateAssert assertThat(IntPredicate actual) {
     return proxy(IntPredicateAssert.class, IntPredicate.class, actual);
   }
-
   /**
    * Create assertion for {@link DoublePredicate}.
    *
@@ -198,7 +248,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
   public DoublePredicateAssert assertThat(DoublePredicate actual) {
     return proxy(DoublePredicateAssert.class, DoublePredicate.class, actual);
   }
-
   /**
    * Create assertion for {@link DoublePredicate}.
    *
@@ -208,21 +257,6 @@ public abstract class AbstractStandardSoftAssertions extends Java6AbstractStanda
    */
   public LongPredicateAssert assertThat(LongPredicate actual) {
     return proxy(LongPredicateAssert.class, LongPredicate.class, actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
-   * <p>
-   * <b>Be aware that to create the returned {@link ListAssert} the given the {@link Stream} is consumed so it won't be
-   * possible to use it again.</b> Calling multiple methods on the returned {@link ListAssert} is safe as it only
-   * interacts with the {@link List} built from the {@link Stream}.
-   *
-   * @param actual the actual {@link Stream} value.
-   * @return the created assertion object.
-   */
-  @SuppressWarnings("unchecked")
-  public <ELEMENT> ListAssert<ELEMENT> assertThat(Stream<? extends ELEMENT> actual) {
-    return proxy(ListAssert.class, Stream.class, actual);
   }
 
 }
