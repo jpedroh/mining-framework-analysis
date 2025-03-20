@@ -95,7 +95,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ImageButton packRemoveBtn;
 	private JLabel packShadow;
 	private JLabel customName;
-
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -108,7 +107,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
 	}
-
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
 
@@ -361,15 +359,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
-
 	public ModpackSelector getModpackSelector() {
 		return packSelector;
 	}
-	
 	public BackgroundImage getBackgroundImage() {
 		return packBackground;
 	}
-
 	public static ImageIcon getIcon(String iconName, int w, int h) {
 		try {
 			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
@@ -385,7 +380,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			e.printStackTrace();
 		}
 	}
-	
 	private void setIcon(JButton label, String iconName, int w, int h) {
 		try {
 			label.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h)));
@@ -393,7 +387,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			e.printStackTrace();
 		}
 	}
-
 	public static void setIcon(JLabel label, String iconName, int w, int h) {
 		try {
 			label.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h)));
@@ -401,7 +394,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			e.printStackTrace();
 		}
 	}
-
 	private BufferedImage getImage(String user){
 		try {
 			URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
@@ -419,14 +411,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			throw new RuntimeException("Error reading backup image", e1);
 		}
 	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
 			action(e.getActionCommand(), (JComponent)e.getSource());
 		}
 	}
-
 	private void action(String action, JComponent c) {
 		if (action.equals(OPTIONS_ACTION)) {
 			if (launcherOptions == null || !launcherOptions.isVisible()) {
@@ -482,7 +472,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			writeUsernameList();
 		}
 	}
-
 	@Override
 	public void stateChanged(final String status, final float progress) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -498,54 +487,43 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		});
 	}
-
 	@Override
 	public JProgressBar getProgressBar() {
 		return progressBar;
 	}
-
 	@Override
 	public void disableForm() {
 	}
-
 	@Override
 	public void enableForm() {
 	}
-
 	@Override
 	public String getSelectedUser() {
 		return this.name.getText();
 	}
-
 	public ImageButton getPackOptionsBtn() {
 		return packOptionsBtn;
 	}
-
 	public ImageButton getPackRemoveBtn() {
 		return packRemoveBtn;
 	}
-	
 	public JLabel getPackShadow() {
 		return packShadow;
 	}
-	
 	public JLabel getCustomName() {
 		return customName;
 	}
-
 	public void setButtonEnable(JButton button, boolean enable) {
 		button.setVisible(enable);
 		button.setEnabled(enable);
 	}
-	
 	public void setLabelVisible(JLabel label, boolean visible) {
 		label.setVisible(visible);
 	}
-	
 	public void setCustomName(String packName) {
 		customName.setText(packName);
 	}
-	
+
 	public void lockLoginButton() {
 		login.setText("Launching...");
 		login.setEnabled(false);

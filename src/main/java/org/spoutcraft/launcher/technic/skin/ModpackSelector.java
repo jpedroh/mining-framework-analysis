@@ -206,13 +206,23 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		if (getSelectedPack() instanceof AddPack) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+<<<<<<< /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/left.java
 			frame.setLabelVisible(frame.getPackShadow(), false);
 			frame.setLabelVisible(frame.getCustomName(), false);
+||||||| /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/base.java
+=======
+			frame.setLabelVisible(frame.getPackShadow(), false);
+>>>>>>> /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/right.java
 		} else if (getSelectedPack() instanceof InstalledRest) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+<<<<<<< /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/left.java
 			frame.setLabelVisible(frame.getPackShadow(), true);
 			frame.setLabelVisible(frame.getCustomName(), false);
+||||||| /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/base.java
+=======
+			frame.setLabelVisible(frame.getPackShadow(), true);
+>>>>>>> /usr/src/app/output/spoutcraft/legacylauncher/de2055a55ccc0cb9a2fd9dc9dd083962ba575d11/src/main/java/org/spoutcraft/launcher/technic/skin/ModpackSelector.java/right.java
 		} else {
 			if (((InstalledCustom) getSelectedPack()).getLogoUrl().equals("")) {
 				frame.setCustomName(getSelectedPack().getDisplayName());
