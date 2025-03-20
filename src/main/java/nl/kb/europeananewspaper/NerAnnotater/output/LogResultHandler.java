@@ -1,5 +1,4 @@
 package nl.kb.europeananewspaper.NerAnnotater.output;
-
 import org.jsoup.nodes.Document;
 
 /**
@@ -9,72 +8,43 @@ import org.jsoup.nodes.Document;
  * 
  */
 public class LogResultHandler implements ResultHandler {
+  Document altoDocument;
 
-	Document altoDocument;
-	/**
+  /**
 	 * 
 	 */
-	public LogResultHandler() {
-	}
+  public LogResultHandler() {
+  }
 
-	@Override
-	public void addToken(String wordid, String originalContent, String word,
-			String label, String continuationId) {
-		if (label != null) {
-			System.out.println("Wordid: " + wordid + " OriginalContent"
-					+ originalContent + " Word: " + word + " Label: " + label
-					+ " ContinuationId: " + continuationId);
-		}
-		
-		
-	}
+  @Override public void addToken(String wordid, String originalContent, String word, String label, String continuationId) {
+    if (label != null) {
+      System.out.println("Wordid: " + wordid + " OriginalContent" + originalContent + " Word: " + word + " Label: " + label + " ContinuationId: " + continuationId);
+    }
+  }
 
-	@Override
-	public void close() {
-		System.out.println("Output finished");
+  @Override public void close() {
+    System.out.println("Output finished");
+  }
 
-	}
+  @Override public void startDocument() {
+  }
 
-    public void startDocument() {
+  @Override public void globalShutdown() {
+  }
 
-		// TODO Auto-generated method stub
+  @Override public void startTextBlock() {
+  }
 
-	}
+  @Override public void stopTextBlock() {
+  }
 
-	@Override
-	public void startTextBlock() {
-		// TODO Auto-generated method stub
+  @Override public void stopDocument() {
+  }
 
-	}
+  @Override public void newLine(boolean hyphenated) {
+  }
 
-	@Override
-	public void stopTextBlock() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void stopDocument() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void newLine(boolean hyphenated) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void globalShutdown() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setAltoDocument(Document doc) {
-		altoDocument=doc;
-		
-	}
-
+  @Override public void setAltoDocument(Document doc) {
+    altoDocument = doc;
+  }
 }
