@@ -43,12 +43,16 @@ import lombok.EqualsAndHashCode;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
- * @todo #1 Unit test for GhUser is required. Let's mock
- *  request using Mockito or com.rexsl.test.request.FakeRequest, and make
- *  sure that the class can do its key operations.
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/72ba99f81e38b5ae40eb538bc586a9a61b969823/src/main/java/com/jcabi/github/GhUser.java/left.java
  * @todo #2:30min Organizations of a user.
  *  Let's implements a new method organizations(),
  *  which should return an instance of interface Organisations.
+||||||| /usr/src/app/output/jcabi/jcabi-github/72ba99f81e38b5ae40eb538bc586a9a61b969823/src/main/java/com/jcabi/github/GhUser.java/base.java
+=======
+ * @todo #1 Unit test for GhUser is required. Let's mock
+ *  request using Mockito or com.rexsl.test.request.FakeRequest, and make
+ *  sure that the class can do its key operations.
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/72ba99f81e38b5ae40eb538bc586a9a61b969823/src/main/java/com/jcabi/github/GhUser.java/right.java
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
