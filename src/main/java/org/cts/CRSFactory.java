@@ -68,8 +68,16 @@ public class CRSFactory {
     }
 
     /**
+<<<<<<< /usr/src/app/output/irstv/cts/48c9074ea33c4c5db6417942ef29e1827d97f94e/src/main/java/org/cts/CRSFactory.java/left.java
      * Return a @CoordinateReferenceSystem according an authority and a srid ie :
      * EPSG:4326 or IGNF:LAMBE
+||||||| /usr/src/app/output/irstv/cts/48c9074ea33c4c5db6417942ef29e1827d97f94e/src/main/java/org/cts/CRSFactory.java/base.java
+     * Return a @CoordinateReferenceSystem according an authority and srid ie :
+     * EPSG:4326
+=======
+     * Return a @CoordinateReferenceSystem according an authority and srid ie :
+     * EPSG:4326 or IGNF:LAMB
+>>>>>>> /usr/src/app/output/irstv/cts/48c9074ea33c4c5db6417942ef29e1827d97f94e/src/main/java/org/cts/CRSFactory.java/right.java
      *
      * @param authorityAndSrid
      * @return
