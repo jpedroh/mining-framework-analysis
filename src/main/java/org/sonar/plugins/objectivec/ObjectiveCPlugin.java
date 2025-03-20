@@ -33,7 +33,8 @@ import org.sonar.plugins.objectivec.cpd.ObjectiveCCpdMapping;
 import com.google.common.collect.ImmutableList;
 
 @Properties({
-        @Property(key = OCLintSensor.REPORT_PATH_KEY, defaultValue = OCLintSensor.DEFAULT_REPORT_PATH, name = "Path to oclint pmd formatted report", description = "Relative to projects' root.", global = false, project = true), })
+        @Property(key = OCLintSensor.REPORT_PATH_KEY, defaultValue = OCLintSensor.DEFAULT_REPORT_PATH, name = "Path to oclint pmd formatted report", description = "Relative to projects' root.", global = false, project = true), }) @Properties({
+	@Property(key = ObjectiveCCoverageSensor.REPORT_PATTERN_KEY, defaultValue = ObjectiveCCoverageSensor.DEFAULT_REPORT_PATTERN, name = "Path to unit test coverage report(s)", description = "Relative to projects' root. Ant patterns are accepted", global = false, project = true), })
 public class ObjectiveCPlugin extends SonarPlugin {
 
     public List<Class<? extends Extension>> getExtensions() {
@@ -41,12 +42,25 @@ public class ObjectiveCPlugin extends SonarPlugin {
                 ObjectiveCSourceImporter.class,
                 ObjectiveCColorizerFormat.class, ObjectiveCCpdMapping.class,
 
+<<<<<<< /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/left.java
                 ObjectiveCSquidSensor.class, ObjectiveCProfile.class,
                 OCLintRuleRepository.class,
                 OCLintSensor.class, OCLintProfile.class,
                 OCLintProfileImporter.class
         // ObjectiveCRuleRepository.class,
         // ObjectiveCProfile.class,
+||||||| /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/base.java
+                ObjectiveCSquidSensor.class,
+                ObjectiveCProfile.class
+        //                ObjectiveCRuleRepository.class,
+        //                ObjectiveCProfile.class,
+=======
+                ObjectiveCSquidSensor.class,
+                ObjectiveCProfile.class,
+                ObjectiveCCoverageSensor.class
+        //                ObjectiveCRuleRepository.class,
+        //                ObjectiveCProfile.class,
+>>>>>>> /usr/src/app/output/octo-technology/sonar-objective-c/a1e94950696d8ca2430d435be2221196a7089ec0/src/main/java/org/sonar/plugins/objectivec/ObjectiveCPlugin.java/right.java
         //
         // OCTestDriverSurefireSensor.class,
         // OCTestDriverCoverageSensor.class,
