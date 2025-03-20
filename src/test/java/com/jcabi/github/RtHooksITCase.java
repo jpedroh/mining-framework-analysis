@@ -31,9 +31,9 @@ package com.jcabi.github;
 
 import java.io.IOException;
 import java.util.Collections;
-import org.apache.commons.collections.CollectionUtils;
 import javax.json.Json;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assume;
