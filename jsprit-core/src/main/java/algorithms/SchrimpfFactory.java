@@ -1,29 +1,10 @@
-/*******************************************************************************
- * Copyright (C) 2013  Stefan Schroeder
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either 
- * version 3.0 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package algorithms;
-
 import java.net.URL;
-
 import util.Resource;
 import basics.VehicleRoutingAlgorithm;
 import basics.VehicleRoutingProblem;
 import basics.io.AlgorithmConfig;
 import basics.io.AlgorithmConfigXmlReader;
-
 
 /**
  * Factory that creates the {@link VehicleRoutingAlgorithm} as proposed by Schrimpf et al., 2000 with the following parameters:
@@ -45,20 +26,16 @@ import basics.io.AlgorithmConfigXmlReader;
  *
  */
 public class SchrimpfFactory {
-	
-	/**
+  /**
 	 * Creates the {@link VehicleRoutingAlgorithm}.
 	 * 
 	 * @param vrp
 	 * @return algorithm
 	 */
-	public VehicleRoutingAlgorithm createAlgorithm(VehicleRoutingProblem vrp){
-		AlgorithmConfig algorithmConfig = new AlgorithmConfig();
-		URL resource = Resource.getAsURL("schrimpf.xml");
-		new AlgorithmConfigXmlReader(algorithmConfig).read(resource);
-		return VehicleRoutingAlgorithms.createAlgorithm(vrp, algorithmConfig);
-	}
-	
-	
-
+  public VehicleRoutingAlgorithm createAlgorithm(VehicleRoutingProblem vrp) {
+    AlgorithmConfig algorithmConfig = new AlgorithmConfig();
+    URL resource = Resource.getAsURL("schrimpf.xml");
+    new AlgorithmConfigXmlReader(algorithmConfig).read(resource);
+    return VehicleRoutingAlgorithms.createAlgorithm(vrp, algorithmConfig);
+  }
 }
