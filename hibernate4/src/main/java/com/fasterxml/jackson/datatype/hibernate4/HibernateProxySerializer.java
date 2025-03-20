@@ -2,7 +2,6 @@ package com.fasterxml.jackson.datatype.hibernate4;
 
 import java.io.IOException;
 import java.util.HashMap;
-
 import com.fasterxml.jackson.core.*;
 
 import com.fasterxml.jackson.databind.BeanProperty;
