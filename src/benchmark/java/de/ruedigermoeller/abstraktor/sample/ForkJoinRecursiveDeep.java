@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask;
 /**
  * originally created by Aleksey Shipilev
  * 
- * added some minor correction, adapted to blog benchmark 'style'
+ * added some minor correction to actually compute Pi, adapted to blog benchmark mainloop 'style'
  * 
  */
 public class ForkJoinRecursiveDeep {
@@ -64,6 +64,12 @@ public class ForkJoinRecursiveDeep {
     static ForkJoinPool pool;
     public static void main(String arg[] ) throws InterruptedException {
 
+<<<<<<< /usr/src/app/output/ruedigermoeller/kontraktor/54fa3de6899427de183bc5434da2d17bbee13023/src/benchmark/java/de/ruedigermoeller/abstraktor/sample/ForkJoinRecursiveDeep.java/left.java
+||||||| /usr/src/app/output/ruedigermoeller/kontraktor/54fa3de6899427de183bc5434da2d17bbee13023/src/benchmark/java/de/ruedigermoeller/abstraktor/sample/ForkJoinRecursiveDeep.java/base.java
+        int NUM_CORE = 4;
+=======
+        int NUM_CORE = 16;
+>>>>>>> /usr/src/app/output/ruedigermoeller/kontraktor/54fa3de6899427de183bc5434da2d17bbee13023/src/benchmark/java/de/ruedigermoeller/abstraktor/sample/ForkJoinRecursiveDeep.java/right.java
         String res[] = new String[NUM_CORE];
         for ( int i = 1; i <= NUM_CORE; i++ ) {
             long sum = 0;
