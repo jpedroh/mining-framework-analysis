@@ -22,7 +22,7 @@ public final class FrontendPluginFactory {
     
     public BowerRunner getBowerRunner() {
         return new DefaultBowerRunner(getExecutorConfig());
-    }    
+    }
 
     public JspmRunner getJspmRunner() {
         return new DefaultJspmRunner(defaultPlatform, workingDirectory);
