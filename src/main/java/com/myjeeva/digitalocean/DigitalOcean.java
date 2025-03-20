@@ -1353,8 +1353,16 @@ public interface DigitalOcean {
 
   /**
    * Method deletes volume by name and region slug
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/left.java
+   *
+   * @param volumeName
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/base.java
+   * 
+   * @param volumeName
+=======
    * 
    * @param volumeName name of the volume
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/right.java
    * @param regionSlug is code name of the region aka DigitalOcean data centers
    * @return {@link Delete}
    * @throws DigitalOceanException if request had interruption [ <code>
@@ -1453,10 +1461,22 @@ public interface DigitalOcean {
       throws DigitalOceanException, RequestUnsuccessfulException;
 
   /**
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/left.java
+   * Method returns specific volume action by action & volume identifier
+   *
+   * @param volumeId
+   * @param actionId
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/base.java
+   * Method returns specific volume action by action & volume identifier
+   * 
+   * @param volumeId
+   * @param actionId
+=======
    * Method returns specific volume action by action and volume identifier
    * 
    * @param volumeId volume identifier
    * @param actionId the id of action
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/right.java
    * @return {@link Action}
    * @throws DigitalOceanException if request had interruption [ <code>
    *     HTTP status code &gt;= 400 &amp;&amp; &lt; 510</code>]
@@ -1468,8 +1488,16 @@ public interface DigitalOcean {
 
   /**
    * Method return all of the snapshots for given volume Id
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/left.java
+   *
+   * @param volumeId
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/base.java
+   * 
+   * @param volumeId
+=======
    * 
    * @param volumeId volume identifier
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/right.java
    * @param pageNo for pagination
    * @param perPage no. of items per page
    * @return {@link Snapshots}
@@ -1483,9 +1511,19 @@ public interface DigitalOcean {
 
   /**
    * Method take snapshot of given volume Id
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/left.java
+   *
+   * @param volumeId
+   * @param snapshotName
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/base.java
+   * 
+   * @param volumeId
+   * @param snapshotName
+=======
    * 
    * @param volumeId volume identifier
    * @param snapshotName the name the snapshot to be created
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/right.java
    * @return {@link Snapshot}
    * @throws DigitalOceanException if request had interruption [ <code>
    *     HTTP status code &gt;= 400 &amp;&amp; &lt; 510</code>]
@@ -1543,8 +1581,16 @@ public interface DigitalOcean {
 
   /**
    * Method returns specific snapshot info by id
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/left.java
+   *
+   * @param snapshotId
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/base.java
+   * 
+   * @param snapshotId
+=======
    * 
    * @param snapshotId for snapshot
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/DigitalOcean.java/right.java
    * @return {@link Snapshot}
    * @throws DigitalOceanException if request had interruption [ <code>
    *     HTTP status code &gt;= 400 &amp;&amp; &lt; 510</code>]
@@ -1557,7 +1603,7 @@ public interface DigitalOcean {
   /**
    * Method deletes snapshot by id
    *
-   * @param snapshotId for snapsho
+   * @param snapshotId for snapshot
    * @return {@link Delete}
    * @throws DigitalOceanException if request had interruption [ <code>
    *     HTTP status code &gt;= 400 &amp;&amp; &lt; 510</code>]

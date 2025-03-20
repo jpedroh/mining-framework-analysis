@@ -75,6 +75,17 @@ public class Certificate extends Base {
     // default constructor
   }
 
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/left.java
+  /** Constructor for new certificate create request. */
+  public Certificate(
+      String name, String privateKey, String leafCertificate, String certificateChain) {
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/base.java
+  /**
+   * Constructor for new certificate create request.
+   */
+  public Certificate(String name, String privateKey, String leafCertificate,
+      String certificateChain) {
+=======
   /**
    * Constructor for new certificate create request.
    * @param name the name for the certificate
@@ -84,11 +95,21 @@ public class Certificate extends Base {
    */
   public Certificate(String name, String privateKey, String leafCertificate,
       String certificateChain) {
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/right.java
     this.name = name;
     this.privateKey = privateKey;
     this.leafCertificate = leafCertificate;
     this.certificateChain = certificateChain;
   }
+<<<<<<< /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/left.java
+
+  /** Constructor for new Let's Encrypt certificate create request. */
+||||||| /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/base.java
+  
+  /**
+   * Constructor for new Let's Encrypt certificate create request.
+   */
+=======
   
   /**
    * Constructor for new Let's Encrypt certificate create request.
@@ -96,6 +117,7 @@ public class Certificate extends Base {
    * @param type the type of the certificate
    * @param dnsNames list of dns names
    */
+>>>>>>> /usr/src/app/output/jeevatkm/digitalocean-api-java/997ce11f32044dd4702fdba7e1f4e5d60bae99f4/src/main/java/com/myjeeva/digitalocean/pojo/Certificate.java/right.java
   public Certificate(String name, String type, List<String> dnsNames) {
     this.name = name;
     this.type = type;
