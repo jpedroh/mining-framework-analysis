@@ -32,14 +32,13 @@ package com.jcabi.github;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.rexsl.test.Request;
+import javax.json.JsonObject;
 import com.rexsl.test.response.JsonResponse;
 import com.rexsl.test.response.RestResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Collections;
 import javax.json.Json;
 import javax.json.JsonStructure;
-import javax.json.JsonObject;
 import lombok.EqualsAndHashCode;
 
 /**
@@ -63,6 +62,9 @@ public final class RtReleases implements Releases {
      * RESTful API releases request.
      */
     private final transient Request request;
+    /**
+     * RESTful request.
+     */
 
     /**
      * Repository.
@@ -77,12 +79,23 @@ public final class RtReleases implements Releases {
     public RtReleases(final Request req, final Repo repo) {
         this.entry = req;
         this.owner = repo;
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/b753098546c4fce159d88e863277216c3ec2e845/src/main/java/com/jcabi/github/RtReleases.java/left.java
         this.request = this.entry.uri()
             .path("/repos")
             .path(repo.coordinates().user())
             .path(repo.coordinates().repo())
             .path("/releases")
             .back();
+||||||| /usr/src/app/output/jcabi/jcabi-github/b753098546c4fce159d88e863277216c3ec2e845/src/main/java/com/jcabi/github/RtReleases.java/base.java
+=======
+        final Coordinates coords = repo.coordinates();
+        this.request = this.entry.uri()
+            .path("/repos")
+            .path(coords.user())
+            .path(coords.repo())
+            .path("/releases")
+            .back();
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/b753098546c4fce159d88e863277216c3ec2e845/src/main/java/com/jcabi/github/RtReleases.java/right.java
     }
 
     @Override
