@@ -732,6 +732,14 @@ public class CoverityPublisher extends Recorder {
             return FormValidation.warning("Password is deprecated in Coverity plugin version 1.10 and later. Please use Credentials above for more secure password.");
         }
 
+        public ListBoxModel doFillToolInstallationNameItems() {
+            ListBoxModel result = new ListBoxModel();
+            for(CoverityToolInstallation toolInstallation : getInstallations()) {
+                result.add(toolInstallation.getName());
+            }
+            return result;
+        }
+
         public FormValidation doCheckPostCovBuildCmd(@QueryParameter String postCovBuildCmd){
             if (StringUtils.isEmpty(postCovBuildCmd)){
                 return FormValidation.error("Post cov-build command cannot be empty!");
@@ -746,14 +754,6 @@ public class CoverityPublisher extends Recorder {
             }
 
             return FormValidation.ok();
-        }
-		
-		public ListBoxModel doFillToolInstallationNameItems() {
-            ListBoxModel result = new ListBoxModel();
-            for(CoverityToolInstallation toolInstallation : getInstallations()) {
-                result.add(toolInstallation.getName());
-            }
-            return result;
         }
     }
 }
