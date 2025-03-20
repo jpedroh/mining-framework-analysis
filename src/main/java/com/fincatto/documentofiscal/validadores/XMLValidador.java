@@ -45,7 +45,13 @@ public final class XMLValidador {
     }
 
     private static boolean validaMDF(final String xml, final String xsd) throws IOException, SAXException, URISyntaxException {
+<<<<<<< /usr/src/app/output/fincatto/nfe/95976d6464410856fe626458328582f568e74bd3/src/main/java/com/fincatto/documentofiscal/validadores/XMLValidador.java/left.java
+        final URL xsdPath = XMLValidador.class.getClassLoader().getResource(String.format("schemas/PL_MDFe_300a/%s", xsd));
+||||||| /usr/src/app/output/fincatto/nfe/95976d6464410856fe626458328582f568e74bd3/src/main/java/com/fincatto/documentofiscal/validadores/XMLValidador.java/base.java
+        final URL xsdPath = XMLValidador.class.getClassLoader().getResource(String.format("schemas/PL_MDFe_300_NT022018/%s", xsd));
+=======
         final URL xsdPath = XMLValidador.class.getClassLoader().getResource(String.format("schemas/PL_MDFe_300a15072019/%s", xsd));
+>>>>>>> /usr/src/app/output/fincatto/nfe/95976d6464410856fe626458328582f568e74bd3/src/main/java/com/fincatto/documentofiscal/validadores/XMLValidador.java/right.java
         final SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         final Schema schema = schemaFactory.newSchema(new StreamSource(xsdPath.toURI().toString()));
         schema.newValidator().validate(new StreamSource(new StringReader(xml)));

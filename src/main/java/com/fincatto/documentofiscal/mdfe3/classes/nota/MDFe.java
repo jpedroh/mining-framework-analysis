@@ -22,6 +22,9 @@ public class MDFe extends DFBase {
     @Element(name = "infMDFe")
     private MDFInfo info;
 
+    @Element(name = "infMDFeSupl", required = true)
+    private MDFInfMDFeSupl infMDFeSupl;
+
     @Element(name = "infMDFeSupl", required = false)
     private MDFInfoSuplementar mdfInfoSuplementar;
 
@@ -34,6 +37,14 @@ public class MDFe extends DFBase {
 
     public void setInfo(final MDFInfo info) {
         this.info = info;
+    }
+
+    public MDFInfMDFeSupl getInfMDFeSupl() {
+        return infMDFeSupl;
+    }
+
+    public void setInfMDFeSupl(final MDFInfMDFeSupl infMDFeSupl) {
+        this.infMDFeSupl = infMDFeSupl;
     }
 
     public MDFInfoSuplementar getMdfInfoSuplementar() {
