@@ -41,6 +41,7 @@ public class TabCompleteRequest extends DefinedPacket
         {
             transactionId = readVarInt( buf );
         }
+
         cursor = readString( buf, 32500 );
 
         if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13 )
@@ -49,7 +50,6 @@ public class TabCompleteRequest extends DefinedPacket
             {
                 assumeCommand = buf.readBoolean();
             }
-
             if ( hasPositon = buf.readBoolean() )
             {
                 position = buf.readLong();
@@ -64,6 +64,7 @@ public class TabCompleteRequest extends DefinedPacket
         {
             writeVarInt( transactionId, buf );
         }
+
         writeString( cursor, buf );
 
         if ( protocolVersion >= ProtocolConstants.MINECRAFT_1_8 && protocolVersion < ProtocolConstants.MINECRAFT_1_13 )

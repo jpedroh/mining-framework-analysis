@@ -486,7 +486,13 @@ public final class UserConnection implements ProxiedPlayer
         // transform score components
         message = ChatComponentTransformer.getInstance().transform( this, true, message );
 
-        if ( position == ChatMessageType.ACTION_BAR && pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 && getPendingConnection().getVersion() < ProtocolConstants.MINECRAFT_1_17 )
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/412c148b035867136eeb9e8b7e9de3c5c89e9fee/proxy/src/main/java/net/md_5/bungee/UserConnection.java/left.java
+        if ( position == ChatMessageType.ACTION_BAR && pendingConnection.getVersion() >= ProtocolConstants.MINECRAFT_1_8 )
+||||||| /usr/src/app/output/spigotmc/bungeecord/412c148b035867136eeb9e8b7e9de3c5c89e9fee/proxy/src/main/java/net/md_5/bungee/UserConnection.java/base.java
+        if ( position == ChatMessageType.ACTION_BAR )
+=======
+        if ( position == ChatMessageType.ACTION_BAR && getPendingConnection().getVersion() < ProtocolConstants.MINECRAFT_1_17 )
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/412c148b035867136eeb9e8b7e9de3c5c89e9fee/proxy/src/main/java/net/md_5/bungee/UserConnection.java/right.java
         {
             // Versions older than 1.11 cannot send the Action bar with the new JSON formattings
             // Fix by converting to a legacy message, see https://bugs.mojang.com/browse/MC-119145

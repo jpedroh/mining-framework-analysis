@@ -5,10 +5,9 @@ import java.util.List;
 
 public class ProtocolConstants
 {
-
-    private static final boolean SNAPSHOT_SUPPORT = Boolean.getBoolean( "net.md_5.bungee.protocol.snapshot" );
     public static final int MINECRAFT_1_7_2 = 4;
     public static final int MINECRAFT_1_7_6 = 5;
+    private static final boolean SNAPSHOT_SUPPORT = Boolean.getBoolean( "net.md_5.bungee.protocol.snapshot" );
     public static final int MINECRAFT_1_8 = 47;
     public static final int MINECRAFT_1_9 = 107;
     public static final int MINECRAFT_1_9_1 = 108;
