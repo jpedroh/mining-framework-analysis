@@ -11,7 +11,6 @@
  * specific language governing permissions and limitations under the License.
  */
 package org.omnifaces.util;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Pattern.quote;
 import static javax.faces.application.ProjectStage.Development;
@@ -199,7 +198,7 @@ public final class Servlets {
 		String queryString = request.getQueryString();
 
 		if (isEmpty(queryString)) {
-			return new LinkedHashMap<String, List<String>>(0);
+			return new LinkedHashMap<>(0);
 		}
 
 		return toParameterMap(queryString);

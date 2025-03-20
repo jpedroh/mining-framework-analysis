@@ -18,6 +18,8 @@ import static java.util.regex.Pattern.quote;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +30,12 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,13 +80,21 @@ public final class Utils {
 	public static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private static final int DEFAULT_STREAM_BUFFER_SIZE = 10240;
+
 	private static final String PATTERN_RFC1123_DATE = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
 	private static final TimeZone TIMEZONE_GMT = TimeZone.getTimeZone("GMT");
+
 	private static final int BASE64_SEGMENT_LENGTH = 4;
+
 	private static final int UNICODE_3_BYTES = 0xfff;
+
 	private static final int UNICODE_2_BYTES = 0xff;
+
 	private static final int UNICODE_1_BYTE = 0xf;
+
 	private static final int UNICODE_END_PRINTABLE_ASCII = 0x7f;
+
 	private static final int UNICODE_BEGIN_PRINTABLE_ASCII = 0x20;
 
 	private static final String ERROR_UNSUPPORTED_ENCODING = "UTF-8 is apparently not supported on this platform.";
@@ -100,6 +113,7 @@ public final class Utils {
 	 * @param string The string to be checked on emptiness.
 	 * @return <code>true</code> if the given string is null or is empty.
 	 */
+
 	public static boolean isEmpty(String string) {
 		return string == null || string.isEmpty();
 	}
@@ -110,6 +124,7 @@ public final class Utils {
 	 * @param array The array to be checked on emptiness.
 	 * @return <code>true</code> if the given array is null or is empty.
 	 */
+
 	public static boolean isEmpty(Object[] array) {
 		return array == null || array.length == 0;
 	}
@@ -120,6 +135,7 @@ public final class Utils {
 	 * @param collection The collection to be checked on emptiness.
 	 * @return <code>true</code> if the given collection is null or is empty.
 	 */
+
 	public static boolean isEmpty(Collection<?> collection) {
 		return collection == null || collection.isEmpty();
 	}
@@ -130,6 +146,7 @@ public final class Utils {
 	 * @param map The map to be checked on emptiness.
 	 * @return <code>true</code> if the given map is null or is empty.
 	 */
+
 	public static boolean isEmpty(Map<?, ?> map) {
 		return map == null || map.isEmpty();
 	}
@@ -140,6 +157,7 @@ public final class Utils {
 	 * @param value The value to be checked on emptiness.
 	 * @return <code>true</code> if the given value is null or is empty.
 	 */
+
 	public static boolean isEmpty(Object value) {
 		if (value == null) {
 			return true;
@@ -168,6 +186,7 @@ public final class Utils {
 	 * @return <code>true</code> if any value is empty and <code>false</code> if no values are empty
 	 * @since 1.8
 	 */
+
 	public static boolean isAnyEmpty(Object... values) {
 		for (Object value : values) {
 			if (isEmpty(value)) {
@@ -187,6 +206,7 @@ public final class Utils {
 	 * @return True if the given string is null or is empty or contains whitespace only.
 	 * @since 1.5
 	 */
+
 	public static boolean isBlank(String string) {
 		return isEmpty(string) || string.trim().isEmpty();
 	}
@@ -198,6 +218,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given string is parseable as a number.
 	 * @since 1.5.
 	 */
+
 	public static boolean isNumber(String string) {
 		try {
 			// Performance tests taught that this approach is in general faster than regex or char-by-char checking.
@@ -216,6 +237,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given string is parseable as a decimal.
 	 * @since 1.5.
 	 */
+
 	public static boolean isDecimal(String string) {
 		try {
 			// Performance tests taught that this approach is in general faster than regex or char-by-char checking.
@@ -235,6 +257,7 @@ public final class Utils {
 	 * @return The first non-<code>null</code> object of the argument list, or <code>null</code> if there is no such
 	 * element.
 	 */
+
 	public static <T> T coalesce(T... objects) {
 		for (T object : objects) {
 			if (object != null) {
@@ -252,6 +275,7 @@ public final class Utils {
 	 * @param objects The argument list of objects to be tested for equality.
 	 * @return <code>true</code> if the given object equals one of the given objects.
 	 */
+
 	public static <T> boolean isOneOf(T object, T... objects) {
 		for (Object other : objects) {
 			if (object == null ? other == null : object.equals(other)) {
@@ -269,6 +293,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given string starts with one of the given prefixes.
 	 * @since 1.4
 	 */
+
 	public static boolean startsWithOneOf(String string, String... prefixes) {
 		for (String prefix : prefixes) {
 			if (string.startsWith(prefix)) {
@@ -286,6 +311,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given class could also be an instance of one of the given classes.
 	 * @since 2.0
 	 */
+
 	public static boolean isOneInstanceOf(Class<?> cls, Class<?>... classes) {
 		for (Class<?> other : classes) {
 			if (cls == null ? other == null : other.isAssignableFrom(cls)) {
@@ -303,6 +329,7 @@ public final class Utils {
 	 * @return <code>true</code> if the given clazz would be an instance of one of the given clazzes.
 	 * @since 2.0
 	 */
+
 	public static boolean isOneAnnotationPresent(Class<?> cls, Class<? extends Annotation>... annotations) {
 		for (Class<? extends Annotation> annotation : annotations) {
 			if (cls.isAnnotationPresent(annotation)) {
@@ -313,18 +340,8 @@ public final class Utils {
 		return false;
 	}
 
-
 	// I/O ------------------------------------------------------------------------------------------------------------
 
-	/**
-	 * Stream the given input to the given output via NIO {@link Channels} and a directly allocated NIO
-	 * {@link ByteBuffer}. Both the input and output streams will implicitly be closed after streaming,
-	 * regardless of whether an exception is been thrown or not.
-	 * @param input The input stream.
-	 * @param output The output stream.
-	 * @return The length of the written bytes.
-	 * @throws IOException When an I/O error occurs.
-	 */
 	public static long stream(InputStream input, OutputStream output) throws IOException {
 		ReadableByteChannel inputChannel = null;
 		WritableByteChannel outputChannel = null;
@@ -357,6 +374,7 @@ public final class Utils {
 	 * @throws IOException When an I/O error occurs.
 	 * @since 2.0
 	 */
+
 	public static byte[] toByteArray(InputStream input) throws IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		stream(input, output);
@@ -370,6 +388,7 @@ public final class Utils {
 	 * @param resource The closeable resource to be closed.
 	 * @return The caught {@link IOException}, or <code>null</code> if none is been thrown.
 	 */
+
 	public static IOException close(Closeable resource) {
 		if (resource != null) {
 			try {
@@ -395,6 +414,7 @@ public final class Utils {
 	 * @throws ClassCastException When one of the values or one of the arrays or collections is of wrong type.
 	 * @since 1.1
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static <E> Set<E> unmodifiableSet(Object... values) {
 		Set<E> set = new HashSet<E>();
@@ -430,6 +450,7 @@ public final class Utils {
 	 * @return The list representation of the given iterable, possibly the same instance as that iterable.
 	 * @since 1.5
 	 */
+
 	public static <E> List<E> iterableToList(Iterable<E> iterable) {
 
 		List<E> list = null;
@@ -468,6 +489,7 @@ public final class Utils {
 	 * @return a list with all values encountered in the <code>values</code> argument, can be the empty list.
 	 * @since 1.4
 	 */
+
 	public static List<String> csvToList(String values) {
 		return csvToList(values, ",");
 	}
@@ -490,6 +512,7 @@ public final class Utils {
 	 * @return a list with all values encountered in the <code>values</code> argument, can be the empty list.
 	 * @since 1.4
 	 */
+
 	public static List<String> csvToList(String values, String delimiter) {
 
 		if (isEmpty(values)) {
@@ -518,6 +541,7 @@ public final class Utils {
 	 * @param source the map that is to be reversed
 	 * @return the reverse of the given map
 	 */
+
 	public static <T> Map<T, T> reverse(Map<T, T> source) {
 		Map<T, T> target = new HashMap<T, T>();
 		for (Entry<T, T> entry : source.entrySet()) {
@@ -535,6 +559,7 @@ public final class Utils {
 	 * @return true if the collection contains at least one object with the given class name, false otherwise
 	 * @since 1.6
 	 */
+
 	public static boolean containsByClassName(Collection<?> objects, String className) {
 		for (Object object : objects) {
 			if (object.getClass().getName().equals(className)) {
@@ -554,6 +579,7 @@ public final class Utils {
 	 * @return The formatted string.
 	 * @since 1.2
 	 */
+
 	public static String formatRFC1123(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_RFC1123_DATE, Locale.US);
 		sdf.setTimeZone(TIMEZONE_GMT);
@@ -567,6 +593,7 @@ public final class Utils {
 	 * @throws ParseException When the given string is not in RFC1123 format.
 	 * @since 1.2
 	 */
+
 	public static Date parseRFC1123(String string) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_RFC1123_DATE, Locale.US);
 		return sdf.parse(string);
@@ -584,6 +611,7 @@ public final class Utils {
 	 * @return The serialized URL-safe string, or <code>null</code> when the given string is itself <code>null</code>.
 	 * @since 1.2
 	 */
+
 	public static String serializeURLSafe(String string) {
 		if (string == null) {
 			return null;
@@ -610,6 +638,7 @@ public final class Utils {
 	 * {@link #serializeURLSafe(String)}.
 	 * @since 1.2
 	 */
+
 	public static String unserializeURLSafe(String string) {
 		if (string == null) {
 			return null;
@@ -637,6 +666,7 @@ public final class Utils {
 	 * @throws UnsupportedOperationException When this platform does not support UTF-8.
 	 * @since 1.4
 	 */
+
 	public static String encodeURL(String string) {
 		if (string == null) {
 			return null;
@@ -657,6 +687,7 @@ public final class Utils {
 	 * @throws UnsupportedOperationException When this platform does not support UTF-8.
 	 * @since 1.4
 	 */
+
 	public static String decodeURL(String string) {
 		if (string == null) {
 			return null;
@@ -669,6 +700,75 @@ public final class Utils {
 			throw new UnsupportedOperationException(ERROR_UNSUPPORTED_ENCODING, e);
 		}
 	}
+
+	// Escaping/unescaping --------------------------------------------------------------------------------------------
+
+	// Constants ------------------------------------------------------------------------------------------------------
+
+	// Constructors ---------------------------------------------------------------------------------------------------
+
+	// Lang -----------------------------------------------------------------------------------------------------------
+
+	// I/O ------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Stream the given input to the given output via NIO {@link Channels} and a directly allocated NIO
+	 * {@link ByteBuffer}. Both the input and output streams will implicitly be closed after streaming,
+	 * regardless of whether an exception is been thrown or not.
+	 * @param input The input stream.
+	 * @param output The output stream.
+	 * @return The length of the written bytes.
+	 * @throws IOException When an I/O error occurs.
+	 */
+
+	/**
+	 * Stream a specified range of the given file to the given output via NIO {@link Channels} and a directly allocated
+	 * NIO {@link ByteBuffer}. The output stream will only implicitly be closed after streaming when the specified range
+	 * represents the whole file, regardless of whether an exception is been thrown or not.
+	 * @param file The file.
+	 * @param output The output stream.
+	 * @param start The start position (offset).
+	 * @param length The (intented) length of written bytes.
+	 * @return The (actual) length of the written bytes. This may be smaller when the given length is too large.
+	 * @throws IOException When an I/O error occurs.
+	 * @since 2.2
+	 */
+
+	public static long stream(File file, OutputStream output, long start, long length) throws IOException {
+		if (start == 0 && length >= file.length()) {
+			return stream(new FileInputStream(file), output);
+		}
+
+		try (FileChannel fileChannel = (FileChannel) Files.newByteChannel(file.toPath(), StandardOpenOption.READ)) {
+			WritableByteChannel outputChannel = Channels.newChannel(output);
+			ByteBuffer buffer = ByteBuffer.allocateDirect(DEFAULT_STREAM_BUFFER_SIZE);
+			long size = 0;
+
+			while (fileChannel.read(buffer, start + size) != -1) {
+				buffer.flip();
+
+				if (size + buffer.limit() > length) {
+					buffer.limit((int) (length - size));
+				}
+
+				size += outputChannel.write(buffer);
+
+				if (size >= length) {
+					break;
+				}
+
+				buffer.clear();
+			}
+
+			return size;
+		}
+	}
+
+	// Collections ----------------------------------------------------------------------------------------------------
+
+	// Dates ----------------------------------------------------------------------------------------------------------
+
+	// Encoding/decoding ----------------------------------------------------------------------------------------------
 
 	// Escaping/unescaping --------------------------------------------------------------------------------------------
 

@@ -306,7 +306,7 @@ public final class FacesLocal {
 		Collection<UIViewParameter> viewParameters = getViewParameters(context);
 
 		if (viewParameters.isEmpty()) {
-			return new LinkedHashMap<String, List<String>>(0);
+			return new LinkedHashMap<>(0);
 		}
 
 		Map<String, List<String>> parameterMap = new LinkedHashMap<String, List<String>>(viewParameters.size());

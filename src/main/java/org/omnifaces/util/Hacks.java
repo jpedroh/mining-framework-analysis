@@ -122,8 +122,10 @@ public final class Hacks {
 				continue;
 			}
 		}
-
-		return false;
+<<<<<<< /usr/src/app/output/omnifaces/omnifaces/c60f2912ea124a5c47fc0e0e83a1c81ff6751d2f/src/main/java/org/omnifaces/util/Hacks.java/left.java
+		catch (ClassNotFoundException ignore) {
+			return false;
+		}
 	}
 
 	private static boolean initJUELSupportsMethodExpression() {
@@ -138,6 +140,14 @@ public final class Hacks {
 		}
 
 		return isSameOrHigherVersion(juelVersion, JUEL_MINIMUM_METHOD_EXPRESSION_VERSION);
+||||||| /usr/src/app/output/omnifaces/omnifaces/c60f2912ea124a5c47fc0e0e83a1c81ff6751d2f/src/main/java/org/omnifaces/util/Hacks.java/base.java
+		catch (ClassNotFoundException ignore) {
+			return false;
+		}
+=======
+
+		return false;
+>>>>>>> /usr/src/app/output/omnifaces/omnifaces/c60f2912ea124a5c47fc0e0e83a1c81ff6751d2f/src/main/java/org/omnifaces/util/Hacks.java/right.java
 	}
 
 	// RichFaces related ----------------------------------------------------------------------------------------------
