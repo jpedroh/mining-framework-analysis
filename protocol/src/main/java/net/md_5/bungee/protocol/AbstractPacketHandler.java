@@ -1,5 +1,4 @@
 package net.md_5.bungee.protocol;
-
 import net.md_5.bungee.protocol.packet.BossBar;
 import net.md_5.bungee.protocol.packet.Chat;
 import net.md_5.bungee.protocol.packet.ClearTitles;
@@ -43,176 +42,139 @@ import ru.leymooo.botfilter.packets.PlayerPosition;
 import ru.leymooo.botfilter.packets.PlayerPositionAndLook;
 import ru.leymooo.botfilter.packets.TeleportConfirm;
 
-public abstract class AbstractPacketHandler
-{
+public abstract class AbstractPacketHandler {
+  public void handle(LegacyPing ping) throws Exception {
+  }
 
-    public void handle(LegacyPing ping) throws Exception
-    {
-    }
+  public void handle(Player player) throws Exception {
+  }
 
-    //BotFilter statrt
-    public void handle(Player player) throws Exception
-    {
-    }
+  public void handle(
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/left.java
+  PlayerPosition pos
+=======
+  Subtitle title
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/right.java
+  ) throws Exception {
+  }
 
-    public void handle(PlayerPosition pos) throws Exception
-    {
-    }
+  public void handle(TabCompleteResponse tabResponse) throws Exception {
+  }
 
-    public void handle(TeleportConfirm confirm) throws Exception
-    {
-    }
+  public void handle(
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/left.java
+  TeleportConfirm confirm
+=======
+  TitleTimes title
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/right.java
+  ) throws Exception {
+  }
 
-    public void handle(PlayerPositionAndLook posRot) throws Exception
-    {
-    }
-    //BotFilter end
+  public void handle(PingPacket ping) throws Exception {
+  }
 
-    public void handle(TabCompleteResponse tabResponse) throws Exception
-    {
-    }
+  public void handle(
+<<<<<<< /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/left.java
+  PlayerPositionAndLook posRot
+=======
+  ClearTitles title
+>>>>>>> /usr/src/app/output/spigotmc/bungeecord/96db0c71b8799520b6ad818c00c8a9607c597b78/protocol/src/main/java/net/md_5/bungee/protocol/AbstractPacketHandler.java/right.java
+  ) throws Exception {
+  }
 
-    public void handle(PingPacket ping) throws Exception
-    {
-    }
+  public void handle(StatusRequest statusRequest) throws Exception {
+  }
 
-    public void handle(StatusRequest statusRequest) throws Exception
-    {
-    }
+  public void handle(StatusResponse statusResponse) throws Exception {
+  }
 
-    public void handle(StatusResponse statusResponse) throws Exception
-    {
-    }
+  public void handle(Handshake handshake) throws Exception {
+  }
 
-    public void handle(Handshake handshake) throws Exception
-    {
-    }
+  public void handle(KeepAlive keepAlive) throws Exception {
+  }
 
-    public void handle(KeepAlive keepAlive) throws Exception
-    {
-    }
+  public void handle(Login login) throws Exception {
+  }
 
-    public void handle(Login login) throws Exception
-    {
-    }
+  public void handle(Chat chat) throws Exception {
+  }
 
-    public void handle(Chat chat) throws Exception
-    {
-    }
+  public void handle(Respawn respawn) throws Exception {
+  }
 
-    public void handle(Respawn respawn) throws Exception
-    {
-    }
+  public void handle(LoginRequest loginRequest) throws Exception {
+  }
 
-    public void handle(LoginRequest loginRequest) throws Exception
-    {
-    }
+  public void handle(ClientSettings settings) throws Exception {
+  }
 
-    public void handle(ClientSettings settings) throws Exception
-    {
-    }
+  public void handle(ClientStatus clientStatus) throws Exception {
+  }
 
-    public void handle(ClientStatus clientStatus) throws Exception
-    {
-    }
+  public void handle(PlayerListItem playerListItem) throws Exception {
+  }
 
-    public void handle(PlayerListItem playerListItem) throws Exception
-    {
-    }
+  public void handle(PlayerListHeaderFooter playerListHeaderFooter) throws Exception {
+  }
 
-    public void handle(PlayerListHeaderFooter playerListHeaderFooter) throws Exception
-    {
-    }
+  public void handle(TabCompleteRequest tabComplete) throws Exception {
+  }
 
-    public void handle(TabCompleteRequest tabComplete) throws Exception
-    {
-    }
+  public void handle(ScoreboardObjective scoreboardObjective) throws Exception {
+  }
 
-    public void handle(ScoreboardObjective scoreboardObjective) throws Exception
-    {
-    }
+  public void handle(ScoreboardScore scoreboardScore) throws Exception {
+  }
 
-    public void handle(ScoreboardScore scoreboardScore) throws Exception
-    {
-    }
+  public void handle(EncryptionRequest encryptionRequest) throws Exception {
+  }
 
-    public void handle(EncryptionRequest encryptionRequest) throws Exception
-    {
-    }
+  public void handle(ScoreboardDisplay displayScoreboard) throws Exception {
+  }
 
-    public void handle(ScoreboardDisplay displayScoreboard) throws Exception
-    {
-    }
+  public void handle(Team team) throws Exception {
+  }
 
-    public void handle(Team team) throws Exception
-    {
-    }
+  public void handle(Title title) throws Exception {
+  }
 
-    public void handle(Title title) throws Exception
-    {
-    }
+  public void handle(PluginMessage pluginMessage) throws Exception {
+  }
 
-    public void handle(Subtitle title) throws Exception
-    {
-    }
+  public void handle(Kick kick) throws Exception {
+  }
 
-    public void handle(TitleTimes title) throws Exception
-    {
-    }
+  public void handle(EncryptionResponse encryptionResponse) throws Exception {
+  }
 
-    public void handle(ClearTitles title) throws Exception
-    {
-    }
+  public void handle(LoginSuccess loginSuccess) throws Exception {
+  }
 
-    public void handle(PluginMessage pluginMessage) throws Exception
-    {
-    }
+  public void handle(LegacyHandshake legacyHandshake) throws Exception {
+  }
 
-    public void handle(Kick kick) throws Exception
-    {
-    }
+  public void handle(SetCompression setCompression) throws Exception {
+  }
 
-    public void handle(EncryptionResponse encryptionResponse) throws Exception
-    {
-    }
+  public void handle(BossBar bossBar) throws Exception {
+  }
 
-    public void handle(LoginSuccess loginSuccess) throws Exception
-    {
-    }
+  public void handle(LoginPayloadRequest request) throws Exception {
+  }
 
-    public void handle(LegacyHandshake legacyHandshake) throws Exception
-    {
-    }
+  public void handle(LoginPayloadResponse response) throws Exception {
+  }
 
-    public void handle(SetCompression setCompression) throws Exception
-    {
-    }
+  public void handle(EntityStatus status) throws Exception {
+  }
 
-    public void handle(BossBar bossBar) throws Exception
-    {
-    }
+  public void handle(Commands commands) throws Exception {
+  }
 
-    public void handle(LoginPayloadRequest request) throws Exception
-    {
-    }
+  public void handle(ViewDistance viewDistance) throws Exception {
+  }
 
-    public void handle(LoginPayloadResponse response) throws Exception
-    {
-    }
-
-    public void handle(EntityStatus status) throws Exception
-    {
-    }
-
-    public void handle(Commands commands) throws Exception
-    {
-    }
-
-    public void handle(ViewDistance viewDistance) throws Exception
-    {
-    }
-
-    public void handle(GameState gameState) throws Exception
-    {
-    }
+  public void handle(GameState gameState) throws Exception {
+  }
 }
