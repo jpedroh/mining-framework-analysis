@@ -1,11 +1,7 @@
-
 package no.priv.garshol.duke;
-
 import java.io.IOException;
 import java.io.FileOutputStream;
-
 import org.xml.sax.helpers.AttributeListImpl;
-
 import no.priv.garshol.duke.datasources.Column;
 import no.priv.garshol.duke.datasources.CSVDataSource;
 import no.priv.garshol.duke.datasources.JDBCDataSource;
@@ -21,64 +17,53 @@ import no.priv.garshol.duke.utils.XMLPrettyPrinter;
  * @since 1.1
  */
 public class ConfigWriter {
-
   /**
    * Writes the given configuration to the given file.
    */
-  public static void write(Configuration config, String file)
-    throws IOException {
+  public static void write(Configuration config, String file) throws IOException {
     FileOutputStream fos = new FileOutputStream(file);
     XMLPrettyPrinter pp = new XMLPrettyPrinter(fos);
-
     pp.startDocument();
     pp.startElement("duke", null);
-
-    // FIXME: here we should write the objects, but that's not
-    // possible with the current API. we don't need that for the
-    // genetic algorithm at the moment, but it would be useful.
-
     pp.startElement("schema", null);
-
     writeElement(pp, "threshold", "" + config.getThreshold());
-    if (config.getMaybeThreshold() != 0.0)
+    if (config.getMaybeThreshold() != 0.0) {
       writeElement(pp, "maybe-threshold", "" + config.getMaybeThreshold());
-
-    for (Property p : config.getProperties())
+    }
+    for (Property p : config.getProperties()) {
       writeProperty(pp, p);
-
+    }
     pp.endElement("schema");
-
     String dbclass = config.getDatabase(false).getClass().getName();
     AttributeListImpl atts = new AttributeListImpl();
     atts.addAttribute("class", "CDATA", dbclass);
     pp.startElement("database", atts);
     pp.endElement("database");
-
-    if (config.isDeduplicationMode())
-      for (DataSource src : config.getDataSources())
+    if (config.isDeduplicationMode()) {
+      for (DataSource src : config.getDataSources()) {
         writeDataSource(pp, src);
-    else {
+      }
+    } else {
       pp.startElement("group", null);
-      for (DataSource src : config.getDataSources(1))
+      for (DataSource src : config.getDataSources(1)) {
         writeDataSource(pp, src);
+      }
       pp.endElement("group");
-
       pp.startElement("group", null);
-      for (DataSource src : config.getDataSources(2))
+      for (DataSource src : config.getDataSources(2)) {
         writeDataSource(pp, src);
+      }
       pp.endElement("group");
     }
-
     pp.endElement("duke");
     pp.endDocument();
-
     fos.close();
   }
 
   private static void writeParam(XMLPrettyPrinter pp, String name, String value) {
-    if (value == null)
+    if (value == null) {
       return;
-
+    }
     AttributeListImpl atts = new AttributeListImpl();
     atts.addAttribute("name", "CDATA", name);
     atts.addAttribute("value", "CDATA", value);
@@ -99,8 +84,9 @@ public class ConfigWriter {
   }
 
   private static void writeElement(XMLPrettyPrinter pp, String name, String value) {
-    if (value == null)
-      return; // saves us having to repeat these tests everywhere
+    if (value == null) {
+      return;
+    }
     pp.startElement(name, null);
     pp.text(value);
     pp.endElement(name);
@@ -108,25 +94,28 @@ public class ConfigWriter {
 
   private static void writeProperty(XMLPrettyPrinter pp, Property prop) {
     AttributeListImpl atts = new AttributeListImpl();
-    if (prop.isIdProperty())
+    if (prop.isIdProperty()) {
       atts.addAttribute("type", "CDATA", "id");
-    else if (prop.isIgnoreProperty())
-      atts.addAttribute("type", "CDATA", "ignore");
-
-    if (!prop.isIdProperty() &&
-        prop.getLookupBehaviour() != Property.Lookup.DEFAULT) {
+    } else {
+      if (prop.isIgnoreProperty()) {
+        atts.addAttribute("type", "CDATA", "ignore");
+      }
+    }
+    if (!prop.isIdProperty() && prop.getLookupBehaviour() != Property.Lookup.DEFAULT) {
       String value = prop.getLookupBehaviour().toString().toLowerCase();
       atts.addAttribute("lookup", "CDATA", value);
     }
-
     pp.startElement("property", atts);
     writeElement(pp, "name", prop.getName());
-    if (prop.getComparator() != null)
+    if (prop.getComparator() != null) {
       writeElement(pp, "comparator", prop.getComparator().getClass().getName());
-    if (prop.getLowProbability() != 0.0)
+    }
+    if (prop.getLowProbability() != 0.0) {
       writeElement(pp, "low", "" + prop.getLowProbability());
-    if (prop.getHighProbability() != 0.0)
+    }
+    if (prop.getHighProbability() != 0.0) {
       writeElement(pp, "high", "" + prop.getHighProbability());
+    }
     pp.endElement("property");
   }
 
@@ -136,79 +125,80 @@ public class ConfigWriter {
       name = "jndi";
       JNDIDataSource jndi = (JNDIDataSource) src;
       pp.startElement(name, null);
-
       writeParam(pp, "jndi-path", jndi.getJndiPath());
       writeParam(pp, "query", jndi.getQuery());
-    } else if (src instanceof JDBCDataSource) {
-      name = "jdbc";
-      JDBCDataSource jdbc = (JDBCDataSource) src;
-      pp.startElement(name, null);
-
-      writeParam(pp, "driver-class", jdbc.getDriverClass());
-      writeParam(pp, "connection-string", jdbc.getConnectionString());
-      writeParam(pp, "user-name", jdbc.getUserName());
-      writeParam(pp, "password", jdbc.getPassword());
-      writeParam(pp, "query", jdbc.getQuery());
-      // **Fixup to correctly parse the MongoDBDataSource parameters
-    } else if (src instanceof MongoDBDataSource) {
-      name = "data-source";
-      MongoDBDataSource mongodb = (MongoDBDataSource) src;
-      String mongoDatasource_classname = (""+mongodb.getClass()).substring(6);
-      AttributeListImpl attribs = new AttributeListImpl();
-      attribs.addAttribute("class", "CDATA", mongoDatasource_classname);
-      pp.startElement(name, attribs);
-
-      writeParam(pp, "server-address", mongodb.getServerAddress());
-      writeParam(pp, "port-number", mongodb.getPortNumber());
-      writeParam(pp, "user-name", mongodb.getUserName());
-      writeParam(pp, "password", mongodb.getPassword());
-      writeParam(pp, "db-auth", mongodb.getDbAuth());
-      writeParam(pp, "database", mongodb.getDatabase());
-      writeParam(pp, "cursor-notimeout", mongodb.getCursorNotimeout());
-      writeParam(pp, "collection", mongodb.getCollection());
-      writeParam(pp, "query", mongodb.getQuery());
-	  writeParam(pp, "projection", mongodb.getProjection());
-    } else if (src instanceof CSVDataSource) {
-      name = "csv";
-      CSVDataSource csv = (CSVDataSource) src;
-      pp.startElement(name, null);
-
-      writeParam(pp, "input-file", csv.getInputFile());
-      writeParam(pp, "encoding", csv.getEncoding());
-      writeParam(pp, "skip-lines", csv.getSkipLines());
-      writeParam(pp, "header-line", csv.getHeaderLine());
-      if (csv.getSeparator() != 0)
-        writeParam(pp, "separator", csv.getSeparator());
-    } else if (src instanceof SparqlDataSource) {
-      name = "sparql";
-      SparqlDataSource sparql = (SparqlDataSource) src;
-      pp.startElement(name, null);
-
-      writeParam(pp, "endpoint", sparql.getEndpoint());
-      writeParam(pp, "query", sparql.getQuery());
-      writeParam(pp, "page-size", sparql.getPageSize());
-      writeParam(pp, "triple-mode", sparql.getTripleMode());
+    } else {
+      if (src instanceof JDBCDataSource) {
+        name = "jdbc";
+        JDBCDataSource jdbc = (JDBCDataSource) src;
+        pp.startElement(name, null);
+        writeParam(pp, "driver-class", jdbc.getDriverClass());
+        writeParam(pp, "connection-string", jdbc.getConnectionString());
+        writeParam(pp, "user-name", jdbc.getUserName());
+        writeParam(pp, "password", jdbc.getPassword());
+        writeParam(pp, "query", jdbc.getQuery());
+      } else {
+        if (src instanceof MongoDBDataSource) {
+          name = "data-source";
+          MongoDBDataSource mongodb = (MongoDBDataSource) src;
+          String mongoDatasource_classname = ("" + mongodb.getClass()).substring(6);
+          AttributeListImpl attribs = new AttributeListImpl();
+          attribs.addAttribute("class", "CDATA", mongoDatasource_classname);
+          pp.startElement(name, attribs);
+          writeParam(pp, "server-address", mongodb.getServerAddress());
+          writeParam(pp, "port-number", mongodb.getPortNumber());
+          writeParam(pp, "user-name", mongodb.getUserName());
+          writeParam(pp, "password", mongodb.getPassword());
+          writeParam(pp, "db-auth", mongodb.getDbAuth());
+          writeParam(pp, "database", mongodb.getDatabase());
+          writeParam(pp, "cursor-notimeout", mongodb.getCursorNotimeout());
+          writeParam(pp, "collection", mongodb.getCollection());
+          writeParam(pp, "query", mongodb.getQuery());
+          writeParam(pp, "projection", mongodb.getProjection());
+        } else {
+          if (src instanceof CSVDataSource) {
+            name = "csv";
+            CSVDataSource csv = (CSVDataSource) src;
+            pp.startElement(name, null);
+            writeParam(pp, "input-file", csv.getInputFile());
+            writeParam(pp, "encoding", csv.getEncoding());
+            writeParam(pp, "skip-lines", csv.getSkipLines());
+            writeParam(pp, "header-line", csv.getHeaderLine());
+            if (csv.getSeparator() != 0) {
+              writeParam(pp, "separator", csv.getSeparator());
+            }
+          } else {
+            if (src instanceof SparqlDataSource) {
+              name = "sparql";
+              SparqlDataSource sparql = (SparqlDataSource) src;
+              pp.startElement(name, null);
+              writeParam(pp, "endpoint", sparql.getEndpoint());
+              writeParam(pp, "query", sparql.getQuery());
+              writeParam(pp, "page-size", sparql.getPageSize());
+              writeParam(pp, "triple-mode", sparql.getTripleMode());
+            }
+          }
+        }
+      }
     }
-
     if (src instanceof ColumnarDataSource) {
-      // FIXME: this breaks the order...
       for (Column col : ((ColumnarDataSource) src).getColumns()) {
         AttributeListImpl atts = new AttributeListImpl();
         atts.addAttribute("name", "CDATA", col.getName());
         atts.addAttribute("property", "CDATA", col.getProperty());
-        if (col.getPrefix() != null)
+        if (col.getPrefix() != null) {
           atts.addAttribute("prefix", "CDATA", col.getPrefix());
-        // FIXME: cleaner really requires object support ... :-(
-        if (col.getCleaner() != null)
+        }
+        if (col.getCleaner() != null) {
           atts.addAttribute("cleaner", "CDATA", col.getCleaner().getClass().getName());
-        if (col.isSplit())
+        }
+        if (col.isSplit()) {
           atts.addAttribute("split-on", "CDATA", col.getSplitOn());
-
+        }
         pp.startElement("column", atts);
         pp.endElement("column");
       }
     }
-
     pp.endElement(name);
   }
 }
