@@ -18,12 +18,18 @@ package conf;
 
 import com.google.inject.AbstractModule;
 
+import controllers.DeleteExpiredMailBoxes;
+
 import ninja.ebean.NinjaEbeanModule2;
+
 import services.CheckDBForMailAddressDuplicates;
+
 import services.MailService;
 
 public class Module extends AbstractModule
 {
+
+
     @Override
     protected void configure()
     {
@@ -34,7 +40,10 @@ public class Module extends AbstractModule
 
         // bind services and jobs
         bind(MailService.class);
+
+        // bind jobs
         bind(CheckDBForMailAddressDuplicates.class);
+        bind(DeleteExpiredMailBoxes.class);
     }
 
 }
