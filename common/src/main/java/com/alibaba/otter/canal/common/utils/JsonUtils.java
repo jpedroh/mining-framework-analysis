@@ -83,8 +83,33 @@ public class JsonUtils {
 
         public static InetAddressSerializer instance = new InetAddressSerializer();
 
+<<<<<<< /usr/src/app/output/alibaba/canal/19a56fb77e3e67366382edade55376e7cce80009/common/src/main/java/com/alibaba/otter/canal/common/utils/JsonUtils.java/left.java
         @Override
         public void write(JSONSerializer serializer, Object object, Object fieldName, Type type, int i) throws IOException {
+            if (object == null) {
+                serializer.writeNull();
+                return;
+            }
+
+            InetAddress address = (InetAddress) object;
+            // 优先使用name
+            serializer.write(address.getHostName());
+        }
+||||||| /usr/src/app/output/alibaba/canal/19a56fb77e3e67366382edade55376e7cce80009/common/src/main/java/com/alibaba/otter/canal/common/utils/JsonUtils.java/base.java
+        public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType)
+                                                                                                     throws IOException {
+            if (object == null) {
+                serializer.writeNull();
+                return;
+            }
+
+            InetAddress address = (InetAddress) object;
+            // 优先使用name
+            serializer.write(address.getHostName());
+        }
+=======
+        public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType)
+                                                                                                     throws IOException {
             if (object == null) {
                 serializer.writeNull();
                 return;
@@ -106,5 +131,6 @@ public class JsonUtils {
             // 优先使用name
             serializer.write(address.getHostName());
         }
+>>>>>>> /usr/src/app/output/alibaba/canal/19a56fb77e3e67366382edade55376e7cce80009/common/src/main/java/com/alibaba/otter/canal/common/utils/JsonUtils.java/right.java
     }
 }
