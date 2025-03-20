@@ -1018,6 +1018,7 @@ public abstract class AbstractMatrix implements Matrix {
             }
             return result;
         }
-        throw new IllegalArgumentException("You used illegal arguments for the power()-function.");
+        throw new IllegalArgumentException(
+                "You used illegal arguments for the power()-function.");
     }
 }
