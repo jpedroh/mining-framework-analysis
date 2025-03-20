@@ -63,7 +63,13 @@ public class MagicEntry {
 	 */
 	ContentInfo matchBytes(byte[] bytes) {
 		ContentData data = matchBytes(bytes, 0, 0, null);
-		if (data == null || data.name.equals(MagicEntryParser.UNKNOWN_NAME)) {
+<<<<<<< /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/left.java
+		if (data == null || data.name.equals(UNKNOWN_NAME)) {
+||||||| /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/base.java
+		if (data == null || data.name == UNKNOWN_NAME) {
+=======
+		if (data == null || data.name == MagicEntryParser.UNKNOWN_NAME) {
+>>>>>>> /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/right.java
 			return null;
 		} else {
 			return new ContentInfo(data.name, data.mimeType, data.sb.toString(), data.partial);
@@ -197,7 +203,13 @@ public class MagicEntry {
 		 * NOTE: the children will have the first opportunity to set this which makes sense since they are the most
 		 * specific.
 		 */
-		if (!name.equals(MagicEntryParser.UNKNOWN_NAME) && contentData.name.equals(MagicEntryParser.UNKNOWN_NAME)) {
+<<<<<<< /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/left.java
+		if (!name.equals(UNKNOWN_NAME) && contentData.name.equals(UNKNOWN_NAME)) {
+||||||| /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/base.java
+		if (name != UNKNOWN_NAME && contentData.name == UNKNOWN_NAME) {
+=======
+		if (name != MagicEntryParser.UNKNOWN_NAME && contentData.name == MagicEntryParser.UNKNOWN_NAME) {
+>>>>>>> /usr/src/app/output/j256/simplemagic/a2fee571fbe304efa8981457403471a2504062b4/src/main/java/com/j256/simplemagic/entries/MagicEntry.java/right.java
 			contentData.name = name;
 		}
 		/*
