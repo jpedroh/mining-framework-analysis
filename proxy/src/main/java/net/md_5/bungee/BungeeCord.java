@@ -40,7 +40,6 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -102,6 +101,7 @@ import ru.leymooo.botfilter.BotFilterCommand;
 import ru.leymooo.botfilter.BotFilterThread;
 import ru.leymooo.botfilter.config.Settings;
 import ru.leymooo.botfilter.utils.FakeOnlineUtils;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Main BungeeCord proxy class.
@@ -139,6 +139,7 @@ public class BungeeCord extends ProxyServer
      * Fully qualified connections.
      */
     private final Map<String, UserConnection> connections = new CaseInsensitiveMap<>();
+    // Used to help with packet rewriting
     // Used to help with packet rewriting
     private final Map<UUID, UserConnection> connectionsByOfflineUUID = new HashMap<>();
     private final Map<UUID, UserConnection> connectionsByUUID = new HashMap<>();
@@ -509,7 +510,8 @@ public class BungeeCord extends ProxyServer
         bossEventLoopGroup.shutdownGracefully(); //BotFilter //WaterFall backport
         workerEventLoopGroup.shutdownGracefully(); //BotFilter //WaterFall backport
         queryEventLoopGroup.shutdownGracefully(); //BotFilter
-        while ( true ) //BotFilter //WaterFall backport {
+        while ( true ) //BotFilter //WaterFall backport
+        {
             try
             {
                 bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS ); //BotFilter //WaterFall backport
@@ -519,6 +521,8 @@ public class BungeeCord extends ProxyServer
             } catch ( InterruptedException ignored )
             {
             }
+        }
+
         getLogger().info( "Thank you and goodbye" );
         // Need to close loggers after last message!
         for ( Handler handler : getLogger().getHandlers() )
