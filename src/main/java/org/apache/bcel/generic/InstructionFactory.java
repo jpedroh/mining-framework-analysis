@@ -43,34 +43,25 @@ public class InstructionFactory implements InstructionConstants {
      */
     @Deprecated
     protected ClassGen cg;
-
     /**
      * @deprecated (since 6.0) will be made private; do not access directly, use getter/setter
      */
     @Deprecated
     protected ConstantPoolGen cp;
-
-
     public InstructionFactory(final ClassGen cg, final ConstantPoolGen cp) {
         this.cg = cg;
         this.cp = cp;
     }
-
-
     /** Initialize with ClassGen object
      */
     public InstructionFactory(final ClassGen cg) {
         this(cg, cg.getConstantPool());
     }
-
-
     /** Initialize just with ConstantPoolGen object
      */
     public InstructionFactory(final ConstantPoolGen cp) {
         this(null, cp);
     }
-
-
     /** Create an invoke instruction. (Except for invokedynamic.)
      *
      * @param class_name name of the called class
@@ -85,7 +76,6 @@ public class InstructionFactory implements InstructionConstants {
             final Type[] arg_types, final short kind ) {
         return createInvoke(class_name, name, ret_type, arg_types, kind, kind == Const.INVOKEINTERFACE);
     }
-
     /** Create an invoke instruction. (Except for invokedynamic.)
      *
      * @param class_name name of the called class
@@ -94,11 +84,10 @@ public class InstructionFactory implements InstructionConstants {
      * @param arg_types argument types of method
      * @param kind how to invoke: INVOKEINTERFACE, INVOKESTATIC, INVOKEVIRTUAL, or INVOKESPECIAL
      * @param use_interface force use of InterfaceMethodref
-     * @return A new InvokeInstruction.
-     * @since 6.5.0
+     * @since 6.4.2
      */
     public InvokeInstruction createInvoke( final String class_name, final String name, final Type ret_type,
-        final Type[] arg_types, final short kind, final boolean use_interface) {
+            final Type[] arg_types, final short kind, final boolean use_interface ) {
         if (kind != Const.INVOKESPECIAL && kind != Const.INVOKEVIRTUAL && kind != Const.INVOKESTATIC
             && kind != Const.INVOKEINTERFACE && kind != Const.INVOKEDYNAMIC) {
             throw new IllegalArgumentException("Unknown invoke kind: " + kind);
@@ -130,7 +119,6 @@ public class InstructionFactory implements InstructionConstants {
             throw new IllegalStateException("Unknown invoke kind: " + kind);
         }
     }
-
     /** Create an invokedynamic instruction.
      *
      * @param bootstrap_index index into the bootstrap_methods array
@@ -157,7 +145,6 @@ public class InstructionFactory implements InstructionConstants {
         return new INVOKEDYNAMIC(index);
     }
  */
-
     /** Create a call to the most popular System.out.println() method.
      *
      * @param s the string to print
@@ -171,8 +158,6 @@ public class InstructionFactory implements InstructionConstants {
         il.append(new INVOKEVIRTUAL(println));
         return il;
     }
-
-
     /** Uses PUSH to push a constant value onto the stack.
      * @param value must be of type Number, Boolean, Character or String
      */
@@ -191,7 +176,6 @@ public class InstructionFactory implements InstructionConstants {
         }
         return push.getInstruction();
     }
-
     private static class MethodObject {
 
         final Type[] arg_types;
@@ -207,12 +191,9 @@ public class InstructionFactory implements InstructionConstants {
             arg_types = a;
         }
     }
-
-
     private InvokeInstruction createInvoke( final MethodObject m, final short kind ) {
         return createInvoke(m.class_name, m.name, m.result_type, m.arg_types, kind);
     }
-
     private static final MethodObject[] append_mos = {
             new MethodObject("java.lang.StringBuffer", "append", Type.STRINGBUFFER, new Type[] {
                 Type.STRING
@@ -249,14 +230,10 @@ public class InstructionFactory implements InstructionConstants {
                 Type.LONG
             })
     };
-
-
     private static boolean isString( final Type type ) {
         return (type instanceof ObjectType) &&
               ((ObjectType) type).getClassName().equals("java.lang.String");
     }
-
-
     public Instruction createAppend( final Type type ) {
         final byte t = type.getType();
         if (isString(type)) {
@@ -279,8 +256,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("No append for this type? " + type);
         }
     }
-
-
     /** Create a field instruction.
      *
      * @param class_name name of the accessed class
@@ -306,15 +281,11 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Unknown getfield kind:" + kind);
         }
     }
-
-
     /** Create reference to `this'
      */
     public static Instruction createThis() {
         return new ALOAD(0);
     }
-
-
     /** Create typed return
      */
     public static ReturnInstruction createReturn( final Type type ) {
@@ -340,8 +311,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid type: " + type);
         }
     }
-
-
     private static ArithmeticInstruction createBinaryIntOp( final char first, final String op ) {
         switch (first) {
             case '-':
@@ -368,8 +337,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid operand " + op);
         }
     }
-
-
     private static ArithmeticInstruction createBinaryLongOp( final char first, final String op ) {
         switch (first) {
             case '-':
@@ -396,8 +363,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid operand " + op);
         }
     }
-
-
     private static ArithmeticInstruction createBinaryFloatOp( final char op ) {
         switch (op) {
             case '-':
@@ -414,8 +379,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid operand " + op);
         }
     }
-
-
     private static ArithmeticInstruction createBinaryDoubleOp( final char op ) {
         switch (op) {
             case '-':
@@ -432,8 +395,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid operand " + op);
         }
     }
-
-
     /**
      * Create binary operation for simple basic types, such as int and float.
      *
@@ -457,40 +418,30 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid type " + type);
         }
     }
-
-
     /**
      * @param size size of operand, either 1 (int, e.g.) or 2 (double)
      */
     public static StackInstruction createPop( final int size ) {
         return (size == 2) ? InstructionConst.POP2 : InstructionConst.POP;
     }
-
-
     /**
      * @param size size of operand, either 1 (int, e.g.) or 2 (double)
      */
     public static StackInstruction createDup( final int size ) {
         return (size == 2) ? InstructionConst.DUP2 : InstructionConst.DUP;
     }
-
-
     /**
      * @param size size of operand, either 1 (int, e.g.) or 2 (double)
      */
     public static StackInstruction createDup_2( final int size ) {
         return (size == 2) ? InstructionConst.DUP2_X2 : InstructionConst.DUP_X2;
     }
-
-
     /**
      * @param size size of operand, either 1 (int, e.g.) or 2 (double)
      */
     public static StackInstruction createDup_1( final int size ) {
         return (size == 2) ? InstructionConst.DUP2_X1 : InstructionConst.DUP_X1;
     }
-
-
     /**
      * @param index index of local variable
      */
@@ -515,8 +466,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid type " + type);
         }
     }
-
-
     /**
      * @param index index of local variable
      */
@@ -541,8 +490,6 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid type " + type);
         }
     }
-
-
     /**
      * @param type type of elements of array, i.e., array.getElementType()
      */
@@ -570,8 +517,47 @@ public class InstructionFactory implements InstructionConstants {
                 throw new IllegalArgumentException("Invalid type " + type);
         }
     }
-
-
+    /**
+     * @param type type of elements of array, i.e., array.getElementType()
+     */
+    /**
+     * @deprecated (since 6.0) will be made private; do not access directly, use getter/setter
+     */
+    /**
+     * @deprecated (since 6.0) will be made private; do not access directly, use getter/setter
+     */
+    /** Create an invoke instruction. (Except for invokedynamic.)
+     *
+     * @param class_name name of the called class
+     * @param name name of the called method
+     * @param ret_type return type of method
+     * @param arg_types argument types of method
+     * @param kind how to invoke: INVOKEINTERFACE, INVOKESTATIC, INVOKEVIRTUAL, or INVOKESPECIAL
+     * @param use_interface force use of InterfaceMethodref
+     * @return A new InvokeInstruction.
+     * @since 6.5.0
+     */
+    /**
+     * @param size size of operand, either 1 (int, e.g.) or 2 (double)
+     */
+    /**
+     * @param size size of operand, either 1 (int, e.g.) or 2 (double)
+     */
+    /**
+     * @param size size of operand, either 1 (int, e.g.) or 2 (double)
+     */
+    /**
+     * @param size size of operand, either 1 (int, e.g.) or 2 (double)
+     */
+    /**
+     * @param index index of local variable
+     */
+    /**
+     * @param index index of local variable
+     */
+    /**
+     * @param type type of elements of array, i.e., array.getElementType()
+     */
     /**
      * @param type type of elements of array, i.e., array.getElementType()
      */
