@@ -4,6 +4,7 @@ import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.sun.tools.attach.spi.AttachProvider;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import sun.tools.attach.BsdVirtualMachine;
 import sun.tools.attach.LinuxVirtualMachine;
@@ -183,6 +184,7 @@ public class AgentLoader {
    * @param agentName - the agent name that we are trying to match
    * @return null if it fails or a full path to the jar file if it succeeds
    */
+<<<<<<< /usr/src/app/output/avaje-common/avaje-agentloader/1406ac7a25bad7155a3ace629e63da4ba6d9c4c0/src/main/java/org/avaje/agentloader/AgentLoader.java/left.java
   public static String extractJar(URL path, String agentName) {
     String fullPath = null;
 
@@ -236,6 +238,84 @@ public class AgentLoader {
 
     return fullPath;
   }
+||||||| /usr/src/app/output/avaje-common/avaje-agentloader/1406ac7a25bad7155a3ace629e63da4ba6d9c4c0/src/main/java/org/avaje/agentloader/AgentLoader.java/base.java
+=======
+  public static String extractJar(URL path, String partial) {
+    String fullPath = null;
+
+    String[] jarNames = path.getPath().split(":");
+
+    if (jarNames.length >= 2) {
+      String fileAndOffset = jarNames[1];
+      int pos = fileAndOffset.indexOf('!');
+      if (pos >= 0) {
+        String file = fileAndOffset.substring(0, pos);
+        String offset = fileAndOffset.substring(pos + 2);
+        int offsetLength = offset.length();
+
+        fullPath = System.getProperty("java.io.tmpdir") + "/" + partial + ".jar";
+        JarOutputStream outputJar = null;
+        JarFile inputZip = null;
+        try {
+          outputJar = new JarOutputStream(new FileOutputStream(fullPath));
+          inputZip = new JarFile(file);
+
+          Enumeration<JarEntry> entries = inputZip.entries();
+          while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+
+            if (entry.getName().startsWith(offset)) {
+              try {
+                String internalName = entry.getName().substring(offsetLength);
+                JarEntry jarEntry = new JarEntry(entry);
+                Field f = jarEntry.getClass().getSuperclass().getDeclaredField("name");
+                f.setAccessible(true);
+                f.set(jarEntry, internalName);
+                jarEntry.setCompressedSize(0);
+
+                outputJar.putNextEntry(jarEntry);
+                IOUtils.copy(inputZip.getInputStream(entry), outputJar);
+                outputJar.closeEntry();
+
+              } catch (Exception ex) {
+                log.warning("Cannot copy single JarEntry '" + entry.getName() + "'");
+                ex.printStackTrace();
+              }
+            }
+          }
+
+        } catch (Exception ex) {
+          log.warning("Failed to copy partial " + partial);
+          ex.printStackTrace();
+        } finally {
+          if (outputJar != null) {
+            try {
+              outputJar.close();
+            } catch (IOException ioEx) {
+            }
+          }
+          if (inputZip != null) {
+            try {
+              inputZip.close();
+            } catch (IOException ioEx) {
+            }
+          }
+          fullPath = null;
+        }
+      }
+    }
+
+    return fullPath;
+  }
+>>>>>>> /usr/src/app/output/avaje-common/avaje-agentloader/1406ac7a25bad7155a3ace629e63da4ba6d9c4c0/src/main/java/org/avaje/agentloader/AgentLoader.java/right.java
+  /**
+   * This method takes the jar:file:path-to-filename.war!/WEB-INF/jar/jar-file/ offset that is included in the
+   * url classpath and extracts out a single jar containing the files in that match that url.
+   *
+   * @param path    - full url entry in the classpath
+   * @param partial - the name of the partial we are trying to match
+   * @return null if it fails or a full path to the jar file if it succeeds
+   */
 
   private static VirtualMachine getVirtualMachineImplementationFromEmbeddedOnes(String pid) {
     try {
