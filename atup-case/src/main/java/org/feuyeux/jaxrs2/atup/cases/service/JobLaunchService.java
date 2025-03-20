@@ -88,17 +88,36 @@ public class JobLaunchService {
                 //log.debug("test");
             }
 
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/left.java
             private void testing(final ConcurrentHashMap<String, AtupTestJobInfo> highJobMap) {
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/base.java
+            private void testing() {
+=======
+            private void testing(ConcurrentHashMap<String, AtupTestJobInfo> highJobMap) {
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/right.java
                 final Iterator<Map.Entry<String, AtupTestJobInfo>> highIterator = highJobMap.entrySet().iterator();
                 while (highIterator.hasNext()) {
                     try {
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/left.java
                         final Map.Entry<String, AtupTestJobInfo> currentJobKV = highIterator.next();
                         final AtupTestJobInfo jobInfo = currentJobKV.getValue();
                         final String deviceIp = jobInfo.getDeviceIp();
                         final AtupDevice testDevice = deviceDao.findByIp(deviceIp);
                         final Integer deviceStatus = testDevice.getDeviceStatus();
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/base.java
+                        String deviceIp = jobInfo.getDeviceIp();
+                        AtupDevice testDevice = deviceDao.findByIp(deviceIp);
+                        Integer deviceStatus = testDevice.getDeviceStatus();
+=======
+                        Map.Entry<String, AtupTestJobInfo> currentJobKV = highIterator.next();
+                        AtupTestJobInfo jobInfo = currentJobKV.getValue();
+                        String deviceIp = jobInfo.getDeviceIp();
+                        AtupDevice testDevice = deviceDao.findByIp(deviceIp);
+                        Integer deviceStatus = testDevice.getDeviceStatus();
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/right.java
                         log.info("Device[" + deviceIp + "] status = " + deviceStatus);
                         if (deviceStatus.equals(AtupParam.DEVICE_IDLE)) {
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/left.java
                             final String launchPath = AtupApi.PROTOCOL + deviceIp + ":" + AtupApi.SERVICE_PORT + AtupApi.SERVICE_PATH;
                             final AtupTestCase testCase = testCaseDao.findById(jobInfo.getCaseId());
                             final AtupRequest<AtupTestCase, Integer> request = new AtupRequest<>();
@@ -107,6 +126,24 @@ public class JobLaunchService {
                             final AtupUser user = userDao.findById(jobInfo.getUserId());
                             final Date createTime = new Date();
                             final AtupTestResult testResult = new AtupTestResult(testCase, user, status, "", createTime, createTime);
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/base.java
+                            String launchTestPath = AtupApi.PROTOCOL + deviceIp + ":" + AtupApi.SERVICE_PORT + AtupApi.SERVICE_PATH;
+                            AtupRequest<Integer> request = new AtupRequest<>();
+                            Integer resultStatus = request.rest(AtupRequest.POST, launchTestPath, Integer.class);
+
+                            AtupTestCase testCase = testCaseDao.findById(jobInfo.getCaseId());
+                            AtupUser user = userDao.findById(jobInfo.getUserId());
+                            Date createTime = new Date();
+                            AtupTestResult testResult = new AtupTestResult(testCase, user, resultStatus, "", createTime, createTime);
+=======
+                            String launchPath = AtupApi.PROTOCOL + deviceIp + ":" + AtupApi.SERVICE_PORT + AtupApi.SERVICE_PATH;
+                            AtupTestCase testCase = testCaseDao.findById(jobInfo.getCaseId());
+                            AtupRequest<AtupTestCase, Integer> request = new AtupRequest<>();
+                            Integer status = request.rest(AtupRequest.POST, launchPath, null, null, MediaType.APPLICATION_JSON_TYPE, testCase, Integer.class);
+                            AtupUser user = userDao.findById(jobInfo.getUserId());
+                            Date createTime = new Date();
+                            AtupTestResult testResult = new AtupTestResult(testCase, user, status, "", createTime, createTime);
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/main/java/org/feuyeux/jaxrs2/atup/cases/service/JobLaunchService.java/right.java
                             resultDao.save(testResult);
                             highJobMap.remove(currentJobKV.getKey());
                         }

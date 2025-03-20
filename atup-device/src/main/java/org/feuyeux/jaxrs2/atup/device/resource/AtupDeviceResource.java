@@ -53,6 +53,13 @@ public class AtupDeviceResource {
         }
     }
 
+    private void fillUser(HttpHeaders headers, AtupDevice deviceInfo) {
+        String userId = headers.getRequestHeader("Atup-User").get(0);
+        AtupUser currentUser = new AtupUser();
+        currentUser.setUserId(Integer.valueOf(userId));
+        deviceInfo.setUser(currentUser);
+    }
+
     private void fillUser(final HttpHeaders headers, final AtupDevice deviceInfo) {
         final String userId = headers.getRequestHeader("Atup-User").get(0);
         final AtupUser currentUser = new AtupUser();

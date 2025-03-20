@@ -18,7 +18,7 @@ public class TSDeviceResource {
 
     @Test
     public void testFindAll() {
-        final AtupRequest<String, AtupDevice> request = new AtupRequest<>();
+        final AtupRequest<String,AtupDevice> request = new AtupRequest<>();
         final AtupDevice device = request.rest(AtupRequest.GET, TSDeviceResource.BASE_URI + AtupApi.DEVICE_PATH + "/1", null, null,
                 MediaType.APPLICATION_JSON_TYPE, AtupDevice.class);
         log.info(device);

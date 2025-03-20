@@ -38,7 +38,7 @@ public class StationDetectService {
                 deviceList = dao.findAll();
                 for (final AtupDevice atupDevice : deviceList) {
                     final String detectPath = AtupApi.PROTOCOL + atupDevice.getDeviceHost() + ":" + AtupApi.SERVICE_PORT + AtupApi.SERVICE_PATH;
-                    final AtupRequest<String, Integer> request = new AtupRequest<>();
+                    final AtupRequest<String,Integer> request = new AtupRequest<>();
                     try {
                         final Integer result = request.rest(AtupRequest.GET, detectPath, Integer.class);
                         log.debug("detecting " + atupDevice.getDeviceHost() + " :" + result);

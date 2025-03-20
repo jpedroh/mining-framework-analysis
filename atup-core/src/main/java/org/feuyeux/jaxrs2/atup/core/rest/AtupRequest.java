@@ -36,17 +36,43 @@ public class AtupRequest<S, T> {
         this.clientRegisters = clientRegisters;
     }
 
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/left.java
     public T rest(final String method, final String requestUrl, final Class<T> returnType) {
         return rest(method, requestUrl, null, null, null, null, returnType);
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/base.java
+    public T rest(String method, String requestUrl, Class<T> returnType) {
+        return rest(method, requestUrl, null, null, null, returnType, null);
+=======
+    public T rest(String method, String requestUrl, Class<T> returnType) {
+        return rest(method, requestUrl, null, null, null, null, returnType);
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/left.java
     public T rest(final String method, final String requestUrl, final Set<AtupRequestParam> headParams, final Set<AtupRequestParam> queryParams,
                   final MediaType requestDataType, final Class<T> returnType) {
         return rest(method, requestUrl, headParams, queryParams, requestDataType, null, returnType);
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/base.java
+    public T rest(String method, String requestUrl, Set<AtupRequestParam> headParams, Set<AtupRequestParam> queryParams, MediaType requestDataType,
+            Class<T> returnType) {
+        return rest(method, requestUrl, headParams, queryParams, requestDataType, returnType, null);
+=======
+    public T rest(String method, String requestUrl, Set<AtupRequestParam> headParams, Set<AtupRequestParam> queryParams, MediaType requestDataType,
+                  Class<T> returnType) {
+        return rest(method, requestUrl, headParams, queryParams, requestDataType, null, returnType);
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/left.java
     public T rest(final String method, final String requestUrl, final Set<AtupRequestParam> headParams, final Set<AtupRequestParam> queryParams,
                   final MediaType requestDataType, final S requestData, final Class<T> returnType) {
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/base.java
+    public T rest(String method, String requestUrl, Set<AtupRequestParam> headParams, Set<AtupRequestParam> queryParams, MediaType requestDataType,
+            Class<T> returnType, T requestData) {
+=======
+    public T rest(String method, String requestUrl, Set<AtupRequestParam> headParams, Set<AtupRequestParam> queryParams, MediaType requestDataType, S requestData,
+                  Class<T> returnType) {
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-core/src/main/java/org/feuyeux/jaxrs2/atup/core/rest/AtupRequest.java/right.java
         if (clientConfig == null) {
             clientConfig = new ClientConfig();
         }

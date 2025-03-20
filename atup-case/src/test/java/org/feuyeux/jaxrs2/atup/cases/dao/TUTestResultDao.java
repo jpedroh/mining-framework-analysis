@@ -48,10 +48,18 @@ public class TUTestResultDao {
     @Test
     public void testFindByStatus() {
         final List<AtupTestResult> caseList = dao.findByStatus(AtupParam.RESULT_OK);
+<<<<<<< /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/test/java/org/feuyeux/jaxrs2/atup/cases/dao/TUTestResultDao.java/left.java
         checkResult(caseList);
     }
 
     private void checkResult(final List<AtupTestResult> caseList) {
+||||||| /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/test/java/org/feuyeux/jaxrs2/atup/cases/dao/TUTestResultDao.java/base.java
+=======
+        checkResult(caseList);
+    }
+
+    private void checkResult(List<AtupTestResult> caseList) {
+>>>>>>> /usr/src/app/output/feuyeux/jax-rs2-atup/b05c8c331560c1ab4be5c43c20912dbaa3d93839/atup-case/src/test/java/org/feuyeux/jaxrs2/atup/cases/dao/TUTestResultDao.java/right.java
         if (!caseList.isEmpty()) {
             Assert.assertEquals(AtupParam.RESULT_OK, caseList.get(0).getResultStatus());
         }
