@@ -339,9 +339,15 @@ public abstract class AbstractReader {
         validParameterAnnotations.add(QueryParam.class);
         validParameterAnnotations.add(HeaderParam.class);
         validParameterAnnotations.add(FormParam.class);
+<<<<<<< /usr/src/app/output/kongchen/swagger-maven-plugin/e825a7fdc6ef688f1253b93d2cb236e710acfc56/src/main/java/com/github/kongchen/swagger/docgen/reader/AbstractReader.java/left.java
         validParameterAnnotations.add(RequestParam.class);
+        validParameterAnnotations.add(RequestBody.class);
         validParameterAnnotations.add(PathVariable.class);
-
+||||||| /usr/src/app/output/kongchen/swagger-maven-plugin/e825a7fdc6ef688f1253b93d2cb236e710acfc56/src/main/java/com/github/kongchen/swagger/docgen/reader/AbstractReader.java/base.java
+=======
+        validParameterAnnotations.add(RequestParam.class);
+        validParameterAnnotations.add(RequestBody.class);
+>>>>>>> /usr/src/app/output/kongchen/swagger-maven-plugin/e825a7fdc6ef688f1253b93d2cb236e710acfc56/src/main/java/com/github/kongchen/swagger/docgen/reader/AbstractReader.java/right.java
 
         boolean hasValidAnnotation = false;
         for (Annotation potentialAnnotation : parameterAnnotations) {
