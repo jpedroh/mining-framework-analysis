@@ -140,7 +140,13 @@ public abstract class WaterAbility extends ElementalAbility {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/left.java
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/base.java
+				if (TempBlock.isTempBlock(block)) {
+=======
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/right.java
 					continue;
 				}
 				return block;
@@ -184,7 +190,13 @@ public abstract class WaterAbility extends ElementalAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/left.java
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/base.java
+				if (TempBlock.isTempBlock(block)) {
+=======
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/right.java
 					continue;
 				}
 				return block;
@@ -222,7 +234,13 @@ public abstract class WaterAbility extends ElementalAbility {
 			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/left.java
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/base.java
+				if (TempBlock.isTempBlock(block)) {
+=======
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/right.java
 					continue;
 				}
 				return block;
@@ -279,7 +297,14 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
+
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/left.java
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/base.java
+		if (TempBlock.isTempBlock(block)) {
+=======
+		if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/ability/WaterAbility.java/right.java
 			return false;
 		} else if (isWater(block) && block.getData() == full) {
 			return true;

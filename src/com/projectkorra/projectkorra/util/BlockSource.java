@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -163,7 +164,13 @@ public class BlockSource {
 	public static Block getSourceBlock(Player player, double range, BlockSourceType sourceType, ClickType clickType) {
 		BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
 		if (info != null) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/left.java
 			if (TempBlock.isTempBlock(info.getBlock()) && !WaterAbility.isBendableWaterTempBlock(info.getBlock())) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/base.java
+			if (TempBlock.isTempBlock(info.getBlock())) {
+=======
+			if (TempBlock.isTempBlock(info.getBlock()) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(info.getBlock()))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/right.java
 				return null;
 			}
 			return info.getBlock();
@@ -267,9 +274,16 @@ public class BlockSource {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 		}
 		if (sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock))) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/left.java
 			if (TempBlock.isTempBlock(sourceBlock) && !WaterAbility.isBendableWaterTempBlock(sourceBlock)) {
 				return null;
 			}
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/base.java
+=======
+			if (TempBlock.isTempBlock(sourceBlock) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(sourceBlock))) {
+				return null;
+			}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/util/BlockSource.java/right.java
 			return sourceBlock;
 		}
 		return null;

@@ -433,7 +433,13 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(block)) {
 			return false;
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/waterbending/WaterManipulation.java/left.java
 		} else if (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/waterbending/WaterManipulation.java/base.java
+		} else if (TempBlock.isTempBlock(block)) {
+=======
+		} else if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/waterbending/WaterManipulation.java/right.java
 			return false;
 		}
 		return true;

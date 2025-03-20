@@ -1160,7 +1160,13 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/GeneralMethods.java/left.java
 		if (block.equals(null) || (TempBlock.isTempBlock(block) && WaterAbility.isBendableWaterTempBlock(block))) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/GeneralMethods.java/base.java
+		if (TempBlock.isTempBlock(block) || block.equals(null)) {
+=======
+		if ((TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) || block.equals(null)) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/d0b17cacf5a4067954c3a63ffaf45ca733cf2bdb/src/com/projectkorra/projectkorra/GeneralMethods.java/right.java
 			return false;
 		}
 		int sources = 0;
