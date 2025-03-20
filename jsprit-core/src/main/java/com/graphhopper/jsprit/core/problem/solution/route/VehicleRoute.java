@@ -164,6 +164,7 @@ public class VehicleRoute {
          * @return builder
          * @throws IllegalArgumentException if departureTime < vehicle.getEarliestDeparture()
          */
+
         public Builder setDepartureTime(double departureTime) {
             if (departureTime < start.getEndTime())
                 throw new IllegalArgumentException("departureTime < vehicle.getEarliestDepartureTime(). this must not be.");
@@ -183,6 +184,7 @@ public class VehicleRoute {
          * @return this builder
          * @throws IllegalArgumentException if service is null
          */
+
         public Builder addService(Service service) {
             return addService(service,service.getTimeWindow());
         }
@@ -197,22 +199,30 @@ public class VehicleRoute {
             return this;
         }
 
-        @Deprecated
+        @Deprecated @Deprecated
         public Builder addBreak(Break currentbreak) {
             if (currentbreak == null) throw new IllegalArgumentException("break must not be null");
             return addBreak(currentbreak, currentbreak.getTimeWindow());
         }
 
-        @Deprecated
+        @Deprecated @Deprecated
         public Builder addBreak(Break currentbreak, TimeWindow timeWindow) {
             if (currentbreak == null) throw new IllegalArgumentException("break must not be null");
             return addService(currentbreak,timeWindow);
         }
 
+<<<<<<< /usr/src/app/output/jsprit/jsprit/0fb7469d1f73bad31a0f0f7f5292fe2d911f13df/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/solution/route/VehicleRoute.java/left.java
         public Builder addBreak(Break currentbreak, TimeWindow timeWindow, Location location) {
             if (currentbreak == null) throw new IllegalArgumentException("break must not be null");
             return addBreakInternally(currentbreak, timeWindow, location);
         }
+||||||| /usr/src/app/output/jsprit/jsprit/0fb7469d1f73bad31a0f0f7f5292fe2d911f13df/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/solution/route/VehicleRoute.java/base.java
+=======
+        public Builder addBreak(Break currentBreak, TimeWindow timeWindow, Location breakLocation) {
+            if (currentBreak == null) throw new IllegalArgumentException("break must not be null");
+            return addBreakInternally(currentBreak, timeWindow, breakLocation);
+        }
+>>>>>>> /usr/src/app/output/jsprit/jsprit/0fb7469d1f73bad31a0f0f7f5292fe2d911f13df/jsprit-core/src/main/java/com/graphhopper/jsprit/core/problem/solution/route/VehicleRoute.java/right.java
 
         private Builder addBreakInternally(Break currentBreak, TimeWindow timeWindow, Location breakLocation) {
             List<AbstractActivity> acts = jobActivityFactory.createActivities(currentBreak);
