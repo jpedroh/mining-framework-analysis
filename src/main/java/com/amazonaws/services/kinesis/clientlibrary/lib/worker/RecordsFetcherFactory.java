@@ -28,7 +28,7 @@ public interface RecordsFetcherFactory {
      *                
      * @return GetRecordsCache used to get records from Kinesis.
      */
-    GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy, String shardId, IMetricsFactory metricsFactory);
+    GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy, String shardId);
 
     /**
      * Sets the maximum number of ProcessRecordsInput objects the GetRecordsCache can hold, before further requests are
@@ -37,7 +37,7 @@ public interface RecordsFetcherFactory {
      * @param maxPendingProcessRecordsInput The maximum number of ProcessRecordsInput objects that the cache will accept
      *                                     before blocking.
      */
-    void setMaxPendingProcessRecordsInput(int maxPendingProcessRecordsInput);
+    void setMaxPendingProcessRecordsInput(int maxPendingProcessRecordsInput, IMetricsFactory metricsFactory);
 
     /**
      * Sets the max byte size for the GetRecordsCache, before further requests are blocked. The byte size of the cache

@@ -341,7 +341,13 @@ public class ShardConsumerTest {
         getRecordsCache = spy(new BlockingGetRecordsCache(maxRecords,
                 new SynchronousGetRecordsRetrievalStrategy(dataFetcher),
                 0L));
-        when(recordsFetcherFactory.createRecordsFetcher(any(), anyString(),any())).thenReturn(getRecordsCache);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/left.java
+        when(recordsFetcherFactory.createRecordsFetcher(any(), any())).thenReturn(getRecordsCache);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/base.java
+        when(recordsFetcherFactory.createRecordsFetcher(any())).thenReturn(getRecordsCache);
+=======
+        when(recordsFetcherFactory.createRecordsFetcher(any(), anyString())).thenReturn(getRecordsCache);
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/right.java
         
         ShardConsumer consumer =
                 new ShardConsumer(shardInfo,
@@ -471,7 +477,13 @@ public class ShardConsumerTest {
         getRecordsCache = spy(new BlockingGetRecordsCache(maxRecords,
                 new SynchronousGetRecordsRetrievalStrategy(dataFetcher),
                 0L));
-        when(recordsFetcherFactory.createRecordsFetcher(any(), anyString(),any())).thenReturn(getRecordsCache);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/left.java
+        when(recordsFetcherFactory.createRecordsFetcher(any(), any())).thenReturn(getRecordsCache);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/base.java
+        when(recordsFetcherFactory.createRecordsFetcher(any())).thenReturn(getRecordsCache);
+=======
+        when(recordsFetcherFactory.createRecordsFetcher(any(), anyString())).thenReturn(getRecordsCache);
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/test/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumerTest.java/right.java
 
         ShardConsumer consumer =
                 new ShardConsumer(shardInfo,

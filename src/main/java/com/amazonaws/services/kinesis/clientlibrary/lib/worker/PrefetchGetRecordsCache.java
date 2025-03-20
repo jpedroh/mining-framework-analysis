@@ -75,8 +75,8 @@ public class PrefetchGetRecordsCache implements GetRecordsCache {
                                    final int maxRecordsPerCall,
                                    @NonNull final GetRecordsRetrievalStrategy getRecordsRetrievalStrategy,
                                    @NonNull final ExecutorService executorService,
-                                   long idleMillisBetweenCalls,
-                                   @NonNull final IMetricsFactory metricsFactory) {
+                                   @NonNull final IMetricsFactory metricsFactory,
+                                   long idleMillisBetweenCalls) {
         this.getRecordsRetrievalStrategy = getRecordsRetrievalStrategy;
         this.maxRecordsPerCall = maxRecordsPerCall;
         this.maxPendingProcessRecordsInput = maxPendingProcessRecordsInput;
@@ -157,17 +157,23 @@ public class PrefetchGetRecordsCache implements GetRecordsCache {
                         getRecordsResultQueue.put(processRecordsInput);
                         prefetchCounters.added(processRecordsInput);
                     } catch (InterruptedException e) {
-                        log.info("Thread was interrupted, indicating shutdown was called on the cache.");
+                        log.info("Thread was interrupted, indicating shutdown was called on the cache");
                     } catch (SdkClientException e) {
                         log.error("Exception thrown while fetching records from Kinesis", e);
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/left.java
+                    } finally {
+                        MetricsHelper.endScope();
+                    }
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/base.java
+                    } 
+=======
                     } catch (Throwable e) {
                         log.error("Unexpected exception was thrown. This could probably be an issue or a bug." +
                                 " Please search for the exception/error online to check what is going on. If the " +
                                 "issue persists or is a recurring problem, feel free to open an issue on, " +
                                 "https://github.com/awslabs/amazon-kinesis-client.", e);
-                    } finally {
-                        MetricsHelper.endScope();
                     }
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/PrefetchGetRecordsCache.java/right.java
                 }
             }
             callShutdownOnStrategy();

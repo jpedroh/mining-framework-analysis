@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 
 import com.amazonaws.services.kinesis.metrics.interfaces.IMetricsFactory;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import lombok.extern.apachecommons.CommonsLog;
 
 @CommonsLog
@@ -35,7 +36,13 @@ public class SimpleRecordsFetcherFactory implements RecordsFetcherFactory {
     }
 
     @Override
-    public GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy, String shardId, IMetricsFactory metricsFactory) {
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/left.java
+    public GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy, IMetricsFactory metricsFactory) {
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/base.java
+    public GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy) {
+=======
+    public GetRecordsCache createRecordsFetcher(GetRecordsRetrievalStrategy getRecordsRetrievalStrategy, String shardId) {
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/SimpleRecordsFetcherFactory.java/right.java
         if(dataFetchingStrategy.equals(DataFetchingStrategy.DEFAULT)) {
             return new BlockingGetRecordsCache(maxRecords, getRecordsRetrievalStrategy, idleMillisBetweenCalls);
         } else {
@@ -44,8 +51,8 @@ public class SimpleRecordsFetcherFactory implements RecordsFetcherFactory {
                     Executors.newFixedThreadPool(1, new ThreadFactoryBuilder()
                             .setDaemon(true)
                             .setNameFormat("prefetch-cache-" + shardId + "-%04d")
-                            .build()),
-                    idleMillisBetweenCalls, metricsFactory);
+                            .build()), metricsFactory,
+                    idleMillisBetweenCalls);
         }
     }
 

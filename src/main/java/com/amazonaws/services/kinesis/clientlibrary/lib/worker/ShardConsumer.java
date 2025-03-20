@@ -234,8 +234,14 @@ class ShardConsumer {
         this.config = config;
         this.dataFetcher = kinesisDataFetcher;
         this.getRecordsCache = config.getRecordsFetcherFactory().createRecordsFetcher(
+<<<<<<< /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/left.java
+                makeStrategy(this.dataFetcher, retryGetRecordsInSeconds, maxGetRecordsThreadPool, this.shardInfo), metricsFactory);
+||||||| /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/base.java
+                makeStrategy(this.dataFetcher, retryGetRecordsInSeconds, maxGetRecordsThreadPool, this.shardInfo));
+=======
                 makeStrategy(this.dataFetcher, retryGetRecordsInSeconds, maxGetRecordsThreadPool, this.shardInfo),
-                this.getShardInfo().getShardId(), metricsFactory);
+                this.getShardInfo().getShardId());
+>>>>>>> /usr/src/app/output/awslabs/amazon-kinesis-client/81c13d2a3566428a51973caa7cd3069f81bf57de/src/main/java/com/amazonaws/services/kinesis/clientlibrary/lib/worker/ShardConsumer.java/right.java
     }
 
     /**
