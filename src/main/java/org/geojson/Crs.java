@@ -1,7 +1,6 @@
 package org.geojson;
 
 import org.geojson.jackson.CrsType;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
