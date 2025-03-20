@@ -37,7 +37,8 @@ public class CovImportMsvscaCommandTest extends CommandTestBase {
 
         CoverityPublisher publisher = new CoverityPublisher(
                 null, invocationAssistance, false, false, false, false, false,
-                null, null
+                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                null, null, null
         );
 
         ICommand covImportMsvscaCommand = new CovImportMsvscaCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars, outputFiles);

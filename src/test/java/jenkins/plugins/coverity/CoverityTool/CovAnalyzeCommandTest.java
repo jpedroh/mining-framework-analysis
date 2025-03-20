@@ -30,16 +30,16 @@ public class CovAnalyzeCommandTest extends CommandTestBase {
         try{
             misraConfigFile.createNewFile();
 
-            InvocationAssistance invocationAssistance = new InvocationAssistance(
-                    false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
-                    StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                    true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false,
-                    StringUtils.EMPTY, StringUtils.EMPTY, null, false
-            );
-            CoverityPublisher publisher = new CoverityPublisher(
-                    null, invocationAssistance, false, false, false, false, false,
-                    null, null
-            );
+        InvocationAssistance invocationAssistance = new InvocationAssistance(
+                false, StringUtils.EMPTY, false, StringUtils.EMPTY, false, false,
+                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                true, misraConfigFile.getPath(), StringUtils.EMPTY, null, false, false,
+                StringUtils.EMPTY, StringUtils.EMPTY, null, false
+        );
+        CoverityPublisher publisher = new CoverityPublisher(
+                null, invocationAssistance, false, false, false, false, false,
+                null, null
+        );
 
             ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
             setExpectedArguments(new String[] {"cov-analyze", "--dir", "TestDir", "--misra-config", misraConfigFile.getPath()});
@@ -222,7 +222,8 @@ public class CovAnalyzeCommandTest extends CommandTestBase {
     public void cannotExecuteTest() throws IOException, InterruptedException {
         CoverityPublisher publisher = new CoverityPublisher(
                 null, null, false, false, false, false, false,
-                null, null
+                StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                null, null, null
         );
 
         ICommand covAnalyzeCommand = new CovAnalyzeCommand(build, launcher, listener, publisher, StringUtils.EMPTY, envVars);
