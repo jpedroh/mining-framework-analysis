@@ -1,23 +1,12 @@
 package alma.fr;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
 import alma.fr.basecomponents.IBase;
 import alma.fr.data.Positions;
-import alma.fr.documentgenerator.BeginningGenerator;
 import alma.fr.documentgenerator.DocumentSimulator;
-import alma.fr.documentgenerator.EndingGenerator;
 import alma.fr.logootenginecomponents.LogootEngine;
 import alma.fr.logootenginecomponents.Replica;
-import alma.fr.modules.GreedRandDoubleModule;
-import alma.fr.strategychoicecomponents.FakeListNode;
-
+import alma.fr.modules.GreedModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -26,82 +15,132 @@ import com.google.inject.Injector;
  * 
  */
 public class App {
-	public static void main(String[] args) {
+  public static void main(String[] args) {
+    Float[] result;
+    Injector injector;
+    LogootEngine logootEngine;
+    DocumentSimulator ds;
+    injector = Guice.createInjector(new GreedModule());
+    logootEngine = injector.getInstance(LogootEngine.class);
+    logootEngine.setReplica(new Replica());
+    ds = new DocumentSimulator(
+<<<<<<< /usr/src/app/output/chat-wane/lseq/916d8a5efc2654df3f31715ed05eea52f7d09957/src/main/java/alma/fr/App.java/left.java
+    bg
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+    );
+    while (DocumentSimulator.getNbLine() < 100000) {
+      ds.setNbPatch(100);
+      ds.run(logootEngine);
+      System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+      result = avgAndMaxSize(logootEngine.getIdTable());
+      System.out.println("WeissModule avg : " + result[0]);
+      System.out.println("WeissModule max : " + result[1]);
+      result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+      System.out.println("WeissModule avg (bit) : " + result[0]);
+      System.out.println("WeissModule max (bit) : " + result[1]);
+    }
+    ds.setNbPatch(900);
+    ds.run(logootEngine);
+    System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+    result = avgAndMaxSize(logootEngine.getIdTable());
+    System.out.println("WeissModule avg : " + result[0]);
+    System.out.println("WeissModule max : " + result[1]);
+    result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+    System.out.println("WeissModule avg (bit) : " + result[0]);
+    System.out.println("WeissModule max (bit) : " + result[1]);
+    ds.setNbPatch(1000);
+    ds.run(logootEngine);
+    System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+    result = avgAndMaxSize(logootEngine.getIdTable());
+    System.out.println("WeissModule avg : " + result[0]);
+    System.out.println("WeissModule max : " + result[1]);
+    result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+    System.out.println("WeissModule avg (bit) : " + result[0]);
+    System.out.println("WeissModule max (bit) : " + result[1]);
+    ds.setNbPatch(1000);
+    ds.run(logootEngine);
+    System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+    result = avgAndMaxSize(logootEngine.getIdTable());
+    System.out.println("WeissModule avg : " + result[0]);
+    System.out.println("WeissModule max : " + result[1]);
+    result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+    System.out.println("WeissModule avg (bit) : " + result[0]);
+    System.out.println("WeissModule max (bit) : " + result[1]);
+    ds.setNbPatch(2000);
+    ds.run(logootEngine);
+    System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+    result = avgAndMaxSize(logootEngine.getIdTable());
+    System.out.println("WeissModule avg : " + result[0]);
+    System.out.println("WeissModule max : " + result[1]);
+    result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+    System.out.println("WeissModule avg (bit) : " + result[0]);
+    System.out.println("WeissModule max (bit) : " + result[1]);
+    ds.setNbPatch(5000);
+    ds.run(logootEngine);
+    System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+    result = avgAndMaxSize(logootEngine.getIdTable());
+    System.out.println("WeissModule avg : " + result[0]);
+    System.out.println("WeissModule max : " + result[1]);
+    result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+    System.out.println("WeissModule avg (bit) : " + result[0]);
+    System.out.println("WeissModule max (bit) : " + result[1]);
+    while (true) {
+      ds.setNbPatch(10000);
+      ds.run(logootEngine);
+      System.out.println("====== " + DocumentSimulator.getNbLine() + " ======");
+      result = avgAndMaxSize(logootEngine.getIdTable());
+      System.out.println("WeissModule avg : " + result[0]);
+      System.out.println("WeissModule max : " + result[1]);
+      result = avgAndMaxBitSizeWeiss(logootEngine.getIdTable(), logootEngine.getBase());
+      System.out.println("WeissModule avg (bit) : " + result[0]);
+      System.out.println("WeissModule max (bit) : " + result[1]);
+    }
+  }
 
-		Injector injector;
-		LogootEngine logootEngine;
-		DocumentSimulator ds;
+  public static Float[] avgAndMaxSize(List<Positions> logootIdTable) {
+    BigInteger[] tempResult = { new BigInteger("0"), new BigInteger("0") };
+    Float[] result = { 0f, 0f };
+    for (Positions p : logootIdTable) {
+      tempResult[0] = tempResult[0].add(new BigInteger("" + p.size()));
+      if (p.size() > result[1]) {
+        result[1] = (float) p.size();
+      }
+    }
+    tempResult = tempResult[0].divideAndRemainder(new BigInteger("" + logootIdTable.size()));
+    result[0] = tempResult[0].intValue() + (float) tempResult[1].intValue() / logootIdTable.size();
+    return result;
+  }
 
-		/*********************************/
+  public static Float[] avgAndMaxBitSizeWeiss(List<Positions> logootIdTable, IBase base) {
+    BigInteger[] tempResult = { new BigInteger("0"), new BigInteger("0") };
+    Float[] result = { 0f, 0f };
+    for (Positions p : logootIdTable) {
+      tempResult[0] = tempResult[0].add(new BigInteger("" + (base.getBase(1).bitLength() - 1) * p.size()));
+      if ((base.getBase(1).bitLength() - 1) * p.size() > result[1]) {
+        result[1] = (float) (base.getBase(1).bitLength() - 1) * p.size();
+      }
+    }
+    tempResult = tempResult[0].divideAndRemainder(new BigInteger("" + logootIdTable.size()));
+    result[0] = tempResult[0].intValue() + (float) tempResult[1].intValue() / logootIdTable.size();
+    return result;
+  }
 
-		// injector = Guice.createInjector(new WeissModule());
-		// injector = Guice.createInjector(new GreedModule());
-		// injector = Guice.createInjector(new DoubleModule());
-		// injector = Guice.createInjector(new GreedDoubleModule());
-		 injector = Guice.createInjector(new GreedRandDoubleModule());
-
-		logootEngine = injector.getInstance(LogootEngine.class);
-		logootEngine.setReplica(new Replica());
-
-		BeginningGenerator bg = new BeginningGenerator();
-		EndingGenerator eg = new EndingGenerator();
-		ds = new DocumentSimulator(bg);
-
-		while (true) {
-			ds.setNbPatch(10000);
-			ds.run(logootEngine);
-			System.out.println(DocumentSimulator.getNbLine());
- 
-			if (DocumentSimulator.getNbLine() == 10000) {
-				ArrayList<Positions> idTable = (ArrayList<Positions>) logootEngine
-						.getIdTable();
-				HashMap<Positions, FakeListNode> spectrum = logootEngine
-						.getStrategyChoice().getSpectrum();
-				writeFile("3meow3", idTable, spectrum);
-			}
-		}
-
-	}
-
-	// / / / / ///// / / // / // / / // / / // / // / / /
-	public static Float[] avgAndMaxBitSize(List<Positions> logootIdTable,
-			IBase base) {
-		BigInteger[] tempResult = { BigInteger.ZERO, BigInteger.ZERO };
-		Float[] result = { 0f, 0f };
-		for (Positions p : logootIdTable) {
-			tempResult[0] = tempResult[0].add(BigInteger.valueOf(p.getD()
-					.bitLength()));
-
-			if (p.getD().bitLength() > result[1]) {
-				result[1] = (float) p.getD().bitLength();
-			}
-		}
-		tempResult = tempResult[0].divideAndRemainder(BigInteger
-				.valueOf(logootIdTable.size()));
-		result[0] = tempResult[0].intValue() + (float) tempResult[1].intValue()
-				/ logootIdTable.size();
-		return result;
-	}
-
-	// / / // // / / // / // / / / /// / // / // // / //
-	public static void writeFile(String name, ArrayList<Positions> idTable,
-			HashMap<Positions, FakeListNode> spectrum) {
-		String page = name.replace("/", "_").replace("\\", "_");
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter(page + ".dat"));
-			int docSize = idTable.size();
-			for (int i = 0; i < docSize; ++i) {
-				String lineS = new String();
-				lineS = spectrum.get(idTable.get(i)).getDate() + " "
-						+ idTable.get(i).getD().bitLength();
-				out.println(lineS);
-			}
-			out.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
+  public static Float[] avgAndMaxBitSizeDouble(List<Positions> logootIdTable, IBase base) {
+    BigInteger[] tempResult = { new BigInteger("0"), new BigInteger("0") };
+    Float[] result = { 0f, 0f };
+    for (Positions p : logootIdTable) {
+      Integer tempsum = 0;
+      for (int i = 0; i < p.size(); ++i) {
+        tempsum += base.getBase(i).bitLength();
+      }
+      tempResult[0] = tempResult[0].add(new BigInteger("" + tempsum));
+      if (tempsum > result[1]) {
+        result[1] = (float) tempsum;
+      }
+    }
+    tempResult = tempResult[0].divideAndRemainder(new BigInteger("" + logootIdTable.size()));
+    result[0] = tempResult[0].intValue() + (float) tempResult[1].intValue() / logootIdTable.size();
+    return result;
+  }
 }
