@@ -1,19 +1,10 @@
-/*******************************************************************************
- * This file is part of Pebble.
- * <p>
- * Copyright (c) 2014 by Mitchell Bösecke
- * <p>
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- ******************************************************************************/
 package com.mitchellbosecke.pebble.node.expression;
-
 import java.util.List;
+import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
 import java.util.Optional;
-
+import com.mitchellbosecke.pebble.error.ClassAccessException;
 import com.mitchellbosecke.pebble.attributes.DefaultAttributeResolver;
 import com.mitchellbosecke.pebble.attributes.ResolvedAttribute;
-import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RootAttributeNotFoundException;
 import com.mitchellbosecke.pebble.extension.DynamicAttributeProvider;
@@ -22,7 +13,6 @@ import com.mitchellbosecke.pebble.node.ArgumentsNode;
 import com.mitchellbosecke.pebble.node.PositionalArgumentNode;
 import com.mitchellbosecke.pebble.template.EvaluationContextImpl;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
-
 
 /**
  * Used to get an attribute from an object. It will look up attributes in the
@@ -33,68 +23,127 @@ import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
  * @author Mitchell
  */
 public class GetAttributeExpression implements Expression<Object> {
+  private final Expression<?> node;
 
-    private final Expression<?> node;
+  private final Expression<?> attributeNameExpression;
 
-    private final Expression<?> attributeNameExpression;
+  private final ArgumentsNode args;
 
-    private final ArgumentsNode args;
+  private final String filename;
 
-    private final String filename;
+  private final int lineNumber;
 
-    private final int lineNumber;
+  public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, String filename, int lineNumber) {
+    this(node, attributeNameExpression, null, filename, lineNumber);
+  }
 
-    public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, String filename,
-                                  int lineNumber) {
-        this(node, attributeNameExpression, null, filename, lineNumber);
-    }
+  public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, ArgumentsNode args, String filename, int lineNumber) {
+    this.node = node;
+    this.attributeNameExpression = attributeNameExpression;
+    this.args = args;
+    this.filename = filename;
+    this.lineNumber = lineNumber;
+  }
 
-    public GetAttributeExpression(Expression<?> node, Expression<?> attributeNameExpression, ArgumentsNode args,
-                                  String filename, int lineNumber) {
+  @Override public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
+    final Object object = this.node.evaluate(self, context);
+    final Object attributeNameValue = this.attributeNameExpression.evaluate(self, context);
+    final String attributeName = String.valueOf(attributeNameValue);
+    final Object[] argumentValues = this.getArgumentValues(self, context);
+    if (object == null && context.isStrictVariables()) {
+      if (
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+      this.node instanceof ContextVariableExpression
+=======
+      object instanceof DynamicAttributeProvider
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+      ) {
+        final 
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+        String
+=======
+        DynamicAttributeProvider
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+         
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+        rootPropertyName = ((ContextVariableExpression) this.node).getName()
+=======
+        dynamicAttributeProvider = (DynamicAttributeProvider) object
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+        ;
 
-        this.node = node;
-        this.attributeNameExpression = attributeNameExpression;
-        this.args = args;
-        this.filename = filename;
-        this.lineNumber = lineNumber;
-    }
-
-    @Override
-    public Object evaluate(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
-        final Object object = this.node.evaluate(self, context);
-        final Object attributeNameValue = this.attributeNameExpression.evaluate(self, context);
-        final String attributeName = String.valueOf(attributeNameValue);
-        final Object[] argumentValues = this.getArgumentValues(self, context);
-
-        if (object == null && context.isStrictVariables()) {
-            if (this.node instanceof ContextVariableExpression) {
-                final String rootPropertyName = ((ContextVariableExpression) this.node).getName();
-                throw new RootAttributeNotFoundException(null, String.format(
-                        "Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.",
-                        rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
-            } else {
-                throw new RootAttributeNotFoundException(null,
-                        "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
-            }
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+        throw new RootAttributeNotFoundException(null, String.format("Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.", rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+=======
+        if (dynamicAttributeProvider.canProvideDynamicAttribute(attributeName)) {
+          return dynamicAttributeProvider.getDynamicAttribute(attributeNameValue, argumentValues);
         }
-        
-        Optional<ResolvedAttribute> resolvedAttribute = DefaultAttributeResolver.resolve(context.getExtensionRegistry().getAttributeResolver(), object, attributeNameValue, argumentValues, context.isStrictVariables(), filename, this.lineNumber);
-        
-        if (resolvedAttribute.isPresent()) {
-            return resolvedAttribute.get().evaluate();
-        } 
-        
-        if (context.isStrictVariables()) {
-            throw new AttributeNotFoundException(null, String.format(
-                    "Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.",
-                    attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
-        }
-
-        return null;
-
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+      } else {
+        throw new RootAttributeNotFoundException(null, "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
+      }
     }
 
-    /**
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+    Optional<ResolvedAttribute> resolvedAttribute = DefaultAttributeResolver.resolve(context.getExtensionRegistry().getAttributeResolver(), object, attributeNameValue, argumentValues, context.isStrictVariables(), filename, this.lineNumber);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+<<<<<<< /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/left.java
+    if (resolvedAttribute.isPresent()) {
+      return resolvedAttribute.get().evaluate();
+    }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+    if (context.isStrictVariables()) {
+      throw new AttributeNotFoundException(null, String.format("Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.", attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
+    } else {
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      if (context.isStrictVariables()) {
+        if (object == null) {
+          if (this.node instanceof ContextVariableExpression) {
+            final String rootPropertyName = ((ContextVariableExpression) this.node).getName();
+            throw new RootAttributeNotFoundException(null, String.format("Root attribute [%s] does not exist or can not be accessed and strict variables is set to true.", rootPropertyName), rootPropertyName, this.lineNumber, this.filename);
+          } else {
+            throw new RootAttributeNotFoundException(null, "Attempt to get attribute of null object and strict variables is set to true.", attributeName, this.lineNumber, this.filename);
+          }
+        } else {
+          if (attributeName.equals("class") || attributeName.equals("getClass")) {
+            throw new ClassAccessException(this.lineNumber, this.filename);
+          } else {
+            throw new AttributeNotFoundException(null, String.format("Attribute [%s] of [%s] does not exist or can not be accessed and strict variables is set to true.", attributeName, object.getClass().getName()), attributeName, this.lineNumber, this.filename);
+          }
+        }
+      }
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+
+    }
+    return null;
+  }
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  private Object getObjectFromMap(Map<?, ?> object, Object attributeNameValue) throws PebbleException {
+    if (object.isEmpty()) {
+      return null;
+    }
+    if (attributeNameValue != null && Number.class.isAssignableFrom(attributeNameValue.getClass())) {
+      Number keyAsNumber = (Number) attributeNameValue;
+      Class<?> keyClass = object.keySet().iterator().next().getClass();
+      Object key = this.cast(keyAsNumber, keyClass);
+      return object.get(key);
+    }
+    return object.get(attributeNameValue);
+  }
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
+
+
+  /**
      * Fully evaluates the individual arguments.
      *
      * @param self
@@ -102,47 +151,83 @@ public class GetAttributeExpression implements Expression<Object> {
      * @return
      * @throws PebbleException
      */
-    private Object[] getArgumentValues(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
+  private Object[] getArgumentValues(PebbleTemplateImpl self, EvaluationContextImpl context) throws PebbleException {
+    Object[] argumentValues;
+    if (this.args == null) {
+      argumentValues = null;
+    } else {
+      List<PositionalArgumentNode> args = this.args.getPositionalArgs();
+      argumentValues = new Object[args.size()];
+      int index = 0;
+      for (PositionalArgumentNode arg : args) {
+        Object argumentValue = arg.getValueExpression().evaluate(self, context);
+        argumentValues[index] = argumentValue;
+        index++;
+      }
+    }
+    return argumentValues;
+  }
 
-        Object[] argumentValues;
 
-        if (this.args == null) {
-            argumentValues = null; //new Object[0];
-        } else {
-            List<PositionalArgumentNode> args = this.args.getPositionalArgs();
-
-            argumentValues = new Object[args.size()];
-
-            int index = 0;
-            for (PositionalArgumentNode arg : args) {
-                Object argumentValue = arg.getValueExpression().evaluate(self, context);
-                argumentValues[index] = argumentValue;
-                index++;
-            }
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+     * Finds an appropriate method by comparing if parameter types are
+     * compatible. This is more relaxed than class.getMethod.
+     *
+     * @param clazz
+     * @param name
+     * @param requiredTypes
+     * @return
+     */
+  private Method findMethod(Class<?> clazz, String name, Class<?>[] requiredTypes) {
+    if (name.equals("getClass")) {
+      return null;
+    }
+    Method result = null;
+    Method[] candidates = clazz.getMethods();
+    for (Method candidate : candidates) {
+      if (!candidate.getName().equalsIgnoreCase(name)) {
+        continue;
+      }
+      Class<?>[] types = candidate.getParameterTypes();
+      if (types.length != requiredTypes.length) {
+        continue;
+      }
+      boolean compatibleTypes = true;
+      for (int i = 0; i < types.length; i++) {
+        if (requiredTypes[i] != null && !this.widen(types[i]).isAssignableFrom(requiredTypes[i])) {
+          compatibleTypes = false;
+          break;
         }
-        return argumentValues;
+      }
+      if (compatibleTypes) {
+        result = candidate;
+        break;
+      }
     }
+    return result;
+  }
+>>>>>>> /usr/src/app/output/mbosecke/pebble/c8c30f79bfa1849d04e41ed14402ddc2f2746fe9/src/main/java/com/mitchellbosecke/pebble/node/expression/GetAttributeExpression.java/right.java
 
-    @Override
-    public void accept(NodeVisitor visitor) {
-        visitor.visit(this);
-    }
 
-    public Expression<?> getNode() {
-        return this.node;
-    }
+  @Override public void accept(NodeVisitor visitor) {
+    visitor.visit(this);
+  }
 
-    public Expression<?> getAttributeNameExpression() {
-        return this.attributeNameExpression;
-    }
+  public Expression<?> getNode() {
+    return this.node;
+  }
 
-    public ArgumentsNode getArgumentsNode() {
-        return this.args;
-    }
+  public Expression<?> getAttributeNameExpression() {
+    return this.attributeNameExpression;
+  }
 
-    @Override
-    public int getLineNumber() {
-        return this.lineNumber;
-    }
+  public ArgumentsNode getArgumentsNode() {
+    return this.args;
+  }
 
+  @Override public int getLineNumber() {
+    return this.lineNumber;
+  }
 }
