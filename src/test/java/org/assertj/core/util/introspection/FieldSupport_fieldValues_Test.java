@@ -45,6 +45,7 @@ public class FieldSupport_fieldValues_Test {
 	yoda = new Employee(1L, new Name("Yoda"), 800);
 	luke = new Employee(2L, new Name("Luke", "Skywalker"), 26);
 	employees = newArrayList(yoda, luke);
+	FieldSupport.setAllowExtractingPrivateFields(true);
   }
 
   @Rule

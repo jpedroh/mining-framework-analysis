@@ -8,17 +8,18 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * Copyright 2012-2014 the original author or authors.
+ * Copyright 2012-2015 the original author or authors.
  */
 package org.assertj.core.api;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.assertj.core.api.BDDAssertions.thenExceptionThrownBy;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,9 +33,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Before;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -299,14 +301,14 @@ public class BDDAssertions_then_Test {
   @Test
   public void thenExceptionThrownBy_of_Callable_should_delegate_to_assertThatExceptionThrownBy() {
 	// GIVEN
-	ThrowingCallable actual = () -> { throw new Exception("Boom !"); };
+	Callable<Void> actual = () -> { throw new Exception("Boom !"); };
 	// WHEN
-	thenThrownBy(actual);
+	thenExceptionThrownBy(actual);
 	// THEN
 	verifyStatic();
-	assertThatThrownBy(actual);
+	assertThatExceptionThrownBy(actual);
   }
-  
+
   @Test
   public void then_of_Optional_should_delegate_to_assertThat() {
 	// GIVEN
@@ -317,7 +319,7 @@ public class BDDAssertions_then_Test {
 	verifyStatic();
 	assertThat(actual);
   }
-  
+
   @Test
   public void then_of_BigDecimal_should_delegate_to_assertThat() {
 	// GIVEN
@@ -328,7 +330,7 @@ public class BDDAssertions_then_Test {
 	verifyStatic();
 	assertThat(actual);
   }
-  
+
   @Test
   public void then_of_boolean_should_delegate_to_assertThat() {
 	// GIVEN
@@ -339,7 +341,7 @@ public class BDDAssertions_then_Test {
 	verifyStatic();
 	assertThat(actual);
   }
-  
+
   @Test
   public void then_of_Boolean_should_delegate_to_assertThat() {
 	// GIVEN
@@ -462,6 +464,37 @@ public class BDDAssertions_then_Test {
   }
 
   @Test
+  public void should_delegate_to_assert_comparable() throws Exception {
+
+    class IntBox implements Comparable<IntBox> {
+
+      private final Integer number;
+
+      IntBox(Integer number) {
+        this.number = number;
+      }
+
+      @Override
+      public int compareTo(IntBox o) {
+        return number.compareTo(o.number);
+      }
+    }
+
+    then(new IntBox(1)).isLessThan(new IntBox(2));
+  }
+
+  @Test
+  public void should_build_ThrowableAssert_with_throwable_thrown() {
+    thenThrownBy(new ThrowingCallable() {
+      @Override
+      public void call() throws Throwable {
+        throw new Throwable("something was wrong");
+      }
+    }).isInstanceOf(Throwable.class)
+      .hasMessage("something was wrong");
+  }
+
+  @Test
   public void then_of_Map_should_delegate_to_assertThat() {
 	// GIVEN
 	Map<String, String> actual = new HashMap<String, String>();
@@ -516,13 +549,4 @@ public class BDDAssertions_then_Test {
 	assertThat(actual);
   }
 
-  public void should_build_ThrowableAssert_with_throwable_thrown() {
-    thenThrownBy(new ThrowingCallable() {
-      @Override
-      public void call() throws Throwable {
-        throw new Throwable("something was wrong");
-      }
-    }).isInstanceOf(Throwable.class)
-      .hasMessage("something was wrong");
-  }
 }

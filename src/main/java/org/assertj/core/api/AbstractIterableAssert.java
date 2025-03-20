@@ -8,21 +8,12 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * Copyright 2012-2014 the original author or authors.
+ * Copyright 2012-2015 the original author or authors.
  */
 package org.assertj.core.api;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.assertj.core.extractor.Extractors.byName;
-import static org.assertj.core.extractor.Extractors.resultOf;
-import static org.assertj.core.util.Iterables.toArray;
-import static org.assertj.core.util.Lists.newArrayList;
-
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
 import java.util.function.Function;
 
 import org.assertj.core.api.iterable.Extractor;
@@ -1008,23 +999,7 @@ public abstract class AbstractIterableAssert<S extends AbstractIterableAssert<S,
   }
 
   /**
-   * Same as {@link #containsExactly(Object[])} but handle the {@link Iterable} to array conversion. Same semantic as
-   * {@link #containsExactly(Object...)} : verifies that actual contains all the elements of the given iterable and
-   * nothing else <b>in the same order</b>.
-   * <p/>
-   * Example :
-   * 
-   * <pre><code class='java'>
-   * Iterable&lt;Ring&gt; elvesRings = newArrayList(vilya, nenya, narya);
-   * 
-   * // assertion will pass
-   * assertThat(elvesRings).containsExactly(newLinkedList(vilya, nenya, narya));
-   * 
-   * // assertion will fail as actual and expected orders differ.
-   * assertThat(elvesRings).containsExactly(newLinkedList(nenya, vilya, narya));
-   * </code></pre>
-   *
-   * @param iterable the given {@code Iterable} we will get elements from.
+   * {@inheritDoc}
    */
   @Override
   public S containsExactlyElementsOf(Iterable<? extends T> iterable) {

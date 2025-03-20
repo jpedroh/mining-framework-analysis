@@ -8,7 +8,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * Copyright 2012-2014 the original author or authors.
+ * Copyright 2012-2015 the original author or authors.
  */
 package org.assertj.core.api;
 
@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 /**
@@ -197,6 +196,9 @@ public class BDDAssertions extends Assertions {
    */
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return assertThat(actual);
+  }
+  public static <T> AbstractObjectAssert<?, T> then(T actual) {
+	return assertThat(actual);
   }
 
   /**
@@ -378,9 +380,6 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> then(T actual) {
-	return assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectArrayAssert}</code>.
@@ -471,7 +470,76 @@ public class BDDAssertions extends Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> then(Throwable actual) {
 	return assertThat(actual);
   }
-  
+
+  /**
+   * Creates a new instance of <code>{@link ThrowableAssert}</code> with the exception thrown by the given
+   * {@link Callable} execution.
+   * <p>
+   * Example with lambda:
+   * 
+   * <pre><code class='java'>
+   * Jedi yoda = new Jedi("Yoda", "Green");
+   * thenExceptionThrownBy(() -> { throw new Exception(yoda + " is no Sith"); })
+   *                      .isInstanceOf(Exception.class)
+   *                      .hasMessage(yoda + " is no Sith");
+   * </code></pre>
+   * 
+   * Example with {@link Callable}:
+   * 
+   * <pre><code class='java'>
+   * thenExceptionThrownBy(new Callable&lt;Void&gt;()
+   * 
+   *   {@literal @}Override
+   *   public Void call() throws Exception {
+   *     throw new Exception("something was wrong");
+   *   }
+   *   
+   * }).isInstanceOf(Exception.class)
+   *   .hasMessage("something was wrong");
+   * </code></pre>
+   *
+   * @param callable the callable whose execution throws an exception we want to check.
+   * @return the created {@link ThrowableAssert}.
+   */
+  public static <V> ThrowableAssert thenExceptionThrownBy(Callable<V> callable) {
+	return assertThatExceptionThrownBy(callable);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalDateAssert<?> then(LocalDate actual) {
+	return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalDateTimeAssert<?> then(LocalDateTime actual) {
+	return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ZonedDateTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractZonedDateTimeAssert<?> then(ZonedDateTime actual) {
+	return assertThat(actual);
+  }
+  /**
+   * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  public static AbstractLocalTimeAssert<?> then(LocalTime actual) {
+	return assertThat(actual);
+  }
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    * 
@@ -510,45 +578,6 @@ public class BDDAssertions extends Assertions {
     return assertThatThrownBy(shouldRaiseThrowable);
   }
 
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalDateAssert<?> then(LocalDate actual) {
-	return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalDateTimeAssert<?> then(LocalDateTime actual) {
-	return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link org.assertj.core.api.ZonedDateTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractZonedDateTimeAssert<?> then(ZonedDateTime actual) {
-	return assertThat(actual);
-  }
-
-  /**
-   * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
-  public static AbstractLocalTimeAssert<?> then(LocalTime actual) {
-	return assertThat(actual);
-  }
   
 
   /**

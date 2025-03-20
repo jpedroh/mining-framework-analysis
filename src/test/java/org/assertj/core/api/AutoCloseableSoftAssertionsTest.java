@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.data.MapEntry;
 import org.assertj.core.test.Maps;
 import org.assertj.core.util.Lists;
@@ -128,9 +128,9 @@ public class AutoCloseableSoftAssertionsTest {
 	  final IllegalArgumentException illegalArgumentException = new IllegalArgumentException
 		  ("IllegalArgumentException message");
 	  softly.assertThat(illegalArgumentException).hasMessage("NullPointerException message");
-	  softly.assertThatThrownBy(new ThrowingCallable() {
+	  softly.assertThatExceptionThrownBy(new Callable<Void>() {
 		@Override
-		public void call() throws Exception {
+		public Void call() throws Exception {
 		  throw new Exception("something was wrong");
 		}
 

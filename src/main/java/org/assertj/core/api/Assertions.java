@@ -8,7 +8,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * Copyright 2012-2014 the original author or authors.
+ * Copyright 2012-2015 the original author or authors.
  */
 package org.assertj.core.api;
 
@@ -206,6 +206,12 @@ public class Assertions {
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
     return new GenericComparableAssert<>(actual);
   }
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
 
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
@@ -277,7 +283,8 @@ public class Assertions {
    * @param actual the path to test
    * @return the created assertion object
    */
-  public static AbstractPathAssert<?> assertThat(Path actual)  {
+  public static AbstractPathAssert<?> assertThat(Path actual)
+  {
     return new PathAssert(actual);
   }
 
@@ -397,9 +404,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
-    return new ObjectAssert<>(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -458,9 +462,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
@@ -614,8 +615,23 @@ public class Assertions {
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    * 
    * <p>
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/main/java/org/assertj/core/api/Assertions.java/left.java
+   * Example with lambda:
+   *  
+   * <pre><code class='java'>
+   * Jedi yoda = new Jedi("Yoda", "Green");
+   * assertThatExceptionThrownBy(() -> { throw new Exception(yoda + " is no Sith"); })
+   *                           .isInstanceOf(Exception.class)
+   *                           .hasMessage(yoda + " is no Sith");
+   * </code></pre>
+   *  
+   * Example with {@link Callable}:
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/main/java/org/assertj/core/api/Assertions.java/base.java
+   * Example :
+=======
    * Java 8 example :
    * </p>
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/main/java/org/assertj/core/api/Assertions.java/right.java
    * 
    * <pre><code class='java'>
    *  {@literal @}Test

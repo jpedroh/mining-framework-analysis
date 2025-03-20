@@ -12,27 +12,31 @@
  */
 package org.assertj.core.api;
 
-import static java.util.Arrays.asList;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.shouldHaveThrown;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.util.Dates.parseDatetime;
 import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.assertj.core.data.MapEntry;
+import org.assertj.core.test.Maps;
+import org.assertj.core.util.Lists;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.shouldHaveThrown;
+import static org.assertj.core.api.Assertions.tuple;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.iterable.Extractor;
-import org.assertj.core.data.MapEntry;
 import org.assertj.core.test.CartoonCharacter;
-import org.assertj.core.test.Maps;
 import org.assertj.core.test.Name;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -186,12 +190,28 @@ public class SoftAssertionsTest {
         }
 
       }).hasMessage("something was good");
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/left.java
+      softly.assertThat(Optional.of("bad option")).isEqualTo(Optional.of("good option"));
+      softly.assertThat(LocalDate.of(2015, 1, 1)).isEqualTo(LocalDate.of(2015, 1, 2));
+      softly.assertThat(LocalDateTime.of(2015, 1, 1, 23, 59, 59)).isEqualTo(LocalDateTime.of(2015, 1, 1, 23, 59, 0));
+      softly.assertThat(ZonedDateTime.of(2015, 1, 1, 23, 59, 59, 0, UTC)).isEqualTo(ZonedDateTime.of(2015, 1, 1, 23,
+    	                                                                                             59, 0, 0, UTC));
+      softly.assertThat(LocalTime.of(23, 59, 59)).isEqualTo(LocalTime.of(23, 59, 0));
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/base.java
+=======
       softly.assertThat(Maps.mapOf(MapEntry.entry("54", "55"))).contains(MapEntry.entry("1", "2"));
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/right.java
       softly.assertAll();
       fail("Should not reach here");
     } catch (SoftAssertionError e) {
       List<String> errors = e.getErrors();
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/left.java
+      assertThat(errors).hasSize(44);
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/base.java
+      assertThat(errors).hasSize(39);
+=======
       assertThat(errors).hasSize(40);
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/right.java
       assertThat(errors.get(0)).isEqualTo("expected:<[1]> but was:<[0]>");
 
       assertThat(errors.get(1)).isEqualTo("expected:<[tru]e> but was:<[fals]e>");
@@ -258,6 +278,20 @@ public class SoftAssertionsTest {
                                            + "but was:\n"
                                            + " <\"IllegalArgumentException message\">");
       assertThat(errors.get(38)).isEqualTo("\nExpecting message:\n"
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/left.java
+    	                                   + " <\"something was good\">\n"
+    	                                   + "but was:\n"
+    	                                   + " <\"something was wrong\">");
+      assertThat(errors.get(39)).isEqualTo("expected:<Optional[[goo]d option]> but was:<Optional[[ba]d option]>");
+      assertThat(errors.get(40)).isEqualTo("expected:<2015-01-0[2]> but was:<2015-01-0[1]>");
+      assertThat(errors.get(41)).isEqualTo("expected:<2015-01-01T23:59[]> but was:<2015-01-01T23:59[:59]>");
+      assertThat(errors.get(42)).isEqualTo("expected:<2015-01-01T23:59[]Z> but was:<2015-01-01T23:59[:59]Z>");
+      assertThat(errors.get(43)).isEqualTo("expected:<23:59[]> but was:<23:59[:59]>");
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/base.java
+    	                                   + " <\"something was good\">\n"
+    	                                   + "but was:\n"
+    	                                   + " <\"something was wrong\">");
+=======
                                            + " <\"something was good\">\n"
                                            + "but was:\n"
                                            + " <\"something was wrong\">");
@@ -267,8 +301,9 @@ public class SoftAssertionsTest {
                                            + " <[MapEntry[key='1', value='2']]>\n"
                                            + "but could not find:\n"
                                            + " <[MapEntry[key='1', value='2']]>\n");
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/dd0b3c1b29a139edec4e06194f2d1d0e7cfacaff/src/test/java/org/assertj/core/api/SoftAssertionsTest.java/right.java
     }
-  }  
+  }
 
   @Test
   public void should_pass_when_using_extracting_with_list() {
