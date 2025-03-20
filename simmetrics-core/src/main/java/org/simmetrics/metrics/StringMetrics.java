@@ -36,6 +36,7 @@ import org.simmetrics.builders.StringMetricBuilder;
 import org.simmetrics.simplifiers.Simplifier;
 import org.simmetrics.simplifiers.Soundex;
 import org.simmetrics.tokenizers.Tokenizer;
+import org.simmetrics.tokenizers.Tokenizers;
 
 import com.google.common.collect.Multiset;
 
