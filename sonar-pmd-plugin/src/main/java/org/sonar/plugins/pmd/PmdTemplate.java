@@ -19,6 +19,7 @@
  */
 package org.sonar.plugins.pmd;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -96,7 +97,13 @@ public class PmdTemplate {
     }
 
     public void process(InputFile file, RuleSets rulesets, RuleContext ruleContext) {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/left.java
+        ruleContext.setSourceCodeFile(new File(file.uri().toString()));
+||||||| /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/base.java
+        ruleContext.setSourceCodeFilename(file.uri().toString());
+=======
         ruleContext.setSourceCodeFile(Paths.get(file.uri()).toFile());
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/main/java/org/sonar/plugins/pmd/PmdTemplate.java/right.java
 
         try (InputStream inputStream = file.inputStream()) {
             processor.processSourceCode(inputStream, rulesets, ruleContext);

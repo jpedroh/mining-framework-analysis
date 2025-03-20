@@ -29,6 +29,7 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -67,7 +68,13 @@ class PmdTemplateTest {
 
         new PmdTemplate(configuration, processor).process(inputFile, rulesets, ruleContext);
 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/test/java/org/sonar/plugins/pmd/PmdTemplateTest.java/left.java
+        verify(ruleContext).setSourceCodeFile(new File(inputFile.uri().toString()));
+||||||| /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/test/java/org/sonar/plugins/pmd/PmdTemplateTest.java/base.java
+        verify(ruleContext).setSourceCodeFilename(inputFile.uri().toString());
+=======
         verify(ruleContext).setSourceCodeFile(Paths.get(inputFile.uri()).toFile());
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-pmd/2301c0627b5ab5276acb103f933e68d2ab6ca3be/sonar-pmd-plugin/src/test/java/org/sonar/plugins/pmd/PmdTemplateTest.java/right.java
         verify(processor).processSourceCode(any(InputStream.class), eq(rulesets), eq(ruleContext));
     }
 
