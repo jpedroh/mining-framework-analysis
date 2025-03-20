@@ -5,7 +5,6 @@ package com.fincatto.documentofiscal.nfe400.webservices.consultacadastro;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Stub;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
