@@ -1,23 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldHaveValue.shouldHaveValue;
 import static org.assertj.core.error.ShouldNotContainValue.shouldNotContainValue;
-
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
-
 import org.assertj.core.data.Offset;
 import org.assertj.core.data.Percentage;
 import org.assertj.core.internal.Comparables;
@@ -27,12 +12,9 @@ import org.assertj.core.util.CheckReturnValue;
 import org.assertj.core.util.VisibleForTesting;
 
 public class AtomicLongAssert extends AbstractAssert<AtomicLongAssert, AtomicLong> {
+  @VisibleForTesting Comparables comparables = new Comparables();
 
-  @VisibleForTesting
-  Comparables comparables = new Comparables();
-
-  @VisibleForTesting
-  Longs longs = Longs.instance();
+  @VisibleForTesting Longs longs = Longs.instance();
 
   public AtomicLongAssert(AtomicLong actual) {
     super(actual, AtomicLongAssert.class);
@@ -288,30 +270,18 @@ public class AtomicLongAssert extends AbstractAssert<AtomicLongAssert, AtomicLon
   }
 
   /**
-   * Verifies that the actual atomic has a value close to the given one within the given offset.
-   * <p>
-   * When <i>abs(actual - expected) == offset value</i>, the assertion: 
-   * <ul>
-   * <li><b>succeeds</b> when using {@link Assertions#within(Long)} or {@link Assertions#offset(Long)}</li>
-   * <li><b>fails</b> when using {@link Assertions#byLessThan(Long)} or {@link Offset#strictOffset(Number)}</li>
-   * </ul>
-   * <p>
-   * <b>Breaking change</b> since 2.9.0/3.9.0: using {@link Assertions#byLessThan(Long)} implies a <b>strict</b> comparison, 
-   * use {@link Assertions#within(Long)} to get the old behavior. 
+   * Verifies that the actual atomic has a value close to the given one within the given offset.<br>
+   * If difference is equal to the offset value, assertion is considered valid.
    * <p>
    * Example with Long:
    * <pre><code class='java'> // assertions will pass:
-   * assertThat(new AtomicLong(5)).hasValueCloseTo(7L, within(3L))
-   *                              .hasValueCloseTo(7L, byLessThan(3L));
+   * assertThat(new AtomicLong(5)).hasValueCloseTo(7, offset(3));
    *
-   * // if the difference is exactly equals to the offset, it's ok ...
-   * assertThat(new AtomicLong(5)).hasValueCloseTo(7L, within(2L));
-   * // ... but not with byLessThan which implies a strict comparison
-   * assertThat(new AtomicLong(5)).hasValueCloseTo(7L, byLessThan(2L)); // FAIL
+   * // if the difference is exactly equals to the offset, it's ok
+   * assertThat(new AtomicLong(5)).hasValueCloseTo(7, offset(2));
    *
    * // assertion will fail
-   * assertThat(new AtomicLong(5)).hasValueCloseTo(7L, within(1L));
-   * assertThat(new AtomicLong(5)).hasValueCloseTo(7L, byLessThan(1L));</code></pre>
+   * assertThat(new AtomicLong(5)).hasValueCloseTo(7, offset(1));</code></pre>
    *
    * @param expected the given number to compare the actual value to.
    * @param offset the given allowed {@link Offset}.
@@ -379,20 +349,15 @@ public class AtomicLongAssert extends AbstractAssert<AtomicLongAssert, AtomicLon
     return myself;
   }
 
-  @Override
-  @CheckReturnValue
-  public AtomicLongAssert usingComparator(Comparator<? super AtomicLong> customComparator) {
+  @Override @CheckReturnValue public AtomicLongAssert usingComparator(Comparator<? super AtomicLong> customComparator) {
     super.usingComparator(customComparator);
     longs = new Longs(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  @CheckReturnValue
-  public AtomicLongAssert usingDefaultComparator() {
+  @Override @CheckReturnValue public AtomicLongAssert usingDefaultComparator() {
     super.usingDefaultComparator();
     longs = Longs.instance();
     return myself;
   }
-
 }

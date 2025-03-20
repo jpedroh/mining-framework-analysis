@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.math.BigInteger;
 import java.util.Comparator;
-
 import org.assertj.core.data.Offset;
 import org.assertj.core.data.Percentage;
 import org.assertj.core.internal.BigIntegers;
@@ -27,11 +13,8 @@ import org.assertj.core.util.VisibleForTesting;
  *
  * @since 2.7.0 / 3.7.0
  */
-public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF>> extends
-    AbstractComparableAssert<SELF, BigInteger> implements NumberAssert<SELF, BigInteger> {
-
-  @VisibleForTesting
-  BigIntegers bigIntegers = BigIntegers.instance();
+public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF>> extends AbstractComparableAssert<SELF, BigInteger> implements NumberAssert<SELF, BigInteger> {
+  @VisibleForTesting BigIntegers bigIntegers = BigIntegers.instance();
 
   public AbstractBigIntegerAssert(BigInteger actual, Class<?> selfType) {
     super(actual, selfType);
@@ -50,8 +33,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isZero() {
+  @Override public SELF isZero() {
     bigIntegers.assertIsZero(info, actual);
     return myself;
   }
@@ -69,8 +51,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNotZero() {
+  @Override public SELF isNotZero() {
     bigIntegers.assertIsNotZero(info, actual);
     return myself;
   }
@@ -88,8 +69,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isOne() {
+  @Override public SELF isOne() {
     bigIntegers.assertIsOne(info, actual);
     return myself;
   }
@@ -107,8 +87,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isPositive() {
+  @Override public SELF isPositive() {
     bigIntegers.assertIsPositive(info, actual);
     return myself;
   }
@@ -126,8 +105,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNegative() {
+  @Override public SELF isNegative() {
     bigIntegers.assertIsNegative(info, actual);
     return myself;
   }
@@ -145,8 +123,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNotNegative() {
+  @Override public SELF isNotNegative() {
     bigIntegers.assertIsNotNegative(info, actual);
     return myself;
   }
@@ -164,43 +141,29 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNotPositive() {
+  @Override public SELF isNotPositive() {
     bigIntegers.assertIsNotPositive(info, actual);
     return myself;
   }
 
   /**
    * Verifies that the actual number is close to the given one within the given offset.<br>
-   * <p>
-   * When <i>abs(actual - expected) == offset value</i>, the assertion: 
-   * <ul>
-   * <li><b>succeeds</b> when using {@link Assertions#within(BigInteger)}</li>
-   * <li><b>fails</b> when using {@link Assertions#byLessThan(BigInteger)} or {@link Offset#strictOffset(Number)}</li>
-   * </ul>
-   * <p>
-   * <b>Breaking change</b> since 2.9.0/3.9.0: using {@link Assertions#byLessThan(BigInteger)} implies a <b>strict</b> comparison, 
-   * use {@link Assertions#within(BigInteger)} to get the old behavior. 
-   * <p>
+   * If difference is equal to offset value, assertion is considered valid.
    * <p>
    * Example:
    * <pre><code class='java'> import static org.assertj.core.api.Assertions.within;
    *  
-   * final BigInteger eight = new BigInteger("8");
-   * final BigInteger ten =  BigInteger.TEN;
+   * final BigInteger actual = new BigInteger("8");
+   * final BigInteger other =  new BigInteger("10");
    *
    * // valid assertion
-   * assertThat(eight).isCloseTo(ten, within(new BigInteger("3")));
-   * assertThat(eight).isCloseTo(ten, byLessThan(new BigInteger("3")));
+   * assertThat(actual).isCloseTo(other, within(new BigInteger("3")));
    *
    * // if difference is exactly equals to given offset value, it's ok
-   * assertThat(eight).isCloseTo(ten, within(new BigInteger("2")));
-   * // ... but not with byLessThan which implies a strict comparison
-   * assertThat(eight).isCloseTo(ten, byLessThan(new BigInteger("2")));
+   * assertThat(actual).isCloseTo(other, within(new BigInteger("2")));
    *
-   * // assertions will fail:
-   * assertThat(eight).isCloseTo(ten, within(BigInteger.ONE));
-   * assertThat(eight).isCloseTo(ten, byLessThan(BigInteger.ONE));</code></pre>
+   * // but if difference is greater than given offset value assertion will fail :
+   * assertThat(actual).isCloseTo(other, within(new BigInteger("1")));</code></pre>
    *
    * @param expected the given number to compare the actual value to.
    * @param offset the given positive offset.
@@ -211,42 +174,29 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    *
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isCloseTo(BigInteger expected, Offset<BigInteger> offset) {
+  @Override public SELF isCloseTo(BigInteger expected, Offset<BigInteger> offset) {
     bigIntegers.assertIsCloseTo(info, actual, expected, offset);
     return myself;
   }
 
   /**
    * Verifies that the actual number is not close to the given one by less than the given offset.<br>
+   * If the difference is equal to the offset value, the assertion fails.
    * <p>
-   * When <i>abs(actual - expected) == offset value</i>, the assertion: 
-   * <ul>
-   * <li><b>succeeds</b> when using {@link Assertions#byLessThan(BigInteger)} or {@link Offset#strictOffset(Number)}</li>
-   * <li><b>fails</b> when using {@link Assertions#within(BigInteger)}</li>
-   * </ul>
-   * <p>
-   * <b>Breaking change</b> since 2.9.0/3.9.0: using {@link Assertions#byLessThan(BigInteger)} implies a <b>strict</b> comparison, 
-   * use {@link Assertions#within(BigInteger)} to get the old behavior. 
-   * <p>
-   * Examples:
+   * Example:
    * <pre><code class='java'> import static org.assertj.core.api.Assertions.byLessThan;
    *  
-   * final BigInteger eight = new BigInteger("8");
-   * final BigInteger ten =  BigInteger.TEN;
+   * final BigInteger actual = new BigInteger("8");
+   * final BigInteger other =  new BigInteger("10");
    *
    * // this assertion succeeds
-   * assertThat(eight).isNotCloseTo(ten, byLessThan(BigInteger.ONE));
-   * assertThat(eight).isNotCloseTo(ten, within(BigInteger.ONE));
+   * assertThat(actual).isNotCloseTo(other, byLessThan(new BigInteger("1")));
    *
-   * // diff == offset but isNotCloseTo succeeds as we use byLessThan
-   * assertThat(eight).isNotCloseTo(ten, byLessThan(new BigInteger("2")));
+   * // the assertion fails if the difference is equal to the given offset value
+   * assertThat(actual).isNotCloseTo(other, byLessThan(new BigInteger("2")));
    *
-   * // the assertion fails as the difference is equal to the offset value and we use 'within'
-   * assertThat(eight).isNotCloseTo(ten, within(new BigInteger("2")));
    * // the assertion fails if the difference is greater than the given offset value
-   * assertThat(eight).isNotCloseTo(ten, within(new BigInteger("3")));
-   * assertThat(eight).isNotCloseTo(ten, byLessThan(new BigInteger("3")));</code></pre>
+   * assertThat(actual).isNotCloseTo(other, byLessThan(new BigInteger("3")));</code></pre>
    *
    * @param expected the given number to compare the actual value to.
    * @param offset the given positive offset.
@@ -258,8 +208,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    *
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNotCloseTo(BigInteger expected, Offset<BigInteger> offset) {
+  @Override public SELF isNotCloseTo(BigInteger expected, Offset<BigInteger> offset) {
     bigIntegers.assertIsNotCloseTo(info, actual, expected, offset);
     return myself;
   }
@@ -289,8 +238,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    *
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isCloseTo(BigInteger expected, Percentage percentage) {
+  @Override public SELF isCloseTo(BigInteger expected, Percentage percentage) {
     bigIntegers.assertIsCloseToPercentage(info, actual, expected, percentage);
     return myself;
   }
@@ -322,8 +270,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    *
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isNotCloseTo(BigInteger expected, Percentage percentage) {
+  @Override public SELF isNotCloseTo(BigInteger expected, Percentage percentage) {
     bigIntegers.assertIsNotCloseToPercentage(info, actual, expected, percentage);
     return myself;
   }
@@ -343,8 +290,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isBetween(BigInteger start, BigInteger end) {
+  @Override public SELF isBetween(BigInteger start, BigInteger end) {
     bigIntegers.assertIsBetween(info, actual, start, end);
     return myself;
   }
@@ -364,8 +310,7 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
    * @return {@code this} assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @Override
-  public SELF isStrictlyBetween(BigInteger start, BigInteger end) {
+  @Override public SELF isStrictlyBetween(BigInteger start, BigInteger end) {
     bigIntegers.assertIsStrictlyBetween(info, actual, start, end);
     return myself;
   }
@@ -427,20 +372,15 @@ public class AbstractBigIntegerAssert<SELF extends AbstractBigIntegerAssert<SELF
     return isEqualTo(new BigInteger(Long.toString(expected)));
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF usingComparator(Comparator<? super BigInteger> customComparator) {
+  @Override @CheckReturnValue public SELF usingComparator(Comparator<? super BigInteger> customComparator) {
     super.usingComparator(customComparator);
     this.bigIntegers = new BigIntegers(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  @CheckReturnValue
-  public SELF usingDefaultComparator() {
+  @Override @CheckReturnValue public SELF usingDefaultComparator() {
     super.usingDefaultComparator();
     this.bigIntegers = BigIntegers.instance();
     return myself;
   }
-
 }

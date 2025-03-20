@@ -1,22 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.util;
-
 import static java.util.Collections.emptyList;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Preconditions.checkArgument;
 import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +18,6 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  * @author Florent Biville
  */
 public class Arrays {
-
   /**
    * Indicates whether the given object is not {@code null} and is an array.
    * 
@@ -52,7 +37,9 @@ public class Arrays {
    */
   public static Object[] asObjectArray(Object array) {
     checkArgument(isArray(array), "Given object %s is not an array", array);
-    if (array == null) return null;
+    if (array == null) {
+      return null;
+    }
     int length = Array.getLength(array);
     Object[] objectArray = new Object[length];
     for (int i = 0; i < length; i++) {
@@ -79,7 +66,7 @@ public class Arrays {
    * @param array the array to check.
    * @return {@code true} if the given array is {@code null} or empty, otherwise {@code false}.
    */
-  public static <T> boolean isNullOrEmpty(T[] array) {
+  public static <T extends java.lang.Object> boolean isNullOrEmpty(T[] array) {
     return array == null || isEmpty(array);
   }
 
@@ -90,8 +77,7 @@ public class Arrays {
    * @param values the values to store in the array.
    * @return an array containing the given arguments.
    */
-  @SafeVarargs
-  public static <T> T[] array(T... values) {
+  @SafeVarargs public static <T extends java.lang.Object> T[] array(T... values) {
     return values;
   }
 
@@ -102,7 +88,9 @@ public class Arrays {
    * @return an int[].
    */
   public static int[] array(AtomicIntegerArray atomicIntegerArray) {
-    if (atomicIntegerArray == null) return null;
+    if (atomicIntegerArray == null) {
+      return null;
+    }
     int[] array = new int[atomicIntegerArray.length()];
     for (int i = 0; i < array.length; i++) {
       array[i] = atomicIntegerArray.get(i);
@@ -117,7 +105,9 @@ public class Arrays {
    * @return an long[].
    */
   public static long[] array(AtomicLongArray atomicLongArray) {
-    if (atomicLongArray == null) return null;
+    if (atomicLongArray == null) {
+      return null;
+    }
     long[] array = new long[atomicLongArray.length()];
     for (int i = 0; i < array.length; i++) {
       array[i] = atomicLongArray.get(i);
@@ -132,11 +122,14 @@ public class Arrays {
    * @param atomicReferenceArray the {@link AtomicReferenceArray} to convert to T[].
    * @return an T[].
    */
-  @SuppressWarnings("unchecked")
-  public static <T> T[] array(AtomicReferenceArray<T> atomicReferenceArray) {
-    if (atomicReferenceArray == null) return null;
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends java.lang.Object> T[] array(AtomicReferenceArray<T> atomicReferenceArray) {
+    if (atomicReferenceArray == null) {
+      return null;
+    }
     int length = atomicReferenceArray.length();
-    if (length == 0) return array();
+    if (length == 0) {
+      return array();
+    }
     List<T> list = newArrayList();
     for (int i = 0; i < length; i++) {
       list.add(atomicReferenceArray.get(i));
@@ -152,11 +145,15 @@ public class Arrays {
    * @return all the non-{@code null} elements in the given array. An empty list is returned if the given array is
    *         {@code null}.
    */
-  public static <T> List<T> nonNullElementsIn(T[] array) {
-    if (array == null) return emptyList();
+  public static <T extends java.lang.Object> List<T> nonNullElementsIn(T[] array) {
+    if (array == null) {
+      return emptyList();
+    }
     List<T> nonNullElements = new ArrayList<>();
     for (T o : array) {
-      if (o != null) nonNullElements.add(o);
+      if (o != null) {
+        nonNullElements.add(o);
+      }
     }
     return nonNullElements;
   }
@@ -170,16 +167,20 @@ public class Arrays {
    * @return {@code true} if the given array has only {@code null} elements or is empty, {@code false} otherwise.
    * @throws NullPointerException if the given array is {@code null}.
    */
-  public static <T> boolean hasOnlyNullElements(T[] array) {
+  public static <T extends java.lang.Object> boolean hasOnlyNullElements(T[] array) {
     checkNotNull(array);
-    if (isEmpty(array)) return false;
+    if (isEmpty(array)) {
+      return false;
+    }
     for (T o : array) {
-      if (o != null) return false;
+      if (o != null) {
+        return false;
+      }
     }
     return true;
   }
 
-  private static <T> boolean isEmpty(T[] array) {
+  private static <T extends java.lang.Object> boolean isEmpty(T[] array) {
     return array.length == 0;
   }
 
@@ -195,14 +196,13 @@ public class Arrays {
     return new IllegalArgumentException(String.format("<%s> is not an array of primitives", o));
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T> T[] prepend(T first, T... rest) {
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends java.lang.Object> T[] prepend(T first, T... rest) {
     T[] result = (T[]) new Object[1 + rest.length];
     result[0] = first;
     System.arraycopy(rest, 0, result, 1, rest.length);
     return result;
   }
 
-  private Arrays() {}
-
+  private Arrays() {
+  }
 }

@@ -1,24 +1,10 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
+import static org.assertj.core.api.Assertions.extractProperty;
 import static java.lang.String.format;
 import static org.assertj.core.groups.FieldsOrPropertiesExtractor.extract;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-
 import org.assertj.core.api.iterable.Extractor;
 
 /**
@@ -70,6 +56,7 @@ import org.assertj.core.api.iterable.Extractor;
  *   softly.assertThat(mansion.professor()).as(&quot;Professor&quot;).isEqualTo(&quot;well kempt&quot;);
  *   softly.assertAll();
  * }</code></pre>
+ *
  *
  * <p>
  * Now upon running the test our JUnit exception message is far more detailed:
@@ -124,27 +111,18 @@ import org.assertj.core.api.iterable.Extractor;
  * @see <a href="http://beust.com/weblog/2012/07/29/reinventing-assertions/">Reinventing Assertions (inspired this feature)</a>
  */
 public class SoftAssertions extends AbstractStandardSoftAssertions {
-
   private Extractor<Throwable, String> errorDescriptionExtractor = new Extractor<Throwable, String>() {
-    @Override
-    public String extract(Throwable throwable) {
+    @Override public String extract(Throwable throwable) {
       Throwable cause = throwable.getCause();
       if (cause == null) {
         return throwable.getMessage();
       }
-      // error has a cause, display the cause message and the first stack trace elements.
       StackTraceElement[] stackTraceFirstElements = Arrays.copyOf(cause.getStackTrace(), 5);
       String stackTraceDescription = "";
       for (StackTraceElement stackTraceElement : stackTraceFirstElements) {
         stackTraceDescription += format("\tat %s%n", stackTraceElement);
       }
-      return format("%s%n" +
-                    "cause message: %s%n" +
-                    "cause first five stack trace elements:%n" +
-                    "%s",
-                    throwable.getMessage(),
-                    cause.getMessage(),
-                    stackTraceDescription);
+      return format("%s%n" + "cause message: %s%n" + "cause first five stack trace elements:%n" + "%s", throwable.getMessage(), cause.getMessage(), stackTraceDescription);
     }
   };
 
@@ -155,14 +133,12 @@ public class SoftAssertions extends AbstractStandardSoftAssertions {
    */
   public void assertAll() {
     List<Throwable> errors = errorsCollected();
-    if (!errors.isEmpty()) throw new SoftAssertionError(describeErrors(errors));
+    if (!errors.isEmpty()) {
+      throw new SoftAssertionError(describeErrors(errors));
+    }
   }
 
-  private List<String> describeErrors(List<Throwable> errors) {
-    return extract(errors, errorDescriptionExtractor);
-  }
-
- /**
+  /**
   * Use this to avoid having to call assertAll manually.
   *
   * <pre><code class='java'> &#064;Test
@@ -184,9 +160,13 @@ public class SoftAssertions extends AbstractStandardSoftAssertions {
   * @throws SoftAssertionError if any proxied assertion objects threw
   * @since 3.6.0
   */
-public static void assertSoftly(Consumer<SoftAssertions> softly) {
-      SoftAssertions assertions = new SoftAssertions();
-      softly.accept(assertions);
-      assertions.assertAll();
+  public static void assertSoftly(Consumer<SoftAssertions> softly) {
+    SoftAssertions assertions = new SoftAssertions();
+    softly.accept(assertions);
+    assertions.assertAll();
+  }
+
+  private List<String> describeErrors(List<Throwable> errors) {
+    return extract(errors, errorDescriptionExtractor);
   }
 }

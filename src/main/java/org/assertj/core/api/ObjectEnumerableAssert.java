@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2017 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -32,9 +19,7 @@ import java.util.function.Predicate;
  * @author Nicolas François
  * @author Florent Biville
  */
-public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF, ELEMENT>, ELEMENT>
-    extends EnumerableAssert<SELF, ELEMENT> {
-
+public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF, ELEMENT>, ELEMENT extends java.lang.Object> extends EnumerableAssert<SELF, ELEMENT> {
   /**
    * Verifies that the actual group contains the given values, in any order.
    * <p>
@@ -57,7 +42,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not contain the given values.
    */
-  SELF contains(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF contains(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in any order</b>.
@@ -65,11 +50,10 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * Example :
    * <pre><code class='java'> Iterable&lt;String&gt; abc = newArrayList("a", "b", "c");
    *
-   * // assertions will pass
+   * // assertion will pass
    * assertThat(abc).containsOnly("c", "b", "a");
-   * assertThat(newArrayList("a", "a", "b")).containsOnly("a", "b");
    * 
-   * // assertion will fail because "c" is missing in the given values
+   * // assertion will fail because "c" is missing
    * assertThat(abc).containsOnly("a", "b");
    * // assertion will fail because "d" is missing in abc (use isSubsetOf if you want this assertion to pass)
    * assertThat(abc).containsOnly("a", "b", "c", "d");</code></pre>
@@ -86,7 +70,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more values than the given ones.
    */
-  SELF containsOnly(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF containsOnly(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group contains only null elements and nothing else.
@@ -134,7 +118,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group contains some
    *           or none of the given values, or the actual group contains more than once these values.
    */
-  SELF containsOnlyOnce(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF containsOnlyOnce(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in order</b>.<br>
@@ -161,7 +145,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    *           contains some or none of the given values, or the actual group contains more values than the given ones
    *           or values are the same but the order is not.
    */
-  SELF containsExactly(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF containsExactly(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
@@ -186,7 +170,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group does not contain the given values, i.e. the actual group
    *           contains some or none of the given values, or the actual group contains more values than the given ones.
    */
-  SELF containsExactlyInAnyOrder(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF containsExactlyInAnyOrder(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
@@ -241,7 +225,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given sequence.
    */
-  SELF containsSequence(@SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF containsSequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group contains the given sequence in the correct order and <b>without extra values between the sequence values</b>.
@@ -295,7 +279,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group contains the given sequence.
    */
-  SELF doesNotContainSequence(@SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF doesNotContainSequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group does not contain the given sequence, 
@@ -347,7 +331,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group does not contain the given subsequence.
    */
-  SELF containsSubsequence(@SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF containsSubsequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group contains the given subsequence in the correct order (possibly with other values between them).
@@ -396,7 +380,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the given array is {@code null}.
    * @throws AssertionError if the actual group contains the given subsequence.
    */
-  SELF doesNotContainSubsequence(@SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF doesNotContainSubsequence(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group does not contain the given subsequence, 
@@ -448,7 +432,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group contains any of the given values.
    */
-  SELF doesNotContain(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF doesNotContain(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the actual group does not contain duplicates.
@@ -493,7 +477,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not start with the given sequence of objects.
    */
-  SELF startsWith(@SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF startsWith(@SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group ends with the given sequence of objects, without any other objects between them.
@@ -520,7 +504,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual group is {@code null}.
    * @throws AssertionError if the actual group does not end with the given sequence of objects.
    */
-  SELF endsWith(ELEMENT first, @SuppressWarnings("unchecked") ELEMENT... sequence);
+  SELF endsWith(ELEMENT first, @SuppressWarnings(value = { "unchecked" }) ELEMENT... sequence);
 
   /**
    * Verifies that the actual group ends with the given sequence of objects, without any other objects between them.
@@ -1101,7 +1085,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the actual {@code Iterable} is {@code null}.
    * @throws AssertionError if the actual {@code Iterable} is not subset of the given values.
    */
-  SELF isSubsetOf(@SuppressWarnings("unchecked") ELEMENT... values);
+  SELF isSubsetOf(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that all the elements of actual match the given {@link Predicate}.
@@ -1231,7 +1215,7 @@ public interface ObjectEnumerableAssert<SELF extends ObjectEnumerableAssert<SELF
    * @throws AssertionError if the {@code Iterable} under test does not contain any of the given {@code values}.
    * @since 2.9.0 / 3.9.0
    */
-  public SELF containsAnyOf(@SuppressWarnings("unchecked") ELEMENT... values);
+  public SELF containsAnyOf(@SuppressWarnings(value = { "unchecked" }) ELEMENT... values);
 
   /**
    * Verifies that the {@link Iterable} under test contains at least one of the given {@link Iterable} elements.
