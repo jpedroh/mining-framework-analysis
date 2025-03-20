@@ -1,9 +1,7 @@
 package com.moandjiezana.toml;
-
 import static com.moandjiezana.toml.MapValueWriter.MAP_VALUE_WRITER;
 import static com.moandjiezana.toml.ObjectValueWriter.OBJECT_VALUE_WRITER;
 import static com.moandjiezana.toml.ValueWriters.WRITERS;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +12,8 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import static com.moandjiezana.toml.MapValueWriter.*;
+import static com.moandjiezana.toml.ObjectValueWriter.*;
 
 /**
  * <p>Converts Objects to TOML</p>
@@ -33,42 +33,41 @@ import java.util.TimeZone;
  * </code></pre>
  */
 public class TomlWriter {
-  
   public static class Builder {
     private int keyIndentation;
+
     private int tableIndentation;
+
     private int arrayDelimiterPadding = 0;
+
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
     private boolean showFractionalSeconds = false;
-    
+
     public TomlWriter.Builder indentValuesBy(int spaces) {
       this.keyIndentation = spaces;
-      
       return this;
     }
 
     public TomlWriter.Builder indentTablesBy(int spaces) {
       this.tableIndentation = spaces;
-      
       return this;
     }
-    
+
     public TomlWriter.Builder timeZone(TimeZone timeZone) {
       this.timeZone = timeZone;
-      
       return this;
     }
-    
+
     /**
      * @param spaces number of spaces to put between opening square bracket and first item and between closing square bracket and last item
      * @return this TomlWriter.Builder instance
      */
     public TomlWriter.Builder padArrayDelimitersBy(int spaces) {
       this.arrayDelimiterPadding = spaces;
-      
       return this;
     }
-    
+
     public TomlWriter build() {
       return new TomlWriter(keyIndentation, tableIndentation, arrayDelimiterPadding, timeZone, showFractionalSeconds);
     }
@@ -80,6 +79,7 @@ public class TomlWriter {
   }
 
   private final IndentationPolicy indentationPolicy;
+
   private final DatePolicy datePolicy;
 
   /**
@@ -88,7 +88,7 @@ public class TomlWriter {
   public TomlWriter() {
     this(0, 0, 0, TimeZone.getTimeZone("UTC"), false);
   }
-  
+
   private TomlWriter(int keyIndentation, int tableIndentation, int arrayDelimiterPadding, TimeZone timeZone, boolean showFractionalSeconds) {
     this.indentationPolicy = new IndentationPolicy(keyIndentation, tableIndentation, arrayDelimiterPadding);
     this.datePolicy = new DatePolicy(timeZone, showFractionalSeconds);
@@ -104,7 +104,6 @@ public class TomlWriter {
     try {
       StringWriter output = new StringWriter();
       write(from, output);
-      
       return output.toString();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -135,7 +134,7 @@ public class TomlWriter {
     FileWriter writer = new FileWriter(target);
     try {
       write(from, writer);
-    } finally {
+    }  finally {
       writer.close();
     }
   }
@@ -146,12 +145,20 @@ public class TomlWriter {
    * @param from the object to be written
    * @param target the Writer to which TOML will be written. The Writer is not closed.
    * @throws IOException if target.write() fails
-   * @throws IllegalStateException if
    */
   public void write(Object from, Writer target) throws IOException {
     ValueWriter valueWriter = WRITERS.findWriterFor(from);
+    if (valueWriter != MAP_VALUE_WRITER && valueWriter != OBJECT_VALUE_WRITER) {
+      throw new IllegalArgumentException("An object of type " + from.getClass().getSimpleName() + " cannot produce valid TOML.");
+    }
+    WriterContext context = new WriterContext(indentationPolicy, datePolicy, target);
 
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/main/java/com/moandjiezana/toml/TomlWriter.java/left.java
+    valueWriter.write(from, context);
+=======
     ValueWriter writer = WRITERS.findWriterFor(from);
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/main/java/com/moandjiezana/toml/TomlWriter.java/right.java
+
     if (writer == MAP_VALUE_WRITER || writer == OBJECT_VALUE_WRITER) {
       WRITERS.findWriterFor(from).write(from, context);
     } else {

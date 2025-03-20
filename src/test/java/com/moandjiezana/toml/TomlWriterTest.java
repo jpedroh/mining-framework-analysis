@@ -1,7 +1,8 @@
 package com.moandjiezana.toml;
-
 import static org.junit.Assert.*;
-
+import org.hamcrest.Matchers;
+import org.junit.*;
+import org.junit.rules.*;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,61 +25,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+@SuppressWarnings(value = { "unused" }) public class TomlWriterTest {
+  @Rule public TemporaryFolder testDirectory = new TemporaryFolder();
 
-@SuppressWarnings("unused")
-public class TomlWriterTest {
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-  @Rule
-  public TemporaryFolder testDirectory = new TemporaryFolder();
-  
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
-
-  @Test
-  public void should_write_primitive_types() {
+  @Test public void should_write_primitive_types() {
     class TestClass {
       public String aString = "hello";
+
       int anInt = 4;
+
       protected float aFloat = 1.23f;
+
       private double aDouble = -5.43;
+
       final boolean aBoolean = false;
-      static final int aFinalInt = 1; // Should be skipped
+
+      static final int aFinalInt = 1;
+
       Date aDate;
     }
-
     TestClass o = new TestClass();
-
     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Africa/Johannesburg"));
     calendar.set(2015, Calendar.JULY, 1, 11, 5, 30);
     calendar.set(Calendar.MILLISECOND, 0);
     o.aDate = calendar.getTime();
-    
     String output = new TomlWriter().write(o);
-    String expected = "aString = \"hello\"\n" +
-        "anInt = 4\n" +
-        "aFloat = 1.23\n" +
-        "aDouble = -5.43\n" +
-        "aBoolean = false\n" +
-        "aDate = 2015-07-01T09:05:30Z\n";
-
+    String expected = "aString = \"hello\"\n" + "anInt = 4\n" + "aFloat = 1.23\n" + "aDouble = -5.43\n" + "aBoolean = false\n" + "aDate = 2015-07-01T09:05:30Z\n";
     assertEquals(expected, output);
   }
 
   class SubChild {
     int anInt;
   }
+
   class Child {
     SubChild subChild;
+
     int anInt;
   }
+
   class Parent {
     Map<String, Object> aMap;
+
     Child child;
+
     boolean aBoolean;
   }
 
@@ -93,82 +85,34 @@ public class TomlWriterTest {
     parent.child.subChild = new SubChild();
     parent.child.subChild.anInt = 4;
     parent.aBoolean = true;
-
     return parent;
   }
 
-  @Test
-  public void should_write_nested_map_with_default_indentation_policy() {
+  @Test public void should_write_nested_map_with_default_indentation_policy() {
     String output = new TomlWriter().write(buildNestedMap());
-    String expected = "aBoolean = true\n\n" +
-        "[aMap]\n" +
-        "foo = 1\n" +
-        "bar = \"value1\"\n" +
-        "\"baz.x\" = true\n\n" +
-        "[child]\n" +
-        "anInt = 2\n\n" +
-        "[child.subChild]\n" +
-        "anInt = 4\n";
+    String expected = "aBoolean = true\n\n" + "[aMap]\n" + "foo = 1\n" + "bar = \"value1\"\n" + "\"baz.x\" = true\n\n" + "[child]\n" + "anInt = 2\n\n" + "[child.subChild]\n" + "anInt = 4\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_follow_indentation_policy_of_indented_values() {
-    String output = new TomlWriter.Builder().
-      indentValuesBy(2).
-      build().
-      write(buildNestedMap());
-    String expected = "aBoolean = true\n\n" +
-        "[aMap]\n" +
-        "  foo = 1\n" +
-        "  bar = \"value1\"\n" +
-        "  \"baz.x\" = true\n\n" +
-        "[child]\n" +
-        "  anInt = 2\n\n" +
-        "[child.subChild]\n" +
-        "  anInt = 4\n";
+  @Test public void should_follow_indentation_policy_of_indented_values() {
+    String output = new TomlWriter.Builder().indentValuesBy(2).build().write(buildNestedMap());
+    String expected = "aBoolean = true\n\n" + "[aMap]\n" + "  foo = 1\n" + "  bar = \"value1\"\n" + "  \"baz.x\" = true\n\n" + "[child]\n" + "  anInt = 2\n\n" + "[child.subChild]\n" + "  anInt = 4\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_follow_indentation_policy_of_indented_tables() {
-    String output = new TomlWriter.Builder().
-      indentTablesBy(2).
-      build().
-      write(buildNestedMap());
-    String expected = "aBoolean = true\n\n" +
-        "[aMap]\n" +
-        "foo = 1\n" +
-        "bar = \"value1\"\n" +
-        "\"baz.x\" = true\n\n" +
-        "[child]\n" +
-        "anInt = 2\n\n" +
-        "  [child.subChild]\n" +
-        "  anInt = 4\n";
+  @Test public void should_follow_indentation_policy_of_indented_tables() {
+    String output = new TomlWriter.Builder().indentTablesBy(2).build().write(buildNestedMap());
+    String expected = "aBoolean = true\n\n" + "[aMap]\n" + "foo = 1\n" + "bar = \"value1\"\n" + "\"baz.x\" = true\n\n" + "[child]\n" + "anInt = 2\n\n" + "  [child.subChild]\n" + "  anInt = 4\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_follow_indentation_policy_of_indented_tables_and_values() {
-    String output = new TomlWriter.Builder().
-      indentValuesBy(2).
-      indentTablesBy(2).
-      build().
-      write(buildNestedMap());
-    String expected = "aBoolean = true\n\n" +
-        "[aMap]\n" +
-        "  foo = 1\n" +
-        "  bar = \"value1\"\n" +
-        "  \"baz.x\" = true\n\n" +
-        "[child]\n" +
-        "  anInt = 2\n\n" +
-        "  [child.subChild]\n" +
-        "    anInt = 4\n";
+  @Test public void should_follow_indentation_policy_of_indented_tables_and_values() {
+    String output = new TomlWriter.Builder().indentValuesBy(2).indentTablesBy(2).build().write(buildNestedMap());
+    String expected = "aBoolean = true\n\n" + "[aMap]\n" + "  foo = 1\n" + "  bar = \"value1\"\n" + "  \"baz.x\" = true\n\n" + "[child]\n" + "  anInt = 2\n\n" + "  [child.subChild]\n" + "    anInt = 4\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_write_array_of_tables() {
+  @Test public void should_write_array_of_tables() {
     class Table {
       int anInt;
 
@@ -180,81 +124,65 @@ public class TomlWriterTest {
       Table[] table;
     }
     Config config = new Config();
-    config.table = new Table[]{new Table(1), new Table(2)};
-
+    config.table = new Table[] { new Table(1), new Table(2) };
     String output = new TomlWriter().write(config);
-    String expected = "[[table]]\n" +
-        "anInt = 1\n\n" +
-        "[[table]]\n" +
-        "anInt = 2\n";
+    String expected = "[[table]]\n" + "anInt = 1\n\n" + "[[table]]\n" + "anInt = 2\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_write_array_of_array() {
+  @Test public void should_write_array_of_array() {
     class ArrayTest {
-      int[][] array = {{1, 2, 3}, {4, 5, 6}};
+      int[][] array = { { 1, 2, 3 }, { 4, 5, 6 } };
     }
     ArrayTest arrayTest = new ArrayTest();
-
     String output = new TomlWriter.Builder().padArrayDelimitersBy(1).build().write(arrayTest);
     String expected = "array = [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]\n";
     assertEquals(expected, output);
   }
 
-  @Test
-  public void should_write_list() {
+  @Test public void should_write_list() {
     class ListTest {
       List<Integer> aList = new LinkedList<Integer>();
     }
     ListTest o = new ListTest();
     o.aList.add(1);
     o.aList.add(2);
-
     assertEquals("aList = [ 1, 2 ]\n", new TomlWriter.Builder().padArrayDelimitersBy(1).build().write(o));
   }
 
-  @Test
-  public void should_handle_zero_length_arrays_and_lists() {
+  @Test public void should_handle_zero_length_arrays_and_lists() {
     class TestClass {
       List<Integer> aList = new LinkedList<Integer>();
+
       Float[] anArray = new Float[0];
     }
     assertEquals("aList = []\nanArray = []\n", new TomlWriter().write(new TestClass()));
   }
 
-  @Test
-  public void should_reject_heterogeneous_arrays() {
+  @Test public void should_reject_heterogeneous_arrays() {
     class BadArray {
       Object[] array = new Object[2];
     }
     BadArray badArray = new BadArray();
     badArray.array[0] = new Integer(1);
     badArray.array[1] = "oops";
-
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage(Matchers.startsWith("array"));
-    
     new TomlWriter().write(badArray);
   }
 
-  @Test
-  public void should_reject_nested_heterogeneous_array() {
+  @Test public void should_reject_nested_heterogeneous_array() {
     class BadArray {
       Map<String, Object> aMap = new HashMap<String, Object>();
     }
-    
     BadArray badArray = new BadArray();
     badArray.aMap.put("array", new Object[] { Integer.valueOf(1), "oops" });
-
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("aMap.array");
-
     new TomlWriter().write(badArray);
   }
 
-  @Test
-  public void should_elide_empty_intermediate_tables() {
+  @Test public void should_elide_empty_intermediate_tables() {
     class C {
       int anInt = 1;
     }
@@ -264,186 +192,167 @@ public class TomlWriterTest {
     class A {
       B b = new B();
     }
-
     assertEquals("[b.c]\nanInt = 1\n", new TomlWriter().write(new A()));
   }
 
   class Base {
     protected int anInt = 2;
   }
+
   class Impl extends Base {
     boolean aBoolean = true;
   }
 
-  @Test
-  public void should_write_classes_with_inheritance() {
+  @Test public void should_write_classes_with_inheritance() {
     Impl impl = new Impl();
     String expected = "aBoolean = true\nanInt = 2\n";
     assertEquals(expected, new TomlWriter().write(impl));
   }
 
-  @Test
-  public void should_write_strings_to_toml_utf8() throws UnsupportedEncodingException {
+  @Test public void should_write_strings_to_toml_utf8() throws UnsupportedEncodingException {
     class Utf8Test {
       String input;
     }
 
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    Map<String, String> input = new HashMap<String, String>();
+=======
     Utf8Test utf8Test = new Utf8Test();
-    utf8Test.input = " é foo € \b \t \n \f \r \" \\ ";
-    assertEquals("input = \" \\u00E9 foo \\u20AC \\b \\t \\n \\f \\r \\\" \\\\ \"\n", new TomlWriter().write(utf8Test));
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
 
-    // Check unicode code points greater than 0XFFFF
-    utf8Test.input = " \uD801\uDC28 \uD840\uDC0B ";
-    assertEquals("input = \" \\U00010428 \\U0002000B \"\n", new TomlWriter().write(utf8Test));
+
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    input.put("a", " \u00e9 foo \u20ac \b \t \n \f \r \" \\ ");
+=======
+    utf8Test.input = " \u00e9 foo \u20ac \b \t \n \f \r \" \\ ";
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
+
+
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    input.put("b", " \ud801\udc28 \ud840\udc0b ")
+=======
+    assertEquals("input = \" \\u00E9 foo \\u20AC \\b \\t \\n \\f \\r \\\" \\\\ \"\n", new TomlWriter().write(utf8Test))
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
+    ;
+
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    String expected = "a = \" \\u00E9 foo \\u20AC \\b \\t \\n \\f \\r \\\" \\\\ \"\n" + "b = \" \\U00010428 \\U0002000B \"\n";
+=======
+    utf8Test.input = " \ud801\udc28 \ud840\udc0b ";
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
+
+    assertEquals(
+<<<<<<< /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/left.java
+    expected
+=======
+    "input = \" \\U00010428 \\U0002000B \"\n"
+>>>>>>> /usr/src/app/output/mwanji/toml4j/16915c8edb83ecaa709c267c05e2272c24a8fdd4/src/test/java/com/moandjiezana/toml/TomlWriterTest.java/right.java
+    , new TomlWriter().write(utf8Test));
   }
 
-  @Test
-  public void should_quote_keys() {
+  @Test public void should_quote_keys() {
     Map<String, Integer> aMap = new LinkedHashMap<String, Integer>();
     aMap.put("a.b", 1);
-    aMap.put("5€", 2);
+    aMap.put("5\u20ac", 2);
     aMap.put("c$d", 3);
     aMap.put("e/f", 4);
-
-    String expected = "\"a.b\" = 1\n" +
-        "\"5€\" = 2\n" +
-        "\"c$d\" = 3\n" +
-        "\"e/f\" = 4\n";
+    String expected = "\"a.b\" = 1\n" + "\"5\u20ac\" = 2\n" + "\"c$d\" = 3\n" + "\"e/f\" = 4\n";
     assertEquals(expected, new TomlWriter().write(aMap));
   }
-  
-  @Test
-  public void should_quote_keys_in_object() throws Exception {
+
+  @Test public void should_quote_keys_in_object() throws Exception {
     class A$ {
       Double µµ = 5.3;
     }
-    
     class A {
       int €5 = 5;
+
       String français = "langue";
+
       A$ a$ = new A$();
     }
-    
-    assertEquals("\"€5\" = 5\n\"français\" = \"langue\"\n\n[\"a$\"]\n\"µµ\" = 5.3\n", new TomlWriter().write(new A()));
+    assertEquals("\"\u20ac5\" = 5\n\"fran\u00e7ais\" = \"langue\"\n\n[\"a$\"]\n\"\u00b5\u00b5\" = 5.3\n", new TomlWriter().write(new A()));
   }
-  
-  @Test
-  public void should_handle_urls() throws Exception {
+
+  @Test public void should_handle_urls() throws Exception {
     class WithUrl {
       URL url;
+
       URI uri;
     }
-    
     WithUrl from = new WithUrl();
     from.url = new URL("https://github.com");
     from.uri = new URI("https://bitbucket.com");
-    
-    String expected = "url = \"https://github.com\"\n"
-      + "uri = \"https://bitbucket.com\"\n";
-    
+    String expected = "url = \"https://github.com\"\n" + "uri = \"https://bitbucket.com\"\n";
     assertEquals(expected, new TomlWriter().write(from));
   }
 
-  @Test
-  public void should_handle_enum() throws Exception {
+  @Test public void should_handle_enum() throws Exception {
     class WithEnum {
       RetentionPolicy retentionPolicy = RetentionPolicy.RUNTIME;
     }
-    
     assertEquals("retentionPolicy = \"RUNTIME\"\n", new TomlWriter().write(new WithEnum()));
   }
-  
-  @Test
-  public void should_handle_char() throws Exception {
+
+  @Test public void should_handle_char() throws Exception {
     class WithChar {
       char c = 'a';
     }
-    
     assertEquals("c = \"a\"\n", new TomlWriter().write(new WithChar()));
   }
-  
-  @Test
-  public void should_handle_big_numbers() throws Exception {
+
+  @Test public void should_handle_big_numbers() throws Exception {
     class WithBigNumbers {
       BigInteger bigInt = BigInteger.valueOf(1);
+
       BigDecimal bigDecimal = BigDecimal.valueOf(2.8);
     }
-    
-    String expected = "bigInt = 1\n"
-      + "bigDecimal = 2.8\n";
-    
+    String expected = "bigInt = 1\n" + "bigDecimal = 2.8\n";
     assertEquals(expected, new TomlWriter().write(new WithBigNumbers()));
   }
-  
-  @Test
-  public void should_handle_wrappers() throws Exception {
+
+  @Test public void should_handle_wrappers() throws Exception {
     class WithWrappers {
       Character c = Character.valueOf('b');
+
       Long l = Long.valueOf(2);
+
       Double d = Double.valueOf(3.4);
     }
-    
-    String expected = "c = \"b\"\n"
-      + "l = 2\n"
-      + "d = 3.4\n";
-    
+    String expected = "c = \"b\"\n" + "l = 2\n" + "d = 3.4\n";
     assertEquals(expected, new TomlWriter().write(new WithWrappers()));
   }
-  
-  @Test
-  public void should_use_specified_time_zone() throws Exception {
+
+  @Test public void should_use_specified_time_zone() throws Exception {
     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     calendar.set(2015, Calendar.JULY, 1, 11, 5, 30);
     calendar.set(Calendar.MILLISECOND, 0);
-    
     Map<String, Date> o = new HashMap<String, Date>();
-    
     o.put("sast", calendar.getTime());
-    
-    TomlWriter writer = new TomlWriter.Builder().
-      timeZone(TimeZone.getTimeZone("Africa/Johannesburg")).
-      build();
-    
+    TomlWriter writer = new TomlWriter.Builder().timeZone(TimeZone.getTimeZone("Africa/Johannesburg")).build();
     assertEquals("sast = 2015-07-01T13:05:30+02:00\n", writer.write(o));
   }
-  
-  @Test
-  public void should_show_fractional_seconds() throws Exception {
+
+  @Test public void should_show_fractional_seconds() throws Exception {
     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     calendar.set(2015, Calendar.JULY, 1, 11, 5, 30);
     calendar.set(Calendar.MILLISECOND, 345);
-    
     Map<String, Date> o = new HashMap<String, Date>();
-    
     o.put("date", calendar.getTime());
-    
-    TomlWriter writer = new TomlWriter.Builder().
-      showFractionalSeconds().
-      build();
-    
+    TomlWriter writer = new TomlWriter.Builder().showFractionalSeconds().build();
     assertEquals("date = 2015-07-01T11:05:30.345Z\n", writer.write(o));
   }
-  
-  @Test
-  public void should_show_fractional_seconds_in_specified_time_zone() throws Exception {
+
+  @Test public void should_show_fractional_seconds_in_specified_time_zone() throws Exception {
     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     calendar.set(2015, Calendar.JULY, 1, 11, 5, 30);
     calendar.set(Calendar.MILLISECOND, 345);
-    
     Map<String, Date> o = new LinkedHashMap<String, Date>();
-    
     o.put("date", calendar.getTime());
     calendar.set(Calendar.MINUTE, 37);
     o.put("date2", calendar.getTime());
-    
-    TomlWriter writer = new TomlWriter.Builder().
-      timeZone(TimeZone.getTimeZone("Africa/Johannesburg")).
-      showFractionalSeconds().
-      build();
-    
-    String expected = "date = 2015-07-01T13:05:30.345+02:00\n"
-      + "date2 = 2015-07-01T13:37:30.345+02:00\n";
-    
+    TomlWriter writer = new TomlWriter.Builder().timeZone(TimeZone.getTimeZone("Africa/Johannesburg")).showFractionalSeconds().build();
+    String expected = "date = 2015-07-01T13:05:30.345+02:00\n" + "date2 = 2015-07-01T13:37:30.345+02:00\n";
     assertEquals(expected, writer.write(o));
   }
 
@@ -451,68 +360,66 @@ public class TomlWriterTest {
     int a = 1;
   }
 
-  @Test
-  public void should_write_to_writer() throws IOException {
-    StringWriter output = new StringWriter();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", output.toString());
-  }
-
-  @Test
-  public void should_write_to_outputstream() throws IOException {
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", output.toString());
-  }
-
-  @Test
-  public void should_write_to_file() throws IOException {
-    File output = testDirectory.newFile();
-    new TomlWriter().write(new SimpleTestClass(), output);
-
-    assertEquals("a = 1\n", readFile(output));
-  }
-  
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_string_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_string_fragment() {
     new TomlWriter().write("fragment");
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_boolean_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_boolean_fragment() {
     new TomlWriter().write(true);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_number_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_number_fragment() {
     new TomlWriter().write(42);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_date_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_date_fragment() {
     new TomlWriter().write(new Date());
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_array_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_array_fragment() {
     new TomlWriter().write(new int[2]);
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void should_refuse_to_write_table_array_fragment() {
+  @Test(expected = IllegalStateException.class) public void should_refuse_to_write_table_array_fragment() {
     new TomlWriter().write(new SimpleTestClass[2]);
   }
 
-  @Test(expected=IllegalArgumentException.class)
-  public void should_not_write_list() throws Exception {
+  @Test public void should_write_to_writer() throws IOException {
+    StringWriter output = new StringWriter();
+    new TomlWriter().write(new SimpleTestClass(), output);
+    assertEquals("a = 1\n", output.toString());
+  }
+
+  @Test public void should_write_to_outputstream() throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    new TomlWriter().write(new SimpleTestClass(), output);
+    assertEquals("a = 1\n", output.toString());
+  }
+
+  @Test public void should_write_to_file() throws IOException {
+    File output = testDirectory.newFile();
+    new TomlWriter().write(new SimpleTestClass(), output);
+    assertEquals("a = 1\n", readFile(output));
+  }
+
+  @Test(expected = IllegalArgumentException.class) public void should_not_write_date() throws Exception {
+    new TomlWriter().write(new Date());
+  }
+
+  @Test(expected = IllegalArgumentException.class) public void should_not_write_boolean() throws Exception {
+    new TomlWriter().write(Boolean.TRUE);
+  }
+
+  @Test(expected = IllegalArgumentException.class) public void should_not_write_number() throws Exception {
+    new TomlWriter().write(Long.valueOf(1));
+  }
+
+  @Test(expected = IllegalArgumentException.class) public void should_not_write_list() throws Exception {
     new TomlWriter().write(Arrays.asList("a"));
   }
 
   private String readFile(File input) throws IOException {
     BufferedReader bufferedReader = new BufferedReader(new FileReader(input));
-
     try {
       StringBuilder w = new StringBuilder();
       String line = bufferedReader.readLine();
@@ -520,9 +427,8 @@ public class TomlWriterTest {
         w.append(line).append('\n');
         line = bufferedReader.readLine();
       }
-
       return w.toString();
-    } finally {
+    }  finally {
       bufferedReader.close();
     }
   }
