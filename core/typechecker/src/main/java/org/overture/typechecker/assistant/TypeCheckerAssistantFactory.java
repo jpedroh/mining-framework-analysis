@@ -1004,8 +1004,8 @@ public class TypeCheckerAssistantFactory extends AstAssistantFactory
 	public IQuestionAnswer<FreeVarInfo, LexNameSet> getFreeVariablesChecker()
 	{
 		return new FreeVariablesChecker(this);
-    }
-    
+	}
+
 	@Override public IQuestionAnswer<ILexLocation, Boolean> getIsOrderedVisitor()
 	{
 		if (iOrdV == null)

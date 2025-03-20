@@ -410,79 +410,125 @@ public class DefinitionReader extends SyntaxReader
 
 		PPattern invPattern = null;
 		PExp invExpression = null;
-		
-		PPattern eqPattern1 = null;
-		PPattern eqPattern2 = null;
-		PExp eqExpression = null;
-		AEqRelation eqRel = null;
-		
-		PPattern ordPattern1 = null;
-		PPattern ordPattern2 = null;
-		PExp ordExpression = null;
-		AOrdRelation ordRel = null;
 
-		while (lastToken().is(VDMToken.INV) || lastToken().is(VDMToken.EQ) || lastToken().is(VDMToken.ORD))
+		if (lastToken().is(VDMToken.INV))
 		{
-    		switch (lastToken().type)
-    		{
-    			case INV:
-    				if (invPattern != null)
-    				{
-    					throwMessage(2332, "Duplicate inv clause");
-    				}
-    				
-        			nextToken();
-        			invPattern = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
-        			invExpression = getExpressionReader().readExpression();
-        			break;
-        			
-    			case EQ:
-    				if (Settings.release == Release.CLASSIC)
-    				{
-    					throwMessage(2333, "Type eq/ord clauses not available in classic");
-    				}
+<<<<<<< /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/parser/src/main/java/org/overture/parser/syntax/DefinitionReader.java/left.java
+			nextToken();
+			invPattern = getPatternReader().readPattern();
+			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
+			invExpression = getExpressionReader().readExpression();
+||||||| /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/parser/src/main/java/org/overture/parser/syntax/DefinitionReader.java/base.java
+		    		switch (lastToken().type)
+		    		{
+		    			case INV:
+		    				if (invPattern != null)
+		    				{
+		    					throwMessage(2332, "Duplicate inv clause");
+		    				}
+		    				
+		        			nextToken();
+		        			invPattern = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
+		        			invExpression = getExpressionReader().readExpression();
+		        			break;
+		        			
+		    			case EQ:
+		    				if (eqPattern1 != null)
+		    				{
+		    					throwMessage(2332, "Duplicate eq clause");
+		    				}
+		    				
+		        			nextToken();
+		        			eqPattern1 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALS, 2087, "Expecting '=' between patterns in eq clause");
+		        			eqPattern2 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in eq clause");
+		        			eqExpression = getExpressionReader().readExpression();
+		        			eqRel = AstFactory.newAEqRelation(eqPattern1, eqPattern2, eqExpression);
+		    				break;
+		    				
+		    			case ORD:
+		    				if (ordPattern1 != null)
+		    				{
+		    					throwMessage(2332, "Duplicate ord clause");
+		    				}
+		    				
+		        			nextToken();
+		        			ordPattern1 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.LT, 2087, "Expecting '<' between patterns in ord clause");
+		        			ordPattern2 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in ord clause");
+		        			ordExpression = getExpressionReader().readExpression();
+		        			ordRel = AstFactory.newAOrdRelation(ordPattern1, ordPattern2, ordExpression);
+		    				break;
 
-    				if (eqPattern1 != null)
-    				{
-    					throwMessage(2332, "Duplicate eq clause");
-    				}
-    				
-        			nextToken();
-        			eqPattern1 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALS, 2087, "Expecting '=' between patterns in eq clause");
-        			eqPattern2 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in eq clause");
-        			eqExpression = getExpressionReader().readExpression();
-        			eqRel = AstFactory.newAEqRelation(eqPattern1, eqPattern2, eqExpression);
-    				break;
-    				
-    			case ORD:
-    				if (Settings.release == Release.CLASSIC)
-    				{
-    					throwMessage(2333, "Type eq/ord clauses not available in classic");
-    				}
+		    			default:
+		    				throwMessage(2331, "Expecting inv, eq or ord clause");
+		    		}
+=======
+		    		switch (lastToken().type)
+		    		{
+		    			case INV:
+		    				if (invPattern != null)
+		    				{
+		    					throwMessage(2332, "Duplicate inv clause");
+		    				}
+		    				
+		        			nextToken();
+		        			invPattern = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after pattern in invariant");
+		        			invExpression = getExpressionReader().readExpression();
+		        			break;
+		        			
+		    			case EQ:
+		    				if (Settings.release == Release.CLASSIC)
+		    				{
+		    					throwMessage(2333, "Type eq/ord clauses not available in classic");
+		    				}
 
-    				if (ordPattern1 != null)
-    				{
-    					throwMessage(2332, "Duplicate ord clause");
-    				}
-    				
-        			nextToken();
-        			ordPattern1 = getPatternReader().readPattern();
-        			checkFor(VDMToken.LT, 2087, "Expecting '<' between patterns in ord clause");
-        			ordPattern2 = getPatternReader().readPattern();
-        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in ord clause");
-        			ordExpression = getExpressionReader().readExpression();
-        			ordRel = AstFactory.newAOrdRelation(ordPattern1, ordPattern2, ordExpression);
-    				break;
+		    				if (eqPattern1 != null)
+		    				{
+		    					throwMessage(2332, "Duplicate eq clause");
+		    				}
+		    				
+		        			nextToken();
+		        			eqPattern1 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALS, 2087, "Expecting '=' between patterns in eq clause");
+		        			eqPattern2 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in eq clause");
+		        			eqExpression = getExpressionReader().readExpression();
+		        			eqRel = AstFactory.newAEqRelation(eqPattern1, eqPattern2, eqExpression);
+		    				break;
+		    				
+		    			case ORD:
+		    				if (Settings.release == Release.CLASSIC)
+		    				{
+		    					throwMessage(2333, "Type eq/ord clauses not available in classic");
+		    				}
 
-    			default:
-    				throwMessage(2331, "Expecting inv, eq or ord clause");
-    		}
+		    				if (ordPattern1 != null)
+		    				{
+		    					throwMessage(2332, "Duplicate ord clause");
+		    				}
+		    				
+		        			nextToken();
+		        			ordPattern1 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.LT, 2087, "Expecting '<' between patterns in ord clause");
+		        			ordPattern2 = getPatternReader().readPattern();
+		        			checkFor(VDMToken.EQUALSEQUALS, 2087, "Expecting '==' after patterns in ord clause");
+		        			ordExpression = getExpressionReader().readExpression();
+		        			ordRel = AstFactory.newAOrdRelation(ordPattern1, ordPattern2, ordExpression);
+		    				break;
+
+		    			default:
+		    				throwMessage(2331, "Expecting inv, eq or ord clause");
+		    		}
+>>>>>>> /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/parser/src/main/java/org/overture/parser/syntax/DefinitionReader.java/right.java
 		}
-		
-		return AstFactory.newATypeDefinition(idToName(id), invtype, invPattern, invExpression, eqRel, ordRel);
+
+		return AstFactory.newATypeDefinition(idToName(id), invtype, invPattern, invExpression);
+
 	}
 
 	private List<PDefinition> readTypes() throws LexException, ParserException

@@ -238,8 +238,8 @@ abstract public class TypeChecker
 		}
 		
 		return false;
-    }
-    
+	}
+
 	public static void suppressErrors(boolean sup)
 	{
 		suppress =sup;

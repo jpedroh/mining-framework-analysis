@@ -404,13 +404,16 @@ public interface ITypeCheckerAssistantFactory extends IAstAssistantFactory
 	
 	IAnswer<Boolean> getInstanceVariableChecker();
 
+<<<<<<< /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/typechecker/src/main/java/org/overture/typechecker/assistant/ITypeCheckerAssistantFactory.java/left.java
 	IAnswer<Boolean> getTypeDefinitionChecker();
 
 	IQuestionAnswer<FreeVarInfo, LexNameSet> getFreeVariablesChecker();
-
+||||||| /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/typechecker/src/main/java/org/overture/typechecker/assistant/ITypeCheckerAssistantFactory.java/base.java
+=======
 	IQuestionAnswer<ILexLocation,Boolean> getIsOrderedVisitor();
 
 	IQuestionAnswer<ILexLocation,Boolean> getIsEqVisitor();
 
 	IQuestion<TypeCheckInfo> getMultipleEqualityChecker();
+>>>>>>> /usr/src/app/output/overturetool/overture/bffba8bbaba72042e85c88e333720221b2d54250/core/typechecker/src/main/java/org/overture/typechecker/assistant/ITypeCheckerAssistantFactory.java/right.java
 }
