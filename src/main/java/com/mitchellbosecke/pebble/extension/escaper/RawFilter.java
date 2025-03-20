@@ -23,6 +23,7 @@ public class RawFilter implements Filter {
     @Override
     public Object apply(Object inputObject, Map<String, Object> args, PebbleTemplateImpl self, int lineNumber) {
         return inputObject == null ? null : new SafeString(inputObject.toString());
+
     }
 
 }
