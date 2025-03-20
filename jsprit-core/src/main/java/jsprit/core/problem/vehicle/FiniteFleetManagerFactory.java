@@ -27,12 +27,16 @@ public class FiniteFleetManagerFactory implements VehicleFleetManagerFactory{
 
 	private Collection<Vehicle> vehicles;
 	
-
 	/**
 	 * Constucts the factory.
 	 *
 	 * @param vehicles
 	 */
+        /**
+         * Constucts the factory.
+         *
+         * @param vehicles
+         */
 	public FiniteFleetManagerFactory(Collection<Vehicle> vehicles) {
 		super();
 		this.vehicles = vehicles;
@@ -41,6 +45,9 @@ public class FiniteFleetManagerFactory implements VehicleFleetManagerFactory{
 	/**
 	 * Creates the finite fleetmanager.
 	 */
+        /**
+         * Creates the finite fleetmanager.
+         */
 	@Override
 	public VehicleFleetManager createFleetManager() {
 		return new VehicleFleetManagerImpl(vehicles);

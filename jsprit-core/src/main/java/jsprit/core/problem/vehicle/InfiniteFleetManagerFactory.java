@@ -27,12 +27,16 @@ public class InfiniteFleetManagerFactory implements VehicleFleetManagerFactory{
 
 	private Collection<Vehicle> vehicles;
 	
-
 	/**
 	 * Constructs the factory.
 	 *
 	 * @param vehicles
 	 */
+        /**
+         * Constructs the factory.
+         *
+         * @param vehicles
+         */
 	public InfiniteFleetManagerFactory(Collection<Vehicle> vehicles) {
 		super();
 		this.vehicles = vehicles;
@@ -41,6 +45,9 @@ public class InfiniteFleetManagerFactory implements VehicleFleetManagerFactory{
 	/**
 	 * Creates the infinite fleetmanager.
 	 */
+        /**
+         * Creates the infinite fleetmanager.
+         */
 	@Override
 	public VehicleFleetManager createFleetManager() {
 		return new InfiniteVehicles(vehicles);
