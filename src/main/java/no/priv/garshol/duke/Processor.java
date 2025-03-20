@@ -172,12 +172,13 @@ public class Processor {
 
 
   /**
-   * Retrieve new records from data sources, and match them to
-   * previously indexed records. This method does <em>not</em> index
-   * the new records.
+   * match records to previously indexed entities
+   * 
+   * @param sources new entities
+   * @throws IOException
    */
   public void linkRecords(Collection<DataSource> sources) throws IOException {
-    for (DataSource source : sources) {
+	for (DataSource source : sources) {
       source.setLogger(logger);
 
       RecordIterator it2 = source.getRecords();
@@ -196,12 +197,16 @@ public class Processor {
   }
 
   /**
-   * Index all new records from the given data sources. This method
-   * does <em>not</em> do any matching.
+   * build an index of the given data sources
+   * 
+   * @param sources 
+   * @param batch_size
+   * @throws CorruptIndexException
+   * @throws IOException
    */
   public void buildIndex(Collection<DataSource> sources, int batch_size)
-    throws CorruptIndexException, IOException {
-    int count = 0;
+		throws CorruptIndexException, IOException {
+	int count = 0;
     for (DataSource source : sources) {
       source.setLogger(logger);
 
