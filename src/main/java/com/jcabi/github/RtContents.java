@@ -47,12 +47,10 @@ import lombok.EqualsAndHashCode;
  * @author Andres Candal (andres.candal@rollasolution.com)
  * @version $Id$
  * @since 0.8
- * @checkstyle MultipleStringLiterals (200 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
 @EqualsAndHashCode(of = { "entry", "request", "owner" })
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class RtContents implements Contents {
 
     /**
@@ -104,6 +102,7 @@ public final class RtContents implements Contents {
         throws IOException {
         final JsonStructure json = Json.createObjectBuilder()
             .add("message", message)
+            // @checkstyle MultipleStringLiterals (1 line)
             .add("content", content)
             .build();
         return new RtContent(this.entry, this.owner,
@@ -116,7 +115,6 @@ public final class RtContents implements Contents {
                 .json().readObject().getJsonObject("content").getString("path")
         );
     }
-
     @Override
     public Commit remove(
         @NotNull(message = "path is never NULL") final String path,
@@ -125,6 +123,7 @@ public final class RtContents implements Contents {
         throws IOException {
         final JsonStructure json = Json.createObjectBuilder()
             .add("message", message)
+            // @checkstyle MultipleStringLiterals (1 line)
             .add("sha", sha)
             .build();
         return new RtCommit(

@@ -60,6 +60,7 @@ public interface Contents {
     @NotNull(message = "Content is never NULL")
     Content readme();
 
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/ff16bc5bbf21619b07fec2f2e5b9ee83993ee963/src/main/java/com/jcabi/github/Contents.java/left.java
     /**
      * Create new file.
      * @param path The content path
@@ -75,7 +76,8 @@ public interface Contents {
         @NotNull(message = "message is never NULL") String message,
         @NotNull(message = "content is never NULL") String content)
         throws IOException;
-
+||||||| /usr/src/app/output/jcabi/jcabi-github/ff16bc5bbf21619b07fec2f2e5b9ee83993ee963/src/main/java/com/jcabi/github/Contents.java/base.java
+=======
     /**
      * Removes a file.
      * @param path The content path
@@ -91,5 +93,6 @@ public interface Contents {
         @NotNull(message = "message is never NULL") String message,
         @NotNull(message = "sha is never NULL") String sha)
         throws IOException;
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/ff16bc5bbf21619b07fec2f2e5b9ee83993ee963/src/main/java/com/jcabi/github/Contents.java/right.java
 
 }

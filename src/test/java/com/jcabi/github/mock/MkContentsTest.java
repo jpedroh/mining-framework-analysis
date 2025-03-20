@@ -71,7 +71,6 @@ public final class MkContentsTest {
     public void canCreateFile() throws Exception {
         //To be implemented.
     }
-
     /**
      * MkContents should be able to create new files.
      *
