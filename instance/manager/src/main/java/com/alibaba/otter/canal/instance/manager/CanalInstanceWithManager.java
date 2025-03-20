@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import com.alibaba.otter.canal.parse.inbound.mysql.tablemeta.HistoryTableMetaCache;
-
 import com.alibaba.otter.canal.meta.FileMixedMetaManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
