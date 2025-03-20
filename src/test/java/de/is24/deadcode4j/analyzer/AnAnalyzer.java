@@ -1,7 +1,6 @@
 package de.is24.deadcode4j.analyzer;
-
-import de.is24.deadcode4j.*;
 import de.is24.deadcode4j.junit.FileLoader;
+import de.is24.deadcode4j.*;
 import de.is24.deadcode4j.junit.LoggingRule;
 import org.junit.After;
 import org.junit.Before;
@@ -38,6 +37,10 @@ public abstract class AnAnalyzer<T extends Analyzer> {
                 Collections.<Repository>emptyList());
         codeContext = new CodeContext(dummyModule, Collections.<Object, IntermediateResult>emptyMap());
         analysisIsFinished = false;
+    }
+
+    protected File getFile(String fileName) {
+        return FileLoader.getFile(fileName);
     }
 
     @After

@@ -106,6 +106,15 @@ public final class Utils {
     }
 
     /**
+     * Returns the given <code>Iterable</code> or an empty list if it is <code>null</code>.
+     *
+     * @since 1.6
+     */
+    @Nonnull
+    public static <E> Iterable<E> emptyIfNull(@Nullable Iterable<E> iterable) {
+        return iterable == null ? Collections.<E>emptyList() : iterable;
+    }
+    /**
      * Returns a <code>Function</code> that will call the specified functions one by one until a return value is
      * <i>present</i> or the end of the call chain is reached.
      *
@@ -127,16 +136,6 @@ public final class Utils {
                 }
             }
         };
-    }
-
-    /**
-     * Returns the given <code>Iterable</code> or an empty list if it is <code>null</code>.
-     *
-     * @since 1.6
-     */
-    @Nonnull
-    public static <E> Iterable<E> emptyIfNull(@Nullable Iterable<E> iterable) {
-        return iterable == null ? Collections.<E>emptyList() : iterable;
     }
 
 }
