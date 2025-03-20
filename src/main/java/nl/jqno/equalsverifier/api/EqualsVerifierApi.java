@@ -11,7 +11,7 @@ import nl.jqno.equalsverifier.Warning;
  * @param <T> The class under test.
  */
 public interface EqualsVerifierApi<T> {
-    /* package private */String WEBSITE_URL =
+    /* package private */ String WEBSITE_URL =
         "For more information, go to: https://www.jqno.nl/equalsverifier/errormessages";
 
     /**
