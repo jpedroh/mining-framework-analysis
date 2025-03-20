@@ -400,7 +400,13 @@ public class ERXConfigurationManager {
      * @return true if the application is deployed as a servlet
      */
     public boolean isDeployedAsServlet() {
+<<<<<<< /usr/src/app/output/wocommunity/wonder/4b8ea8d4f52275fb43ea92afa9649b036e84de7f/Frameworks/Core/ERExtensions/Sources/er/extensions/foundation/ERXConfigurationManager.java/left.java
+		return contextClassName().contains("Servlet"); // i.e one of WOServletContext or ERXWOServletContext
+||||||| /usr/src/app/output/wocommunity/wonder/4b8ea8d4f52275fb43ea92afa9649b036e84de7f/Frameworks/Core/ERExtensions/Sources/er/extensions/foundation/ERXConfigurationManager.java/base.java
+		 // i.e one of WOServletContext or ERXWOServletContext
+=======
 		return contextClassName()!= null && contextClassName().contains("Servlet"); // i.e one of WOServletContext or ERXWOServletContext
+>>>>>>> /usr/src/app/output/wocommunity/wonder/4b8ea8d4f52275fb43ea92afa9649b036e84de7f/Frameworks/Core/ERExtensions/Sources/er/extensions/foundation/ERXConfigurationManager.java/right.java
     }
     
 	public void setContextClassName(String name) {
