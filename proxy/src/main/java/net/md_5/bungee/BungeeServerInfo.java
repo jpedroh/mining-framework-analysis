@@ -1,5 +1,4 @@
 package net.md_5.bungee;
-
 import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -31,161 +30,107 @@ import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.packet.PluginMessage;
 
-// CHECKSTYLE:OFF
-@RequiredArgsConstructor
-@ToString(of =
-{
-    "name", "socketAddress", "restricted"
-})
-// CHECKSTYLE:ON
-public class BungeeServerInfo implements ServerInfo
-{
+@RequiredArgsConstructor @ToString(of = { "name", "socketAddress", "restricted" }) public class BungeeServerInfo implements ServerInfo {
+  @Getter private final String name;
 
-    @Getter
-    private final String name;
-    @Getter
-    private final SocketAddress socketAddress;
-    private final Collection<ProxiedPlayer> players = new ArrayList<>();
-    @Getter
-    private final String motd;
-    @Getter
-    private final boolean restricted;
-    @Getter
-    private final Queue<DefinedPacket> packetQueue = new LinkedList<>();
+  @Getter private final SocketAddress socketAddress;
 
-    @Synchronized("players")
-    public void addPlayer(ProxiedPlayer player)
-    {
-        players.add( player );
-    }
+  private final Collection<ProxiedPlayer> players = new ArrayList<>();
 
-    @Synchronized("players")
-    public void removePlayer(ProxiedPlayer player)
-    {
-        players.remove( player );
-    }
+  @Getter private final String motd;
 
-    @Synchronized("players")
-    @Override
-    public Collection<ProxiedPlayer> getPlayers()
-    {
-        return Collections.unmodifiableCollection( new HashSet<>( players ) );
-    }
+  @Getter private final boolean restricted;
 
-    @Override
-    public String getPermission()
-    {
-        return "bungeecord.server." + name;
-    }
+  @Getter private final Queue<DefinedPacket> packetQueue = new LinkedList<>();
 
-    @Override
-    public boolean canAccess(CommandSender player)
-    {
-        Preconditions.checkNotNull( player, "player" );
-        return !restricted || player.hasPermission( getPermission() );
-    }
+  @Synchronized(value = "players") public void addPlayer(ProxiedPlayer player) {
+    players.add(player);
+  }
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        return ( obj instanceof ServerInfo ) && Objects.equals( getAddress(), ( (ServerInfo) obj ).getAddress() );
-    }
+  @Synchronized(value = "players") public void removePlayer(ProxiedPlayer player) {
+    players.remove(player);
+  }
 
-    @Override
-    public int hashCode()
-    {
-        return socketAddress.hashCode();
-    }
+  @Synchronized(value = "players") @Override public Collection<ProxiedPlayer> getPlayers() {
+    return Collections.unmodifiableCollection(new HashSet<>(players));
+  }
 
-    @Override
-    public void sendData(String channel, byte[] data)
-    {
-        sendData( channel, data, true );
-    }
+  @Override public String getPermission() {
+    return "bungeecord.server." + name;
+  }
 
-    // TODO: Don't like this method
-    @Override
-    public boolean sendData(String channel, byte[] data, boolean queue)
-    {
-        Preconditions.checkNotNull( channel, "channel" );
-        Preconditions.checkNotNull( data, "data" );
+  @Override public boolean canAccess(CommandSender player) {
+    Preconditions.checkNotNull(player, "player");
+    return !restricted || player.hasPermission(getPermission());
+  }
 
-        synchronized ( packetQueue )
-        {
-            Server server = ( players.isEmpty() ) ? null : players.iterator().next().getServer();
-            if ( server != null )
-            {
-                server.sendData( channel, data );
-                return true;
-            } else if ( queue )
-            {
-                packetQueue.add( new PluginMessage( channel, data, false ) );
-            }
-            return false;
+  @Override public boolean equals(Object obj) {
+    return (obj instanceof ServerInfo) && Objects.equals(getAddress(), ((ServerInfo) obj).getAddress());
+  }
+
+  @Override public int hashCode() {
+    return socketAddress.hashCode();
+  }
+
+  @Override public void sendData(String channel, byte[] data) {
+    sendData(channel, data, true);
+  }
+
+  @Override public boolean sendData(String channel, byte[] data, boolean queue) {
+    Preconditions.checkNotNull(channel, "channel");
+    Preconditions.checkNotNull(data, "data");
+    synchronized (packetQueue) {
+      Server server = (players.isEmpty()) ? null : players.iterator().next().getServer();
+      if (server != null) {
+        server.sendData(channel, data);
+        return true;
+      } else {
+        if (queue) {
+          packetQueue.add(new PluginMessage(channel, data, false));
         }
+      }
+      return false;
     }
+  }
 
-    private long lastPing;
-    private ServerPing cachedPing;
+  private long lastPing;
 
-    public void cachePing(ServerPing serverPing)
-    {
-        if ( ProxyServer.getInstance().getConfig().getRemotePingCache() > 0 )
-        {
-            this.cachedPing = serverPing;
-            this.lastPing = System.currentTimeMillis();
+  private ServerPing cachedPing;
+
+  public void cachePing(ServerPing serverPing) {
+    if (ProxyServer.getInstance().getConfig().getRemotePingCache() > 0) {
+      this.cachedPing = serverPing;
+      this.lastPing = System.currentTimeMillis();
+    }
+  }
+
+  @Override public InetSocketAddress getAddress() {
+    return (InetSocketAddress) socketAddress;
+  }
+
+  @Override public void ping(final Callback<ServerPing> callback) {
+    ping(callback, ProxyServer.getInstance().getProtocolVersion());
+  }
+
+  public void ping(final Callback<ServerPing> callback, final int protocolVersion) {
+    Preconditions.checkNotNull(callback, "callback");
+    int pingCache = ProxyServer.getInstance().getConfig().getRemotePingCache();
+    if (pingCache > 0 && cachedPing != null && (lastPing - System.currentTimeMillis()) > pingCache) {
+      cachedPing = null;
+    }
+    if (cachedPing != null) {
+      callback.done(cachedPing, null);
+      return;
+    }
+    ChannelFutureListener listener = new ChannelFutureListener() {
+      @Override public void operationComplete(ChannelFuture future) throws Exception {
+        if (future.isSuccess()) {
+          future.channel().pipeline().get(HandlerBoss.class).setHandler(new PingHandler(BungeeServerInfo.this, callback, protocolVersion));
+        } else {
+          callback.done(null, future.cause());
         }
-    }
-
-    @Override
-    public InetSocketAddress getAddress()
-    {
-        return (InetSocketAddress) socketAddress;
-    }
-
-    @Override
-    public void ping(final Callback<ServerPing> callback)
-    {
-        ping( callback, ProxyServer.getInstance().getProtocolVersion() );
-    }
-
-    public void ping(final Callback<ServerPing> callback, final int protocolVersion)
-    {
-        Preconditions.checkNotNull( callback, "callback" );
-
-        int pingCache = ProxyServer.getInstance().getConfig().getRemotePingCache();
-        if ( pingCache > 0 && cachedPing != null && ( lastPing - System.currentTimeMillis() ) > pingCache )
-        {
-            cachedPing = null;
-        }
-
-        if ( cachedPing != null )
-        {
-            callback.done( cachedPing, null );
-            return;
-        }
-
-        ChannelFutureListener listener = new ChannelFutureListener()
-        {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception
-            {
-                if ( future.isSuccess() )
-                {
-                    future.channel().pipeline().get( HandlerBoss.class ).setHandler( new PingHandler( BungeeServerInfo.this, callback, protocolVersion ) );
-                } else
-                {
-                    callback.done( null, future.cause() );
-                }
-            }
-        };
-        new Bootstrap()
-                .channel( PipelineUtils.getChannel( socketAddress ) )
-                .group( BungeeCord.getInstance().workerEventLoopGroup ) //BotFilter //WaterFall backport
-                .handler( PipelineUtils.BASE )
-                .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, BungeeCord.getInstance().getConfig().getRemotePingTimeout() )
-                .remoteAddress( socketAddress )
-                .connect()
-                .addListener( listener );
-    }
+      }
+    };
+    new Bootstrap().channel(PipelineUtils.getChannel(socketAddress)).group(BungeeCord.getInstance().workerEventLoopGroup).handler(PipelineUtils.BASE).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, BungeeCord.getInstance().getConfig().getRemotePingTimeout()).remoteAddress(socketAddress).connect().addListener(listener);
+  }
 }
