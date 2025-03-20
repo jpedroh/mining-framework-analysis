@@ -1,5 +1,4 @@
 package com.mercadopago.client.cardtoken;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -30,7 +29,7 @@ public class CardTokenClient extends MercadoPagoClient {
    * Get card token.
    *
    * @param id card id
-   * @return card token information
+   * @return card token
    */
   public CardToken get(String id) throws MPException {
     return this.get(id, null);
@@ -41,11 +40,10 @@ public class CardTokenClient extends MercadoPagoClient {
    *
    * @param id card id
    * @param requestOptions metadata to customize the request
-   * @return card token information
+   * @return card token
    */
   public CardToken get(String id, MPRequestOptions requestOptions) throws MPException {
-    MPResponse response =
-        send(String.format("/v1/card_tokens/%s", id), HttpMethod.GET, null, null, requestOptions);
+    MPResponse response = send(String.format("/v1/card_tokens/%s", id), HttpMethod.GET, null, null, requestOptions);
     CardToken cardToken = Serializer.deserializeFromJson(CardToken.class, response.getContent());
     cardToken.setResponse(response);
     return cardToken;
@@ -55,8 +53,8 @@ public class CardTokenClient extends MercadoPagoClient {
    * Create token associated with a card.
    *
    * @param request attributes used to perform the request
-   * @return card token information
-   * @throws MPException an error if the request fails
+   * @return card token
+   * @throws MPException any error creating the customer card
    */
   public CardToken create(CardTokenRequest request) throws MPException {
     return this.create(request, null);
@@ -67,18 +65,11 @@ public class CardTokenClient extends MercadoPagoClient {
    *
    * @param request attributes used to perform the request
    * @param requestOptions metadata to customize the request
-   * @return card token information
-   * @throws MPException an error if the request fails
+   * @return card token
+   * @throws MPException any error creating the customer card
    */
-  public CardToken create(CardTokenRequest request, MPRequestOptions requestOptions)
-      throws MPException {
-    MPResponse response =
-        send(
-            "/v1/card_tokens",
-            HttpMethod.POST,
-            Serializer.serializeToJson(request),
-            null,
-            requestOptions);
+  public CardToken create(CardTokenRequest request, MPRequestOptions requestOptions) throws MPException {
+    MPResponse response = send("/v1/card_tokens", HttpMethod.POST, Serializer.serializeToJson(request), null, requestOptions);
     CardToken cardToken = Serializer.deserializeFromJson(CardToken.class, response.getContent());
     cardToken.setResponse(response);
     return cardToken;

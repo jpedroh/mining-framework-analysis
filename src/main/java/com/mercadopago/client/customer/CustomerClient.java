@@ -1,8 +1,6 @@
 package com.mercadopago.client.customer;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeResultsResourcesPageFromJson;
-
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPagoConfig;
@@ -52,8 +50,7 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param customerId id of the customer to which the card belongs
    * @return the requested customer card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/get/">api docs</a>
+   * @throws MPException any error retrieving the customer card
    */
   public Customer get(String customerId) throws MPException {
     return this.get(customerId, null);
@@ -64,21 +61,12 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param customerId id of the customer
    * @param requestOptions metadata to customize the request
-   * @return the requested customer card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/get/">api docs</a>
+   * @return customer card retrieved
+   * @throws MPException any error retrieving the customer card
    */
   public Customer get(String customerId, MPRequestOptions requestOptions) throws MPException {
     LOGGER.info("Sending get customer request");
-
-    MPResponse response =
-        send(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
-
+    MPResponse response = send(String.format("/v1/customers/%s", customerId), HttpMethod.GET, null, null, requestOptions);
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -88,32 +76,26 @@ public class CustomerClient extends MercadoPagoClient {
    * Add new customer.
    *
    * @param request attributes used to perform the request
-   * @return the customer just added
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers/post/">api docs</a>
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
   public Customer create(CustomerRequest request) throws MPException {
     return this.create(request, null);
   }
 
   /**
-   * Add new customer.
+   * Add card for customer.
    *
    * @param request attributes used to perform the request
    * @param requestOptions metadata to customize the request
-   * @return the customer just added
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers/post/">api docs</a>
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
-  public Customer create(CustomerRequest request, MPRequestOptions requestOptions)
-      throws MPException {
+  public Customer create(CustomerRequest request, MPRequestOptions requestOptions) throws MPException {
     LOGGER.info("Sending create customer request");
-
     JsonObject payload = Serializer.serializeToJson(request);
-    MPRequest mpRequest =
-        MPRequest.buildRequest("/v1/customers", HttpMethod.POST, payload, null, requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest("/v1/customers", HttpMethod.POST, payload, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -124,9 +106,8 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param customerId id of the customer
    * @param request attributes used to perform the request
-   * @return the customer just updated
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/put/">api docs</a>
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
   public Customer update(String customerId, CustomerRequest request) throws MPException {
     return this.update(customerId, request, null);
@@ -138,25 +119,14 @@ public class CustomerClient extends MercadoPagoClient {
    * @param customerId id of the customer
    * @param request attributes used to perform the request
    * @param requestOptions metadata to customize the request
-   * @return the customer just updated
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/put/">api docs</a>
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
-  public Customer update(
-      String customerId, CustomerRequest request, MPRequestOptions requestOptions)
-      throws MPException {
+  public Customer update(String customerId, CustomerRequest request, MPRequestOptions requestOptions) throws MPException {
     LOGGER.info("Sending update customer request");
-
     JsonObject payload = Serializer.serializeToJson(request);
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.PUT,
-            payload,
-            null,
-            requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest(String.format("/v1/customers/%s", customerId), HttpMethod.PUT, payload, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -166,8 +136,8 @@ public class CustomerClient extends MercadoPagoClient {
    * Delete customer.
    *
    * @param customerId id of the customer
-   * @return the customer just deleted
-   * @throws MPException an error if the request fails
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
   public Customer delete(String customerId) throws MPException {
     return this.delete(customerId, null);
@@ -178,21 +148,13 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param customerId id of the customer
    * @param requestOptions metadata to customize the request
-   * @return the customer just deleted
-   * @throws MPException an error if the request fails
+   * @return the customer card just added
+   * @throws MPException any error creating the customer card
    */
   public Customer delete(String customerId, MPRequestOptions requestOptions) throws MPException {
     LOGGER.info("Sending delete customer request");
-
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.DELETE,
-            null,
-            null,
-            requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest(String.format("/v1/customers/%s", customerId), HttpMethod.DELETE, null, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -203,8 +165,7 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param request attributes used to perform the request
    * @return search result
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/customers/_customers_search/get">api docs</a>
+   * @throws MPException any error creating the customer card
    */
   public MPResultsResourcesPage<Customer> search(MPSearchRequest request) throws MPException {
     return this.search(request, null);
@@ -216,18 +177,13 @@ public class CustomerClient extends MercadoPagoClient {
    * @param request attributes used to search for customer
    * @param requestOptions metadata to customize the request
    * @return search result
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/customers/_customers_search/get">api docs</a>
+   * @throws MPException any error creating the customer card
    */
-  public MPResultsResourcesPage<Customer> search(
-      MPSearchRequest request, MPRequestOptions requestOptions) throws MPException {
+  public MPResultsResourcesPage<Customer> search(MPSearchRequest request, MPRequestOptions requestOptions) throws MPException {
     LOGGER.info("Sending search customer request");
-
     MPResponse response = search("/v1/customers/search", request, requestOptions);
-
-    Type responseType = new TypeToken<MPResultsResourcesPage<Customer>>() {}.getType();
-    MPResultsResourcesPage<Customer> result =
-        deserializeResultsResourcesPageFromJson(responseType, response.getContent());
+    Type responseType = new TypeToken<MPResultsResourcesPage<Customer>>() { }.getType();
+    MPResultsResourcesPage<Customer> result = deserializeResultsResourcesPageFromJson(responseType, response.getContent());
     result.setResponse(response);
     return result;
   }
@@ -238,8 +194,7 @@ public class CustomerClient extends MercadoPagoClient {
    * @param customerId id of the customer
    * @param cardId id of the card
    * @return the requested card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/get">api docs</a>
+   * @throws MPException any error retrieving the customer card
    */
   public CustomerCard getCard(String customerId, String cardId) throws MPException {
     return this.getCard(customerId, cardId, null);
@@ -252,11 +207,9 @@ public class CustomerClient extends MercadoPagoClient {
    * @param cardId id of the card
    * @param requestOptions metadata to customize the request
    * @return the requested card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/get">api docs</a>
+   * @throws MPException any error retrieving the customer card
    */
-  public CustomerCard getCard(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException {
+  public CustomerCard getCard(String customerId, String cardId, MPRequestOptions requestOptions) throws MPException {
     return cardClient.get(customerId, cardId, requestOptions);
   }
 
@@ -266,11 +219,9 @@ public class CustomerClient extends MercadoPagoClient {
    * @param customerId id of the customer
    * @param request attributes used to associate a new card with customer
    * @return the added card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/post">api docs</a>
+   * @throws MPException any error creating the customer card
    */
-  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request)
-      throws MPException {
+  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request) throws MPException {
     return this.createCard(customerId, request, null);
   }
 
@@ -281,12 +232,9 @@ public class CustomerClient extends MercadoPagoClient {
    * @param request attributes used to associate a new card with customer
    * @param requestOptions metadata to customize the request
    * @return the added card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/post">api docs</a>
+   * @throws MPException any error creating the customer card
    */
-  public CustomerCard createCard(
-      String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions)
-      throws MPException {
+  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions) throws MPException {
     return cardClient.create(customerId, request, requestOptions);
   }
 
@@ -296,8 +244,7 @@ public class CustomerClient extends MercadoPagoClient {
    * @param customerId id of the customer
    * @param cardId id of the card being removed
    * @return the deleted card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/delete">api docs</a>
+   * @throws MPException any error deleting the customer card
    */
   public CustomerCard deleteCard(String customerId, String cardId) throws MPException {
     return this.deleteCard(customerId, cardId, null);
@@ -310,11 +257,9 @@ public class CustomerClient extends MercadoPagoClient {
    * @param cardId id of the card being removed
    * @param requestOptions metadata to customize the request
    * @return the deleted card
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/delete">api docs</a>
+   * @throws MPException any error deleting the customer card
    */
-  public CustomerCard deleteCard(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException {
+  public CustomerCard deleteCard(String customerId, String cardId, MPRequestOptions requestOptions) throws MPException {
     return cardClient.delete(customerId, cardId, requestOptions);
   }
 
@@ -323,8 +268,7 @@ public class CustomerClient extends MercadoPagoClient {
    *
    * @param customerId id of the customer
    * @return list of customer cards
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/get">api docs</a>
+   * @throws MPException any error listing customer cards
    */
   public MPResourceList<CustomerCard> listCards(String customerId) throws MPException {
     return this.listCards(customerId, null);
@@ -336,11 +280,9 @@ public class CustomerClient extends MercadoPagoClient {
    * @param customerId id of the customer
    * @param requestOptions metadata to customize the request
    * @return list of customer cards
-   * @throws MPException an error if the request fails
-   * @see <a href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/get">api docs</a>
+   * @throws MPException any error listing customer cards
    */
-  public MPResourceList<CustomerCard> listCards(String customerId, MPRequestOptions requestOptions)
-      throws MPException {
+  public MPResourceList<CustomerCard> listCards(String customerId, MPRequestOptions requestOptions) throws MPException {
     return cardClient.listAll(customerId, requestOptions);
   }
 }

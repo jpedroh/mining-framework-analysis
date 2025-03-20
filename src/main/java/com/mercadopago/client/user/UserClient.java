@@ -1,5 +1,4 @@
 package com.mercadopago.client.user;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -30,7 +29,7 @@ public class UserClient extends MercadoPagoClient {
    * Get user information.
    *
    * @return user information
-   * @throws MPException an error if the request fails
+   * @throws MPException any error retrieving the customer card
    */
   public User get() throws MPException {
     return this.get(null);
@@ -41,7 +40,7 @@ public class UserClient extends MercadoPagoClient {
    *
    * @param requestOptions metadata to customize the request
    * @return user information
-   * @throws MPException an error if the request fails
+   * @throws MPException any error retrieving the customer card
    */
   public User get(MPRequestOptions requestOptions) throws MPException {
     MPResponse response = send("/users/me", HttpMethod.GET, null, null, requestOptions);
