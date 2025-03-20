@@ -58,10 +58,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public BooleanAssert assertThat(boolean actual) {
 	return proxy(BooleanAssert.class, Boolean.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -88,10 +100,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public ByteAssert assertThat(byte actual) {
 	return proxy(ByteAssert.class, Byte.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -118,6 +142,12 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public CharacterAssert assertThat(char actual) {
 	return proxy(CharacterAssert.class, Character.class, actual);
   }
@@ -132,6 +162,12 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
 	return proxy(CharArrayAssert.class, char[].class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -161,17 +197,41 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/b5e448af3b363526f25633005608a912ba51bdb2/src/main/java/org/assertj/core/api/AbstractStandardSoftAssertions.java/left.java
+  @SuppressWarnings("unchecked")
+  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return proxy(AbstractComparableAssert.class, Comparable.class, actual);
+  }
+  @SuppressWarnings("unchecked")
+  public <T> ObjectAssert<T> assertThat(T actual) {
+	return proxy(ObjectAssert.class, Object.class, actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/b5e448af3b363526f25633005608a912ba51bdb2/src/main/java/org/assertj/core/api/AbstractStandardSoftAssertions.java/base.java
+  @SuppressWarnings("unchecked")
+  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return proxy(AbstractComparableAssert.class, Comparable.class, actual);
+  }
+  @SuppressWarnings("unchecked")
+  public <T> ObjectAssert<T> assertThat(T actual) {
+	return proxy(ObjectAssert.class, Object.class, actual);
+  }
+=======
   @SuppressWarnings("unchecked")
   public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
     return proxy(GenericComparableAssert.class, Comparable.class, actual);
   }
+  @SuppressWarnings("unchecked")
+  public <T> ObjectAssert<T> assertThat(T actual) {
+	return proxy(ObjectAssert.class, Object.class, actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/b5e448af3b363526f25633005608a912ba51bdb2/src/main/java/org/assertj/core/api/AbstractStandardSoftAssertions.java/right.java
 
   /**
-   * Creates a new instance of <code>{@link IterableAssert}</code>.
-   *
-   * @param actual the actual value.
-   * @return the created assertion object.
-   */
+ * Creates a new instance of <code>{@link IterableAssert}</code>.
+ *
+ * @param actual the actual value.
+ * @return the created assertion object.
+ */
   @SuppressWarnings("unchecked")
   public <T> IterableAssert<T> assertThat(Iterable<? extends T> actual) {
 	return proxy(IterableAssert.class, Iterable.class, actual);
@@ -196,10 +256,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public DoubleAssert assertThat(double actual) {
 	return proxy(DoubleAssert.class, Double.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -256,10 +328,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public FloatAssert assertThat(float actual) {
 	return proxy(FloatAssert.class, Float.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -286,6 +370,12 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public IntegerAssert assertThat(int actual) {
 	return proxy(IntegerAssert.class, Integer.class, actual);
   }
@@ -300,6 +390,12 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
 	return proxy(IntArrayAssert.class, int[].class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -327,10 +423,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public LongAssert assertThat(long actual) {
 	return proxy(LongAssert.class, Long.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -357,10 +465,6 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  public <T> ObjectAssert<T> assertThat(T actual) {
-	return proxy(ObjectAssert.class, Object.class, actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
@@ -392,10 +496,22 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
    * @param actual the actual value.
    * @return the created assertion object.
    */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   public ShortAssert assertThat(short actual) {
 	return proxy(ShortAssert.class, Short.class, actual);
   }
 
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -456,6 +572,32 @@ public abstract class AbstractStandardSoftAssertions extends AbstractSoftAsserti
 	return proxy(ThrowableAssert.class, Throwable.class, actual);
   }
 
+  /**
+   * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
+   * 
+   * Java 8 example :
+   * <pre><code class='java'>  {@literal @}Test
+   *  public void testException() {
+   *    SoftAssertions softly = new SoftAssertions();
+   *    softly.assertThatThrownBy(() -> { throw new Exception("boom!"); }).isInstanceOf(Exception.class)
+   *                                                                     .hasMessageContaining("boom");
+   *  }</code></pre>
+   * 
+   * Java 7 example :
+   * <pre><code class='java'> SoftAssertions softly = new SoftAssertions();
+   * softly.assertThatThrownBy(new ThrowingCallable() {
+   * 
+   *   {@literal @}Override
+   *   public Void call() throws Exception {
+   *     throw new Exception("boom!");
+   *   }
+   *   
+   * }).isInstanceOf(Exception.class)
+   *   .hasMessageContaining("boom");</code></pre>
+   *
+   * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
+   * @return The captured exception or <code>null</code> if none was raised by the callable.
+   */
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    * 
