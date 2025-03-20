@@ -20,14 +20,65 @@ import java.net.URL;
  * https://github.com/asciidoctor/asciidoctorj[Asciidoctor Java integration])
  * to interpet http://asciidoc.org[AsciiDoc] markup within Javadoc comments.
  *
+<<<<<<< /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/left.java
  * include::README.asciidoc[tags=usage]
+||||||| /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/base.java
+ * == Usage
+ * 
+ * Asciidoclet may be used via a custom doclet in the maven-javadoc-plugin:
+ *
+ * [source,xml]
+ * ----
+ * include::pom.xml[tags=pom_include,indent=0]
+ * ----
+ *
+ * <1> Use the `additionalparam` parameter to pass Asciidoclet parameters to javadoc. 
+ *     See <<doclet-options>>.
+ *
+ * <2> The `-overview` option may refer to an Asciidoc file, see <<doclet-options>>.
+ * 
+ * == Doclet Options
+ *
+ * include::README.asciidoc[tags=doclet-options]
+=======
+ * == Usage
+ * 
+ * Asciidoclet may be used via a custom doclet in the maven-javadoc-plugin:
+ *
+ * [source,xml]
+ * ----
+ * include::pom.xml[lines=110..139,indent=0]
+ * ----
+ * //include::pom.xml[tags=pom_include,indent=0]
+ * <1> Use the `additionalparam` parameter to pass Asciidoclet parameters to javadoc. 
+ *     See <<doclet-options>>.
+ * <2> The `-overview` option may refer to an Asciidoc file, see <<doclet-options>>.
+ * 
+ * == Doclet Options
+ *
+ * include::README.asciidoc[tags=doclet-options]
+>>>>>>> /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/right.java
  *
  * == Examples
  *
  * Custom attributes::
+<<<<<<< /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/left.java
+ * +{project_name}+ = {project_name}
+ * +
+ * +{project_desc}+ = {project_desc}
+ * +
+ * +{project_version}+ = {project_version}
+||||||| /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/base.java
+ * `{project_name}` = {project_name}
+ * +
+ * `{project_desc}` = {project_desc}
+ * +
+ * `{project_version}` = {project_version}
+=======
  * `+{project_name}+`;; {project_name}
  * `+{project_desc}+`;; {project_desc}
  * `+{project_version}+`;; {project_version}
+>>>>>>> /usr/src/app/output/asciidoctor/asciidoclet/e31ec7a8acded7cc6ed731a391ddaf86d13329da/src/main/java/org/asciidoctor/Asciidoclet.java/right.java
  *
  * Code block (with syntax highlighting added by CodeRay)::
  * +
