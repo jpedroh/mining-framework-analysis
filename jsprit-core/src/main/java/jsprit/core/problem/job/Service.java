@@ -144,12 +144,10 @@ public class Service implements Job {
 			return this;
 		}
 		
-
 		public Builder addCapacityDimension(int dimensionIndex, int dimensionValue){
 			capacityBuilder.addDimension(dimensionIndex, dimensionValue);
 			return this;
 		}
-		
 		/**
 		 * Sets the time-window of this service.
 		 * 

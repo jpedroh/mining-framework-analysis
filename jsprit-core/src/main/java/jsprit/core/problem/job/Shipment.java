@@ -205,19 +205,10 @@ public class Shipment implements Job{
 			return this;
 		}
 		
-		/**
-		 * Adds capacity dimension.
-		 * 
-		 * @param dimIndex
-		 * @param dimVal
-		 * @return
-		 */
 		public Builder addCapacityDimension(int dimIndex, int dimVal) {
 			capacityBuilder.addDimension(dimIndex, dimVal);
 			return this;
 		}
-		
-
 		/**
 		 * Builds the shipment.
 		 * 
@@ -262,7 +253,6 @@ public class Shipment implements Job{
 	private final TimeWindow pickupTimeWindow;
 	
 	private final Capacity capacity;
-
 	
 	/**
 	 * Constructs the shipment.
