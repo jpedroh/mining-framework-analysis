@@ -57,13 +57,11 @@ public class DataFormatPluginTest {
     private static final File geojsonTempFile;
     private static final String path;
     private static final String pathgeo;
-
     private final Map<String, String> paramsCsv = new HashMap<>();
     private final Map<String, String> paramsXls = new HashMap<>();
     private final Map<String, String> paramsJson = new HashMap<>();
     private final Map<String, String> paramsJsonList = new HashMap<>();
     private final Map<String, String> paramsGeoJson = new HashMap<>();
-
     static {
         // Doc number used for test
         // -> max 9990 because elastic query size limited below 10000
@@ -77,7 +75,6 @@ public class DataFormatPluginTest {
         path = "/dataset0/_data";
         pathgeo = "/dataset1/_data";
     }
-
     @BeforeClass
     public static void setUp() throws IOException {
         clusterName = "es-dataformat-" + System.currentTimeMillis();
@@ -103,7 +100,6 @@ public class DataFormatPluginTest {
 
         node = runner.node();
     }
-
     @AfterClass
     public static void tearDown() throws IOException {
         // close runner
@@ -111,7 +107,6 @@ public class DataFormatPluginTest {
         // delete all files
         runner.clean();
     }
-
     @Before
     public void prepareParams() {
         paramsCsv.put("format", "csv");
@@ -120,7 +115,6 @@ public class DataFormatPluginTest {
         paramsJsonList.put("format", "jsonlist");
         paramsGeoJson.put("format", "geojson");
     }
-
     @After
     public void clearParams() {
         paramsCsv.clear();
@@ -129,7 +123,6 @@ public class DataFormatPluginTest {
         paramsJsonList.clear();
         paramsGeoJson.clear();
     }
-
     @Test
     public void dumpCsvSimple() throws IOException {
         try (CurlResponse curlResponse = createRequest(node, path, paramsCsv).execute()) {
@@ -139,17 +132,14 @@ public class DataFormatPluginTest {
             assertLineContains(lines[0], "\"aaa\"", "\"bbb\"", "\"ccc\"", "\"eee.fff\"", "\"eee.ggg\"", "\"eee.hhh\"");
         }
     }
-
     @Test
     public void dumpCsvWithDenotedFields() throws IOException {
         dumpCsvWithDenotedFields("fields_name");
     }
-
     @Test
     public void dumpCsvWithDenotedFieldsCompatible() throws IOException {
         dumpCsvWithDenotedFields("fl");
     }
-
     @Test
     public void dumpCsvWithoutHeader() throws IOException {
         paramsCsv.put("append.header", "false");
@@ -157,7 +147,6 @@ public class DataFormatPluginTest {
             assertEquals(docNumber, response.getContentAsString().split("\n").length);
         }
     }
-
     @Test
     public void dumpCsvWithQuery() throws IOException {
 
@@ -233,7 +222,6 @@ public class DataFormatPluginTest {
             assertTrue(lines[0].contains("\"eee.hhh\""));
         }
     }
-
     @Test
     public void dumpCsvInFile() throws IOException {
         paramsCsv.put("file", csvTempFile.getAbsolutePath());
@@ -247,7 +235,6 @@ public class DataFormatPluginTest {
             assertLineContains(line, "\"aaa\"", "\"bbb\"", "\"ccc\"", "\"eee.fff\"", "\"eee.ggg\"", "\"eee.hhh\"");
         }
     }
-
     @Test
     public void dumpExcelSimple() throws IOException {
         try (CurlResponse response = createRequest(node, path, paramsXls).execute()) {
@@ -259,17 +246,14 @@ public class DataFormatPluginTest {
             }
         }
     }
-
     @Test
     public void dumpExcelWithDenotedFields() throws IOException {
         dumpExcelWithDenotedFields("fields_name");
     }
-
     @Test
     public void dumpExcelWithDenotedFieldsCompatible() throws IOException {
         dumpExcelWithDenotedFields("fl");
     }
-
     @Test
     public void dumpExcelWithoutHeader() throws IOException {
         paramsXls.put("append.header", "false");
@@ -282,7 +266,6 @@ public class DataFormatPluginTest {
             }
         }
     }
-
     @Test
     public void dumpExcel() throws IOException {
 
@@ -318,7 +301,6 @@ public class DataFormatPluginTest {
             }
         }
     }
-
     @Test
     public void dumpXlsInFile() throws IOException {
         paramsXls.put("file", xlsTempFile.getAbsolutePath());
@@ -333,7 +315,6 @@ public class DataFormatPluginTest {
             }
         }
     }
-
     @Test
     public void dumpJson() throws IOException {
 
@@ -425,7 +406,6 @@ public class DataFormatPluginTest {
             assertTrue(lines[1].startsWith("{\"aaa\""));
         }
     }
-
     @Test
     public void dumpJsonInFile() throws IOException {
         paramsJson.put("file", jsonTempFile.getAbsolutePath());
@@ -439,7 +419,6 @@ public class DataFormatPluginTest {
             assertTrue(lines.get(1).startsWith("{\"aaa\""));
         }
     }
-
     @Test
     public void dumpJsonList() throws IOException {
 
@@ -528,7 +507,6 @@ public class DataFormatPluginTest {
             assertTrue(lines[docNumber + 1].equals("]"));
         }
     }
-
     @Test
     public void dumpJsonListInFile() throws IOException {
         paramsJsonList.put("file", jsonListTempFile.getAbsolutePath());
@@ -543,9 +521,10 @@ public class DataFormatPluginTest {
             assertTrue(lines.get(docNumber + 1).equals("]"));   
         }
     }
-
     @Test
-    public void dumpGeoJson() throws IOException {
+    public
+<<<<<<< /usr/src/app/output/codelibs/elasticsearch-dataformat/7f6410361b640207341ac3b31112ad48aa23d64e/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/left.java
+    @Test void dumpGeoJson() throws IOException {
 
         // default call
         try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
@@ -646,7 +625,111 @@ public class DataFormatPluginTest {
             assertTrue(lines[1].contains("\"x_typeArray\":[\"badtype\",\"badtype\"]"));
         }
     }
+||||||| /usr/src/app/output/codelibs/elasticsearch-dataformat/7f6410361b640207341ac3b31112ad48aa23d64e/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/base.java
+    @Test void dumpGeoJson() throws IOException 
+=======
+    @Test void dumpGeoJson() throws IOException {
 
+        // default call
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson").execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertEquals(docNumber + 2, lines.length);
+            assertTrue(lines[0].equals("{\"type\": \"FeatureCollection\", \"features\": ["));
+            assertTrue(lines[docNumber + 1].equals("]}")); 
+        }
+
+        // normal call with lon_field" and "lat_field"
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.lon_field", "x_lon")
+                .param("geometry.lat_field", "x_lat")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(!lines[1].contains("\"x_lon\":"));
+            assertTrue(!lines[1].contains("\"x_lat\":"));
+            assertTrue(lines[1].matches("(.+)\"geometry\":\\{\"type\":\"Point\",\"coordinates\":\\[[0-9\\.\\-]+,[0-9\\.\\-]+\\](.+)"));
+        }
+
+        // normal call with lon_field", "lat_field" and "x_alt" but without field cleaning
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.lon_field", "x_lon")
+                .param("geometry.lat_field", "x_lat")
+                .param("geometry.alt_field", "x_alt")
+                .param("keep_geometry_info", "true")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(lines[1].contains("\"x_lon\":"));
+            assertTrue(lines[1].contains("\"x_lat\":"));
+            assertTrue(lines[1].contains("\"x_alt\":"));
+            assertTrue(lines[1].matches("(.+)\"geometry\":\\{\"type\":\"Point\",\"coordinates\":\\[[0-9\\.\\-]+,[0-9\\.\\-]+,[0-9\\.\\-]+\\](.+)"));
+        }
+
+        // Look for "geometry.alt_field" value in the iii sub-object and exclude unnecessary fields from final properties
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.lon_field", "x_lon")
+                .param("geometry.lat_field", "x_lat")
+                .param("geometry.alt_field", "iii.x_altSub")
+                .param("exclude_fields", "iii,x_alt,x_coord,x_type,x_typeArray")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(!lines[1].contains("\"x_lon\":"));
+            assertTrue(!lines[1].contains("\"x_lat\":"));
+            assertTrue(!lines[1].contains("\"iii\":{\"jjj\":\"static test\"}"));
+            assertTrue(!lines[1].contains("\"x_alt\":"));
+            assertTrue(lines[1].matches("(.+)\"geometry\":\\{\"type\":\"Point\",\"coordinates\":\\[[0-9\\.\\-]+,[0-9\\.\\-]+,[0-9\\.\\-]+\\](.+)"));
+        }
+
+        // normal call with "type_field" and "coord_field"
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.type_field", "x_type")
+                .param("geometry.coord_field", "x_coord")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(!lines[1].contains("\"x_coord\":["));
+            assertTrue(!lines[1].contains("\"x_type\":"));
+            assertTrue(lines[1].matches("(.+)\"coordinates\":\\[[0-9,\\.\\-\\[\\]]+\\](.+)"));
+        }
+
+        // Bad "geometry.coord_field" value
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.type_field", "x_type")
+                .param("geometry.coord_field", "x_coords")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(lines[1].contains("\"coordinates\":[]"));
+            assertTrue(lines[1].contains("\"x_coord\":["));
+        }
+
+        // Look for "geometry.type_field" value in array at index 1
+        try (CurlResponse curlResponse = EcrCurl.get(node, "/dataset1/_data")
+                .header("Content-Type", "application/json")
+                .param("format", "geojson")
+                .param("geometry.type_field", "x_typeArray[1]")
+                .param("geometry.coord_field", "x_coord")
+                .execute()) {
+            final String content = curlResponse.getContentAsString();
+            final String[] lines = content.split("\n");
+            assertTrue(lines[1].contains("\"x_typeArray\":[\"badtype\",\"badtype\"]"));
+        }
+    }
+>>>>>>> /usr/src/app/output/codelibs/elasticsearch-dataformat/7f6410361b640207341ac3b31112ad48aa23d64e/src/test/java/org/codelibs/elasticsearch/df/DataFormatPluginTest.java/right.java
     @Test
     public void dumpGeoJsonInFile() throws IOException {
         paramsGeoJson.put("file", geojsonTempFile.getAbsolutePath());
@@ -661,7 +744,6 @@ public class DataFormatPluginTest {
             assertTrue(lines.get(docNumber + 1).equals("]}")); 
         }
     }
-
     @Test
     public void dumpSizeLimit() throws IOException {
 
