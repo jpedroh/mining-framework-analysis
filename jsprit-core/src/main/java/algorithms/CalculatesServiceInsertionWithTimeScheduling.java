@@ -27,9 +27,13 @@ import basics.route.Driver;
 import basics.route.Vehicle;
 import basics.route.VehicleRoute;
 
-
+/**
+ * This is experimental. It ignores vehicles' earliestStartTime.
+ * 
+ * @author schroeder
+ *
+ */
 class CalculatesServiceInsertionWithTimeScheduling implements JobInsertionCostsCalculator{
-
 
 	private static Logger log = Logger.getLogger(CalculatesServiceInsertionWithTimeScheduling.class);
 	
