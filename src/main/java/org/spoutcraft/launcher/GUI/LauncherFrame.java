@@ -1,94 +1,77 @@
 package org.spoutcraft.launcher.GUI;
-
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 
-
-public class LauncherFrame extends Frame implements WindowListener{
-
-	/**
+public class LauncherFrame extends Frame implements WindowListener {
+  /**
 	 * 
 	 */
-	private static final long serialVersionUID = 4524937541564722358L;
-	private MinecraftAppletEnglober minecraft;
-	
-	public LauncherFrame() {
-		super("Spoutcraft Launcher");
-		super.setVisible(true);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((dim.width-870)/2, (dim.height-518)/2);
-		this.setSize(new Dimension(870, 518));
-		this.setResizable(true);
-		this.addWindowListener(this);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
-	}
-	
-	public void runGame(String user, String session, String downloadTicket, String mcpass) {
+  private static final long serialVersionUID = 4524937541564722358L;
 
-		this.setVisible(true);
+  private MinecraftAppletEnglober minecraft;
 
-		Applet applet = Launcher.getMinecraftApplet();
+  public LauncherFrame() {
+    super("Spoutcraft Launcher");
+    super.setVisible(true);
+    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+    this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
+    this.setSize(new Dimension(870, 518));
+    this.setResizable(true);
+    this.addWindowListener(this);
+    setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
+  }
 
-		minecraft = new MinecraftAppletEnglober(applet);
+  public void runGame(String user, String session, String downloadTicket, String mcpass) {
+    this.setVisible(true);
+    Applet applet = Launcher.getMinecraftApplet();
+    minecraft = new MinecraftAppletEnglober(applet);
+    minecraft.addParameter("username", user);
+    minecraft.addParameter("sessionid", session);
+    minecraft.addParameter("downloadticket", downloadTicket);
+    minecraft.addParameter("mppass", mcpass);
+    applet.setStub(minecraft);
+    this.add(minecraft);
+    validate();
+    minecraft.init();
+    minecraft.setSize(getWidth(), getHeight());
+    minecraft.start();
+  }
 
-		minecraft.addParameter("username", user);
-		minecraft.addParameter("sessionid", session);
-		minecraft.addParameter("downloadticket", downloadTicket);
-		minecraft.addParameter("mppass", mcpass);
+  public void windowActivated(WindowEvent e) {
+  }
 
-		applet.setStub(minecraft);
+  public void windowClosed(WindowEvent e) {
+  }
 
-		this.add(minecraft);
-		validate();
+  public void windowClosing(WindowEvent e) {
+    if (LauncherFrame.this.minecraft != null) {
+      LauncherFrame.this.minecraft.stop();
+      LauncherFrame.this.minecraft.destroy();
+    }
+    try {
+      Thread.sleep(10000L);
+    } catch (InterruptedException e1) {
+      e1.printStackTrace();
+    }
+    System.out.println("Exiting Spoutcraft");
+    System.exit(0);
+  }
 
-		minecraft.init();
-		minecraft.setSize(getWidth(), getHeight());
+  public void windowDeactivated(WindowEvent e) {
+  }
 
-		minecraft.start();
-	}
-	
-	public void windowActivated(WindowEvent e) {		
-	}
+  public void windowDeiconified(WindowEvent e) {
+  }
 
-	
-	public void windowClosed(WindowEvent e) {
-	}
+  public void windowIconified(WindowEvent e) {
+  }
 
-	
-	public void windowClosing(WindowEvent e) {
-		if (LauncherFrame.this.minecraft != null) {
-			LauncherFrame.this.minecraft.stop();
-			LauncherFrame.this.minecraft.destroy();
-		}
-		try {
-			Thread.sleep(10000L);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		System.out.println("Exiting Spoutcraft");
-		System.exit(0);
-	}
-
-	
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	
-	public void windowIconified(WindowEvent e) {
-	}
-
-	
-	public void windowOpened(WindowEvent e) {
-	}
+  public void windowOpened(WindowEvent e) {
+  }
 }
