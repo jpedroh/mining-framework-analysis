@@ -214,13 +214,13 @@ public enum Protocol
                     map( ProtocolConstants.MINECRAFT_1_15, 0x12 )
             );
             TO_CLIENT.registerPacket(
-                GameState.class, GameState::new,
-                map( ProtocolConstants.MINECRAFT_1_15, 0x1F )
+                    GameState.class,
+                    map( ProtocolConstants.MINECRAFT_1_15, 0x1F )
             );
             TO_CLIENT.registerPacket(
-                ViewDistance.class, ViewDistance::new,
-                map( ProtocolConstants.MINECRAFT_1_14, 0x41 ),
-                map( ProtocolConstants.MINECRAFT_1_15, 0x42 )
+                    ViewDistance.class, ViewDistance::new,
+                    map( ProtocolConstants.MINECRAFT_1_14, 0x41 ),
+                    map( ProtocolConstants.MINECRAFT_1_15, 0x42 )
             );
 
             TO_SERVER.registerPacket(
