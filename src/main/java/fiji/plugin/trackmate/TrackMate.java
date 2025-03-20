@@ -356,6 +356,20 @@ public class TrackMate implements Benchmark, MultiThreaded, Algorithm, Named
 	{
 		final Interval interval = TMUtils.getInterval( img, settings );
 		final int zindex = TMUtils.findZAxisIndex( img );
+<<<<<<< /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/TrackMate.java/left.java
+||||||| /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/TrackMate.java/base.java
+	
+		factory.setTarget( img, settings.detectorSettings );
+
+=======
+	
+		if ( !factory.setTarget( img, settings.detectorSettings ) )
+		{
+			errorMessage = factory.getErrorMessage();
+			return false;
+		}
+
+>>>>>>> /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/TrackMate.java/right.java
 		final int numFrames = settings.tend - settings.tstart + 1;
 		// Final results holder, for all frames
 		final SpotCollection spots = new SpotCollection();

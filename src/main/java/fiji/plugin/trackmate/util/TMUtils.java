@@ -686,7 +686,9 @@ public class TMUtils
 	 *            the {@link Settings} object to declare the analyzers in.
 	 */
 	public static void declareAllFeatures( final Settings settings )
+<<<<<<< /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/util/TMUtils.java/left.java
 	{
+
 		settings.clearSpotAnalyzerFactories();
 		final SpotAnalyzerProvider spotAnalyzerProvider = new SpotAnalyzerProvider( settings.imp );
 		final List< String > spotAnalyzerKeys = spotAnalyzerProvider.getKeys();
@@ -714,7 +716,38 @@ public class TMUtils
 			settings.addTrackAnalyzer( trackAnalyzer );
 		}
 	}
+||||||| /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/util/TMUtils.java/base.java
+=======
+	{
 
+		settings.clearSpotAnalyzerFactories();
+		final SpotAnalyzerProvider spotAnalyzerProvider = new SpotAnalyzerProvider();
+		final List< String > spotAnalyzerKeys = spotAnalyzerProvider.getKeys();
+		for ( final String key : spotAnalyzerKeys )
+		{
+			final SpotAnalyzerFactory< ? > spotFeatureAnalyzer = spotAnalyzerProvider.getFactory( key );
+			settings.addSpotAnalyzerFactory( spotFeatureAnalyzer );
+		}
+
+		settings.clearEdgeAnalyzers();
+		final EdgeAnalyzerProvider edgeAnalyzerProvider = new EdgeAnalyzerProvider();
+		final List< String > edgeAnalyzerKeys = edgeAnalyzerProvider.getKeys();
+		for ( final String key : edgeAnalyzerKeys )
+		{
+			final EdgeAnalyzer edgeAnalyzer = edgeAnalyzerProvider.getFactory( key );
+			settings.addEdgeAnalyzer( edgeAnalyzer );
+		}
+
+		settings.clearTrackAnalyzers();
+		final TrackAnalyzerProvider trackAnalyzerProvider = new TrackAnalyzerProvider();
+		final List< String > trackAnalyzerKeys = trackAnalyzerProvider.getKeys();
+		for ( final String key : trackAnalyzerKeys )
+		{
+			final TrackAnalyzer trackAnalyzer = trackAnalyzerProvider.getFactory( key );
+			settings.addTrackAnalyzer( trackAnalyzer );
+		}
+	}
+>>>>>>> /usr/src/app/output/fiji/trackmate/31e749c77fd17fb77bb36433506765f44784035d/src/main/java/fiji/plugin/trackmate/util/TMUtils.java/right.java
 	/**
 	 * Creates a default file path to save the TrackMate session to, based on
 	 * the image TrackMate works on.
@@ -762,6 +795,24 @@ public class TMUtils
 		}
 		return file;
 	}
+	/**
+	 * Declare all feature analyzers (spot, edge and track analyzers) that can
+	 * be found at runtime to the specified settings.
+	 * 
+	 * @param settings
+	 *            the {@link Settings} object to declare the analyzers in.
+	 */
+	/**
+	 * Creates a default file path to save the TrackMate session to, based on
+	 * the image TrackMate works on.
+	 * 
+	 * @param settings
+	 *            the settings object from which to read the image, its folder,
+	 *            etc.
+	 * @param logger
+	 *            a logger instance in which to echo problems if any.
+	 * @return a new file.
+	 */
 
 	private TMUtils()
 	{}
