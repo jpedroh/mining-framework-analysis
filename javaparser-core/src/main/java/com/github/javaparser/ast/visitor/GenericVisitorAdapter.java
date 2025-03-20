@@ -210,19 +210,23 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final ArrayCreationExpr n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		{
 			R result = visitArraysAnnotations(n, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
 		{
-			R result = n.getType().accept(this, arg);
-			if (result != null) {
-				return result;
-			}
+		R result = n.getType().accept(this, arg);
+		if (result != null) {
+			return result;
 		}
+	}
 		if (n.getDimensions() != null) {
 			for (final Expression dim : n.getDimensions()) {
 				{
@@ -457,21 +461,25 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final ClassOrInterfaceType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
 		if (n.getScope() != null) {
-			{
-				R result = n.getScope().accept(this, arg);
-				if (result != null) {
-					return result;
-				}
+		{
+			R result = n.getScope().accept(this, arg);
+			if (result != null) {
+				return result;
 			}
 		}
+	}
 		if (n.getTypeArgs() != null) {
 			for (final Type t : n.getTypeArgs()) {
 				{
@@ -1282,13 +1290,17 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final PrimitiveType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
 		return null;
 	}
 
@@ -1330,41 +1342,49 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
     @Override
     public R visit(final IntersectionType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
         {
-            for (ReferenceType element : n.getElements()) {
-                R result = element.accept(this, arg);
-                if (result != null) {
-                    return result;
-                }
+        for (ReferenceType element : n.getElements()) {
+            R result = element.accept(this, arg);
+            if (result != null) {
+                return result;
             }
         }
+    }
         return null;
     }
 
     @Override
     public R visit(final UnionType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
         {
-            for (ReferenceType element : n.getElements()) {
-                R result = element.accept(this, arg);
-                if (result != null) {
-                    return result;
-                }
+        for (ReferenceType element : n.getElements()) {
+            R result = element.accept(this, arg);
+            if (result != null) {
+                return result;
             }
         }
+    }
         return null;
     }
 
@@ -1601,11 +1621,33 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final VariableDeclarationExpr n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				{
+					R result = a.accept(this, arg);
+					if (result != null) {
+						return result;
+					}
+				}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				{
+					R result = a.accept(this, arg);
+					if (result != null) {
+						return result;
+					}
+				}
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
+			}
+		}
 		{
 			R result = n.getType().accept(this, arg);
 			if (result != null) {
@@ -1651,13 +1693,17 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final VoidType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
 		return null;
 	}
 
@@ -1681,21 +1727,25 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 
 	@Override
 	public R visit(final WildcardType n, final A arg) {
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/left.java
 		visitComment(n, arg);
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/base.java
+=======
 		for (final AnnotationExpr a : n.getAnnotations()) {
 			R result = a.accept(this, arg);
 			if (result != null) {
 				return result;
 			}
 		}
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/GenericVisitorAdapter.java/right.java
 		if (n.getExtends() != null) {
-			{
-				R result = n.getExtends().accept(this, arg);
-				if (result != null) {
-					return result;
-				}
+		{
+			R result = n.getExtends().accept(this, arg);
+			if (result != null) {
+				return result;
 			}
 		}
+	}
 		if (n.getSuper() != null) {
 			{
 				R result = n.getSuper().accept(this, arg);

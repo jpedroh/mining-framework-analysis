@@ -128,10 +128,30 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final AnnotationDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		n.getNameExpr().accept(this, arg);
 		if (n.getMembers() != null) {
-            for (final BodyDeclaration<?> member : n.getMembers()) {
+	            for (final BodyDeclaration<?> member : n.getMembers()) {
 				member.accept(this, arg);
 			}
 		}
@@ -139,7 +159,27 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final AnnotationMemberDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		n.getType().accept(this, arg);
 		if (n.getDefaultValue() != null) {
 			n.getDefaultValue().accept(this, arg);
@@ -238,7 +278,23 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final ClassOrInterfaceDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		for (final AnnotationExpr a : n.getAnnotations()) {
+			a.accept(this, arg);
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		for (final AnnotationExpr a : n.getAnnotations()) {
+			a.accept(this, arg);
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		n.getNameExpr().accept(this, arg);
 		for (final TypeParameter t : n.getTypeParameters()) {
 			t.accept(this, arg);
@@ -249,7 +305,7 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 		for (final ClassOrInterfaceType c : n.getImplements()) {
 			c.accept(this, arg);
 		}
-        for (final BodyDeclaration<?> member : n.getMembers()) {
+	        for (final BodyDeclaration<?> member : n.getMembers()) {
 			member.accept(this, arg);
 		}
 	}
@@ -293,7 +349,27 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final ConstructorDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		if (n.getTypeParameters() != null) {
 			for (final TypeParameter t : n.getTypeParameters()) {
 				t.accept(this, arg);
@@ -347,14 +423,34 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final EnumConstantDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		if (n.getArgs() != null) {
 			for (final Expression e : n.getArgs()) {
 				e.accept(this, arg);
 			}
 		}
 		if (n.getClassBody() != null) {
-            for (final BodyDeclaration<?> member : n.getClassBody()) {
+	            for (final BodyDeclaration<?> member : n.getClassBody()) {
 				member.accept(this, arg);
 			}
 		}
@@ -362,7 +458,27 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final EnumDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		n.getNameExpr().accept(this, arg);
 		if (n.getImplements() != null) {
 			for (final ClassOrInterfaceType c : n.getImplements()) {
@@ -375,7 +491,7 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 			}
 		}
 		if (n.getMembers() != null) {
-            for (final BodyDeclaration<?> member : n.getMembers()) {
+	            for (final BodyDeclaration<?> member : n.getMembers()) {
 				member.accept(this, arg);
 			}
 		}
@@ -411,7 +527,27 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final FieldDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		n.getType().accept(this, arg);
 		for (final VariableDeclarator var : n.getVariables()) {
 			var.accept(this, arg);
@@ -525,7 +661,27 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	@Override public void visit(final MethodDeclaration n, final A arg) {
 		visitComment(n.getComment(), arg);
+<<<<<<< /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/left.java
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+||||||| /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/base.java
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
+		if (n.getAnnotations() != null) {
+			for (final AnnotationExpr a : n.getAnnotations()) {
+				a.accept(this, arg);
+			}
+		}
+=======
+		if (n.getJavaDoc() != null) {
+			n.getJavaDoc().accept(this, arg);
+		}
 		visitAnnotations(n, arg);
+>>>>>>> /usr/src/app/output/javaparser/javaparser/b6c807a8d367d96efbb6fc30d38ab9e3a76fc12e/javaparser-core/src/main/java/com/github/javaparser/ast/visitor/VoidVisitorAdapter.java/right.java
 		if (n.getTypeParameters() != null) {
 			for (final TypeParameter t : n.getTypeParameters()) {
 				t.accept(this, arg);
