@@ -4,7 +4,13 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
+<<<<<<< /usr/src/app/output/alexxiyang/shiro-redis/a23d2bb28bd5bceac5d4a089d950ded31b93dba3/src/main/java/org/crazycake/shiro/RedisManager.java/left.java
 public class RedisManager extends BaseRedisManager implements IRedisManager{
+||||||| /usr/src/app/output/alexxiyang/shiro-redis/a23d2bb28bd5bceac5d4a089d950ded31b93dba3/src/main/java/org/crazycake/shiro/RedisManager.java/base.java
+public class RedisManager {
+=======
+public class RedisManager implements IRedisManager{
+>>>>>>> /usr/src/app/output/alexxiyang/shiro-redis/a23d2bb28bd5bceac5d4a089d950ded31b93dba3/src/main/java/org/crazycake/shiro/RedisManager.java/right.java
 	
 	private String host = "127.0.0.1";
 
@@ -31,7 +37,7 @@ public class RedisManager extends BaseRedisManager implements IRedisManager{
 			init();
 		}
 	}
-
+	
 	public String getHost() {
 		return host;
 	}
