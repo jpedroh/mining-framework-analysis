@@ -355,7 +355,6 @@ public class JcrMockServiceTest {
         Property mimeType = rootNode.getNode("products/productA/digitalAssets/asset1").getProperty("mimeType");
         assertEquals("Expected path to be /products/productA/digitalAssets/asset1/mimeType", "/products/productA/digitalAssets/asset1/mimeType", mimeType.getPath());
     }
-
     @Test
     public void shouldReturnCorrectPrimaryTypePropertyValueAsString() throws RepositoryException
     {
