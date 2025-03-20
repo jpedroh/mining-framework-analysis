@@ -61,22 +61,8 @@ import org.raml.yagi.framework.nodes.snakeyaml.NodeParser;
 import org.raml.yagi.framework.phase.GrammarPhase;
 import org.raml.yagi.framework.phase.Phase;
 import org.raml.yagi.framework.phase.TransformationPhase;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static org.raml.v2.api.model.v10.RamlFragment.Default;
-import static org.raml.v2.api.model.v10.RamlFragment.Extension;
-import static org.raml.v2.api.model.v10.RamlFragment.Overlay;
-import static org.raml.v2.internal.impl.RamlBuilder.FIRST_PHASE;
-import static org.raml.v2.internal.impl.RamlBuilder.LIBRARY_LINK_PHASE;
-import static org.raml.v2.internal.impl.commons.RamlVersion.RAML_10;
 
 public class Raml10Builder
 {
