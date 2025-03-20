@@ -131,7 +131,7 @@ public final class JSR310Module extends SimpleModule
     public JSR310Module()
     {
         super(Version.unknownVersion()); // !!! TEST
-//        super(PackageVersion.VERSION);
+    //        super(PackageVersion.VERSION);
 
         // first deserializers
         addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
@@ -162,10 +162,9 @@ public final class JSR310Module extends SimpleModule
         addSerializer(Year.class, YearSerializer.INSTANCE);
         addSerializer(YearMonth.class, YearMonthSerializer.INSTANCE);
         addSerializer(ZonedDateTime.class, ZonedDateTimeSerializer.INSTANCE);
-        // note: actual concrete type is `ZoneRegion`, but that's not visible:
-        addSerializer(ZoneId.class, new ToStringSerializer(ZoneId.class));
-        
-        addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
+<<<<<<< /usr/src/app/output/fasterxml/jackson-datatype-jsr310/dedccf4c3baa8d6d7aed9423504ca1087302483b/src/main/java/com/fasterxml/jackson/datatype/jsr310/JSR310Module.java/left.java
+        addSerializer(ZoneId.class, ToStringSerializer.instance);
+        addSerializer(ZoneOffset.class, ToStringSerializer.instance);
 
         // key serializers
         addKeySerializer(ZonedDateTime.class, ZonedDateTimeKeySerializer.INSTANCE);
@@ -185,6 +184,15 @@ public final class JSR310Module extends SimpleModule
         addKeyDeserializer(ZonedDateTime.class, ZonedDateTimeKeyDeserializer.INSTANCE);
         addKeyDeserializer(ZoneId.class, ZoneIdKeyDeserializer.INSTANCE);
         addKeyDeserializer(ZoneOffset.class, ZoneOffsetKeyDeserializer.INSTANCE);
+||||||| /usr/src/app/output/fasterxml/jackson-datatype-jsr310/dedccf4c3baa8d6d7aed9423504ca1087302483b/src/main/java/com/fasterxml/jackson/datatype/jsr310/JSR310Module.java/base.java
+        addSerializer(ZoneId.class, ToStringSerializer.instance);
+        addSerializer(ZoneOffset.class, ToStringSerializer.instance);
+=======
+        // note: actual concrete type is `ZoneRegion`, but that's not visible:
+        addSerializer(ZoneId.class, new ToStringSerializer(ZoneId.class));
+        
+        addSerializer(ZoneOffset.class, new ToStringSerializer(ZoneOffset.class));
+>>>>>>> /usr/src/app/output/fasterxml/jackson-datatype-jsr310/dedccf4c3baa8d6d7aed9423504ca1087302483b/src/main/java/com/fasterxml/jackson/datatype/jsr310/JSR310Module.java/right.java
     }
 
     @Override
