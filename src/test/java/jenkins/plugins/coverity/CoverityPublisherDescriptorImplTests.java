@@ -116,7 +116,7 @@ public class CoverityPublisherDescriptorImplTests {
     }
 
     @Test
-        public void doLoadProjectsForInstance_returnsJsonResponse() throws ServletException, IOException, org.json.simple.parser.ParseException {
+    public void doLoadProjectsForInstance_returnsJsonResponse() throws ServletException, IOException, org.json.simple.parser.ParseException {
         final String projectName = "test-cim-project";
         final String streamName = "test-cim-stream";
         CIMStream stream = new CIMStream("test-cim-instance", projectName, streamName);
