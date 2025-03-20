@@ -1,12 +1,8 @@
 package com.googlecode.greysanatomy.console;
-
 import com.googlecode.greysanatomy.Configer;
 import com.googlecode.greysanatomy.console.command.Command;
 import com.googlecode.greysanatomy.console.command.Commands;
-<<<<<<< HEAD
-=======
 import com.googlecode.greysanatomy.console.command.QuitCommand;
->>>>>>> pr/8
 import com.googlecode.greysanatomy.console.command.ShutdownCommand;
 import com.googlecode.greysanatomy.console.rmi.RespResult;
 import com.googlecode.greysanatomy.console.rmi.req.ReqCmd;
@@ -20,373 +16,227 @@ import jline.console.KeyMap;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
 import java.io.*;
-=======
-import java.io.IOException;
-import java.io.Writer;
->>>>>>> pr/8
 import java.rmi.NoSuchObjectException;
-
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
- * ¿ØÖÆÌ¨
+ * ï¿½ï¿½ï¿½ï¿½Ì¨
  *
  * @author vlinux
  */
 public class GreysAnatomyConsole {
+  private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
 
-    private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
+  private final Configer configer;
 
-    private final Configer configer;
-    private final ConsoleReader console;
+  private final ConsoleReader console;
 
-    private volatile boolean isF = true;
-<<<<<<< HEAD
-    private volatile boolean isShutdown = false;
+  private volatile boolean isF = true;
 
-    private final long sessionId;
-    private String jobId;
-    private String path;
+  private volatile boolean 
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/left.java
+  isShutdown = false
 =======
-    private volatile boolean isQuit = false;
+  isQuit = false
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/right.java
+  ;
 
-    private final long sessionId;
-    private int jobId;
->>>>>>> pr/8
+  private final long sessionId;
 
-    /**
-     * ´´½¨GA¿ØÖÆÌ¨
+  private int jobId;
+
+  /**
+     * ï¿½ï¿½ï¿½ï¿½GAï¿½ï¿½ï¿½ï¿½Ì¨
      *
      * @param configer
      * @throws IOException
      */
-    public GreysAnatomyConsole(Configer configer, long sessionId) throws IOException {
-        this.console = new ConsoleReader(System.in, System.out);
-        this.configer = configer;
-        this.sessionId = sessionId;
-        write(GaStringUtils.getLogo());
-        Commands.getInstance().registCompleter(console);
+  public GreysAnatomyConsole(Configer configer, long sessionId) throws IOException {
+    this.console = new ConsoleReader(System.in, System.out);
+    this.configer = configer;
+    this.sessionId = sessionId;
+    write(GaStringUtils.getLogo());
+    Commands.getInstance().registCompleter(console);
+  }
+
+  private class GaConsoleInputer implements Runnable {
+    private final ConsoleServerService consoleServer;
+
+    private GaConsoleInputer(ConsoleServerService consoleServer) {
+      this.consoleServer = consoleServer;
     }
 
-    /**
-     * ¿ØÖÆÌ¨ÊäÈëÕß
-     *
-     * @author vlinux
-     */
-    private class GaConsoleInputer implements Runnable {
-
-        private final ConsoleServerService consoleServer;
-
-        private GaConsoleInputer(ConsoleServerService consoleServer) {
-            this.consoleServer = consoleServer;
+    @Override public void run() {
+      while (true) {
+        try {
+          doRead();
+        } catch (ConsoleException ce) {
+          write("Error : " + ce.getMessage() + "\n");
+          write("Please type help for more information...\n\n");
+        } catch (Exception e) {
+          logger.warn("console read failed.", e);
         }
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    //¿ØÖÆÌ¨¶ÁÃüÁî
-                    doRead();
-                } catch (ConsoleException ce) {
-<<<<<<< HEAD
-                    write("Error : "+ce.getMessage()+"\n");
-=======
-                    write("Error : " + ce.getMessage() + "\n");
->>>>>>> pr/8
-                    write("Please type help for more information...\n\n");
-                } catch (Exception e) {
-                    // ÕâÀïÊÇ¿ØÖÆÌ¨£¬¿ÉÄÜÃ´£¿
-                    logger.warn("console read failed.", e);
-                }
-            }
-        }
-
-        private void doRead() throws Exception {
-            final String prompt = isF ? configer.getConsolePrompt() : EMPTY;
-            final ReqCmd reqCmd = new ReqCmd(console.readLine(prompt), sessionId);
-
-			/*
-             * Èç¹û¶ÁÈëµÄÊÇ¿Õ°××Ö·û´®»òÕßµ±Ç°¿ØÖÆÌ¨Ã»±»±ê¼ÇÎªÒÑÍê³É
-			 * Ôò·ÅÆú±¾´ÎËù¶ÁÈ¡ÄÚÈÝ
-			 */
-            if (isBlank(reqCmd.getCommand()) || !isF) {
-                return;
-            }
-
-            final Command command;
-            try {
-                command = Commands.getInstance().newRiscCommand(reqCmd.getCommand());
-            } catch (Exception e) {
-                throw new ConsoleException(e.getMessage());
-            }
-
-<<<<<<< HEAD
-
-            if (command != null) {
-                path = command.getRedirectPath();
-                if (!StringUtils.isEmpty(path)) {
-                    //·¢ÃüÁîÖ®Ç°ÏÈ°ÑÖØ¶¨ÏòÎÄ¼þ´´½¨ºÃ£¬Èç¹ûÃ»ÓÐÈ¨ÏÞ»òÆäËûÎÊÌâ£¬¾Í²»·¢ÆðÈÎÎñ
-                    try {
-                        new File(path).createNewFile();
-                    } catch (Exception e) {
-                        final String msg = String.format("create path:%s failed. %s", path, e.getMessage());
-                        logger.warn(msg, e);
-                        write(msg);
-                        return;
-                    }
-                }
-            } else {
-                //Èç¹ûÃüÁî²»´æÔÚ£¬¿Í»§¶Ë²»Å×Òì³££¬½»¸ø·þÎñ¶Ë´¦Àí¡£µ«ÊÇÐèÒª°ÑpathÇå¿Õ
-                path = EMPTY;
-            }
-
-=======
->>>>>>> pr/8
-            // ½«ÃüÁî×´Ì¬±ê¼ÇÎªÎ´Íê³É
-            isF = false;
-
-            // ÓÃ»§Ö´ÐÐÁËÒ»¸öshutdownÃüÁî,ÖÕ¶ËÐèÒªÍË³ö
-<<<<<<< HEAD
-            if (command instanceof ShutdownCommand) {
-                isShutdown = true;
-            }
-
-=======
-            if (command instanceof ShutdownCommand
-                    || command instanceof QuitCommand) {
-                isQuit = true;
-            }
-
-
->>>>>>> pr/8
-            // ·¢ËÍÃüÁîÇëÇó
-            RespResult result = consoleServer.postCmd(reqCmd);
-            jobId = result.getJobId();
-        }
-
+      }
     }
 
-    /**
-     * ¿ØÖÆÌ¨Êä³öÕß
-     *
-     * @author chengtongda
-     */
-    private class GaConsoleOutputer implements Runnable {
+    private void doRead() throws Exception {
+      final String prompt = isF ? configer.getConsolePrompt() : EMPTY;
+      final ReqCmd reqCmd = new ReqCmd(console.readLine(prompt), sessionId);
+      if (isBlank(reqCmd.getCommand()) || !isF) {
+        return;
+      }
+      final Command command;
+      try {
+        command = Commands.getInstance().newRiscCommand(reqCmd.getCommand());
+      } catch (Exception e) {
+        throw new ConsoleException(e.getMessage());
+      }
+      isF = false;
 
-        private final ConsoleServerService consoleServer;
-<<<<<<< HEAD
-        private String currentJob;
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/left.java
+      if (command instanceof ShutdownCommand) {
+        isShutdown = true;
+      }
 =======
-        private int currentJob;
->>>>>>> pr/8
-        private int pos = 0;
+      if (command instanceof ShutdownCommand || command instanceof QuitCommand) {
+        isQuit = true;
+      }
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/right.java
 
-        private GaConsoleOutputer(ConsoleServerService consoleServer) {
-            this.consoleServer = consoleServer;
-        }
+      RespResult result = consoleServer.postCmd(reqCmd);
+      jobId = result.getJobId();
+    }
+  }
 
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    //¿ØÖÆÌ¨Ð´Êý¾Ý
-                    doWrite();
-                    //Ã¿500ms¶ÁÒ»´Î½á¹û
-                    Thread.sleep(500);
-                } catch (NoSuchObjectException nsoe) {
-                    // Ä¿±êRMI¹Ø±Õ,ÐèÒªÍË³ö¿ØÖÆÌ¨
-                    logger.warn("target RMI's server was closed, console will be exit.");
-                    break;
-                } catch (Exception e) {
-                    logger.warn("console write failed.", e);
-                }
-            }
-        }
+  private class GaConsoleOutputer implements Runnable {
+    private final ConsoleServerService consoleServer;
 
-        private void doWrite() throws Exception {
-            //Èç¹ûÈÎÎñ½áÊø£¬»ò»¹Ã»ÓÐ×¢²áºÃjob  Ôò²»¶Á
-<<<<<<< HEAD
-            if (isF || sessionId == 0 || StringUtils.isEmpty(jobId)) {
-=======
-            if (isF
-                    || sessionId == 0
-//                    || StringUtils.isEmpty(jobId)) {
-                    || jobId == 0) {
->>>>>>> pr/8
-                return;
-            }
+    private int currentJob;
 
-            //Èç¹ûµ±Ç°»ñÈ¡½á¹ûµÄjob²»ÊÇÕýÔÚÖ´ÐÐµÄjob£¬Ôò´Ó0¿ªÊ¼¶Á
-<<<<<<< HEAD
-            if (!StringUtils.equals(currentJob, jobId)) {
-=======
-//            if (!StringUtils.equals(currentJob, jobId)) {
-            if (currentJob != jobId) {
->>>>>>> pr/8
-                pos = 0;
-                currentJob = jobId;
-            }
+    private int pos = 0;
 
-            RespResult resp = consoleServer.getCmdExecuteResult(new ReqGetResult(jobId, sessionId, pos));
-            pos = resp.getPos();
-
-<<<<<<< HEAD
-            //ÏÈÐ´ÖØ¶¨Ïò
-            try {
-                writeToFile(resp.getMessage(), path);
-            } catch (IOException e) {
-                //ÖØ¶¨ÏòÐ´ÎÄ¼þ³öÏÖÒì³£Ê±£¬ÐèÒªkillµôjob ²»Ö´ÐÐÁË
-                consoleServer.killJob(new ReqKillJob(sessionId, jobId));
-                isF = true;
-                logger.warn("writeToFile failed.", e);
-                write(path + ":" + e.getMessage());
-                return;
-            }
-
-            write(resp);
-
-            if (isShutdown) {
-=======
-            write(resp);
-
-            if (isQuit) {
->>>>>>> pr/8
-                logger.info("greys console will be shutdown.");
-                System.exit(0);
-            }
-
-        }
-
+    private GaConsoleOutputer(ConsoleServerService consoleServer) {
+      this.consoleServer = consoleServer;
     }
 
-    /**
-     * Æô¶¯console
+    @Override public void run() {
+      while (true) {
+        try {
+          doWrite();
+          Thread.sleep(500);
+        } catch (NoSuchObjectException nsoe) {
+          logger.warn("target RMI\'s server was closed, console will be exit.");
+          break;
+        } catch (Exception e) {
+          logger.warn("console write failed.", e);
+        }
+      }
+    }
+
+    private void doWrite() throws Exception {
+      if (isF || sessionId == 0 || jobId == 0) {
+        return;
+      }
+      if (currentJob != jobId) {
+        pos = 0;
+        currentJob = jobId;
+      }
+      RespResult resp = consoleServer.getCmdExecuteResult(new ReqGetResult(jobId, sessionId, pos));
+      pos = resp.getPos();
+
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/left.java
+      try {
+        writeToFile(resp.getMessage(), path);
+      } catch (IOException e) {
+        consoleServer.killJob(new ReqKillJob(sessionId, jobId));
+        isF = true;
+        logger.warn("writeToFile failed.", e);
+        write(path + ":" + e.getMessage());
+        return;
+      }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+      write(resp);
+      if (
+<<<<<<< /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/left.java
+      isShutdown
+=======
+      isQuit
+>>>>>>> /usr/src/app/output/oldmanpushcart/greys-anatomy/26f8fde516d364d9aadbda98ad78f6c4255470e3/src/main/java/com/googlecode/greysanatomy/console/GreysAnatomyConsole.java/right.java
+      ) {
+        logger.info("greys console will be shutdown.");
+        System.exit(0);
+      }
+    }
+  }
+
+  /**
+     * ï¿½ï¿½ï¿½ï¿½console
      *
-<<<<<<< HEAD
      * @param consoleServer
-=======
-     * @param consoleServer RMIÍ¨Ñ¶ÓÃµÄConsoleServer
->>>>>>> pr/8
      */
-    public synchronized void start(final ConsoleServerService consoleServer) {
-        this.console.getKeys().bind("" + KeyMap.CTRL_D, new ActionListener() {
+  public synchronized void start(final ConsoleServerService consoleServer) {
+    this.console.getKeys().bind("" + KeyMap.CTRL_D, new ActionListener() {
+      @Override public void actionPerformed(ActionEvent e) {
+        if (!isF) {
+          try {
+            isF = true;
+            write("abort it.\n");
+            redrawLine();
+            consoleServer.killJob(new ReqKillJob(sessionId, jobId));
+          } catch (Exception e1) {
+            logger.warn("killJob failed.", e);
+          }
+        }
+      }
+    });
+    new Thread(new GaConsoleInputer(consoleServer), "ga-console-inputer").start();
+    new Thread(new GaConsoleOutputer(consoleServer), "ga-console-outputer").start();
+  }
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isF) {
-<<<<<<< HEAD
-                    write("abort it.");
-                    isF = true;
-                    try {
-=======
-                    try {
-                        isF = true;
-                        write("abort it.\n");
-                        redrawLine();
->>>>>>> pr/8
-                        consoleServer.killJob(new ReqKillJob(sessionId, jobId));
-                    } catch (Exception e1) {
-                        // ÕâÀïÊÇ¿ØÖÆÌ¨£¬¿ÉÄÜÃ´£¿
-                        logger.warn("killJob failed.", e);
-                    }
-                }
-            }
+  private synchronized void redrawLine() throws IOException {
+    final String prompt = isF ? configer.getConsolePrompt() : EMPTY;
+    console.setPrompt(prompt);
+    console.redrawLine();
+    console.flush();
+  }
 
-        });
-        new Thread(new GaConsoleInputer(consoleServer), "ga-console-inputer").start();
-        new Thread(new GaConsoleOutputer(consoleServer), "ga-console-outputer").start();
-    }
-
-<<<<<<< HEAD
-=======
-    private synchronized void redrawLine() throws IOException {
-        final String prompt = isF ? configer.getConsolePrompt() : EMPTY;
-        console.setPrompt(prompt);
-        console.redrawLine();
-        console.flush();
-    }
->>>>>>> pr/8
-
-    /**
-     * Ïò¿ØÖÆÌ¨Êä³ö·µ»ØÐÅÏ¢
+  /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
      *
-<<<<<<< HEAD
      * @param resp
      */
-    private void write(RespResult resp) {
-=======
-     * @param resp ·µ»Ø±¨ÎÄÐÅÏ¢
-     */
-    private void write(RespResult resp) throws IOException {
->>>>>>> pr/8
-        if (!isF) {
-            String content = resp.getMessage();
-            if (resp.isFinish()) {
-                isF = true;
-                //content += "\n------------------------------end------------------------------\n";
-                content += "\n";
-            }
-            if (!StringUtils.isEmpty(content)) {
-                write(content);
-<<<<<<< HEAD
-=======
-                redrawLine();
->>>>>>> pr/8
-            }
-        }
+  private void write(RespResult resp) throws IOException {
+    if (!isF) {
+      String content = resp.getMessage();
+      if (resp.isFinish()) {
+        isF = true;
+        content += "\n";
+      }
+      if (!StringUtils.isEmpty(content)) {
+        write(content);
+        redrawLine();
+      }
     }
+  }
 
-    /**
-     * Êä³öÐÅÏ¢
-     *
-<<<<<<< HEAD
-     * @param message
-=======
-     * @param message Êä³öÎÄ±¾ÄÚÈÝ
->>>>>>> pr/8
-     */
-    private void write(String message) {
-        final Writer writer = console.getOutput();
-        try {
-            writer.write(message);
-            writer.flush();
-        } catch (IOException e) {
-            // ¿ØÖÆÌ¨Ð´Ê§°Ü£¬¿ÉÄÜÃ´£¿
-            logger.warn("console write failed.", e);
-        }
-
-    }
-
-<<<<<<< HEAD
-    /**
-     * Êä³öÐÅÏ¢µ½ÎÄ¼þ
+  /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
      *
      * @param message
-     * @param path
-     * @throws IOException
      */
-    private void writeToFile(String message, String path) throws IOException {
-        if (StringUtils.isEmpty(message) || StringUtils.isEmpty(path)) {
-            return;
-        }
-
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(path, true)));
-            out.println(message);
-            out.flush();
-        } finally {
-            if (null != out) {
-                out.close();
-            }
-        }
+  private void write(String message) {
+    final Writer writer = console.getOutput();
+    try {
+      writer.write(message);
+      writer.flush();
+    } catch (IOException e) {
+      logger.warn("console write failed.", e);
     }
-=======
->>>>>>> pr/8
+  }
 }

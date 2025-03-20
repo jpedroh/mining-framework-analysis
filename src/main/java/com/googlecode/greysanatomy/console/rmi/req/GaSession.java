@@ -1,74 +1,60 @@
 package com.googlecode.greysanatomy.console.rmi.req;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * ·ÃÎÊ»Ø»°
+ * ï¿½ï¿½ï¿½Ê»Ø»ï¿½
  *
  * @author chengtongda
  */
 public class GaSession implements Serializable {
-    private static final long serialVersionUID = -8271465701431818048L;
+  private static final long serialVersionUID = -8271465701431818048L;
 
-    private static transient final AtomicLong seq = new AtomicLong();
+  private static transient final AtomicLong seq = new AtomicLong();
 
-    private final long sessionId;
+  private final long sessionId;
 
-<<<<<<< HEAD
-    private Set<String> jobIds = new HashSet<String>();
-=======
-    private Set<Integer> jobIds = new HashSet<Integer>();
->>>>>>> pr/8
+  private Set<Integer> jobIds = new HashSet<Integer>();
 
-    private boolean isAlive = true;
+  private boolean isAlive = true;
 
-    private long lastModified = System.currentTimeMillis();
+  private long lastModified = System.currentTimeMillis();
 
-    public GaSession() {
-        this.sessionId = seq.incrementAndGet();
-    }
+  public GaSession() {
+    this.sessionId = seq.incrementAndGet();
+  }
 
-    public GaSession(long sessionId) {
-        this.sessionId = sessionId;
-    }
+  public GaSession(long sessionId) {
+    this.sessionId = sessionId;
+  }
 
-    public long getSessionId() {
-        return sessionId;
-    }
+  public long getSessionId() {
+    return sessionId;
+  }
 
-    public long getLastModified() {
-        return lastModified;
-    }
+  public long getLastModified() {
+    return lastModified;
+  }
 
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
-    }
+  public void setLastModified(long lastModified) {
+    this.lastModified = lastModified;
+  }
 
-<<<<<<< HEAD
-    public Set<String> getJobIds() {
-        return jobIds;
-    }
+  public Set<Integer> getJobIds() {
+    return jobIds;
+  }
 
-    public void setJobIds(Set<String> jobIds) {
-=======
-    public Set<Integer> getJobIds() {
-        return jobIds;
-    }
+  public void setJobIds(Set<Integer> jobIds) {
+    this.jobIds = jobIds;
+  }
 
-    public void setJobIds(Set<Integer> jobIds) {
->>>>>>> pr/8
-        this.jobIds = jobIds;
-    }
+  public boolean isAlive() {
+    return isAlive;
+  }
 
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean isAlive) {
-        this.isAlive = isAlive;
-    }
-
+  public void setAlive(boolean isAlive) {
+    this.isAlive = isAlive;
+  }
 }

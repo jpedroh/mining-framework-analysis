@@ -1,33 +1,27 @@
 package com.googlecode.greysanatomy.console.command;
-
 import com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.TransformResult;
-<<<<<<< HEAD
 import com.googlecode.greysanatomy.console.command.annotation.*;
-=======
 import com.googlecode.greysanatomy.console.command.annotation.RiscCmd;
 import com.googlecode.greysanatomy.console.command.annotation.RiscIndexArg;
 import com.googlecode.greysanatomy.console.command.annotation.RiscNamedArg;
->>>>>>> pr/8
 import com.googlecode.greysanatomy.console.server.ConsoleServer;
 import com.googlecode.greysanatomy.probe.Advice;
 import com.googlecode.greysanatomy.probe.AdviceListenerAdapter;
 import com.googlecode.greysanatomy.util.GaStringUtils;
 import org.apache.commons.lang.StringUtils;
-
 import java.lang.instrument.Instrumentation;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-
 import static com.googlecode.greysanatomy.agent.GreysAnatomyClassFileTransformer.transform;
 import static com.googlecode.greysanatomy.console.server.SessionJobsHolder.registJob;
 import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
 
 /**
- * ¼à¿ØÇëÇóÃüÁî<br/>
- * Êä³öµÄÄÚÈÝ¸ñÊ½Îª:<br/>
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½<br/>
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½Ê½Îª:<br/>
  * <style type="text/css">
  * table, th, td {
  * border:1px solid #cccccc;
@@ -36,15 +30,15 @@ import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
  * </style>
  * <table>
  * <tr>
- * <th>Ê±¼ä´Á</th>
- * <th>Í³¼ÆÖÜÆÚ(s)</th>
- * <th>ÀàÈ«Â·¾¶</th>
- * <th>·½·¨Ãû</th>
- * <th>µ÷ÓÃ×Ü´ÎÊý</th>
- * <th>³É¹¦´ÎÊý</th>
- * <th>Ê§°Ü´ÎÊý</th>
- * <th>Æ½¾ùºÄÊ±(ms)</th>
- * <th>Ê§°ÜÂÊ</th>
+ * <th>Ê±ï¿½ï¿½ï¿½</th>
+ * <th>Í³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(s)</th>
+ * <th>ï¿½ï¿½È«Â·ï¿½ï¿½</th>
+ * <th>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</th>
+ * <th>ï¿½ï¿½ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½</th>
+ * <th>ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½</th>
+ * <th>Ê§ï¿½Ü´ï¿½ï¿½ï¿½</th>
+ * <th>Æ½ï¿½ï¿½ï¿½ï¿½Ê±(ms)</th>
+ * <th>Ê§ï¿½ï¿½ï¿½ï¿½</th>
  * </tr>
  * <tr>
  * <td>2012-11-07 05:00:01</td>
@@ -72,316 +66,213 @@ import static com.googlecode.greysanatomy.probe.ProbeJobs.activeJob;
  *
  * @author vlinux
  */
-<<<<<<< HEAD
-@Cmd("monitor")
-@RiscCmd(named = "monitor", sort = 5, desc = "Buried point method for monitoring the operation.")
-public class MonitorCommand extends Command {
+@RiscCmd(named = "monitor", sort = 5, desc = "Buried point method for monitoring the operation.") public class MonitorCommand extends Command {
+  @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname") private String classRegex;
 
-    @Arg(name = "class")
-    @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
-    private String classRegex;
+  @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname") private String methodRegex;
 
-    @Arg(name = "method")
-    @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
-    private String methodRegex;
+  @RiscNamedArg(named = "c", hasValue = true, description = "the cycle of output") private int cycle = 120;
 
-    @Arg(name = "cycle")
-=======
-@RiscCmd(named = "monitor", sort = 5, desc = "Buried point method for monitoring the operation.")
-public class MonitorCommand extends Command {
+  private Timer timer;
 
-    @RiscIndexArg(index = 0, name = "class-regex", description = "regex match of classpath.classname")
-    private String classRegex;
+  private ConcurrentHashMap<Key, AtomicReference<Data>> monitorDatas = new ConcurrentHashMap<Key, AtomicReference<Data>>();
 
-    @RiscIndexArg(index = 1, name = "method-regex", description = "regex match of methodname")
-    private String methodRegex;
+  private static class Key {
+    private final String className;
 
->>>>>>> pr/8
-    @RiscNamedArg(named = "c", hasValue = true, description = "the cycle of output")
-    private int cycle = 120;
+    private final String behaviorName;
 
-    /*
-     * Êä³ö¶¨Ê±ÈÎÎñ
-     */
-    private Timer timer;
+    private Key(String className, String behaviorName) {
+      this.className = className;
+      this.behaviorName = behaviorName;
+    }
 
-    /*
-     * ¼à¿ØÊý¾Ý
-     */
-    private ConcurrentHashMap<Key, AtomicReference<Data>> monitorDatas = new ConcurrentHashMap<Key, AtomicReference<Data>>();
+    @Override public int hashCode() {
+      return className.hashCode() + behaviorName.hashCode();
+    }
 
-    /**
-     * Êý¾Ý¼à¿ØÓÃµÄKey
-     *
-     * @author vlinux
-     */
-    private static class Key {
-        private final String className;
-        private final String behaviorName;
+    @Override public boolean equals(Object obj) {
+      if (null == obj || !(obj instanceof Key)) {
+        return false;
+      }
+      Key okey = (Key) obj;
+      return StringUtils.equals(okey.className, className) && StringUtils.equals(okey.behaviorName, behaviorName);
+    }
+  }
 
-        private Key(String className, String behaviorName) {
-            this.className = className;
-            this.behaviorName = behaviorName;
-        }
+  private static class Data {
+    private int total;
 
-        @Override
-        public int hashCode() {
-            return className.hashCode() + behaviorName.hashCode();
-        }
+    private int success;
 
-        @Override
-        public boolean equals(Object obj) {
-            if (null == obj
-                    || !(obj instanceof Key)) {
-                return false;
+    private int failed;
+
+    private long cost;
+  }
+
+  @Override public Action getAction() {
+    return new Action() {
+      @Override public void action(final ConsoleServer consoleServer, final Info info, final Sender sender) throws Throwable {
+        final Instrumentation inst = info.getInst();
+        final TransformResult result = transform(inst, classRegex, methodRegex, new AdviceListenerAdapter() {
+          private final ThreadLocal<Long> beginTimestamp = new ThreadLocal<Long>();
+
+          @Override public void onBefore(Advice p) {
+            beginTimestamp.set(System.currentTimeMillis());
+          }
+
+          @Override public void onFinish(Advice p) {
+            final Long startTime = beginTimestamp.get();
+            if (null == startTime) {
+              return;
             }
-            Key okey = (Key) obj;
-            return StringUtils.equals(okey.className, className) && StringUtils.equals(okey.behaviorName, behaviorName);
-        }
+            final long cost = System.currentTimeMillis() - startTime;
+            final Key key = new Key(p.getTarget().getTargetClassName(), p.getTarget().getTargetBehaviorName());
+            while (true) {
+              AtomicReference<Data> value = monitorDatas.get(key);
+              if (null == value) {
+                monitorDatas.putIfAbsent(key, new AtomicReference<Data>(new Data()));
+                continue;
+              }
+              while (true) {
+                Data oData = value.get();
+                Data nData = new Data();
+                nData.cost = oData.cost + cost;
+                if (p.isThrowException()) {
+                  nData.failed = oData.failed + 1;
+                }
+                if (p.isReturn()) {
+                  nData.success = oData.success + 1;
+                }
+                nData.total = oData.total + 1;
+                if (value.compareAndSet(oData, nData)) {
+                  break;
+                }
+              }
+              break;
+            }
+          }
 
-    }
-
-    /**
-     * Êý¾Ý¼à¿ØÓÃµÄvalue
-     *
-     * @author vlinux
-     */
-    private static class Data {
-        private int total;
-        private int success;
-        private int failed;
-        private long cost;
-    }
-
-    @Override
-    public Action getAction() {
-        return new Action() {
-
-            @Override
-            public void action(final ConsoleServer consoleServer, final Info info, final Sender sender) throws Throwable {
-
-                final Instrumentation inst = info.getInst();
-                final TransformResult result = transform(inst, classRegex, methodRegex, new AdviceListenerAdapter() {
-
-                    private final ThreadLocal<Long> beginTimestamp = new ThreadLocal<Long>();
-
-                    @Override
-                    public void onBefore(Advice p) {
-                        beginTimestamp.set(System.currentTimeMillis());
+          @Override public void create() {
+            timer = new Timer("Timer-for-greys-monitor-" + info.getJobId(), true);
+            timer.scheduleAtFixedRate(new TimerTask() {
+              @Override public void run() {
+                if (monitorDatas.isEmpty()) {
+                  return;
+                }
+                final String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                final StringBuilder monitorSB = new StringBuilder();
+                final Iterator<Map.Entry<Key, AtomicReference<Data>>> it = monitorDatas.entrySet().iterator();
+                while (it.hasNext()) {
+                  final Map.Entry<Key, AtomicReference<Data>> entry = it.next();
+                  final AtomicReference<Data> value = entry.getValue();
+                  Data data = null;
+                  while (true) {
+                    data = value.get();
+                    if (value.compareAndSet(data, new Data())) {
+                      break;
                     }
+                  }
+                  if (null != data) {
+                    monitorSB.append(timestamp).append("\t");
+                    monitorSB.append(entry.getKey().className).append("\t");
+                    monitorSB.append(entry.getKey().behaviorName).append("\t");
+                    monitorSB.append(data.total).append("\t");
+                    monitorSB.append(data.success).append("\t");
+                    monitorSB.append(data.failed).append("\t");
+                    final DecimalFormat df = new DecimalFormat("0.00");
+                    monitorSB.append(df.format(div(data.cost, data.total))).append("\t");
+                    monitorSB.append(df.format(100.0d * div(data.failed, data.total))).append("%");
+                    monitorSB.append("\n");
+                  }
+                }
+                sender.send(false, tableFormat(monitorSB.toString()));
+              }
+            }, 0, cycle * 1000);
+          }
 
-                    @Override
-                    public void onFinish(Advice p) {
-                        final Long startTime = beginTimestamp.get();
-                        if (null == startTime) {
-                            return;
-                        }
-                        final long cost = System.currentTimeMillis() - startTime;
-<<<<<<< HEAD
-                        final Key key = new Key(p.getTarget().getTargetClass().getName(), p.getTarget().getTargetBehavior().getName());
-=======
-                        final Key key = new Key(p.getTarget().getTargetClassName(), p.getTarget().getTargetBehaviorName());
->>>>>>> pr/8
-
-                        while (true) {
-                            AtomicReference<Data> value = monitorDatas.get(key);
-                            if (null == value) {
-                                monitorDatas.putIfAbsent(key, new AtomicReference<Data>(new Data()));
-                                continue;
-                            }
-
-                            while (true) {
-                                Data oData = value.get();
-                                Data nData = new Data();
-                                nData.cost = oData.cost + cost;
-                                if (p.isThrowException()) {
-                                    nData.failed = oData.failed + 1;
-                                }
-                                if (p.isReturn()) {
-                                    nData.success = oData.success + 1;
-                                }
-                                nData.total = oData.total + 1;
-                                if (value.compareAndSet(oData, nData)) {
-                                    break;
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-
-                    @Override
-                    public void create() {
-                        timer = new Timer("Timer-for-greys-monitor-" + info.getJobId(), true);
-                        timer.scheduleAtFixedRate(new TimerTask() {
-
-                            @Override
-                            public void run() {
-                                if (monitorDatas.isEmpty()) {
-                                    return;
-                                }
-                                final String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                                final StringBuilder monitorSB = new StringBuilder();
-                                final Iterator<Map.Entry<Key, AtomicReference<Data>>> it = monitorDatas.entrySet().iterator();
-                                while (it.hasNext()) {
-                                    final Map.Entry<Key, AtomicReference<Data>> entry = it.next();
-                                    final AtomicReference<Data> value = entry.getValue();
-
-                                    Data data = null;
-                                    while (true) {
-                                        data = value.get();
-                                        if (value.compareAndSet(data, new Data())) {
-                                            break;
-                                        }
-                                    }
-
-//                                    final Data data = value.get();
-//                                    value.set(new Data());
-
-                                    if (null != data) {
-                                        monitorSB.append(timestamp).append("\t");
-                                        monitorSB.append(entry.getKey().className).append("\t");
-                                        monitorSB.append(entry.getKey().behaviorName).append("\t");
-                                        monitorSB.append(data.total).append("\t");
-                                        monitorSB.append(data.success).append("\t");
-                                        monitorSB.append(data.failed).append("\t");
-
-                                        final DecimalFormat df = new DecimalFormat("0.00");
-                                        monitorSB.append(df.format(div(data.cost, data.total))).append("\t");
-                                        monitorSB.append(df.format(100.0d * div(data.failed, data.total))).append("%");
-                                        monitorSB.append("\n");
-                                    }
-
-                                }//while
-
-                                sender.send(false, tableFormat(monitorSB.toString()));
-                            }
-
-                        }, 0, cycle * 1000);
-                    }
-
-                    /**
-                     * ÈÆ¹ý0µÄ³ý·¨
+          /**
+                     * ï¿½Æ¹ï¿½0ï¿½Ä³ï¿½ï¿½ï¿½
                      * @param a
                      * @param b
                      * @return
                      */
-                    private double div(double a, double b) {
-                        if (b == 0) {
-                            return 0;
-                        }
-                        return a / b;
-                    }
-
-                    @Override
-                    public void destroy() {
-                        if (null != timer) {
-                            timer.cancel();
-                        }
-                    }
-
-                }, info);
-
-                // ×¢²áÈÎÎñ
-                registJob(info.getSessionId(), result.getId());
-
-                // ¼¤»îÈÎÎñ
-                activeJob(result.getId());
-
-                final StringBuilder message = new StringBuilder();
-                message.append(GaStringUtils.LINE);
-                message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n",
-                        result.getModifiedClasses().size(),
-                        result.getModifiedBehaviors().size()));
-<<<<<<< HEAD
-=======
-                message.append(GaStringUtils.ABORT_MSG).append("\n");
->>>>>>> pr/8
-                sender.send(false, message.toString());
+          private double div(double a, double b) {
+            if (b == 0) {
+              return 0;
             }
+            return a / b;
+          }
 
-        };
-    }
+          @Override public void destroy() {
+            if (null != timer) {
+              timer.cancel();
+            }
+          }
+        }, info);
+        registJob(info.getSessionId(), result.getId());
+        activeJob(result.getId());
+        final StringBuilder message = new StringBuilder();
+        message.append(GaStringUtils.LINE);
+        message.append(String.format("done. probe:c-Cnt=%s,m-Cnt=%s\n", result.getModifiedClasses().size(), result.getModifiedBehaviors().size()));
+        message.append(GaStringUtils.ABORT_MSG).append("\n");
+        sender.send(false, message.toString());
+      }
+    };
+  }
 
-<<<<<<< HEAD
-    /**
-     * ±í¸ñ¸ñÊ½»¯
+  /**
+     * ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
      *
      * @param output
      * @return
      */
-=======
->>>>>>> pr/8
-    private String tableFormat(String output) {
-
-        final StringBuilder outputSB = new StringBuilder();
-        final List<String> outputs = new ArrayList<String>();
-        final List<StringBuilder> lines = new ArrayList<StringBuilder>();
-        final StringBuilder titleSB = new StringBuilder();
-        final List<String[]> datas = new ArrayList<String[]>();
-        final int[] colMaxWidths = new int[]{9, 5, 8, 5, 7, 4, 2, 9};
-        datas.add(new String[]{"timestamp", "class", "behavior", "total", "success", "fail", "rt", "fail-rate"});
-        lines.add(new StringBuilder());
-
-        final Scanner scan = new Scanner(output);
-        while (scan.hasNextLine()) {
-            final String[] strs = scan.nextLine().split("\\s+");
-            final String[] cols = new String[]{
-                    strs[0] + " " + strs[1],    // timestamp
-                    strs[2],                // classname
-                    strs[3],                // behavior
-                    strs[4],                // total
-                    strs[5],                // success
-                    strs[6],                // failed
-                    strs[7],                // rt
-                    strs[8],                // fail-rate
-            };
-            for (int c = 0; c < 8; c++) {
-                colMaxWidths[c] = Math.max(colMaxWidths[c], cols[c].length());
-            }
-
-            datas.add(cols);
-            lines.add(new StringBuilder());
-
-        }//while
-
-        for (int c = 0; c < 8; c++) {
-            titleSB.append("+");
-            GaStringUtils.rightFill(titleSB, colMaxWidths[c] + 2, "-");
-        }
-        titleSB.append("+").append("\n");
-
-        // ±éÀúÐÐ
-        for (int i = 0; i < lines.size(); i++) {
-
-            final StringBuilder lineSB = lines.get(i);
-            final String[] cols = datas.get(i);
-
-            // ±éÀúÁÐ
-            for (int c = 0; c < 8; c++) {
-                lineSB.append("|");
-                int diff = colMaxWidths[c] - cols[c].length() + 1;
-                GaStringUtils.rightFill(lineSB, diff, " ");
-                lineSB.append(cols[c]).append(" ");
-            }
-
-            lineSB.append("|");
-            outputs.add(lineSB.toString());
-        }//for
-
-        outputSB.append(titleSB.toString());
-        boolean isTitle = true;
-        for (String o : outputs) {
-            outputSB.append(o).append("\n");
-            if (isTitle) {
-                outputSB.append(titleSB.toString());
-                isTitle = false;
-            }
-        }
-        outputSB.append(titleSB.toString());
-
-        return outputSB.toString();
-
+  private String tableFormat(String output) {
+    final StringBuilder outputSB = new StringBuilder();
+    final List<String> outputs = new ArrayList<String>();
+    final List<StringBuilder> lines = new ArrayList<StringBuilder>();
+    final StringBuilder titleSB = new StringBuilder();
+    final List<String[]> datas = new ArrayList<String[]>();
+    final int[] colMaxWidths = new int[] { 9, 5, 8, 5, 7, 4, 2, 9 };
+    datas.add(new String[] { "timestamp", "class", "behavior", "total", "success", "fail", "rt", "fail-rate" });
+    lines.add(new StringBuilder());
+    final Scanner scan = new Scanner(output);
+    while (scan.hasNextLine()) {
+      final String[] strs = scan.nextLine().split("\\s+");
+      final String[] cols = new String[] { strs[0] + " " + strs[1], strs[2], strs[3], strs[4], strs[5], strs[6], strs[7], strs[8] };
+      for (int c = 0; c < 8; c++) {
+        colMaxWidths[c] = Math.max(colMaxWidths[c], cols[c].length());
+      }
+      datas.add(cols);
+      lines.add(new StringBuilder());
     }
-
+    for (int c = 0; c < 8; c++) {
+      titleSB.append("+");
+      GaStringUtils.rightFill(titleSB, colMaxWidths[c] + 2, "-");
+    }
+    titleSB.append("+").append("\n");
+    for (int i = 0; i < lines.size(); i++) {
+      final StringBuilder lineSB = lines.get(i);
+      final String[] cols = datas.get(i);
+      for (int c = 0; c < 8; c++) {
+        lineSB.append("|");
+        int diff = colMaxWidths[c] - cols[c].length() + 1;
+        GaStringUtils.rightFill(lineSB, diff, " ");
+        lineSB.append(cols[c]).append(" ");
+      }
+      lineSB.append("|");
+      outputs.add(lineSB.toString());
+    }
+    outputSB.append(titleSB.toString());
+    boolean isTitle = true;
+    for (String o : outputs) {
+      outputSB.append(o).append("\n");
+      if (isTitle) {
+        outputSB.append(titleSB.toString());
+        isTitle = false;
+      }
+    }
+    outputSB.append(titleSB.toString());
+    return outputSB.toString();
+  }
 }

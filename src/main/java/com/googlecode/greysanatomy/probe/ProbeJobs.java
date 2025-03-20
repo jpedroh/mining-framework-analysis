@@ -1,13 +1,8 @@
 package com.googlecode.greysanatomy.probe;
-
 import com.googlecode.greysanatomy.console.command.JavaScriptCommand.JLS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-<<<<<<< HEAD
-=======
 import java.io.*;
->>>>>>> pr/8
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,331 +10,184 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-<<<<<<< HEAD
-public class ProbeJobs {
-
-    private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
-
-    /**
-     * ÈÎÎñ
-     *
-     * @author vlinux
-     */
-    private static class Job {
-        private String id;
-        private boolean isAlive;
-        private JobListener listener;
-    }
-
-    private static final Map<String, Job> jobs = new ConcurrentHashMap<String, Job>();
-
-
-    /**
-     * ×¢²áÕìÌýÆ÷
-     *
-     * @param listener
-     */
-    public static void register(String id, JobListener listener) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.listener = listener;
-            listener.create();
-        }
-    }
-
-    /**
-     * ´´½¨Ò»¸öjob
-     *
-     * @return
-     */
-    public static String createJob() {
-        final String id = UUID.randomUUID().toString();
-        Job job = new Job();
-        job.id = id;
-        job.isAlive = false;
-        jobs.put(id, job);
-        return id;
-    }
-
-    /**
-     * ¼¤»îÒ»¸öjob
-     *
-     * @param id
-     */
-    public static void activeJob(String id) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.isAlive = true;
-        }
-    }
-
-    /**
-     * ÅÐ¶ÏjobÊÇ·ñ»¹¿ÉÒÔ¼ÌÐø¹¤×÷
-     *
-     * @param id
-     * @return
-     */
-    public static boolean isJobAlive(String id) {
-        Job job = jobs.get(id);
-        return null != job && job.isAlive;
-    }
-
-    /**
-     * É±ËÀÒ»¸öjob
-     *
-     * @param id
-     */
-    public static void killJob(String id) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.isAlive = false;
-            try {
-                job.listener.destroy();
-            } catch (Throwable t) {
-                logger.warn("destroy listener failed, jobId={}", id, t);
-            }
-            JLS.removeJob(id);
-        }
-    }
-
-    /**
-     * ·µ»Ø´æ»îµÄjobId
-     *
-     * @return
-     */
-    public static List<String> listAliveJobIds() {
-        final List<String> jobIds = new ArrayList<String>();
-        for (Job job : jobs.values()) {
-            if (job.isAlive) {
-                jobIds.add(job.id);
-            }
-        }
-        return jobIds;
-    }
-
-    /**
-     * ·µ»Øµ±Ç°µÄÌ½²â¼àÌýÆ÷ÁÐ±í
-     *
-     * @param id
-     * @return
-     */
-    public static JobListener getJobListeners(String id) {
-        if (jobs.containsKey(id)) {
-            return jobs.get(id).listener;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * jobÊÇ·ñÊµÏÖÁËÖ¸¶¨µÄlistener
-     *
-     * @param id
-     * @param classListener
-     * @return
-     */
-    public static boolean isListener(String id, Class<? extends JobListener> classListener) {
-
-        final JobListener jobListener = getJobListeners(id);
-        return null != jobListener
-                && classListener.isAssignableFrom(jobListener.getClass());
-
-    }
-
-=======
 public final class ProbeJobs {
+  private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
 
-    private static final Logger logger = LoggerFactory.getLogger("greysanatomy");
+  private static final String REST_DIR = System.getProperty("java.io.tmpdir") + File.separator + "greysdata" + File.separator + UUID.randomUUID().toString() + File.separator;
 
-    private static final String REST_DIR = System.getProperty("java.io.tmpdir")//Ö´ÐÐ½á¹ûÊä³öÎÄ¼þÂ·¾¶
-            + File.separator + "greysdata"
-            + File.separator + UUID.randomUUID().toString()
-            + File.separator
-            ;
-    private static final String REST_FILE_EXT = ".ga";                            //´æ´¢ÖÐ¼ä½á¹ûµÄÁÙÊ±ÎÄ¼þºó×ºÃû
+  private static final String REST_FILE_EXT = ".ga";
 
-    /**
-     * ÈÎÎñ
-     *
-     * @author vlinux
-     */
-    private static class Job {
-        private final int id;
-        private boolean isAlive;
-        private boolean isKilled;
-        private JobListener listener;
+  private static class Job {
+    private final int id;
 
-        private final File jobFile;
+    private boolean isAlive;
 
-        // JOBÎÄ¼þ¶Á
-        private final Reader jobReader;
+    private boolean isKilled;
 
-        // JOBÎÄ¼þÐ´
-        private final Writer jobWriter;
+    private JobListener listener;
 
+    private final File jobFile;
 
-        Job(int id) throws IOException {
-            this.id = id;
-            final File dir = new File(REST_DIR);
-            if( !dir.exists() ) {
-                dir.mkdir();
-            }
-            jobFile = new File(REST_DIR + id + REST_FILE_EXT);
-            jobFile.createNewFile();
-            jobReader = new BufferedReader(new FileReader(jobFile));
-            jobWriter = new BufferedWriter(new FileWriter(jobFile));
-        }
+    private final Reader jobReader;
 
+    private final Writer jobWriter;
+
+    Job(int id) throws IOException {
+      this.id = id;
+      final File dir = new File(REST_DIR);
+      if (!dir.exists()) {
+        dir.mkdir();
+      }
+      jobFile = new File(REST_DIR + id + REST_FILE_EXT);
+      jobFile.createNewFile();
+      jobReader = new BufferedReader(new FileReader(jobFile));
+      jobWriter = new BufferedWriter(new FileWriter(jobFile));
     }
+  }
 
-    private static final Map<Integer, Job> jobs = new ConcurrentHashMap<Integer, Job>();
-    private static final AtomicInteger jobIdxSequencer = new AtomicInteger(1000);
+  private static final Map<Integer, Job> jobs = new ConcurrentHashMap<Integer, Job>();
 
+  private static final AtomicInteger jobIdxSequencer = new AtomicInteger(1000);
 
-    /**
-     * ×¢²áÕìÌýÆ÷
+  /**
+     * ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param listener
      */
-    public static void register(Integer id, JobListener listener) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.listener = listener;
-            listener.create();
-        }
+  public static void register(Integer id, JobListener listener) {
+    Job job = jobs.get(id);
+    if (null != job) {
+      job.listener = listener;
+      listener.create();
     }
+  }
 
-    /**
-     * ´´½¨Ò»¸öjob
+  /**
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @return
      */
-    public static int createJob() throws IOException {
-        final int id = jobIdxSequencer.getAndIncrement();
-        Job job = new Job(id);
-        job.isAlive = false;
-        jobs.put(id, job);
-        return id;
-    }
+  public static int createJob() throws IOException {
+    final int id = jobIdxSequencer.getAndIncrement();
+    Job job = new Job(id);
+    job.isAlive = false;
+    jobs.put(id, job);
+    return id;
+  }
 
-    /**
-     * ¼¤»îÒ»¸öjob
+  /**
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½job
      *
      * @param id
      */
-    public static void activeJob(int id) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.isAlive = true;
-        }
+  public static void activeJob(int id) {
+    Job job = jobs.get(id);
+    if (null != job) {
+      job.isAlive = true;
     }
+  }
 
-    /**
-     * ÅÐ¶ÏjobÊÇ·ñ»¹¿ÉÒÔ¼ÌÐø¹¤×÷
-     *
-     * @param id
-     * @return true¿ÉÒÔ¼ÌÐø¹¤×÷,false²»¿ÉÒÔ
-     */
-    public static boolean isJobAlive(int id) {
-        Job job = jobs.get(id);
-        return null != job && job.isAlive;
-    }
-
-    /**
-     * ÅÐ¶ÏjobÊÇ·ñÒÑ¾­±»kill
-     * @param id
-     * @return
-     */
-    public static boolean isJobKilled(int id) {
-        Job job = jobs.get(id);
-        return null != job && job.isKilled;
-    }
-
-    /**
-     * É±ËÀÒ»¸öjob
-     *
-     * @param id
-     */
-    public static void killJob(int id) {
-        Job job = jobs.get(id);
-        if (null != job) {
-            job.isAlive = false;
-            job.isKilled = true;
-            try {
-                job.listener.destroy();
-            } catch (Throwable t) {
-                logger.warn("destroy job listener failed, jobId={}", id, t);
-            }
-            try {
-                job.jobReader.close();
-                job.jobWriter.close();
-                job.jobFile.deleteOnExit();
-            }catch(IOException e) {
-                logger.warn("close jobFile failed. jobId={}",id, e);
-            }
-            JLS.removeJob(id);
-        }
-    }
-
-    /**
-     * ·µ»Ø´æ»îµÄjobId
-     *
-     * @return
-     */
-    public static List<Integer> listAliveJobIds() {
-        final List<Integer> jobIds = new ArrayList<Integer>();
-        for (Job job : jobs.values()) {
-            if (job.isAlive) {
-                jobIds.add(job.id);
-            }
-        }
-        return jobIds;
-    }
-
-    public static Reader getJobReader(int id) {
-        if (jobs.containsKey(id)) {
-            return jobs.get(id).jobReader;
-        } else {
-            return null;
-        }
-    }
-
-    public static Writer getJobWriter(int id) {
-        if (jobs.containsKey(id)) {
-            return jobs.get(id).jobWriter;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * ·µ»Øµ±Ç°µÄÌ½²â¼àÌýÆ÷ÁÐ±í
+  /**
+     * ï¿½Ð¶ï¿½jobï¿½Ç·ñ»¹¿ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      *
      * @param id
      * @return
      */
-    public static JobListener getJobListeners(int id) {
-        if (jobs.containsKey(id)) {
-            return jobs.get(id).listener;
-        } else {
-            return null;
-        }
-    }
+  public static boolean isJobAlive(int id) {
+    Job job = jobs.get(id);
+    return null != job && job.isAlive;
+  }
 
-    /**
-     * jobÊÇ·ñÊµÏÖÁËÖ¸¶¨µÄlistener
+  /**
+     * ï¿½Ð¶ï¿½jobï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½kill
+     * @param id
+     * @return
+     */
+  public static boolean isJobKilled(int id) {
+    Job job = jobs.get(id);
+    return null != job && job.isKilled;
+  }
+
+  /**
+     * É±ï¿½ï¿½Ò»ï¿½ï¿½job
+     *
+     * @param id
+     */
+  public static void killJob(int id) {
+    Job job = jobs.get(id);
+    if (null != job) {
+      job.isAlive = false;
+      job.isKilled = true;
+      try {
+        job.listener.destroy();
+      } catch (Throwable t) {
+        logger.warn("destroy job listener failed, jobId={}", id, t);
+      }
+      try {
+        job.jobReader.close();
+        job.jobWriter.close();
+        job.jobFile.deleteOnExit();
+      } catch (IOException e) {
+        logger.warn("close jobFile failed. jobId={}", id, e);
+      }
+      JLS.removeJob(id);
+    }
+  }
+
+  /**
+     * ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½jobId
+     *
+     * @return
+     */
+  public static List<Integer> listAliveJobIds() {
+    final List<Integer> jobIds = new ArrayList<Integer>();
+    for (Job job : jobs.values()) {
+      if (job.isAlive) {
+        jobIds.add(job.id);
+      }
+    }
+    return jobIds;
+  }
+
+  public static Reader getJobReader(int id) {
+    if (jobs.containsKey(id)) {
+      return jobs.get(id).jobReader;
+    } else {
+      return null;
+    }
+  }
+
+  public static Writer getJobWriter(int id) {
+    if (jobs.containsKey(id)) {
+      return jobs.get(id).jobWriter;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+     * ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+     *
+     * @param id
+     * @return
+     */
+  public static JobListener getJobListeners(int id) {
+    if (jobs.containsKey(id)) {
+      return jobs.get(id).listener;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+     * jobï¿½Ç·ï¿½Êµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½listener
      *
      * @param id
      * @param classListener
      * @return
      */
-    public static boolean isListener(int id, Class<? extends JobListener> classListener) {
-
-        final JobListener jobListener = getJobListeners(id);
-        return null != jobListener
-                && classListener.isAssignableFrom(jobListener.getClass());
-
-    }
-
->>>>>>> pr/8
+  public static boolean isListener(int id, Class<? extends JobListener> classListener) {
+    final JobListener jobListener = getJobListeners(id);
+    return null != jobListener && classListener.isAssignableFrom(jobListener.getClass());
+  }
 }

@@ -1,71 +1,59 @@
 package com.googlecode.greysanatomy.clocker;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * ¼ÆÊ±Æ÷
+ * ï¿½ï¿½Ê±ï¿½ï¿½
  *
  * @author vlinux
  */
 public class Clocker implements Runnable {
+  private final ReentrantLock lock = new ReentrantLock();
 
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Condition condition = lock.newCondition();
-    private final AtomicLong timestamp = new AtomicLong(System.currentTimeMillis());
+  private final Condition condition = lock.newCondition();
 
-    private Clocker() {
-        final Thread clockerT = new Thread(this, "ga-clocker");
-        clockerT.setDaemon(true);
-        clockerT.start();
-    }
+  private final AtomicLong timestamp = new AtomicLong(System.currentTimeMillis());
 
-    @Override
-    public void run() {
-<<<<<<< HEAD
-        System.out.println("start");
-=======
->>>>>>> pr/8
-        while (true) {
+  private Clocker() {
+    final Thread clockerT = new Thread(this, "ga-clocker");
+    clockerT.setDaemon(true);
+    clockerT.start();
+  }
 
-            lock.lock();
-            // wait 1ms
-            try {
-                condition.await(1L, TimeUnit.MILLISECONDS);
-                // fix timestamp every 1000 times
-                if (timestamp.incrementAndGet() % 1000 == 0) {
-                    timestamp.set(System.currentTimeMillis());
-                }
-            } catch (InterruptedException e) {
-                // do nothing...
-            } finally {
-                lock.unlock();
-            }
-
+  @Override public void run() {
+    while (true) {
+      lock.lock();
+      try {
+        condition.await(1L, TimeUnit.MILLISECONDS);
+        if (timestamp.incrementAndGet() % 1000 == 0) {
+          timestamp.set(System.currentTimeMillis());
         }
+      } catch (InterruptedException e) {
+      } finally {
+        lock.unlock();
+      }
     }
+  }
 
-    /**
-     * »ñÈ¡¼ÆÊ±Æ÷µ±Ç°Ê±¼ä
+  /**
+     * ï¿½ï¿½È¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ç°Ê±ï¿½ï¿½
      *
      * @return
      */
-    public long getCurrentTimeMillis() {
-        return timestamp.get();
-    }
+  public long getCurrentTimeMillis() {
+    return timestamp.get();
+  }
 
+  private static volatile Clocker clocker = new Clocker();
 
-    private static volatile Clocker clocker = new Clocker();
-
-    /**
-     * »ñÈ¡µ¥ÀýµÄclocker
+  /**
+     * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clocker
      *
      * @return
      */
-    public static Clocker current() {
-        return clocker;
-    }
-
+  public static Clocker current() {
+    return clocker;
+  }
 }
