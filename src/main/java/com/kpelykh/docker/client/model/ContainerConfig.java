@@ -1,8 +1,6 @@
 package com.kpelykh.docker.client.model;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -11,281 +9,276 @@ import java.util.Map;
  * @author Konstantin Pelykh (kpelykh@gmail.com)
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ContainerConfig {
+@JsonIgnoreProperties(ignoreUnknown = true) public class ContainerConfig {
+  @JsonProperty(value = "Hostname") private String hostName = "";
 
-    @JsonProperty("Hostname")     private String    hostName = "";
-    @JsonProperty("PortSpecs")    private String[]  portSpecs;
-    @JsonProperty("User")         private String    user = "";
-    @JsonProperty("Tty")          private boolean   tty = false;
-    @JsonProperty("OpenStdin")    private boolean   stdinOpen = false;
-    @JsonProperty("StdinOnce")    private boolean   stdInOnce = false;
-    @JsonProperty("Memory")       private long      memoryLimit = 0;
-    @JsonProperty("MemorySwap")   private long      memorySwap = 0;
-    @JsonProperty("CpuShares")    private int       cpuShares = 0;
-    @JsonProperty("AttachStdin")  private boolean   attachStdin = false;
-    @JsonProperty("AttachStdout") private boolean   attachStdout = false;
-    @JsonProperty("AttachStderr") private boolean   attachStderr = false;
-    @JsonProperty("Env")          private String[]  env;
-    @JsonProperty("Cmd")          private String[]  cmd;
-    @JsonProperty("Dns")          private String[]  dns;
-    @JsonProperty("Image")        private String    image;
-    @JsonProperty("Volumes")      private BoundHostVolumes   volumes;
-    @JsonProperty("VolumesFrom")  private String    volumesFrom = "";
-    @JsonProperty("Entrypoint")   private String[]  entrypoint = new String[]{};
-    @JsonProperty("NetworkDisabled") private boolean networkDisabled = false;
-    @JsonProperty("Privileged")   private boolean privileged = false;
-    @JsonProperty("WorkingDir")   private String workingDir = "";
-    @JsonProperty("Domainname")   private String domainName = "";
-    // FIXME Is this the right type? -BJE
-    @JsonProperty("ExposedPorts")   private Map<String, ?> exposedPorts;
-    
-    @JsonProperty("OnBuild")   private int[] onBuild;
+  @JsonProperty(value = "PortSpecs") private String[] portSpecs;
 
-    public Map<String, ?> getExposedPorts() {
-        return exposedPorts;
-    }
+  @JsonProperty(value = "User") private String user = "";
 
-    public boolean isNetworkDisabled() {
-        return networkDisabled;
-    }
+  @JsonProperty(value = "Tty") private boolean tty = false;
 
-    public String getDomainName() {
-        return domainName;
-    }
+  @JsonProperty(value = "OpenStdin") private boolean stdinOpen = false;
 
-    public String getWorkingDir() { return workingDir; }
+  @JsonProperty(value = "StdinOnce") private boolean stdInOnce = false;
 
-    public ContainerConfig setWorkingDir(String workingDir) {
-        this.workingDir = workingDir;
-        return this;
-    }
+  @JsonProperty(value = "Memory") private long memoryLimit = 0;
 
-    public boolean isPrivileged() {
-        return privileged;
-    }
+  @JsonProperty(value = "MemorySwap") private long memorySwap = 0;
 
-    public ContainerConfig setPrivileged(boolean privileged) {
-        this.privileged = privileged;
-        return this;
-    }
+  @JsonProperty(value = "CpuShares") private int cpuShares = 0;
 
-    public String getHostName() {
-        return hostName;
-    }
+  @JsonProperty(value = "AttachStdin") private boolean attachStdin = false;
 
-    public ContainerConfig setNetworkDisabled(boolean networkDisabled) {
-        this.networkDisabled = networkDisabled;
-        return this;
-    }
+  @JsonProperty(value = "AttachStdout") private boolean attachStdout = false;
 
-    public ContainerConfig setHostName(String hostName) {
-        this.hostName = hostName;
-        return this;
-    }
+  @JsonProperty(value = "AttachStderr") private boolean attachStderr = false;
 
-    public String[] getPortSpecs() {
-        return portSpecs;
-    }
+  @JsonProperty(value = "Env") private String[] env;
 
-    public ContainerConfig setPortSpecs(String[] portSpecs) {
-        this.portSpecs = portSpecs;
-        return this;
-    }
+  @JsonProperty(value = "Cmd") private String[] cmd;
 
-    public String getUser() {
-        return user;
-    }
+  @JsonProperty(value = "Dns") private String[] dns;
 
-    public ContainerConfig setUser(String user) {
-        this.user = user;
-        return this;
-    }
+  @JsonProperty(value = "Image") private String image;
 
-    public boolean isTty() {
-        return tty;
-    }
+  @JsonProperty(value = "Volumes") private BoundHostVolumes volumes;
 
-    public ContainerConfig setTty(boolean tty) {
-        this.tty = tty;
-        return this;
-    }
+  @JsonProperty(value = "VolumesFrom") private String volumesFrom = "";
 
-    public boolean isStdinOpen() {
-        return stdinOpen;
-    }
+  @JsonProperty(value = "Entrypoint") private String[] entrypoint = new String[] {  };
 
-    public ContainerConfig setStdinOpen(boolean stdinOpen) {
-        this.stdinOpen = stdinOpen;
-        return this;
-    }
+  @JsonProperty(value = "NetworkDisabled") private boolean networkDisabled = false;
 
-    public boolean isStdInOnce() {
-        return stdInOnce;
-    }
+  @JsonProperty(value = "Privileged") private boolean privileged = false;
 
-    public ContainerConfig setStdInOnce(boolean stdInOnce) {
-        this.stdInOnce = stdInOnce;
-        return this;
-    }
+  @JsonProperty(value = "WorkingDir") private String workingDir = "";
 
-    public long getMemoryLimit() {
-        return memoryLimit;
-    }
+  @JsonProperty(value = "Domainname") private String domainName = "";
 
-    public ContainerConfig setMemoryLimit(long memoryLimit) {
-        this.memoryLimit = memoryLimit;
-        return this;
-    }
+  @JsonProperty(value = "ExposedPorts") private Map<String, ?> exposedPorts;
 
-    public long getMemorySwap() {
-        return memorySwap;
-    }
+  @JsonProperty(value = "OnBuild") private int[] onBuild;
 
-    public ContainerConfig setMemorySwap(long memorySwap) {
-        this.memorySwap = memorySwap;
-        return this;
-    }
+  public Map<String, ?> getExposedPorts() {
+    return exposedPorts;
+  }
 
-    public int getCpuShares() {
-        return cpuShares;
-    }
+  public boolean isNetworkDisabled() {
+    return networkDisabled;
+  }
 
-    public ContainerConfig setCpuShares(int cpuShares) {
-        this.cpuShares = cpuShares;
-        return this;
-    }
+  public String getDomainName() {
+    return domainName;
+  }
 
-    public boolean isAttachStdin() {
-        return attachStdin;
-    }
+  public String getWorkingDir() {
+    return workingDir;
+  }
 
-    public ContainerConfig setAttachStdin(boolean attachStdin) {
-        this.attachStdin = attachStdin;
-        return this;
-    }
+  public ContainerConfig setWorkingDir(String workingDir) {
+    this.workingDir = workingDir;
+    return this;
+  }
 
-    public boolean isAttachStdout() {
-        return attachStdout;
-    }
+  public boolean isPrivileged() {
+    return privileged;
+  }
 
-    public ContainerConfig setAttachStdout(boolean attachStdout) {
-        this.attachStdout = attachStdout;
-        return this;
-    }
+  public ContainerConfig setPrivileged(boolean privileged) {
+    this.privileged = privileged;
+    return this;
+  }
 
-    public boolean isAttachStderr() {
-        return attachStderr;
-    }
+  public String getHostName() {
+    return hostName;
+  }
 
-    public ContainerConfig setAttachStderr(boolean attachStderr) {
-        this.attachStderr = attachStderr;
-        return this;
-    }
+  public ContainerConfig setNetworkDisabled(boolean networkDisabled) {
+    this.networkDisabled = networkDisabled;
+    return this;
+  }
 
-    public String[] getEnv() {
-        return env;
-    }
+  public ContainerConfig setHostName(String hostName) {
+    this.hostName = hostName;
+    return this;
+  }
 
-    public ContainerConfig setEnv(String[] env) {
-        this.env = env;
-        return this;
-    }
+  public String[] getPortSpecs() {
+    return portSpecs;
+  }
 
-    public String[] getCmd() {
-        return cmd;
-    }
+  public ContainerConfig setPortSpecs(String[] portSpecs) {
+    this.portSpecs = portSpecs;
+    return this;
+  }
 
-    public ContainerConfig setCmd(String[] cmd) {
-        this.cmd = cmd;
-        return this;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public String[] getDns() {
-        return dns;
-    }
+  public ContainerConfig setUser(String user) {
+    this.user = user;
+    return this;
+  }
 
-    public ContainerConfig setDns(String[] dns) {
-        this.dns = dns;
-        return this;
-    }
+  public boolean isTty() {
+    return tty;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public ContainerConfig setTty(boolean tty) {
+    this.tty = tty;
+    return this;
+  }
 
-    public ContainerConfig setImage(String image) {
-        this.image = image;
-        return this;
-    }
+  public boolean isStdinOpen() {
+    return stdinOpen;
+  }
 
-    public BoundHostVolumes getVolumes() {
-        return volumes;
-    }
+  public ContainerConfig setStdinOpen(boolean stdinOpen) {
+    this.stdinOpen = stdinOpen;
+    return this;
+  }
 
-    public ContainerConfig setVolumes(BoundHostVolumes volumes) {
-        this.volumes = volumes;
-        return this;
-    }
+  public boolean isStdInOnce() {
+    return stdInOnce;
+  }
 
-    public String getVolumesFrom() {
-        return volumesFrom;
-    }
+  public ContainerConfig setStdInOnce(boolean stdInOnce) {
+    this.stdInOnce = stdInOnce;
+    return this;
+  }
 
-    public ContainerConfig setVolumesFrom(String volumesFrom) {
-        this.volumesFrom = volumesFrom;
-        return this;
-    }
+  public long getMemoryLimit() {
+    return memoryLimit;
+  }
 
-    public String[] getEntrypoint() {
-        return entrypoint;
-    }
+  public ContainerConfig setMemoryLimit(long memoryLimit) {
+    this.memoryLimit = memoryLimit;
+    return this;
+  }
 
-    public ContainerConfig setEntrypoint(String[] entrypoint) {
-        this.entrypoint = entrypoint;
-        return this;
-    }
-    
-    public void setOnBuild(int[] onBuild) {
-		this.onBuild = onBuild;
-	}
-    
-    public int[] getOnBuild() {
-		return onBuild;
-	}
-    
-    public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-   
+  public long getMemorySwap() {
+    return memorySwap;
+  }
 
-    @Override
-    public String toString() {
-        return "ContainerConfig{" +
-                "hostName='" + hostName + '\'' +
-                ", portSpecs=" + Arrays.toString(portSpecs) +
-                ", user='" + user + '\'' +
-                ", tty=" + tty +
-                ", stdinOpen=" + stdinOpen +
-                ", stdInOnce=" + stdInOnce +
-                ", memoryLimit=" + memoryLimit +
-                ", memorySwap=" + memorySwap +
-                ", cpuShares=" + cpuShares +
-                ", attachStdin=" + attachStdin +
-                ", attachStdout=" + attachStdout +
-                ", attachStderr=" + attachStderr +
-                ", env=" + Arrays.toString(env) +
-                ", cmd=" + Arrays.toString(cmd) +
-                ", dns=" + Arrays.toString(dns) +
-                ", image='" + image + '\'' +
-                ", volumes=" + volumes +
-                ", volumesFrom='" + volumesFrom + '\'' +
-                ", entrypoint=" + Arrays.toString(entrypoint) +
-                ", networkDisabled=" + networkDisabled +
-                ", privileged=" + privileged +
-                ", workingDir='" + workingDir + '\'' +
-                ", domainName='" + domainName + '\'' +
-                ", onBuild='" + Arrays.toString(onBuild) + '\'' +
-                '}';
-    }
+  public ContainerConfig setMemorySwap(long memorySwap) {
+    this.memorySwap = memorySwap;
+    return this;
+  }
+
+  public int getCpuShares() {
+    return cpuShares;
+  }
+
+  public ContainerConfig setCpuShares(int cpuShares) {
+    this.cpuShares = cpuShares;
+    return this;
+  }
+
+  public boolean isAttachStdin() {
+    return attachStdin;
+  }
+
+  public ContainerConfig setAttachStdin(boolean attachStdin) {
+    this.attachStdin = attachStdin;
+    return this;
+  }
+
+  public boolean isAttachStdout() {
+    return attachStdout;
+  }
+
+  public ContainerConfig setAttachStdout(boolean attachStdout) {
+    this.attachStdout = attachStdout;
+    return this;
+  }
+
+  public boolean isAttachStderr() {
+    return attachStderr;
+  }
+
+  public ContainerConfig setAttachStderr(boolean attachStderr) {
+    this.attachStderr = attachStderr;
+    return this;
+  }
+
+  public String[] getEnv() {
+    return env;
+  }
+
+  public ContainerConfig setEnv(String[] env) {
+    this.env = env;
+    return this;
+  }
+
+  public String[] getCmd() {
+    return cmd;
+  }
+
+  public ContainerConfig setCmd(String[] cmd) {
+    this.cmd = cmd;
+    return this;
+  }
+
+  public String[] getDns() {
+    return dns;
+  }
+
+  public ContainerConfig setDns(String[] dns) {
+    this.dns = dns;
+    return this;
+  }
+
+  public String getImage() {
+    return image;
+  }
+
+  public ContainerConfig setImage(String image) {
+    this.image = image;
+    return this;
+  }
+
+  public BoundHostVolumes getVolumes() {
+    return volumes;
+  }
+
+  public ContainerConfig setVolumes(BoundHostVolumes volumes) {
+    this.volumes = volumes;
+    return this;
+  }
+
+  public String getVolumesFrom() {
+    return volumesFrom;
+  }
+
+  public ContainerConfig setVolumesFrom(String volumesFrom) {
+    this.volumesFrom = volumesFrom;
+    return this;
+  }
+
+  public String[] getEntrypoint() {
+    return entrypoint;
+  }
+
+  public ContainerConfig setEntrypoint(String[] entrypoint) {
+    this.entrypoint = entrypoint;
+    return this;
+  }
+
+  public void setOnBuild(int[] onBuild) {
+    this.onBuild = onBuild;
+  }
+
+  public int[] getOnBuild() {
+    return onBuild;
+  }
+
+  public void setDomainName(String domainName) {
+    this.domainName = domainName;
+  }
+
+  @Override public String toString() {
+    return "ContainerConfig{" + "hostName=\'" + hostName + '\'' + ", portSpecs=" + Arrays.toString(portSpecs) + ", user=\'" + user + '\'' + ", tty=" + tty + ", stdinOpen=" + stdinOpen + ", stdInOnce=" + stdInOnce + ", memoryLimit=" + memoryLimit + ", memorySwap=" + memorySwap + ", cpuShares=" + cpuShares + ", attachStdin=" + attachStdin + ", attachStdout=" + attachStdout + ", attachStderr=" + attachStderr + ", env=" + Arrays.toString(env) + ", cmd=" + Arrays.toString(cmd) + ", dns=" + Arrays.toString(dns) + ", image=\'" + image + '\'' + ", volumes=" + volumes + ", volumesFrom=\'" + volumesFrom + '\'' + ", entrypoint=" + Arrays.toString(entrypoint) + ", networkDisabled=" + networkDisabled + ", privileged=" + privileged + ", workingDir=\'" + workingDir + '\'' + ", domainName=\'" + domainName + '\'' + ", onBuild=\'" + Arrays.toString(onBuild) + '\'' + '}';
+  }
 }
