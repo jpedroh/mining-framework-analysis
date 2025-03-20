@@ -1,8 +1,6 @@
 package com.mercadopago.client.customer;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeResultsResourcesPageFromJson;
-
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.MercadoPagoConfig;
@@ -73,18 +71,9 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/get/">api
    *     docs</a>
    */
-  public Customer get(String customerId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Customer get(String customerId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get customer request");
-
-    MPResponse response =
-        send(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
-
+    MPResponse response = send(String.format("/v1/customers/%s", customerId), HttpMethod.GET, null, null, requestOptions);
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -115,15 +104,11 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com/developers/en/reference/customers/_customers/post/">api
    *     docs</a>
    */
-  public Customer create(CustomerRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Customer create(CustomerRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending create customer request");
-
     JsonObject payload = Serializer.serializeToJson(request);
-    MPRequest mpRequest =
-        MPRequest.buildRequest("/v1/customers", HttpMethod.POST, payload, null, requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest("/v1/customers", HttpMethod.POST, payload, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -140,8 +125,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/put/">api
    *     docs</a>
    */
-  public Customer update(String customerId, CustomerRequest request)
-      throws MPException, MPApiException {
+  public Customer update(String customerId, CustomerRequest request) throws MPException, MPApiException {
     return this.update(customerId, request, null);
   }
 
@@ -157,21 +141,11 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com/developers/en/reference/customers/_customers_id/put/">api
    *     docs</a>
    */
-  public Customer update(
-      String customerId, CustomerRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Customer update(String customerId, CustomerRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending update customer request");
-
     JsonObject payload = Serializer.serializeToJson(request);
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.PUT,
-            payload,
-            null,
-            requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest(String.format("/v1/customers/%s", customerId), HttpMethod.PUT, payload, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -196,19 +170,10 @@ public class CustomerClient extends MercadoPagoClient {
    * @return the customer just deleted
    * @throws MPException an error if the request fails
    */
-  public Customer delete(String customerId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public Customer delete(String customerId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending delete customer request");
-
-    MPRequest mpRequest =
-        MPRequest.buildRequest(
-            String.format("/v1/customers/%s", customerId),
-            HttpMethod.DELETE,
-            null,
-            null,
-            requestOptions);
+    MPRequest mpRequest = MPRequest.buildRequest(String.format("/v1/customers/%s", customerId), HttpMethod.DELETE, null, null, requestOptions);
     MPResponse response = send(mpRequest);
-
     Customer customer = Serializer.deserializeFromJson(Customer.class, response.getContent());
     customer.setResponse(response);
     return customer;
@@ -224,8 +189,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/customers/_customers_search/get">api
    *     docs</a>
    */
-  public MPResultsResourcesPage<Customer> search(MPSearchRequest request)
-      throws MPException, MPApiException {
+  public MPResultsResourcesPage<Customer> search(MPSearchRequest request) throws MPException, MPApiException {
     return this.search(request, null);
   }
 
@@ -240,15 +204,11 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/customers/_customers_search/get">api
    *     docs</a>
    */
-  public MPResultsResourcesPage<Customer> search(
-      MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
+  public MPResultsResourcesPage<Customer> search(MPSearchRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending search customer request");
-
     MPResponse response = search("/v1/customers/search", request, requestOptions);
-
-    Type responseType = new TypeToken<MPResultsResourcesPage<Customer>>() {}.getType();
-    MPResultsResourcesPage<Customer> result =
-        deserializeResultsResourcesPageFromJson(responseType, response.getContent());
+    Type responseType = new TypeToken<MPResultsResourcesPage<Customer>>() { }.getType();
+    MPResultsResourcesPage<Customer> result = deserializeResultsResourcesPageFromJson(responseType, response.getContent());
     result.setResponse(response);
     return result;
   }
@@ -280,8 +240,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/get">api
    *     docs</a>
    */
-  public CustomerCard getCard(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public CustomerCard getCard(String customerId, String cardId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     return cardClient.get(customerId, cardId, requestOptions);
   }
 
@@ -296,8 +255,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/post">api
    *     docs</a>
    */
-  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request)
-      throws MPException, MPApiException {
+  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request) throws MPException, MPApiException {
     return this.createCard(customerId, request, null);
   }
 
@@ -313,9 +271,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/post">api
    *     docs</a>
    */
-  public CustomerCard createCard(
-      String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public CustomerCard createCard(String customerId, CustomerCardCreateRequest request, MPRequestOptions requestOptions) throws MPException, MPApiException {
     return cardClient.create(customerId, request, requestOptions);
   }
 
@@ -330,8 +286,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/delete">api
    *     docs</a>
    */
-  public CustomerCard deleteCard(String customerId, String cardId)
-      throws MPException, MPApiException {
+  public CustomerCard deleteCard(String customerId, String cardId) throws MPException, MPApiException {
     return this.deleteCard(customerId, cardId, null);
   }
 
@@ -347,8 +302,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards_id/delete">api
    *     docs</a>
    */
-  public CustomerCard deleteCard(String customerId, String cardId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public CustomerCard deleteCard(String customerId, String cardId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     return cardClient.delete(customerId, cardId, requestOptions);
   }
 
@@ -362,8 +316,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/get">api
    *     docs</a>
    */
-  public MPResourceList<CustomerCard> listCards(String customerId)
-      throws MPException, MPApiException {
+  public MPResourceList<CustomerCard> listCards(String customerId) throws MPException, MPApiException {
     return this.listCards(customerId, null);
   }
 
@@ -378,8 +331,7 @@ public class CustomerClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/cards/_customers_customer_id_cards/get">api
    *     docs</a>
    */
-  public MPResourceList<CustomerCard> listCards(String customerId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MPResourceList<CustomerCard> listCards(String customerId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     return cardClient.listAll(customerId, requestOptions);
   }
 }

@@ -1,10 +1,8 @@
 package com.mercadopago.client.payment;
-
 import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.serialization.Serializer.deserializeFromJson;
 import static com.mercadopago.serialization.Serializer.deserializeListFromJson;
 import static com.mercadopago.serialization.Serializer.serializeToJson;
-
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.MercadoPagoClient;
 import com.mercadopago.core.MPRequestOptions;
@@ -21,7 +19,6 @@ import java.util.logging.StreamHandler;
 
 /** Client that use the Payment Refunds APIs. */
 public class PaymentRefundClient extends MercadoPagoClient {
-
   private static final Logger LOGGER = Logger.getLogger(PaymentRefundClient.class.getName());
 
   private static final String URL_WITH_PAYMENT_ID = "/v1/payments/%s/refunds";
@@ -70,22 +67,12 @@ public class PaymentRefundClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/chargebacks/_payments_id_refunds/post">api
    *     docs</a>
    */
-  public PaymentRefund refund(Long paymentId, BigDecimal amount, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public PaymentRefund refund(Long paymentId, BigDecimal amount, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending refund payment request");
-    PaymentRefundCreateRequest request =
-        PaymentRefundCreateRequest.builder().amount(amount).build();
-
-    MPResponse response =
-        send(
-            String.format(URL_WITH_PAYMENT_ID, paymentId),
-            HttpMethod.POST,
-            serializeToJson(request),
-            null,
-            requestOptions);
+    PaymentRefundCreateRequest request = PaymentRefundCreateRequest.builder().amount(amount).build();
+    MPResponse response = send(String.format(URL_WITH_PAYMENT_ID, paymentId), HttpMethod.POST, serializeToJson(request), null, requestOptions);
     PaymentRefund result = deserializeFromJson(PaymentRefund.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -116,19 +103,11 @@ public class PaymentRefundClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/chargebacks/_payments_id_refunds_refund_id/get">api
    *     docs</a>
    */
-  public PaymentRefund get(Long paymentId, Long refundId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public PaymentRefund get(Long paymentId, Long refundId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending get refund payment request");
-    MPResponse response =
-        send(
-            String.format("/v1/payments/%s/refunds/%s", paymentId, refundId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
+    MPResponse response = send(String.format("/v1/payments/%s/refunds/%s", paymentId, refundId), HttpMethod.GET, null, null, requestOptions);
     PaymentRefund result = deserializeFromJson(PaymentRefund.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 
@@ -157,20 +136,11 @@ public class PaymentRefundClient extends MercadoPagoClient {
    *     href="https://www.mercadopago.com.br/developers/en/reference/chargebacks/_payments_id_refunds/get">api
    *     docs</a>
    */
-  public MPResourceList<PaymentRefund> list(Long paymentId, MPRequestOptions requestOptions)
-      throws MPException, MPApiException {
+  public MPResourceList<PaymentRefund> list(Long paymentId, MPRequestOptions requestOptions) throws MPException, MPApiException {
     LOGGER.info("Sending list refund payment request");
-    MPResponse response =
-        send(
-            String.format(URL_WITH_PAYMENT_ID, paymentId),
-            HttpMethod.GET,
-            null,
-            null,
-            requestOptions);
-    MPResourceList<PaymentRefund> result =
-        deserializeListFromJson(PaymentRefund.class, response.getContent());
+    MPResponse response = send(String.format(URL_WITH_PAYMENT_ID, paymentId), HttpMethod.GET, null, null, requestOptions);
+    MPResourceList<PaymentRefund> result = deserializeListFromJson(PaymentRefund.class, response.getContent());
     result.setResponse(response);
-
     return result;
   }
 }
