@@ -68,7 +68,6 @@ public class JettyBootstrap {
 	public JettyBootstrap startJetty() throws JettyBootstrapException {
 		return startJetty(iJettyConfiguration.isAutoJoinOnStart());
 	}
-
 	/**
 	 * Start Jetty
 	 * 
@@ -95,7 +94,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Join Jetty
 	 * 
@@ -113,7 +111,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Stop Jetty
 	 * 
@@ -137,7 +134,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Add War
 	 * 
@@ -147,7 +143,6 @@ public class JettyBootstrap {
 	public JettyBootstrap addWar(File warFile) {
 		return addWar(warFile, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add War
 	 * 
@@ -164,7 +159,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Add ResourceWar
 	 * 
@@ -174,7 +168,6 @@ public class JettyBootstrap {
 	public JettyBootstrap addResourceWar(String resource) {
 		return addResourceWar(resource, CONTEXT_PATH_ROOT);
 	}
-
 	/**
 	 * Add ResourceWar
 	 * 
@@ -191,7 +184,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Add Handler
 	 * 
@@ -206,7 +198,6 @@ public class JettyBootstrap {
 
 		return this;
 	}
-
 	/**
 	 * Get Jetty Server Object
 	 * 
@@ -219,7 +210,6 @@ public class JettyBootstrap {
 		}
 		return server;
 	}
-
 	protected void init(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
 		this.iJettyConfiguration = initConfiguration(iJettyConfiguration);
 
@@ -230,7 +220,6 @@ public class JettyBootstrap {
 
 		createShutdownHook(iJettyConfiguration);
 	}
-
 	protected IJettyConfiguration initConfiguration(IJettyConfiguration iJettyConfiguration) throws JettyBootstrapException {
 		logger.debug("Init Configuration...");
 
@@ -281,7 +270,6 @@ public class JettyBootstrap {
 
 		return iJettyConfiguration;
 	}
-
 	protected Server createServer(IJettyConfiguration iJettyConfiguration) {
 		logger.trace("Create Jetty Server...");
 
@@ -291,7 +279,6 @@ public class JettyBootstrap {
 
 		return server;
 	}
-
 	protected Connector[] createConnectors(IJettyConfiguration iJettyConfiguration, Server server) {
 		logger.trace("Create Jetty Connectors...");
 
@@ -335,7 +322,6 @@ public class JettyBootstrap {
 
 		return connectors.toArray(new Connector[connectors.size()]);
 	}
-
 	protected void shutdown(IJettyConfiguration iJettyConfiguration) {
 		try {
 			logger.debug("Shutdown...");
@@ -346,11 +332,16 @@ public class JettyBootstrap {
 			logger.error("Shutdown", e);
 		}
 	}
-
 	/**
 	 * Add Handlers to jetty
 	 * 
 	 * @throws JettyBootstrapException
+	 */
+	/**
+	 * Add Handler
+	 * 
+	 * @param handler
+	 * @return
 	 */
 	private void addHandlers() throws JettyBootstrapException {
 		if (jettyHandlers.size() == 0) {
