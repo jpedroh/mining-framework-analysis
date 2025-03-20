@@ -376,6 +376,14 @@ public class Iterables {
   /**
    * Return true if actualAsList contains exactly the given sequence at given starting index, false otherwise.
    *
+   * @param actualAsList the list to look sequance in
+   * @param sequence the sequence to look for
+   * @param startingIndex the index of actual list at which we start looking for sequence.
+   * @return true if actualAsList contains exactly the given sequence at given starting index, false otherwise.
+   */
+  /**
+   * Return true if actualAsList contains exactly the given sequence at given starting index, false otherwise.
+   * 
    * @param actualAsList the list to look sequence in
    * @param sequence the sequence to look for
    * @param startingIndex the index of actual list at which we start looking for sequence.
@@ -565,6 +573,16 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to T.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
+  /**
+   * Assert that each element of given {@code Iterable} satisfies the given condition.
+   * 
+   * @param info contains information about the assertion.
+   * @param actual the given {@code Iterable}.
+   * @param condition the given {@code Condition}.
+   * @throws NullPointerException if the given condition is {@code null}.
+   * @throws AssertionError if an element cannot be cast to E.
+   * @throws AssertionError if one or more elements do not satisfy the given condition.
+   */
   public <T> void assertAre(AssertionInfo info, Iterable<? extends T> actual, Condition<? super T> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
@@ -580,6 +598,16 @@ public class Iterables {
   /**
    * Assert that each element of given {@code Iterable} not satisfies the given condition.
    *
+   * @param info contains information about the assertion.
+   * @param actual the given {@code Iterable}.
+   * @param condition the given {@code Condition}.
+   * @throws NullPointerException if the given condition is {@code null}.
+   * @throws AssertionError if an element cannot be cast to E.
+   * @throws AssertionError if one or more elements satisfy the given condition.
+   */
+  /**
+   * Assert that each element of given {@code Iterable} not satisfies the given condition.
+   * 
    * @param info contains information about the assertion.
    * @param actual the given {@code Iterable}.
    * @param condition the given {@code Condition}.
@@ -609,6 +637,16 @@ public class Iterables {
    * @throws AssertionError if an element cannot be cast to E.
    * @throws AssertionError if one or more elements do not satisfy the given condition.
    */
+  /**
+   * Assert that each element of given {@code Iterable} satisfies the given condition.
+   * 
+   * @param info contains information about the assertion.
+   * @param actual the given {@code Iterable}.
+   * @param condition the given {@code Condition}.
+   * @throws NullPointerException if the given condition is {@code null}.
+   * @throws AssertionError if an element cannot be cast to E.
+   * @throws AssertionError if one or more elements do not satisfy the given condition.
+   */
   public <E> void assertHave(AssertionInfo info, Iterable<? extends E> actual, Condition<? super E> condition) {
     assertNotNull(info, actual);
     conditions.assertIsNotNull(condition);
@@ -624,6 +662,16 @@ public class Iterables {
   /**
    * Assert that each element of given {@code Iterable} not satisfies the given condition.
    *
+   * @param info contains information about the assertion.
+   * @param actual the given {@code Iterable}.
+   * @param condition the given {@code Condition}.
+   * @throws NullPointerException if the given condition is {@code null}.
+   * @throws AssertionError if an element cannot be cast to E.
+   * @throws AssertionError if one or more elements satisfy the given condition.
+   */
+  /**
+   * Assert that each element of given {@code Iterable} not satisfies the given condition.
+   * 
    * @param info contains information about the assertion.
    * @param actual the given {@code Iterable}.
    * @param condition the given {@code Condition}.
