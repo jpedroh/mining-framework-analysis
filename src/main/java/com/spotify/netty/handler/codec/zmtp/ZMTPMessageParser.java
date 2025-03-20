@@ -17,14 +17,14 @@
 package com.spotify.netty.handler.codec.zmtp;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.spotify.netty.handler.codec.zmtp.ZMTPUtils.MORE_FLAG;
-import static java.lang.Math.min;
 import static java.nio.ByteOrder.BIG_ENDIAN;
+import static java.lang.Math.min;
+import static org.jboss.netty.buffer.ChannelBuffers.swapLong;
 
 /**
  * Decodes ZMTP messages from a channel buffer, reading and accumulating frame by frame, keeping
@@ -32,13 +32,13 @@ import static java.nio.ByteOrder.BIG_ENDIAN;
  */
 public class ZMTPMessageParser {
 
-    private static final byte LONG_FLAG = 0x02;
-    private final boolean enveloped;
+  private static final byte LONG_FLAG = 0x02;
+  private final boolean enveloped;
 
     private final long sizeLimit;
-    private final int version;
+  private final int version;
 
-    private List<ZMTPFrame> envelope;
+  private List<ZMTPFrame> envelope;
     private List<ZMTPFrame> content;
     private List<ZMTPFrame> part;
     private boolean hasMore;
@@ -52,8 +52,8 @@ public class ZMTPMessageParser {
     public ZMTPMessageParser(final boolean enveloped, final long sizeLimit, int version) {
         this.enveloped = enveloped;
         this.sizeLimit = sizeLimit;
-        this.version = version;
-        reset();
+      this.version = version;
+      reset();
     }
 
     /**
@@ -102,7 +102,6 @@ public class ZMTPMessageParser {
 
             // Read frame content
             final ZMTPFrame frame = ZMTPFrame.read(buffer, frameSize);
-
             if (!frame.hasData() && part == envelope) {
                 // Skip the delimiter
                 part = content;
@@ -189,13 +188,13 @@ public class ZMTPMessageParser {
         return null;
     }
 
-    private boolean parseZMTPHeader(final ByteBuf buffer) throws ZMTPMessageParsingException {
-        return version == 1 ? parseZMTP1Header(buffer) : parseZMTP2Header(buffer);
-    }
+  private boolean parseZMTPHeader(final ChannelBuffer buffer) throws ZMTPMessageParsingException {
+    return version == 1 ? parseZMTP1Header(buffer) : parseZMTP2Header(buffer);
+  }
 
-    /**
-     * Parse a frame header.
-     */
+  /**
+   * Parse a frame header.
+   */
     private boolean parseZMTP1Header(final ByteBuf buffer) throws ZMTPMessageParsingException {
         final long len = ZMTPUtils.decodeLength(buffer);
 
@@ -223,29 +222,29 @@ public class ZMTPMessageParser {
         return true;
     }
 
-    private boolean parseZMTP2Header(ByteBuf buffer) throws ZMTPMessageParsingException {
-        if (buffer.readableBytes() < 2) {
-            return false;
-        }
-        int flags = buffer.readByte();
-        hasMore = (flags & MORE_FLAG) == MORE_FLAG;
-        if ((flags & LONG_FLAG) != LONG_FLAG) {
-            frameSize = buffer.readByte() & 0xff;
-            return true;
-        }
-        if (buffer.readableBytes() < 8) {
-            return false;
-        }
-        long len;
-        if (buffer.order() == BIG_ENDIAN) {
-            len = buffer.readLong();
-        } else {
-            len = ByteBufUtil.swapLong(buffer.readLong());
-        }
-        if (len > Integer.MAX_VALUE) {
-            throw new ZMTPMessageParsingException("Received too large frame: " + len);
-        }
-        frameSize = (int) len;
-        return true;
+  private boolean parseZMTP2Header(ChannelBuffer buffer) throws ZMTPMessageParsingException {
+    if (buffer.readableBytes() < 2) {
+      return false;
     }
+    int flags = buffer.readByte();
+    hasMore = (flags & MORE_FLAG) == MORE_FLAG;
+    if ((flags & LONG_FLAG) != LONG_FLAG) {
+      frameSize = buffer.readByte() & 0xff;
+      return true;
+    }
+    if (buffer.readableBytes() < 8) {
+      return false;
+    }
+    long len;
+    if (buffer.order() == BIG_ENDIAN) {
+      len = buffer.readLong();
+    } else {
+      len = swapLong(buffer.readLong());
+    }
+    if (len > Integer.MAX_VALUE) {
+      throw new ZMTPMessageParsingException("Received too large frame: " + len);
+    }
+    frameSize = (int)len;
+    return true;
+  }
 }

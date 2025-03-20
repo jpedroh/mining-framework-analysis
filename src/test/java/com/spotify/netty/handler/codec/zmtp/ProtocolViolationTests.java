@@ -26,9 +26,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static com.spotify.netty.handler.codec.zmtp.ZMTPConnectionType.Addressed;
-
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class ProtocolViolationTests {
@@ -39,11 +37,85 @@ public class ProtocolViolationTests {
 
   @Before
   public void setup() {
+<<<<<<< /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/left.java
     ZMTPSession session = new ZMTPSession(Addressed, identity.getBytes());
     serverChannel = new EmbeddedChannel(
         new ZMTPFramingDecoder(session),
         new ZMTPFramingEncoder(session),
         mockHandler);
+||||||| /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/base.java
+    serverBootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
+
+    serverBootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+      Executor executor = new OrderedMemoryAwareThreadPoolExecutor(
+          Runtime.getRuntime().availableProcessors(),
+          1024 * 1024,
+          128 * 1024 * 1024
+      );
+
+      public ChannelPipeline getPipeline() throws Exception {
+        final ZMTPSession session = new ZMTPSession(Addressed, identity.getBytes());
+
+        return Channels.pipeline(
+            new ExecutionHandler(executor),
+            new ZMTPFramingDecoder(session),
+            new ZMTPFramingEncoder(session),
+            new SimpleChannelUpstreamHandler() {
+
+              @Override
+              public void channelConnected(final ChannelHandlerContext ctx,
+                                           final ChannelStateEvent e) throws Exception {
+                mockHandler.channelConnected(ctx, e);
+              }
+
+              @Override
+              public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent e)
+                  throws Exception {
+                mockHandler.messageReceived(ctx, e);
+              }
+            });
+      }
+    });
+
+    serverChannel = serverBootstrap.bind(new InetSocketAddress("localhost", 0));
+    serverAddress = (InetSocketAddress) serverChannel.getLocalAddress();
+=======
+    serverBootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
+
+    serverBootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+      Executor executor = new OrderedMemoryAwareThreadPoolExecutor(
+          Runtime.getRuntime().availableProcessors(),
+          1024 * 1024,
+          128 * 1024 * 1024
+      );
+
+      public ChannelPipeline getPipeline() throws Exception {
+
+        return Channels.pipeline(
+            new ExecutionHandler(executor),
+            new ZMTP10Codec(new ZMTPSession(ZMTPConnectionType.Addressed, identity.getBytes())),
+            new SimpleChannelUpstreamHandler() {
+
+              @Override
+              public void channelConnected(final ChannelHandlerContext ctx,
+                                           final ChannelStateEvent e) throws Exception {
+                mockHandler.channelConnected(ctx, e);
+              }
+
+              @Override
+              public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent e)
+                  throws Exception {
+                mockHandler.messageReceived(ctx, e);
+              }
+            });
+      }
+    });
+
+    serverChannel = serverBootstrap.bind(new InetSocketAddress("localhost", 0));
+    serverAddress = (InetSocketAddress) serverChannel.getLocalAddress();
+>>>>>>> /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/right.java
   }
 
   @After
@@ -60,8 +132,42 @@ public class ProtocolViolationTests {
     }
   }
 
+<<<<<<< /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/left.java
+  private void testConnect(final int payloadSize) throws Exception {
+    System.out.println("payloadSize=" + payloadSize);
+||||||| /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/base.java
   private void testConnect(final int payloadSize) throws InterruptedException {
-    final StringBuilder payload = new StringBuilder();
+    final ClientBootstrap clientBootstrap =
+        new ClientBootstrap(new NioClientSocketChannelFactory());
+    clientBootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+      @Override
+      public ChannelPipeline getPipeline() throws Exception {
+        return Channels.pipeline(new SimpleChannelUpstreamHandler());
+      }
+    });
+    final ChannelFuture future = clientBootstrap.connect(serverAddress);
+    future.awaitUninterruptibly();
+
+    final Channel channel = future.getChannel();
+
+    System.out.println("payloadSize=" + payloadSize);
+=======
+  private void testConnect(final int payloadSize) throws InterruptedException {
+    final ClientBootstrap clientBootstrap =
+        new ClientBootstrap(new NioClientSocketChannelFactory());
+    clientBootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+      @Override
+      public ChannelPipeline getPipeline() throws Exception {
+        return Channels.pipeline(new SimpleChannelUpstreamHandler());
+      }
+    });
+    final ChannelFuture future = clientBootstrap.connect(serverAddress);
+    future.awaitUninterruptibly();
+
+    final Channel channel = future.getChannel();
+>>>>>>> /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ProtocolViolationTests.java/right.java
+
+    StringBuilder payload = new StringBuilder();
     for (int i = 0; i < payloadSize; i++) {
       payload.append('0');
     }

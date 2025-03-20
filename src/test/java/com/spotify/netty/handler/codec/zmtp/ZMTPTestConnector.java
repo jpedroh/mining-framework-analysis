@@ -27,7 +27,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.jeromq.ZMQ;
-
 import java.net.InetSocketAddress;
 
 /**
@@ -35,63 +34,94 @@ import java.net.InetSocketAddress;
  */
 public abstract class ZMTPTestConnector {
 
-    public ZMQ.Context context;
-    public ZMQ.Socket serverSocket;
+	public ZMQ.Context context;
+	public ZMQ.Socket serverSocket;
 
-    boolean receivedMessage = false;
+	boolean receivedMessage = false;
 
-    public abstract void preConnect(ZMQ.Socket socket);
+	public abstract void preConnect(ZMQ.Socket socket);
 
-    public abstract void afterConnect(ZMQ.Socket socket, ChannelFuture future);
+	public abstract void afterConnect(ZMQ.Socket socket, ChannelFuture future);
 
-    public abstract boolean onMessage(ZMTPIncomingMessage msg);
+	public abstract boolean onMessage(ZMTPIncomingMessage msg);
 
-    public boolean connectAndReceive(final String ip, final int port, final int serverType) {
-        context = ZMQ.context(1);
-        serverSocket = context.socket(serverType);
+	public boolean connectAndReceive(final String ip, final int port, final int serverType) {
+		context = ZMQ.context(1);
+		serverSocket = context.socket(serverType);
 
-        preConnect(serverSocket);
+		preConnect(serverSocket);
 
-        serverSocket.bind("tcp://" + ip + ":" + port);
+		serverSocket.bind("tcp://" + ip + ":" + port);
 
-        EventLoopGroup group = new NioEventLoopGroup();
-        // Configure the client.
-        final Bootstrap bootstrap = new Bootstrap()
-                .group(group)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        final ZMTPSession session = new ZMTPSession(ZMTPConnectionType.Addressed);
-                        ch.pipeline().addLast(new ZMTPFramingDecoder(session));
-                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                if (onMessage((ZMTPIncomingMessage) msg)) {
-                                    receivedMessage = true;
-                                    ctx.channel().close();
-                                }
-                            }
-                        });
-                    }
-                });
+		EventLoopGroup group = new NioEventLoopGroup();
+		// Configure the client.
+		final Bootstrap bootstrap = new Bootstrap()
+				.group(group)
+				.channel(NioSocketChannel.class)
+				.handler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					protected void initChannel(SocketChannel ch) throws Exception {
+						final ZMTPSession session = new ZMTPSession(Addressed);
+						ch.pipeline().addLast(new ZMTPFramingDecoder(session));
+						ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+							@Override
+							public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+								if (onMessage((ZMTPIncomingMessage) msg)) {
+									receivedMessage = true;
+									ctx.channel().close();
+								}
+							}
+						});
+					}
+				});
 
-        // Start the connection attempt.
-        final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ip, port));
+<<<<<<< /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ZMTPTestConnector.java/left.java
+		// Start the connection attempt.
+		final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ip, port));
+||||||| /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ZMTPTestConnector.java/base.java
+	  // Set up the pipeline factory.
+	  bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+	    public ChannelPipeline getPipeline() throws Exception {
+	      final ZMTPSession session = new ZMTPSession(Addressed);
+	      return Channels.pipeline(
+	          new ZMTPFramingDecoder(session),
+	          new OneToOneDecoder() {
+	            @Override
+	            protected Object decode(final ChannelHandlerContext ctx, final Channel channel,
+	                                    final Object msg) throws Exception {
+	              if (onMessage((ZMTPIncomingMessage) msg)) {
+	                receivedMessage = true;
+	                channel.close();
+	              }
+=======
+	  // Set up the pipeline factory.
+	  bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+	    public ChannelPipeline getPipeline() throws Exception {
+	      return Channels.pipeline(
+	          new ZMTP10Codec(new ZMTPSession(ZMTPConnectionType.Addressed, "client".getBytes())),
+	          new OneToOneDecoder() {
+	            @Override
+	            protected Object decode(final ChannelHandlerContext ctx, final Channel channel,
+	                                    final Object msg) throws Exception {
+	              if (onMessage((ZMTPIncomingMessage) msg)) {
+	                receivedMessage = true;
+	                channel.close();
+	              }
+>>>>>>> /usr/src/app/output/spotify/netty-zmtp/8d02651ebcbfc80ea17699b5547176248b2635c7/src/test/java/com/spotify/netty/handler/codec/zmtp/ZMTPTestConnector.java/right.java
 
-        future.awaitUninterruptibly();
+		future.awaitUninterruptibly();
 
-        afterConnect(serverSocket, future);
+		afterConnect(serverSocket, future);
 
-        // Wait until the connection is closed or the connection attempt fails.
-        future.channel().closeFuture().awaitUninterruptibly();
+		// Wait until the connection is closed or the connection attempt fails.
+		future.channel().closeFuture().awaitUninterruptibly();
 
-        // Shut down thread pools to exit.
-        group.shutdownGracefully();
+		// Shut down thread pools to exit.
+		group.shutdownGracefully();
 
-        serverSocket.close();
-        context.term();
+		serverSocket.close();
+		context.term();
 
-        return receivedMessage;
-    }
+		return receivedMessage;
+	}
 }
