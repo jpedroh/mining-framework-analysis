@@ -1,25 +1,4 @@
-/**
-* Code contributed to the Learning Layers project
-* http://www.learning-layers.eu
-* Development is partly funded by the FP7 Programme of the European Commission under
-* Grant Agreement FP7-ICT-318209.
-* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
-* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
 package at.kc.tugraz.ss.service.disc.impl.fct.op;
-
 import at.kc.tugraz.socialserver.utils.SSObjU;
 import at.kc.tugraz.socialserver.utils.SSStrU;
 import at.kc.tugraz.ss.datatypes.datatypes.SSTextComment;
@@ -34,156 +13,98 @@ import at.kc.tugraz.ss.service.disc.datatypes.pars.SSDiscUserEntryAddPar;
 import at.kc.tugraz.ss.service.disc.impl.fct.sql.SSDiscSQLFct;
 import java.util.ArrayList;
 
-public class SSDiscUserEntryAddFct{
-  
-  public static void addDisc(
-    final SSDiscSQLFct  sqlFct,
-    final SSUri         discUri,
-    final SSUri         userUri, 
-    final SSUri         targetUri,
-    final SSEntityE     discType, 
-    final SSLabel       discLabel,
-    final SSTextComment explanation) throws Exception{
-    
-    try{
-      
-      final SSUri         tmpTargetUri;
+public class SSDiscUserEntryAddFct {
+  public static void addDisc(final SSDiscSQLFct sqlFct, final SSUri discUri, final SSUri userUri, final SSUri targetUri, final SSEntityE discType, final SSLabel discLabel, final SSTextComment explanation) throws Exception {
+    try {
+      final SSUri tmpTargetUri;
       final SSTextComment tmpExplanation;
-      
-      if(targetUri == null){
+      if (targetUri == null) {
         tmpTargetUri = discUri;
-      }else{
+      } else {
         tmpTargetUri = targetUri;
       }
-      
-      if(explanation == null){
+      if (explanation == null) {
         tmpExplanation = SSTextComment.get(SSStrU.empty);
-      }else{
+      } else {
         tmpExplanation = explanation;
       }
-      
-      SSServCaller.entityAdd(
-        userUri,
-        discUri,
-        discLabel,
-        discType,
-        false);
-      
-      SSServCaller.entityAdd(
-        userUri,
-        tmpTargetUri,
-        SSLabel.get(tmpTargetUri),
-        SSEntityE.entity,
-        false);
-      
-      SSServCaller.entityCircleCreate(
-        userUri, 
-        discUri,
-        new ArrayList<SSUri>(), 
-        SSCircleE.priv, 
-        discLabel, 
-        userUri, 
-        false);
-      
-      sqlFct.addDisc(
-        userUri, 
-        discUri, 
-        tmpTargetUri,
-        tmpExplanation);
-      
-    }catch(Exception error){
+      SSServCaller.entityAdd(userUri, discUri, discLabel, discType, false);
+      SSServCaller.entityAdd(userUri, tmpTargetUri, SSLabel.get(tmpTargetUri), SSEntityE.entity, false);
+      SSServCaller.entityCircleCreate(userUri, discUri, new ArrayList<SSUri>(), SSCircleE.priv, discLabel, userUri, false);
+      sqlFct.addDisc(userUri, discUri, tmpTargetUri, tmpExplanation);
+    } catch (Exception error) {
       SSServErrReg.regErrThrow(error);
     }
   }
 
-  public static SSUri addDiscEntry(
-    final SSDiscSQLFct  sqlFct, 
-    final SSUri         userUri,
-    final SSUri         discUri, 
-    final SSTextComment content) throws Exception{
-    
-    try{
-      final SSUri     discEntryUri  = SSServCaller.vocURICreate ();
-      final SSEntityE discType      = SSServCaller.entityGet    (discUri).type;
-      SSEntityE       discEntryType = null;
-      
-      switch(discType){
-        case disc: discEntryType = SSEntityE.discEntry;   break;
-        case qa:   discEntryType = SSEntityE.qaEntry;     break;
-        case chat: discEntryType = SSEntityE.chatEntry;   break;
-        default: throw new Exception("disc type not valid");
+  public static SSUri addDiscEntry(final SSDiscSQLFct sqlFct, final SSUri userUri, final SSUri discUri, final SSTextComment content) throws Exception {
+    try {
+      final SSUri discEntryUri = SSServCaller.vocURICreate();
+      final SSEntityE discType = SSServCaller.entityGet(discUri).type;
+      SSEntityE discEntryType = null;
+      switch (discType) {
+        case disc:
+        discEntryType = SSEntityE.discEntry;
+        break;
+        case qa:
+        discEntryType = SSEntityE.qaEntry;
+        break;
+        case chat:
+        discEntryType = SSEntityE.chatEntry;
+        break;
+        default:
+        throw new Exception("disc type not valid");
       }
-      
-      SSServCaller.entityAdd(
-        userUri,
-        discEntryUri,
-        SSLabel.get(discEntryUri),
-        discEntryType,
-        false);
-      
-      for(SSEntityCircle entityUserCircle : SSServCaller.entityUserEntityCirclesGet(userUri, discUri)){
-        
-        SSServCaller.entityEntitiesToCircleAdd(
-          userUri,
-          entityUserCircle.id,
-          discEntryUri,
-          false);
+      SSServCaller.entityAdd(userUri, discEntryUri, SSLabel.get(discEntryUri), discEntryType, false);
+      for (SSEntityCircle entityUserCircle : SSServCaller.entityUserEntityCirclesGet(userUri, discUri)) {
+        SSServCaller.entityEntitiesToCircleAdd(userUri, entityUserCircle.id, discEntryUri, false);
       }
-      
-      sqlFct.addDiscEntry(
-        discEntryUri, 
-        discUri, 
-        content);
-      
+      sqlFct.addDiscEntry(discEntryUri, discUri, content);
       return discEntryUri;
-      
-    }catch(Exception error){
+    } catch (Exception error) {
       SSServErrReg.regErrThrow(error);
       return null;
     }
   }
-  
-  public static void checkWhetherUserCanAddDisc(
-    final SSDiscUserEntryAddPar par) throws Exception{
-    
-    try{
-      
-      if(SSObjU.isNull(par.label, par.type)){
+
+  public static void checkWhetherUserCanAddDisc(final SSDiscUserEntryAddPar par) throws Exception {
+    try {
+      if (SSObjU.isNull(par.label, par.type)) {
         throw new Exception("label, disc type null");
       }
-      
-      switch(par.type){
+      switch (par.type) {
         case disc:
         case qa:
-        case chat: break;
-        default: throw new Exception("disc type not valid");
+        case chat:
+        break;
+        default:
+        throw new Exception("disc type not valid");
       }
-      
-      if(
-        !SSObjU.isNull(par.entity) &&
-        !SSServCaller.entityUserCanRead(par.user, par.entity)){
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      if (SSEntityE.equals(par.type, SSEntityE.qa) && SSObjU.isNull(par.entry)) {
+        throw new Exception("question content null");
+      }
+>>>>>>> /usr/src/app/output/learning-layers/socialsemanticserver/085587be1338bb740008afa05913af155f816290/ss-serv/ss-datatypes/ss-disc/ss-disc-impl/src/main/java/at/kc/tugraz/ss/service/disc/impl/fct/op/SSDiscUserEntryAddFct.java/right.java
+
+      if (!SSObjU.isNull(par.entity) && !SSServCaller.entityUserCanRead(par.user, par.entity)) {
         throw new Exception("user cannot edit disc target");
       }
-      
-    }catch(Exception error){
+    } catch (Exception error) {
       SSServErrReg.regErrThrow(error);
     }
   }
 
-  public static void checkWhetherUserCanAddDiscEntry(
-    final SSDiscUserEntryAddPar par) throws Exception{
-    
-    try{
-     
-      if(SSObjU.isNull(par.entry)){
+  public static void checkWhetherUserCanAddDiscEntry(final SSDiscUserEntryAddPar par) throws Exception {
+    try {
+      if (SSObjU.isNull(par.entry)) {
         throw new Exception("content missing");
       }
-      
-      if(!SSServCaller.entityUserCanEdit(par.user, par.disc)){
+      if (!SSServCaller.entityUserCanEdit(par.user, par.disc)) {
         throw new Exception("user cannot edit discussion");
       }
-      
-    }catch(Exception error){
+    } catch (Exception error) {
       SSServErrReg.regErrThrow(error);
     }
   }
