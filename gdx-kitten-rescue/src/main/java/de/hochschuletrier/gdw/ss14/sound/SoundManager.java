@@ -18,7 +18,13 @@ public class SoundManager {
 	private static Sound loop;
 	private static boolean isLooping;
 	private static AssetManagerX assetManager;
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/left.java
+	private static float SystemVolume = 0.9f;
+||||||| /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/base.java
+	private static float SystemVolume = 0.4f;
+=======
 	private static float SystemVolume = 1.9f;
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/right.java
 	
 	public static void performAction(Enum action) {
 		GameStates actualGamestate = null;
@@ -49,9 +55,16 @@ public class SoundManager {
 						System.out.println("WALKING CAT!!!");
 						Array<Integer> entities = new Array<Integer>();
 						entities = (EntityManager.getInstance().getAllEntitiesWithComponents(CatPropertyComponent.class));
+
 						int playerEntityID = entities.first();
 						CatPropertyComponent playerProperties = EntityManager.getInstance().getComponent(playerEntityID, CatPropertyComponent.class);
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/left.java
+						if (playerProperties.state != CatStateEnum.WALK) {
+||||||| /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/base.java
+						if (cp.getState() != CatStateEnum.WALK) {
+=======
 						if (playerProperties.getState() != CatStateEnum.WALK) {
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/b9dfbd07d0ab96f152218e0b9d412c729b97c3e6/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/sound/SoundManager.java/right.java
 							SoundManager.loop.stop();
 							SoundManager.isLooping = false;
 						}
