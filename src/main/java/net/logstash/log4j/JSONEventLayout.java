@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import net.logstash.log4j.data.HostData;
 
-import org.apache.commons.lang.*;
+//import net.minidev.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LocationInfo;
@@ -34,6 +35,7 @@ public class JSONEventLayout extends Layout {
     private HashMap<String, Object> fieldData;
     private HashMap<String, Object> exceptionInformation;
 
+    //private JSONObject logstashEvent;
     public static final FastDateFormat ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
 
     public static String dateFormat(long timestamp) {
@@ -69,24 +71,24 @@ public class JSONEventLayout extends Layout {
 
 
 
-        eventNode.put("@source_host",hostname);
-        eventNode.put("@message",loggingEvent.getRenderedMessage());
-        eventNode.put("@timestamp",dateFormat(timestamp));
+        eventNode.put("@source_host", hostname);
+        eventNode.put("@message", loggingEvent.getRenderedMessage());
+        eventNode.put("@timestamp", dateFormat(timestamp));
         ObjectNode fieldsNode = MAPPER.createObjectNode();
         eventNode.put("@fields", fieldsNode);
 
-        if(loggingEvent.getThrowableInformation() != null) {
+        if (loggingEvent.getThrowableInformation() != null) {
             ObjectNode exceptionNode = MAPPER.createObjectNode();
 
             final ThrowableInformation throwableInformation = loggingEvent.getThrowableInformation();
-            if(throwableInformation.getThrowable().getClass().getCanonicalName() != null){
+            if (throwableInformation.getThrowable().getClass().getCanonicalName() != null) {
                 exceptionNode.put("exception_class", throwableInformation.getThrowable().getClass().getCanonicalName());
             }
-            if(throwableInformation.getThrowable().getMessage() != null) {
+            if (throwableInformation.getThrowable().getMessage() != null) {
                 exceptionNode.put("exception_message", throwableInformation.getThrowable().getMessage());
             }
-            if( throwableInformation.getThrowableStrRep() != null) {
-                String stackTrace = StringUtils.join(throwableInformation.getThrowableStrRep(),"\n");
+            if (throwableInformation.getThrowableStrRep() != null) {
+                String stackTrace = StringUtils.join(throwableInformation.getThrowableStrRep(), "\n");
                 exceptionNode.put("stacktrace", stackTrace);
             }
             fieldsNode.put("exception", exceptionNode);
@@ -109,7 +111,7 @@ public class JSONEventLayout extends Layout {
         }
 
 
-        fieldsNode.put("ndc",ndc);
+        fieldsNode.put("ndc", ndc);
         fieldsNode.put("level", loggingEvent.getLevel().toString());
 
         //eventNode.put("@fields", fieldData);

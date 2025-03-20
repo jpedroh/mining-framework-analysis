@@ -6,7 +6,6 @@ import net.minidev.json.JSONValue;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
-import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
