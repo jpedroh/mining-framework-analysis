@@ -45,12 +45,21 @@ import org.scribble.util.ScribUtil;
 
 public class CommandLine
 {
-	protected final Map<CLArgFlag, String[]> args;  // Maps each flag to list of associated argument values
+	protected final Map<CLArgFlag, String[]> args;
+
+	//protected CommandLine(Map<CLArgFlag, String[]> args)
 
 	protected CommandLine(CLArgParser p) throws CommandLineException
 	{
+<<<<<<< /usr/src/app/output/scribble/scribble-java/e72f7c9c06a3f415440224d97211da97dcbd76f8/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/left.java
+		//this.args = args;
 		p.parse();
 		this.args = p.getArgs();
+||||||| /usr/src/app/output/scribble/scribble-java/e72f7c9c06a3f415440224d97211da97dcbd76f8/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/base.java
+=======
+		p.parse();
+		this.args = p.getArgs();
+>>>>>>> /usr/src/app/output/scribble/scribble-java/e72f7c9c06a3f415440224d97211da97dcbd76f8/scribble-cli/src/main/java/org/scribble/cli/CommandLine.java/right.java
 	}
 
 	public CommandLine(String... args) throws CommandLineException
@@ -64,6 +73,7 @@ public class CommandLine
 	}
 
 	// A Scribble extension should override newMainContext as appropriate.
+
 	protected MainContext newMainContext() throws ScribParserException, ScribbleException
 	{
 		//boolean jUnit = this.args.containsKey(ArgFlag.JUNIT);
@@ -152,7 +162,7 @@ public class CommandLine
 		// Attempt certain "output tasks" even if above failed, in case can still do some useful output (hacky)
 		try
 		{
-			doNonAttemptableOutputTasks(job);
+			doAttemptableOutputTasks(job);
 		}
 		catch (ScribbleException x)
 		{
@@ -171,7 +181,10 @@ public class CommandLine
 		doNonAttemptableOutputTasks(job);
 	}
 
+// Maps each flag to list of associated argument values
+
 	// AntlrSourceException super of ScribbleException -- needed for, e.g., AssrtCoreSyntaxException
+
 	protected void doValidationTasks(Job job) throws AntlrSourceException, ScribParserException,  // Latter in case needed by subclasses
 			CommandLineException
 	{
@@ -189,7 +202,7 @@ public class CommandLine
 		}
 	}
 
-	protected void tryOutputTasks(Job job) throws CommandLineException, ScribbleException
+	protected void doAttemptableOutputTasks(Job job) throws CommandLineException, ScribbleException
 	{
 		// Following must be ordered appropriately -- ?
 		if (this.args.containsKey(CLArgFlag.PROJECT))
