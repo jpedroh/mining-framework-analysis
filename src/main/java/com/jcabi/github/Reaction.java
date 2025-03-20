@@ -38,9 +38,27 @@ package com.jcabi.github;
  * @see <a href="https://developer.github.com/v3/reactions">Reactions API</a>
  * @todo #1467:30min Check reaction values. At the moment only a few types of
  *  reactions are allowed (full list at
+<<<<<<< /usr/src/app/output/jcabi/jcabi-github/ea45e9cb7d4ddd6909b735e649963d74490d23f9/src/main/java/com/jcabi/github/Reaction.java/left.java
+ *  https://developer.github.com/v3/reactions/#reaction-types). Implement
+ *  reaction validation in RtReaction.value and then uncomment test in
+ *  RtReactionTest
+ * @todo #1451:30min Create reaction values constants in Reaction. As reaction
+ *  values are in a few number they must be created as constants in Reaction.
+ *  Then replace all existing code in tests and application to use the new
+ *  created constants.
+||||||| /usr/src/app/output/jcabi/jcabi-github/ea45e9cb7d4ddd6909b735e649963d74490d23f9/src/main/java/com/jcabi/github/Reaction.java/base.java
  *  https://developer.github.com/v3/reactions/#reaction-types). Reaction API
  *  implementation should somehow validate these inputs and do not add an
  *  invalid reaction to a Comment or Issue
+ * @todo #1451:30min Create reaction values constants in Reaction. As reaction
+ *  values are in a few number they must be created as constants in Reaction.
+ *  Then replace all existing code in tests and application to use the new
+ *  created constants.
+=======
+ *  https://developer.github.com/v3/reactions/#reaction-types). Reaction API
+ *  implementation should somehow validate these inputs and do not add an
+ *  invalid reaction to a Comment or Issue
+>>>>>>> /usr/src/app/output/jcabi/jcabi-github/ea45e9cb7d4ddd6909b735e649963d74490d23f9/src/main/java/com/jcabi/github/Reaction.java/right.java
  * @todo #1469:30min Add support to team discussion and team discussion comments
  *  The API does not supports team discussion and team discussion comments (
  *  https://developer.github.com/changes/2018-02-07-team-discussions-api/ )
