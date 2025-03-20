@@ -1,5 +1,3 @@
-
-
 package de.hochschuletrier.gdw.ss14.game;
 
 
@@ -42,13 +40,6 @@ import de.hochschuletrier.gdw.ss14.ecs.systems.ShadowSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.TileMapRenderingSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.WoolInfluenceSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.WorldObjectsSystem;
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 public class Game {
     private static final Logger logger = LoggerFactory.getLogger(Game.class);

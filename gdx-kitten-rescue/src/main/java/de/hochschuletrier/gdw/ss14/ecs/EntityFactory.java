@@ -1,12 +1,9 @@
 package de.hochschuletrier.gdw.ss14.ecs;
 
 import java.io.File;
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import de.hochschuletrier.gdw.commons.ai.behaviourtree.engine.Behaviour;
 import de.hochschuletrier.gdw.commons.ai.behaviourtree.engine.BehaviourManager;
 import de.hochschuletrier.gdw.commons.gdx.assets.AnimationExtended;
@@ -16,29 +13,9 @@ import de.hochschuletrier.gdw.commons.gdx.physix.PhysixFixtureDef;
 import de.hochschuletrier.gdw.commons.gdx.physix.PhysixManager;
 import de.hochschuletrier.gdw.ss14.ecs.ai.DogBehaviour;
 import de.hochschuletrier.gdw.ss14.ecs.ai.DogBehaviour.DogBlackboard;
-import de.hochschuletrier.gdw.ss14.ecs.components.AnimationComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.BehaviourComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.CameraComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.CatBoxPhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.CatPhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.CatPropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.DogPropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.EnemyComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ExitMapPhysicsComponent;
 import de.hochschuletrier.gdw.ss14.ecs.components.ExitMapPropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.InputComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.JumpDataComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.JumpablePropertyComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.LaserPointerComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.LightComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.MovementComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.ParticleEmitterComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.PlayerComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.RenderComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.ShadowComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.WoolPhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.WoolPropertyComponent;
+import de.hochschuletrier.gdw.ss14.ecs.components.*;
 import de.hochschuletrier.gdw.ss14.ecs.systems.CatContactSystem;
 import de.hochschuletrier.gdw.ss14.ecs.systems.WorldObjectsSystem;
 import de.hochschuletrier.gdw.ss14.game.Game;
@@ -48,6 +25,8 @@ import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
 import de.hochschuletrier.gdw.ss14.states.DogStateEnum;
 import de.hochschuletrier.gdw.ss14.states.JumpableState;
 import de.hochschuletrier.gdw.ss14.states.ParticleEmitterTypeEnum;
+
+import java.util.ArrayList;
 
 public class EntityFactory{
 
