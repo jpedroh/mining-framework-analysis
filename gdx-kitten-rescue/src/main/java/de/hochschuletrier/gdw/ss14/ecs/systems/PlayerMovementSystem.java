@@ -5,10 +5,11 @@ import com.badlogic.gdx.utils.Array;
 import de.hochschuletrier.gdw.ss14.ecs.EntityManager;
 import de.hochschuletrier.gdw.ss14.ecs.components.*;
 import de.hochschuletrier.gdw.ss14.states.CatStateEnum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+/*
  * Created by Daniel Dreher on 01.10.2014.
  */
 public class PlayerMovementSystem extends ECSystem{
@@ -46,7 +47,7 @@ public class PlayerMovementSystem extends ECSystem{
             if(catStateCompo.atePositiveFood){
                 moveCompo.maxVelocity *= 5;
 
-                moveCompo.acceleration *= 5;
+                moveCompo.acceleration  *= 5;
 
             }
 
@@ -60,8 +61,8 @@ public class PlayerMovementSystem extends ECSystem{
                 catStateCompo.state = CatStateEnum.RUN;
                 catStateCompo.jumpBuffer = 0;
             }
-
-            logger.debug("\n"+catStateCompo.state);
+            
+            logger.debug("\n"+ catStateCompo.state);
 
             moveCompo.directionVec = inputCompo.whereToGo.sub(phyCompo.getPosition());
             moveCompo.positionVec = moveCompo.directionVec;
@@ -98,10 +99,10 @@ public class PlayerMovementSystem extends ECSystem{
                     if(moveCompo.velocity <= moveCompo.middleVelocity){
                         moveCompo.velocity = moveCompo.middleVelocity;
                     }
-                    /**
-                     * Falls unsere Katze aus dem "Rennen" aus zu nah an unseren Laserpointer kommt, soll
-                     * sie stetig langsamer werden
-                     */
+                /**
+                 * Falls unsere Katze aus dem "Rennen" aus zu nah an unseren Laserpointer kommt, soll
+                 * sie stetig langsamer werden
+                 */
                 }else if(moveCompo.velocity < moveCompo.middleVelocity){
                     moveCompo.velocity += moveCompo.acceleration*delta;
                     if(moveCompo.velocity >= moveCompo.middleVelocity){
@@ -113,9 +114,10 @@ public class PlayerMovementSystem extends ECSystem{
                 catStateCompo.state = CatStateEnum.IDLE;
                 catStateCompo.jumpBuffer = 0;
                 // phyCompo.setRotation(phyCompo.getRotation());
-            }else{
-                moveCompo.velocity += moveCompo.damping*1.5f*delta;
-                if(moveCompo.velocity <= moveCompo.minVelocity){
+            }
+            else{
+                moveCompo.velocity += moveCompo.damping * 1.5f * delta;
+                if (moveCompo.velocity <= moveCompo.minVelocity){
                     moveCompo.velocity = 0;
                 }
             }
@@ -131,9 +133,15 @@ public class PlayerMovementSystem extends ECSystem{
             float angle;
             //Normalizing DirectionVector for Movement
             moveCompo.directionVec = moveCompo.directionVec.nor();
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/left.java
             moveCompo.positionVec = moveCompo.positionVec.nor();
-
+||||||| /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/base.java
+=======
+            
             if(catStateCompo.state == CatStateEnum.JUMP){
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/right.java
+
+            if(catStateCompo.state == CatStateEnum.JUMP || catStateCompo.state == CatStateEnum.IDLE){
                 angle = phyCompo.getRotation();
             }else{
                 angle = (float) Math.atan2(-moveCompo.directionVec.x, moveCompo.directionVec.y);
@@ -145,9 +153,21 @@ public class PlayerMovementSystem extends ECSystem{
                 phyCompo.setRotation(angle);
             }
 
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/left.java
             phyCompo.setVelocityX(moveCompo.positionVec.x*moveCompo.velocity);
             phyCompo.setVelocityY(moveCompo.positionVec.y*moveCompo.velocity);
-            logger.debug("\n"+catStateCompo.jumpBuffer);
+||||||| /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/base.java
+            phyCompo.setVelocityX(moveCompo.directionVec.x*moveCompo.velocity);
+            phyCompo.setVelocityY(moveCompo.directionVec.y*moveCompo.velocity);
+
+            logger.debug("\n" + catStateCompo.jumpBuffer);
+=======
+            phyCompo.setVelocityX(moveCompo.directionVec.x*moveCompo.velocity);
+            phyCompo.setVelocityY(moveCompo.directionVec.y*moveCompo.velocity);
+            logger.debug("\n" + catStateCompo.jumpBuffer);
+            
+            }
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/e827c85b825f93d5ae7f401465f69dfdf80619ec/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/systems/PlayerMovementSystem.java/right.java
         }
     }
 } 
