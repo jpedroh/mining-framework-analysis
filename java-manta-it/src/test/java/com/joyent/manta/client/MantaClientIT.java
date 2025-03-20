@@ -58,13 +58,12 @@ public class MantaClientIT {
 
     private final String testPathPrefix;
 
-    @ Parameters({"encryptionCipher", "testType"})
-    public MantaClientIT(final @Optional String encryptionCipher) {
+    @Parameters({"encryptionCipher"})
+    public MantaClientIT(final @Optional String encryptionCipher,
+                            @Optional String testType) {
 
         // Let TestNG configuration take precedence over environment variables
-
         ConfigContext config = new IntegrationTestConfigContext(encryptionCipher);
-        String testName = this.getClass().getSimpleName();
 
         mantaClient = new MantaClient(config);
         testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,
@@ -72,8 +71,35 @@ public class MantaClientIT {
     }
 
     @BeforeClass
+<<<<<<< /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/left.java
+    @Parameters({"usingEncryption", "testType"})
+||||||| /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/base.java
+    @Parameters({"usingEncryption"})
+=======
+>>>>>>> /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/right.java
     public void beforeClass() throws IOException {
+<<<<<<< /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/left.java
+    
+        // Let TestNG configuration take precedence over environment variables
+        ConfigContext config = new IntegrationTestConfigContext(usingEncryption);
+        String testName = this.getClass().getSimpleName();
+
+        mantaClient = new MantaClient(config);
+        testPathPrefix = IntegrationTestHelper.setupTestPath(config, mantaClient,
+                testName, testType);
+
         IntegrationTestHelper.createTestBucketOrDirectory(mantaClient, testPathPrefix, testType);
+||||||| /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/base.java
+    
+        // Let TestNG configuration take precedence over environment variables
+        ConfigContext config = new IntegrationTestConfigContext(usingEncryption);
+
+        mantaClient = new MantaClient(config);
+        testPathPrefix = IntegrationTestConfigContext.generateBasePath(config, this.getClass().getSimpleName());
+        mantaClient.putDirectory(testPathPrefix, true);
+=======
+        mantaClient.putDirectory(testPathPrefix, true);
+>>>>>>> /usr/src/app/output/joyent/java-manta/9b874b910f536955ab70d5adb565a8780c613ab3/java-manta-it/src/test/java/com/joyent/manta/client/MantaClientIT.java/right.java
     }
 
     @AfterClass
