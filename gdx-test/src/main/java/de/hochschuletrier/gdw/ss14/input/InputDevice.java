@@ -1,9 +1,9 @@
 package de.hochschuletrier.gdw.ss14.input;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public abstract class InputDevice {
-
     public static enum DeviceType {
         MOUSE("mouse"),
         KEYBOARD("keyboard"),
@@ -19,14 +19,19 @@ public abstract class InputDevice {
         public String toString() {
             return deviceName; 
         }
-    };
+    }
     
-	protected LinkedList<GameInputAdapter> listener = new LinkedList<>(); 
-	
+;
+    
+    private HashMap<String, InputAction> buttonMap = new HashMap<>();
+    
+	protected LinkedList<GameInputAdapter> listener = new LinkedList<>();
+    
     /**
      * 
      * @param gia @ GameInputAdapter to the Listener
      */
+    
     public void addGameInputAdapter(GameInputAdapter gia) {
     	listener.add(gia);
     }
