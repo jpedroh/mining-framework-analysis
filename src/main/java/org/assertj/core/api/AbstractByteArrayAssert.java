@@ -214,6 +214,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContains(info, actual, values);
     return myself;
   }
+  public SELF contains(int... values) {
+    arrays.assertContains(info, actual, values);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains the given values, in any order.
@@ -236,10 +240,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError           if the actual array does not contain the given values.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF contains(int... values) {
-    arrays.assertContains(info, actual, values);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains only the given values and nothing else, in any order.
@@ -268,6 +268,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsOnly(info, actual, values);
     return myself;
   }
+  public SELF containsOnly(int... values) {
+    arrays.assertContainsOnly(info, actual, values);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains only the given values and nothing else, in any order.
@@ -293,10 +297,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    *                                  given ones.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsOnly(int... values) {
-    arrays.assertContainsOnly(info, actual, values);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains the given values only once.
@@ -324,6 +324,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsOnlyOnce(info, actual, values);
     return myself;
   }
+  public SELF containsOnlyOnce(int... values) {
+    arrays.assertContainsOnlyOnce(info, actual, values);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains the given values only once.
@@ -348,10 +352,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    *                                  values.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsOnlyOnce(int... values) {
-    arrays.assertContainsOnlyOnce(info, actual, values);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains the given sequence, without any other values between them.
@@ -376,6 +376,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsSequence(info, actual, sequence);
     return myself;
   }
+  public SELF containsSequence(int... sequence) {
+    arrays.assertContainsSequence(info, actual, sequence);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains the given sequence, without any other values between them.
@@ -397,10 +401,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the actual array does not contain the given sequence.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsSequence(int... sequence) {
-    arrays.assertContainsSequence(info, actual, sequence);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains the given subsequence (possibly with other values between them).
@@ -426,6 +426,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsSubsequence(info, actual, subsequence);
     return myself;
   }
+  public SELF containsSubsequence(int... subsequence) {
+    arrays.assertContainsSubsequence(info, actual, subsequence);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains the given subsequence (possibly with other values between them).
@@ -448,10 +452,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the actual array does not contain the given subsequence.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsSubsequence(int... subsequence) {
-    arrays.assertContainsSubsequence(info, actual, subsequence);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains the given value at the given index.
@@ -527,6 +527,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertDoesNotContain(info, actual, values);
     return myself;
   }
+  public SELF doesNotContain(int... values) {
+    arrays.assertDoesNotContain(info, actual, values);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array does not contain the given values.
@@ -546,10 +550,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError           if the actual array contains any of the given values.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF doesNotContain(int... values) {
-    arrays.assertDoesNotContain(info, actual, values);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array does not contain the given value at the given index.
@@ -642,6 +642,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertStartsWith(info, actual, sequence);
     return myself;
   }
+  public SELF startsWith(int... sequence) {
+    arrays.assertStartsWith(info, actual, sequence);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array starts with the given sequence of values, without any other values between them.
@@ -663,10 +667,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError           if the actual array does not start with the given sequence.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF startsWith(int... sequence) {
-    arrays.assertStartsWith(info, actual, sequence);
-    return myself;
-  }
 
   /**
    * Verifies that the actual array ends with the given sequence of values, without any other values between them.
@@ -691,6 +691,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertEndsWith(info, actual, sequence);
     return myself;
   }
+  public SELF endsWith(int... sequence) {
+    arrays.assertEndsWith(info, actual, sequence);
+    return myself;
+  }
 
   /**
    * Verifies that the actual array ends with the given sequence of values, without any other values between them.
@@ -712,10 +716,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError           if the actual array does not end with the given sequence.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF endsWith(int... sequence) {
-    arrays.assertEndsWith(info, actual, sequence);
-    return myself;
-  }
 
   /** {@inheritDoc} */
   @Override
@@ -771,6 +771,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsExactly(info, actual, values);
     return myself;
   }
+  public SELF containsExactly(int... values) {
+    arrays.assertContainsExactly(info, actual, arrays.toByteArray(values));
+    return myself;
+  }
 
   /**
    * Verifies that the actual group contains only the given values and nothing else, <b>in order</b>.
@@ -793,10 +797,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    *                              or values are the same but the order is not.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsExactly(int... values) {
-    arrays.assertContainsExactly(info, actual, arrays.toByteArray(values));
-    return myself;
-  }
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
@@ -823,6 +823,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsExactlyInAnyOrder(info, actual, values);
     return myself;
   }
+  public SELF containsExactlyInAnyOrder(int... values) {
+    arrays.assertContainsExactlyInAnyOrder(info, actual, arrays.toByteArray(values));
+    return myself;
+  }
 
   /**
    * Verifies that the actual group contains exactly the given values and nothing else, <b>in any order</b>.<br>
@@ -845,10 +849,6 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    *           contains some or none of the given values, or the actual group contains more values than the given ones.
    * @since 2.6.0 / 3.6.0
    */
-  public SELF containsExactlyInAnyOrder(int... values) {
-    arrays.assertContainsExactlyInAnyOrder(info, actual, arrays.toByteArray(values));
-    return myself;
-  }
 
   /**
    * Verifies that the actual array contains at least one of the given values.
@@ -879,6 +879,10 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
     arrays.assertContainsAnyOf(info, actual, values);
     return myself;
   }
+  public SELF containsAnyOf(int... values) {
+    arrays.assertContainsAnyOf(info, actual, arrays.toByteArray(values));
+    return myself;
+  }
 
   /**
    * Verifies that the actual array contains at least one of the given values.
@@ -905,9 +909,5 @@ public abstract class AbstractByteArrayAssert<SELF extends AbstractByteArrayAsse
    * @throws AssertionError if the array under test does not contain any of the given {@code values}.
    * @since 2.9.0 / 3.9.0
    */
-  public SELF containsAnyOf(int... values) {
-    arrays.assertContainsAnyOf(info, actual, arrays.toByteArray(values));
-    return myself;
-  }
 
 }

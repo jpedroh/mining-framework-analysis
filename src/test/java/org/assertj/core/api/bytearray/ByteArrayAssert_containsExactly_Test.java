@@ -12,6 +12,7 @@
  */
 package org.assertj.core.api.bytearray;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.test.ByteArrays.arrayOf;
 import static org.mockito.Mockito.verify;
@@ -39,14 +40,13 @@ public class ByteArrayAssert_containsExactly_Test extends ByteArrayAssertBaseTes
   }
 
   @Test
-  public void invoke_api_like_user() {
-    assertThat(new byte[] { 1, 2, 3 }).containsExactly((byte) 1, (byte) 2, (byte) 3);
-  }
-  
-  @Test
   public void should_honor_the_given_element_comparator() {
     byte[] actual = new byte[] { 1, 2, 3, 4 };
     assertThat(actual).usingElementComparator(new AbsValueComparator<Byte>()).containsExactly((byte) -1, (byte) 2, (byte) 3,
                                                                                               (byte) -4);
+  }
+  @Test
+  public void invoke_api_like_user() {
+    assertThat(new byte[] { 1, 2, 3 }).containsExactly((byte) 1, (byte) 2, (byte) 3);
   }
 }
