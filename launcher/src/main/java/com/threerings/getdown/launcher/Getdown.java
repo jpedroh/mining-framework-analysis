@@ -311,8 +311,9 @@ public abstract class Getdown extends Thread implements Application.StatusDispla
   {
     boolean proxySettingsDetected = false;
     // we may already have a proxy configured
-        if (System.getProperty("http.proxyHost") != null ||
-            System.getProperty("https.proxyHost") != null) {
+    if (System.getProperty("http.proxyHost") != null ||
+        System.getProperty("https.proxyHost") != null)
+    {
       proxySettingsDetected = true;
     }
 
@@ -893,10 +894,11 @@ public abstract class Getdown extends Thread implements Application.StatusDispla
       {
         ProgressObserver pobs = pragg.startElement(ii++);
         try
-                    // install the patch file (renaming them from _new)
-                    prsrc.install(false);
-                    // now apply the patch
-          Patcher patcher = new Patcher();
+        {
+            // install the patch file (renaming them from _new)
+            prsrc.install(false);
+            // now apply the patch
+            Patcher patcher = new Patcher();
           patcher.patch(prsrc.getLocal().getParentFile(), prsrc.getLocal(), pobs);
         }
         catch (Exception e)
