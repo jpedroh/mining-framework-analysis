@@ -87,7 +87,6 @@ public class PersistentCollectionSerializer
      */
 
     // since 2.3
-    @Deprecated // since 2.5
     @Override
     public boolean isEmpty(Object value)
     {
@@ -98,18 +97,6 @@ public class PersistentCollectionSerializer
             return findLazyValue((PersistentCollection) value) == null;
         }
         return _serializer.isEmpty(value);
-    }
-
-    @Override
-    public boolean isEmpty(SerializerProvider provider, Object value)
-    {
-        if (value == null) { // is null ever passed?
-            return true;
-        }
-        if (value instanceof PersistentCollection) {
-            return findLazyValue((PersistentCollection) value) == null;
-        }
-        return _serializer.isEmpty(provider, value);
     }
     
     @Override
