@@ -1,33 +1,18 @@
 package de.hochschuletrier.gdw.ss14.game;
 
 
-import java.util.Comparator;
-
+import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.utils.*;
+import de.hochschuletrier.gdw.commons.gdx.assets.*;
+import de.hochschuletrier.gdw.commons.gdx.physix.*;
+import de.hochschuletrier.gdw.commons.tiled.*;
+import de.hochschuletrier.gdw.ss14.ecs.*;
+import de.hochschuletrier.gdw.ss14.ecs.components.*;
+import de.hochschuletrier.gdw.ss14.ecs.systems.*;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-
-import de.hochschuletrier.gdw.commons.gdx.assets.AssetManagerX;
-import de.hochschuletrier.gdw.commons.gdx.physix.PhysixManager;
-import de.hochschuletrier.gdw.commons.tiled.Layer;
-import de.hochschuletrier.gdw.commons.tiled.LayerObject;
-import de.hochschuletrier.gdw.commons.tiled.TiledMap;
-import de.hochschuletrier.gdw.ss14.ecs.EntityFactory;
-import de.hochschuletrier.gdw.ss14.ecs.EntityManager;
-import de.hochschuletrier.gdw.ss14.ecs.components.CatPhysicsComponent;
-import de.hochschuletrier.gdw.ss14.ecs.components.TileMapRenderingComponent;
-import de.hochschuletrier.gdw.ss14.ecs.systems.AnimationSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.CameraSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.DogInputSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.ECSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.InputSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.MovementSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.PhysixDebugRenderSystem;
-import de.hochschuletrier.gdw.ss14.ecs.systems.TileMapRenderingSystem;
+import java.util.*;
 
 public class Game
 {
@@ -160,15 +145,27 @@ public class Game
         if (Gdx.input.isKeyPressed(Keys.DOWN)) {
             
             //testPhysics.position = testPhysics.position.add( new Vector2(100.0f, 0.0f) );
-//            catPhysicsComp.dummyPosition.add(new Vector2(10.0f, 0.0f));
-        }
-        else{
-//            catPhysicsComp.dummyPosition.add(mapCenter.cpy().sub(catPhysicsComp.getPosition()));
-            catPhysicsComp.dummyPosition.add(mapCenter.cpy().sub(catPhysicsComp.getPosition()));
-        
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
+    //            catPhysicsComp.dummyPosition.add(new Vector2(10.0f, 0.0f));
+||||||| /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+            catPhysicsComp.dummyPosition.add(new Vector2(10.0f, 0.0f));
+=======
             catPhysicsComp.mPosition.add(new Vector2(10.0f, 0.0f));
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
         }
-
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/left.java
+        else
+    <<<<<<< HEAD
+    //            catPhysicsComp.dummyPosition.add(mapCenter.cpy().sub(catPhysicsComp.getPosition()));
+    =======
+            catPhysicsComp.dummyPosition.add(mapCenter.cpy().sub(catPhysicsComp.getPosition()));*/
+        
+||||||| /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/base.java
+        else
+            catPhysicsComp.dummyPosition.add(mapCenter.cpy().sub(catPhysicsComp.getPosition()));*/
+        
+=======
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/game/Game.java/right.java
         for (ECSystem system : systems) {
             system.update(delta);
         }

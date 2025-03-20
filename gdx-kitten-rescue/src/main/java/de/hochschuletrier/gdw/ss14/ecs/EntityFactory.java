@@ -69,11 +69,15 @@ public class EntityFactory {
         manager.addComponent(entity, catMove);
         manager.addComponent(entity, catInput);
         manager.addComponent(entity, new PlayerComponent());
+<<<<<<< /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/left.java
 //        manager.addComponent(entity, new AnimationComponent());
 //        manager.addComponent(entity, new CameraComponent());
-        manager.addComponent(entity, cam);
+||||||| /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/base.java
+=======
+manager.addComponent(entity, cam);
         
         return entity;
+>>>>>>> /usr/src/app/output/lusito/gamedevweek/5b370eb274974dd4a8f09607c3ee9c0f2699e1c1/gdx-kitten-rescue/src/main/java/de/hochschuletrier/gdw/ss14/ecs/EntityFactory.java/right.java
     }
 
     public static void constructCatbox() {
