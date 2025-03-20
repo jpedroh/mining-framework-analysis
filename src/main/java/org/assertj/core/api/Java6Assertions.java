@@ -400,6 +400,14 @@ public class Java6Assertions {
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
     return new GenericComparableAssert<>(actual);
   }
+  @CheckReturnValue
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  @CheckReturnValue
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
 
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
@@ -757,10 +765,6 @@ public class Java6Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @CheckReturnValue
-  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
-    return new ObjectAssert<>(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -813,10 +817,6 @@ public class Java6Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  @CheckReturnValue
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.

@@ -19,12 +19,11 @@ import static org.assertj.core.util.Strings.quote;
 
 import org.assertj.core.description.Description;
 import org.assertj.core.description.EmptyTextDescription;
-import org.assertj.core.description.TextDescription;
 import org.assertj.core.presentation.BinaryRepresentation;
 import org.assertj.core.presentation.HexadecimalRepresentation;
 import org.assertj.core.presentation.Representation;
 import org.assertj.core.presentation.UnicodeRepresentation;
-
+import org.assertj.core.description.TextDescription;
 
 /**
  * Writable information about an assertion.
