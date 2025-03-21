@@ -556,8 +556,12 @@ public class GUIBackend implements BackendAPI, ControllerListener {
         this.activeState = state;
         this.machineCoord = machineCoord;
         this.workCoord = workCoord;
-        this.reportUnits = machineCoord.getUnits();
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/84944f80c14e738235076b047d02909c86427b28/src/com/willwinder/universalgcodesender/model/GUIBackend.java/left.java
         this.lastResponse = System.currentTimeMillis();
+||||||| /usr/src/app/output/winder/universal-g-code-sender/84944f80c14e738235076b047d02909c86427b28/src/com/willwinder/universalgcodesender/model/GUIBackend.java/base.java
+=======
+        this.reportUnits = machineCoord.getUnits();
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/84944f80c14e738235076b047d02909c86427b28/src/com/willwinder/universalgcodesender/model/GUIBackend.java/right.java
     }
 
     @Override
