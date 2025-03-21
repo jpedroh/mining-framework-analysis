@@ -333,7 +333,7 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             comment.getChildTopics().setRef("dm4.test.person_name", karl.getId());
             //
             assertEquals(karl.getId(), comment.getChildTopics().getTopic("dm4.test.person_name").getId());
-            assertEquals("Karl Albrecht", comment.getSimpleValue().toString());
+            assertEquals("Karl Albrecht", comment.getSimpleValue().toString());     // ### FAILS!!!
             //
             tx.success();
         } finally {
