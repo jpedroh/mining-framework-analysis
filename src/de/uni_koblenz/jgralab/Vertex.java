@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * represents a vertex, schema classes inherit from this class
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
@@ -134,24 +134,24 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	 * <br/>
 	 * For example, this returns the first edge to a parent vertex in the
 	 * containment hierarchy.
-	 *
+	 * 
 	 * <pre>
 	 * v.getFirstIncidence(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 *
+	 * 
 	 * And this returns the first edge to a child vertex in the containment
 	 * hierarchy.
-	 *
+	 * 
 	 * <pre>
 	 * v.getFirstIncidence(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
-	 *
+	 * 
 	 * @see Edge#getNextIncidence(boolean, AggregationKind...)
-	 *
+	 * 
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at this
 	 *            vertex, else it has to match the opposite incidence
-	 *
+	 * 
 	 * @return the first incident edge where the incidence at this vertex
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
@@ -186,7 +186,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * puts this vertex immediately before v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putBefore(Vertex v);
@@ -199,7 +199,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * puts this vertex immediately after v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putAfter(Vertex v);
@@ -207,7 +207,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
@@ -215,21 +215,18 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 
 	/**
 	 * @param <T>
-	 * @param returnType
-	 *            the class of the vertices you can reach with that path (acts
-	 *            as implicit GoalRestriction)
 	 * @param pathElements
 	 *            an array of {@link PathElement}s
 	 * @return a Set of vertices reachable by traversing the path given by
 	 *         pathElements
 	 */
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
-			Class<T> returnType, PathElement... pathElements);
+			PathElement... pathElements);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -241,7 +238,7 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @param dir
@@ -255,18 +252,78 @@ public interface Vertex extends GraphElement<VertexClass, Vertex> {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+<<<<<<< /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/base.java
+	 *            the schema class of the edges which should be iterated
+	 * @param dir
+	 *            the direction of the edges which should be iterated, either
+	 *            EdgeDirection.IN or EdgeDirection.OUT
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
+	 */
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
+			EdgeDirection dir);
+
+	/**
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
 	 *
 	 * @param eclass
+=======
+	 *            the schema class of the edges which should be iterated
+	 * @param dir
+	 *            the direction of the edges which should be iterated, either
+	 *            EdgeDirection.IN or EdgeDirection.OUT
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
+	 */
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
+			EdgeDirection dir);
+
+	/**
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+>>>>>>> /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/right.java
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
 	public Iterable<Edge> incidences(EdgeClass eclass);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/base.java
+
+	/**
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 *
+	 * @param eclass
+	 *            the schema class of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
+	 */
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
+=======
+
+	/**
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the schema class of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
+	 */
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/f475191b1bb19e089d61d4d35056c1306db833a9/src/de/uni_koblenz/jgralab/Vertex.java/right.java
 
 	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
-	 *
+	 * 
 	 * @param comp
 	 *            the comparator that defines the desired incidence order.
 	 */

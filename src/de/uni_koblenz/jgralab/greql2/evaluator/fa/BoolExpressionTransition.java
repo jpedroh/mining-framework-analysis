@@ -115,8 +115,7 @@ public class BoolExpressionTransition extends Transition {
 			VertexEvaluator<? extends Expression> boolEval, QueryImpl query) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		ThisVertex v = (ThisVertex) query.getQueryGraph().getFirstVertex(
-				ThisVertex.VC);
+		ThisVertex v = (ThisVertex) query.getQueryGraph().getFirstVertex(ThisVertex.VC);
 		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) query
 					.getVertexEvaluator(v);

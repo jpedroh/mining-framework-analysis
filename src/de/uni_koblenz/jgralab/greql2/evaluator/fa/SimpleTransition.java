@@ -250,8 +250,7 @@ public class SimpleTransition extends Transition {
 		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		ThisEdge v = (ThisEdge) query.getQueryGraph().getFirstVertex(
-				ThisEdge.VC);
+		ThisEdge v = (ThisEdge) query.getQueryGraph().getFirstVertex(ThisEdge.VC);
 		if (v != null) {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) query.getVertexEvaluator(v);
 		}
