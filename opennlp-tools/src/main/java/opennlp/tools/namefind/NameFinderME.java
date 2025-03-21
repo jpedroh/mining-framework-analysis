@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.namefind;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import opennlp.tools.ml.BeamSearch;
 import opennlp.tools.ml.EventModelSequenceTrainer;
 import opennlp.tools.ml.EventTrainer;
@@ -53,13 +34,16 @@ import opennlp.tools.util.featuregen.WindowFeatureGenerator;
  * A maximum-entropy-based {@link TokenNameFinder name finder} implementation.
  */
 public class NameFinderME implements TokenNameFinder {
-
   private static final String[][] EMPTY = new String[0][0];
+
   public static final int DEFAULT_BEAM_SIZE = 3;
+
   private static final Pattern typedOutcomePattern = Pattern.compile("(.+)-\\w+");
 
   public static final String START = "start";
+
   public static final String CONTINUE = "cont";
+
   public static final String OTHER = "other";
 
   private SequenceCodec<String> seqCodec = new BioCodec();
@@ -67,10 +51,11 @@ public class NameFinderME implements TokenNameFinder {
   protected SequenceClassificationModel<String> model;
 
   protected NameContextGenerator contextGenerator;
+
   private Sequence bestSequence;
 
-  private final AdditionalContextFeatureGenerator additionalContextFeatureGenerator =
-          new AdditionalContextFeatureGenerator();
+  private final AdditionalContextFeatureGenerator additionalContextFeatureGenerator = new AdditionalContextFeatureGenerator();
+
   private final SequenceValidator<String> sequenceValidator;
 
   /**
@@ -79,41 +64,30 @@ public class NameFinderME implements TokenNameFinder {
    * @param model The {@link TokenNameFinderModel} to initialize with.
    */
   public NameFinderME(TokenNameFinderModel model) {
-
     TokenNameFinderFactory factory = model.getFactory();
-
     seqCodec = factory.createSequenceCodec();
     sequenceValidator = seqCodec.createSequenceValidator();
     this.model = model.getNameFinderSequenceModel();
     contextGenerator = factory.createContextGenerator();
-
-    // TODO: We should deprecate this. And come up with a better solution!
-    contextGenerator.addFeatureGenerator(
-            new WindowFeatureGenerator(additionalContextFeatureGenerator, 8, 8));
+    contextGenerator.addFeatureGenerator(new WindowFeatureGenerator(additionalContextFeatureGenerator, 8, 8));
   }
 
-  private static AdaptiveFeatureGenerator createFeatureGenerator(
-          byte[] generatorDescriptor, final Map<String, Object> resources)
-          throws IOException {
+  private static AdaptiveFeatureGenerator createFeatureGenerator(byte[] generatorDescriptor, final Map<String, Object> resources) throws IOException {
     AdaptiveFeatureGenerator featureGenerator;
-
     if (generatorDescriptor != null) {
-      featureGenerator = GeneratorFactory.create(new ByteArrayInputStream(
-          generatorDescriptor), key -> {
-            if (resources != null) {
-              return resources.get(key);
-            }
-            return null;
-          });
+      featureGenerator = GeneratorFactory.create(new ByteArrayInputStream(generatorDescriptor), (key) -> {
+        if (resources != null) {
+          return resources.get(key);
+        }
+        return null;
+      });
     } else {
       featureGenerator = null;
     }
-
     return featureGenerator;
   }
 
-  @Override
-  public Span[] find(String[] tokens) {
+  @Override public Span[] find(String[] tokens) {
     return find(tokens, EMPTY);
   }
 
@@ -128,20 +102,16 @@ public class NameFinderME implements TokenNameFinder {
    * @return An array of {@link Span token spans} for each of the names identified.
    */
   public Span[] find(String[] tokens, String[][] additionalContext) {
-
     additionalContextFeatureGenerator.setCurrentContext(additionalContext);
     bestSequence = model.bestSequence(tokens, additionalContext, contextGenerator, sequenceValidator);
-
     List<String> c = bestSequence.getOutcomes();
-
     contextGenerator.updateAdaptiveData(tokens, c.toArray(new String[c.size()]));
     Span[] spans = seqCodec.decode(c);
     spans = setProbs(spans);
     return spans;
   }
-  
-  @Override
-  public void clearAdaptiveData() {
+
+  @Override public void clearAdaptiveData() {
     contextGenerator.clearAdaptiveData();
   }
 
@@ -178,7 +148,6 @@ public class NameFinderME implements TokenNameFinder {
   private Span[] setProbs(Span[] spans) {
     double[] probs = probs(spans);
     if (probs != null) {
-
       for (int i = 0; i < probs.length; i++) {
         double prob = probs[i];
         spans[i] = new Span(spans[i], prob);
@@ -198,23 +167,16 @@ public class NameFinderME implements TokenNameFinder {
    * @return An array of probabilities for each of the specified spans.
    */
   public double[] probs(Span[] spans) {
-
     double[] sprobs = new double[spans.length];
     double[] probs = bestSequence.getProbs();
-
     for (int si = 0; si < spans.length; si++) {
-
       double p = 0;
-
       for (int oi = spans[si].getStart(); oi < spans[si].getEnd(); oi++) {
         p += probs[oi];
       }
-
       p /= spans[si].length();
-
       sprobs[si] = p;
     }
-
     return sprobs;
   }
 
@@ -231,54 +193,38 @@ public class NameFinderME implements TokenNameFinder {
    * @return A valid, trained {@link TokenNameFinderModel} instance.
    * @throws IOException Thrown if IO errors occurred during training.
    */
-  public static TokenNameFinderModel train(String languageCode, String type,
-                                           ObjectStream<NameSample> samples, TrainingParameters params,
-                                           TokenNameFinderFactory factory) throws IOException {
-
+  public static TokenNameFinderModel train(String languageCode, String type, ObjectStream<NameSample> samples, TrainingParameters params, TokenNameFinderFactory factory) throws IOException {
     params.putIfAbsent(TrainingParameters.ALGORITHM_PARAM, PerceptronTrainer.PERCEPTRON_VALUE);
     params.putIfAbsent(TrainingParameters.CUTOFF_PARAM, 0);
     params.putIfAbsent(TrainingParameters.ITERATIONS_PARAM, 300);
-
     int beamSize = params.getIntParameter(BeamSearch.BEAM_SIZE_PARAMETER, NameFinderME.DEFAULT_BEAM_SIZE);
-
     Map<String, String> manifestInfoEntries = new HashMap<>();
-
     MaxentModel nameFinderModel = null;
     SequenceClassificationModel<String> seqModel = null;
-
     TrainerType trainerType = TrainerFactory.getTrainerType(params);
-
     if (TrainerType.EVENT_MODEL_TRAINER.equals(trainerType)) {
-      ObjectStream<Event> eventStream = new NameFinderEventStream(samples, type,
-              factory.createContextGenerator(), factory.createSequenceCodec());
-
+      ObjectStream<Event> eventStream = new NameFinderEventStream(samples, type, factory.createContextGenerator(), factory.createSequenceCodec());
       EventTrainer trainer = TrainerFactory.getEventTrainer(params, manifestInfoEntries);
       nameFinderModel = trainer.train(eventStream);
-    } // TODO: Maybe it is not a good idea, that these two don't use the context generator ?!
-    // These also don't use the sequence codec ?!
-    else if (TrainerType.EVENT_MODEL_SEQUENCE_TRAINER.equals(trainerType)) {
-      NameSampleSequenceStream ss = new NameSampleSequenceStream(samples, factory.createContextGenerator());
-
-      EventModelSequenceTrainer trainer = TrainerFactory.getEventModelSequenceTrainer(
-              params, manifestInfoEntries);
-      nameFinderModel = trainer.train(ss);
-    } else if (TrainerType.SEQUENCE_TRAINER.equals(trainerType)) {
-      SequenceTrainer trainer = TrainerFactory.getSequenceModelTrainer(
-              params, manifestInfoEntries);
-
-      NameSampleSequenceStream ss =
-          new NameSampleSequenceStream(samples, factory.createContextGenerator(), false);
-      seqModel = trainer.train(ss);
     } else {
-      throw new IllegalStateException("Unexpected trainer type!");
+      if (TrainerType.EVENT_MODEL_SEQUENCE_TRAINER.equals(trainerType)) {
+        NameSampleSequenceStream ss = new NameSampleSequenceStream(samples, factory.createContextGenerator());
+        EventModelSequenceTrainer<NameSample> trainer = TrainerFactory.getEventModelSequenceTrainer(params, manifestInfoEntries);
+        nameFinderModel = trainer.train(ss);
+      } else {
+        if (TrainerType.SEQUENCE_TRAINER.equals(trainerType)) {
+          SequenceTrainer trainer = TrainerFactory.getSequenceModelTrainer(params, manifestInfoEntries);
+          NameSampleSequenceStream ss = new NameSampleSequenceStream(samples, factory.createContextGenerator(), false);
+          seqModel = trainer.train(ss);
+        } else {
+          throw new IllegalStateException("Unexpected trainer type!");
+        }
+      }
     }
-
     if (seqModel != null) {
-      return new TokenNameFinderModel(languageCode, seqModel, factory.getFeatureGenerator(),
-              factory.getResources(), manifestInfoEntries, factory.getSequenceCodec(), factory);
+      return new TokenNameFinderModel(languageCode, seqModel, factory.getFeatureGenerator(), factory.getResources(), manifestInfoEntries, factory.getSequenceCodec(), factory);
     } else {
-      return new TokenNameFinderModel(languageCode, nameFinderModel, beamSize, factory.getFeatureGenerator(),
-              factory.getResources(), manifestInfoEntries, factory.getSequenceCodec(), factory);
+      return new TokenNameFinderModel(languageCode, nameFinderModel, beamSize, factory.getFeatureGenerator(), factory.getResources(), manifestInfoEntries, factory.getSequenceCodec(), factory);
     }
   }
 
@@ -293,7 +239,6 @@ public class NameFinderME implements TokenNameFinder {
     if (matcher.matches()) {
       return matcher.group(1);
     }
-
     return null;
   }
 
@@ -311,28 +256,21 @@ public class NameFinderME implements TokenNameFinder {
    * @return The resulting non-overlapping {@link Span spans}.
    */
   public static Span[] dropOverlappingSpans(Span[] spans) {
-
     List<Span> sortedSpans = new ArrayList<>(spans.length);
     Collections.addAll(sortedSpans, spans);
     Collections.sort(sortedSpans);
-
     Iterator<Span> it = sortedSpans.iterator();
-
     Span lastSpan = null;
-
     while (it.hasNext()) {
       Span span = it.next();
-
       if (lastSpan != null) {
         if (lastSpan.intersects(span)) {
           it.remove();
           span = lastSpan;
         }
       }
-
       lastSpan = span;
     }
-
     return sortedSpans.toArray(new Span[sortedSpans.size()]);
   }
 }
