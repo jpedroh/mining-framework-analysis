@@ -298,7 +298,6 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         // finally managed to get this to 0; other variants produced thousands
         assertEquals(0, symbols.spilloverCount());
     }
-
     // Another variant, but with 1-quad names
     public void testCollisionsWithBytesNew187b() throws IOException
     {
@@ -325,7 +324,6 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         // but number of spill-overs starts to grow beyond 30k quite a lot:
         assertEquals(12, symbols.spilloverCount());
     }
-
     // [core#191]: similarly, but for "short" symbols:
     public void testShortNameCollisionsViaParser() throws Exception
     {
@@ -343,7 +341,6 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
         while (p.nextToken() != null) { }
         p.close();
     }
-
     // [core#191]
     public void testShortNameCollisionsDirect() throws IOException
     {
@@ -380,7 +377,6 @@ public class TestSymbolTables extends com.fasterxml.jackson.core.BaseTest
             assertEquals(1, symbols.maxCollisionLength());
         }
     }
-    
     private String _shortDoc191() {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
