@@ -230,7 +230,14 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
                                                                                    String othersTopicTypeUri) {
         RelatedTopicModel topic = fetchRelatedTopic(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri);
         // fetchRelatedTopic() is abstract
-        return topic != null ? dms.instantiateRelatedTopic(topic, true) : null;     // checkAccess=true
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedDeepaMehtaObject.java/left.java
+        return topic != null ? dms.instantiateRelatedTopic(topic, fetchComposite, fetchRelatingComposite, true) : null;
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedDeepaMehtaObject.java/base.java
+        return topic != null ? dms.instantiateRelatedTopic(topic, fetchComposite, fetchRelatingComposite) : null;
+=======
+        return topic != null ? dms.instantiateRelatedTopic(topic) : null;
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedDeepaMehtaObject.java/right.java
+        // checkAccess=true
     }
 
     @Override

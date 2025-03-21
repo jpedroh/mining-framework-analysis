@@ -33,6 +33,7 @@ public interface FacetsService extends PluginService {
     // ---
 
     // ### TODO: rename to getFacetValues
+    // ### TODO: add fetchComposite parameter
     ResultList<RelatedTopic> getFacets(long topicId, String facetTypeUri);
 
     /**

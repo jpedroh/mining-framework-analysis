@@ -216,14 +216,26 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     @Path("/topic/{id}")
     @Override
     public Permissions getTopicPermissions(@PathParam("id") long topicId) {
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/left.java
         return getPermissions(topicId);
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/base.java
+        return getPermissions(dms.getTopic(topicId, false));
+=======
+        return getPermissions(dms.getTopic(topicId));
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/right.java
     }
 
     @GET
     @Path("/association/{id}")
     @Override
     public Permissions getAssociationPermissions(@PathParam("id") long assocId) {
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/left.java
         return getPermissions(assocId);
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/base.java
+        return getPermissions(dms.getAssociation(assocId, false));
+=======
+        return getPermissions(dms.getAssociation(assocId));
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-accesscontrol/src/main/java/de/deepamehta/plugins/accesscontrol/AccessControlPlugin.java/right.java
     }
 
 

@@ -226,7 +226,15 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
                                                                          String othersRoleTypeUri) {
         RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(),
             assocTypeUri, myRoleTypeUri, othersRoleTypeUri, null); // othersAssocTypeUri=null
-        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null;   // checkAccess=true
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/left.java
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, false, false, true) : null; 
+        // fetchComposite=false, fetchRelatingComposite=false, checkAccess=true
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/base.java
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, false, false) : null; 
+                                                                   // fetchComposite=false, fetchRelatingComposite=false
+=======
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc) : null; 
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/right.java
     }
 
 
@@ -256,7 +264,14 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
                                                                                    long othersTopicId) {
         AssociationModel assoc = dms.storageDecorator.fetchAssociationBetweenTopicAndAssociation(assocTypeUri,
             othersTopicId, getId(), othersRoleTypeUri, myRoleTypeUri);
-        return assoc != null ? dms.instantiateAssociation(assoc, true) : null;   // checkAccess=true
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/left.java
+        return assoc != null ? dms.instantiateAssociation(assoc, false, true) : null;   // fetchComposite=false
+                                                                                        // checkAccess=true
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/base.java
+        return assoc != null ? dms.instantiateAssociation(assoc, false) : null;     // fetchComposite=false
+=======
+        return assoc != null ? dms.instantiateAssociation(assoc) : null;
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/AttachedAssociation.java/right.java
     }
 
     @Override

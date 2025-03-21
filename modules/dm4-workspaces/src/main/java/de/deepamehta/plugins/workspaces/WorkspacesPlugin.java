@@ -58,13 +58,21 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
 
 
     @Override
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/left.java
     public Topic getAssignedWorkspace(long id) {
         if (!dms.hasProperty(id, PROP_WORKSPACE_ID)) {
             return null;
         }
         //
         long workspaceId = (Long) dms.getProperty(id, PROP_WORKSPACE_ID);
-        return dms.getTopic(workspaceId);
+        return dms.getTopic(workspaceId, true);     // fetchComposite=true
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/base.java
+    public List<RelatedTopic> getAssignedWorkspaces(DeepaMehtaObject object) {
+        return facetsService.getFacets(object, "dm4.workspaces.workspace_facet");
+=======
+    public List<RelatedTopic> getAssignedWorkspaces(DeepaMehtaObject object) {
+        return facetsService.getFacets(object, "dm4.workspaces.workspace_facet").getItems();
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/right.java
     }
 
     @Override

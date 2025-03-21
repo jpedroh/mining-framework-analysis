@@ -64,7 +64,13 @@ class TopicIterator extends ObjectIterator<Topic, TopicModel> {
 
     @Override
     Topic instantiateObject(TopicModel model) {
-        return dms.instantiateTopic(model, true);           // checkAccess=true
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/left.java
+        return dms.instantiateTopic(model, false, true);            // fetchComnposite=false, checkAccess=true
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/base.java
+        return dms.instantiateTopic(model, false);          // fetchComnposite=false
+=======
+        return dms.instantiateTopic(model);
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/right.java
     }
 }
 
@@ -83,7 +89,13 @@ class AssociationIterator extends ObjectIterator<Association, AssociationModel> 
 
     @Override
     Association instantiateObject(AssociationModel model) {
-        return dms.instantiateAssociation(model, true);     // checkAccess=true
+<<<<<<< /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/left.java
+        return dms.instantiateAssociation(model, false, true);      // fetchComnposite=false, checkAccess=true
+||||||| /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/base.java
+        return dms.instantiateAssociation(model, false);    // fetchComnposite=false
+=======
+        return dms.instantiateAssociation(model);
+>>>>>>> /usr/src/app/output/jri/deepamehta/1f2cd6a62b0c098ca82f646440d6e998a88cdf5b/modules/dm4-core/src/main/java/de/deepamehta/core/impl/DeepaMehtaObjectIterable.java/right.java
     }
 }
 
