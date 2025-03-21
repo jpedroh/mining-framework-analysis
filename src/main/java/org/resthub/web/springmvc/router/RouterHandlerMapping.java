@@ -84,7 +84,7 @@ public class RouterHandlerMapping extends AbstractHandlerMapping {
      * Routes configuration Files names< Injected by bean configuration (in
      * servlet.xml)
      */
-    public List<String> getRouteFiles() {
+    public List<String> getRouteFileq() {
         return routeFiles;
     }
 
@@ -93,21 +93,15 @@ public class RouterHandlerMapping extends AbstractHandlerMapping {
     }
 
     /**
-     * Reload routes configuration at runtime. No-op if configuration files
-     * didn't change since last reload.
+     * Reload routes configuration at runtime.
+     * No-op if configuration files didn't change since last reload.
      */
     public void reloadRoutesConfiguration() {
-         List<Resource> fileResources = new ArrayList<Resource>();
-
-        for (String fileName : this.routeFiles) {
-            fileResources.add(getApplicationContext().getResource(fileName));
-        }
-        
         try {
-            Router.detectChanges(fileResources, servletPrefix);
-        } catch (IOException ex) {
+            Router.detectChanges(getApplicationContext().getResource(routeFile), servletPrefix);
+        } catch (IOException e) {
             throw new RouteFileParsingException(
-                    "Could not read route configuration files", ex);
+                    "Cannot parse route file " + routeFile, e);
         }
     }
 
@@ -119,23 +113,26 @@ public class RouterHandlerMapping extends AbstractHandlerMapping {
 
         super.initApplicationContext();
 
+<<<<<<< /usr/src/app/output/resthub/springmvc-router/cf86d464ca1768fae380c8a99223c5d536fa0b3e/src/main/java/org/resthub/web/springmvc/router/RouterHandlerMapping.java/left.java
         // Scan beans for Controllers
         this.methodResolver.setCachedControllers(getApplicationContext().getBeansWithAnnotation(Controller.class));
-
+||||||| /usr/src/app/output/resthub/springmvc-router/cf86d464ca1768fae380c8a99223c5d536fa0b3e/src/main/java/org/resthub/web/springmvc/router/RouterHandlerMapping.java/base.java
+=======
         List<Resource> fileResources = new ArrayList<Resource>();
+>>>>>>> /usr/src/app/output/resthub/springmvc-router/cf86d464ca1768fae380c8a99223c5d536fa0b3e/src/main/java/org/resthub/web/springmvc/router/RouterHandlerMapping.java/right.java
 
         try {
-
-            for (String fileName : this.routeFiles) {
-                fileResources.add(getApplicationContext().getResource(fileName));
-            }
-
-            Router.load(fileResources, this.servletPrefix);
-
-        } catch (IOException e) {
-            throw new RouteFileParsingException(
-                    "Could not read route configuration files", e);
+        
+        for(String fileName : this.routeFiles) {
+            fileResources.add(getApplicationContext().getResource(fileName));
         }
+        
+        Router.load(fileResources, this.servletPrefix);
+
+    } catch (IOException e) {
+        throw new RouteFileParsingException(
+                "Cannot parse route file " + routeFile, e);
+    }
     }
 
     /**
