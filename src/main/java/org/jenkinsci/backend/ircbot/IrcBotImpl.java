@@ -385,14 +385,22 @@ public class IrcBotImpl extends PircBot {
             }
 
             t.add(c);
-            if (!o.hasPublicMember(c)) {
-                o.publicize(c);
-            }
+<<<<<<< /usr/src/app/output/jenkins-infra/ircbot/d3a41197e86732bd4ce8fb804fc2a19452f22620/src/main/java/org/jenkinsci/backend/ircbot/IrcBotImpl.java/left.java
+            o.publicize(c);
             String successMsg = "Added "+collaborator+" as a GitHub committer";
             if (justForThisRepo != null) {
                 successMsg += " for repository " + justForThisRepo;
             }
             sendMessage(channel,successMsg);
+||||||| /usr/src/app/output/jenkins-infra/ircbot/d3a41197e86732bd4ce8fb804fc2a19452f22620/src/main/java/org/jenkinsci/backend/ircbot/IrcBotImpl.java/base.java
+            o.publicize(c);
+            sendMessage(channel,"Added "+collaborator+" as a GitHub committer");
+=======
+            if (!o.hasPublicMember(c)) {
+                o.publicize(c);
+            }
+            sendMessage(channel,"Added "+collaborator+" as a GitHub committer");
+>>>>>>> /usr/src/app/output/jenkins-infra/ircbot/d3a41197e86732bd4ce8fb804fc2a19452f22620/src/main/java/org/jenkinsci/backend/ircbot/IrcBotImpl.java/right.java
         } catch (IOException e) {
             sendMessage(channel,"Failed to create a repository: "+e.getMessage());
             e.printStackTrace();
