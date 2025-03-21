@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.plugins.php.api.visitors;
-
 import java.util.Iterator;
 import java.util.List;
 import org.sonar.php.tree.impl.PHPTree;
@@ -123,493 +103,396 @@ import org.sonar.plugins.php.api.tree.statement.WhileStatementTree;
 
 public abstract class PHPVisitorCheck implements VisitorCheck {
   public static final int MAX_DEPTH = 1500;
+
   private int depth;
+
   private CheckContext context;
 
-  @Override
-  public void init() {
-    // Default behavior : do nothing.
+  @Override public void init() {
   }
 
-  @Override
-  public void visitToken(SyntaxToken token) {
+  @Override public void visitToken(SyntaxToken token) {
     scan(token);
   }
 
-  @Override
-  public void visitTrivia(SyntaxTrivia trivia) {
-    // Do nothing is the default behavior (There is no children to visit)
+  @Override public void visitTrivia(SyntaxTrivia trivia) {
   }
 
-  @Override
-  public void visitVariableDeclaration(VariableDeclarationTree tree) {
+  @Override public void visitVariableDeclaration(VariableDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitNamespaceName(NamespaceNameTree tree) {
+  @Override public void visitNamespaceName(NamespaceNameTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitUseClause(UseClauseTree tree) {
+  @Override public void visitUseClause(UseClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitClassPropertyDeclaration(ClassPropertyDeclarationTree tree) {
+  @Override public void visitClassPropertyDeclaration(ClassPropertyDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitMethodDeclaration(MethodDeclarationTree tree) {
+  @Override public void visitMethodDeclaration(MethodDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitFunctionDeclaration(FunctionDeclarationTree tree) {
+  @Override public void visitFunctionDeclaration(FunctionDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitParameterList(ParameterListTree tree) {
+  @Override public void visitParameterList(ParameterListTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitParameter(ParameterTree tree) {
+  @Override public void visitParameter(ParameterTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitUseTraitDeclaration(UseTraitDeclarationTree tree) {
+  @Override public void visitUseTraitDeclaration(UseTraitDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitTraitPrecedence(TraitPrecedenceTree tree) {
+  @Override public void visitTraitPrecedence(TraitPrecedenceTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitTraitAlias(TraitAliasTree tree) {
+  @Override public void visitTraitAlias(TraitAliasTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitTraitMethodReference(TraitMethodReferenceTree tree) {
+  @Override public void visitTraitMethodReference(TraitMethodReferenceTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitClassDeclaration(ClassDeclarationTree tree) {
+  @Override public void visitClassDeclaration(ClassDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitConstDeclaration(ConstantDeclarationTree tree) {
+  @Override public void visitConstDeclaration(ConstantDeclarationTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitStaticStatement(StaticStatementTree tree) {
+  @Override public void visitStaticStatement(StaticStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitDeclareStatement(DeclareStatementTree tree) {
+  @Override public void visitDeclareStatement(DeclareStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitInlineHTML(InlineHTMLTree tree) {
+  @Override public void visitInlineHTML(InlineHTMLTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitGlobalStatement(GlobalStatementTree tree) {
+  @Override public void visitGlobalStatement(GlobalStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitUseStatement(UseStatementTree tree) {
+  @Override public void visitUseStatement(UseStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitUnsetVariableStatement(UnsetVariableStatementTree tree) {
+  @Override public void visitUnsetVariableStatement(UnsetVariableStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitDefaultClause(DefaultClauseTree tree) {
+  @Override public void visitDefaultClause(DefaultClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCaseClause(CaseClauseTree tree) {
+  @Override public void visitCaseClause(CaseClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitSwitchStatement(SwitchStatementTree tree) {
+  @Override public void visitSwitchStatement(SwitchStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitMatchConditionClause(MatchConditionClauseTree tree) {
+  @Override public void visitMatchConditionClause(MatchConditionClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitMatchDefaultClause(MatchDefaultClauseTree tree) {
+  @Override public void visitMatchDefaultClause(MatchDefaultClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitMatchExpression(MatchExpressionTree tree) {
+  @Override public void visitMatchExpression(MatchExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitWhileStatement(WhileStatementTree tree) {
+  @Override public void visitWhileStatement(WhileStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitDoWhileStatement(DoWhileStatementTree tree) {
+  @Override public void visitDoWhileStatement(DoWhileStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitElseifClause(ElseifClauseTree tree) {
+  @Override public void visitElseifClause(ElseifClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitIfStatement(IfStatementTree tree) {
+  @Override public void visitIfStatement(IfStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitElseClause(ElseClauseTree tree) {
+  @Override public void visitElseClause(ElseClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitBlock(BlockTree tree) {
+  @Override public void visitBlock(BlockTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitForStatement(ForStatementTree tree) {
+  @Override public void visitForStatement(ForStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitForEachStatement(ForEachStatementTree tree) {
+  @Override public void visitForEachStatement(ForEachStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitThrowStatement(ThrowStatementTree tree) {
+  @Override public void visitThrowStatement(ThrowStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitEmptyStatement(EmptyStatementTree tree) {
+  @Override public void visitEmptyStatement(EmptyStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitReturnStatement(ReturnStatementTree tree) {
+  @Override public void visitReturnStatement(ReturnStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitContinueStatement(ContinueStatementTree tree) {
+  @Override public void visitContinueStatement(ContinueStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitBreakStatement(BreakStatementTree tree) {
+  @Override public void visitBreakStatement(BreakStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCatchBlock(CatchBlockTree tree) {
+  @Override public void visitCatchBlock(CatchBlockTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitTryStatement(TryStatementTree tree) {
+  @Override public void visitTryStatement(TryStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitGotoStatement(GotoStatementTree tree) {
+  @Override public void visitGotoStatement(GotoStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitExpressionStatement(ExpressionStatementTree tree) {
+  @Override public void visitExpressionStatement(ExpressionStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitExpressionListStatement(ExpressionListStatementTree tree) {
+  @Override public void visitExpressionListStatement(ExpressionListStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitEchoTagStatement(EchoTagStatementTree tree) {
+  @Override public void visitEchoTagStatement(EchoTagStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayAssignmentPattern(ArrayAssignmentPatternTree tree) {
+  @Override public void visitArrayAssignmentPattern(ArrayAssignmentPatternTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayAssignmentPatternElement(ArrayAssignmentPatternElementTree tree) {
+  @Override public void visitArrayAssignmentPatternElement(ArrayAssignmentPatternElementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitLabel(LabelTree tree) {
+  @Override public void visitLabel(LabelTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitNamespaceStatement(NamespaceStatementTree tree) {
+  @Override public void visitNamespaceStatement(NamespaceStatementTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitThrowExpression(ThrowExpressionTree tree) {
+  @Override public void visitThrowExpression(ThrowExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCastExpression(CastExpressionTree tree) {
+  @Override public void visitCastExpression(CastExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitPrefixedCastExpression(PrefixedCastExpressionTree tree) {
+  @Override public void visitPrefixedCastExpression(PrefixedCastExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitPrefixExpression(UnaryExpressionTree tree) {
+  @Override public void visitPrefixExpression(UnaryExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitBinaryExpression(BinaryExpressionTree tree) {
+  @Override public void visitBinaryExpression(BinaryExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitVariableIdentifier(VariableIdentifierTree tree) {
+  @Override public void visitVariableIdentifier(VariableIdentifierTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitNameIdentifier(NameIdentifierTree tree) {
+  @Override public void visitNameIdentifier(NameIdentifierTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitLiteral(LiteralTree tree) {
+  @Override public void visitLiteral(LiteralTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitExpandableStringCharacters(ExpandableStringCharactersTree tree) {
+  @Override public void visitExpandableStringCharacters(ExpandableStringCharactersTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayAccess(ArrayAccessTree tree) {
+  @Override public void visitArrayAccess(ArrayAccessTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitMemberAccess(MemberAccessTree tree) {
+  @Override public void visitMemberAccess(MemberAccessTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCompoundVariable(CompoundVariableTree tree) {
+  @Override public void visitCompoundVariable(CompoundVariableTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitComputedVariable(ComputedVariableTree tree) {
+  @Override public void visitComputedVariable(ComputedVariableTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitExpandableStringLiteral(ExpandableStringLiteralTree tree) {
+  @Override public void visitExpandableStringLiteral(ExpandableStringLiteralTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitExecutionOperator(ExecutionOperatorTree tree) {
+  @Override public void visitExecutionOperator(ExecutionOperatorTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitYieldExpression(YieldExpressionTree tree) {
+  @Override public void visitYieldExpression(YieldExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitParenthesisedExpression(ParenthesisedExpressionTree tree) {
+  @Override public void visitParenthesisedExpression(ParenthesisedExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitListExpression(ListExpressionTree tree) {
+  @Override public void visitListExpression(ListExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitAssignmentExpression(AssignmentExpressionTree tree) {
+  @Override public void visitAssignmentExpression(AssignmentExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitVariableVariable(VariableVariableTree tree) {
+  @Override public void visitVariableVariable(VariableVariableTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitReferenceVariable(ReferenceVariableTree tree) {
+  @Override public void visitReferenceVariable(ReferenceVariableTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitSpreadArgument(SpreadArgumentTree tree) {
+  @Override public void visitSpreadArgument(SpreadArgumentTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitFunctionCall(FunctionCallTree tree) {
+  @Override public void visitFunctionCall(FunctionCallTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitLexicalVariables(LexicalVariablesTree tree) {
+  @Override public void visitLexicalVariables(LexicalVariablesTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayPair(ArrayPairTree tree) {
+  @Override public void visitArrayPair(ArrayPairTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayInitializerFunction(ArrayInitializerFunctionTree tree) {
+  @Override public void visitArrayInitializerFunction(ArrayInitializerFunctionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrayInitializerBracket(ArrayInitializerBracketTree tree) {
+  @Override public void visitArrayInitializerBracket(ArrayInitializerBracketTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitScript(ScriptTree tree) {
+  @Override public void visitScript(ScriptTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCompilationUnit(CompilationUnitTree tree) {
+  @Override public void visitCompilationUnit(CompilationUnitTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitFunctionExpression(FunctionExpressionTree tree) {
+  @Override public void visitFunctionExpression(FunctionExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitArrowFunctionExpression(ArrowFunctionExpressionTree tree) {
+  @Override public void visitArrowFunctionExpression(ArrowFunctionExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitNewExpression(NewExpressionTree tree) {
+  @Override public void visitNewExpression(NewExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitAnonymousClass(AnonymousClassTree tree) {
+  @Override public void visitAnonymousClass(AnonymousClassTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitPostfixExpression(UnaryExpressionTree tree) {
+  @Override public void visitPostfixExpression(UnaryExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitConditionalExpression(ConditionalExpressionTree tree) {
+  @Override public void visitConditionalExpression(ConditionalExpressionTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitType(TypeTree tree) {
+  @Override public void visitType(TypeTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitUnionType(UnionTypeTree tree) {
+  @Override public void visitUnionType(UnionTypeTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitBuiltInType(BuiltInTypeTree tree) {
+  @Override public void visitBuiltInType(BuiltInTypeTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitReturnTypeClause(ReturnTypeClauseTree tree) {
+  @Override public void visitReturnTypeClause(ReturnTypeClauseTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitHeredoc(HeredocStringLiteralTree tree) {
+  @Override public void visitHeredoc(HeredocStringLiteralTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitCallArgument(CallArgumentTree tree) {
+  @Override public void visitCallArgument(CallArgumentTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitAttributeGroup(AttributeGroupTree tree) {
+  @Override public void visitAttributeGroup(AttributeGroupTree tree) {
     scan(tree);
   }
 
-  @Override
-  public void visitAttribute(AttributeTree tree) {
+  @Override public void visitAttribute(AttributeTree tree) {
     scan(tree);
   }
 
-  @Override
-  public CheckContext context() {
+  @Override public CheckContext context() {
     return context;
   }
 
   protected void scan(Tree tree) {
     Iterator<Tree> childrenIterator = ((PHPTree) tree).childrenIterator();
     Tree child;
-
     while (childrenIterator.hasNext()) {
       child = childrenIterator.next();
       if (child != null && depth < MAX_DEPTH) {
@@ -626,19 +509,15 @@ public abstract class PHPVisitorCheck implements VisitorCheck {
     }
   }
 
-
-  @Override
-  public final List<PhpIssue> analyze(PhpFile file, CompilationUnitTree tree) {
+  @Override public final List<PhpIssue> analyze(PhpFile file, CompilationUnitTree tree) {
     return analyze(new PHPCheckContext(file, tree, null));
   }
 
-  @Override
-  public List<PhpIssue> analyze(PhpFile file, CompilationUnitTree tree, SymbolTable symbolTable) {
+  @Override public List<PhpIssue> analyze(PhpFile file, CompilationUnitTree tree, SymbolTable symbolTable) {
     return analyze(new PHPCheckContext(file, tree, null, symbolTable));
   }
 
-  @Override
-  public final List<PhpIssue> analyze(CheckContext context) {
+  @Override public final List<PhpIssue> analyze(CheckContext context) {
     depth = 0;
     this.context = context;
     visitCompilationUnit(context.tree());
@@ -653,8 +532,7 @@ public abstract class PHPVisitorCheck implements VisitorCheck {
     return symbol.qualifiedName();
   }
 
-  @Override
-  public PreciseIssue newIssue(Tree tree, String message) {
+  @Override public PreciseIssue newIssue(Tree tree, String message) {
     return context().newIssue(this, tree, message);
   }
 }

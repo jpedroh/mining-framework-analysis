@@ -1,44 +1,16 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.parser.declaration;
-
 import org.junit.Test;
 import org.sonar.php.parser.PHPLexicalGrammar;
-
 import static org.sonar.php.utils.Assertions.assertThat;
 
 public class ClassDeclarationTest {
-
-  @Test
-  public void test() {
-    assertThat(PHPLexicalGrammar.CLASS_DECLARATION)
-      .matches("class C {}")
-      .matches("class match {}")
-      .matches("abstract class C {}")
-      .matches("final class C {}")
-
-      .matches("class C extends A {}")
-      .matches("class C implements B {}")
-      .matches("class C extends A implements B {}")
-      .matches("#[A1(1)] class C {}")
-
-      .notMatches("class A extends B, C {}");
+  @Test public void test() {
+    assertThat(PHPLexicalGrammar.CLASS_DECLARATION).matches("class C {}").matches("class match {}").matches("abstract class C {}").matches("final class C {}").matches("class C extends A {}").matches("class C implements B {}").matches(
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/61de31ef3667903965e4f26aeb52b329b5dde5a2/php-frontend/src/test/java/org/sonar/php/parser/declaration/ClassDeclarationTest.java/left.java
+    "class C extends A implements B {}"
+=======
+    "#[A1(1)] class C {}"
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/61de31ef3667903965e4f26aeb52b329b5dde5a2/php-frontend/src/test/java/org/sonar/php/parser/declaration/ClassDeclarationTest.java/right.java
+    ).notMatches("class A extends B, C {}");
   }
 }
