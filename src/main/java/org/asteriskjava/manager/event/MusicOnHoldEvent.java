@@ -1,19 +1,3 @@
-/*
- *  Copyright 2004-2006 Stefan Reuter
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
 package org.asteriskjava.manager.event;
 
 /**
@@ -22,76 +6,79 @@ package org.asteriskjava.manager.event;
  * Available since Asterisk 1.6
  *
  * @author srt
+ * @version $Id$
  * @since 1.0.0
  */
-public class MusicOnHoldEvent extends ManagerEvent
-{
-    private static final long serialVersionUID = 0L;
+public class MusicOnHoldEvent extends ManagerEvent {
+  private static final long serialVersionUID = 0L;
 
-    public static final String STATE_START = "Start";
-    public static final String STATE_STOP = "Stop";
+  public static final String STATE_START = "Start";
 
-    private String channel;
-    private String className;
-    private String uniqueId;
-    private String state;
-    
-	public MusicOnHoldEvent(Object source)
-    {
-        super(source);
-    }
+  public static final String STATE_STOP = "Stop";
 
-    /**
+  private String channel;
+
+  private String 
+<<<<<<< /usr/src/app/output/srt/asterisk-java/a4b27137cc92af086da78fdfb634a441cb07e1d0/src/main/java/org/asteriskjava/manager/event/MusicOnHoldEvent.java/left.java
+  clazz
+=======
+  className
+>>>>>>> /usr/src/app/output/srt/asterisk-java/a4b27137cc92af086da78fdfb634a441cb07e1d0/src/main/java/org/asteriskjava/manager/event/MusicOnHoldEvent.java/right.java
+  ;
+
+  private String uniqueId;
+
+  private String state;
+
+  public MusicOnHoldEvent(Object source) {
+    super(source);
+  }
+
+  /**
      * Returns the name of the channel.
      *
      * @return channel the name of the channel.
      */
-    public String getChannel()
-    {
-        return channel;
-    }
+  public String getChannel() {
+    return channel;
+  }
 
-    /**
+  /**
      * Sets the name of the channel.
      *
      * @param channel the name of the channel.
      */
-    public void setChannel(String channel)
-    {
-        this.channel = channel;
-    }
+  public void setChannel(String channel) {
+    this.channel = channel;
+  }
 
-    public String getClassName()
-    {
-    	return this.className;
-    }
-    
-    public void setClazz(String className)
-    {
-    	this.className = className;
-    }
+  public String getClazz() {
+    return this.clazz;
+  }
 
-    /**
+  public void setClazz(String clazz) {
+    this.clazz = clazz;
+  }
+
+  /**
      * Returns the unique id of the channel.
      *
      * @return the unique id of the channel.
      */
-    public String getUniqueId()
-    {
-        return uniqueId;
-    }
+  public String getUniqueId() {
+    return uniqueId;
+  }
 
-    /**
+  /**
      * Sets the unique id of the channel.
      *
      * @param uniqueId the unique id of the channel.
      */
-    public void setUniqueId(String uniqueId)
-    {
-        this.uniqueId = uniqueId;
-    }
+  public void setUniqueId(String uniqueId) {
+    this.uniqueId = uniqueId;
+  }
 
-    /**
+  /**
      * Returns the state. This is either "Start" or "Stop" depending on whether music on hold
      * started or stopped on the channel.
      *
@@ -101,33 +88,41 @@ public class MusicOnHoldEvent extends ManagerEvent
      * @see #isStart()
      * @see #isStop()
      */
-    public String getState()
-    {
-        return state;
-    }
+  public String getState() {
+    return state;
+  }
 
-    public void setState(String state)
-    {
-        this.state = state;
-    }
+  public void setState(String state) {
+    this.state = state;
+  }
 
-    /**
+  /**
      * Returns whether this is a start event.
      *
      * @return <code>true</code> if this a start event, <code>false</code> otherwise.
      */
-    public boolean isStart()
-    {
-        return STATE_START.equals(state);
-    }
+  public boolean isStart() {
+    return STATE_START.equals(state);
+  }
 
-    /**
+  /**
      * Returns whether this is a stop event.
      *
      * @return <code>true</code> if this an stop event, <code>false</code> otherwise.
      */
-    public boolean isStop()
-    {
-        return STATE_STOP.equals(state);
-    }
+  public boolean isStop() {
+    return STATE_STOP.equals(state);
+  }
+
+  /**
+     * @return The music on hold class name.
+     * @since 1.0.0
+     */
+  public String getClassName() {
+    return className;
+  }
+
+  public void setClassName(String className) {
+    this.className = className;
+  }
 }
