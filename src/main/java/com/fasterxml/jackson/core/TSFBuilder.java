@@ -83,7 +83,12 @@ public abstract class TSFBuilder<F extends JsonFactory,
      * @since 2.15
      */
     protected StreamReadConstraints _streamReadConstraints;
-
+    /**
+     * Optional StreamReadConfig.
+     *
+     * @since 2.15
+     */
+    
     /*
     /**********************************************************************
     /* Construction
