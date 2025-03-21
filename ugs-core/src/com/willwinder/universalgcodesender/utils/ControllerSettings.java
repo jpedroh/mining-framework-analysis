@@ -113,10 +113,16 @@ public class ControllerSettings {
                 return Optional.of(new GrblController(new LoopBackCommunicator()));
             case LOOPBACK_SLOW:
                 return Optional.of(new GrblController(new LoopBackCommunicator(100)));
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/94d11f96ea1eb22315fd31df76bb03625d4438fa/ugs-core/src/com/willwinder/universalgcodesender/utils/ControllerSettings.java/left.java
+            case FLUIDNC:
+                return new FluidNCController();
+||||||| /usr/src/app/output/winder/universal-g-code-sender/94d11f96ea1eb22315fd31df76bb03625d4438fa/ugs-core/src/com/willwinder/universalgcodesender/utils/ControllerSettings.java/base.java
+=======
             case FLUIDNC:
                 return Optional.of(new FluidNCController());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/94d11f96ea1eb22315fd31df76bb03625d4438fa/ugs-core/src/com/willwinder/universalgcodesender/utils/ControllerSettings.java/right.java
             default:
-                return Optional.empty();
+            return Optional.empty();
         }
     }
 
