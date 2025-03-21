@@ -86,7 +86,6 @@ public abstract class VertexBaseImpl extends
 	public int getDegree() {
 		return getDegree(EdgeDirection.INOUT);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,7 +124,6 @@ public abstract class VertexBaseImpl extends
 			throw new RuntimeException("FIXME!");
 		}
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -143,7 +141,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return nextVertex;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,7 +159,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -176,7 +172,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getNextVertex(vertexClass.getSchemaClass());
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -197,12 +192,10 @@ public abstract class VertexBaseImpl extends
 		}
 		return prev != null;
 	}
-
 	@Override
 	public boolean isValid() {
 		return graph.vSeqContainsVertex(this);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -217,7 +210,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid() && v.isValid();
 		graph.putVertexBefore((InternalVertex) v, this);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -237,7 +229,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return next != null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -252,7 +243,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid() && v.isValid();
 		graph.putVertexAfter((InternalVertex) v, this);
 	}
-
 	@Override
 	public Edge getFirstIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
@@ -263,7 +253,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return firstIncidence;
 	}
-
 	@Override
 	public Edge getLastIncidence() {
 		TraversalContext tc = graph.getTraversalContext();
@@ -274,7 +263,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return lastIncidence;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -302,7 +290,6 @@ public abstract class VertexBaseImpl extends
 			throw new RuntimeException("FIXME!");
 		}
 	}
-
 	@Override
 	public Edge getFirstIncidence(boolean thisIncidence,
 			AggregationKind... kinds) {
@@ -322,7 +309,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -337,7 +323,6 @@ public abstract class VertexBaseImpl extends
 		return getFirstIncidence(anEdgeClass.getSchemaClass(),
 				EdgeDirection.INOUT);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -349,7 +334,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -364,7 +348,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getFirstIncidence(anEdgeClass.getSchemaClass(), orientation);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -385,7 +368,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return null;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -396,7 +378,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid() : this + " is not valid!";
 		graph.deleteVertex(this);
 	}
-
 	@Override
 	public void putIncidenceAfter(InternalEdge target, InternalEdge moved) {
 		assert (target != null) && (moved != null);
@@ -442,7 +423,6 @@ public abstract class VertexBaseImpl extends
 		target.setNextIncidenceInternal(moved);
 		incidenceListModified();
 	}
-
 	@Override
 	public void putIncidenceBefore(InternalEdge target, InternalEdge moved) {
 		assert (target != null) && (moved != null);
@@ -487,7 +467,6 @@ public abstract class VertexBaseImpl extends
 		target.setPrevIncidenceInternal(moved);
 		incidenceListModified();
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -495,7 +474,6 @@ public abstract class VertexBaseImpl extends
 	 */
 	@Override
 	abstract public long getIncidenceListVersion();
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -506,7 +484,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return (getIncidenceListVersion() != vertexStructureVersion);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -517,7 +494,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		setIncidenceListVersion(getIncidenceListVersion() + 1);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -529,7 +505,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getDegree(ec.getSchemaClass(), EdgeDirection.INOUT);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -541,7 +516,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getDegree(ec, EdgeDirection.INOUT);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -553,7 +527,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return getDegree(ec.getSchemaClass(), orientation);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -570,7 +543,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return degree;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -580,7 +552,6 @@ public abstract class VertexBaseImpl extends
 	public String toString() {
 		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -594,7 +565,6 @@ public abstract class VertexBaseImpl extends
 		assert getGraph() == v.getGraph();
 		return getId() - v.getId();
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -605,7 +575,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -618,7 +587,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, dir);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -632,7 +600,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass(), dir);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -646,7 +613,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, eclass, dir);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -660,7 +626,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, eclass.getSchemaClass());
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -672,7 +637,6 @@ public abstract class VertexBaseImpl extends
 		assert isValid();
 		return new IncidenceIterable<Edge>(this, eclass);
 	}
-
 	@Override
 	public Vertex getPrevVertex() {
 		TraversalContext tc = graph.getTraversalContext();
@@ -685,7 +649,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return prevVertex;
 	}
-
 	@Override
 	public void appendIncidenceToISeq(InternalEdge i) {
 		assert i != null;
@@ -700,7 +663,6 @@ public abstract class VertexBaseImpl extends
 		}
 		setLastIncidence(i);
 	}
-
 	@Override
 	public void removeIncidenceFromISeq(InternalEdge i) {
 		assert i != null;
@@ -733,7 +695,6 @@ public abstract class VertexBaseImpl extends
 		i.setNextIncidenceInternal(null);
 		i.setPrevIncidenceInternal(null);
 	}
-
 	@Override
 	public void sortIncidences(Comparator<Edge> comp) {
 		assert isValid();
@@ -870,7 +831,6 @@ public abstract class VertexBaseImpl extends
 		}
 
 	}
-
 	@Override
 	public List<? extends Vertex> adjacences(String role) {
 		assert (role != null) && (role.length() > 0);
@@ -883,7 +843,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return adjacences;
 	}
-
 	@Override
 	public Edge addAdjacence(String role, Vertex other) {
 		assert (role != null) && (role.length() > 0);
@@ -904,7 +863,6 @@ public abstract class VertexBaseImpl extends
 		}
 		return getGraph().createEdge(entry.getEdgeClass(), from, to);
 	}
-
 	@Override
 	public List<Vertex> removeAdjacences(String role) {
 		assert (role != null) && (role.length() > 0);
@@ -927,7 +885,6 @@ public abstract class VertexBaseImpl extends
 			getGraph().setTraversalContext(oldTC);
 		}
 	}
-
 	@Override
 	public void removeAdjacence(String role, Vertex other) {
 		assert (role != null) && (role.length() > 0);
@@ -951,12 +908,187 @@ public abstract class VertexBaseImpl extends
 			getGraph().setTraversalContext(oldTC);
 		}
 	}
-
 	@Override
 	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
 		return getAttributedElementClass().getDirectedEdgeClassForFarEndRole(
 				rolename);
 	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getDegree()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#getDegree(de.uni_koblenz.jgralab.EdgeDirection
+	 * )
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab
+	 * .schema.VertexClass)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#isBefore(de.uni_koblenz.jgralab.Vertex)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#putBefore(de.uni_koblenz.jgralab.Vertex)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#isAfter(de.uni_koblenz.jgralab.Vertex)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#putAfter(de.uni_koblenz.jgralab.Vertex)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.Vertex#getFirstEdge(de.uni_koblenz.jgralab.
+	 * EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
+	 * de.uni_koblenz.jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#delete()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#getVertexVersion()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#isVertexModified()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.impl.InternalVertex#incidenceListModified()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jgralab.Vertex#getDegree(Class)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#incidences()
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.EdgeDirection
+	 * )
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema
+	 * .EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class,
+	 * de.uni_koblenz.jgralab.EdgeDirection)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema
+	 * .EdgeClass)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class)
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#reachableVertices(java.lang.String,
+	 * java.lang.Class)
+	 */
 
 	@Override
 	@SuppressWarnings("unchecked")

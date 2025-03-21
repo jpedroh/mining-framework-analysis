@@ -43,8 +43,16 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
- * AttributeImpl represents a grUML attribute on the schema level.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/schema/impl/AttributeImpl.java/left.java
+ * TODO add comment
  *
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/schema/impl/AttributeImpl.java/base.java
+ * TODO add comment
+ * 
+=======
+ * AttributeImpl represents a grUML attribute on the schema level.
+ * 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/schema/impl/AttributeImpl.java/right.java
  * @author ist@uni-koblenz.de
  */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {

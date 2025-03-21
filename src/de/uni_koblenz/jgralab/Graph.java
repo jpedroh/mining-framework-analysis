@@ -100,9 +100,19 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Object getEnumConstant(EnumDomain enumDomain, String constantName);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Creates a record of type <code>RecordDomain</code> with values as
+	 * specified by <code>values</code>
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Creates a record of type <code>RecordDomain</code> with values as
+	 * specified by <code>values</code>
+	 *
+=======
 	 * Creates a {@link Record} of type {@link RecordDomain} with values as
 	 * specified by <code>values</code>.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param recordDomain
 	 * 			the {@link RecordDomain} to create a {@link Record} for
 	 * @param values
@@ -114,11 +124,25 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 			Map<String, Object> values);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Checks whether this graph has changed with respect to the given
+	 * <code>previousVersion</code>. Every change in the graph, e.g. adding,
+	 * creating and reordering of edges and vertices or changes of attributes of
+	 * the graph, an edge or a vertex are treated as a change.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Checks whether this graph has changed with respect to the given
+	 * <code>previousVersion</code>. Every change in the graph, e.g. adding,
+	 * creating and reordering of edges and vertices or changes of attributes of
+	 * the graph, an edge or a vertex are treated as a change.
+	 *
+=======
 	 * Checks whether this {@link Graph} has changed with respect to the given
 	 * <code>previousVersion</code>. Every change in this {@link Graph}, e.g. adding,
 	 * creating and reordering of {@link Edge} and {@link Vertex} instances or changes 
 	 * of attributes of the graph, an {@link Edge} or a {@link Vertex} are treated as a change.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param previousVersion
 	 *            The version to check against
 	 * @return <code>true</code> if the internal graph version of the graph is
@@ -127,8 +151,16 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public boolean isGraphModified(long previousVersion);
 
 	/**
-	 * Returns the version counter of this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the version counter of this graph.
 	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the version counter of this graph.
+	 *
+=======
+	 * Returns the version counter of this {@link Graph}.
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @return the graph version
 	 * @see #isGraphModified(long)
 	 */
@@ -176,85 +208,215 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public void deleteEdge(Edge e);
 
 	/**
-	 * Returns the first {@link Vertex} in the vertex sequence of this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Vertex in the vertex sequence of this Graph.
 	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices.
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Vertex in the vertex sequence of this Graph.
+	 *
+	 * @return the first Vertex, or null if this graph contains no vertices.
+=======
+	 * Returns the first {@link Vertex} in the vertex sequence of this {@link Graph}.
+	 *
 	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Vertex getFirstVertex();
 
 	/**
-	 * Returns the last {@link Vertex} in the vertex sequence of this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the last Vertex in the vertex sequence of this Graph.
 	 * 
+	 * @return the last Vertex, or null if this graph contains no vertices.
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the last Vertex in the vertex sequence of this Graph.
+	 *
+	 * @return the last Vertex, or null if this graph contains no vertices.
+=======
+	 * Returns the last {@link Vertex} in the vertex sequence of this {@link Graph}.
+	 *
 	 * @return the last {@link Vertex}, or null if this graph contains no vertices.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Vertex getLastVertex();
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 *
+=======
 	 * Returns the first {@link Vertex} of the specified {@link VertexClass}
 	 * (including subclasses) in the vertex sequence of this {@link Graph}.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param vertexClass
-	 *            a {@link VertexClass} (i.e. an instance of schema.VertexClass)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 *            a VertexClass (i.e. an instance of schema.VertexClass)
 	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *            a VertexClass (i.e. an instance of schema.VertexClass)
+	 *
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
+=======
+	 *            a {@link VertexClass} (i.e. an instance of schema.VertexClass)
+	 *
 	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices of
 	 *         the specified {@link VertexClass}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 *
+=======
 	 * Returns the first {@link Vertex} of the specified VertexClass
 	 * (including subclasses) in the vertex sequence of this {@link Graph}.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param vertexClass
-	 *            a VertexClass (i.e. an schema interface extending {@link Vertex})
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 *            a VertexClass (i.e. an schema interface extending Vertex)
 	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *            a VertexClass (i.e. an schema interface extending Vertex)
+	 *
+	 * @return the first Vertex, or null if this graph contains no vertices of
+=======
+	 *            a VertexClass (i.e. an schema interface extending {@link Vertex})
+	 *
 	 * @return the first {@link Vertex}, or null if this {@link Graph} contains no vertices of
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 *         the specified <code>vertexClass</code>.
 	 */
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
 
 	/**
-	 * Returns the first {@link Edge} in the edge sequence of this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Edge in the edge sequence of this Graph.
 	 * 
+	 * @return the first Edge, or null if this graph contains no edges.
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Edge in the edge sequence of this Graph.
+	 *
+	 * @return the first Edge, or null if this graph contains no edges.
+=======
+	 * Returns the first {@link Edge} in the edge sequence of this {@link Graph}.
+	 *
 	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Edge getFirstEdge();
 
 	/**
-	 * Returns the last {@link Edge} in the edge sequence of this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the last Edge in the edge sequence of this Graph.
 	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the last Edge in the edge sequence of this Graph.
+	 *
+=======
+	 * Returns the last {@link Edge} in the edge sequence of this {@link Graph}.
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
 	public Edge getLastEdge();
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 *
+=======
 	 * Returns the first {@link Edge} of the specified {@link EdgeClass} (including
 	 * subclasses) in the edge sequence of this {@link Graph}.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param edgeClass
-	 *            an {@link EdgeClass} (i.e. an instance of schema.EdgeClass)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
 	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
+	 *
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
+=======
+	 *            an {@link EdgeClass} (i.e. an instance of schema.EdgeClass)
+	 *
 	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges of the
 	 *         specified {@link EdgeClass}.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Edge getFirstEdge(EdgeClass edgeClass);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 *
+=======
 	 * Returns the first {@link Edge} of the specified <code>edgeClass</code> (including
 	 * subclasses) in the edge sequence of this {@link Graph}.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an schema interface extending Edge)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *
+	 * @return the first Edge, or null if this graph contains no edges of the
+=======
+	 *
 	 * @return the first {@link Edge}, or null if this {@link Graph} contains no edges of the
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 *         specified <code>edgeClass</code>.
 	 */
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the Vertex with the specified <code>id</code> if such a vertex
+	 * exists in this Graph.
+	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the Vertex with the specified <code>id</code> if such a vertex
+	 * exists in this Graph.
+	 *
+=======
 	 * Returns the {@link Vertex} with the specified <code>id</code> if such a vertex
 	 * exists in this {@link Graph}.
-	 * 
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param id
 	 *            the id of the {@link Vertex} (must be > 0)
 	 * @return the {@link Vertex}, or null if no such vertex exists
@@ -273,15 +435,31 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	public Edge getEdge(int id);
 
 	/**
-	 * Returns the number of vertices in this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the number of vertices in this Graph.
 	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the number of vertices in this Graph.
+	 *
+=======
+	 * Returns the number of vertices in this {@link Graph}.
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @return the number of vertices
 	 */
 	public int getVCount();
 
 	/**
-	 * Returns the number of edges in this {@link Graph}.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns the number of edges in this Graph.
 	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the number of edges in this Graph.
+	 *
+=======
+	 * Returns the number of edges in this {@link Graph}.
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @return the number of edges
 	 */
 	public int getECount();
@@ -298,8 +476,16 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	/**
 	 * Returns an {@code Iterable} which iterates over all edges of this {@link Graph} in the
 	 * order determined by the edge sequence.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	 * 
+	 * @return an Iterable for all edges
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *
+	 * @return an Iterable for all edges
+=======
+	 *
 	 * @return an {@code Iterable} for all edges
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Iterable<Edge> edges();
 
@@ -309,9 +495,19 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * order determined by the edge sequence.
 	 * 
 	 * @param edgeClass
-	 *            an {@link EdgeClass} (i.e. instance of schema.EdgeClass)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 *            an EdgeClass (i.e. instance of schema.EdgeClass)
 	 * 
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *            an EdgeClass (i.e. instance of schema.EdgeClass)
+	 *
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
+=======
+	 *            an {@link EdgeClass} (i.e. instance of schema.EdgeClass)
+	 *
 	 * @return an {@code Iterable} for all edges of the specified {@link EdgeClass}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Iterable<Edge> edges(EdgeClass edgeClass);
 
@@ -322,16 +518,72 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an schema interface extending Edge)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	 * 
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
+=======
+	 *
 	 * @return an {@code Iterable} for all edges of the specified <code>edgeClass</code>
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Returns an Iterable which iterates over all vertices of this Graph in the
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Returns the list of reachable vertices.
+	 *
+	 * @param startVertex
+	 *            a start vertex
+	 * @param pathDescription
+	 *            a GReQL path description
+	 * @param vertexType
+	 *            the type of the reachable vertices (acts as implicit
+	 *            GoalRestriction)
+	 * @return a List of all vertices of type <code>vertexType</code> reachable
+	 *         from <code>startVertex</code> using the given
+	 *         <code>pathDescription</code>
+	 */
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			Vertex startVertex, String pathDescription, Class<T> vertexType);
+
+	/**
+	 * Returns an Iterable which iterates over all vertices of this Graph in the
+=======
+	 * Returns the list of reachable vertices.
+	 *
+	 * @param startVertex
+	 *            a start {@link Vertex}
+	 * @param pathDescription
+	 *            a GReQL path description
+	 * @param vertexType
+	 *            the type of the reachable vertices (acts as implicit
+	 *            GoalRestriction)
+	 * @return a List of all vertices of type <code>vertexType</code> reachable
+	 *         from <code>startVertex</code> using the given
+	 *         <code>pathDescription</code>
+	 */
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			Vertex startVertex, String pathDescription, Class<T> vertexType);
+
+	/**
 	 * Returns an {@code Iterable} which iterates over all vertices of this {@link Graph} in the
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * order determined by the vertex sequence.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	 * 
+	 * @return an Iterable for all vertices
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *
+	 * @return an Iterable for all vertices
+=======
+	 *
 	 * @return an {@code Iterable} for all vertices
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Iterable<Vertex> vertices();
 
@@ -341,10 +593,22 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * the order determined by the vertex sequence.
 	 * 
 	 * @param vertexclass
-	 *            a {@link VertexClass} (i.e. instance of schema.VertexClass)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 *            a VertexClass (i.e. instance of schema.VertexClass)
 	 * 
+	 * @return an Iterable for all vertices of the specified
+	 *         <code>vertexClass</code>
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *            a VertexClass (i.e. instance of schema.VertexClass)
+	 *
+	 * @return an Iterable for all vertices of the specified
+	 *         <code>vertexClass</code>
+=======
+	 *            a {@link VertexClass} (i.e. instance of schema.VertexClass)
+	 *
 	 * @return an {@code Iterable} for all vertices of the specified
 	 *         {@link VertexClass}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public Iterable<Vertex> vertices(VertexClass vertexclass);
 
@@ -355,8 +619,16 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 * 
 	 * @param vertexClass
 	 *            a VertexClass (i.e. a schema interface extending Vertex)
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	 * 
+	 * @return a iterable for all vertices of the specified
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 *
+	 * @return a iterable for all vertices of the specified
+=======
+	 *
 	 * @return a {@code Iterable} for all vertices of the specified
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 *         <code>vertexClass</code>
 	 */
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass);
@@ -374,8 +646,16 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
 	 * Sets the given <code>transaction</code> as the active
-	 * {@link Transaction} for the current thread.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * <code>Transaction</code> for the current thread.
 	 * 
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * <code>Transaction</code> for the current thread.
+	 *
+=======
+	 * {@link Transaction} for the current thread.
+	 *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 * @param transaction
 	 */
 	public void setCurrentTransaction(Transaction transaction);

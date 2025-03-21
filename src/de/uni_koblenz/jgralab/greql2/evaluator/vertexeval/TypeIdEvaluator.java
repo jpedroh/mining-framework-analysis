@@ -64,12 +64,17 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass<?, ?>> createTypeList(
+	protected List<GraphElementClass<?, ?>> createTypeList(
 			InternalGreqlEvaluator evaluator) {
-
-		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
-		AttributedElementClass<?, ?> elemClass = evaluator
-				.getAttributedElementClass(vertex.get_name());
+		ArrayList<GraphElementClass<?, ?>> returnTypes = new ArrayList<GraphElementClass<?, ?>>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/left.java
+		GraphElementClass<?, ?> elemClass = evaluator
+||||||| /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/base.java
+		GraphElementClass<?, ?> elemClass = schema
+=======
+		GraphElementClass<?, ?> elemClass = schema.getGraphClass()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/3ecb9c7c133da9fe37fca7b4089fc0a4eeea96fc/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/right.java
+				.getGraphElementClass(vertex.get_name());
 		if (elemClass == null) {
 			elemClass = query.getKnownType(vertex.get_name());
 			if (elemClass == null) {
@@ -88,7 +93,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	@Override
 	public TypeCollection evaluate(InternalGreqlEvaluator evaluator) {
-		List<AttributedElementClass<?, ?>> typeList = createTypeList(evaluator);
+		List<GraphElementClass<?, ?>> typeList = createTypeList(evaluator);
 		return new TypeCollection(typeList, vertex.is_excluded());
 	}
 

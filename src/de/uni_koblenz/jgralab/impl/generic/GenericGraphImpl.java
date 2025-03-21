@@ -361,4 +361,9 @@ public class GenericGraphImpl extends GraphImpl {
 		throw new UnsupportedOperationException(
 				"This method is not supported by the generic implementation");
 	}
+
+	/**
+	 * This method is not supported by the generic implementation and therefore
+	 * throws an {@link UnsupportedOperationException}.
+	 */
 }
