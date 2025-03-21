@@ -1,5 +1,4 @@
 package org.webbitserver.netty;
-
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -15,147 +14,126 @@ import org.webbitserver.handler.HttpToWebSocketHandler;
 import org.webbitserver.handler.PathMatchHandler;
 import org.webbitserver.handler.exceptions.PrintStackTraceExceptionHandler;
 import org.webbitserver.handler.exceptions.SilentExceptionHandler;
-
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
 import static org.jboss.netty.channel.Channels.pipeline;
 
 public class NettyWebServer implements WebServer {
-    private final ServerBootstrap bootstrap;
-    private final SocketAddress socketAddress;
-    private final URI publicUri;
-    private final List<HttpHandler> handlers = new ArrayList<HttpHandler>();
-    private final Executor executor;
-    private Channel channel;
+  private final ServerBootstrap bootstrap;
 
-    protected long nextId = 1;
+  private final SocketAddress socketAddress;
 
-    private Thread.UncaughtExceptionHandler exceptionHandler;
-    private Thread.UncaughtExceptionHandler ioExceptionHandler;
+  private final URI publicUri;
 
-    public NettyWebServer(int port) {
-        this(Executors.newSingleThreadScheduledExecutor(), port);
+  private final List<HttpHandler> handlers = new ArrayList<HttpHandler>();
 
-        // Uncaught exceptions from handlers get dumped to console by default.
-        // To change, call uncaughtExceptionHandler()
-        uncaughtExceptionHandler(new PrintStackTraceExceptionHandler());
+  private final Executor executor;
 
-        // Default behavior is to silently discard any exceptions caused
-        // when reading/writing to the client. The Internet is flaky - it happens.
-        connectionExceptionHandler(new SilentExceptionHandler());
+  private Channel channel;
+
+  protected long nextId = 1;
+
+  private Thread.UncaughtExceptionHandler exceptionHandler;
+
+  private Thread.UncaughtExceptionHandler ioExceptionHandler;
+
+  public NettyWebServer(int port) {
+    this(Executors.newSingleThreadScheduledExecutor(), port);
+    uncaughtExceptionHandler(new PrintStackTraceExceptionHandler());
+    connectionExceptionHandler(new SilentExceptionHandler());
+  }
+
+  public NettyWebServer(final Executor executor, int port) {
+    this(executor, new InetSocketAddress(port), localUri(port));
+  }
+
+  public NettyWebServer(final Executor executor, SocketAddress socketAddress, URI publicUri) {
+    this.executor = executor;
+    this.socketAddress = socketAddress;
+    this.publicUri = publicUri;
+    bootstrap = new ServerBootstrap();
+    bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+      @Override public ChannelPipeline getPipeline() throws Exception {
+        long timestamp = timestamp();
+        Object id = nextId();
+        ChannelPipeline pipeline = pipeline();
+        pipeline.addLast("decoder", new HttpRequestDecoder());
+        pipeline.addLast("aggregator", new HttpChunkAggregator(65536));
+        pipeline.addLast("encoder", new HttpResponseEncoder());
+        pipeline.addLast("handler", new NettyHttpChannelHandler(executor, handlers, id, timestamp, exceptionHandler, ioExceptionHandler));
+        return pipeline;
+      }
+    });
+  }
+
+  @Override public URI getUri() {
+    return publicUri;
+  }
+
+  @Override public Executor getExecutor() {
+    return executor;
+  }
+
+  @Override public NettyWebServer add(HttpHandler handler) {
+    handlers.add(handler);
+    return this;
+  }
+
+  @Override public NettyWebServer add(String path, HttpHandler handler) {
+    return add(new PathMatchHandler(path, handler));
+  }
+
+  @Override public NettyWebServer add(String path, WebSocketHandler handler) {
+    return add(path, new HttpToWebSocketHandler(handler));
+  }
+
+  @Override public synchronized NettyWebServer start() {
+    bootstrap.setFactory(new NioServerSocketChannelFactory(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor(), 1));
+    channel = bootstrap.bind(socketAddress);
+    return this;
+  }
+
+  @Override public synchronized NettyWebServer stop() throws IOException {
+    if (channel != null) {
+      channel.close();
     }
+    return this;
+  }
 
-    public NettyWebServer(final Executor executor, int port) {
-        this(executor, new InetSocketAddress(port), localUri(port));
+  @Override public synchronized NettyWebServer join() throws InterruptedException {
+    if (channel != null) {
+      channel.getCloseFuture().await();
     }
+    return this;
+  }
 
-    public NettyWebServer(final Executor executor, SocketAddress socketAddress, URI publicUri) {
-        this.executor = executor;
-        this.socketAddress = socketAddress;
-        this.publicUri = publicUri;
+  @Override public WebServer uncaughtExceptionHandler(Thread.UncaughtExceptionHandler exceptionHandler) {
+    this.exceptionHandler = exceptionHandler;
+    return this;
+  }
 
-        // Configure the server.
-        bootstrap = new ServerBootstrap();
+  @Override public WebServer connectionExceptionHandler(Thread.UncaughtExceptionHandler ioExceptionHandler) {
+    this.ioExceptionHandler = ioExceptionHandler;
+    return this;
+  }
 
-        // Set up the event pipeline factory.
-        bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-            @Override
-            public ChannelPipeline getPipeline() throws Exception {
-                long timestamp = timestamp();
-                Object id = nextId();
-                ChannelPipeline pipeline = pipeline();
-                pipeline.addLast("decoder", new HttpRequestDecoder());
-                pipeline.addLast("aggregator", new HttpChunkAggregator(65536));
-                pipeline.addLast("encoder", new HttpResponseEncoder());
-                pipeline.addLast("handler", new NettyHttpChannelHandler(
-                        executor, handlers, id, timestamp, exceptionHandler, ioExceptionHandler));
-                return pipeline;
-            }
-        });
+  private static URI localUri(int port) {
+    try {
+      return URI.create("http://" + InetAddress.getLocalHost().getHostName() + (port == 80 ? "" : (":" + port)) + "/");
+    } catch (UnknownHostException e) {
+      return null;
     }
+  }
 
-    @Override
-    public URI getUri() {
-        return publicUri;
-    }
+  protected long timestamp() {
+    return System.currentTimeMillis();
+  }
 
-    @Override
-    public Executor getExecutor() {
-        return executor;
-    }
-
-    @Override
-    public NettyWebServer add(HttpHandler handler) {
-        handlers.add(handler);
-        return this;
-    }
-
-    @Override
-    public NettyWebServer add(String path, HttpHandler handler) {
-        return add(new PathMatchHandler(path, handler));
-    }
-
-    @Override
-    public NettyWebServer add(String path, WebSocketHandler handler) {
-        return add(path, new HttpToWebSocketHandler(handler));
-    }
-
-    @Override
-    public synchronized NettyWebServer start() {
-        bootstrap.setFactory(new NioServerSocketChannelFactory(
-                Executors.newSingleThreadExecutor(),
-                Executors.newSingleThreadExecutor(), 1));
-        channel = bootstrap.bind(socketAddress);
-        return this;
-    }
-
-    @Override
-    public synchronized NettyWebServer stop() throws IOException {
-        if (channel != null) {
-            channel.close();
-        }
-        return this;
-    }
-
-    @Override
-    public synchronized NettyWebServer join() throws InterruptedException {
-        if (channel != null) {
-            channel.getCloseFuture().await();
-        }
-        return this;
-    }
-
-    @Override
-    public WebServer uncaughtExceptionHandler(Thread.UncaughtExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-        return this;
-    }
-
-    @Override
-    public WebServer connectionExceptionHandler(Thread.UncaughtExceptionHandler ioExceptionHandler) {
-        this.ioExceptionHandler = ioExceptionHandler;
-        return this;
-    }
-
-    private static URI localUri(int port) {
-        try {
-            return URI.create("http://" + InetAddress.getLocalHost().getHostName() + (port == 80 ? "" : (":" + port)) + "/");
-        } catch (UnknownHostException e) {
-            return null;
-        }
-    }
-
-    protected long timestamp() {
-        return System.currentTimeMillis();
-    }
-
-    protected Object nextId() {
-        return nextId++;
-    }
-
+  protected Object nextId() {
+    return nextId++;
+  }
 }

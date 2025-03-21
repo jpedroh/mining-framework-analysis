@@ -1,130 +1,117 @@
 package org.webbitserver.stub;
-
 import org.webbitserver.HttpRequest;
-
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-<<<<<<< HEAD
-import java.util.HashMap;
-import java.util.Map;
-=======
 import java.util.*;
->>>>>>> 94a178a0402451a97a1b3ed10698e2a1f5d1687e
 
 /**
  * Implementation of HttpRequest that is easy to construct manually and populate.
  * Useful for testing.
  */
 public class StubHttpRequest extends StubDataHolder implements HttpRequest {
+  private String uri = "/";
 
-    private String uri = "/";
-    private String method = "GET";
-    private List<Map.Entry<String, String>> headers = new ArrayList<Map.Entry<String, String>>();
-    private SocketAddress remoteAddress = new InetSocketAddress("localhost", 0);
-    private Object id = "StubID";
-    private long timestamp = 0;
+  private String method = "GET";
 
-    public StubHttpRequest() {
+  private List<Map.Entry<String, String>> headers = new ArrayList<Map.Entry<String, String>>();
+
+  private SocketAddress remoteAddress = new InetSocketAddress("localhost", 0);
+
+  private Object id = "StubID";
+
+  private long timestamp = 0;
+
+  public StubHttpRequest() {
+  }
+
+  public StubHttpRequest(String uri) {
+    this.uri = uri;
+  }
+
+  @Override public String uri() {
+    return uri;
+  }
+
+  public StubHttpRequest uri(String uri) {
+    this.uri = uri;
+    return this;
+  }
+
+  @Override public String header(String name) {
+    for (Map.Entry<String, String> header : headers) {
+      if (header.getKey().equals(name)) {
+        return header.getValue();
+      }
     }
+    return null;
+  }
 
-    public StubHttpRequest(String uri) {
-        this.uri = uri;
+  @Override public boolean hasHeader(String name) {
+    for (Map.Entry<String, String> header : headers) {
+      if (header.getKey().equals(name)) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public String uri() {
-        return uri;
+  @Override public List<String> headers(String name) {
+    List<String> result = new ArrayList<String>();
+    for (Map.Entry<String, String> header : headers) {
+      if (header.getKey().equals(name)) {
+        result.add(header.getValue());
+      }
     }
+    return result;
+  }
 
-    public StubHttpRequest uri(String uri) {
-        this.uri = uri;
-        return this;
-    }
+  @Override public List<Map.Entry<String, String>> allHeaders() {
+    return headers;
+  }
 
-    @Override
-    public String header(String name) {
-        for (Map.Entry<String, String> header : headers) {
-            if (header.getKey().equals(name)) {
-                return header.getValue();
-            }
-        }
-        return null;
-    }
+  @Override public String method() {
+    return method;
+  }
 
-    @Override
-    public boolean hasHeader(String name) {
-        for (Map.Entry<String, String> header : headers) {
-            if (header.getKey().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
+  public StubHttpRequest method(String method) {
+    this.method = method;
+    return this;
+  }
 
-    @Override
-    public List<String> headers(String name) {
-        List<String> result = new ArrayList<String>();
-        for (Map.Entry<String, String> header : headers) {
-            if (header.getKey().equals(name)) {
-                result.add(header.getValue());
-            }
-        }
-        return result;
-    }
+  public StubHttpRequest header(String name, String value) {
+    headers.add(new AbstractMap.SimpleEntry<String, String>(name, value));
+    return this;
+  }
 
-    @Override
-    public List<Map.Entry<String, String>> allHeaders() {
-        return headers;
-    }
+  @Override public StubHttpRequest data(String key, Object value) {
+    super.data(key, value);
+    return this;
+  }
 
-    @Override
-    public String method() {
-        return method;
-    }
+  @Override public SocketAddress remoteAddress() {
+    return remoteAddress;
+  }
 
-    public StubHttpRequest method(String method) {
-        this.method = method;
-        return this;
-    }
+  @Override public Object id() {
+    return id;
+  }
 
-    public StubHttpRequest header(String name, String value) {
-        headers.add(new AbstractMap.SimpleEntry<String, String>(name, value));
-        return this;
-    }
+  public StubHttpRequest id(Object id) {
+    this.id = id;
+    return this;
+  }
 
-    @Override
-    public StubHttpRequest data(String key, Object value) {
-        super.data(key, value);
-        return this;
-    }
+  @Override public long timestamp() {
+    return timestamp;
+  }
 
-    @Override
-    public SocketAddress remoteAddress() {
-        return remoteAddress;
-    }
+  public StubHttpRequest timestamp(long timestamp) {
+    this.timestamp = timestamp;
+    return this;
+  }
 
-    @Override
-    public Object id() {
-        return id;
-    }
-
-    public StubHttpRequest id(Object id) {
-        this.id = id;
-        return this;
-    }
-
-    @Override
-    public long timestamp() {
-        return timestamp;
-    }
-
-    public StubHttpRequest timestamp(long timestamp) {
-        this.timestamp = timestamp;
-        return this;
-    }
-
-    public StubHttpRequest remoteAddress(SocketAddress remoteAddress) {
-        this.remoteAddress = remoteAddress;
-        return this;
-    }
+  public StubHttpRequest remoteAddress(SocketAddress remoteAddress) {
+    this.remoteAddress = remoteAddress;
+    return this;
+  }
 }
