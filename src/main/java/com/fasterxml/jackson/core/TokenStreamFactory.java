@@ -1398,16 +1398,6 @@ public abstract class TokenStreamFactory
         }
     }
 
-    /**
-     * Helper methods used for constructing an {@link InputStream} for
-     * parsers to use, when input is to be read from given {@link File}.
-     *
-     * @param f File to open stream for
-     *
-     * @return {@link InputStream} constructed
-     *
-     * @throws JacksonException If there is a problem opening the stream
-     */
     protected InputStream _fileInputStream(File f) throws JacksonException
     {
         try {
@@ -1426,16 +1416,6 @@ public abstract class TokenStreamFactory
         }
     }
 
-    /**
-     * Helper methods used for constructing an {@link OutputStream} for
-     * generator to use, when target is to be written into given {@link File}.
-     *
-     * @param f File to open stream for
-     *
-     * @return {@link OutputStream} constructed
-     *
-     * @throws JacksonException If there is a problem opening the stream
-     */
     protected OutputStream _fileOutputStream(File f) throws JacksonException
     {
         try {
@@ -1461,8 +1441,34 @@ public abstract class TokenStreamFactory
     protected <T> T _unsupported() {
         return _unsupported("Operation not supported for this format (%s)", getFormatName());
     }
-    
+
     protected <T> T _unsupported(String str, Object... args) {
         throw new UnsupportedOperationException(String.format(str, args));
     }
+
+    /**
+     * Helper methods used for constructing an {@link InputStream} for
+     * parsers to use, when input is to be read from given {@link File}.
+     *
+     * @param f File to open stream for
+     *
+     * @return {@link InputStream} constructed
+     *
+     * @throws IOException If there is a problem opening the stream
+     *
+     * @since 2.14
+     */
+
+    /**
+     * Helper methods used for constructing an {@link OutputStream} for
+     * generator to use, when target is to be written into given {@link File}.
+     *
+     * @param f File to open stream for
+     *
+     * @return {@link OutputStream} constructed
+     *
+     * @throws IOException If there is a problem opening the stream
+     *
+     * @since 2.14
+     */
 }
