@@ -91,15 +91,69 @@ public class LongHashFunctionTest {
     private static void testNegativePrimitives(LongHashFunction f) {
         byte[] bytes = new byte[8];
         Arrays.fill(bytes, (byte) -1);
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         long oneByteExpected = f.hashBytes(bytes, 0, 1);
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        long ;
+=======
+        long oneByteActual = f.hashBytes(bytes, 0, 1);
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         long twoByteExpected = f.hashBytes(bytes, 0, 2);
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        long ;
+=======
+        long twoByteActual = f.hashBytes(bytes, 0, 2);
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         long fourByteExpected = f.hashBytes(bytes, 0, 4);
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        long ;
+=======
+        long fourByteActual = f.hashBytes(bytes, 0, 4);
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         long eightByteExpected = f.hashBytes(bytes);
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        long ;
+=======
+        long eightByteActual = f.hashBytes(bytes);
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         assertEquals("byte hash", oneByteExpected, f.hashByte((byte) -1));
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        assertEquals("byte hash", f.hashBytes(bytes, 0, 1), f.hashByte((byte) -1));
+=======
+        assertEquals("byte hash", oneByteActual, f.hashByte((byte) -1));
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         assertEquals("short hash", twoByteExpected, f.hashShort((short) -1));
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        assertEquals("short hash", f.hashBytes(bytes, 0, 2), f.hashShort((short) -1));
+=======
+        assertEquals("short hash", twoByteActual, f.hashShort((short) -1));
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         assertEquals("char hash", twoByteExpected, f.hashChar((char) -1));
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        assertEquals("char hash", f.hashBytes(bytes, 0, 2), f.hashChar((char) -1));
+=======
+        assertEquals("char hash", twoByteActual, f.hashChar((char) -1));
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         assertEquals("int hash", fourByteExpected, f.hashInt(-1));
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        assertEquals("int hash", f.hashBytes(bytes, 0, 4), f.hashInt(-1));
+=======
+        assertEquals("int hash", fourByteActual, f.hashInt(-1));
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
+<<<<<<< /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/left.java
         assertEquals("long hash", eightByteExpected, f.hashLong(-1L));
+||||||| /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/base.java
+        assertEquals("long hash", f.hashBytes(bytes), f.hashLong(-1L));
+=======
+        assertEquals("long hash", eightByteActual, f.hashLong(-1L));
+>>>>>>> /usr/src/app/output/openhft/zero-allocation-hashing/0d095dacc71fdff39d82d11674d410941d909e6a/src/test/java/net/openhft/hashing/LongHashFunctionTest.java/right.java
     }
 
     private static void testArrays(LongHashFunction f, byte[] data, long eh, int len,
