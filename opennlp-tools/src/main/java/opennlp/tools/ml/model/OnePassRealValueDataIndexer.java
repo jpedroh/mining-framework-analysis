@@ -38,30 +38,13 @@ public class OnePassRealValueDataIndexer extends OnePassDataIndexer {
 
   float[][] values;
 
-  /**
-   * Two argument constructor for DataIndexer.
-   * @param eventStream An Event[] which contains the a list of all the Events
-   *               seen in the training data.
-   * @param cutoff The minimum number of times a predicate must have been
-   *               observed in order to be included in the model.
-   */
-  @Deprecated
-  public OnePassRealValueDataIndexer(ObjectStream<Event> eventStream, int cutoff) throws IOException {
-    super(eventStream,cutoff);
-  }
-
-  @Deprecated
-  public OnePassRealValueDataIndexer(ObjectStream<Event> eventStream, int cutoff, boolean sort) throws IOException {
-    super(eventStream,cutoff,sort);
-  }
-
   public OnePassRealValueDataIndexer() {
   }
-
+  
   public float[][] getValues() {
     return values;
   }
-
+  
   protected int sortAndMerge(List<ComparableEvent> eventsToCompare,boolean sort) throws InsufficientTrainingDataException {
     int numUniqueEvents = super.sortAndMerge(eventsToCompare,sort);
     values = new float[numUniqueEvents][];
@@ -75,12 +58,11 @@ public class OnePassRealValueDataIndexer extends OnePassDataIndexer {
     }
     return numUniqueEvents;
   }
-
-
-  @Override
+  
+  @Override @Override
   protected List<ComparableEvent> index(List<Event> events, Map<String,Integer> predicateIndex) {
-    Map<String,Integer> omap = new HashMap<>();
-
+    Map<String,Integer> omap = new HashMap<String,Integer>();
+    
     int numEvents = events.size();
     int outcomeCount = 0;
     List<ComparableEvent> eventsToCompare = new ArrayList<>(numEvents);
@@ -114,15 +96,34 @@ public class OnePassRealValueDataIndexer extends OnePassDataIndexer {
         }
         ce = new ComparableEvent(ocID, cons, ev.getValues());
         eventsToCompare.add(ce);
-      } else {
+      }
+      else {
         System.err.println("Dropped event "+ev.getOutcome()+":"+Arrays.asList(ev.getContext()));
       }
-      //    recycle the TIntArrayList
+//    recycle the TIntArrayList
       indexedContext.clear();
     }
     outcomeLabels = toIndexedStringArray(omap);
     predLabels = toIndexedStringArray(predicateIndex);
     return eventsToCompare;
+  }
+  
+  /**
+     * Two argument constructor for DataIndexer.
+     * @param eventStream An Event[] which contains the a list of all the Events
+     *               seen in the training data.
+     * @param cutoff The minimum number of times a predicate must have been
+     *               observed in order to be included in the model.
+     */
+  
+  @Deprecated @Deprecated
+  public OnePassRealValueDataIndexer(ObjectStream<Event> eventStream, int cutoff) throws IOException {
+    super(eventStream,cutoff);
+  }
+  
+  @Deprecated @Deprecated
+  public OnePassRealValueDataIndexer(ObjectStream<Event> eventStream, int cutoff, boolean sort) throws IOException {
+    super(eventStream,cutoff,sort);
   }
 
 }

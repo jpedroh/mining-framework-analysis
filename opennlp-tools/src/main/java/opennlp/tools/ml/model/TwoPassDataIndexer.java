@@ -154,6 +154,9 @@ public class TwoPassDataIndexer extends AbstractDataIndexer{
       System.err.println(e);
     }
   }
+
+  public TwoPassDataIndexer() {}
+
   /**
    * Reads events from <tt>eventStream</tt> into a linked list.  The
    * predicates associated with each event are counted and any which

@@ -95,7 +95,7 @@ EventTrainer {
     parameters.addToReport(AbstractTrainer.TRAINER_TYPE_PARAM, EventTrainer.EVENT_VALUE);
     return model;
   }
-
+  
   public final MaxentModel train(ObjectStream<Event> events) throws IOException {
 
     if (!isValid()) {
@@ -105,6 +105,20 @@ EventTrainer {
     HashSumEventStream hses = new HashSumEventStream(events);
     DataIndexer indexer = getDataIndexer(hses);
 
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/AbstractEventTrainer.java/left.java
+    MaxentModel model = doTrain(indexer);
+
+    parameters.addToReport("Training-Eventhash", hses.calculateHashSum().toString(16));
+    parameters.addToReport(AbstractTrainer.TRAINER_TYPE_PARAM, EventTrainer.EVENT_VALUE);
+    return model;
+||||||| /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/AbstractEventTrainer.java/base.java
+    MaxentModel model = doTrain(indexer);
+
+    addToReport("Training-Eventhash", hses.calculateHashSum().toString(16));
+    addToReport(AbstractTrainer.TRAINER_TYPE_PARAM, EventTrainer.EVENT_VALUE);
+    return model;
+=======
     return train(indexer);
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/AbstractEventTrainer.java/right.java
   }
 }

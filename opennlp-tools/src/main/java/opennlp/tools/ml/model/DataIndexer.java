@@ -76,6 +76,24 @@ public interface DataIndexer {
    * @return The number of total events indexed.
    */
   public int getNumEvents();
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/DataIndexer.java/left.java
+  
+  /**
+   * Sets parameters used during the data indexing.
+   * @param trainParams
+   * @param reportMap
+   */
+  public void init(Map<String, String> trainParams, Map<String, String> reportMap);
+
+  /**
+   * Performs the data indexing. Make sure the init(...) method is called first.
+   * 
+   * @param eventStream
+   * @throws IOException
+   */
+  public void index(ObjectStream<Event> eventStream) throws IOException;
+||||||| /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/DataIndexer.java/base.java
+=======
 
   /**
    * Sets parameters used during the data indexing.
@@ -91,4 +109,5 @@ public interface DataIndexer {
    * @throws IOException
    */
   public void index(ObjectStream<Event> eventStream) throws IOException;
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/DataIndexer.java/right.java
 }

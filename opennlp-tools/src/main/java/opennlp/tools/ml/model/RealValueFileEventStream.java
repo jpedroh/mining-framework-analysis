@@ -110,15 +110,26 @@ public class RealValueFileEventStream extends FileEventStream {
     }
     int ai = 0;
     String eventFile = args[ai++];
-
-    Map<String,String> params=new HashMap<>(); 
+    
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/left.java
+    Map<String,String> params =new HashMap<String, String>(); 
+||||||| /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/base.java
+    Map<String,String> params =100; 
+=======
+    Map<String,String> params =new HashMap<>(); 
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/right.java
     params.put(AbstractTrainer.ITERATIONS_PARAM,"100");
     params.put(AbstractTrainer.CUTOFF_PARAM, "5");
     if (ai < args.length) {
       params.put(AbstractTrainer.ITERATIONS_PARAM,args[ai++]);
       params.put(AbstractTrainer.CUTOFF_PARAM, args[ai++]);
     }
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/left.java
+    PluggableParameters parameters=new PluggableParameters(params, new HashMap<String, String>());
+||||||| /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/base.java
+=======
     PluggableParameters parameters = new PluggableParameters(params, new HashMap<>());
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/right.java
     AbstractModel model;
     try (RealValueFileEventStream es = new RealValueFileEventStream(eventFile)) {
       DataIndexer indexer=new OnePassDataIndexer();

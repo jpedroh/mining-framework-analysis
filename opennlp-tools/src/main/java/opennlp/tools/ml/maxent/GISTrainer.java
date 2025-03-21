@@ -222,6 +222,18 @@ class GISTrainer {
    * @param cutoff The number of times a feature must occur to be included.
    * @return A GIS model trained with specified
    */
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/maxent/GISTrainer.java/left.java
+  public GISModel trainModel(ObjectStream<Event> eventStream, int iterations, int cutoff) throws IOException {
+  	DataIndexer indexer=new OnePassDataIndexer();
+  	Map<String, String> params=new HashMap<String, String>();
+  	params.put(GIS.ITERATIONS_PARAM, Integer.toString(iterations));
+  	params.put(GIS.CUTOFF_PARAM, Integer.toString(cutoff));
+  	indexer.init(params, new HashMap<String, String>());
+    return trainModel(iterations, indexer, cutoff);
+  }
+||||||| /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/maxent/GISTrainer.java/base.java
+  public GISModel trainModel(ObjectStream<Event> eventStream, int iterations, int cutoff) throws IOException 
+=======
   public GISModel trainModel(ObjectStream<Event> eventStream, int iterations, int cutoff) throws IOException {
     DataIndexer indexer = new OnePassDataIndexer();
     Map<String, String> params=new HashMap<>();
@@ -230,6 +242,7 @@ class GISTrainer {
     indexer.init(params, new HashMap<>());
     return trainModel(iterations, indexer, cutoff);
   }
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/maxent/GISTrainer.java/right.java
 
   /**
    * Train a model using the GIS algorithm.
