@@ -57,7 +57,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
     }
 
     private void perform (boolean fromWorkFlow, @Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        if (fromWorkFlow || onFailure || Result.SUCCESS.equals(run.getResult())) {
+        if (fromWorkFlow || onFailure || run.getResult().equals(Result.SUCCESS)) {
             if (!workspace.exists()) {
                 listener.getLogger().println("[DeployPublisher][ERROR] Workspace not found");
                 throw new FileNotFoundException("Workspace not found");
@@ -78,7 +78,7 @@ public class DeployPublisher extends Publisher implements SimpleBuildStep, Seria
                 }
             }
         } else {
-            listener.getLogger().println("[DeployPublisher][INFO] Build failed or incomplete, project not deployed");
+            listener.getLogger().println("[DeployPublisher][INFO] Build failed, project not deployed");
         }
     }
 

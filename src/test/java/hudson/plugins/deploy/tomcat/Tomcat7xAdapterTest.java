@@ -55,12 +55,12 @@ public class Tomcat7xAdapterTest {
     @Test
     public void testVariables() throws Exception {
         Node n = jenkinsRule.createSlave();
-    	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
 
-    	EnvVars envVars = property.getEnvVars();
-    	envVars.put(urlVariable, url);
-    	envVars.put(usernameVariable, username);
-    	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
+        EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
+        EnvVars envVars = property.getEnvVars();
+        envVars.put(urlVariable, url);
+        envVars.put(usernameVariable, username);
+        jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
 
         FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
         project.setAssignedNode(n);

@@ -2,23 +2,20 @@ package hudson.plugins.deploy;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import jenkins.MasterToSlaveFileCallable;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.*;
+import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.NodePropertyDescriptor;
-import hudson.util.DescribableList;
 import hudson.util.VariableResolver;
-import jenkins.MasterToSlaveFileCallable;
-import jenkins.model.Jenkins;
-import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.cargo.container.Container;
@@ -34,7 +31,6 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.codehaus.cargo.generic.deployer.DefaultDeployerFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 /**
  * Provides container-specific glue code.
@@ -72,7 +68,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
     protected void deploy(DeployerFactory deployerFactory, final TaskListener listener, Container container, File f, String contextPath) {
         Deployer deployer = deployerFactory.createDeployer(container);
 
-        listener.getLogger().println("[DeployPublisher][INFO] Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
+        listener.getLogger().println("Deploying " + f + " to container " + container.getName() + " with context " + contextPath);
         deployer.setLogger(new LoggerImpl(listener.getLogger()));
 
 
@@ -132,7 +128,6 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
         return war.act(new MasterToSlaveFileCallable<Boolean>() {
             @Override
             public Boolean invoke(File f, VirtualChannel channel) throws IOException, InterruptedException {
-
                 ClassLoader cl = getClass().getClassLoader();
                 final ConfigurationFactory configFactory = new DefaultConfigurationFactory(cl);
                 final ContainerFactory containerFactory = new DefaultContainerFactory(cl);
@@ -140,8 +135,7 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
 
                 try {
                     final EnvVars envVars = build.getEnvironment(listener);
-                    envVars.putAll(globalEnvVars()); // gets global variables
-                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(envVars);
+                    final VariableResolver<String> resolver = new VariableResolver.ByMap<String>(build.getCharacteristicEnvVars());
                     Container container = getContainer(configFactory, containerFactory, getContainerId(), envVars, resolver);
                     deploy(deployerFactory, listener, container, f, expandVariable(envVars, resolver, contextPath));
                 } catch (InterruptedException e) {
@@ -151,13 +145,5 @@ public abstract class CargoContainerAdapter extends ContainerAdapter implements 
                 return true;
             }
         });
-    }
-
-    /**
-     * Collects the global Environment variables
-     * @return the list of globally configured environment variables
-     */
-    private EnvVars globalEnvVars () {
-        return Jenkins.getActiveInstance().getGlobalNodeProperties().get(EnvironmentVariablesNodeProperty.class).getEnvVars();
     }
 }
