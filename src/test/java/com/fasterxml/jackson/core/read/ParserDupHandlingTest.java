@@ -35,8 +35,16 @@ public class ParserDupHandlingTest
 
     public void testSimpleDupsBytes() throws Exception
     {
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/left.java
         JsonFactory dupF = JsonFactory.builder()
                 .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
+||||||| /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/base.java
+        JsonFactory dupF = new JsonFactory();
+=======
+        JsonFactory dupF = JsonFactory.builder()
+                .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                .build();
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/right.java
         for (String doc : DUP_DOCS) {
             _testSimpleDupsFail(doc, dupF, MODE_INPUT_STREAM, "a");
 
@@ -46,8 +54,16 @@ public class ParserDupHandlingTest
 
     public void testSimpleDupsDataInput() throws Exception
     {
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/left.java
         JsonFactory dupF = JsonFactory.builder()
                 .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
+||||||| /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/base.java
+        JsonFactory dupF = new JsonFactory();
+=======
+        JsonFactory dupF = JsonFactory.builder()
+                .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+                .build();
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/test/java/com/fasterxml/jackson/core/read/ParserDupHandlingTest.java/right.java
         for (String doc : DUP_DOCS) {
             _testSimpleDupsFail(doc, dupF, MODE_DATA_INPUT, "a");
         }

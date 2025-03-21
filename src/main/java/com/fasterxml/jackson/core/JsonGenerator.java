@@ -521,7 +521,13 @@ public abstract class JsonGenerator
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/left.java
         writeStartArray(array, length);
+||||||| /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/base.java
+        writeStartArray();
+=======
+        writeStartArray(array);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/right.java
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
@@ -543,7 +549,13 @@ public abstract class JsonGenerator
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/left.java
         writeStartArray(array, length);
+||||||| /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/base.java
+        writeStartArray();
+=======
+        writeStartArray(array);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/right.java
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
@@ -565,7 +577,13 @@ public abstract class JsonGenerator
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/left.java
         writeStartArray(array, length);
+||||||| /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/base.java
+        writeStartArray();
+=======
+        writeStartArray(array);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c082d7c444221a1c28da708d4476939f2eb1e5ca/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/right.java
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
