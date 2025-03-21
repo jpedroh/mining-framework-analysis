@@ -112,16 +112,16 @@ public final class DefaultUserAdmin implements UserAdmin {
     @Override
     public Mono<OrganizationUsers> listOrganizationUsers(ListOrganizationUsersRequest request) {
         return this.cloudFoundryClient
-            .flatMap(cloudFoundryClient -> Mono.zip(
+            .then(cloudFoundryClient -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getOrganizationId(cloudFoundryClient, request.getOrganizationName())
             ))
-            .flatMap(function((cloudFoundryClient, organizationId) -> Mono.zip(
+            .then(function((cloudFoundryClient, organizationId) -> Mono.when(
                 listOrganizationAuditorNames(cloudFoundryClient, organizationId),
                 listOrganizationBillingManagerNames(cloudFoundryClient, organizationId),
                 listOrganizationManagerNames(cloudFoundryClient, organizationId)
             )))
-            .flatMap(function(this::toOrganizationUsers))
+            .then(function(this::toOrganizationUsers))
             .transform(OperationsLogging.log("List Organization Users"))
             .checkpoint();
     }
@@ -150,17 +150,17 @@ public final class DefaultUserAdmin implements UserAdmin {
     @Override
     public Mono<Void> setOrganizationRole(SetOrganizationRoleRequest request) {
         return this.cloudFoundryClient
-            .flatMap(cloudFoundryClient -> Mono.zip(
+            .then(cloudFoundryClient -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getFeatureFlagEnabled(cloudFoundryClient, SET_ROLES_BY_USERNAME_FEATURE_FLAG)
             ))
             .filter(predicate((cloudFoundryClient, setRolesByUsernameEnabled) -> setRolesByUsernameEnabled))
             .switchIfEmpty(ExceptionUtils.illegalState("Setting roles by username is not enabled"))
-            .flatMap(function((cloudFoundryClient, ignore) -> Mono.zip(
+            .then(function((cloudFoundryClient, ignore) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getOrganizationId(cloudFoundryClient, request.getOrganizationName()))
             ))
-            .flatMap(function((cloudFoundryClient, organizationId) -> Mono.zip(
+            .then(function((cloudFoundryClient, organizationId) -> Mono.when(
                 requestAssociateOrganizationUserByUsername(cloudFoundryClient, organizationId, request),
                 associateOrganizationRole(cloudFoundryClient, organizationId, request))
             ))
@@ -199,17 +199,17 @@ public final class DefaultUserAdmin implements UserAdmin {
     @Override
     public Mono<Void> unsetOrganizationRole(UnsetOrganizationRoleRequest request) {
         return this.cloudFoundryClient
-            .flatMap(cloudFoundryClient -> Mono.zip(
+            .then(cloudFoundryClient -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getFeatureFlagEnabled(cloudFoundryClient, UNSET_ROLES_BY_USERNAME_FEATURE_FLAG)
             ))
             .filter(predicate((cloudFoundryClient, setRolesByUsernameEnabled) -> setRolesByUsernameEnabled))
             .switchIfEmpty(ExceptionUtils.illegalState("Unsetting roles by username is not enabled"))
-            .flatMap(function((cloudFoundryClient, ignore) -> Mono.zip(
+            .then(function((cloudFoundryClient, ignore) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getOrganizationId(cloudFoundryClient, request.getOrganizationName()))
             ))
-            .flatMap(function((cloudFoundryClient, organizationId) -> removeOrganizationRole(cloudFoundryClient, organizationId, request)))
+            .then(function((cloudFoundryClient, organizationId) -> removeOrganizationRole(cloudFoundryClient, organizationId, request)))
             .transform(OperationsLogging.log("Unset User Organization Role"))
             .then();
     }
