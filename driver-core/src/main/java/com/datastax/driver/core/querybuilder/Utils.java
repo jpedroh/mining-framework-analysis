@@ -176,7 +176,7 @@ abstract class Utils {
     @SuppressWarnings("rawtypes")
     private static boolean appendValueIfCollection(Object value, StringBuilder sb) {
         if (value instanceof List) {
-            appendList((List)value, sb);
+            appendList((List) value, sb);
             return true;
         } else if (value instanceof Set) {
             appendSet((Set)value, sb);
