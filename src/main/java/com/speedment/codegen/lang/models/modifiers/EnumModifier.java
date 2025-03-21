@@ -27,4 +27,54 @@ import com.speedment.codegen.lang.models.modifiers.Keyword.static_;
  * @param <T>
  */
 public interface EnumModifier<T extends EnumModifier<T>> 
+<<<<<<< /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/EnumModifier.java/left.java
 extends public_<T>, protected_<T>, private_<T>, static_<T> {}
+||||||| /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/EnumModifier.java/base.java
+extends public_<T>, protected_<T>, private_<T>, static_<T> {
+	default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+}
+=======
+extends public_<T>, protected_<T>, private_<T>, static_<T> {
+	@SuppressWarnings("unchecked")
+    default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+}
+>>>>>>> /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/EnumModifier.java/right.java

@@ -34,4 +34,120 @@ import com.speedment.codegen.lang.models.modifiers.Keyword.synchronized_;
  */
 public interface MethodModifier<T extends MethodModifier<T>> extends public_<T>, 
 protected_<T>, private_<T>, abstract_<T>, static_<T>, final_<T>, strictfp_<T>, 
+<<<<<<< /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/MethodModifier.java/left.java
 synchronized_<T>, native_<T>, default_<T> {}
+||||||| /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/MethodModifier.java/base.java
+synchronized_<T>, native_<T>, default_<T> {
+	default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+	default T abstract_() {
+		getModifiers().add(ABSTRACT);
+		return (T) this;
+	}
+	
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+	
+	default T final_() {
+		getModifiers().add(FINAL);
+		return (T) this;
+	}
+	
+	default T strictfp_() {
+		getModifiers().add(STRICTFP);
+		return (T) this;
+	}
+	
+	default T synchronized_() {
+		getModifiers().add(SYNCHRONIZED);
+		return (T) this;
+	}
+	
+	default T native_() {
+		getModifiers().add(NATIVE);
+		return (T) this;
+	}
+	
+	default T default_() {
+		getModifiers().add(DEFAULT);
+		return (T) this;
+	}
+}
+=======
+synchronized_<T>, native_<T>, default_<T> {
+	@SuppressWarnings("unchecked")
+    default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T abstract_() {
+		getModifiers().add(ABSTRACT);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+    
+	@SuppressWarnings("unchecked")
+	default T final_() {
+		getModifiers().add(FINAL);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T strictfp_() {
+		getModifiers().add(STRICTFP);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T synchronized_() {
+		getModifiers().add(SYNCHRONIZED);
+		return (T) this;
+	}
+    
+	@SuppressWarnings("unchecked")
+	default T native_() {
+		getModifiers().add(NATIVE);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T default_() {
+		getModifiers().add(DEFAULT);
+		return (T) this;
+	}
+}
+>>>>>>> /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/MethodModifier.java/right.java

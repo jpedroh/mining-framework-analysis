@@ -32,4 +32,98 @@ import com.speedment.codegen.lang.models.modifiers.Keyword.volatile_;
  */
 public interface FieldModifier<T extends FieldModifier<T>> 
 extends public_<T>, protected_<T>, private_<T>, static_<T>, final_<T>, 
+<<<<<<< /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/FieldModifier.java/left.java
 synchronized_<T>, transient_<T>, volatile_<T> {}
+||||||| /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/FieldModifier.java/base.java
+synchronized_<T>, transient_<T>, volatile_<T> {
+	default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+	
+	default T final_() {
+		getModifiers().add(FINAL);
+		return (T) this;
+	}
+
+	default T synchronized_() {
+		getModifiers().add(SYNCHRONIZED);
+		return (T) this;
+	}
+	
+	default T transient_() {
+		getModifiers().add(TRANSIENT);
+		return (T) this;
+	}
+	
+	default T volatile_() {
+		getModifiers().add(VOLATILE);
+		return (T) this;
+	}
+}
+=======
+synchronized_<T>, transient_<T>, volatile_<T> {
+	@SuppressWarnings("unchecked")
+    default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T protected_() {
+		getModifiers().add(PROTECTED);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T private_() {
+		getModifiers().add(PRIVATE);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T static_() {
+		getModifiers().add(STATIC);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T final_() {
+		getModifiers().add(FINAL);
+		return (T) this;
+	}
+
+    @SuppressWarnings("unchecked")
+	default T synchronized_() {
+		getModifiers().add(SYNCHRONIZED);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T transient_() {
+		getModifiers().add(TRANSIENT);
+		return (T) this;
+	}
+	
+    @SuppressWarnings("unchecked")
+	default T volatile_() {
+		getModifiers().add(VOLATILE);
+		return (T) this;
+	}
+}
+>>>>>>> /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/FieldModifier.java/right.java

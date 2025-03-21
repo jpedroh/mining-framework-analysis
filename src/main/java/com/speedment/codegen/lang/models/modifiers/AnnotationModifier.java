@@ -20,8 +20,25 @@ import com.speedment.codegen.lang.models.modifiers.Keyword.public_;
 
 /**
  *
- * @author Duncan
+ * @author Emil Forslund
  * @param <T>
  */
 public interface AnnotationModifier<T extends AnnotationModifier<T>> 
+<<<<<<< /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/AnnotationModifier.java/left.java
 extends public_<T> {}
+||||||| /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/AnnotationModifier.java/base.java
+extends public_<T> {
+	default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+}
+=======
+extends public_<T> {
+	@SuppressWarnings("unchecked")
+    default T public_() {
+		getModifiers().add(PUBLIC);
+		return (T) this;
+	}
+}
+>>>>>>> /usr/src/app/output/pyknic/codegen/e303235d2e0f90a3ce6a72974a8de27ec144599a/src/main/java/com/speedment/codegen/lang/models/modifiers/AnnotationModifier.java/right.java
