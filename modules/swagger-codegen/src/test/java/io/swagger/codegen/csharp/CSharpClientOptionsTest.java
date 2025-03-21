@@ -31,4 +31,25 @@ public class CSharpClientOptionsTest extends AbstractOptionsTest {
             times = 1;
         }};
     }
+<<<<<<< /usr/src/app/output/wordnik/swagger-codegen/6b4aaf8ada78a8a55d0488d820085fb024b1a364/modules/swagger-codegen/src/test/java/io/swagger/codegen/csharp/CSharpClientOptionsTest.java/left.java
+
+    @Override
+    protected Map<String, String> getAvaliableOptions() {
+        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+        return builder.put(CodegenConstants.PACKAGE_NAME, PACKAGE_NAME_VALUE)
+                .put(CodegenConstants.PACKAGE_VERSION, PACKAGE_VERSION_VALUE)
+                .put(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG, "true")
+                .build();
+    }
+||||||| /usr/src/app/output/wordnik/swagger-codegen/6b4aaf8ada78a8a55d0488d820085fb024b1a364/modules/swagger-codegen/src/test/java/io/swagger/codegen/csharp/CSharpClientOptionsTest.java/base.java
+
+    @Override
+    protected Map<String, String> getAvaliableOptions() {
+        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+        return builder.put(CodegenConstants.PACKAGE_NAME, PACKAGE_NAME_VALUE)
+                .put(CodegenConstants.PACKAGE_VERSION, PACKAGE_VERSION_VALUE)
+                .build();
+    }
+=======
+>>>>>>> /usr/src/app/output/wordnik/swagger-codegen/6b4aaf8ada78a8a55d0488d820085fb024b1a364/modules/swagger-codegen/src/test/java/io/swagger/codegen/csharp/CSharpClientOptionsTest.java/right.java
 }
