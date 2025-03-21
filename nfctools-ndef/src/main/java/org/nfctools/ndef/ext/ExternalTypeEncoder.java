@@ -20,9 +20,11 @@ import java.util.Map;
 
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
+import org.nfctools.ndef.NdefException;
 import org.nfctools.ndef.NdefMessageEncoder;
 import org.nfctools.ndef.NdefRecord;
 import org.nfctools.ndef.Record;
+import org.nfctools.ndef.wkt.WellKnownRecordConfig;
 import org.nfctools.ndef.wkt.encoder.RecordEncoder;
 
 public class ExternalTypeEncoder implements RecordEncoder {
@@ -38,10 +40,15 @@ public class ExternalTypeEncoder implements RecordEncoder {
 	public NdefRecord encodeRecord(Record record, NdefMessageEncoder messageEncoder) {
 		ExternalTypeRecord externalType = (ExternalTypeRecord)record;
 		
+<<<<<<< /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/main/java/org/nfctools/ndef/ext/ExternalTypeEncoder.java/left.java
 		if(!externalType.hasNamespace()) {
 			throw new NdefEncoderException("Expected namespace", record);
 		}
-		
+		if(!externalType.hasContent()) {
+			throw new NdefEncoderException("Expected content", record);
+		}
+||||||| /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/main/java/org/nfctools/ndef/ext/ExternalTypeEncoder.java/base.java
+=======
 		ExternalTypeRecordConfig config = externalRecordTypes.get(record.getClass());
 		
 		byte[] payload;
@@ -49,15 +56,11 @@ public class ExternalTypeEncoder implements RecordEncoder {
 			payload = config.getContentEncoder().encodeContent(externalType).getBytes(NdefConstants.DEFAULT_CHARSET);
 		} else if(externalType instanceof UnsupportedExternalTypeRecord){
 			UnsupportedExternalTypeRecord externalTypeUnsupportedRecord = (UnsupportedExternalTypeRecord)externalType;
-			
-			if(!externalTypeUnsupportedRecord.hasContent()) {
-				throw new NdefEncoderException("Expected content", record);
-			}
-
 			payload = externalTypeUnsupportedRecord.getContent().getBytes(NdefConstants.DEFAULT_CHARSET);
 		} else {
 			throw new IllegalArgumentException("Unable to encode external type " + externalType.getClass().getName()); // TODO change to ndef exception
 		}
+>>>>>>> /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/main/java/org/nfctools/ndef/ext/ExternalTypeEncoder.java/right.java
 		byte[] type = externalType.getNamespace().getBytes(NdefConstants.DEFAULT_CHARSET);
 		return new NdefRecord(NdefConstants.TNF_EXTERNAL_TYPE, type, record.getId(), payload);
 	}

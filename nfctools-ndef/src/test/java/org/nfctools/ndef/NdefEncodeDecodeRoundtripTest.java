@@ -96,12 +96,18 @@ public class NdefEncodeDecodeRoundtripTest {
 			collisionResolutionRecord, errorRecord,
 			alternativeCarrierRecord, handoverSelectRecord, handoverCarrierRecord, handoverRequestRecord,
 			
+<<<<<<< /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/test/java/org/nfctools/ndef/NdefEncodeDecodeRoundtripTest.java/left.java
 			signatureRecordMarker, signatureRecord,
 			
-			unsupportedRecord,
+			unsupportedRecord
+||||||| /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/test/java/org/nfctools/ndef/NdefEncodeDecodeRoundtripTest.java/base.java
+			signatureRecordMarker, signatureRecord
+=======
+			signatureRecordMarker, signatureRecord,
+			
 			addressInformationGeoRecord, coordinatesGeoRecord
+>>>>>>> /usr/src/app/output/grundid/nfctools/15659385c0127435a9d7ed840ff8f444d3d63053/nfctools-ndef/src/test/java/org/nfctools/ndef/NdefEncodeDecodeRoundtripTest.java/right.java
 			};
-
 
 	static {
 		// handover request record requires at least on alternative carrier record
@@ -138,6 +144,8 @@ public class NdefEncodeDecodeRoundtripTest {
 			Record decodedRecord = ndefMessageDecoder.decodeToRecord(ndef);
 
 			if(!record.equals(decodedRecord)) {
+				record.equals(decodedRecord);
+				
 				fail(record.getClass().getName());
 			}
 		}

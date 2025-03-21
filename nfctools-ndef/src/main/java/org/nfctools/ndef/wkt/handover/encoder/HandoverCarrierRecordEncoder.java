@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import org.nfctools.ndef.NdefConstants;
 import org.nfctools.ndef.NdefEncoderException;
 import org.nfctools.ndef.NdefMessageEncoder;
-import org.nfctools.ndef.ext.ExternalTypeRecord;
 import org.nfctools.ndef.ext.UnsupportedExternalTypeRecord;
 import org.nfctools.ndef.wkt.WellKnownRecordPayloadEncoder;
 import org.nfctools.ndef.wkt.handover.records.HandoverCarrierRecord;
@@ -85,8 +84,8 @@ public class HandoverCarrierRecordEncoder implements WellKnownRecordPayloadEncod
 			}
 			case External: {
 				// NFC Forum external type [NFC RTD]
-				if (carrierType instanceof ExternalTypeRecord) {
-					ExternalTypeRecord externalTypeRecord = (ExternalTypeRecord)carrierType;
+				if (carrierType instanceof UnsupportedExternalTypeRecord) {
+					UnsupportedExternalTypeRecord externalTypeRecord = (UnsupportedExternalTypeRecord)carrierType;
 
 					encoded = messageEncoder.encodeSingle(externalTypeRecord);
 
