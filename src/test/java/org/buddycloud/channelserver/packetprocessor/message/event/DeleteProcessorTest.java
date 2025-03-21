@@ -1,12 +1,9 @@
 package org.buddycloud.channelserver.packetprocessor.message.event;
-
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import junit.framework.Assert;
-
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
 import org.buddycloud.channelserver.db.exception.NodeStoreException;
@@ -26,70 +23,50 @@ import org.xmpp.packet.Packet;
 import org.xmpp.resultsetmanagement.ResultSetImpl;
 
 public class DeleteProcessorTest extends IQTestHandler {
-	private Message message;
-	private DeleteProcessor deleteProcessor;
-	private Element delete;
+  private Message message;
 
-	private BlockingQueue<Packet> queue = new LinkedBlockingQueue<Packet>();
-	private ChannelManager channelManager;
+  private DeleteProcessor deleteProcessor;
 
-	private JID jid = new JID("juliet@shakespeare.lit");
+  private Element delete;
 
-	@Before
-	public void setUp() throws Exception {
+  private BlockingQueue<Packet> queue = new LinkedBlockingQueue<Packet>();
 
-		Properties configuration = new Properties();
-		configuration.setProperty("server.domain.channels",
-				"chgnnels.shakespeare.lit");
+  private ChannelManager channelManager;
 
-		channelManager = Mockito.mock(ChannelManager.class);
-		Configuration.getInstance().remove(
-				Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
-		Configuration.getInstance().putProperty(
-				Configuration.CONFIGURATION_SERVER_DOMAIN, "shakespeare.lit");
+  private JID jid = new JID("juliet@shakespeare.lit");
 
-		ArrayList<NodeMembership> members = new ArrayList<NodeMembership>();
-		members.add(new NodeMembershipImpl(
-				"/user/romeo@denmark.lit/posts", jid,
-				Subscriptions.subscribed, Affiliations.member, null));
-		Mockito.doReturn(new ResultSetImpl<NodeMembership>(members))
-				.when(channelManager).getNodeMemberships(Mockito.anyString());
+  @Before public void setUp() throws Exception {
+    Properties configuration = new Properties();
+    configuration.setProperty("server.domain.channels", "chgnnels.shakespeare.lit");
+    channelManager = Mockito.mock(ChannelManager.class);
+    Configuration.getInstance().remove(Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
+    Configuration.getInstance().putProperty(Configuration.CONFIGURATION_SERVER_DOMAIN, "shakespeare.lit");
+    ArrayList<NodeMembership> members = new ArrayList<NodeMembership>();
+    members.add(new NodeMembershipImpl("/user/romeo@denmark.lit/posts", jid, Subscriptions.subscribed, Affiliations.member, null));
+    Mockito.doReturn(new ResultSetImpl<NodeMembership>(members)).when(channelManager).getNodeMemberships(Mockito.anyString());
+    deleteProcessor = new DeleteProcessor(queue, configuration, channelManager);
+    message = new Message();
+    message.setType(Message.Type.headline);
+    Element event = message.addChildElement("event", JabberPubsub.NS_PUBSUB_EVENT);
+    delete = event.addElement("delete");
+    delete.addAttribute("node", "/user/juliet@denmark.lit/posts");
+  }
 
-		deleteProcessor = new DeleteProcessor(queue, configuration,
-				channelManager);
+  @Test public void testEventForLocalNodeIsIgnored() throws Exception {
+    Configuration.getInstance().putProperty(Configuration.CONFIGURATION_SERVER_DOMAIN, "denmark.lit");
+    deleteProcessor.process(message);
+    Assert.assertEquals(0, queue.size());
+  }
 
-		message = new Message();
-		message.setType(Message.Type.headline);
-		Element event = message.addChildElement("event",
-				JabberPubsub.NS_PUBSUB_EVENT);
+  @Test(expected = NodeStoreException.class) public void testNodeStoreExceptionIsThrownWhenExpected() throws Exception {
+    Mockito.doThrow(new NodeStoreException()).when(channelManager).deleteNode(Mockito.anyString());
+    deleteProcessor.process(message);
+  }
 
-		delete = event.addElement("delete");
-		delete.addAttribute("node", "/user/juliet@denmark.lit/posts");
-	}
-
-	@Test
-	public void testEventForLocalNodeIsIgnored() throws Exception {
-		Configuration.getInstance().putProperty(
-				Configuration.CONFIGURATION_SERVER_DOMAIN, "denmark.lit");
-		deleteProcessor.process(message);
-		Assert.assertEquals(0, queue.size());
-	}
-
-	@Test(expected = NodeStoreException.class)
-	public void testNodeStoreExceptionIsThrownWhenExpected() throws Exception {
-
-		Mockito.doThrow(new NodeStoreException()).when(channelManager)
-				.deleteNode(Mockito.anyString());
-		deleteProcessor.process(message);
-	}
-
-	@Test
-	public void testNotificationsAreSentOutAsExpected() throws Exception {
-
-		deleteProcessor.process(message);
-
-		Assert.assertEquals(1, queue.size());
-		message.setTo(jid.toString());
-		Assert.assertEquals(message.toString(), queue.poll().toString());
-	}
+  @Test public void testNotificationsAreSentOutAsExpected() throws Exception {
+    deleteProcessor.process(message);
+    Assert.assertEquals(1, queue.size());
+    message.setTo(jid.toString());
+    Assert.assertEquals(message.toString(), queue.poll().toString());
+  }
 }

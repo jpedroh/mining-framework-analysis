@@ -1,7 +1,5 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.result;
-
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
@@ -15,65 +13,53 @@ import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 
 public class SubscriptionsResult extends PubSubElementProcessorAbstract {
+  private IQ request;
 
-    private IQ request;
-    private boolean ownerRequest;
-    private String lastNode = "";
+  private boolean ownerRequest;
 
-    private static final Logger logger = Logger.getLogger(SubscriptionsResult.class);
+  private String lastNode = "";
 
-    public SubscriptionsResult(ChannelManager channelManager) {
-        this.channelManager = channelManager;
+  private static final Logger logger = Logger.getLogger(SubscriptionsResult.class);
+
+  public SubscriptionsResult(ChannelManager channelManager) {
+    this.channelManager = channelManager;
+  }
+
+  @Override public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+    this.request = reqIQ;
+    if (-1 != request.getFrom().toString().indexOf("@")) {
+      logger.debug("Ignoring result packet, only interested in stanzas " + "from other buddycloud servers");
+      return;
     }
-
-    @Override
-    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
-        this.request = reqIQ;
-
-        if (-1 != request.getFrom().toString().indexOf("@")) {
-            logger.debug("Ignoring result packet, only interested in stanzas " + "from other buddycloud servers");
-            return;
-        }
-
-        ownerRequest = ((null == node) || (true == node.equals("")));
-
-        @SuppressWarnings("unchecked")
-        List<Element> subscriptions = request.getElement().element("pubsub").element("subscriptions").elements("subscription");
-
-        for (Element subscription : subscriptions) {
-            addSubscription(subscription);
-        }
+    ownerRequest = ((null == node) || (true == node.equals("")));
+    @SuppressWarnings(value = { "unchecked" }) List<Element> subscriptions = request.getElement().element("pubsub").element("subscriptions").elements("subscription");
+    for (Element subscription : subscriptions) {
+      addSubscription(subscription);
     }
+  }
 
-    private void addSubscription(Element subscription) throws NodeStoreException {
-
-        if (true == ownerRequest) {
-            node = subscription.attributeValue("node");
-        }
-
-        if ((false == lastNode.equals(node)) && (false == channelManager.nodeExists(node))) {
-            channelManager.addRemoteNode(node);
-        }
-
-        JID jid = new JID(subscription.attributeValue("jid"));
-
-        JID listener = request.getFrom();
-        if (Configuration.getInstance().isLocalJID(jid)) {
-            listener = jid;
-        }
-        JID invitedBy = null;
-        if (null != subscription.attributeValue("invited-by")) {
-            invitedBy = new JID(subscription.attributeValue("invited-by"));
-        }
-
-        NodeSubscription nodeSubscription =
-                new NodeSubscriptionImpl(node, jid, listener, Subscriptions.createFromString(subscription.attributeValue("subscription")), invitedBy);
-        channelManager.addUserSubscription(nodeSubscription);
-        lastNode = node;
+  private void addSubscription(Element subscription) throws NodeStoreException {
+    if (true == ownerRequest) {
+      node = subscription.attributeValue("node");
     }
-
-    @Override
-    public boolean accept(Element elm) {
-        return elm.getName().equals("subscriptions");
+    if ((false == lastNode.equals(node)) && (false == channelManager.nodeExists(node))) {
+      channelManager.addRemoteNode(node);
     }
+    JID jid = new JID(subscription.attributeValue("jid"));
+    JID listener = request.getFrom();
+    if (Configuration.getInstance().isLocalJID(jid)) {
+      listener = jid;
+    }
+    JID invitedBy = null;
+    if (null != subscription.attributeValue("invited-by")) {
+      invitedBy = new JID(subscription.attributeValue("invited-by"));
+    }
+    NodeSubscription nodeSubscription = new NodeSubscriptionImpl(node, jid, listener, Subscriptions.createFromString(subscription.attributeValue("subscription")), invitedBy);
+    channelManager.addUserSubscription(nodeSubscription);
+    lastNode = node;
+  }
+
+  @Override public boolean accept(Element elm) {
+    return elm.getName().equals("subscriptions");
+  }
 }

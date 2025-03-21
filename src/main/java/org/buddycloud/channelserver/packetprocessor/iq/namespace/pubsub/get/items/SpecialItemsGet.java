@@ -1,7 +1,5 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.get.items;
-
 import java.util.concurrent.BlockingQueue;
-
 import org.buddycloud.channelserver.channel.ChannelManager;
 import org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.PubSubElementProcessor;
 import org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.PubSubElementProcessorAbstract;
@@ -13,35 +11,32 @@ import org.xmpp.packet.Packet;
 import org.xmpp.packet.PacketError;
 
 public class SpecialItemsGet extends PubSubElementProcessorAbstract {
+  private static final String FIREHOSE = "/firehose";
 
-    private static final String FIREHOSE = "/firehose";
+  public SpecialItemsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
+    setChannelManager(channelManager);
+    setOutQueue(outQueue);
+  }
 
-    public SpecialItemsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
-        setChannelManager(channelManager);
-        setOutQueue(outQueue);
+  @Override public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+    request = reqIQ;
+    PubSubElementProcessor processor = null;
+    node = elm.attributeValue("node");
+    if (true == FIREHOSE.equals(node)) {
+      processor = new FirehoseGet(outQueue, channelManager);
+    } else {
+      featureNotImplementedError();
+      return;
     }
+    processor.process(elm, actorJID, reqIQ, rsm);
+  }
 
-    @Override
-    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
-        request = reqIQ;
-        PubSubElementProcessor processor = null;
-        node = elm.attributeValue("node");
-        if (true == FIREHOSE.equals(node)) {
-            processor = new FirehoseGet(outQueue, channelManager);
-        } else {
-            featureNotImplementedError();
-            return;
-        }
-        processor.process(elm, actorJID, reqIQ, rsm);
-    }
+  private void featureNotImplementedError() throws InterruptedException {
+    setErrorCondition(PacketError.Type.cancel, PacketError.Condition.feature_not_implemented);
+    outQueue.put(response);
+  }
 
-    private void featureNotImplementedError() throws InterruptedException {
-        setErrorCondition(PacketError.Type.cancel, PacketError.Condition.feature_not_implemented);
-        outQueue.put(response);
-    }
-
-    @Override
-    public boolean accept(Element elm) {
-        return elm.getName().equals("items");
-    }
+  @Override public boolean accept(Element elm) {
+    return elm.getName().equals("items");
+  }
 }

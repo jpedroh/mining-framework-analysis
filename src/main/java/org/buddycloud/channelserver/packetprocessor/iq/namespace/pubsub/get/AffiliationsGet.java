@@ -1,7 +1,5 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.get;
-
 import java.util.concurrent.BlockingQueue;
-
 import org.apache.log4j.Logger;
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
@@ -20,164 +18,139 @@ import org.xmpp.packet.Packet;
 import org.xmpp.resultsetmanagement.ResultSet;
 
 public class AffiliationsGet implements PubSubElementProcessor {
+  private final BlockingQueue<Packet> outQueue;
 
-	private final BlockingQueue<Packet> outQueue;
-	private final ChannelManager channelManager;
+  private final ChannelManager channelManager;
 
-	private IQ requestIq;
-	private String node;
-	private JID actorJid;
-	private IQ result;
-	private String firstItem;
+  private IQ requestIq;
 
-	private static final Logger logger = Logger
-			.getLogger(AffiliationsGet.class);
+  private String node;
 
-	public AffiliationsGet(BlockingQueue<Packet> outQueue,
-			ChannelManager channelManager) {
-		this.outQueue = outQueue;
-		this.channelManager = channelManager;
-	}
+  private JID actorJid;
 
-	@Override
-	public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm)
-			throws Exception {
-		result = IQ.createResultIQ(reqIQ);
-		requestIq = reqIQ;
-		actorJid = actorJID;
-		node = elm.attributeValue("node");
+  private IQ result;
 
-		if (false == Configuration.getInstance().isLocalJID(requestIq.getFrom())) {
-			result.getElement().addAttribute("remote-server-discover", "false");
-		}
-		String namespace = JabberPubsub.NS_PUBSUB_OWNER;
-		if (node == null) {
-			namespace = JabberPubsub.NAMESPACE_URI;
-		}
+  private String firstItem;
 
-		Element pubsub = result.setChildElement(PubSubGet.ELEMENT_NAME,
-				namespace);
-		Element affiliations = pubsub.addElement("affiliations");
+  private static final Logger logger = Logger.getLogger(AffiliationsGet.class);
 
-		if (actorJid == null) {
-			actorJid = requestIq.getFrom();
-		}
+  public AffiliationsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
+    this.outQueue = outQueue;
+    this.channelManager = channelManager;
+  }
 
-		boolean isProcessedLocally = true;
-		if (node == null) {
-			isProcessedLocally = getUserMemberships(affiliations);
-		} else {
-			isProcessedLocally = getNodeAffiliations(affiliations);
-		}
-		if (false == isProcessedLocally) return;
-			
-		outQueue.put(result);
-	}
+  @Override public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+    result = IQ.createResultIQ(reqIQ);
+    requestIq = reqIQ;
+    actorJid = actorJID;
+    node = elm.attributeValue("node");
+    if (false == Configuration.getInstance().isLocalJID(requestIq.getFrom())) {
+      result.getElement().addAttribute("remote-server-discover", "false");
+    }
+    String namespace = JabberPubsub.NS_PUBSUB_OWNER;
+    if (node == null) {
+      namespace = JabberPubsub.NAMESPACE_URI;
+    }
+    Element pubsub = result.setChildElement(PubSubGet.ELEMENT_NAME, namespace);
+    Element affiliations = pubsub.addElement("affiliations");
+    if (actorJid == null) {
+      actorJid = requestIq.getFrom();
+    }
+    boolean isProcessedLocally = true;
+    if (node == null) {
+      isProcessedLocally = getUserMemberships(affiliations);
+    } else {
+      isProcessedLocally = getNodeAffiliations(affiliations);
+    }
+    if (false == isProcessedLocally) {
+      return;
+    }
+    outQueue.put(result);
+  }
 
-	private boolean getNodeAffiliations(Element affiliations)
-			throws NodeStoreException, InterruptedException {
-		if (false == Configuration.getInstance().isLocalNode(node)
-				&& (false == channelManager.isCachedNode(node))) {
-			makeRemoteRequest(node.split("/")[2]);
-			return false;
-		}
-		ResultSet<NodeMembership> nodeMemberships;
-		nodeMemberships = channelManager.getNodeMemberships(node);
-		
-		if ((0 == nodeMemberships.size())
-			&& (false == Configuration.getInstance().isLocalNode(node))) {
-			makeRemoteRequest(node.split("/")[2]);
-			return false;
-		}
-		
-		boolean isOwnerModerator = isOwnerModerator();
-		
-		for (NodeMembership nodeMembership : nodeMemberships) {
+  private boolean getNodeAffiliations(Element affiliations) throws NodeStoreException, InterruptedException {
+    if (false == Configuration.getInstance().isLocalNode(node) && (false == channelManager.isCachedNode(node))) {
+      makeRemoteRequest(node.split("/")[2]);
+      return false;
+    }
+    ResultSet<NodeMembership> nodeMemberships;
+    nodeMemberships = channelManager.getNodeMemberships(node);
+    if ((0 == nodeMemberships.size()) && (false == Configuration.getInstance().isLocalNode(node))) {
+      makeRemoteRequest(node.split("/")[2]);
+      return false;
+    }
+    boolean isOwnerModerator = isOwnerModerator();
+    for (NodeMembership nodeMembership : nodeMemberships) {
+      if (false == actorJid.toBareJID().equals(nodeMembership.getUser())) {
+        if ((false == isOwnerModerator) && nodeMembership.getAffiliation().in(Affiliations.outcast, Affiliations.none)) {
+          continue;
+        }
+        if ((false == isOwnerModerator) && !nodeMembership.getSubscription().equals(Subscriptions.subscribed)) {
+          continue;
+        }
+      }
+      logger.trace("Adding affiliation for " + nodeMembership.getUser() + " affiliation " + nodeMembership.getAffiliation());
+      if (null == firstItem) {
+        firstItem = nodeMembership.getUser().toString();
+      }
 
-			if (false == actorJid.toBareJID().equals(nodeMembership.getUser())) {
-				if ((false == isOwnerModerator) && nodeMembership.getAffiliation().in(Affiliations.outcast, Affiliations.none)) {
-					continue;
-				}
-				if ((false == isOwnerModerator) && !nodeMembership.getSubscription().equals(Subscriptions.subscribed)) {
-					continue;
-				}
-			}
-			logger.trace("Adding affiliation for " + nodeMembership.getUser()
-					+ " affiliation " + nodeMembership.getAffiliation());
-			
-			if (null == firstItem) {
-				firstItem = nodeMembership.getUser().toString();
-			}
-			
-			affiliations
-					.addElement("affiliation")
-					.addAttribute("node", nodeMembership.getNodeId())
-					.addAttribute("affiliation",
-							nodeMembership.getAffiliation().toString())
-					.addAttribute("jid", nodeMembership.getUser().toString());
-		}
-		return true;
-	}
-	
-	private boolean isOwnerModerator() throws NodeStoreException {
-		return channelManager.getNodeMembership(node,
-				actorJid).getAffiliation().canAuthorize();
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      nodeMembership.getUser().toString();
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
 
-	private boolean getUserMemberships(Element affiliations)
-			throws NodeStoreException, InterruptedException {
-		
-		if (false == Configuration.getInstance().isLocalJID(actorJid)
-				&& (false == channelManager.isCachedJID(requestIq.getFrom()))) {
-			makeRemoteRequest(actorJid.getDomain());
-			return false;
-		}
-		
-		ResultSet<NodeMembership> memberships;
-		memberships = channelManager.getUserMemberships(actorJid);
-		boolean isOwnerModerator = isOwnerModerator();
-		
-		for (NodeMembership membership : memberships) {
+      affiliations.addElement("affiliation").addAttribute("node", nodeMembership.getNodeId()).addAttribute("affiliation", nodeMembership.getAffiliation().toString()).addAttribute("jid", nodeMembership.getUser().toString());
+    }
+    return true;
+  }
 
-			if (false == actorJid.toBareJID().equals(membership.getUser())) {
-				if ((false == isOwnerModerator) && membership.getAffiliation().in(Affiliations.outcast, Affiliations.none)) {
-					continue;
-				}
-				if ((false == isOwnerModerator) && !membership.getSubscription().equals(Subscriptions.subscribed)) {
-					continue;
-				}
-			}
-			logger.trace("Adding affiliation for " + membership.getUser()
-					+ " affiliation " + membership.getAffiliation()
-					+ " (no node provided)");
-			
-			if (null == firstItem) {
-				firstItem = membership.getNodeId();
-			}
-			
-			affiliations
-					.addElement("affiliation")
-					.addAttribute("node", membership.getNodeId())
-					.addAttribute("affiliation",
-							membership.getAffiliation().toString())
-					.addAttribute("jid", membership.getUser().toBareJID());
-		}
-		return true;
-	}
+  private boolean isOwnerModerator() throws NodeStoreException {
+    return channelManager.getNodeMembership(node, actorJid).getAffiliation().canAuthorize();
+  }
 
-	private void makeRemoteRequest(String node) throws InterruptedException {
-		logger.info("Going federated for <affiliations />");
-		requestIq.setTo(new JID(node).getDomain());
-		if (null == requestIq.getElement().element("pubsub").element("actor")) {
-		    Element actor = requestIq.getElement().element("pubsub")
-				.addElement("actor", Buddycloud.NS);
-		    actor.addText(requestIq.getFrom().toBareJID());
-		}
-		outQueue.put(requestIq);
-	}
+  private boolean getUserMemberships(Element affiliations) throws NodeStoreException, InterruptedException {
+    if (false == Configuration.getInstance().isLocalJID(actorJid) && (false == channelManager.isCachedJID(requestIq.getFrom()))) {
+      makeRemoteRequest(actorJid.getDomain());
+      return false;
+    }
+    ResultSet<NodeMembership> memberships;
+    memberships = channelManager.getUserMemberships(actorJid);
+    boolean isOwnerModerator = isOwnerModerator();
+    for (NodeMembership membership : memberships) {
+      if (false == actorJid.toBareJID().equals(membership.getUser())) {
+        if ((false == isOwnerModerator) && membership.getAffiliation().in(Affiliations.outcast, Affiliations.none)) {
+          continue;
+        }
+        if ((false == isOwnerModerator) && !membership.getSubscription().equals(Subscriptions.subscribed)) {
+          continue;
+        }
+      }
+      logger.trace("Adding affiliation for " + membership.getUser() + " affiliation " + membership.getAffiliation() + " (no node provided)");
+      if (null == firstItem) {
+        firstItem = membership.getNodeId();
+      }
 
-	@Override
-	public boolean accept(Element elm) {
-		return elm.getName().equals("affiliations");
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      membership.getNodeId();
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
+
+      affiliations.addElement("affiliation").addAttribute("node", membership.getNodeId()).addAttribute("affiliation", membership.getAffiliation().toString()).addAttribute("jid", membership.getUser().toBareJID());
+    }
+    return true;
+  }
+
+  private void makeRemoteRequest(String node) throws InterruptedException {
+    logger.info("Going federated for <affiliations />");
+    requestIq.setTo(new JID(node).getDomain());
+    if (null == requestIq.getElement().element("pubsub").element("actor")) {
+      Element actor = requestIq.getElement().element("pubsub").addElement("actor", Buddycloud.NS);
+      actor.addText(requestIq.getFrom().toBareJID());
+    }
+    outQueue.put(requestIq);
+  }
+
+  @Override public boolean accept(Element elm) {
+    return elm.getName().equals("affiliations");
+  }
 }

@@ -1,11 +1,11 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.discoitems;
-
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-
 import org.apache.log4j.Logger;
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
+import org.buddycloud.channelserver.channel.LocalDomainChecker;
 import org.buddycloud.channelserver.db.exception.NodeStoreException;
 import org.buddycloud.channelserver.packetprocessor.PacketProcessor;
 import org.buddycloud.channelserver.packetprocessor.iq.namespace.discoinfo.DiscoInfoGet;
@@ -18,57 +18,62 @@ import org.xmpp.packet.PacketError.Condition;
 import org.xmpp.packet.PacketError.Type;
 
 public class DiscoItemsGet implements PacketProcessor<IQ> {
+  public static final String ELEMENT_NAME = "query";
 
-    public static final String ELEMENT_NAME = "query";
-    private static final Logger logger = Logger.getLogger(DiscoInfoGet.class);
-    private final BlockingQueue<Packet> outQueue;
-    private IQ requestIq;
-    private IQ response;
+  private static final Logger logger = Logger.getLogger(DiscoInfoGet.class);
 
-    private ChannelManager channelManager;
+  private final BlockingQueue<Packet> outQueue;
 
-    public DiscoItemsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager, FederatedQueueManager federatedQueueManager) {
-        this.outQueue = outQueue;
-        this.channelManager = channelManager;
+  private IQ requestIq;
+
+  private IQ response;
+
+  private ChannelManager channelManager;
+
+  public DiscoItemsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager, FederatedQueueManager federatedQueueManager) {
+    this.outQueue = outQueue;
+    this.channelManager = channelManager;
+  }
+
+  @Override public void process(IQ reqIQ) throws Exception {
+    this.requestIq = reqIQ;
+    this.response = IQ.createResultIQ(this.requestIq);
+    try {
+      if (null == requestIq.getElement().element("query").attributeValue("node")) {
+        addItems();
+      } else {
+        setErrorCondition(PacketError.Type.cancel, PacketError.Condition.feature_not_implemented);
+      }
+    } catch (NodeStoreException e) {
+      logger.error(e);
+      setErrorCondition(PacketError.Type.wait, PacketError.Condition.internal_server_error);
     }
+    outQueue.add(response);
+  }
 
-    @Override
-    public void process(IQ reqIQ) throws Exception {
-        this.requestIq = reqIQ;
+  private void addItems() throws NodeStoreException {
+    List<String> nodes = channelManager.getLocalNodesList();
+    String jid = Configuration.getInstance().getProperty(Configuration.CONFIGURATION_SERVER_CHANNELS_DOMAIN);
+    Element query = response.getElement().addElement("query");
+    query.addNamespace("", JabberDiscoItems.NAMESPACE_URI);
+    for (String node : nodes) {
 
-        this.response = IQ.createResultIQ(this.requestIq);
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      if (false == isLocalNode(node)) {
+        continue;
+      }
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/discoitems/DiscoItemsGet.java/right.java
 
-        try {
-            if (null == requestIq.getElement().element("query").attributeValue("node")) {
-                addItems();
-            } else {
-                setErrorCondition(PacketError.Type.cancel, PacketError.Condition.feature_not_implemented);
-            }
-        } catch (NodeStoreException e) {
-            logger.error(e);
-            setErrorCondition(PacketError.Type.wait, PacketError.Condition.internal_server_error);
-        }
-        outQueue.add(response);
+      Element item = query.addElement("item");
+      item.addAttribute("node", node);
+      item.addAttribute("jid", jid);
     }
+  }
 
-	private void addItems() throws NodeStoreException {
-		List<String> nodes = channelManager.getLocalNodesList();
-
-		String jid = Configuration.getInstance()
-		    .getProperty(Configuration.CONFIGURATION_SERVER_CHANNELS_DOMAIN);
-		
-		Element query = response.getElement().addElement("query");
-		query.addNamespace("", JabberDiscoItems.NAMESPACE_URI);
-		for (String node : nodes) {
-			Element item = query.addElement("item");
-			item.addAttribute("node", node);
-			item.addAttribute("jid", jid);
-		}
-	}
-
-    private void setErrorCondition(Type type, Condition condition) {
-        response.setType(IQ.Type.error);
-        PacketError error = new PacketError(condition, type);
-        response.setError(error);
-    }
+  private void setErrorCondition(Type type, Condition condition) {
+    response.setType(IQ.Type.error);
+    PacketError error = new PacketError(condition, type);
+    response.setError(error);
+  }
 }
