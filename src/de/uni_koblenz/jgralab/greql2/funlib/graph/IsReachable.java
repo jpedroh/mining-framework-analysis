@@ -68,9 +68,12 @@ public class IsReachable extends Function {
 			Vertex v, NFA nfa) {
 		return evaluate(evaluator, u, v, nfa.getDFA());
 	}
-
 	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
 			Vertex v, DFA dfa) {
+		return evaluate(u, v, nfa.getDFA());
+	}
+
+	public Boolean evaluate(Vertex u, Vertex v, DFA dfa) {
 		if (u.getGraph() != v.getGraph()) {
 			throw new IllegalArgumentException(
 					"The vertices are in different graphs, but must be in the same graph.");
