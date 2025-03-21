@@ -39,8 +39,45 @@ public class SimpleViewGeneratorTest {
 	String expectedDocrefsFunctionWhereChildHasDiscriminator = "function(doc) { if(doc.otherField && doc.parentId) { emit([doc.parentId, 'children'], null); } }";
 	
 	SimpleViewGenerator gen = new SimpleViewGenerator();
-
-        @Test
+	
+        /**
+         * Duplicate the loaded external resources to ensure line-endings are
+         * used from both Windows and Unix whatever platform we are on
+         * 
+         * @throws IOException 
+         */
+        @BeforeClass
+        public static void createWindowsUnixLineEndings() throws IOException {
+                createWindowsUnixLineEndings("complicated_view.json");
+                createWindowsUnixLineEndings("map.js");
+                createWindowsUnixLineEndings("reduce.js");
+        }
+        
+        private static void createWindowsUnixLineEndings(String resource) throws IOException {
+                // Find the resource in the classpath and create duplicates
+                File original = new File(SimpleViewGeneratorTest.class.getResource(resource).getPath());
+                File windows = new File(original.getAbsolutePath().replace(".js", "_windows.js"));
+                File unix = new File(original.getAbsolutePath().replace(".js", "_unix.js"));
+                FileReader reader = new FileReader(original);
+                FileWriter writer1 = new FileWriter(windows);
+                FileWriter writer2 = new FileWriter(unix);
+                // Read from the original and write to the duplicates
+                char[] buffer = new char[1024];
+                int r = reader.read(buffer);
+                while(r>-1) {
+                    // Replace any Windows line-endings with Unix and vice versa
+                    writer1.append(new String(buffer, 0, r).replaceAll("([^\r])\n", "$1\r\n"));
+                    writer2.append(new String(buffer, 0, r).replaceAll("\r\n", "\n"));
+                    r = reader.read(buffer);
+                }
+                writer1.flush();
+                writer1.close();
+                writer2.flush();
+                writer2.close();
+                reader.close();
+        }
+	
+	@Test
 	public void testGenerateFindByView() {
 		DesignDocument.View v = gen.generateFindByView("name", "");
 		assertEquals(expectedFindByNameMapFunction, v.getMap());
@@ -302,6 +339,7 @@ public class SimpleViewGeneratorTest {
 		}
 	}
         
+<<<<<<< /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/left.java
         @Views({
 		@View(name = "view_1", map = "function(doc) { ... }"),
 		@View(name = "view_2", map = "function(doc) { ... }"),
@@ -376,7 +414,67 @@ public class SimpleViewGeneratorTest {
 			return null;
 		}
 	}
+||||||| /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/base.java
+=======
+        @Views({
+		@View(name = "view_1", map = "function(doc) { ... }"),
+		@View(name = "view_2", map = "function(doc) { ... }"),
+		@View(name = "view_3", map = "function(doc) { ... }")
+	})
+	public static class TestRepoWindows {
+	
+		@View(name = "all", map = ALL_VIEW_FUNCTION)
+		public List<TestDoc> findAll() {
+			return null;
+		}
+		
+		@GenerateView
+		public List<TestDoc> findByName() {
+			return null;
+		}
+		
+		@GenerateView
+		public List<TestDoc> findByLastName() {
+			return null;
+		}
+		
+		@GenerateView
+		public TestDoc findByDomainName(String name) {
+			return null;
+		}
+		
+		@GenerateView(field = "accountId")
+		public TestDoc findByAccount(String name) {
+			return null;
+		}
+	
+		@View(name = "by_special", map = "function(doc) { ... }")
+		public List<String> findBySpecialView() {
+			return null;
+		}
+		
+		@View(name = "by_complicated", file="complicated_view_windows.json")
+		public String findByComplicatedView(String input) {
+			return "";
+		}
+	
+		@View(name = "by_special2", map = "classpath:map_windows.js", reduce = "classpath:reduce_windows.js")
+		public List<String> findBySpecialView2() {
+			return null;
+		}
+		
+		@View(name = "by_special3", map = "classpath:map_windows.js")
+		public List<String> findBySpecialView3() {
+			return null;
+		}
+		
+		public List<String> findBySomethingElse() {
+			return null;
+		}
+	}
+>>>>>>> /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/right.java
         
+<<<<<<< /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/left.java
         @Views({
 		@View(name = "view_1", map = "function(doc) { ... }"),
 		@View(name = "view_2", map = "function(doc) { ... }"),
@@ -451,20 +549,79 @@ public class SimpleViewGeneratorTest {
 			return null;
 		}
 	}
+||||||| /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/base.java
+=======
+        @Views({
+		@View(name = "view_1", map = "function(doc) { ... }"),
+		@View(name = "view_2", map = "function(doc) { ... }"),
+		@View(name = "view_3", map = "function(doc) { ... }")
+	})
+	public static class TestRepoUnix {
 	
-	public static class TestRepo2<T extends TestInterface> extends CouchDbRepositorySupport<T> {
-
-		public TestRepo2(Class<T> type, CouchDbConnector db) {
-			super(type, db);
+		@View(name = "all", map = ALL_VIEW_FUNCTION)
+		public List<TestDoc> findAll() {
+			return null;
 		}
 		
 		@GenerateView
-		public List<T> findByTags(String tag)
-		{
-			return queryView("by_tags", tag);
+		public List<TestDoc> findByName() {
+			return null;
 		}
 		
+		@GenerateView
+		public List<TestDoc> findByLastName() {
+			return null;
+		}
+		
+		@GenerateView
+		public TestDoc findByDomainName(String name) {
+			return null;
+		}
+		
+		@GenerateView(field = "accountId")
+		public TestDoc findByAccount(String name) {
+			return null;
+		}
+	
+		@View(name = "by_special", map = "function(doc) { ... }")
+		public List<String> findBySpecialView() {
+			return null;
+		}
+		
+		@View(name = "by_complicated", file="complicated_view_unix.json")
+		public String findByComplicatedView(String input) {
+			return "";
+		}
+	
+		@View(name = "by_special2", map = "classpath:map_unix.js", reduce = "classpath:reduce_unix.js")
+		public List<String> findBySpecialView2() {
+			return null;
+		}
+		
+		@View(name = "by_special3", map = "classpath:map_unix.js")
+		public List<String> findBySpecialView3() {
+			return null;
+		}
+		
+		public List<String> findBySomethingElse() {
+			return null;
+		}
 	}
+>>>>>>> /usr/src/app/output/helun/ektorp/12ee55cf7e9fb36f7a4c78d71271d0ed6030337c/org.ektorp/src/test/java/org/ektorp/support/SimpleViewGeneratorTest.java/right.java
+	
+	public static class TestRepo2<T extends TestInterface> extends CouchDbRepositorySupport<T> {
+
+	public TestRepo2(Class<T> type, CouchDbConnector db) {
+		super(type, db);
+	}
+	
+	@GenerateView
+	public List<T> findByTags(String tag)
+	{
+		return queryView("by_tags", tag);
+	}
+	
+}
 
 	public static class DiscriminatingRepo extends CouchDbRepositorySupport<DocWithDiscriminator> {
 
