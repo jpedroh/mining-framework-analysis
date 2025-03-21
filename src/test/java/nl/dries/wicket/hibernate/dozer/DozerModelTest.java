@@ -390,7 +390,6 @@ public class DozerModelTest extends AbstractWicketHibernateTest
 		assertEquals(2, model.getObject().getMap().size());
 		assertEquals("two", model.getObject().getMap().get("2"));
 	}
-	
 	/**
 	 * Intialize a collection multiple times, check nu x-times loading
 	 */
@@ -426,6 +425,9 @@ public class DozerModelTest extends AbstractWicketHibernateTest
 		getSession().flush();
 		assertTrue(((PersistentCollection) model.getObject().getAdresses()).wasInitialized());
 	}
+	/**
+	 * Intialize a collection multiple times, check nu x-times loading
+	 */
 
 	/**
 	 * @see nl.dries.wicket.hibernate.dozer.AbstractWicketHibernateTest#getEntities()
