@@ -624,14 +624,21 @@ public class RecurlyClient {
 
     /**
      * Update a Plan's info
+     * <p/>
+     *
+     * @param plan The plan to create on recurly
+     * @return the plan object as identified by the passed in ID
+     */
+    public Plan updatePlan(final Plan plan) {
+        return doPUT(Plan.PLANS_RESOURCE + "/" + plan.getPlanCode(), plan, Plan.class);
+    }
+    /**
+     * Update a Plan's info
      * <p>
      *
      * @param plan The plan to update on recurly
      * @return the updated plan object
      */
-    public Plan updatePlan(final Plan plan) {
-        return doPUT(Plan.PLANS_RESOURCE + "/" + plan.getPlanCode(), plan, Plan.class);
-    }
 
     /**
      * Get a Plan's details

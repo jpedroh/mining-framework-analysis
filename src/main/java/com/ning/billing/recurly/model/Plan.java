@@ -353,6 +353,50 @@ public class Plan extends RecurlyObject {
 
     @Override
     public int hashCode() {
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/8b21935e0bb95e0c9a671d4f848495e29e2cd5fe/src/main/java/com/ning/billing/recurly/model/Plan.java/left.java
+        int result = addOns != null ? addOns.hashCode() : 0;
+        result = 31 * result + (planCode != null ? planCode.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (successLink != null ? successLink.hashCode() : 0);
+        result = 31 * result + (cancelLink != null ? cancelLink.hashCode() : 0);
+        result = 31 * result + (displayDonationAmounts != null ? displayDonationAmounts.hashCode() : 0);
+        result = 31 * result + (displayQuantity != null ? displayQuantity.hashCode() : 0);
+        result = 31 * result + (displayPhoneNumber ? 1 : 0);
+        result = 31 * result + (bypassHostedConfirmation ? 1 : 0);
+        result = 31 * result + (unitName != null ? unitName.hashCode() : 0);
+        result = 31 * result + (planIntervalUnit != null ? planIntervalUnit.hashCode() : 0);
+        result = 31 * result + (planIntervalLength != null ? planIntervalLength.hashCode() : 0);
+        result = 31 * result + (taxCode != null ? taxCode.hashCode() : 0);
+        result = 31 * result + (trialIntervalLength != null ? trialIntervalLength.hashCode() : 0);
+        result = 31 * result + (trialIntervalUnit != null ? trialIntervalUnit.hashCode() : 0);
+        result = 31 * result + (accountingCode != null ? accountingCode.hashCode() : 0);
+        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + (unitAmountInCents != null ? unitAmountInCents.hashCode() : 0);
+        result = 31 * result + (setupFeeInCents != null ? setupFeeInCents.hashCode() : 0);
+        return result;
+||||||| /usr/src/app/output/killbilling/recurly-java-library/8b21935e0bb95e0c9a671d4f848495e29e2cd5fe/src/main/java/com/ning/billing/recurly/model/Plan.java/base.java
+        int result = addOns != null ? addOns.hashCode() : 0;
+        result = 31 * result + (planCode != null ? planCode.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (successLink != null ? successLink.hashCode() : 0);
+        result = 31 * result + (cancelLink != null ? cancelLink.hashCode() : 0);
+        result = 31 * result + (displayDonationAmounts != null ? displayDonationAmounts.hashCode() : 0);
+        result = 31 * result + (displayQuantity != null ? displayQuantity.hashCode() : 0);
+        result = 31 * result + (displayPhoneNumber ? 1 : 0);
+        result = 31 * result + (bypassHostedConfirmation ? 1 : 0);
+        result = 31 * result + (unitName != null ? unitName.hashCode() : 0);
+        result = 31 * result + (planIntervalUnit != null ? planIntervalUnit.hashCode() : 0);
+        result = 31 * result + (planIntervalLength != null ? planIntervalLength.hashCode() : 0);
+        result = 31 * result + (trialIntervalLength != null ? trialIntervalLength.hashCode() : 0);
+        result = 31 * result + (trialIntervalUnit != null ? trialIntervalUnit.hashCode() : 0);
+        result = 31 * result + (accountingCode != null ? accountingCode.hashCode() : 0);
+        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + (unitAmountInCents != null ? unitAmountInCents.hashCode() : 0);
+        result = 31 * result + (setupFeeInCents != null ? setupFeeInCents.hashCode() : 0);
+        return result;
+=======
         return Objects.hashCode(
                 addOns,
                 planCode,
@@ -367,7 +411,6 @@ public class Plan extends RecurlyObject {
                 unitName,
                 planIntervalUnit,
                 planIntervalLength,
-                taxCode,
                 trialIntervalUnit,
                 trialIntervalLength,
                 accountingCode,
@@ -375,5 +418,6 @@ public class Plan extends RecurlyObject {
                 unitAmountInCents,
                 setupFeeInCents
         );
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/8b21935e0bb95e0c9a671d4f848495e29e2cd5fe/src/main/java/com/ning/billing/recurly/model/Plan.java/right.java
     }
 }
