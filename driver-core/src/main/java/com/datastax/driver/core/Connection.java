@@ -21,16 +21,13 @@ import java.util.Iterator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.ssl.SSLEngine;
-
 import com.datastax.cassandra.transport.messages.AuthChallenge;
 import com.datastax.cassandra.transport.messages.AuthResponse;
 import com.google.common.collect.ImmutableMap;
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import com.datastax.driver.core.exceptions.DriverInternalError;
-
 import org.apache.cassandra.service.ClientState;
 import com.datastax.cassandra.transport.*;
 import com.datastax.cassandra.transport.messages.*;
@@ -58,10 +55,12 @@ import org.slf4j.LoggerFactory;
  */
 class Connection extends com.datastax.cassandra.transport.Connection
 {
+    public static final int MAX_STREAM_PER_CONNECTION = 128;
 
     private static final Logger logger = LoggerFactory.getLogger(Connection.class);
 
     // TODO: that doesn't belong here
+
     private static final String CQL_VERSION = "3.0.0";
 
     private static final Connection.Tracker EMPTY_TRACKER = new Connection.Tracker() {
@@ -73,20 +72,27 @@ class Connection extends com.datastax.cassandra.transport.Connection
     };
 
     public final InetAddress address;
+
     private final String name;
 
     private final Channel channel;
+
     private final Factory factory;
+
     private final Dispatcher dispatcher = new Dispatcher();
 
     // Used by connnection pooling to count how many requests are "in flight" on that connection.
+
     public final AtomicInteger inFlight = new AtomicInteger(0);
 
     private final AtomicInteger writer = new AtomicInteger(0);
+
     private volatile boolean isClosed;
+
     private volatile String keyspace;
 
     private volatile boolean isDefunct;
+
     private volatile ConnectionException exception;
 
     /**
@@ -97,6 +103,7 @@ class Connection extends com.datastax.cassandra.transport.Connection
      * @throws ConnectionException if the connection attempts fails or is
      * refused by the server.
      */
+
     private Connection(String name, InetAddress address, Factory factory) throws ConnectionException, InterruptedException {
         super(EMPTY_TRACKER);
 
@@ -212,10 +219,6 @@ class Connection extends com.datastax.cassandra.transport.Connection
         return isDefunct;
     }
 
-    public int maxAvailableStreams() {
-        return dispatcher.streamIdHandler.maxAvailableStreams();
-    }
-
     public ConnectionException lastException() {
         return exception;
     }
@@ -280,6 +283,7 @@ class Connection extends com.datastax.cassandra.transport.Connection
      * @throws ConnectionException if the connection is closed
      * @throws TransportException if an I/O error while sending the request
      */
+
     public Future write(com.datastax.cassandra.transport.Message.Request request) throws ConnectionException, BusyConnectionException {
         Future future = new Future(request);
         write(future);
@@ -393,9 +397,18 @@ class Connection extends com.datastax.cassandra.transport.Connection
     }
 
     // Cruft needed because we reuse server side classes, but we don't care about it
-    public void validateNewMessage(com.datastax.cassandra.transport.Message.Type type) {};
-    public void applyStateTransition(com.datastax.cassandra.transport.Message.Type requestType, com.datastax.cassandra.transport.Message.Type responseType) {};
-    public ClientState clientState() { return null; };
+
+    public void validateNewMessage(com.datastax.cassandra.transport.Message.Type type) {}
+
+;
+
+    public void applyStateTransition(com.datastax.cassandra.transport.Message.Type requestType, com.datastax.cassandra.transport.Message.Type responseType) {}
+
+;
+
+    public ClientState clientState() { return null; }
+
+;
 
     public static class Factory {
 
@@ -606,32 +619,35 @@ class Connection extends com.datastax.cassandra.transport.Connection
 
         private final com.datastax.cassandra.transport.Message.Request request;
         private volatile InetAddress address;
-
         public Future(com.datastax.cassandra.transport.Message.Request request) {
             this.request = request;
         }
-
         @Override
         public void register(RequestHandler handler) {
             // noop, we don't care about the handler here so far
         }
-
         @Override
         public com.datastax.cassandra.transport.Message.Request request() {
             return request;
         }
-
         @Override
-        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, ExecutionInfo info, long latency) {
-            onSet(connection, response, latency);
+        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, ExecutionInfo info) {
+            onSet(connection, response);
         }
-
         @Override
         public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, long latency) {
             this.address = connection.address;
             super.set(response);
         }
-
+        @Override
+        public void onException(Connection connection, Exception exception) {
+            this.address = connection.address;
+            super.setException(exception);
+        }
+        @Override
+        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, ExecutionInfo info, long latency) {
+            onSet(connection, response, latency);
+        }
         @Override
         public void onException(Connection connection, Exception exception, long latency) {
             // If all nodes are down, we will get a null connection here. This is fine, if we have
@@ -655,9 +671,9 @@ class Connection extends com.datastax.cassandra.transport.Connection
 
     interface ResponseCallback {
         public com.datastax.cassandra.transport.Message.Request request();
-        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, long latency);
-        public void onException(Connection connection, Exception exception, long latency);
-        public void onTimeout(Connection connection, long latency);
+        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response);
+        public void onException(Connection connection, Exception exception);
+        public void onTimeout(Connection connection);
     }
 
     static class ResponseHandler {
@@ -708,6 +724,29 @@ class Connection extends com.datastax.cassandra.transport.Connection
         public void handle(com.datastax.cassandra.transport.Message.Response response);
     }
 
+    // TODO: that doesn't belong here
+
+    // Used by connnection pooling to count how many requests are "in flight" on that connection.
+
+    public int maxAvailableStreams() {
+        return dispatcher.streamIdHandler.maxAvailableStreams();
+    }
+
+    // Cruft needed because we reuse server side classes, but we don't care about it
+
+;
+
+;
+
+;
+
+    interface ResponseCallback {
+        public com.datastax.cassandra.transport.Message.Request request();
+        public void onSet(Connection connection, com.datastax.cassandra.transport.Message.Response response, long latency);
+        public void onException(Connection connection, Exception exception, long latency);
+        public void onTimeout(Connection connection, long latency);
+    }
+
     private static class PipelineFactory implements ChannelPipelineFactory {
         // Stateless handlers
         private static final Message.ProtocolDecoder messageDecoder = new Message.ProtocolDecoder();
@@ -715,7 +754,6 @@ class Connection extends com.datastax.cassandra.transport.Connection
         private static final Frame.Decompressor frameDecompressor = new Frame.Decompressor();
         private static final Frame.Compressor frameCompressor = new Frame.Compressor();
         private static final Frame.Encoder frameEncoder = new Frame.Encoder();
-
         // One more fallout of using server side classes; not a big deal
         private static final Connection.Tracker tracker;
         static {
@@ -727,9 +765,10 @@ class Connection extends com.datastax.cassandra.transport.Connection
                 public void closeAll() {}
             };
         }
-
         private final Connection connection;
         private final com.datastax.cassandra.transport.Connection.Factory cfactory;
+        // Stateless handlers
+        // One more fallout of using server side classes; not a big deal
 
         public PipelineFactory(final Connection connection) {
             this.connection = connection;
