@@ -292,7 +292,7 @@ public @interface JsonAutoDetect
             return construct(_fieldVisibility, _getterVisibility, _isGetterVisibility,
                     _setterVisibility, _creatorVisibility, v);
         }
-
+        
         public static Value merge(Value base, Value overrides)
         {
             return (base == null) ? overrides
@@ -318,7 +318,7 @@ public @interface JsonAutoDetect
         private static Visibility _override(Visibility base, Visibility override) {
             return (override == Visibility.DEFAULT) ? base : override;
         }
-
+        
         @Override
         public Class<JsonAutoDetect> valueFor() {
             return JsonAutoDetect.class;

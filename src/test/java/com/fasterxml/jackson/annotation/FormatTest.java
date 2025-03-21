@@ -30,7 +30,7 @@ public class FormatTest extends TestBase
 
     public void testEquality() {
         JsonFormat.Value v1 = JsonFormat.Value.forShape(Shape.BOOLEAN);
-
+        
         // then let's converge
         assertFalse(v1.equals(v1.withPattern("ZBC")));
         assertFalse(v1.equals(v1.withFeature(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)));

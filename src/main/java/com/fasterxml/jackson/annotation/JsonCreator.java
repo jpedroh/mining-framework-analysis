@@ -56,6 +56,14 @@ public @interface JsonCreator
      *<p>
      * Default value of {@link Mode#DEFAULT} means that caller is to use standard
      * heuristics for choosing mode to use.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonCreator.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonCreator.java/base.java
+     * 
+     * @since 2.5
+=======
+     *
+     * @since 2.5
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonCreator.java/right.java
      */
     public Mode mode() default Mode.DEFAULT;
 

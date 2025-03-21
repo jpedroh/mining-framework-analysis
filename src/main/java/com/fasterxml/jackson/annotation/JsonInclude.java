@@ -60,6 +60,14 @@ public @interface JsonInclude
      * {@link java.util.Map}s and referential types (like
      * {@link java.util.concurrent.atomic.AtomicReference});
      * defaults to {@link Include#ALWAYS}.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/base.java
+     * 
+     * @since 2.5
+=======
+     *
+     * @since 2.5
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/right.java
      */
     public Include content() default Include.USE_DEFAULTS;
 

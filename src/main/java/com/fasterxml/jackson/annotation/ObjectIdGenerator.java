@@ -55,6 +55,14 @@ public abstract class ObjectIdGenerator<T>
      * @param parser Parser that points to property name, in case generator needs
      *    further verification (note: untyped, because <code>JsonParser</code> is defined
      *    in `jackson-core`, and this package does not depend on it).
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/ObjectIdGenerator.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/ObjectIdGenerator.java/base.java
+     * 
+     * @since 2.5
+=======
+     *
+     * @since 2.5
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/ObjectIdGenerator.java/right.java
      */
     public boolean isValidReferencePropertyName(String name, Object parser) {
         return false;

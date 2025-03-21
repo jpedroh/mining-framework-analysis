@@ -52,6 +52,14 @@ public @interface JsonProperty
     /**
      * Special value that indicates that handlers should use the default
      * name (derived from method or field name) for property.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/base.java
+     * 
+     * @since 2.1
+=======
+     *
+     * @since 2.1
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/right.java
      */
     public final static String USE_DEFAULT_NAME = "";
 
@@ -59,6 +67,14 @@ public @interface JsonProperty
      * Marker value used to indicate that no index has been specified.
      * Used as the default value as annotations do not allow "missing"
      * values.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/base.java
+     * 
+     * @since 2.4
+=======
+     *
+     * @since 2.4
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/right.java
      */
     public final static int INDEX_UNKNOWN = -1;
 
@@ -107,6 +123,14 @@ public @interface JsonProperty
      * to other properties specified for the Object). This index
      * is typically used by binary formats, but may also be useful
      * for schema languages and other tools.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/base.java
+     * 
+     * @since 2.4
+=======
+     *
+     * @since 2.4
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/right.java
      */
     int index() default INDEX_UNKNOWN;
 

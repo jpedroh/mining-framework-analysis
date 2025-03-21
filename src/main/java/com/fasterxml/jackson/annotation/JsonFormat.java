@@ -109,6 +109,14 @@ public @interface JsonFormat
      * Note that underlying default setting depends on datatype (or more precisely
      * deserializer for it): for most date/time types, default is for leniency
      * to be enabled.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/base.java
+     * 
+     * @since 2.9
+=======
+     *
+     * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/right.java
      */
     public OptBoolean lenient() default OptBoolean.DEFAULT;
 
@@ -181,7 +189,7 @@ public @interface JsonFormat
          * {@link #ARRAY} or {@link #OBJECT}, but can be any other shape.
          */
         SCALAR,
-
+        
         // // // Concrete physical shapes, structured
 
         /**
@@ -294,6 +302,14 @@ public @interface JsonFormat
          * which allows case-sensitive matching of (some) property values, such
          * as {@code Enum}s.
          * Only affects deserialization, has no effect on serialization.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/base.java
+         * 
+         * @since 2.10
+=======
+         *
+         * @since 2.10
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/right.java
          */
         ACCEPT_CASE_INSENSITIVE_VALUES,
 
@@ -471,6 +487,7 @@ public @interface JsonFormat
         private final Features _features;
 
         // lazily constructed when created from annotations
+
         private transient TimeZone _timezone;
 
         public Value() {
@@ -530,6 +547,7 @@ public @interface JsonFormat
          * Note that one or both of value instances may be `null`, directly;
          * if both are `null`, result will also be `null`; otherwise never null.
          */
+
         public static Value merge(Value base, Value overrides)
         {
             return (base == null) ? overrides
@@ -658,7 +676,9 @@ public @interface JsonFormat
         }
 
         public String getPattern() { return _pattern; }
+
         public Shape getShape() { return _shape; }
+
         public Locale getLocale() { return _locale; }
 
         /**
@@ -666,6 +686,7 @@ public @interface JsonFormat
          *   if explicit set to false; or {@code null} if not set either way (assuming
          *   "default leniency" for the context)
          */
+
         public Boolean getLenient() {
             return _lenient;
         }
@@ -678,6 +699,7 @@ public @interface JsonFormat
          * that is, returns {@code true} if (and only if) leniency has been explicitly
          * set to {code true}; but not if it is undefined.
          */
+
         public boolean isLenient() {
             return Boolean.TRUE.equals(_lenient);
         }
@@ -687,6 +709,7 @@ public @interface JsonFormat
          * when caller just wants time zone id to convert, but not as JDK
          * provided {@link TimeZone}
          */
+
         public String timeZoneAsString() {
             if (_timezone != null) {
                 return _timezone.getID();
@@ -723,6 +746,7 @@ public @interface JsonFormat
          * NOTE: does NOT mean that `lenient` is `true` necessarily; just that
          * it has been set.
          */
+
         public boolean hasLenient() {
             return _lenient != null;
         }
@@ -734,12 +758,109 @@ public @interface JsonFormat
          * indicates that the default handling should be used based on global defaults,
          * and there is no format override.
          */
+
         public Boolean getFeature(JsonFormat.Feature f) {
             return _features.get(f);
         }
 
         /**
          * Accessor for getting full set of features enabled/disabled.
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * Alternate access (compared to {@link #getTimeZone()}) which is useful
+         * when caller just wants time zone id to convert, but not as JDK
+         * provided {@link TimeZone}
+         *
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
          */
         public Features getFeatures() {
             return _features;

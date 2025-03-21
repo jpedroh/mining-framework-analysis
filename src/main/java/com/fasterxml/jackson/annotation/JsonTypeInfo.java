@@ -210,6 +210,14 @@ public @interface JsonTypeInfo
          * whereas with {@link JsonTypeId}, output of regular property is suppressed.
          * This mostly matters with respect to output order; this choice is the only
          * way to ensure specific placement of type id during serialization.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+         * 
+         * @since 2.3.0 but databind <b>only since 2.5.0</b>.
+=======
+         *
+         * @since 2.3.0 but databind <b>only since 2.5.0</b>.
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
          */
         EXISTING_PROPERTY
         ;
@@ -289,6 +297,14 @@ public @interface JsonTypeInfo
      * Default value is false, meaning that Jackson handles and removes
      * the type identifier from JSON content that is passed to
      * <code>JsonDeserializer</code>.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+     * 
+     * @since 2.0
+=======
+     *
+     * @since 2.0
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
      */
     public boolean visible() default false;
 
@@ -303,12 +319,27 @@ public @interface JsonTypeInfo
     */
 
     /*
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
     /**********************************************************************
     /* Value class used to enclose information, allow for
     /* merging of layered configuration settings.
     /**********************************************************************
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+    
+    /*
+    /**********************************************************
+    /* Helper classes
+    /**********************************************************
+=======
+
+    /*
+    /**********************************************************
+    /* Helper classes
+    /**********************************************************
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
      */
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
     public static class Value
         implements JacksonAnnotationValue<JsonTypeInfo>,
             java.io.Serializable
@@ -426,7 +457,7 @@ public @interface JsonTypeInfo
             return (v != null) &&
                 (v._idType != null) && (v._idType != Id.NONE);
         }
-
+        
         /*
         /**********************************************************************
         /* Standard methods
@@ -465,4 +496,27 @@ public @interface JsonTypeInfo
             ;
         }
     }
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+    /**
+     * This marker class that is only to be used with <code>defaultImpl</code>
+     * annotation property, to indicate that there is no default implementation
+     * specified.
+     * 
+     * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
+     *    if such behavior is needed; this is rarely necessary.
+     */
+    @Deprecated
+    public abstract static class None { }
+=======
+    /**
+     * This marker class that is only to be used with <code>defaultImpl</code>
+     * annotation property, to indicate that there is no default implementation
+     * specified.
+     *
+     * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
+     *    if such behavior is needed; this is rarely necessary.
+     */
+    @Deprecated
+    public abstract static class None { }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
 }

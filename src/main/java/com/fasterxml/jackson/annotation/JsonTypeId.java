@@ -25,6 +25,14 @@ import java.lang.annotation.Target;
  * {@link JsonTypeInfo.As#PROPERTY}), but is more commonly embedded
  * in a different place, as per inclusion rules (see {@link JsonTypeInfo}
  * for details).
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeId.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeId.java/base.java
+ * 
+ * @since 2.0
+=======
+ *
+ * @since 2.0
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonTypeId.java/right.java
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

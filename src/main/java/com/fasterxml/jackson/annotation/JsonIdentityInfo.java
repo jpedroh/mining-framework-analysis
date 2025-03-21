@@ -26,6 +26,14 @@ import java.lang.annotation.Target;
  * Finally, note that generator type of {@link ObjectIdGenerators.None}
  * indicates that no Object Id should be included or used: it is included
  * to allow suppressing Object Ids using mix-in annotations.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/base.java
+ * 
+ * @since 2.0
+=======
+ *
+ * @since 2.0
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/right.java
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE,
     ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
@@ -61,6 +69,14 @@ public @interface JsonIdentityInfo
      * Resolver to use for producing POJO from Object Identifier.
      * <p>
      * Default value is {@link SimpleObjectIdResolver}
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/base.java
+     * 
+     * @since 2.4
+=======
+     *
+     * @since 2.4
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/7751bf6722ef91c8b8083a2700d6290bb1074b9c/src/main/java/com/fasterxml/jackson/annotation/JsonIdentityInfo.java/right.java
      */
     public Class<? extends ObjectIdResolver> resolver() default SimpleObjectIdResolver.class;
 
