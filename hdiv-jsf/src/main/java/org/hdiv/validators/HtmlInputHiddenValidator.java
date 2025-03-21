@@ -55,6 +55,7 @@ public class HtmlInputHiddenValidator extends AbstractComponentValidator {
 	 * @param validationContext Validation context
 	 * @param inputHidden component to validate
 	 */
+
 	protected void validateHiddenComponent(final ValidationContext validationContext, final HtmlInputHiddenExtension inputHidden) {
 
 		FacesContext context = validationContext.getFacesContext();
@@ -142,6 +143,87 @@ public class HtmlInputHiddenValidator extends AbstractComponentValidator {
 			}
 
 		}
+	}
+
+	protected ValidationError validateHiddenComponent(final FacesContext context, final HtmlInputHiddenExtension inputHidden) {
+
+		UIData uiDataComp = UtilsJsf.findParentUIData(inputHidden);
+
+		int rowIndex = 0;
+		if (uiDataComp != null) {
+			rowIndex = uiDataComp.getRowIndex();
+		}
+		Object hiddenValue;
+		Object hiddenRealValue;
+
+		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
+		if (rowIndex >= 0) {
+			// If rowIndex >= 0, current position is a table and hidden's component
+			// clientId is correct
+
+			hiddenValue = request.getParameter(inputHidden.getClientId(context));
+			hiddenRealValue = inputHidden.getRealValue(inputHidden.getClientId(context));
+
+			if (log.isDebugEnabled()) {
+				log.debug("Hidden's value received:" + hiddenValue);
+				log.debug("Hidden's value sent to the client:" + hiddenRealValue);
+			}
+
+			if (hiddenValue == null) {
+				ValidationError error = new ValidationError();
+				error.setErrorKey(HDIVErrorCodes.NOT_RECEIVED_ALL_REQUIRED_PARAMETERS);
+				error.setErrorParam(inputHidden.getId());
+				error.setErrorValue("null");
+				error.setErrorComponent(inputHidden.getClientId(context));
+				return error;
+			}
+
+			boolean correct = hasEqualValue(hiddenValue, hiddenRealValue);
+			if (!correcto) {
+				ValidationError error = new ValidationError();
+				error.setErrorKey(HDIVErrorCodes.INVALID_PARAMETER_VALUE);
+				error.setErrorParam(inputHidden.getId());
+				error.setErrorValue(hiddenRealValue.toString());
+				error.setErrorComponent(inputHidden.getClientId(context));
+				return error;
+			}
+		}
+		else {
+			// else, current position isn't a table, but hidden is in a table
+			// and its clientId is incorrect
+			List<String> clientIds = inputHidden.getClientIds();
+			for (int i = 0; i < clientIds.size(); i++) {
+				String clientId = clientIds.get(i);
+				hiddenValue = parameters.get(clientId);
+				hiddenRealValue = inputHidden.getRealValue(clientId);
+				if (log.isDebugEnabled()) {
+					log.debug("Hidden's value received:" + hiddenValue);
+					log.debug("Hidden's value sent to the client:" + hiddenRealValue);
+				}
+
+				if (hiddenValue == null) {
+					ValidationError error = new ValidationError();
+					error.setErrorKey(HDIVErrorCodes.NOT_RECEIVED_ALL_REQUIRED_PARAMETERS);
+					error.setErrorParam(inputHidden.getId());
+					error.setErrorValue("null");
+					error.setErrorComponent(inputHidden.getClientId(context));
+					return error;
+				}
+
+				boolean correct = hiddenValue.equals(hiddenRealValue);
+				if (!correcto) {
+					ValidationError error = new ValidationError();
+					error.setErrorKey(HDIVErrorCodes.INVALID_PARAMETER_VALUE);
+					error.setErrorParam(inputHidden.getId());
+					error.setErrorValue(hiddenRealValue.toString());
+					error.setErrorComponent(inputHidden.getClientId(context));
+					return error;
+				}
+			}
+
+		}
+
+		return null;
 	}
 
 	/**

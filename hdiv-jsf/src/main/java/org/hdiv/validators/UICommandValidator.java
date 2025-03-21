@@ -117,6 +117,22 @@ public class UICommandValidator extends AbstractComponentValidator {
 			validationContext.acceptParameter(param.getName(), requestValue);
 		}
 		else if (requestValue == null) {
+<<<<<<< /usr/src/app/output/hdiv/hdiv/24a14715725c13330cb2da5e7846ba88e50557cf/hdiv-jsf/src/main/java/org/hdiv/validators/UICommandValidator.java/left.java
+||||||| /usr/src/app/output/hdiv/hdiv/24a14715725c13330cb2da5e7846ba88e50557cf/hdiv-jsf/src/main/java/org/hdiv/validators/UICommandValidator.java/base.java
+			ValidationError error = new ValidationError();
+			error.setErrorKey(HDIVErrorCodes.REQUIRED_PARAMETERS);
+			error.setErrorParam(param.getId());
+			error.setErrorValue(requestValue);
+			error.setErrorComponent(param.getClientId(context));
+			return error;
+=======
+			ValidationError error = new ValidationError();
+			error.setErrorKey(HDIVErrorCodes.NOT_RECEIVED_ALL_REQUIRED_PARAMETERS);
+			error.setErrorParam(param.getId());
+			error.setErrorValue(requestValue);
+			error.setErrorComponent(param.getClientId(context));
+			return error;
+>>>>>>> /usr/src/app/output/hdiv/hdiv/24a14715725c13330cb2da5e7846ba88e50557cf/hdiv-jsf/src/main/java/org/hdiv/validators/UICommandValidator.java/right.java
 
 			if (log.isDebugEnabled()) {
 				log.debug("Parameter '" + param.getName() + "' rejected in component '" + param.getClientId(context)
@@ -130,7 +146,7 @@ public class UICommandValidator extends AbstractComponentValidator {
 				log.debug("Parameter '" + param.getName() + "' rejected in component '" + param.getClientId(context)
 						+ "' in ComponentValidator '" + this.getClass() + "'");
 			}
-			validationContext.rejectParameter(param.getName(), requestValue, HDIVErrorCodes.PARAMETER_VALUE_INCORRECT);
+			validationContext.rejectParameter(param.getName(), requestValue, HDIVErrorCodes.INVALID_PARAMETER_VALUE);
 		}
 	}
 }
