@@ -25,6 +25,7 @@ import com.speedment.codegen.java.views.interfaces.DocumentableView;
 import com.speedment.codegen.java.views.interfaces.ImportableView;
 import com.speedment.codegen.lang.models.File;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -65,7 +66,15 @@ public class FileView implements CodeView<File>, DocumentableView<File>,
 		final Optional<String> view = Optional.of(
 			renderJavadoc(cg, model) +
 			renderPackage(model) +
+<<<<<<< /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/FileView.java/left.java
             renderImports(cg, model) +
+||||||| /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/FileView.java/base.java
+            cg.onEach(model.getImports()).collect(CodeCombiner.joinIfNotEmpty(nl(), EMPTY, dnl())) +
+=======
+            cg.onEach(model.getImports())
+			                .distinct().sorted()
+			                .collect(CodeCombiner.joinIfNotEmpty(nl(), EMPTY, dnl())) +
+>>>>>>> /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/FileView.java/right.java
 			renderClasses(cg, model)//cg.onEach(model.getClasses()).collect(CodeCombiner.joinIfNotEmpty(dnl()))
 		);
 		

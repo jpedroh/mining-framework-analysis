@@ -29,6 +29,12 @@ import com.speedment.codegen.lang.interfaces.Documentable;
  */
 public interface DocumentableView<M extends Documentable<M>> extends CodeView<M> {
     default String renderJavadoc(CodeGenerator cg, M model) {
+<<<<<<< /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/interfaces/DocumentableView.java/left.java
         return cg.on(model.getJavadoc()).map(jd -> jd + nl()).orElse(EMPTY);
+||||||| /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/interfaces/DocumentableView.java/base.java
+        return cg.on(model.getJavadoc()).map().orElse(EMPTY);
+=======
+        return cg.on(model.getJavadoc()).map(j -> j + nl()).orElse(EMPTY);
+>>>>>>> /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/java/views/interfaces/DocumentableView.java/right.java
     }
 }

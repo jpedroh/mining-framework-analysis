@@ -84,12 +84,27 @@ public interface CodeGenerator {
      * @return The viewed text if any.
      */
     default Optional<String> on(Object model) {
+<<<<<<< /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/base/CodeGenerator.java/left.java
         if (model instanceof Optional<?>) {
             return ((Optional<?>) model)
                 .flatMap(m -> codeOn(m).findAny().map(c -> c.getText()));
         } else {
             return codeOn(model).findAny().map(c -> c.getText());
         }
+||||||| /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/base/CodeGenerator.java/base.java
+        return codeOn(model).map(c -> c.getText()).findAny();
+=======
+        if (model instanceof Optional) {
+            final Optional result = (Optional<?>) model;
+            if (result.isPresent()) {
+                model = result.get();
+            } else {
+                return Optional.empty();
+            }
+        }
+        
+        return codeOn(model).map(c -> c.getText()).findAny();
+>>>>>>> /usr/src/app/output/pyknic/codegen/b718264121f2990b0cd2df982f93714ce9b2fe14/src/main/java/com/speedment/codegen/base/CodeGenerator.java/right.java
     }
 
     /**
