@@ -184,8 +184,16 @@ public class RedisNodeSubscriber {
                     break;
                 }
                 case SUBSCRIBE: {
+<<<<<<< /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/left.java
                     final String channel = (String) reply.get(1);
+                    final Long subscribedChannels = (Long) reply.get(2);
+||||||| /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/base.java
+                    final String channel = byteToStr((byte[]) reply.get(1));
+                    final Long subscribedChannels = (Long) reply.get(2);
+=======
+                    final String channel = byteToStr((byte[]) reply.get(1));
                     subscribedChannels = (Long) reply.get(2);
+>>>>>>> /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/right.java
 
                     if (subscribeListener != null) {
                         subscribeListener.onSubscribe(channel, subscribedChannels);
@@ -193,24 +201,48 @@ public class RedisNodeSubscriber {
                     break;
                 }
                 case UNSUBSCRIBE: {
+<<<<<<< /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/left.java
                     final String channel = (String) reply.get(1);
+                    final Long subscribedChannels = (Long) reply.get(2);
+||||||| /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/base.java
+                    final String channel = byteToStr((byte[]) reply.get(1));
+                    final Long subscribedChannels = (Long) reply.get(2);
+=======
+                    final String channel = byteToStr((byte[]) reply.get(1));
                     subscribedChannels = (Long) reply.get(2);
+>>>>>>> /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/right.java
                     if (subscribeListener != null) {
                         subscribeListener.onUnsubscribe(channel, subscribedChannels);
                     }
                     break;
                 }
                 case PSUBSCRIBE: {
+<<<<<<< /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/left.java
                     final String pattern = (String) reply.get(1);
+                    final Long subscribedChannels = (Long) reply.get(2);
+||||||| /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/base.java
+                    final String pattern = byteToStr((byte[]) reply.get(1));
+                    final Long subscribedChannels = (Long) reply.get(2);
+=======
+                    final String pattern = byteToStr((byte[]) reply.get(1));
                     subscribedChannels = (Long) reply.get(2);
+>>>>>>> /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/right.java
                     if (subscribeListener != null) {
                         subscribeListener.onPSubscribe(pattern, subscribedChannels);
                     }
                     break;
                 }
                 case PUNSUBSCRIBE: {
+<<<<<<< /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/left.java
                     final String pattern = (String) reply.get(1);
+                    final Long subscribedChannels = (Long) reply.get(2);
+||||||| /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/base.java
+                    final String pattern = byteToStr((byte[]) reply.get(1));
+                    final Long subscribedChannels = (Long) reply.get(2);
+=======
+                    final String pattern = byteToStr((byte[]) reply.get(1));
                     subscribedChannels = (Long) reply.get(2);
+>>>>>>> /usr/src/app/output/e-mzungu/rjc/3afc92b5e097f29763b600a8192f557f66752039/src/main/java/org/idevlab/rjc/message/RedisNodeSubscriber.java/right.java
                     if (subscribeListener != null) {
                         subscribeListener.onPUnsubscribe(pattern, subscribedChannels);
                     }
