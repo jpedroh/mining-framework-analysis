@@ -77,4 +77,5 @@ public class TestTextBuffer
               }
           }
       }
+      // [Core#152]
 }
