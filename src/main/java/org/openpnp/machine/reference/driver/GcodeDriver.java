@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2011 Jason von Nieda <jason@vonnieda.org>
- *
+ * 
  * This file is part of OpenPnP.
- *
+ * 
  * OpenPnP is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * OpenPnP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with OpenPnP. If not, see
  * <http://www.gnu.org/licenses/>.
- *
+ * 
  * For more information about OpenPnP visit http://openpnp.org
  */
 
@@ -23,18 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.machine.reference.ReferenceActuator;
 import org.openpnp.machine.reference.ReferenceHeadMountable;
@@ -264,8 +258,8 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     @Element(required = false, data=true) 
     String reportedAxes = null; 
 
-    @Element(required = false, data=true)
-    String configuredAxes = null;
+    @Element(required = false, data=true) 
+    String configuredAxes = null; 
 
     @ElementList(required = false, inline = true)
     public ArrayList<Command> commands = new ArrayList<>();
@@ -760,7 +754,7 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
     }
 
     protected void drainCommandQueue(long timeout) throws InterruptedException {
-        // This does nothing in the plain GcodeDriver. It will be overridden in the GcodeAsyncDriver.
+        // This does nothing in the plain GcodeDriver. It will be overridden in the GcodeAsyncDriver. 
     }
 
     @Override
@@ -785,20 +779,20 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named {
                  * timeoutMillis while searching the responses for the regex. As soon as it is
                  * matched we continue. If it's not matched within the timeout we throw an
                  * Exception.
-                 *
-                 * AFAIK, this was used on TinyG and it is now obsolete with new firmware :
+                 * 
+                 * AFAIK, this was used on TinyG and it is now obsolete with new firmware :  
                  * https://makr.zone/tinyg-new-g-code-commands-for-openpnp-use/577/
                  */
                 String moveToCompleteRegex = getCommand(hm, CommandType.MOVE_TO_COMPLETE_REGEX);
                 if (moveToCompleteRegex != null) {
                     receiveResponses(moveToCompleteRegex, completionType == CompletionType.WaitForStillstandIndefinitely ?
-                            -1 : getTimeoutAtMachineSpeed(),
+                            -1 : getTimeoutAtMachineSpeed(), 
                             (responses) -> {
                         throw new Exception("Timed out waiting for move to complete.");
                     });
                 }
             }
-            // Remember, we're now standing still.
+            // Remember, we're now standing still.  
             motionPending = false;
         }
     }
