@@ -73,9 +73,25 @@ public class Batch extends BuiltStatement {
                 if (!str.trim().endsWith(";"))
                     builder.append(';');
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/df59bef5a1450c539ffa170f4c02129421dbd68e/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Batch.java/left.java
+                // For !BuiltStatement, we know that variables == null since we explicitely set 'hasBindMarkers' below
+                if ((stmt instanceof BuiltStatement) && variables != null) {
+                    List<Object> vals = ((BuiltStatement)stmt).getRawValues();
+                    if (vals != null)
+                        variables.addAll(vals);
+                }
+||||||| /usr/src/app/output/datastax/java-driver/df59bef5a1450c539ffa170f4c02129421dbd68e/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Batch.java/base.java
+                if (variables != null) {
+                    ByteBuffer[] vars = stmt.getValues();
+                    if (vars != null) {
+                        Collections.addAll(variables, vars);
+                    }
+                }
+=======
                 // Note that we force hasBindMarkers if there is any non-BuiltStatement, so we know
                 // that we can only get there with variables == null
                 assert variables == null;
+>>>>>>> /usr/src/app/output/datastax/java-driver/df59bef5a1450c539ffa170f4c02129421dbd68e/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Batch.java/right.java
             }
         }
         builder.append("APPLY BATCH;");
