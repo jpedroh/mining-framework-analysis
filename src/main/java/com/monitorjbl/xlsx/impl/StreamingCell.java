@@ -61,16 +61,16 @@ public class StreamingCell implements Cell {
     this.use1904Dates = use1904Dates;
   }
 
+  public void setCommentsTableSupplier(Supplier commentsTableSupplier) {
+    this.commentsTableSupplier = commentsTableSupplier;
+  }
+
   String getRawCachedFormulaResultType() {
     return cachedFormulaResultType;
   }
 
   boolean supportsSupplierOverride() {
     return "n".equals(cachedFormulaResultType);
-  }
-  
-  public void setCommentsTableSupplier(Supplier commentsTableSupplier) {
-    this.commentsTableSupplier = commentsTableSupplier;
   }
 
   public void setContentSupplier(Supplier contentsSupplier) {
