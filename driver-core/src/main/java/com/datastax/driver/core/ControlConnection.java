@@ -25,8 +25,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.base.Objects;
 import org.apache.cassandra.transport.Event;
-import com.datastax.cassandra.transport.messages.QueryMessage;
 import com.datastax.cassandra.transport.messages.RegisterMessage;
+import com.datastax.cassandra.transport.messages.QueryMessage;
+import org.apache.cassandra.transport.messages.QueryMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

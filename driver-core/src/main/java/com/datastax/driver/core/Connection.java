@@ -22,22 +22,35 @@ import java.util.Iterator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.datastax.cassandra.transport.messages.AuthChallenge;
+
+import com.datastax.cassandra.transport.messages.AuthResponse;
+
 import com.google.common.collect.ImmutableMap;
+
+import com.datastax.driver.core.exceptions.AuthenticationException;
+
 import com.google.common.util.concurrent.Uninterruptibles;
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.apache.cassandra.service.ClientState;
 
-import com.datastax.driver.core.exceptions.AuthenticationException;
-import com.datastax.driver.core.exceptions.DriverInternalError;
-import com.datastax.cassandra.transport.Frame;
-import com.datastax.cassandra.transport.Message;
-import com.datastax.cassandra.transport.messages.AuthChallenge;
-import com.datastax.cassandra.transport.messages.AuthResponse;
-import com.datastax.cassandra.transport.messages.ErrorMessage;
-import com.datastax.cassandra.transport.messages.QueryMessage;
-import com.datastax.cassandra.transport.messages.StartupMessage;
+import com.datastax.cassandra.transport.*;
 
+import com.datastax.cassandra.transport.messages.*;
+
+import org.apache.cassandra.transport.Frame;
+
+import org.apache.cassandra.transport.Message;
+
+import org.apache.cassandra.transport.messages.CredentialsMessage;
+
+import org.apache.cassandra.transport.messages.ErrorMessage;
+
+import org.apache.cassandra.transport.messages.QueryMessage;
+
+import org.apache.cassandra.transport.messages.StartupMessage;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -50,6 +63,7 @@ import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.datastax.driver.core.exceptions.DriverInternalError;
 
 // For LoggingHandler
 //import org.jboss.netty.handler.logging.LoggingHandler;

@@ -30,20 +30,16 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.*;
 import org.apache.cassandra.transport.Event;
-
 import com.datastax.cassandra.transport.Message;
 import com.datastax.cassandra.transport.messages.EventMessage;
 import com.datastax.cassandra.transport.messages.PrepareMessage;
-
-import com.datastax.driver.core.policies.*;
-
 import org.apache.cassandra.utils.MD5Digest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.policies.*;
 
 /**
  * information and known state of a Cassandra cluster.

@@ -18,16 +18,18 @@ package com.datastax.driver.core;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import com.datastax.cassandra.transport.Message;
+import com.datastax.cassandra.transport.messages.*;
 import java.util.concurrent.TimeoutException;
 
 import com.yammer.metrics.core.TimerContext;
-
 import org.apache.cassandra.exceptions.PreparedQueryNotFoundException;
 import org.apache.cassandra.exceptions.ReadTimeoutException;
 import org.apache.cassandra.exceptions.UnavailableException;
 import org.apache.cassandra.exceptions.WriteTimeoutException;
-import com.datastax.cassandra.transport.Message;
-import com.datastax.cassandra.transport.messages.*;
+import org.apache.cassandra.transport.Message;
+import org.apache.cassandra.transport.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

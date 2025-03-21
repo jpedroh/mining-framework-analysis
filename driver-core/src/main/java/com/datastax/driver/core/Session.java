@@ -22,6 +22,9 @@ import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.datastax.driver.core.exceptions.QueryValidationException;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import com.datastax.cassandra.transport.Message;
+import com.datastax.cassandra.transport.messages.*;
+
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.
  *

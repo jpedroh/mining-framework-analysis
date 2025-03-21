@@ -15,6 +15,7 @@
  */
 package com.datastax.driver.core;
 
+import com.datastax.cassandra.transport.messages.ResultMessage;
 import java.util.Iterator;
 import java.util.List;
 
