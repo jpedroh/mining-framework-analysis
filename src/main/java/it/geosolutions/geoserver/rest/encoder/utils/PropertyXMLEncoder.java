@@ -1,30 +1,4 @@
-/*
- *  GeoServer-Manager - Simple Manager Library for GeoServer
- *  
- *  Copyright (C) 2007,2011 GeoSolutions S.A.S.
- *  http://www.geo-solutions.it
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package it.geosolutions.geoserver.rest.encoder.utils;
-
 import org.jdom.Element;
 
 /**
@@ -52,121 +26,100 @@ import org.jdom.Element;
  * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
  */
 public class PropertyXMLEncoder extends XmlElement {
+  public PropertyXMLEncoder(final String rootName) {
+    super(rootName);
+  }
 
-	public PropertyXMLEncoder(final String rootName) {
-		super(rootName);
-	}
-	
-	
-	public void set(final String key, final String value) {
-		if (key != null && value != null) {
-			set(getRoot(), key, value);
-		}
-	}
-	
-	private void set(final Element e, final String key, final String value){
-		if (key.contains("/")) {
-			final int i = key.indexOf("/");
-			final String childName = key.substring(0, i);
-			final String newkey = key.substring(i + 1);
+  public void set(final String key, final String value) {
+    if (key != null && value != null) {
+      set(getRoot(), key, value);
+    }
+  }
 
-			Element child = e.getChild(childName);
-			if (child == null) {
-				child = new Element(childName);
-				e.addContent(child);
-				add(child,newkey,value);
-			}
-			set(child, newkey, value);	
-		} else {
-			Element pp = null;
-			if ((pp = ElementUtils.contains(e,key)) == null)
-				add(e,key, value);
-			else {
-				ElementUtils.remove(e,pp);
-				add(e,key, value);
-			}
-		}
-	}
+  private void set(final Element e, final String key, final String value) {
 
-	public void add(final String key, final String value) {
-		if (key != null && value != null) {
-			add(this.getRoot(), key, value);
-		}
-	}
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/utils/PropertyXMLEncoder.java/left.java
+    if (!key.contains("/")) {
+      Element pp = null;
+      if ((pp = contains(key)) == null) {
+        add(e, key, value);
+      } else {
+        remove(pp);
+        add(e, key, value);
+      }
+    } else {
+      final int i = key.indexOf("/");
+      final String childName = key.substring(0, i);
+      final String newkey = key.substring(i + 1);
+      Element child = e.getChild(childName);
+      if (child == null) {
+        child = new Element(childName);
+        e.addContent(child);
+        add(child, newkey, value);
+      }
+      set(child, newkey, value);
+    }
+=======
+    if (key.contains("/")) {
+      final int i = key.indexOf("/");
+      final String childName = key.substring(0, i);
+      final String newkey = key.substring(i + 1);
+      Element child = e.getChild(childName);
+      if (child == null) {
+        child = new Element(childName);
+        e.addContent(child);
+        add(child, newkey, value);
+      }
+      set(child, newkey, value);
+    } else {
+      Element pp = null;
+      if ((pp = ElementUtils.contains(e, key)) == null) {
+        add(e, key, value);
+      } else {
+        ElementUtils.remove(e, pp);
+        add(e, key, value);
+      }
+    }
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/utils/PropertyXMLEncoder.java/right.java
+  }
 
-	private void add(Element e, String key, String value) {
-		if (key.contains("/")) {
-			final int i = key.indexOf("/");
-			final String childName = key.substring(0, i);
-			final String newkey = key.substring(i + 1);
+  public void add(final String key, final String value) {
+    if (key != null && value != null) {
+      add(this.getRoot(), key, value);
+    }
+  }
 
-			Element child = e.getChild(childName);
-			if (child == null) {
-				child = new Element(childName);
-				e.addContent(child);
-			}
+  private void add(Element e, String key, String value) {
+    if (key.contains("/")) {
+      final int i = key.indexOf("/");
+      final String childName = key.substring(0, i);
+      final String newkey = key.substring(i + 1);
+      Element child = e.getChild(childName);
+      if (child == null) {
+        child = new Element(childName);
+        e.addContent(child);
+      }
+      add(child, newkey, value);
+    } else {
 
-			add(child, newkey, value);
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/utils/PropertyXMLEncoder.java/left.java
+      final int i = key.indexOf("/");
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-		} else {
-			e.addContent(new Element(key).setText(value));
-		}
 
-	}
-	
-//	public void set(final String key, final String value) {
-//		if (key != null && value != null) {
-//			set(getRoot(), key, value);
-//		}
-//	}
-//	
-//	private void set(final Element e, final String key, final String value){
-//		if (!key.contains("/")) {
-//				Element pp = null;
-//				if ((pp = contains(key)) == null)
-//					add(e,key, value);
-//				else {
-//					remove(pp);
-//					add(e,key, value);
-//				}
-//		} else {
-//			final int i = key.indexOf("/");
-//			final String childName = key.substring(0, i);
-//			final String newkey = key.substring(i + 1);
-//
-//			Element child = e.getChild(childName);
-//			if (child == null) {
-//				child = new Element(childName);
-//				e.addContent(child);
-//				add(child,newkey,value);
-//			}
-//			set(child, newkey, value);
-//		}
-//	}
-//
-//	public void add(final String key, final String value) {
-//		if (key != null && value != null) {
-//			add(this.getRoot(), key, value);
-//		}
-//	}
-//
-//	private void add(Element e, String key, String value) {
-//		if (!key.contains("/")) {
-//			e.addContent(new Element(key).setText(value));
-//		} else {
-//			final int i = key.indexOf("/");
-//			final String childName = key.substring(0, i);
-//			final String newkey = key.substring(i + 1);
-//
-//			Element child = e.getChild(childName);
-//			if (child == null) {
-//				child = new Element(childName);
-//				e.addContent(child);
-//			}
-//
-//			add(child, newkey, value);
-//		}
-//
-//	}
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/utils/PropertyXMLEncoder.java/left.java
+      final String childName = key.substring(0, i);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
+
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/utils/PropertyXMLEncoder.java/left.java
+      final String newkey = key.substring(i + 1);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+      e.addContent(new Element(key).setText(value));
+    }
+  }
 }
