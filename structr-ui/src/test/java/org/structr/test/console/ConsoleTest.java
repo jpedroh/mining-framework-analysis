@@ -147,9 +147,20 @@ public class ConsoleTest extends StructrUiTest {
 	public void testRebuildCommand() {
 
 		final Console console = new Console(securityContext, ConsoleMode.JavaScript, Collections.emptyMap());
-
+<<<<<<< /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/left.java
 		final int nodeCount      = 2438;
+||||||| /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/base.java
+		final int nodeCount      = 2403;
+=======
+		final int nodeCount      = 2440;
+>>>>>>> /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/right.java
+<<<<<<< /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/left.java
 		final int relCount       = 2846;
+||||||| /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/base.java
+		final int relCount       = 2824;
+=======
+		final int relCount       = 2853;
+>>>>>>> /usr/src/app/output/structr/structr/a8cda24e915512dae80b01d9ea08579533fbb00a/structr-ui/src/test/java/org/structr/test/console/ConsoleTest.java/right.java
 		final int typedNodeCount = 612;
 
 		final String fullIndexRebuildOutput =
