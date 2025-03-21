@@ -174,8 +174,8 @@ public class TerminalClient {
             backend.performHomingCycle();
             Thread.sleep(WAIT_DURATION);
             while (backend.getController().getControllerStatus().getState() == ControllerState.HOME) {
-                Thread.sleep(10);
-            }
+            Thread.sleep(10);
+        }
         } catch (Exception e) {
             throw new RuntimeException("Couldn't home machine", e);
         }
