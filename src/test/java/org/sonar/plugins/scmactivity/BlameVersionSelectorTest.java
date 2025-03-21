@@ -50,7 +50,6 @@ public class BlameVersionSelectorTest {
   @Before
   public void setUp() {
     blameVersionSelector = new BlameVersionSelector(conf, blameSensor);
-    when(conf.isReloadBlameEnabled()).thenReturn(false);
   }
 
   @Test
@@ -79,21 +78,6 @@ public class BlameVersionSelectorTest {
 
     assertThat(update).isSameAs(saveBlame);
   }
-  
-  @Test
-  public void should_save_blame_when_file_is_the_same_and_reloadEnabled() throws IOException {
-      File file = file("source.java", "foo");
-      DefaultInputFile inputFile = new DefaultInputFile("source.java").setFile(file);
-      inputFile.setStatus(InputFile.Status.SAME);
-      inputFile.setLines(1);
-      when(blameSensor.save(file, resource, 1)).thenReturn(saveBlame);
-
-      when(conf.isReloadBlameEnabled()).thenReturn(true);
-
-      MeasureUpdate update = blameVersionSelector.detect(resource, inputFile, context, true);
-      
-      assertThat(update).isSameAs(saveBlame);
-  }
 
   @Test
   public void should_copy_previous_measures_when_file_is_the_same_and_previous_measures_present() throws IOException {
@@ -107,6 +91,21 @@ public class BlameVersionSelectorTest {
     MeasureUpdate update = blameVersionSelector.detect(resource, inputFile, context, true);
 
     assertThat(update).isInstanceOf(CopyPreviousMeasures.class);
+  }
+  
+  @Test
+  public void should_save_blame_when_reloadEnabled() throws IOException {
+      File file = file("source.java", "foo");
+      InputFile inputFile = inputFile(file);
+      when(fileToResource.toResource(inputFile, context)).thenReturn(resource);
+      when(sha1Generator.find(anyString())).thenReturn("SHA1");
+      when(blameSensor.save(file, resource, "SHA1", 1)).thenReturn(saveBlame);
+
+      when(conf.isReloadBlameEnabled()).thenReturn(true);
+
+      MeasureUpdate update = blameVersionSelector.detect(inputFile, "SHA1", context);
+      
+      assertThat(update).isSameAs(saveBlame);
   }
 
   File file(String name, String content) throws IOException {
