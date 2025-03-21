@@ -9,6 +9,7 @@ package org.sonatype.maven.polyglot.yaml;
 
 import org.apache.maven.model.*;
 import org.junit.Test;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.InputStream;
 import java.util.List;
@@ -103,8 +104,15 @@ public class CompactFormatTest {
     try {
       getModel("dependencies-colon-issue.yaml");
     } catch (Exception e) {
+<<<<<<< /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/test/java/org/sonatype/maven/polyglot/yaml/CompactFormatTest.java/left.java
+      // just assert it failed, but the message below was removed from Snakeyaml
+      // assertTrue(e.getMessage().contains("http://pyyaml.org/wiki/YAMLColonInFlowContext"));
+||||||| /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/test/java/org/sonatype/maven/polyglot/yaml/CompactFormatTest.java/base.java
+      assertTrue(e.getMessage().contains("http://pyyaml.org/wiki/YAMLColonInFlowContext"));
+=======
       String message = e.getMessage();
       assertTrue(message, message.contains("Unable to find property 'groupId:log4j' on class: org.apache.maven.model.Exclusion"));
+>>>>>>> /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/test/java/org/sonatype/maven/polyglot/yaml/CompactFormatTest.java/right.java
     }
   }
 

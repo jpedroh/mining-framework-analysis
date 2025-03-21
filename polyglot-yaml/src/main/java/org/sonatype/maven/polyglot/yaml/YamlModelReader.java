@@ -31,7 +31,7 @@ import java.util.Map;
  * @since 0.7
  */
 @Singleton
-@Named("yaml")
+@Named( "yaml" )
 public class YamlModelReader extends ModelReaderSupport {
   private final Yaml yaml;
 

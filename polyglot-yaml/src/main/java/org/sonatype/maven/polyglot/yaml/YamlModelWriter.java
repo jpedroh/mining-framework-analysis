@@ -32,7 +32,7 @@ import java.util.Map;
  * @since 0.7
  */
 @Singleton
-@Named("yaml")
+@Named( "yaml" )
 public class YamlModelWriter extends ModelWriterSupport {
   public void write(Writer output, Map<String, Object> o, Model model) throws IOException {
     DumperOptions dumperOptions = new DumperOptions();

@@ -13,8 +13,8 @@ import org.apache.maven.model.Developer;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -22,7 +22,6 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.beans.IntrospectionException;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -36,7 +35,12 @@ import static java.lang.String.format;
  */
 class ModelRepresenter extends Representer {
   public ModelRepresenter(DumperOptions options) {
+<<<<<<< /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/left.java
+    setDefaultScalarStyle( DumperOptions.ScalarStyle.PLAIN );
+||||||| /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/base.java
+=======
     super(options);
+>>>>>>> /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/right.java
     this.representers.put(Xpp3Dom.class, new RepresentXpp3Dom());
     Represent stringRepresenter = this.representers.get(String.class);
     this.representers.put(Boolean.class, stringRepresenter);
@@ -98,7 +102,13 @@ class ModelRepresenter extends Representer {
     private static final String ATTRIBUTE_PREFIX = "attr/";
 
     public Node representData(Object data) {
+<<<<<<< /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/left.java
+      return representMapping(Tag.MAP, toMap((Xpp3Dom) data), DumperOptions.FlowStyle.BLOCK);
+||||||| /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/base.java
+      return representMapping(Tag.MAP, toMap((Xpp3Dom) data), null);
+=======
       return representMapping(Tag.MAP, toMap((Xpp3Dom) data), DumperOptions.FlowStyle.AUTO);
+>>>>>>> /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/right.java
     }
 
     private Map<String, Object> toMap(Xpp3Dom node) {
@@ -217,6 +227,36 @@ class ModelRepresenter extends Representer {
    * Change the default order. Important data goes first.
    */
   @Override
+<<<<<<< /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/left.java
+  protected Set<Property> getProperties(Class<? extends Object> type) {
+    if (type.isAssignableFrom(Model.class)) {
+      return sortTypeWithOrder(type, ORDER_MODEL);
+    } else if (type.isAssignableFrom(Developer.class)) {
+      return sortTypeWithOrder(type, ORDER_DEVELOPER);
+    } else if (type.isAssignableFrom(Contributor.class)) {
+      return sortTypeWithOrder(type, ORDER_CONTRIBUTOR);
+    }  else if (type.isAssignableFrom(Dependency.class)) {
+      return sortTypeWithOrder(type, ORDER_DEPENDENCY);
+    }  else if (type.isAssignableFrom(Plugin.class)) {
+      return sortTypeWithOrder(type, ORDER_PLUGIN);
+    } else {
+      return super.getProperties(type);
+||||||| /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/base.java
+  protected Set<Property> getProperties(Class<? extends Object> type)
+          throws IntrospectionException {
+    if (type.isAssignableFrom(Model.class)) {
+      return sortTypeWithOrder(type, ORDER_MODEL);
+    } else if (type.isAssignableFrom(Developer.class)) {
+      return sortTypeWithOrder(type, ORDER_DEVELOPER);
+    } else if (type.isAssignableFrom(Contributor.class)) {
+      return sortTypeWithOrder(type, ORDER_CONTRIBUTOR);
+    }  else if (type.isAssignableFrom(Dependency.class)) {
+      return sortTypeWithOrder(type, ORDER_DEPENDENCY);
+    }  else if (type.isAssignableFrom(Plugin.class)) {
+      return sortTypeWithOrder(type, ORDER_PLUGIN);
+    } else {
+      return super.getProperties(type);
+=======
   protected Set<Property> getProperties(Class<? extends Object> type) {
     try {
       if (type.isAssignableFrom(Model.class)) {
@@ -234,11 +274,11 @@ class ModelRepresenter extends Representer {
       }
     } catch (IntrospectionException e) {
       throw new YAMLException(e);
+>>>>>>> /usr/src/app/output/takari/maven-polyglot/746ef5141b10b1281a83864bd72ff5b78816762b/polyglot-yaml/src/main/java/org/sonatype/maven/polyglot/yaml/ModelRepresenter.java/right.java
     }
   }
 
-  private Set<Property> sortTypeWithOrder(Class<? extends Object> type, List<String> order)
-          throws IntrospectionException {
+  private Set<Property> sortTypeWithOrder(Class<? extends Object> type, List<String> order) {
       Set<Property> standard = super.getProperties(type);
       Set<Property> sorted = new TreeSet<Property>(new ModelPropertyComparator(order));
       sorted.addAll(standard);
