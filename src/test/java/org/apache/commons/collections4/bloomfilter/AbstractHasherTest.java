@@ -81,6 +81,23 @@ public abstract class AbstractHasherTest extends AbstractIndexProducerTest {
 
     @Test
     public void testUniqueIndex() {
+<<<<<<< /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/AbstractHasherTest.java/left.java
+        // create a hasher that produces duplicates with the specified shape.
+        // this setup produces 5, 17, 29, 41, 53, 65 two times
+        Shape shape = Shape.fromKM(12, 72);
+        Hasher hasher = new IncrementingHasher(5, 12);
+        Set<Integer> set = new HashSet<>();
+        assertTrue(hasher.uniqueIndices(shape).forEachIndex(set::add), "Duplicate detected");
+        assertEquals(6, set.size());
+||||||| /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/AbstractHasherTest.java/base.java
+        // create a hasher that produces duplicates with the specified shape.
+        // this setup produces 5, 17, 29, 41, 53, 65 two times
+        Shape shape = Shape.fromKM(12, 72);
+        Hasher hasher = new SimpleHasher(5, 12);
+        Set<Integer> set = new HashSet<>();
+        assertTrue(hasher.uniqueIndices(shape).forEachIndex(set::add), "Duplicate detected");
+        assertEquals(6, set.size());
+=======
         // @formatter:off
         /*
          * The probability of a collision when
@@ -116,5 +133,6 @@ public abstract class AbstractHasherTest extends AbstractIndexProducerTest {
         assertTrue( full.size() > unique.size() );
         Set<Integer> set = new HashSet<Integer>( unique );
         assertEquals( set.size(), unique.size() );
+>>>>>>> /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/AbstractHasherTest.java/right.java
     }
 }

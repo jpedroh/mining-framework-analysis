@@ -50,13 +50,20 @@ public class DefaultBloomFilterTest extends AbstractBloomFilterTest<DefaultBloom
     }
 
     @Test
-    public void testDefaultBloomFilterSimpleSpecificMerge() {
+    public void testDefaultBloomFilterSimpleSpecificMergeInPlace() {
         AbstractDefaultBloomFilter filter = new SparseDefaultBloomFilter(Shape.fromKM(3, 150));
         Hasher hasher = new IncrementingHasher(0, 1);
-        assertTrue(filter.merge(hasher));
+        assertTrue(filter.mergeInPlace(hasher));
         assertEquals(3, filter.cardinality());
     }
 
+    @Test
+    public void testDefaultBloomFilterSparseSpecificMergeInPlace() {
+        AbstractDefaultBloomFilter filter = new SparseDefaultBloomFilter(Shape.fromKM(3, 150));
+        Hasher hasher = new IncrementingHasher(0, 1);
+        BloomFilter newFilter = filter.merge(hasher);
+        assertEquals(3, newFilter.cardinality());
+    }
 
     @Test
     public void testDefaultBloomFilterSparseSpecificMerge() {
@@ -68,6 +75,23 @@ public class DefaultBloomFilterTest extends AbstractBloomFilterTest<DefaultBloom
         assertEquals(3, newFilter.cardinality());
     }
 
+<<<<<<< /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/DefaultBloomFilterTest.java/left.java
+    @Test
+    public void testHasherBasedMergeInPlaceWithDifferingSparseness() {
+        Hasher hasher = new IncrementingHasher(1, 1);
+
+        BloomFilter bf1 = new NonSparseDefaultBloomFilter(getTestShape());
+        bf1.mergeInPlace(hasher);
+        assertTrue(BitMapProducer.fromIndexProducer(hasher.indices(getTestShape()), getTestShape().getNumberOfBits())
+                .forEachBitMapPair(bf1, (x, y) -> x == y));
+
+        bf1 = new SparseDefaultBloomFilter(getTestShape());
+        bf1.mergeInPlace(hasher);
+        assertTrue(BitMapProducer.fromIndexProducer(hasher.indices(getTestShape()), getTestShape().getNumberOfBits())
+                .forEachBitMapPair(bf1, (x, y) -> x == y));
+    }
+||||||| /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/DefaultBloomFilterTest.java/base.java
+=======
     @Test
     public void testHasherBasedMergeInPlaceWithDifferingSparseness() {
         Hasher hasher = new IncrementingHasher(1, 1);
@@ -81,6 +105,15 @@ public class DefaultBloomFilterTest extends AbstractBloomFilterTest<DefaultBloom
         bf1.merge(hasher);
         assertTrue(BitMapProducer.fromIndexProducer(hasher.indices(getTestShape()), getTestShape().getNumberOfBits())
                 .forEachBitMapPair(bf1, (x, y) -> x == y));
+    }
+>>>>>>> /usr/src/app/output/apache/commons-collections/8ed3c228f6a028dddb3141a32abfea7688a49443/src/test/java/org/apache/commons/collections4/bloomfilter/DefaultBloomFilterTest.java/right.java
+
+    @Test
+    public void testDefaultBloomFilterSimpleSpecificMerge() {
+        AbstractDefaultBloomFilter filter = new SparseDefaultBloomFilter(Shape.fromKM(3, 150));
+        Hasher hasher = new IncrementingHasher(0, 1);
+        assertTrue(filter.merge(hasher));
+        assertEquals(3, filter.cardinality());
     }
 
     abstract static class AbstractDefaultBloomFilter implements BloomFilter {
