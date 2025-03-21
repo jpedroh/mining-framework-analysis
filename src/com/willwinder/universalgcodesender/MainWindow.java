@@ -42,10 +42,6 @@ import com.willwinder.universalgcodesender.listeners.ControllerListener;
 import com.willwinder.universalgcodesender.model.GUIBackend;
 import com.willwinder.universalgcodesender.model.Utils.Units;
 import com.willwinder.universalgcodesender.uielements.LengthLimitedDocument;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1037,7 +1033,13 @@ implements KeyListener, ControllerListener, ControlStateListener {
                 .add(connectionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(firmwareLabel)
                     .add(firmwareComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/left.java
                 .addContainerGap(27, Short.MAX_VALUE))
+||||||| /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/base.java
+                .addContainerGap(25, Short.MAX_VALUE))
+=======
+                .addContainerGap(45, Short.MAX_VALUE))
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/right.java
         );
 
         showVerboseOutputCheckBox.setText("Show verbose output");
@@ -1180,7 +1182,13 @@ implements KeyListener, ControllerListener, ControlStateListener {
                         .add(statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(machinePositionZLabel)
                             .add(machinePositionZValueLabel))))
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/left.java
+                .addContainerGap(10, Short.MAX_VALUE))
+||||||| /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/base.java
+                .addContainerGap(6, Short.MAX_VALUE))
+=======
                 .addContainerGap(23, Short.MAX_VALUE))
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/caab3ac3b99a7a4df0cf8df4da3c17c6205b4298/src/com/willwinder/universalgcodesender/MainWindow.java/right.java
         );
 
         showCommandTableCheckBox.setSelected(true);
@@ -2253,10 +2261,6 @@ implements KeyListener, ControllerListener, ControlStateListener {
         this.commandTable.setAutoWindowScroll(scrollWindowCheckBox.isSelected());
     }
     
-    void clearTable() {
-        this.commandTable.clear();
-    }
-        
     private static void displayErrorDialog(final String errorMessage) {
         java.awt.EventQueue.invokeLater(new Runnable() { @Override public void run() {
             JOptionPane.showMessageDialog(new JFrame(), errorMessage, 
