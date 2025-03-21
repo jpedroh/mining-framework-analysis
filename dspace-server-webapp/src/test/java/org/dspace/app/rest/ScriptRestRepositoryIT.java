@@ -84,6 +84,7 @@ public class ScriptRestRepositoryIT extends AbstractControllerIntegrationTest {
         getClient(token).perform(get("/api/system/scripts"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$._embedded.scripts", containsInAnyOrder(
+<<<<<<< /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/left.java
                             scriptConfigurations
                                 .stream()
                                 .map(scriptConfiguration -> ScriptMatcher.matchScript(
@@ -91,6 +92,43 @@ public class ScriptRestRepositoryIT extends AbstractControllerIntegrationTest {
                                     scriptConfiguration.getDescription()
                                 ))
                                 .collect(Collectors.toList())
+||||||| /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/base.java
+                                ScriptMatcher.matchScript(scriptConfigurations.get(0).getName(),
+                                                          scriptConfigurations.get(0).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(1).getName(),
+                                                          scriptConfigurations.get(1).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(2).getName(),
+                                                          scriptConfigurations.get(2).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(3).getName(),
+                                                          scriptConfigurations.get(3).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(4).getName(),
+                                                      scriptConfigurations.get(4).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(5).getName(),
+                                                      scriptConfigurations.get(5).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(6).getName(),
+                                                          scriptConfigurations.get(6).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(7).getName(),
+                                                          scriptConfigurations.get(7).getDescription())
+=======
+                                ScriptMatcher.matchScript(scriptConfigurations.get(0).getName(),
+                                                          scriptConfigurations.get(0).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(1).getName(),
+                                                          scriptConfigurations.get(1).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(2).getName(),
+                                                          scriptConfigurations.get(2).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(3).getName(),
+                                                          scriptConfigurations.get(3).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(4).getName(),
+                                                      scriptConfigurations.get(4).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(5).getName(),
+                                                      scriptConfigurations.get(5).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(6).getName(),
+                                                          scriptConfigurations.get(6).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(7).getName(),
+                                                          scriptConfigurations.get(7).getDescription()),
+                                ScriptMatcher.matchScript(scriptConfigurations.get(8).getName(),
+                                                          scriptConfigurations.get(8).getDescription())
+>>>>>>> /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/right.java
                         )));
     }
 
@@ -137,12 +175,28 @@ public class ScriptRestRepositoryIT extends AbstractControllerIntegrationTest {
                             Matchers.containsString("/api/system/scripts?"),
                             Matchers.containsString("page=1"), Matchers.containsString("size=1"))))
                         .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
+<<<<<<< /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/left.java
                             Matchers.containsString("/api/system/scripts?"),
                             Matchers.containsString("page=" + lastPage), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/base.java
+                                Matchers.containsString("/api/system/scripts?"),
+                                Matchers.containsString("page=7"), Matchers.containsString("size=1"))))
+=======
+                                Matchers.containsString("/api/system/scripts?"),
+                                Matchers.containsString("page=8"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/right.java
                         .andExpect(jsonPath("$.page.size", is(1)))
                         .andExpect(jsonPath("$.page.number", is(0)))
+<<<<<<< /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/left.java
                         .andExpect(jsonPath("$.page.totalPages", is(totalPages)))
                         .andExpect(jsonPath("$.page.totalElements", is(totalPages)));
+||||||| /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/base.java
+                        .andExpect(jsonPath("$.page.totalPages", is(8)))
+                        .andExpect(jsonPath("$.page.totalElements", is(8)));
+=======
+                        .andExpect(jsonPath("$.page.totalPages", is(9)))
+                        .andExpect(jsonPath("$.page.totalElements", is(9)));
+>>>>>>> /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/right.java
 
 
         getClient(token).perform(get("/api/system/scripts").param("size", "1").param("page", "1"))
@@ -168,12 +222,28 @@ public class ScriptRestRepositoryIT extends AbstractControllerIntegrationTest {
                             Matchers.containsString("/api/system/scripts?"),
                             Matchers.containsString("page=2"), Matchers.containsString("size=1"))))
                         .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
+<<<<<<< /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/left.java
                             Matchers.containsString("/api/system/scripts?"),
                             Matchers.containsString("page=" + lastPage), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/base.java
+                                Matchers.containsString("/api/system/scripts?"),
+                                Matchers.containsString("page=7"), Matchers.containsString("size=1"))))
+=======
+                                Matchers.containsString("/api/system/scripts?"),
+                                Matchers.containsString("page=8"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/right.java
                         .andExpect(jsonPath("$.page.size", is(1)))
                         .andExpect(jsonPath("$.page.number", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/left.java
                         .andExpect(jsonPath("$.page.totalPages", is(totalPages)))
                         .andExpect(jsonPath("$.page.totalElements", is(totalPages)));
+||||||| /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/base.java
+                        .andExpect(jsonPath("$.page.totalPages", is(8)))
+                        .andExpect(jsonPath("$.page.totalElements", is(8)));
+=======
+                        .andExpect(jsonPath("$.page.totalPages", is(9)))
+                        .andExpect(jsonPath("$.page.totalElements", is(9)));
+>>>>>>> /usr/src/app/output/dspace/dspace/ffaa7ded6f6c51dfd7855d601cabb72789e681bf/dspace-server-webapp/src/test/java/org/dspace/app/rest/ScriptRestRepositoryIT.java/right.java
     }
 
     @Test
