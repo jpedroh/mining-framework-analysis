@@ -28,9 +28,9 @@ import org.xmpp.resultsetmanagement.ResultSetImpl;
 public class NodeDelete extends PubSubElementProcessorAbstract {
 
     private static final String NODE_REG_EX = "^/user/[^@]+@[^/]+/[^/]+$";
-	private ResultSet<NodeSubscription> subscriptions;
 
     private static final Logger LOGGER = Logger.getLogger(NodeThreadsGet.class);
+	private ResultSet<NodeSubscription> subscriptions;
 
     public NodeDelete(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
         setChannelManager(channelManager);
