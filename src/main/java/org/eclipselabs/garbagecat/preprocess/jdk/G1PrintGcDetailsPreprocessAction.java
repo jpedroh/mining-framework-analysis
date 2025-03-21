@@ -413,78 +413,108 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *            The log line.
      * @param nextLogEntry
      *            The next log line.
-     * @param entangledLogLines
+     * @param savedLogLines
      *            Log lines to be output out of order.
      */
     public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
-            List<String> entangledLogLines) {
+            List<String> savedLogLines) {
         if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
                 || logEntry.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK)
                 || logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)
                 || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
             this.logEntry = logEntry;
+<<<<<<< /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/left.java
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
             // Handle young collection mixed with concurrent logging. See dataset47.txt.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(25));
+                // Add concurrent part to saved lines list
+                savedLogLines.add(matcher.group(25));
             }
             // Output beginning of young line
             this.logEntry = matcher.group(12);
         } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
-            // Handle concurrent mixed with young collections. See dataset47.txt.
+||||||| /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/base.java
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT))  else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+=======
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
+            // Handle young collection mixed with concurrent logging. See dataset47.txt.
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
-            Matcher matcher = pattern.matcher(priorLogEntry);
+            Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                entangledLogLines.add(logEntry);
-            } else {
+                // Add concurrent part as separate line to saved lines list
+                savedLogLines.add(matcher.group(25));
+            }
+            // Output beginning of young line
+            this.logEntry = matcher.group(12);
+        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+>>>>>>> /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/right.java
+                // Handle concurrent mixed with young collections. See dataset47.txt.
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
+                Matcher matcher = pattern.matcher(priorLogEntry);
+                if (matcher.matches()) {
+                    savedLogLines.add(logEntry);
+                } else {
+                    this.logEntry = logEntry;
+                }
+            } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    this.logEntry = matcher.group(1) + matcher.group(5);
+                }
+            } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    this.logEntry = matcher.group(1);
+                }
+            } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                    // For now put logging in standard G1 form (K and M). If standard logging one day has B, G, or
+                    // decimals, we would want to remove this from preprocessing and expand the normal handling to account
+                    // for decimals, bytes, and/or gigabytes.
+                    this.logEntry = " ";
+                    this.logEntry = this.logEntry
+                            + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(13), matcher.group(14).charAt(0));
+                    this.logEntry = this.logEntry + "->";
+                    this.logEntry = this.logEntry
+                            + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(17), matcher.group(18).charAt(0));
+                    this.logEntry = this.logEntry + "(";
+                    this.logEntry = this.logEntry
+                            + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(19), matcher.group(20).charAt(0));
+                    this.logEntry = this.logEntry + ")";
+                }
+            } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_DURATION)) {
                 this.logEntry = logEntry;
+            } else if (logEntry.matches(REGEX_RETAIN_END)) {
+                this.logEntry = logEntry + System.getProperty("line.separator");
+<<<<<<< /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/left.java
+                // Output any saved log lines
+                Iterator<String> iterator = savedLogLines.iterator();
+                while (iterator.hasNext()) {
+                    String logLine = iterator.next();
+                    this.logEntry = this.logEntry + logLine;
+                    this.logEntry = this.logEntry + System.getProperty("line.separator");
+                }
+                // Remove savedLogLines entries
+                savedLogLines.clear();
+||||||| /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/base.java
+=======
+                // Output any saved log lines
+                Iterator<String> iterator = savedLogLines.iterator();
+                while (iterator.hasNext()) {
+                    String logLine = iterator.next();
+                    this.logEntry = this.logEntry + logLine;
+                    this.logEntry = this.logEntry + System.getProperty("line.separator");
+                }
+                // Removed savedLogLines entries
+                savedLogLines.clear();
+>>>>>>> /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/preprocess/jdk/G1PrintGcDetailsPreprocessAction.java/right.java
             }
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(5);
-            }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-            }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                // For now put logging in standard G1 form (K and M). If standard logging one day has B, G, or
-                // decimals, we would want to remove this from preprocessing and expand the normal handling to account
-                // for decimals, bytes, and/or gigabytes.
-                this.logEntry = " ";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(13), matcher.group(14).charAt(0));
-                this.logEntry = this.logEntry + "->";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(17), matcher.group(18).charAt(0));
-                this.logEntry = this.logEntry + "(";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(19), matcher.group(20).charAt(0));
-                this.logEntry = this.logEntry + ")";
-            }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_DURATION)) {
-            this.logEntry = logEntry;
-        } else if (logEntry.matches(REGEX_RETAIN_END)) {
-            this.logEntry = logEntry + System.getProperty("line.separator");
-            // Output any entangled log lines
-            Iterator<String> iterator = entangledLogLines.iterator();
-            while (iterator.hasNext()) {
-                String logLine = iterator.next();
-                this.logEntry = this.logEntry + logLine;
-                this.logEntry = this.logEntry + System.getProperty("line.separator");
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
-        }
     }
 
     public String getLogEntry() {

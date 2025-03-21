@@ -105,12 +105,21 @@ public class GcManager {
             // Used for detangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
 
+            List<String> savedLogLines = new ArrayList<String>();
+
             String nextLogLine = bufferedReader.readLine();
             while (nextLogLine != null) {
                 lineCounter++;
 
+<<<<<<< /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/left.java
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
                         entangledLogLines);
+||||||| /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/base.java
+                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
+=======
+                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                        savedLogLines);
+>>>>>>> /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/right.java
                 if (preprocessedLogLine != null) {
                     bufferedWriter.write(preprocessedLogLine);
                 }
@@ -121,8 +130,15 @@ public class GcManager {
             } // while()
 
             // Process last line
+<<<<<<< /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/left.java
             preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
                     entangledLogLines);
+||||||| /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/base.java
+            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate);
+=======
+            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
+                    savedLogLines);
+>>>>>>> /usr/src/app/output/doctau/garbagecat/4af1d9c4fc71246add443b99af9cc47e5464aa89/src/main/java/org/eclipselabs/garbagecat/service/GcManager.java/right.java
             if (preprocessedLogLine != null) {
                 bufferedWriter.write(preprocessedLogLine);
             }
@@ -173,12 +189,12 @@ public class GcManager {
      *            The next log line.
      * @param jvmStartDate
      *            The date and time the JVM was started.
-     * @param entangledLogLines
-     *            Log lines mixed in with other logging events.
+     * @param savedLogLines
+     *            Log lines to be output out of order.
      * @return
      */
     private String getPreprocessedLogEntry(String currentLogLine, String priorLogLine, String nextLogLine,
-            Date jvmStartDate, List<String> entangledLogLines) {
+            Date jvmStartDate, List<String> savedLogLines) {
         String preprocessedLogLine = null;
         if (!JdkUtil.discardLogLine(currentLogLine)) {
             // First convert any datestamps to timestamps
@@ -239,7 +255,7 @@ public class GcManager {
                 }
             } else if (G1PrintGcDetailsPreprocessAction.match(currentLogLine)) {
                 G1PrintGcDetailsPreprocessAction action = new G1PrintGcDetailsPreprocessAction(priorLogLine,
-                        currentLogLine, nextLogLine, entangledLogLines);
+                        currentLogLine, nextLogLine, savedLogLines);
                 if (action.getLogEntry() != null) {
                     preprocessedLogLine = action.getLogEntry();
                 }
