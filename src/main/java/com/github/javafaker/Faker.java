@@ -131,8 +131,12 @@ public class Faker {
         this.hipster = new Hipster(this);
         this.job = new Job(this);
         this.twinPeaks = new TwinPeaks(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/a42e08057a2eb63549c7482177a34e797d0382b6/src/main/java/com/github/javafaker/Faker.java/left.java
         this.rickAndMorty = new RickAndMorty(this);
+||||||| /usr/src/app/output/dius/java-faker/a42e08057a2eb63549c7482177a34e797d0382b6/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.yoda = new Yoda(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/a42e08057a2eb63549c7482177a34e797d0382b6/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -407,7 +411,6 @@ public class Faker {
     public RickAndMorty rickAndMorty() {
         return rickAndMorty;
     }
-  
     public Yoda yoda() {
         return yoda;
     }
