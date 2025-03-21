@@ -177,10 +177,14 @@ public class Faker {
         this.lebowski = new Lebowski(this);
         this.medical = new Medical(this);
         this.country = new Country(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/7b5abe97d0c634bd2c4300239f2f9d4d69badbcf/src/main/java/com/github/javafaker/Faker.java/left.java
         this.barcode = new Barcode(this);
+||||||| /usr/src/app/output/dius/java-faker/7b5abe97d0c634bd2c4300239f2f9d4d69badbcf/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.animal = new Animal(this);
         this.backToTheFuture = new BackToTheFuture(this);
         this.princessBride = new PrincessBride(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/7b5abe97d0c634bd2c4300239f2f9d4d69badbcf/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -579,8 +583,9 @@ public class Faker {
 
     public Barcode barcode() {
         return barcode;
+    }
 
-      public Animal animal(){ return animal; }
+    public Animal animal(){ return animal; }
 
     public BackToTheFuture backToTheFuture() {
         return  backToTheFuture;
