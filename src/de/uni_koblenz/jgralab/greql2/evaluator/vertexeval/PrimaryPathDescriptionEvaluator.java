@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
  */
 public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescription>
 		extends PathDescriptionEvaluator<V> {
-
+	
 	private GReQLDirection validDirection = null;
 
 	public PrimaryPathDescriptionEvaluator(V vertex, QueryImpl query) {
@@ -65,8 +65,7 @@ public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescr
 	protected GReQLDirection getEdgeDirection(PrimaryPathDescription vertex) {
 		if (validDirection == null) {
 			validDirection = GReQLDirection.INOUT;
-			Edge dirEdge = vertex
-					.getFirstIsDirectionOfIncidence(EdgeDirection.IN);
+			Edge dirEdge = vertex.getFirstIsDirectionOfIncidence(EdgeDirection.IN);
 			if (dirEdge != null) {
 				Direction dirVertex = (Direction) dirEdge.getAlpha();
 				validDirection = dirVertex.get_dirValue();

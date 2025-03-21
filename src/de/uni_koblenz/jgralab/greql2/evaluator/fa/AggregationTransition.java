@@ -59,8 +59,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class AggregationTransition extends Transition {
 
 	private final VertexEvaluator<? extends Expression> predicateEvaluator;
-
-	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
+	
+	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
 
@@ -70,7 +70,7 @@ public class AggregationTransition extends Transition {
 	 * The collection of types that are accepted by this transition
 	 */
 	protected TypeCollection typeCollection;
-
+	
 	public TypeCollection getTypeCollection() {
 		return typeCollection;
 	}
@@ -80,11 +80,11 @@ public class AggregationTransition extends Transition {
 	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
-
+	
 	public Set<String> getValidToRoles() {
 		return validToEdgeRoles;
 	}
-
+	
 	public Set<String> getValidFromRoles() {
 		return validFromEdgeRoles;
 	}
@@ -92,7 +92,7 @@ public class AggregationTransition extends Transition {
 	protected Set<String> validFromEdgeRoles;
 
 	protected boolean aggregateFrom;
-
+	
 	public boolean isAggregateFrom() {
 		return aggregateFrom;
 	}

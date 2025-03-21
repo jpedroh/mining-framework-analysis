@@ -66,8 +66,8 @@ public class EdgeTransition extends SimpleTransition {
 	 * the result can be used as allowed edge
 	 */
 	private final VertexEvaluator<?> allowedEdgeEvaluator;
-
-	public VertexEvaluator<?> getAllowedEdgeEvaluator() {
+	
+	public VertexEvaluator getAllowedEdgeEvaluator() {
 		return allowedEdgeEvaluator;
 	}
 

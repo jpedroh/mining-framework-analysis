@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import java.util.BitSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -49,6 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
 
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is
@@ -60,10 +62,11 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class SimpleTransition extends Transition {
 
 	protected VertexEvaluator<? extends Expression> predicateEvaluator;
-
-	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
+	
+	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
+	
 
 	protected ThisEdgeEvaluator thisEdgeEvaluator;
 
@@ -71,10 +74,11 @@ public class SimpleTransition extends Transition {
 	 * The collection of types that are accepted by this transition
 	 */
 	protected TypeCollection typeCollection;
-
+	
 	public TypeCollection getTypeCollection() {
 		return typeCollection;
 	}
+	
 
 	/**
 	 * an edge may have valid roles. This set holds the valid roles at the other
@@ -82,7 +86,8 @@ public class SimpleTransition extends Transition {
 	 * for no explicit role, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
-
+	
+	
 	public Set<String> getValidToRoles() {
 		return validToEdgeRoles;
 	}
@@ -97,12 +102,12 @@ public class SimpleTransition extends Transition {
 	public Set<String> getValidFromRoles() {
 		return validFromEdgeRoles;
 	}
-
+	
 	/**
 	 * this transition may accept edges in direction in, out or any
 	 */
 	protected GReQLDirection validDirection;
-
+	
 	public GReQLDirection getAllowedDirection() {
 		return validDirection;
 	}
@@ -317,6 +322,8 @@ public class SimpleTransition extends Transition {
 				&& (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
 
+
+		
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = e.getAttributedElementClass();

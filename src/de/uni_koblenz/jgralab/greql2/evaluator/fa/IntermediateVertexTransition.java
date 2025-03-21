@@ -50,8 +50,8 @@ public class IntermediateVertexTransition extends Transition {
 	 * the result of this VertexEvaluator
 	 */
 	public VertexEvaluator<?> intermediateVertexEvaluator;
-
-	public VertexEvaluator<?> getIntermediateVertexEvaluator() {
+	
+	public VertexEvaluator getIntermediateVertexEvaluator() {
 		return intermediateVertexEvaluator;
 	}
 
