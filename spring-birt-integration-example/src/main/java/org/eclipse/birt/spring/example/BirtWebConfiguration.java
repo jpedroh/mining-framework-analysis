@@ -46,11 +46,12 @@ public class BirtWebConfiguration extends WebMvcConfigurerAdapter {
     public HtmlSingleFormatBirtView htmlBirt() throws Exception {
 
         HtmlSingleFormatBirtView htmlSingleFormatBirtView = new HtmlSingleFormatBirtView();
+        
         htmlSingleFormatBirtView.setBirtEngine(this.engine().getObject());
         htmlSingleFormatBirtView.setDataSource(birtDataServiceConfiguration.dataSource());
 
         return htmlSingleFormatBirtView;
-     }
+    }
 
 /*
 @Bean
