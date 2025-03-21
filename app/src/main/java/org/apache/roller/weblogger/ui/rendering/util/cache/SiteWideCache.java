@@ -1,23 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
- */
-
 package org.apache.roller.weblogger.ui.rendering.util.cache;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -47,134 +28,97 @@ import org.apache.roller.weblogger.util.cache.CacheHandler;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
 
-
 /**
  * Cache for site-wide weblog content.
  */
 public final class SiteWideCache implements CacheHandler {
-    
-    private static Log log = LogFactory.getLog(SiteWideCache.class);
-    
-    // a unique identifier for this cache, this is used as the prefix for
-    // roller config properties that apply to this cache
-    public static final String CACHE_ID = "cache.sitewide";
-    
-    // keep cached content
-    private boolean cacheEnabled = true;
-    private Cache contentCache = null;
-    
-    // keep a cached version of last expired time
-    private ExpiringCacheEntry lastUpdateTime = null;
+  private static Log log = LogFactory.getLog(SiteWideCache.class);
 
-    // reference to our singleton instance
-    private static final SiteWideCache singletonInstance = new SiteWideCache();
-    
-    
-    private SiteWideCache() {
-        
-        cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
-        
-        Map<String, String> cacheProps = new HashMap<String, String>();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
-            }
-        }
-        
-        log.info(cacheProps);
-        
-        if(cacheEnabled) {
-            contentCache = CacheManager.constructCache(this, cacheProps);
-        } else {
-            log.warn("Caching has been DISABLED");
-        }
-    }
-    
-    
-    public static SiteWideCache getInstance() {
-        return singletonInstance;
-    }
-    
-    
-    public Object get(String key) {
-        
-        if (!cacheEnabled) {
-            return null;
-        }
-        
-        Object entry = contentCache.get(key);
-        
-        if(entry == null) {
-            log.debug("MISS "+key);
-        } else {
-            log.debug("HIT "+key);
-        }
-        
-        return entry;
-    }
-    
-    
-    public void put(String key, Object value) {
-        
-        if (!cacheEnabled) {
-            return;
-        }
-        
-        contentCache.put(key, value);
-        log.debug("PUT "+key);
-    }
+  public static final String CACHE_ID = "cache.sitewide";
 
-    
-    public void remove(String key) {
-        
-        if (!cacheEnabled) {
-            return;
-        }
-        
-        contentCache.remove(key);
-        log.debug("REMOVE "+key);
+  private boolean cacheEnabled = true;
+
+  private Cache contentCache = null;
+
+  private ExpiringCacheEntry lastUpdateTime = null;
+
+  private static final SiteWideCache singletonInstance = new SiteWideCache();
+
+  private SiteWideCache() {
+    cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID + ".enabled");
+    Map<String, String> cacheProps = new HashMap<String, String>();
+    cacheProps.put("id", CACHE_ID);
+    Enumeration allProps = WebloggerConfig.keys();
+    String prop = null;
+    while (allProps.hasMoreElements()) {
+      prop = (String) allProps.nextElement();
+      if (prop.startsWith(CACHE_ID + ".")) {
+        cacheProps.put(prop.substring(CACHE_ID.length() + 1), WebloggerConfig.getProperty(prop));
+      }
     }
-    
-    
-    public void clear() {
-        
-        if (!cacheEnabled) {
-            return;
-        }
-        
-        contentCache.clear();
-        this.lastUpdateTime = null;
-        log.debug("CLEAR");
+    log.info(cacheProps);
+    if (cacheEnabled) {
+      contentCache = CacheManager.constructCache(this, cacheProps);
+    } else {
+      log.warn("Caching has been DISABLED");
     }
-    
-    
-    public Date getLastModified() {
-        
-        Date lastModified = null;
-        
-        // first try our cached version
-        if(this.lastUpdateTime != null) {
-            lastModified = (Date) this.lastUpdateTime.getValue();
-        }
-        
-        // still null, we need to get a fresh value
-        if(lastModified == null) {
-            lastModified = new Date();
-            this.lastUpdateTime = new ExpiringCacheEntry(lastModified, RollerConstants.FIFTEEN_MIN_IN_MS);
-        }
-        
-        return lastModified;
+  }
+
+  public static SiteWideCache getInstance() {
+    return singletonInstance;
+  }
+
+  public Object get(String key) {
+    if (!cacheEnabled) {
+      return null;
     }
-    
-    
-    /**
+    Object entry = contentCache.get(key);
+    if (entry == null) {
+      log.debug("MISS " + key);
+    } else {
+      log.debug("HIT " + key);
+    }
+    return entry;
+  }
+
+  public void put(String key, Object value) {
+    if (!cacheEnabled) {
+      return;
+    }
+    contentCache.put(key, value);
+    log.debug("PUT " + key);
+  }
+
+  public void remove(String key) {
+    if (!cacheEnabled) {
+      return;
+    }
+    contentCache.remove(key);
+    log.debug("REMOVE " + key);
+  }
+
+  public void clear() {
+    if (!cacheEnabled) {
+      return;
+    }
+    contentCache.clear();
+    this.lastUpdateTime = null;
+    log.debug("CLEAR");
+  }
+
+  public Date getLastModified() {
+    Date lastModified = null;
+    if (this.lastUpdateTime != null) {
+      lastModified = (Date) this.lastUpdateTime.getValue();
+    }
+    if (lastModified == null) {
+      lastModified = new Date();
+      this.lastUpdateTime = new ExpiringCacheEntry(lastModified, RollerConstants.FIFTEEN_MIN_IN_MS);
+    }
+    return lastModified;
+  }
+
+  /**
      * Generate a cache key from a parsed weblog page request.
      * This generates a key of the form ...
      *
@@ -191,84 +135,60 @@ public final class SiteWideCache implements CacheHandler {
      * foo/MyCategory/en/user=myname
      *
      */
-    public String generateKey(WeblogPageRequest pageRequest) {
-        
-        StringBuilder key = new StringBuilder(128);
-        
-        key.append(CACHE_ID).append(':');
-        key.append("page/");
-        key.append(pageRequest.getWeblogHandle());
-        
-        if(pageRequest.getWeblogAnchor() != null) {
-            String anchor = null;
-            try {
-                // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
-            } catch(UnsupportedEncodingException ex) {
-                // ignored
-            }
-            
-            key.append("/entry/").append(anchor);
-        } else {
-            
-            if(pageRequest.getWeblogPageName() != null) {
-                key.append("/page/").append(pageRequest.getWeblogPageName());
-            }
-            
-            if(pageRequest.getWeblogDate() != null) {
-                key.append('/').append(pageRequest.getWeblogDate());
-            }
-            
-            if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = null;
-                try {
-                    // may contain spaces or other bad chars
-                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
-                } catch(UnsupportedEncodingException ex) {
-                    // ignored
-                }
-                
-                key.append('/').append(cat);
-            }
-            
-            if("tags".equals(pageRequest.getContext())) {
-                key.append("/tags/");
-                if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
-                    Set ordered = new TreeSet(pageRequest.getTags());
-                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(Utilities.stringArrayToString(tags,"+"));
-                }
-            }
+  public String generateKey(WeblogPageRequest pageRequest) {
+    StringBuilder key = new StringBuilder(128);
+    key.append(CACHE_ID).append(':');
+    key.append("page/");
+    key.append(pageRequest.getWeblogHandle());
+    if (pageRequest.getWeblogAnchor() != null) {
+      String anchor = null;
+      try {
+        anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
+      } catch (UnsupportedEncodingException ex) {
+      }
+      key.append("/entry/").append(anchor);
+    } else {
+      if (pageRequest.getWeblogPageName() != null) {
+        key.append("/page/").append(pageRequest.getWeblogPageName());
+      }
+      if (pageRequest.getWeblogDate() != null) {
+        key.append('/').append(pageRequest.getWeblogDate());
+      }
+      if (pageRequest.getWeblogCategoryName() != null) {
+        String cat = null;
+        try {
+          cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
         }
-        
-        if(pageRequest.getLocale() != null) {
-            key.append('/').append(pageRequest.getLocale());
+        key.append('/').append(cat);
+      }
+      if ("tags".equals(pageRequest.getContext())) {
+        key.append("/tags/");
+        if (pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
+          Set ordered = new TreeSet(pageRequest.getTags());
+          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
+          key.append(Utilities.stringArrayToString(tags, "+"));
         }
-        
-        // add page number when applicable
-        if(pageRequest.getWeblogAnchor() == null) {
-            key.append("/page=").append(pageRequest.getPageNum());
-        }
-        
-        // add login state
-        if(pageRequest.getAuthenticUser() != null) {
-            key.append("/user=").append(pageRequest.getAuthenticUser());
-        }
-      
-        key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
-
-        // we allow for arbitrary query params for custom pages
-        if(!pageRequest.getCustomParams().isEmpty()) {
-            String queryString = paramsToString(pageRequest.getCustomParams());
-            
-            key.append("/qp=").append(queryString);
-        }
-
-        return key.toString();
+      }
     }
-    
-    
-    /**
+    if (pageRequest.getLocale() != null) {
+      key.append('/').append(pageRequest.getLocale());
+    }
+    if (pageRequest.getWeblogAnchor() == null) {
+      key.append("/page=").append(pageRequest.getPageNum());
+    }
+    if (pageRequest.getAuthenticUser() != null) {
+      key.append("/user=").append(pageRequest.getAuthenticUser());
+    }
+    key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
+    if (!pageRequest.getCustomParams().isEmpty()) {
+      String queryString = paramsToString(pageRequest.getCustomParams());
+      key.append("/qp=").append(queryString);
+    }
+    return key.toString();
+  }
+
+  /**
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
@@ -281,159 +201,121 @@ public final class SiteWideCache implements CacheHandler {
      * foo/entries/atom/en/excerpts
      *
      */
-    public String generateKey(WeblogFeedRequest feedRequest) {
-        
-        StringBuilder key = new StringBuilder(128);
-        
-        key.append(CACHE_ID).append(':');
-        key.append("feed/");
-        key.append(feedRequest.getWeblogHandle());
-        
-        key.append('/').append(feedRequest.getType());
-        key.append('/').append(feedRequest.getFormat());
-        
-        if (feedRequest.getTerm() != null) {
-            key.append("/search/").append(feedRequest.getTerm());
-        }
-        
-        if(feedRequest.getWeblogCategoryName() != null) {
-            String cat = feedRequest.getWeblogCategoryName();
-            try {
-                cat = URLEncoder.encode(cat, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported
-            }
-            
-            key.append('/').append(cat);
-        }
-        
-        if(feedRequest.getLocale() != null) {
-            key.append('/').append(feedRequest.getLocale());
-        }
-        
-        if(feedRequest.isExcerpts()) {
-            key.append("/excerpts");
-        }
-        
-        if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
-          String[] tags = new String[feedRequest.getTags().size()];
-          new TreeSet(feedRequest.getTags()).toArray(tags);
-          key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-        }       
-        
-        return key.toString();
+  public String generateKey(WeblogFeedRequest feedRequest) {
+    StringBuilder key = new StringBuilder(128);
+    key.append(CACHE_ID).append(':');
+    key.append("feed/");
+    key.append(feedRequest.getWeblogHandle());
+    key.append('/').append(feedRequest.getType());
+    key.append('/').append(feedRequest.getFormat());
+    if (feedRequest.getTerm() != null) {
+      key.append("/search/").append(feedRequest.getTerm());
     }
-    
-    
-    /**
+    if (feedRequest.getWeblogCategoryName() != null) {
+      String cat = feedRequest.getWeblogCategoryName();
+      try {
+        cat = URLEncoder.encode(cat, "UTF-8");
+      } catch (UnsupportedEncodingException ex) {
+      }
+      key.append('/').append(cat);
+    }
+    if (feedRequest.getLocale() != null) {
+      key.append('/').append(feedRequest.getLocale());
+    }
+    if (feedRequest.isExcerpts()) {
+      key.append("/excerpts");
+    }
+    if (feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
+      String[] tags = new String[feedRequest.getTags().size()];
+      new TreeSet(feedRequest.getTags()).toArray(tags);
+      key.append("/tags/").append(Utilities.stringArrayToString(tags, "+"));
+    }
+    return key.toString();
+  }
+
+  /**
      * A weblog entry has changed.
      */
-    @Override
-    public void invalidate(WeblogEntry entry) {
-        
-        if (!cacheEnabled) {
-            return;
-        }
-        
-        this.contentCache.clear();
-        this.lastUpdateTime = null;
+  @Override public void invalidate(WeblogEntry entry) {
+    if (!cacheEnabled) {
+      return;
     }
-    
-    
-    /**
+    this.contentCache.clear();
+    this.lastUpdateTime = null;
+  }
+
+  /**
      * A weblog has changed.
      */
-    @Override
-    public void invalidate(Weblog website) {
-        
-        if (!cacheEnabled) {
-            return;
-        }
-        
-        this.contentCache.clear();
-        this.lastUpdateTime = null;
+  @Override public void invalidate(Weblog website) {
+    if (!cacheEnabled) {
+      return;
     }
-    
-    
-    /**
+    this.contentCache.clear();
+    this.lastUpdateTime = null;
+  }
+
+  /**
      * A bookmark has changed.
      */
-    @Override
-    public void invalidate(WeblogBookmark bookmark) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
-            invalidate(bookmark.getWebsite());
-        }
+  @Override public void invalidate(WeblogBookmark bookmark) {
+    if (WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
+      invalidate(bookmark.getWebsite());
     }
-    
-    
-    /**
+  }
+
+  /**
      * A folder has changed.
      */
-    @Override
-    public void invalidate(WeblogBookmarkFolder folder) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
-            invalidate(folder.getWeblog());
-        }
+  @Override public void invalidate(WeblogBookmarkFolder folder) {
+    if (WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
+      invalidate(folder.getWeblog());
     }
-    
-    
-    /**
+  }
+
+  /**
      * A comment has changed.
      */
-    @Override
-    public void invalidate(WeblogEntryComment comment) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWebsite().getHandle())) {
-            invalidate(comment.getWeblogEntry().getWebsite());
-        }
+  @Override public void invalidate(WeblogEntryComment comment) {
+    if (WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWebsite().getHandle())) {
+      invalidate(comment.getWeblogEntry().getWebsite());
     }
-    
-    
-    /**
+  }
+
+  /**
      * A user profile has changed.
      */
-    @Override
-    public void invalidate(User user) {
-        // ignored
-    }
-    
-    
-    /**
+  @Override public void invalidate(User user) {
+  }
+
+  /**
      * A category has changed.
      */
-    @Override
-    public void invalidate(WeblogCategory category) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
-            invalidate(category.getWeblog());
-        }
+  @Override public void invalidate(WeblogCategory category) {
+    if (WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
+      invalidate(category.getWeblog());
     }
-    
-    
-    /**
+  }
+
+  /**
      * A weblog template has changed.
      */
-    @Override
-    public void invalidate(WeblogTemplate template) {
-        if(WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
-            invalidate(template.getWeblog());
-        }
+  @Override public void invalidate(WeblogTemplate template) {
+    if (WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
+      invalidate(template.getWeblog());
     }
-    
-    
-    private String paramsToString(Map<String, String[]> map) {
-        
-        if (map == null) {
-            return null;
-        }
-        
-        StringBuilder string = new StringBuilder();
-        
-        for (Map.Entry<String, String[]> entry : map.entrySet()) {
-            if(entry.getValue() != null) {
-                string.append(',').append(entry.getKey()).append('=').append(entry.getValue()[0]);
-            }
-        }
-        
-        return Utilities.toBase64(string.toString().substring(1).getBytes());
+  }
+
+  private String paramsToString(Map<String, String[]> map) {
+    if (map == null) {
+      return null;
     }
-    
+    StringBuilder string = new StringBuilder();
+    for (Map.Entry<String, String[]> entry : map.entrySet()) {
+      if (entry.getValue() != null) {
+        string.append(',').append(entry.getKey()).append('=').append(entry.getValue()[0]);
+      }
+    }
+    return Utilities.toBase64(string.toString().substring(1).getBytes());
+  }
 }
