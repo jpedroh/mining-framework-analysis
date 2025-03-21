@@ -27,7 +27,6 @@ import java.util.Map;
 
 import static org.elasticsearch.rest.RestStatus.*;
 import static org.elasticsearch.rest.action.support.RestXContentBuilder.restContentBuilder;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Medcl'
@@ -39,8 +38,9 @@ public class PartialUpdateRestAction extends BaseRestHandler {
     @Inject
     public PartialUpdateRestAction(Settings settings, Client client, RestController restController) {
         super(settings, client);
-        restController.registerHandler(RestRequest.Method.POST,"/{index}/{type}/{id}/_partial_update",this);
-        restController.registerHandler(RestRequest.Method.PUT,"/{index}/{type}/{id}/_partial_update",this);
+
+        restController.registerHandler(RestRequest.Method.POST, "/{index}/{type}/{id}/_partial_update", this);
+        restController.registerHandler(RestRequest.Method.PUT, "/{index}/{type}/{id}/_partial_update", this);
     }
 
     public void handleRequest(final RestRequest request, final RestChannel channel) {
@@ -52,7 +52,7 @@ public class PartialUpdateRestAction extends BaseRestHandler {
             logger.debug("doc pending to be update:{}/{}/{}", request.param("index"), request.param("type"), request.param("id"));
         }
 
-        final Map<String, Object> pendingChanges = sourceAsMap(request.contentByteArray(), request.contentByteArrayOffset(), request.contentLength());
+        final Map<String, Object> pendingChanges = sourceAsMap(request.contentByteArray(), request.contentByteArrayOffset(), request.contentLength(), request.contentUnsafe());
 
         //if pending changes is empty,just return
         if (pendingChanges.size() <= 0) {
@@ -227,35 +227,17 @@ public class PartialUpdateRestAction extends BaseRestHandler {
         }
     }
 
-
-    public static Map<String, Object> sourceAsMap(byte[] bytes, int offset, int length) {
-          XContentParser parser = null;
-          try {
-              if (isCompressed(bytes, offset, length)) {
-                  BytesStreamInput siBytes = new BytesStreamInput(bytes, offset, length,true);
-                  LZFStreamInput siLzf = CachedStreamInput.cachedLzf(siBytes);
-                  XContentType contentType = XContentFactory.xContentType(siLzf);
-                  siLzf.resetToBufferStart();
-                  parser = XContentFactory.xContent(contentType).createParser(siLzf);
-                  return parser.map();
-              } else {
-                  parser = XContentFactory.xContent(bytes, offset, length).createParser(bytes, offset, length);
-                  return parser.map();
-              }
-          } catch (Exception e) {
-              throw new ElasticSearchParseException("Failed to parse source to map", e);
-          } finally {
-              if (parser != null) {
-                  parser.close();
-              }
-          }
-      }
-
     public static Map<String, Object> sourceAsMap(byte[] bytes, int offset, int length, boolean unsafe) {
         XContentParser parser = null;
         try {
             if (isCompressed(bytes, offset, length)) {
+<<<<<<< /usr/src/app/output/medcl/elasticsearch-partialupdate/2cffb48e7b98f31e05feb82b21bb15e46b28493b/src/main/java/org/elasticsearch/plugin/infinitbyte/PartialUpdateRestAction.java/left.java
+                BytesStreamInput siBytes = new BytesStreamInput(bytes, offset, length,true);
+||||||| /usr/src/app/output/medcl/elasticsearch-partialupdate/2cffb48e7b98f31e05feb82b21bb15e46b28493b/src/main/java/org/elasticsearch/plugin/infinitbyte/PartialUpdateRestAction.java/base.java
+                BytesStreamInput siBytes = new BytesStreamInput(bytes, offset, length);
+=======
                 BytesStreamInput siBytes = new BytesStreamInput(bytes, offset, length, unsafe);
+>>>>>>> /usr/src/app/output/medcl/elasticsearch-partialupdate/2cffb48e7b98f31e05feb82b21bb15e46b28493b/src/main/java/org/elasticsearch/plugin/infinitbyte/PartialUpdateRestAction.java/right.java
                 LZFStreamInput siLzf = CachedStreamInput.cachedLzf(siBytes);
                 XContentType contentType = XContentFactory.xContentType(siLzf);
                 siLzf.resetToBufferStart();
@@ -287,4 +269,3 @@ public class PartialUpdateRestAction extends BaseRestHandler {
         static final XContentBuilderString MATCHES = new XContentBuilderString("matches");
     }
 }
-
