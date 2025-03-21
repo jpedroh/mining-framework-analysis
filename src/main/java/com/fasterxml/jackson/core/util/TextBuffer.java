@@ -479,13 +479,16 @@ public class TextBuffer
                             _resultString = new String(_currentSegment, 0, currLen);
                         }
                     } else { // no, need to combine
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/c67612e1312309b160ff42d092da3af22580a01b/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/left.java
+                        validateStringLength(segLen + currLen);
+||||||| /usr/src/app/output/fasterxml/jackson-core/c67612e1312309b160ff42d092da3af22580a01b/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/base.java
+=======
                         final int builderLen = segLen + currLen;
                         if (builderLen < 0) {
                             _reportBufferOverflow(segLen, currLen);
                         }
-                        validateStringLength(builderLen);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/c67612e1312309b160ff42d092da3af22580a01b/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/right.java
                         StringBuilder sb = new StringBuilder(builderLen);
-
                         // First stored segments
                         if (_segments != null) {
                             for (int i = 0, len = _segments.size(); i < len; ++i) {
@@ -1160,12 +1163,6 @@ public class TextBuffer
     /**********************************************************************
      */
 
-    protected void _reportBufferOverflow(int prev, int curr) {
-        long newSize = (long) prev + (long) curr;
-        throw new IllegalStateException("TextBuffer overrun: size reached ("
-                +newSize+") exceeds maximum of "+Integer.MAX_VALUE);
-    }
-
     /**
      * Convenience method that can be used to verify that a String
      * of specified length does not exceed maximum specific by this
@@ -1178,8 +1175,15 @@ public class TextBuffer
      * @throws IOException If length exceeds maximum
      * @since 2.15
      */
+
     protected void validateStringLength(int length) throws IOException
     {
         // no-op
+    }
+
+    private void _reportBufferOverflow(int prev, int curr) {
+        long newSize = (long) prev + (long) curr;
+        throw new IllegalStateException("TextBuffer overrun: size reached ("
+                +newSize+") exceeds maximum of "+Integer.MAX_VALUE);
     }
 }
