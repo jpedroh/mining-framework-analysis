@@ -316,7 +316,13 @@ final class ScriptRunner implements Callable<ScriptPair> {
     public void dispose() throws Exception {
         controller.dispose();
         try {
+<<<<<<< /usr/src/app/output/k3po/k3po/7e948479abb61b96ce4d8290aa36a7f14714b2ad/junit/src/main/java/org/kaazing/k3po/junit/rules/ScriptRunner.java/left.java
+            CommandEvent event = controller.readEvent(DISPOSE_TIMEOUT, MILLISECONDS);
+||||||| /usr/src/app/output/k3po/k3po/7e948479abb61b96ce4d8290aa36a7f14714b2ad/junit/src/main/java/org/kaazing/k3po/junit/rules/ScriptRunner.java/base.java
+            CommandEvent event = controller.readEvent(5000, MILLISECONDS);
+=======
             CommandEvent event = controller.readEvent();
+>>>>>>> /usr/src/app/output/k3po/k3po/7e948479abb61b96ce4d8290aa36a7f14714b2ad/junit/src/main/java/org/kaazing/k3po/junit/rules/ScriptRunner.java/right.java
 
             // ensure it is the correct event
             switch (event.getKind()) {
