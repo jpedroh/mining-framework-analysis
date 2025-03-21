@@ -44,25 +44,25 @@ public class AtomEntryTest extends TestHandler {
 
     private ChannelManager channelManager;
 
-	JID jid = new JID("juliet@shakespeare.lit/balcony");
-	String node = "/users/romeo@shakespeare.lit/posts";
-	String server = "channels.shakespeare.lit";
+    JID jid = new JID("juliet@shakespeare.lit/balcony");
+    String node = "/users/romeo@shakespeare.lit/posts";
+    String server = "channels.shakespeare.lit";
 
-    @Before
-    public void setUp() throws Exception {
-        publishRequest = readStanzaAsIq("/iq/pubsub/publish/request.stanza");
-        publishEntry = publishRequest.getChildElement().element("publish").element("item");
-        replyRequest = readStanzaAsIq("/iq/pubsub/publish/reply.stanza");
-        replyEntry = replyRequest.getChildElement().element("publish").element("item");
-        ratingRequest = readStanzaAsIq("/iq/pubsub/publish/rating.stanza");
-        ratingEntry = ratingRequest.getChildElement().element("publish").element("item");
+	@Before
+	public void setUp() throws Exception {
+	    publishRequest = readStanzaAsIq("/iq/pubsub/publish/request.stanza");
+	    publishEntry = publishRequest.getChildElement().element("publish").element("item");
+	    replyRequest = readStanzaAsIq("/iq/pubsub/publish/reply.stanza");
+	    replyEntry = replyRequest.getChildElement().element("publish").element("item");
+	    ratingRequest = readStanzaAsIq("/iq/pubsub/publish/rating.stanza");
+	    ratingEntry = ratingRequest.getChildElement().element("publish").element("item");
 
-        channelManager = Mockito.mock(ChannelManager.class);
+	    channelManager = Mockito.mock(ChannelManager.class);
 
-        NodeItem item = new NodeItemImpl(node, "1", new Date(), "<entry/>");
-        Mockito.when(channelManager.getNodeItem(Mockito.eq(node), Mockito.anyString())).thenReturn(item);
+	    NodeItem item = new NodeItemImpl(node, "1", new Date(), "<entry/>");
+	    Mockito.when(channelManager.getNodeItem(Mockito.eq(node), Mockito.anyString())).thenReturn(item);
 
-    }
+	}
 
     private AtomEntry getEntryObject(Element item) {
         AtomEntry validate = new AtomEntry(item);
@@ -157,8 +157,8 @@ public class AtomEntryTest extends TestHandler {
         validator = getEntryObject(item);
         Assert.assertTrue(validator.isValid());
         Element entry = validator.getPayload();
-		Assert.assertTrue(entry.elementText("updated").matches(ISO_8601_REGEX));
-	}
+        Assert.assertTrue(entry.elementText("updated").matches(ISO_8601_REGEX));
+    }
 
     @Test
     public void updateDateIsIgnored() throws Exception {

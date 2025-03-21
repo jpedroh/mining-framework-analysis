@@ -4,10 +4,10 @@ import org.buddycloud.channelserver.db.NodeStoreFactory;
 
 public class ChannelManagerFactoryImpl implements ChannelManagerFactory {
 
-    private final NodeStoreFactory nodeStoreFactory;
+	private final NodeStoreFactory nodeStoreFactory;
 
     public ChannelManagerFactoryImpl(final NodeStoreFactory nodeStoreFactory) {
-        this.nodeStoreFactory = nodeStoreFactory;
+    	this.nodeStoreFactory = nodeStoreFactory;
     }
 
     @Override

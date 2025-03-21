@@ -49,23 +49,20 @@ public class NodeThreadsGet extends PubSubElementProcessorAbstract {
             actor = request.getFrom();
         }
 
-		if (!Configuration.getInstance().isLocalJID(request.getFrom())) {
-			response.getElement().addAttribute("remote-server-discover",
-					"false");
-		}
+        if (!Configuration.getInstance().isLocalJID(request.getFrom())) {
+            response.getElement().addAttribute("remote-server-discover", "false");
+        }
 
         if (!isValidStanza()) {
             outQueue.put(response);
             return;
         }
 
-		if (!Configuration.getInstance().isLocalNode(node)
-				&& !channelManager.isCachedNode(node)) {
-			logger.debug("Node " + node
-					+ " is remote and not cached, off to get some data");
-			makeRemoteRequest();
-			return;
-		}
+        if (!Configuration.getInstance().isLocalNode(node) && !channelManager.isCachedNode(node)) {
+            logger.debug("Node " + node + " is remote and not cached, off to get some data");
+            makeRemoteRequest();
+            return;
+        }
 
         if (!checkNodeExists() || !userCanViewNode() || !parseRsmElement()) {
             outQueue.put(response);
@@ -154,12 +151,10 @@ public class NodeThreadsGet extends PubSubElementProcessorAbstract {
         NodeViewAcl nodeViewAcl = new NodeViewAcl();
         Map<String, String> nodeConfiguration = channelManager.getNodeConf(node);
 
-        if (nodeViewAcl.canViewNode(node,
-				channelManager.getNodeMembership(node, actor),
-				getNodeAccessModel(nodeConfiguration),
-				Configuration.getInstance().isLocalJID(actor))) {
-			return true;
-		}
+        if (nodeViewAcl.canViewNode(node, channelManager.getNodeMembership(node, actor), getNodeAccessModel(nodeConfiguration),
+                Configuration.getInstance().isLocalJID(actor))) {
+        	return true;
+        }
 
         NodeAclRefuseReason reason = nodeViewAcl.getReason();
         createExtendedErrorReply(reason.getType(), reason.getCondition(), reason.getAdditionalErrorElement());

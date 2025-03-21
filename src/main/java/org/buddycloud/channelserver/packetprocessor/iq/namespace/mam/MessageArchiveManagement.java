@@ -58,10 +58,10 @@ public class MessageArchiveManagement implements PacketProcessor<IQ> {
         requestIq = reqIQ;
         reply = IQ.createResultIQ(requestIq);
 
-		if (false == Configuration.getInstance().isLocalJID(requestIq.getFrom())) {
-			this._sendNotHandledStanza();
-			return;
-		}
+        if (false == Configuration.getInstance().isLocalJID(requestIq.getFrom())) {
+            this._sendNotHandledStanza();
+            return;
+        }
 
         if (false == isValidRequest()) {
             return;

@@ -23,11 +23,9 @@ public class FirehoseGet extends PubSubElementProcessorAbstract {
 
 	private static final int DEFAULT_MAX_RESULTS = 50;
 	private static final Logger LOGGER = Logger.getLogger(FirehoseGet.class);
-	
 	private Element pubsub;
 	private SAXReader xmlReader;
 	private boolean isAdmin = false;
-
 	// RSM details
 	private String firstItemId = null;
 	private String lastItemId = null;
@@ -41,112 +39,121 @@ public class FirehoseGet extends PubSubElementProcessorAbstract {
 		xmlReader = new SAXReader();
 	}
 
-	@Override
-	public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm)
-			throws Exception {
-		response = IQ.createResultIQ(reqIQ);
-		request = reqIQ;
-		actor = actorJID;
-		node = elm.attributeValue("node");
-		resultSetManagement = rsm;
+    @Override
+    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+        response = IQ.createResultIQ(reqIQ);
+        request = reqIQ;
+        actor = actorJID;
+        node = elm.attributeValue("node");
+        resultSetManagement = rsm;
 
-		if (null == actor) {
-			actor = request.getFrom();
-		}
-		determineAdminUserStatus();
+        if (null == actor) {
+            actor = request.getFrom();
+        }
+        determineAdminUserStatus();
 
-		if (false == Configuration.getInstance().isLocalJID(request.getFrom())) {
-			response.getElement().addAttribute("remote-server-discover",
-					"false");
-		}
+        if (false == Configuration.getInstance().isLocalJID(request.getFrom())) {
+            response.getElement().addAttribute("remote-server-discover", "false");
+        }
 
-		pubsub = response.getElement().addElement("pubsub",
-				JabberPubsub.NAMESPACE_URI);
-		try {
-			parseRsmElement();
-			addItems();
-			addRsmElement();
-			outQueue.put(response);
-		} catch (NodeStoreException e) {
-			LOGGER.error(e);
-			response.getElement().remove(pubsub);
-			setErrorCondition(PacketError.Type.wait,
-					PacketError.Condition.internal_server_error);
-		}
-		outQueue.put(response);
+        pubsub = response.getElement().addElement("pubsub", JabberPubsub.NAMESPACE_URI);
+        try {
+            parseRsmElement();
+            addItems();
+            addRsmElement();
+            outQueue.put(response);
+        } catch (NodeStoreException e) {
+            LOGGER.error(e);
+            response.getElement().remove(pubsub);
+            setErrorCondition(PacketError.Type.wait, PacketError.Condition.internal_server_error);
+        }
+        outQueue.put(response);
 
-	}
+    }
 
-	private void determineAdminUserStatus() {
-		for (JID user : getAdminUsers()) {
-			if (user.toBareJID().equals(actor.toBareJID())) {
-				isAdmin = true;
-				return;
-			}
-		}
-	}
+    private void determineAdminUserStatus() {
+        for (JID user : getAdminUsers()) {
+            if (user.toBareJID().equals(actor.toBareJID())) {
+                isAdmin = true;
+                return;
+            }
+        }
+    }
 
-	private void parseRsmElement() {
-		if (null == resultSetManagement) {
+    private void parseRsmElement() {
+    	if (null == resultSetManagement) {
+    		return;
+    	}
+        Element max = resultSetManagement.element("max");
+    	if (max != null) {
+    	    maxResults = Integer.parseInt(max.getTextTrim());
+    	}
+    	Element after = resultSetManagement.element("after");
+    	if (after != null) {
+    	    afterItemId = after.getTextTrim();
+    	}
+    }
+
+    private void addRsmElement() throws NodeStoreException {
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/left.java
+        if (firstItemId == null) {
 			return;
 		}
-		Element max = resultSetManagement.element("max");
-		if (max != null) {
-			maxResults = Integer.parseInt(max.getTextTrim());
-		}
-		Element after = resultSetManagement.element("after");
-		if (after != null) {
-			afterItemId = after.getTextTrim();
-		}
-	}
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/base.java
+        if (firstItemId == null) return;
+=======
+        if (firstItemId == null) {
+            return;
+        }
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/right.java
+        Element rsm = pubsub.addElement("set");
+        rsm.addNamespace("", NS_RSM);
+        rsm.addElement("first").setText(firstItemId);
+        rsm.addElement("last").setText(lastItemId);
+        rsm.addElement("count").setText(String.valueOf(channelManager.getFirehoseItemCount(
+        		isAdmin, actor.getDomain())));
+    }
 
-	private void addRsmElement() throws NodeStoreException {
-		if (firstItemId == null) {
-			return;
-		}
-		Element rsm = pubsub.addElement("set");
-		rsm.addNamespace("", NS_RSM);
-		rsm.addElement("first").setText(firstItemId);
-		rsm.addElement("last").setText(lastItemId);
-		rsm.addElement("count").setText(
-				String.valueOf(channelManager.getFirehoseItemCount(
-						isAdmin, actor.getDomain())));
-	}
-
-	private void addItems() throws NodeStoreException {
-		if (-1 == maxResults) {
+    private void addItems() throws NodeStoreException {
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/left.java
+        if (-1 == maxResults) {
 			maxResults = DEFAULT_MAX_RESULTS;
 		}
-		CloseableIterator<NodeItem> items = channelManager.getFirehose(
-				maxResults, afterItemId, isAdmin, actor.getDomain());
-		String lastNode = "";
-		Element itemsElement = null;
-		while (items.hasNext()) {
-			NodeItem item = items.next();
-			if (false == item.getNodeId().equals(lastNode)) {
-				itemsElement = pubsub.addElement("items");
-				itemsElement.addAttribute("node", item.getNodeId());
-				lastNode = item.getNodeId();
-			}
-			try {
-				Element entry = xmlReader.read(new StringReader(item.getPayload()))
-						.getRootElement();
-				Element itemElement = itemsElement.addElement("item");
-				itemElement.addAttribute("id", item.getId());
-				if (null == firstItemId) {
-					firstItemId = item.getId();
-				}
-				lastItemId = item.getId();
-				itemElement.add(entry);
-			} catch (DocumentException e) {
-				LOGGER.error("Error parsing a node entry, ignoring. "
-						+ item.getId());
-			}
-		}
-	}
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/base.java
+        if (-1 == maxResults) maxResults = 50;
+=======
+        if (-1 == maxResults) {
+            maxResults = 50;
+        }
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/special/FirehoseGet.java/right.java
+        CloseableIterator<NodeItem> items = channelManager.getFirehose(
+        		maxResults, afterItemId, isAdmin, actor.getDomain());
+        String lastNode = "";
+    	Element itemsElement = null;
+    	while (items.hasNext()) {
+    		NodeItem item = items.next();
+    		if (false == item.getNodeId().equals(lastNode)) {
+    		    itemsElement = pubsub.addElement("items");
+    		    itemsElement.addAttribute("node", item.getNodeId());
+    		    lastNode = item.getNodeId();
+    		}
+    	    try {
+    	    	Element entry = xmlReader.read(new StringReader(item.getPayload())).getRootElement();
+    	    	Element itemElement = itemsElement.addElement("item");
+    	    	itemElement.addAttribute("id", item.getId());
+    	        if (null == firstItemId) {
+    	        	firstItemId = item.getId();
+    	        }
+    	        lastItemId = item.getId();
+    	        itemElement.add(entry);
+    	    } catch (DocumentException e) {
+    	        LOGGER.error("Error parsing a node entry, ignoring. " + item.getId());
+    	    }
+    	}
+    }
 
-	@Override
-	public boolean accept(Element elm) {
-		return elm.getName().equals("items");
-	}
+    @Override
+    public boolean accept(Element elm) {
+        return elm.getName().equals("items");
+    }
 }

@@ -1,11 +1,12 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.discoitems;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-
 import org.apache.log4j.Logger;
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
+import org.buddycloud.channelserver.channel.LocalDomainChecker;
 import org.buddycloud.channelserver.db.exception.NodeStoreException;
 import org.buddycloud.channelserver.packetprocessor.PacketProcessor;
 import org.buddycloud.channelserver.packetprocessor.iq.namespace.discoinfo.DiscoInfoGet;
@@ -51,24 +52,37 @@ public class DiscoItemsGet implements PacketProcessor<IQ> {
         outQueue.add(response);
     }
 
-	private void addItems() throws NodeStoreException {
-		List<String> nodes = channelManager.getLocalNodesList();
+    private void addItems() throws NodeStoreException {
+        List<String> nodes = channelManager.getLocalNodesList();
 
-		String jid = Configuration.getInstance()
-		    .getProperty(Configuration.CONFIGURATION_SERVER_CHANNELS_DOMAIN);
-		
-		Element query = response.getElement().addElement("query");
-		query.addNamespace("", JabberDiscoItems.NAMESPACE_URI);
-		for (String node : nodes) {
-			Element item = query.addElement("item");
-			item.addAttribute("node", node);
-			item.addAttribute("jid", jid);
-		}
-	}
+        String jid = Configuration.getInstance().getProperty(Configuration.CONFIGURATION_SERVER_CHANNELS_DOMAIN);
 
-    private void setErrorCondition(Type type, Condition condition) {
-        response.setType(IQ.Type.error);
-        PacketError error = new PacketError(condition, type);
-        response.setError(error);
+        Element query = response.getElement().addElement("query");
+        query.addNamespace("", JabberDiscoItems.NAMESPACE_URI);
+        for (String node : nodes) {
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/discoitems/DiscoItemsGet.java/left.java
+        	Element item = query.addElement("item");
+        	item.addAttribute("node", node);
+        	item.addAttribute("jid", jid);
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/discoitems/DiscoItemsGet.java/base.java
+        	if (false == isLocalNode(node)) continue;
+        	Element item = query.addElement("item");
+        	item.addAttribute("node", node);
+        	item.addAttribute("jid", jid);
+=======
+            if (false == isLocalNode(node)) {
+                continue;
+            }
+            Element item = query.addElement("item");
+            item.addAttribute("node", node);
+            item.addAttribute("jid", jid);
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/discoitems/DiscoItemsGet.java/right.java
+        }
     }
+
+	private void setErrorCondition(Type type, Condition condition) {
+	    response.setType(IQ.Type.error);
+	    PacketError error = new PacketError(condition, type);
+	    response.setError(error);
+	}
 }

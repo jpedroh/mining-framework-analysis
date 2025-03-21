@@ -408,6 +408,7 @@ public interface NodeStore {
      */
     void purgeNodeItems(String nodeId) throws NodeStoreException;
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/left.java
 	/**
 	 * Retrieves a list of nodes
 	 * 
@@ -421,7 +422,23 @@ public interface NodeStore {
 	 * @throws NodeStoreException
 	 */
 	List<String> getLocalNodesList() throws NodeStoreException;
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/base.java
+	/**
+	 * Retrieves a list of nodes
+	 * 
+	 * @throws NodeStoreException
+	 */
+	ArrayList<String> getNodeList() throws NodeStoreException;
+=======
+    /**
+     * Retrieves a list of nodes
+     * 
+     * @throws NodeStoreException
+     */
+    ArrayList<String> getNodeList() throws NodeStoreException;
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/right.java
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/left.java
 	/**
 	 * Retrieves a list of remote nodes
 	 * 
@@ -448,7 +465,41 @@ public interface NodeStore {
 	@SuppressWarnings("rawtypes")
 	CloseableIterator<NodeItem> performSearch(JID searcher, List content,
 			JID author, int page, int rpp) throws NodeStoreException;
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/base.java
+	/**
+	 * Search subscribed nodes for content
+	 * 
+	 * @param searcher
+	 *            JID of user performing the search
+	 * @param content
+	 *            Keywords upon which to search
+	 * @param author
+	 *            JID of the content author
+	 * @param page
+	 *            Page number of results (>= 1)
+	 * @param rpp
+	 *            Results per page (>= 1)
+	 * @return
+	 * @throws NodeStoreException
+	 */
+	CloseableIterator<NodeItem> performSearch(JID searcher, List content,
+			JID author, int page, int rpp) throws NodeStoreException;
+=======
+    /**
+     * Search subscribed nodes for content
+     * 
+     * @param searcher JID of user performing the search
+     * @param content Keywords upon which to search
+     * @param author JID of the content author
+     * @param page Page number of results (>= 1)
+     * @param rpp Results per page (>= 1)
+     * @return
+     * @throws NodeStoreException
+     */
+    CloseableIterator<NodeItem> performSearch(JID searcher, List content, JID author, int page, int rpp) throws NodeStoreException;
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/right.java
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/left.java
 	/**
 	 * Retrieves a list of items from public channels "firehose"
 	 * 
@@ -465,7 +516,35 @@ public interface NodeStore {
 	 */
 	CloseableIterator<NodeItem> getFirehose(int limit, String afterItemId,
 			boolean isAdmin, String actorDomain) throws NodeStoreException;
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/base.java
+	/**
+	 * Retrieves a list of items from public channels "firehose"
+	 * 
+	 * @param limit
+	 *            limit the number of results
+	 * @param afterItemId
+	 *            after item ID#
+	 * @param isAdmin
+	 *            show items from non-open nodes
+	 * @return
+	 * @throws NodeStoreException
+	 */
+	CloseableIterator<NodeItem> getFirehose(int limit, String afterItemId,
+			boolean isAdmin) throws NodeStoreException;
+=======
+    /**
+     * Retrieves a list of items from public channels "firehose"
+     * 
+     * @param limit limit the number of results
+     * @param afterItemId after item ID#
+     * @param isAdmin show items from non-open nodes
+     * @return
+     * @throws NodeStoreException
+     */
+    CloseableIterator<NodeItem> getFirehose(int limit, String afterItemId, boolean isAdmin) throws NodeStoreException;
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/right.java
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/left.java
 	/**
 	 * Get count of items from public channels "firehose"
 	 * 
@@ -476,6 +555,24 @@ public interface NodeStore {
 	 * @throws NodeStoreException
 	 */
 	int getFirehoseItemCount(boolean isAdmin, String actorDomain) throws NodeStoreException;
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/base.java
+	/**
+	 * Get count of items from public channels "firehose"
+	 * 
+	 * @param isAdmin
+	 *            counts items from non-open nodes
+	 * @throws NodeStoreException
+	 */
+	int getFirehoseItemCount(boolean isAdmin) throws NodeStoreException;
+=======
+    /**
+     * Get count of items from public channels "firehose"
+     * 
+     * @param isAdmin counts items from non-open nodes
+     * @throws NodeStoreException
+     */
+    int getFirehoseItemCount(boolean isAdmin) throws NodeStoreException;
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/db/NodeStore.java/right.java
 
     /**
      * Get a list of posts for a user

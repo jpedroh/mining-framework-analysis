@@ -26,95 +26,85 @@ import org.xmpp.packet.Packet;
 import org.xmpp.resultsetmanagement.ResultSetImpl;
 
 public class AffiliationProcessorTest extends IQTestHandler {
-	private Message message;
-	private AffiliationProcessor affiliationProcessor;
+    private Message message;
+    private AffiliationProcessor affiliationProcessor;
 	private Element affiliation;
-	private Element affiliations;
-	
-	private BlockingQueue<Packet> queue = new LinkedBlockingQueue<Packet>();
-	private ChannelManager channelManager;
+    private Element affiliations;
 
-	private JID jid = new JID("juliet@shakespeare.lit");
+    private BlockingQueue<Packet> queue = new LinkedBlockingQueue<Packet>();
+    private ChannelManager channelManager;
 
-	@Before
-	public void setUp() throws Exception {
+    private JID jid = new JID("juliet@shakespeare.lit");
 
-		Properties configuration = new Properties();
-		configuration.setProperty("server.domain.channels",
-				"channels.shakespeare.lit");
+    @Before
+    public void setUp() throws Exception {
 
-		channelManager = Mockito.mock(ChannelManager.class);
-		Configuration.getInstance().remove(
-				Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
-		
-		ArrayList<NodeMembership> subscribers = new ArrayList<NodeMembership>();
-		subscribers.add(new NodeMembershipImpl(
-				"/user/romeo@shakespeare.lit/posts", jid,
-				Subscriptions.subscribed, Affiliations.member, null));
-		Mockito.doReturn(new ResultSetImpl<NodeMembership>(subscribers))
-				.when(channelManager).getNodeMemberships(Mockito.anyString());
+        Properties configuration = new Properties();
+        configuration.setProperty("server.domain.channels", "channels.shakespeare.lit");
 
-		affiliationProcessor = new AffiliationProcessor(queue, configuration,
-				channelManager);
+        channelManager = Mockito.mock(ChannelManager.class);
+    	Configuration.getInstance().remove(
+    			Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
+    	
+    	ArrayList<NodeMembership> subscribers = new ArrayList<NodeMembership>();
+    	subscribers.add(new NodeMembershipImpl(
+    			"/user/romeo@shakespeare.lit/posts", jid,
+    			Subscriptions.subscribed, Affiliations.member, null));
+    	Mockito.doReturn(new ResultSetImpl<NodeMembership>(subscribers)).when(channelManager).getNodeMemberships(Mockito.anyString());
 
-		message = new Message();
-		message.setType(Message.Type.headline);
-		Element event = message.addChildElement("event",
-				JabberPubsub.NS_PUBSUB_EVENT);
+        affiliationProcessor = new AffiliationProcessor(queue, configuration, channelManager);
 
-		affiliations = event.addElement("affiliations");
-		affiliations.addAttribute("node", "/user/juliet@denmark.lit/posts");
-		
-		affiliation = affiliations.addElement("affiliation");
-		affiliation.addAttribute("jid", "romeo@shakespeare.lit");
-		affiliation.addAttribute("affiliation",
-				Affiliations.publisher.toString());
-	}
+        message = new Message();
+        message.setType(Message.Type.headline);
+        Element event = message.addChildElement("event", JabberPubsub.NS_PUBSUB_EVENT);
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testInvalidAffiliationValueThrowsException() throws Exception {
-		Message badAffiliationValue = message.createCopy();
-		badAffiliationValue.getElement().element("event").element("affiliations")
-				.element("affiliation").addAttribute("affiliation", "invalid");
-		affiliationProcessor.process(badAffiliationValue);
-	}
+        affiliations = event.addElement("affiliations");
+    	affiliations.addAttribute("node", "/user/juliet@denmark.lit/posts");
+    	
+    	affiliation = affiliations.addElement("affiliation");
+        affiliation.addAttribute("jid", "romeo@shakespeare.lit");
+        affiliation.addAttribute("affiliation", Affiliations.publisher.toString());
+    }
 
-	@Test
-	public void testMissingAffiliationElementDoesNotCauseError()
-			throws Exception {
-		Message noAffiliationElement = message.createCopy();
-		noAffiliationElement.getElement().element("event").element("affiliations")
-				.element("affiliation").detach();
-		affiliationProcessor.process(noAffiliationElement);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidAffiliationValueThrowsException() throws Exception {
+        Message badAffiliationValue = message.createCopy();
+        badAffiliationValue.getElement().element("event").element("affiliations").element("affiliation").addAttribute("affiliation", "invalid");
+        affiliationProcessor.process(badAffiliationValue);
+    }
 
-	@Test
-	public void testEventForLocalNodeIsIgnored() throws Exception {
-		Configuration.getInstance().putProperty(
-				Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER, Boolean.TRUE.toString());
-		affiliationProcessor.process(message);
-		Assert.assertEquals(0, queue.size());
-	}
+    @Test
+    public void testMissingAffiliationElementDoesNotCauseError() throws Exception {
+        Message noAffiliationElement = message.createCopy();
+        noAffiliationElement.getElement().element("event").element("affiliations").element("affiliation").detach();
+        affiliationProcessor.process(noAffiliationElement);
+    }
 
-	@Test(expected = NodeStoreException.class)
-	public void testNodeStoreExceptionIsThrownWhenExpected() throws Exception {
+    @Test
+    public void testEventForLocalNodeIsIgnored() throws Exception {
+    	Configuration.getInstance().putProperty(
+    			Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER, Boolean.TRUE.toString());
+        affiliationProcessor.process(message);
+        Assert.assertEquals(0, queue.size());
+    }
 
-		Mockito.doThrow(new NodeStoreException())
-				.when(channelManager)
-				.setUserAffiliation(Mockito.anyString(),
-						Mockito.any(JID.class), Mockito.any(Affiliations.class));
-		affiliationProcessor.process(message);
-	}
+    @Test(expected = NodeStoreException.class)
+    public void testNodeStoreExceptionIsThrownWhenExpected() throws Exception {
 
-	@Test
-	public void testNotificationsAreSentOutAsExpected() throws Exception {
-		Configuration.getInstance().putProperty(
-				Configuration.CONFIGURATION_SERVER_DOMAIN, "shakespeare.lit");
-		affiliationProcessor.process(message);
+        Mockito.doThrow(new NodeStoreException()).when(channelManager)
+                .setUserAffiliation(Mockito.anyString(), Mockito.any(JID.class), Mockito.any(Affiliations.class));
+        affiliationProcessor.process(message);
+    }
 
-		Assert.assertEquals(1, queue.size());
-		message.setTo(jid.toString());
-		Message received = (Message) queue.poll();
-		Assert.assertEquals(message.toString(), received.toString());
-	}
+    @Test
+    public void testNotificationsAreSentOutAsExpected() throws Exception {
+    	Configuration.getInstance().putProperty(
+    			Configuration.CONFIGURATION_SERVER_DOMAIN, "shakespeare.lit");
+    	affiliationProcessor.process(message);
+
+        Assert.assertEquals(1, queue.size());
+        message.setTo(jid.toString());
+        Message received = (Message) queue.poll();
+        Assert.assertEquals(message.toString(), received.toString());
+    }
 }

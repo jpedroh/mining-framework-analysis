@@ -11,6 +11,73 @@ import org.xmpp.packet.JID;
 
 public interface ChannelManager extends NodeStore {
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/channel/ChannelManager.java/left.java
+	/**
+	 * Creates a channel.
+	 * 
+	 * @param channelJID
+	 *            the JID of the channel.
+	 * @throws NodeStoreException
+	 */
+	void createPersonalChannel(JID ownerJID) throws NodeStoreException;
+	
+	/**
+	 * Deletes all data from remote nodes
+	 * 
+	 * @throws NodeStoreException
+	 */
+	void deleteRemoteData() throws NodeStoreException;
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/channel/ChannelManager.java/base.java
+	/**
+	 * Creates a channel.
+	 * 
+	 * @param channelJID
+	 *            the JID of the channel.
+	 * @throws NodeStoreException
+	 */
+	void createPersonalChannel(JID ownerJID) throws NodeStoreException;
+
+	/**
+	 * Determines whether the node id given refers to a local node.
+	 * 
+	 * @param nodeId
+	 *            the node id
+	 * @return <code>true</code> if the node appears to be local,
+	 *         <code>false</code> otherwise.
+	 * @throws NodeStoreException
+	 */
+	boolean isLocalNode(String nodeId) throws NodeStoreException;
+
+	/**
+	 * Determines whether the jid refers to a local user.
+	 * 
+	 * @param jid
+	 *            the user's jid
+	 * @return <code>true</code> if the jid appears to be local,
+	 *         <code>false</code> otherwise.
+	 * @throws NodeStoreException
+	 */
+	boolean isLocalJID(JID jid) throws NodeStoreException;
+	
+	/**
+	 * Determines whether the domain is served by this server.
+	 * 
+	 * @param domain
+	 *            the domain name
+	 * @return <code>true</code> if the domain appears to be local,
+	 *         <code>false</code> otherwise.
+	 * @throws NodeStoreException
+	 */
+	boolean isLocalDomain(String domain) throws NodeStoreException;
+
+	
+	/**
+	 * Deletes all data from remote nodes
+	 * 
+	 * @throws NodeStoreException
+	 */
+	void deleteRemoteData() throws NodeStoreException;
+=======
     /**
      * Creates a channel.
      * 
@@ -18,6 +85,35 @@ public interface ChannelManager extends NodeStore {
      * @throws NodeStoreException
      */
     void createPersonalChannel(JID ownerJID) throws NodeStoreException;
+
+    /**
+     * Determines whether the node id given refers to a local node.
+     * 
+     * @param nodeId the node id
+     * @return <code>true</code> if the node appears to be local, <code>false</code> otherwise.
+     * @throws NodeStoreException
+     */
+    boolean isLocalNode(String nodeId) throws NodeStoreException;
+
+    /**
+     * Determines whether the jid refers to a local user.
+     * 
+     * @param jid the user's jid
+     * @return <code>true</code> if the jid appears to be local, <code>false</code> otherwise.
+     * @throws NodeStoreException
+     */
+    boolean isLocalJID(JID jid) throws NodeStoreException;
+
+    /**
+     * Determines whether the domain is served by this server.
+     * 
+     * @param domain the domain name
+     * @return <code>true</code> if the domain appears to be local, <code>false</code> otherwise.
+     * @throws NodeStoreException
+     */
+    boolean isLocalDomain(String domain) throws NodeStoreException;
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/bc01763824f2ab363ee2be9718c77db9cb5e3755/src/main/java/org/buddycloud/channelserver/channel/ChannelManager.java/right.java
+
 
     /**
      * Deletes all data from remote nodes

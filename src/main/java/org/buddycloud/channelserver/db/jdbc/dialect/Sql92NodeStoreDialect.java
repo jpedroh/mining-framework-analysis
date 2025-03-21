@@ -62,11 +62,8 @@ public class Sql92NodeStoreDialect implements NodeStoreSQLDialect {
 
     private static final String DELETE_AFFILIATION = "DELETE FROM \"affiliations\" WHERE \"node\" = ? AND \"user\" = ?;";
 
-    private static final String SELECT_SUBSCRIPTION = "SELECT \"node\", \"user\", \"listener\", \"subscription\", \"updated\""
-            + " FROM \"subscriptions\" WHERE \"node\" = ? AND (\"user\" = ? OR \"listener\" = ? ) ORDER BY \"updated\" ASC";
-
-    private static final String SELECT_SUBSCRIPTIONS_FOR_USER = "SELECT \"node\", \"user\", \"listener\", \"subscription\", \"updated\""
-            + " FROM \"subscriptions\" WHERE \"user\" = ? OR \"listener\" = ? ORDER BY \"updated\" ASC";
+	private static final String SELECT_SUBSCRIPTIONS_FOR_USER = "SELECT \"node\", \"user\", \"listener\", \"subscription\", \"updated\""
+	        + " FROM \"subscriptions\" WHERE \"user\" = ? OR \"listener\" = ? ORDER BY \"updated\" ASC";
 
     private static final String SELECT_SUBSCRIPTIONS_FOR_USER_AFTER_NODE = "SELECT \"node\", \"user\", \"listener\", \"subscription\", \"updated\""
             + " FROM \"subscriptions\" WHERE (\"user\" = ? OR \"listener\" = ?) AND "
@@ -143,46 +140,10 @@ public class Sql92NodeStoreDialect implements NodeStoreSQLDialect {
     private static final String SELECT_COUNT_ITEM_THREAD = "" + "SELECT COUNT(\"id\") " + "FROM \"items\" WHERE \"node\" = ? "
             + "AND (\"in_reply_to\" LIKE ? OR \"id\" = ?) ";
 
-	private static final String SELECT_LOCAL_NODES = 	
-			"SELECT \"node\" " +
-			"FROM \"nodes\" " +
-			"WHERE \"node\" ~ ? ";
-	
-	private static final String SELECT_REMOTE_NODES = 	
-			"SELECT \"node\" " +
-			"FROM \"nodes\" " +
-			"WHERE \"node\" !~ ?";
-	
-	private static final String SELECT_ITEMS_FROM_LOCAL_NODES_BEFORE_DATE = 
-			"SELECT \"items\".\"node\", \"id\", \"items\".\"updated\", \"xml\", \"in_reply_to\", \"created\" " +
-			"FROM \"items\", \"node_config\" " +
-			"WHERE \"items\".\"updated\" < ? " +
-			"AND \"items\".\"node\" = \"node_config\".\"node\" "+
-			"AND \"key\" = ? " +
-			"AND ((" +
-			  "NOT ? AND " +
-			    "(\"value\" LIKE ?) OR " +
-			    "(\"value\" LIKE ? AND \"items\".\"node\" ~ ?)) " +
-			"OR ?) " +
-			"AND \"items\".\"node\" ~ ? " +
-			"ORDER BY \"updated\" DESC, \"id\" ASC LIMIT ?";
-
-	private static final String COUNT_SUBSCRIPTIONS_FOR_NODE = "SELECT COUNT(*) " + "FROM \"subscriptions\", \"affiliations\" WHERE "
+    private static final String COUNT_SUBSCRIPTIONS_FOR_NODE = "SELECT COUNT(*) " + "FROM \"subscriptions\", \"affiliations\" WHERE "
             + "\"subscriptions\".\"node\" = ? AND \"affiliations\".\"node\" = \"subscriptions\".\"node\" "
             + "AND \"affiliations\".\"user\" = \"subscriptions\".\"user\" " + "AND \"affiliations\".\"affiliation\" != 'outcast';";
 
-	private static final String COUNT_ITEMS_FROM_LOCAL_NODES = 	
-			"SELECT COUNT(\"id\") " +
-			"FROM \"items\", \"node_config\" " +
-			"WHERE \"items\".\"node\" = \"node_config\".\"node\" "+
-			"AND \"key\" = ? " +
-			"AND ((" +
-			  "NOT ? AND " +
-			    "(\"value\" LIKE ?) OR " +
-			    "(\"value\" LIKE ? AND \"items\".\"node\" ~ ?)) " +
-			"OR ?) " +
-			"AND \"items\".\"node\" ~ ?";
-	
     private static final String COUNT_SUBSCRIPTIONS_TO_NODE_FOR_OWNER = "SELECT COUNT(*) " + "FROM \"subscriptions\" WHERE "
             + "\"subscriptions\".\"node\" = ?;";
 
@@ -210,9 +171,45 @@ public class Sql92NodeStoreDialect implements NodeStoreSQLDialect {
 
     private static final String DELETE_ITEMS = "DELETE FROM \"items\" WHERE \"node\" = ?;";
 
-    private static final String SELECT_USER_ITEMS = "SELECT \"node\", \"id\", \"updated\", \"xml\", \"in_reply_to\", \"created\""
-            + " FROM \"items\" WHERE (CAST(xpath('//atom:author/atom:name/text()', xmlparse(document \"xml\"),"
-            + " ARRAY[ARRAY['atom', 'http://www.w3.org/2005/Atom']]) AS TEXT[]))[1] = ?";
+	private static final String SELECT_LOCAL_NODES = 	
+			"SELECT \"node\" " +
+			"FROM \"nodes\" " +
+			"WHERE \"node\" ~ ? ";
+	
+	private static final String SELECT_REMOTE_NODES = 	
+			"SELECT \"node\" " +
+			"FROM \"nodes\" " +
+			"WHERE \"node\" !~ ?";
+	
+	private static final String SELECT_ITEMS_FROM_LOCAL_NODES_BEFORE_DATE = 
+			"SELECT \"items\".\"node\", \"id\", \"items\".\"updated\", \"xml\", \"in_reply_to\", \"created\" " +
+			"FROM \"items\", \"node_config\" " +
+			"WHERE \"items\".\"updated\" < ? " +
+			"AND \"items\".\"node\" = \"node_config\".\"node\" "+
+			"AND \"key\" = ? " +
+			"AND ((" +
+			  "NOT ? AND " +
+			    "(\"value\" LIKE ?) OR " +
+			    "(\"value\" LIKE ? AND \"items\".\"node\" ~ ?)) " +
+			"OR ?) " +
+			"AND \"items\".\"node\" ~ ? " +
+			"ORDER BY \"updated\" DESC, \"id\" ASC LIMIT ?";
+
+	private static final String COUNT_ITEMS_FROM_LOCAL_NODES = 	
+			"SELECT COUNT(\"id\") " +
+			"FROM \"items\", \"node_config\" " +
+			"WHERE \"items\".\"node\" = \"node_config\".\"node\" "+
+			"AND \"key\" = ? " +
+			"AND ((" +
+			  "NOT ? AND " +
+			    "(\"value\" LIKE ?) OR " +
+			    "(\"value\" LIKE ? AND \"items\".\"node\" ~ ?)) " +
+			"OR ?) " +
+			"AND \"items\".\"node\" ~ ?";
+	
+	private static final String SELECT_USER_ITEMS = "SELECT \"node\", \"id\", \"updated\", \"xml\", \"in_reply_to\", \"created\""
+	        + " FROM \"items\" WHERE (CAST(xpath('//atom:author/atom:name/text()', xmlparse(document \"xml\"),"
+	        + " ARRAY[ARRAY['atom', 'http://www.w3.org/2005/Atom']]) AS TEXT[]))[1] = ?";
 
     private static final String DELETE_USER_ITEMS = "DELETE"
             + " FROM \"items\" WHERE (CAST(xpath('//atom:author/atom:name/text()', xmlparse(document \"xml\"),"
