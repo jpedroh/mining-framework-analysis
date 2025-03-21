@@ -212,11 +212,14 @@ public @interface JsonTypeInfo
          * whereas with {@link JsonTypeId}, output of regular property is suppressed.
          * This mostly matters with respect to output order; this choice is the only
          * way to ensure specific placement of type id during serialization.
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+         *
+         * @since 2.3.0 but databind <b>only since 2.5.0</b>.
 =======
          *
          * @since 2.3 but databind <b>only since 2.5</b>.
->>>>>>> 2.16
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
          */
         EXISTING_PROPERTY
         ;
@@ -300,25 +303,32 @@ public @interface JsonTypeInfo
     public boolean visible() default false;
 
     // 19-Dec-2014, tatu: Was hoping to implement for 2.5, but didn't quite make it.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
     //   Hope for better luck with 3.0 or later
-
-    // public boolean skipWritingDefault() default false;
-
     /**
-     * Specifies whether the type ID should be strictly required during polymorphic
-     * deserialization of its subtypes.
-     * <p>
-     * If set to {@link OptBoolean#TRUE}, an {@code InvalidTypeIdException} will
-     * be thrown if no type information is provided. 
-     * If set to {@link OptBoolean#FALSE}, deserialization may proceed without
-     * type information if the  subtype is a legitimate target (non-abstract). 
-     * If set to {@link OptBoolean#DEFAULT}, the global configuration of 
-     * {@code MapperFeature#REQUIRE_TYPE_ID_FOR_SUBTYPES} is used for type ID handling.
-     * <p>
-     * NOTE: This setting is specific to this type and will <strong>always override</strong>
-     * the global configuration of {@code MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES}.
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+    //   Hope for better luck with 2.8 or later
+    /**
+=======
+    //   Hope for better luck in future
+    /*
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
+     * Property that defines whether type serializer is allowed to omit writing
+     * of type id, in case that value written has type same as {@link #defaultImpl()}.
+     * If true, omission is allowed (although writer may or may not be able to do that);
+     * if false, type id should always be written still.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
+    public boolean skipWritingDefault() default false;
+    */
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+     *
+     * @since 2.5
+    public boolean skipWritingDefault() default false;
+    /*
+=======
      */
-    public OptBoolean requireTypeIdForSubtypes() default OptBoolean.DEFAULT;
+    // public boolean skipWritingDefault() default false;
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
 
     /*
     /**********************************************************************
@@ -327,6 +337,7 @@ public @interface JsonTypeInfo
     /**********************************************************************
      */
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/left.java
     public static class Value
         implements JacksonAnnotationValue<JsonTypeInfo>,
             java.io.Serializable
@@ -483,4 +494,45 @@ public @interface JsonTypeInfo
             ;
         }
     }
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/base.java
+    /**
+     * This marker class that is only to be used with <code>defaultImpl</code>
+     * annotation property, to indicate that there is no default implementation
+     * specified.
+     *
+     * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
+     *    if such behavior is needed; this is rarely necessary.
+     */
+    @Deprecated
+    public abstract static class None { }
+=======
+    /**
+     * This marker class that is only to be used with <code>defaultImpl</code>
+     * annotation property, to indicate that there is no default implementation
+     * specified.
+     *
+     * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
+     *    if such behavior is needed; this is rarely necessary.
+     */
+    @Deprecated
+    public abstract static class None {}
+
+    /**
+     * Specifies whether the type ID should be strictly required during polymorphic
+     * deserialization of its subtypes.
+     * <p>
+     * If set to {@link OptBoolean#TRUE}, an {@code InvalidTypeIdException} will
+     * be thrown if no type information is provided. 
+     * If set to {@link OptBoolean#FALSE}, deserialization may proceed without
+     * type information if the  subtype is a legitimate target (non-abstract). 
+     * If set to {@link OptBoolean#DEFAULT}, the global configuration of 
+     * {@code MapperFeature#REQUIRE_TYPE_ID_FOR_SUBTYPES} is used for type ID handling.
+     * <p>
+     * NOTE: This setting is specific to this type and will <strong>always override</strong>
+     * the global configuration of {@code MapperFeature.REQUIRE_TYPE_ID_FOR_SUBTYPES}.
+     *
+     * @since 2.16
+     */
+    public OptBoolean requireTypeIdForSubtypes() default OptBoolean.DEFAULT;
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cfb345303a68395bd184cc2caca87dc051c9fdc5/src/main/java/com/fasterxml/jackson/annotation/JsonTypeInfo.java/right.java
 }
