@@ -1,9 +1,7 @@
 package com.monitorjbl.xlsx;
-
 import com.monitorjbl.xlsx.exceptions.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
@@ -13,15 +11,33 @@ import javax.xml.xpath.XPathFactory;
 import java.util.*;
 
 public class XmlUtils {
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  public static Document document(InputStream is) {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+      factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      factory.setExpandEntityReferences(false);
+      factory.setXIncludeAware(false);
+      return factory.newDocumentBuilder().parse(is);
+    } catch (SAXException | IOException | ParserConfigurationException e) {
+      throw new ParseException(e);
+    }
+  }
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/7d81ae0fed55b297e0c7ad370ce073981a6fd102/src/main/java/com/monitorjbl/xlsx/XmlUtils.java/right.java
+
+
   public static NodeList searchForNodeList(Document document, String xpath) {
     try {
       XPath xp = XPathFactory.newInstance().newXPath();
       NamespaceContextImpl nc = new NamespaceContextImpl();
       nc.addNamespace("ss", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
       xp.setNamespaceContext(nc);
-      return (NodeList)xp.compile(xpath)
-              .evaluate(document, XPathConstants.NODESET);
-    } catch(XPathExpressionException e) {
+      return (NodeList) xp.compile(xpath).evaluate(document, XPathConstants.NODESET);
+    } catch (XPathExpressionException e) {
       throw new ParseException(e);
     }
   }
@@ -36,7 +52,7 @@ public class XmlUtils {
       addNamespace(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
     }
 
-    public void addNamespace(String prefix, String namespaceURI) {
+    public synchronized void addNamespace(String prefix, String namespaceURI) {
       urisByPrefix.put(prefix, namespaceURI);
       if (prefixesByURI.containsKey(namespaceURI)) {
         (prefixesByURI.get(namespaceURI)).add(prefix);
@@ -48,12 +64,14 @@ public class XmlUtils {
     }
 
     public String getNamespaceURI(String prefix) {
-      if (prefix == null)
+      if (prefix == null) {
         throw new IllegalArgumentException("prefix cannot be null");
-      if (urisByPrefix.containsKey(prefix))
+      }
+      if (urisByPrefix.containsKey(prefix)) {
         return (String) urisByPrefix.get(prefix);
-      else
+      } else {
         return XMLConstants.NULL_NS_URI;
+      }
     }
 
     public String getPrefix(String namespaceURI) {
@@ -61,8 +79,9 @@ public class XmlUtils {
     }
 
     public Iterator getPrefixes(String namespaceURI) {
-      if (namespaceURI == null)
+      if (namespaceURI == null) {
         throw new IllegalArgumentException("namespaceURI cannot be null");
+      }
       if (prefixesByURI.containsKey(namespaceURI)) {
         return ((Set) prefixesByURI.get(namespaceURI)).iterator();
       } else {

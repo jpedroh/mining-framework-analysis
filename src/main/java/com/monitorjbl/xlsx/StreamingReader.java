@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx;
-
 import com.monitorjbl.xlsx.exceptions.MissingSheetException;
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -34,7 +32,6 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Iterator;
 import java.util.Objects;
-
 import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 import static com.monitorjbl.xlsx.impl.TempFileUtil.writeInputStreamToFile;
 import static org.apache.poi.ooxml.util.DocumentHelper.readDocument;
@@ -48,6 +45,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingReader.class);
 
   private File tmp;
+
   private final StreamingWorkbookReader workbook;
 
   public StreamingReader(StreamingWorkbookReader workbook) {
@@ -63,8 +61,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    * @deprecated StreamingReader is equivalent to the POI Workbook object rather
    * than the Sheet object. This method will be removed in a future release.
    */
-  @Override
-  public Iterator<Row> iterator() {
+  @Override public Iterator<Row> iterator() {
     return workbook.first().iterator();
   }
 
@@ -73,12 +70,11 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    *
    * @throws com.monitorjbl.xlsx.exceptions.CloseException if there is an issue closing the stream
    */
-  @Override
-  public void close() throws IOException {
+  @Override public void close() throws IOException {
     try {
       workbook.close();
-    } finally {
-      if(tmp != null) {
+    }  finally {
+      if (tmp != null) {
         if (log.isDebugEnabled()) {
           log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
         }
@@ -93,10 +89,15 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   public static class Builder {
     private int rowCacheSize = 10;
+
     private int bufferSize = 1024;
+
     private int sheetIndex = 0;
+
     private int sstCacheSize = -1;
+
     private String sheetName;
+
     private String password;
 
     public int getRowCacheSize() {
@@ -285,14 +286,13 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       try {
         f = writeInputStreamToFile(is, bufferSize);
         log.debug("Created temp file [" + f.getAbsolutePath() + "]");
-
         StreamingReader r = read(f);
         r.tmp = f;
         return r;
-      } catch(IOException e) {
+      } catch (IOException e) {
         throw new ReadException("Unable to read input stream", e);
-      } catch(RuntimeException e) {
-        if(f != null) {
+      } catch (RuntimeException e) {
+        if (f != null) {
           f.delete();
         }
         throw e;
@@ -312,8 +312,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
     public StreamingReader read(File f) {
       try {
         OPCPackage pkg;
-        if(password != null) {
-          // Based on: https://poi.apache.org/encryption.html
+        if (password != null) {
           POIFSFileSystem poifs = new POIFSFileSystem(f);
           EncryptionInfo info = new EncryptionInfo(poifs);
           Decryptor d = Decryptor.getInstance(info);
@@ -322,20 +321,17 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
         } else {
           pkg = OPCPackage.open(f);
         }
-
         boolean use1904Dates = false;
         XSSFReader reader = new XSSFReader(pkg);
-
         SharedStringsTable sst;
         File sstCache = null;
-        if(sstCacheSize > 0) {
+        if (sstCacheSize > 0) {
           sstCache = Files.createTempFile("", "").toFile();
           log.debug("Created sst cache file [" + sstCache.getAbsolutePath() + "]");
           sst = BufferedStringsTable.getSharedStringsTable(sstCache, sstCacheSize, pkg);
         } else {
           sst = reader.getSharedStringsTable();
         }
-
         StylesTable styles = reader.getStylesTable();
         NodeList workbookPr = searchForNodeList(readDocument(reader.getWorkbookData()), "/ss:workbook/ss:workbookPr");
         if (workbookPr.getLength() == 1) {
@@ -345,19 +341,16 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
           }
         }
         InputStream sheet = findSheet(reader);
-        if(sheet == null) {
+        if (sheet == null) {
           throw new MissingSheetException("Unable to find sheet at index [" + sheetIndex + "]");
         }
-
         XMLEventReader parser = StaxHelper.newXMLInputFactory().createXMLEventReader(sheet);
-
-        return new StreamingReader(new StreamingWorkbookReader(sst, sstCache, pkg, new StreamingSheetReader(sst, styles, parser, use1904Dates, rowCacheSize),
-            this));
-      } catch(IOException e) {
+        return new StreamingReader(new StreamingWorkbookReader(sst, sstCache, pkg, new StreamingSheetReader(sst, styles, parser, use1904Dates, rowCacheSize), this));
+      } catch (IOException e) {
         throw new OpenException("Failed to open file", e);
-      } catch(OpenXML4JException | SAXException | XMLStreamException e) {
+      } catch (OpenXML4JException | SAXException | XMLStreamException e) {
         throw new ReadException("Unable to read workbook", e);
-      } catch(GeneralSecurityException e) {
+      } catch (GeneralSecurityException e) {
         throw new ReadException("Unable to read workbook - Decryption failed", e);
       }
     }
@@ -367,26 +360,24 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
      */
     private InputStream findSheet(XSSFReader reader) throws IOException, InvalidFormatException, SAXException {
       int index = sheetIndex;
-      if(sheetName != null) {
+      if (sheetName != null) {
         index = -1;
-        //This file is separate from the worksheet data, and should be fairly small
         NodeList nl = searchForNodeList(readDocument(reader.getWorkbookData()), "/ss:workbook/ss:sheets/ss:sheet");
-        for(int i = 0; i < nl.getLength(); i++) {
-          if(Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
+        for (int i = 0; i < nl.getLength(); i++) {
+          if (Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
             index = i;
           }
         }
-        if(index < 0) {
+        if (index < 0) {
           return null;
         }
       }
       Iterator<InputStream> iter = reader.getSheetsData();
       InputStream sheet = null;
-
       int i = 0;
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         InputStream is = iter.next();
-        if(i++ == index) {
+        if (i++ == index) {
           sheet = is;
           log.debug("Found sheet at index [" + sheetIndex + "]");
           break;
@@ -395,5 +386,4 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       return sheet;
     }
   }
-
 }
