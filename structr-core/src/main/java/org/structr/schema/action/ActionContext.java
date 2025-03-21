@@ -595,6 +595,5 @@ public class ActionContext {
 
 	public boolean isRenderContext() {
 		return false;
-
 	}
 }
