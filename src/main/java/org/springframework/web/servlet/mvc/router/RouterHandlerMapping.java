@@ -1,22 +1,13 @@
 package org.springframework.web.servlet.mvc.router;
 
-<<<<<<< HEAD
 import org.springframework.core.io.Resource;
-import org.springframework.web.servlet.mvc.router.exceptions.RouteFileParsingException;
-import org.springframework.web.servlet.mvc.router.exceptions.NoRouteFoundException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
-=======
-import java.io.IOException;
->>>>>>> e4270319fd079a7d5aeaa35a20630480a3efef98
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -134,18 +125,26 @@ public class RouterHandlerMapping extends AbstractHandlerMapping {
         super.initApplicationContext();
 
         try {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/left.java
           Resource resource = getApplicationContext().getResource(routeFile);
+||||||| /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/base.java
+            // load routes configuration file and parse all routes
+            File file = new File(this.getClass().getClassLoader().getResource(
+                    routeFile).toURI());
+=======
+            Resource resource = getApplicationContext().getResource(routeFile);
+>>>>>>> /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/right.java
 
+<<<<<<< /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/left.java
             // load routes configuration file and parse all routes
             InputStream is = resource.getInputStream();
 
             Router.load(is, this.servletPrefix);
+||||||| /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/base.java
+            Router.load(file, this.servletPrefix);
 =======
-            Resource resource = getApplicationContext().getResource(routeFile);
-
             Router.load(resource, this.servletPrefix);
->>>>>>> e4270319fd079a7d5aeaa35a20630480a3efef98
+>>>>>>> /usr/src/app/output/resthub/springmvc-router/43b5984109507a1956226b3ce4bb4641cf1f4dbf/src/main/java/org/springframework/web/servlet/mvc/router/RouterHandlerMapping.java/right.java
 
         } catch (IOException e) {
             throw new RouteFileParsingException(
