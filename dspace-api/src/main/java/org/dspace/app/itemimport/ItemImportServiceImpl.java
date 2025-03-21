@@ -13,7 +13,6 @@ import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_LABEL_ELEMENT;
 import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_SCHEMA;
 import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_TOC_ELEMENT;
 import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_WIDTH_QUALIFIER;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -55,7 +54,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.collections4.ComparatorUtils;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.io.FileUtils;
@@ -185,7 +183,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
     //remember which folder item was imported from
     Map<String, Item> itemFolderMap = null;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         tempWorkDir = configurationService.getProperty("org.dspace.app.batchitemimport.work.dir");
@@ -200,10 +197,8 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
     // File listing filter to look for metadata files
     protected FilenameFilter metadataFileFilter = new LocalSchemaFilenameFilter();
-
     // File listing filter to check for folders
     protected FilenameFilter directoryFilter = new FilenameFilter() {
         @Override
@@ -212,12 +207,9 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             return item.isDirectory();
         }
     };
-
     protected ItemImportServiceImpl() {
         //Protected consumer to ensure that we use spring to create a bean, NEVER make this public
     }
-
-
     @Override
     public void addItemsAtomic(Context c, List<Collection> mycollections, String sourceDir, String mapFile,
                                boolean template) throws Exception {
@@ -230,7 +222,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             throw addException;
         }
     }
-
     @Override
     public void addItems(Context c, List<Collection> mycollections,
                          String sourceDir, String mapFile, boolean template) throws Exception {
@@ -325,7 +316,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
      /**
       * Add relationships from a 'relationships' manifest file.
       * 
@@ -374,7 +364,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         }
 
     }
-
     /**
      * Add relationship.
      * @param c the context
@@ -420,16 +409,28 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             rightItem = item;
         }
 
-        // Create the relationship, appending to the end
+<<<<<<< /usr/src/app/output/dspace/dspace/e882ae75b42099fac549dae0930b5e8c5d892010/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+        // create the relationship
+        int leftPlace = relationshipService.findNextLeftPlaceByLeftItem(c, leftItem);
+        int rightPlace = relationshipService.findNextRightPlaceByRightItem(c, rightItem);
         Relationship persistedRelationship = relationshipService.create(
-            c, leftItem, rightItem, foundRelationshipType, -1, -1
-        );
-        relationshipService.update(c, persistedRelationship);
+            c, leftItem, rightItem, foundRelationshipType, leftPlace, rightPlace);
+||||||| /usr/src/app/output/dspace/dspace/e882ae75b42099fac549dae0930b5e8c5d892010/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+        // Create the relationship
+        int leftPlace = relationshipService.findNextLeftPlaceByLeftItem(c, leftItem);
+        int rightPlace = relationshipService.findNextRightPlaceByRightItem(c, rightItem);
+        Relationship persistedRelationship = relationshipService.create(
+            c, leftItem, rightItem, foundRelationshipType, leftPlace, rightPlace);
+=======
+        // Create the relationship
+        Relationship persistedRelationship =
+            relationshipService.create(c, leftItem, rightItem, foundRelationshipType, -1, -1);
+>>>>>>> /usr/src/app/output/dspace/dspace/e882ae75b42099fac549dae0930b5e8c5d892010/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+        // relationshipService.update(c, persistedRelationship);
 
         System.out.println("\tAdded relationship (type: " + relationshipType + ") from " +
             leftItem.getHandle() + " to " + rightItem.getHandle());
     }
-
     /**
      * Get the item's entity type from meta.
      * 
@@ -439,7 +440,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
     protected String getEntityType(Item item) {
         return itemService.getMetadata(item, "dspace", "entity", "type", Item.ANY).get(0).getValue();
     }
-
     /**
      * Read the relationship manifest file.
      * 
@@ -517,7 +517,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return result;
     }
-
      /**
       * Resolve an item identifier referred to in the relationships manifest file.
       *
@@ -558,7 +557,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         return resolveItem(c, itemIdentifier);
 
     }
-
     /**
      * Resolve an item identifier.
      * 
@@ -579,7 +577,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         // resolve by UUID
         return itemService.findByIdOrLegacyId(c, itemIdentifier);
     }
-
     /**
      * Lookup an item by a (unique) meta value.
      * 
@@ -622,7 +619,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         return item;
 
     }
-
     @Override
     public void replaceItems(Context c, List<Collection> mycollections,
                              String sourceDir, String mapFile, boolean template) throws Exception {
@@ -677,7 +673,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             c.uncacheEntity(newItem);
         }
     }
-
     @Override
     public void deleteItems(Context c, String mapFile) throws Exception {
         System.out.println("Deleting items listed in mapfile: " + mapFile);
@@ -704,7 +699,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
     /**
      * item? try and add it to the archive.
      *
@@ -806,7 +800,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return myitem;
     }
-
     // remove, given the actual item
     protected void deleteItem(Context c, Item myitem) throws Exception {
         if (!isTest) {
@@ -824,7 +817,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
     // remove, given a handle
     protected void deleteItem(Context c, String myhandle) throws Exception {
         // bit of a hack - to remove an item, you must remove it
@@ -838,7 +830,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             c.uncacheEntity(myitem);
         }
     }
-
     ////////////////////////////////////
     // utility methods
     ////////////////////////////////////
@@ -881,7 +872,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return myHash;
     }
-
     // Load all metadata schemas into the item.
     protected void loadMetadata(Context c, Item myitem, String path)
         throws SQLException, IOException, ParserConfigurationException,
@@ -896,7 +886,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             loadDublinCore(c, myitem, file[i].getAbsolutePath());
         }
     }
-
     protected void loadDublinCore(Context c, Item myitem, String filename)
         throws SQLException, IOException, ParserConfigurationException,
         SAXException, TransformerException, AuthorizeException, XPathExpressionException {
@@ -929,7 +918,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             addDCValue(c, myitem, schema, n);
         }
     }
-
     protected void addDCValue(Context c, Item i, String schema, Node n)
         throws TransformerException, SQLException, AuthorizeException {
         String value = getStringValue(n); //n.getNodeValue();
@@ -987,7 +975,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
     /**
      * Read the collections file inside the item directory. If there
      * is one and it is not empty return a list of collections in
@@ -1001,7 +988,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
      * @throws IOException  if IO error
      * @throws SQLException if database error
      */
-
     protected List<Collection> processCollectionFile(Context c, String path, String filename)
         throws IOException, SQLException {
         File file = new File(path + File.separatorChar + filename);
@@ -1048,7 +1034,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return result;
     }
-
     /**
      * Read in the handle file contents or return null if empty or doesn't exist
      *
@@ -1095,7 +1080,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return result;
     }
-
     /**
      * Given a contents file and an item, stuffing it with bitstreams from the
      * contents file Returns a List of Strings with lines from the contents
@@ -1380,7 +1364,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         return options;
     }
-
     /**
      * each entry represents a bitstream....
      *
@@ -1451,7 +1434,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
         bis.close();
     }
-
     /**
      * Register the bitstream file into DSpace
      *
@@ -1513,7 +1495,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             bitstreamService.update(c, bs);
         }
     }
-
     /**
      * Process the Options to apply to the Item. The options are tab delimited
      *
@@ -1779,7 +1760,6 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
             }
         }
     }
-
     /**
      * Set the Permission on a Bitstream.
      *
@@ -1814,7 +1794,17 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         }
 
     }
-
+    // XML utility methods
+    //remember which folder item was imported from
+    // File listing filter to look for metadata files
+    // File listing filter to check for folders
+    // remove, given the actual item
+    // remove, given a handle
+    ////////////////////////////////////
+    // utility methods
+    ////////////////////////////////////
+    // read in the map file and generate a hashmap of (file,handle) pairs
+    // Load all metadata schemas into the item.
     // XML utility methods
 
     /**
