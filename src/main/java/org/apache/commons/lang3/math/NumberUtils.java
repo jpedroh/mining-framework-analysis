@@ -70,22 +70,18 @@ public class NumberUtils {
     public static final Float FLOAT_ONE = Float.valueOf(1.0f);
     /** Reusable Float constant for minus one. */
     public static final Float FLOAT_MINUS_ONE = Float.valueOf(-1.0f);
-
     /**
      * {@link Integer#MAX_VALUE} as a {@link Long}.
      *
      * @since 3.12.0
      */
     public static final Long LONG_INT_MAX_VALUE = Long.valueOf(Integer.MAX_VALUE);
-
     /**
      * {@link Integer#MIN_VALUE} as a {@link Long}.
      *
      * @since 3.12.0
      */
     public static final Long LONG_INT_MIN_VALUE = Long.valueOf(Integer.MIN_VALUE);
-
-
     /**
      * {@link NumberUtils} instances should NOT be constructed in standard programming.
      * Instead, the class should be used as {@code NumberUtils.toInt("6");}.
@@ -95,7 +91,6 @@ public class NumberUtils {
      */
     public NumberUtils() {
     }
-
     /**
      * Convert a {@link String} to an {@code int}, returning
      * {@code zero} if the conversion fails.
@@ -116,7 +111,6 @@ public class NumberUtils {
     public static int toInt(final String str) {
         return toInt(str, 0);
     }
-
     /**
      * Convert a {@link String} to an {@code int}, returning a
      * default value if the conversion fails.
@@ -144,7 +138,6 @@ public class NumberUtils {
             return defaultValue;
         }
     }
-
     /**
      * Convert a {@link String} to a {@code long}, returning
      * {@code zero} if the conversion fails.
@@ -165,7 +158,6 @@ public class NumberUtils {
     public static long toLong(final String str) {
         return toLong(str, 0L);
     }
-
     /**
      * Convert a {@link String} to a {@code long}, returning a
      * default value if the conversion fails.
@@ -193,7 +185,6 @@ public class NumberUtils {
             return defaultValue;
         }
     }
-
     /**
      * Convert a {@link String} to a {@code float}, returning
      * {@code 0.0f} if the conversion fails.
@@ -215,7 +206,6 @@ public class NumberUtils {
     public static float toFloat(final String str) {
         return toFloat(str, 0.0f);
     }
-
     /**
      * Convert a {@link String} to a {@code float}, returning a
      * default value if the conversion fails.
@@ -245,7 +235,6 @@ public class NumberUtils {
           return defaultValue;
       }
     }
-
     /**
      * Convert a {@link String} to a {@code double}, returning
      * {@code 0.0d} if the conversion fails.
@@ -267,7 +256,6 @@ public class NumberUtils {
     public static double toDouble(final String str) {
         return toDouble(str, 0.0d);
     }
-
     /**
      * Convert a {@link String} to a {@code double}, returning a
      * default value if the conversion fails.
@@ -297,7 +285,6 @@ public class NumberUtils {
           return defaultValue;
       }
     }
-
     /**
      * Convert a {@link BigDecimal} to a {@code double}.
      *
@@ -317,7 +304,6 @@ public class NumberUtils {
     public static double toDouble(final BigDecimal value) {
         return toDouble(value, 0.0d);
     }
-
     /**
      * Convert a {@link BigDecimal} to a {@code double}.
      *
@@ -338,7 +324,6 @@ public class NumberUtils {
     public static double toDouble(final BigDecimal value, final double defaultValue) {
         return value == null ? defaultValue : value.doubleValue();
     }
-
      /**
      * Convert a {@link String} to a {@code byte}, returning
      * {@code zero} if the conversion fails.
@@ -359,7 +344,6 @@ public class NumberUtils {
     public static byte toByte(final String str) {
         return toByte(str, (byte) 0);
     }
-
     /**
      * Convert a {@link String} to a {@code byte}, returning a
      * default value if the conversion fails.
@@ -387,7 +371,6 @@ public class NumberUtils {
             return defaultValue;
         }
     }
-
     /**
      * Convert a {@link String} to a {@code short}, returning
      * {@code zero} if the conversion fails.
@@ -408,7 +391,6 @@ public class NumberUtils {
     public static short toShort(final String str) {
         return toShort(str, (short) 0);
     }
-
     /**
      * Convert a {@link String} to an {@code short}, returning a
      * default value if the conversion fails.
@@ -436,7 +418,6 @@ public class NumberUtils {
             return defaultValue;
         }
     }
-
     /**
      * Convert a {@link BigDecimal} to a {@link BigDecimal} with a scale of
      * two that has been rounded using {@code RoundingMode.HALF_EVEN}. If the supplied
@@ -452,7 +433,6 @@ public class NumberUtils {
     public static BigDecimal toScaledBigDecimal(final BigDecimal value) {
         return toScaledBigDecimal(value, INTEGER_TWO, RoundingMode.HALF_EVEN);
     }
-
     /**
      * Convert a {@link BigDecimal} to a {@link BigDecimal} whose scale is the
      * specified value with a {@link RoundingMode} applied. If the input {@code value}
@@ -474,7 +454,6 @@ public class NumberUtils {
             roundingMode == null ? RoundingMode.HALF_EVEN : roundingMode
         );
     }
-
     /**
      * Convert a {@link Float} to a {@link BigDecimal} with a scale of
      * two that has been rounded using {@code RoundingMode.HALF_EVEN}. If the supplied
@@ -490,7 +469,6 @@ public class NumberUtils {
     public static BigDecimal toScaledBigDecimal(final Float value) {
         return toScaledBigDecimal(value, INTEGER_TWO, RoundingMode.HALF_EVEN);
     }
-
     /**
      * Convert a {@link Float} to a {@link BigDecimal} whose scale is the
      * specified value with a {@link RoundingMode} applied. If the input {@code value}
@@ -513,7 +491,6 @@ public class NumberUtils {
             roundingMode
         );
     }
-
     /**
      * Convert a {@link Double} to a {@link BigDecimal} with a scale of
      * two that has been rounded using {@code RoundingMode.HALF_EVEN}. If the supplied
@@ -529,7 +506,6 @@ public class NumberUtils {
     public static BigDecimal toScaledBigDecimal(final Double value) {
         return toScaledBigDecimal(value, INTEGER_TWO, RoundingMode.HALF_EVEN);
     }
-
     /**
      * Convert a {@link Double} to a {@link BigDecimal} whose scale is the
      * specified value with a {@link RoundingMode} applied. If the input {@code value}
@@ -552,7 +528,6 @@ public class NumberUtils {
             roundingMode
         );
     }
-
     /**
      * Convert a {@link String} to a {@link BigDecimal} with a scale of
      * two that has been rounded using {@code RoundingMode.HALF_EVEN}. If the supplied
@@ -568,7 +543,6 @@ public class NumberUtils {
     public static BigDecimal toScaledBigDecimal(final String value) {
         return toScaledBigDecimal(value, INTEGER_TWO, RoundingMode.HALF_EVEN);
     }
-
     /**
      * Convert a {@link String} to a {@link BigDecimal} whose scale is the
      * specified value with a {@link RoundingMode} applied. If the input {@code value}
@@ -591,7 +565,6 @@ public class NumberUtils {
             roundingMode
         );
     }
-
     // must handle Long, Float, Integer, Float, Short,
     //                  BigDecimal, BigInteger and Byte
     // useful methods:
@@ -626,7 +599,6 @@ public class NumberUtils {
     // Possible inputs:
     // 45 45.5 45E7 4.5E7 Hex Oct Binary xxxF xxxD xxxf xxxd
     // plus minus everything. Prolly more. A lot are not separable.
-
     /**
      * Turns a string value into a java.lang.Number.
      *
@@ -829,7 +801,6 @@ public class NumberUtils {
         }
         return createBigDecimal(str);
     }
-
     /**
      * Utility method for {@link #createNumber(java.lang.String)}.
      *
@@ -845,7 +816,6 @@ public class NumberUtils {
 
         return hasSign ? str.substring(1, stopPos) : str.substring(0, stopPos);
     }
-
     /**
      * Utility method for {@link #createNumber(java.lang.String)}.
      *
@@ -875,7 +845,6 @@ public class NumberUtils {
     private static boolean isZero(final String mant, final String dec) {
         return isAllZeros(mant) && isAllZeros(dec);
     }
-
     /**
      * Utility method for {@link #createNumber(java.lang.String)}.
      *
@@ -895,7 +864,6 @@ public class NumberUtils {
         }
         return true;
     }
-
     /**
      * Convert a {@link String} to a {@link Float}.
      *
@@ -911,7 +879,6 @@ public class NumberUtils {
         }
         return Float.valueOf(str);
     }
-
     /**
      * Convert a {@link String} to a {@link Double}.
      *
@@ -927,7 +894,6 @@ public class NumberUtils {
         }
         return Double.valueOf(str);
     }
-
     /**
      * Convert a {@link String} to a {@link Integer}, handling
      * hex (0xhhhh) and octal (0dddd) notations.
@@ -946,7 +912,6 @@ public class NumberUtils {
         // decode() handles 0xAABD and 0777 (hex and octal) as well.
         return Integer.decode(str);
     }
-
     /**
      * Convert a {@link String} to a {@link Long};
      * since 3.1 it handles hex (0Xhhhh) and octal (0ddd) notations.
@@ -964,7 +929,6 @@ public class NumberUtils {
         }
         return Long.decode(str);
     }
-
     /**
      * Convert a {@link String} to a {@link BigInteger};
      * since 3.2 it handles hex (0x or #) and octal (0) notations.
@@ -1006,7 +970,6 @@ public class NumberUtils {
         final BigInteger value = new BigInteger(str.substring(pos), radix);
         return negate ? value.negate() : value;
     }
-
     /**
      * Convert a {@link String} to a {@link BigDecimal}.
      *
@@ -1026,7 +989,6 @@ public class NumberUtils {
         }
         return new BigDecimal(str);
     }
-
     /**
      * Returns the minimum value in an array.
      *
@@ -1050,16 +1012,6 @@ public class NumberUtils {
 
         return min;
     }
-
-    /**
-     * Returns the minimum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the minimum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from min(int[]) to min(int...)
-     */
     public static int min(final int... array) {
         // Validates input
         validateArray(array);
@@ -1074,16 +1026,6 @@ public class NumberUtils {
 
         return min;
     }
-
-    /**
-     * Returns the minimum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the minimum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from min(short[]) to min(short...)
-     */
     public static short min(final short... array) {
         // Validates input
         validateArray(array);
@@ -1098,16 +1040,6 @@ public class NumberUtils {
 
         return min;
     }
-
-    /**
-     * Returns the minimum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the minimum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from min(byte[]) to min(byte...)
-     */
     public static byte min(final byte... array) {
         // Validates input
         validateArray(array);
@@ -1122,17 +1054,6 @@ public class NumberUtils {
 
         return min;
     }
-
-     /**
-     * Returns the minimum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the minimum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @see IEEE754rUtils#min(double[]) IEEE754rUtils for a version of this method that handles NaN differently
-     * @since 3.4 Changed signature from min(double[]) to min(double...)
-     */
     public static double min(final double... array) {
         // Validates input
         validateArray(array);
@@ -1150,17 +1071,6 @@ public class NumberUtils {
 
         return min;
     }
-
-    /**
-     * Returns the minimum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the minimum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @see IEEE754rUtils#min(float[]) IEEE754rUtils for a version of this method that handles NaN differently
-     * @since 3.4 Changed signature from min(float[]) to min(float...)
-     */
     public static float min(final float... array) {
         // Validates input
         validateArray(array);
@@ -1178,7 +1088,53 @@ public class NumberUtils {
 
         return min;
     }
-
+    /**
+     * Returns the minimum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from min(int[]) to min(int...)
+     */
+    /**
+     * Returns the minimum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from min(short[]) to min(short...)
+     */
+    /**
+     * Returns the minimum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from min(byte[]) to min(byte...)
+     */
+     /**
+     * Returns the minimum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @see IEEE754rUtils#min(double[]) IEEE754rUtils for a version of this method that handles NaN differently
+     * @since 3.4 Changed signature from min(double[]) to min(double...)
+     */
+    /**
+     * Returns the minimum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the minimum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @see IEEE754rUtils#min(float[]) IEEE754rUtils for a version of this method that handles NaN differently
+     * @since 3.4 Changed signature from min(float[]) to min(float...)
+     */
     /**
      * Returns the maximum value in an array.
      *
@@ -1202,16 +1158,6 @@ public class NumberUtils {
 
         return max;
     }
-
-    /**
-     * Returns the maximum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the maximum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from max(int[]) to max(int...)
-     */
     public static int max(final int... array) {
         // Validates input
         validateArray(array);
@@ -1226,16 +1172,6 @@ public class NumberUtils {
 
         return max;
     }
-
-    /**
-     * Returns the maximum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the maximum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from max(short[]) to max(short...)
-     */
     public static short max(final short... array) {
         // Validates input
         validateArray(array);
@@ -1250,16 +1186,6 @@ public class NumberUtils {
 
         return max;
     }
-
-    /**
-     * Returns the maximum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the maximum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @since 3.4 Changed signature from max(byte[]) to max(byte...)
-     */
     public static byte max(final byte... array) {
         // Validates input
         validateArray(array);
@@ -1274,17 +1200,6 @@ public class NumberUtils {
 
         return max;
     }
-
-    /**
-     * Returns the maximum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the maximum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @see IEEE754rUtils#max(double[]) IEEE754rUtils for a version of this method that handles NaN differently
-     * @since 3.4 Changed signature from max(double[]) to max(double...)
-     */
     public static double max(final double... array) {
         // Validates input
         validateArray(array);
@@ -1302,17 +1217,6 @@ public class NumberUtils {
 
         return max;
     }
-
-    /**
-     * Returns the maximum value in an array.
-     *
-     * @param array  an array, must not be null or empty
-     * @return the maximum value in the array
-     * @throws NullPointerException if {@code array} is {@code null}
-     * @throws IllegalArgumentException if {@code array} is empty
-     * @see IEEE754rUtils#max(float[]) IEEE754rUtils for a version of this method that handles NaN differently
-     * @since 3.4 Changed signature from max(float[]) to max(float...)
-     */
     public static float max(final float... array) {
         // Validates input
         validateArray(array);
@@ -1330,7 +1234,53 @@ public class NumberUtils {
 
         return max;
     }
-
+    /**
+     * Returns the maximum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the maximum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from max(int[]) to max(int...)
+     */
+    /**
+     * Returns the maximum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the maximum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from max(short[]) to max(short...)
+     */
+    /**
+     * Returns the maximum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the maximum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @since 3.4 Changed signature from max(byte[]) to max(byte...)
+     */
+    /**
+     * Returns the maximum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the maximum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @see IEEE754rUtils#max(double[]) IEEE754rUtils for a version of this method that handles NaN differently
+     * @since 3.4 Changed signature from max(double[]) to max(double...)
+     */
+    /**
+     * Returns the maximum value in an array.
+     *
+     * @param array  an array, must not be null or empty
+     * @return the maximum value in the array
+     * @throws NullPointerException if {@code array} is {@code null}
+     * @throws IllegalArgumentException if {@code array} is empty
+     * @see IEEE754rUtils#max(float[]) IEEE754rUtils for a version of this method that handles NaN differently
+     * @since 3.4 Changed signature from max(float[]) to max(float...)
+     */
     /**
      * Checks if the specified array is neither null nor empty.
      *
@@ -1342,7 +1292,6 @@ public class NumberUtils {
         Objects.requireNonNull(array, "array");
         Validate.isTrue(Array.getLength(array) != 0, "Array cannot be empty.");
     }
-
     // 3 param min
     /**
      * Gets the minimum of three {@code long} values.
@@ -1361,7 +1310,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the minimum of three {@code int} values.
      *
@@ -1379,7 +1327,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the minimum of three {@code short} values.
      *
@@ -1397,7 +1344,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the minimum of three {@code byte} values.
      *
@@ -1415,7 +1361,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the minimum of three {@code double} values.
      *
@@ -1431,7 +1376,6 @@ public class NumberUtils {
     public static double min(final double a, final double b, final double c) {
         return Math.min(Math.min(a, b), c);
     }
-
     /**
      * Gets the minimum of three {@code float} values.
      *
@@ -1447,7 +1391,6 @@ public class NumberUtils {
     public static float min(final float a, final float b, final float c) {
         return Math.min(Math.min(a, b), c);
     }
-
     // 3 param max
     /**
      * Gets the maximum of three {@code long} values.
@@ -1466,7 +1409,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the maximum of three {@code int} values.
      *
@@ -1484,7 +1426,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the maximum of three {@code short} values.
      *
@@ -1502,7 +1443,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the maximum of three {@code byte} values.
      *
@@ -1520,7 +1460,6 @@ public class NumberUtils {
         }
         return a;
     }
-
     /**
      * Gets the maximum of three {@code double} values.
      *
@@ -1536,7 +1475,6 @@ public class NumberUtils {
     public static double max(final double a, final double b, final double c) {
         return Math.max(Math.max(a, b), c);
     }
-
     /**
      * Gets the maximum of three {@code float} values.
      *
@@ -1552,7 +1490,6 @@ public class NumberUtils {
     public static float max(final float a, final float b, final float c) {
         return Math.max(Math.max(a, b), c);
     }
-
     /**
      * Checks whether the {@link String} contains only
      * digit characters.
@@ -1566,7 +1503,61 @@ public class NumberUtils {
     public static boolean isDigits(final String str) {
         return StringUtils.isNumeric(str);
     }
-
+    /** Reusable Long constant for zero. */
+    /** Reusable Long constant for one. */
+    /** Reusable Long constant for minus one. */
+    /** Reusable Integer constant for zero. */
+    /** Reusable Integer constant for one. */
+    /** Reusable Integer constant for two */
+    /** Reusable Integer constant for minus one. */
+    /** Reusable Short constant for zero. */
+    /** Reusable Short constant for one. */
+    /** Reusable Short constant for minus one. */
+    /** Reusable Byte constant for zero. */
+    /** Reusable Byte constant for one. */
+    /** Reusable Byte constant for minus one. */
+    /** Reusable Double constant for zero. */
+    /** Reusable Double constant for one. */
+    /** Reusable Double constant for minus one. */
+    /** Reusable Float constant for zero. */
+    /** Reusable Float constant for one. */
+    /** Reusable Float constant for minus one. */
+    // must handle Long, Float, Integer, Float, Short,
+    //                  BigDecimal, BigInteger and Byte
+    // useful methods:
+    // Byte.decode(String)
+    // Byte.valueOf(String, int radix)
+    // Byte.valueOf(String)
+    // Double.valueOf(String)
+    // Float.valueOf(String)
+    // Float.valueOf(String)
+    // Integer.valueOf(String, int radix)
+    // Integer.valueOf(String)
+    // Integer.decode(String)
+    // Integer.getInteger(String)
+    // Integer.getInteger(String, int val)
+    // Integer.getInteger(String, Integer val)
+    // Integer.valueOf(String)
+    // Double.valueOf(String)
+    // new Byte(String)
+    // Long.valueOf(String)
+    // Long.getLong(String)
+    // Long.getLong(String, int)
+    // Long.getLong(String, Integer)
+    // Long.valueOf(String, int)
+    // Long.valueOf(String)
+    // Short.valueOf(String)
+    // Short.decode(String)
+    // Short.valueOf(String, int)
+    // Short.valueOf(String)
+    // new BigDecimal(String)
+    // new BigInteger(String)
+    // new BigInteger(String, int radix)
+    // Possible inputs:
+    // 45 45.5 45E7 4.5E7 Hex Oct Binary xxxF xxxD xxxf xxxd
+    // plus minus everything. Prolly more. A lot are not separable.
+    // 3 param min
+    // 3 param max
     /**
      * Checks whether the String is a valid Java number.
      *
