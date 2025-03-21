@@ -16,9 +16,15 @@
  */
 package org.apache.commons.lang3;
 
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.text.WordUtils;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
@@ -27,11 +33,18 @@ import java.lang.reflect.Modifier;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.PatternSyntaxException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.text.WordUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for methods of {@link org.apache.commons.lang3.StringUtils}
@@ -607,25 +620,6 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testLazyDefault_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultString(null, () -> "NULL"));
-        assertEquals("", StringUtils.lazyDefaultString("", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultString("abc", () -> "NULL"));
-        assertNull(null, StringUtils.lazyDefaultString(null, () -> null));
-        assertNull(null, StringUtils.lazyDefaultString(null, null));
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultString("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultString(null, countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-    }
-
-    @Test
     public void testDefaultIfBlank_CharBuffers() {
         assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
         assertEquals("NULL", StringUtils.defaultIfBlank(CharBuffer.wrap(" "), CharBuffer.wrap("NULL")).toString());
@@ -670,34 +664,6 @@ public class StringUtilsTest {
         assertEquals("abc", s);
     }
 
-
-    @Test
-    public void testLazyDefaultIfBlank_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(null, () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank("", () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(" ", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultIfBlank("abc", () -> "NULL"));
-        assertNull(StringUtils.lazyDefaultIfBlank("", () -> null));
-        assertNull(StringUtils.lazyDefaultIfBlank("", null));
-        // Tests compatibility for the API return type
-        final String s = StringUtils.lazyDefaultIfBlank("abc", () -> "NULL");
-        assertEquals("abc", s);
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultIfBlank("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank("", countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank(" ", countingDefaultSupplier);
-        assertEquals(2, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfBlank(null, countingDefaultSupplier);
-        assertEquals(3, numberOfCalls.getValue());
-    }
-
     @Test
     public void testDefaultIfEmpty_CharBuffers() {
         assertEquals("NULL", StringUtils.defaultIfEmpty(CharBuffer.wrap(""), CharBuffer.wrap("NULL")).toString());
@@ -739,31 +705,6 @@ public class StringUtilsTest {
         final String s = StringUtils.defaultIfEmpty("abc", "NULL");
         assertEquals("abc", s);
     }
-
-    @Test
-    public void testLazyDefaultIfEmpty_StringStringSupplier() {
-        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty(null, () -> "NULL"));
-        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty("", () -> "NULL"));
-        assertEquals("abc", StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL"));
-        assertNull(StringUtils.lazyDefaultIfEmpty("", () -> null));
-        assertNull(StringUtils.lazyDefaultIfEmpty("", null));
-        // Tests compatibility for the API return type
-        final String s = StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL");
-        assertEquals("abc", s);
-        //Checking laziness
-        MutableInt numberOfCalls = new MutableInt(0);
-        Supplier<String> countingDefaultSupplier = () -> {
-            numberOfCalls.increment();
-            return "NULL";
-        };
-        StringUtils.lazyDefaultIfEmpty("abc", countingDefaultSupplier);
-        assertEquals(0, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfEmpty("", countingDefaultSupplier);
-        assertEquals(1, numberOfCalls.getValue());
-        StringUtils.lazyDefaultIfEmpty(null, countingDefaultSupplier);
-        assertEquals(2, numberOfCalls.getValue());
-    }
-
 
     @Test
     public void testDeleteWhitespace_String() {
@@ -2964,6 +2905,91 @@ public class StringUtilsTest {
      * @throws java.io.UnsupportedEncodingException because the method under test max throw it
      * @see StringUtils#toString(byte[], String)
      */
+
+    //-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------
+
+    @Test
+    public void testLazyDefault_StringStringSupplier() {
+        assertEquals("NULL", StringUtils.lazyDefaultString(null, () -> "NULL"));
+        assertEquals("", StringUtils.lazyDefaultString("", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultString("abc", () -> "NULL"));
+        assertNull(null, StringUtils.lazyDefaultString(null, () -> null));
+        assertNull(null, StringUtils.lazyDefaultString(null, null));
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultString("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultString(null, countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+    }
+
+    @Test
+    public void testLazyDefaultIfEmpty_StringStringSupplier() {
+        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty(null, () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfEmpty("", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultIfEmpty("abc", () -> "NULL"));
+        assertNull(StringUtils.lazyDefaultIfEmpty("", () -> null));
+        assertNull(StringUtils.lazyDefaultIfEmpty("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.lazyDefaultIfEmpty("abc", ()->"NULL");
+        assertEquals("abc", s);
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultIfEmpty("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfEmpty("", countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfEmpty(null, countingDefaultSupplier);
+        assertEquals(2, numberOfCalls.getValue());
+    }
+
+    @Test
+    public void testLazyDefaultIfBlank_StringString() {
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(null, () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank("", () -> "NULL"));
+        assertEquals("NULL", StringUtils.lazyDefaultIfBlank(" ", () -> "NULL"));
+        assertEquals("abc", StringUtils.lazyDefaultIfBlank("abc", () -> "NULL"));
+        assertNull(StringUtils.lazyDefaultIfBlank("", () -> null));
+        assertNull(StringUtils.lazyDefaultIfBlank("", null));
+        // Tests compatibility for the API return type
+        final String s = StringUtils.lazyDefaultIfBlank("abc", () -> "NULL");
+        assertEquals("abc", s);
+        //Checking laziness
+        MutableInt numberOfCalls = new MutableInt(0);
+        Supplier<String> countingDefaultSupplier = () -> {
+            numberOfCalls.increment();
+            return "NULL";
+        };
+        StringUtils.lazyDefaultIfBlank("abc", countingDefaultSupplier);
+        assertEquals(0, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank("", countingDefaultSupplier);
+        assertEquals(1, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank(" ", countingDefaultSupplier);
+        assertEquals(2, numberOfCalls.getValue());
+        StringUtils.lazyDefaultIfBlank(null, countingDefaultSupplier);
+        assertEquals(3, numberOfCalls.getValue());
+    }
+
+    //-----------------------------------------------------------------------
+
     @Test
     public void testToString() throws UnsupportedEncodingException {
         final String expectedString = "The quick brown fox jumps over the lazy dog.";
