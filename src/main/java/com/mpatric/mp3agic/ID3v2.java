@@ -129,10 +129,9 @@ public interface ID3v2 extends ID3v1 {
 
 	String getLyrics();
 
-	void setLyrics(String lyrics);
-
+	void setLyrics(String lyrics);    
+    
 	String getCustomText(String description);
-
 	void setCustomText(String description, String value);
 
 	/**
