@@ -26,7 +26,6 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnsupportedAddressTypeException;
 import java.util.Set;
-
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.ProtocolFamily;
 import jnr.constants.platform.Sock;
@@ -35,7 +34,6 @@ import jnr.constants.platform.SocketOption;
 import jnr.enxio.channels.AbstractNativeSocketChannel;
 import jnr.ffi.LastError;
 import jnr.ffi.byref.IntByReference;
-
 import static jnr.unixsocket.SockAddrUnix.HEADER_LENGTH;
 
 /**
@@ -211,30 +209,30 @@ public class UnixSocketChannel extends AbstractNativeSocketChannel {
 		return Credentials.getCredentials(getFD());
 	}
 
-	static UnixSocketAddress getpeername(int sockfd) {
-		UnixSocketAddress remote = new UnixSocketAddress();
+    static UnixSocketAddress getpeername(int sockfd) {
+        UnixSocketAddress remote = new UnixSocketAddress();
         SockAddrUnix addr = remote.getStruct();
-		IntByReference len = new IntByReference(addr.getMaximumLength());
+        IntByReference len = new IntByReference(addr.getMaximumLength());
 
-		if (Native.libc().getpeername(sockfd, addr, len) < 0) {
-			throw new Error(Native.getLastErrorString());
-		}
+        if (Native.libc().getpeername(sockfd, addr, len) < 0) {
+            throw new Error(Native.getLastErrorString());
+        }
 
         // Handle unnamed sockets
         if (len.getValue() == addr.getHeaderLength()) addr.setPath("");
 
-		return remote;
-	}
+        return remote;
+    }
 
-	static UnixSocketAddress getsockname(int sockfd) {
-		UnixSocketAddress remote = new UnixSocketAddress();
+    static UnixSocketAddress getsockname(int sockfd) {
+        UnixSocketAddress remote = new UnixSocketAddress();
         SockAddrUnix addr = remote.getStruct();
         int maxLength = addr.getMaximumLength();
-		IntByReference len = new IntByReference(addr.getMaximumLength());
+        IntByReference len = new IntByReference(addr.getMaximumLength());
 
-		if (Native.libc().getsockname(sockfd, addr, len) < 0) {
-			throw new Error(Native.getLastErrorString());
-		}
+        if (Native.libc().getsockname(sockfd, addr, len) < 0) {
+            throw new Error(Native.getLastErrorString());
+        }
 
         int headerLength = addr.getHeaderLength();
         if (len.getValue() == headerLength) {
@@ -247,14 +245,14 @@ public class UnixSocketChannel extends AbstractNativeSocketChannel {
             }
         }
 
-		return remote;
-	}
+        return remote;
+    }
 
-	public boolean getKeepAlive() {
-		int ret = Native.getsockopt(getFD(), SocketLevel.SOL_SOCKET,
-				SocketOption.SO_KEEPALIVE.intValue());
-		return (ret == 1) ? true : false;
-	}
+    public boolean getKeepAlive() {
+    	int ret = Native.getsockopt(getFD(), SocketLevel.SOL_SOCKET,
+    			SocketOption.SO_KEEPALIVE.intValue());
+    	return (ret == 1) ? true : false;
+    }
 
 	public void setKeepAlive(boolean on) {
 		Native.setsockopt(getFD(), SocketLevel.SOL_SOCKET,
