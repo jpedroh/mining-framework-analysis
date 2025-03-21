@@ -1,33 +1,14 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.symbols;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
 public class MethodSymbolImpl extends FunctionSymbolIndex.FunctionSymbolImpl implements MethodSymbol {
-
   private final MethodSymbolData data;
+
   private final ClassSymbol owner;
+
   private Trilean isOverriding;
 
   public MethodSymbolImpl(MethodSymbolData data, ClassSymbol owner) {
@@ -36,55 +17,53 @@ public class MethodSymbolImpl extends FunctionSymbolIndex.FunctionSymbolImpl imp
     this.owner = owner;
   }
 
-  @Override
-  public Visibility visibility() {
+  @Override public Visibility visibility() {
     return data.visibility();
   }
 
-  @Override
-  public String name() {
+  @Override public String name() {
     return data.name();
   }
 
-  @Override
-  public Trilean isOverriding() {
+  @Override public Trilean isOverriding() {
+
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/2ebc3248b4cc888b29b2dc46de1ee82a9e5b281c/php-frontend/src/main/java/org/sonar/php/symbols/MethodSymbolImpl.java/left.java
     if (isOverriding == null) {
       isOverriding = computeIsOverriding();
     }
+=======
+    if ("__construct".equals(name())) {
+      return Trilean.FALSE;
+    }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/2ebc3248b4cc888b29b2dc46de1ee82a9e5b281c/php-frontend/src/main/java/org/sonar/php/symbols/MethodSymbolImpl.java/right.java
+
     return isOverriding;
   }
 
   private Trilean computeIsOverriding() {
     if (visibility().equals(Visibility.PRIVATE) || name().equals("__construct")) {
-      return  Trilean.FALSE;
+      return Trilean.FALSE;
     }
-
     Deque<ClassSymbol> workList = new ArrayDeque<>();
     Set<ClassSymbol> visitedClasses = new HashSet<>();
     visitedClasses.add(owner);
-
     pushOnIsOverridingWorkList(owner, workList);
-
     boolean isUnknown = false;
     while (!workList.isEmpty()) {
       ClassSymbol visitedClass = workList.removeLast();
       if (!visitedClasses.add(visitedClass)) {
         continue;
       }
-
       if (visitedClass.isUnknownSymbol()) {
         isUnknown = true;
         continue;
       }
-
       MethodSymbol methodSymbol = visitedClass.getDeclaredMethod(name());
       if (!methodSymbol.isUnknownSymbol() && !methodSymbol.visibility().equals(Visibility.PRIVATE)) {
         return Trilean.TRUE;
       }
-
       pushOnIsOverridingWorkList(visitedClass, workList);
     }
-
     if (isUnknown) {
       return Trilean.UNKNOWN;
     }
@@ -98,5 +77,4 @@ public class MethodSymbolImpl extends FunctionSymbolIndex.FunctionSymbolImpl imp
     classSymbol.superClass().ifPresent(workList::add);
     workList.addAll(classSymbol.implementedInterfaces());
   }
-
 }
