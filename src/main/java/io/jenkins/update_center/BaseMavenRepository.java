@@ -62,12 +62,20 @@ public abstract class BaseMavenRepository implements MavenRepository {
                 }
                 continue;
             }
+<<<<<<< /usr/src/app/output/jenkinsci/backend-update-center2/12ea8d49641d0d7bee4755901aa908033afe4abe/src/main/java/io/jenkins/update_center/BaseMavenRepository.java/left.java
             if (IGNORE.containsKey(artifactCoordinates.artifactId + "@" + artifactCoordinates.version)) {
+                LOGGER.log(Level.CONFIG, "Ignoring " + artifactCoordinates.artifactId + ", version " + artifactCoordinates.version + " because this version is blacklisted");
+||||||| /usr/src/app/output/jenkinsci/backend-update-center2/12ea8d49641d0d7bee4755901aa908033afe4abe/src/main/java/io/jenkins/update_center/BaseMavenRepository.java/base.java
+            if (IGNORE.containsKey(artifactCoordinates.artifactId + "-" + artifactCoordinates.version)) {
+                LOGGER.log(Level.CONFIG, "Ignoring " + artifactCoordinates.artifactId + ", version " + artifactCoordinates.version + " because this version is blacklisted");
+=======
+            if (IGNORE.containsKey(artifactCoordinates.artifactId + "-" + artifactCoordinates.version)) {
                 LOGGER.log(Level.CONFIG, "Ignoring " + artifactCoordinates.artifactId + ", version " + artifactCoordinates.version + " because this version is suspended");
                 continue;
             }
             if (!artifactCoordinates.isVersionValid()) {
                 LOGGER.log(Level.CONFIG, "Ignoring " + artifactCoordinates.artifactId + ", version " + artifactCoordinates.version + " because this version is not valid");
+>>>>>>> /usr/src/app/output/jenkinsci/backend-update-center2/12ea8d49641d0d7bee4755901aa908033afe4abe/src/main/java/io/jenkins/update_center/BaseMavenRepository.java/right.java
                 continue;
             }
 
