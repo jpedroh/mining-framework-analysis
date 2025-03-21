@@ -169,7 +169,13 @@ public class ModelUtil {
 
 			return values.stream()
 				.filter(value -> (Value.Property.VALID).equals(value.getProperty()))
+<<<<<<< /usr/src/app/output/jpmml/openscoring/9aca0c7a8409f3888295b16cc03a74d8def3ed21/openscoring-service/src/main/java/org/openscoring/service/ModelUtil.java/left.java
+				.map(pmmlValue -> TypeUtil.format(pmmlValue.getValue()))
+||||||| /usr/src/app/output/jpmml/openscoring/9aca0c7a8409f3888295b16cc03a74d8def3ed21/openscoring-service/src/main/java/org/openscoring/service/ModelUtil.java/base.java
+				.map(Value::getValue)
+=======
 				.map(value -> TypeUtil.format(value.getValue()))
+>>>>>>> /usr/src/app/output/jpmml/openscoring/9aca0c7a8409f3888295b16cc03a74d8def3ed21/openscoring-service/src/main/java/org/openscoring/service/ModelUtil.java/right.java
 				.collect(Collectors.toList());
 		}
 
