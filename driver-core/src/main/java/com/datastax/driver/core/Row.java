@@ -585,7 +585,13 @@ public class Row {
         if (value == null)
             return Collections.<T>emptyList();
 
-        return Collections.unmodifiableList((List<T>)type.codec().deserialize(value));
+<<<<<<< /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/left.java
+        return (List<T>)type.codec().deserialize(value);
+||||||| /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/base.java
+        return Codec.<List<T>>getCodec(type).compose(value);
+=======
+        return Collections.unmodifiableList(Codec.<List<T>>getCodec(type).compose(value));
+>>>>>>> /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/right.java
     }
 
     /**
@@ -635,7 +641,13 @@ public class Row {
         if (value == null)
             return Collections.<T>emptySet();
 
-        return Collections.unmodifiableSet((Set<T>)type.codec().deserialize(value));
+<<<<<<< /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/left.java
+        return (Set<T>)type.codec().deserialize(value);
+||||||| /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/base.java
+        return Codec.<Set<T>>getCodec(type).compose(value);
+=======
+        return Collections.unmodifiableSet(Codec.<Set<T>>getCodec(type).compose(value));
+>>>>>>> /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/right.java
     }
 
     /**
@@ -689,7 +701,13 @@ public class Row {
         if (value == null)
             return Collections.<K, V>emptyMap();
 
-        return Collections.unmodifiableMap((Map<K, V>)type.codec().deserialize(value));
+<<<<<<< /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/left.java
+        return (Map<K, V>)type.codec().deserialize(value);
+||||||| /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/base.java
+        return Codec.<Map<K, V>>getCodec(type).compose(value);
+=======
+        return Collections.unmodifiableMap(Codec.<Map<K, V>>getCodec(type).compose(value));
+>>>>>>> /usr/src/app/output/datastax/java-driver/5966e5b3a56bd0537bbd8ad8b207f2419a3b6729/driver-core/src/main/java/com/datastax/driver/core/Row.java/right.java
     }
 
     /**
