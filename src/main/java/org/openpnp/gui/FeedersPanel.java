@@ -66,9 +66,11 @@ import org.openpnp.gui.support.ActionGroup;
 import org.openpnp.gui.support.Helpers;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.MessageBoxes;
+import org.openpnp.gui.support.PropertySheetWizardAdapter;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.gui.support.WizardContainer;
 import org.openpnp.gui.tablemodel.FeedersTableModel;
+import org.openpnp.machine.reference.feeder.ReferenceFeederGroup;
 import org.openpnp.model.Board;
 import org.openpnp.model.BoardLocation;
 import org.openpnp.model.Configuration;
@@ -216,10 +218,30 @@ public class FeedersPanel extends JPanel implements WizardContainer {
                     multiSelectActionGroup.setEnabled(true);
                 }
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/0d04eddb120c8930c554e0e6bd8bacf4a34d44b2/src/main/java/org/openpnp/gui/FeedersPanel.java/left.java
+                Feeder feeder = getSelection();
+                
+                feeder.setWizardContainer(FeedersPanel.this); /////////////New
+                
+                configurationPanel.removeAll();
+                if (feeder != null) {
+                    PropertySheet[] propertySheets = feeder.getPropertySheets();
+                    for (PropertySheet ps : propertySheets) {
+                        configurationPanel.addTab(ps.getPropertySheetTitle(), ps.getPropertySheetPanel());
+||||||| /usr/src/app/output/openpnp/openpnp/0d04eddb120c8930c554e0e6bd8bacf4a34d44b2/src/main/java/org/openpnp/gui/FeedersPanel.java/base.java
+                Feeder feeder = getSelection();
+                
+                configurationPanel.removeAll();
+                if (feeder != null) {
+                    PropertySheet[] propertySheets = feeder.getPropertySheets();
+                    for (PropertySheet ps : propertySheets) {
+                        configurationPanel.addTab(ps.getPropertySheetTitle(), ps.getPropertySheetPanel());
+=======
                 if (table.getSelectedRow() != priorRowIndex) {
                     if (keepUnAppliedFeederConfigurationChanges()) {
                         table.setRowSelectionInterval(priorRowIndex, priorRowIndex);
                         return;
+>>>>>>> /usr/src/app/output/openpnp/openpnp/0d04eddb120c8930c554e0e6bd8bacf4a34d44b2/src/main/java/org/openpnp/gui/FeedersPanel.java/right.java
                     }
                     priorRowIndex = table.getSelectedRow();
                     
@@ -417,6 +439,7 @@ public class FeedersPanel extends JPanel implements WizardContainer {
                 feeder.setPart(part == null ? Configuration.get().getParts().get(0) : part);
             }
             configuration.getMachine().addFeeder(feeder);
+
             tableModel.refresh();
 
             searchTextField.setText("");
