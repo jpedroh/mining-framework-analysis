@@ -92,7 +92,12 @@ public class FluidNCController implements IController, CommunicatorListener {
                 .build();
         this.communicator = communicator;
         this.communicator.addListener(this);
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/8d59e1e6fa7b41b1b35005b820832c047daf3d41/ugs-core/src/com/willwinder/universalgcodesender/firmware/fluidnc/FluidNCController.java/left.java
         this.fileService = new FluidNCFileService(this, positionPollTimer);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/8d59e1e6fa7b41b1b35005b820832c047daf3d41/ugs-core/src/com/willwinder/universalgcodesender/firmware/fluidnc/FluidNCController.java/base.java
+        this.positionPollTimer = new StatusPollTimer(this);
+=======
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/8d59e1e6fa7b41b1b35005b820832c047daf3d41/ugs-core/src/com/willwinder/universalgcodesender/firmware/fluidnc/FluidNCController.java/right.java
     }
 
     @Override
