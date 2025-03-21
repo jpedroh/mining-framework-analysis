@@ -261,7 +261,7 @@ public class StructsGenerator extends JNIGenerator {
         JNIClass superclazz = clazz.getSuperclass();
         String clazzName = clazz.getNativeName();
         String superName = superclazz.getNativeName();
-        String methodname;
+	    String Methodname;
         if (!superclazz.getName().equals("java.lang.Object") && hasNonIgnoredFields(superclazz)) {
             /*
              * Windows exception - cannot call get/set function of super class
@@ -290,19 +290,41 @@ public class StructsGenerator extends JNIGenerator {
             JNIFieldAccessor accessor = field.getAccessor();
             output("\t");
             if (type.isPrimitive()) {
-                if (field.isSharedPointer()) {
-                    output("lpStruct->");
-                    output(accessor.setter());
+<<<<<<< /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/left.java
+            		        if (field.isSharedPointer()) {
+            		            output("\tlpStruct->");
+                    output(accessor);
                     output(" = ");
-                    output("std::shared_ptr");
+            		            output("std::shared_ptr");
                     output("<");
-                    methodname = field.getCast();
-                    String method = methodname.replace("*", ">");
-                    method = method.replace("(", "");
-                    method = method.replace(")", "");
-                    output(method);
+                    Methodname =field.getCast();
+                    String Method =Methodname.replace("*", ">");
+                    Method =Method.replace("(", "");
+                    Method =Method.replace(")", "");
+                    output(Method);
                     output("(");
                     output(field.getCast());
+||||||| /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/base.java
+                output("\tlpStruct->");
+                output(accessor);
+                output(" = ");
+                output(field.getCast());
+                if( field.isPointer() ) {
+=======
+                if (!accessor.isNonMemberSetter())
+                    output("lpStruct->");
+                if (accessor.isMethodSetter()) {
+                    String setterStart = accessor.setter().split("\\(")[0];
+                    output(setterStart + "(");
+                    if (accessor.isNonMemberSetter())
+                        output("lpStruct, ");
+                } else {
+                    output(accessor.setter());
+                    output(" = ");
+                }
+                output(field.getCast());
+                if( field.isPointer() ) {
+>>>>>>> /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/right.java
                     output("(intptr_t)");
                     if (isCPP) {
                         output("env->Get");
@@ -318,21 +340,12 @@ public class StructsGenerator extends JNIGenerator {
                     output(field.getDeclaringClass().getSimpleName());
                     output("Fc.");
                     output(field.getName());
-                    if (accessor.isMethodSetter())
-                        output(")");
+            		            output(")");
                     output(");");
-                } else {
-                    if (!accessor.isNonMemberSetter())
-                        output("lpStruct->");
-                    if (accessor.isMethodSetter()) {
-                        String setterStart = accessor.setter().split("\\(")[0];
-                        output(setterStart + "(");
-                        if (accessor.isNonMemberSetter())
-                            output("lpStruct, ");
-                    } else {
-                        output(accessor.setter());
-                        output(" = ");
-                    }
+            	} else {
+                    output("\tlpStruct->");
+                    output(accessor);
+                    output(" = ");
                     output(field.getCast());
                     if (field.isPointer()) {
                         output("(intptr_t)");
@@ -351,14 +364,49 @@ public class StructsGenerator extends JNIGenerator {
                     output(field.getDeclaringClass().getSimpleName());
                     output("Fc.");
                     output(field.getName());
-                    if (accessor.isMethodSetter())
-                        output(")");
                     output(");");
                 }
+<<<<<<< /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/left.java
+||||||| /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/base.java
+                if (isCPP) {
+                    output("env->Get");
+                } else {
+                    output("(*env)->Get");
+                }
+                output(type.getTypeSignature1(!type.equals(type64)));
+                if (isCPP) {
+                    output("Field(lpObject, ");
+                } else {
+                    output("Field(env, lpObject, ");
+                }
+                output(field.getDeclaringClass().getSimpleName());
+                output("Fc.");
+                output(field.getName());
+                output(");");
+=======
+                if (isCPP) {
+                    output("env->Get");
+                } else {
+                    output("(*env)->Get");
+                }
+                output(type.getTypeSignature1(!type.equals(type64)));
+                if (isCPP) {
+                    output("Field(lpObject, ");
+                } else {
+                    output("Field(env, lpObject, ");
+                }
+                output(field.getDeclaringClass().getSimpleName());
+                output("Fc.");
+                output(field.getName());
+                output(")");
+                if (accessor.isMethodSetter())
+                    output(")");
+                output(";");
+>>>>>>> /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/right.java
             } else if (type.isArray()) {
                 JNIType componentType = type.getComponentType(), componentType64 = type64.getComponentType();
                 if (componentType.isPrimitive()) {
-                    outputln("{");
+                    outputln("\t{");
                     output("\t");
                     output(type.getTypeSignature2(!type.equals(type64)));
                     output(" lpObject1 = (");
@@ -509,34 +557,24 @@ public class StructsGenerator extends JNIGenerator {
                 if( field.isPointer() ) {
                     output("(intptr_t)");
                 }
-		        if (field.isSharedPointer()) {
+<<<<<<< /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/left.java
+            		        if (field.isSharedPointer()) {
                     output("(&");
-                    if (!accessor.isNonMemberGetter())
-                        output("lpStruct->");
-                    if (accessor.isMethodGetter()) {
-                        String getterStart = accessor.getter().split("\\(")[0];
-                        output(getterStart + "(");
-                        if (accessor.isNonMemberGetter())
-                            output("lpStruct");
-                        output(")");
-                    } else {
-                        output(accessor.getter());
-                    }
+                    output("lpStruct->" + accessor);
                     output("));");
                 } else {
-                    if (!accessor.isNonMemberGetter())
-                        output("lpStruct->");
-                    if (accessor.isMethodGetter()) {
-                        String getterStart = accessor.getter().split("\\(")[0];
-                        output(getterStart + "(");
-                        if (accessor.isNonMemberGetter())
-                            output("lpStruct");
-                        output(")");
-                    } else {
-                        output(accessor.getter());
-                    }
+                    output("lpStruct->"+accessor);
                     output(");");
-		        }
+            		        }
+||||||| /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/base.java
+                output("lpStruct->"+accessor);
+                output(");");
+=======
+                if (!accessor.isNonMemberGetter())
+                    output("lpStruct->");
+                output(accessor.getter());
+                output(");");
+>>>>>>> /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-generator/src/main/java/org/fusesource/hawtjni/generator/StructsGenerator.java/right.java
             } else if (type.isArray()) {
                 JNIType componentType = type.getComponentType(), componentType64 = type64.getComponentType();
                 if (componentType.isPrimitive()) {
@@ -567,15 +605,7 @@ public class StructsGenerator extends JNIGenerator {
                     }
                     if (!accessor.isNonMemberGetter())
                         output("lpStruct->");
-                    if (accessor.isMethodGetter()) {
-                        String getterStart = accessor.getter().split("\\(")[0];
-                        output(getterStart + "(");
-                        if (accessor.isNonMemberGetter())
-                            output("lpStruct");
-                        output(")");
-                    } else {
-                        output(accessor.getter());
-                    }
+                    output(accessor.getter());
                     output(")");
                     if (!componentType.isType("byte")) {
                         output(" / sizeof(");

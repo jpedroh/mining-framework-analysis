@@ -32,12 +32,14 @@ public enum FieldFlag {
      */
     POINTER_FIELD,
 
+<<<<<<< /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/FieldFlag.java/left.java
     /**
      * Indicate that the field is a shared pointer.
      */
     
     SHARED_PTR,
-
+||||||| /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/FieldFlag.java/base.java
+=======
     /**
      * Indicate that the getter method used is not part of
      * the structure. Useful for using wrappers to access
@@ -55,4 +57,6 @@ public enum FieldFlag {
      * Only useful when the setter is declared explicitly.
      */
     SETTER_NONMEMBER,
+>>>>>>> /usr/src/app/output/fusesource/hawtjni/9d38df2f4a25ee55fbb0dc921fb2004b33c59541/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/FieldFlag.java/right.java
+    
 }
