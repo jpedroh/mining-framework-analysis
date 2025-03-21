@@ -171,7 +171,13 @@ public class PersonName {
     }
 
     public String getNormalizedQueryString(Group g) {
+<<<<<<< /usr/src/app/output/dcm4che/dcm4che/eabc8cb593e0c682dac2f88a3d0c8d3acd0f17ef/dcm4che-core/src/main/java/org/dcm4che/data/PersonName.java/left.java
         if (!contains(g))
+||||||| /usr/src/app/output/dcm4che/dcm4che/eabc8cb593e0c682dac2f88a3d0c8d3acd0f17ef/dcm4che-core/src/main/java/org/dcm4che/data/PersonName.java/base.java
+        if (isEmpty(g))
+=======
+        if (contains(g))
+>>>>>>> /usr/src/app/output/dcm4che/dcm4che/eabc8cb593e0c682dac2f88a3d0c8d3acd0f17ef/dcm4che-core/src/main/java/org/dcm4che/data/PersonName.java/right.java
             return "*";
 
         int totLen = 0;
