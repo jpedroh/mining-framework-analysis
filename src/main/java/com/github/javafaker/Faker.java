@@ -166,7 +166,10 @@ public class Faker {
         this.yoda = new Yoda(this);
         this.matz = new Matz(this);
         this.witcher = new Witcher(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/0d738fe70a91b60635112611cd8b4e3c4ef76f9d/src/main/java/com/github/javafaker/Faker.java/left.java
         this.cpf = new CPF(this);
+||||||| /usr/src/app/output/dius/java-faker/0d738fe70a91b60635112611cd8b4e3c4ef76f9d/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.dragonBall = new DragonBall(this);
         this.funnyName = new FunnyName(this);
         this.hitchhikersGuideToTheGalaxy = new HitchhikersGuideToTheGalaxy(this);
@@ -185,6 +188,7 @@ public class Faker {
         this.princessBride = new PrincessBride(this);
         this.buffy = new Buffy(this);
         this.relationships = new Relationships(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/0d738fe70a91b60635112611cd8b4e3c4ef76f9d/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -540,7 +544,7 @@ public class Faker {
     public CPF cpf() {
         return cpf;
     }
-  
+
     public DragonBall dragonBall() {
         return dragonBall;
     }
