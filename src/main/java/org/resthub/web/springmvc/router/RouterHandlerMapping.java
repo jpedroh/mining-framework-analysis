@@ -1,5 +1,4 @@
 package org.resthub.web.springmvc.router;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,113 +57,92 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
  * @see org.springframework.web.servlet.handler.AbstractHandlerMapping
  */
 public class RouterHandlerMapping extends AbstractHandlerMapping {
+  private static final Logger logger = LoggerFactory.getLogger(RouterHandlerMapping.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(RouterHandlerMapping.class);
-    private List<String> routeFiles;
-    private String servletPrefix;
-    private RouterHandlerResolver methodResolver;
+  private List<String> routeFiles;
 
-    public RouterHandlerMapping() {
-        this.methodResolver = new RouterHandlerResolver();
-    }
+  private String servletPrefix;
 
-    /**
+  private RouterHandlerResolver methodResolver;
+
+  public RouterHandlerMapping() {
+    this.methodResolver = new RouterHandlerResolver();
+  }
+
+  /**
      * Servlet Prefix to be added in front of all routes Injected by bean
      * configuration (in servlet.xml)
      */
-    public String getServletPrefix() {
-        return servletPrefix;
-    }
+  public String getServletPrefix() {
+    return servletPrefix;
+  }
 
-    public void setServletPrefix(String servletPrefix) {
-        this.servletPrefix = servletPrefix;
-    }
+  public void setServletPrefix(String servletPrefix) {
+    this.servletPrefix = servletPrefix;
+  }
 
-    /**
+  /**
      * Routes configuration Files names< Injected by bean configuration (in
      * servlet.xml)
      */
-    public List<String> getRouteFiles() {
-        return routeFiles;
-    }
+  public List<String> getRouteFileq() {
+    return routeFiles;
+  }
 
-    public void setRouteFiles(List<String> routeFiles) {
-        this.routeFiles = routeFiles;
-    }
+  public void setRouteFiles(List<String> routeFiles) {
+    this.routeFiles = routeFiles;
+  }
 
-    /**
-     * Reload routes configuration at runtime. No-op if configuration files
-     * didn't change since last reload.
+  /**
+     * Reload routes configuration at runtime.
+     * No-op if configuration files didn't change since last reload.
      */
-    public void reloadRoutesConfiguration() {
-         List<Resource> fileResources = new ArrayList<Resource>();
-
-        for (String fileName : this.routeFiles) {
-            fileResources.add(getApplicationContext().getResource(fileName));
-        }
-        
-        try {
-            Router.detectChanges(fileResources, servletPrefix);
-        } catch (IOException ex) {
-            throw new RouteFileParsingException(
-                    "Could not read route configuration files", ex);
-        }
+  public void reloadRoutesConfiguration() {
+    try {
+      Router.detectChanges(getApplicationContext().getResource(routeFile), servletPrefix);
+    } catch (IOException e) {
+      throw new RouteFileParsingException("Cannot parse route file " + routeFile, e);
     }
+  }
 
-    /**
+  /**
      * Inits Routes from route configuration file
      */
-    @Override
-    protected void initApplicationContext() throws BeansException {
+  @Override protected void initApplicationContext() throws BeansException {
+    super.initApplicationContext();
 
-        super.initApplicationContext();
+<<<<<<< /usr/src/app/output/resthub/springmvc-router/cf86d464ca1768fae380c8a99223c5d536fa0b3e/src/main/java/org/resthub/web/springmvc/router/RouterHandlerMapping.java/left.java
+    this.methodResolver.setCachedControllers(getApplicationContext().getBeansWithAnnotation(Controller.class));
+=======
+    List<Resource> fileResources = new ArrayList<Resource>();
+>>>>>>> /usr/src/app/output/resthub/springmvc-router/cf86d464ca1768fae380c8a99223c5d536fa0b3e/src/main/java/org/resthub/web/springmvc/router/RouterHandlerMapping.java/right.java
 
-        // Scan beans for Controllers
-        this.methodResolver.setCachedControllers(getApplicationContext().getBeansWithAnnotation(Controller.class));
-
-        List<Resource> fileResources = new ArrayList<Resource>();
-
-        try {
-
-            for (String fileName : this.routeFiles) {
-                fileResources.add(getApplicationContext().getResource(fileName));
-            }
-
-            Router.load(fileResources, this.servletPrefix);
-
-        } catch (IOException e) {
-            throw new RouteFileParsingException(
-                    "Could not read route configuration files", e);
-        }
+    try {
+      for (String fileName : this.routeFiles) {
+        fileResources.add(getApplicationContext().getResource(fileName));
+      }
+      Router.load(fileResources, this.servletPrefix);
+    } catch (IOException e) {
+      throw new RouteFileParsingException("Cannot parse route file " + routeFile, e);
     }
+  }
 
-    /**
-     * Resolves a HandlerMethod (of type RouterHandler) given the current HTTP
-     * request, using the Router instance.
+  /**
      *
      * @param request the HTTP Servlet request
      * @return a RouterHandler, containing matching route + wrapped request
      */
-    @Override
-    protected Object getHandlerInternal(HttpServletRequest request)
-            throws Exception {
-
-        HandlerMethod handler;
-        try {
-            // Adapt HTTPServletRequest for Router
-            HTTPRequestAdapter rq = HTTPRequestAdapter.parseRequest(request);
-            // Route request and resolve format
-            Router.Route route = Router.route(rq);
-            handler = this.methodResolver.resolveHandler(route, rq.action, rq);
-            // Add resolved route arguments to the request
-            request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, rq.routeArgs);
-
-        } catch (NoRouteFoundException nrfe) {
-            handler = null;
-            logger.trace("no route found for method[" + nrfe.method
-                    + "] and path[" + nrfe.path + "]");
-        }
-
-        return handler;
+  @Override protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+    HandlerMethod handler;
+    try {
+      HTTPRequestAdapter rq = HTTPRequestAdapter.parseRequest(request);
+      Router.Route route = Router.route(rq);
+      handler = this.methodResolver.resolveHandler(route, rq.action, rq);
+      request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, rq.routeArgs);
+    } catch (NoRouteFoundException nrfe) {
+      handler = null;
+      logger.trace("no route found for method[" + nrfe.method + "] and path[" + nrfe.path + "]");
     }
+    return handler;
+  }
 }
