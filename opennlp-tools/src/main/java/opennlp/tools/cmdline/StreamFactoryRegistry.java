@@ -34,7 +34,6 @@ import opennlp.tools.formats.LemmatizerSampleStreamFactory;
 import opennlp.tools.formats.NameSampleDataStreamFactory;
 import opennlp.tools.formats.ParseSampleStreamFactory;
 import opennlp.tools.formats.SentenceSampleStreamFactory;
-import opennlp.tools.formats.SentimentSampleStreamFactory;
 import opennlp.tools.formats.TokenSampleStreamFactory;
 import opennlp.tools.formats.WordTagSampleStreamFactory;
 import opennlp.tools.formats.ad.ADChunkSampleStreamFactory;
@@ -43,6 +42,7 @@ import opennlp.tools.formats.ad.ADPOSSampleStreamFactory;
 import opennlp.tools.formats.ad.ADSentenceSampleStreamFactory;
 import opennlp.tools.formats.ad.ADTokenSampleStreamFactory;
 import opennlp.tools.formats.brat.BratNameSampleStreamFactory;
+import opennlp.tools.formats.SentimentSampleStreamFactory;
 import opennlp.tools.formats.convert.NameToSentenceSampleStreamFactory;
 import opennlp.tools.formats.convert.NameToTokenSampleStreamFactory;
 import opennlp.tools.formats.convert.POSToSentenceSampleStreamFactory;
@@ -108,11 +108,14 @@ public final class StreamFactoryRegistry {
     ConstitParseSampleStreamFactory.registerFactory();
 
     BratNameSampleStreamFactory.registerFactory();
-    
-    SentimentSampleStreamFactory.registerFactory();
 
+<<<<<<< /usr/src/app/output/apache/opennlp/6fceb69a6af56b3ccf80b333b25f884a20ef224e/opennlp-tools/src/main/java/opennlp/tools/cmdline/StreamFactoryRegistry.java/left.java
     LetsmtSentenceStreamFactory.registerFactory();
     MosesSentenceSampleStreamFactory.registerFactory();
+||||||| /usr/src/app/output/apache/opennlp/6fceb69a6af56b3ccf80b333b25f884a20ef224e/opennlp-tools/src/main/java/opennlp/tools/cmdline/StreamFactoryRegistry.java/base.java
+=======
+    SentimentSampleStreamFactory.registerFactory();
+>>>>>>> /usr/src/app/output/apache/opennlp/6fceb69a6af56b3ccf80b333b25f884a20ef224e/opennlp-tools/src/main/java/opennlp/tools/cmdline/StreamFactoryRegistry.java/right.java
   }
 
   public static final String DEFAULT_FORMAT = "opennlp";
