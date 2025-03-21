@@ -1,24 +1,7 @@
-/**
- * Copyright © 2006-2016 Web Cohesion (info@webcohesion.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.webcohesion.enunciate.mojo;
-
 import com.webcohesion.enunciate.Enunciate;
 import com.webcohesion.enunciate.module.DocumentationProviderModule;
 import com.webcohesion.enunciate.module.EnunciateModule;
-
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,7 +11,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -38,51 +20,41 @@ import java.util.Locale;
  *
  * @author Ryan Heaton
  */
-@Mojo ( name = "docs", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true )
-public class DocsBaseMojo extends ConfigMojo implements MavenReport {
-
+@Mojo(name = "docs", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true) public class DocsBaseMojo extends ConfigMojo implements MavenReport {
   /**
    * The directory where the docs are put.
    */
-  @Parameter( defaultValue = "${project.reporting.outputDirectory}", property = "enunciate.docsDir", required = true )
-  protected String docsDir;
+  @Parameter(defaultValue = "${project.reporting.outputDirectory}", property = "enunciate.docsDir", required = true) protected String docsDir;
 
   /**
    * The name of the subdirectory where the documentation is put.
    */
-  @Parameter
-  protected String docsSubdir = "apidocs";
+  @Parameter protected String docsSubdir = "apidocs";
 
   /**
    * The temporary staging directory for Enunciate-generated documentation. This is only required for "site" inclusion.
    */
-  @Parameter( defaultValue = "${project.build.directory}/enunciate-docs-staging", required = true )
-  protected String docsStagingDir;
+  @Parameter(defaultValue = "${project.build.directory}/enunciate-docs-staging", required = true) protected String docsStagingDir;
 
   /**
    * The name of the index page.
    */
-  @Parameter
-  protected String indexPageName;
+  @Parameter protected String indexPageName;
 
   /**
    * The name of the docs report.
    */
-  @Parameter( defaultValue = "Web Service API")
-  protected String reportName;
+  @Parameter(defaultValue = "Web Service API") protected String reportName;
 
   /**
    * The description of the docs report.
    */
-  @Parameter( defaultValue = "Web Service API Documentation" )
-  protected String reportDescription;
+  @Parameter(defaultValue = "Web Service API Documentation") protected String reportDescription;
 
   private Exception siteError = null;
 
-  @Override
-  protected void applyAdditionalConfiguration(EnunciateModule module) {
+  @Override protected void applyAdditionalConfiguration(EnunciateModule module) {
     super.applyAdditionalConfiguration(module);
-
     if (module instanceof DocumentationProviderModule) {
       DocumentationProviderModule docsProvider = (DocumentationProviderModule) module;
       docsProvider.setDefaultDocsDir(new File(this.docsStagingDir));
@@ -92,35 +64,50 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
     }
   }
 
-  @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
-    //if this method is called, it means we're _not_ being invoked via the maven site plugin. Therefore, we don't need a staging area:
+  @Override public void execute() throws MojoExecutionException, MojoFailureException {
     this.docsStagingDir = docsDir;
-
     super.execute();
   }
 
   public void generate(org.codehaus.doxia.sink.Sink sink, Locale locale) throws MavenReportException {
-    generate();
+    generate(locale);
   }
 
-  public void generate(org.apache.maven.doxia.sink.Sink sink, java.util.Locale locale) throws MavenReportException {
-    generate();
+  public void generate(
+<<<<<<< /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/left.java
+  Sink
+=======
+  org.apache.maven.doxia.sink.Sink
+>>>>>>> /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/right.java
+   sink, 
+<<<<<<< /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/left.java
+  Locale
+=======
+  java.util.Locale
+>>>>>>> /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/right.java
+   locale) throws MavenReportException {
+    generate(locale);
   }
 
-  private void generate() throws MavenReportException {
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  private
+>>>>>>> /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/right.java
+   void generate(
+<<<<<<< /usr/src/app/output/stoicflame/enunciate/46949ae95bd07a25a0c66af8bd4e523ae21009d0/slim-maven-plugin/src/main/java/com/webcohesion/enunciate/mojo/DocsBaseMojo.java/left.java
+  Locale locale
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+  ) throws MavenReportException {
     if (this.siteError != null) {
       throw new MavenReportException("Unable to generate Enunciate documentation.", this.siteError);
     }
-
-    //first get rid of the empty page the site plugin puts there, in order to make room for the documentation.
     new File(getReportOutputDirectory(), this.indexPageName == null ? "index.html" : this.indexPageName).delete();
-
     Enunciate enunciate = (Enunciate) getPluginContext().get(ConfigMojo.ENUNCIATE_PROPERTY);
     try {
       enunciate.copyDir(getReportStagingDirectory(), getReportOutputDirectory());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new MavenReportException("Unable to copy Enunciate documentation from the staging area to the report directory.", e);
     }
   }
@@ -130,8 +117,7 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
     if (this.indexPageName != null) {
       if (this.indexPageName.indexOf('.') > 0) {
         indexName = this.indexPageName.substring(0, this.indexPageName.indexOf('.'));
-      }
-      else {
+      } else {
         indexName = this.indexPageName;
       }
     }
@@ -178,23 +164,16 @@ public class DocsBaseMojo extends ConfigMojo implements MavenReport {
     if (this.skipEnunciate) {
       return false;
     }
-
-    // for some reason, when running in the "site" lifecycle, the context classloader
-    // doesn't get set up the same way it does when doing the default lifecycle
-    // so we have to set it up manually here.
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
       super.execute();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       this.siteError = e;
       return false;
-    }
-    finally {
+    } finally {
       Thread.currentThread().setContextClassLoader(old);
     }
-
     return new File(getReportStagingDirectory(), this.indexPageName == null ? "index.html" : this.indexPageName).exists();
   }
 }
