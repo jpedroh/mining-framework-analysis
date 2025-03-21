@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx;
-
 import com.monitorjbl.xlsx.exceptions.MissingSheetException;
 import com.monitorjbl.xlsx.exceptions.OpenException;
 import com.monitorjbl.xlsx.exceptions.ReadException;
@@ -19,7 +18,6 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -31,7 +29,6 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Iterator;
 import java.util.Objects;
-
 import static com.monitorjbl.xlsx.XmlUtils.document;
 import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 
@@ -43,12 +40,90 @@ import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 public class StreamingReader implements Iterable<Row>, AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingReader.class);
 
-  private File tmp;
   private final StreamingWorkbookReader workbook;
 
-  public StreamingReader(StreamingWorkbookReader workbook) {
+  private File tmp;
+
+  private OPCPackage pkg;
+
+  public StreamingReader(
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+  OPCPackage pkg
+=======
+  StreamingWorkbookReader workbook
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
+  ) {
+    this.pkg = pkg;
     this.workbook = workbook;
   }
+
+
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+  /**
+   * Handles a SAX event.
+   *
+   * @param event
+   * @throws SAXException
+   */
+  private void handleEvent(XMLEvent event) throws SAXException {
+    if (event.getEventType() == XMLStreamConstants.CHARACTERS) {
+      Characters c = event.asCharacters();
+      lastContents += c.getData();
+    } else {
+      if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {
+        StartElement startElement = event.asStartElement();
+        String tagLocalName = startElement.getName().getLocalPart();
+        if ("row".equals(tagLocalName)) {
+          Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
+          currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
+        } else {
+          if ("c".equals(tagLocalName)) {
+            Attribute ref = startElement.getAttributeByName(new QName("r"));
+            String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+            currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+            setFormatString(startElement, currentCell);
+            Attribute type = startElement.getAttributeByName(new QName("t"));
+            if (type != null) {
+              currentCell.setType(type.getValue());
+            } else {
+              currentCell.setType("n");
+            }
+            Attribute style = startElement.getAttributeByName(new QName("s"));
+            if (style != null) {
+              String indexStr = style.getValue();
+              try {
+                int index = Integer.parseInt(indexStr);
+                currentCell.setCellStyle(stylesTable.getStyleAt(index));
+              } catch (NumberFormatException nfe) {
+                log.warn("Ignoring invalid style index {}", indexStr);
+              }
+            }
+          }
+        }
+        lastContents = "";
+      } else {
+        if (event.getEventType() == XMLStreamConstants.END_ELEMENT) {
+          EndElement endElement = event.asEndElement();
+          String tagLocalName = endElement.getName().getLocalPart();
+          if ("v".equals(tagLocalName) || "t".equals(tagLocalName)) {
+            currentCell.setRawContents(unformattedContents());
+            currentCell.setContents(formattedContents());
+          } else {
+            if ("row".equals(tagLocalName) && currentRow != null) {
+              rowCache.add(currentRow);
+            } else {
+              if ("c".equals(tagLocalName)) {
+                currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
 
   /**
    * Returns a new streaming iterator to loop through rows. This iterator is not
@@ -56,11 +131,8 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    * trigger a load from disk to read in new data.
    *
    * @return the streaming iterator
-   * @deprecated StreamingReader is equivalent to the POI Workbook object rather
-   * than the Sheet object. This method will be removed in a future release.
    */
-  @Override
-  public Iterator<Row> iterator() {
+  @Override public Iterator<Row> iterator() {
     return workbook.first().iterator();
   }
 
@@ -69,12 +141,12 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    *
    * @throws com.monitorjbl.xlsx.exceptions.CloseException if there is an issue closing the stream
    */
-  @Override
-  public void close() {
+  @Override public void close() {
     try {
       workbook.close();
-    } finally {
-      if(tmp != null) {
+      pkg.revert();
+    }  finally {
+      if (tmp != null) {
         log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
         tmp.delete();
       }
@@ -83,10 +155,10 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   static File writeInputStreamToFile(InputStream is, int bufferSize) throws IOException {
     File f = Files.createTempFile("tmp-", ".xlsx").toFile();
-    try(FileOutputStream fos = new FileOutputStream(f)) {
+    try (FileOutputStream fos = new FileOutputStream(f)) {
       int read;
       byte[] bytes = new byte[bufferSize];
-      while((read = is.read(bytes)) != -1) {
+      while ((read = is.read(bytes)) != -1) {
         fos.write(bytes, 0, read);
       }
       is.close();
@@ -101,9 +173,13 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   public static class Builder {
     private int rowCacheSize = 10;
+
     private int bufferSize = 1024;
+
     private int sheetIndex = 0;
+
     private String sheetName;
+
     private String password;
 
     public int getRowCacheSize() {
@@ -223,20 +299,18 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
      * @param is input stream to read in
      * @return built streaming reader instance
      * @throws com.monitorjbl.xlsx.exceptions.ReadException if there is an issue reading the stream
-     * @deprecated This method will be removed in a future release. Use {@link Builder#open(InputStream)} instead
      */
     public StreamingReader read(InputStream is) {
       File f = null;
       try {
         f = writeInputStreamToFile(is, bufferSize);
         log.debug("Created temp file [" + f.getAbsolutePath() + "]");
-
         StreamingReader r = read(f);
         r.tmp = f;
         return r;
-      } catch(IOException e) {
+      } catch (IOException e) {
         throw new ReadException("Unable to read input stream", e);
-      } catch(RuntimeException e) {
+      } catch (RuntimeException e) {
         f.delete();
         throw e;
       }
@@ -250,13 +324,11 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
      * @return built streaming reader instance
      * @throws com.monitorjbl.xlsx.exceptions.OpenException if there is an issue opening the file
      * @throws com.monitorjbl.xlsx.exceptions.ReadException if there is an issue reading the file
-     * @deprecated This method will be removed in a future release. Use {@link Builder#open(File)} instead
      */
     public StreamingReader read(File f) {
       try {
         OPCPackage pkg;
-        if(password != null) {
-          // Based on: https://poi.apache.org/encryption.html
+        if (password != null) {
           POIFSFileSystem poifs = new POIFSFileSystem(f);
           EncryptionInfo info = new EncryptionInfo(poifs);
           Decryptor d = Decryptor.getInstance(info);
@@ -265,50 +337,50 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
         } else {
           pkg = OPCPackage.open(f);
         }
-
         XSSFReader reader = new XSSFReader(pkg);
         SharedStringsTable sst = reader.getSharedStringsTable();
         StylesTable styles = reader.getStylesTable();
-
         InputStream sheet = findSheet(reader);
-        if(sheet == null) {
+        if (sheet == null) {
           throw new MissingSheetException("Unable to find sheet at index [" + sheetIndex + "]");
         }
-
         XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(sheet);
-
-        return new StreamingReader(new StreamingWorkbookReader(pkg, new StreamingSheetReader(sst, styles, parser, rowCacheSize), this));
-      } catch(IOException e) {
+        return new StreamingReader(
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+        pkg
+=======
+        new StreamingWorkbookReader(pkg, new StreamingSheetReader(sst, styles, parser, rowCacheSize), this)
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
+        );
+      } catch (IOException e) {
         throw new OpenException("Failed to open file", e);
-      } catch(OpenXML4JException | XMLStreamException e) {
+      } catch (OpenXML4JException | XMLStreamException e) {
         throw new ReadException("Unable to read workbook", e);
-      } catch(GeneralSecurityException e) {
+      } catch (GeneralSecurityException e) {
         throw new ReadException("Unable to read workbook - Decryption failed", e);
       }
     }
 
     InputStream findSheet(XSSFReader reader) throws IOException, InvalidFormatException {
       int index = sheetIndex;
-      if(sheetName != null) {
+      if (sheetName != null) {
         index = -1;
-        //This file is separate from the worksheet data, and should be fairly small
         NodeList nl = searchForNodeList(document(reader.getWorkbookData()), "/workbook/sheets/sheet");
-        for(int i = 0; i < nl.getLength(); i++) {
-          if(Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
+        for (int i = 0; i < nl.getLength(); i++) {
+          if (Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
             index = i;
           }
         }
-        if(index < 0) {
+        if (index < 0) {
           return null;
         }
       }
       Iterator<InputStream> iter = reader.getSheetsData();
       InputStream sheet = null;
-
       int i = 0;
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         InputStream is = iter.next();
-        if(i++ == index) {
+        if (i++ == index) {
           sheet = is;
           log.debug("Found sheet at index [" + sheetIndex + "]");
           break;
@@ -317,5 +389,4 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       return sheet;
     }
   }
-
 }
