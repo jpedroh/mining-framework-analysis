@@ -4,7 +4,16 @@ package st.redline.compiler;
 public class BlockAnalyser extends MethodAnalyser {
 
 	public BlockAnalyser(String className, String packageName, int countOfArguments, boolean isClassMethod, Analyser containingAnalyser) {
+<<<<<<< /usr/src/app/output/redline-smalltalk/redline-smalltalk/8d475d7ea4bcf0001b0486803b76c29ef6ba8698/src/main/java/st/redline/compiler/BlockAnalyser.java/left.java
+		super(className, packageName, countOfArguments, isClassMethod);
+		this.containingAnalyser = containingAnalyser;
+		this.blockSequence(containingAnalyser.blockSequence() + 1);
+||||||| /usr/src/app/output/redline-smalltalk/redline-smalltalk/8d475d7ea4bcf0001b0486803b76c29ef6ba8698/src/main/java/st/redline/compiler/BlockAnalyser.java/base.java
+		super(className, packageName, countOfArguments, isClassMethod);
+		this.containingAnalyser = containingAnalyser;
+=======
 		super(className, packageName, countOfArguments, isClassMethod, containingAnalyser);
+>>>>>>> /usr/src/app/output/redline-smalltalk/redline-smalltalk/8d475d7ea4bcf0001b0486803b76c29ef6ba8698/src/main/java/st/redline/compiler/BlockAnalyser.java/right.java
 	}
 
 	protected void initialize() {
