@@ -1,17 +1,4 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2023 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +52,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.configuration.PreferredAssumptionException;
 import org.assertj.core.util.CheckReturnValue;
@@ -99,10 +85,9 @@ import org.assertj.core.util.CheckReturnValue;
  * @since 3.14.0
  * @author Gonzalo Müller
  */
-@CheckReturnValue
-public final class BDDAssumptions extends Assumptions {
-
-  private BDDAssumptions() {}
+@CheckReturnValue public final class BDDAssumptions extends Assumptions {
+  private BDDAssumptions() {
+  }
 
   /**
    * Creates a new assumption's instance for a <code>boolean</code> value.
@@ -1265,7 +1250,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractObjectAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T> ObjectAssert<T> given(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> given(T actual) {
     return assumeThat(actual);
   }
 
@@ -1295,7 +1280,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractObjectArrayAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T> ObjectArrayAssert<T> given(T[] actual) {
+  public static <T extends java.lang.Object> ObjectArrayAssert<T> given(T[] actual) {
     return assumeThat(actual);
   }
 
@@ -1325,7 +1310,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link Object2DArrayAssert} assertion object to be used for assumptions.
    * @since 3.17.0
    */
-  public static <T> Object2DArrayAssert<T> given(T[][] actual) {
+  public static <T extends java.lang.Object> Object2DArrayAssert<T> given(T[][] actual) {
     return assumeThat(actual);
   }
 
@@ -1348,7 +1333,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractObjectAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T> ObjectAssert<T> givenObject(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> givenObject(T actual) {
     return assumeThat(actual);
   }
 
@@ -1622,7 +1607,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractIterableAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> IterableAssert<ELEMENT> given(Iterable<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IterableAssert<ELEMENT> given(Iterable<? extends ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -1637,7 +1622,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractIterableAssert} assertion object to be used for assumptions.
    * @since 3.23.0
    */
-  public static <ELEMENT> IterableAssert<ELEMENT> givenIterable(Iterable<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IterableAssert<ELEMENT> givenIterable(Iterable<? extends ELEMENT> actual) {
     return given(actual);
   }
 
@@ -1667,7 +1652,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractIteratorAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> IteratorAssert<ELEMENT> given(Iterator<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IteratorAssert<ELEMENT> given(Iterator<? extends ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -1682,7 +1667,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractIteratorAssert} assertion object to be used for assumptions.
    * @since 3.23.0
    */
-  public static <ELEMENT> IteratorAssert<ELEMENT> givenIterator(Iterator<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IteratorAssert<ELEMENT> givenIterator(Iterator<? extends ELEMENT> actual) {
     return given(actual);
   }
 
@@ -1695,7 +1680,7 @@ public final class BDDAssumptions extends Assumptions {
    * @see Assumptions#assumeThat(Collection)
    * @since 3.21.0
    */
-  public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> given(Collection<? extends E> actual) {
+  public static <E extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> given(Collection<? extends E> actual) {
     return assumeThat(actual);
   }
 
@@ -1710,7 +1695,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the created assumption for assertion object.
    * @since 3.23.0
    */
-  public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> givenCollection(Collection<? extends E> actual) {
+  public static <E extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> givenCollection(Collection<? extends E> actual) {
     return given(actual);
   }
 
@@ -1740,7 +1725,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractListAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> FactoryBasedNavigableListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> given(List<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> FactoryBasedNavigableListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> given(List<? extends ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -1755,7 +1740,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractListAssert} assertion object to be used for assumptions.
    * @since 3.23.0
    */
-  public static <ELEMENT> FactoryBasedNavigableListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> givenList(List<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> FactoryBasedNavigableListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> givenList(List<? extends ELEMENT> actual) {
     return given(actual);
   }
 
@@ -1786,7 +1771,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractMapAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <K, V> MapAssert<K, V> given(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> given(Map<K, V> actual) {
     return assumeThat(actual);
   }
 
@@ -1816,7 +1801,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractPredicateAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T> PredicateAssert<T> given(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> given(Predicate<T> actual) {
     return assumeThat(actual);
   }
 
@@ -1831,7 +1816,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractPredicateAssert} assertion object to be used for assumptions.
    * @since 3.23.0
    */
-  public static <T> PredicateAssert<T> givenPredicate(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> givenPredicate(Predicate<T> actual) {
     return given(actual);
   }
 
@@ -1948,7 +1933,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link OptionalAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <VALUE> OptionalAssert<VALUE> given(Optional<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> OptionalAssert<VALUE> given(Optional<VALUE> actual) {
     return assumeThat(actual);
   }
 
@@ -2076,7 +2061,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractListAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> given(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> given(Stream<? extends ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -2091,7 +2076,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractListAssert} assertion object to be used for assumptions.
    * @since 3.23.0
    */
-  public static <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> givenStream(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> givenStream(Stream<? extends ELEMENT> actual) {
     return given(actual);
   }
 
@@ -2149,7 +2134,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractSpliteratorAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> AbstractSpliteratorAssert<?, ELEMENT> given(Spliterator<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AbstractSpliteratorAssert<?, ELEMENT> given(Spliterator<ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -2237,7 +2222,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractFutureAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <RESULT> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> given(Future<RESULT> future) {
+  public static <RESULT extends java.lang.Object> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> given(Future<RESULT> future) {
     return assumeThat(future);
   }
 
@@ -2267,7 +2252,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractCompletableFutureAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> given(CompletableFuture<RESULT> future) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> given(CompletableFuture<RESULT> future) {
     return assumeThat(future);
   }
 
@@ -2300,7 +2285,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractCompletableFutureAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> given(CompletionStage<RESULT> stage) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> given(CompletionStage<RESULT> stage) {
     return assumeThat(stage);
   }
 
@@ -2427,7 +2412,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicIntegerFieldUpdaterAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> given(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> given(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return assumeThat(actual);
   }
 
@@ -2554,7 +2539,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicLongFieldUpdaterAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> given(AtomicLongFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> given(AtomicLongFieldUpdater<OBJECT> actual) {
     return assumeThat(actual);
   }
 
@@ -2584,7 +2569,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicReferenceAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <VALUE> AtomicReferenceAssert<VALUE> given(AtomicReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> given(AtomicReference<VALUE> actual) {
     return assumeThat(actual);
   }
 
@@ -2614,7 +2599,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicReferenceArrayAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> given(AtomicReferenceArray<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> given(AtomicReferenceArray<ELEMENT> actual) {
     return assumeThat(actual);
   }
 
@@ -2655,7 +2640,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicReferenceFieldUpdaterAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> given(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  public static <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> given(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return assumeThat(actual);
   }
 
@@ -2685,7 +2670,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicMarkableReferenceAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <VALUE> AtomicMarkableReferenceAssert<VALUE> given(AtomicMarkableReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> given(AtomicMarkableReference<VALUE> actual) {
     return assumeThat(actual);
   }
 
@@ -2715,7 +2700,7 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AtomicStampedReferenceAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <VALUE> AtomicStampedReferenceAssert<VALUE> given(AtomicStampedReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> given(AtomicStampedReference<VALUE> actual) {
     return assumeThat(actual);
   }
 
@@ -3165,5 +3150,4 @@ public final class BDDAssumptions extends Assumptions {
   public static void setPreferredAssumptionException(PreferredAssumptionException preferredAssumptionException) {
     Assumptions.setPreferredAssumptionException(preferredAssumptionException);
   }
-
 }

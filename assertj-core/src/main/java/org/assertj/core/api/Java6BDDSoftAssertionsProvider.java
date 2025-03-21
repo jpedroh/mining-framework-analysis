@@ -1,19 +1,5 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2023 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.Assertions.catchThrowable;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.concurrent.atomic.AtomicStampedReference;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
@@ -52,10 +37,7 @@ import org.assertj.core.util.CheckReturnValue;
  *
  * @since 2.5.0 / 3.5.0
  */
-@CheckReturnValue
-public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
-  // then* methods duplicated from BDDAssertions
-
+@CheckReturnValue public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
@@ -220,8 +202,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.21.0
    */
-  @SuppressWarnings("unchecked")
-  default <T> CollectionAssert<T> then(Collection<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> CollectionAssert<T> then(Collection<? extends T> actual) {
     return proxy(CollectionAssert.class, Collection.class, actual);
   }
 
@@ -236,7 +217,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  default <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> thenCollection(Collection<? extends E> actual) {
+  default <E extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> thenCollection(Collection<? extends E> actual) {
     return then(actual);
   }
 
@@ -247,8 +228,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return proxy(GenericComparableAssert.class, Comparable.class, actual);
   }
 
@@ -263,8 +243,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  @SuppressWarnings("unchecked")
-  default <T> AbstractUniversalComparableAssert<?, T> thenComparable(Comparable<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> AbstractUniversalComparableAssert<?, T> thenComparable(Comparable<T> actual) {
     return proxy(UniversalComparableAssert.class, Comparable.class, actual);
   }
 
@@ -275,8 +254,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T> IterableAssert<T> then(Iterable<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> IterableAssert<T> then(Iterable<? extends T> actual) {
     return proxy(IterableAssert.class, Iterable.class, actual);
   }
 
@@ -291,7 +269,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  default <ELEMENT> IterableAssert<ELEMENT> thenIterable(Iterable<? extends ELEMENT> actual) {
+  default <ELEMENT extends java.lang.Object> IterableAssert<ELEMENT> thenIterable(Iterable<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -304,8 +282,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T> IteratorAssert<T> then(Iterator<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> IteratorAssert<T> then(Iterator<? extends T> actual) {
     return proxy(IteratorAssert.class, Iterator.class, actual);
   }
 
@@ -320,7 +297,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  default <ELEMENT> IteratorAssert<ELEMENT> thenIterator(Iterator<? extends ELEMENT> actual) {
+  default <ELEMENT extends java.lang.Object> IteratorAssert<ELEMENT> thenIterator(Iterator<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -383,8 +360,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <RESULT> FutureAssert<RESULT> then(Future<RESULT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <RESULT extends java.lang.Object> FutureAssert<RESULT> then(Future<RESULT> actual) {
     return proxy(FutureAssert.class, Future.class, actual);
   }
 
@@ -487,8 +463,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T> ListAssert<T> then(List<? extends T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> ListAssert<T> then(List<? extends T> actual) {
     return proxy(ListAssert.class, List.class, actual);
   }
 
@@ -503,7 +478,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  default <ELEMENT> ListAssert<ELEMENT> thenList(List<? extends ELEMENT> actual) {
+  default <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> thenList(List<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -555,8 +530,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param <T> the type of the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T> ObjectAssert<T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> ObjectAssert<T> then(T actual) {
     return proxy(ObjectAssert.class, Object.class, actual);
   }
 
@@ -567,8 +541,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <T> ObjectArrayAssert<T> then(T[] actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> ObjectArrayAssert<T> then(T[] actual) {
     return proxy(ObjectArrayAssert.class, Object[].class, actual);
   }
 
@@ -580,8 +553,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.17.0
    */
-  @SuppressWarnings("unchecked")
-  default <T> Object2DArrayAssert<T> then(T[][] actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends java.lang.Object> Object2DArrayAssert<T> then(T[][] actual) {
     return proxy(Object2DArrayAssert.class, Object[][].class, actual);
   }
 
@@ -595,8 +567,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  @SuppressWarnings("unchecked")
-  default <K, V> MapAssert<K, V> then(Map<K, V> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> then(Map<K, V> actual) {
     return proxy(MapAssert.class, Map.class, actual);
   }
 
@@ -734,8 +705,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return proxy(AtomicIntegerFieldUpdaterAssert.class, AtomicIntegerFieldUpdater.class, actual);
   }
 
@@ -769,8 +739,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
     return proxy(AtomicLongFieldUpdaterAssert.class, AtomicLongFieldUpdater.class, actual);
   }
 
@@ -782,8 +751,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <VALUE> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
     return proxy(AtomicReferenceAssert.class, AtomicReference.class, actual);
   }
 
@@ -795,8 +763,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
     return proxy(AtomicReferenceArrayAssert.class, AtomicReferenceArray.class, actual);
   }
 
@@ -809,8 +776,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return proxy(AtomicReferenceFieldUpdaterAssert.class, AtomicReferenceFieldUpdater.class, actual);
   }
 
@@ -822,8 +788,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <VALUE> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
     return proxy(AtomicMarkableReferenceAssert.class, AtomicMarkableReference.class, actual);
   }
 
@@ -835,8 +800,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  @SuppressWarnings("unchecked")
-  default <VALUE> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
     return proxy(AtomicStampedReferenceAssert.class, AtomicStampedReference.class, actual);
   }
 
@@ -847,8 +811,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param actual the actual value.
    * @return the created assertion Throwable.
    */
-  @SuppressWarnings("unchecked")
-  default <T extends Throwable> ThrowableAssert<T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends Throwable> ThrowableAssert<T> then(T actual) {
     return proxy(ThrowableAssert.class, Throwable.class, actual);
   }
 
@@ -862,8 +825,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion Throwable.
    * @since 3.23.1
    */
-  @SuppressWarnings("unchecked")
-  default <T extends SQLException> ThrowableAssert<T> then(T actual) {
+  @SuppressWarnings(value = { "unchecked" }) default <T extends SQLException> ThrowableAssert<T> then(T actual) {
     return proxy(ThrowableAssert.class, Throwable.class, actual);
   }
 
@@ -909,8 +871,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
    */
-  @CanIgnoreReturnValue
-  default AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
+  @CanIgnoreReturnValue default AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return then(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
 
@@ -947,9 +908,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    *
    * @since 3.9.0
    */
-  @CanIgnoreReturnValue
-  default AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable,
-                                                                       String description, Object... args) {
+  @CanIgnoreReturnValue default AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable, String description, Object... args) {
     return then(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
 
@@ -1013,7 +972,7 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
    * @return the created assertion object.
    * @since 3.12.0
    */
-  default <T> ObjectAssert<T> thenObject(T actual) {
+  default <T extends java.lang.Object> ObjectAssert<T> thenObject(T actual) {
     return then(actual);
   }
 
@@ -1144,5 +1103,4 @@ public interface Java6BDDSoftAssertionsProvider extends SoftAssertionsProvider {
   default ThrowableTypeAssert<IndexOutOfBoundsException> thenIndexOutOfBoundsException() {
     return thenExceptionOfType(IndexOutOfBoundsException.class);
   }
-
 }

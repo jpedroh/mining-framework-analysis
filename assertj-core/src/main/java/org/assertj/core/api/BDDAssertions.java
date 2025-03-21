@@ -1,17 +1,4 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2023 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +58,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.InFilter;
@@ -134,13 +120,12 @@ import org.assertj.core.util.CheckReturnValue;
  * @author William Delanoue
  * @author Mariusz Smykula
  */
-@CheckReturnValue
-public class BDDAssertions extends Assertions {
-
+@CheckReturnValue public class BDDAssertions extends Assertions {
   /**
    * Creates a new <code>{@link org.assertj.core.api.BDDAssertions}</code>.
    */
-  protected BDDAssertions() {}
+  protected BDDAssertions() {
+  }
 
   /**
    * A <code>BDDAssertions</code> which allows to blend assertions with other libraries when the name '<code>then</code>' cause clash.
@@ -193,7 +178,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.5.0
    */
-  public static <T> PredicateAssert<T> then(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> then(Predicate<T> actual) {
     return assertThat(actual);
   }
 
@@ -208,7 +193,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <T> PredicateAssert<T> thenPredicate(Predicate<T> actual) {
+  public static <T extends java.lang.Object> PredicateAssert<T> thenPredicate(Predicate<T> actual) {
     return then(actual);
   }
 
@@ -256,7 +241,7 @@ public class BDDAssertions extends Assertions {
    *
    * @return the created assertion object.
    */
-  public static <VALUE> OptionalAssert<VALUE> then(Optional<VALUE> optional) {
+  public static <VALUE extends java.lang.Object> OptionalAssert<VALUE> then(Optional<VALUE> optional) {
     return assertThat(optional);
   }
 
@@ -482,7 +467,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <T> AbstractUniversalComparableAssert<?, T> thenComparable(Comparable<T> actual) {
+  public static <T extends java.lang.Object> AbstractUniversalComparableAssert<?, T> thenComparable(Comparable<T> actual) {
     return assertThatComparable(actual);
   }
 
@@ -493,7 +478,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> IterableAssert<T> then(Iterable<? extends T> actual) {
+  public static <T extends java.lang.Object> IterableAssert<T> then(Iterable<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -508,7 +493,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <ELEMENT> IterableAssert<ELEMENT> thenIterable(Iterable<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IterableAssert<ELEMENT> thenIterable(Iterable<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -532,7 +517,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> IteratorAssert<T> then(Iterator<? extends T> actual) {
+  public static <T extends java.lang.Object> IteratorAssert<T> then(Iterator<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -547,7 +532,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <ELEMENT> IteratorAssert<ELEMENT> thenIterator(Iterator<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> IteratorAssert<ELEMENT> thenIterator(Iterator<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -588,10 +573,7 @@ public class BDDAssertions extends Assertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-//@format:off
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(Iterable<? extends ELEMENT> actual,
-                                                                                 AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(Iterable<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
 
@@ -624,9 +606,7 @@ public class BDDAssertions extends Assertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(ACTUAL actual,
-                                                                                          Class<ELEMENT_ASSERT> assertClass) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(ACTUAL actual, Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
 
@@ -667,9 +647,7 @@ public class BDDAssertions extends Assertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual,
-                                                                                        AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
 
@@ -702,13 +680,9 @@ public class BDDAssertions extends Assertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ELEMENT, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-         ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual,
-                                                                                      Class<ELEMENT_ASSERT> assertClass) {
+  public static <ELEMENT extends java.lang.Object, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual, Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
-
-//@format:on
 
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
@@ -793,7 +767,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object
    * @since 2.7.0 / 3.7.0
    */
-  public static <RESULT> FutureAssert<RESULT> then(Future<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> FutureAssert<RESULT> then(Future<RESULT> actual) {
     return assertThat(actual);
   }
 
@@ -897,7 +871,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.21.0
    */
-  public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> then(Collection<? extends E> actual) {
+  public static <E extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> then(Collection<? extends E> actual) {
     return assertThat(actual);
   }
 
@@ -912,7 +886,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> thenCollection(Collection<? extends E> actual) {
+  public static <E extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> thenCollection(Collection<? extends E> actual) {
     return then(actual);
   }
 
@@ -923,7 +897,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ListAssert<T> then(List<? extends T> actual) {
+  public static <T extends java.lang.Object> ListAssert<T> then(List<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -938,7 +912,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <ELEMENT> ListAssert<ELEMENT> thenList(List<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> thenList(List<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -990,7 +964,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectAssert<T> then(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> then(T actual) {
     return assertThat(actual);
   }
 
@@ -1001,7 +975,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectArrayAssert<T> then(T[] actual) {
+  public static <T extends java.lang.Object> ObjectArrayAssert<T> then(T[] actual) {
     return assertThat(actual);
   }
 
@@ -1013,7 +987,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.17.0
    */
-  public static <T> Object2DArrayAssert<T> then(T[][] actual) {
+  public static <T extends java.lang.Object> Object2DArrayAssert<T> then(T[][] actual) {
     return assertThat(actual);
   }
 
@@ -1025,7 +999,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <K, V> MapAssert<K, V> then(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> then(Map<K, V> actual) {
     return assertThat(actual);
   }
 
@@ -1163,7 +1137,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return assertThat(actual);
   }
 
@@ -1208,7 +1182,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
     return assertThat(actual);
   }
 
@@ -1220,7 +1194,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
     return assertThat(actual);
   }
 
@@ -1232,7 +1206,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
     return assertThat(actual);
   }
 
@@ -1245,7 +1219,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  public static <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return assertThat(actual);
   }
 
@@ -1257,7 +1231,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
     return assertThat(actual);
   }
 
@@ -1269,7 +1243,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
     return assertThat(actual);
   }
 
@@ -1326,8 +1300,7 @@ public class BDDAssertions extends Assertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return the created {@link ThrowableAssert}.
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
 
@@ -1362,9 +1335,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.9.0
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable,
-                                                                             String description, Object... args) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable, String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
 
@@ -1430,7 +1401,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.12.0
    */
-  public static <T> ObjectAssert<T> thenObject(T actual) {
+  public static <T extends java.lang.Object> ObjectAssert<T> thenObject(T actual) {
     return then(actual);
   }
 
@@ -1455,9 +1426,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.20.0
    */
-  @CanIgnoreReturnValue
-  @SafeVarargs
-  public static <T> ObjectAssert<T> thenWith(T actual, Consumer<T>... requirements) {
+  @CanIgnoreReturnValue @SafeVarargs public static <T extends java.lang.Object> ObjectAssert<T> thenWith(T actual, Consumer<T>... requirements) {
     return then(actual).satisfies(requirements);
   }
 
@@ -1582,7 +1551,7 @@ public class BDDAssertions extends Assertions {
    *
    * @return the created assertion object.
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> then(CompletableFuture<RESULT> future) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> then(CompletableFuture<RESULT> future) {
     return assertThat(future);
   }
 
@@ -1596,7 +1565,7 @@ public class BDDAssertions extends Assertions {
    *
    * @return the created assertion object.
    */
-  public static <RESULT> CompletableFutureAssert<RESULT> then(CompletionStage<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> CompletableFutureAssert<RESULT> then(CompletionStage<RESULT> actual) {
     return assertThat(actual);
   }
 
@@ -1666,7 +1635,7 @@ public class BDDAssertions extends Assertions {
    *          the component that creates its own assert
    * @return the associated {@link Assert} of the given component
    */
-  public static <T> T then(final AssertProvider<T> component) {
+  public static <T extends java.lang.Object> T then(final AssertProvider<T> component) {
     return component.assertThat();
   }
 
@@ -1697,7 +1666,7 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual {@link Stream} value.
    * @return the created assertion object.
    */
-  public static <ELEMENT> ListAssert<ELEMENT> then(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> then(Stream<? extends ELEMENT> actual) {
     return assertThat(actual);
   }
 
@@ -1732,7 +1701,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.23.0
    */
-  public static <ELEMENT> ListAssert<ELEMENT> thenStream(Stream<? extends ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> ListAssert<ELEMENT> thenStream(Stream<? extends ELEMENT> actual) {
     return then(actual);
   }
 
@@ -1838,7 +1807,7 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion object.
    * @since 3.14.0
    */
-  public static <ELEMENT> SpliteratorAssert<ELEMENT> then(Spliterator<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> SpliteratorAssert<ELEMENT> then(Spliterator<ELEMENT> actual) {
     return assertThat(actual);
   }
 
@@ -1909,8 +1878,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(ThrowingCallable shouldRaiseThrowable,
-                                                                             Class<THROWABLE> type) {
+  public static <THROWABLE extends Throwable> THROWABLE catchThrowableOfType(ThrowingCallable shouldRaiseThrowable, Class<THROWABLE> type) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseThrowable, type);
   }
 
@@ -2240,10 +2208,6 @@ public class BDDAssertions extends Assertions {
     return assertThatRuntimeException();
   }
 
-  // -------------------------------------------------------------------------------------------------
-  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
-  // -------------------------------------------------------------------------------------------------
-
   /**
    * Sets whether we remove elements related to AssertJ from assertion error stack trace.
    * <p>
@@ -2267,8 +2231,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage) {
     return Assertions.fail(failureMessage);
   }
 
@@ -2283,8 +2246,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage, Object... args) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage, Object... args) {
     return Assertions.fail(failureMessage, args);
   }
 
@@ -2298,8 +2260,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @CanIgnoreReturnValue
-  public static <T> T fail(String failureMessage, Throwable realCause) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T fail(String failureMessage, Throwable realCause) {
     return Assertions.fail(failureMessage, realCause);
   }
 
@@ -2314,8 +2275,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @CanIgnoreReturnValue
-  public static <T> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
+  @CanIgnoreReturnValue public static <T extends java.lang.Object> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     return Assertions.shouldHaveThrown(throwableClass);
   }
 
@@ -2432,10 +2392,6 @@ public class BDDAssertions extends Assertions {
     Assertions.setMaxStackTraceElementsDisplayed(maxStackTraceElementsDisplayed);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -2466,7 +2422,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
+  public static <T extends java.lang.Object> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Assertions.extractProperty(propertyName, propertyType);
   }
 
@@ -2561,10 +2517,6 @@ public class BDDAssertions extends Assertions {
     Assertions.setExtractBareNamePropertyMethods(barenamePropertyMethods);
   }
 
-  // ------------------------------------------------------------------------------------------------------
-  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
    * all
@@ -2583,7 +2535,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <K, V> MapEntry<K, V> entry(K key, V value) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapEntry<K, V> entry(K key, V value) {
     return Assertions.entry(key, value);
   }
 
@@ -2774,7 +2726,7 @@ public class BDDAssertions extends Assertions {
   }
 
   /**
-   * Assertions entry point for {@link TemporalUnitOffset} with less than or equal condition
+   * Assertions entry point for {@link TemporalUnitOffset} with  with less than or equal condition
    * to use with isCloseTo temporal assertions.
    * <p>
    * Typical usage :
@@ -3040,7 +2992,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <F, T> Function<F, T> from(Function<F, T> extractor) {
+  public static <F extends java.lang.Object, T extends java.lang.Object> Function<F, T> from(Function<F, T> extractor) {
     return Assertions.from(extractor);
   }
 
@@ -3068,12 +3020,9 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T, ASSERT extends AbstractAssert<?, ?>> InstanceOfAssertFactory<T, ASSERT> as(InstanceOfAssertFactory<T, ASSERT> assertFactory) {
+  public static <T extends java.lang.Object, ASSERT extends AbstractAssert<?, ?>> InstanceOfAssertFactory<T, ASSERT> as(InstanceOfAssertFactory<T, ASSERT> assertFactory) {
     return Assertions.as(assertFactory);
   }
-  // ------------------------------------------------------------------------------------------------------
-  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
-  // ------------------------------------------------------------------------------------------------------
 
   /**
    * Creates a new <code>{@link AllOf}</code>
@@ -3086,8 +3035,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @SafeVarargs
-  public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> allOf(Condition<? super T>... conditions) {
     return Assertions.allOf(conditions);
   }
 
@@ -3102,7 +3050,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.allOf(conditions);
   }
 
@@ -3120,8 +3068,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  @SafeVarargs
-  public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
+  @SafeVarargs public static <T extends java.lang.Object> Condition<T> anyOf(Condition<? super T>... conditions) {
     return Assertions.anyOf(conditions);
   }
 
@@ -3136,7 +3083,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
+  public static <T extends java.lang.Object> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.anyOf(conditions);
   }
 
@@ -3149,7 +3096,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return Assertions.doesNotHave(condition);
   }
 
@@ -3162,13 +3109,9 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.20.0
    */
-  public static <T> Not<T> not(Condition<? super T> condition) {
+  public static <T extends java.lang.Object> Not<T> not(Condition<? super T> condition) {
     return Assertions.not(condition);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
@@ -3244,10 +3187,6 @@ public class BDDAssertions extends Assertions {
   public static NotFilter not(Object valueNotToMatch) {
     return Assertions.not(valueNotToMatch);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // File methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
@@ -3353,7 +3292,7 @@ public class BDDAssertions extends Assertions {
     return Assertions.linesOf(file, charsetName);
   }
 
-	/**
+  /**
 	 * Loads the text content of a file at a given path into a list of strings with the default charset, each string corresponding to a
 	 * line.
 	 * The line endings are either \n, \r or \r\n.
@@ -3365,11 +3304,11 @@ public class BDDAssertions extends Assertions {
 	 *
 	 * @since 3.23.0
 	 */
-	public static List<String> linesOf(Path path) {
-		return Assertions.linesOf(path, Charset.defaultCharset());
-	}
+  public static List<String> linesOf(Path path) {
+    return Assertions.linesOf(path, Charset.defaultCharset());
+  }
 
-	/**
+  /**
 	 * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line.
 	 * The line endings are either \n, \r or \r\n.
 	 *
@@ -3381,11 +3320,11 @@ public class BDDAssertions extends Assertions {
 	 *
 	 * @since 3.23.0
 	 */
-	public static List<String> linesOf(Path path, Charset charset) {
-		return Assertions.linesOf(path, charset);
-	}
+  public static List<String> linesOf(Path path, Charset charset) {
+    return Assertions.linesOf(path, charset);
+  }
 
-	/**
+  /**
 	 * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line. The line endings are
 	 * either \n, \r or \r\n.
 	 *
@@ -3397,13 +3336,9 @@ public class BDDAssertions extends Assertions {
 	 *
 	 * @since 3.23.0
 	 */
-	public static List<String> linesOf(Path path, String charsetName) {
-		return Assertions.linesOf(path, charsetName);
-	}
-
-  // --------------------------------------------------------------------------------------------------
-  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
+  public static List<String> linesOf(Path path, String charsetName) {
+    return Assertions.linesOf(path, charsetName);
+  }
 
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
@@ -3505,10 +3440,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(URL url, String charsetName) {
     return Assertions.linesOf(url, charsetName);
   }
-
-  // --------------------------------------------------------------------------------------------------
-  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
 
   /**
    * Instead of using default strict date/time parsing, it is possible to use lenient parsing mode for default date
@@ -3758,7 +3689,7 @@ public class BDDAssertions extends Assertions {
    *
    * @since 3.5.0
    */
-  public static <T> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
+  public static <T extends java.lang.Object> void registerFormatterForType(Class<T> type, Function<T, String> formatter) {
     Assertions.registerFormatterForType(type, formatter);
   }
 

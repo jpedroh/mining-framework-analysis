@@ -1,20 +1,6 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2023 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -40,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.concurrent.atomic.AtomicStampedReference;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
@@ -54,12 +39,7 @@ import org.assertj.core.util.CheckReturnValue;
  *
  * @since 2.5.0 / 3.5.0
  */
-@Deprecated
-@CheckReturnValue
-// Deprecation is raised by JDK-17. IntelliJ thinks this is redundant when it is not.
-@SuppressWarnings({"DeprecatedIsStillUsed", "deprecation", "RedundantSuppression"})
-public class Java6BDDAssertions {
-
+@Deprecated @CheckReturnValue @SuppressWarnings(value = { "DeprecatedIsStillUsed", "deprecation", "RedundantSuppression" }) public class Java6BDDAssertions {
   /**
    * Create assertion for {@link AtomicBoolean}.
    *
@@ -101,7 +81,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return new AtomicIntegerFieldUpdaterAssert<>(actual);
   }
 
@@ -135,7 +115,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
+  public static <OBJECT extends java.lang.Object> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
     return new AtomicLongFieldUpdaterAssert<>(actual);
   }
 
@@ -147,7 +127,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
     return new AtomicReferenceAssert<>(actual);
   }
 
@@ -159,7 +139,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
+  public static <ELEMENT extends java.lang.Object> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
     return new AtomicReferenceArrayAssert<>(actual);
   }
 
@@ -172,7 +152,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+  public static <FIELD extends java.lang.Object, OBJECT extends java.lang.Object> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return new AtomicReferenceFieldUpdaterAssert<>(actual);
   }
 
@@ -184,7 +164,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
     return new AtomicMarkableReferenceAssert<>(actual);
   }
 
@@ -196,7 +176,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 2.7.0 / 3.7.0
    */
-  public static <VALUE> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
+  public static <VALUE extends java.lang.Object> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
     return new AtomicStampedReferenceAssert<>(actual);
   }
 
@@ -362,7 +342,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 3.21.0
    */
-  public static <T> AbstractCollectionAssert<?, Collection<? extends T>, T, ObjectAssert<T>> then(Collection<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractCollectionAssert<?, Collection<? extends T>, T, ObjectAssert<T>> then(Collection<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -385,7 +365,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractIterableAssert<?, Iterable<? extends T>, T, ObjectAssert<T>> then(Iterable<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractIterableAssert<?, Iterable<? extends T>, T, ObjectAssert<T>> then(Iterable<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -408,7 +388,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractIteratorAssert<?, T> then(Iterator<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractIteratorAssert<?, T> then(Iterator<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -449,10 +429,7 @@ public class Java6BDDAssertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-  //@format:off
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-      FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(Iterable<? extends ELEMENT> actual,
-                                                                               AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(Iterable<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
 
@@ -485,9 +462,7 @@ public class Java6BDDAssertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-      ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(ACTUAL actual,
-                                                                             Class<ELEMENT_ASSERT> assertClass) {
+  public static <ACTUAL extends Iterable<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableIterableAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(ACTUAL actual, Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
 
@@ -528,9 +503,7 @@ public class Java6BDDAssertions {
    * @param assertFactory the factory used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-      FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual,
-                                                                           AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
+  public static <ACTUAL extends List<? extends ELEMENT>, ELEMENT extends java.lang.Object, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> FactoryBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual, AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
 
@@ -563,13 +536,9 @@ public class Java6BDDAssertions {
    * @param assertClass the class used to create the elements assert instance.
    * @return the created assertion object.
    */
-  public static <ELEMENT, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
-      ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual,
-                                                                         Class<ELEMENT_ASSERT> assertClass) {
+  public static <ELEMENT extends java.lang.Object, ACTUAL extends List<? extends ELEMENT>, ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>> ClassBasedNavigableListAssert<?, ACTUAL, ELEMENT, ELEMENT_ASSERT> then(List<? extends ELEMENT> actual, Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
-
-//@format:on
 
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
@@ -630,7 +599,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object
    * @since 2.7.0 / 3.7.0
    */
-  public static <RESULT> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> then(Future<RESULT> actual) {
+  public static <RESULT extends java.lang.Object> AbstractFutureAssert<?, ? extends Future<? extends RESULT>, RESULT> then(Future<RESULT> actual) {
     return assertThat(actual);
   }
 
@@ -732,7 +701,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractListAssert<?, List<? extends T>, T, ObjectAssert<T>> then(List<? extends T> actual) {
+  public static <T extends java.lang.Object> AbstractListAssert<?, List<? extends T>, T, ObjectAssert<T>> then(List<? extends T> actual) {
     return assertThat(actual);
   }
 
@@ -784,7 +753,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> then(T actual) {
+  public static <T extends java.lang.Object> AbstractObjectAssert<?, T> then(T actual) {
     return assertThat(actual);
   }
 
@@ -795,7 +764,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectArrayAssert<?, T> then(T[] actual) {
+  public static <T extends java.lang.Object> AbstractObjectArrayAssert<?, T> then(T[] actual) {
     return assertThat(actual);
   }
 
@@ -807,7 +776,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 3.17.0
    */
-  public static <T> Object2DArrayAssert<T> then(T[][] actual) {
+  public static <T extends java.lang.Object> Object2DArrayAssert<T> then(T[][] actual) {
     return assertThat(actual);
   }
 
@@ -819,7 +788,7 @@ public class Java6BDDAssertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <K, V> MapAssert<K, V> then(Map<K, V> actual) {
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapAssert<K, V> then(Map<K, V> actual) {
     return assertThat(actual);
   }
 
@@ -981,8 +950,7 @@ public class Java6BDDAssertions {
    * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
    * @return The captured exception or <code>null</code> if none was raised by the callable.
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return Assertions.assertThatThrownBy(shouldRaiseThrowable);
   }
 
@@ -1018,9 +986,7 @@ public class Java6BDDAssertions {
    *
    * @since 3.9.0
    */
-  @CanIgnoreReturnValue
-  public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable,
-                                                                             String description, Object... args) {
+  @CanIgnoreReturnValue public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable, String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
 
@@ -1150,14 +1116,15 @@ public class Java6BDDAssertions {
    *          the component that creates its own assert
    * @return the associated {@link Assert} of the given component
    */
-  public static <T> T then(final AssertProvider<T> component) {
+  public static <T extends java.lang.Object> T then(final AssertProvider<T> component) {
     return component.assertThat();
   }
 
   /**
    * Creates a new <code>{@link org.assertj.core.api.BDDAssertions}</code>.
    */
-  protected Java6BDDAssertions() {}
+  protected Java6BDDAssertions() {
+  }
 
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectAssert}</code> for any object.
@@ -1175,7 +1142,7 @@ public class Java6BDDAssertions {
    * @return the created assertion object.
    * @since 3.12.0
    */
-  public static <T> AbstractObjectAssert<?, T> thenObject(T actual) {
+  public static <T extends java.lang.Object> AbstractObjectAssert<?, T> thenObject(T actual) {
     return then(actual);
   }
 }
