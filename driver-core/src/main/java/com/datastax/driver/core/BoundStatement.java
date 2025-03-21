@@ -511,6 +511,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * of neither of the following types: VARCHAR, TEXT or ASCII.
      */
+
     public BoundStatement setString(String name, String v) {
         return wrapper.setString(name, v);
     }
@@ -529,6 +530,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BLOB.
      */
+
     public BoundStatement setBytes(int i, ByteBuffer v) {
         return wrapper.setBytes(i, v);
     }
@@ -550,6 +552,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
      * @throws InvalidTypeException if (any occurrence of) {@code name} is not of type BLOB.
      */
+
     public BoundStatement setBytes(String name, ByteBuffer v) {
         return wrapper.setBytes(name, v);
     }
@@ -568,6 +571,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      *
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      */
+
     public BoundStatement setBytesUnsafe(int i, ByteBuffer v) {
         return wrapper.setBytesUnsafe(i, v);
     }
@@ -589,6 +593,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IllegalArgumentException if {@code name} is not a prepared
      * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
      */
+
     public BoundStatement setBytesUnsafe(String name, ByteBuffer v) {
         return wrapper.setBytesUnsafe(name, v);
     }
@@ -603,6 +608,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type VARINT.
      */
+
     public BoundStatement setVarint(int i, BigInteger v) {
         return wrapper.setVarint(i, v);
     }
@@ -621,6 +627,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * not of type VARINT.
      */
+
     public BoundStatement setVarint(String name, BigInteger v) {
         return wrapper.setVarint(name, v);
     }
@@ -635,6 +642,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type DECIMAL.
      */
+
     public BoundStatement setDecimal(int i, BigDecimal v) {
         return wrapper.setDecimal(i, v);
     }
@@ -653,6 +661,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * not of type DECIMAL.
      */
+
     public BoundStatement setDecimal(String name, BigDecimal v) {
         return wrapper.setDecimal(name, v);
     }
@@ -669,6 +678,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * TIMEUUID, or if column {@code i} is of type TIMEUUID but {@code v} is
      * not a type 1 UUID.
      */
+
     public BoundStatement setUUID(int i, UUID v) {
         return wrapper.setUUID(i, v);
     }
@@ -688,6 +698,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * not of type UUID or TIMEUUID, or if column {@code name} is of type
      * TIMEUUID but {@code v} is not a type 1 UUID.
      */
+
     public BoundStatement setUUID(String name, UUID v) {
         return wrapper.setUUID(name, v);
     }
@@ -702,6 +713,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type INET.
      */
+
     public BoundStatement setInet(int i, InetAddress v) {
         return wrapper.setInet(i, v);
     }
@@ -720,6 +732,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * not of type INET.
      */
+
     public BoundStatement setInet(String name, InetAddress v) {
         return wrapper.setInet(name, v);
     }
@@ -737,6 +750,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of the type of the token's value.
      */
+
     public BoundStatement setToken(int i, Token v) {
         return wrapper.setToken(i, v);
     }
@@ -767,6 +781,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * not of the type of the token's value.
      */
+
     public BoundStatement setToken(String name, Token v) {
         return wrapper.setToken(name, v);
     }
@@ -801,6 +816,7 @@ public class BoundStatement extends Statement implements SettableData<BoundState
      * @throws InvalidTypeException if (any occurrence of) {@code name} is
      * not of the type of the token's value.
      */
+
     public BoundStatement setPartitionKeyToken(Token v) {
         return setToken("partition key token", v);
     }
