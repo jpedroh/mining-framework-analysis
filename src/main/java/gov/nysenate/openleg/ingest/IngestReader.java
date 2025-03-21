@@ -164,6 +164,255 @@ public class IngestReader {
 		calendarParser = new CalendarParser(this);
 	}
 	
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/de816044907e6d82a25cf08d3b2ef5efae55a879/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/left.java
+	public void processFile(File file) {
+		if(file.isDirectory()) {
+			for(File child: sortFilesByName(file.listFiles()))
+				processFile(child);
+
+		} else {
+			
+			File[] files = sortFilesByName(file.listFiles());
+			
+			for (int i = 0; i < files.length; i++)
+			{
+				if(files[i].isFile()) {
+					handleFile(files[i]);
+				}
+				else if(files[i].isDirectory()) {
+					handlePath(files[i].getAbsolutePath());
+				}
+			}
+		}
+		else {
+			handleFile(file);
+		}
+	}
+	
+	public void handleFile(File file) {
+		logger.info("Reading file: " + file);
+				
+		if(file.getName().endsWith(".TXT")) {			
+			bills = new ArrayList<Bill>();
+			try {
+				logger.warn("Reading file: " + file);
+				ArrayList<ISenateObject> objects = new ArrayList<ISenateObject>();
+				ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
+				
+				long start = System.currentTimeMillis();
+				if(file.getName().endsWith(".TXT")) {
+					for(Bill bill: basicParser.handleBill(file.getAbsolutePath(), '-')) {
+						objects.add(processSenateObject(bill, Bill.class, file, true));
+					}
+					basicParser.clearBills();
+					
+				} else if(file.getName().contains("-calendar-")) {
+					XmlHelper.fixCalendar(file);
+					for(Calendar calendar:calendarParser.doParsing(file.getAbsolutePath())) {
+						objects.add(processSenateObject(calendar, Calendar.class, file, true));
+					}
+					calendarParser.clearCalendars();
+					
+				} else if(file.getName().contains("-agenda-")) {
+					for(ISenateObject obj:committeeParser.doParsing(file)) {
+						if(obj instanceof Bill)
+							objects.add(processSenateObject(obj,Bill.class,file,true));
+						else if(obj instanceof Agenda)
+							objects.add(processSenateObject(obj,Agenda.class,file,true));
+					}
+					committeeParser.clearUpdates();
+					
+				} else {
+					//This file doesn't belong here...
+					throw new IngestException();
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
+				
+				//Write the objects
+				start = System.currentTimeMillis();
+				for(ISenateObject obj:objects) {
+					if(writeSenateObject(obj))
+						luceneObjects.add(obj);
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects");
+				
+				//Index the objects we wrote successfully
+				start = System.currentTimeMillis();
+				this.searchEngine.indexSenateObjects(
+						luceneObjects,
+						new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+	
+				//Commit the changes made to the file system
+				start = System.currentTimeMillis();
+				commit(file.getName());
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+				
+				logger.warn("Finished with file: "+file.getName());
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (IngestException e) {
+				// TODO Auto-generated catch block
+				//We don't care about this file, do nothing
+				//e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(!calendars.isEmpty()) {
+				writeCalendars(calendars, file);
+				calendarParser.clearCalendars();
+			}
+			
+			calendars.clear();
+		}
+		else if(file.getName().contains("-agenda-")) {
+			try {
+				committeeUpdates = getCommitteeParser().doParsing(file);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			writeCommitteeUpdates(committeeUpdates, file);
+			committeeParser.clearUpdates();
+		}
+		
+//		long start = System.currentTimeMillis();
+//		String message = file.getName();
+//		gitCommit(message);
+//		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+//		logger.warn("Finished with file: "+file.getName());
+	}
+||||||| /usr/src/app/output/nysenate/openlegislation/de816044907e6d82a25cf08d3b2ef5efae55a879/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/base.java
+	public void processFile(File file) {
+		if(file.isDirectory()) {
+			for(File child: sortFilesByName(file.listFiles()))
+				processFile(child);
+
+		} else {
+			
+			File[] files = sortFilesByName(file.listFiles());
+			
+			for (int i = 0; i < files.length; i++)
+			{
+				if(files[i].isFile()) {
+					handleFile(files[i]);
+				}
+				else if(files[i].isDirectory()) {
+					handlePath(files[i].getAbsolutePath());
+				}
+			}
+		}
+		else {
+			handleFile(file);
+		}
+	}
+	
+	public void handleFile(File file) {
+		logger.warn("Reading file: " + file);
+		
+		if(file.getName().endsWith(".TXT")) {			
+			bills = new ArrayList<Bill>();
+			try {
+				logger.warn("Reading file: " + file);
+				ArrayList<ISenateObject> objects = new ArrayList<ISenateObject>();
+				ArrayList<ILuceneObject> luceneObjects = new ArrayList<ILuceneObject>();
+				
+				long start = System.currentTimeMillis();
+				if(file.getName().endsWith(".TXT")) {
+					for(Bill bill: basicParser.handleBill(file.getAbsolutePath(), '-')) {
+						objects.add(processSenateObject(bill, Bill.class, file, true));
+					}
+					basicParser.clearBills();
+					
+				} else if(file.getName().contains("-calendar-")) {
+					XmlHelper.fixCalendar(file);
+					for(Calendar calendar:calendarParser.doParsing(file.getAbsolutePath())) {
+						objects.add(processSenateObject(calendar, Calendar.class, file, true));
+					}
+					calendarParser.clearCalendars();
+					
+				} else if(file.getName().contains("-agenda-")) {
+					for(ISenateObject obj:committeeParser.doParsing(file)) {
+						if(obj instanceof Bill)
+							objects.add(processSenateObject(obj,Bill.class,file,true));
+						else if(obj instanceof Agenda)
+							objects.add(processSenateObject(obj,Agenda.class,file,true));
+					}
+					committeeParser.clearUpdates();
+					
+				} else {
+					//This file doesn't belong here...
+					throw new IngestException();
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Processed Objects");
+				
+				//Write the objects
+				start = System.currentTimeMillis();
+				for(ISenateObject obj:objects) {
+					if(writeSenateObject(obj))
+						luceneObjects.add(obj);
+				}
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Wrote Objects");
+				
+				//Index the objects we wrote successfully
+				start = System.currentTimeMillis();
+				this.searchEngine.indexSenateObjects(
+						luceneObjects,
+						new LuceneSerializer[]{	new XmlSerializer(), new JsonSerializer()});
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Indexed Objects");
+	
+				//Commit the changes made to the file system
+				start = System.currentTimeMillis();
+				commit(file.getName());
+				logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+				
+				logger.warn("Finished with file: "+file.getName());
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (IngestException e) {
+				// TODO Auto-generated catch block
+				//We don't care about this file, do nothing
+				//e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(!calendars.isEmpty()) {
+				writeCalendars(calendars, file);
+				calendarParser.clearCalendars();
+			}
+			
+			calendars.clear();
+		}
+		else if(file.getName().contains("-agenda-")) {
+			try {
+				committeeUpdates = getCommitteeParser().doParsing(file);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			writeCommitteeUpdates(committeeUpdates, file);
+			committeeParser.clearUpdates();
+		}
+		
+		long start = System.currentTimeMillis();
+		String message = file.getName();
+		gitCommit(message);
+		logger.warn(((System.currentTimeMillis()-start))/1000.0+" - Committed Changes");
+		logger.warn("Finished with file: "+file.getName());
+	}
+=======
 	public void processFile(File file) {
 		if(file.isDirectory()) {
 			for(File child: sortFilesByName(file.listFiles()))
@@ -241,6 +490,39 @@ public class IngestReader {
 			}
 		}
 	}
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/de816044907e6d82a25cf08d3b2ef5efae55a879/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/right.java
+	
+	public static File[] sortFilesByName(File[] fList) {
+		Arrays.sort(fList, new Comparator<File>() {
+			@Override
+			public int compare(File one, File two) {
+				return one.getName().compareTo(two.getName());
+			}
+		});
+		
+		return fList;
+	}
+	
+	//TODO this is pretty bad
+	
+	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
+		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
+	}
+	
+	/**
+	 * @param path to json document
+	 * @param clazz class of object to be loaded
+	 * @return deserialized SenateObject of type clazz
+	 */
+	
+	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, File file, boolean merge) {
+		if(file == null)
+			writeSenateObject(obj, clazz, merge);
+		else {
+			obj.addSobiReference(file.getName());
+			writeSenateObject(obj, clazz, getDateFromFileName(file.getName()), merge);
+		}
+	}
 	
 	public void writeSenateObject(ISenateObject obj, Class<? extends ISenateObject> clazz, boolean merge) {
 		writeSenateObject(obj, clazz, THE_TIME, merge);
@@ -306,10 +588,6 @@ public class IngestReader {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	public ISenateObject loadObject(String id, String year, String type, Class<? extends ISenateObject> clazz) {
-		return loadObject(WRITE_DIRECTORY + "/" + year + "/" + type + "/" + id + ".json", clazz);
 	}
 	
 	/**
@@ -856,17 +1134,6 @@ public class IngestReader {
 				}
 			}
 		}
-	}
-	
-	public static File[] sortFilesByName(File[] fList) {
-		Arrays.sort(fList, new Comparator<File>() {
-			@Override
-			public int compare(File one, File two) {
-				return one.getName().compareTo(two.getName());
-			}
-		});
-		
-		return fList;
 	}
 	
 	/* 
