@@ -127,11 +127,6 @@ public class Version implements Comparable<Version> {
     return compareTo(version) >= 0;
   }
 
-  public boolean isAtMost(Version version)
-  {
-    return compareTo(version) <= 0;
-  }
-
   @Override
   public String toString() {
     if (!minor.isPresent()) {
