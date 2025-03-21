@@ -79,7 +79,7 @@ public class Dictionary {
 	 * 配置对象
 	 */
 	private Configuration configuration;
-	public static ESLogger logger=Loggers.getLogger("ik-analyzer");
+	public static final ESLogger logger=Loggers.getLogger("ik-analyzer");
 
 	private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
 
@@ -103,29 +103,28 @@ public class Dictionary {
 	 * @return Dictionary
 	 */
 	public static synchronized Dictionary initial(Configuration cfg){
-		if(singleton == null){
-			synchronized(Dictionary.class){
-				if(singleton == null){
-					singleton = new Dictionary();
-					singleton.configuration=cfg;
-					singleton.loadMainDict();
-					singleton.loadSurnameDict();
-					singleton.loadQuantifierDict();
-					singleton.loadSuffixDict();
-					singleton.loadPrepDict();
-					singleton.loadStopWordDict();
-
-					//建立监控线程
-					for(String location:cfg.getRemoteExtDictionarys()){
-						//10 秒是初始延迟可以修改的  60是间隔时间  单位秒
-						pool.scheduleAtFixedRate(new Monitor(location), 10, 60, TimeUnit.SECONDS);
-					}
-					for(String location:cfg.getRemoteExtStopWordDictionarys()){
-						pool.scheduleAtFixedRate(new Monitor(location), 10, 60, TimeUnit.SECONDS);
-					}
-
-					return singleton;
+		
+		synchronized(Dictionary.class){
+			if(singleton == null){
+				singleton = new Dictionary();
+				singleton.configuration=cfg;
+				singleton.loadMainDict();
+				singleton.loadSurnameDict();
+				singleton.loadQuantifierDict();
+				singleton.loadSuffixDict();
+				singleton.loadPrepDict();
+				singleton.loadStopWordDict();
+				
+				//建立监控线程
+				for(String location:cfg.getRemoteExtDictionarys()){
+					//10 秒是初始延迟可以修改的  60是间隔时间  单位秒
+					pool.scheduleAtFixedRate(new Monitor(location), 10, 60, TimeUnit.SECONDS);
 				}
+				for(String location:cfg.getRemoteExtStopWordDictionarys()){
+					pool.scheduleAtFixedRate(new Monitor(location), 10, 60, TimeUnit.SECONDS);
+				}
+				
+				return singleton;
 			}
 		}
 		return singleton;
@@ -273,9 +272,9 @@ public class Dictionary {
 				logger.info("[Dict Loading] " + extDictName);
 				Path file = PathUtils.get(configuration.getDictRoot(), extDictName);
 				try {
-					is = new FileInputStream(file.toFile());
+				    is = new FileInputStream(file.toFile());
 				} catch (FileNotFoundException e) {
-					logger.error("ik-analyzer",e);
+				    logger.error("ik-analyzer",e);
 				}
 
 				//如果找不到扩展的字典，则忽略
@@ -294,16 +293,14 @@ public class Dictionary {
 					} while (theWord != null);
 
 				} catch (IOException e) {
-					logger.error("ik-analyzer",e);
-				}finally{
+                    logger.error("ik-analyzer",e);
+                }finally{
 					try {
-						if(is != null){
-							is.close();
-							is = null;
-						}
+						is.close();
+						is = null;
 					} catch (IOException e) {
-						logger.error("ik-analyzer",e);
-					}
+                        logger.error("ik-analyzer",e);
+                    }
 				}
 			}
 		}
@@ -318,11 +315,14 @@ public class Dictionary {
 		for(String location:remoteExtDictFiles){
 			logger.info("[Dict Loading] " + location);
 			List<String> lists = getRemoteWords(location);
+			
+			/** Redundant Nullcheck as the list is initialized in the getRemoteWords method
 			//如果找不到扩展的字典，则忽略
 			if(lists == null){
 				logger.error("[Dict Loading] "+location+"加载失败");
 				continue;
-			}
+			}*/
+			
 			for(String theWord:lists){
 				if (theWord != null && !"".equals(theWord.trim())) {
 					//加载扩展词典数据到主内存词典中
@@ -431,9 +431,9 @@ public class Dictionary {
 				//读取扩展词典文件
 				file=PathUtils.get(configuration.getDictRoot(), extStopWordDictName);
 				try {
-					is = new FileInputStream(file.toFile());
+				    is = new FileInputStream(file.toFile());
 				} catch (FileNotFoundException e) {
-					logger.error("ik-analyzer",e);
+				    logger.error("ik-analyzer",e);
 				}
 				//如果找不到扩展的字典，则忽略
 				if(is == null){
@@ -451,16 +451,14 @@ public class Dictionary {
 					} while (theWord != null);
 
 				} catch (IOException e) {
-					logger.error("ik-analyzer",e);
-
+                    logger.error("ik-analyzer",e);
+					
 				}finally{
 					try {
-						if(is != null){
-							is.close();
-							is = null;
-						}
+						is.close();
+						is = null;
 					} catch (IOException e) {
-						logger.error("ik-analyzer",e);
+                        logger.error("ik-analyzer",e);
 					}
 				}
 			}
@@ -471,11 +469,14 @@ public class Dictionary {
 		for(String location:remoteExtStopWordDictFiles){
 			logger.info("[Dict Loading] " + location);
 			List<String> lists = getRemoteWords(location);
+			
+			/** Redundant Nullcheck as the list is initialized in the getRemoteWords method
 			//如果找不到扩展的字典，则忽略
 			if(lists == null){
 				logger.error("[Dict Loading] "+location+"加载失败");
 				continue;
-			}
+			}*/
+			
 			for(String theWord:lists){
 				if (theWord != null && !"".equals(theWord.trim())) {
 					//加载远程词典数据到主内存中
@@ -534,9 +535,9 @@ public class Dictionary {
 		Path file = PathUtils.get(configuration.getDictRoot(), Dictionary.PATH_DIC_SURNAME);
 		InputStream is = null;
 		try {
-			is = new FileInputStream(file.toFile());
+		    is = new FileInputStream(file.toFile());
 		} catch (FileNotFoundException e) {
-			logger.error("ik-analyzer",e);
+		    logger.error("ik-analyzer",e);
 		}
 		if(is == null){
 			throw new RuntimeException("Surname Dictionary not found!!!");
@@ -551,15 +552,13 @@ public class Dictionary {
 				}
 			} while (theWord != null);
 		} catch (IOException e) {
-			logger.error("ik-analyzer",e);
+		    logger.error("ik-analyzer",e);
 		}finally{
 			try {
-				if(is != null){
-					is.close();
-					is = null;
-				}
+				is.close();
+				is = null;
 			} catch (IOException e) {
-				logger.error("ik-analyzer",e);
+			    logger.error("ik-analyzer",e);
 			}
 		}
 	}
