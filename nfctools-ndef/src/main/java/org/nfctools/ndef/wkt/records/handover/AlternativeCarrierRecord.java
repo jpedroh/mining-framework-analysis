@@ -24,13 +24,29 @@ import org.nfctools.ndef.wkt.records.WellKnownRecord;
 /**
  * 
  * 
+<<<<<<< /usr/src/app/output/grundid/nfctools/fffd5949aeb52ad453125aa10e8fb716e3efe579/nfctools-ndef/src/main/java/org/nfctools/ndef/wkt/records/handover/AlternativeCarrierRecord.java/left.java
+ * The record references are established using the URI-based Payload Identification mechanism described in the NDEF specification [NDEF]. 
+ * The URI reference values SHALL be encoded as relative URIs with the virtual base defined as "urn:nfc:handover:".
+ * The message generator is responsible for the uniqueness of the payload identifiers encoded into the ID field of the NDEF record header. 
+ * While identifiers can be strings of length up to 255 characters, it is RECOMMENDED that short, possibly single character, strings are used. 
+ * However, the generator SHALL NOT use the tilde character ("~", hexadecimal 7E) at the first string position and a 
+ * compliant parser SHALL ignore strings starting with a tilde character.
+||||||| /usr/src/app/output/grundid/nfctools/fffd5949aeb52ad453125aa10e8fb716e3efe579/nfctools-ndef/src/main/java/org/nfctools/ndef/wkt/records/handover/AlternativeCarrierRecord.java/base.java
+ * The record references are established using the URI-based Payload Identification mechanism described in the NDEF specification [NDEF]. 
+ * The URI reference values SHALL be encoded as relative URIs with the virtual base defined as �urn:nfc:handover:�.
+ * The message generator is responsible for the uniqueness of the payload identifiers encoded into the ID field of the NDEF record header. 
+ * While identifiers can be strings of length up to 255 characters, it is RECOMMENDED that short, possibly single character, strings are used. 
+ * However, the generator SHALL NOT use the tilde character (�~�, hexadecimal 7E) at the first string position and a 
+ * compliant parser SHALL ignore strings starting with a tilde character.
+=======
  * The record references are established using the URI-based Payload Identification mechanism described in the NDEF
  * specification [NDEF]. The URI reference values SHALL be encoded as relative URIs with the virtual base defined as
- * "urn:nfc:handover:". The message generator is responsible for the uniqueness of the payload identifiers encoded into
+ * �urn:nfc:handover:�. The message generator is responsible for the uniqueness of the payload identifiers encoded into
  * the ID field of the NDEF record header. While identifiers can be strings of length up to 255 characters, it is
  * RECOMMENDED that short, possibly single character, strings are used. However, the generator SHALL NOT use the tilde
- * character ("~", hexadecimal 7E) at the first string position and a compliant parser SHALL ignore strings starting
+ * character (�~�, hexadecimal 7E) at the first string position and a compliant parser SHALL ignore strings starting
  * with a tilde character.
+>>>>>>> /usr/src/app/output/grundid/nfctools/fffd5949aeb52ad453125aa10e8fb716e3efe579/nfctools-ndef/src/main/java/org/nfctools/ndef/wkt/records/handover/AlternativeCarrierRecord.java/right.java
  * 
  * @author Thomas Rorvik Skjolberg (skjolber@gmail.com)
  * 
