@@ -188,11 +188,10 @@ public class TestDependencyMojo extends AbstractHpiMojo {
             if (useUpperBounds) {
                 boolean converged = false;
                 int i = 0;
-                Map<String, String> upperBounds = null;
 
                 while (!converged) {
                     if (i++ > 10) {
-                        throw new MojoExecutionException("Failed to iterate to convergence during upper bounds analysis: " + upperBounds);
+                        throw new MojoExecutionException("Failed to iterate to convergence during upper bounds analysis");
                     }
 
                     /*
@@ -212,7 +211,7 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                     RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
                     node.accept(visitor);
                     String self = String.format("%s:%s", shadow.getGroupId(), shadow.getArtifactId());
-                    upperBounds = visitor.upperBounds(upperBoundsExcludes, self);
+                    Map<String, String> upperBounds = visitor.upperBounds(upperBoundsExcludes, self);
 
                     if (upperBounds.isEmpty()) {
                         converged = true;
