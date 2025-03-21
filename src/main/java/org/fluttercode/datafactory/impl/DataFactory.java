@@ -23,6 +23,7 @@ package org.fluttercode.datafactory.impl;
  *
  */
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -317,7 +318,39 @@ public final class DataFactory {
 					max));
 		}
 
-		return min + random.nextInt(max - min);
+		int average = avg(min, max);
+		int base = abs(min - average);
+
+		int randomNumber;
+		if (base != 0) {
+			randomNumber = random.nextInt(base);
+		} else {
+			randomNumber = 0;
+		}
+
+		if (random.nextBoolean()) {
+			return average + randomNumber;
+		} else {
+			return average - randomNumber;
+		}
+	}
+
+	private int abs(int number) {
+		if (number == Integer.MIN_VALUE) {
+			// -1 * MIN_VALUE will overflow
+			return Integer.MAX_VALUE;
+		} else {
+			return Math.abs(number);
+		}
+	}
+
+	private int avg(int first, int second) {
+		BigInteger firstInt = BigInteger.valueOf(first);
+		BigInteger secondInt = BigInteger.valueOf(second);
+		
+		return firstInt.add(secondInt).
+				divide(BigInteger.valueOf(2)).
+				intValue();
 	}
 
 	/**
@@ -417,7 +450,13 @@ public final class DataFactory {
 			}
 			final double desiredWordLengthNormalDistributed = 1.0+Math.abs(random.nextGaussian()) * 6;
 			int usedWordLength = (int)(Math.min(length, desiredWordLengthNormalDistributed));
+<<<<<<< /usr/src/app/output/andygibson/datafactory/1d4a47b045ee2c13820416dd60773690f6093e62/src/main/java/org/fluttercode/datafactory/impl/DataFactory.java/left.java
+			String word = getRandomWord(0, length);
+||||||| /usr/src/app/output/andygibson/datafactory/1d4a47b045ee2c13820416dd60773690f6093e62/src/main/java/org/fluttercode/datafactory/impl/DataFactory.java/base.java
+			String word = getRandomWord(length);
+=======
 			String word = getRandomWord(usedWordLength);
+>>>>>>> /usr/src/app/output/andygibson/datafactory/1d4a47b045ee2c13820416dd60773690f6093e62/src/main/java/org/fluttercode/datafactory/impl/DataFactory.java/right.java
 			sb.append(word);
 			length = length - word.length();
 		}
@@ -487,7 +526,7 @@ public final class DataFactory {
 	/**
 	 * Returns a word of a length between 1 and 10 characters.
 	 * 
-	 * @return A work of max length 10
+	 * @return A word of max length 10
 	 */
 	public String getRandomWord() {
 		return getItem(contentDataValues.getWords());
