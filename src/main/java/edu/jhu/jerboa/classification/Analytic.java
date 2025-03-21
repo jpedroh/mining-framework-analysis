@@ -185,6 +185,12 @@ public class Analytic {
     IDocumentParser docParser = (IDocumentParser) c.newInstance();
 
     for (int i = 0; i < args.length; i++)
+<<<<<<< /usr/src/app/output/vandurme/jerboa/3ce0e6dedb14acd3be38b052f4158734778b4973/src/main/java/edu/jhu/jerboa/classification/Analytic.java/left.java
+      analytic.process(args[i],docParser.parseDocument(new File(args[i])));
+||||||| /usr/src/app/output/vandurme/jerboa/3ce0e6dedb14acd3be38b052f4158734778b4973/src/main/java/edu/jhu/jerboa/classification/Analytic.java/base.java
+      docParser.parseDocument(FileManager.getFile(args[i]));
+=======
       analytic.process(args[i], docParser.parseDocument(new File(args[i])));
+>>>>>>> /usr/src/app/output/vandurme/jerboa/3ce0e6dedb14acd3be38b052f4158734778b4973/src/main/java/edu/jhu/jerboa/classification/Analytic.java/right.java
   }
 }
