@@ -1,20 +1,4 @@
-/*
- * Copyright 2010 Daniel Kurka
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.googlecode.mgwt.ui.client.widget.tabbar;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -26,13 +10,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.util.HandlerRegistrationConverter;
 import com.googlecode.mgwt.ui.client.widget.carousel.Carousel;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,26 +44,25 @@ import java.util.List;
  * @author Daniel Kurka
  */
 public class TabPanel extends Composite implements HasSelectionHandlers<Integer> {
-
   public static class TabBar extends Composite implements HasSelectionHandlers<Integer> {
-
     private class InternalTouchHandler implements TapHandler {
-
       private final TabBarButtonBase button;
 
       public InternalTouchHandler(TabBarButtonBase button) {
         this.button = button;
       }
 
-      @Override
-      public void onTap(TapEvent event) {
+      @Override public void onTap(TapEvent event) {
         setSelectedButton(getIndexForWidget(button));
       }
     }
 
-    @UiField
-    public FlowPanel container;
-    private List<TabBarButtonBase> children = new ArrayList<TabBarButtonBase>();;
+    @UiField public FlowPanel container;
+
+    private List<TabBarButtonBase> children = new ArrayList<TabBarButtonBase>();
+
+
+
     private List<HandlerRegistration> handlers = new ArrayList<HandlerRegistration>();
 
     public TabBar() {
@@ -118,7 +99,6 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
         handlers.get(indexForWidget).removeHandler();
         handlers.remove(indexForWidget);
       }
-
       return container.remove(w);
     }
 
@@ -130,7 +110,6 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
       if (index < 0 || index >= children.size()) {
         throw new IllegalArgumentException("invalid index");
       }
-
       int count = 0;
       for (TabBarButtonBase button : children) {
         if (count == index) {
@@ -145,9 +124,7 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
       }
     }
 
-    @Override
-    public com.google.gwt.event.shared.HandlerRegistration addSelectionHandler(
-        SelectionHandler<Integer> handler) {
+    @Override public com.google.gwt.event.shared.HandlerRegistration addSelectionHandler(SelectionHandler<Integer> handler) {
       return addHandler(handler, SelectionEvent.getType());
     }
 
@@ -163,14 +140,11 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
 
   public static final TabBarAppearance DEFAULT_APPEARANCE = GWT.create(TabBarAppearance.class);
 
-  @UiField
-  public FlexPanel container;
+  @UiField public FlexPanel container;
 
-  @UiField(provided=true)
-  public Carousel tabContainer;
+  @UiField(provided = true) public Carousel tabContainer;
 
-  @UiField(provided=true)
-  public TabBar tabBar;
+  @UiField(provided = true) public TabBar tabBar;
 
   protected final TabBarAppearance appearance;
 
@@ -184,17 +158,13 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
     tabContainer.setShowCarouselIndicator(false);
     tabBar = new TabBar(appearance);
     initWidget(appearance.panelBinder().createAndBindUi(this));
-
     tabBar.addSelectionHandler(new SelectionHandler<Integer>() {
-      @Override
-      public void onSelection(SelectionEvent<Integer> event) {
+      @Override public void onSelection(SelectionEvent<Integer> event) {
         tabContainer.setSelectedPage(event.getSelectedItem(), false);
       }
     });
-
     tabContainer.addSelectionHandler(new SelectionHandler<Integer>() {
-      @Override
-      public void onSelection(SelectionEvent<Integer> event) {
+      @Override public void onSelection(SelectionEvent<Integer> event) {
         tabBar.setSelectedButton(event.getSelectedItem(), false);
       }
     });
@@ -219,29 +189,23 @@ public class TabPanel extends Composite implements HasSelectionHandlers<Integer>
    *
    * @param b the tab to add
    */
-  @UiChild(tagname = "tabs")
-  public void addTab(Tab b) {
+  @UiChild(tagname = "tabs") public void addTab(Tab b) {
     Widget w = b.getWidget();
     TabBarButtonBase button = b.getButton();
-
     if (button == null) {
       throw new IllegalArgumentException("button can not be null");
     }
-
     if (w == null) {
       throw new IllegalArgumentException("widget can not be null");
     }
     add(button, w);
   }
 
-  @Override
-  public com.google.gwt.event.shared.HandlerRegistration addSelectionHandler(
-      SelectionHandler<Integer> handler) {
+  @Override public com.google.gwt.event.shared.HandlerRegistration addSelectionHandler(SelectionHandler<Integer> handler) {
     return new HandlerRegistrationConverter(tabBar.addSelectionHandler(handler));
   }
 
-  @UiFactory
-  public TabBarAppearance getAppearance() {
-	  return appearance;
+  @UiFactory public TabBarAppearance getAppearance() {
+    return appearance;
   }
 }
