@@ -222,8 +222,7 @@ public abstract class AbstractBloomFilterTest<T extends BloomFilter> {
 
         final BloomFilter bf = createFilter(getTestShape(), TestingHashers.FROM1);
         final BloomFilter bf2 = TestingHashers.populateFromHashersFrom1AndFrom11(createEmptyFilter(getTestShape()));
-
-        final BloomFilter bf3 = TestingHashers.populateEntireFilter(createEmptyFilter(getTestShape()));
+        final BloomFilter bf3 = createFilter(getTestShape(), fullHasher);
 
         assertEquals(1, bf.estimateIntersection(bf2));
         assertEquals(1, bf2.estimateIntersection(bf));
@@ -236,10 +235,14 @@ public abstract class AbstractBloomFilterTest<T extends BloomFilter> {
         assertEquals(0, bf.estimateIntersection(bf4));
         assertEquals(0, bf4.estimateIntersection(bf));
 
-        BloomFilter bf5 = TestingHashers.mergeHashers(createEmptyFilter(getTestShape()), new IncrementingHasher(0, 1)/* 0-16 */,
+        // test split to union
+        HasherCollection firstHalf = new HasherCollection(new IncrementingHasher(0, 1)/* 0-16 */,
                 new IncrementingHasher(17, 1)/* 17-33 */, new IncrementingHasher(33, 1)/* 33-49 */);
-        BloomFilter bf6 = TestingHashers.mergeHashers(createEmptyFilter(getTestShape()), new IncrementingHasher(50, 1)/* 50-66 */,
-                new IncrementingHasher(67, 1)/* 67-83 */);
+        // test split to union
+        HasherCollection secondHalf = new HasherCollection(new IncrementingHasher(50, 1)/* 50-66 */,
+                        new IncrementingHasher(67, 1)/* 67-83 */);
+        BloomFilter bf5 = createFilter(getTestShape(), firstHalf);
+        BloomFilter bf6 = createFilter(getTestShape(), secondHalf);
         assertThrows(IllegalArgumentException.class, () -> bf5.estimateIntersection(bf6));
 
         // infinite with infinite
@@ -269,7 +272,7 @@ public abstract class AbstractBloomFilterTest<T extends BloomFilter> {
     @Test
     public final void testEstimateN() {
         // build a filter
-        BloomFilter filter1 = createFilter(getTestShape(), TestingHashers.FROM1);
+         BloomFilter filter1 = createFilter(getTestShape(), TestingHashers.FROM1);
         assertEquals(1, filter1.estimateN());
 
         // the data provided above do not generate an estimate that is equivalent to the
@@ -281,7 +284,7 @@ public abstract class AbstractBloomFilterTest<T extends BloomFilter> {
 
         assertEquals(3, filter1.estimateN());
 
-        filter1 = TestingHashers.populateEntireFilter(createEmptyFilter(getTestShape()));
+        filter1 = createFilter(getTestShape(), fullHasher);
         assertEquals(Integer.MAX_VALUE, filter1.estimateN());
     }
 
