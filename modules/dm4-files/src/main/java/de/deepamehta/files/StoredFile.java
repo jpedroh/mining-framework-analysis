@@ -43,7 +43,7 @@ public class StoredFile implements JSONEnabled {
         try {
             JSONObject storedFile = new JSONObject();
             storedFile.put("fileName", fileName);
-            storedFile.put("repoPath", repoPath);
+            storedFile.put("repo_path", repoPath);
             storedFile.put("topicId", fileTopicId);
             return storedFile;
         } catch (Exception e) {
