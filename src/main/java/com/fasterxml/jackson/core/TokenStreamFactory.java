@@ -1441,8 +1441,19 @@ public abstract class TokenStreamFactory
     protected <T> T _unsupported() {
         return _unsupported("Operation not supported for this format (%s)", getFormatName());
     }
-    
+
     protected <T> T _unsupported(String str, Object... args) {
         throw new UnsupportedOperationException(String.format(str, args));
+    }
+
+    /**
+     * Helper methods used for constructing an {@link InputStream} for
+     * parsers to use, when input is to be read from given {@link File}.
+     *
+     * @since 2.14
+     */
+
+    protected InputStream _streamFromFile(File f) throws IOException {
+        return new FileInputStream(f);
     }
 }
