@@ -1,39 +1,17 @@
-/*
-// Licensed to Julian Hyde under one or more contributor license
-// agreements. See the NOTICE file distributed with this work for
-// additional information regarding copyright ownership.
-//
-// Julian Hyde licenses this file to you under the Apache License,
-// Version 2.0 (the "License"); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at:
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
 package net.hydromatic.linq4j;
-
 import net.hydromatic.linq4j.function.*;
-
 import java.math.BigDecimal;
 import java.util.*;
-
 import static net.hydromatic.linq4j.function.Functions.adapt;
 
 /**
  * Default implementations of methods in the {@link Enumerable} interface.
  */
 public abstract class EnumerableDefaults {
-
   /**
    * Applies an accumulator function over a sequence.
    */
-  public static <TSource> TSource aggregate(Enumerable<TSource> source,
-      Function2<TSource, TSource, TSource> func) {
+  public static <TSource extends java.lang.Object> TSource aggregate(Enumerable<TSource> source, Function2<TSource, TSource, TSource> func) {
     TSource result = null;
     final Enumerator<TSource> os = source.enumerator();
     try {
@@ -42,7 +20,7 @@ public abstract class EnumerableDefaults {
         result = func.apply(result, o);
       }
       return result;
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -52,9 +30,7 @@ public abstract class EnumerableDefaults {
    * sequence. The specified seed value is used as the initial
    * accumulator value.
    */
-  public static <TSource, TAccumulate> TAccumulate aggregate(
-      Enumerable<TSource> source, TAccumulate seed,
-      Function2<TAccumulate, TSource, TAccumulate> func) {
+  public static <TSource extends java.lang.Object, TAccumulate extends java.lang.Object> TAccumulate aggregate(Enumerable<TSource> source, TAccumulate seed, Function2<TAccumulate, TSource, TAccumulate> func) {
     TAccumulate result = seed;
     final Enumerator<TSource> os = source.enumerator();
     try {
@@ -63,7 +39,7 @@ public abstract class EnumerableDefaults {
         result = func.apply(result, o);
       }
       return result;
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -74,10 +50,7 @@ public abstract class EnumerableDefaults {
    * accumulator value, and the specified function is used to select
    * the result value.
    */
-  public static <TSource, TAccumulate, TResult> TResult aggregate(
-      Enumerable<TSource> source, TAccumulate seed,
-      Function2<TAccumulate, TSource, TAccumulate> func,
-      Function1<TAccumulate, TResult> selector) {
+  public static <TSource extends java.lang.Object, TAccumulate extends java.lang.Object, TResult extends java.lang.Object> TResult aggregate(Enumerable<TSource> source, TAccumulate seed, Function2<TAccumulate, TSource, TAccumulate> func, Function1<TAccumulate, TResult> selector) {
     TAccumulate accumulate = seed;
     final Enumerator<TSource> os = source.enumerator();
     try {
@@ -86,7 +59,7 @@ public abstract class EnumerableDefaults {
         accumulate = func.apply(accumulate, o);
       }
       return selector.apply(accumulate);
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -95,14 +68,12 @@ public abstract class EnumerableDefaults {
    * Determines whether all elements of a sequence
    * satisfy a condition.
    */
-  public static <TSource> boolean all(Enumerable<?> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> boolean all(Enumerable<?> enumerable, Predicate1<TSource> predicate) {
     for (Object o : enumerable) {
       if (!predicate.apply((TSource) o)) {
         return false;
       }
     }
-
     return true;
   }
 
@@ -118,8 +89,7 @@ public abstract class EnumerableDefaults {
    * Determines whether any element of a sequence
    * satisfies a condition.
    */
-  public static <TSource> boolean any(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> boolean any(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     final Enumerator<TSource> os = enumerable.enumerator();
     try {
       while (os.moveNext()) {
@@ -129,7 +99,7 @@ public abstract class EnumerableDefaults {
         }
       }
       return false;
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -156,8 +126,7 @@ public abstract class EnumerableDefaults {
    * hide the custom methods and instead make the standard query operators
    * available.
    */
-  public static <TSource> Enumerable<TSource> asEnumerable(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> asEnumerable(Enumerable<TSource> enumerable) {
     return enumerable;
   }
 
@@ -171,8 +140,7 @@ public abstract class EnumerableDefaults {
    *
    * @return A queryable
    */
-  public static <TSource> Queryable<TSource> asQueryable(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> Queryable<TSource> asQueryable(Enumerable<TSource> enumerable) {
     throw Extensions.todo();
   }
 
@@ -181,8 +149,7 @@ public abstract class EnumerableDefaults {
    * values that are obtained by invoking a transform function on
    * each element of the input sequence.
    */
-  public static <TSource> BigDecimal average(Enumerable<TSource> source,
-      BigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal average(Enumerable<TSource> source, BigDecimalFunction1<TSource> selector) {
     return sum(source, selector).divide(BigDecimal.valueOf(longCount(source)));
   }
 
@@ -191,8 +158,7 @@ public abstract class EnumerableDefaults {
    * Decimal values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> BigDecimal average(Enumerable<TSource> source,
-      NullableBigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal average(Enumerable<TSource> source, NullableBigDecimalFunction1<TSource> selector) {
     return sum(source, selector).divide(BigDecimal.valueOf(longCount(source)));
   }
 
@@ -201,8 +167,7 @@ public abstract class EnumerableDefaults {
    * values that are obtained by invoking a transform function on
    * each element of the input sequence.
    */
-  public static <TSource> double average(Enumerable<TSource> source,
-      DoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> double average(Enumerable<TSource> source, DoubleFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -211,8 +176,7 @@ public abstract class EnumerableDefaults {
    * Double values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> Double average(Enumerable<TSource> source,
-      NullableDoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Double average(Enumerable<TSource> source, NullableDoubleFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -221,8 +185,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> int average(Enumerable<TSource> source,
-      IntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> int average(Enumerable<TSource> source, IntegerFunction1<TSource> selector) {
     return sum(source, selector) / count(source);
   }
 
@@ -231,8 +194,7 @@ public abstract class EnumerableDefaults {
    * int values that are obtained by invoking a transform function
    * on each element of the input sequence.
    */
-  public static <TSource> Integer average(Enumerable<TSource> source,
-      NullableIntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Integer average(Enumerable<TSource> source, NullableIntegerFunction1<TSource> selector) {
     return sum(source, selector) / count(source);
   }
 
@@ -241,8 +203,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> long average(Enumerable<TSource> source,
-      LongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> long average(Enumerable<TSource> source, LongFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -251,8 +212,7 @@ public abstract class EnumerableDefaults {
    * long values that are obtained by invoking a transform function
    * on each element of the input sequence.
    */
-  public static <TSource> Long average(Enumerable<TSource> source,
-      NullableLongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Long average(Enumerable<TSource> source, NullableLongFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -261,8 +221,7 @@ public abstract class EnumerableDefaults {
    * values that are obtained by invoking a transform function on
    * each element of the input sequence.
    */
-  public static <TSource> float average(Enumerable<TSource> source,
-      FloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> float average(Enumerable<TSource> source, FloatFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -271,8 +230,7 @@ public abstract class EnumerableDefaults {
    * Float values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> Float average(Enumerable<TSource> source,
-      NullableFloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Float average(Enumerable<TSource> source, NullableFloatFunction1<TSource> selector) {
     return sum(source, selector) / longCount(source);
   }
 
@@ -284,8 +242,7 @@ public abstract class EnumerableDefaults {
    *
    * @return Collection of T2
    */
-  public static <TSource, T2> Enumerable<T2> cast(
-      final Enumerable<TSource> source, final Class<T2> clazz) {
+  public static <TSource extends java.lang.Object, T2 extends java.lang.Object> Enumerable<T2> cast(final Enumerable<TSource> source, final Class<T2> clazz) {
     return new AbstractEnumerable<T2>() {
       public Enumerator<T2> enumerator() {
         return new CastingEnumerator<T2>(source.enumerator(), clazz);
@@ -296,21 +253,15 @@ public abstract class EnumerableDefaults {
   /**
    * Concatenates two sequences.
    */
-  public static <TSource> Enumerable<TSource> concat(
-      Enumerable<TSource> enumerable0, Enumerable<TSource> enumerable1) {
-    //noinspection unchecked
-    return Linq4j.concat(Arrays.<Enumerable<TSource>>asList(enumerable0,
-        enumerable1));
+  public static <TSource extends java.lang.Object> Enumerable<TSource> concat(Enumerable<TSource> enumerable0, Enumerable<TSource> enumerable1) {
+    return Linq4j.concat(Arrays.<Enumerable<TSource>>asList(enumerable0, enumerable1));
   }
 
   /**
    * Determines whether a sequence contains a specified
    * element by using the default equality comparer.
    */
-  public static <TSource> boolean contains(Enumerable<TSource> enumerable,
-      TSource element) {
-    // Implementations of Enumerable backed by a Collection call
-    // Collection.contains, which may be more efficient, not this method.
+  public static <TSource extends java.lang.Object> boolean contains(Enumerable<TSource> enumerable, TSource element) {
     final Enumerator<TSource> os = enumerable.enumerator();
     try {
       while (os.moveNext()) {
@@ -320,7 +271,7 @@ public abstract class EnumerableDefaults {
         }
       }
       return false;
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -329,8 +280,7 @@ public abstract class EnumerableDefaults {
    * Determines whether a sequence contains a specified
    * element by using a specified {@code EqualityComparer<TSource>}.
    */
-  public static <TSource> boolean contains(Enumerable<TSource> enumerable,
-      TSource element, EqualityComparer comparer) {
+  public static <TSource extends java.lang.Object> boolean contains(Enumerable<TSource> enumerable, TSource element, EqualityComparer comparer) {
     for (TSource o : enumerable) {
       if (comparer.equal(o, element)) {
         return true;
@@ -343,7 +293,7 @@ public abstract class EnumerableDefaults {
    * Returns the number of elements in a
    * sequence.
    */
-  public static <TSource> int count(Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> int count(Enumerable<TSource> enumerable) {
     return (int) longCount(enumerable, Functions.<TSource>truePredicate1());
   }
 
@@ -351,8 +301,7 @@ public abstract class EnumerableDefaults {
    * Returns a number that represents how many elements
    * in the specified sequence satisfy a condition.
    */
-  public static <TSource> int count(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> int count(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     return (int) longCount(enumerable, predicate);
   }
 
@@ -361,8 +310,7 @@ public abstract class EnumerableDefaults {
    * the type parameter's default value in a singleton collection if
    * the sequence is empty.
    */
-  public static <TSource> Enumerable<TSource> defaultIfEmpty(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> defaultIfEmpty(Enumerable<TSource> enumerable) {
     throw Extensions.todo();
   }
 
@@ -371,8 +319,7 @@ public abstract class EnumerableDefaults {
    * the specified value in a singleton collection if the sequence
    * is empty.
    */
-  public static <TSource> TSource defaultIfEmpty(Enumerable<TSource> enumerable,
-      TSource value) {
+  public static <TSource extends java.lang.Object> TSource defaultIfEmpty(Enumerable<TSource> enumerable, TSource value) {
     throw Extensions.todo();
   }
 
@@ -380,8 +327,7 @@ public abstract class EnumerableDefaults {
    * Returns distinct elements from a sequence by using
    * the default {@link EqualityComparer} to compare values.
    */
-  public static <TSource> Enumerable<TSource> distinct(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> distinct(Enumerable<TSource> enumerable) {
     final Enumerator<TSource> os = enumerable.enumerator();
     final Set<TSource> set = new HashSet<TSource>();
     while (os.moveNext()) {
@@ -395,8 +341,7 @@ public abstract class EnumerableDefaults {
    * Returns distinct elements from a sequence by using
    * a specified {@link EqualityComparer} to compare values.
    */
-  public static <TSource> Enumerable<TSource> distinct(
-      Enumerable<TSource> enumerable, EqualityComparer<TSource> comparer) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> distinct(Enumerable<TSource> enumerable, EqualityComparer<TSource> comparer) {
     if (comparer == Functions.identityComparer()) {
       return distinct(enumerable);
     }
@@ -411,8 +356,7 @@ public abstract class EnumerableDefaults {
    * Returns the element at a specified index in a
    * sequence.
    */
-  public static <TSource> TSource elementAt(Enumerable<TSource> enumerable,
-      int index) {
+  public static <TSource extends java.lang.Object> TSource elementAt(Enumerable<TSource> enumerable, int index) {
     throw Extensions.todo();
   }
 
@@ -421,8 +365,7 @@ public abstract class EnumerableDefaults {
    * sequence or a default value if the index is out of
    * range.
    */
-  public static <TSource> TSource elementAtOrDefault(
-      Enumerable<TSource> enumerable, int index) {
+  public static <TSource extends java.lang.Object> TSource elementAtOrDefault(Enumerable<TSource> enumerable, int index) {
     throw Extensions.todo();
   }
 
@@ -431,8 +374,7 @@ public abstract class EnumerableDefaults {
    * using the default equality comparer to compare values. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Enumerable<TSource> except(
-      Enumerable<TSource> source0, Enumerable<TSource> source1) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> except(Enumerable<TSource> source0, Enumerable<TSource> source1) {
     Set<TSource> set = new HashSet<TSource>();
     source0.into(set);
     final Enumerator<TSource> os = source1.enumerator();
@@ -442,7 +384,7 @@ public abstract class EnumerableDefaults {
         set.remove(o);
       }
       return Linq4j.asEnumerable(set);
-    } finally {
+    }  finally {
       os.close();
     }
   }
@@ -452,20 +394,17 @@ public abstract class EnumerableDefaults {
    * using the specified {@code EqualityComparer<TSource>} to compare
    * values.
    */
-  public static <TSource> Enumerable<TSource> except(
-      Enumerable<TSource> source0, Enumerable<TSource> source1,
-      EqualityComparer<TSource> comparer) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> except(Enumerable<TSource> source0, Enumerable<TSource> source1, EqualityComparer<TSource> comparer) {
     Set<Wrapped<TSource>> set = new HashSet<Wrapped<TSource>>();
     Function1<TSource, Wrapped<TSource>> wrapper = wrapperFor(comparer);
     source0.select(wrapper).into(set);
-    final Enumerator<Wrapped<TSource>> os =
-        source1.select(wrapper).enumerator();
+    final Enumerator<Wrapped<TSource>> os = source1.select(wrapper).enumerator();
     try {
       while (os.moveNext()) {
         Wrapped<TSource> o = os.current();
         set.remove(o);
       }
-    } finally {
+    }  finally {
       os.close();
     }
     Function1<Wrapped<TSource>, TSource> unwrapper = unwrapper();
@@ -476,7 +415,7 @@ public abstract class EnumerableDefaults {
    * Returns the first element of a sequence. (Defined
    * by Enumerable.)
    */
-  public static <TSource> TSource first(Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> TSource first(Enumerable<TSource> enumerable) {
     return enumerable.iterator().next();
   }
 
@@ -484,8 +423,7 @@ public abstract class EnumerableDefaults {
    * Returns the first element in a sequence that
    * satisfies a specified condition.
    */
-  public static <TSource> TSource first(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource first(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     for (TSource o : enumerable) {
       if (predicate.apply(o)) {
         return o;
@@ -498,8 +436,7 @@ public abstract class EnumerableDefaults {
    * Returns the first element of a sequence, or a
    * default value if the sequence contains no elements.
    */
-  public static <TSource> TSource firstOrDefault(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> TSource firstOrDefault(Enumerable<TSource> enumerable) {
     throw Extensions.todo();
   }
 
@@ -508,8 +445,7 @@ public abstract class EnumerableDefaults {
    * satisfies a condition or a default value if no such element is
    * found.
    */
-  public static <TSource> TSource firstOrDefault(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource firstOrDefault(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     throw Extensions.todo();
   }
 
@@ -517,9 +453,7 @@ public abstract class EnumerableDefaults {
    * Groups the elements of a sequence according to a
    * specified key selector function.
    */
-  public static <TSource, TKey> Enumerable<Grouping<TKey, TSource>> groupBy(
-      final Enumerable<TSource> enumerable,
-      final Function1<TSource, TKey> keySelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Enumerable<Grouping<TKey, TSource>> groupBy(final Enumerable<TSource> enumerable, final Function1<TSource, TKey> keySelector) {
     return enumerable.toLookup(keySelector);
   }
 
@@ -528,9 +462,7 @@ public abstract class EnumerableDefaults {
    * specified key selector function and compares the keys by using
    * a specified comparer.
    */
-  public static <TSource, TKey> Enumerable<Grouping<TKey, TSource>> groupBy(
-      Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Enumerable<Grouping<TKey, TSource>> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, EqualityComparer<TKey> comparer) {
     return enumerable.toLookup(keySelector, comparer);
   }
 
@@ -539,9 +471,7 @@ public abstract class EnumerableDefaults {
    * specified key selector function and projects the elements for
    * each group by using a specified function.
    */
-  public static <TSource, TKey, TElement> Enumerable<Grouping<TKey, TElement>>
-  groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Enumerable<Grouping<TKey, TElement>> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector) {
     throw Extensions.todo();
   }
 
@@ -550,9 +480,7 @@ public abstract class EnumerableDefaults {
    * specified key selector function and creates a result value from
    * each group and its key.
    */
-  public static <TSource, TKey, TResult> Enumerable<Grouping<TKey, TResult>>
-  groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function2<TKey, Enumerable<TSource>, TResult> elementSelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<Grouping<TKey, TResult>> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function2<TKey, Enumerable<TSource>, TResult> elementSelector) {
     throw Extensions.todo();
   }
 
@@ -562,10 +490,7 @@ public abstract class EnumerableDefaults {
    * comparer and each group's elements are projected by using a
    * specified function.
    */
-  public static <TSource, TKey, TElement> Enumerable<Grouping<TKey, TElement>>
-  groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Enumerable<Grouping<TKey, TElement>> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector, EqualityComparer<TKey> comparer) {
     throw Extensions.todo();
   }
 
@@ -575,10 +500,7 @@ public abstract class EnumerableDefaults {
    * each group and its key. The keys are compared by using a
    * specified comparer.
    */
-  public static <TSource, TKey, TResult> Enumerable<TResult> groupBy(
-      Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function2<TKey, Enumerable<TSource>, TResult> elementSelector,
-      EqualityComparer comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function2<TKey, Enumerable<TSource>, TResult> elementSelector, EqualityComparer comparer) {
     throw Extensions.todo();
   }
 
@@ -588,10 +510,7 @@ public abstract class EnumerableDefaults {
    * each group and its key. The elements of each group are
    * projected by using a specified function.
    */
-  public static <TSource, TKey, TElement, TResult> Enumerable<TResult> groupBy(
-      Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector,
-      Function2<TKey, Enumerable<TElement>, TResult> resultSelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector, Function2<TKey, Enumerable<TElement>, TResult> resultSelector) {
     throw Extensions.todo();
   }
 
@@ -602,11 +521,7 @@ public abstract class EnumerableDefaults {
    * specified comparer, and the elements of each group are
    * projected by using a specified function.
    */
-  public static <TSource, TKey, TElement, TResult> Enumerable<TResult> groupBy(
-      Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector,
-      Function2<TKey, Enumerable<TElement>, TResult> resultSelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector, Function2<TKey, Enumerable<TElement>, TResult> resultSelector, EqualityComparer<TKey> comparer) {
     throw Extensions.todo();
   }
 
@@ -617,13 +532,8 @@ public abstract class EnumerableDefaults {
    * Creates a result value from each accumulator and its key using a
    * specified function.
    */
-  public static <TSource, TKey, TAccumulate, TResult> Enumerable<TResult>
-  groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function0<TAccumulate> accumulatorInitializer,
-      Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder,
-      final Function2<TKey, TAccumulate, TResult> resultSelector) {
-    return groupBy_(new HashMap<TKey, TAccumulate>(), enumerable, keySelector,
-        accumulatorInitializer, accumulatorAdder, resultSelector);
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TAccumulate extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function0<TAccumulate> accumulatorInitializer, Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder, final Function2<TKey, TAccumulate, TResult> resultSelector) {
+    return groupBy_(new HashMap<TKey, TAccumulate>(), enumerable, keySelector, accumulatorInitializer, accumulatorAdder, resultSelector);
   }
 
   /**
@@ -634,22 +544,11 @@ public abstract class EnumerableDefaults {
    * specified function. Key values are compared by using a
    * specified comparer.
    */
-  public static <TSource, TKey, TAccumulate, TResult> Enumerable<TResult>
-  groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector,
-      Function0<TAccumulate> accumulatorInitializer,
-      Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder,
-      Function2<TKey, TAccumulate, TResult> resultSelector,
-      EqualityComparer<TKey> comparer) {
-    return groupBy_(new WrapMap<TKey, TAccumulate>(comparer), enumerable,
-        keySelector, accumulatorInitializer, accumulatorAdder, resultSelector);
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TAccumulate extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy(Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function0<TAccumulate> accumulatorInitializer, Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder, Function2<TKey, TAccumulate, TResult> resultSelector, EqualityComparer<TKey> comparer) {
+    return groupBy_(new WrapMap<TKey, TAccumulate>(comparer), enumerable, keySelector, accumulatorInitializer, accumulatorAdder, resultSelector);
   }
 
-  private static <TSource, TKey, TAccumulate, TResult> Enumerable<TResult>
-  groupBy_(final Map<TKey, TAccumulate> map, Enumerable<TSource> enumerable,
-      Function1<TSource, TKey> keySelector,
-      Function0<TAccumulate> accumulatorInitializer,
-      Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder,
-      final Function2<TKey, TAccumulate, TResult> resultSelector) {
+  private static <TSource extends java.lang.Object, TKey extends java.lang.Object, TAccumulate extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy_(final Map<TKey, TAccumulate> map, Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, Function0<TAccumulate> accumulatorInitializer, Function2<TAccumulate, TSource, TAccumulate> accumulatorAdder, final Function2<TKey, TAccumulate, TResult> resultSelector) {
     final Enumerator<TSource> os = enumerable.enumerator();
     try {
       while (os.moveNext()) {
@@ -668,13 +567,12 @@ public abstract class EnumerableDefaults {
           }
         }
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return new AbstractEnumerable2<TResult>() {
       public Iterator<TResult> iterator() {
-        final Iterator<Map.Entry<TKey, TAccumulate>> iterator =
-            map.entrySet().iterator();
+        final Iterator<Map.Entry<TKey, TAccumulate>> iterator = map.entrySet().iterator();
         return new Iterator<TResult>() {
           public boolean hasNext() {
             return iterator.hasNext();
@@ -693,10 +591,7 @@ public abstract class EnumerableDefaults {
     };
   }
 
-  private static <TSource, TKey, TResult> Enumerable<TResult>
-  groupBy_(final Set<TKey> map, Enumerable<TSource> enumerable,
-      Function1<TSource, TKey> keySelector,
-      final Function1<TKey, TResult> resultSelector) {
+  private static <TSource extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupBy_(final Set<TKey> map, Enumerable<TSource> enumerable, Function1<TSource, TKey> keySelector, final Function1<TKey, TResult> resultSelector) {
     final Enumerator<TSource> os = enumerable.enumerator();
     try {
       while (os.moveNext()) {
@@ -704,7 +599,7 @@ public abstract class EnumerableDefaults {
         TKey key = keySelector.apply(o);
         map.add(key);
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return Linq4j.asEnumerable(map).select(resultSelector);
@@ -715,24 +610,20 @@ public abstract class EnumerableDefaults {
    * equality of keys and groups the results. The default equality
    * comparer is used to compare keys.
    */
-  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> groupJoin(
-      final Enumerable<TSource> outer, final Enumerable<TInner> inner,
-      final Function1<TSource, TKey> outerKeySelector,
-      final Function1<TInner, TKey> innerKeySelector,
-      final Function2<TSource, Enumerable<TInner>, TResult> resultSelector) {
+  public static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupJoin(final Enumerable<TSource> outer, final Enumerable<TInner> inner, final Function1<TSource, TKey> outerKeySelector, final Function1<TInner, TKey> innerKeySelector, final Function2<TSource, Enumerable<TInner>, TResult> resultSelector) {
     return new AbstractEnumerable<TResult>() {
       final Map<TKey, TSource> outerMap = outer.toMap(outerKeySelector);
+
       final Lookup<TKey, TInner> innerLookup = inner.toLookup(innerKeySelector);
-      final Enumerator<Map.Entry<TKey, TSource>> entries =
-          Linq4j.enumerator(outerMap.entrySet());
+
+      final Enumerator<Map.Entry<TKey, TSource>> entries = Linq4j.enumerator(outerMap.entrySet());
 
       public Enumerator<TResult> enumerator() {
         return new Enumerator<TResult>() {
           public TResult current() {
             final Map.Entry<TKey, TSource> entry = entries.current();
             final Enumerable<TInner> inners = innerLookup.get(entry.getKey());
-            return resultSelector.apply(entry.getValue(),
-                inners == null ? Linq4j.<TInner>emptyEnumerable() : inners);
+            return resultSelector.apply(entry.getValue(), inners == null ? Linq4j.<TInner>emptyEnumerable() : inners);
           }
 
           public boolean moveNext() {
@@ -755,12 +646,7 @@ public abstract class EnumerableDefaults {
    * key equality and groups the results. A specified
    * {@code EqualityComparer<TSource>} is used to compare keys.
    */
-  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> groupJoin(
-      Enumerable<TSource> outer, Enumerable<TInner> inner,
-      Function1<TSource, TKey> outerKeySelector,
-      Function1<TInner, TKey> innerKeySelector,
-      Function2<TSource, Enumerable<TInner>, TResult> resultSelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> groupJoin(Enumerable<TSource> outer, Enumerable<TInner> inner, Function1<TSource, TKey> outerKeySelector, Function1<TInner, TKey> innerKeySelector, Function2<TSource, Enumerable<TInner>, TResult> resultSelector, EqualityComparer<TKey> comparer) {
     throw Extensions.todo();
   }
 
@@ -769,8 +655,7 @@ public abstract class EnumerableDefaults {
    * using the default equality comparer to compare values. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Enumerable<TSource> intersect(
-      Enumerable<TSource> source0, Enumerable<TSource> source1) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> intersect(Enumerable<TSource> source0, Enumerable<TSource> source1) {
     Set<TSource> set0 = new HashSet<TSource>();
     source0.into(set0);
     Set<TSource> set1 = new HashSet<TSource>();
@@ -782,7 +667,7 @@ public abstract class EnumerableDefaults {
           set1.add(o);
         }
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return Linq4j.asEnumerable(set1);
@@ -793,15 +678,12 @@ public abstract class EnumerableDefaults {
    * using the specified {@code EqualityComparer<TSource>} to compare
    * values.
    */
-  public static <TSource> Enumerable<TSource> intersect(
-      Enumerable<TSource> source0, Enumerable<TSource> source1,
-      EqualityComparer<TSource> comparer) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> intersect(Enumerable<TSource> source0, Enumerable<TSource> source1, EqualityComparer<TSource> comparer) {
     Set<Wrapped<TSource>> set0 = new HashSet<Wrapped<TSource>>();
     Function1<TSource, Wrapped<TSource>> wrapper = wrapperFor(comparer);
     source0.select(wrapper).into(set0);
     Set<Wrapped<TSource>> set1 = new HashSet<Wrapped<TSource>>();
-    final Enumerator<Wrapped<TSource>> os =
-        source1.select(wrapper).enumerator();
+    final Enumerator<Wrapped<TSource>> os = source1.select(wrapper).enumerator();
     try {
       while (os.moveNext()) {
         Wrapped<TSource> o = os.current();
@@ -809,7 +691,7 @@ public abstract class EnumerableDefaults {
           set1.add(o);
         }
       }
-    } finally {
+    }  finally {
       os.close();
     }
     Function1<Wrapped<TSource>, TSource> unwrapper = unwrapper();
@@ -821,13 +703,8 @@ public abstract class EnumerableDefaults {
    * matching keys. The default equality comparer is used to compare
    * keys.
    */
-  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> join(
-      final Enumerable<TSource> outer, final Enumerable<TInner> inner,
-      final Function1<TSource, TKey> outerKeySelector,
-      final Function1<TInner, TKey> innerKeySelector,
-      final Function2<TSource, TInner, TResult> resultSelector) {
-    return join(outer, inner, outerKeySelector, innerKeySelector,
-        resultSelector, null, false, false);
+  public static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> join(final Enumerable<TSource> outer, final Enumerable<TInner> inner, final Function1<TSource, TKey> outerKeySelector, final Function1<TInner, TKey> innerKeySelector, final Function2<TSource, TInner, TResult> resultSelector) {
+    return join(outer, inner, outerKeySelector, innerKeySelector, resultSelector, null, false, false);
   }
 
   /**
@@ -835,14 +712,8 @@ public abstract class EnumerableDefaults {
    * matching keys. A specified {@code EqualityComparer<TSource>} is used to
    * compare keys.
    */
-  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> join(
-      Enumerable<TSource> outer, Enumerable<TInner> inner,
-      Function1<TSource, TKey> outerKeySelector,
-      Function1<TInner, TKey> innerKeySelector,
-      Function2<TSource, TInner, TResult> resultSelector,
-      EqualityComparer<TKey> comparer) {
-    return join(outer, inner, outerKeySelector, innerKeySelector,
-        resultSelector, comparer, false, false);
+  public static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> join(Enumerable<TSource> outer, Enumerable<TInner> inner, Function1<TSource, TKey> outerKeySelector, Function1<TInner, TKey> innerKeySelector, Function2<TSource, TInner, TResult> resultSelector, EqualityComparer<TKey> comparer) {
+    return join(outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer, false, false);
   }
 
   /**
@@ -850,55 +721,34 @@ public abstract class EnumerableDefaults {
    * matching keys. A specified {@code EqualityComparer<TSource>} is used to
    * compare keys.
    */
-  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> join(
-      Enumerable<TSource> outer, Enumerable<TInner> inner,
-      Function1<TSource, TKey> outerKeySelector,
-      Function1<TInner, TKey> innerKeySelector,
-      Function2<TSource, TInner, TResult> resultSelector,
-      EqualityComparer<TKey> comparer, boolean generateNullsOnLeft,
-      boolean generateNullsOnRight) {
-    return join_(outer, inner, outerKeySelector, innerKeySelector,
-        resultSelector, comparer, generateNullsOnLeft, generateNullsOnRight);
+  public static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> join(Enumerable<TSource> outer, Enumerable<TInner> inner, Function1<TSource, TKey> outerKeySelector, Function1<TInner, TKey> innerKeySelector, Function2<TSource, TInner, TResult> resultSelector, EqualityComparer<TKey> comparer, boolean generateNullsOnLeft, boolean generateNullsOnRight) {
+    return join_(outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer, generateNullsOnLeft, generateNullsOnRight);
   }
 
   /** Implementation of join that builds the right input and probes with the
    * left. */
-  private static <TSource, TInner, TKey, TResult> Enumerable<TResult> join_(
-      final Enumerable<TSource> outer, final Enumerable<TInner> inner,
-      final Function1<TSource, TKey> outerKeySelector,
-      final Function1<TInner, TKey> innerKeySelector,
-      final Function2<TSource, TInner, TResult> resultSelector,
-      final EqualityComparer<TKey> comparer, final boolean generateNullsOnLeft,
-      final boolean generateNullsOnRight) {
+  private static <TSource extends java.lang.Object, TInner extends java.lang.Object, TKey extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> join_(final Enumerable<TSource> outer, final Enumerable<TInner> inner, final Function1<TSource, TKey> outerKeySelector, final Function1<TInner, TKey> innerKeySelector, final Function2<TSource, TInner, TResult> resultSelector, final EqualityComparer<TKey> comparer, final boolean generateNullsOnLeft, final boolean generateNullsOnRight) {
     return new AbstractEnumerable<TResult>() {
       public Enumerator<TResult> enumerator() {
-        final Lookup<TKey, TInner> innerLookup =
-            comparer == null
-                ? inner.toLookup(innerKeySelector)
-                : inner.toLookup(innerKeySelector, comparer);
-
+        final Lookup<TKey, TInner> innerLookup = comparer == null ? inner.toLookup(innerKeySelector) : inner.toLookup(innerKeySelector, comparer);
         return new Enumerator<TResult>() {
           Enumerator<TSource> outers = outer.enumerator();
+
           Enumerator<TInner> inners = Linq4j.emptyEnumerator();
-          Set<TKey> unmatchedKeys =
-              generateNullsOnLeft
-                  ? new HashSet<TKey>(innerLookup.keySet())
-                  : null;
+
+          Set<TKey> unmatchedKeys = generateNullsOnLeft ? new HashSet<TKey>(innerLookup.keySet()) : null;
 
           public TResult current() {
             return resultSelector.apply(outers.current(), inners.current());
           }
 
           public boolean moveNext() {
-            for (;;) {
+            for ( ; ; ) {
               if (inners.moveNext()) {
                 return true;
               }
               if (!outers.moveNext()) {
                 if (unmatchedKeys != null) {
-                  // We've seen everything else. If we are doing a RIGHT or FULL
-                  // join (leftNull = true) there are any keys which right but
-                  // not the left.
                   List<TInner> list = new ArrayList<TInner>();
                   for (TKey key : unmatchedKeys) {
                     for (TInner tInner : innerLookup.get(key)) {
@@ -913,7 +763,7 @@ public abstract class EnumerableDefaults {
                   }
                   inners = Linq4j.enumerator(list);
                   outers = Linq4j.singletonNullEnumerator();
-                  unmatchedKeys = null; // don't do the 'leftovers' again
+                  unmatchedKeys = null;
                   continue;
                 }
                 return false;
@@ -926,10 +776,8 @@ public abstract class EnumerableDefaults {
               if (unmatchedKeys != null) {
                 unmatchedKeys.remove(outerKey);
               }
-              final Enumerable<TInner> innerEnumerable =
-                  innerLookup.get(outerKey);
-              if (innerEnumerable == null
-                  || !innerEnumerable.any()) {
+              final Enumerable<TInner> innerEnumerable = innerLookup.get(outerKey);
+              if (innerEnumerable == null || !innerEnumerable.any()) {
                 if (generateNullsOnRight) {
                   inners = Linq4j.singletonNullEnumerator();
                 } else {
@@ -957,7 +805,7 @@ public abstract class EnumerableDefaults {
    * Returns the last element of a sequence. (Defined
    * by Enumerable.)
    */
-  public static <TSource> TSource last(Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> TSource last(Enumerable<TSource> enumerable) {
     throw Extensions.todo();
   }
 
@@ -965,8 +813,7 @@ public abstract class EnumerableDefaults {
    * Returns the last element of a sequence that
    * satisfies a specified condition.
    */
-  public static <TSource> TSource last(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource last(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     throw Extensions.todo();
   }
 
@@ -974,8 +821,7 @@ public abstract class EnumerableDefaults {
    * Returns the last element of a sequence, or a
    * default value if the sequence contains no elements.
    */
-  public static <TSource> TSource lastOrDefault(
-      Enumerable<TSource> enumerable) {
+  public static <TSource extends java.lang.Object> TSource lastOrDefault(Enumerable<TSource> enumerable) {
     throw Extensions.todo();
   }
 
@@ -984,8 +830,7 @@ public abstract class EnumerableDefaults {
    * satisfies a condition or a default value if no such element is
    * found.
    */
-  public static <TSource> TSource lastOrDefault(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource lastOrDefault(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     throw Extensions.todo();
   }
 
@@ -993,7 +838,7 @@ public abstract class EnumerableDefaults {
    * Returns an long that represents the total number
    * of elements in a sequence.
    */
-  public static <TSource> long longCount(Enumerable<TSource> source) {
+  public static <TSource extends java.lang.Object> long longCount(Enumerable<TSource> source) {
     return longCount(source, Functions.<TSource>truePredicate1());
   }
 
@@ -1001,9 +846,7 @@ public abstract class EnumerableDefaults {
    * Returns an long that represents how many elements
    * in a sequence satisfy a condition.
    */
-  public static <TSource> long longCount(Enumerable<TSource> enumerable,
-      Predicate1<TSource> predicate) {
-    // Shortcut if this is a collection and the predicate is always true.
+  public static <TSource extends java.lang.Object> long longCount(Enumerable<TSource> enumerable, Predicate1<TSource> predicate) {
     if (predicate == Predicate1.TRUE && enumerable instanceof Collection) {
       return ((Collection) enumerable).size();
     }
@@ -1016,7 +859,7 @@ public abstract class EnumerableDefaults {
           ++n;
         }
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return n;
@@ -1026,8 +869,7 @@ public abstract class EnumerableDefaults {
    * Returns the maximum value in a generic
    * sequence.
    */
-  public static <TSource extends Comparable<TSource>> TSource max(
-      Enumerable<TSource> source) {
+  public static <TSource extends Comparable<TSource>> TSource max(Enumerable<TSource> source) {
     Function2<TSource, TSource, TSource> max = maxFunction();
     return aggregate(source, null, max);
   }
@@ -1036,8 +878,7 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the maximum Decimal value.
    */
-  public static <TSource> BigDecimal max(Enumerable<TSource> source,
-      BigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal max(Enumerable<TSource> source, BigDecimalFunction1<TSource> selector) {
     Function2<BigDecimal, BigDecimal, BigDecimal> max = maxFunction();
     return aggregate(source.select(selector), null, max);
   }
@@ -1047,8 +888,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the maximum nullable Decimal
    * value.
    */
-  public static <TSource> BigDecimal max(Enumerable<TSource> source,
-      NullableBigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal max(Enumerable<TSource> source, NullableBigDecimalFunction1<TSource> selector) {
     Function2<BigDecimal, BigDecimal, BigDecimal> max = maxFunction();
     return aggregate(source.select(selector), null, max);
   }
@@ -1057,10 +897,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the maximum Double value.
    */
-  public static <TSource> double max(Enumerable<TSource> source,
-      DoubleFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.DOUBLE_MAX);
+  public static <TSource extends java.lang.Object> double max(Enumerable<TSource> source, DoubleFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.DOUBLE_MAX);
   }
 
   /**
@@ -1068,8 +906,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the maximum nullable Double
    * value.
    */
-  public static <TSource> Double max(Enumerable<TSource> source,
-      NullableDoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Double max(Enumerable<TSource> source, NullableDoubleFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.DOUBLE_MAX);
   }
 
@@ -1077,10 +914,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the maximum int value.
    */
-  public static <TSource> int max(Enumerable<TSource> source,
-      IntegerFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.INTEGER_MAX);
+  public static <TSource extends java.lang.Object> int max(Enumerable<TSource> source, IntegerFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.INTEGER_MAX);
   }
 
   /**
@@ -1088,8 +923,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the maximum nullable int value. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Integer max(Enumerable<TSource> source,
-      NullableIntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Integer max(Enumerable<TSource> source, NullableIntegerFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.INTEGER_MAX);
   }
 
@@ -1097,8 +931,7 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the maximum long value.
    */
-  public static <TSource> long max(Enumerable<TSource> source,
-      LongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> long max(Enumerable<TSource> source, LongFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), null, Extensions.LONG_MAX);
   }
 
@@ -1107,8 +940,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the maximum nullable long value. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Long max(Enumerable<TSource> source,
-      NullableLongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Long max(Enumerable<TSource> source, NullableLongFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.LONG_MAX);
   }
 
@@ -1116,10 +948,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the maximum Float value.
    */
-  public static <TSource> float max(Enumerable<TSource> source,
-      FloatFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.FLOAT_MAX);
+  public static <TSource extends java.lang.Object> float max(Enumerable<TSource> source, FloatFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.FLOAT_MAX);
   }
 
   /**
@@ -1127,8 +957,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the maximum nullable Float
    * value.
    */
-  public static <TSource> Float max(Enumerable<TSource> source,
-      NullableFloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Float max(Enumerable<TSource> source, NullableFloatFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.FLOAT_MAX);
   }
 
@@ -1137,8 +966,7 @@ public abstract class EnumerableDefaults {
    * generic sequence and returns the maximum resulting
    * value.
    */
-  public static <TSource, TResult extends Comparable<TResult>> TResult max(
-      Enumerable<TSource> source, Function1<TSource, TResult> selector) {
+  public static <TSource extends java.lang.Object, TResult extends Comparable<TResult>> TResult max(Enumerable<TSource> source, Function1<TSource, TResult> selector) {
     Function2<TResult, TResult, TResult> max = maxFunction();
     return aggregate(source.select(selector), null, max);
   }
@@ -1147,21 +975,16 @@ public abstract class EnumerableDefaults {
    * Returns the minimum value in a generic
    * sequence.
    */
-  public static <TSource extends Comparable<TSource>> TSource min(
-      Enumerable<TSource> source) {
+  public static <TSource extends Comparable<TSource>> TSource min(Enumerable<TSource> source) {
     Function2<TSource, TSource, TSource> min = minFunction();
     return aggregate(source, null, min);
   }
 
-  @SuppressWarnings("unchecked")
-  private static <TSource extends Comparable<TSource>>
-  Function2<TSource, TSource, TSource> minFunction() {
+  @SuppressWarnings(value = { "unchecked" }) private static <TSource extends Comparable<TSource>> Function2<TSource, TSource, TSource> minFunction() {
     return (Function2<TSource, TSource, TSource>) Extensions.COMPARABLE_MIN;
   }
 
-  @SuppressWarnings("unchecked")
-  private static <TSource extends Comparable<TSource>>
-  Function2<TSource, TSource, TSource> maxFunction() {
+  @SuppressWarnings(value = { "unchecked" }) private static <TSource extends Comparable<TSource>> Function2<TSource, TSource, TSource> maxFunction() {
     return (Function2<TSource, TSource, TSource>) Extensions.COMPARABLE_MAX;
   }
 
@@ -1169,8 +992,7 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the minimum Decimal value.
    */
-  public static <TSource> BigDecimal min(Enumerable<TSource> source,
-      BigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal min(Enumerable<TSource> source, BigDecimalFunction1<TSource> selector) {
     Function2<BigDecimal, BigDecimal, BigDecimal> min = minFunction();
     return aggregate(source.select(selector), null, min);
   }
@@ -1180,8 +1002,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the minimum nullable Decimal
    * value.
    */
-  public static <TSource> BigDecimal min(Enumerable<TSource> source,
-      NullableBigDecimalFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> BigDecimal min(Enumerable<TSource> source, NullableBigDecimalFunction1<TSource> selector) {
     Function2<BigDecimal, BigDecimal, BigDecimal> min = minFunction();
     return aggregate(source.select(selector), null, min);
   }
@@ -1190,10 +1011,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the minimum Double value.
    */
-  public static <TSource> double min(Enumerable<TSource> source,
-      DoubleFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.DOUBLE_MIN);
+  public static <TSource extends java.lang.Object> double min(Enumerable<TSource> source, DoubleFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.DOUBLE_MIN);
   }
 
   /**
@@ -1201,8 +1020,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the minimum nullable Double
    * value.
    */
-  public static <TSource> Double min(Enumerable<TSource> source,
-      NullableDoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Double min(Enumerable<TSource> source, NullableDoubleFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.DOUBLE_MIN);
   }
 
@@ -1210,10 +1028,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the minimum int value.
    */
-  public static <TSource> int min(Enumerable<TSource> source,
-      IntegerFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.INTEGER_MIN);
+  public static <TSource extends java.lang.Object> int min(Enumerable<TSource> source, IntegerFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.INTEGER_MIN);
   }
 
   /**
@@ -1221,8 +1037,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the minimum nullable int value. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Integer min(Enumerable<TSource> source,
-      NullableIntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Integer min(Enumerable<TSource> source, NullableIntegerFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.INTEGER_MIN);
   }
 
@@ -1230,8 +1045,7 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the minimum long value.
    */
-  public static <TSource> long min(Enumerable<TSource> source,
-      LongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> long min(Enumerable<TSource> source, LongFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), null, Extensions.LONG_MIN);
   }
 
@@ -1240,8 +1054,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the minimum nullable long value. (Defined
    * by Enumerable.)
    */
-  public static <TSource> Long min(Enumerable<TSource> source,
-      NullableLongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Long min(Enumerable<TSource> source, NullableLongFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.LONG_MIN);
   }
 
@@ -1249,10 +1062,8 @@ public abstract class EnumerableDefaults {
    * Invokes a transform function on each element of a
    * sequence and returns the minimum Float value.
    */
-  public static <TSource> float min(Enumerable<TSource> source,
-      FloatFunction1<TSource> selector) {
-    return aggregate(source.select(adapt(selector)), null,
-        Extensions.FLOAT_MIN);
+  public static <TSource extends java.lang.Object> float min(Enumerable<TSource> source, FloatFunction1<TSource> selector) {
+    return aggregate(source.select(adapt(selector)), null, Extensions.FLOAT_MIN);
   }
 
   /**
@@ -1260,8 +1071,7 @@ public abstract class EnumerableDefaults {
    * sequence and returns the minimum nullable Float
    * value.
    */
-  public static <TSource> Float min(Enumerable<TSource> source,
-      NullableFloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Float min(Enumerable<TSource> source, NullableFloatFunction1<TSource> selector) {
     return aggregate(source.select(selector), null, Extensions.FLOAT_MIN);
   }
 
@@ -1270,8 +1080,7 @@ public abstract class EnumerableDefaults {
    * generic sequence and returns the minimum resulting
    * value.
    */
-  public static <TSource, TResult extends Comparable<TResult>> TResult min(
-      Enumerable<TSource> source, Function1<TSource, TResult> selector) {
+  public static <TSource extends java.lang.Object, TResult extends Comparable<TResult>> TResult min(Enumerable<TSource> source, Function1<TSource, TResult> selector) {
     Function2<TResult, TResult, TResult> min = minFunction();
     return aggregate(source.select(selector), null, min);
   }
@@ -1287,19 +1096,15 @@ public abstract class EnumerableDefaults {
    *
    * @return Collection of T2
    */
-  public static <TSource, TResult> Enumerable<TResult> ofType(
-      Enumerable<TSource> enumerable, Class<TResult> clazz) {
-    //noinspection unchecked
-    return (Enumerable) where(enumerable,
-        Functions.<TSource, TResult>ofTypePredicate(clazz));
+  public static <TSource extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> ofType(Enumerable<TSource> enumerable, Class<TResult> clazz) {
+    return (Enumerable) where(enumerable, Functions.<TSource, TResult>ofTypePredicate(clazz));
   }
 
   /**
    * Sorts the elements of a sequence in ascending
    * order according to a key.
    */
-  public static <TSource, TKey extends Comparable> Enumerable<TSource> orderBy(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+  public static <TSource extends java.lang.Object, TKey extends Comparable> Enumerable<TSource> orderBy(Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
     return orderBy(source, keySelector, null);
   }
 
@@ -1307,16 +1112,9 @@ public abstract class EnumerableDefaults {
    * Sorts the elements of a sequence in ascending
    * order by using a specified comparer.
    */
-  public static <TSource, TKey> Enumerable<TSource> orderBy(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Comparator<TKey> comparator) {
-    // NOTE: TreeMap allows null comparator. But the caller of this method
-    // must supply a comparator if the key does not extend Comparable.
-    // Otherwise there will be a ClassCastException while retrieving.
-    final Map<TKey, List<TSource>> map = new TreeMap<TKey, List<TSource>>(
-        comparator);
-    LookupImpl<TKey, TSource> lookup = toLookup_(map, source, keySelector,
-        Functions.<TSource>identitySelector());
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Enumerable<TSource> orderBy(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Comparator<TKey> comparator) {
+    final Map<TKey, List<TSource>> map = new TreeMap<TKey, List<TSource>>(comparator);
+    LookupImpl<TKey, TSource> lookup = toLookup_(map, source, keySelector, Functions.<TSource>identitySelector());
     return lookup.valuesEnumerable();
   }
 
@@ -1324,9 +1122,7 @@ public abstract class EnumerableDefaults {
    * Sorts the elements of a sequence in descending
    * order according to a key.
    */
-  public static <TSource, TKey extends Comparable> Enumerable<TSource>
-  orderByDescending(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+  public static <TSource extends java.lang.Object, TKey extends Comparable> Enumerable<TSource> orderByDescending(Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
     return orderBy(source, keySelector, Collections.<TKey>reverseOrder());
   }
 
@@ -1334,9 +1130,7 @@ public abstract class EnumerableDefaults {
    * Sorts the elements of a sequence in descending
    * order by using a specified comparer.
    */
-  public static <TSource, TKey> Enumerable<TSource> orderByDescending(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Comparator<TKey> comparator) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Enumerable<TSource> orderByDescending(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Comparator<TKey> comparator) {
     return orderBy(source, keySelector, Collections.reverseOrder(comparator));
   }
 
@@ -1344,8 +1138,7 @@ public abstract class EnumerableDefaults {
    * Inverts the order of the elements in a
    * sequence.
    */
-  public static <TSource> Enumerable<TSource> reverse(
-      Enumerable<TSource> source) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> reverse(Enumerable<TSource> source) {
     final List<TSource> list = toList(source);
     final int n = list.size();
     return Linq4j.asEnumerable(new AbstractList<TSource>() {
@@ -1362,11 +1155,8 @@ public abstract class EnumerableDefaults {
   /**
    * Projects each element of a sequence into a new form.
    */
-  public static <TSource, TResult> Enumerable<TResult> select(
-      final Enumerable<TSource> source,
-      final Function1<TSource, TResult> selector) {
+  public static <TSource extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> select(final Enumerable<TSource> source, final Function1<TSource, TResult> selector) {
     if (selector == Functions.identitySelector()) {
-      //noinspection unchecked
       return (Enumerable<TResult>) source;
     }
     return new AbstractEnumerable<TResult>() {
@@ -1398,13 +1188,12 @@ public abstract class EnumerableDefaults {
    * Projects each element of a sequence into a new
    * form by incorporating the element's index.
    */
-  public static <TSource, TResult> Enumerable<TResult> select(
-      final Enumerable<TSource> source,
-      final Function2<TSource, Integer, TResult> selector) {
+  public static <TSource extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> select(final Enumerable<TSource> source, final Function2<TSource, Integer, TResult> selector) {
     return new AbstractEnumerable<TResult>() {
       public Enumerator<TResult> enumerator() {
         return new Enumerator<TResult>() {
           final Enumerator<TSource> enumerator = source.enumerator();
+
           int n = -1;
 
           public TResult current() {
@@ -1437,13 +1226,12 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} and flattens the resulting sequences into one
    * sequence.
    */
-  public static <TSource, TResult> Enumerable<TResult> selectMany(
-      final Enumerable<TSource> source,
-      final Function1<TSource, Enumerable<TResult>> selector) {
+  public static <TSource extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> selectMany(final Enumerable<TSource> source, final Function1<TSource, Enumerable<TResult>> selector) {
     return new AbstractEnumerable<TResult>() {
       public Enumerator<TResult> enumerator() {
         return new Enumerator<TResult>() {
           Enumerator<TSource> sourceEnumerator = source.enumerator();
+
           Enumerator<TResult> resultEnumerator = Linq4j.emptyEnumerator();
 
           public TResult current() {
@@ -1451,15 +1239,14 @@ public abstract class EnumerableDefaults {
           }
 
           public boolean moveNext() {
-            for (;;) {
+            for ( ; ; ) {
               if (resultEnumerator.moveNext()) {
                 return true;
               }
               if (!sourceEnumerator.moveNext()) {
                 return false;
               }
-              resultEnumerator = selector.apply(sourceEnumerator.current())
-                  .enumerator();
+              resultEnumerator = selector.apply(sourceEnumerator.current()).enumerator();
             }
           }
 
@@ -1483,9 +1270,7 @@ public abstract class EnumerableDefaults {
    * sequence. The index of each source element is used in the
    * projected form of that element.
    */
-  public static <TSource, TResult> Enumerable<TResult> selectMany(
-      Enumerable<TSource> source,
-      Function2<TSource, Integer, Enumerable<TResult>> selector) {
+  public static <TSource extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> selectMany(Enumerable<TSource> source, Function2<TSource, Integer, Enumerable<TResult>> selector) {
     throw Extensions.todo();
   }
 
@@ -1496,10 +1281,7 @@ public abstract class EnumerableDefaults {
    * element therein. The index of each source element is used in
    * the intermediate projected form of that element.
    */
-  public static <TSource, TCollection, TResult> Enumerable<TResult> selectMany(
-      Enumerable<TSource> source,
-      Function2<TSource, Integer, Enumerable<TCollection>> collectionSelector,
-      Function2<TSource, TCollection, TResult> resultSelector) {
+  public static <TSource extends java.lang.Object, TCollection extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> selectMany(Enumerable<TSource> source, Function2<TSource, Integer, Enumerable<TCollection>> collectionSelector, Function2<TSource, TCollection, TResult> resultSelector) {
     throw Extensions.todo();
   }
 
@@ -1509,10 +1291,7 @@ public abstract class EnumerableDefaults {
    * sequence, and invokes a result selector function on each
    * element therein.
    */
-  public static <TSource, TCollection, TResult> Enumerable<TResult> selectMany(
-      Enumerable<TSource> source,
-      Function1<TSource, Enumerable<TCollection>> collectionSelector,
-      Function2<TSource, TCollection, TResult> resultSelector) {
+  public static <TSource extends java.lang.Object, TCollection extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> selectMany(Enumerable<TSource> source, Function1<TSource, Enumerable<TCollection>> collectionSelector, Function2<TSource, TCollection, TResult> resultSelector) {
     throw Extensions.todo();
   }
 
@@ -1521,8 +1300,7 @@ public abstract class EnumerableDefaults {
    * comparing the elements by using the default equality comparer
    * for their type.
    */
-  public static <TSource> boolean sequenceEqual(Enumerable<TSource> enumerable0,
-      Enumerable<TSource> enumerable1) {
+  public static <TSource extends java.lang.Object> boolean sequenceEqual(Enumerable<TSource> enumerable0, Enumerable<TSource> enumerable1) {
     throw Extensions.todo();
   }
 
@@ -1531,8 +1309,7 @@ public abstract class EnumerableDefaults {
    * comparing their elements by using a specified
    * {@code EqualityComparer<TSource>}.
    */
-  public static <TSource> boolean sequenceEqual(Enumerable<TSource> enumerable0,
-      Enumerable<TSource> enumerable1, EqualityComparer<TSource> comparer) {
+  public static <TSource extends java.lang.Object> boolean sequenceEqual(Enumerable<TSource> enumerable0, Enumerable<TSource> enumerable1, EqualityComparer<TSource> comparer) {
     throw Extensions.todo();
   }
 
@@ -1541,7 +1318,7 @@ public abstract class EnumerableDefaults {
    * an exception if there is not exactly one element in the
    * sequence.
    */
-  public static <TSource> TSource single(Enumerable<TSource> source) {
+  public static <TSource extends java.lang.Object> TSource single(Enumerable<TSource> source) {
     throw Extensions.todo();
   }
 
@@ -1550,8 +1327,7 @@ public abstract class EnumerableDefaults {
    * satisfies a specified condition, and throws an exception if
    * more than one such element exists.
    */
-  public static <TSource> TSource single(Enumerable<TSource> source,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource single(Enumerable<TSource> source, Predicate1<TSource> predicate) {
     throw Extensions.todo();
   }
 
@@ -1561,7 +1337,7 @@ public abstract class EnumerableDefaults {
    * exception if there is more than one element in the
    * sequence.
    */
-  public static <TSource> TSource singleOrDefault(Enumerable<TSource> source) {
+  public static <TSource extends java.lang.Object> TSource singleOrDefault(Enumerable<TSource> source) {
     throw Extensions.todo();
   }
 
@@ -1571,8 +1347,7 @@ public abstract class EnumerableDefaults {
    * element exists; this method throws an exception if more than
    * one element satisfies the condition.
    */
-  public static <TSource> TSource singleOrDefault(Enumerable<TSource> source,
-      Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> TSource singleOrDefault(Enumerable<TSource> source, Predicate1<TSource> predicate) {
     throw Extensions.todo();
   }
 
@@ -1580,11 +1355,9 @@ public abstract class EnumerableDefaults {
    * Bypasses a specified number of elements in a
    * sequence and then returns the remaining elements.
    */
-  public static <TSource> Enumerable<TSource> skip(Enumerable<TSource> source,
-      final int count) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> skip(Enumerable<TSource> source, final int count) {
     return skipWhile(source, new Predicate2<TSource, Integer>() {
       public boolean apply(TSource v1, Integer v2) {
-        // Count is 1-based
         return v2 < count;
       }
     });
@@ -1595,10 +1368,8 @@ public abstract class EnumerableDefaults {
    * specified condition is true and then returns the remaining
    * elements.
    */
-  public static <TSource> Enumerable<TSource> skipWhile(
-      Enumerable<TSource> source, Predicate1<TSource> predicate) {
-    return skipWhile(source, Functions.<TSource, Integer>toPredicate2(
-        predicate));
+  public static <TSource extends java.lang.Object> Enumerable<TSource> skipWhile(Enumerable<TSource> source, Predicate1<TSource> predicate) {
+    return skipWhile(source, Functions.<TSource, Integer>toPredicate2(predicate));
   }
 
   /**
@@ -1607,9 +1378,7 @@ public abstract class EnumerableDefaults {
    * elements. The element's index is used in the logic of the
    * predicate function.
    */
-  public static <TSource> Enumerable<TSource> skipWhile(
-      final Enumerable<TSource> source,
-      final Predicate2<TSource, Integer> predicate) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> skipWhile(final Enumerable<TSource> source, final Predicate2<TSource, Integer> predicate) {
     return new AbstractEnumerable<TSource>() {
       public Enumerator<TSource> enumerator() {
         return new SkipWhileEnumerator<TSource>(source.enumerator(), predicate);
@@ -1622,10 +1391,8 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> BigDecimal sum(Enumerable<TSource> source,
-      BigDecimalFunction1<TSource> selector) {
-    return aggregate(source.select(selector), BigDecimal.ZERO,
-        Extensions.BIG_DECIMAL_SUM);
+  public static <TSource extends java.lang.Object> BigDecimal sum(Enumerable<TSource> source, BigDecimalFunction1<TSource> selector) {
+    return aggregate(source.select(selector), BigDecimal.ZERO, Extensions.BIG_DECIMAL_SUM);
   }
 
   /**
@@ -1633,10 +1400,8 @@ public abstract class EnumerableDefaults {
    * Decimal values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> BigDecimal sum(Enumerable<TSource> source,
-      NullableBigDecimalFunction1<TSource> selector) {
-    return aggregate(source.select(selector), BigDecimal.ZERO,
-        Extensions.BIG_DECIMAL_SUM);
+  public static <TSource extends java.lang.Object> BigDecimal sum(Enumerable<TSource> source, NullableBigDecimalFunction1<TSource> selector) {
+    return aggregate(source.select(selector), BigDecimal.ZERO, Extensions.BIG_DECIMAL_SUM);
   }
 
   /**
@@ -1644,8 +1409,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> double sum(Enumerable<TSource> source,
-      DoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> double sum(Enumerable<TSource> source, DoubleFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), 0d, Extensions.DOUBLE_SUM);
   }
 
@@ -1654,8 +1418,7 @@ public abstract class EnumerableDefaults {
    * Double values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> Double sum(Enumerable<TSource> source,
-      NullableDoubleFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Double sum(Enumerable<TSource> source, NullableDoubleFunction1<TSource> selector) {
     return aggregate(source.select(selector), 0d, Extensions.DOUBLE_SUM);
   }
 
@@ -1664,8 +1427,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> int sum(Enumerable<TSource> source,
-      IntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> int sum(Enumerable<TSource> source, IntegerFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), 0, Extensions.INTEGER_SUM);
   }
 
@@ -1674,8 +1436,7 @@ public abstract class EnumerableDefaults {
    * values that are obtained by invoking a transform function on
    * each element of the input sequence.
    */
-  public static <TSource> Integer sum(Enumerable<TSource> source,
-      NullableIntegerFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Integer sum(Enumerable<TSource> source, NullableIntegerFunction1<TSource> selector) {
     return aggregate(source.select(selector), 0, Extensions.INTEGER_SUM);
   }
 
@@ -1684,8 +1445,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> long sum(Enumerable<TSource> source,
-      LongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> long sum(Enumerable<TSource> source, LongFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), 0L, Extensions.LONG_SUM);
   }
 
@@ -1694,8 +1454,7 @@ public abstract class EnumerableDefaults {
    * values that are obtained by invoking a transform function on
    * each element of the input sequence.
    */
-  public static <TSource> Long sum(Enumerable<TSource> source,
-      NullableLongFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Long sum(Enumerable<TSource> source, NullableLongFunction1<TSource> selector) {
     return aggregate(source.select(selector), 0L, Extensions.LONG_SUM);
   }
 
@@ -1704,8 +1463,7 @@ public abstract class EnumerableDefaults {
    * that are obtained by invoking a transform function on each
    * element of the input sequence.
    */
-  public static <TSource> float sum(Enumerable<TSource> source,
-      FloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> float sum(Enumerable<TSource> source, FloatFunction1<TSource> selector) {
     return aggregate(source.select(adapt(selector)), 0F, Extensions.FLOAT_SUM);
   }
 
@@ -1714,8 +1472,7 @@ public abstract class EnumerableDefaults {
    * Float values that are obtained by invoking a transform
    * function on each element of the input sequence.
    */
-  public static <TSource> Float sum(Enumerable<TSource> source,
-      NullableFloatFunction1<TSource> selector) {
+  public static <TSource extends java.lang.Object> Float sum(Enumerable<TSource> source, NullableFloatFunction1<TSource> selector) {
     return aggregate(source.select(selector), 0F, Extensions.FLOAT_SUM);
   }
 
@@ -1723,11 +1480,9 @@ public abstract class EnumerableDefaults {
    * Returns a specified number of contiguous elements
    * from the start of a sequence.
    */
-  public static <TSource> Enumerable<TSource> take(Enumerable<TSource> source,
-      final int count) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> take(Enumerable<TSource> source, final int count) {
     return takeWhile(source, new Predicate2<TSource, Integer>() {
       public boolean apply(TSource v1, Integer v2) {
-        // Count is 1-based
         return v2 < count;
       }
     });
@@ -1737,10 +1492,8 @@ public abstract class EnumerableDefaults {
    * Returns elements from a sequence as long as a
    * specified condition is true.
    */
-  public static <TSource> Enumerable<TSource> takeWhile(
-      Enumerable<TSource> source, final Predicate1<TSource> predicate) {
-    return takeWhile(source, Functions.<TSource, Integer>toPredicate2(
-        predicate));
+  public static <TSource extends java.lang.Object> Enumerable<TSource> takeWhile(Enumerable<TSource> source, final Predicate1<TSource> predicate) {
+    return takeWhile(source, Functions.<TSource, Integer>toPredicate2(predicate));
   }
 
   /**
@@ -1748,9 +1501,7 @@ public abstract class EnumerableDefaults {
    * specified condition is true. The element's index is used in the
    * logic of the predicate function.
    */
-  public static <TSource> Enumerable<TSource> takeWhile(
-      final Enumerable<TSource> source,
-      final Predicate2<TSource, Integer> predicate) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> takeWhile(final Enumerable<TSource> source, final Predicate2<TSource, Integer> predicate) {
     return new AbstractEnumerable<TSource>() {
       public Enumerator<TSource> enumerator() {
         return new TakeWhileEnumerator<TSource>(source.enumerator(), predicate);
@@ -1762,10 +1513,7 @@ public abstract class EnumerableDefaults {
    * Performs a subsequent ordering of the elements in a sequence according
    * to a key.
    */
-  public static <TSource, TKey> OrderedEnumerable<TSource>
-  createOrderedEnumerable(
-      OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Comparator<TKey> comparator, boolean descending) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> OrderedEnumerable<TSource> createOrderedEnumerable(OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector, Comparator<TKey> comparator, boolean descending) {
     throw Extensions.todo();
   }
 
@@ -1773,20 +1521,15 @@ public abstract class EnumerableDefaults {
    * Performs a subsequent ordering of the elements in a sequence in
    * ascending order according to a key.
    */
-  public static <TSource, TKey extends Comparable<TKey>>
-  OrderedEnumerable<TSource> thenBy(
-      OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector) {
-    return createOrderedEnumerable(source, keySelector,
-        Extensions.<TKey>comparableComparator(), false);
+  public static <TSource extends java.lang.Object, TKey extends Comparable<TKey>> OrderedEnumerable<TSource> thenBy(OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+    return createOrderedEnumerable(source, keySelector, Extensions.<TKey>comparableComparator(), false);
   }
 
   /**
    * Performs a subsequent ordering of the elements in a sequence in
    * ascending order according to a key, using a specified comparator.
    */
-  public static <TSource, TKey> OrderedEnumerable<TSource> thenBy(
-      OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Comparator<TKey> comparator) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> OrderedEnumerable<TSource> thenBy(OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector, Comparator<TKey> comparator) {
     return createOrderedEnumerable(source, keySelector, comparator, false);
   }
 
@@ -1794,20 +1537,15 @@ public abstract class EnumerableDefaults {
    * Performs a subsequent ordering of the elements in a sequence in
    * descending order according to a key.
    */
-  public static <TSource, TKey extends Comparable<TKey>>
-  OrderedEnumerable<TSource> thenByDescending(
-      OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector) {
-    return createOrderedEnumerable(source, keySelector,
-        Extensions.<TKey>comparableComparator(), true);
+  public static <TSource extends java.lang.Object, TKey extends Comparable<TKey>> OrderedEnumerable<TSource> thenByDescending(OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+    return createOrderedEnumerable(source, keySelector, Extensions.<TKey>comparableComparator(), true);
   }
 
   /**
    * Performs a subsequent ordering of the elements in a sequence in
    * descending order according to a key, using a specified comparator.
    */
-  public static <TSource, TKey> OrderedEnumerable<TSource> thenByDescending(
-      OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Comparator<TKey> comparator) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> OrderedEnumerable<TSource> thenByDescending(OrderedEnumerable<TSource> source, Function1<TSource, TKey> keySelector, Comparator<TKey> comparator) {
     return createOrderedEnumerable(source, keySelector, comparator, true);
   }
 
@@ -1818,8 +1556,7 @@ public abstract class EnumerableDefaults {
    *
    * <p>NOTE: Called {@code toDictionary} in LINQ.NET.</p>
    */
-  public static <TSource, TKey> Map<TKey, TSource> toMap(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Map<TKey, TSource> toMap(Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
     return toMap(source, keySelector, Functions.<TSource>identitySelector());
   }
 
@@ -1828,9 +1565,7 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to a specified key selector function
    * and key comparer.
    */
-  public static <TSource, TKey> Map<TKey, TSource> toMap(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Map<TKey, TSource> toMap(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, EqualityComparer<TKey> comparer) {
     throw Extensions.todo();
   }
 
@@ -1839,11 +1574,7 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to specified key selector and element
    * selector functions.
    */
-  public static <TSource, TKey, TElement> Map<TKey, TElement> toMap(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector) {
-    // Use LinkedHashMap because groupJoin requires order of keys to be
-    // preserved.
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Map<TKey, TElement> toMap(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector) {
     final Map<TKey, TElement> map = new LinkedHashMap<TKey, TElement>();
     final Enumerator<TSource> os = source.enumerator();
     try {
@@ -1851,7 +1582,7 @@ public abstract class EnumerableDefaults {
         TSource o = os.current();
         map.put(keySelector.apply(o), elementSelector.apply(o));
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return map;
@@ -1862,25 +1593,18 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to a specified key selector function,
    * a comparer, and an element selector function.
    */
-  public static <TSource, TKey, TElement> Map<TKey, TElement> toMap(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector,
-      EqualityComparer<TKey> comparer) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Map<TKey, TElement> toMap(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector, EqualityComparer<TKey> comparer) {
     throw Extensions.todo();
   }
 
   /**
    * Creates a {@code List<TSource>} from an {@code Enumerable<TSource>}.
    */
-  @SuppressWarnings("unchecked")
-  public static <TSource> List<TSource> toList(Enumerable<TSource> source) {
+  @SuppressWarnings(value = { "unchecked" }) public static <TSource extends java.lang.Object> List<TSource> toList(Enumerable<TSource> source) {
     if (source instanceof List && source instanceof RandomAccess) {
       return (List<TSource>) source;
     } else {
-      return source.into(
-          source instanceof Collection
-              ? new ArrayList<TSource>(((Collection) source).size())
-              : new ArrayList<TSource>());
+      return source.into(source instanceof Collection ? new ArrayList<TSource>(((Collection) source).size()) : new ArrayList<TSource>());
     }
   }
 
@@ -1889,8 +1613,7 @@ public abstract class EnumerableDefaults {
    * Enumerable&lt;TSource&gt; according to a specified key selector
    * function.
    */
-  public static <TSource, TKey> Lookup<TKey, TSource> toLookup(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Lookup<TKey, TSource> toLookup(Enumerable<TSource> source, Function1<TSource, TKey> keySelector) {
     return toLookup(source, keySelector, Functions.<TSource>identitySelector());
   }
 
@@ -1899,11 +1622,8 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to a specified key selector function
    * and key comparer.
    */
-  public static <TSource, TKey> Lookup<TKey, TSource> toLookup(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      EqualityComparer<TKey> comparer) {
-    return toLookup(source, keySelector, Functions.<TSource>identitySelector(),
-        comparer);
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object> Lookup<TKey, TSource> toLookup(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, EqualityComparer<TKey> comparer) {
+    return toLookup(source, keySelector, Functions.<TSource>identitySelector(), comparer);
   }
 
   /**
@@ -1911,17 +1631,12 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to specified key selector and element
    * selector functions.
    */
-  public static <TSource, TKey, TElement> Lookup<TKey, TElement> toLookup(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector) {
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Lookup<TKey, TElement> toLookup(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector) {
     final Map<TKey, List<TElement>> map = new HashMap<TKey, List<TElement>>();
     return toLookup_(map, source, keySelector, elementSelector);
   }
 
-  static <TSource, TKey, TElement> LookupImpl<TKey, TElement> toLookup_(
-      Map<TKey, List<TElement>> map, Enumerable<TSource> source,
-      Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector) {
+  static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> LookupImpl<TKey, TElement> toLookup_(Map<TKey, List<TElement>> map, Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector) {
     final Enumerator<TSource> os = source.enumerator();
     try {
       while (os.moveNext()) {
@@ -1929,11 +1644,9 @@ public abstract class EnumerableDefaults {
         final TKey key = keySelector.apply(o);
         List<TElement> list = map.get(key);
         if (list == null) {
-          // for first entry, use a singleton list to save space
           list = Collections.singletonList(elementSelector.apply(o));
         } else {
           if (list.size() == 1) {
-            // when we go from 1 to 2 elements, switch to array list
             TElement element = list.get(0);
             list = new ArrayList<TElement>();
             list.add(element);
@@ -1942,7 +1655,7 @@ public abstract class EnumerableDefaults {
         }
         map.put(key, list);
       }
-    } finally {
+    }  finally {
       os.close();
     }
     return new LookupImpl<TKey, TElement>(map);
@@ -1953,20 +1666,15 @@ public abstract class EnumerableDefaults {
    * {@code Enumerable<TSource>} according to a specified key selector function,
    * a comparer and an element selector function.
    */
-  public static <TSource, TKey, TElement> Lookup<TKey, TElement> toLookup(
-      Enumerable<TSource> source, Function1<TSource, TKey> keySelector,
-      Function1<TSource, TElement> elementSelector,
-      EqualityComparer<TKey> comparer) {
-    return toLookup_(new WrapMap<TKey, List<TElement>>(comparer), source,
-        keySelector, elementSelector);
+  public static <TSource extends java.lang.Object, TKey extends java.lang.Object, TElement extends java.lang.Object> Lookup<TKey, TElement> toLookup(Enumerable<TSource> source, Function1<TSource, TKey> keySelector, Function1<TSource, TElement> elementSelector, EqualityComparer<TKey> comparer) {
+    return toLookup_(new WrapMap<TKey, List<TElement>>(comparer), source, keySelector, elementSelector);
   }
 
   /**
    * Produces the set union of two sequences by using
    * the default equality comparer.
    */
-  public static <TSource> Enumerable<TSource> union(Enumerable<TSource> source0,
-      Enumerable<TSource> source1) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> union(Enumerable<TSource> source0, Enumerable<TSource> source1) {
     Set<TSource> set = new HashSet<TSource>();
     source0.into(set);
     source1.into(set);
@@ -1977,8 +1685,7 @@ public abstract class EnumerableDefaults {
    * Produces the set union of two sequences by using a
    * specified EqualityComparer&lt;TSource&gt;.
    */
-  public static <TSource> Enumerable<TSource> union(Enumerable<TSource> source0,
-      Enumerable<TSource> source1, final EqualityComparer<TSource> comparer) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> union(Enumerable<TSource> source0, Enumerable<TSource> source1, final EqualityComparer<TSource> comparer) {
     if (comparer == Functions.identityComparer()) {
       return union(source0, source1);
     }
@@ -1990,7 +1697,7 @@ public abstract class EnumerableDefaults {
     return Linq4j.asEnumerable(set).select(unwrapper);
   }
 
-  private static <TSource> Function1<Wrapped<TSource>, TSource> unwrapper() {
+  private static <TSource extends java.lang.Object> Function1<Wrapped<TSource>, TSource> unwrapper() {
     return new Function1<Wrapped<TSource>, TSource>() {
       public TSource apply(Wrapped<TSource> a0) {
         return a0.element;
@@ -1998,8 +1705,7 @@ public abstract class EnumerableDefaults {
     };
   }
 
-  private static <TSource> Function1<TSource, Wrapped<TSource>> wrapperFor(
-      final EqualityComparer<TSource> comparer) {
+  private static <TSource extends java.lang.Object> Function1<TSource, Wrapped<TSource>> wrapperFor(final EqualityComparer<TSource> comparer) {
     return new Function1<TSource, Wrapped<TSource>>() {
       public Wrapped<TSource> apply(TSource a0) {
         return Wrapped.upAs(comparer, a0);
@@ -2011,8 +1717,7 @@ public abstract class EnumerableDefaults {
    * Filters a sequence of values based on a
    * predicate.
    */
-  public static <TSource> Enumerable<TSource> where(
-      final Enumerable<TSource> source, final Predicate1<TSource> predicate) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> where(final Enumerable<TSource> source, final Predicate1<TSource> predicate) {
     assert predicate != null;
     return new AbstractEnumerable<TSource>() {
       public Enumerator<TSource> enumerator() {
@@ -2048,13 +1753,12 @@ public abstract class EnumerableDefaults {
    * predicate. Each element's index is used in the logic of the
    * predicate function.
    */
-  public static <TSource> Enumerable<TSource> where(
-      final Enumerable<TSource> source,
-      final Predicate2<TSource, Integer> predicate) {
+  public static <TSource extends java.lang.Object> Enumerable<TSource> where(final Enumerable<TSource> source, final Predicate2<TSource, Integer> predicate) {
     return new AbstractEnumerable<TSource>() {
       public Enumerator<TSource> enumerator() {
         return new Enumerator<TSource>() {
           final Enumerator<TSource> enumerator = source.enumerator();
+
           int n = -1;
 
           public TSource current() {
@@ -2089,44 +1793,37 @@ public abstract class EnumerableDefaults {
    * elements of two sequences, producing a sequence of the
    * results.
    */
-  public static <T0, T1, TResult> Enumerable<TResult> zip(
-      Enumerable<T0> source0, Enumerable<T1> source1,
-      Function2<T0, T1, TResult> resultSelector) {
+  public static <T0 extends java.lang.Object, T1 extends java.lang.Object, TResult extends java.lang.Object> Enumerable<TResult> zip(Enumerable<T0> source0, Enumerable<T1> source1, Function2<T0, T1, TResult> resultSelector) {
     throw Extensions.todo();
   }
 
-  public static <T> OrderedQueryable<T> asOrderedQueryable(
-      Enumerable<T> source) {
-    //noinspection unchecked
-    return source instanceof OrderedQueryable
-        ? ((OrderedQueryable<T>) source)
-        : new EnumerableOrderedQueryable<T>(
-            source, (Class) Object.class, null, null);
+  public static <T extends java.lang.Object> OrderedQueryable<T> asOrderedQueryable(Enumerable<T> source) {
+    return source instanceof OrderedQueryable ? ((OrderedQueryable<T>) source) : new EnumerableOrderedQueryable<T>(source, (Class) Object.class, null, null);
   }
 
-  public static <T, C extends Collection<? super T>> C into(
-      Enumerable<T> source, C sink) {
+  public static <T extends java.lang.Object, C extends Collection<? super T>> C into(Enumerable<T> source, C sink) {
     final Enumerator<T> enumerator = source.enumerator();
     try {
       while (enumerator.moveNext()) {
         T t = enumerator.current();
         sink.add(t);
       }
-    } finally {
+    }  finally {
       enumerator.close();
     }
     return sink;
   }
 
-  static class TakeWhileEnumerator<TSource> implements Enumerator<TSource> {
+  static class TakeWhileEnumerator<TSource extends java.lang.Object> implements Enumerator<TSource> {
     private final Enumerator<TSource> enumerator;
+
     private final Predicate2<TSource, Integer> predicate;
 
     boolean done = false;
+
     int n = -1;
 
-    public TakeWhileEnumerator(Enumerator<TSource> enumerator,
-        Predicate2<TSource, Integer> predicate) {
+    public TakeWhileEnumerator(Enumerator<TSource> enumerator, Predicate2<TSource, Integer> predicate) {
       this.enumerator = enumerator;
       this.predicate = predicate;
     }
@@ -2137,8 +1834,7 @@ public abstract class EnumerableDefaults {
 
     public boolean moveNext() {
       if (!done) {
-        if (enumerator.moveNext() && predicate.apply(enumerator.current(),
-            ++n)) {
+        if (enumerator.moveNext() && predicate.apply(enumerator.current(), ++n)) {
           return true;
         } else {
           done = true;
@@ -2158,15 +1854,16 @@ public abstract class EnumerableDefaults {
     }
   }
 
-  static class SkipWhileEnumerator<TSource> implements Enumerator<TSource> {
+  static class SkipWhileEnumerator<TSource extends java.lang.Object> implements Enumerator<TSource> {
     private final Enumerator<TSource> enumerator;
+
     private final Predicate2<TSource, Integer> predicate;
 
     boolean started = false;
+
     int n = -1;
 
-    public SkipWhileEnumerator(Enumerator<TSource> enumerator,
-        Predicate2<TSource, Integer> predicate) {
+    public SkipWhileEnumerator(Enumerator<TSource> enumerator, Predicate2<TSource, Integer> predicate) {
       this.enumerator = enumerator;
       this.predicate = predicate;
     }
@@ -2176,7 +1873,7 @@ public abstract class EnumerableDefaults {
     }
 
     public boolean moveNext() {
-      for (;;) {
+      for ( ; ; ) {
         if (!enumerator.moveNext()) {
           return false;
         }
@@ -2201,8 +1898,9 @@ public abstract class EnumerableDefaults {
     }
   }
 
-  static class CastingEnumerator<T> implements Enumerator<T> {
+  static class CastingEnumerator<T extends java.lang.Object> implements Enumerator<T> {
     private final Enumerator<?> enumerator;
+
     private final Class<T> clazz;
 
     public CastingEnumerator(Enumerator<?> enumerator, Class<T> clazz) {
@@ -2227,8 +1925,9 @@ public abstract class EnumerableDefaults {
     }
   }
 
-  private static class Wrapped<T> {
+  private static class Wrapped<T extends java.lang.Object> {
     private final EqualityComparer<T> comparer;
+
     private final T element;
 
     private Wrapped(EqualityComparer<T> comparer, T element) {
@@ -2236,20 +1935,16 @@ public abstract class EnumerableDefaults {
       this.element = element;
     }
 
-    static <T> Wrapped<T> upAs(EqualityComparer<T> comparer, T element) {
+    static <T extends java.lang.Object> Wrapped<T> upAs(EqualityComparer<T> comparer, T element) {
       return new Wrapped<T>(comparer, element);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
       return comparer.hashCode(element);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      //noinspection unchecked
-      return obj == this || obj instanceof Wrapped && comparer.equal(element,
-          ((Wrapped<T>) obj).element);
+    @Override public boolean equals(Object obj) {
+      return obj == this || obj instanceof Wrapped && comparer.equal(element, ((Wrapped<T>) obj).element);
     }
 
     public T unwrap() {
@@ -2257,22 +1952,19 @@ public abstract class EnumerableDefaults {
     }
   }
 
-  private static class WrapMap<K, V> extends AbstractMap<K, V> {
+  private static class WrapMap<K extends java.lang.Object, V extends java.lang.Object> extends AbstractMap<K, V> {
     private final Map<Wrapped<K>, V> map = new HashMap<Wrapped<K>, V>();
+
     private final EqualityComparer<K> comparer;
 
     protected WrapMap(EqualityComparer<K> comparer) {
       this.comparer = comparer;
     }
 
-    @Override
-    public Set<Entry<K, V>> entrySet() {
+    @Override public Set<Entry<K, V>> entrySet() {
       return new AbstractSet<Entry<K, V>>() {
-        @Override
-        public Iterator<Entry<K, V>> iterator() {
-          final Iterator<Entry<Wrapped<K>, V>> iterator =
-              map.entrySet().iterator();
-
+        @Override public Iterator<Entry<K, V>> iterator() {
+          final Iterator<Entry<Wrapped<K>, V>> iterator = map.entrySet().iterator();
           return new Iterator<Entry<K, V>>() {
             public boolean hasNext() {
               return iterator.hasNext();
@@ -2280,8 +1972,7 @@ public abstract class EnumerableDefaults {
 
             public Entry<K, V> next() {
               Entry<Wrapped<K>, V> next = iterator.next();
-              return new SimpleEntry<K, V>(next.getKey().element,
-                  next.getValue());
+              return new SimpleEntry<K, V>(next.getKey().element, next.getValue());
             }
 
             public void remove() {
@@ -2290,15 +1981,13 @@ public abstract class EnumerableDefaults {
           };
         }
 
-        @Override
-        public int size() {
+        @Override public int size() {
           return map.size();
         }
       };
     }
 
-    @Override
-    public boolean containsKey(Object key) {
+    @Override public boolean containsKey(Object key) {
       return map.containsKey(wrap((K) key));
     }
 
@@ -2306,31 +1995,24 @@ public abstract class EnumerableDefaults {
       return Wrapped.upAs(comparer, key);
     }
 
-    @Override
-    public V get(Object key) {
+    @Override public V get(Object key) {
       return map.get(wrap((K) key));
     }
 
-    @Override
-    public V put(K key, V value) {
+    @Override public V put(K key, V value) {
       return map.put(wrap(key), value);
     }
 
-    @Override
-    public V remove(Object key) {
+    @Override public V remove(Object key) {
       return map.remove(wrap((K) key));
     }
 
-    @Override
-    public void clear() {
+    @Override public void clear() {
       map.clear();
     }
 
-    @Override
-    public Collection<V> values() {
+    @Override public Collection<V> values() {
       return map.values();
     }
   }
 }
-
-// End EnumerableDefaults.java
