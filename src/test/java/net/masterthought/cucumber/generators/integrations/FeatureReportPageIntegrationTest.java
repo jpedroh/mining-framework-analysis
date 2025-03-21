@@ -1,4 +1,7 @@
 package net.masterthought.cucumber.generators.integrations;
+import java.util.Arrays;
+
+import java.util.Collections;
 
 import net.masterthought.cucumber.generators.FeatureReportPage;
 import net.masterthought.cucumber.generators.integrations.helpers.BriefAssertion;
@@ -26,8 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
