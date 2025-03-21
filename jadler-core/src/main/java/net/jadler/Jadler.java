@@ -1,9 +1,4 @@
-/*
- * Copyright (c) 2013 Jadler contributors
- * This program is made available under the terms of the MIT License.
- */
 package net.jadler;
-
 import java.nio.charset.Charset;
 import net.jadler.exception.JadlerException;
 import net.jadler.mocking.VerificationException;
@@ -12,7 +7,6 @@ import net.jadler.stubbing.RequestStubbing;
 import net.jadler.stubbing.server.StubHttpServerManager;
 import net.jadler.stubbing.server.StubHttpServer;
 import net.jadler.stubbing.ResponseStubbing;
-
 
 /**
  * <p>This class is a gateway to the whole Jadler library. Jadler is a powerful yet simple to use 
@@ -231,7 +225,7 @@ import net.jadler.stubbing.ResponseStubbing;
  * {@link net.jadler.stubbing.ResponseStubbing#withContentType(java.lang.String)} method.</p>
  * 
  * <p>And finally sometimes you would like to simulate a network latency. To do so just call the
- * {@link net.jadler.stubbing.ResponseStubbing#withDelay(long, java.util.concurrent.TimeUnit)} method.
+ * {@link net.jadler.stubbing.ResponseStubbing#withTimeout(long, java.util.concurrent.TimeUnit)} method.
  * The stub response will be returned at least after the specified amount of time.</p>
  * 
  * <p>Let's define the <em>THEN</em> part precisely:</p>
@@ -244,7 +238,7 @@ import net.jadler.stubbing.ResponseStubbing;
  *     .havingHeaderEqualTo("Content-Type", "application/json")
  *     .havingParameterEqualTo("force", "1")
  * .respond()
- *     .withDelay(2, SECONDS)
+ *     .withTimeout(2, SECONDS)
  *     .withStatus(201)
  *     .withBody("{\"project\":{\"id\" : 1}}")
  *     .withEncoding(Charset.forName("UTF-8"))
@@ -441,16 +435,14 @@ import net.jadler.stubbing.ResponseStubbing;
  * </pre>
  */
 public class Jadler {
-    
-    private static ThreadLocal<JadlerMocker> jadlerMockerContainer = new ThreadLocal<JadlerMocker>();
-    private static String JETTY_SERVER_CLASS = "net.jadler.stubbing.server.jetty.JettyStubHttpServer";
+  private static ThreadLocal<JadlerMocker> jadlerMockerContainer = new ThreadLocal<JadlerMocker>();
 
-    private Jadler() {
-        //gtfo
-    }
-    
-    
-    /**
+  private static String JETTY_SERVER_CLASS = "net.jadler.stubbing.server.jetty.JettyStubHttpServer";
+
+  private Jadler() {
+  }
+
+  /**
      * Initializes Jadler and starts a default stub server {@link net.jadler.stubbing.server.jetty.JettyStubHttpServer}
      * serving the http protocol listening on any free port. The port number can be retrieved using {@link #port()}.
      * <br /><br />
@@ -458,12 +450,11 @@ public class Jadler {
      * @return if additional tweaking needed on the initialized Jadler, call {@link AdditionalConfiguration#that()}
      * to add more configuration
      */
-    public static AdditionalConfiguration initJadler() {
-        return initInternal(new JadlerMocker(getJettyServer()));
-    }
-    
+  public static AdditionalConfiguration initJadler() {
+    return initInternal(new JadlerMocker(getJettyServer()));
+  }
 
-    /**
+  /**
      * Initializes Jadler and starts a default stub server {@link net.jadler.stubbing.server.jetty.JettyStubHttpServer}
      * serving the http protocol listening on the given port.
      * <br /><br />
@@ -472,12 +463,11 @@ public class Jadler {
      * @return if additional tweaking needed on the initialized Jadler, call {@link AdditionalConfiguration#that()}
      * to add more configuration
      */
-    public static AdditionalConfiguration initJadlerListeningOn(final int port) {
-        return initInternal(new JadlerMocker(getJettyServer(port)));
-    }
-    
+  public static AdditionalConfiguration initJadlerListeningOn(final int port) {
+    return initInternal(new JadlerMocker(getJettyServer(port)));
+  }
 
-    /**
+  /**
      * Initializes Jadler and starts the given {@link StubHttpServer}.
      * <br /><br />
      * This should be preferably called in the {@code setUp} method of the test suite
@@ -485,180 +475,151 @@ public class Jadler {
      * @return if additional tweaking needed on the initialized Jadler, call {@link AdditionalConfiguration#that()}
      * to add more configuration
      */
-    public static AdditionalConfiguration initJadlerUsing(final StubHttpServer server) {
-        return initInternal(new JadlerMocker(server));
-    }
-    
-    
-    /**
+  public static AdditionalConfiguration initJadlerUsing(final StubHttpServer server) {
+    return initInternal(new JadlerMocker(server));
+  }
+
+  /**
      * Stops the underlying {@link StubHttpServer} and closes Jadler.
      * <br /><br />
      * This should be preferably called in the {@code tearDown} method of a test suite.
      */
-    public static void closeJadler() {
-        final StubHttpServerManager serverManager = jadlerMockerContainer.get();
-        if (serverManager != null && serverManager.isStarted()) {
-            serverManager.close();
-        }
-        
-        jadlerMockerContainer.set(null);
+  public static void closeJadler() {
+    final StubHttpServerManager serverManager = jadlerMockerContainer.get();
+    if (serverManager != null && serverManager.isStarted()) {
+      serverManager.close();
     }
+    jadlerMockerContainer.set(null);
+  }
 
-
-    /**
+  /**
      * Use this method to retrieve the port the underlying http stub server is listening on
      * @return the port the underlying http stub server is listening on
      * @throws IllegalStateException if Jadler was not initialized yet
      */
-    public static int port() {
-        checkInitialized();
-        return jadlerMockerContainer.get().getStubHttpServerPort();
-    }
-    
-    
-    /**
+  public static int port() {
+    checkInitialized();
+    return jadlerMockerContainer.get().getStubHttpServerPort();
+  }
+
+  /**
      * Starts new http stubbing (defining new <i>WHEN</i>-<i>THEN</i> rule).
      * @return stubbing object for ongoing stubbing 
      */
-    public static RequestStubbing onRequest() {
-        checkInitialized();
-        return jadlerMockerContainer.get().onRequest();
-    }
-    
-    
-    /**
+  public static RequestStubbing onRequest() {
+    checkInitialized();
+    return jadlerMockerContainer.get().onRequest();
+  }
+
+  /**
      * Starts new verification (checking that an http request with given properties was or was not received)
      * @return verifying object for ongoing verifying 
      */
-    public static Verifying verifyThatRequest() {
-        checkInitialized();
-        return jadlerMockerContainer.get().verifyThatRequest();
-    }
-    
+  public static Verifying verifyThatRequest() {
+    checkInitialized();
+    return jadlerMockerContainer.get().verifyThatRequest();
+  }
 
-    private static void checkInitialized() {
-        if (jadlerMockerContainer.get() == null) {
-            throw new IllegalStateException("Jadler has not been initialized yet.");
-        }
+  private static void checkInitialized() {
+    if (jadlerMockerContainer.get() == null) {
+      throw new IllegalStateException("Jadler has not been initialized yet.");
     }
-    
-    
-    private static AdditionalConfiguration initInternal(final JadlerMocker jadlerMocker) {
-        if (jadlerMockerContainer.get() != null) {
-            throw new IllegalStateException("Jadler seems to have been initialized already.");
-        }
-        
-        jadlerMockerContainer.set(jadlerMocker);
-        jadlerMocker.start();
-        return AdditionalConfiguration.INSTANCE;        
+  }
+
+  private static AdditionalConfiguration initInternal(final JadlerMocker jadlerMocker) {
+    if (jadlerMockerContainer.get() != null) {
+      throw new IllegalStateException("Jadler seems to have been initialized already.");
     }
-    
-    
-    private static StubHttpServer getJettyServer() {
-        final Class<?> clazz = getJettyStubHttpServerClass();
-        try {
-            return (StubHttpServer) clazz.newInstance();
-        }
-        catch (final Exception e) {
-            throw new JadlerException("Cannot instantiate default Jetty stub server", e);
-        }
+    jadlerMockerContainer.set(jadlerMocker);
+    jadlerMocker.start();
+    return AdditionalConfiguration.INSTANCE;
+  }
+
+  private static StubHttpServer getJettyServer() {
+    final Class<?> clazz = getJettyStubHttpServerClass();
+    try {
+      return (StubHttpServer) clazz.newInstance();
+    } catch (final Exception e) {
+      throw new JadlerException("Cannot instantiate default Jetty stub server", e);
     }
-    
-    private static StubHttpServer getJettyServer(final int port) {
-        final Class<?> clazz = getJettyStubHttpServerClass();
-        try {
-            return (StubHttpServer) clazz.getConstructor(int.class).newInstance(port);
-        }
-        catch (final Exception e) {
-            throw new JadlerException("Cannot instantiate default Jetty stub server with the given port", e);
-        }
+  }
+
+  private static StubHttpServer getJettyServer(final int port) {
+    final Class<?> clazz = getJettyStubHttpServerClass();
+    try {
+      return (StubHttpServer) clazz.getConstructor(int.class).newInstance(port);
+    } catch (final Exception e) {
+      throw new JadlerException("Cannot instantiate default Jetty stub server with the given port", e);
     }
-    
-    
-    private static Class<?> getJettyStubHttpServerClass() {
-        try {
-            return Class.forName(JETTY_SERVER_CLASS);
-        }
-        catch (final ClassNotFoundException e) {
-            throw new JadlerException("Class " + JETTY_SERVER_CLASS + " cannot be found. "
-                    + "Either add jadler-jetty to your classpath or use the initJadlerUsing method to specify the "
-                    + "stub server explicitly.", e);
-        }
+  }
+
+  private static Class<?> getJettyStubHttpServerClass() {
+    try {
+      return Class.forName(JETTY_SERVER_CLASS);
+    } catch (final ClassNotFoundException e) {
+      throw new JadlerException("Class " + JETTY_SERVER_CLASS + " cannot be found. " + "Either add jadler-jetty to your classpath or use the initJadlerUsing method to specify the " + "stub server explicitly.", e);
     }
-    
-    
+  }
+
+  public static class OngoingConfiguration {
+    private static final OngoingConfiguration INSTANCE = new OngoingConfiguration();
+
+    private OngoingConfiguration() {
+    }
+
     /**
-     * This class serves as a DSL support for additional Jadler configuration.
-     */
-    public static class OngoingConfiguration {
-        private static final OngoingConfiguration INSTANCE = new OngoingConfiguration();
-        
-        
-        private OngoingConfiguration() {
-            //private constructor, instances of this class should never be created directly
-        }
-        
-        /**
          * Sets the default http response status. This value will be used for all stub responses with no
          * specific http status defined. (see {@link ResponseStubbing#withStatus(int)})
          * @param defaultStatus default http response status
          * @return this ongoing configuration
          */
-        public OngoingConfiguration respondsWithDefaultStatus(final int defaultStatus) {
-            jadlerMockerContainer.get().setDefaultStatus(defaultStatus);
-            return this;
-        }
-        
-        
-        /**
+    public OngoingConfiguration respondsWithDefaultStatus(final int defaultStatus) {
+      jadlerMockerContainer.get().setDefaultStatus(defaultStatus);
+      return this;
+    }
+
+    /**
          * Defines a response header that will be sent in every http stub response.
          * Can be called repeatedly to define more headers.
          * @param name name of the header
          * @param value header value
          * @return this ongoing configuration
          */
-        public OngoingConfiguration respondsWithDefaultHeader(final String name, final String value) {
-            jadlerMockerContainer.get().addDefaultHeader(name, value);
-            return this;
-        }
-        
-        
-        /**
+    public OngoingConfiguration respondsWithDefaultHeader(final String name, final String value) {
+      jadlerMockerContainer.get().addDefaultHeader(name, value);
+      return this;
+    }
+
+    /**
          * Defines a default encoding of every stub http response. This value will be used for all stub responses
          * with no specific encoding defined. (see {@link ResponseStubbing#withEncoding(java.nio.charset.Charset)})
          * @param defaultEncoding default stub response encoding
          * @return this ongoing configuration
          */
-        public OngoingConfiguration respondsWithDefaultEncoding(final Charset defaultEncoding) {
-            jadlerMockerContainer.get().setDefaultEncoding(defaultEncoding);
-            return this;
-        }
-        
-        
-        /**
+    public OngoingConfiguration respondsWithDefaultEncoding(final Charset defaultEncoding) {
+      jadlerMockerContainer.get().setDefaultEncoding(defaultEncoding);
+      return this;
+    }
+
+    /**
          * Defines a default content type of every stub http response. This value will be used for all stub responses
          * with no specific content type defined. (see {@link ResponseStubbing#withContentType(java.lang.String)})
          * @param defaultContentType default {@code Content-Type} header of every http stub response
          * @return this ongoing configuration
          */
-        public OngoingConfiguration respondsWithDefaultContentType(final String defaultContentType) {
-            return this.respondsWithDefaultHeader("Content-Type", defaultContentType);
-        }
+    public OngoingConfiguration respondsWithDefaultContentType(final String defaultContentType) {
+      return this.respondsWithDefaultHeader("Content-Type", defaultContentType);
     }
-    
-    
-    /**
-     * This class serves as a DSL support for initialization of an additional Jadler configuration.
-     */
-    public static class AdditionalConfiguration {
-        private static final AdditionalConfiguration INSTANCE = new AdditionalConfiguration();
-        
-        private AdditionalConfiguration() {
-            //private constructor, instances of this class should never be created directly
-        }
-        
-        public OngoingConfiguration that() {
-            return OngoingConfiguration.INSTANCE;
-        }
+  }
+
+  public static class AdditionalConfiguration {
+    private static final AdditionalConfiguration INSTANCE = new AdditionalConfiguration();
+
+    private AdditionalConfiguration() {
     }
+
+    public OngoingConfiguration that() {
+      return OngoingConfiguration.INSTANCE;
+    }
+  }
 }
