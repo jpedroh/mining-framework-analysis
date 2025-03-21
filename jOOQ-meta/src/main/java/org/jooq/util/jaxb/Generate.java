@@ -1,13 +1,4 @@
-
-
-
-
-
-
-
-
 package org.jooq.util.jaxb;
-
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,115 +8,126 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.jooq.util.jaxb.tools.StringAdapter;
 
-
 /**
  * Options strictly related to generated code.
  *
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Generate", propOrder = {
+@XmlAccessorType(value = XmlAccessType.FIELD) @XmlType(name = "Generate", propOrder = {  }) @SuppressWarnings(value = { "all" }) public class Generate implements Serializable {
+  private final static long serialVersionUID = 31100L;
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class Generate implements Serializable
-{
+  @XmlElement(defaultValue = "true") protected Boolean indexes = true;
 
-    private final static long serialVersionUID = 31100L;
-    @XmlElement(defaultValue = "true")
-    protected Boolean indexes = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean relations = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean deprecated = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean deprecationOnUnknownTypes = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean instanceFields = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean generatedAnnotation = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean routines = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean sequences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean udts = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean queues = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean links = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean keys = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean tables = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean records = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean recordsImplementingRecordN = true;
-    @XmlElement(defaultValue = "false")
-    protected Boolean pojos = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean pojosEqualsAndHashCode = false;
-    @XmlElement(defaultValue = "true")
-    protected Boolean pojosToString = true;
-    @XmlElement(defaultValue = "false")
-    protected Boolean immutablePojos = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean interfaces = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean immutableInterfaces = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean daos = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean jpaAnnotations = false;
-    @XmlSchemaType(name = "string")
-    protected JpaVersion jpaVersion;
-    @XmlElement(defaultValue = "false")
-    protected Boolean validationAnnotations = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean springAnnotations = false;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalObjectReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalCatalogReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalSchemaReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalTableReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalSequenceReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalUDTReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalRoutineReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalQueueReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalLinkReferences = true;
-    @XmlElement(defaultValue = "true")
-    protected Boolean globalKeyReferences = true;
-    @XmlElement(defaultValue = "false")
-    protected Boolean fluentSetters = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean javaBeansGettersAndSetters = false;
-    @XmlElement(defaultValue = "true")
-    protected Boolean varargSetters = true;
-    @XmlElement(defaultValue = "")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String fullyQualifiedTypes = "";
-    @XmlElement(defaultValue = "false")
-    protected Boolean emptyCatalogs = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean emptySchemas = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean javaTimeTypes = false;
-    @XmlElement(defaultValue = "false")
-    protected Boolean primaryKeyTypes = false;
+  @XmlElement(defaultValue = "true") protected Boolean relations = true;
 
-    /**
+  @XmlElement(defaultValue = "true") protected Boolean deprecated = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean deprecationOnUnknownTypes = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean instanceFields = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean generatedAnnotation = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean routines = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean sequences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean udts = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean queues = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean links = true;
+
+  @
+<<<<<<< /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/left.java
+  XmlElement
+=======
+  XmlSchemaType
+>>>>>>> /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/right.java
+  (
+<<<<<<< /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/left.java
+  defaultValue = "true"
+=======
+  name = "string"
+>>>>>>> /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/right.java
+  ) protected 
+<<<<<<< /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/left.java
+  Boolean
+=======
+  JpaVersion
+>>>>>>> /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/right.java
+   
+<<<<<<< /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/left.java
+  keys = true
+=======
+  jpaVersion
+>>>>>>> /usr/src/app/output/jooq/jooq/cc04a7fd812f7f2f2e016fc22c2cb9581ac039f9/jOOQ-meta/src/main/java/org/jooq/util/jaxb/Generate.java/right.java
+  ;
+
+  @XmlElement(defaultValue = "true") protected Boolean tables = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean records = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean recordsImplementingRecordN = true;
+
+  @XmlElement(defaultValue = "false") protected Boolean pojos = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean pojosEqualsAndHashCode = false;
+
+  @XmlElement(defaultValue = "true") protected Boolean pojosToString = true;
+
+  @XmlElement(defaultValue = "false") protected Boolean immutablePojos = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean interfaces = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean immutableInterfaces = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean daos = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean jpaAnnotations = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean validationAnnotations = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean springAnnotations = false;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalObjectReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalCatalogReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalSchemaReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalTableReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalSequenceReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalUDTReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalRoutineReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalQueueReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalLinkReferences = true;
+
+  @XmlElement(defaultValue = "true") protected Boolean globalKeyReferences = true;
+
+  @XmlElement(defaultValue = "false") protected Boolean fluentSetters = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean javaBeansGettersAndSetters = false;
+
+  @XmlElement(defaultValue = "true") protected Boolean varargSetters = true;
+
+  @XmlElement(defaultValue = "") @XmlJavaTypeAdapter(value = StringAdapter.class) protected String fullyQualifiedTypes = "";
+
+  @XmlElement(defaultValue = "false") protected Boolean emptyCatalogs = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean emptySchemas = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean javaTimeTypes = false;
+
+  @XmlElement(defaultValue = "false") protected Boolean primaryKeyTypes = false;
+
+  /**
      * Generate index information.
      *
      * @return
@@ -133,11 +135,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isIndexes() {
-        return indexes;
-    }
+  public Boolean isIndexes() {
+    return indexes;
+  }
 
-    /**
+  /**
      * Sets the value of the indexes property.
      *
      * @param value
@@ -145,11 +147,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setIndexes(Boolean value) {
-        this.indexes = value;
-    }
+  public void setIndexes(Boolean value) {
+    this.indexes = value;
+  }
 
-    /**
+  /**
      * Primary key / foreign key relations should be generated and used.
      * This is a prerequisite for various advanced features
      *
@@ -158,11 +160,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isRelations() {
-        return relations;
-    }
+  public Boolean isRelations() {
+    return relations;
+  }
 
-    /**
+  /**
      * Sets the value of the relations property.
      *
      * @param value
@@ -170,11 +172,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setRelations(Boolean value) {
-        this.relations = value;
-    }
+  public void setRelations(Boolean value) {
+    this.relations = value;
+  }
 
-    /**
+  /**
      * Generate deprecated code for backwards compatibility
      *
      * @return
@@ -182,11 +184,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isDeprecated() {
-        return deprecated;
-    }
+  public Boolean isDeprecated() {
+    return deprecated;
+  }
 
-    /**
+  /**
      * Sets the value of the deprecated property.
      *
      * @param value
@@ -194,11 +196,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setDeprecated(Boolean value) {
-        this.deprecated = value;
-    }
+  public void setDeprecated(Boolean value) {
+    this.deprecated = value;
+  }
 
-    /**
+  /**
      * Generate deprecation annotations on references to unknown data types.
      * This helps identifying columns, attributes, and parameters, which may not be usable through
      * jOOQ API, without adding custom data type bindings to them.
@@ -208,11 +210,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isDeprecationOnUnknownTypes() {
-        return deprecationOnUnknownTypes;
-    }
+  public Boolean isDeprecationOnUnknownTypes() {
+    return deprecationOnUnknownTypes;
+  }
 
-    /**
+  /**
      * Sets the value of the deprecationOnUnknownTypes property.
      *
      * @param value
@@ -220,11 +222,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setDeprecationOnUnknownTypes(Boolean value) {
-        this.deprecationOnUnknownTypes = value;
-    }
+  public void setDeprecationOnUnknownTypes(Boolean value) {
+    this.deprecationOnUnknownTypes = value;
+  }
 
-    /**
+  /**
      * @deprecated
      *
      * @return
@@ -232,11 +234,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isInstanceFields() {
-        return instanceFields;
-    }
+  public Boolean isInstanceFields() {
+    return instanceFields;
+  }
 
-    /**
+  /**
      * Sets the value of the instanceFields property.
      *
      * @param value
@@ -244,11 +246,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setInstanceFields(Boolean value) {
-        this.instanceFields = value;
-    }
+  public void setInstanceFields(Boolean value) {
+    this.instanceFields = value;
+  }
 
-    /**
+  /**
      * Generate the {@link javax.annotation.Generated} annotation to indicate
      * jOOQ version used for source code
      *
@@ -257,11 +259,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGeneratedAnnotation() {
-        return generatedAnnotation;
-    }
+  public Boolean isGeneratedAnnotation() {
+    return generatedAnnotation;
+  }
 
-    /**
+  /**
      * Sets the value of the generatedAnnotation property.
      *
      * @param value
@@ -269,11 +271,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGeneratedAnnotation(Boolean value) {
-        this.generatedAnnotation = value;
-    }
+  public void setGeneratedAnnotation(Boolean value) {
+    this.generatedAnnotation = value;
+  }
 
-    /**
+  /**
      * Generate Routine classes.
      *
      * @return
@@ -281,11 +283,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isRoutines() {
-        return routines;
-    }
+  public Boolean isRoutines() {
+    return routines;
+  }
 
-    /**
+  /**
      * Sets the value of the routines property.
      *
      * @param value
@@ -293,11 +295,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setRoutines(Boolean value) {
-        this.routines = value;
-    }
+  public void setRoutines(Boolean value) {
+    this.routines = value;
+  }
 
-    /**
+  /**
      * Generate Sequence classes.
      *
      * @return
@@ -305,11 +307,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isSequences() {
-        return sequences;
-    }
+  public Boolean isSequences() {
+    return sequences;
+  }
 
-    /**
+  /**
      * Sets the value of the sequences property.
      *
      * @param value
@@ -317,11 +319,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setSequences(Boolean value) {
-        this.sequences = value;
-    }
+  public void setSequences(Boolean value) {
+    this.sequences = value;
+  }
 
-    /**
+  /**
      * Generate UDT classes.
      *
      * @return
@@ -329,11 +331,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isUdts() {
-        return udts;
-    }
+  public Boolean isUdts() {
+    return udts;
+  }
 
-    /**
+  /**
      * Sets the value of the udts property.
      *
      * @param value
@@ -341,11 +343,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setUdts(Boolean value) {
-        this.udts = value;
-    }
+  public void setUdts(Boolean value) {
+    this.udts = value;
+  }
 
-    /**
+  /**
      * Generate Queue classes.
      *
      * @return
@@ -353,11 +355,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isQueues() {
-        return queues;
-    }
+  public Boolean isQueues() {
+    return queues;
+  }
 
-    /**
+  /**
      * Sets the value of the queues property.
      *
      * @param value
@@ -365,11 +367,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setQueues(Boolean value) {
-        this.queues = value;
-    }
+  public void setQueues(Boolean value) {
+    this.queues = value;
+  }
 
-    /**
+  /**
      * Generate database Link classes.
      *
      * @return
@@ -377,11 +379,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isLinks() {
-        return links;
-    }
+  public Boolean isLinks() {
+    return links;
+  }
 
-    /**
+  /**
      * Sets the value of the links property.
      *
      * @param value
@@ -389,11 +391,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setLinks(Boolean value) {
-        this.links = value;
-    }
+  public void setLinks(Boolean value) {
+    this.links = value;
+  }
 
-    /**
+  /**
      * Generate Key classes.
      *
      * @return
@@ -401,11 +403,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isKeys() {
-        return keys;
-    }
+  public Boolean isKeys() {
+    return keys;
+  }
 
-    /**
+  /**
      * Sets the value of the keys property.
      *
      * @param value
@@ -413,11 +415,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setKeys(Boolean value) {
-        this.keys = value;
-    }
+  public void setKeys(Boolean value) {
+    this.keys = value;
+  }
 
-    /**
+  /**
      * Generate Table classes.
      *
      * @return
@@ -425,11 +427,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isTables() {
-        return tables;
-    }
+  public Boolean isTables() {
+    return tables;
+  }
 
-    /**
+  /**
      * Sets the value of the tables property.
      *
      * @param value
@@ -437,11 +439,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setTables(Boolean value) {
-        this.tables = value;
-    }
+  public void setTables(Boolean value) {
+    this.tables = value;
+  }
 
-    /**
+  /**
      * Generate TableRecord classes.
      *
      * @return
@@ -449,11 +451,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isRecords() {
-        return records;
-    }
+  public Boolean isRecords() {
+    return records;
+  }
 
-    /**
+  /**
      * Sets the value of the records property.
      *
      * @param value
@@ -461,11 +463,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setRecords(Boolean value) {
-        this.records = value;
-    }
+  public void setRecords(Boolean value) {
+    this.records = value;
+  }
 
-    /**
+  /**
      * Generate TableRecord classes that implement Record[N] super types
      *
      * @return
@@ -473,11 +475,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isRecordsImplementingRecordN() {
-        return recordsImplementingRecordN;
-    }
+  public Boolean isRecordsImplementingRecordN() {
+    return recordsImplementingRecordN;
+  }
 
-    /**
+  /**
      * Sets the value of the recordsImplementingRecordN property.
      *
      * @param value
@@ -485,11 +487,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setRecordsImplementingRecordN(Boolean value) {
-        this.recordsImplementingRecordN = value;
-    }
+  public void setRecordsImplementingRecordN(Boolean value) {
+    this.recordsImplementingRecordN = value;
+  }
 
-    /**
+  /**
      * Generate POJOs.
      *
      * @return
@@ -497,11 +499,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isPojos() {
-        return pojos;
-    }
+  public Boolean isPojos() {
+    return pojos;
+  }
 
-    /**
+  /**
      * Sets the value of the pojos property.
      *
      * @param value
@@ -509,11 +511,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setPojos(Boolean value) {
-        this.pojos = value;
-    }
+  public void setPojos(Boolean value) {
+    this.pojos = value;
+  }
 
-    /**
+  /**
      * Generate basic equals() and hashCode() methods in POJOs.
      *
      * @return
@@ -521,11 +523,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isPojosEqualsAndHashCode() {
-        return pojosEqualsAndHashCode;
-    }
+  public Boolean isPojosEqualsAndHashCode() {
+    return pojosEqualsAndHashCode;
+  }
 
-    /**
+  /**
      * Sets the value of the pojosEqualsAndHashCode property.
      *
      * @param value
@@ -533,11 +535,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setPojosEqualsAndHashCode(Boolean value) {
-        this.pojosEqualsAndHashCode = value;
-    }
+  public void setPojosEqualsAndHashCode(Boolean value) {
+    this.pojosEqualsAndHashCode = value;
+  }
 
-    /**
+  /**
      * Generate basic toString() methods in POJOs.
      *
      * @return
@@ -545,11 +547,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isPojosToString() {
-        return pojosToString;
-    }
+  public Boolean isPojosToString() {
+    return pojosToString;
+  }
 
-    /**
+  /**
      * Sets the value of the pojosToString property.
      *
      * @param value
@@ -557,11 +559,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setPojosToString(Boolean value) {
-        this.pojosToString = value;
-    }
+  public void setPojosToString(Boolean value) {
+    this.pojosToString = value;
+  }
 
-    /**
+  /**
      * Generate immutable POJOs.
      *
      * @return
@@ -569,11 +571,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isImmutablePojos() {
-        return immutablePojos;
-    }
+  public Boolean isImmutablePojos() {
+    return immutablePojos;
+  }
 
-    /**
+  /**
      * Sets the value of the immutablePojos property.
      *
      * @param value
@@ -581,11 +583,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setImmutablePojos(Boolean value) {
-        this.immutablePojos = value;
-    }
+  public void setImmutablePojos(Boolean value) {
+    this.immutablePojos = value;
+  }
 
-    /**
+  /**
      * Generated interfaces to be implemented by records and/or POJOs.
      *
      * @return
@@ -593,11 +595,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isInterfaces() {
-        return interfaces;
-    }
+  public Boolean isInterfaces() {
+    return interfaces;
+  }
 
-    /**
+  /**
      * Sets the value of the interfaces property.
      *
      * @param value
@@ -605,11 +607,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setInterfaces(Boolean value) {
-        this.interfaces = value;
-    }
+  public void setInterfaces(Boolean value) {
+    this.interfaces = value;
+  }
 
-    /**
+  /**
      * Generate immutable interfaces.
      *
      * @return
@@ -617,11 +619,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isImmutableInterfaces() {
-        return immutableInterfaces;
-    }
+  public Boolean isImmutableInterfaces() {
+    return immutableInterfaces;
+  }
 
-    /**
+  /**
      * Sets the value of the immutableInterfaces property.
      *
      * @param value
@@ -629,11 +631,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setImmutableInterfaces(Boolean value) {
-        this.immutableInterfaces = value;
-    }
+  public void setImmutableInterfaces(Boolean value) {
+    this.immutableInterfaces = value;
+  }
 
-    /**
+  /**
      * Generate DAOs.
      *
      * @return
@@ -641,11 +643,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isDaos() {
-        return daos;
-    }
+  public Boolean isDaos() {
+    return daos;
+  }
 
-    /**
+  /**
      * Sets the value of the daos property.
      *
      * @param value
@@ -653,11 +655,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setDaos(Boolean value) {
-        this.daos = value;
-    }
+  public void setDaos(Boolean value) {
+    this.daos = value;
+  }
 
-    /**
+  /**
      * Annotate POJOs and Records with JPA annotations.
      *
      * @return
@@ -665,11 +667,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isJpaAnnotations() {
-        return jpaAnnotations;
-    }
+  public Boolean isJpaAnnotations() {
+    return jpaAnnotations;
+  }
 
-    /**
+  /**
      * Sets the value of the jpaAnnotations property.
      *
      * @param value
@@ -677,11 +679,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setJpaAnnotations(Boolean value) {
-        this.jpaAnnotations = value;
-    }
+  public void setJpaAnnotations(Boolean value) {
+    this.jpaAnnotations = value;
+  }
 
-    /**
+  /**
      * Sets the version of JPA specification to generate version-specific annotations.
      * If it is omitted, the latest version is used by default.
      *
@@ -690,11 +692,11 @@ public class Generate implements Serializable
      *     {@link JpaVersion }
      *
      */
-    public JpaVersion getJpaVersion() {
-        return jpaVersion;
-    }
+  public JpaVersion getJpaVersion() {
+    return jpaVersion;
+  }
 
-    /**
+  /**
      * Sets the value of the jpaVersion property.
      *
      * @param value
@@ -702,11 +704,11 @@ public class Generate implements Serializable
      *     {@link JpaVersion }
      *
      */
-    public void setJpaVersion(JpaVersion value) {
-        this.jpaVersion = value;
-    }
+  public void setJpaVersion(JpaVersion value) {
+    this.jpaVersion = value;
+  }
 
-    /**
+  /**
      * Annotate POJOs and Records with JSR-303 validation annotations
      *
      * @return
@@ -714,11 +716,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isValidationAnnotations() {
-        return validationAnnotations;
-    }
+  public Boolean isValidationAnnotations() {
+    return validationAnnotations;
+  }
 
-    /**
+  /**
      * Sets the value of the validationAnnotations property.
      *
      * @param value
@@ -726,11 +728,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setValidationAnnotations(Boolean value) {
-        this.validationAnnotations = value;
-    }
+  public void setValidationAnnotations(Boolean value) {
+    this.validationAnnotations = value;
+  }
 
-    /**
+  /**
      * Annotate DAOs with useful spring annotations such as @Repository or @Autowired.
      *
      * @return
@@ -738,11 +740,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isSpringAnnotations() {
-        return springAnnotations;
-    }
+  public Boolean isSpringAnnotations() {
+    return springAnnotations;
+  }
 
-    /**
+  /**
      * Sets the value of the springAnnotations property.
      *
      * @param value
@@ -750,11 +752,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setSpringAnnotations(Boolean value) {
-        this.springAnnotations = value;
-    }
+  public void setSpringAnnotations(Boolean value) {
+    this.springAnnotations = value;
+  }
 
-    /**
+  /**
      * Turn off generation of all global object references.
      *
      * @return
@@ -762,11 +764,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalObjectReferences() {
-        return globalObjectReferences;
-    }
+  public Boolean isGlobalObjectReferences() {
+    return globalObjectReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalObjectReferences property.
      *
      * @param value
@@ -774,11 +776,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalObjectReferences(Boolean value) {
-        this.globalObjectReferences = value;
-    }
+  public void setGlobalObjectReferences(Boolean value) {
+    this.globalObjectReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global catalog references.
      *
      * @return
@@ -786,11 +788,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalCatalogReferences() {
-        return globalCatalogReferences;
-    }
+  public Boolean isGlobalCatalogReferences() {
+    return globalCatalogReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalCatalogReferences property.
      *
      * @param value
@@ -798,11 +800,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalCatalogReferences(Boolean value) {
-        this.globalCatalogReferences = value;
-    }
+  public void setGlobalCatalogReferences(Boolean value) {
+    this.globalCatalogReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global schema references.
      *
      * @return
@@ -810,11 +812,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalSchemaReferences() {
-        return globalSchemaReferences;
-    }
+  public Boolean isGlobalSchemaReferences() {
+    return globalSchemaReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalSchemaReferences property.
      *
      * @param value
@@ -822,11 +824,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalSchemaReferences(Boolean value) {
-        this.globalSchemaReferences = value;
-    }
+  public void setGlobalSchemaReferences(Boolean value) {
+    this.globalSchemaReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global table references.
      *
      * @return
@@ -834,11 +836,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalTableReferences() {
-        return globalTableReferences;
-    }
+  public Boolean isGlobalTableReferences() {
+    return globalTableReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalTableReferences property.
      *
      * @param value
@@ -846,11 +848,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalTableReferences(Boolean value) {
-        this.globalTableReferences = value;
-    }
+  public void setGlobalTableReferences(Boolean value) {
+    this.globalTableReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global sequence references.
      *
      * @return
@@ -858,11 +860,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalSequenceReferences() {
-        return globalSequenceReferences;
-    }
+  public Boolean isGlobalSequenceReferences() {
+    return globalSequenceReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalSequenceReferences property.
      *
      * @param value
@@ -870,11 +872,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalSequenceReferences(Boolean value) {
-        this.globalSequenceReferences = value;
-    }
+  public void setGlobalSequenceReferences(Boolean value) {
+    this.globalSequenceReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global UDT references.
      *
      * @return
@@ -882,11 +884,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalUDTReferences() {
-        return globalUDTReferences;
-    }
+  public Boolean isGlobalUDTReferences() {
+    return globalUDTReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalUDTReferences property.
      *
      * @param value
@@ -894,11 +896,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalUDTReferences(Boolean value) {
-        this.globalUDTReferences = value;
-    }
+  public void setGlobalUDTReferences(Boolean value) {
+    this.globalUDTReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global routine references.
      *
      * @return
@@ -906,11 +908,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalRoutineReferences() {
-        return globalRoutineReferences;
-    }
+  public Boolean isGlobalRoutineReferences() {
+    return globalRoutineReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalRoutineReferences property.
      *
      * @param value
@@ -918,11 +920,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalRoutineReferences(Boolean value) {
-        this.globalRoutineReferences = value;
-    }
+  public void setGlobalRoutineReferences(Boolean value) {
+    this.globalRoutineReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global queue references.
      *
      * @return
@@ -930,11 +932,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalQueueReferences() {
-        return globalQueueReferences;
-    }
+  public Boolean isGlobalQueueReferences() {
+    return globalQueueReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalQueueReferences property.
      *
      * @param value
@@ -942,11 +944,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalQueueReferences(Boolean value) {
-        this.globalQueueReferences = value;
-    }
+  public void setGlobalQueueReferences(Boolean value) {
+    this.globalQueueReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global database link references.
      *
      * @return
@@ -954,11 +956,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalLinkReferences() {
-        return globalLinkReferences;
-    }
+  public Boolean isGlobalLinkReferences() {
+    return globalLinkReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalLinkReferences property.
      *
      * @param value
@@ -966,11 +968,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalLinkReferences(Boolean value) {
-        this.globalLinkReferences = value;
-    }
+  public void setGlobalLinkReferences(Boolean value) {
+    this.globalLinkReferences = value;
+  }
 
-    /**
+  /**
      * Turn off generation of global key references.
      *
      * @return
@@ -978,11 +980,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isGlobalKeyReferences() {
-        return globalKeyReferences;
-    }
+  public Boolean isGlobalKeyReferences() {
+    return globalKeyReferences;
+  }
 
-    /**
+  /**
      * Sets the value of the globalKeyReferences property.
      *
      * @param value
@@ -990,11 +992,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setGlobalKeyReferences(Boolean value) {
-        this.globalKeyReferences = value;
-    }
+  public void setGlobalKeyReferences(Boolean value) {
+    this.globalKeyReferences = value;
+  }
 
-    /**
+  /**
      * Generate fluent setters in records, POJOs, interfaces.
      *
      * @return
@@ -1002,11 +1004,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isFluentSetters() {
-        return fluentSetters;
-    }
+  public Boolean isFluentSetters() {
+    return fluentSetters;
+  }
 
-    /**
+  /**
      * Sets the value of the fluentSetters property.
      *
      * @param value
@@ -1014,11 +1016,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setFluentSetters(Boolean value) {
-        this.fluentSetters = value;
-    }
+  public void setFluentSetters(Boolean value) {
+    this.fluentSetters = value;
+  }
 
-    /**
+  /**
      * Modify DefaultGeneratorStrategy behaviour to generate getters and setters in JavaBeans style in records, POJOs, interfaces.
      * <p>
      * If this flag is set to false, then:
@@ -1043,11 +1045,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isJavaBeansGettersAndSetters() {
-        return javaBeansGettersAndSetters;
-    }
+  public Boolean isJavaBeansGettersAndSetters() {
+    return javaBeansGettersAndSetters;
+  }
 
-    /**
+  /**
      * Sets the value of the javaBeansGettersAndSetters property.
      *
      * @param value
@@ -1055,11 +1057,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setJavaBeansGettersAndSetters(Boolean value) {
-        this.javaBeansGettersAndSetters = value;
-    }
+  public void setJavaBeansGettersAndSetters(Boolean value) {
+    this.javaBeansGettersAndSetters = value;
+  }
 
-    /**
+  /**
      * Generate varargs setters for array types for convenience.
      * <p>
      * This may lead to compilation warnings in current Java versions.
@@ -1069,11 +1071,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isVarargSetters() {
-        return varargSetters;
-    }
+  public Boolean isVarargSetters() {
+    return varargSetters;
+  }
 
-    /**
+  /**
      * Sets the value of the varargSetters property.
      *
      * @param value
@@ -1081,11 +1083,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setVarargSetters(Boolean value) {
-        this.varargSetters = value;
-    }
+  public void setVarargSetters(Boolean value) {
+    this.varargSetters = value;
+  }
 
-    /**
+  /**
      * A regular expression matching all the types in generated code that should be fully qualified.
      * <p>
      * This can be useful if you have a database object that generates a String
@@ -1097,11 +1099,11 @@ public class Generate implements Serializable
      *     {@link String }
      *
      */
-    public String getFullyQualifiedTypes() {
-        return fullyQualifiedTypes;
-    }
+  public String getFullyQualifiedTypes() {
+    return fullyQualifiedTypes;
+  }
 
-    /**
+  /**
      * Sets the value of the fullyQualifiedTypes property.
      *
      * @param value
@@ -1109,11 +1111,11 @@ public class Generate implements Serializable
      *     {@link String }
      *
      */
-    public void setFullyQualifiedTypes(String value) {
-        this.fullyQualifiedTypes = value;
-    }
+  public void setFullyQualifiedTypes(String value) {
+    this.fullyQualifiedTypes = value;
+  }
 
-    /**
+  /**
      * Whether empty catalogs (e.g. empty because of <excludes/> configurations) should still be generated.
      *
      * @return
@@ -1121,11 +1123,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isEmptyCatalogs() {
-        return emptyCatalogs;
-    }
+  public Boolean isEmptyCatalogs() {
+    return emptyCatalogs;
+  }
 
-    /**
+  /**
      * Sets the value of the emptyCatalogs property.
      *
      * @param value
@@ -1133,11 +1135,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setEmptyCatalogs(Boolean value) {
-        this.emptyCatalogs = value;
-    }
+  public void setEmptyCatalogs(Boolean value) {
+    this.emptyCatalogs = value;
+  }
 
-    /**
+  /**
      * Whether empty schemas (e.g. empty because of <excludes/> configurations) should still be generated.
      *
      * @return
@@ -1145,11 +1147,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isEmptySchemas() {
-        return emptySchemas;
-    }
+  public Boolean isEmptySchemas() {
+    return emptySchemas;
+  }
 
-    /**
+  /**
      * Sets the value of the emptySchemas property.
      *
      * @param value
@@ -1157,11 +1159,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setEmptySchemas(Boolean value) {
-        this.emptySchemas = value;
-    }
+  public void setEmptySchemas(Boolean value) {
+    this.emptySchemas = value;
+  }
 
-    /**
+  /**
      * A flag indicating whether Java 8's java.time types should be used by the
      * source code generator, rather than JDBC's java.sql types.
      * <p>
@@ -1172,11 +1174,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isJavaTimeTypes() {
-        return javaTimeTypes;
-    }
+  public Boolean isJavaTimeTypes() {
+    return javaTimeTypes;
+  }
 
-    /**
+  /**
      * Sets the value of the javaTimeTypes property.
      *
      * @param value
@@ -1184,11 +1186,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setJavaTimeTypes(Boolean value) {
-        this.javaTimeTypes = value;
-    }
+  public void setJavaTimeTypes(Boolean value) {
+    this.javaTimeTypes = value;
+  }
 
-    /**
+  /**
      * Whether wrapper types should be generated for primary key columns, and for their referencing foreign keys.
      *
      * @return
@@ -1196,11 +1198,11 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public Boolean isPrimaryKeyTypes() {
-        return primaryKeyTypes;
-    }
+  public Boolean isPrimaryKeyTypes() {
+    return primaryKeyTypes;
+  }
 
-    /**
+  /**
      * Sets the value of the primaryKeyTypes property.
      *
      * @param value
@@ -1208,228 +1210,227 @@ public class Generate implements Serializable
      *     {@link Boolean }
      *
      */
-    public void setPrimaryKeyTypes(Boolean value) {
-        this.primaryKeyTypes = value;
-    }
+  public void setPrimaryKeyTypes(Boolean value) {
+    this.primaryKeyTypes = value;
+  }
 
-    public Generate withIndexes(Boolean value) {
-        setIndexes(value);
-        return this;
-    }
+  public Generate withIndexes(Boolean value) {
+    setIndexes(value);
+    return this;
+  }
 
-    public Generate withRelations(Boolean value) {
-        setRelations(value);
-        return this;
-    }
+  public Generate withRelations(Boolean value) {
+    setRelations(value);
+    return this;
+  }
 
-    public Generate withDeprecated(Boolean value) {
-        setDeprecated(value);
-        return this;
-    }
+  public Generate withDeprecated(Boolean value) {
+    setDeprecated(value);
+    return this;
+  }
 
-    public Generate withDeprecationOnUnknownTypes(Boolean value) {
-        setDeprecationOnUnknownTypes(value);
-        return this;
-    }
+  public Generate withDeprecationOnUnknownTypes(Boolean value) {
+    setDeprecationOnUnknownTypes(value);
+    return this;
+  }
 
-    public Generate withInstanceFields(Boolean value) {
-        setInstanceFields(value);
-        return this;
-    }
+  public Generate withInstanceFields(Boolean value) {
+    setInstanceFields(value);
+    return this;
+  }
 
-    public Generate withGeneratedAnnotation(Boolean value) {
-        setGeneratedAnnotation(value);
-        return this;
-    }
+  public Generate withGeneratedAnnotation(Boolean value) {
+    setGeneratedAnnotation(value);
+    return this;
+  }
 
-    public Generate withRoutines(Boolean value) {
-        setRoutines(value);
-        return this;
-    }
+  public Generate withRoutines(Boolean value) {
+    setRoutines(value);
+    return this;
+  }
 
-    public Generate withSequences(Boolean value) {
-        setSequences(value);
-        return this;
-    }
+  public Generate withSequences(Boolean value) {
+    setSequences(value);
+    return this;
+  }
 
-    public Generate withUdts(Boolean value) {
-        setUdts(value);
-        return this;
-    }
+  public Generate withUdts(Boolean value) {
+    setUdts(value);
+    return this;
+  }
 
-    public Generate withQueues(Boolean value) {
-        setQueues(value);
-        return this;
-    }
+  public Generate withQueues(Boolean value) {
+    setQueues(value);
+    return this;
+  }
 
-    public Generate withLinks(Boolean value) {
-        setLinks(value);
-        return this;
-    }
+  public Generate withLinks(Boolean value) {
+    setLinks(value);
+    return this;
+  }
 
-    public Generate withKeys(Boolean value) {
-        setKeys(value);
-        return this;
-    }
+  public Generate withKeys(Boolean value) {
+    setKeys(value);
+    return this;
+  }
 
-    public Generate withTables(Boolean value) {
-        setTables(value);
-        return this;
-    }
+  public Generate withTables(Boolean value) {
+    setTables(value);
+    return this;
+  }
 
-    public Generate withRecords(Boolean value) {
-        setRecords(value);
-        return this;
-    }
+  public Generate withRecords(Boolean value) {
+    setRecords(value);
+    return this;
+  }
 
-    public Generate withRecordsImplementingRecordN(Boolean value) {
-        setRecordsImplementingRecordN(value);
-        return this;
-    }
+  public Generate withRecordsImplementingRecordN(Boolean value) {
+    setRecordsImplementingRecordN(value);
+    return this;
+  }
 
-    public Generate withPojos(Boolean value) {
-        setPojos(value);
-        return this;
-    }
+  public Generate withPojos(Boolean value) {
+    setPojos(value);
+    return this;
+  }
 
-    public Generate withPojosEqualsAndHashCode(Boolean value) {
-        setPojosEqualsAndHashCode(value);
-        return this;
-    }
+  public Generate withPojosEqualsAndHashCode(Boolean value) {
+    setPojosEqualsAndHashCode(value);
+    return this;
+  }
 
-    public Generate withPojosToString(Boolean value) {
-        setPojosToString(value);
-        return this;
-    }
+  public Generate withPojosToString(Boolean value) {
+    setPojosToString(value);
+    return this;
+  }
 
-    public Generate withImmutablePojos(Boolean value) {
-        setImmutablePojos(value);
-        return this;
-    }
+  public Generate withImmutablePojos(Boolean value) {
+    setImmutablePojos(value);
+    return this;
+  }
 
-    public Generate withInterfaces(Boolean value) {
-        setInterfaces(value);
-        return this;
-    }
+  public Generate withInterfaces(Boolean value) {
+    setInterfaces(value);
+    return this;
+  }
 
-    public Generate withImmutableInterfaces(Boolean value) {
-        setImmutableInterfaces(value);
-        return this;
-    }
+  public Generate withImmutableInterfaces(Boolean value) {
+    setImmutableInterfaces(value);
+    return this;
+  }
 
-    public Generate withDaos(Boolean value) {
-        setDaos(value);
-        return this;
-    }
+  public Generate withDaos(Boolean value) {
+    setDaos(value);
+    return this;
+  }
 
-    public Generate withJpaAnnotations(Boolean value) {
-        setJpaAnnotations(value);
-        return this;
-    }
+  public Generate withJpaAnnotations(Boolean value) {
+    setJpaAnnotations(value);
+    return this;
+  }
 
-    public Generate withJpaVersion(JpaVersion value) {
-        setJpaVersion(value);
-        return this;
-    }
+  public Generate withJpaVersion(JpaVersion value) {
+    setJpaVersion(value);
+    return this;
+  }
 
-    public Generate withValidationAnnotations(Boolean value) {
-        setValidationAnnotations(value);
-        return this;
-    }
+  public Generate withValidationAnnotations(Boolean value) {
+    setValidationAnnotations(value);
+    return this;
+  }
 
-    public Generate withSpringAnnotations(Boolean value) {
-        setSpringAnnotations(value);
-        return this;
-    }
+  public Generate withSpringAnnotations(Boolean value) {
+    setSpringAnnotations(value);
+    return this;
+  }
 
-    public Generate withGlobalObjectReferences(Boolean value) {
-        setGlobalObjectReferences(value);
-        return this;
-    }
+  public Generate withGlobalObjectReferences(Boolean value) {
+    setGlobalObjectReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalCatalogReferences(Boolean value) {
-        setGlobalCatalogReferences(value);
-        return this;
-    }
+  public Generate withGlobalCatalogReferences(Boolean value) {
+    setGlobalCatalogReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalSchemaReferences(Boolean value) {
-        setGlobalSchemaReferences(value);
-        return this;
-    }
+  public Generate withGlobalSchemaReferences(Boolean value) {
+    setGlobalSchemaReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalTableReferences(Boolean value) {
-        setGlobalTableReferences(value);
-        return this;
-    }
+  public Generate withGlobalTableReferences(Boolean value) {
+    setGlobalTableReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalSequenceReferences(Boolean value) {
-        setGlobalSequenceReferences(value);
-        return this;
-    }
+  public Generate withGlobalSequenceReferences(Boolean value) {
+    setGlobalSequenceReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalUDTReferences(Boolean value) {
-        setGlobalUDTReferences(value);
-        return this;
-    }
+  public Generate withGlobalUDTReferences(Boolean value) {
+    setGlobalUDTReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalRoutineReferences(Boolean value) {
-        setGlobalRoutineReferences(value);
-        return this;
-    }
+  public Generate withGlobalRoutineReferences(Boolean value) {
+    setGlobalRoutineReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalQueueReferences(Boolean value) {
-        setGlobalQueueReferences(value);
-        return this;
-    }
+  public Generate withGlobalQueueReferences(Boolean value) {
+    setGlobalQueueReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalLinkReferences(Boolean value) {
-        setGlobalLinkReferences(value);
-        return this;
-    }
+  public Generate withGlobalLinkReferences(Boolean value) {
+    setGlobalLinkReferences(value);
+    return this;
+  }
 
-    public Generate withGlobalKeyReferences(Boolean value) {
-        setGlobalKeyReferences(value);
-        return this;
-    }
+  public Generate withGlobalKeyReferences(Boolean value) {
+    setGlobalKeyReferences(value);
+    return this;
+  }
 
-    public Generate withFluentSetters(Boolean value) {
-        setFluentSetters(value);
-        return this;
-    }
+  public Generate withFluentSetters(Boolean value) {
+    setFluentSetters(value);
+    return this;
+  }
 
-    public Generate withJavaBeansGettersAndSetters(Boolean value) {
-        setJavaBeansGettersAndSetters(value);
-        return this;
-    }
+  public Generate withJavaBeansGettersAndSetters(Boolean value) {
+    setJavaBeansGettersAndSetters(value);
+    return this;
+  }
 
-    public Generate withVarargSetters(Boolean value) {
-        setVarargSetters(value);
-        return this;
-    }
+  public Generate withVarargSetters(Boolean value) {
+    setVarargSetters(value);
+    return this;
+  }
 
-    public Generate withFullyQualifiedTypes(String value) {
-        setFullyQualifiedTypes(value);
-        return this;
-    }
+  public Generate withFullyQualifiedTypes(String value) {
+    setFullyQualifiedTypes(value);
+    return this;
+  }
 
-    public Generate withEmptyCatalogs(Boolean value) {
-        setEmptyCatalogs(value);
-        return this;
-    }
+  public Generate withEmptyCatalogs(Boolean value) {
+    setEmptyCatalogs(value);
+    return this;
+  }
 
-    public Generate withEmptySchemas(Boolean value) {
-        setEmptySchemas(value);
-        return this;
-    }
+  public Generate withEmptySchemas(Boolean value) {
+    setEmptySchemas(value);
+    return this;
+  }
 
-    public Generate withJavaTimeTypes(Boolean value) {
-        setJavaTimeTypes(value);
-        return this;
-    }
+  public Generate withJavaTimeTypes(Boolean value) {
+    setJavaTimeTypes(value);
+    return this;
+  }
 
-    public Generate withPrimaryKeyTypes(Boolean value) {
-        setPrimaryKeyTypes(value);
-        return this;
-    }
-
+  public Generate withPrimaryKeyTypes(Boolean value) {
+    setPrimaryKeyTypes(value);
+    return this;
+  }
 }
