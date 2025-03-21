@@ -758,7 +758,6 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			}
 		}
 
-
 		Vertex topVertex = graph.createVertex(origVertex
 				.getAttributedElementClass());
 		copyAttributes(origVertex, topVertex);
@@ -775,8 +774,18 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		while (origEdge != null) {
 			subVertex = copySubgraph(origEdge.getAlpha(), graph,
 					variablesToBeCopied, copiedVarMap);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/greql2/optimizer/EarlySelectionOptimizer.java/left.java
+			Class<? extends Edge> edgeClass = origEdge
+					.getAttributedElementClass().getSchemaClass();
+			graph.createEdge(edgeClass, subVertex, topVertex);
+||||||| /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/greql2/optimizer/EarlySelectionOptimizer.java/base.java
+			Class<? extends Edge> edgeClass = (Class<? extends Edge>) origEdge
+					.getAttributedElementClass().getSchemaClass();
+			graph.createEdge(edgeClass, subVertex, topVertex);
+=======
 			graph.createEdge(origEdge.getAttributedElementClass(), subVertex,
 					topVertex);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/greql2/optimizer/EarlySelectionOptimizer.java/right.java
 			origEdge = origEdge.getNextIncidence(EdgeDirection.IN);
 		}
 

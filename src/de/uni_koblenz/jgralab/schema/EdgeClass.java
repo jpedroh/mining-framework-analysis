@@ -62,4 +62,25 @@ public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 
 	public IncidenceClass getTo();
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/left.java
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.schema.AttributedElementClass#getSchemaClass()
+	 */
+	@Override
+	public Class<? extends Edge> getSchemaClass();
+
+||||||| /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.schema.AttributedElementClass#getSchemaClass()
+	 */
+	public Class<? extends Edge> getSchemaClass();
+
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/4aec874ec88fb13e499510a38c517beb31eaec51/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/right.java
 }
