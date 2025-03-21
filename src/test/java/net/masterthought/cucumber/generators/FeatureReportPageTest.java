@@ -47,7 +47,13 @@ public class FeatureReportPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/FeatureReportPageTest.java/left.java
+        assertThat(context.getKeys()).hasSize(13);
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/FeatureReportPageTest.java/base.java
         assertThat(context.getKeys()).hasSize(12);
+=======
+        assertThat(context.getKeys()).hasSize(11);
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/FeatureReportPageTest.java/right.java
         assertThat(context.get("feature")).isEqualTo(feature);
     }
 

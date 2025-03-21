@@ -43,7 +43,13 @@ public class StepsOverviewPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/StepsOverviewPageTest.java/left.java
+        assertThat(context.getKeys()).hasSize(17);
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/StepsOverviewPageTest.java/base.java
         assertThat(context.getKeys()).hasSize(16);
+=======
+        assertThat(context.getKeys()).hasSize(15);
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/StepsOverviewPageTest.java/right.java
         assertThat(context.get("all_steps")).isEqualTo(steps);
 
         int allOccurrences = 0;

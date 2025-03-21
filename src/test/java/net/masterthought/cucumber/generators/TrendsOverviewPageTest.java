@@ -58,7 +58,13 @@ public class TrendsOverviewPageTest extends PageTest {
 
         // then
         VelocityContext context = page.context;
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/TrendsOverviewPageTest.java/left.java
+        assertThat(context.getKeys()).hasSize(23);
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/TrendsOverviewPageTest.java/base.java
         assertThat(context.getKeys()).hasSize(22);
+=======
+        assertThat(context.getKeys()).hasSize(21);
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/47f552e3abd1197a640f0548fc194f38efc2eced/src/test/java/net/masterthought/cucumber/generators/TrendsOverviewPageTest.java/right.java
 
         assertThat(context.get("buildNumbers")).isEqualTo(new String[]{"01_first", "other build", "05last"});
         assertThat(context.get("failedFeatures")).isEqualTo(new int[]{1, 2, 5});
