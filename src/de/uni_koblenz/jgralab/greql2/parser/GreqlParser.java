@@ -92,7 +92,7 @@ public class GreqlParser extends ParserHelper {
 	 * the current token position. If it was already tested, this method skips
 	 * the number of tokens which were consumed by the rule in its last
 	 * application at the current token
-	 * 
+	 *
 	 * @param rule
 	 *            the rule to test
 	 * @return the current token position if the rule was not applied before or
@@ -136,7 +136,7 @@ public class GreqlParser extends ParserHelper {
 	 * (skipRule(pos)) return null; Expression expr =
 	 * parseQuantifiedExpression(); ruleSucceeded(RuleEnum.EXPRESSION, pos);
 	 * return expr;
-	 * 
+	 *
 	 * @return true if the rule application has already been tested and the
 	 *         parser is still in predicate mode, so the rule and the tokens it
 	 *         matched last time can be skipped, false otherwise
@@ -818,7 +818,7 @@ public class GreqlParser extends ParserHelper {
 
 	/**
 	 * matches conditional expressions
-	 * 
+	 *
 	 * @return
 	 */
 	private final Expression parseConditionalExpression() {
