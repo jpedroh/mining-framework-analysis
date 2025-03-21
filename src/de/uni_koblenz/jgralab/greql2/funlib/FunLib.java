@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,25 +9,221 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.funlib.Function.Category;
 import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 public class FunLib {
-	private static final Map<String, FunctionInfo> functions;
-	private static final Logger logger;
-
 	static {
-		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
 		functions = new HashMap<String, FunctionInfo>();
-		// register builtin functions
-		if (logger != null) {
-			logger.fine("Registering builtin functions");
+		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
+		registerBuiltInFunctions();
+	}
+
+	private FunLib() {
+	}
+
+	private static Map<String, FunctionInfo> functions;
+	private static Logger logger;
+
+	private static class Signature {
+		Class<?>[] parameterTypes;
+		Method evaluateMethod;
+
+		final boolean matches(Object[] params) {
+			if (params.length != parameterTypes.length) {
+				return false;
+			}
+			for (int i = 0; i < params.length; i++) {
+				if (!parameterTypes[i].isInstance(params[i])) {
+					return false;
+				}
+			}
+			return true;
 		}
+	}
+
+	public static class FunctionInfo {
+		String name;
+		Class<? extends Function> functionClass;
+		Function function;
+		Signature[] signatures;
+		boolean needsGraphArgument;
+		boolean acceptsUndefinedValues;
+
+		FunctionInfo(String name, Class<? extends Function> cls) {
+			this.name = name;
+			functionClass = cls;
+			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
+			try {
+				function = cls.newInstance();
+			} catch (InstantiationException e) {
+				throw new GreqlException("Could not instantiate '"
+						+ cls.getName() + "'", e);
+			} catch (IllegalAccessException e) {
+				throw new GreqlException(
+						"Could not instantiate '"
+								+ cls.getName()
+								+ "' (class must be public and needs public default constructor)",
+						e);
+			}
+			needsGraphArgument = cls
+					.isAnnotationPresent(NeedsGraphArgument.class);
+			acceptsUndefinedValues = cls
+					.isAnnotationPresent(AcceptsUndefinedArguments.class);
+			registerSignatures(functionSignatures, cls);
+			signatures = new Signature[functionSignatures.size()];
+			functionSignatures.toArray(signatures);
+		}
+
+		void registerSignatures(ArrayList<Signature> signatures,
+				Class<? extends Function> cls) {
+			for (Method m : cls.getMethods()) {
+				if (Modifier.isPublic(m.getModifiers())
+						&& !Modifier.isAbstract(m.getModifiers())
+						&& m.getName().equals("evaluate")) {
+					if (logger != null) {
+						logger.finest("\t" + m);
+					}
+					Signature sig = new Signature();
+					sig.evaluateMethod = m;
+					sig.parameterTypes = m.getParameterTypes();
+					signatures.add(sig);
+				}
+			}
+		}
+
+		public final Function getFunction() {
+			return function;
+		}
+
+		public final boolean needsGraphArgument() {
+			return needsGraphArgument;
+		}
+
+		public final boolean acceptsUndefinedValues() {
+			return acceptsUndefinedValues;
+		}
+	}
+
+	public static final boolean contains(String name) {
+		return functions.containsKey(name);
+	}
+
+	private static final String getFunctionName(String className) {
+		return Character.toLowerCase(className.charAt(0))
+				+ className.substring(1);
+	}
+
+	private static final String getFunctionName(Class<? extends Function> cls) {
+		return getFunctionName(cls.getSimpleName());
+	}
+
+	public static final String getArgumentAsString(Object arg) {
+		if (arg == null) {
+			arg = Undefined.UNDEFINED;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(Types.getGreqlTypeName(arg));
+		if (arg instanceof String) {
+			sb.append(": ").append('"')
+					.append(arg.toString().replace("\"", "\\\"")).append('"');
+		} else if (!(arg instanceof Graph) && !(arg instanceof Undefined)) {
+			sb.append(": ").append(arg);
+		}
+		return sb.toString();
+	}
+
+	public static final Object apply(PrintStream os, String name,
+			Object... args) {
+		assert (name != null) && (name.length() >= 1);
+		assert args != null;
+		assert validArgumentTypes(args);
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		if (args.length == 0) {
+			sb.append("()");
+		} else {
+			String delim = "(";
+			for (Object arg : args) {
+				sb.append(delim).append(getArgumentAsString(arg));
+				delim = ", ";
+			}
+			sb.append(")");
+		}
+		os.print(sb);
+		Object result = apply(name, args);
+		os.println(" -> " + getArgumentAsString(result));
+		return result;
+	}
+
+	public static final Object apply(FunctionInfo fi, Object... args) {
+		assert fi != null;
+		if (!fi.acceptsUndefinedValues) {
+			for (Object arg : args) {
+				if ((arg == null) || (arg == Undefined.UNDEFINED)) {
+					return Undefined.UNDEFINED;
+				}
+			}
+		}
+		for (Signature sig : fi.signatures) {
+			if (sig.matches(args)) {
+				try {
+					Object result = sig.evaluateMethod
+							.invoke(fi.function, args);
+					assert Types.isValidGreqlValue(result);
+					return result == null ? Undefined.UNDEFINED : result;
+				} catch (IllegalArgumentException e) {
+					throw new GreqlException(e.getMessage(), e.getCause());
+				} catch (IllegalAccessException e) {
+					throw new GreqlException(e.getMessage(), e.getCause());
+				} catch (InvocationTargetException e) {
+					throw new GreqlException(e.getMessage(), e.getCause());
+				}
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("Function '").append(fi.name)
+				.append("' not defined for argument types (");
+		String delim = "";
+		for (Object arg : args) {
+			sb.append(delim).append(Types.getGreqlTypeName(arg));
+			delim = ", ";
+		}
+		sb.append(")");
+		throw new GreqlException(sb.toString());
+	}
+
+	public static final Object apply(String name, Object... args) {
+		assert (name != null) && (name.length() >= 1);
+		assert args != null;
+		assert validArgumentTypes(args);
+		FunctionInfo fi = getFunctionInfo(name);
+		if (fi == null) {
+			throw new GreqlException("Call to unknown function '" + name + "'");
+		}
+		return apply(fi, args);
+	}
+
+	private static final boolean validArgumentTypes(Object[] args) {
+		for (Object arg : args) {
+			if (!Types.isValidGreqlValue(arg)) {
+				throw new GreqlException("Type unknown to GReQL: "
+						+ arg.getClass().getName() + ", value: " + arg);
+			}
+		}
+		return true;
+	}
+
+	private static void registerBuiltInFunctions() {
 		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Abs.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Add.class);
 		register(de.uni_koblenz.jgralab.greql2.funlib.artithmetics.Ceil.class);
@@ -140,198 +338,6 @@ public class FunLib {
 		register(de.uni_koblenz.jgralab.greql2.funlib.strings.ToString.class);
 	}
 
-	private FunLib() {
-	}
-
-	private static class Signature {
-		Class<?>[] parameterTypes;
-		Method evaluateMethod;
-
-		final boolean matches(Object[] params) {
-			if (params.length != parameterTypes.length) {
-				return false;
-			}
-			for (int i = 0; i < params.length; i++) {
-				if (!parameterTypes[i].isInstance(params[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-
-	public static class FunctionInfo {
-		String name;
-		Class<? extends Function> functionClass;
-		Function function;
-		Signature[] signatures;
-		boolean needsGraphArgument;
-		boolean acceptsUndefinedValues;
-
-		FunctionInfo(String name, Class<? extends Function> cls) {
-			this.name = name;
-			functionClass = cls;
-			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
-			try {
-				function = cls.newInstance();
-			} catch (InstantiationException e) {
-				throw new GreqlException("Could not instantiate '"
-						+ cls.getName() + "'", e);
-			} catch (IllegalAccessException e) {
-				throw new GreqlException(
-						"Could not instantiate '"
-								+ cls.getName()
-								+ "' (class must be public and needs public default constructor)",
-						e);
-			}
-			needsGraphArgument = cls
-					.isAnnotationPresent(NeedsGraphArgument.class);
-			acceptsUndefinedValues = cls
-					.isAnnotationPresent(AcceptsUndefinedArguments.class);
-			registerSignatures(functionSignatures, cls);
-			signatures = new Signature[functionSignatures.size()];
-			functionSignatures.toArray(signatures);
-		}
-
-		void registerSignatures(ArrayList<Signature> signatures,
-				Class<? extends Function> cls) {
-			for (Method m : cls.getMethods()) {
-				if (Modifier.isPublic(m.getModifiers())
-						&& !Modifier.isAbstract(m.getModifiers())
-						&& m.getName().equals("evaluate")) {
-					if (logger != null) {
-						logger.finest("\t" + m);
-					}
-					Signature sig = new Signature();
-					sig.evaluateMethod = m;
-					sig.parameterTypes = m.getParameterTypes();
-					signatures.add(sig);
-				}
-			}
-		}
-
-		public final Function getFunction() {
-			return function;
-		}
-
-		public final boolean needsGraphArgument() {
-			return needsGraphArgument;
-		}
-
-		public final boolean acceptsUndefinedValues() {
-			return acceptsUndefinedValues;
-		}
-	}
-
-	public static final boolean contains(String name) {
-		return functions.containsKey(name);
-	}
-
-	private static final String getFunctionName(String className) {
-		return Character.toLowerCase(className.charAt(0))
-				+ className.substring(1);
-	}
-
-	private static final String getFunctionName(Class<? extends Function> cls) {
-		return getFunctionName(cls.getSimpleName());
-	}
-
-	public static final String getArgumentAsString(Object arg) {
-		if (arg == null) {
-			arg = Undefined.UNDEFINED;
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(Types.getGreqlTypeName(arg));
-		if (arg instanceof String) {
-			sb.append(": ").append('"')
-					.append(arg.toString().replace("\"", "\\\"")).append('"');
-		} else if (!(arg instanceof Graph) && !(arg instanceof Undefined)) {
-			sb.append(": ").append(arg);
-		}
-		return sb.toString();
-	}
-
-	public static final Object apply(PrintStream os, String name,
-			Object... args) {
-		assert name != null && name.length() >= 1;
-		assert args != null;
-		assert validArgumentTypes(args);
-		StringBuilder sb = new StringBuilder();
-		sb.append(name);
-		if (args.length == 0) {
-			sb.append("()");
-		} else {
-			String delim = "(";
-			for (Object arg : args) {
-				sb.append(delim).append(getArgumentAsString(arg));
-				delim = ", ";
-			}
-			sb.append(")");
-		}
-		os.print(sb);
-		Object result = apply(name, args);
-		os.println(" -> " + getArgumentAsString(result));
-		return result;
-	}
-
-	public static final Object apply(FunctionInfo fi, Object... args) {
-		assert fi != null;
-		if (!fi.acceptsUndefinedValues) {
-			for (Object arg : args) {
-				if (arg == null || arg == Undefined.UNDEFINED) {
-					return Undefined.UNDEFINED;
-				}
-			}
-		}
-		for (Signature sig : fi.signatures) {
-			if (sig.matches(args)) {
-				try {
-					Object result = sig.evaluateMethod
-							.invoke(fi.function, args);
-					assert Types.isValidGreqlValue(result);
-					return result == null ? Undefined.UNDEFINED : result;
-				} catch (IllegalArgumentException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
-				} catch (IllegalAccessException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
-				} catch (InvocationTargetException e) {
-					throw new GreqlException(e.getMessage(), e.getCause());
-				}
-			}
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("Function '").append(fi.name)
-				.append("' not defined for argument types (");
-		String delim = "";
-		for (Object arg : args) {
-			sb.append(delim).append(Types.getGreqlTypeName(arg));
-			delim = ", ";
-		}
-		sb.append(")");
-		throw new GreqlException(sb.toString());
-	}
-
-	public static final Object apply(String name, Object... args) {
-		assert name != null && name.length() >= 1;
-		assert args != null;
-		assert validArgumentTypes(args);
-		FunctionInfo fi = getFunctionInfo(name);
-		if (fi == null) {
-			throw new GreqlException("Call to unknown function '" + name + "'");
-		}
-		return apply(fi, args);
-	}
-
-	private static final boolean validArgumentTypes(Object[] args) {
-		for (Object arg : args) {
-			if (!Types.isValidGreqlValue(arg)) {
-				throw new GreqlException("Type unknown to GReQL: "
-						+ arg.getClass().getName() + ", value: " + arg);
-			}
-		}
-		return true;
-	}
-
 	public static final void register(Class<? extends Function> cls) {
 		int mods = cls.getModifiers();
 		if (Modifier.isAbstract(mods) || Modifier.isInterface(mods)
@@ -359,5 +365,132 @@ public class FunLib {
 
 	public static final Logger getLogger() {
 		return logger;
+	}
+
+	public static void generateLaTeXFunctionDocs(String fileName)
+			throws IOException {
+		LaTeXFunctionDocsGenerator docGen = new LaTeXFunctionDocsGenerator(
+				fileName, functions);
+		docGen.generate();
+	}
+
+	private static class LaTeXFunctionDocsGenerator {
+		private BufferedWriter bw;
+		private final Map<Category, SortedMap<String, FunctionInfo>> cat2funs = new HashMap<Function.Category, SortedMap<String, FunctionInfo>>();
+
+		LaTeXFunctionDocsGenerator(String fileName,
+				final Map<String, FunctionInfo> funs) throws IOException {
+			bw = new BufferedWriter(new FileWriter(fileName));
+			fillCat2Funs(funs);
+		}
+
+		private void fillCat2Funs(final Map<String, FunctionInfo> funs) {
+			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
+				for (Category cat : e.getValue().getFunction().getCategories()) {
+					SortedMap<String, FunctionInfo> m = cat2funs.get(cat);
+					if (m == null) {
+						m = new TreeMap<String, FunctionInfo>();
+						cat2funs.put(cat, m);
+					}
+					m.put(e.getKey(), e.getValue());
+				}
+			}
+		}
+
+		/**
+		 * Set to true to generate a complete latex doc that can be compiled
+		 * standalone. Useful when changing this generator...
+		 */
+		private boolean STANDALONE = false;
+
+		void generate() throws IOException {
+			try {
+				if (STANDALONE) {
+					write("\\documentclass{article}");
+					newLine();
+					write("\\begin{document}");
+					newLine();
+				}
+				for (Category cat : Category.values()) {
+					if (cat2funs.get(cat) != null) {
+						generateCategoryDocs(cat);
+					}
+				}
+				if (STANDALONE) {
+					write("\\end{document}");
+					newLine();
+				}
+			} finally {
+				bw.close();
+			}
+		}
+
+		private void write(String... strings) throws IOException {
+			for (String s : strings) {
+				bw.write(s);
+			}
+		}
+
+		private void newLine() throws IOException {
+			bw.newLine();
+		}
+
+		private void generateCategoryDocs(Category cat) throws IOException {
+			String heading = cat.toString().toLowerCase().replace('_', ' ');
+			heading = heading.substring(0, 1).toUpperCase()
+					.concat(heading.substring(1));
+			newLine();
+			write("\\subsection{" + heading + "}");
+			newLine();
+
+			SortedMap<String, FunctionInfo> funs = cat2funs.get(cat);
+			for (Entry<String, FunctionInfo> e : funs.entrySet()) {
+				generateFunctionDocs(e.getKey(), e.getValue());
+			}
+		}
+
+		private void generateFunctionDocs(String name, FunctionInfo info)
+				throws IOException {
+			newLine();
+			write("\\paragraph*{" + name + ".}");
+			newLine();
+			write(info.function.getDescription());
+			newLine();
+
+			generateSignatures(name, info.signatures);
+
+			newLine();
+		}
+
+		private void generateSignatures(String name, Signature[] signatures)
+				throws IOException {
+			write("\\begin{itemize}");
+
+			for (Signature sig : signatures) {
+				write("\\item $" + name + ": ");
+				for (int i = 0; i < sig.parameterTypes.length; i++) {
+					if (i != 0) {
+						write(" \\times ");
+					}
+					write(Types.getGreqlTypeName(sig.parameterTypes[i]));
+				}
+				write(" \\longrightarrow ");
+				write(Types
+						.getGreqlTypeName(sig.evaluateMethod.getReturnType()));
+				write("$");
+			}
+
+			write("\\end{itemize}");
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		if (args.length != 1) {
+			System.out
+					.println("Generate a LaTeX documentation for all known GReQL functions.");
+			System.out.println("Usage: java FunLib /path/to/fundocs.tex");
+		} else {
+			generateLaTeXFunctionDocs(args[0]);
+		}
 	}
 }
