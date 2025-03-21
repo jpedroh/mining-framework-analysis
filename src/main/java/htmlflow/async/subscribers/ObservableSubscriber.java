@@ -1,3 +1,4 @@
+<<<<<<< /usr/src/app/output/fmcarvalho/htmlflow/a89a8fa0e3425befa5503896bca392ce1bac437e/src/main/java/htmlflow/async/subscribers/ObservableSubscriber.java/left.java
 package htmlflow.async.subscribers;
 
 import htmlflow.async.AsyncNode;
@@ -43,3 +44,31 @@ public class ObservableSubscriber<E extends Element, T> implements Observer<T> {
         finalizer.accept(elem, node);
     }
 }
+||||||| /usr/src/app/output/fmcarvalho/htmlflow/a89a8fa0e3425befa5503896bca392ce1bac437e/src/main/java/htmlflow/async/subscribers/ObservableSubscriber.java/base.java
+package htmlflow.async.subscribers;
+
+import htmlflow.async.AsyncNode;
+import org.xmlet.htmlapifaster.Element;
+
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
+public class ObservableSubscriber<E extends Element, T> extends AbstractObservableSubscriber<T> {
+    private final BiConsumer<Supplier<E>, AsyncNode<T>> finalizer;
+    private final Supplier<E> elem;
+    private final AsyncNode<T> node;
+    
+    public ObservableSubscriber(BiConsumer<Supplier<E>, AsyncNode<T>> finalizer, Supplier<E> elem, AsyncNode<T> node) {
+        this.finalizer = finalizer;
+        this.elem = elem;
+        this.node = node;
+    }
+    
+    @Override
+    public void onComplete() {
+        finalizer.accept(elem, node);
+    }
+}
+=======
+fatal: path 'src/main/java/htmlflow/async/subscribers/ObservableSubscriber.java' does not exist in '91c5c4b27e1d315ebdd7690049050e7fe79addc3'
+>>>>>>> /usr/src/app/output/fmcarvalho/htmlflow/a89a8fa0e3425befa5503896bca392ce1bac437e/src/main/java/htmlflow/async/subscribers/ObservableSubscriber.java/right.java
