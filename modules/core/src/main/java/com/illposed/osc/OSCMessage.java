@@ -39,13 +39,48 @@ public class OSCMessage extends OSCPacket {
 	}
 
 	/**
-	 * Creates an OSCMessage with an address already initialized.
-	 * @param address  the recipient of this OSC message
+	 * Create an OSCMessage with an address already initialized.
+	 * @param address the recipient of this OSC message
 	 */
 	public OSCMessage(String address) {
 		this(address, null);
 	}
+	/**
+	 * Create an OSCMessage with an address and arguments already initialized.
+	 * @param address    the recipient of this OSC message
+	 * @param arguments  the data sent to the receiver
+	 */
+	public OSCMessage(String address, Collection<Object> arguments) {
 
+		this.address = address;
+		if (arguments == null) {
+			this.arguments = new LinkedList();
+		} else {
+			this.arguments = new ArrayList(arguments);
+		}
+		init();
+	}
+	/**
+	 * Creates an OSCMessage with an address already initialized.
+	 * @param address  the recipient of this OSC message
+	 */
+	/**
+	 * Creates an OSCMessage with an address and arguments already initialized.
+	 * @param address  the recipient of this OSC message
+	 * @param arguments  the data sent to the receiver
+	 * @deprecated
+	 */
+	public OSCMessage(String address, Object[] arguments) {
+
+		this.address = address;
+		if (arguments == null) {
+			this.arguments = new LinkedList();
+		} else {
+			this.arguments = new ArrayList(arguments.length);
+			this.arguments.addAll(Arrays.asList(arguments));
+		}
+		init();
+	}
 	/**
 	 * Creates an OSCMessage with an address
 	 * and arguments already initialized.

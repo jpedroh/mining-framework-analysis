@@ -174,9 +174,19 @@ public class OSCJavaToByteArrayConverter {
 		// Can't do switch on class
 		if (null == anObject) {
 		} else if (anObject instanceof Collection) {
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/left.java
 			Collection<Object> theArray = (Collection<Object>) anObject;
 			for (Object entry : theArray) {
 				write(entry);
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/base.java
+			Object[] theArray = (Object[]) anObject;
+			for(int i = 0; i < theArray.length; ++i) {
+				write(theArray[i]);
+=======
+			Object[] theArray = (Object[]) anObject;
+			for (int i = 0; i < theArray.length; ++i) {
+				write(theArray[i]);
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/right.java
 			}
 		} else if (anObject instanceof Float) {
 			write((Float) anObject);
@@ -225,7 +235,13 @@ public class OSCJavaToByteArrayConverter {
 		// I really wish I could extend the base classes!
 
 		for (Object element : array) {
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/left.java
 			if (element == null) {
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/base.java
+			if (null == array[i]) {
+=======
+			if (array[i] == null) {
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/utility/OSCJavaToByteArrayConverter.java/right.java
 			} else if (Boolean.TRUE.equals(element)) {
 				// Create a way to deal with Boolean type objects
 				stream.write('T');

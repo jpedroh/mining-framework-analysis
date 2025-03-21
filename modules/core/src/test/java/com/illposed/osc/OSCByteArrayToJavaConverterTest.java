@@ -56,20 +56,42 @@ public class OSCByteArrayToJavaConverterTest extends junit.framework.TestCase {
 		OSCMessage packet = (OSCMessage) converter.convert(bytes, bytes.length);
 		if (!packet.getAddress().equals("/s_new")) {
 			fail("Address should be /s_new, but is " + packet.getAddress());
-		}
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCByteArrayToJavaConverterTest.java/left.java
 		List<Object> arguments = packet.getArguments();
-		if (arguments.size() != 3) {
+		if (arguments.size() != 3)
 			fail("Num arguments should be 3, but is " + arguments.size());
-		}
-		if (!(new Integer(1001).equals(arguments.get(0)))) {
+		if (!(new Integer(1001).equals(arguments.get(0))))
 			fail("Argument 1 should be 1001, but is " + arguments.get(0));
-		}
-		if (!("freq".equals(arguments.get(1)))) {
+		if (!("freq".equals(arguments.get(1))))
 			fail("Argument 2 should be freq, but is " + arguments.get(1));
-		}
-		if (!(new Float(440.0).equals(arguments.get(2)))) {
+		if (!(new Float(440.0).equals(arguments.get(2))))
 			fail("Argument 3 should be 440.0, but is " + arguments.get(2));
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCByteArrayToJavaConverterTest.java/base.java
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 3)
+			fail("Num arguments should be 3, but is " + arguments.length);
+		if (!(new Integer(1001).equals(arguments[0])))
+			fail("Argument 1 should be 1001, but is " + arguments[0]);
+		if (!("freq".equals(arguments[1])))
+			fail("Argument 2 should be freq, but is " + arguments[1]);
+		if (!(new Float(440.0).equals(arguments[2])))
+			fail("Argument 3 should be 440.0, but is " + arguments[2]);
+=======
 		}
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 3) {
+			fail("Num arguments should be 3, but is " + arguments.length);
+		}
+		if (!(new Integer(1001).equals(arguments[0]))) {
+			fail("Argument 1 should be 1001, but is " + arguments[0]);
+		}
+		if (!("freq".equals(arguments[1]))) {
+			fail("Argument 2 should be freq, but is " + arguments[1]);
+		}
+		if (!(new Float(440.0).equals(arguments[2]))) {
+			fail("Argument 3 should be 440.0, but is " + arguments[2]);
+		}
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCByteArrayToJavaConverterTest.java/right.java
 	}
 
 	public void testReadBundle() throws Exception {

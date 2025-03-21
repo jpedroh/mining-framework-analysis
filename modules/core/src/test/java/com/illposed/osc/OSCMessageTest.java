@@ -120,17 +120,35 @@ public class OSCMessageTest extends junit.framework.TestCase {
 		OSCMessage packet = (OSCMessage) converter.convert(byteArray, byteArray.length);
 		if (!packet.getAddress().equals("/dummy")) {
 			fail("Send Big Integer did not receive the correct address");
-		}
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/left.java
 		List<Object> arguments = packet.getArguments();
-		if (arguments.size() != 1) {
+		if (arguments.size() != 1)
 			fail("Send Big Integer should have 1 argument, not " + arguments.size());
-		}
-		if (!(arguments.get(0) instanceof BigInteger)) {
+		if (!(arguments.get(0) instanceof BigInteger))
 			fail("arguments.get(0) should be a BigInteger, not " + arguments.get(0));
-		}
-		if (!(new BigInteger("1001").equals(arguments.get(0)))) {
+		if (!(new BigInteger("1001").equals(arguments.get(0))))
 			fail("Instead of BigInteger(1001), received " + arguments.get(0));
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/base.java
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 1)
+			fail("Send Big Integer should have 1 argument, not " + arguments.length);
+		if (!(arguments[0] instanceof BigInteger))
+			fail("arguments[0] should be a BigInteger, not " + arguments[0]);
+		if (!(new BigInteger("1001").equals(arguments[0])))
+			fail("Instead of BigInteger(1001), received " + arguments[0]);
+=======
 		}
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 1) {
+			fail("Send Big Integer should have 1 argument, not " + arguments.length);
+		}
+		if (!(arguments[0] instanceof BigInteger)) {
+			fail("arguments[0] should be a BigInteger, not " + arguments[0]);
+		}
+		if (!(new BigInteger("1001").equals(arguments[0]))) {
+			fail("Instead of BigInteger(1001), received " + arguments[0]);
+		}
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/right.java
 	}
 
 	public void testSendArray() {
@@ -144,19 +162,43 @@ public class OSCMessageTest extends junit.framework.TestCase {
 		OSCMessage packet = (OSCMessage) converter.convert(byteArray, byteArray.length);
 		if (!packet.getAddress().equals("/dummy")) {
 			fail("Send Array did not receive the correct address");
-		}
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/left.java
 		List<Object> arguments = packet.getArguments();
-		if (arguments.size() != 1) {
+		if (arguments.size() != 1)
 			fail("Send Array should have 1 argument, not " + arguments.size());
-		}
-		if (!(arguments.get(0) instanceof List)) {
+		if (!(arguments.get(0) instanceof List))
 			fail("arguments.get(0) should be a Object array, not " + arguments.get(0));
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/base.java
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 1)
+			fail("Send Array should have 1 argument, not " + arguments.length);
+		if (!(arguments[0] instanceof Object[]))
+			fail("arguments[0] should be a Object array, not " + arguments[0]);
+=======
 		}
+		Object[] arguments = packet.getArguments();
+		if (arguments.length != 1) {
+			fail("Send Array should have 1 argument, not " + arguments.length);
+		}
+		if (!(arguments[0] instanceof Object[])) {
+			fail("arguments[0] should be a Object array, not " + arguments[0]);
+		}
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/right.java
 		for (int i = 0; i < 2; ++i) {
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/left.java
 			List<Object> theArray = (List<Object>) arguments.get(0);
-			if (!floats.get(i).equals(theArray.get(i))) {
+			if (!floats.get(i).equals(theArray.get(i)))
 				fail("Array element " + i + " should be " + floats.get(i) + " not " + theArray.get(i));
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/base.java
+			Object[] theArray = (Object[]) arguments[0];
+			if (!floats[i].equals(theArray[i]))
+				fail("Array element " + i + " should be " + floats[i] + " not " + theArray[i]);
+=======
+			Object[] theArray = (Object[]) arguments[0];
+			if (!floats[i].equals(theArray[i])) {
+				fail("Array element " + i + " should be " + floats[i] + " not " + theArray[i]);
 			}
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCMessageTest.java/right.java
 		}
 	}
 }

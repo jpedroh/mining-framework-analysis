@@ -33,9 +33,21 @@ public class OSCBundleTest extends junit.framework.TestCase {
 			fail("Send Bundle did not receive the correct timestamp " + packet.getTimestamp()
 				+ "(" + packet.getTimestamp().getTime() +
 				") (should be " + timestamp +"( " + timestamp.getTime() + ")) ");
-		}
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/left.java
 		List<OSCPacket> packets = packet.getPackets();
 		OSCMessage msg = (OSCMessage) packets.get(0);
+		if (!msg.getAddress().equals("/dummy"))
+			fail("Send Bundle's message did not receive the correct address");
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/base.java
+		OSCPacket[] packets = packet.getPackets();
+		OSCMessage msg = (OSCMessage) packets[0];
+		if (!msg.getAddress().equals("/dummy"))
+			fail("Send Bundle's message did not receive the correct address");
+=======
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/right.java
+		}
+		OSCPacket[] packets = packet.getPackets();
+		OSCMessage msg = (OSCMessage) packets[0];
 		if (!msg.getAddress().equals("/dummy")) {
 			fail("Send Bundle's message did not receive the correct address");
 		}
@@ -51,9 +63,21 @@ public class OSCBundleTest extends junit.framework.TestCase {
 		if (!packet.getTimestamp().equals(OSCBundle.TIMESTAMP_IMMEDIATE)) {
 			fail("Timestamp should have been immediate, not " + packet.getTimestamp()
 				+ "(" + packet.getTimestamp().getTime() + ")");
-		}
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/left.java
 		List<OSCPacket> packets = packet.getPackets();
 		OSCMessage msg = (OSCMessage) packets.get(0);
+		if (!msg.getAddress().equals("/dummy"))
+			fail("Send Bundle's message did not receive the correct address");
+||||||| /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/base.java
+		OSCPacket[] packets = packet.getPackets();
+		OSCMessage msg = (OSCMessage) packets[0];
+		if (!msg.getAddress().equals("/dummy"))
+			fail("Send Bundle's message did not receive the correct address");
+=======
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/test/java/com/illposed/osc/OSCBundleTest.java/right.java
+		}
+		OSCPacket[] packets = packet.getPackets();
+		OSCMessage msg = (OSCMessage) packets[0];
 		if (!msg.getAddress().equals("/dummy")) {
 			fail("Send Bundle's message did not receive the correct address");
 		}
