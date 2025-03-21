@@ -46,13 +46,15 @@ import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 
 import static org.junit.Assert.*;
 
+
 public class AbortAndRestartOperationTest {
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void testAbortAndRestartOnce() throws Exception {
+    public void abortAndRestartOnce() throws Exception {
+
         FreeStyleProject testproject = j.createFreeStyleProject();
 
         QuickBuildTimeOutStrategy strategy = new QuickBuildTimeOutStrategy(5000);
@@ -65,6 +67,7 @@ public class AbortAndRestartOperationTest {
 
 
         testproject.getBuildersList().add(new SleepBuilder(5*60*1000)); //5 minutes
+
 
         testproject.scheduleBuild(new Cause.UserIdCause());
 
@@ -83,7 +86,7 @@ public class AbortAndRestartOperationTest {
     }
 
     @Test
-    public void testAbortAndRestartTwice() throws Exception {
+    public void abortAndRestartTwice() throws Exception {
 
         FreeStyleProject testproject = j.createFreeStyleProject();
 
@@ -94,10 +97,12 @@ public class AbortAndRestartOperationTest {
 
         BuildTimeoutWrapper wrapper = new BuildTimeoutWrapper(strategy,list,"");
         testproject.getBuildWrappersList().add(wrapper);
-        
+
+
         testproject.getBuildersList().add(new SleepBuilder(5*60*1000)); //5 minutes
 
         assertTrue(testproject.getBuilds().size()==0);
+
 
         testproject.scheduleBuild(new Cause.UserIdCause());
 
@@ -173,5 +178,6 @@ public class AbortAndRestartOperationTest {
         assertNotNull(action);
         assertEquals(AbortAndRestartOperation.class.getSimpleName(), action.getReason());
     }
+
 }
 
