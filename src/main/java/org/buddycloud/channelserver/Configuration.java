@@ -1,5 +1,4 @@
 package org.buddycloud.channelserver;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,145 +8,146 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.xmpp.packet.JID;
 
 public class Configuration extends Properties {
-	private static final Logger LOGGER = Logger.getLogger(Configuration.class);
+  private static final Logger LOGGER = Logger.getLogger(Configuration.class);
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private static final String ARRAY_PROPERTY_SEPARATOR = ";";
+  private static final String ARRAY_PROPERTY_SEPARATOR = ";";
 
-	public static final String CONFIGURATION_SERVER_DOMAIN = "server.domain";
-	public static final String CONFIGURATION_SERVER_CHANNELS_DOMAIN = "server.domain.channels";
-	public static final String CONFIGURATION_SERVER_TOPICS_DOMAIN = "server.domain.topics";
-	public static final String CONFIGURATION_LOCAL_DOMAIN_CHECKER = "server.domain.checker";
-	
-	public static final String CONFIGURATION_ADMIN_USERS = "users.admin";
+  public static final String CONFIGURATION_SERVER_DOMAIN = "server.domain";
 
-	public static final String CONFIGURATION_CHANNELS_AUTOSUBSCRIBE = "channels.autosubscribe";
-	public static final String CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE = "channels.autosubscribe.autoapprove";
-	public static final String CONFIGURATION_CHANNELS_DEFAULT_AFFILIATION = "channel.configuration.default.affiliation";
-	public static final String CONFIGURATION_CHANNELS_DEFAULT_ACCESSMODEL = "channel.configuration.default.accessmodel";
-	public static final String CONFIGURATION_CHANNELS_DEFAULT_DESCRIPTION = "channel.configuration.default.description";
-	public static final String CONFIGURATION_CHANNELS_DEFAULT_TITLE = "channel.configuration.default.title";
-	
-	public static final String DISCOVERY_USE_DNS = "discovery.dns.enabled";
+  public static final String CONFIGURATION_SERVER_CHANNELS_DOMAIN = "server.domain.channels";
 
-	private static final String CONFIGURATION_FILE = "configuration.properties";
+  public static final String CONFIGURATION_SERVER_TOPICS_DOMAIN = "server.domain.topics";
 
-	private static Configuration instance = null;
+  public static final String 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/e968c8725af25e08b926dd9f960d37f79f509d09/src/main/java/org/buddycloud/channelserver/Configuration.java/left.java
+  CONFIGURATION_LOCAL_DOMAIN_CHECKER = "server.domain.checker"
+=======
+  DISCOVERY_USE_DNS = "discovery.dns.enabled"
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/e968c8725af25e08b926dd9f960d37f79f509d09/src/main/java/org/buddycloud/channelserver/Configuration.java/right.java
+  ;
 
-	private Collection<JID> adminUsers = new ArrayList<JID>();
-	private Collection<JID> autosubscribeChannels = new ArrayList<JID>();
+  public static final String CONFIGURATION_ADMIN_USERS = "users.admin";
 
-	private Properties conf;
+  public static final String CONFIGURATION_CHANNELS_AUTOSUBSCRIBE = "channels.autosubscribe";
 
-	private Configuration() {
-		try {
-			conf = new Properties();
-			InputStream confFile = this.getClass().getClassLoader()
-					.getResourceAsStream(CONFIGURATION_FILE);
-			if (confFile != null) {
-				load(confFile);
-				LOGGER.info("Loaded " + CONFIGURATION_FILE + " from classpath.");
-			} else {
-				File f = new File(CONFIGURATION_FILE);
-				load(new FileInputStream(f));
-				LOGGER.info("Loaded " + CONFIGURATION_FILE
-						+ " from working directory.");
-			}
-		} catch (Exception e) {
-			LOGGER.error("Could not load " + CONFIGURATION_FILE + "!");
-			System.out.println(e.getLocalizedMessage());
-			System.exit(1);
-		}
-	}
+  public static final String CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE = "channels.autosubscribe.autoapprove";
 
-	private void setupCollections() {
-		adminUsers = getJIDArrayProperty(CONFIGURATION_ADMIN_USERS);
-		autosubscribeChannels = getJIDArrayProperty(CONFIGURATION_CHANNELS_AUTOSUBSCRIBE);
-	}
+  public static final String CONFIGURATION_CHANNELS_DEFAULT_AFFILIATION = "channel.configuration.default.affiliation";
 
-	public Collection<JID> getAdminUsers() {
-		return adminUsers;
-	}
+  public static final String CONFIGURATION_CHANNELS_DEFAULT_ACCESSMODEL = "channel.configuration.default.accessmodel";
 
-	public Collection<JID> getAutosubscribeChannels() {
-		return autosubscribeChannels;
-	}
+  public static final String CONFIGURATION_CHANNELS_DEFAULT_DESCRIPTION = "channel.configuration.default.description";
 
-	public static Configuration getInstance() {
-		if (null == instance) {
-			instance = new Configuration();
-		}
-		return instance;
-	}
+  public static final String CONFIGURATION_CHANNELS_DEFAULT_TITLE = "channel.configuration.default.title";
 
-	public String getProperty(String key) {
-		return conf.getProperty(key);
-	}
+  private static final String CONFIGURATION_FILE = "configuration.properties";
 
-	public String getProperty(String key, String defaultValue) {
-		return conf.getProperty(key, defaultValue);
-	}
+  private static Configuration instance = null;
 
-	public void load(InputStream inputStream) throws IOException {
-		conf.load(inputStream);
-		setupCollections();
-	}
+  private Collection<JID> adminUsers = new ArrayList<JID>();
 
-	private Collection<String> getStringArrayProperty(String key) {
-		String prop = getProperty(key);
+  private Collection<JID> autosubscribeChannels = new ArrayList<JID>();
 
-		if (null == prop) {
-			return Collections.emptyList();
-		}
+  private Properties conf;
 
-		return Arrays.asList(prop.split(ARRAY_PROPERTY_SEPARATOR));
-	}
+  private Configuration() {
+    try {
+      conf = new Properties();
+      InputStream confFile = this.getClass().getClassLoader().getResourceAsStream(CONFIGURATION_FILE);
+      if (confFile != null) {
+        load(confFile);
+        LOGGER.info("Loaded " + CONFIGURATION_FILE + " from classpath.");
+      } else {
+        File f = new File(CONFIGURATION_FILE);
+        load(new FileInputStream(f));
+        LOGGER.info("Loaded " + CONFIGURATION_FILE + " from working directory.");
+      }
+    } catch (Exception e) {
+      LOGGER.error("Could not load " + CONFIGURATION_FILE + "!");
+      System.out.println(e.getLocalizedMessage());
+      System.exit(1);
+    }
+  }
 
-	private Collection<JID> getJIDArrayProperty(String key) {
-		Collection<String> props = getStringArrayProperty(key);
+  private void setupCollections() {
+    adminUsers = getJIDArrayProperty(CONFIGURATION_ADMIN_USERS);
+    autosubscribeChannels = getJIDArrayProperty(CONFIGURATION_CHANNELS_AUTOSUBSCRIBE);
+  }
 
-		Collection<JID> jids = new ArrayList<JID>(props.size());
+  public Collection<JID> getAdminUsers() {
+    return adminUsers;
+  }
 
-		for (String prop : props) {
-			jids.add(new JID(prop));
-		}
+  public Collection<JID> getAutosubscribeChannels() {
+    return autosubscribeChannels;
+  }
 
-		return jids;
-	}
+  public static Configuration getInstance() {
+    if (null == instance) {
+      instance = new Configuration();
+    }
+    return instance;
+  }
 
-	public String getServerDomain() {
-		return getProperty(CONFIGURATION_SERVER_DOMAIN);
-	}
+  public String getProperty(String key) {
+    return conf.getProperty(key);
+  }
 
-	public String getServerChannelsDomain() {
-		return getProperty(CONFIGURATION_SERVER_CHANNELS_DOMAIN);
-	}
+  public String getProperty(String key, String defaultValue) {
+    return conf.getProperty(key, defaultValue);
+  }
 
-	public String getServerTopicsDomain() {
-		return getProperty(CONFIGURATION_SERVER_TOPICS_DOMAIN);
-	}
+  public void load(InputStream inputStream) throws IOException {
+    conf.load(inputStream);
+    setupCollections();
+  }
 
-	public boolean getBooleanProperty(final String key,
-			final boolean defaultValue) {
-		String value = getProperty(key);
+  private Collection<String> getStringArrayProperty(String key) {
+    String prop = getProperty(key);
+    if (null == prop) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(prop.split(ARRAY_PROPERTY_SEPARATOR));
+  }
 
-		if (value != null) {
-			if (value.equalsIgnoreCase("true")) {
-				return true;
-			}
-			if (value.equalsIgnoreCase("false")) {
-				return false;
-			}
-			LOGGER.warn("Invalid boolean property value for " + key + ": "
-					+ value);
-		}
+  private Collection<JID> getJIDArrayProperty(String key) {
+    Collection<String> props = getStringArrayProperty(key);
+    Collection<JID> jids = new ArrayList<JID>(props.size());
+    for (String prop : props) {
+      jids.add(new JID(prop));
+    }
+    return jids;
+  }
 
-		return defaultValue;
-	}
+  public String getServerDomain() {
+    return getProperty(CONFIGURATION_SERVER_DOMAIN);
+  }
+
+  public String getServerChannelsDomain() {
+    return getProperty(CONFIGURATION_SERVER_CHANNELS_DOMAIN);
+  }
+
+  public String getServerTopicsDomain() {
+    return getProperty(CONFIGURATION_SERVER_TOPICS_DOMAIN);
+  }
+
+  public boolean getBooleanProperty(final String key, final boolean defaultValue) {
+    String value = getProperty(key);
+    if (value != null) {
+      if (value.equalsIgnoreCase("true")) {
+        return true;
+      }
+      if (value.equalsIgnoreCase("false")) {
+        return false;
+      }
+      LOGGER.warn("Invalid boolean property value for " + key + ": " + value);
+    }
+    return defaultValue;
+  }
 }
