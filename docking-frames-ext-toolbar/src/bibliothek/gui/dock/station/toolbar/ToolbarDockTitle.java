@@ -77,6 +77,10 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 		g.fillRect( 0, 0, getWidth(), getHeight() );
 		
 		if( isActive() ){
+<<<<<<< /usr/src/app/output/benoker/dockingframes/d91cd1019a9156d5e4c379a931879adfd3c65047/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/ToolbarDockTitle.java/left.java
+			g.setColor( Color.GRAY );
+			g.fillRect( 0, 0, getWidth(), getHeight() );
+||||||| /usr/src/app/output/benoker/dockingframes/d91cd1019a9156d5e4c379a931879adfd3c65047/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/ToolbarDockTitle.java/base.java
 			g.setColor( Color.BLACK );
 			if( orientation.isHorizontal() ){
 				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
@@ -84,6 +88,15 @@ public class ToolbarDockTitle extends AbstractDockTitle {
 			else{
 				g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
 			}
+=======
+			g.setColor( Color.BLACK );
+			if( getOrientation().isHorizontal() ){
+				g.drawLine( 1, getHeight()/2, getWidth()-1, getHeight()/2 );
+			}
+			else{
+				g.drawLine( getWidth()/2, 1, getWidth()/2, getHeight()-1 );
+			}
+>>>>>>> /usr/src/app/output/benoker/dockingframes/d91cd1019a9156d5e4c379a931879adfd3c65047/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/ToolbarDockTitle.java/right.java
 		}
 	}
 }
