@@ -1,22 +1,8 @@
-/******************************************************************************
- * Garbage Cat                                                                *
- *                                                                            *
- * Copyright (c) 2008-2010 Red Hat, Inc.                                      *
- * All rights reserved. This program and the accompanying materials           *
- * are made available under the terms of the Eclipse Public License v1.0      *
- * which accompanies this distribution, and is available at                   *
- * http://www.eclipse.org/legal/epl-v10.html                                  *
- *                                                                            *
- * Contributors:                                                              *
- *    Red Hat, Inc. - initial API and implementation                          *
- ******************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -259,152 +245,77 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  *
  */
 public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
-
-    /**
+  /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE collection. Trigger can be before or after "(young)".
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
-            + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?$";
+  private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))? \\(young\\)( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_INITIAL_MARK collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_INITIAL_MARK = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION
-            + "\\])?$";
+  private static final String REGEX_RETAIN_BEGINNING_INITIAL_MARK = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_FULL_GC collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\("
-            + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]$";
+  private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^" + JdkRegEx.TIMESTAMP + ": \\[Full GC (\\(" + JdkRegEx.TRIGGER_SYSTEM_GC + "\\) )?" + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_CONCURRENT collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-mark-start\\])$";
+  private static final String REGEX_RETAIN_BEGINNING_CONCURRENT = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC concurrent-mark-start\\])$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_REMARK collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC remark) "
-            + JdkRegEx.TIMESTAMP + ": \\[GC ref-proc, " + JdkRegEx.DURATION + "\\](, " + JdkRegEx.DURATION + "\\])$";
+  private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.TIMESTAMP + ": \\[GC remark) " + JdkRegEx.TIMESTAMP + ": \\[GC ref-proc, " + JdkRegEx.DURATION + "\\](, " + JdkRegEx.DURATION + "\\])$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_MIXED collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_MIXED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(mixed\\)(, " + JdkRegEx.DURATION + "\\])?$";
+  private static final String REGEX_RETAIN_BEGINNING_MIXED = "^" + JdkRegEx.TIMESTAMP + ": \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\))? \\(mixed\\)(, " + JdkRegEx.DURATION + "\\])?$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_CLEANUP collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup "
-            + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION
-            + "\\]$";
+  private static final String REGEX_RETAIN_BEGINNING_CLEANUP = "^" + JdkRegEx.TIMESTAMP + ": \\[GC cleanup " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\), " + JdkRegEx.DURATION + "\\]$";
 
-    /**
+  /**
      * Regular expression for retained beginning G1_YOUNG_PAUSE mixed with G1_CONCURRENT collection.
      */
-    private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?" + "("
-            + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\))(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP
-            + ": \\[GC concurrent-(root-region-scan|cleanup)-end, " + JdkRegEx.DURATION + "\\])$";
+  private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^(" + JdkRegEx.DATESTAMP + ": )?" + "(" + JdkRegEx.TIMESTAMP + ": \\[GC pause \\(young\\))(" + JdkRegEx.DATESTAMP + ": )?(" + JdkRegEx.TIMESTAMP + ": \\[GC concurrent-(root-region-scan|cleanup)-end, " + JdkRegEx.DURATION + "\\])$";
 
-    /**
+  /**
      * Regular expression for retained middle G1_YOUNG_PAUSE collection.
      */
-    private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   \\[( " + JdkRegEx.SIZE_G1 + "->"
-            + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))\\]$";
+  private static final String REGEX_RETAIN_MIDDLE_YOUNG_PAUSE = "^   \\[( " + JdkRegEx.SIZE_G1 + "->" + JdkRegEx.SIZE_G1 + "\\(" + JdkRegEx.SIZE_G1 + "\\))\\]$";
 
-    /**
+  /**
      * Regular expression for retained middle JDK8.
      */
-    private static final String REGEX_RETAIN_MIDDLE_JDK8 = "^   \\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS
-            + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: "
-            + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\("
-            + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]$";
+  private static final String REGEX_RETAIN_MIDDLE_JDK8 = "^   \\[Eden: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\) Survivors: " + JdkRegEx.SIZE_G1_DETAILS + "->" + JdkRegEx.SIZE_G1_DETAILS + " Heap: " + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)->" + JdkRegEx.SIZE_G1_DETAILS + "\\(" + JdkRegEx.SIZE_G1_DETAILS + "\\)\\]$";
 
-    /**
+  /**
      * Regular expression for retained middle duration.
      */
-    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^, " + JdkRegEx.DURATION + "\\]$";
+  private static final String REGEX_RETAIN_MIDDLE_DURATION = "^, " + JdkRegEx.DURATION + "\\]$";
 
-    /**
+  /**
      * Regular expression for retained end.
      */
-    private static final String REGEX_RETAIN_END = "^" + JdkRegEx.TIMES_BLOCK + "$";
+  private static final String REGEX_RETAIN_END = "^" + JdkRegEx.TIMES_BLOCK + "$";
 
-    /**
+  /**
      * Regular expressions for lines thrown away.
      */
-    private static final String[] REGEX_THROWAWAY = {
+  private static final String[] REGEX_THROWAWAY = { "^   \\[Root Region Scan Waiting:.+$", "^   \\[Parallel Time:.+$", "^      \\[GC Worker Start( Time)? \\(ms\\):.+$", "^      \\[Ext Root Scanning \\(ms\\):.+$", "^      \\[SATB Filtering \\(ms\\):.+", "^      \\[Update RS \\(ms\\):.+$", "^         \\[Processed Buffers( )?:.+$", "^      \\[Scan RS \\(ms\\):.+$", "^      \\[Object Copy \\(ms\\):.+$", "^      \\[Termination \\(ms\\):.+$", "^      \\[GC Worker Other \\(ms\\):.+$", "^      \\[GC Worker Total \\(ms\\):.+$", "^      \\[GC Worker End( Time)? \\(ms\\):.+$", "^      \\[Code Root Scanning \\(ms\\):.+$", "^   \\[Code Root Fixup:.+$", "^   \\[Code Root Migration:.+$", "^      \\[Code Root Marking \\(ms\\):.+$", "^   \\[Clear CT:.+$", "^   (   )?\\[Other:.+$", "^      \\[Choose CSet:.+$", "^      \\[Ref Proc:.+$", "^      \\[Ref Enq:.+$", "^      \\[Free CSet:.+$", "^          Sum:.+$", "^      \\[Mark Stack Scanning \\(ms\\):.+$", "^         \\[Termination Attempts :.+$", "^       Avg:.+$" };
 
-            "^   \\[Root Region Scan Waiting:.+$",
-            //
-            "^   \\[Parallel Time:.+$",
-            // JDK8 does not have "Time"
-            "^      \\[GC Worker Start( Time)? \\(ms\\):.+$",
-            //
-            "^      \\[Ext Root Scanning \\(ms\\):.+$",
-            //
-            "^      \\[SATB Filtering \\(ms\\):.+",
-            //
-            "^      \\[Update RS \\(ms\\):.+$",
-            // Earlier JDKs appear to have a superfluous space
-            "^         \\[Processed Buffers( )?:.+$",
-            //
-            "^      \\[Scan RS \\(ms\\):.+$",
-            //
-            "^      \\[Object Copy \\(ms\\):.+$",
-            //
-            "^      \\[Termination \\(ms\\):.+$",
-            //
-            "^      \\[GC Worker Other \\(ms\\):.+$",
-            //
-            "^      \\[GC Worker Total \\(ms\\):.+$",
-            // JDK8 does not have "Time"
-            "^      \\[GC Worker End( Time)? \\(ms\\):.+$",
-            //
-            "^      \\[Code Root Scanning \\(ms\\):.+$",
-            //
-            "^   \\[Code Root Fixup:.+$",
-            //
-            "^   \\[Code Root Migration:.+$",
-            //
-            "^      \\[Code Root Marking \\(ms\\):.+$",
-            //
-            "^   \\[Clear CT:.+$",
-            // JDK8 has 3 leading spaces
-            "^   (   )?\\[Other:.+$",
-            //
-            "^      \\[Choose CSet:.+$",
-            //
-            "^      \\[Ref Proc:.+$",
-            //
-            "^      \\[Ref Enq:.+$",
-            //
-            "^      \\[Free CSet:.+$",
-            //
-            "^          Sum:.+$",
-            //
-            "^      \\[Mark Stack Scanning \\(ms\\):.+$",
-            //
-            "^         \\[Termination Attempts :.+$",
-            //
-            "^       Avg:.+$" };
-
-    /**
+  /**
      * The log entry for the event. Can be used for debugging purposes.
      */
-    private String logEntry;
+  private String logEntry;
 
-    /**
+  /**
      * Create event from log entry.
      *
      * @param priorLogEntry
@@ -413,89 +324,88 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *            The log line.
      * @param nextLogEntry
      *            The next log line.
-     * @param entangledLogLines
+     * @param savedLogLines
      *            Log lines to be output out of order.
      */
-    public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr,
-            List<String> entangledLogLines) {
-        if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE)
-                || logEntry.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK)
-                || logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED)
-                || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
+  public G1PrintGcDetailsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntr, List<String> savedLogLines) {
+    if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE) || logEntry.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK) || logEntry.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logEntry.matches(REGEX_RETAIN_BEGINNING_MIXED) || logEntry.matches(REGEX_RETAIN_BEGINNING_CLEANUP)) {
+      this.logEntry = logEntry;
+    } else {
+      if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
+        Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.matches()) {
+          savedLogLines.add(matcher.group(25));
+        }
+        this.logEntry = matcher.group(12);
+      } else {
+        if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
+          Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
+          Matcher matcher = pattern.matcher(priorLogEntry);
+          if (matcher.matches()) {
+            savedLogLines.add(logEntry);
+          } else {
             this.logEntry = logEntry;
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)) {
-            // Handle young collection mixed with concurrent logging. See dataset47.txt.
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                entangledLogLines.add(matcher.group(25));
-            }
-            // Output beginning of young line
-            this.logEntry = matcher.group(12);
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)) {
-            // Handle concurrent mixed with young collections. See dataset47.txt.
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT);
-            Matcher matcher = pattern.matcher(priorLogEntry);
-            if (matcher.matches()) {
-                entangledLogLines.add(logEntry);
-            } else {
-                this.logEntry = logEntry;
-            }
-        } else if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
+          }
+        } else {
+          if (logEntry.matches(REGEX_RETAIN_BEGINNING_REMARK)) {
             Pattern pattern = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(5);
+              this.logEntry = matcher.group(1) + matcher.group(5);
             }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
+          } else {
+            if (logEntry.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE)) {
+              Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE);
+              Matcher matcher = pattern.matcher(logEntry);
+              if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
+              }
+            } else {
+              if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
+                Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
+                Matcher matcher = pattern.matcher(logEntry);
+                if (matcher.matches()) {
+                  this.logEntry = " ";
+                  this.logEntry = this.logEntry + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(13), matcher.group(14).charAt(0));
+                  this.logEntry = this.logEntry + "->";
+                  this.logEntry = this.logEntry + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(17), matcher.group(18).charAt(0));
+                  this.logEntry = this.logEntry + "(";
+                  this.logEntry = this.logEntry + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(19), matcher.group(20).charAt(0));
+                  this.logEntry = this.logEntry + ")";
+                }
+              } else {
+                if (logEntry.matches(REGEX_RETAIN_MIDDLE_DURATION)) {
+                  this.logEntry = logEntry;
+                } else {
+                  if (logEntry.matches(REGEX_RETAIN_END)) {
+                    this.logEntry = logEntry + System.getProperty("line.separator");
+                    Iterator<String> iterator = savedLogLines.iterator();
+                    while (iterator.hasNext()) {
+                      String logLine = iterator.next();
+                      this.logEntry = this.logEntry + logLine;
+                      this.logEntry = this.logEntry + System.getProperty("line.separator");
+                    }
+                    savedLogLines.clear();
+                  }
+                }
+              }
             }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_JDK8)) {
-            Pattern pattern = Pattern.compile(REGEX_RETAIN_MIDDLE_JDK8);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.matches()) {
-                // For now put logging in standard G1 form (K and M). If standard logging one day has B, G, or
-                // decimals, we would want to remove this from preprocessing and expand the normal handling to account
-                // for decimals, bytes, and/or gigabytes.
-                this.logEntry = " ";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(13), matcher.group(14).charAt(0));
-                this.logEntry = this.logEntry + "->";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(17), matcher.group(18).charAt(0));
-                this.logEntry = this.logEntry + "(";
-                this.logEntry = this.logEntry
-                        + JdkUtil.convertSizeG1DetailsToSizeG1(matcher.group(19), matcher.group(20).charAt(0));
-                this.logEntry = this.logEntry + ")";
-            }
-        } else if (logEntry.matches(REGEX_RETAIN_MIDDLE_DURATION)) {
-            this.logEntry = logEntry;
-        } else if (logEntry.matches(REGEX_RETAIN_END)) {
-            this.logEntry = logEntry + System.getProperty("line.separator");
-            // Output any entangled log lines
-            Iterator<String> iterator = entangledLogLines.iterator();
-            while (iterator.hasNext()) {
-                String logLine = iterator.next();
-                this.logEntry = this.logEntry + logLine;
-                this.logEntry = this.logEntry + System.getProperty("line.separator");
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
+          }
         }
+      }
     }
+  }
 
-    public String getLogEntry() {
-        return logEntry;
-    }
+  public String getLogEntry() {
+    return logEntry;
+  }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString();
-    }
+  public String getName() {
+    return JdkUtil.PreprocessActionType.G1_PRINT_GC_DETAILS.toString();
+  }
 
-    /**
+  /**
      * Determine if the logLine matches the logging pattern(s) for this event.
      *
      * @param logLine
@@ -504,24 +414,18 @@ public class G1PrintGcDetailsPreprocessAction implements PreprocessAction {
      *            The last log entry processed.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
-        boolean match = false;
-        if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED) || logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE_JDK8)
-                || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION) || logLine.matches(REGEX_RETAIN_END)) {
-            match = true;
-        } else {
-            for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
-                if (logLine.matches(REGEX_THROWAWAY[i])) {
-                    match = true;
-                    break;
-                }
-            }
+  public static final boolean match(String logLine) {
+    boolean match = false;
+    if (logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_BEGINNING_INITIAL_MARK) || logLine.matches(REGEX_RETAIN_BEGINNING_FULL_GC) || logLine.matches(REGEX_RETAIN_BEGINNING_REMARK) || logLine.matches(REGEX_RETAIN_BEGINNING_MIXED) || logLine.matches(REGEX_RETAIN_BEGINNING_CLEANUP) || logLine.matches(REGEX_RETAIN_BEGINNING_CONCURRENT) || logLine.matches(REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT) || logLine.matches(REGEX_RETAIN_MIDDLE_YOUNG_PAUSE) || logLine.matches(REGEX_RETAIN_MIDDLE_JDK8) || logLine.matches(REGEX_RETAIN_MIDDLE_DURATION) || logLine.matches(REGEX_RETAIN_END)) {
+      match = true;
+    } else {
+      for (int i = 0; i < REGEX_THROWAWAY.length; i++) {
+        if (logLine.matches(REGEX_THROWAWAY[i])) {
+          match = true;
+          break;
         }
-        return match;
+      }
     }
+    return match;
+  }
 }
