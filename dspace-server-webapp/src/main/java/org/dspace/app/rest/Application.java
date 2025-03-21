@@ -1,17 +1,8 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.Filter;
-
 import org.dspace.app.rest.filter.DSpaceRequestContextFilter;
 import org.dspace.app.rest.model.hateoas.DSpaceLinkRelationProvider;
 import org.dspace.app.rest.parameter.resolver.SearchFilterResolver;
@@ -55,21 +46,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author Andrea Bollini (andrea.bollini at 4science.it)
  * @author Tim Donohue
  */
-@SpringBootApplication
-@EnableScheduling
-public class Application extends SpringBootServletInitializer {
+@SpringBootApplication @EnableScheduling public class Application extends SpringBootServletInitializer {
+  private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+  @Autowired private ApplicationConfig configuration;
 
-    @Autowired
-    private ApplicationConfig configuration;
+  @Scheduled(cron = "${sitemap.cron:-}") public void generateSitemap() throws IOException, SQLException {
+    GenerateSitemaps.generateSitemapsScheduled();
+  }
 
-    @Scheduled(cron = "${sitemap.cron:-}")
-    public void generateSitemap() throws IOException, SQLException {
-        GenerateSitemaps.generateSitemapsScheduled();
-    }
-
-    /**
+  /**
      * Override the default SpringBootServletInitializer.configure() method,
      * passing it this Application class.
      * <p>
@@ -81,114 +67,84 @@ public class Application extends SpringBootServletInitializer {
      * @param application
      * @return
      */
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        // Pass this Application class, and our initializers for DSpace Kernel and Configuration
-        // NOTE: Kernel must be initialized before Configuration
-        return application.sources(Application.class)
-                          .initializers(new DSpaceKernelInitializer(), new DSpaceConfigurationInitializer());
-    }
+  @Override protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    return application.sources(Application.class).initializers(new DSpaceKernelInitializer(), new DSpaceConfigurationInitializer());
+  }
 
-    /**
+  /**
      * Register the "DSpaceContextListener" so that it is loaded
      * for this Application.
      *
      * @return DSpaceContextListener
      */
-    @Bean
-    @Order(2)
-    protected DSpaceContextListener dspaceContextListener() {
-        // This listener initializes the DSpace Context object
-        return new DSpaceContextListener();
-    }
+  @Bean @Order(value = 2) protected DSpaceContextListener dspaceContextListener() {
+    return new DSpaceContextListener();
+  }
 
-    /**
+  /**
      * Register the DSpaceWebappServletFilter, which initializes the
      * DSpace RequestService / SessionService
      *
      * @return DSpaceWebappServletFilter
      */
-    @Bean
-    @Order(1)
-    protected Filter dspaceWebappServletFilter() {
-        return new DSpaceWebappServletFilter();
-    }
+  @Bean @Order(value = 1) protected Filter dspaceWebappServletFilter() {
+    return new DSpaceWebappServletFilter();
+  }
 
-    /**
+  /**
      * Register the DSpaceRequestContextFilter, a Filter which checks for open
      * Context objects *after* a request has been fully processed, and closes them
      *
      * @return DSpaceRequestContextFilter
      */
-    @Bean
-    @Order(2)
-    protected Filter dspaceRequestContextFilter() {
-        return new DSpaceRequestContextFilter();
-    }
+  @Bean @Order(value = 2) protected Filter dspaceRequestContextFilter() {
+    return new DSpaceRequestContextFilter();
+  }
 
-    /**
+  /**
      * Register the DSpaceAPIRequestLoggingFilter, a Filter that provides Mapped
      * Diagnostic Context for the DSpace Server Webapp
      *
      * @return DSpaceRequestContextFilter
      */
-    @Bean
-    @Order(3)
-    protected Filter dspaceApiLoggingRequest() {
-        return new DSpaceAPIRequestLoggingFilter();
-    }
+  @Bean @Order(value = 3) protected Filter dspaceApiLoggingRequest() {
+    return new DSpaceAPIRequestLoggingFilter();
+  }
 
-    @Bean
-    public RequestContextListener requestContextListener() {
-        return new RequestContextListener();
-    }
+  @Bean public RequestContextListener requestContextListener() {
+    return new RequestContextListener();
+  }
 
-    @Bean
-    protected LinkRelationProvider dspaceLinkRelationProvider() {
-        return new DSpaceLinkRelationProvider();
-    }
+  @Bean protected LinkRelationProvider dspaceLinkRelationProvider() {
+    return new DSpaceLinkRelationProvider();
+  }
 
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer() {
-
-        return new WebMvcConfigurer() {
-            /**
+  @Bean public WebMvcConfigurer webMvcConfigurer() {
+    return new WebMvcConfigurer() {
+      /**
              * Create a custom CORS mapping for the DSpace REST API (/api/ paths), based on configured allowed origins.
              * @param registry CorsRegistry
              */
-            @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-                String[] corsAllowedOrigins = configuration.getCorsAllowedOrigins();
-                boolean corsAllowCredentials = configuration.getCorsAllowCredentials();
-                if (corsAllowedOrigins != null) {
-                    registry.addMapping("/api/**").allowedMethods(CorsConfiguration.ALL)
-                            // Set Access-Control-Allow-Credentials to "true" and specify which origins are valid
-                            // for our Access-Control-Allow-Origin header
-                            .allowCredentials(corsAllowCredentials).allowedOrigins(corsAllowedOrigins)
-                            // Allow list of request preflight headers allowed to be sent to us from the client
-                            .allowedHeaders("Accept", "Authorization", "Content-Type", "Origin", "X-On-Behalf-Of",
-                                            "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER")
-                            // Allow list of response headers allowed to be sent by us (the server) to the client
-                            .exposedHeaders("Authorization", "DSPACE-XSRF-TOKEN", "Location", "WWW-Authenticate");
-                }
-            }
+      @Override public void addCorsMappings(@NonNull CorsRegistry registry) {
+        String[] corsAllowedOrigins = configuration.getCorsAllowedOrigins();
+        boolean corsAllowCredentials = configuration.getCorsAllowCredentials();
+        if (corsAllowedOrigins != null) {
+          registry.addMapping("/api/**").allowedMethods(CorsConfiguration.ALL).allowCredentials(corsAllowCredentials).allowedOrigins(corsAllowedOrigins).allowedHeaders("Accept", "Authorization", "Content-Type", "Origin", "X-On-Behalf-Of", "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER").exposedHeaders("Authorization", "DSPACE-XSRF-TOKEN", "Location", "WWW-Authenticate");
+        }
+      }
 
-            /**
+      /**
              * Add a new ResourceHandler to allow us to use WebJars.org to pull in web dependencies
              * dynamically for HAL Browser, and access them off the /webjars path.
              * @param registry ResourceHandlerRegistry
              */
-            @Override
-            public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                registry
-                    .addResourceHandler("/webjars/**")
-                    .addResourceLocations("/webjars/");
-            }
+      @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+      }
 
-            @Override
-            public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> argumentResolvers) {
-                argumentResolvers.add(new SearchFilterResolver());
-            }
-        };
-    }
+      @Override public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new SearchFilterResolver());
+      }
+    };
+  }
 }
