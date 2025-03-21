@@ -31,10 +31,14 @@ public class EnumCaseTest {
     assertThat(PHPLexicalGrammar.ENUM_CASE)
       .matches("case A;")
       .matches("#[A1(1)] case A;")
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/eddb02d847090e98cbe8c994fb5b5397f6f4dd5e/php-frontend/src/test/java/org/sonar/php/parser/statement/EnumCaseTest.java/left.java
       .matches("case Enum;")
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/eddb02d847090e98cbe8c994fb5b5397f6f4dd5e/php-frontend/src/test/java/org/sonar/php/parser/statement/EnumCaseTest.java/base.java
+=======
       .matches("case A = 'A';")
       .matches("case A = 'A' . 'B';")
       .matches("case A = MyClass::CONSTANT;")
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/eddb02d847090e98cbe8c994fb5b5397f6f4dd5e/php-frontend/src/test/java/org/sonar/php/parser/statement/EnumCaseTest.java/right.java
       .notMatches("case A")
     ;
   }
