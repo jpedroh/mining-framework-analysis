@@ -60,7 +60,13 @@ public abstract class RecurlyObject {
         // will interpret as an Object (Map), not Booleans.
         if (object instanceof Map) {
             final Map map = (Map) object;
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/436ba5710544e1462135096d91524a776e831e2b/src/main/java/com/ning/billing/recurly/model/RecurlyObject.java/left.java
+            if (map.keySet().size() >= 1 && "boolean".equals(map.get("type"))) {
+||||||| /usr/src/app/output/killbilling/recurly-java-library/436ba5710544e1462135096d91524a776e831e2b/src/main/java/com/ning/billing/recurly/model/RecurlyObject.java/base.java
+            if (map.keySet().size() == 1 && "boolean".equals(map.get("type"))) {
+=======
             if (map.keySet().size() == 2 && "boolean".equals(map.get("type"))) {
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/436ba5710544e1462135096d91524a776e831e2b/src/main/java/com/ning/billing/recurly/model/RecurlyObject.java/right.java
                 return Boolean.valueOf((String) map.get(""));
             }
         }
