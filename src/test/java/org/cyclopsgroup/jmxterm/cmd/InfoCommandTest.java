@@ -88,36 +88,35 @@ public class InfoCommandTest {
   public void testExecuteWithShowingOperations() throws Exception {
     command.setBean("a:type=x");
     command.setType("o");
-    MBeanServerConnection con = context.mock(MBeanServerConnection.class);
-    MBeanInfo beanInfo = context.mock(MBeanInfo.class);
-    MBeanOperationInfo opInfo = context.mock(MBeanOperationInfo.class);
-    MBeanParameterInfo paramInfo = context.mock(MBeanParameterInfo.class);
+    final MBeanServerConnection con = context.mock(MBeanServerConnection.class);
+    final MBeanInfo beanInfo = context.mock(MBeanInfo.class);
+    final MBeanOperationInfo opInfo = context.mock(MBeanOperationInfo.class);
+    final MBeanParameterInfo paramInfo = context.mock(MBeanParameterInfo.class);
     Session session = new MockSession(output, con);
-    context.checking(
-        new Expectations() {
-          {
-            atLeast(1).of(con).getMBeanInfo(new ObjectName("a:type=x"));
-            will(returnValue(beanInfo));
-            allowing(beanInfo).getClassName();
-            will(returnValue("bogus class"));
-            oneOf(beanInfo).getOperations();
-            will(returnValue(new MBeanOperationInfo[] {opInfo}));
-            allowing(opInfo).getDescription();
-            will(returnValue("bingo"));
-            oneOf(opInfo).getSignature();
-            will(returnValue(new MBeanParameterInfo[] {paramInfo}));
-            oneOf(paramInfo).getType();
-            will(returnValue(String.class.getName()));
-            atLeast(1).of(paramInfo).getName();
-            will(returnValue("a"));
-            oneOf(paramInfo).getDescription();
-            will(returnValue("a-desc"));
-            oneOf(opInfo).getReturnType();
-            will(returnValue("int"));
-            atLeast(1).of(opInfo).getName();
-            will(returnValue("x"));
-          }
-        });
+    context.checking(new Expectations() {
+      {
+        atLeast(1).of(con).getMBeanInfo(new ObjectName("a:type=x"));
+        will(returnValue(beanInfo));
+        allowing(beanInfo).getClassName();
+        will(returnValue("bogus class"));
+        oneOf(beanInfo).getOperations();
+        will(returnValue(new MBeanOperationInfo[] {opInfo}));
+        allowing(opInfo).getDescription();
+        will(returnValue("bingo"));
+        oneOf(opInfo).getSignature();
+        will(returnValue(new MBeanParameterInfo[] {paramInfo}));
+        oneOf(paramInfo).getType();
+        will(returnValue(String.class.getName()));
+        atLeast(1).of(paramInfo).getName();
+        will(returnValue("a"));
+        oneOf(paramInfo).getDescription();
+        will(returnValue("a-desc"));
+        oneOf(opInfo).getReturnType();
+        will(returnValue("int"));
+        atLeast(1).of(opInfo).getName();
+        will(returnValue("x"));
+      }
+    });
     command.setSession(session);
     command.execute();
     context.assertIsSatisfied();

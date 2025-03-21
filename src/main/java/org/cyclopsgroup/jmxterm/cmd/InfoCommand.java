@@ -121,21 +121,15 @@ public class InfoCommand extends Command {
       List<String> paramTypes = new ArrayList<String>(paramInfos.length);
       List<String> paramDescriptions = new ArrayList<String>(paramInfos.length);
       for (MBeanParameterInfo paramInfo : paramInfos) {
-        paramTypes.add(paramInfo.getType() + " " + paramInfo.getName());
+        paramTypes.add(paramInfo.getType() + " "            + paramInfo.getName());
         paramDescriptions.add("       " + paramInfo.getName() + ": " + paramInfo.getDescription());
       }
-      String parameters = StringUtils.join(paramTypes, ',');
-      String parametersDesc =
-          paramDescriptions.isEmpty() ? "" : '\n' + StringUtils.join(paramDescriptions, '\n');
+      final String parameters = StringUtils.join(paramTypes, ',');
+      final String parametersDesc = paramDescriptions.isEmpty() ? "" : '\n' + StringUtils.join(paramDescriptions, '\n');
       session.output.println(
           String.format(
               "  %%%-3d - %s %s(%s)" + (showDescription ? ", %s%s" : ""),
-              index++,
-              op.getReturnType(),
-              op.getName(),
-              parameters,
-              op.getDescription(),
-              parametersDesc));
+              index++, op.getReturnType(), op.getName(), parameters, op.getDescription(), parametersDesc));
     }
   }
 
