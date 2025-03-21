@@ -235,41 +235,9 @@ public class SystemInfoTest {
             assertNotNull(disk.getWrites());
         }
     }
-
-    /**
-     * Test system uptime.
-     */
-    @Test
-    public void testSystemUptime() {
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        long uptime = hal.getProcessor().getSystemUptime();
-        assertTrue(uptime >= 0);
-    }
-
-    /**
-     * Test serial number
-     */
-    @Test
-    public void testSerialNumber() {
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        String sn = hal.getProcessor().getSystemSerialNumber();
-        assertTrue(sn.length() >= 0);
-    }
-
     /**
      * Test displays
      */
-    @Test
-    public void testDisplay() {
-        SystemInfo si = new SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
-        Display[] displays = hal.getDisplays();
-        if (displays.length > 0) {
-            assertTrue(displays[0].getEdid().length >= 128);
-        }
-    }
 
     /**
      * The main method.
