@@ -1,170 +1,185 @@
 package com.qcadoo.mes.materialFlowResources.dto;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class ResourceToRepackDto {
-    private Long locationId;
-    private String resourceNumber;
-    private String productName;
-    private String locationNumber;
-    private String storageLocationNumber;
-    private String productNumber;
-    private String conversionValue;
-    private String palletNumber;
-    private String palletType;
-    private String batchNumber;
-    private Date productionDate;
-    private Date expirationDate;
-    private String additionalUnit;
-    private BigDecimal quantity;
-    private String unit;
-    private BigDecimal additionalQuantity;
-    private Boolean blockedForQualityControl;
+  private Long locationId;
 
-    private String qualityRating;
+  private String resourceNumber;
 
-    public String getQualityRating() {
-        return qualityRating;
-    }
+  private String productName;
 
-    public void setQualityRating(String qualityRating) {
-        this.qualityRating = qualityRating;
-    }
+  private String locationNumber;
 
-    public Boolean getBlockedForQualityControl() {
-        return blockedForQualityControl;
-    }
+  private String storageLocationNumber;
 
-    public void setBlockedForQualityControl(Boolean blockedForQualityControl) {
-        this.blockedForQualityControl = blockedForQualityControl;
-    }
+  private String productNumber;
 
-    public String getResourceNumber() {
-        return resourceNumber;
-    }
+  private String conversionValue;
 
-    public void setResourceNumber(String resourceNumber) {
-        this.resourceNumber = resourceNumber;
-    }
+  private String palletNumber;
 
-    public Long getLocationId() {
-        return locationId;
-    }
+  private String palletType;
 
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
+  private String batchNumber;
 
-    public String getProductName() {
-        return productName;
-    }
+  private Date productionDate;
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
+  private Date expirationDate;
 
-    public String getLocationNumber() {
-        return locationNumber;
-    }
+  private String additionalUnit;
 
-    public void setLocationNumber(String locationNumber) {
-        this.locationNumber = locationNumber;
-    }
+  private BigDecimal quantity;
 
-    public String getStorageLocationNumber() {
-        return storageLocationNumber;
-    }
+  private String unit;
 
-    public void setStorageLocationNumber(String storageLocationNumber) {
-        this.storageLocationNumber = storageLocationNumber;
-    }
+  private BigDecimal additionalQuantity;
 
-    public String getProductNumber() {
-        return productNumber;
-    }
+  private Boolean blockedForQualityControl;
 
-    public void setProductNumber(String productNumber) {
-        this.productNumber = productNumber;
-    }
+  private String qualityRating;
 
-    public String getConversionValue() {
-        return conversionValue;
-    }
+  public String getQualityRating() {
+    return qualityRating;
+  }
 
-    public void setConversionValue(String conversionValue) {
-        this.conversionValue = conversionValue;
-    }
+  public void setQualityRating(String qualityRating) {
+    this.qualityRating = qualityRating;
+  }
 
-    public String getPalletNumber() {
-        return palletNumber;
-    }
+  public Boolean getBlockedForQualityControl() {
+    return blockedForQualityControl;
+  }
 
-    public void setPalletNumber(String palletNumber) {
-        this.palletNumber = palletNumber;
-    }
+  public void setBlockedForQualityControl(Boolean blockedForQualityControl) {
+    this.blockedForQualityControl = blockedForQualityControl;
+  }
 
-    public String getPalletType() {
-        return palletType;
-    }
+  public String getResourceNumber() {
+    return resourceNumber;
+  }
 
-    public void setPalletType(String palletType) {
-        this.palletType = palletType;
-    }
+  public void setResourceNumber(String resourceNumber) {
+    this.resourceNumber = resourceNumber;
+  }
 
-    public String getBatchNumber() {
-        return batchNumber;
-    }
+  public Long getLocationId() {
+    return locationId;
+  }
 
-    public void setBatchNumber(String batchNumber) {
-        this.batchNumber = batchNumber;
-    }
+  public void setLocationId(Long locationId) {
+    this.locationId = locationId;
+  }
 
-    public Date getProductionDate() {
-        return productionDate;
-    }
+  public String getProductName() {
+    return productName;
+  }
 
-    public void setProductionDate(Date productionDate) {
-        this.productionDate = productionDate;
-    }
+  public void setProductName(String productName) {
+    this.productName = productName;
+  }
 
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
+  public String getLocationNumber() {
+    return locationNumber;
+  }
 
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
+  public void setLocationNumber(String locationNumber) {
+    this.locationNumber = locationNumber;
+  }
 
-    public String getAdditionalUnit() {
-        return additionalUnit;
-    }
+  public String getStorageLocationNumber() {
+    return storageLocationNumber;
+  }
 
-    public void setAdditionalUnit(String additionalUnit) {
-        this.additionalUnit = additionalUnit;
-    }
+  public void setStorageLocationNumber(String storageLocationNumber) {
+    this.storageLocationNumber = storageLocationNumber;
+  }
 
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
+  public String getProductNumber() {
+    return productNumber;
+  }
 
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
+  public void setProductNumber(String productNumber) {
+    this.productNumber = productNumber;
+  }
 
-    public String getUnit() {
-        return unit;
-    }
+  public String getConversionValue() {
+    return conversionValue;
+  }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
+  public void setConversionValue(String conversionValue) {
+    this.conversionValue = conversionValue;
+  }
 
-    public BigDecimal getAdditionalQuantity() {
-        return additionalQuantity;
-    }
+  public String getPalletNumber() {
+    return palletNumber;
+  }
 
-    public void setAdditionalQuantity(BigDecimal additionalQuantity) {
-        this.additionalQuantity = additionalQuantity;
-    }
+  public void setPalletNumber(String palletNumber) {
+    this.palletNumber = palletNumber;
+  }
+
+  public String getPalletType() {
+    return palletType;
+  }
+
+  public void setPalletType(String palletType) {
+    this.palletType = palletType;
+  }
+
+  public String getBatchNumber() {
+    return batchNumber;
+  }
+
+  public void setBatchNumber(String batchNumber) {
+    this.batchNumber = batchNumber;
+  }
+
+  public Date getProductionDate() {
+    return productionDate;
+  }
+
+  public void setProductionDate(Date productionDate) {
+    this.productionDate = productionDate;
+  }
+
+  public Date getExpirationDate() {
+    return expirationDate;
+  }
+
+  public void setExpirationDate(Date expirationDate) {
+    this.expirationDate = expirationDate;
+  }
+
+  public String getAdditionalUnit() {
+    return additionalUnit;
+  }
+
+  public void setAdditionalUnit(String additionalUnit) {
+    this.additionalUnit = additionalUnit;
+  }
+
+  public BigDecimal getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(BigDecimal quantity) {
+    this.quantity = quantity;
+  }
+
+  public String getUnit() {
+    return unit;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
+
+  public BigDecimal getAdditionalQuantity() {
+    return additionalQuantity;
+  }
+
+  public void setAdditionalQuantity(BigDecimal additionalQuantity) {
+    this.additionalQuantity = additionalQuantity;
+  }
 }
