@@ -1,14 +1,20 @@
 package mikera.matrixx.decompose.impl.qr;
 
 import java.util.Random;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
 import mikera.matrixx.AMatrix;
+
 import mikera.matrixx.Matrix;
+
 import mikera.matrixx.algo.Multiplications;
+
 import mikera.matrixx.decompose.IQRResult;
-import mikera.matrixx.decompose.impl.qr.HouseholderQR;
+
 import mikera.matrixx.impl.AStridedMatrix;
+
+import static org.junit.Assert.assertEquals;
+
+import static org.junit.Assert.assertTrue;
 import mikera.matrixx.impl.IdentityMatrix;
 import mikera.matrixx.impl.ZeroMatrix;
 
