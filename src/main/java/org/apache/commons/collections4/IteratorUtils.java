@@ -1,28 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.collections4;
-
 import org.apache.commons.collections4.functors.EqualPredicate;
+import java.lang.reflect.Array;
 import org.apache.commons.collections4.iterators.*;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import org.w3c.dom.NodeList;
 import java.util.*;
 
 /**
@@ -32,51 +14,44 @@ import java.util.*;
  * @since 2.1
  */
 public class IteratorUtils {
-    // validation is done in this class in certain cases because the
-    // public classes allow invalid states
-
-    /**
+  /**
      * An iterator over no elements.
      */
-    @SuppressWarnings("rawtypes")
-    public static final ResettableIterator EMPTY_ITERATOR = EmptyIterator.RESETTABLE_INSTANCE;
+  @SuppressWarnings(value = { "rawtypes" }) public static final ResettableIterator EMPTY_ITERATOR = EmptyIterator.RESETTABLE_INSTANCE;
 
-    /**
+  /**
      * A list iterator over no elements.
      */
-    @SuppressWarnings("rawtypes")
-    public static final ResettableListIterator EMPTY_LIST_ITERATOR = EmptyListIterator.RESETTABLE_INSTANCE;
+  @SuppressWarnings(value = { "rawtypes" }) public static final ResettableListIterator EMPTY_LIST_ITERATOR = EmptyListIterator.RESETTABLE_INSTANCE;
 
-    /**
+  /**
      * An ordered iterator over no elements.
      */
-    @SuppressWarnings("rawtypes")
-    public static final OrderedIterator EMPTY_ORDERED_ITERATOR = EmptyOrderedIterator.INSTANCE;
+  @SuppressWarnings(value = { "rawtypes" }) public static final OrderedIterator EMPTY_ORDERED_ITERATOR = EmptyOrderedIterator.INSTANCE;
 
-    /**
+  /**
      * A map iterator over no elements.
      */
-    @SuppressWarnings("rawtypes")
-    public static final MapIterator EMPTY_MAP_ITERATOR = EmptyMapIterator.INSTANCE;
+  @SuppressWarnings(value = { "rawtypes" }) public static final MapIterator EMPTY_MAP_ITERATOR = EmptyMapIterator.INSTANCE;
 
-    /**
+  /**
      * An ordered map iterator over no elements.
      */
-    @SuppressWarnings("rawtypes")
-    public static final OrderedMapIterator EMPTY_ORDERED_MAP_ITERATOR = EmptyOrderedMapIterator.INSTANCE;
-    /**
+  @SuppressWarnings(value = { "rawtypes" }) public static final OrderedMapIterator EMPTY_ORDERED_MAP_ITERATOR = EmptyOrderedMapIterator.INSTANCE;
+
+  /**
      * Default delimiter used to delimit elements while converting an Iterator
      * to its String representation.
      */
-    private static final String DEFAULT_TOSTRING_DELIMITER = ", ";
+  private static final String DEFAULT_TOSTRING_DELIMITER = ", ";
 
-    /**
+  /**
      * Don't allow instances.
      */
-    private IteratorUtils() {}
+  private IteratorUtils() {
+  }
 
-    // Empty
-    /**
+  /**
      * Gets an empty iterator.
      * <p>
      * This iterator is a valid iterator object that will iterate over nothing.
@@ -84,11 +59,11 @@ public class IteratorUtils {
      * @param <E> the element type
      * @return an iterator over nothing
      */
-    public static <E> ResettableIterator<E> emptyIterator() {
-        return EmptyIterator.<E>resettableEmptyIterator();
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> emptyIterator() {
+    return EmptyIterator.<E>resettableEmptyIterator();
+  }
 
-    /**
+  /**
      * Gets an empty list iterator.
      * <p>
      * This iterator is a valid list iterator object that will iterate
@@ -97,11 +72,11 @@ public class IteratorUtils {
      * @param <E> the element type
      * @return a list iterator over nothing
      */
-    public static <E> ResettableListIterator<E> emptyListIterator() {
-        return EmptyListIterator.resettableEmptyListIterator();
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> emptyListIterator() {
+    return EmptyListIterator.resettableEmptyListIterator();
+  }
 
-    /**
+  /**
      * Gets an empty ordered iterator.
      * <p>
      * This iterator is a valid iterator object that will iterate
@@ -110,11 +85,11 @@ public class IteratorUtils {
      * @param <E> the element type
      * @return an ordered iterator over nothing
      */
-    public static <E> OrderedIterator<E> emptyOrderedIterator() {
-        return EmptyOrderedIterator.emptyOrderedIterator();
-    }
+  public static <E extends java.lang.Object> OrderedIterator<E> emptyOrderedIterator() {
+    return EmptyOrderedIterator.emptyOrderedIterator();
+  }
 
-    /**
+  /**
      * Gets an empty map iterator.
      * <p>
      * This iterator is a valid map iterator object that will iterate
@@ -124,11 +99,11 @@ public class IteratorUtils {
      * @param <V> the value type
      * @return a map iterator over nothing
      */
-    public static <K, V> MapIterator<K, V> emptyMapIterator() {
-        return EmptyMapIterator.emptyMapIterator();
-    }
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapIterator<K, V> emptyMapIterator() {
+    return EmptyMapIterator.emptyMapIterator();
+  }
 
-    /**
+  /**
      * Gets an empty ordered map iterator.
      * <p>
      * This iterator is a valid map iterator object that will iterate
@@ -138,12 +113,11 @@ public class IteratorUtils {
      * @param <V> the value type
      * @return a map iterator over nothing
      */
-    public static <K, V> OrderedMapIterator<K, V> emptyOrderedMapIterator() {
-        return EmptyOrderedMapIterator.emptyOrderedMapIterator();
-    }
+  public static <K extends java.lang.Object, V extends java.lang.Object> OrderedMapIterator<K, V> emptyOrderedMapIterator() {
+    return EmptyOrderedMapIterator.emptyOrderedMapIterator();
+  }
 
-    // Singleton
-    /**
+  /**
      * Gets a singleton iterator.
      * <p>
      * This iterator is a valid iterator object that will iterate over
@@ -153,11 +127,11 @@ public class IteratorUtils {
      * @param object  the single object over which to iterate
      * @return a singleton iterator over the object
      */
-    public static <E> ResettableIterator<E> singletonIterator(final E object) {
-        return new SingletonIterator<>(object);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> singletonIterator(final E object) {
+    return new SingletonIterator<>(object);
+  }
 
-    /**
+  /**
      * Gets a singleton list iterator.
      * <p>
      * This iterator is a valid list iterator object that will iterate over
@@ -167,12 +141,11 @@ public class IteratorUtils {
      * @param object  the single object over which to iterate
      * @return a singleton list iterator over the object
      */
-    public static <E> ListIterator<E> singletonListIterator(final E object) {
-        return new SingletonListIterator<>(object);
-    }
+  public static <E extends java.lang.Object> ListIterator<E> singletonListIterator(final E object) {
+    return new SingletonListIterator<>(object);
+  }
 
-    // Arrays
-    /**
+  /**
      * Gets an iterator over an object array.
      *
      * @param <E> the element type
@@ -180,11 +153,11 @@ public class IteratorUtils {
      * @return an iterator over the array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final E... array) {
-        return new ObjectArrayIterator<>(array);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final E... array) {
+    return new ObjectArrayIterator<>(array);
+  }
 
-    /**
+  /**
      * Gets an iterator over an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -196,11 +169,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if the array is not an array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final Object array) {
-        return new ArrayIterator<>(array);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final Object array) {
+    return new ArrayIterator<>(array);
+  }
 
-    /**
+  /**
      * Gets an iterator over the end part of an object array.
      *
      * @param <E> the element type
@@ -211,11 +184,11 @@ public class IteratorUtils {
      *   than the length of the array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final E[] array, final int start) {
-        return new ObjectArrayIterator<>(array, start);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final E[] array, final int start) {
+    return new ObjectArrayIterator<>(array, start);
+  }
 
-    /**
+  /**
      * Gets an iterator over the end part of an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -230,11 +203,11 @@ public class IteratorUtils {
      *   than the length of the array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final Object array, final int start) {
-        return new ArrayIterator<>(array, start);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final Object array, final int start) {
+    return new ArrayIterator<>(array, start);
+  }
 
-    /**
+  /**
      * Gets an iterator over part of an object array.
      *
      * @param <E> the element type
@@ -246,11 +219,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if end is before start
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final E[] array, final int start, final int end) {
-        return new ObjectArrayIterator<>(array, start, end);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final E[] array, final int start, final int end) {
+    return new ObjectArrayIterator<>(array, start, end);
+  }
 
-    /**
+  /**
      * Gets an iterator over part of an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -265,11 +238,11 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if array bounds are invalid
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableIterator<E> arrayIterator(final Object array, final int start, final int end) {
-        return new ArrayIterator<>(array, start, end);
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> arrayIterator(final Object array, final int start, final int end) {
+    return new ArrayIterator<>(array, start, end);
+  }
 
-    /**
+  /**
      * Gets a list iterator over an object array.
      *
      * @param <E> the element type
@@ -277,11 +250,11 @@ public class IteratorUtils {
      * @return a list iterator over the array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final E... array) {
-        return new ObjectArrayListIterator<>(array);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final E... array) {
+    return new ObjectArrayListIterator<>(array);
+  }
 
-    /**
+  /**
      * Gets a list iterator over an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -293,11 +266,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if the array is not an array
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final Object array) {
-        return new ArrayListIterator<>(array);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final Object array) {
+    return new ArrayListIterator<>(array);
+  }
 
-    /**
+  /**
      * Gets a list iterator over the end part of an object array.
      *
      * @param <E> the element type
@@ -307,11 +280,11 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if start is less than zero
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final E[] array, final int start) {
-        return new ObjectArrayListIterator<>(array, start);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final E[] array, final int start) {
+    return new ObjectArrayListIterator<>(array, start);
+  }
 
-    /**
+  /**
      * Gets a list iterator over the end part of an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -325,11 +298,11 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if start is less than zero
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final Object array, final int start) {
-        return new ArrayListIterator<>(array, start);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final Object array, final int start) {
+    return new ArrayListIterator<>(array, start);
+  }
 
-    /**
+  /**
      * Gets a list iterator over part of an object array.
      *
      * @param <E> the element type
@@ -341,11 +314,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if end is before start
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final E[] array, final int start, final int end) {
-        return new ObjectArrayListIterator<>(array, start, end);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final E[] array, final int start, final int end) {
+    return new ObjectArrayListIterator<>(array, start, end);
+  }
 
-    /**
+  /**
      * Gets a list iterator over part of an object or primitive array.
      * <p>
      * This method will handle primitive arrays as well as object arrays.
@@ -360,12 +333,11 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if array bounds are invalid
      * @throws NullPointerException if array is null
      */
-    public static <E> ResettableListIterator<E> arrayListIterator(final Object array, final int start, final int end) {
-        return new ArrayListIterator<>(array, start, end);
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> arrayListIterator(final Object array, final int start, final int end) {
+    return new ArrayListIterator<>(array, start, end);
+  }
 
-    // Bounded
-    /**
+  /**
      * Decorates the specified iterator to return at most the given number
      * of elements.
      *
@@ -377,11 +349,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if max is negative
      * @since 4.1
      */
-    public static <E> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator, final long max) {
-        return boundedIterator(iterator, 0, max);
-    }
+  public static <E extends java.lang.Object> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator, final long max) {
+    return boundedIterator(iterator, 0, max);
+  }
 
-    /**
+  /**
      * Decorates the specified iterator to return at most the given number
      * of elements, skipping all elements until the iterator reaches the
      * position at {@code offset}.
@@ -398,13 +370,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if either offset or max is negative
      * @since 4.1
      */
-    public static <E> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator,
-                                                         final long offset, final long max) {
-        return new BoundedIterator<>(iterator, offset, max);
-    }
+  public static <E extends java.lang.Object> BoundedIterator<E> boundedIterator(final Iterator<? extends E> iterator, final long offset, final long max) {
+    return new BoundedIterator<>(iterator, offset, max);
+  }
 
-    // Unmodifiable
-    /**
+  /**
      * Gets an immutable version of an {@link Iterator}. The returned object
      * will always throw an {@link UnsupportedOperationException} for
      * the {@link Iterator#remove} method.
@@ -413,11 +383,11 @@ public class IteratorUtils {
      * @param iterator  the iterator to make immutable
      * @return an immutable version of the iterator
      */
-    public static <E> Iterator<E> unmodifiableIterator(final Iterator<E> iterator) {
-        return UnmodifiableIterator.unmodifiableIterator(iterator);
-    }
+  public static <E extends java.lang.Object> Iterator<E> unmodifiableIterator(final Iterator<E> iterator) {
+    return UnmodifiableIterator.unmodifiableIterator(iterator);
+  }
 
-    /**
+  /**
      * Gets an immutable version of a {@link ListIterator}. The returned object
      * will always throw an {@link UnsupportedOperationException} for
      * the {@link Iterator#remove}, {@link ListIterator#add} and
@@ -427,11 +397,11 @@ public class IteratorUtils {
      * @param listIterator  the iterator to make immutable
      * @return an immutable version of the iterator
      */
-    public static <E> ListIterator<E> unmodifiableListIterator(final ListIterator<E> listIterator) {
-        return UnmodifiableListIterator.unmodifiableListIterator(listIterator);
-    }
+  public static <E extends java.lang.Object> ListIterator<E> unmodifiableListIterator(final ListIterator<E> listIterator) {
+    return UnmodifiableListIterator.unmodifiableListIterator(listIterator);
+  }
 
-    /**
+  /**
      * Gets an immutable version of a {@link MapIterator}. The returned object
      * will always throw an {@link UnsupportedOperationException} for
      * the {@link Iterator#remove}, {@link MapIterator#setValue(Object)} methods.
@@ -441,13 +411,11 @@ public class IteratorUtils {
      * @param mapIterator  the iterator to make immutable
      * @return an immutable version of the iterator
      */
-    public static <K, V> MapIterator<K, V> unmodifiableMapIterator(final MapIterator<K, V> mapIterator) {
-        return UnmodifiableMapIterator.unmodifiableMapIterator(mapIterator);
-    }
+  public static <K extends java.lang.Object, V extends java.lang.Object> MapIterator<K, V> unmodifiableMapIterator(final MapIterator<K, V> mapIterator) {
+    return UnmodifiableMapIterator.unmodifiableMapIterator(mapIterator);
+  }
 
-    // Chained
-
-    /**
+  /**
      * Gets an iterator that iterates through two {@link Iterator}s
      * one after another.
      *
@@ -457,14 +425,11 @@ public class IteratorUtils {
      * @return a combination iterator over the iterators
      * @throws NullPointerException if either iterator is null
      */
-    public static <E> Iterator<E> chainedIterator(final Iterator<? extends E> iterator1,
-                                                  final Iterator<? extends E> iterator2) {
-        // keep a version with two iterators to avoid the following warning in client code (Java 5 & 6)
-        // "A generic array of E is created for a varargs parameter"
-        return new IteratorChain<>(iterator1, iterator2);
-    }
+  public static <E extends java.lang.Object> Iterator<E> chainedIterator(final Iterator<? extends E> iterator1, final Iterator<? extends E> iterator2) {
+    return new IteratorChain<>(iterator1, iterator2);
+  }
 
-    /**
+  /**
      * Gets an iterator that iterates through an array of {@link Iterator}s
      * one after another.
      *
@@ -473,11 +438,11 @@ public class IteratorUtils {
      * @return a combination iterator over the iterators
      * @throws NullPointerException if iterators array is null or contains a null
      */
-    public static <E> Iterator<E> chainedIterator(final Iterator<? extends E>... iterators) {
-        return new IteratorChain<>(iterators);
-    }
+  public static <E extends java.lang.Object> Iterator<E> chainedIterator(final Iterator<? extends E>... iterators) {
+    return new IteratorChain<>(iterators);
+  }
 
-    /**
+  /**
      * Gets an iterator that iterates through a collections of {@link Iterator}s
      * one after another.
      *
@@ -487,12 +452,11 @@ public class IteratorUtils {
      * @throws NullPointerException if iterators collection is null or contains a null
      * @throws ClassCastException if the iterators collection contains the wrong object type
      */
-    public static <E> Iterator<E> chainedIterator(final Collection<Iterator<? extends E>> iterators) {
-        return new IteratorChain<>(iterators);
-    }
+  public static <E extends java.lang.Object> Iterator<E> chainedIterator(final Collection<Iterator<? extends E>> iterators) {
+    return new IteratorChain<>(iterators);
+  }
 
-    // Collated
-    /**
+  /**
      * Gets an iterator that provides an ordered iteration over the elements
      * contained in a collection of ordered {@link Iterator}s.
      * <p>
@@ -509,16 +473,12 @@ public class IteratorUtils {
      * @return a combination iterator over the iterators
      * @throws NullPointerException if either iterator is null
      */
-    public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
-                                                   final Iterator<? extends E> iterator1,
-                                                   final Iterator<? extends E> iterator2) {
-        @SuppressWarnings("unchecked")
-        final Comparator<E> comp =
-            comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
-        return new CollatingIterator<>(comp, iterator1, iterator2);
-    }
+  public static <E extends java.lang.Object> Iterator<E> collatedIterator(final Comparator<? super E> comparator, final Iterator<? extends E> iterator1, final Iterator<? extends E> iterator2) {
+    @SuppressWarnings(value = { "unchecked" }) final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
+    return new CollatingIterator<>(comp, iterator1, iterator2);
+  }
 
-    /**
+  /**
      * Gets an iterator that provides an ordered iteration over the elements
      * contained in an array of {@link Iterator}s.
      * <p>
@@ -534,15 +494,12 @@ public class IteratorUtils {
      * @return a combination iterator over the iterators
      * @throws NullPointerException if iterators array is null or contains a null value
      */
-    public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
-                                                   final Iterator<? extends E>... iterators) {
-        @SuppressWarnings("unchecked")
-        final Comparator<E> comp =
-            comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
-        return new CollatingIterator<>(comp, iterators);
-    }
+  public static <E extends java.lang.Object> Iterator<E> collatedIterator(final Comparator<? super E> comparator, final Iterator<? extends E>... iterators) {
+    @SuppressWarnings(value = { "unchecked" }) final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
+    return new CollatingIterator<>(comp, iterators);
+  }
 
-    /**
+  /**
      * Gets an iterator that provides an ordered iteration over the elements
      * contained in a collection of {@link Iterator}s.
      * <p>
@@ -559,16 +516,12 @@ public class IteratorUtils {
      * @throws NullPointerException if iterators collection is null or contains a null
      * @throws ClassCastException if the iterators collection contains the wrong object type
      */
-    public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
-                                                   final Collection<Iterator<? extends E>> iterators) {
-        @SuppressWarnings("unchecked")
-        final Comparator<E> comp =
-            comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
-        return new CollatingIterator<>(comp, iterators);
-    }
+  public static <E extends java.lang.Object> Iterator<E> collatedIterator(final Comparator<? super E> comparator, final Collection<Iterator<? extends E>> iterators) {
+    @SuppressWarnings(value = { "unchecked" }) final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : (Comparator<E>) comparator;
+    return new CollatingIterator<>(comp, iterators);
+  }
 
-    // Object Graph
-    /**
+  /**
      * Gets an iterator that operates over an object graph.
      * <p>
      * This iterator can extract multiple objects from a complex tree-like object graph.
@@ -622,13 +575,11 @@ public class IteratorUtils {
      * @return a new object graph iterator
      * @since 3.1
      */
-    public static <E> Iterator<E> objectGraphIterator(final E root,
-            final Transformer<? super E, ? extends E> transformer) {
-        return new ObjectGraphIterator<>(root, transformer);
-    }
+  public static <E extends java.lang.Object> Iterator<E> objectGraphIterator(final E root, final Transformer<? super E, ? extends E> transformer) {
+    return new ObjectGraphIterator<>(root, transformer);
+  }
 
-    // Transformed
-    /**
+  /**
      * Gets an iterator that transforms the elements of another iterator.
      * <p>
      * The transformation occurs during the next() method and the underlying
@@ -641,16 +592,13 @@ public class IteratorUtils {
      * @return a new transforming iterator
      * @throws NullPointerException if either parameter is null
      */
-    public static <I, O> Iterator<O> transformedIterator(final Iterator<? extends I> iterator,
-            final Transformer<? super I, ? extends O> transformer) {
+  public static <I extends java.lang.Object, O extends java.lang.Object> Iterator<O> transformedIterator(final Iterator<? extends I> iterator, final Transformer<? super I, ? extends O> transformer) {
+    Objects.requireNonNull(iterator, "iterator");
+    Objects.requireNonNull(transformer, "transformer");
+    return new TransformIterator<>(iterator, transformer);
+  }
 
-        Objects.requireNonNull(iterator, "iterator");
-        Objects.requireNonNull(transformer, "transformer");
-        return new TransformIterator<>(iterator, transformer);
-    }
-
-    // Filtered
-    /**
+  /**
      * Gets an iterator that filters another iterator.
      * <p>
      * The returned iterator will only return objects that match the specified
@@ -662,14 +610,13 @@ public class IteratorUtils {
      * @return a new filtered iterator
      * @throws NullPointerException if either parameter is null
      */
-    public static <E> Iterator<E> filteredIterator(final Iterator<? extends E> iterator,
-                                                   final Predicate<? super E> predicate) {
-        Objects.requireNonNull(iterator, "iterator");
-        Objects.requireNonNull(predicate, "predicate");
-        return new FilterIterator<>(iterator, predicate);
-    }
+  public static <E extends java.lang.Object> Iterator<E> filteredIterator(final Iterator<? extends E> iterator, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(iterator, "iterator");
+    Objects.requireNonNull(predicate, "predicate");
+    return new FilterIterator<>(iterator, predicate);
+  }
 
-    /**
+  /**
      * Gets a list iterator that filters another list iterator.
      * <p>
      * The returned iterator will only return objects that match the specified
@@ -681,16 +628,13 @@ public class IteratorUtils {
      * @return a new filtered iterator
      * @throws NullPointerException if either parameter is null
      */
-    public static <E> ListIterator<E> filteredListIterator(final ListIterator<? extends E> listIterator,
-            final Predicate<? super E> predicate) {
+  public static <E extends java.lang.Object> ListIterator<E> filteredListIterator(final ListIterator<? extends E> listIterator, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(listIterator, "listIterator");
+    Objects.requireNonNull(predicate, "predicate");
+    return new FilterListIterator<>(listIterator, predicate);
+  }
 
-        Objects.requireNonNull(listIterator, "listIterator");
-        Objects.requireNonNull(predicate, "predicate");
-        return new FilterListIterator<>(listIterator, predicate);
-    }
-
-    // Looping
-    /**
+  /**
      * Gets an iterator that loops continuously over the supplied collection.
      * <p>
      * The iterator will only stop looping if the remove method is called
@@ -702,11 +646,11 @@ public class IteratorUtils {
      * @return a new looping iterator
      * @throws NullPointerException if the collection is null
      */
-    public static <E> ResettableIterator<E> loopingIterator(final Collection<? extends E> collection) {
-        return new LoopingIterator<>(Objects.requireNonNull(collection, "collection"));
-    }
+  public static <E extends java.lang.Object> ResettableIterator<E> loopingIterator(final Collection<? extends E> collection) {
+    return new LoopingIterator<>(Objects.requireNonNull(collection, "collection"));
+  }
 
-    /**
+  /**
      * Gets an iterator that loops continuously over the supplied list.
      * <p>
      * The iterator will only stop looping if the remove method is called
@@ -718,12 +662,11 @@ public class IteratorUtils {
      * @throws NullPointerException if the list is null
      * @since 3.2
      */
-    public static <E> ResettableListIterator<E> loopingListIterator(final List<E> list) {
-        return new LoopingListIterator<>(Objects.requireNonNull(list, "list"));
-    }
+  public static <E extends java.lang.Object> ResettableListIterator<E> loopingListIterator(final List<E> list) {
+    return new LoopingListIterator<>(Objects.requireNonNull(list, "list"));
+  }
 
-    // org.w3c.dom.NodeList iterators
-    /**
+  /**
      * Gets an {@link Iterator} that wraps the specified {@link NodeList}.
      * The returned {@link Iterator} can be used for a single iteration.
      *
@@ -732,11 +675,11 @@ public class IteratorUtils {
      * @throws NullPointerException if nodeList is null
      * @since 4.0
      */
-    public static NodeListIterator nodeListIterator(final NodeList nodeList) {
-        return new NodeListIterator(Objects.requireNonNull(nodeList, "nodeList"));
-    }
+  public static NodeListIterator nodeListIterator(final NodeList nodeList) {
+    return new NodeListIterator(Objects.requireNonNull(nodeList, "nodeList"));
+  }
 
-    /**
+  /**
      * Gets an {@link Iterator} that wraps the specified node's childNodes.
      * The returned {@link Iterator} can be used for a single iteration.
      * <p>
@@ -753,13 +696,11 @@ public class IteratorUtils {
      * @throws NullPointerException if node is null
      * @since 4.0
      */
-    public static NodeListIterator nodeListIterator(final Node node) {
-        return new NodeListIterator(Objects.requireNonNull(node, "node"));
-    }
+  public static NodeListIterator nodeListIterator(final Node node) {
+    return new NodeListIterator(Objects.requireNonNull(node, "node"));
+  }
 
-    // Peeking
-
-    /**
+  /**
      * Gets an iterator that supports one-element lookahead.
      *
      * @param <E> the element type
@@ -768,13 +709,11 @@ public class IteratorUtils {
      * @throws NullPointerException if the iterator is null
      * @since 4.0
      */
-    public static <E> Iterator<E> peekingIterator(final Iterator<? extends E> iterator) {
-        return PeekingIterator.peekingIterator(iterator);
-    }
+  public static <E extends java.lang.Object> Iterator<E> peekingIterator(final Iterator<? extends E> iterator) {
+    return PeekingIterator.peekingIterator(iterator);
+  }
 
-    // Pushback
-
-    /**
+  /**
      * Gets an iterator that supports pushback of elements.
      *
      * @param <E> the element type
@@ -783,12 +722,11 @@ public class IteratorUtils {
      * @throws NullPointerException if the iterator is null
      * @since 4.0
      */
-    public static <E> Iterator<E> pushbackIterator(final Iterator<? extends E> iterator) {
-        return PushbackIterator.pushbackIterator(iterator);
-    }
+  public static <E extends java.lang.Object> Iterator<E> pushbackIterator(final Iterator<? extends E> iterator) {
+    return PushbackIterator.pushbackIterator(iterator);
+  }
 
-    // Skipping
-    /**
+  /**
      * Decorates the specified iterator to skip the first N elements.
      *
      * @param <E> the element type
@@ -799,12 +737,11 @@ public class IteratorUtils {
      * @throws IllegalArgumentException if offset is negative
      * @since 4.1
      */
-    public static <E> SkippingIterator<E> skippingIterator(final Iterator<E> iterator, final long offset) {
-        return new SkippingIterator<>(iterator, offset);
-    }
+  public static <E extends java.lang.Object> SkippingIterator<E> skippingIterator(final Iterator<E> iterator, final long offset) {
+    return new SkippingIterator<>(iterator, offset);
+  }
 
-    // Zipping
-    /**
+  /**
      * Returns an iterator that interleaves elements from the decorated iterators.
      *
      * @param <E> the element type
@@ -814,12 +751,11 @@ public class IteratorUtils {
      * @throws NullPointerException if any iterator is null
      * @since 4.1
      */
-    public static <E> ZippingIterator<E> zippingIterator(final Iterator<? extends E> a,
-                                                         final Iterator<? extends E> b) {
-        return new ZippingIterator<>(a, b);
-    }
+  public static <E extends java.lang.Object> ZippingIterator<E> zippingIterator(final Iterator<? extends E> a, final Iterator<? extends E> b) {
+    return new ZippingIterator<>(a, b);
+  }
 
-    /**
+  /**
      * Returns an iterator that interleaves elements from the decorated iterators.
      *
      * @param <E> the element type
@@ -830,13 +766,11 @@ public class IteratorUtils {
      * @throws NullPointerException if any iterator is null
      * @since 4.1
      */
-    public static <E> ZippingIterator<E> zippingIterator(final Iterator<? extends E> a,
-                                                         final Iterator<? extends E> b,
-                                                         final Iterator<? extends E> c) {
-        return new ZippingIterator<>(a, b, c);
-    }
+  public static <E extends java.lang.Object> ZippingIterator<E> zippingIterator(final Iterator<? extends E> a, final Iterator<? extends E> b, final Iterator<? extends E> c) {
+    return new ZippingIterator<>(a, b, c);
+  }
 
-    /**
+  /**
      * Returns an iterator that interleaves elements from the decorated iterators.
      *
      * @param <E> the element type
@@ -845,11 +779,11 @@ public class IteratorUtils {
      * @throws NullPointerException if any iterator is null
      * @since 4.1
      */
-    public static <E> ZippingIterator<E> zippingIterator(final Iterator<? extends E>... iterators) {
-        return new ZippingIterator<>(iterators);
-    }
+  public static <E extends java.lang.Object> ZippingIterator<E> zippingIterator(final Iterator<? extends E>... iterators) {
+    return new ZippingIterator<>(iterators);
+  }
 
-    /**
+  /**
      * Gets an Iterator over the elements contained in a pair of Iterables in-tandem.
      * <p>
      * The returned iterator traverses the elements in {@code a} and {@code b} together until one of the iterators
@@ -864,12 +798,11 @@ public class IteratorUtils {
      * @return an iterator, to iterate over the decorated iterators together until one is exhausted
      * @throws NullPointerException if any iterator is null
      */
-    public static <L, R> PairedIterator<L, R> pairedIterator(final Iterator<L> left, Iterator<R> right) {
-        return PairedIterator.of(left, right);
-    }
+  public static <L extends java.lang.Object, R extends java.lang.Object> PairedIterator<L, R> pairedIterator(final Iterator<L> left, Iterator<R> right) {
+    return PairedIterator.of(left, right);
+  }
 
-    // Views
-    /**
+  /**
      * Gets an iterator that provides an iterator view of the given enumeration.
      *
      * @param <E> the element type
@@ -877,11 +810,11 @@ public class IteratorUtils {
      * @return a new iterator
      * @throws NullPointerException if enumeration is null
      */
-    public static <E> Iterator<E> asIterator(final Enumeration<? extends E> enumeration) {
-        return new EnumerationIterator<>(Objects.requireNonNull(enumeration, "enumeration"));
-    }
+  public static <E extends java.lang.Object> Iterator<E> asIterator(final Enumeration<? extends E> enumeration) {
+    return new EnumerationIterator<>(Objects.requireNonNull(enumeration, "enumeration"));
+  }
 
-    /**
+  /**
      * Gets an iterator that provides an iterator view of the given enumeration
      * that will remove elements from the specified collection.
      *
@@ -891,13 +824,11 @@ public class IteratorUtils {
      * @return a new iterator
      * @throws NullPointerException if enumeration or removeCollection is null
      */
-    public static <E> Iterator<E> asIterator(final Enumeration<? extends E> enumeration,
-                                             final Collection<? super E> removeCollection) {
-        return new EnumerationIterator<>(Objects.requireNonNull(enumeration, "enumeration"),
-                Objects.requireNonNull(removeCollection, "removeCollection"));
-    }
+  public static <E extends java.lang.Object> Iterator<E> asIterator(final Enumeration<? extends E> enumeration, final Collection<? super E> removeCollection) {
+    return new EnumerationIterator<>(Objects.requireNonNull(enumeration, "enumeration"), Objects.requireNonNull(removeCollection, "removeCollection"));
+  }
 
-    /**
+  /**
      * Gets an enumeration that wraps an iterator.
      *
      * @param <E> the element type
@@ -905,11 +836,11 @@ public class IteratorUtils {
      * @return a new enumeration
      * @throws NullPointerException if iterator is null
      */
-    public static <E> Enumeration<E> asEnumeration(final Iterator<? extends E> iterator) {
-        return new IteratorEnumeration<>(Objects.requireNonNull(iterator, "iterator"));
-    }
+  public static <E extends java.lang.Object> Enumeration<E> asEnumeration(final Iterator<? extends E> iterator) {
+    return new IteratorEnumeration<>(Objects.requireNonNull(iterator, "iterator"));
+  }
 
-    /**
+  /**
      * Gets an {@link Iterable} that wraps an iterator.  The returned {@link Iterable} can be
      * used for a single iteration.
      *
@@ -918,12 +849,12 @@ public class IteratorUtils {
      * @return a new, single use {@link Iterable}
      * @throws NullPointerException if iterator is null
      */
-    public static <E> Iterable<E> asIterable(final Iterator<? extends E> iterator) {
-        Objects.requireNonNull(iterator, "iterator");
-        return new IteratorIterable<>(iterator, false);
-    }
+  public static <E extends java.lang.Object> Iterable<E> asIterable(final Iterator<? extends E> iterator) {
+    Objects.requireNonNull(iterator, "iterator");
+    return new IteratorIterable<>(iterator, false);
+  }
 
-    /**
+  /**
      * Gets an iterable that wraps an iterator.  The returned iterable can be
      * used for multiple iterations.
      *
@@ -932,12 +863,12 @@ public class IteratorUtils {
      * @return a new, multiple use iterable
      * @throws NullPointerException if iterator is null
      */
-    public static <E> Iterable<E> asMultipleUseIterable(final Iterator<? extends E> iterator) {
-        Objects.requireNonNull(iterator, "iterator");
-        return new IteratorIterable<>(iterator, true);
-    }
+  public static <E extends java.lang.Object> Iterable<E> asMultipleUseIterable(final Iterator<? extends E> iterator) {
+    Objects.requireNonNull(iterator, "iterator");
+    return new IteratorIterable<>(iterator, true);
+  }
 
-    /**
+  /**
      * Gets a list iterator based on a simple iterator.
      * <p>
      * As the wrapped Iterator is traversed, a LinkedList of its values is
@@ -948,12 +879,12 @@ public class IteratorUtils {
      * @return a new iterator
      * @throws NullPointerException if iterator parameter is null
      */
-    public static <E> ListIterator<E> toListIterator(final Iterator<? extends E> iterator) {
-        Objects.requireNonNull(iterator, "iterator");
-        return new ListIteratorWrapper<>(iterator);
-    }
+  public static <E extends java.lang.Object> ListIterator<E> toListIterator(final Iterator<? extends E> iterator) {
+    Objects.requireNonNull(iterator, "iterator");
+    return new ListIteratorWrapper<>(iterator);
+  }
 
-    /**
+  /**
      * Gets an array based on an iterator.
      * <p>
      * As the wrapped Iterator is traversed, an ArrayList of its values is
@@ -963,13 +894,13 @@ public class IteratorUtils {
      * @return an array of the iterator contents
      * @throws NullPointerException if iterator parameter is null
      */
-    public static Object[] toArray(final Iterator<?> iterator) {
-        Objects.requireNonNull(iterator, "iterator");
-        final List<?> list = toList(iterator, 100);
-        return list.toArray();
-    }
+  public static Object[] toArray(final Iterator<?> iterator) {
+    Objects.requireNonNull(iterator, "iterator");
+    final List<?> list = toList(iterator, 100);
+    return list.toArray();
+  }
 
-    /**
+  /**
      * Gets an array based on an iterator.
      * <p>
      * As the wrapped Iterator is traversed, an ArrayList of its values is
@@ -982,16 +913,15 @@ public class IteratorUtils {
      * @throws NullPointerException if iterator parameter or arrayClass is null
      * @throws ArrayStoreException if the arrayClass is invalid
      */
-    public static <E> E[] toArray(final Iterator<? extends E> iterator, final Class<E> arrayClass) {
-        Objects.requireNonNull(iterator, "iterator");
-        Objects.requireNonNull(arrayClass, "arrayClass");
-        final List<E> list = toList(iterator, 100);
-        @SuppressWarnings("unchecked")
-        final E[] array = (E[]) Array.newInstance(arrayClass, list.size());
-        return list.toArray(array);
-    }
+  public static <E extends java.lang.Object> E[] toArray(final Iterator<? extends E> iterator, final Class<E> arrayClass) {
+    Objects.requireNonNull(iterator, "iterator");
+    Objects.requireNonNull(arrayClass, "arrayClass");
+    final List<E> list = toList(iterator, 100);
+    @SuppressWarnings(value = { "unchecked" }) final E[] array = (E[]) Array.newInstance(arrayClass, list.size());
+    return list.toArray(array);
+  }
 
-    /**
+  /**
      * Gets a list based on an iterator.
      * <p>
      * As the wrapped Iterator is traversed, an ArrayList of its values is
@@ -1002,11 +932,11 @@ public class IteratorUtils {
      * @return a list of the iterator contents
      * @throws NullPointerException if iterator parameter is null
      */
-    public static <E> List<E> toList(final Iterator<? extends E> iterator) {
-        return toList(iterator, 10);
-    }
+  public static <E extends java.lang.Object> List<E> toList(final Iterator<? extends E> iterator) {
+    return toList(iterator, 10);
+  }
 
-    /**
+  /**
      * Gets a list based on an iterator.
      * <p>
      * As the wrapped Iterator is traversed, an ArrayList of its values is
@@ -1019,19 +949,19 @@ public class IteratorUtils {
      * @throws NullPointerException if iterator parameter is null
      * @throws IllegalArgumentException if the size is less than 1
      */
-    public static <E> List<E> toList(final Iterator<? extends E> iterator, final int estimatedSize) {
-        Objects.requireNonNull(iterator, "iterator");
-        if (estimatedSize < 1) {
-            throw new IllegalArgumentException("Estimated size must be greater than 0");
-        }
-        final List<E> list = new ArrayList<>(estimatedSize);
-        while (iterator.hasNext()) {
-            list.add(iterator.next());
-        }
-        return list;
+  public static <E extends java.lang.Object> List<E> toList(final Iterator<? extends E> iterator, final int estimatedSize) {
+    Objects.requireNonNull(iterator, "iterator");
+    if (estimatedSize < 1) {
+      throw new IllegalArgumentException("Estimated size must be greater than 0");
     }
+    final List<E> list = new ArrayList<>(estimatedSize);
+    while (iterator.hasNext()) {
+      list.add(iterator.next());
+    }
+    return list;
+  }
 
-    /**
+  /**
      * Gets a suitable Iterator for the given object.
      * <p>
      * This method can handle objects as follows
@@ -1052,54 +982,51 @@ public class IteratorUtils {
      * @param obj  the object to convert to an iterator
      * @return a suitable iterator, never null
      */
-    public static Iterator<?> getIterator(final Object obj) {
-        if (obj == null) {
-            return emptyIterator();
-        }
-        if (obj instanceof Iterator) {
-            return (Iterator<?>) obj;
-        }
-        if (obj instanceof Iterable) {
-            return ((Iterable<?>) obj).iterator();
-        }
-        if (obj instanceof Object[]) {
-            return new ObjectArrayIterator<>((Object[]) obj);
-        }
-        if (obj instanceof Enumeration) {
-            return new EnumerationIterator<>((Enumeration<?>) obj);
-        }
-        if (obj instanceof Map) {
-            return ((Map<?, ?>) obj).values().iterator();
-        }
-        if (obj instanceof NodeList) {
-            return new NodeListIterator((NodeList) obj);
-        }
-        if (obj instanceof Node) {
-            return new NodeListIterator((Node) obj);
-        }
-        if (obj instanceof Dictionary) {
-            return new EnumerationIterator<>(((Dictionary<?, ?>) obj).elements());
-        }
-        if (obj.getClass().isArray()) {
-            return new ArrayIterator<>(obj);
-        }
-        try {
-            final Method method = obj.getClass().getMethod("iterator", (Class[]) null);
-            if (Iterator.class.isAssignableFrom(method.getReturnType())) {
-                final Iterator<?> it = (Iterator<?>) method.invoke(obj, (Object[]) null);
-                if (it != null) {
-                    return it;
-                }
-            }
-        } catch (final RuntimeException | ReflectiveOperationException ignore) { // NOPMD
-            // ignore
-        }
-        return singletonIterator(obj);
+  public static Iterator<?> getIterator(final Object obj) {
+    if (obj == null) {
+      return emptyIterator();
     }
+    if (obj instanceof Iterator) {
+      return (Iterator<?>) obj;
+    }
+    if (obj instanceof Iterable) {
+      return ((Iterable<?>) obj).iterator();
+    }
+    if (obj instanceof Object[]) {
+      return new ObjectArrayIterator<>((Object[]) obj);
+    }
+    if (obj instanceof Enumeration) {
+      return new EnumerationIterator<>((Enumeration<?>) obj);
+    }
+    if (obj instanceof Map) {
+      return ((Map<?, ?>) obj).values().iterator();
+    }
+    if (obj instanceof NodeList) {
+      return new NodeListIterator((NodeList) obj);
+    }
+    if (obj instanceof Node) {
+      return new NodeListIterator((Node) obj);
+    }
+    if (obj instanceof Dictionary) {
+      return new EnumerationIterator<>(((Dictionary<?, ?>) obj).elements());
+    }
+    if (obj.getClass().isArray()) {
+      return new ArrayIterator<>(obj);
+    }
+    try {
+      final Method method = obj.getClass().getMethod("iterator", (Class[]) null);
+      if (Iterator.class.isAssignableFrom(method.getReturnType())) {
+        final Iterator<?> it = (Iterator<?>) method.invoke(obj, (Object[]) null);
+        if (it != null) {
+          return it;
+        }
+      }
+    } catch (final RuntimeException | ReflectiveOperationException ignore) {
+    }
+    return singletonIterator(obj);
+  }
 
-    // Utility methods
-
-    /**
+  /**
      * Applies the closure to each element of the provided iterator.
      *
      * @param <E> the element type
@@ -1108,18 +1035,17 @@ public class IteratorUtils {
      * @throws NullPointerException if closure is null
      * @since 4.1
      */
-    public static <E> void forEach(final Iterator<E> iterator, final Closure<? super E> closure) {
-        Objects.requireNonNull(closure, "closure");
-
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                final E element = iterator.next();
-                closure.execute(element);
-            }
-        }
+  public static <E extends java.lang.Object> void forEach(final Iterator<E> iterator, final Closure<? super E> closure) {
+    Objects.requireNonNull(closure, "closure");
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        final E element = iterator.next();
+        closure.execute(element);
+      }
     }
+  }
 
-    /**
+  /**
      * Executes the given closure on each but the last element in the iterator.
      * <p>
      * If the input iterator is null no change is made.
@@ -1131,22 +1057,21 @@ public class IteratorUtils {
      * @throws NullPointerException if closure is null
      * @since 4.1
      */
-    public static <E> E forEachButLast(final Iterator<E> iterator, final Closure<? super E> closure) {
-        Objects.requireNonNull(closure, "closure");
-
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                final E element = iterator.next();
-                if (!iterator.hasNext()) {
-                    return element;
-                }
-                closure.execute(element);
-            }
+  public static <E extends java.lang.Object> E forEachButLast(final Iterator<E> iterator, final Closure<? super E> closure) {
+    Objects.requireNonNull(closure, "closure");
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        final E element = iterator.next();
+        if (!iterator.hasNext()) {
+          return element;
         }
-        return null;
+        closure.execute(element);
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * Finds the first element in the given iterator which matches the given predicate.
      * <p>
      * A {@code null} or empty iterator returns null.
@@ -1158,21 +1083,20 @@ public class IteratorUtils {
      * @throws NullPointerException if predicate is null
      * @since 4.1
      */
-    public static <E> E find(final Iterator<E> iterator, final Predicate<? super E> predicate) {
-        Objects.requireNonNull(predicate, "predicate");
-
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                final E element = iterator.next();
-                if (predicate.evaluate(element)) {
-                    return element;
-                }
-            }
+  public static <E extends java.lang.Object> E find(final Iterator<E> iterator, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(predicate, "predicate");
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        final E element = iterator.next();
+        if (predicate.evaluate(element)) {
+          return element;
         }
-        return null;
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * Returns the index of the first element in the specified iterator that
      * matches the given predicate.
      * <p>
@@ -1185,21 +1109,20 @@ public class IteratorUtils {
      * @throws NullPointerException if predicate is null
      * @since 4.1
      */
-    public static <E> int indexOf(final Iterator<E> iterator, final Predicate<? super E> predicate) {
-        Objects.requireNonNull(predicate, "predicate");
-
-        if (iterator != null) {
-            for (int index = 0; iterator.hasNext(); index++) {
-                final E element = iterator.next();
-                if (predicate.evaluate(element)) {
-                    return index;
-                }
-            }
+  public static <E extends java.lang.Object> int indexOf(final Iterator<E> iterator, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(predicate, "predicate");
+    if (iterator != null) {
+      for (int index = 0; iterator.hasNext(); index++) {
+        final E element = iterator.next();
+        if (predicate.evaluate(element)) {
+          return index;
         }
-        return CollectionUtils.INDEX_NOT_FOUND;
+      }
     }
+    return CollectionUtils.INDEX_NOT_FOUND;
+  }
 
-    /**
+  /**
      * Answers true if a predicate is true for any element of the iterator.
      * <p>
      * A {@code null} or empty iterator returns false.
@@ -1211,11 +1134,11 @@ public class IteratorUtils {
      * @throws NullPointerException if predicate is null
      * @since 4.1
      */
-    public static <E> boolean matchesAny(final Iterator<E> iterator, final Predicate<? super E> predicate) {
-        return indexOf(iterator, predicate) != -1;
-    }
+  public static <E extends java.lang.Object> boolean matchesAny(final Iterator<E> iterator, final Predicate<? super E> predicate) {
+    return indexOf(iterator, predicate) != -1;
+  }
 
-    /**
+  /**
      * Answers true if a predicate is true for every element of an iterator.
      * <p>
      * A {@code null} or empty iterator returns true.
@@ -1228,21 +1151,20 @@ public class IteratorUtils {
      * @throws NullPointerException if predicate is null
      * @since 4.1
      */
-    public static <E> boolean matchesAll(final Iterator<E> iterator, final Predicate<? super E> predicate) {
-        Objects.requireNonNull(predicate, "predicate");
-
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                final E element = iterator.next();
-                if (!predicate.evaluate(element)) {
-                    return false;
-                }
-            }
+  public static <E extends java.lang.Object> boolean matchesAll(final Iterator<E> iterator, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(predicate, "predicate");
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        final E element = iterator.next();
+        if (!predicate.evaluate(element)) {
+          return false;
         }
-        return true;
+      }
     }
+    return true;
+  }
 
-    /**
+  /**
      * Checks if the given iterator is empty.
      * <p>
      * A {@code null} or empty iterator returns true.
@@ -1251,11 +1173,11 @@ public class IteratorUtils {
      * @return true if the iterator is exhausted or null, false otherwise
      * @since 4.1
      */
-    public static boolean isEmpty(final Iterator<?> iterator) {
-        return iterator == null || !iterator.hasNext();
-    }
+  public static boolean isEmpty(final Iterator<?> iterator) {
+    return iterator == null || !iterator.hasNext();
+  }
 
-    /**
+  /**
      * Checks if the object is contained in the given iterator.
      * <p>
      * A {@code null} or empty iterator returns false.
@@ -1266,11 +1188,11 @@ public class IteratorUtils {
      * @return true if the object is contained in the iterator, false otherwise
      * @since 4.1
      */
-    public static <E> boolean contains(final Iterator<E> iterator, final Object object) {
-        return matchesAny(iterator, EqualPredicate.equalPredicate(object));
-    }
+  public static <E extends java.lang.Object> boolean contains(final Iterator<E> iterator, final Object object) {
+    return matchesAny(iterator, EqualPredicate.equalPredicate(object));
+  }
 
-    /**
+  /**
      * Returns the {@code index}-th value in {@link Iterator}, throwing
      * {@code IndexOutOfBoundsException} if there is no such element.
      * <p>
@@ -1284,20 +1206,20 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if the index is invalid
      * @since 4.1
      */
-    public static <E> E get(final Iterator<E> iterator, final int index) {
-        int i = index;
-        CollectionUtils.checkIndexBounds(i);
-        while (iterator.hasNext()) {
-            i--;
-            if (i == -1) {
-                return iterator.next();
-            }
-            iterator.next();
-        }
-        throw new IndexOutOfBoundsException("Entry does not exist: " + i);
+  public static <E extends java.lang.Object> E get(final Iterator<E> iterator, final int index) {
+    int i = index;
+    CollectionUtils.checkIndexBounds(i);
+    while (iterator.hasNext()) {
+      i--;
+      if (i == -1) {
+        return iterator.next();
+      }
+      iterator.next();
     }
+    throw new IndexOutOfBoundsException("Entry does not exist: " + i);
+  }
 
-    /**
+  /**
      * Shortcut for {@code get(iterator, 0)}.
      * <p>
      * Returns the {@code first} value in {@link Iterator}, throwing
@@ -1313,11 +1235,11 @@ public class IteratorUtils {
      * @throws IndexOutOfBoundsException if the request is invalid
      * @since 4.2
      */
-    public static <E> E first(final Iterator<E> iterator) {
-        return get(iterator, 0);
-    }
+  public static <E extends java.lang.Object> E first(final Iterator<E> iterator) {
+    return get(iterator, 0);
+  }
 
-    /**
+  /**
      * Returns the number of elements contained in the given iterator.
      * <p>
      * A {@code null} or empty iterator returns {@code 0}.
@@ -1326,18 +1248,18 @@ public class IteratorUtils {
      * @return the number of elements contained in the iterator
      * @since 4.1
      */
-    public static int size(final Iterator<?> iterator) {
-        int size = 0;
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                iterator.next();
-                size++;
-            }
-        }
-        return size;
+  public static int size(final Iterator<?> iterator) {
+    int size = 0;
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        iterator.next();
+        size++;
+      }
     }
+    return size;
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterator.
      * <p>
      * The string representation consists of a list of the iterator's elements,
@@ -1350,13 +1272,11 @@ public class IteratorUtils {
      * @return a string representation of {@code iterator}
      * @since 4.1
      */
-    public static <E> String toString(final Iterator<E> iterator) {
-        return toString(iterator, TransformerUtils.stringValueTransformer(),
-                        DEFAULT_TOSTRING_DELIMITER, CollectionUtils.DEFAULT_TOSTRING_PREFIX,
-                CollectionUtils.DEFAULT_TOSTRING_SUFFIX);
-    }
+  public static <E extends java.lang.Object> String toString(final Iterator<E> iterator) {
+    return toString(iterator, TransformerUtils.stringValueTransformer(), DEFAULT_TOSTRING_DELIMITER, CollectionUtils.DEFAULT_TOSTRING_PREFIX, CollectionUtils.DEFAULT_TOSTRING_SUFFIX);
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterator.
      * <p>
      * The string representation consists of a list of the iterable's elements,
@@ -1371,13 +1291,11 @@ public class IteratorUtils {
      * @throws NullPointerException if {@code transformer} is null
      * @since 4.1
      */
-    public static <E> String toString(final Iterator<E> iterator,
-                                      final Transformer<? super E, String> transformer) {
-        return toString(iterator, transformer, DEFAULT_TOSTRING_DELIMITER,
-                CollectionUtils.DEFAULT_TOSTRING_PREFIX, CollectionUtils.DEFAULT_TOSTRING_SUFFIX);
-    }
+  public static <E extends java.lang.Object> String toString(final Iterator<E> iterator, final Transformer<? super E, String> transformer) {
+    return toString(iterator, transformer, DEFAULT_TOSTRING_DELIMITER, CollectionUtils.DEFAULT_TOSTRING_PREFIX, CollectionUtils.DEFAULT_TOSTRING_SUFFIX);
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterator.
      * <p>
      * The string representation consists of a list of the iterator's elements,
@@ -1395,28 +1313,23 @@ public class IteratorUtils {
      * @throws NullPointerException if either transformer, delimiter, prefix or suffix is null
      * @since 4.1
      */
-    public static <E> String toString(final Iterator<E> iterator,
-                                      final Transformer<? super E, String> transformer,
-                                      final String delimiter,
-                                      final String prefix,
-                                      final String suffix) {
-        Objects.requireNonNull(transformer, "transformer");
-        Objects.requireNonNull(delimiter, "delimiter");
-        Objects.requireNonNull(prefix, "prefix");
-        Objects.requireNonNull(suffix, "suffix");
-        final StringBuilder stringBuilder = new StringBuilder(prefix);
-        if (iterator != null) {
-            while (iterator.hasNext()) {
-                final E element = iterator.next();
-                stringBuilder.append(transformer.transform(element));
-                stringBuilder.append(delimiter);
-            }
-            if (stringBuilder.length() > prefix.length()) {
-                stringBuilder.setLength(stringBuilder.length() - delimiter.length());
-            }
-        }
-        stringBuilder.append(suffix);
-        return stringBuilder.toString();
+  public static <E extends java.lang.Object> String toString(final Iterator<E> iterator, final Transformer<? super E, String> transformer, final String delimiter, final String prefix, final String suffix) {
+    Objects.requireNonNull(transformer, "transformer");
+    Objects.requireNonNull(delimiter, "delimiter");
+    Objects.requireNonNull(prefix, "prefix");
+    Objects.requireNonNull(suffix, "suffix");
+    final StringBuilder stringBuilder = new StringBuilder(prefix);
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        final E element = iterator.next();
+        stringBuilder.append(transformer.transform(element));
+        stringBuilder.append(delimiter);
+      }
+      if (stringBuilder.length() > prefix.length()) {
+        stringBuilder.setLength(stringBuilder.length() - delimiter.length());
+      }
     }
-
+    stringBuilder.append(suffix);
+    return stringBuilder.toString();
+  }
 }

@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.collections4;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.commons.collections4.functors.EqualPredicate;
 import org.apache.commons.collections4.iterators.LazyIteratorChain;
 import org.apache.commons.collections4.iterators.PairedIterator.PairedItem;
@@ -50,19 +32,16 @@ import org.apache.commons.collections4.iterators.UniqueFilterIterator;
  * @since 4.1
  */
 public class IterableUtils {
-
-    /**
+  /**
      * An empty iterable.
      */
-    @SuppressWarnings("rawtypes")
-    static final FluentIterable EMPTY_ITERABLE = new FluentIterable<Object>() {
-        @Override
-        public Iterator<Object> iterator() {
-            return IteratorUtils.emptyIterator();
-        }
-    };
+  @SuppressWarnings(value = { "rawtypes" }) static final FluentIterable EMPTY_ITERABLE = new FluentIterable<Object>() {
+    @Override public Iterator<Object> iterator() {
+      return IteratorUtils.emptyIterator();
+    }
+  };
 
-    /**
+  /**
      * Gets an empty iterable.
      * <p>
      * This iterable does not contain any elements.
@@ -70,12 +49,11 @@ public class IterableUtils {
      * @param <E> the element type
      * @return an empty iterable
      */
-    @SuppressWarnings("unchecked") // OK, empty collection is compatible with any type
-    public static <E> Iterable<E> emptyIterable() {
-        return EMPTY_ITERABLE;
-    }
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Iterable<E> emptyIterable() {
+    return EMPTY_ITERABLE;
+  }
 
-    /**
+  /**
      * Combines two iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a},
@@ -91,13 +69,11 @@ public class IterableUtils {
      * @return a new iterable, combining the provided iterables
      * @throws NullPointerException if either a or b is null
      */
-    @SuppressWarnings("unchecked")
-    public static <E> Iterable<E> chainedIterable(final Iterable<? extends E> a,
-                                                  final Iterable<? extends E> b) {
-        return chainedIterable(new Iterable[] {a, b});
-    }
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Iterable<E> chainedIterable(final Iterable<? extends E> a, final Iterable<? extends E> b) {
+    return chainedIterable(new Iterable[] { a, b });
+  }
 
-    /**
+  /**
      * Combines three iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a},
@@ -114,14 +90,11 @@ public class IterableUtils {
      * @return a new iterable, combining the provided iterables
      * @throws NullPointerException if either of the provided iterables is null
      */
-    @SuppressWarnings("unchecked")
-    public static <E> Iterable<E> chainedIterable(final Iterable<? extends E> a,
-                                                  final Iterable<? extends E> b,
-                                                  final Iterable<? extends E> c) {
-        return chainedIterable(new Iterable[] {a, b, c});
-    }
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Iterable<E> chainedIterable(final Iterable<? extends E> a, final Iterable<? extends E> b, final Iterable<? extends E> c) {
+    return chainedIterable(new Iterable[] { a, b, c });
+  }
 
-    /**
+  /**
      * Combines four iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a},
@@ -139,15 +112,11 @@ public class IterableUtils {
      * @return a new iterable, combining the provided iterables
      * @throws NullPointerException if either of the provided iterables is null
      */
-    @SuppressWarnings("unchecked")
-    public static <E> Iterable<E> chainedIterable(final Iterable<? extends E> a,
-                                                  final Iterable<? extends E> b,
-                                                  final Iterable<? extends E> c,
-                                                  final Iterable<? extends E> d) {
-        return chainedIterable(new Iterable[] {a, b, c, d});
-    }
+  @SuppressWarnings(value = { "unchecked" }) public static <E extends java.lang.Object> Iterable<E> chainedIterable(final Iterable<? extends E> a, final Iterable<? extends E> b, final Iterable<? extends E> c, final Iterable<? extends E> d) {
+    return chainedIterable(new Iterable[] { a, b, c, d });
+  }
 
-    /**
+  /**
      * Combines the provided iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in the order
@@ -162,25 +131,23 @@ public class IterableUtils {
      * @return a new iterable, combining the provided iterables
      * @throws NullPointerException if either of the provided iterables is null
      */
-    public static <E> Iterable<E> chainedIterable(final Iterable<? extends E>... iterables) {
-        checkNotNull(iterables);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return new LazyIteratorChain<E>() {
-                    @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
-                        if (count > iterables.length) {
-                            return null;
-                        }
-                        return iterables[count - 1].iterator();
-                    }
-                };
+  public static <E extends java.lang.Object> Iterable<E> chainedIterable(final Iterable<? extends E>... iterables) {
+    checkNotNull(iterables);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return new LazyIteratorChain<E>() {
+          @Override protected Iterator<? extends E> nextIterator(final int count) {
+            if (count > iterables.length) {
+              return null;
             }
+            return iterables[count - 1].iterator();
+          }
         };
-    }
+      }
+    };
+  }
 
-    /**
+  /**
      * Combines the two provided iterables into an ordered iterable using
      * natural ordering.
      * <p>
@@ -193,18 +160,16 @@ public class IterableUtils {
      * @return a filtered view on the specified iterable
      * @throws NullPointerException if either of the provided iterables is null
      */
-    public static <E> Iterable<E> collatedIterable(final Iterable<? extends E> a,
-                                                   final Iterable<? extends E> b) {
-        checkNotNull(a, b);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.collatedIterator(null, a.iterator(), b.iterator());
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> collatedIterable(final Iterable<? extends E> a, final Iterable<? extends E> b) {
+    checkNotNull(a, b);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.collatedIterator(null, a.iterator(), b.iterator());
+      }
+    };
+  }
 
-    /**
+  /**
      * Combines the two provided iterables into an ordered iterable using the
      * provided comparator. If the comparator is null, natural ordering will be
      * used.
@@ -220,19 +185,16 @@ public class IterableUtils {
      * @return a filtered view on the specified iterable
      * @throws NullPointerException if either of the provided iterables is null
      */
-    public static <E> Iterable<E> collatedIterable(final Comparator<? super E> comparator,
-                                                   final Iterable<? extends E> a,
-                                                   final Iterable<? extends E> b) {
-        checkNotNull(a, b);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.collatedIterator(comparator, a.iterator(), b.iterator());
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> collatedIterable(final Comparator<? super E> comparator, final Iterable<? extends E> a, final Iterable<? extends E> b) {
+    checkNotNull(a, b);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.collatedIterator(comparator, a.iterator(), b.iterator());
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a view of the given iterable that only contains elements matching
      * the provided predicate.
      * <p>
@@ -245,19 +207,17 @@ public class IterableUtils {
      * @return a filtered view on the specified iterable
      * @throws NullPointerException if either iterable or predicate is null
      */
-    public static <E> Iterable<E> filteredIterable(final Iterable<E> iterable,
-                                                   final Predicate<? super E> predicate) {
-        checkNotNull(iterable);
-        Objects.requireNonNull(predicate, "predicate");
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.filteredIterator(emptyIteratorIfNull(iterable), predicate);
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> filteredIterable(final Iterable<E> iterable, final Predicate<? super E> predicate) {
+    checkNotNull(iterable);
+    Objects.requireNonNull(predicate, "predicate");
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.filteredIterator(emptyIteratorIfNull(iterable), predicate);
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a view of the given iterable that contains at most the given number
      * of elements.
      * <p>
@@ -271,21 +231,19 @@ public class IterableUtils {
      * @throws IllegalArgumentException if maxSize is negative
      * @throws NullPointerException if iterable is null
      */
-    public static <E> Iterable<E> boundedIterable(final Iterable<E> iterable, final long maxSize) {
-        checkNotNull(iterable);
-        if (maxSize < 0) {
-            throw new IllegalArgumentException("MaxSize parameter must not be negative.");
-        }
-
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.boundedIterator(iterable.iterator(), maxSize);
-            }
-        };
+  public static <E extends java.lang.Object> Iterable<E> boundedIterable(final Iterable<E> iterable, final long maxSize) {
+    checkNotNull(iterable);
+    if (maxSize < 0) {
+      throw new IllegalArgumentException("MaxSize parameter must not be negative.");
     }
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.boundedIterator(iterable.iterator(), maxSize);
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a view of the given iterable which will cycle infinitely over
      * its elements.
      * <p>
@@ -300,25 +258,23 @@ public class IterableUtils {
      * @return a view of the iterable, providing an infinite loop over its elements
      * @throws NullPointerException if iterable is null
      */
-    public static <E> Iterable<E> loopingIterable(final Iterable<E> iterable) {
-        checkNotNull(iterable);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return new LazyIteratorChain<E>() {
-                    @Override
-                    protected Iterator<? extends E> nextIterator(final int count) {
-                        if (IterableUtils.isEmpty(iterable)) {
-                            return null;
-                        }
-                        return iterable.iterator();
-                    }
-                };
+  public static <E extends java.lang.Object> Iterable<E> loopingIterable(final Iterable<E> iterable) {
+    checkNotNull(iterable);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return new LazyIteratorChain<E>() {
+          @Override protected Iterator<? extends E> nextIterator(final int count) {
+            if (IterableUtils.isEmpty(iterable)) {
+              return null;
             }
+            return iterable.iterator();
+          }
         };
-    }
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a reversed view of the given iterable.
      * <p>
      * In case the provided iterable is a {@link List} instance, a
@@ -334,20 +290,17 @@ public class IterableUtils {
      * @throws NullPointerException if iterable is null
      * @see ReverseListIterator
      */
-    public static <E> Iterable<E> reversedIterable(final Iterable<E> iterable) {
-        checkNotNull(iterable);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                final List<E> list = iterable instanceof List<?> ?
-                        (List<E>) iterable :
-                        IteratorUtils.toList(iterable.iterator());
-                return new ReverseListIterator<>(list);
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> reversedIterable(final Iterable<E> iterable) {
+    checkNotNull(iterable);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        final List<E> list = iterable instanceof List<?> ? (List<E>) iterable : IteratorUtils.toList(iterable.iterator());
+        return new ReverseListIterator<>(list);
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a view of the given iterable that skips the first N elements.
      * <p>
      * The returned iterable's iterator supports {@code remove()} when the corresponding
@@ -360,21 +313,19 @@ public class IterableUtils {
      * @throws IllegalArgumentException if elementsToSkip is negative
      * @throws NullPointerException if iterable is null
      */
-    public static <E> Iterable<E> skippingIterable(final Iterable<E> iterable, final long elementsToSkip) {
-        checkNotNull(iterable);
-        if (elementsToSkip < 0) {
-            throw new IllegalArgumentException("ElementsToSkip parameter must not be negative.");
-        }
-
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.skippingIterator(iterable.iterator(), elementsToSkip);
-            }
-        };
+  public static <E extends java.lang.Object> Iterable<E> skippingIterable(final Iterable<E> iterable, final long elementsToSkip) {
+    checkNotNull(iterable);
+    if (elementsToSkip < 0) {
+      throw new IllegalArgumentException("ElementsToSkip parameter must not be negative.");
     }
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.skippingIterator(iterable.iterator(), elementsToSkip);
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a transformed view of the given iterable where all of its elements
      * have been transformed by the provided transformer.
      * <p>
@@ -388,19 +339,17 @@ public class IterableUtils {
      * @return a transformed view of the specified iterable
      * @throws NullPointerException if either iterable or transformer is null
      */
-    public static <I, O> Iterable<O> transformedIterable(final Iterable<I> iterable,
-                                                         final Transformer<? super I, ? extends O> transformer) {
-        checkNotNull(iterable);
-        Objects.requireNonNull(transformer, "transformer");
-        return new FluentIterable<O>() {
-            @Override
-            public Iterator<O> iterator() {
-                return IteratorUtils.transformedIterator(iterable.iterator(), transformer);
-            }
-        };
-    }
+  public static <I extends java.lang.Object, O extends java.lang.Object> Iterable<O> transformedIterable(final Iterable<I> iterable, final Transformer<? super I, ? extends O> transformer) {
+    checkNotNull(iterable);
+    Objects.requireNonNull(transformer, "transformer");
+    return new FluentIterable<O>() {
+      @Override public Iterator<O> iterator() {
+        return IteratorUtils.transformedIterator(iterable.iterator(), transformer);
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns a unique view of the given iterable.
      * <p>
      * The returned iterable's iterator supports {@code remove()} when the
@@ -412,17 +361,16 @@ public class IterableUtils {
      * @return a unique view of the specified iterable
      * @throws NullPointerException if iterable is null
      */
-    public static <E> Iterable<E> uniqueIterable(final Iterable<E> iterable) {
-        checkNotNull(iterable);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return new UniqueFilterIterator<>(iterable.iterator());
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> uniqueIterable(final Iterable<E> iterable) {
+    checkNotNull(iterable);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return new UniqueFilterIterator<>(iterable.iterator());
+      }
+    };
+  }
 
-    /**
+  /**
      * Returns an unmodifiable view of the given iterable.
      * <p>
      * The returned iterable's iterator does not support {@code remove()}.
@@ -432,31 +380,27 @@ public class IterableUtils {
      * @return an unmodifiable view of the specified iterable
      * @throws NullPointerException if iterable is null
      */
-    public static <E> Iterable<E> unmodifiableIterable(final Iterable<E> iterable) {
-        checkNotNull(iterable);
-        if (iterable instanceof UnmodifiableIterable<?>) {
-            return iterable;
-        }
-        return new UnmodifiableIterable<>(iterable);
+  public static <E extends java.lang.Object> Iterable<E> unmodifiableIterable(final Iterable<E> iterable) {
+    checkNotNull(iterable);
+    if (iterable instanceof UnmodifiableIterable<?>) {
+      return iterable;
+    }
+    return new UnmodifiableIterable<>(iterable);
+  }
+
+  private static final class UnmodifiableIterable<E extends java.lang.Object> extends FluentIterable<E> {
+    private final Iterable<E> unmodifiable;
+
+    UnmodifiableIterable(final Iterable<E> iterable) {
+      this.unmodifiable = iterable;
     }
 
-    /**
-     * Inner class to distinguish unmodifiable instances.
-     */
-    private static final class UnmodifiableIterable<E> extends FluentIterable<E> {
-        private final Iterable<E> unmodifiable;
-
-        UnmodifiableIterable(final Iterable<E> iterable) {
-            this.unmodifiable = iterable;
-        }
-
-        @Override
-        public Iterator<E> iterator() {
-            return IteratorUtils.unmodifiableIterator(unmodifiable.iterator());
-        }
+    @Override public Iterator<E> iterator() {
+      return IteratorUtils.unmodifiableIterator(unmodifiable.iterator());
     }
+  }
 
-    /**
+  /**
      * Interleaves two iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a}
@@ -472,19 +416,17 @@ public class IterableUtils {
      * @return a new iterable, interleaving the provided iterables
      * @throws NullPointerException if either a or b is null
      */
-    public static <E> Iterable<E> zippingIterable(final Iterable<? extends E> a,
-                                                  final Iterable<? extends E> b) {
-        checkNotNull(a);
-        checkNotNull(b);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                return IteratorUtils.zippingIterator(a.iterator(), b.iterator());
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> zippingIterable(final Iterable<? extends E> a, final Iterable<? extends E> b) {
+    checkNotNull(a);
+    checkNotNull(b);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        return IteratorUtils.zippingIterator(a.iterator(), b.iterator());
+      }
+    };
+  }
 
-    /**
+  /**
      * Interleaves two iterables into a single iterable.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a}
@@ -500,26 +442,22 @@ public class IterableUtils {
      * @return a new iterable, interleaving the provided iterables
      * @throws NullPointerException if either of the provided iterables is null
      */
-    public static <E> Iterable<E> zippingIterable(final Iterable<? extends E> first,
-                                                  final Iterable<? extends E>... others) {
-        checkNotNull(first);
-        checkNotNull(others);
-        return new FluentIterable<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                @SuppressWarnings("unchecked") // safe
-                final
-                Iterator<? extends E>[] iterators = new Iterator[others.length + 1];
-                iterators[0] = first.iterator();
-                for (int i = 0; i < others.length; i++) {
-                    iterators[i + 1] = others[i].iterator();
-                }
-                return IteratorUtils.zippingIterator(iterators);
-            }
-        };
-    }
+  public static <E extends java.lang.Object> Iterable<E> zippingIterable(final Iterable<? extends E> first, final Iterable<? extends E>... others) {
+    checkNotNull(first);
+    checkNotNull(others);
+    return new FluentIterable<E>() {
+      @Override public Iterator<E> iterator() {
+        @SuppressWarnings(value = { "unchecked" }) final Iterator<? extends E>[] iterators = new Iterator[others.length + 1];
+        iterators[0] = first.iterator();
+        for (int i = 0; i < others.length; i++) {
+          iterators[i + 1] = others[i].iterator();
+        }
+        return IteratorUtils.zippingIterator(iterators);
+      }
+    };
+  }
 
-    /**
+  /**
      * Provides iteration over the elements contained in a pair of Iterables in-tandem.
      * <p>
      * The returned iterable has an iterator that traverses the elements in {@code a}
@@ -539,21 +477,17 @@ public class IterableUtils {
      * @throws NullPointerException if any iterator is null
      * @since 4.5
      */
-    public static <L, R> Iterable<PairedItem<L, R>> pairedIterable(final Iterable<L> left, final Iterable<R> right) {
-        checkNotNull(left);
-        checkNotNull(right);
+  public static <L extends java.lang.Object, R extends java.lang.Object> Iterable<PairedItem<L, R>> pairedIterable(final Iterable<L> left, final Iterable<R> right) {
+    checkNotNull(left);
+    checkNotNull(right);
+    return new FluentIterable<PairedItem<L, R>>() {
+      @Override public Iterator<PairedItem<L, R>> iterator() {
+        return IteratorUtils.pairedIterator(left.iterator(), right.iterator());
+      }
+    };
+  }
 
-        return new FluentIterable<PairedItem<L, R>>(){
-            @Override
-            public Iterator<PairedItem<L, R>> iterator() {
-                return IteratorUtils.pairedIterator(left.iterator(), right.iterator());
-            }
-        };
-    }
-
-    // Utility methods
-    // ----------------------------------------------------------------------
-    /**
+  /**
      * Returns an immutable empty iterable if the argument is null,
      * or the argument itself otherwise.
      *
@@ -561,11 +495,11 @@ public class IterableUtils {
      * @param iterable  the iterable, may be null
      * @return an empty iterable if the argument is null
      */
-    public static <E> Iterable<E> emptyIfNull(final Iterable<E> iterable) {
-        return iterable == null ? IterableUtils.<E>emptyIterable() : iterable;
-    }
+  public static <E extends java.lang.Object> Iterable<E> emptyIfNull(final Iterable<E> iterable) {
+    return iterable == null ? IterableUtils.<E>emptyIterable() : iterable;
+  }
 
-    /**
+  /**
      * Applies the closure to each element of the provided iterable.
      *
      * @param <E> the element type
@@ -573,11 +507,11 @@ public class IterableUtils {
      * @param closure  the closure to apply to each element, may not be null
      * @throws NullPointerException if closure is null
      */
-    public static <E> void forEach(final Iterable<E> iterable, final Closure<? super E> closure) {
-        IteratorUtils.forEach(emptyIteratorIfNull(iterable), closure);
-    }
+  public static <E extends java.lang.Object> void forEach(final Iterable<E> iterable, final Closure<? super E> closure) {
+    IteratorUtils.forEach(emptyIteratorIfNull(iterable), closure);
+  }
 
-    /**
+  /**
      * Executes the given closure on each but the last element in the iterable.
      * <p>
      * If the input iterable is null no change is made.
@@ -587,11 +521,11 @@ public class IterableUtils {
      * @param closure  the closure to perform, may not be null
      * @return the last element in the iterable, or null if iterable is null or empty
      */
-    public static <E> E forEachButLast(final Iterable<E> iterable, final Closure<? super E> closure) {
-        return IteratorUtils.forEachButLast(emptyIteratorIfNull(iterable), closure);
-    }
+  public static <E extends java.lang.Object> E forEachButLast(final Iterable<E> iterable, final Closure<? super E> closure) {
+    return IteratorUtils.forEachButLast(emptyIteratorIfNull(iterable), closure);
+  }
 
-    /**
+  /**
      * Finds the first element in the given iterable which matches the given predicate.
      * <p>
      * A {@code null} or empty iterator returns null.
@@ -602,11 +536,11 @@ public class IterableUtils {
      * @return the first element of the iterable which matches the predicate or null if none could be found
      * @throws NullPointerException if predicate is null
      */
-    public static <E> E find(final Iterable<E> iterable, final Predicate<? super E> predicate) {
-        return IteratorUtils.find(emptyIteratorIfNull(iterable), predicate);
-    }
+  public static <E extends java.lang.Object> E find(final Iterable<E> iterable, final Predicate<? super E> predicate) {
+    return IteratorUtils.find(emptyIteratorIfNull(iterable), predicate);
+  }
 
-    /**
+  /**
      * Returns the index of the first element in the specified iterable that
      * matches the given predicate.
      * <p>
@@ -618,11 +552,11 @@ public class IterableUtils {
      * @return the index of the first element which matches the predicate or -1 if none matches
      * @throws NullPointerException if predicate is null
      */
-    public static <E> int indexOf(final Iterable<E> iterable, final Predicate<? super E> predicate) {
-        return IteratorUtils.indexOf(emptyIteratorIfNull(iterable), predicate);
-    }
+  public static <E extends java.lang.Object> int indexOf(final Iterable<E> iterable, final Predicate<? super E> predicate) {
+    return IteratorUtils.indexOf(emptyIteratorIfNull(iterable), predicate);
+  }
 
-    /**
+  /**
      * Answers true if a predicate is true for every element of an iterable.
      * <p>
      * A {@code null} or empty iterable returns true.
@@ -634,11 +568,11 @@ public class IterableUtils {
      *   collection is empty, false otherwise
      * @throws NullPointerException if predicate is null
      */
-    public static <E> boolean matchesAll(final Iterable<E> iterable, final Predicate<? super E> predicate) {
-        return IteratorUtils.matchesAll(emptyIteratorIfNull(iterable), predicate);
-    }
+  public static <E extends java.lang.Object> boolean matchesAll(final Iterable<E> iterable, final Predicate<? super E> predicate) {
+    return IteratorUtils.matchesAll(emptyIteratorIfNull(iterable), predicate);
+  }
 
-    /**
+  /**
      * Answers true if a predicate is true for any element of the iterable.
      * <p>
      * A {@code null} or empty iterable returns false.
@@ -649,11 +583,11 @@ public class IterableUtils {
      * @return true if any element of the collection matches the predicate, false otherwise
      * @throws NullPointerException if predicate is null
      */
-    public static <E> boolean matchesAny(final Iterable<E> iterable, final Predicate<? super E> predicate) {
-        return IteratorUtils.matchesAny(emptyIteratorIfNull(iterable), predicate);
-    }
+  public static <E extends java.lang.Object> boolean matchesAny(final Iterable<E> iterable, final Predicate<? super E> predicate) {
+    return IteratorUtils.matchesAny(emptyIteratorIfNull(iterable), predicate);
+  }
 
-    /**
+  /**
      * Counts the number of elements in the input iterable that match the predicate.
      * <p>
      * A {@code null} iterable matches no elements.
@@ -664,12 +598,12 @@ public class IterableUtils {
      * @return the number of matches for the predicate in the collection
      * @throws NullPointerException if predicate is null
      */
-    public static <E> long countMatches(final Iterable<E> input, final Predicate<? super E> predicate) {
-        Objects.requireNonNull(predicate, "predicate");
-        return size(filteredIterable(emptyIfNull(input), predicate));
-    }
+  public static <E extends java.lang.Object> long countMatches(final Iterable<E> input, final Predicate<? super E> predicate) {
+    Objects.requireNonNull(predicate, "predicate");
+    return size(filteredIterable(emptyIfNull(input), predicate));
+  }
 
-    /**
+  /**
      * Answers true if the provided iterable is empty.
      * <p>
      * A {@code null} iterable returns true.
@@ -677,14 +611,14 @@ public class IterableUtils {
      * @param iterable  the {@link Iterable to use}, may be null
      * @return true if the iterable is null or empty, false otherwise
      */
-    public static boolean isEmpty(final Iterable<?> iterable) {
-        if (iterable instanceof Collection<?>) {
-            return ((Collection<?>) iterable).isEmpty();
-        }
-        return IteratorUtils.isEmpty(emptyIteratorIfNull(iterable));
+  public static boolean isEmpty(final Iterable<?> iterable) {
+    if (iterable instanceof Collection<?>) {
+      return ((Collection<?>) iterable).isEmpty();
     }
+    return IteratorUtils.isEmpty(emptyIteratorIfNull(iterable));
+  }
 
-    /**
+  /**
      * Checks if the object is contained in the given iterable.
      * <p>
      * A {@code null} or empty iterable returns false.
@@ -694,14 +628,14 @@ public class IterableUtils {
      * @param object  the object to check
      * @return true if the object is contained in the iterable, false otherwise
      */
-    public static <E> boolean contains(final Iterable<E> iterable, final Object object) {
-        if (iterable instanceof Collection<?>) {
-            return ((Collection<E>) iterable).contains(object);
-        }
-        return IteratorUtils.contains(emptyIteratorIfNull(iterable), object);
+  public static <E extends java.lang.Object> boolean contains(final Iterable<E> iterable, final Object object) {
+    if (iterable instanceof Collection<?>) {
+      return ((Collection<E>) iterable).contains(object);
     }
+    return IteratorUtils.contains(emptyIteratorIfNull(iterable), object);
+  }
 
-    /**
+  /**
      * Checks if the object is contained in the given iterable. Object equality
      * is tested with an {@code equator} unlike {@link #contains(Iterable, Object)}
      * which uses {@link Object#equals(Object)}.
@@ -718,13 +652,12 @@ public class IterableUtils {
      * @return true if the object is contained in the iterable, false otherwise
      * @throws NullPointerException if equator is null
      */
-    public static <E> boolean contains(final Iterable<? extends E> iterable, final E object,
-                                       final Equator<? super E> equator) {
-        Objects.requireNonNull(equator, "equator");
-        return matchesAny(iterable, EqualPredicate.equalPredicate(object, equator));
-    }
+  public static <E extends java.lang.Object> boolean contains(final Iterable<? extends E> iterable, final E object, final Equator<? super E> equator) {
+    Objects.requireNonNull(equator, "equator");
+    return matchesAny(iterable, EqualPredicate.equalPredicate(object, equator));
+  }
 
-    /**
+  /**
      * Returns the number of occurrences of the provided object in the iterable.
      *
      * @param <E> the element type that the {@link Iterable} may contain
@@ -733,17 +666,17 @@ public class IterableUtils {
      * @param obj  the object to find the cardinality of
      * @return the number of occurrences of obj in iterable
      */
-    public static <E, T extends E> int frequency(final Iterable<E> iterable, final T obj) {
-        if (iterable instanceof Set<?>) {
-            return ((Set<E>) iterable).contains(obj) ? 1 : 0;
-        }
-        if (iterable instanceof Bag<?>) {
-            return ((Bag<E>) iterable).getCount(obj);
-        }
-        return size(filteredIterable(emptyIfNull(iterable), EqualPredicate.<E>equalPredicate(obj)));
+  public static <E extends java.lang.Object, T extends E> int frequency(final Iterable<E> iterable, final T obj) {
+    if (iterable instanceof Set<?>) {
+      return ((Set<E>) iterable).contains(obj) ? 1 : 0;
     }
+    if (iterable instanceof Bag<?>) {
+      return ((Bag<E>) iterable).getCount(obj);
+    }
+    return size(filteredIterable(emptyIfNull(iterable), EqualPredicate.<E>equalPredicate(obj)));
+  }
 
-    /**
+  /**
      * Returns the {@code index}-th value in the {@code iterable}'s {@link Iterator}, throwing
      * {@code IndexOutOfBoundsException} if there is no such element.
      * <p>
@@ -755,15 +688,15 @@ public class IterableUtils {
      * @return the object at the specified index
      * @throws IndexOutOfBoundsException if the index is invalid
      */
-    public static <T> T get(final Iterable<T> iterable, final int index) {
-        CollectionUtils.checkIndexBounds(index);
-        if (iterable instanceof List<?>) {
-            return ((List<T>) iterable).get(index);
-        }
-        return IteratorUtils.get(emptyIteratorIfNull(iterable), index);
+  public static <T extends java.lang.Object> T get(final Iterable<T> iterable, final int index) {
+    CollectionUtils.checkIndexBounds(index);
+    if (iterable instanceof List<?>) {
+      return ((List<T>) iterable).get(index);
     }
+    return IteratorUtils.get(emptyIteratorIfNull(iterable), index);
+  }
 
-    /**
+  /**
      * Shortcut for {@code get(iterator, 0)}.
      * <p>
      * Returns the {@code first} value in the {@code iterable}'s {@link Iterator}, throwing
@@ -779,11 +712,11 @@ public class IterableUtils {
      * @throws IndexOutOfBoundsException if the request  is invalid
      * @since 4.2
      */
-    public static <T> T first(final Iterable<T> iterable) {
-        return get(iterable, 0);
-    }
+  public static <T extends java.lang.Object> T first(final Iterable<T> iterable) {
+    return get(iterable, 0);
+  }
 
-    /**
+  /**
      * Returns the number of elements contained in the given iterator.
      * <p>
      * A {@code null} or empty iterator returns {@code 0}.
@@ -791,17 +724,17 @@ public class IterableUtils {
      * @param iterable  the iterable to check, may be null
      * @return the number of elements contained in the iterable
      */
-    public static int size(final Iterable<?> iterable) {
-        if (iterable == null) {
-            return 0;
-        }
-        if (iterable instanceof Collection<?>) {
-            return ((Collection<?>) iterable).size();
-        }
-        return IteratorUtils.size(emptyIteratorIfNull(iterable));
+  public static int size(final Iterable<?> iterable) {
+    if (iterable == null) {
+      return 0;
     }
+    if (iterable instanceof Collection<?>) {
+      return ((Collection<?>) iterable).size();
+    }
+    return IteratorUtils.size(emptyIteratorIfNull(iterable));
+  }
 
-    /**
+  /**
      * Partitions all elements from iterable into separate output collections,
      * based on the evaluation of the given predicate.
      * <p>
@@ -828,17 +761,14 @@ public class IterableUtils {
      * @return a list containing the output collections
      * @throws NullPointerException if predicate is null
      */
-    public static <O> List<List<O>> partition(final Iterable<? extends O> iterable,
-                                              final Predicate<? super O> predicate) {
-        Objects.requireNonNull(predicate, "predicate");
-        @SuppressWarnings({ "unchecked", "rawtypes" }) // safe
-        final Factory<List<O>> factory = FactoryUtils.instantiateFactory((Class) ArrayList.class);
-        @SuppressWarnings("unchecked") // safe
-        final Predicate<? super O>[] predicates = new Predicate[] { predicate };
-        return partition(iterable, factory, predicates);
-    }
+  public static <O extends java.lang.Object> List<List<O>> partition(final Iterable<? extends O> iterable, final Predicate<? super O> predicate) {
+    Objects.requireNonNull(predicate, "predicate");
+    @SuppressWarnings(value = { "unchecked", "rawtypes" }) final Factory<List<O>> factory = FactoryUtils.instantiateFactory((Class) ArrayList.class);
+    @SuppressWarnings(value = { "unchecked" }) final Predicate<? super O>[] predicates = new Predicate[] { predicate };
+    return partition(iterable, factory, predicates);
+  }
 
-    /**
+  /**
      * Partitions all elements from iterable into separate output collections,
      * based on the evaluation of the given predicates.
      * <p>
@@ -870,15 +800,12 @@ public class IterableUtils {
      * @return a list containing the output collections
      * @throws NullPointerException if any predicate is null
      */
-    public static <O> List<List<O>> partition(final Iterable<? extends O> iterable,
-                                              final Predicate<? super O>... predicates) {
+  public static <O extends java.lang.Object> List<List<O>> partition(final Iterable<? extends O> iterable, final Predicate<? super O>... predicates) {
+    @SuppressWarnings(value = { "unchecked", "rawtypes" }) final Factory<List<O>> factory = FactoryUtils.instantiateFactory((Class) ArrayList.class);
+    return partition(iterable, factory, predicates);
+  }
 
-        @SuppressWarnings({ "unchecked", "rawtypes" }) // safe
-        final Factory<List<O>> factory = FactoryUtils.instantiateFactory((Class) ArrayList.class);
-        return partition(iterable, factory, predicates);
-    }
-
-    /**
+  /**
      * Partitions all elements from iterable into separate output collections,
      * based on the evaluation of the given predicates.
      * <p>
@@ -914,71 +841,54 @@ public class IterableUtils {
      * @return a list containing the output collections
      * @throws NullPointerException if any predicate is null
      */
-    public static <O, R extends Collection<O>> List<R> partition(final Iterable<? extends O> iterable,
-            final Factory<R> partitionFactory, final Predicate<? super O>... predicates) {
-
-        if (iterable == null) {
-            final Iterable<O> empty = emptyIterable();
-            return partition(empty, partitionFactory, predicates);
-        }
-
-        Objects.requireNonNull(predicates, "predicates");
-
-        for (final Predicate<?> predicate : predicates) {
-            Objects.requireNonNull(predicate, "predicate");
-        }
-
-        if (predicates.length < 1) {
-            // return the entire input collection as a single partition
-            final R singlePartition = partitionFactory.create();
-            CollectionUtils.addAll(singlePartition, iterable);
-            return Collections.singletonList(singlePartition);
-        }
-
-        // create the empty partitions
-        final int numberOfPredicates = predicates.length;
-        final int numberOfPartitions = numberOfPredicates + 1;
-        final List<R> partitions = new ArrayList<>(numberOfPartitions);
-        for (int i = 0; i < numberOfPartitions; ++i) {
-            partitions.add(partitionFactory.create());
-        }
-
-        // for each element in inputCollection:
-        // find the first predicate that evaluates to true.
-        // if there is a predicate, add the element to the corresponding partition.
-        // if there is no predicate, add it to the last, catch-all partition.
-        for (final O element : iterable) {
-            boolean elementAssigned = false;
-            for (int i = 0; i < numberOfPredicates; ++i) {
-                if (predicates[i].evaluate(element)) {
-                    partitions.get(i).add(element);
-                    elementAssigned = true;
-                    break;
-                }
-            }
-
-            if (!elementAssigned) {
-                // no predicates evaluated to true
-                // add element to last partition
-                partitions.get(numberOfPredicates).add(element);
-            }
-        }
-
-        return partitions;
+  public static <O extends java.lang.Object, R extends Collection<O>> List<R> partition(final Iterable<? extends O> iterable, final Factory<R> partitionFactory, final Predicate<? super O>... predicates) {
+    if (iterable == null) {
+      final Iterable<O> empty = emptyIterable();
+      return partition(empty, partitionFactory, predicates);
     }
+    Objects.requireNonNull(predicates, "predicates");
+    for (final Predicate<?> predicate : predicates) {
+      Objects.requireNonNull(predicate, "predicate");
+    }
+    if (predicates.length < 1) {
+      final R singlePartition = partitionFactory.create();
+      CollectionUtils.addAll(singlePartition, iterable);
+      return Collections.singletonList(singlePartition);
+    }
+    final int numberOfPredicates = predicates.length;
+    final int numberOfPartitions = numberOfPredicates + 1;
+    final List<R> partitions = new ArrayList<>(numberOfPartitions);
+    for (int i = 0; i < numberOfPartitions; ++i) {
+      partitions.add(partitionFactory.create());
+    }
+    for (final O element : iterable) {
+      boolean elementAssigned = false;
+      for (int i = 0; i < numberOfPredicates; ++i) {
+        if (predicates[i].evaluate(element)) {
+          partitions.get(i).add(element);
+          elementAssigned = true;
+          break;
+        }
+      }
+      if (!elementAssigned) {
+        partitions.get(numberOfPredicates).add(element);
+      }
+    }
+    return partitions;
+  }
 
-    /**
+  /**
      * Gets a new list with the contents of the provided iterable.
      *
      * @param <E> the element type
      * @param iterable  the iterable to use, may be null
      * @return a list of the iterator contents
      */
-    public static <E> List<E> toList(final Iterable<E> iterable) {
-        return IteratorUtils.toList(emptyIteratorIfNull(iterable));
-    }
+  public static <E extends java.lang.Object> List<E> toList(final Iterable<E> iterable) {
+    return IteratorUtils.toList(emptyIteratorIfNull(iterable));
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterable.
      * <p>
      * The string representation consists of a list of the iterable's elements,
@@ -990,11 +900,11 @@ public class IterableUtils {
      * @param iterable  the iterable to convert to a string, may be null
      * @return a string representation of {@code iterable}
      */
-    public static <E> String toString(final Iterable<E> iterable) {
-        return IteratorUtils.toString(emptyIteratorIfNull(iterable));
-    }
+  public static <E extends java.lang.Object> String toString(final Iterable<E> iterable) {
+    return IteratorUtils.toString(emptyIteratorIfNull(iterable));
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterable.
      * <p>
      * The string representation consists of a list of the iterable's elements,
@@ -1008,13 +918,12 @@ public class IterableUtils {
      * @return a string representation of {@code iterable}
      * @throws NullPointerException if {@code transformer} is null
      */
-    public static <E> String toString(final Iterable<E> iterable,
-                                      final Transformer<? super E, String> transformer) {
-        Objects.requireNonNull(transformer, "transformer");
-        return IteratorUtils.toString(emptyIteratorIfNull(iterable), transformer);
-    }
+  public static <E extends java.lang.Object> String toString(final Iterable<E> iterable, final Transformer<? super E, String> transformer) {
+    Objects.requireNonNull(transformer, "transformer");
+    return IteratorUtils.toString(emptyIteratorIfNull(iterable), transformer);
+  }
 
-    /**
+  /**
      * Returns a string representation of the elements of the specified iterable.
      * <p>
      * The string representation consists of a list of the iterable's elements,
@@ -1031,39 +940,34 @@ public class IterableUtils {
      * @return a string representation of {@code iterable}
      * @throws NullPointerException if either transformer, delimiter, prefix or suffix is null
      */
-    public static <E> String toString(final Iterable<E> iterable,
-                                      final Transformer<? super E, String> transformer,
-                                      final String delimiter,
-                                      final String prefix,
-                                      final String suffix) {
-        return IteratorUtils.toString(emptyIteratorIfNull(iterable),
-                                      transformer, delimiter, prefix, suffix);
-    }
+  public static <E extends java.lang.Object> String toString(final Iterable<E> iterable, final Transformer<? super E, String> transformer, final String delimiter, final String prefix, final String suffix) {
+    return IteratorUtils.toString(emptyIteratorIfNull(iterable), transformer, delimiter, prefix, suffix);
+  }
 
-    /**
+  /**
      * Fail-fast check for null arguments.
      *
      * @param iterable  the iterable to check
      * @throws NullPointerException if iterable is null
      */
-    static void checkNotNull(final Iterable<?> iterable) {
-        Objects.requireNonNull(iterable, "iterable");
-    }
+  static void checkNotNull(final Iterable<?> iterable) {
+    Objects.requireNonNull(iterable, "iterable");
+  }
 
-    /**
+  /**
      * Fail-fast check for null arguments.
      *
      * @param iterables  the iterables to check
      * @throws NullPointerException if the argument or any of its contents is null
      */
-    static void checkNotNull(final Iterable<?>... iterables) {
-        Objects.requireNonNull(iterables, "iterables");
-        for (final Iterable<?> iterable : iterables) {
-            checkNotNull(iterable);
-        }
+  static void checkNotNull(final Iterable<?>... iterables) {
+    Objects.requireNonNull(iterables, "iterables");
+    for (final Iterable<?> iterable : iterables) {
+      checkNotNull(iterable);
     }
+  }
 
-    /**
+  /**
      * Returns an empty iterator if the argument is {@code null},
      * or {@code iterable.iterator()} otherwise.
      *
@@ -1071,8 +975,7 @@ public class IterableUtils {
      * @param iterable  the iterable, possibly {@code null}
      * @return an empty iterator if the argument is {@code null}
      */
-    private static <E> Iterator<E> emptyIteratorIfNull(final Iterable<E> iterable) {
-        return iterable != null ? iterable.iterator() : IteratorUtils.<E>emptyIterator();
-    }
-
+  private static <E extends java.lang.Object> Iterator<E> emptyIteratorIfNull(final Iterable<E> iterable) {
+    return iterable != null ? iterable.iterator() : IteratorUtils.<E>emptyIterator();
+  }
 }
