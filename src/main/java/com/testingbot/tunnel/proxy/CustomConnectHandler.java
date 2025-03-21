@@ -43,7 +43,12 @@ public class CustomConnectHandler extends ConnectHandler {
                     header = headerNames.nextElement();
                     sb.append(header).append(": ").append(request.getHeader(header)).append(System.getProperty("line.separator"));
                 }
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/proxy/CustomConnectHandler.java/left.java
                 Logger.getLogger(App.class.getName()).log(Level.INFO, sb.toString());
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/proxy/CustomConnectHandler.java/base.java
+=======
+                Logger.getLogger(CustomConnectHandler.class.getName()).log(Level.INFO, sb.toString());
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/proxy/CustomConnectHandler.java/right.java
             }
         }
         

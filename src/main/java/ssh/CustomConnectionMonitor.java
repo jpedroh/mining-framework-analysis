@@ -57,7 +57,12 @@ public class CustomConnectionMonitor implements ConnectionMonitor {
                     Logger.getLogger(App.class.getName()).log(Level.INFO, "Successfully re-established SSH Connection");
                     return;
                 }
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/ssh/CustomConnectionMonitor.java/left.java
                 Logger.getLogger(App.class.getName()).log(Level.INFO, "Attempts {0}", retryAttempts);
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/ssh/CustomConnectionMonitor.java/base.java
+=======
+                Logger.getLogger(App.class.getName()).log(Level.INFO, "Attempts " + retryAttempts);
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/ssh/CustomConnectionMonitor.java/right.java
             } catch (Exception ex) {
                 Logger.getLogger(App.class.getName()).log(Level.WARNING, ex.getMessage());
             }

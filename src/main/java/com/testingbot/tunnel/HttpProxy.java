@@ -44,12 +44,30 @@ public final class HttpProxy {
         this.app = app;
         
         this.httpProxy = new Server();
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/left.java
                 HttpConfiguration http_config = new HttpConfiguration();
         ServerConnector connector = new ServerConnector(httpProxy,
                 new HttpConnectionFactory(http_config));
         connector.setPort(app.getJettyPort());
         connector.setIdleTimeout(400000);
         httpProxy.setConnectors(new Connector[] { connector });
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/base.java
+        SelectChannelConnector connector = new SelectChannelConnector();
+        connector.setPort(8087);
+        connector.setMaxIdleTime(400000);
+        connector.setThreadPool(new QueuedThreadPool(256));
+        httpProxy.addConnector(connector);
+        
+        httpProxy.setGracefulShutdown(3000);
+=======
+        SelectChannelConnector connector = new SelectChannelConnector();
+        connector.setPort(app.getJettyPort());
+        connector.setMaxIdleTime(400000);
+        connector.setThreadPool(new QueuedThreadPool(256));
+        httpProxy.addConnector(connector);
+        
+        httpProxy.setGracefulShutdown(3000);
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/right.java
         httpProxy.setStopAtShutdown(true);
         
         ServletHolder servletHolder = new ServletHolder(TunnelProxyServlet.class);
@@ -89,10 +107,70 @@ public final class HttpProxy {
         httpProxy.setHandler(handlers);
         
         ServletContextHandler context = new ServletContextHandler(handlers, "/", ServletContextHandler.SESSIONS);
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/left.java
         context.addServlet(servletHolder, "/*");
         context.setAttribute("extra_headers", app.getCustomHeaders());
         CustomConnectHandler proxy = new CustomConnectHandler();
         proxy.setDebugMode(app.isDebugMode());
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/base.java
+        ServletHolder proxyServlet = new ServletHolder(TunnelProxyServlet.class);
+        if (app.getFastFail() != null && app.getFastFail().length > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String domain : app.getFastFail()) {
+                sb.append(domain).append(",");
+            }
+            proxyServlet.setInitParameter("blackList", sb.toString());
+        }
+        
+        if (app.getUseBoost() == true) {
+            proxyServlet.setInitParameter("proxy", "127.0.0.1:9666");     
+        }
+        
+        if (app.getProxy() != null) {
+            proxyServlet.setInitParameter("proxy", app.getProxy());     
+        }
+        
+        context.addServlet(proxyServlet, "/*");
+        
+        // Setup proxy handler to handle CONNECT methods
+        ConnectHandler proxy = new CustomConnectHandler();
+=======
+        ServletHolder proxyServlet = new ServletHolder(TunnelProxyServlet.class);
+        proxyServlet.setInitParameter("idleTimeout", "90000");
+        proxyServlet.setInitParameter("timeout", "90000");
+        
+        if (app.getFastFail() != null && app.getFastFail().length > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String domain : app.getFastFail()) {
+                sb.append(domain).append(",");
+            }
+            proxyServlet.setInitParameter("blackList", sb.toString());
+        }
+        
+        if (app.isDebugMode() == true) {
+            proxyServlet.setInitParameter("tb_debug", "true");
+        }
+        if (app.getUseBoost() == true) {
+            proxyServlet.setInitParameter("proxy", "127.0.0.1:9666");     
+        }
+        
+        if (app.getProxy() != null) {
+            proxyServlet.setInitParameter("proxy", app.getProxy());     
+        }
+        
+        if (app.getProxyAuth()!= null) {
+            proxyServlet.setInitParameter("proxyAuth", app.getProxyAuth());     
+        }
+
+        proxyServlet.setInitParameter("jetty", String.valueOf(app.getJettyPort()));
+        
+        context.addServlet(proxyServlet, "/*");
+        
+        // Setup proxy handler to handle CONNECT methods
+        CustomConnectHandler proxy = new CustomConnectHandler();
+        proxy.setDebugMode(app.isDebugMode());
+        
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/right.java
         if (app.getFastFail() != null && app.getFastFail().length > 0) {
             for (String domain : app.getFastFail()) {
                 if (!domain.contains(":")) {
@@ -120,6 +198,7 @@ public final class HttpProxy {
         }
     }
 
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/left.java
     public void start() {
         try {
             httpProxy.start();
@@ -128,19 +207,30 @@ public final class HttpProxy {
             System.exit(1);
         }
     }
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/base.java
+=======
+    public void start() {
+        try {
+            httpProxy.start();
+        } catch (Exception ex) {
+            Logger.getLogger(App.class.getName()).log(Level.INFO, "Could not set up local http proxy. Please make sure this program can open port {0} on this computer.", app.getJettyPort());
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/HttpProxy.java/right.java
     
     private ServerSocket _findAvailableSocket() {
-        int[] ports = {80, 888, 2000, 2001, 2020, 2222, 3000, 3001, 3030, 3333, 4000, 4001, 4040, 4502, 4503, 5000, 5001, 5050, 5555, 6000, 6001, 6060, 6666, 7000, 7070, 7777, 8000, 8001, 8080, 8888, 9000, 9001, 9090, 9999};
-        
-        for (int port : ports) {
-            try {
-                return new ServerSocket(port);
-            } catch (IOException ex) {
-            }
+    int[] ports = {80, 888, 2000, 2001, 2020, 2222, 3000, 3001, 3030, 3333, 4000, 4001, 4040, 4502, 4503, 5000, 5001, 5050, 5555, 6000, 6001, 6060, 6666, 7000, 7070, 7777, 8000, 8001, 8080, 8888, 9000, 9001, 9090, 9999};
+    
+    for (int port : ports) {
+        try {
+            return new ServerSocket(port);
+        } catch (IOException ex) {
         }
-        
-        return null;
     }
+    
+    return null;
+}
     
     public boolean testProxy() {
         // find a free port, create a webserver, make a request to the proxy endpoint, expect it to arrive here.

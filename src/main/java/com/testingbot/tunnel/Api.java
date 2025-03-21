@@ -36,11 +36,11 @@ public class Api {
         this.app = app;
         this.clientKey = app.getClientKey();
         this.clientSecret = app.getClientSecret();
-        this.apiHost = "api.testingbot.com";
     }
     
     public JSONObject createTunnel() throws Exception {
         try {
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/left.java
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
             nameValuePairs.add(new BasicNameValuePair("tunnel_version", App.VERSION.toString()));
             if (app.getTunnelIdentifier() != null && !app.getTunnelIdentifier().isEmpty()) {
@@ -50,6 +50,15 @@ public class Api {
                 nameValuePairs.add(new BasicNameValuePair("no_cache", String.valueOf(app.isBypassingSquid())));
             }
             return this._post("https://" + apiHost + "/v1/tunnel/create", nameValuePairs);
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/base.java
+            return this._get("https://" + apiHost + "/v1/tunnel/start");
+=======
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            if (app.getTunnelIdentifier() != null && !app.getTunnelIdentifier().isEmpty()) {
+                nameValuePairs.add(new BasicNameValuePair("tunnel_identifier", app.getTunnelIdentifier()));
+            }
+            return this._post("https://" + apiHost + "/v1/tunnel/create", nameValuePairs);
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/right.java
         } 
         catch (Exception e) {
             throw new Exception("Could not start tunnel: " + e.getMessage());
@@ -66,6 +75,72 @@ public class Api {
         } 
         catch (Exception e) {
             throw new Exception("Could not get tunnel info: " + e.getMessage());
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/left.java
+||||||| /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/base.java
+        }
+    }
+    
+    public void setupBrowserMob(JSONObject apiResponse) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpPost postRequest = new HttpPost("http://" + apiResponse.getString("ip") + ":9090/proxy?httpProxy=" + apiResponse.getString("private_ip") + ":2009");
+        try {
+            HttpResponse response = httpClient.execute(postRequest);
+            BufferedReader br = new BufferedReader(
+                     new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                    sb.append(output);
+            }
+            
+            try {
+                String jsonData = sb.toString().replaceAll("\\\\", "");
+                if (!jsonData.startsWith("{")) {
+                    jsonData = jsonData.substring(1, (jsonData.toString().length() - 1));
+                }
+                
+                JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(jsonData);
+                app.addCustomHeader("TB-Tunnel-Port", jsonObject.getString("port"));
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(Api.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Api.class.getName()).log(Level.SEVERE, null, ex);
+=======
+        }
+    }
+    
+    public void setupBrowserMob(JSONObject apiResponse) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpPost postRequest = new HttpPost("http://" + apiResponse.getString("ip") + ":9090/proxy?httpProxy=" + apiResponse.getString("private_ip") + ":2009");
+        try {
+            HttpResponse response = httpClient.execute(postRequest);
+            BufferedReader br = new BufferedReader(
+                     new InputStreamReader((response.getEntity().getContent()), "UTF8"));
+
+            String output;
+            StringBuilder sb = new StringBuilder();
+            while ((output = br.readLine()) != null) {
+                    sb.append(output);
+            }
+            
+            try {
+                String jsonData = sb.toString().replaceAll("\\\\", "");
+                if (!jsonData.startsWith("{")) {
+                    jsonData = jsonData.substring(1, (jsonData.length() - 1));
+                }
+                
+                JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(jsonData);
+                app.addCustomHeader("TB-Tunnel-Port", jsonObject.getString("port"));
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(Api.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Api.class.getName()).log(Level.SEVERE, null, ex);
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/Api.java/right.java
         }
     }
     
