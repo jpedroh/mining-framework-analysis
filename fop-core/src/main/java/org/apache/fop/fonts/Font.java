@@ -196,6 +196,16 @@ public class Font implements Substitutable, Positionable {
      * @param ch2 second character
      * @return the distance to adjust for kerning, 0 if there's no kerning
      */
+
+    /**
+     * Returns the amount of kerning between two characters.
+     *
+     * The value returned measures in pt. So it is already adjusted for font size.
+     *
+     * @param ch1 first character
+     * @param ch2 second character
+     * @return the distance to adjust for kerning, 0 if there's no kerning
+     */
     public int getKernValue(int ch1, int ch2) {
         // Isolate surrogate pair
         if ((ch1 >= 0xD800) && (ch1 <= 0xE000)) {
