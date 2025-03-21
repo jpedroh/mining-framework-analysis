@@ -57,6 +57,7 @@ public class LibratoReporter extends AbstractPollingReporter implements MetricPr
         this.vm = vm;
         this.reportVmMetrics = reportVmMetrics;
         this.expansionConfig = expansionConfig;
+
         this.executor = registry.newScheduledThreadPool(1, name);
     }
 

@@ -1,15 +1,20 @@
 package com.librato.metrics;
+import java.util.concurrent.TimeUnit;
 
-import com.librato.metrics.LibratoReporter.ExpandedMetric;
-import com.librato.metrics.LibratoReporter.MetricExpansionConfig;
-import com.yammer.metrics.core.*;
-import com.yammer.metrics.stats.Snapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.librato.metrics.LibratoReporter.ExpandedMetric.*;
+
+import com.librato.metrics.LibratoReporter.ExpandedMetric;
+import com.librato.metrics.LibratoReporter.MetricExpansionConfig;
+import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.Metered;
+import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.Sampling;
+import com.yammer.metrics.core.Summarizable;
+import com.yammer.metrics.stats.Snapshot;
+
 
 
 /**
@@ -80,8 +85,8 @@ public class MetricsLibratoBatch extends LibratoBatch {
     }
 
     private void maybeAdd(ExpandedMetric metric, String name, Number reading) {
-        if (expansionConfig.isSet(metric)) {
-            addMeasurement(new SingleValueGaugeMeasurement(metric.buildMetricName(name), reading));
-        }
+      if (expansionConfig.isSet(metric)) {
+        addMeasurement(new SingleValueGaugeMeasurement(metric.buildMetricName(name), reading));
+      }
     }
 }
