@@ -1,20 +1,4 @@
-/*
- *      Copyright (C) 2012-2014 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.policies;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -23,14 +7,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Configuration;
 import com.datastax.driver.core.ConsistencyLevel;
@@ -54,25 +36,25 @@ import com.datastax.driver.core.Statement;
  * policy could be preferred to this policy in that case.
  */
 public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLoadBalancingPolicy {
+  private static final Logger logger = LoggerFactory.getLogger(DCAwareRoundRobinPolicy.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(DCAwareRoundRobinPolicy.class);
+  private final String UNSET = "";
 
-    private final String UNSET = "";
+  private final ConcurrentMap<String, CopyOnWriteArrayList<Host>> perDcLiveHosts = new ConcurrentHashMap<String, CopyOnWriteArrayList<Host>>();
 
-    private final ConcurrentMap<String, CopyOnWriteArrayList<Host>> perDcLiveHosts = new ConcurrentHashMap<String, CopyOnWriteArrayList<Host>>();
-    private final AtomicInteger index = new AtomicInteger();
+  private final AtomicInteger index = new AtomicInteger();
 
-    @VisibleForTesting
-    volatile String localDc;
+  @VisibleForTesting volatile String localDc;
 
-    private final ConcurrentMap<String, CopyOnWriteArrayList<Host>> perDcSuspectedHosts = new ConcurrentHashMap<String, CopyOnWriteArrayList<Host>>();
+  private final ConcurrentMap<String, CopyOnWriteArrayList<Host>> perDcSuspectedHosts = new ConcurrentHashMap<String, CopyOnWriteArrayList<Host>>();
 
-    private final int usedHostsPerRemoteDc;
-    private final boolean dontHopForLocalCL;
+  private final int usedHostsPerRemoteDc;
 
-    private volatile Configuration configuration;
+  private final boolean dontHopForLocalCL;
 
-    /**
+  private volatile Configuration configuration;
+
+  /**
      * Creates a new datacenter aware round robin policy that auto-discover
      * the local data-center.
      * <p>
@@ -86,11 +68,11 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * This constructor is a shortcut for {@code new DCAwareRoundRobinPolicy(null)},
      * and as such will ignore all hosts in remote data-centers.
      */
-    public DCAwareRoundRobinPolicy() {
-        this(null, 0, false, true);
-    }
+  public DCAwareRoundRobinPolicy() {
+    this(null, 0, false, true);
+  }
 
-    /**
+  /**
      * Creates a new datacenter aware round robin policy given the name of
      * the local datacenter.
      * <p>
@@ -104,11 +86,11 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * Cassandra). If this is {@code null}, the policy will default to the
      * data-center of the first node connected to.
      */
-    public DCAwareRoundRobinPolicy(String localDc) {
-        this(localDc, 0, false, false);
-    }
+  public DCAwareRoundRobinPolicy(String localDc) {
+    this(localDc, 0, false, false);
+  }
 
-    /**
+  /**
      * Creates a new DCAwareRoundRobin policy given the name of the local
      * datacenter and that uses the provided number of host per remote
      * datacenter as failover for the local hosts.
@@ -136,11 +118,11 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * of the remote datacenters will be ignored (and thus no
      * connections to them will be maintained).
      */
-    public DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc) {
-        this(localDc, usedHostsPerRemoteDc, false, false);
-    }
+  public DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc) {
+    this(localDc, usedHostsPerRemoteDc, false, false);
+  }
 
-    /**
+  /**
      * Creates a new DCAwareRoundRobin policy given the name of the local
      * datacenter and that uses the provided number of host per remote
      * datacenter as failover for the local hosts.
@@ -169,61 +151,58 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * policy may return remote host when building query plan for query
      * having consitency {@code LOCAL_ONE} and {@code LOCAL_QUORUM}.
      */
-    public DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc, boolean allowRemoteDCsForLocalConsistencyLevel) {
-        this(localDc, usedHostsPerRemoteDc, allowRemoteDCsForLocalConsistencyLevel, false);
+  public DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc, boolean allowRemoteDCsForLocalConsistencyLevel) {
+    this(localDc, usedHostsPerRemoteDc, allowRemoteDCsForLocalConsistencyLevel, false);
+  }
+
+  private DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc, boolean allowRemoteDCsForLocalConsistencyLevel, boolean allowEmptyLocalDc) {
+    if (!allowEmptyLocalDc && Strings.isNullOrEmpty(localDc)) {
+      throw new IllegalArgumentException("Null or empty data center specified for DC-aware policy");
     }
+    this.localDc = localDc == null ? UNSET : localDc;
+    this.usedHostsPerRemoteDc = usedHostsPerRemoteDc;
+    this.dontHopForLocalCL = !allowRemoteDCsForLocalConsistencyLevel;
+  }
 
-    private DCAwareRoundRobinPolicy(String localDc, int usedHostsPerRemoteDc, boolean allowRemoteDCsForLocalConsistencyLevel, boolean allowEmptyLocalDc) {
-        if (!allowEmptyLocalDc && Strings.isNullOrEmpty(localDc))
-            throw new IllegalArgumentException("Null or empty data center specified for DC-aware policy");
-        this.localDc = localDc == null ? UNSET : localDc;
-        this.usedHostsPerRemoteDc = usedHostsPerRemoteDc;
-        this.dontHopForLocalCL = !allowRemoteDCsForLocalConsistencyLevel;
+  @Override public void init(Cluster cluster, Collection<Host> hosts) {
+    if (localDc != UNSET) {
+      logger.info("Using provided data-center name \'{}\' for DCAwareRoundRobinPolicy", localDc);
     }
-
-    @Override
-    public void init(Cluster cluster, Collection<Host> hosts) {
-        if (localDc != UNSET)
-            logger.info("Using provided data-center name '{}' for DCAwareRoundRobinPolicy", localDc);
-
-        this.configuration = cluster.getConfiguration();
-
-        ArrayList<String> notInLocalDC = new ArrayList<String>();
-
-        for (Host host : hosts) {
-            String dc = dc(host);
-
-            // If the localDC was in "auto-discover" mode and it's the first host for which we have a DC, use it.
-            if (localDc == UNSET && dc != UNSET) {
-                logger.info("Using data-center name '{}' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)", dc);
-                localDc = dc;
-            } else if (!dc.equals(localDc))
-                notInLocalDC.add(String.format("%s (%s)", host.toString(), dc));
-
-            CopyOnWriteArrayList<Host> prev = perDcLiveHosts.get(dc);
-            if (prev == null)
-                perDcLiveHosts.put(dc, new CopyOnWriteArrayList<Host>(Collections.singletonList(host)));
-            else
-                prev.addIfAbsent(host);
+    this.configuration = cluster.getConfiguration();
+    ArrayList<String> notInLocalDC = new ArrayList<String>();
+    for (Host host : hosts) {
+      String dc = dc(host);
+      if (localDc == UNSET && dc != UNSET) {
+        logger.info("Using data-center name \'{}\' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)", dc);
+        localDc = dc;
+      } else {
+        if (!dc.equals(localDc)) {
+          notInLocalDC.add(String.format("%s (%s)", host.toString(), dc));
         }
-
-        if (notInLocalDC.size() > 0) {
-            String nonLocalHosts = Joiner.on(",").join(notInLocalDC);
-            logger.warn("Some contact points don't match specified local data center. Local DC = {}. Non-conforming contact points: {}", localDc, nonLocalHosts);
-        }
+      }
+      CopyOnWriteArrayList<Host> prev = perDcLiveHosts.get(dc);
+      if (prev == null) {
+        perDcLiveHosts.put(dc, new CopyOnWriteArrayList<Host>(Collections.singletonList(host)));
+      } else {
+        prev.addIfAbsent(host);
+      }
     }
-
-    private String dc(Host host) {
-        String dc = host.getDatacenter();
-        return dc == null ? localDc : dc;
+    if (notInLocalDC.size() > 0) {
+      String nonLocalHosts = Joiner.on(",").join(notInLocalDC);
+      logger.warn("Some contact points don\'t match specified local data center. Local DC = {}. Non-conforming contact points: {}", localDc, nonLocalHosts);
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    private static CopyOnWriteArrayList<Host> cloneList(CopyOnWriteArrayList<Host> list) {
-        return (CopyOnWriteArrayList<Host>)list.clone();
-    }
+  private String dc(Host host) {
+    String dc = host.getDatacenter();
+    return dc == null ? localDc : dc;
+  }
 
-    /**
+  @SuppressWarnings(value = { "unchecked" }) private static CopyOnWriteArrayList<Host> cloneList(CopyOnWriteArrayList<Host> list) {
+    return (CopyOnWriteArrayList<Host>) list.clone();
+  }
+
+  /**
      * Return the HostDistance for the provided host.
      * <p>
      * This policy consider nodes in the local datacenter as {@code LOCAL}.
@@ -236,24 +215,20 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * @param host the host of which to return the distance of.
      * @return the HostDistance to {@code host}.
      */
-    @Override
-    public HostDistance distance(Host host) {
-        String dc = dc(host);
-        if (dc == UNSET || dc.equals(localDc))
-            return HostDistance.LOCAL;
-
-        CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc);
-        if (dcHosts == null || usedHostsPerRemoteDc == 0)
-            return HostDistance.IGNORED;
-
-        // We need to clone, otherwise our subList call is not thread safe
-        dcHosts = cloneList(dcHosts);
-        return dcHosts.subList(0, Math.min(dcHosts.size(), usedHostsPerRemoteDc)).contains(host)
-             ? HostDistance.REMOTE
-             : HostDistance.IGNORED;
+  @Override public HostDistance distance(Host host) {
+    String dc = dc(host);
+    if (dc == UNSET || dc.equals(localDc)) {
+      return HostDistance.LOCAL;
     }
+    CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc);
+    if (dcHosts == null || usedHostsPerRemoteDc == 0) {
+      return HostDistance.IGNORED;
+    }
+    dcHosts = cloneList(dcHosts);
+    return dcHosts.subList(0, Math.min(dcHosts.size(), usedHostsPerRemoteDc)).contains(host) ? HostDistance.REMOTE : HostDistance.IGNORED;
+  }
 
-    /**
+  /**
      * Returns the hosts to use for a new query.
      * <p>
      * The returned plan will always try each known host in the local
@@ -268,175 +243,155 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
      * @return a new query plan, i.e. an iterator indicating which host to
      * try first for querying, which one to use as failover, etc...
      */
-    @Override
-    public Iterator<Host> newQueryPlan(String loggedKeyspace, final Statement statement) {
+  @Override public Iterator<Host> newQueryPlan(String loggedKeyspace, final Statement statement) {
+    CopyOnWriteArrayList<Host> localLiveHosts = perDcLiveHosts.get(localDc);
+    final List<Host> hosts = localLiveHosts == null ? Collections.<Host>emptyList() : cloneList(localLiveHosts);
+    final int startIdx = index.getAndIncrement();
+    return new AbstractIterator<Host>() {
+      private int idx = startIdx;
 
-        CopyOnWriteArrayList<Host> localLiveHosts = perDcLiveHosts.get(localDc);
-        final List<Host> hosts = localLiveHosts == null ? Collections.<Host>emptyList() : cloneList(localLiveHosts);
-        final int startIdx = index.getAndIncrement();
+      private int remainingLocal = hosts.size();
 
-        return new AbstractIterator<Host>() {
+      private Iterator<Host> localSuspected;
 
-            private int idx = startIdx;
-            private int remainingLocal = hosts.size();
+      private Iterator<String> remoteDcs;
 
-            private Iterator<Host> localSuspected;
+      private List<Host> currentDcHosts;
 
-            // For remote Dcs
-            private Iterator<String> remoteDcs;
-            private List<Host> currentDcHosts;
-            private int currentDcRemaining;
-            private Iterator<Host> currentDcSuspected;
+      private int currentDcRemaining;
 
-            @Override
-            protected Host computeNext() {
-                if (remainingLocal > 0) {
-                    remainingLocal--;
-                    int c = idx++ % hosts.size();
-                    if (c < 0) {
-                        c += hosts.size();
-                    }
-                    return hosts.get(c);
-                }
+      private Iterator<Host> currentDcSuspected;
 
-                if (localSuspected == null) {
-                    List<Host> l = perDcSuspectedHosts.get(localDc);
-                    localSuspected = l == null ? Collections.<Host>emptySet().iterator() : l.iterator();
-                }
-
-                while (localSuspected.hasNext()) {
-                    Host h = localSuspected.next();
-                    waitOnReconnection(h);
-                    if (h.isUp())
-                        return h;
-                }
-
-                ConsistencyLevel cl = statement.getConsistencyLevel() == null
-                                    ? configuration.getQueryOptions().getConsistencyLevel()
-                                    : statement.getConsistencyLevel();
-
-                if (dontHopForLocalCL && cl.isDCLocal())
-                    return endOfData();
-
-                if (remoteDcs == null) {
-                    Set<String> copy = new HashSet<String>(perDcLiveHosts.keySet());
-                    copy.remove(localDc);
-                    remoteDcs = copy.iterator();
-                }
-
-                while (true) {
-                    if (currentDcHosts != null && currentDcRemaining > 0) {
-                        currentDcRemaining--;
-                        int c = idx++ % currentDcHosts.size();
-                        if (c < 0) {
-                            c += currentDcHosts.size();
-                        }
-                        return currentDcHosts.get(c);
-                    }
-
-                    if (currentDcSuspected != null) {
-                        while (currentDcSuspected.hasNext()) {
-                            Host h = currentDcSuspected.next();
-                            waitOnReconnection(h);
-                            if (h.isUp())
-                                return h;
-                        }
-                    }
-
-                    if (!remoteDcs.hasNext())
-                        break;
-
-                    String nextRemoteDc = remoteDcs.next();
-                    CopyOnWriteArrayList<Host> nextDcHosts = perDcLiveHosts.get(nextRemoteDc);
-                    if (nextDcHosts != null) {
-                        // Clone for thread safety
-                        List<Host> dcHosts = cloneList(nextDcHosts);
-                        currentDcHosts = dcHosts.subList(0, Math.min(dcHosts.size(), usedHostsPerRemoteDc));
-                        currentDcRemaining = currentDcHosts.size();
-                    }
-                    List<Host> suspectedList = perDcSuspectedHosts.get(nextRemoteDc);
-                    currentDcSuspected = suspectedList == null ? null : suspectedList.iterator();
-                }
-                return endOfData();
+      @Override protected Host computeNext() {
+        if (remainingLocal > 0) {
+          remainingLocal--;
+          int c = idx++ % hosts.size();
+          if (c < 0) {
+            c += hosts.size();
+          }
+          return hosts.get(c);
+        }
+        if (localSuspected == null) {
+          List<Host> l = perDcSuspectedHosts.get(localDc);
+          localSuspected = l == null ? Collections.<Host>emptySet().iterator() : l.iterator();
+        }
+        while (localSuspected.hasNext()) {
+          Host h = localSuspected.next();
+          waitOnReconnection(h);
+          if (h.isUp()) {
+            return h;
+          }
+        }
+        ConsistencyLevel cl = statement.getConsistencyLevel() == null ? configuration.getQueryOptions().getConsistencyLevel() : statement.getConsistencyLevel();
+        if (dontHopForLocalCL && cl.isDCLocal()) {
+          return endOfData();
+        }
+        if (remoteDcs == null) {
+          Set<String> copy = new HashSet<String>(perDcLiveHosts.keySet());
+          copy.remove(localDc);
+          remoteDcs = copy.iterator();
+        }
+        while (true) {
+          if (currentDcHosts != null && currentDcRemaining > 0) {
+            currentDcRemaining--;
+            int c = idx++ % currentDcHosts.size();
+            if (c < 0) {
+              c += currentDcHosts.size();
             }
-        };
-    }
-
-    private void waitOnReconnection(Host h) {
-        try {
-            h.getInitialReconnectionAttemptFuture().get(configuration.getSocketOptions().getConnectTimeoutMillis(), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            throw new AssertionError(e);
-        } catch (TimeoutException e) {
-            // Shouldn't really happen but isn't really a huge deal
-            logger.debug("Timeout while waiting only host initial reconnection future", e);
+            return currentDcHosts.get(c);
+          }
+          if (currentDcSuspected != null) {
+            while (currentDcSuspected.hasNext()) {
+              Host h = currentDcSuspected.next();
+              waitOnReconnection(h);
+              if (h.isUp()) {
+                return h;
+              }
+            }
+          }
+          if (!remoteDcs.hasNext()) {
+            break;
+          }
+          String nextRemoteDc = remoteDcs.next();
+          CopyOnWriteArrayList<Host> nextDcHosts = perDcLiveHosts.get(nextRemoteDc);
+          if (nextDcHosts != null) {
+            List<Host> dcHosts = cloneList(nextDcHosts);
+            currentDcHosts = dcHosts.subList(0, Math.min(dcHosts.size(), usedHostsPerRemoteDc));
+            currentDcRemaining = currentDcHosts.size();
+          }
+          List<Host> suspectedList = perDcSuspectedHosts.get(nextRemoteDc);
+          currentDcSuspected = suspectedList == null ? null : suspectedList.iterator();
         }
+        return endOfData();
+      }
+    };
+  }
+
+  private void waitOnReconnection(Host h) {
+    try {
+      h.getInitialReconnectionAttemptFuture().get(configuration.getSocketOptions().getConnectTimeoutMillis(), TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    } catch (ExecutionException e) {
+      throw new AssertionError(e);
+    } catch (TimeoutException e) {
+      logger.debug("Timeout while waiting only host initial reconnection future", e);
     }
+  }
 
-    @Override
-    public void onUp(Host host) {
-        String dc = dc(host);
-
-        // If the localDC was in "auto-discover" mode and it's the first host for which we have a DC, use it.
-        if (localDc == UNSET && dc != UNSET) {
-            logger.info("Using data-center name '{}' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)", dc);
-            localDc = dc;
-        }
-
-        CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc);
-        if (dcHosts == null) {
-            CopyOnWriteArrayList<Host> newMap = new CopyOnWriteArrayList<Host>(Collections.singletonList(host));
-            dcHosts = perDcLiveHosts.putIfAbsent(dc, newMap);
-            // If we've successfully put our new host, we're good, otherwise we've been beaten so continue
-            if (dcHosts == null)
-                return;
-        }
-        dcHosts.addIfAbsent(host);
-
-        CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc(host));
-        if (dcSuspected != null)
-            dcSuspected.remove(host);
+  @Override public void onUp(Host host) {
+    String dc = dc(host);
+    if (localDc == UNSET && dc != UNSET) {
+      logger.info("Using data-center name \'{}\' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)", dc);
+      localDc = dc;
     }
-
-    @Override
-    public void onSuspected(Host host) {
-        String dc = dc(host);
-        CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc);
-        if (dcSuspected == null) {
-            CopyOnWriteArrayList<Host> newMap = new CopyOnWriteArrayList<Host>(Collections.singletonList(host));
-            dcSuspected = perDcSuspectedHosts.putIfAbsent(dc, newMap);
-            // If we've successfully put our new host, we're good, otherwise we've been beaten so continue
-            if (dcSuspected == null)
-                return;
-        }
-        dcSuspected.addIfAbsent(host);
+    CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc);
+    if (dcHosts == null) {
+      CopyOnWriteArrayList<Host> newMap = new CopyOnWriteArrayList<Host>(Collections.singletonList(host));
+      dcHosts = perDcLiveHosts.putIfAbsent(dc, newMap);
+      if (dcHosts == null) {
+        return;
+      }
     }
-
-    @Override
-    public void onDown(Host host) {
-        CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc(host));
-        if (dcHosts != null)
-            dcHosts.remove(host);
-
-        CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc(host));
-        if (dcSuspected != null)
-            dcSuspected.remove(host);
+    dcHosts.addIfAbsent(host);
+    CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc(host));
+    if (dcSuspected != null) {
+      dcSuspected.remove(host);
     }
+  }
 
-    @Override
-    public void onAdd(Host host) {
-        onUp(host);
+  @Override public void onSuspected(Host host) {
+    String dc = dc(host);
+    CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc);
+    if (dcSuspected == null) {
+      CopyOnWriteArrayList<Host> newMap = new CopyOnWriteArrayList<Host>(Collections.singletonList(host));
+      dcSuspected = perDcSuspectedHosts.putIfAbsent(dc, newMap);
+      if (dcSuspected == null) {
+        return;
+      }
     }
+    dcSuspected.addIfAbsent(host);
+  }
 
-    @Override
-    public void onRemove(Host host) {
-        onDown(host);
+  @Override public void onDown(Host host) {
+    CopyOnWriteArrayList<Host> dcHosts = perDcLiveHosts.get(dc(host));
+    if (dcHosts != null) {
+      dcHosts.remove(host);
     }
+    CopyOnWriteArrayList<Host> dcSuspected = perDcSuspectedHosts.get(dc(host));
+    if (dcSuspected != null) {
+      dcSuspected.remove(host);
+    }
+  }
 
-    @Override
-    public void close() {
-        // nothing to do
-    }
+  @Override public void onAdd(Host host) {
+    onUp(host);
+  }
+
+  @Override public void onRemove(Host host) {
+    onDown(host);
+  }
+
+  @Override public void close() {
+  }
 }
