@@ -125,7 +125,6 @@ public class ItemServiceImpl extends DSpaceObjectServiceImpl<Item> implements It
 
     @Autowired(required = true)
     private EntityTypeService entityTypeService;
-
     @Autowired
     private OrcidTokenService orcidTokenService;
 

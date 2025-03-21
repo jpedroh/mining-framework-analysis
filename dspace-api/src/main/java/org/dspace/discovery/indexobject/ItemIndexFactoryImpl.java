@@ -175,6 +175,14 @@ public class ItemIndexFactoryImpl extends DSpaceObjectIndexFactoryImpl<Indexable
         return doc;
     }
 
+    @Override
+    public SolrInputDocument buildNewDocument(Context context, IndexableItem indexableItem)
+            throws SQLException, IOException {
+        SolrInputDocument doc = buildDocument(context, indexableItem);
+        doc.addField(STATUS_FIELD, STATUS_FIELD_PREDB);
+        return doc;
+    }
+
     /**
      * Check whether the given item is the latest version.
      * If the latest item cannot be determined, because either the version history or the latest version is not present,
@@ -210,14 +218,6 @@ public class ItemIndexFactoryImpl extends DSpaceObjectIndexFactoryImpl<Indexable
         assert latestVersion.getItem().isArchived();
 
         return item.equals(latestVersion.getItem());
-    }
-
-    @Override
-    public SolrInputDocument buildNewDocument(Context context, IndexableItem indexableItem)
-            throws SQLException, IOException {
-        SolrInputDocument doc = buildDocument(context, indexableItem);
-        doc.addField(STATUS_FIELD, STATUS_FIELD_PREDB);
-        return doc;
     }
 
     @Override
