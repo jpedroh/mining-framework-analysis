@@ -122,14 +122,10 @@ public class XmlSerializerProvider extends SerializationContextExt
             }
             QName rootName = _rootNameFromConfig();
             if (rootName == null) {
-                rootName = (rootType == null)
-                        ? _rootNameLookup.findRootName(this, value.getClass())
-                        : _rootNameLookup.findRootName(this, rootType);
+                rootName = _rootNameLookup.findRootName(this, rootType);
             }
             _initWithRootName(xgen, rootName);
-            asArray = (rootType == null)
-                    ? TypeUtil.isIndexedType(value.getClass())
-                        : TypeUtil.isIndexedType(rootType);
+            asArray = TypeUtil.isIndexedType(rootType);
             if (asArray) {
                 _startRootArray(xgen, rootName);
             }
@@ -171,14 +167,10 @@ public class XmlSerializerProvider extends SerializationContextExt
         } else {
             QName rootName = _rootNameFromConfig();
             if (rootName == null) {
-                rootName = (rootType == null)
-                        ? _rootNameLookup.findRootName(this, value.getClass())
-                        : _rootNameLookup.findRootName(this, rootType);
+                rootName = _rootNameLookup.findRootName(this, rootType);
             }
             _initWithRootName(xgen, rootName);
-            asArray = (rootType == null)
-                    ? TypeUtil.isIndexedType(value.getClass())
-                    : TypeUtil.isIndexedType(rootType);
+            asArray = TypeUtil.isIndexedType(rootType);
             if (asArray) {
                 _startRootArray(xgen, rootName);
             }
@@ -268,6 +260,120 @@ public class XmlSerializerProvider extends SerializationContextExt
                 && (((ObjectNode) value).size() == 1);
     }
 
+    // As of 2.7
+
+    // @since 2.1
+
+    @SuppressWarnings("resource")
+    @Override
+    public void serializeValue(JsonGenerator gen, Object value, JavaType rootType,
+            JsonSerializer<Object> ser) throws IOException
+    {
+        _generator = gen;
+        if (value == null) {
+            _serializeXmlNull(gen);
+            return;
+        }
+        // Let's ensure types are compatible at this point
+        if ((rootType != null) && !rootType.getRawClass().isAssignableFrom(value.getClass())) {
+            _reportIncompatibleRootType(value, rootType);
+        }
+        final boolean asArray;
+        final ToXmlGenerator xgen = _asXmlGenerator(gen);
+        if (xgen == null) { // called by convertValue()
+            asArray = false;
+        } else {
+            // [dataformat-xml#441]: allow ObjectNode unwrapping
+            if (_shouldUnwrapObjectNode(xgen, value)) {
+                _serializeUnwrappedObjectNode(xgen, value, ser);
+                return;
+            }
+            QName rootName = _rootNameFromConfig();
+            if (rootName == null) {
+                rootName = (rootType == null)
+                        ? _rootNameLookup.findRootName(value.getClass(), _config)
+                        : _rootNameLookup.findRootName(rootType, _config);
+            }
+            _initWithRootName(xgen, rootName);
+            asArray = (rootType == null)
+                    ? TypeUtil.isIndexedType(value.getClass())
+                        : TypeUtil.isIndexedType(rootType);
+            if (asArray) {
+                _startRootArray(xgen, rootName);
+            }
+        }
+        if (ser == null) {
+            ser = findTypedValueSerializer(rootType, true, null);
+        }
+        // From super-class implementation
+        try {
+            ser.serialize(value, gen, this);
+        } catch (Exception e) { // but others do need to be, to get path etc
+            throw _wrapAsIOE(gen, e);
+        }
+        // end of super-class implementation
+        if (asArray) {
+            gen.writeEndObject();
+        }
+    }
+
+    @SuppressWarnings("resource")
+    @Override // since 2.11.1, was missing before
+    public void serializePolymorphic(JsonGenerator gen, Object value, JavaType rootType,
+            JsonSerializer<Object> valueSer, TypeSerializer typeSer)
+        throws IOException
+    {
+        _generator = gen;
+        if (value == null) {
+            _serializeXmlNull(gen);
+            return;
+        }
+        // Let's ensure types are compatible at this point
+        if ((rootType != null) && !rootType.getRawClass().isAssignableFrom(value.getClass())) {
+            _reportIncompatibleRootType(value, rootType);
+        }
+        final boolean asArray;
+        final ToXmlGenerator xgen = _asXmlGenerator(gen);
+        if (xgen == null) { // called by convertValue()
+            asArray = false;
+        } else {
+            QName rootName = _rootNameFromConfig();
+            if (rootName == null) {
+                rootName = (rootType == null)
+                        ? _rootNameLookup.findRootName(value.getClass(), _config)
+                        : _rootNameLookup.findRootName(rootType, _config);
+            }
+            _initWithRootName(xgen, rootName);
+            asArray = (rootType == null)
+                    ? TypeUtil.isIndexedType(value.getClass())
+                    : TypeUtil.isIndexedType(rootType);
+            if (asArray) {
+                _startRootArray(xgen, rootName);
+            }
+        }
+        // 21-May-2020: See comments in `jackson-databind/DefaultSerializerProvider`
+        if (valueSer == null) {
+            if ((rootType != null) && rootType.isContainerType()) {
+                valueSer = findValueSerializer(rootType, null);
+            } else {
+                valueSer = findValueSerializer(value.getClass(), null);
+            }
+        }
+        // From super-class implementation
+        try {
+            valueSer.serializeWithType(value, gen, this, typeSer);
+        } catch (Exception e) { // but others do need to be, to get path etc
+            throw _wrapAsJacksonE(gen, e);
+        }
+        // end of super-class implementation
+        if (asArray) {
+            gen.writeEndObject();
+        }
+    }
+
+    // @since 2.13
+
+    // @since 2.13
     protected void _serializeUnwrappedObjectNode(ToXmlGenerator xgen, Object value,
             ValueSerializer<Object> ser) throws JacksonException
     {
