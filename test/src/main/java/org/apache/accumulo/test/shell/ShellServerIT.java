@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,6 +111,8 @@ public class ShellServerIT extends SharedMiniClusterBase {
   private MockShell ts;
 
   private static String rootPath;
+
+  private final SecureRandom random = new SecureRandom();
 
   private static class ShellServerITConfigCallback implements MiniClusterConfigurationCallback {
     @Override
@@ -921,11 +924,17 @@ public class ShellServerIT extends SharedMiniClusterBase {
   }
 
   // Feb 2023 - the sample example utilizing RowColumnSampler was failing. Analysis found that
+
   // the AbstractHashSampler was throwing an exception when additional options were utilized,
+
   // i.e., options beyond the required base 'hasher' and 'modulus' options. Additionally, the
+
   // RowColumnSampler threw an exception when the base options were parsed.
+
   // This test exercises a sampler that utilizes additional options and verifies options are parsed
+
   // successfully.
+
   @Test
   public void testScanSampleOptions() throws Exception {
     final String table = getUniqueNames(1)[0];
@@ -1146,6 +1155,7 @@ public class ShellServerIT extends SharedMiniClusterBase {
    * <p>
    * Example: <code>'0'</code> will be displayed as <code>'0x30'</code>
    */
+
   public static class HexFormatter implements Formatter {
     private Iterator<Entry<Key,Value>> iter = null;
     private FormatterConfig config;
@@ -1272,6 +1282,25 @@ public class ShellServerIT extends SharedMiniClusterBase {
     // test that history command prints contents of history file
     ts.exec("history", true, "createtable " + table, true);
     ts.exec("history", true, "deletetable -f " + table, true);
+  }
+
+  @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "path provided by test")
+  @Test
+  public void importDirectoryOld() throws Exception {
+    final String table = getUniqueNames(1)[0];
+    Configuration conf = new Configuration();
+    FileSystem fs = FileSystem.get(conf);
+    File errorsDir = new File(rootPath, "errors_" + table);
+    assertTrue(errorsDir.mkdir());
+    fs.mkdirs(new Path(errorsDir.toString()));
+
+    String nonce = generateNonce();
+    File importDir = createRFiles(conf, fs, table, nonce);
+    ts.exec("createtable " + table, true);
+    ts.exec("importdirectory " + importDir + " " + errorsDir + " true", true);
+    ts.exec("scan -r 00000000", true, "0-->" + nonce, true);
+    ts.exec("scan -r 00000099", true, "99-->" + nonce, true);
+    ts.exec("deletetable -f " + table);
   }
 
   @Test
@@ -2126,7 +2155,7 @@ public class ShellServerIT extends SharedMiniClusterBase {
    */
   public String generateNonce() {
     byte[] r = new byte[16];
-    RANDOM.get().nextBytes(r);
+    random.nextBytes(r);
     return new String(Base64.getEncoder().encode(r), UTF_8);
   }
 }
