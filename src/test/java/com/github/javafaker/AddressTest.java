@@ -114,12 +114,6 @@ public class AddressTest extends AbstractFakerTest {
     }
     
     @Test
-    public void testCountyByZipCode() {
-        faker = new Faker(new Locale("en-US"));
-        assertThat(faker.address().countyByZipCode(faker.address().zipCodeByState(faker.address().stateAbbr())), not(emptyOrNullString()));
-    }
-    
-    @Test
     public void testPhysicalDescription() {
     	String physicalDescription = faker.address().physicalDescription();
     	System.out.println("Physical Description: \"" + physicalDescription + "\"");
@@ -127,5 +121,9 @@ public class AddressTest extends AbstractFakerTest {
             matchesRegularExpression("[1-5] mile(s){0,1} " + EXPRESSION 
                 + " of the \\w+ \\w+ and \\w+ \\w+ intersection"));
     }
-    
+    @Test
+    public void testCountyByZipCode() {
+        faker = new Faker(new Locale("en-US"));
+        assertThat(faker.address().countyByZipCode(faker.address().zipCodeByState(faker.address().stateAbbr())), not(isEmptyOrNullString()));
+    }
 }
