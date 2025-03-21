@@ -18,6 +18,8 @@ public final class NumberOutput
     /**
      * Encoded representations of 3-decimal-digit indexed values, where
      * 3 LSB are ascii characters
+     *
+     * @since 2.8.2
      */
     private final static int[] TRIPLET_TO_CHARS = new int[1000];
 
@@ -236,16 +238,11 @@ public final class NumberOutput
         return _outputFullBillion((int) v, b, off);
     }
 
-    /*
-    /**********************************************************************
-    /* Convenience serialization methods
-    /**********************************************************************
-     */
-
     /**
      * @param v double
      * @return double as a string
      */
+
     public static String toString(final double v) {
         return toString(v, false);
     }
@@ -254,7 +251,9 @@ public final class NumberOutput
      * @param v double
      * @param useFastWriter whether to use Schubfach algorithm to write output (default false)
      * @return double as a string
+     * @since 2.14
      */
+
     public static String toString(final double v, final boolean useFastWriter) {
         return useFastWriter ? DoubleToDecimal.toString(v) : Double.toString(v);
     }
@@ -262,7 +261,9 @@ public final class NumberOutput
     /**
      * @param v float
      * @return float as a string
+     * @since 2.6
      */
+
     public static String toString(final float v) {
         return toString(v, false);
     }
@@ -271,7 +272,9 @@ public final class NumberOutput
      * @param v float
      * @param useFastWriter whether to use Schubfach algorithm to write output (default false)
      * @return float as a string
+     * @since 2.14
      */
+
     public static String toString(final float v, final boolean useFastWriter) {
         return useFastWriter ? FloatToDecimal.toString(v) : Float.toString(v);
     }
@@ -289,6 +292,8 @@ public final class NumberOutput
      * @param value {@code double} value to check
      *
      * @return True if number is NOT finite (is Infinity or NaN); false otherwise
+     *
+     * Since 2.10
      */
     public static boolean notFinite(double value) {
         return !Double.isFinite(value);

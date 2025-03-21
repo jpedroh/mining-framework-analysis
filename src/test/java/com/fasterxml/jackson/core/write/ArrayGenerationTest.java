@@ -14,7 +14,7 @@ public class ArrayGenerationTest extends BaseTest
 {
     private final TokenStreamFactory FACTORY = newStreamFactory();
 
-    protected TokenStreamFactory jsonFactory() {
+    protected JsonFactory jsonFactory() {
         return FACTORY;
     }
 
@@ -128,8 +128,16 @@ public class ArrayGenerationTest extends BaseTest
         StringWriter sw = new StringWriter();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(ObjectWriteContext.empty(), bytes)
-                : jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(ObjectWriteContext.empty(), bytes)
+                : FACTORY.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(bytes)
+                : FACTORY.createGenerator(sw);
+=======
+        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(bytes)
+                : jsonFactory().createGenerator(sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
 
         gen.writeArray(values, pre, elements);
         gen.close();
@@ -141,8 +149,16 @@ public class ArrayGenerationTest extends BaseTest
             json = sw.toString();
         }
 
-        JsonParser p = useBytes ? jsonFactory().createParser(ObjectReadContext.empty(), bytes.toByteArray())
-                : jsonFactory().createParser(ObjectReadContext.empty(), json);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonParser p = useBytes ? FACTORY.createParser(ObjectReadContext.empty(), bytes.toByteArray())
+                : FACTORY.createParser(ObjectReadContext.empty(), json);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonParser p = useBytes ? FACTORY.createParser(bytes.toByteArray())
+                : FACTORY.createParser(json);
+=======
+        JsonParser p = useBytes ? jsonFactory().createParser(bytes.toByteArray())
+                : jsonFactory().createParser(json);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
         assertToken(JsonToken.START_ARRAY, p.nextToken());
         for (int i = 0; i < elements; ++i) {
             if ((i & 1) == 0) { // alternate
@@ -169,8 +185,16 @@ public class ArrayGenerationTest extends BaseTest
         StringWriter sw = new StringWriter();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(ObjectWriteContext.empty(), bytes)
-                : jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(ObjectWriteContext.empty(), bytes)
+                : FACTORY.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(bytes)
+                : FACTORY.createGenerator(sw);
+=======
+        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(bytes)
+                : jsonFactory().createGenerator(sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
 
         gen.writeArray(values, pre, elements);
         gen.close();
@@ -182,8 +206,16 @@ public class ArrayGenerationTest extends BaseTest
             json = sw.toString();
         }
 
-        JsonParser p = useBytes ? jsonFactory().createParser(ObjectReadContext.empty(), bytes.toByteArray())
-                : jsonFactory().createParser(ObjectReadContext.empty(), json);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonParser p = useBytes ? FACTORY.createParser(ObjectReadContext.empty(), bytes.toByteArray())
+                : FACTORY.createParser(ObjectReadContext.empty(), json);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonParser p = useBytes ? FACTORY.createParser(bytes.toByteArray())
+                : FACTORY.createParser(json);
+=======
+        JsonParser p = useBytes ? jsonFactory().createParser(bytes.toByteArray())
+                : jsonFactory().createParser(json);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
         assertToken(JsonToken.START_ARRAY, p.nextToken());
         for (int i = 0; i < elements; ++i) {
             if ((i & 1) == 0) { // alternate
@@ -210,8 +242,16 @@ public class ArrayGenerationTest extends BaseTest
         StringWriter sw = new StringWriter();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(ObjectWriteContext.empty(), bytes)
-                : jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(ObjectWriteContext.empty(), bytes)
+                : FACTORY.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(bytes)
+                : FACTORY.createGenerator(sw);
+=======
+        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(bytes)
+                : jsonFactory().createGenerator(sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
 
         gen.writeArray(values, pre, elements);
         gen.close();
@@ -223,8 +263,16 @@ public class ArrayGenerationTest extends BaseTest
             json = sw.toString();
         }
 
-        JsonParser p = useBytes ? jsonFactory().createParser(ObjectReadContext.empty(), bytes.toByteArray())
-                : jsonFactory().createParser(ObjectReadContext.empty(), json);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
+        JsonParser p = useBytes ? FACTORY.createParser(ObjectReadContext.empty(), bytes.toByteArray())
+                : FACTORY.createParser(ObjectReadContext.empty(), json);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonParser p = useBytes ? FACTORY.createParser(bytes.toByteArray())
+                : FACTORY.createParser(json);
+=======
+        JsonParser p = useBytes ? jsonFactory().createParser(bytes.toByteArray())
+                : jsonFactory().createParser(json);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
         assertToken(JsonToken.START_ARRAY, p.nextToken());
         for (int i = 0; i < elements; ++i) {
             JsonToken t = p.nextToken();
@@ -252,9 +300,17 @@ public class ArrayGenerationTest extends BaseTest
         StringWriter sw = new StringWriter();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
         ObjectWriteContext wctxt = ObjectWriteContext.empty();
-        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(wctxt, bytes)
-                : jsonFactory().createGenerator(wctxt, sw);
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(wctxt, bytes)
+                : FACTORY.createGenerator(wctxt, sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonGenerator gen = useBytes ? FACTORY.createGenerator(bytes)
+                : FACTORY.createGenerator(sw);
+=======
+        JsonGenerator gen = useBytes ? jsonFactory().createGenerator(bytes)
+                : jsonFactory().createGenerator(sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
 
         gen.writeArray(values, pre, elements);
         gen.close();
@@ -266,9 +322,17 @@ public class ArrayGenerationTest extends BaseTest
             json = sw.toString();
         }
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/left.java
         ObjectReadContext rctxt = ObjectReadContext.empty();
-        JsonParser p = useBytes ? jsonFactory().createParser(rctxt, bytes.toByteArray())
-                : jsonFactory().createParser(rctxt, json);
+        JsonParser p = useBytes ? FACTORY.createParser(rctxt, bytes.toByteArray())
+                : FACTORY.createParser(rctxt, json);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/base.java
+        JsonParser p = useBytes ? FACTORY.createParser(bytes.toByteArray())
+                : FACTORY.createParser(json);
+=======
+        JsonParser p = useBytes ? jsonFactory().createParser(bytes.toByteArray())
+                : jsonFactory().createParser(json);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ArrayGenerationTest.java/right.java
         assertToken(JsonToken.START_ARRAY, p.nextToken());
         for (int i = 0; i < elements; ++i) {
             JsonToken t = p.nextToken();

@@ -822,29 +822,27 @@ public class WriterBasedJsonGenerator
     @Override
     public void writeNumber(double d) throws JacksonException
     {
-        final boolean useFast = isEnabled(StreamWriteFeature.USE_FAST_DOUBLE_WRITER);
         if (_cfgNumbersAsStrings ||
                 (NumberOutput.notFinite(d) && JsonWriteFeature.WRITE_NAN_AS_STRINGS.enabledIn(_formatWriteFeatures))) {
-            writeString(NumberOutput.toString(d, useFast));
+            writeString(NumberOutput.toString(d, isEnabled(Feature.USE_FAST_DOUBLE_WRITER)));
             return;
         }
         // What is the max length for doubles? 40 chars?
         _verifyValueWrite(WRITE_NUMBER);
-        writeRaw(NumberOutput.toString(d, useFast));
+        writeRaw(NumberOutput.toString(d, isEnabled(Feature.USE_FAST_DOUBLE_WRITER)));
     }
 
     @Override
     public void writeNumber(float f) throws JacksonException
     {
-        final boolean useFast = isEnabled(StreamWriteFeature.USE_FAST_DOUBLE_WRITER);
         if (_cfgNumbersAsStrings ||
                 (NumberOutput.notFinite(f) && JsonWriteFeature.WRITE_NAN_AS_STRINGS.enabledIn(_formatWriteFeatures))) {
-            writeString(NumberOutput.toString(f, useFast));
+            writeString(NumberOutput.toString(f, isEnabled(Feature.USE_FAST_DOUBLE_WRITER)));
             return;
         }
         // What is the max length for floats?
         _verifyValueWrite(WRITE_NUMBER);
-        writeRaw(NumberOutput.toString(f, useFast));
+        writeRaw(NumberOutput.toString(f, isEnabled(Feature.USE_FAST_DOUBLE_WRITER)));
     }
 
     @Override

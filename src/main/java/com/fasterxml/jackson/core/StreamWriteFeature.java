@@ -122,7 +122,8 @@ public enum StreamWriteFeature
      *
      * @since 2.14
      */
-    USE_FAST_DOUBLE_WRITER(false)
+    @SuppressWarnings("deprecation")
+    USE_FAST_DOUBLE_WRITER(JsonGenerator.Feature.USE_FAST_DOUBLE_WRITER)
     ;
 
     /**

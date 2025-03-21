@@ -16,14 +16,22 @@ public class ObjectWriteTest
 {
     final TokenStreamFactory JSON_F = newStreamFactory();
 
-    protected TokenStreamFactory jsonFactory() {
-        return JSON_F;
+    private final JsonFactory FACTORY = new JsonFactory();
+
+    protected JsonFactory jsonFactory() {
+        return FACTORY;
     }
 
     public void testEmptyObjectWrite()
     {
         StringWriter sw = new StringWriter();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/left.java
+        JsonGenerator gen = JSON_F.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/base.java
+        JsonGenerator gen = new JsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+=======
         JsonGenerator gen = jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/right.java
 
         TokenStreamContext ctxt = gen.streamWriteContext();
         assertTrue(ctxt.inRoot());
@@ -64,7 +72,13 @@ public class ObjectWriteTest
     public void testInvalidObjectWrite()
     {
         StringWriter sw = new StringWriter();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/left.java
+        JsonGenerator gen = JSON_F.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/base.java
+        JsonGenerator gen = new JsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+=======
         JsonGenerator gen = jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/right.java
         gen.writeStartObject();
         // Mismatch:
         try {
@@ -79,7 +93,13 @@ public class ObjectWriteTest
     public void testSimpleObjectWrite()
     {
         StringWriter sw = new StringWriter();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/left.java
+        JsonGenerator gen = JSON_F.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/base.java
+        JsonGenerator gen = new JsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+=======
         JsonGenerator gen = jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/right.java
         gen.writeStartObject();
         gen.writeName("first");
         gen.writeNumber(-901);
@@ -111,7 +131,13 @@ public class ObjectWriteTest
     public void testConvenienceMethods()
     {
         StringWriter sw = new StringWriter();
-        JsonGenerator gen = jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/left.java
+        JsonGenerator gen = JSON_F.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/base.java
+        JsonGenerator gen = new JsonFactory().createGenerator(sw);
+=======
+        JsonGenerator gen = jsonFactory().createGenerator(sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/right.java
         gen.writeStartObject();
 
         final String TEXT = "\"some\nString!\"";
@@ -215,7 +241,13 @@ public class ObjectWriteTest
     public void testConvenienceMethodsWithNulls()
     {
         StringWriter sw = new StringWriter();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/left.java
+        JsonGenerator gen = JSON_F.createGenerator(ObjectWriteContext.empty(), sw);
+||||||| /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/base.java
+        JsonGenerator gen = new JsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+=======
         JsonGenerator gen = jsonFactory().createGenerator(ObjectWriteContext.empty(), sw);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/096b045703c72963a74298df9c4401f19db4a0e4/src/test/java/com/fasterxml/jackson/core/write/ObjectWriteTest.java/right.java
         gen.writeStartObject();
 
         gen.writeStringProperty("str", null);
