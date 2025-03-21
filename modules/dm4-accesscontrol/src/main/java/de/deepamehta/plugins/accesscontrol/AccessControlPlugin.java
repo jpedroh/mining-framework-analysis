@@ -44,8 +44,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
@@ -519,6 +519,12 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     // ---
 
     /**
+     * Prerequisite: username is not <code>null</code>.
+     */
+    // ---
+    // ---
+    // ---
+    /**
      * Assigns the logged in user as the creator of the specified object.
      * If no user is logged in, the default user ("admin") is assigned.
      */
@@ -533,17 +539,13 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         //
         assignCreator(object, username.getId());
     }
-
     /**
      * Assigns the specified user as the creator of the specified object.
      */
     private void assignCreator(DeepaMehtaObject object, long usernameId) {
-        TopicModel creatorValue = createCreatorModel(usernameId);
-        facetsService.updateFacet(object, "dm4.accesscontrol.creator_facet", creatorValue, null, null);
+        facetsService.updateFacet(object, "dm4.accesscontrol.creator_facet", createCreatorModel(usernameId), null, null);
     }
-
     // ---
-
     /**
      * Fetches the "Username" topic for the "admin" user.
      * If the "admin" user doesn't exist an exception is thrown.
@@ -557,7 +559,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         }
         return username;
     }
-
     /**
      * Fetches the "Username" topic for the specified username.
      *
@@ -567,11 +568,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
     private Topic fetchUsername(String username) {
         return dms.getTopic("dm4.accesscontrol.username", new SimpleValue(username), false, null);
     }
-
-
-
     // === ACL Entries ===
-
     /**
      * Checks if a user is allowed to perform an operation on a topic.
      * If so, <code>true</code> is returned.
@@ -583,7 +580,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         Topic topic = dms.getTopic(topicId, false, null);
         return hasPermission(username, operation, topic);
     }
-
     /**
      * Checks if a user is allowed to perform an operation on an object.
      * If so, <code>true</code> is returned.
@@ -606,20 +602,10 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         logger.fine("=> DENIED");
         return false;
     }
-
     // ---
-
-    /**
-     * Retrieves all ACL entries of the specified object.
-     */
-    private Set<RelatedTopic> fetchACLEntries(DeepaMehtaObject object) {
-        return facetsService.getFacets(object, "dm4.accesscontrol.acl_facet");
+    private Set<RelatedTopic> fetchACLEntries(Topic topic) {
+        return facetsService.getFacets(topic, "dm4.accesscontrol.acl_facet");
     }
-
-    /**
-     * For the specified ACL entry: reads out the "allowed" value for the specified operation.
-     * If no "allowed" value is set for that operation <code>false</code> is returned.
-     */
     private boolean allowed(Topic aclEntry, Operation operation) {
         for (TopicModel permission : aclEntry.getCompositeValue().getTopics("dm4.accesscontrol.permission")) {
             if (permission.getCompositeValue().getTopic("dm4.accesscontrol.operation").getUri().equals(operation.uri)) {
@@ -628,9 +614,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         }
         return false;
     }
-
     // ---
-
     /**
      * Checks if a user occupies a role with regard to the specified object.
      * If so, <code>true</code> is returned.
@@ -667,9 +651,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         }
         return false;
     }
-
     // ---
-
     /**
      * Checks if a user is a member of any workspace the object is assigned to.
      * If so, <code>true</code> is returned.
@@ -692,7 +674,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         }
         return false;
     }
-
     /**
      * Checks if a user is the owner of the object.
      * If so, <code>true</code> is returned.
@@ -706,7 +687,6 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         logger.fine("The owner is " + userInfo(owner));
         return owner != null && owner.getId() == username.getId();
     }
-
     /**
      * Checks if a user is the creator of the object.
      * If so, <code>true</code> is returned.
@@ -720,8 +700,21 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         logger.fine("The creator is " + userInfo(creator));
         return creator != null && creator.getId() == username.getId();
     }
-
     // ---
+    /**
+     * Retrieves all ACL entries of the specified object.
+     */
+    private Set<RelatedTopic> getACLEntries(DeepaMehtaObject object) {
+        return facetsService.getFacets(object, "dm4.accesscontrol.acl_facet");
+    }
+    /**
+     * For the specified ACL entry: reads out the "allowed" value for the specified operation.
+     * If no "allowed" value is set for that operation <code>false</code> is returned.
+     */
+    // ---
+    private void setCreator(Topic topic, long usernameId) {
+        facetsService.updateFacet(topic, "dm4.accesscontrol.creator_facet", createCreatorModel(usernameId), null, null);
+    }
 
     /**
      * Retrieves the creator of an object, or <code>null</code> if no creator is set.
