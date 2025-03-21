@@ -15,13 +15,144 @@
  */
 
 package com.ning.billing.recurly.model;
-
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "plans")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Plans extends RecurlyObjects<Plan> {
 
     @XmlTransient
     public static final String PLANS_RESOURCE = "/plans";
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/08f428502f99854cbe37544d682bdc674b5ebc95/src/main/java/com/ning/billing/recurly/model/Plans.java/left.java
+    
+    @XmlElement(name = "plan")
+    private List<Plan> plans;
+
+    public List<Plan> getPlans() {
+        return this.plans;
+    }
+
+    public void setPlans(final List<Plan> plans) {
+        this.plans = plans;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Plans [");
+        sb.append(getPlans().toString());
+        for (Plan p : getPlans()) {
+             sb.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+             if (null != p) {
+                 sb.append(p.toString());
+                 sb.append("\n");
+             }
+             sb.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SimplePlan {
+
+        public SimplePlan() {
+        }
+
+        // public SimplePlan(String data) {
+        //     this.data = data;
+        // }
+
+        private String data;
+
+        @XmlElement(name = "name")
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final Object name) {
+            this.name = stringOrNull(name);
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Plan");
+            sb.append("{name='").append(name).append('\'');
+            sb.append(", data='").append(data).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
+    }
+||||||| /usr/src/app/output/killbilling/recurly-java-library/08f428502f99854cbe37544d682bdc674b5ebc95/src/main/java/com/ning/billing/recurly/model/Plans.java/base.java
+    
+    @XmlElementWrapper(name = "plans")
+    @XmlElement(name = "plan")
+    private List<Plan> plans;
+
+    public List<Plan> getPlans() {
+        return this.plans;
+    }
+
+    public void setPlans(final List<Plan> plans) {
+        this.plans = plans;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Plans [");
+        sb.append(getPlans().toString());
+        for (Plan p : getPlans()) {
+             sb.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+             if (null != p) {
+                 sb.append(p.toString());
+                 sb.append("\n");
+             }
+             sb.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        }
+        sb.append(']');
+        return sb.toString();
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SimplePlan {
+
+        public SimplePlan() {
+        }
+
+        // public SimplePlan(String data) {
+        //     this.data = data;
+        // }
+
+        private String data;
+
+        @XmlElement(name = "name")
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final Object name) {
+            this.name = stringOrNull(name);
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Plan");
+            sb.append("{name='").append(name).append('\'');
+            sb.append(", data='").append(data).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
+    }
+=======
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/08f428502f99854cbe37544d682bdc674b5ebc95/src/main/java/com/ning/billing/recurly/model/Plans.java/right.java
 }
