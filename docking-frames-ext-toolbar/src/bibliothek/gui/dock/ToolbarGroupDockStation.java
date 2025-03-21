@@ -1,8 +1,5 @@
 package bibliothek.gui.dock;
-
-
 import java.awt.Dimension;
-
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.ToolbarInterface;
@@ -18,13 +15,11 @@ import bibliothek.gui.dock.util.DockUtilities;
  * @author Herve Guillaume
  */
 public class ToolbarGroupDockStation extends ToolbarDockStation {
+  @Override public String getFactoryID() {
+    return ToolbarGroupDockStationFactory.ID;
+  }
 
-	@Override
-	public String getFactoryID(){
-		return ToolbarGroupDockStationFactory.ID;
-	}
-	
-	/**
+  /**
 	 * Dropps <code>dockable</code> at location <code>index</code>.
 	 * 
 	 * @param dockable
@@ -33,26 +28,21 @@ public class ToolbarGroupDockStation extends ToolbarDockStation {
 	 *            the location of <code>dockable</code>
 	 * @return whether the operation was succesfull or not
 	 */
-	@Override
-	public boolean drop( Dockable dockable, int index ){
-		// note: merging of two ToolbarGroupDockStations is done by the
-		// ToolbarGroupDockStationMerger
-		System.out.println(this.toString()
-				+ "## drop(Dockable dockable, int index)##");
-		if (this.accept(dockable)){
-			this.add(dockable, index);
-			return true;
-		}
-		return false;
-	}
+  @Override public boolean drop(Dockable dockable, int index) {
+    System.out.println(this.toString() + "## drop(Dockable dockable, int index)##");
+    if (this.accept(dockable)) {
+      this.add(dockable, index);
+      return true;
+    }
+    return false;
+  }
 
-	@Override
-	public boolean accept( Dockable child ){
-		System.out.println(this.toString() + "## accept(Dockable child) ##");
-		return getToolbarStrategy().isToolbarGroupPart(child);
-	}
+  @Override public boolean accept(Dockable child) {
+    System.out.println(this.toString() + "## accept(Dockable child) ##");
+    return getToolbarStrategy().isToolbarGroupPart(child);
+  }
 
-	/**
+  /**
 	 * Insert one dockable at the index
 	 * 
 	 * @param dockable
@@ -60,21 +50,19 @@ public class ToolbarGroupDockStation extends ToolbarDockStation {
 	 * @param index
 	 *            Index where add dockable
 	 */
-	private void add( Dockable dockable, int index ){
-		DockUtilities.ensureTreeValidity(this, dockable);
-		DockUtilities.checkLayoutLocked();
-		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
-				dockable);
-		try{
-			listeners.fireDockableAdding(dockable);
-			dockable.setDockParent(this);
-			getDockables().add(index, dockable);
-			mainPanel.getContentPane().add(dockable.getComponent(), index);
-			listeners.fireDockableAdded(dockable);
-			fireDockablesRepositioned(index + 1);
-		} finally{
-			token.release();
-		}
-	}
-
+  private void add(Dockable dockable, int index) {
+    DockUtilities.ensureTreeValidity(this, dockable);
+    DockUtilities.checkLayoutLocked();
+    DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this, dockable);
+    try {
+      listeners.fireDockableAdding(dockable);
+      dockable.setDockParent(this);
+      getDockables().add(index, dockable);
+      mainPanel.getContentPane().add(dockable.getComponent(), index);
+      listeners.fireDockableAdded(dockable);
+      fireDockablesRepositioned(index + 1);
+    }  finally {
+      token.release();
+    }
+  }
 }
