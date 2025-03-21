@@ -167,36 +167,94 @@ public class MPRestClient {
      * @throws MPRestException
      */
     private HttpRequestBase getRequestMethod(HttpMethod httpMethod, String uri, HttpEntity entity) throws MPRestException {
-        if (httpMethod == null) {
+        if (httpMethod == null)
             throw new MPRestException("HttpMethod must be \"GET\", \"POST\", \"PUT\" or \"DELETE\".");
-        }
         if (StringUtils.isEmpty(uri))
             throw new MPRestException("Uri can not be an empty String.");
 
         HttpRequestBase request = null;
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
         if (httpMethod.equals(HttpMethod.GET)) {
             if (entity != null) {
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+        if (httpMethod.equals("GET")) {
+            if (entity != null)
+=======
+        if (httpMethod.equals("GET")) {
+<<<<<<< HEAD
+            if (entity != null)
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
                 throw new MPRestException("Payload not supported for this method.");
             }
             request = new HttpGet(uri);
         } else if (httpMethod.equals(HttpMethod.POST)) {
             if (entity == null) {
                 throw new MPRestException("Must include payload for this method.");
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
             }
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+=======
+=======
+            if (entity != null) {
+                throw new MPRestException("Not supported for this method.");
+            }
+            request = new HttpGet(uri);
+        } else if (httpMethod.equals("POST")) {
+            if (entity == null) {
+                throw new MPRestException("Not supported for this method.");
+            }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
+>>>>>>> theirs
             HttpPost post = new HttpPost(uri);
             post.setEntity(entity);
             request = post;
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
         } else if (httpMethod.equals(HttpMethod.PUT)) {
             if (entity == null) {
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+        } else if (httpMethod.equals("PUT")) {
+            if (entity == null)
+=======
+        } else if (httpMethod.equals("PUT")) {
+<<<<<<< HEAD
+            if (entity == null)
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
                 throw new MPRestException("Must include payload for this method.");
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
             }
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+=======
+=======
+            if (entity == null) {
+                throw new MPRestException("Not supported for this method.");
+            }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
+>>>>>>> theirs
             HttpPut put = new HttpPut(uri);
             put.setEntity(entity);
             request = put;
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
         } else if (httpMethod.equals(HttpMethod.DELETE)) {
             if (entity != null) {
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+        } else if (httpMethod.equals("DELETE")) {
+            if (entity != null)
+=======
+        } else if (httpMethod.equals("DELETE")) {
+<<<<<<< HEAD
+            if (entity != null)
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
                 throw new MPRestException("Payload not supported for this method.");
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/left.java
             }
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/base.java
+=======
+=======
+            if (entity != null) {
+                throw new MPRestException("Not supported for this method.");
+            }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/net/MPRestClient.java/right.java
+>>>>>>> theirs
             request = new HttpDelete(uri);
         }
         return request;

@@ -96,7 +96,14 @@ public abstract class MPBase {
         PayloadType payloadType = (PayloadType) hashAnnotation.get("payloadType");
         JsonObject payload = generatePayload(httpMethod);
         String response = callApi(httpMethod, path, payload, payloadType);
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/left.java
         lastKnownJson = MPCoreUtils.getJson(this);
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/base.java
+
+        lastKnownJson = getJson();
+=======
+        lastKnownJson = getJson();
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/right.java
         return response;
     }
 
@@ -142,9 +149,19 @@ public abstract class MPBase {
                 } else if (mapParams != null &&
                         StringUtils.isNotEmpty(mapParams.get(param))) {
                     value = mapParams.get(param);
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/left.java
                 } else {
                     JsonObject json = MPCoreUtils.getJson(this);
                     if (json.get(param) != null) {
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/base.java
+                else {
+                    JsonObject json = getJson();
+                    if (json.get(param) != null)
+=======
+                } else {
+                    JsonObject json = getJson();
+                    if (json.get(param) != null) {
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/right.java
                         value = json.get(param).getAsString();
                     }
                 }
@@ -174,10 +191,22 @@ public abstract class MPBase {
      */
     private JsonObject generatePayload(String httpMethod) {
         JsonObject payload = null;
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/left.java
         if (httpMethod.equals("POST")) {
             payload = MPCoreUtils.getJson(this);
         } else if (httpMethod.equals("PUT")) {
             JsonObject actualJson = MPCoreUtils.getJson(this);
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/base.java
+        if (httpMethod.equals("POST"))
+            payload = getJson();
+        else if (httpMethod.equals("PUT")) {
+            JsonObject actualJson = getJson();
+=======
+        if (httpMethod.equals("POST")) {
+            payload = getJson();
+        } else if (httpMethod.equals("PUT")) {
+            JsonObject actualJson = getJson();
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/right.java
 
             Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
             Gson gson = new Gson();
@@ -193,6 +222,30 @@ public abstract class MPBase {
             }
         }
         return payload;
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/left.java
+||||||| /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/base.java
+    }
+
+    /**
+     * Transforms all attributes members of the instance in a JSON Element.
+     * @return                  a JSON Object with the attributes members of the instance
+     */
+    private JsonObject getJson() {
+        return (JsonObject) new Gson().toJsonTree(this);
+=======
+    }
+
+    /**
+     * Transforms all attributes members of the instance in a JSON Element.
+     * @return                  a JSON Object with the attributes members of the instance
+     */
+    private JsonObject getJson() {
+        String FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+        Gson gson = new GsonBuilder()
+                .setDateFormat(FORMAT_ISO8601)
+                .create();
+        return (JsonObject) gson.toJsonTree(this);
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/b822e23f94b13e932c53074fbfe2800da45d22f3/src/com/mercadopago/core/MPBase.java/right.java
     }
 
     /**
