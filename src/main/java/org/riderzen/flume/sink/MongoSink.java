@@ -194,36 +194,36 @@ public class MongoSink extends AbstractSink implements Configurable {
                 }
             }
 			try {
-				CommandResult result = dbRef.getCollection(collectionNameVar)
-						.insert(docs, WriteConcern.SAFE).getLastError();
-				if (result.ok()) {
-					String errorMessage = result.getErrorMessage();
-					if (errorMessage != null) {
-						logger.error("can't insert documents with error: {} ",
-								errorMessage);
-						logger.error("with exception", result.getException());
-						throw new MongoException(errorMessage);
-					}
-				} else {
-					logger.error("can't get last error");
-				}
-			} catch (Exception e) {
-				if (!(e instanceof com.mongodb.MongoException.DuplicateKey)) {
-					logger.error("can't process event batch ", e);
-				    logger.debug("can't process doc:{}", docs);
-				}
-				for (DBObject doc : docs) {
-					try {
-						dbRef.getCollection(collectionNameVar).insert(doc,
-								WriteConcern.SAFE);
-					} catch (Exception ee) {
-						if (!(e instanceof com.mongodb.MongoException.DuplicateKey)) {
-							logger.error(doc.toString());
-							logger.error("can't process events, drop it!", ee);
-						}
-					}
-				}
-			}
+        	CommandResult result = dbRef.getCollection(collectionNameVar)
+        			.insert(docs, WriteConcern.SAFE).getLastError();
+        	if (result.ok()) {
+        		String errorMessage = result.getErrorMessage();
+        		if (errorMessage != null) {
+        			logger.error("can't insert documents with error: {} ",
+        					errorMessage);
+        			logger.error("with exception", result.getException());
+        			throw new MongoException(errorMessage);
+        		}
+        	} else {
+        		logger.error("can't get last error");
+        	}
+        } catch (Exception e) {
+        	if (!(e instanceof com.mongodb.MongoException.DuplicateKey)) {
+        		logger.error("can't process event batch ", e);
+        	    logger.debug("can't process doc:{}", docs);
+        	}
+        	for (DBObject doc : docs) {
+        		try {
+        			dbRef.getCollection(collectionNameVar).insert(doc,
+        					WriteConcern.SAFE);
+        		} catch (Exception ee) {
+        			if (!(e instanceof com.mongodb.MongoException.DuplicateKey)) {
+        				logger.error(doc.toString());
+        				logger.error("can't process events, drop it!", ee);
+        			}
+        		}
+        	}
+        }
 		}
 	}
 
@@ -290,15 +290,9 @@ public class MongoSink extends AbstractSink implements Configurable {
             if (logger.isDebugEnabled()) {
                 logger.debug("collection: {}, length: {}", entry.getKey(), docs.size());
             }
-<<<<<<< HEAD
-            int separatorIndex = eventCollection.indexOf(NAMESPACE_SEPARATOR);
-            String eventDb = eventCollection.substring(0, separatorIndex);
-            String collectionNameVar = eventCollection.substring(separatorIndex + 1);
-=======
             int separatorIndex = entry.getKey().indexOf(NAMESPACE_SEPARATOR);
             String eventDb = entry.getKey().substring(0, separatorIndex);
-            String collectionName = entry.getKey().substring(separatorIndex + 1);
->>>>>>> master
+            String collectionNameVar = entry.getKey().substring(separatorIndex + 1);
 
             //Warning: please change the WriteConcern level if you need high datum consistence.
             DB dbRef = mongo.getDB(eventDb);
@@ -342,7 +336,7 @@ public class MongoSink extends AbstractSink implements Configurable {
 		} else {
 		    logger.error("can't get last error");
 		}
-	    }
+        }
         }
     }
 
