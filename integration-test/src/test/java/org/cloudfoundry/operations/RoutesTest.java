@@ -48,6 +48,7 @@ import java.util.function.Predicate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.cloudfoundry.operations.routes.Level.ORGANIZATION;
 import static org.cloudfoundry.operations.routes.Level.SPACE;
+import static org.cloudfoundry.util.tuple.TupleUtils.function;
 
 public final class RoutesTest extends AbstractIntegrationTest {
 
@@ -331,7 +332,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String path = this.nameFactory.getPath();
 
         Mono
-            .when(
+            .zip(
                 createDomainAndRoute(this.cloudFoundryOperations, this.organizationName, this.spaceName, domainName, hostName, path),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -358,7 +359,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String path = this.nameFactory.getPath();
 
         Mono
-            .when(
+            .zip(
                 createDomainAndRoute(this.cloudFoundryOperations, this.organizationName, this.spaceName, domainName, hostName, path),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -385,7 +386,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String path = null;
 
         Mono
-            .when(
+            .zip(
                 createDomainAndRoute(this.cloudFoundryOperations, this.organizationName, this.spaceName, domainName, hostName, path),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -410,7 +411,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String domainName = this.nameFactory.getDomainName();
 
         Mono
-            .when(
+            .zip(
                 createSharedDomainAndTcpRoute(this.cloudFoundryOperations, domainName, this.spaceName),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -435,7 +436,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String domainName = this.nameFactory.getDomainName();
 
         Mono
-            .when(
+            .zip(
                 requestCreateSharedDomain(this.cloudFoundryOperations, domainName, DEFAULT_ROUTER_GROUP),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -467,7 +468,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String path = this.nameFactory.getPath();
 
         Mono
-            .when(
+            .zip(
                 createDomainAndRoute(this.cloudFoundryOperations, this.organizationName, this.spaceName, domainName, hostName, path),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -494,7 +495,7 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String path = null;
 
         Mono
-            .when(
+            .zip(
                 createDomainAndRoute(this.cloudFoundryOperations, this.organizationName, this.spaceName, domainName, hostName, path),
                 requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             )
@@ -518,9 +519,25 @@ public final class RoutesTest extends AbstractIntegrationTest {
         String applicationName = this.nameFactory.getApplicationName();
         String domainName = this.nameFactory.getDomainName();
 
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/2b7fd54c402278631855fe21e7ab3f3cf0b49965/integration-test/src/test/java/org/cloudfoundry/operations/RoutesTest.java/left.java
+        Mono
+            .zip(
+                createSharedDomainAndTcpRoute(this.cloudFoundryOperations, domainName, this.spaceName),
+                requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
+            )
+            .flatMap(function((port, ignore) -> requestMapRoute(this.cloudFoundryOperations, applicationName, domainName, port)))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/2b7fd54c402278631855fe21e7ab3f3cf0b49965/integration-test/src/test/java/org/cloudfoundry/operations/RoutesTest.java/base.java
+        Mono
+            .when(
+                createSharedDomainAndTcpRoute(this.cloudFoundryOperations, domainName, this.spaceName),
+                requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
+            )
+            .then(function((port, ignore) -> requestMapRoute(this.cloudFoundryOperations, applicationName, domainName, port)))
+=======
         requestCreateApplication(this.cloudFoundryOperations, new ClassPathResource("test-application.zip").getFile().toPath(), applicationName, true)
             .then(createSharedDomainAndTcpRoute(this.cloudFoundryOperations, domainName, this.spaceName))
-            .flatMap(port -> requestMapRoute(this.cloudFoundryOperations, applicationName, domainName, port))
+            .then(port -> requestMapRoute(this.cloudFoundryOperations, applicationName, domainName, port))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/2b7fd54c402278631855fe21e7ab3f3cf0b49965/integration-test/src/test/java/org/cloudfoundry/operations/RoutesTest.java/right.java
             .flatMap(port -> this.cloudFoundryOperations.routes()
                 .unmap(UnmapRouteRequest.builder()
                     .applicationName(applicationName)
