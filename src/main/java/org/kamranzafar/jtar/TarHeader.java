@@ -1,22 +1,4 @@
-/**
- * Copyright 2012 Kamran Zafar 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * 
- */
-
 package org.kamranzafar.jtar;
-
 import java.io.File;
 
 /**
@@ -66,83 +48,100 @@ import java.io.File;
  * 345     155     Filename prefix
  * </pre>
  */
-
 public class TarHeader {
+  public static final int NAMELEN = 100;
 
-	/*
-	 * Header
-	 */
-	public static final int NAMELEN = 100;
-	public static final int MODELEN = 8;
-	public static final int UIDLEN = 8;
-	public static final int GIDLEN = 8;
-	public static final int SIZELEN = 12;
-	public static final int MODTIMELEN = 12;
-	public static final int CHKSUMLEN = 8;
-	public static final byte LF_OLDNORM = 0;
+  public static final int MODELEN = 8;
 
-	/*
-	 * File Types
-	 */
-	public static final byte LF_NORMAL = (byte) '0';
-	public static final byte LF_LINK = (byte) '1';
-	public static final byte LF_SYMLINK = (byte) '2';
-	public static final byte LF_CHR = (byte) '3';
-	public static final byte LF_BLK = (byte) '4';
-	public static final byte LF_DIR = (byte) '5';
-	public static final byte LF_FIFO = (byte) '6';
-	public static final byte LF_CONTIG = (byte) '7';
+  public static final int UIDLEN = 8;
 
-	/*
-	 * Ustar header
-	 */
+  public static final int GIDLEN = 8;
 
-	public static final String USTAR_MAGIC = "ustar"; // POSIX
+  public static final int SIZELEN = 12;
 
-	public static final int USTAR_MAGICLEN = 8;
-	public static final int USTAR_USER_NAMELEN = 32;
-	public static final int USTAR_GROUP_NAMELEN = 32;
-	public static final int USTAR_DEVLEN = 8;
-	public static final int USTAR_FILENAME_PREFIX = 155;
+  public static final int MODTIMELEN = 12;
 
-	// Header values
-	public StringBuffer name;
-	public int mode;
-	public int userId;
-	public int groupId;
-	public long size;
-	public long modTime;
-	public int checkSum;
-	public byte linkFlag;
-	public StringBuffer linkName;
-	public StringBuffer magic; // ustar indicator and version
-	public StringBuffer userName;
-	public StringBuffer groupName;
-	public int devMajor;
-	public int devMinor;
-	public StringBuffer namePrefix;
+  public static final int CHKSUMLEN = 8;
 
-	public TarHeader() {
-		this.magic = new StringBuffer(TarHeader.USTAR_MAGIC);
+  public static final byte LF_OLDNORM = 0;
 
-		this.name = new StringBuffer();
-		this.linkName = new StringBuffer();
+  public static final byte LF_NORMAL = (byte) '0';
 
-		String user = System.getProperty("user.name", "");
+  public static final byte LF_LINK = (byte) '1';
 
-		if (user.length() > 31)
-			user = user.substring(0, 31);
+  public static final byte LF_SYMLINK = (byte) '2';
 
-		this.userId = 0;
-		this.groupId = 0;
-		this.userName = new StringBuffer(user);
-		this.groupName = new StringBuffer("");
-		this.namePrefix = new StringBuffer();
-	}
+  public static final byte LF_CHR = (byte) '3';
 
-	/**
+  public static final byte LF_BLK = (byte) '4';
+
+  public static final byte LF_DIR = (byte) '5';
+
+  public static final byte LF_FIFO = (byte) '6';
+
+  public static final byte LF_CONTIG = (byte) '7';
+
+  public static final String USTAR_MAGIC = "ustar";
+
+  public static final int USTAR_MAGICLEN = 8;
+
+  public static final int USTAR_USER_NAMELEN = 32;
+
+  public static final int USTAR_GROUP_NAMELEN = 32;
+
+  public static final int USTAR_DEVLEN = 8;
+
+  public static final int USTAR_FILENAME_PREFIX = 155;
+
+  public StringBuffer name;
+
+  public int mode;
+
+  public int userId;
+
+  public int groupId;
+
+  public long size;
+
+  public long modTime;
+
+  public int checkSum;
+
+  public byte linkFlag;
+
+  public StringBuffer linkName;
+
+  public StringBuffer magic;
+
+  public StringBuffer userName;
+
+  public StringBuffer groupName;
+
+  public int devMajor;
+
+  public int devMinor;
+
+  public StringBuffer namePrefix;
+
+  public TarHeader() {
+    this.magic = new StringBuffer(TarHeader.USTAR_MAGIC);
+    this.name = new StringBuffer();
+    this.linkName = new StringBuffer();
+    String user = System.getProperty("user.name", "");
+    if (user.length() > 31) {
+      user = user.substring(0, 31);
+    }
+    this.userId = 0;
+    this.groupId = 0;
+    this.userName = new StringBuffer(user);
+    this.groupName = new StringBuffer("");
+    this.namePrefix = new StringBuffer();
+  }
+
+  /**
 	 * Parse an entry name from a header buffer.
 	 * 
+	 * @param name
 	 * @param header
 	 *            The header buffer from which to parse.
 	 * @param offset
@@ -151,23 +150,23 @@ public class TarHeader {
 	 *            The number of header bytes to parse.
 	 * @return The header's entry name.
 	 */
-	public static StringBuffer parseName(byte[] header, int offset, int length) {
-		StringBuffer result = new StringBuffer(length);
+  public static StringBuffer parseName(byte[] header, int offset, int length) {
+    StringBuffer result = new StringBuffer(length);
+    int end = offset + length;
+    for (int i = offset; i < end; ++i) {
+      if (header[i] == 0) {
+        break;
+      }
+      result.append((char) header[i]);
+    }
+    return result;
+  }
 
-		int end = offset + length;
-		for (int i = offset; i < end; ++i) {
-			if (header[i] == 0)
-				break;
-			result.append((char) header[i]);
-		}
-
-		return result;
-	}
-
-	/**
+  /**
 	 * Determine the number of bytes in an entry name.
 	 * 
 	 * @param name
+	 * @param header
 	 *            The header buffer from which to parse.
 	 * @param offset
 	 *            The offset into the buffer from which to parse.
@@ -175,25 +174,22 @@ public class TarHeader {
 	 *            The number of header bytes to parse.
 	 * @return The number of bytes in a header's entry name.
 	 */
-	public static int getNameBytes(StringBuffer name, byte[] buf, int offset, int length) {
-		int i;
+  public static int getNameBytes(StringBuffer name, byte[] buf, int offset, int length) {
+    int i;
+    for (i = 0; i < length && i < name.length(); ++i) {
+      buf[offset + i] = (byte) name.charAt(i);
+    }
+    for ( ; i < length; ++i) {
+      buf[offset + i] = 0;
+    }
+    return offset + length;
+  }
 
-		for (i = 0; i < length && i < name.length(); ++i) {
-			buf[offset + i] = (byte) name.charAt(i);
-		}
-
-		for (; i < length; ++i) {
-			buf[offset + i] = 0;
-		}
-
-		return offset + length;
-	}
-
-	/**
+  /**
 	 * Creates a new header for a file/directory entry.
 	 * 
 	 * 
-	 * @param entryName
+	 * @param name
 	 *            File name
 	 * @param size
 	 *            File size in bytes
@@ -201,37 +197,35 @@ public class TarHeader {
 	 *            Last modification time in numeric Unix time format
 	 * @param dir
 	 *            Is directory
+	 * 
+	 * @return
 	 */
-	public static TarHeader createHeader(String entryName, long size, long modTime, boolean dir, int permissions) {
-		String name = entryName;
-		name = TarUtils.trim(name.replace(File.separatorChar, '/'), '/');
-
-		TarHeader header = new TarHeader();
-		header.linkName = new StringBuffer("");
-		header.mode = permissions;
-
-		if (name.length() > 100) {
-			header.namePrefix = new StringBuffer(name.substring(0, name.lastIndexOf('/')));
-			header.name = new StringBuffer(name.substring(name.lastIndexOf('/') + 1));
-		} else {
-			header.name = new StringBuffer(name);
-		}
-		if (dir) {
-			header.linkFlag = TarHeader.LF_DIR;
-			if (header.name.charAt(header.name.length() - 1) != '/') {
-				header.name.append("/");
-			}
-			header.size = 0;
-		} else {
-			header.linkFlag = TarHeader.LF_NORMAL;
-			header.size = size;
-		}
-
-		header.modTime = modTime;
-		header.checkSum = 0;
-		header.devMajor = 0;
-		header.devMinor = 0;
-
-		return header;
-	}
+  public static TarHeader createHeader(String entryName, long size, long modTime, boolean dir, int permissions) {
+    String name = entryName;
+    name = TarUtils.trim(name.replace(File.separatorChar, '/'), '/');
+    TarHeader header = new TarHeader();
+    header.linkName = new StringBuffer("");
+    header.mode = permissions;
+    if (name.length() > 100) {
+      header.namePrefix = new StringBuffer(name.substring(0, name.lastIndexOf('/')));
+      header.name = new StringBuffer(name.substring(name.lastIndexOf('/') + 1));
+    } else {
+      header.name = new StringBuffer(name);
+    }
+    if (dir) {
+      header.linkFlag = TarHeader.LF_DIR;
+      if (header.name.charAt(header.name.length() - 1) != '/') {
+        header.name.append("/");
+      }
+      header.size = 0;
+    } else {
+      header.linkFlag = TarHeader.LF_NORMAL;
+      header.size = size;
+    }
+    header.modTime = modTime;
+    header.checkSum = 0;
+    header.devMajor = 0;
+    header.devMinor = 0;
+    return header;
+  }
 }
