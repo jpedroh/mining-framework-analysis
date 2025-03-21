@@ -51,11 +51,21 @@ public class CharacterUtil {
 
 
     /**
+<<<<<<< /usr/src/app/output/huaban/jieba-analysis/f56461b33c95e386ee28e5b745968b7cdd20292b/src/main/java/com/huaban/analysis/jieba/CharacterUtil.java/left.java
+     * 全角 to 半角,大写 to 小写
+     * @param input 输入字符
+     * @return 转换后的字符
+||||||| /usr/src/app/output/huaban/jieba-analysis/f56461b33c95e386ee28e5b745968b7cdd20292b/src/main/java/com/huaban/analysis/jieba/CharacterUtil.java/base.java
+     * 全角->半角,大写->小写
+     * @param input
+     * @return
+=======
      * 全角 to 半角,大写 to 小写
      * 
      * @param input
      *            输入字符
      * @return 转换后的字符
+>>>>>>> /usr/src/app/output/huaban/jieba-analysis/f56461b33c95e386ee28e5b745968b7cdd20292b/src/main/java/com/huaban/analysis/jieba/CharacterUtil.java/right.java
      */
     public static char regularize(char input) {
         if (input == 12288) {

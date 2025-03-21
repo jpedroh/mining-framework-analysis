@@ -64,7 +64,6 @@ public class WordDictionary {
             while (br.ready()) {
                 String line = br.readLine();
                 String[] tokens = line.split("[\t ]+");
-
                 if (tokens.length < 3)
                     continue;
 
@@ -172,12 +171,10 @@ public class WordDictionary {
         return freqs.containsKey(word);
     }
 
-
-    public Word getWord(String token) {
-        if (containsWord(token)) {
+    public Word getWord(String token){
+        if(containsWord(token)){
             return freqs.get(token);
-        }
-        else {
+        } else {
             return null;
         }
     }
