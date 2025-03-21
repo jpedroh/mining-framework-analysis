@@ -1,44 +1,32 @@
 package de.deepamehta.accesscontrol;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.Topic;
 import de.deepamehta.core.service.accesscontrol.Credentials;
 import de.deepamehta.core.service.accesscontrol.Permissions;
 import de.deepamehta.core.service.accesscontrol.SharingMode;
-
 import java.util.Collection;
 import java.util.Set;
 
-
-
 public interface AccessControlService {
+  static final String ADMIN_USERNAME = "admin";
 
-    // ------------------------------------------------------------------------------------------------------- Constants
+  static final String ADMIN_INITIAL_PASSWORD = System.getProperty("dm4.security.initial_admin_password", "");
 
-    // Admin user account
-    static final String ADMIN_USERNAME = "admin";
-    static final String ADMIN_INITIAL_PASSWORD = System.getProperty("dm4.security.initial_admin_password", "");
+  static final String ADMINISTRATION_WORKSPACE_NAME = "Administration";
 
-    // Administration workspace
-    static final String ADMINISTRATION_WORKSPACE_NAME = "Administration";
-    static final String ADMINISTRATION_WORKSPACE_URI = "dm4.workspaces.administration";
-    static final SharingMode ADMINISTRATION_WORKSPACE_SHARING_MODE = SharingMode.COLLABORATIVE;
+  static final String ADMINISTRATION_WORKSPACE_URI = "dm4.workspaces.administration";
 
-    // System workspace
-    static final String SYSTEM_WORKSPACE_NAME = "System";
-    static final String SYSTEM_WORKSPACE_URI = "dm4.workspaces.system";
-    static final SharingMode SYSTEM_WORKSPACE_SHARING_MODE = SharingMode.PUBLIC;
+  static final SharingMode ADMINISTRATION_WORKSPACE_SHARING_MODE = SharingMode.COLLABORATIVE;
 
-    // Private workspaces
-    static final String DEFAULT_PRIVATE_WORKSPACE_NAME = "Private Workspace";
+  static final String SYSTEM_WORKSPACE_NAME = "System";
 
-    // -------------------------------------------------------------------------------------------------- Public Methods
+  static final String SYSTEM_WORKSPACE_URI = "dm4.workspaces.system";
 
+  static final SharingMode SYSTEM_WORKSPACE_SHARING_MODE = SharingMode.PUBLIC;
 
+  static final String DEFAULT_PRIVATE_WORKSPACE_NAME = "Private Workspace";
 
-    // === User Session ===
-
-    /**
+  /**
      * Checks weather the credentials in the authorization string match an existing User Account,
      * and if so, creates an HTTP session. ### FIXDOC
      *
@@ -49,9 +37,9 @@ public interface AccessControlService {
      * @return  ### FIXDOC: The username of the matched User Account (a Topic of type "Username" /
      *          <code>dm4.accesscontrol.username</code>), or <code>null</code> if there is no matching User Account.
      */
-    void login();
+  void login();
 
-    /**
+  /**
      * Logs the user out. That is invalidating the session associated with the JSESSION ID cookie.
      *
      * For a "non-private" DM installation the response is 204 No Content.
@@ -59,57 +47,45 @@ public interface AccessControlService {
      * supposed to shutdown the DM GUI then. The webclient of a "private" DM installation must only be visible/usable
      * when logged in.
      */
-    void logout();
+  void logout();
 
-    // ---
-
-    /**
+  /**
      * Returns the username of the logged in user.
      *
      * @return  The username, or <code>null</code> if no user is logged in.
      */
-    String getUsername();
+  String getUsername();
 
-    /**
+  /**
      * Returns the "Username" topic of the logged in user.
      *
      * @return  The "Username" topic (type <code>dm4.accesscontrol.username</code>),
      *          or <code>null</code> if no user is logged in.
      */
-    Topic getUsernameTopic();
+  Topic getUsernameTopic();
 
-    // ---
-
-    /**
+  /**
      * Returns the private workspace of the logged in user.
+     * If no user is logged in an exception is thrown.
      * <p>
-     * Note: a user can have more than one private workspace.
-     * This method returns only the first one.
-     *
-     * @return  IllegalStateException   if no user is logged in.
-     * @throws  RuntimeException        if the logged in user has no private workspace.
-     *
-     * @return  The logged in user's private workspace (a topic of type "Workspace").
+     * Note: a user can have more than one private workspace. The workspace returned
+     * by this method is the one that holds the user's password topic.
      */
-    Topic getPrivateWorkspace();
+  Topic getPrivateWorkspace();
 
-
-
-    // === User Accounts ===
-
-    /**
+  /**
      * @return  The "Username" topic of the created user account.
      */
-    Topic createUserAccount(Credentials cred);
+  Topic createUserAccount(Credentials cred);
 
-    /**
+  /**
      * Creates a Username topic and a private workspace.
      * 
      * @return  created "Username" topic.
      */
-    Topic createUsername(String username);
+  Topic createUsername(String username);
 
-    /**
+  /**
      * Returns the "Username" topic for the specified username.
      *
      * @param   username    a username. Must not be null.
@@ -117,32 +93,26 @@ public interface AccessControlService {
      * @return  The "Username" topic (type <code>dm4.accesscontrol.username</code>),
      *          or <code>null</code> if no such username exists.
      */
-    Topic getUsernameTopic(String username);
+  Topic getUsernameTopic(String username);
 
-
-
-    // === Workspaces / Memberships ===
-
-    /**
+  /**
      * Returns the owner of a workspace.
      *
      * @return  The username of the owner, or <code>null</code> if no owner is set.
      *          ### TODO: should throw an exception instead of returning null
      */
-    String getWorkspaceOwner(long workspaceId);
+  String getWorkspaceOwner(long workspaceId);
 
-    /**
+  /**
      * Sets the owner of a workspace.
      * ### TODO: should take an ID instead a topic.
      * ### Core service must be extended with a property setter.
      */
-    void setWorkspaceOwner(Topic workspace, String username);
+  void setWorkspaceOwner(Topic workspace, String username);
 
-    // ---
+  void createMembership(String username, long workspaceId);
 
-    void createMembership(String username, long workspaceId);
-
-    /**
+  /**
      * Checks if a user is a member of the given workspace.
      *
      * @param   username        the user.
@@ -152,61 +122,43 @@ public interface AccessControlService {
      *
      * @return  <code>true</code> if the user is a member, <code>false</code> otherwise.
      */
-    boolean isMember(String username, long workspaceId);
+  boolean isMember(String username, long workspaceId);
 
-
-
-    // === Permissions ===
-
-    // TODO: unify both into "getPermissions()"
-
-    /**
+  /**
      * @return  A Permissions object with one entry: <code>dm4.accesscontrol.operation.write</code>.
      */
-    Permissions getTopicPermissions(long topicId);
+  Permissions getTopicPermissions(long topicId);
 
-    /**
+  /**
      * @return  A Permissions object with one entry: <code>dm4.accesscontrol.operation.write</code>.
      */
-    Permissions getAssociationPermissions(long assocId);
+  Permissions getAssociationPermissions(long assocId);
 
-
-
-    // === Object Info ===
-
-    /**
+  /**
      * Returns the creator of a topic or an association.
      *
      * @return  The username of the creator, or <code>null</code> if no creator is set.
      */
-    String getCreator(long objectId);
+  String getCreator(long objectId);
 
-    /**
+  /**
      * Returns the modifier of a topic or an association.
      *
      * @return  The username of the modifier, or <code>null</code> if no modifier is set.
      */
-    String getModifier(long objectId);
+  String getModifier(long objectId);
 
+  Collection<Topic> getTopicsByCreator(String username);
 
+  Collection<Topic> getTopicsByOwner(String username);
 
-    // === Retrieval ===
+  Collection<Association> getAssociationsByCreator(String username);
 
-    Collection<Topic> getTopicsByCreator(String username);
+  Collection<Association> getAssociationsByOwner(String username);
 
-    Collection<Topic> getTopicsByOwner(String username);
+  void registerAuthorizationMethod(String name, AuthorizationMethod am);
 
-    Collection<Association> getAssociationsByCreator(String username);
+  void unregisterAuthorizationMethod(String name);
 
-    Collection<Association> getAssociationsByOwner(String username);
-
-
-
-    // === Authorization Methods ===
-
-    void registerAuthorizationMethod(String name, AuthorizationMethod am);
-
-    void unregisterAuthorizationMethod(String name);
-
-    Set<String> getAuthorizationMethods();
+  Set<String> getAuthorizationMethods();
 }
