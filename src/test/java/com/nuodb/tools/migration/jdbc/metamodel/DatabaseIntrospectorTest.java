@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.Map;
@@ -12,16 +13,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class DatabaseIntrospectorTest {
-    private static final String TEST_CATALOG_NAME = "TEST_CATALOG";
-    private static final String TEST_SCHEMA_NAME = "TEST_SCHEMA";
+    Database database;
+    DatabaseMetaData mockMetaData;
+    DatabaseIntrospector databaseIntrospector;
 
-    private Database database;
-    private DatabaseMetaData mockMetaData;
-    private DatabaseIntrospector databaseIntrospector;
+    final String TEST_CATALOG_NAME = "TEST_CATALOG";
+    final String TEST_SCHEMA_NAME = "TEST_SCHEMA";
 
     @Before
     public void setUp() throws Exception {
-        databaseIntrospector = new DatabaseIntrospector();
+         databaseIntrospector =
+                new DatabaseIntrospector();
 
         mockMetaData = mock(DatabaseMetaData.class);
         database = new Database(); // mock(Database.class);
@@ -37,6 +39,14 @@ public class DatabaseIntrospectorTest {
         when(mockMetaData.getSchemas()).thenReturn(mockResultSet);
     }
 
+
+    @Test
+    public void testWithConnectionProvider() throws Exception {
+        
+                databaseIntrospector.withConnection(mock(Connection.class));
+        Assert.assertNotNull(databaseIntrospector.getConnectionProvider());
+    }
+
     @Test
     public void testReadCatalogs() throws Exception {
         databaseIntrospector.readCatalogs(mockMetaData, database);
@@ -45,14 +55,18 @@ public class DatabaseIntrospectorTest {
         Assert.assertFalse(catalogs.isEmpty());
         Assert.assertTrue(catalogs.containsKey(Name.valueOf(TEST_CATALOG_NAME)));
         Assert.assertEquals(catalogs.size(), 1);
+
     }
 
     @Test
     public void testReadSchemas() throws Exception {
         databaseIntrospector.readSchemas(mockMetaData, database);
         final Name schemaName = Name.valueOf(TEST_SCHEMA_NAME);
-        final Schema schema = database.getSchema(Name.valueOf(TEST_CATALOG_NAME), schemaName);
+        final Schema schema =
+                database.getSchema(Name.valueOf(TEST_CATALOG_NAME), schemaName);
         Assert.assertNotNull(schema);
         Assert.assertEquals(schema.getName(), schemaName);
     }
+
+
 }
