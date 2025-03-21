@@ -2171,13 +2171,14 @@ public class Cluster implements Closeable {
                             }
                             break;
                         case DROPPED:
+<<<<<<< /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
                             KeyspaceMetadata keyspace;
                             switch (scc.target) {
                                 case KEYSPACE:
                                     manager.metadata.removeKeyspace(scc.keyspace);
                                     break;
                                 case TABLE:
-                                    keyspace = manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                    keyspace = manager.metadata.getKeyspace(scc.keyspace);
                                     if (keyspace == null)
                                         logger.warn("Received a DROPPED notification for table {}.{}, but this keyspace is unknown in our metadata",
                                             scc.keyspace, scc.name);
@@ -2185,13 +2186,34 @@ public class Cluster implements Closeable {
                                         keyspace.removeTable(scc.name);
                                     break;
                                 case TYPE:
-                                    keyspace = manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                    keyspace = manager.metadata.getKeyspace(scc.keyspace);
                                     if (keyspace == null)
                                         logger.warn("Received a DROPPED notification for UDT {}.{}, but this keyspace is unknown in our metadata",
                                             scc.keyspace, scc.name);
                                     else
                                         keyspace.removeUserType(scc.name);
                                     break;
+||||||| /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+                            if (scc.table.isEmpty())
+                                manager.metadata.removeKeyspace(scc.keyspace);
+                            else {
+                                KeyspaceMetadata keyspace = manager.metadata.getKeyspace(scc.keyspace);
+                                if (keyspace == null)
+                                    logger.warn("Received a DROPPED notification for {}.{}, but this keyspace is unknown in our metadata",
+                                        scc.keyspace, scc.table);
+                                else
+                                    keyspace.removeTable(scc.table);
+=======
+                            if (scc.table.isEmpty())
+                                manager.metadata.removeKeyspace(scc.keyspace);
+                            else {
+                                KeyspaceMetadata keyspace = manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                if (keyspace == null)
+                                    logger.warn("Received a DROPPED notification for {}.{}, but this keyspace is unknown in our metadata",
+                                        scc.keyspace, scc.table);
+                                else
+                                    keyspace.removeTable(scc.table);
+>>>>>>> /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
                             }
                             break;
                         case UPDATED:

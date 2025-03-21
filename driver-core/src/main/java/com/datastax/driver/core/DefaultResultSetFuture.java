@@ -84,6 +84,7 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
                                     }
                                     break;
                                 case DROPPED:
+<<<<<<< /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/DefaultResultSetFuture.java/left.java
                                     KeyspaceMetadata keyspace;
                                     switch (scc.target) {
                                         case KEYSPACE:
@@ -95,7 +96,7 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
                                             session.cluster.manager.metadata.removeKeyspace(scc.keyspace);
                                             break;
                                         case TABLE:
-                                            keyspace = session.cluster.manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                            keyspace = session.cluster.manager.metadata.getKeyspace(scc.keyspace);
                                             if (keyspace == null)
                                                 logger.warn("Received a DROPPED notification for table {}.{}, but this keyspace is unknown in our metadata",
                                                     scc.keyspace, scc.name);
@@ -103,13 +104,44 @@ class DefaultResultSetFuture extends AbstractFuture<ResultSet> implements Result
                                                 keyspace.removeTable(scc.name);
                                             break;
                                         case TYPE:
-                                            keyspace = session.cluster.manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                            keyspace = session.cluster.manager.metadata.getKeyspace(scc.keyspace);
                                             if (keyspace == null)
                                                 logger.warn("Received a DROPPED notification for UDT {}.{}, but this keyspace is unknown in our metadata",
                                                     scc.keyspace, scc.name);
                                             else
                                                 keyspace.removeUserType(scc.name);
                                             break;
+||||||| /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/DefaultResultSetFuture.java/base.java
+                                    if (scc.columnFamily.isEmpty()) {
+                                        // If that the one keyspace we are logged in, reset to null (it shouldn't really happen but ...)
+                                        // Note: Actually, Cassandra doesn't do that so we don't either as this could confuse prepared statements.
+                                        // We'll add it back if CASSANDRA-5358 changes that behavior
+                                        //if (scc.keyspace.equals(session.poolsState.keyspace))
+                                        //    session.poolsState.setKeyspace(null);
+                                        session.cluster.manager.metadata.removeKeyspace(scc.keyspace);
+                                    } else {
+                                        KeyspaceMetadata keyspace = session.cluster.manager.metadata.getKeyspace(scc.keyspace);
+                                        if (keyspace == null)
+                                            logger.warn("Received a DROPPED notification for {}.{}, but this keyspace is unknown in our metadata",
+                                                scc.keyspace, scc.columnFamily);
+                                        else
+                                            keyspace.removeTable(scc.columnFamily);
+=======
+                                    if (scc.columnFamily.isEmpty()) {
+                                        // If that the one keyspace we are logged in, reset to null (it shouldn't really happen but ...)
+                                        // Note: Actually, Cassandra doesn't do that so we don't either as this could confuse prepared statements.
+                                        // We'll add it back if CASSANDRA-5358 changes that behavior
+                                        //if (scc.keyspace.equals(session.poolsState.keyspace))
+                                        //    session.poolsState.setKeyspace(null);
+                                        session.cluster.manager.metadata.removeKeyspace(scc.keyspace);
+                                    } else {
+                                        KeyspaceMetadata keyspace = session.cluster.manager.metadata.getKeyspaceInternal(scc.keyspace);
+                                        if (keyspace == null)
+                                            logger.warn("Received a DROPPED notification for {}.{}, but this keyspace is unknown in our metadata",
+                                                scc.keyspace, scc.columnFamily);
+                                        else
+                                            keyspace.removeTable(scc.columnFamily);
+>>>>>>> /usr/src/app/output/datastax/java-driver/6af4247c0b94538f16fbac838eb9d6c0af4098b8/driver-core/src/main/java/com/datastax/driver/core/DefaultResultSetFuture.java/right.java
                                     }
                                     this.setResult(rs);
                                     break;
