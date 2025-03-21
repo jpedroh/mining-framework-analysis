@@ -1,32 +1,7 @@
-/*
- * Copyright (C) 2011 Tatsuhiro Tsujikawa
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 package net.sourceforge.argparse4j.inf;
-
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 
@@ -49,15 +24,14 @@ import net.sourceforge.argparse4j.annotation.Arg;
  * </p>
  */
 public interface ArgumentParser {
-
-    /**
+  /**
      * <p>
      * Creates new {@link Argument} object and adds to this parser and returns
      * the object.
      * </p>
      * <p>
      * The {@code nameOrFlags} is either a single name of positional argument or
-     * a list of option strings for named argument, e.g. {@code foo} or
+     * a list of option strings for optional argument, e.g. {@code foo} or
      * {@code -f, --foo}.
      * </p>
      * 
@@ -65,9 +39,9 @@ public interface ArgumentParser {
      *            A name or a list of option strings of new {@link Argument}.
      * @return {@link Argument} object.
      */
-    Argument addArgument(String... nameOrFlags);
+  Argument addArgument(String... nameOrFlags);
 
-    /**
+  /**
      * <p>
      * Creates new {@link ArgumentGroup} object and adds to this parser and
      * returns the object.
@@ -82,9 +56,9 @@ public interface ArgumentParser {
      *            The title printed in help message.
      * @return {@link ArgumentGroup} object.
      */
-    ArgumentGroup addArgumentGroup(String title);
+  ArgumentGroup addArgumentGroup(String title);
 
-    /**
+  /**
      * <p>
      * Creates new mutually exclusive group, {@link MutuallyExclusiveGroup}
      * object, without title and adds to this parser and returns the object.
@@ -92,9 +66,9 @@ public interface ArgumentParser {
      * 
      * @return {@link MutuallyExclusiveGroup} object.
      */
-    MutuallyExclusiveGroup addMutuallyExclusiveGroup();
+  MutuallyExclusiveGroup addMutuallyExclusiveGroup();
 
-    /**
+  /**
      * <p>
      * Creates new mutually exclusive group, {@link MutuallyExclusiveGroup}
      * object, and adds to this parser and returns the object.
@@ -110,9 +84,9 @@ public interface ArgumentParser {
      *            The title printed in help message.
      * @return The {@link MutuallyExclusiveGroup} object.
      */
-    MutuallyExclusiveGroup addMutuallyExclusiveGroup(String title);
+  MutuallyExclusiveGroup addMutuallyExclusiveGroup(String title);
 
-    /**
+  /**
      * <p>
      * Returns {@link Subparsers}.
      * </p>
@@ -125,9 +99,9 @@ public interface ArgumentParser {
      * 
      * @return {@link Subparsers} object.
      */
-    Subparsers addSubparsers();
+  Subparsers addSubparsers();
 
-    /**
+  /**
      * <p>
      * Sets the text to display as usage line. By default, the usage line is
      * calculated from the arguments this object contains.
@@ -142,27 +116,27 @@ public interface ArgumentParser {
      *            usage text
      * @return this
      */
-    ArgumentParser usage(String usage);
+  ArgumentParser usage(String usage);
 
-    /**
+  /**
      * Sets the text to display before the argument help.
      * 
      * @param description
      *            The text to display before the argument help.
      * @return this
      */
-    ArgumentParser description(String description);
+  ArgumentParser description(String description);
 
-    /**
+  /**
      * Sets the text to display after the argument help.
      * 
      * @param epilog
      *            The text to display after the argument help.
      * @return this
      */
-    ArgumentParser epilog(String epilog);
+  ArgumentParser epilog(String epilog);
 
-    /**
+  /**
      * <p>
      * Sets version string. It will be displayed {@link #printVersion()}.
      * </p>
@@ -177,9 +151,9 @@ public interface ArgumentParser {
      *            The version string.
      * @return this
      */
-    ArgumentParser version(String version);
+  ArgumentParser version(String version);
 
-    /**
+  /**
      * <p>
      * If defaultHelp is {@code true}, the default values of arguments are
      * printed in help message.
@@ -192,72 +166,72 @@ public interface ArgumentParser {
      *            Switch to display the default value in help message.
      * @return this
      */
-    ArgumentParser defaultHelp(boolean defaultHelp);
+  ArgumentParser defaultHelp(boolean defaultHelp);
 
-    /**
+  /**
      * Prints help message in stdout.
      */
-    void printHelp();
+  void printHelp();
 
-    /**
+  /**
      * Prints help message in writer.
      * 
      * @param writer
      *            Writer to print message.
      */
-    void printHelp(PrintWriter writer);
+  void printHelp(PrintWriter writer);
 
-    /**
+  /**
      * Returns help message.
      * 
      * @return The help message.
      */
-    String formatHelp();
+  String formatHelp();
 
-    /**
+  /**
      * Print a brief description of how the program should be invoked on the
      * command line in stdout.
      */
-    void printUsage();
+  void printUsage();
 
-    /**
+  /**
      * Print a brief description of how the program should be invoked on the
      * command line in writer.
      * 
      * @param writer
      *            Writer to print message.
      */
-    void printUsage(PrintWriter writer);
+  void printUsage(PrintWriter writer);
 
-    /**
+  /**
      * Returns a brief description of how the program should be invoked on the
      * command line.
      * 
      * @return Usage text.
      */
-    String formatUsage();
+  String formatUsage();
 
-    /**
+  /**
      * Prints version string in stdout.
      */
-    void printVersion();
+  void printVersion();
 
-    /**
+  /**
      * Prints version string in writer.
      * 
      * @param writer
      *            Writer to print version string.
      */
-    void printVersion(PrintWriter writer);
+  void printVersion(PrintWriter writer);
 
-    /**
+  /**
      * Returns version string.
      * 
      * @return The version string.
      */
-    String formatVersion();
+  String formatVersion();
 
-    /**
+  /**
      * <p>
      * Sets parser-level default value of attribute {@code dest}.
      * </p>
@@ -271,9 +245,9 @@ public interface ArgumentParser {
      *            The default value.
      * @return this
      */
-    ArgumentParser setDefault(String dest, Object value);
+  ArgumentParser setDefault(String dest, Object value);
 
-    /**
+  /**
      * <p>
      * Sets parser-level default values from {@code attrs}.
      * </p>
@@ -287,9 +261,9 @@ public interface ArgumentParser {
      *            The parser-level default values to add.
      * @return this
      */
-    ArgumentParser setDefaults(Map<String, Object> attrs);
+  ArgumentParser setDefaults(Map<String, Object> attrs);
 
-    /**
+  /**
      * <p>
      * Returns default value of given {@code dest}.
      * </p>
@@ -307,9 +281,9 @@ public interface ArgumentParser {
      *            The attribute name of default value to get.
      * @return The default value of given dest.
      */
-    Object getDefault(String dest);
+  Object getDefault(String dest);
 
-    /**
+  /**
      * <p>
      * Parses command line arguments, handling any errors.
      * </p>
@@ -325,9 +299,9 @@ public interface ArgumentParser {
      *            Command line arguments.
      * @return {@link Namespace} object.
      */
-    Namespace parseArgsOrFail(String args[]);
+  Namespace parseArgsOrFail(String[] args);
 
-    /**
+  /**
      * <p>
      * Parses command line arguments.
      * </p>
@@ -343,9 +317,9 @@ public interface ArgumentParser {
      * @throws ArgumentParserException
      *             If an error occurred.
      */
-    Namespace parseArgs(String args[]) throws ArgumentParserException;
+  Namespace parseArgs(String[] args) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Parses command line arguments.
      * </p>
@@ -361,10 +335,9 @@ public interface ArgumentParser {
      * @throws ArgumentParserException
      *             If an error occurred.
      */
-    void parseArgs(String[] args, Map<String, Object> attrs)
-            throws ArgumentParserException;
+  void parseArgs(String[] args, Map<String, Object> attrs) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Parses command line arguments.
      * </p>
@@ -385,10 +358,9 @@ public interface ArgumentParser {
      * @throws ArgumentParserException
      *             If an error occurred.
      */
-    void parseArgs(String[] args, Object userData)
-            throws ArgumentParserException;
+  void parseArgs(String[] args, Object userData) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Parses command line arguments.
      * </p>
@@ -408,10 +380,9 @@ public interface ArgumentParser {
      * @throws ArgumentParserException
      *             If an error occurred.
      */
-    void parseArgs(String[] args, Map<String, Object> attrs, Object userData)
-            throws ArgumentParserException;
+  void parseArgs(String[] args, Map<String, Object> attrs, Object userData) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Just like {@link #parseArgsOrFail(String[])}, but parses only known
      * arguments without throwing exception for unrecognized arguments. If
@@ -425,9 +396,9 @@ public interface ArgumentParser {
      * @return {@link Namespace} object.
      * @since 0.7.0
      */
-    Namespace parseKnownArgsOrFail(String args[], List<String> unknown);
+  Namespace parseKnownArgsOrFail(String[] args, List<String> unknown);
 
-    /**
+  /**
      * <p>
      * Just like {@link #parseArgs(String[])}, but parses only known arguments
      * without throwing exception for unrecognized arguments. If {@code unknown}
@@ -443,10 +414,9 @@ public interface ArgumentParser {
      *             If an error occurred.
      * @since 0.7.0
      */
-    Namespace parseKnownArgs(String args[], List<String> unknown)
-            throws ArgumentParserException;
+  Namespace parseKnownArgs(String[] args, List<String> unknown) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Just like {@link #parseArgs(String[], Map)}, but parses only known
      * arguments without throwing exception for unrecognized arguments. If
@@ -463,10 +433,9 @@ public interface ArgumentParser {
      *             If an error occurred.
      * @since 0.7.0
      */
-    void parseKnownArgs(String[] args, List<String> unknown,
-            Map<String, Object> attrs) throws ArgumentParserException;
+  void parseKnownArgs(String[] args, List<String> unknown, Map<String, Object> attrs) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Just like {@link #parseArgs(String[], Object)}, but parses only known
      * arguments without throwing exception for unrecognized arguments. If
@@ -483,10 +452,9 @@ public interface ArgumentParser {
      *             If an error occurred.
      * @since 0.7.0
      */
-    void parseKnownArgs(String[] args, List<String> unknown, Object userData)
-            throws ArgumentParserException;
+  void parseKnownArgs(String[] args, List<String> unknown, Object userData) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Just like {@link #parseArgs(String[], Map, Object)}, but parses only
      * known arguments without throwing exception for unrecognized arguments. If
@@ -505,11 +473,9 @@ public interface ArgumentParser {
      *             If an error occurred.
      * @since 0.7.0
      */
-    void parseKnownArgs(String[] args, List<String> unknown,
-            Map<String, Object> attrs, Object userData)
-            throws ArgumentParserException;
+  void parseKnownArgs(String[] args, List<String> unknown, Map<String, Object> attrs, Object userData) throws ArgumentParserException;
 
-    /**
+  /**
      * <p>
      * Prints usage and error message.
      * </p>
@@ -520,9 +486,9 @@ public interface ArgumentParser {
      * @param e
      *            Error thrown by {@link #parseArgs(String[])}.
      */
-    void handleError(ArgumentParserException e);
+  void handleError(ArgumentParserException e);
 
-    /**
+  /**
      * <p>
      * Prints usage and error message to the given writer.
      * </p>
@@ -533,9 +499,9 @@ public interface ArgumentParser {
      * @param e
      *            Error thrown by {@link #parseArgs(String[])}.
      */
-    void handleError(ArgumentParserException e, PrintWriter writer);
+  void handleError(ArgumentParserException e, PrintWriter writer);
 
-    /**
+  /**
      * <p>
      * Get the configuration of this argument parser.
      * </p>
@@ -543,5 +509,5 @@ public interface ArgumentParser {
      * @return The argument parser configuration.
      * @since 0.8.0
      */
-    ArgumentParserConfiguration getConfig();
+  ArgumentParserConfiguration getConfig();
 }

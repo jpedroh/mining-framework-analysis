@@ -1,32 +1,7 @@
-/*
- * Copyright (C) 2011 Tatsuhiro Tsujikawa
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 package net.sourceforge.argparse4j;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
 import net.sourceforge.argparse4j.helper.ASCIITextWidthCounter;
 import net.sourceforge.argparse4j.helper.CJKTextWidthCounter;
 import net.sourceforge.argparse4j.inf.Argument;
@@ -40,20 +15,19 @@ import net.sourceforge.argparse4j.internal.TerminalWidth;
  * 
  */
 public final class ArgumentParsers {
-
-    /**
+  /**
      * Intentionally made private to avoid to get instantiated in application
      * code.
      */
-    private ArgumentParsers() {
-    }
+  private ArgumentParsers() {
+  }
 
-    /**
+  /**
      * Default prefix characters.
      */
-    public static final String DEFAULT_PREFIX_CHARS = "-";
+  public static final String DEFAULT_PREFIX_CHARS = "-";
 
-    /**
+  /**
      * <p>
      * Creates {@link ArgumentParserBuilder} with given program name.
      * </p>
@@ -62,11 +36,11 @@ public final class ArgumentParsers {
      *         The program name
      * @return ArgumentParserBuilder object
      */
-    public static ArgumentParserBuilder newFor(String prog) {
-        return new ArgumentParserBuilder(prog);
-    }
+  public static ArgumentParserBuilder newFor(String prog) {
+    return new ArgumentParserBuilder(prog);
+  }
 
-    /**
+  /**
      * <p>
      * Creates {@link ArgumentParser} with given program name.
      * </p>
@@ -80,12 +54,11 @@ public final class ArgumentParsers {
      * @return ArgumentParser object
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static ArgumentParser newArgumentParser(String prog) {
-        return newArgumentParser(prog, true, DEFAULT_PREFIX_CHARS, null);
-    }
+  @Deprecated public static ArgumentParser newArgumentParser(String prog) {
+    return newArgumentParser(prog, true, DEFAULT_PREFIX_CHARS, null);
+  }
 
-    /**
+  /**
      * <p>
      * Creates {@link ArgumentParser} with given program name and addHelp.
      * </p>
@@ -102,12 +75,11 @@ public final class ArgumentParsers {
      * @return ArgumentParser object
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static ArgumentParser newArgumentParser(String prog, boolean addHelp) {
-        return newArgumentParser(prog, addHelp, DEFAULT_PREFIX_CHARS, null);
-    }
+  @Deprecated public static ArgumentParser newArgumentParser(String prog, boolean addHelp) {
+    return newArgumentParser(prog, addHelp, DEFAULT_PREFIX_CHARS, null);
+  }
 
-    /**
+  /**
      * <p>
      * Creates {@link ArgumentParser} with given program name, addHelp and
      * prefixChars.
@@ -124,17 +96,15 @@ public final class ArgumentParsers {
      *            If true, {@code -h/--help} are available. If false, they are
      *            not.
      * @param prefixChars
-     *            The set of characters that prefix named arguments.
+     *            The set of characters that prefix optional arguments.
      * @return ArgumentParser object.
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static ArgumentParser newArgumentParser(String prog,
-            boolean addHelp, String prefixChars) {
-        return newArgumentParser(prog, addHelp, prefixChars, null);
-    }
+  @Deprecated public static ArgumentParser newArgumentParser(String prog, boolean addHelp, String prefixChars) {
+    return newArgumentParser(prog, addHelp, prefixChars, null);
+  }
 
-    /**
+  /**
      * <p>
      * Creates {@link ArgumentParser} with given program name, addHelp and
      * prefixChars.
@@ -146,7 +116,7 @@ public final class ArgumentParsers {
      *            If true, {@code -h/--help} are available. If false, they are
      *            not.
      * @param prefixChars
-     *            The set of characters that prefix named arguments.
+     *            The set of characters that prefix optional arguments.
      * @param fromFilePrefix
      *            The set of characters that prefix file path from which
      *            additional arguments should be read. Specify {@code null} to
@@ -154,25 +124,18 @@ public final class ArgumentParsers {
      * @return ArgumentParser object.
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static ArgumentParser newArgumentParser(String prog,
-            boolean addHelp, String prefixChars, String fromFilePrefix) {
-        ArgumentParserConfigurationImpl config = new ArgumentParserConfigurationImpl(
-                prog, addHelp, prefixChars, fromFilePrefix, Locale.getDefault(),
-                cjkWidthHack_ && cjkWidthLangs_.contains(Locale.getDefault()
-                        .getLanguage()) ? new CJKTextWidthCounter() : new ASCIITextWidthCounter(),
-                getFormatWidth(), isSingleMetavar(),
-                getNoDestConversionForPositionalArgs());
-        return new ArgumentParserImpl(config, null, null);
-    }
+  @Deprecated public static ArgumentParser newArgumentParser(String prog, boolean addHelp, String prefixChars, String fromFilePrefix) {
+    ArgumentParserConfigurationImpl config = new ArgumentParserConfigurationImpl(prog, addHelp, prefixChars, fromFilePrefix, Locale.getDefault(), cjkWidthHack_ && cjkWidthLangs_.contains(Locale.getDefault().getLanguage()) ? new CJKTextWidthCounter() : new ASCIITextWidthCounter(), getFormatWidth(), isSingleMetavar(), getNoDestConversionForPositionalArgs());
+    return new ArgumentParserImpl(config, null, null);
+  }
 
-    private static final String cjkWidthLangsSrc_[] = { "ja", "zh", "ko" };
-    static List<String> cjkWidthLangs_ = Arrays
-            .asList(cjkWidthLangsSrc_);
+  private static final String cjkWidthLangsSrc_[] = { "ja", "zh", "ko" };
 
-    private static boolean cjkWidthHack_ = true;
+  static List<String> cjkWidthLangs_ = Arrays.asList(cjkWidthLangsSrc_);
 
-    /**
+  private static boolean cjkWidthHack_ = true;
+
+  /**
      * <p>
      * Set {@code true} to enable CJK width hack.
      * </p>
@@ -188,25 +151,23 @@ public final class ArgumentParsers {
      *            {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static void setCJKWidthHack(boolean flag) {
-        cjkWidthHack_ = flag;
-    }
+  @Deprecated public static void setCJKWidthHack(boolean flag) {
+    cjkWidthHack_ = flag;
+  }
 
-    /**
+  /**
      * Returns true iff CJK width hack is enabled.
      * 
      * @return {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static boolean getCjkWidthHack() {
-        return cjkWidthHack_;
-    }
+  @Deprecated public static boolean getCjkWidthHack() {
+    return cjkWidthHack_;
+  }
 
-    private static boolean terminalWidthDetection_ = true;
+  private static boolean terminalWidthDetection_ = true;
 
-    /**
+  /**
      * <p>
      * Set {@code true} to enable terminal width detection.
      * </p>
@@ -220,28 +181,26 @@ public final class ArgumentParsers {
      *            {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static void setTerminalWidthDetection(boolean flag) {
-        terminalWidthDetection_ = flag;
-    }
+  @Deprecated public static void setTerminalWidthDetection(boolean flag) {
+    terminalWidthDetection_ = flag;
+  }
 
-    /**
+  /**
      * Returns true iff terminal width detection is enabled.
      * 
      * @return {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static boolean getTerminalWidthDetection() {
-        return terminalWidthDetection_;
-    }
+  @Deprecated public static boolean getTerminalWidthDetection() {
+    return terminalWidthDetection_;
+  }
 
-    /**
+  /**
      * Default format width of text output.
      */
-    public static final int DEFAULT_FORMAT_WIDTH = 75;
+  public static final int DEFAULT_FORMAT_WIDTH = 75;
 
-    /**
+  /**
      * Returns the width of formatted text. If the terminal width detection is
      * enabled, this method will detect the terminal width automatically and
      * calculate the width based on it. If it is not enabled or auto-detection
@@ -250,19 +209,18 @@ public final class ArgumentParsers {
      * @return the width of formatted text
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static int getFormatWidth() {
-        if (terminalWidthDetection_) {
-            int w = new TerminalWidth().getTerminalWidth() - 5;
-            return w <= 0 ? DEFAULT_FORMAT_WIDTH : w;
-        } else {
-            return DEFAULT_FORMAT_WIDTH;
-        }
+  @Deprecated public static int getFormatWidth() {
+    if (terminalWidthDetection_) {
+      int w = new TerminalWidth().getTerminalWidth() - 5;
+      return w <= 0 ? DEFAULT_FORMAT_WIDTH : w;
+    } else {
+      return DEFAULT_FORMAT_WIDTH;
     }
+  }
 
-    private static boolean singleMetavar_ = false;
+  private static boolean singleMetavar_ = false;
 
-    /**
+  /**
      * <p>
      * If singleMetavar is {@code true}, a metavar string in help message is
      * only shown after the last flag instead of each flag.
@@ -288,25 +246,23 @@ public final class ArgumentParsers {
      *            Switch to display a metavar only after the last flag.
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static void setSingleMetavar(boolean singleMetavar) {
-        singleMetavar_ = singleMetavar;
-    }
+  @Deprecated public static void setSingleMetavar(boolean singleMetavar) {
+    singleMetavar_ = singleMetavar;
+  }
 
-    /**
+  /**
      * Returns true iff a metavar is shown only after the last flag.
      * 
      * @return {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static boolean isSingleMetavar() {
-        return singleMetavar_;
-    }
+  @Deprecated public static boolean isSingleMetavar() {
+    return singleMetavar_;
+  }
 
-    private static boolean noDestConversionForPositionalArgs_ = false;
+  private static boolean noDestConversionForPositionalArgs_ = false;
 
-    /**
+  /**
      * <p>
      * Do not perform any conversion to produce "dest" value (See
      * {@link Argument#getDest()}) from positional argument name.
@@ -316,7 +272,7 @@ public final class ArgumentParsers {
      * Prior 0.5.0, no conversion is made to produce "dest" value from
      * positional argument name. Since 0.5.0, "dest" value is generated by
      * replacing "-" with "_" in positional argument name. This is the same
-     * conversion rule for named arguments.
+     * conversion rule for optional arguments.
      * </p>
      * 
      * <p>
@@ -333,23 +289,18 @@ public final class ArgumentParsers {
      *            is made.
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static void setNoDestConversionForPositionalArgs(boolean flag)
-    {
-        noDestConversionForPositionalArgs_ = flag;
-    }
+  @Deprecated public static void setNoDestConversionForPositionalArgs(boolean flag) {
+    noDestConversionForPositionalArgs_ = flag;
+  }
 
-    /**
+  /**
      * Returns {@code true} iff no destination value conversion for positional
      * arguments is enabled.
      *
      * @return {@code true} or {@code false}
      * @deprecated This is not thread safe. Use {@link #newFor(String)} instead.
      */
-    @Deprecated
-    public static boolean getNoDestConversionForPositionalArgs()
-    {
-        return noDestConversionForPositionalArgs_;
-    }
-
+  @Deprecated public static boolean getNoDestConversionForPositionalArgs() {
+    return noDestConversionForPositionalArgs_;
+  }
 }
