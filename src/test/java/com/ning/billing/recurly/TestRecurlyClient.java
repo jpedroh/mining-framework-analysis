@@ -33,6 +33,7 @@ import com.ning.billing.recurly.model.BillingInfo;
 import com.ning.billing.recurly.model.Coupon;
 import com.ning.billing.recurly.model.Invoices;
 import com.ning.billing.recurly.model.Plan;
+import com.ning.billing.recurly.model.RefundOption;
 import com.ning.billing.recurly.model.Subscription;
 import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
@@ -176,6 +177,71 @@ public class TestRecurlyClient {
         final BillingInfo billingInfoData = TestUtils.createRandomBillingInfo();
         final Plan planData = TestUtils.createRandomPlan();
 
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/test/java/com/ning/billing/recurly/TestRecurlyClient.java/left.java
+        try {
+            // Create a user
+            final Account account = recurlyClient.createAccount(accountData);
+
+            // Create BillingInfo
+            billingInfoData.setAccount(account);
+            final BillingInfo billingInfo = recurlyClient.createOrUpdateBillingInfo(billingInfoData);
+            Assert.assertNotNull(billingInfo);
+            final BillingInfo retrievedBillingInfo = recurlyClient.getBillingInfo(account.getAccountCode());
+            Assert.assertNotNull(retrievedBillingInfo);
+
+            // Create a plan
+            final Plan plan = recurlyClient.createPlan(planData);
+
+            // Subscribe the user to the plan
+            Subscription subscriptionData = new Subscription();
+            subscriptionData.setPlanCode(plan.getPlanCode());
+            subscriptionData.setAccount(accountData);
+            subscriptionData.setCurrency(CURRENCY);
+            subscriptionData.setUnitAmountInCents(1242);
+            final DateTime creationDateTime = new DateTime(DateTimeZone.UTC);
+            final Subscription subscription = recurlyClient.createSubscription(subscriptionData);
+
+            // Test subscription creation
+            Assert.assertNotNull(subscription);
+            Assert.assertEquals(subscription.getCurrency(), subscriptionData.getCurrency());
+            if (null == subscriptionData.getQuantity()) {
+                Assert.assertEquals(subscription.getQuantity(), new Integer(1));
+            } else {
+                Assert.assertEquals(subscription.getQuantity(), subscriptionData.getQuantity());
+            }
+            // Verify we can serialize date times
+            Assert.assertEquals(Minutes.minutesBetween(subscription.getActivatedAt(), creationDateTime).getMinutes(),
+                                0);
+            log.info("Created subscription: {}", subscription.getUuid());
+
+            // Test lookup for subscription
+            Subscription sub1 = recurlyClient.getSubscription(subscription.getUuid());
+            Assert.assertNotNull(sub1);
+            Assert.assertEquals(sub1, subscription);
+            // Do a lookup for subs for given account
+            Subscriptions subs = recurlyClient.getAccountSubscriptions(accountData.getAccountCode());
+            // Check that the newly created sub is in the list
+            boolean found = false;
+            for (Subscription s : subs) {
+                if (s.getUuid().equals(subscription.getUuid())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Assert.fail("Could not locate the subscription in the subscriptions associated with the account");
+            }
+            
+            // Test subscription termination
+            recurlyClient.terminateSubscription(subscription.getUuid(), RefundOption.none);
+            Subscription subAfterCancel = recurlyClient.getSubscription(subscription.getUuid());
+            Assert.assertEquals(sub1.getUuid(), subAfterCancel.getUuid(),"It seems we did not change the correct subscription");
+            Assert.assertNotNull(subAfterCancel.getCanceledAt(),"Subscription should have been canceled");
+            Assert.assertNotEquals(sub1.getState(), subAfterCancel.getState(),"State should change from Active to Expired");
+        } finally {
+||||||| /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/test/java/com/ning/billing/recurly/TestRecurlyClient.java/base.java
+        try  finally {
+=======
         try {
             // Create a user
             final Account account = recurlyClient.createAccount(accountData);
@@ -231,6 +297,7 @@ public class TestRecurlyClient {
             }
 
         } finally {
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/test/java/com/ning/billing/recurly/TestRecurlyClient.java/right.java
             // Clear up the BillingInfo
             recurlyClient.clearBillingInfo(accountData.getAccountCode());
             // Close the account

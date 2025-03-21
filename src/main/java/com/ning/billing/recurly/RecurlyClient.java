@@ -201,6 +201,7 @@ public class RecurlyClient {
      * @param subscription Subscription object
      * @return the newly created Subscription object on success, null otherwise
      */
+
     public Subscription createSubscription(final Subscription subscription) {
         return doPOST(Subscription.SUBSCRIPTION_RESOURCE,
                       subscription, Subscription.class);
@@ -214,11 +215,21 @@ public class RecurlyClient {
      * @param uuid UUID of the subscription to lookup
      * @return Subscriptions for the specified user
      */
+
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
     public Subscription getSubscription(final String uuid) {
         return doGET(Subscriptions.SUBSCRIPTION_RESOURCE
                      + "/" + uuid,
                      Subscription.class);
     }
+||||||| /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+=======
+    public Subscription getSubscription(final String uuid) {
+        return doGET(Subscriptions.SUBSCRIPTIONS_RESOURCE
+                     + "/" + uuid,
+                     Subscription.class);
+    }
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
 
     /**
      * Get the subscriptions for an {@link Account}.
@@ -228,13 +239,23 @@ public class RecurlyClient {
      * @param accountCode recurly account id
      * @return Subscriptions for the specified user
      */
+
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
     public Subscriptions getAccountSubscriptions(final String accountCode) {
         return doGET(Account.ACCOUNT_RESOURCE
                      + "/" + accountCode
                      + Subscriptions.SUBSCRIPTION_RESOURCE,
                      Subscriptions.class);
     }
-
+||||||| /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+=======
+    public Subscriptions getAccountSubscriptions(final String accountCode) {
+        return doGET(Account.ACCOUNT_RESOURCE
+                     + "/" + accountCode
+                     + Subscriptions.SUBSCRIPTIONS_RESOURCE,
+                     Subscriptions.class);
+    }
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
 
     /**
      * Get the subscriptions for an account.
@@ -245,6 +266,8 @@ public class RecurlyClient {
      * @param status      Only accounts in this status will be returned
      * @return Subscriptions for the specified user
      */
+
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
     public Subscriptions getAccountSubscriptions(final String accountCode, final String status) {
         return doGET(Account.ACCOUNT_RESOURCE
                      + "/" + accountCode
@@ -253,7 +276,18 @@ public class RecurlyClient {
                      + status,
                      Subscriptions.class);
     }
-    
+||||||| /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+=======
+    public Subscriptions getAccountSubscriptions(final String accountCode, final String status) {
+        return doGET(Account.ACCOUNT_RESOURCE
+                     + "/" + accountCode
+                     + Subscriptions.SUBSCRIPTIONS_RESOURCE
+                     + "?state="
+                     + status,
+                     Subscriptions.class);
+    }
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/0aacf004fc35f9bd354d82e05f6ed59d7497535d/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
+
     /**
      * Terminate a particular {@link Subscription} by it's UUID
      * <p/>
@@ -261,6 +295,7 @@ public class RecurlyClient {
      *
      * @param uuid UUID of the subscription to terminate
      */
+
     public void terminateSubscription(final String uuid, final RefundOption refund) {
       doBodylessPut(Subscription.SUBSCRIPTION_RESOURCE+"/"+uuid+"/terminate?refund="+refund);
     }
@@ -272,6 +307,7 @@ public class RecurlyClient {
      *
      * @param uuid UUID of the subscription to terminate
      */
+
     public void cancelSubscription(final String uuid) {
       doBodylessPut(Subscription.SUBSCRIPTION_RESOURCE+"/"+uuid+"/cancel");
     }
@@ -283,9 +319,51 @@ public class RecurlyClient {
      *
      * @param uuid UUID of the subscription to terminate
      */
+
     public void reactivateSubscription(final String uuid) {
       doBodylessPut(Subscription.SUBSCRIPTION_RESOURCE+"/"+uuid+"/reactivate");
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Create a subscription
+     * <p/>
+     * Creates a subscription for an account.
+     *
+     * @param subscription Subscription object
+     * @return the newly created Subscription object on success, null otherwise
+     */
+
+    /**
+     * Get a particular {@link Subscription} by it's UUID
+     * <p/>
+     * Returns information about a single account.
+     *
+     * @param uuid UUID of the subscription to lookup
+     * @return Subscriptions for the specified user
+     */
+
+    /**
+     * Get the subscriptions for an {@link Account}.
+     * <p/>
+     * Returns information about a single {@link Account}.
+     *
+     * @param accountCode recurly account id
+     * @return Subscriptions for the specified user
+     */
+
+    /**
+     * Get the subscriptions for an account.
+     * <p/>
+     * Returns information about a single account.
+     *
+     * @param accountCode recurly account id
+     * @param status      Only accounts in this status will be returned
+     * @return Subscriptions for the specified user
+     */
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
