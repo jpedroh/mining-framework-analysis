@@ -11,6 +11,7 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpMethod;
 import com.mercadopago.net.MPRestClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
@@ -142,7 +143,7 @@ public abstract class MPBase {
             throws MPException {
         MPRestClient restClient = new MPRestClient();
         Collection<Header> colHeaders = getStandardHeaders();
-        String idempotentHash = MPCoreUtils.getIdempotentHashFromObject(this);
+        String idempotentHash = MPCoreUtils.getIdempotentHash(this);
         if (StringUtils.isNotEmpty(idempotentHash)) {
             colHeaders.add(new BasicHeader("x-idempotency-key", idempotentHash));
         }

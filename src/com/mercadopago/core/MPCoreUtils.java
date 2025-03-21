@@ -7,6 +7,8 @@ import com.mercadopago.core.annotations.idempotent.Idempotent;
 import com.mercadopago.exceptions.MPException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.io.InputStream;
@@ -26,14 +28,7 @@ public class MPCoreUtils {
     private static char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
     public static final String FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    /**
-     * Generates an unique hash using annotated params from the obj passed.
-     *
-     * @param object            the obj to be analized to extract the idempotent params
-     * @return
-     * @throws MPException
-     */
-    public static String getIdempotentHashFromObject(Object object) throws MPException {
+    public static String getIdempotentHash(Object object) throws MPException {
         StringBuilder key = generateIdempotentKey(new StringBuilder(), object);
         String hex = null;
         if (StringUtils.isNotEmpty(key.toString())) {
@@ -55,14 +50,6 @@ public class MPCoreUtils {
         return hex;
     }
 
-    /**
-     * Auxiliar method to generate a key using annotated params from the obj passed.
-     *
-     * @param sb                a string builder that will append all the idempotent params of an object
-     * @param object            the obj to be analized to extract the idempotent params
-     * @return
-     * @throws MPException
-     */
     private static StringBuilder generateIdempotentKey(StringBuilder sb, Object object) throws MPException {
         Field[] declaredFields = object.getClass().getDeclaredFields();
         for(Field field : declaredFields) {
@@ -98,7 +85,8 @@ public class MPCoreUtils {
 
     /**
      * Static method that transforms all attributes members of the instance in a JSON Element.
-     * @return                  a JSON Object with the attributes members of the instance
+     *
+     * @return a JSON Object with the attributes members of the instance
      */
     public static JsonObject getJson(Object object) {
         Gson gson = new GsonBuilder().setDateFormat(FORMAT_ISO8601).create();
@@ -108,8 +96,8 @@ public class MPCoreUtils {
     /**
      * Static method that transform an Input Stream to a String object, returns an empty string if InputStream is null.
      *
-     * @param is                    Input Stream to process
-     * @return                      a String with the stream content
+     * @param is Input Stream to process
+     * @return a String with the stream content
      * @throws MPException
      */
     public static String inputStreamToString(InputStream is) throws MPException {
