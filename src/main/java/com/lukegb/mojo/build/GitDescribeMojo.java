@@ -20,10 +20,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -119,24 +119,21 @@ public class GitDescribeMojo
     /**
      * If true, pass the `--tags` flag to git-describe.
      *
-     * @parameter alias="tags" default-value=false
+     * @parameter default-value=false
      */
-    private boolean tagsFlag;
-
+    private boolean tags;
     /**
      * If true, pass the `--long` flag to git-describe.
      *
-     * @parameter alias="long" default-value=false
+     * @parameter alias="long" default-value="false"
      */
     private boolean longFlag;
-
     /**
      * If true, set the properties on reactor projects.
      *
      * @parameter default-value="false"
      */
     private boolean setReactorProjectsProperties;
-
     /**
      * The projects in the reactor.
      *
@@ -196,6 +193,7 @@ public class GitDescribeMojo
      *
      * @return array of String containing the command (including arguments) to run
      */
+<<<<<<< /usr/src/app/output/lukegb/gitdescribe-maven-plugin/ef23ebbbc45456d85db155436a821f99e9bc24f2/src/main/java/com/lukegb/mojo/build/GitDescribeMojo.java/left.java
     private String[] buildDescribeCommand()
     {
         List<String> args = new ArrayList<String>();
@@ -206,23 +204,38 @@ public class GitDescribeMojo
             args.add("--dirty=" + dirtyMark);
         }
 
-        if (tagsFlag) {
+        if (tags) {
             args.add("--tags");
+        }
+
+        return args.toArray(new String[args.size()]);
+    }
+||||||| /usr/src/app/output/lukegb/gitdescribe-maven-plugin/ef23ebbbc45456d85db155436a821f99e9bc24f2/src/main/java/com/lukegb/mojo/build/GitDescribeMojo.java/base.java
+=======
+    private String[] buildDescribeCommand()
+    {
+        ArrayList command = new ArrayList();
+        command.add("git");
+        command.add("describe");
+
+        if (dirty) {
+            command.add("--dirty=" + dirtyMark);
         }
 
         if (longFlag) {
             command.add("--long");
         }
 
-        return args.toArray(new String[args.size()]);
+        return (String[]) command.toArray(new String[command.size()]);
     }
+>>>>>>> /usr/src/app/output/lukegb/gitdescribe-maven-plugin/ef23ebbbc45456d85db155436a821f99e9bc24f2/src/main/java/com/lukegb/mojo/build/GitDescribeMojo.java/right.java
 
     /**
-     * Run a given command, passed as an array of Strings.
-     *
-     * @param command   the command (including parameters) to execute
-     * @return          output of command to stdout
-     */
+ * Run a given command, passed as an array of Strings.
+ *
+ * @param command   the command (including parameters) to execute
+ * @return          output of command to stdout
+ */
     private String commandExecutor(String[] command)
     {
         try {
