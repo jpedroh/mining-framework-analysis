@@ -76,176 +76,143 @@ public class Subscription extends AbstractSubscription {
     @XmlElement(name = "net_terms")
     private Integer netTerms;
 
-    @XmlElement(name = "coupon_code")
-    private String couponCode;
-
     //Purchase Order Number
     @XmlElement(name = "po_number")
     private String poNumber;
-
     @XmlElement(name = "first_renewal_date")
     private DateTime firstRenewalDate;
-
+    @XmlElement(name = "coupon_code")
+    private String couponCode;
     public Account getAccount() {
         if (account != null && account.getHref() != null && !account.getHref().isEmpty()) {
             account = fetch(account, Account.class);
         }
         return account;
     }
-
     public void setAccount(final Account account) {
         this.account = account;
     }
-
     public Invoice getInvoice() {
         if (invoice != null && invoice.getHref() != null && !invoice.getHref().isEmpty()) {
             invoice = fetch(invoice, Invoice.class);
         }
         return invoice;
     }
-
     public Plan getPlan() {
         return plan;
     }
-
     public void setPlan(final Plan plan) {
         this.plan = plan;
     }
-
     public String getUuid() {
         return uuid;
     }
-
     public void setUuid(final Object uuid) {
         this.uuid = stringOrNull(uuid);
     }
-
     public String getState() {
         return state;
     }
-
     public void setState(final Object state) {
         this.state = stringOrNull(state);
     }
-
     public String getCurrency() {
         return currency;
     }
-
     public void setCurrency(final Object currency) {
         this.currency = stringOrNull(currency);
     }
-
     public DateTime getActivatedAt() {
         return activatedAt;
     }
-
     public void setActivatedAt(final Object activatedAt) {
         this.activatedAt = dateTimeOrNull(activatedAt);
     }
-
     public DateTime getCanceledAt() {
         return canceledAt;
     }
-
     public void setCanceledAt(final Object canceledAt) {
         this.canceledAt = dateTimeOrNull(canceledAt);
     }
-
     public DateTime getExpiresAt() {
         return expiresAt;
     }
-
     public void setExpiresAt(final Object expiresAt) {
         this.expiresAt = dateTimeOrNull(expiresAt);
     }
-
     public DateTime getCurrentPeriodStartedAt() {
         return currentPeriodStartedAt;
     }
-
     public void setCurrentPeriodStartedAt(final Object currentPeriodStartedAt) {
         this.currentPeriodStartedAt = dateTimeOrNull(currentPeriodStartedAt);
     }
-
     public DateTime getCurrentPeriodEndsAt() {
         return currentPeriodEndsAt;
     }
-
     public void setCurrentPeriodEndsAt(final Object currentPeriodEndsAt) {
         this.currentPeriodEndsAt = dateTimeOrNull(currentPeriodEndsAt);
     }
-
     public DateTime getTrialStartedAt() {
         return trialStartedAt;
     }
-
     public void setTrialStartedAt(final Object trialStartedAt) {
         this.trialStartedAt = dateTimeOrNull(trialStartedAt);
     }
-
     public DateTime getTrialEndsAt() {
         return trialEndsAt;
     }
-
     public void setTrialEndsAt(final Object trialEndsAt) {
         this.trialEndsAt = dateTimeOrNull(trialEndsAt);
     }
-
     public Subscription getPendingSubscription() {
         return pendingSubscription;
     }
-
     public void setPendingSubscription(final Subscription pendingSubscription) {
         this.pendingSubscription = pendingSubscription;
     }
-
     public DateTime getStartsAt() {
         return startsAt;
     }
-
     public void setStartsAt(final Object startsAt) {
         this.startsAt = dateTimeOrNull(startsAt);
     }
-
-
     public String getCollectionMethod() {
         return collectionMethod;
     }
-
     public void setCollectionMethod(Object collectionMethod) {
         this.collectionMethod = stringOrNull(collectionMethod);
     }
-
     public Integer getNetTerms() {
         return netTerms;
     }
-
     public void setNetTerms(final Object netTerms) {
         this.netTerms = integerOrNull(netTerms);
     }
-
     public String getPoNumber() {
         return poNumber;
     }
-
     public void setPoNumber(Object poNumber) {
         this.poNumber = stringOrNull(poNumber);
     }
-
     public DateTime getFirstRenewalDate() {
         return firstRenewalDate;
     }
-
     public void setFirstRenewalDate(final Object firstRenewalDate) {
         this.firstRenewalDate = dateTimeOrNull(firstRenewalDate);
     }
-
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/043c55457d2d84b0869ff164e37f4c5605fc31f5/src/main/java/com/ning/billing/recurly/model/Subscription.java/left.java
+    public void setCouponCode(String couponCode) {
+		this.couponCode = couponCode;
+	}
+||||||| /usr/src/app/output/killbilling/recurly-java-library/043c55457d2d84b0869ff164e37f4c5605fc31f5/src/main/java/com/ning/billing/recurly/model/Subscription.java/base.java
+=======
     public void setCouponCode(final String couponCode) {
         this.couponCode = couponCode;
     }
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/043c55457d2d84b0869ff164e37f4c5605fc31f5/src/main/java/com/ning/billing/recurly/model/Subscription.java/right.java
 
-	@Override
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Subscription");
