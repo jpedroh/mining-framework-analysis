@@ -31,18 +31,17 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.PingConfig;
+
+import java.io.IOException;
+import java.util.Properties;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.xmlrpc.util.SAXParsers;
 import org.springframework.security.access.method.P;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
-import java.io.IOException;
-import java.util.Properties;
 
 
 /**
