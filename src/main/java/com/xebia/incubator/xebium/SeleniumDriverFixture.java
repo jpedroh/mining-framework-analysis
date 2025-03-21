@@ -101,7 +101,7 @@ public class SeleniumDriverFixture {
         } else {
             driver = new WebDriverCommandProcessor(browserUrl, webDriver);
         }
-        addMissingSeleneseCommands(driver);
+        addcommands.addMissingSeleneseCommands(driver);
         return driver;
 	}
 
