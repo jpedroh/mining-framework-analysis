@@ -95,6 +95,7 @@ public class AutoHeliBee extends AbstractHeli {
     private double pitchTrim;
     private double yawTrim;
     private boolean boundsCheckEnabled = true;
+    boolean started = false;
 
     protected int THROTTLE_HIGH, THROTTLE_LOW;
     private static Logger logger = Logger.getLogger(AutoHeliBee.class);
@@ -104,12 +105,13 @@ public class AutoHeliBee extends AbstractHeli {
     @Override
     public void initialize() {
 
+
         THROTTLE_HIGH = 240;
         THROTTLE_LOW = 80;
         super.initialize();
 
         throttleTrim = normCommand(185);
-        rollTrim = normCommand(127);
+        rollTrim = normCommand(110);
         pitchTrim = normCommand(127);
         yawTrim = normCommand(127);
         try {
@@ -136,8 +138,16 @@ public class AutoHeliBee extends AbstractHeli {
                 public void fire(SimTime time) {
                     Vector3f currPos = getTruthPosition();
 
+<<<<<<< /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/left.java
 //                   logger.info("occlusion: " + externalSync.getOccluded(getName()));
                    if(externalSync.getOccluded(getName()) > 7500) { // runs every 20 ms
+||||||| /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/base.java
+                   //logger.info(externalSync.getOccluded(getName()));
+                   if(externalSync.getOccluded(getName()) > 7500) { // runs every 20 ms
+=======
+                   //logger.info(externalSync.getOccluded(getName()));
+                   if(externalSync.getOccluded(getName()) > 5000) { // runs every 20 ms
+>>>>>>> /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/right.java
                         // out of bounds, shutdown behaviors and heli
                         logger.warn("Heli (" + getName() + ") is occluded for more than half a second, shutting down.");
 
@@ -160,8 +170,6 @@ public class AutoHeliBee extends AbstractHeli {
                                     setThrust(0);
                                     setPitch(getPitchTrim());
                                     setRoll(getRollTrim());
-                                    getSimEngine().requestScenarioTermination();
-                                    finish();
                                 }
                             }, landingTime, TimeUnit.SECONDS);
                         }
@@ -173,8 +181,23 @@ public class AutoHeliBee extends AbstractHeli {
 
                         // no need to check anymore
                         boundsTimer.cancel();
+                        finish();
+                        getSimEngine().requestScenarioTermination();
 
-                    }
+
+                   }
+                   if(started && (((BaseAutoHeliBehavior)getBehaviors().values().toArray()[0]).getState() == BaseAutoHeliBehavior.MoveState.IDLE)) {
+                       //Finish up
+                       logger.info("Idle state: Ending ..");
+                       boundsTimer.cancel();
+                       finish();
+                       getSimEngine().requestScenarioTermination();
+                   }
+
+                   if(((BaseAutoHeliBehavior)getBehaviors().values().toArray()[0]).getState() != BaseAutoHeliBehavior.MoveState.IDLE) {
+                       started = true;
+                   }
+
                 }
             }, 0, TimeUnit.MILLISECONDS, 20, TimeUnit.MILLISECONDS);
         }
@@ -233,18 +256,6 @@ public class AutoHeliBee extends AbstractHeli {
             boundsTimer.cancel();
         }
 
-        // try to shutdown the heli gently
-        while(thrust > 0) {
-            setThrust(getThrust() - 1);
-            sendCommands();
-            try {
-                Thread.currentThread().sleep(500);
-            }
-            catch(Exception e) {
-                System.out.println(" Exception " + e.toString());
-            }
-        }
-
         setCmd(((byte)42));
         setThrust(0.0);
 
@@ -268,7 +279,36 @@ public class AutoHeliBee extends AbstractHeli {
 
     @Override
     public final void setThrust(double level) {
+<<<<<<< /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/left.java
         thrust = (int) round(THROTTLE_LOW + cap(level) * (double)(THROTTLE_HIGH - THROTTLE_LOW));
+||||||| /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/base.java
+        int THROTTLE_RANGE = THROTTLE_HIGH - THROTTLE_LOW;
+        short val = (short) (THROTTLE_LOW + cap(level) * THROTTLE_RANGE);
+
+        if(val > THROTTLE_HIGH)
+            val = (short) THROTTLE_HIGH;
+        else if(val < THROTTLE_LOW)
+            val = (short) THROTTLE_LOW;
+
+        thrust = (short) (val & 0xFF);
+
+        sendCommands();
+
+=======
+        int THROTTLE_RANGE = THROTTLE_HIGH - THROTTLE_LOW;
+        short val = (short) (THROTTLE_LOW + cap(level) * THROTTLE_RANGE);
+
+        if(val > THROTTLE_HIGH)
+            val = (short) THROTTLE_HIGH;
+        else if(val < THROTTLE_LOW)
+            val = (short) THROTTLE_LOW;
+
+        thrust = (short) (val & 0xFF);
+
+        if(!sock.isClosed())
+            sendCommands();
+
+>>>>>>> /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/right.java
         logger.debug("thrust: " + thrust);
     }
 
@@ -307,7 +347,29 @@ public class AutoHeliBee extends AbstractHeli {
 
     @Override
     public final void setYaw(double level) {
+<<<<<<< /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/left.java
         yaw = rawCommand(cap(level));
+||||||| /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/base.java
+        short val = (short) (CMD_LOW + cap(level) * CMD_RANGE);
+
+        if(val < CMD_LOW)
+            val = CMD_LOW;
+        else if(val > (CMD_LOW + CMD_RANGE))
+            val = (CMD_LOW + CMD_RANGE);
+
+        yaw = (short) (val & 0xFF);
+        sendCommands();
+=======
+        short val = (short) (CMD_LOW + cap(level) * CMD_RANGE);
+
+        if(val < CMD_LOW)
+            val = CMD_LOW;
+        else if(val > (CMD_LOW + CMD_RANGE))
+            val = (CMD_LOW + CMD_RANGE);
+
+        yaw = (short) (val & 0xFF);
+        //sendCommands();
+>>>>>>> /usr/src/app/output/robobees/simbeeotic/d8cc9db915bb7f2fd6a528df8c173d1c08407ec4/simbeeotic-testbed/src/main/java/harvard/robobees/simbeeotic/model/AutoHeliBee.java/right.java
         logger.debug("yaw: " + yaw);
     }
 
