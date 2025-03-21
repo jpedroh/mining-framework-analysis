@@ -71,7 +71,13 @@ public class ResourcePolicyEPersonReplaceRestController {
         }
 
         if (Objects.isNull(resourcePolicy.getEPerson())) {
-            throw new UnprocessableEntityException("ResourcePolicy with id:" + id + " doesn't link to an EPerson");
+<<<<<<< /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyEPersonReplaceRestController.java/left.java
+            throw new UnprocessableEntityException("ResourcePolicy doesn't linked to an EPerson");
+||||||| /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyEPersonReplaceRestController.java/base.java
+            throw new UnprocessableEntityException("");
+=======
+            throw new UnprocessableEntityException("ResourcePolicy with id:" + id + " doesn't linked to an EPerson");
+>>>>>>> /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyEPersonReplaceRestController.java/right.java
         }
         EPerson newEPerson = (EPerson) dsoList.get(0);
         resourcePolicy.setEPerson(newEPerson);

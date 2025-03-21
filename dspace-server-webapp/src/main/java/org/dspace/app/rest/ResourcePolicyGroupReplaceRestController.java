@@ -70,7 +70,13 @@ public class ResourcePolicyGroupReplaceRestController {
         }
 
         if (Objects.isNull(resourcePolicy.getGroup())) {
-            throw new UnprocessableEntityException("ResourcePolicy with id:" + id + "  doesn't link to a Group");
+<<<<<<< /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyGroupReplaceRestController.java/left.java
+            throw new UnprocessableEntityException("ResourcePolicy doesn't linked to Group");
+||||||| /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyGroupReplaceRestController.java/base.java
+            throw new UnprocessableEntityException("");
+=======
+            throw new UnprocessableEntityException("ResourcePolicy with id:" + id + "  doesn't linked to Group");
+>>>>>>> /usr/src/app/output/dspace/dspace/79c4a4c8477aa572165e4aa686001342c734a5a4/dspace-server-webapp/src/main/java/org/dspace/app/rest/ResourcePolicyGroupReplaceRestController.java/right.java
         }
 
         Group newGroup = (Group) dsoList.get(0);
