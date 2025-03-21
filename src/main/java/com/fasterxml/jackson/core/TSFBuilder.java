@@ -331,7 +331,7 @@ public abstract class TSFBuilder<F extends JsonFactory,
         _streamReadConstraints = streamReadConstraints;
         return _this();
     }
-    
+
 /**
      * Sets the configuration for error tokens.
      *

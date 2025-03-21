@@ -74,7 +74,6 @@ public class IOContext
      * @since 2.16
      */
     protected final ErrorReportConfiguration _errorReportConfiguration;
-
     /**
      * @since 2.16
      */
@@ -138,7 +137,7 @@ public class IOContext
      * @since 2.16
      */
     public IOContext(StreamReadConstraints src, StreamWriteConstraints swc, BufferRecycler br,
-                     ContentReference contentRef, boolean managedResource, ErrorReportConfiguration errorReportConfiguration)
+                     ContentReference contentRef, boolean managedResource)
     {
         _streamReadConstraints = (src == null) ?
                 StreamReadConstraints.defaults() : src;
@@ -148,7 +147,6 @@ public class IOContext
         _contentReference = contentRef;
         _sourceRef = contentRef.getRawContent();
         _managedResource = managedResource;
-        _errorReportConfiguration = errorReportConfiguration;
     }
 
     /**
@@ -208,7 +206,7 @@ public class IOContext
     @Deprecated // since 2.15
     public IOContext(BufferRecycler br, ContentReference contentRef, boolean managedResource)
     {
-        this(null, br, contentRef, managedResource, null);
+        this(null, null, br, contentRef, managedResource, null);
     }
 
     @Deprecated // since 2.13
@@ -233,7 +231,6 @@ public class IOContext
     public ErrorReportConfiguration errorReportConfiguration() {
         return _errorReportConfiguration;
     }
-
     /**
      * @return constraints for streaming writes
      * @since 2.16

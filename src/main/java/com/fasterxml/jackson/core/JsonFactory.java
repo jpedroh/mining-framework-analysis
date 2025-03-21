@@ -291,8 +291,7 @@ public class JsonFactory
      * @see ErrorReportConfiguration
      * @since 2.16
      */
-    protected ErrorReportConfiguration _errorReportConfiguration; 
-    
+    protected ErrorReportConfiguration _errorReportConfiguration;
     /**
      * Write constraints to use for {@link JsonGenerator}s constructed using
      * this factory.
@@ -369,8 +368,12 @@ public class JsonFactory
         _objectCodec = oc;
         _quoteChar = DEFAULT_QUOTE_CHAR;
         _streamReadConstraints = StreamReadConstraints.defaults();
-        _streamWriteConstraints = StreamWriteConstraints.defaults();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/left.java
         _errorReportConfiguration = ErrorReportConfiguration.defaults();
+||||||| /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/base.java
+=======
+        _streamWriteConstraints = StreamWriteConstraints.defaults();
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/right.java
         _generatorDecorators = null;
     }
 
@@ -394,8 +397,13 @@ public class JsonFactory
         _outputDecorator = src._outputDecorator;
         _generatorDecorators = _copy(src._generatorDecorators);
         _streamReadConstraints = Objects.requireNonNull(src._streamReadConstraints);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/left.java
+        _errorReportConfiguration = src._errorReportConfiguration == null ?
+            ErrorReportConfiguration.defaults() : src._errorReportConfiguration;
+||||||| /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/base.java
+=======
         _streamWriteConstraints = Objects.requireNonNull(src._streamWriteConstraints);
-        _errorReportConfiguration = Objects.requireNonNull(src._errorReportConfiguration);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/right.java
 
         // JSON-specific
         _characterEscapes = src._characterEscapes;
@@ -422,8 +430,13 @@ public class JsonFactory
         _outputDecorator = b._outputDecorator;
         _generatorDecorators = _copy(b._generatorDecorators);
         _streamReadConstraints = Objects.requireNonNull(b._streamReadConstraints);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/left.java
+        _errorReportConfiguration = b._errorReportConfiguration == null ?
+                ErrorReportConfiguration.defaults() : b._errorReportConfiguration;
+||||||| /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/base.java
+=======
         _streamWriteConstraints = Objects.requireNonNull(b._streamWriteConstraints);
-        _errorReportConfiguration = Objects.requireNonNull(b._errorReportConfiguration);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/right.java
 
         // JSON-specific
         _characterEscapes = b._characterEscapes;
@@ -450,8 +463,13 @@ public class JsonFactory
         _outputDecorator = b._outputDecorator;
         _generatorDecorators = _copy(b._generatorDecorators);
         _streamReadConstraints = Objects.requireNonNull(b._streamReadConstraints);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/left.java
+        _errorReportConfiguration = b._streamReadConstraints == null ?
+                ErrorReportConfiguration.defaults() : b._errorReportConfiguration;
+||||||| /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/base.java
+=======
         _streamWriteConstraints = Objects.requireNonNull(b._streamWriteConstraints);
-        _errorReportConfiguration = Objects.requireNonNull(b._errorReportConfiguration);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/8d9616ba0c1168fe5daf1d7b25d270f69f9e6772/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/right.java
 
         // JSON-specific: need to assign even if not really used
         _characterEscapes = null;
@@ -851,6 +869,7 @@ public class JsonFactory
         return this;
     }
 
+
     /**
      * Method for overriding {@link ErrorReportConfiguration} defined for
      * this factory.
@@ -870,13 +889,12 @@ public class JsonFactory
         _errorReportConfiguration = Objects.requireNonNull(src, "Cannot pass null ErrorReportConfiguration");;
         return this;
     }
-    
     /**
      * Method for overriding {@link StreamWriteConstraints} defined for
      * this factory.
      *<p>
      * NOTE: the preferred way to set constraints is by using
-     * {@link JsonFactoryBuilder#_streamWriteConstraints}: this method is only
+     * {@link JsonFactoryBuilder#streamWriteConstraints}: this method is only
      * provided to support older non-builder-based construction.
      * In Jackson 3.x this method will not be available.
      *
@@ -2146,7 +2164,8 @@ public class JsonFactory
             contentRef = ContentReference.unknown();
         }
         return new IOContext(_streamReadConstraints, _streamWriteConstraints,
-                _getBufferRecycler(), contentRef, resourceManaged, _errorReportConfiguration);
+                _getBufferRecycler(), contentRef, resourceManaged,
+                _errorReportConfiguration);
     }
 
     /**
