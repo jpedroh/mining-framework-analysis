@@ -20,12 +20,11 @@ import static com.lyncode.xml.matchers.QNameMatchers.localPart;
 import static com.lyncode.xml.matchers.XmlEventMatchers.aStartElement;
 import static com.lyncode.xml.matchers.XmlEventMatchers.elementName;
 import static com.lyncode.xml.matchers.XmlEventMatchers.text;
-import static com.lyncode.xml.matchers.XmlEventMatchers.theEndOfDocument;
 import static com.lyncode.xoai.serviceprovider.xml.IslandParsers.dateParser;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
-
 import java.io.InputStream;
+import static com.lyncode.xml.matchers.XmlEventMatchers.theEndOfDocument;
 
 import com.lyncode.xml.XmlReader;
 import com.lyncode.xml.exceptions.XmlReaderException;
