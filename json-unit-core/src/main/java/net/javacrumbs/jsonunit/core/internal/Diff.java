@@ -217,10 +217,10 @@ public class Diff {
                     break;
                 case NUMBER:
                     if (numericComparisonTolerance != null) {
-                        BigDecimal diff = expectedNode.getDecimalValue().subtract(actualNode.getDecimalValue()).abs();
+                        BigDecimal diff = expectedNode.decimalValue().subtract(actualNode.decimalValue()).abs();
                         if (diff.compareTo(numericComparisonTolerance) > 0) {
                             valueDifferenceFound("Different value found in node \"%s\". Expected %s, got %s, difference is %s, tolerance is %s",
-                                    fieldPath, quoteTextValue(expectedNode.getNumberValue()), quoteTextValue(actualNode.getNumberValue()), diff.toString(), numericComparisonTolerance);
+                                    fieldPath, quoteTextValue(expectedNode.numberValue()), quoteTextValue(actualNode.numberValue()), diff.toString(), numericComparisonTolerance);
                         }
                     } else {
                         compareValues(expectedNode.getNumberValue(), actualNode.getNumberValue(), fieldPath);
