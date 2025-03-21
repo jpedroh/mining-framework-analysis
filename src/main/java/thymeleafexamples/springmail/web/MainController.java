@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * 
- *   Copyright (c) 2011-2014, The THYMELEAF team (http://www.thymeleaf.org)
+ *   Copyright (c) 2011-2016, The THYMELEAF team (http://www.thymeleaf.org)
  * 
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -25,8 +25,9 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import org.thymeleaf.util.ClassLoaderUtils;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static thymeleafexamples.springmail.config.SpringWebInitializer.ENCODING;
 
 @Controller
@@ -67,8 +68,20 @@ public class MainController {
     /* Editable HTML email. */
     @RequestMapping(value = "/editable.html", method = GET)
     public String editable(Model model) throws IOException {
+<<<<<<< /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/left.java
         final ClassLoader classLoader = ClassLoaderUtils.getClassLoader(MainController.class);
+||||||| /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/base.java
+        final ClassLoader ;
+=======
+        final ClassLoader cl = ClassLoaderUtils.getClassLoader(MainController.class);
+>>>>>>> /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/right.java
+<<<<<<< /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/left.java
         InputStream inputStream = classLoader.getResourceAsStream(EDITABLE_TEMPLATE);
+||||||| /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/base.java
+        InputStream inputStream = request.getServletContext().getResourceAsStream(EDITABLE_TEMPLATE);
+=======
+        InputStream inputStream = cl.getResourceAsStream(EDITABLE_TEMPLATE);
+>>>>>>> /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/web/MainController.java/right.java
         String baseTemplate = IOUtils.toString(inputStream, ENCODING);
         model.addAttribute("baseTemplate", baseTemplate);
         return "editable";

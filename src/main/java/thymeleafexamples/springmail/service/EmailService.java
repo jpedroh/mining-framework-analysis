@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * 
- *   Copyright (c) 2011-2014, The THYMELEAF team (http://www.thymeleaf.org)
+ *   Copyright (c) 2011-2016, The THYMELEAF team (http://www.thymeleaf.org)
  * 
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -207,10 +207,24 @@ public class EmailService {
         ctx.setVariable("subscriptionDate", new Date());
         ctx.setVariable("hobbies", Arrays.asList("Cinema", "Sports", "Music"));
         
+<<<<<<< /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/left.java
         // Create the HTML body using Thymeleaf
+||||||| /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/base.java
+        final StaticTemplateExecutor templateExecutor = new StaticTemplateExecutor(
+            ctx, messageResolver, HTML5.getTemplateModeName());
+=======
+        // Create the HTML body using Thymeleaf
+        // NOTE the engine will end up using the StringTemplateResolver
+>>>>>>> /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/right.java
+<<<<<<< /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/left.java
         final String output = stringTemplateEngine.process(htmlContent, ctx);
+||||||| /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/base.java
+        final String output = templateExecutor.process(htmlContent, ctx);
+=======
+        final String output = this.templateEngine.process(htmlContent, ctx);
+>>>>>>> /usr/src/app/output/thymeleaf/thymeleafexamples-springmail/158fb6406b10311f114054c66f6206dc7e915917/src/main/java/thymeleafexamples/springmail/service/EmailService.java/right.java
         message.setText(output, true /* isHtml */);
-        
+
         // Add the inline images, referenced from the HTML code as "cid:image-name"
         message.addInline("background", new ClassPathResource(BACKGROUND_IMAGE), PNG_MIME);
         message.addInline("logo-background", new ClassPathResource(LOGO_BACKGROUND_IMAGE), PNG_MIME);
