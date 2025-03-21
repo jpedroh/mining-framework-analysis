@@ -745,6 +745,21 @@ public class TestUtils {
         return addOn;
     }
 
+    /**
+     * Creates a random item-backed {@link AddOn} for use in Tests given a seed.
+     *
+     * @param seed The RNG seed
+     * @return The random {@link AddOn}
+     */
+    public static AddOn createRandomItemBackedAddOn(final int seed) {
+        final AddOn addOn = new AddOn();
+
+        addOn.setItemCode(randomAlphaNumericString(10, seed));
+        addOn.setUnitAmountInCents(createRandomPrice());
+
+        return addOn;
+    }
+
 
         /**
      * Creates a random tiered {@link AddOn} for use in Tests.
@@ -807,21 +822,6 @@ public class TestUtils {
         return addOn;
     }
 
-
-    /**
-     * Creates a random item-backed {@link AddOn} for use in Tests given a seed.
-     *
-     * @param seed The RNG seed
-     * @return The random {@link AddOn}
-     */
-    public static AddOn createRandomItemBackedAddOn(final int seed) {
-        final AddOn addOn = new AddOn();
-
-        addOn.setItemCode(randomAlphaNumericString(10, seed));
-        addOn.setUnitAmountInCents(createRandomPrice());
-
-        return addOn;
-    }
 
     /**
      * Creates a random {@link SubscriptionAddOn} for use in Tests.
