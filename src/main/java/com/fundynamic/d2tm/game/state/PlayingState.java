@@ -1,19 +1,18 @@
 package com.fundynamic.d2tm.game.state;
 
 import com.fundynamic.d2tm.game.controls.Mouse;
-import com.fundynamic.d2tm.game.entities.Player;
 import com.fundynamic.d2tm.game.event.DebugKeysListener;
 import com.fundynamic.d2tm.game.event.MouseListener;
 import com.fundynamic.d2tm.game.event.QuitGameKeyListener;
 import com.fundynamic.d2tm.game.rendering.gui.GuiComposite;
 import com.fundynamic.d2tm.game.rendering.gui.battlefield.BattleField;
+import com.fundynamic.d2tm.game.entities.*;
 import com.fundynamic.d2tm.game.rendering.gui.sidebar.MiniMap;
 import com.fundynamic.d2tm.game.rendering.gui.sidebar.Sidebar;
 import com.fundynamic.d2tm.game.rendering.gui.topbar.Topbar;
 import com.fundynamic.d2tm.game.scenario.Scenario;
 import com.fundynamic.d2tm.game.scenario.ScenarioFactory;
 import com.fundynamic.d2tm.graphics.ImageRepository;
-import com.fundynamic.d2tm.math.MapCoordinate;
 import com.fundynamic.d2tm.math.Vector2D;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
@@ -55,8 +54,40 @@ public class PlayingState extends BasicGameState {
 
     @Override
     public void init(GameContainer gameContainer, StateBasedGame game) throws SlickException {
+<<<<<<< /usr/src/app/output/stefanhendriks/dune2themaker4j/fa32851fce4806699ba6828e72e145fd0107837b/src/main/java/com/fundynamic/d2tm/game/state/PlayingState.java/left.java
         scenario = scenarioFactory.create();
         Player human = scenario.getHuman();
+||||||| /usr/src/app/output/stefanhendriks/dune2themaker4j/fa32851fce4806699ba6828e72e145fd0107837b/src/main/java/com/fundynamic/d2tm/game/state/PlayingState.java/base.java
+        Player human = new Player("Human", Recolorer.FactionColor.GREEN);
+        Player cpu = new Player("CPU", Recolorer.FactionColor.RED);
+
+        if (Game.RECORDING_VIDEO) {
+            human.setCredits(2200);
+        } else {
+            human.setCredits(3000);
+        }
+        cpu.setCredits(2000);
+
+        mapEditor = new MapEditor(terrainFactory);
+        map = new Map(shroud, 128, 128);
+
+        entityRepository = createEntityRepository();
+=======
+        Player human = new Player("Human", Faction.GREEN);
+        Player cpu = new Player("CPU", Faction.RED);
+
+        if (Game.RECORDING_VIDEO) {
+            human.setCredits(2200);
+        } else {
+            human.setCredits(3000);
+        }
+        cpu.setCredits(2000);
+
+        mapEditor = new MapEditor(terrainFactory);
+        map = new Map(shroud, 128, 128);
+
+        entityRepository = createEntityRepository();
+>>>>>>> /usr/src/app/output/stefanhendriks/dune2themaker4j/fa32851fce4806699ba6828e72e145fd0107837b/src/main/java/com/fundynamic/d2tm/game/state/PlayingState.java/right.java
 
         guiComposite = new GuiComposite();
 
@@ -91,7 +122,7 @@ public class PlayingState extends BasicGameState {
                         SCREEN_HEIGHT - HEIGHT_OF_MINIMAP,
                         WIDTH_OF_SIDEBAR,
                         HEIGHT_OF_MINIMAP,
-                        battlefield, scenario.getEntityRepository(), scenario.getMap(), human
+                        battlefield, entityRepository, map, human
                 )
         );
 
