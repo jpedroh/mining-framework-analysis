@@ -1,5 +1,4 @@
 package gov.nysenate.openleg.api.legislation.agenda;
-
 import gov.nysenate.openleg.api.BaseCtrl;
 import gov.nysenate.openleg.api.legislation.agenda.view.*;
 import gov.nysenate.openleg.api.response.BaseResponse;
