@@ -19,6 +19,7 @@
 package org.apache.accumulo.gc;
 
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -356,7 +357,13 @@ public class SimpleGarbageCollector extends AbstractServer implements Iface {
       ServiceLock lock =
           new ServiceLock(getContext().getZooReaderWriter().getZooKeeper(), path, zooLockUUID);
       if (lock.tryLock(lockWatcher,
+<<<<<<< /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/gc/src/main/java/org/apache/accumulo/gc/SimpleGarbageCollector.java/left.java
           new ServiceLockData(zooLockUUID, addr.toString(), ThriftService.GC))) {
+||||||| /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/gc/src/main/java/org/apache/accumulo/gc/SimpleGarbageCollector.java/base.java
+          new ServerServices(addr.toString(), Service.GC_CLIENT).toString().getBytes())) {
+=======
+          new ServerServices(addr.toString(), Service.GC_CLIENT).toString().getBytes(UTF_8))) {
+>>>>>>> /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/gc/src/main/java/org/apache/accumulo/gc/SimpleGarbageCollector.java/right.java
         log.debug("Got GC ZooKeeper lock");
         return;
       }

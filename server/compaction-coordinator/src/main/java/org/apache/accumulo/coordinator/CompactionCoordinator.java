@@ -19,6 +19,7 @@
 package org.apache.accumulo.coordinator;
 
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
@@ -210,8 +211,14 @@ public class CompactionCoordinator extends AbstractServer
       CoordinatorLockWatcher coordinatorLockWatcher = new CoordinatorLockWatcher();
       coordinatorLock = new ServiceLock(getContext().getZooReaderWriter().getZooKeeper(),
           ServiceLock.path(lockPath), zooLockUUID);
+<<<<<<< /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/compaction-coordinator/src/main/java/org/apache/accumulo/coordinator/CompactionCoordinator.java/left.java
       coordinatorLock.lock(coordinatorLockWatcher,
           new ServiceLockData(zooLockUUID, coordinatorClientAddress, ThriftService.COORDINATOR));
+||||||| /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/compaction-coordinator/src/main/java/org/apache/accumulo/coordinator/CompactionCoordinator.java/base.java
+      coordinatorLock.lock(coordinatorLockWatcher, coordinatorClientAddress.getBytes());
+=======
+      coordinatorLock.lock(coordinatorLockWatcher, coordinatorClientAddress.getBytes(UTF_8));
+>>>>>>> /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/compaction-coordinator/src/main/java/org/apache/accumulo/coordinator/CompactionCoordinator.java/right.java
 
       coordinatorLockWatcher.waitForChange();
       if (coordinatorLockWatcher.isAcquiredLock()) {

@@ -19,7 +19,6 @@
 package org.apache.accumulo.manager;
 
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptySortedMap;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -1239,7 +1238,13 @@ public class Manager extends AbstractServer
         ThriftService.MANAGER);
     log.info("Setting manager lock data to {}", sld.toString());
     try {
+<<<<<<< /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/left.java
       managerLock.replaceLockData(sld);
+||||||| /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/base.java
+      managerLock.replaceLockData(address.getBytes());
+=======
+      managerLock.replaceLockData(address.getBytes(UTF_8));
+>>>>>>> /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/right.java
     } catch (KeeperException | InterruptedException e) {
       throw new IllegalStateException("Exception updating manager lock", e);
     }
@@ -1457,7 +1462,13 @@ public class Manager extends AbstractServer
 
       ManagerLockWatcher managerLockWatcher = new ManagerLockWatcher();
       managerLock = new ServiceLock(zooKeeper, zManagerLoc, zooLockUUID);
+<<<<<<< /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/left.java
       managerLock.lock(managerLockWatcher, sld);
+||||||| /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/base.java
+      managerLock.lock(managerLockWatcher, managerClientAddress.getBytes());
+=======
+      managerLock.lock(managerLockWatcher, managerClientAddress.getBytes(UTF_8));
+>>>>>>> /usr/src/app/output/apache/accumulo/f203043e831391496a94210c8e10ebd9c805cb40/server/manager/src/main/java/org/apache/accumulo/manager/Manager.java/right.java
 
       managerLockWatcher.waitForChange();
 
