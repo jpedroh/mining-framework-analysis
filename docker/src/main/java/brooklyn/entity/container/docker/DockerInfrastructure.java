@@ -1,26 +1,8 @@
-/*
- * Copyright 2014-2015 by Cloudsoft Corporation Limited
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package brooklyn.entity.container.docker;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.common.reflect.TypeToken;
-
 import org.apache.brooklyn.api.catalog.CatalogConfig;
 import org.apache.brooklyn.api.entity.Entity;
 import org.apache.brooklyn.api.entity.EntitySpec;
@@ -40,7 +22,6 @@ import org.apache.brooklyn.util.collections.MutableList;
 import org.apache.brooklyn.util.collections.MutableMap;
 import org.apache.brooklyn.util.core.flags.SetFromFlag;
 import org.apache.brooklyn.util.time.Duration;
-
 import brooklyn.entity.container.DockerAttributes;
 import brooklyn.entity.container.DockerUtils;
 import brooklyn.location.docker.DockerLocation;
@@ -52,123 +33,94 @@ import brooklyn.networking.sdn.SdnAttributes;
 /**
  * A collection of machines running Docker.
  */
-@ImplementedBy(DockerInfrastructureImpl.class)
-public interface DockerInfrastructure extends StartableApplication, Resizable, LocationOwner<DockerLocation, DockerInfrastructure> {
+@ImplementedBy(value = DockerInfrastructureImpl.class) public interface DockerInfrastructure extends StartableApplication, Resizable, LocationOwner<DockerLocation, DockerInfrastructure> {
+  @CatalogConfig(label = "Location Name", priority = 90) @SetFromFlag(value = "locationName") ConfigKey<String> LOCATION_NAME = ConfigKeys.newConfigKeyWithDefault(LocationOwner.LOCATION_NAME.getConfigKey(), "my-docker-cloud");
 
-    @CatalogConfig(label = "Location Name", priority = 90)
-    @SetFromFlag("locationName")
-    ConfigKey<String> LOCATION_NAME = ConfigKeys.newConfigKeyWithDefault(LocationOwner.LOCATION_NAME.getConfigKey(), "my-docker-cloud");
+  @CatalogConfig(label = "Docker Version", priority = 10) @SetFromFlag(value = "dockerVersion") ConfigKey<String> DOCKER_VERSION = ConfigKeys.newStringConfigKey("docker.version", "The Docker Engine version number", "1.7.1");
 
-    @CatalogConfig(label = "Docker Version", priority = 10)
-    @SetFromFlag("dockerVersion")
-    ConfigKey<String> DOCKER_VERSION = ConfigKeys.newStringConfigKey("docker.version", "The Docker Engine version number", "1.7.1");
+  @SetFromFlag(value = "securityGroup") ConfigKey<String> SECURITY_GROUP = ConfigKeys.newStringConfigKey("docker.host.securityGroup", "Set a network security group for cloud servers to use; (null to use default configuration)");
 
-    @SetFromFlag("securityGroup")
-    ConfigKey<String> SECURITY_GROUP = ConfigKeys.newStringConfigKey(
-            "docker.host.securityGroup", "Set a network security group for cloud servers to use; (null to use default configuration)");
+  @CatalogConfig(label = "Docker Cluster Size", priority = 50) @SetFromFlag(value = "minHost") ConfigKey<Integer> DOCKER_HOST_CLUSTER_MIN_SIZE = ConfigKeys.newConfigKeyWithPrefix("docker.host.", DynamicCluster.INITIAL_SIZE);
 
-    @CatalogConfig(label = "Docker Cluster Size", priority = 50)
-    @SetFromFlag("minHost")
-    ConfigKey<Integer> DOCKER_HOST_CLUSTER_MIN_SIZE = ConfigKeys.newConfigKeyWithPrefix("docker.host.", DynamicCluster.INITIAL_SIZE);
+  @SetFromFlag(value = "strategies") ConfigKey<List<DockerAwarePlacementStrategy>> PLACEMENT_STRATEGIES = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.PLACEMENT_STRATEGIES, MutableList.<DockerAwarePlacementStrategy>of(new DepthFirstPlacementStrategy()));
 
-    @SetFromFlag("strategies")
-    ConfigKey<List<DockerAwarePlacementStrategy>> PLACEMENT_STRATEGIES = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.PLACEMENT_STRATEGIES,
-            MutableList.<DockerAwarePlacementStrategy>of(new DepthFirstPlacementStrategy()));
+  @SetFromFlag(value = "highAvailabilty") ConfigKey<Boolean> HA_POLICY_ENABLE = ConfigKeys.newBooleanConfigKey("docker.policy.ha.enable", "Enable high-availability and resilience/restart policies", Boolean.FALSE);
 
-    @SetFromFlag("highAvailabilty")
-    ConfigKey<Boolean> HA_POLICY_ENABLE = ConfigKeys.newBooleanConfigKey("docker.policy.ha.enable",
-            "Enable high-availability and resilience/restart policies", Boolean.FALSE);
+  @SetFromFlag(value = "removeEmptyHosts") ConfigKey<Boolean> REMOVE_EMPTY_DOCKER_HOSTS = ConfigKeys.newBooleanConfigKey("docker.host.removeEmpty", "Remove empty Docker Hosts with no containers", Boolean.FALSE);
 
-    @SetFromFlag("removeEmptyHosts")
-    ConfigKey<Boolean> REMOVE_EMPTY_DOCKER_HOSTS = ConfigKeys.newBooleanConfigKey("docker.host.removeEmpty",
-            "Remove empty Docker Hosts with no containers", Boolean.FALSE);
+  @SetFromFlag(value = "enableSdn") ConfigKey<Boolean> SDN_ENABLE = SdnAttributes.SDN_ENABLE;
 
-    @SetFromFlag("enableSdn")
-    ConfigKey<Boolean> SDN_ENABLE = SdnAttributes.SDN_ENABLE;
+  @SetFromFlag(value = "sdnProviderSpec") ConfigKey<EntitySpec> SDN_PROVIDER_SPEC = SdnAttributes.SDN_PROVIDER_SPEC;
 
-    @SetFromFlag("sdnProviderSpec")
-    ConfigKey<EntitySpec> SDN_PROVIDER_SPEC = SdnAttributes.SDN_PROVIDER_SPEC;
+  @SetFromFlag(value = "hostSpec") AttributeSensorAndConfigKey<EntitySpec, EntitySpec> DOCKER_HOST_SPEC = ConfigKeys.newSensorAndConfigKey(EntitySpec.class, "docker.host.spec", "Specification to use when creating child Docker Hosts", EntitySpec.create(DockerHost.class));
 
-    @SetFromFlag("hostSpec")
-    AttributeSensorAndConfigKey<EntitySpec, EntitySpec> DOCKER_HOST_SPEC = ConfigKeys.newSensorAndConfigKey(
-            EntitySpec.class, "docker.host.spec", "Specification to use when creating child Docker Hosts",
-            EntitySpec.create(DockerHost.class));
+  @SetFromFlag(value = "generateCerts") ConfigKey<Boolean> DOCKER_GENERATE_TLS_CERTIFICATES = ConfigKeys.newBooleanConfigKey("docker.tls.generate", "Generate the TLS required TLS certificate and keys for each host", Boolean.TRUE);
 
-    @SetFromFlag("generateCerts")
-    ConfigKey<Boolean> DOCKER_GENERATE_TLS_CERTIFICATES = ConfigKeys.newBooleanConfigKey("docker.tls.generate", "Generate the TLS required TLS certificate and keys for each host", Boolean.TRUE);
+  ConfigKey<String> DOCKER_CA_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.caCert", "The Docker Engine TLS CA certificate PEM file path", "ca-cert.pem");
 
-    ConfigKey<String> DOCKER_CA_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.caCert", "The Docker Engine TLS CA certificate PEM file path", "ca-cert.pem");
-    ConfigKey<String> DOCKER_CA_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.caKey", "The Docker Engine TLS CA certificate PEM file path", "ca-key.pem");
+  ConfigKey<String> DOCKER_CA_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.caKey", "The Docker Engine TLS CA certificate PEM file path", "ca-key.pem");
 
-    ConfigKey<String> DOCKER_SERVER_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.serverCert", "The Docker Engine TLS Server certificate PEM file path");
-    ConfigKey<String> DOCKER_SERVER_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.serverKey", "The Docker Engine TLS Server key PEM file path");
+  ConfigKey<String> DOCKER_SERVER_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.serverCert", "The Docker Engine TLS Server certificate PEM file path");
 
-    ConfigKey<String> DOCKER_CLIENT_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.clientCert", "The Docker Engine TLS Client certificate PEM file path");
-    ConfigKey<String> DOCKER_CLIENT_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.clientKey", "The Docker Engine TLS Client key PEM file path");
+  ConfigKey<String> DOCKER_SERVER_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.serverKey", "The Docker Engine TLS Server key PEM file path");
 
-    @SetFromFlag("dockerfileUrl")
-    ConfigKey<String> DOCKERFILE_URL = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.DOCKERFILE_URL, DockerUtils.UBUNTU_DOCKERFILE);
+  ConfigKey<String> DOCKER_CLIENT_CERTIFICATE_PATH = ConfigKeys.newStringConfigKey("docker.tls.clientCert", "The Docker Engine TLS Client certificate PEM file path");
 
-    @SetFromFlag("dockerfileName")
-    ConfigKey<String> DOCKERFILE_NAME = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.DOCKERFILE_NAME, "ubuntu");
+  ConfigKey<String> DOCKER_CLIENT_KEY_PATH = ConfigKeys.newStringConfigKey("docker.tls.clientKey", "The Docker Engine TLS Client key PEM file path");
 
-    @SetFromFlag("imageId")
-    ConfigKey<String> DOCKER_IMAGE_ID = DockerAttributes.DOCKER_IMAGE_ID.getConfigKey();
+  @SetFromFlag(value = "dockerfileUrl") ConfigKey<String> DOCKERFILE_URL = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.DOCKERFILE_URL, DockerUtils.UBUNTU_DOCKERFILE);
 
-    @SetFromFlag("hardwareId")
-    ConfigKey<String> DOCKER_HARDWARE_ID = DockerAttributes.DOCKER_HARDWARE_ID.getConfigKey();
+  @SetFromFlag(value = "dockerfileName") ConfigKey<String> DOCKERFILE_NAME = ConfigKeys.newConfigKeyWithDefault(DockerAttributes.DOCKERFILE_NAME, "ubuntu");
 
-    @SetFromFlag("affinityRules")
-    ConfigKey<List<String>> DOCKER_HOST_AFFINITY_RULES = AffinityRules.AFFINITY_RULES;
+  @SetFromFlag(value = "imageId") ConfigKey<String> DOCKER_IMAGE_ID = DockerAttributes.DOCKER_IMAGE_ID.getConfigKey();
 
-    @SetFromFlag("shutdownTimeout")
-    ConfigKey<Duration> SHUTDOWN_TIMEOUT = ConfigKeys.newDurationConfigKey("docker.timeout.shutdown", "Timeout to wait for children when shutting down", Duration.FIVE_MINUTES);
+  @SetFromFlag(value = "hardwareId") ConfigKey<String> DOCKER_HARDWARE_ID = DockerAttributes.DOCKER_HARDWARE_ID.getConfigKey();
 
-    @SetFromFlag("substitutions")
-    ConfigKey<Map<String, Object>> DOCKERFILE_SUBSTITUTIONS = ConfigKeys.newConfigKey(
-            new TypeToken<Map<String, Object>>() { },
-            "docker.dockerfile.substitutions", "Dockerfile template substitutions", MutableMap.<String, Object>of());
+  @SetFromFlag(value = "affinityRules") ConfigKey<List<String>> DOCKER_HOST_AFFINITY_RULES = AffinityRules.AFFINITY_RULES;
 
-    @CatalogConfig(label = "Start Registry", priority = 50)
-    @SetFromFlag("registryStart")
-    ConfigKey<Boolean> DOCKER_SHOULD_START_REGISTRY = ConfigKeys.newBooleanConfigKey("docker.registry.start", "Setup a docker registry and use it for pulls", Boolean.FALSE);
+  @SetFromFlag(value = "shutdownTimeout") ConfigKey<Duration> SHUTDOWN_TIMEOUT = ConfigKeys.newDurationConfigKey("docker.timeout.shutdown", "Timeout to wait for children when shutting down", Duration.FIVE_MINUTES);
 
-    @SetFromFlag("registryPort")
-    ConfigKey<Integer> DOCKER_REGISTRY_PORT = ConfigKeys.newIntegerConfigKey("docker.registry.port", "", 5000);
+  @SetFromFlag(value = "substitutions") ConfigKey<Map<String, Object>> DOCKERFILE_SUBSTITUTIONS = ConfigKeys.newConfigKey(new TypeToken<Map<String, Object>>() { }, "docker.dockerfile.substitutions", "Dockerfile template substitutions", MutableMap.<String, Object>of());
 
-    @SetFromFlag("registryWriteable")
-    ConfigKey<Boolean> DOCKER_IMAGE_REGISTRY_WRITEABLE = ConfigKeys.newBooleanConfigKey("docker.registry.writeable", "Use the configured docker registry for pushes", Boolean.FALSE);
+  @CatalogConfig(label = "Start Registry", priority = 50) @SetFromFlag(value = "registryStart") ConfigKey<Boolean> DOCKER_SHOULD_START_REGISTRY = ConfigKeys.newBooleanConfigKey("docker.registry.start", "Setup a docker registry and use it for pulls", Boolean.FALSE);
 
-    @SetFromFlag("registryUrl")
-    AttributeSensorAndConfigKey<String, String> DOCKER_IMAGE_REGISTRY_URL = DockerAttributes.DOCKER_IMAGE_REGISTRY_URL;
+  @SetFromFlag(value = "registryPort") ConfigKey<Integer> DOCKER_REGISTRY_PORT = ConfigKeys.newIntegerConfigKey("docker.registry.port", "", 5000);
 
-    @SetFromFlag("registryUsername")
-    ConfigKey<String> DOCKER_IMAGE_REGISTRY_USERNAME = ConfigKeys.newStringConfigKey("docker.registry.username", "Username for docker registry access");
+  @SetFromFlag(value = "registryWriteable") ConfigKey<Boolean> DOCKER_IMAGE_REGISTRY_WRITEABLE = ConfigKeys.newBooleanConfigKey("docker.registry.writeable", "Use the configured docker registry for pushes", Boolean.FALSE);
 
-    @SetFromFlag("registryPassword")
-    ConfigKey<String> DOCKER_IMAGE_REGISTRY_PASSWORD = ConfigKeys.newStringConfigKey("docker.registry.password", "Password for docker registry access");
+  @SetFromFlag(value = "registryUrl") AttributeSensorAndConfigKey<String, String> DOCKER_IMAGE_REGISTRY_URL = DockerAttributes.DOCKER_IMAGE_REGISTRY_URL;
 
-    AttributeSensor<Entity> DOCKER_IMAGE_REGISTRY = DockerAttributes.DOCKER_IMAGE_REGISTRY;
+  @SetFromFlag(value = "registryUsername") ConfigKey<String> DOCKER_IMAGE_REGISTRY_USERNAME = ConfigKeys.newStringConfigKey("docker.registry.username", "Username for docker registry access");
 
-    AttributeSensor<DynamicCluster> DOCKER_HOST_CLUSTER = Sensors.newSensor(DynamicCluster.class, "docker.hosts", "Docker host cluster");
-    AttributeSensor<DynamicGroup> DOCKER_CONTAINER_FABRIC = Sensors.newSensor(DynamicGroup.class, "docker.fabric", "Docker container fabric");
-    AttributeSensor<DynamicMultiGroup> DOCKER_APPLICATIONS = Sensors.newSensor(DynamicMultiGroup.class, "docker.buckets", "Docker applications");
-    AttributeSensor<Entity> SDN_PROVIDER = SdnAttributes.SDN_PROVIDER;
+  @SetFromFlag(value = "registryPassword") ConfigKey<String> DOCKER_IMAGE_REGISTRY_PASSWORD = ConfigKeys.newStringConfigKey("docker.registry.password", "Password for docker registry access");
 
-    AttributeSensor<AtomicInteger> DOCKER_HOST_COUNTER = Sensors.newSensor(AtomicInteger.class, "docker.hosts.counter", "Docker host counter");
-    AttributeSensor<AtomicInteger> DOCKER_CONTAINER_COUNTER = Sensors.newSensor(AtomicInteger.class, "docker.containers.counter", "Docker container counter");;
+  AttributeSensor<Entity> DOCKER_IMAGE_REGISTRY = DockerAttributes.DOCKER_IMAGE_REGISTRY;
 
-    AttributeSensor<Integer> DOCKER_HOST_COUNT = DockerAttributes.DOCKER_HOST_COUNT;
-    AttributeSensor<Integer> DOCKER_CONTAINER_COUNT = DockerAttributes.DOCKER_CONTAINER_COUNT;
+  AttributeSensor<DynamicCluster> DOCKER_HOST_CLUSTER = Sensors.newSensor(DynamicCluster.class, "docker.hosts", "Docker host cluster");
 
-    List<Entity> getDockerHostList();
+  AttributeSensor<DynamicGroup> DOCKER_CONTAINER_FABRIC = Sensors.newSensor(DynamicGroup.class, "docker.fabric", "Docker container fabric");
 
-    DynamicCluster getDockerHostCluster();
+  AttributeSensor<DynamicMultiGroup> DOCKER_APPLICATIONS = Sensors.newSensor(DynamicMultiGroup.class, "docker.buckets", "Docker applications");
 
-    List<Entity> getDockerContainerList();
+  AttributeSensor<Entity> SDN_PROVIDER = SdnAttributes.SDN_PROVIDER;
 
-    DynamicGroup getContainerFabric();
+  AttributeSensor<AtomicInteger> DOCKER_HOST_COUNTER = Sensors.newSensor(AtomicInteger.class, "docker.hosts.counter", "Docker host counter");
 
-    Object getInfrastructureMutex();
+  AttributeSensor<AtomicInteger> DOCKER_CONTAINER_COUNTER = Sensors.newSensor(AtomicInteger.class, "docker.containers.counter", "Docker container counter");
 
+
+
+  AttributeSensor<Integer> DOCKER_HOST_COUNT = DockerAttributes.DOCKER_HOST_COUNT;
+
+  AttributeSensor<Integer> DOCKER_CONTAINER_COUNT = DockerAttributes.DOCKER_CONTAINER_COUNT;
+
+  List<Entity> getDockerHostList();
+
+  DynamicCluster getDockerHostCluster();
+
+  List<Entity> getDockerContainerList();
+
+  DynamicGroup getContainerFabric();
+
+  Object getInfrastructureMutex();
 }
