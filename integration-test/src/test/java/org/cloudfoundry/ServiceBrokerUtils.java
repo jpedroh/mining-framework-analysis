@@ -72,10 +72,18 @@ public final class ServiceBrokerUtils {
         return getSharedDomain(cloudFoundryClient)
             .flatMap(domain -> pushServiceBrokerApplication(cloudFoundryClient, application, domain, nameFactory, planName, serviceName, spaceId))
             .flatMap(applicationMetadata -> requestCreateServiceBroker(cloudFoundryClient, applicationMetadata, serviceBrokerName, spaceScoped)
-                .delayUntil(response -> Mono.zip(
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/c656f6aa5f42563e62c3f226b05615e9e95c3087/integration-test/src/test/java/org/cloudfoundry/ServiceBrokerUtils.java/left.java
+                .delayUntil(response -> makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName, spaceScoped))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/c656f6aa5f42563e62c3f226b05615e9e95c3087/integration-test/src/test/java/org/cloudfoundry/ServiceBrokerUtils.java/base.java
+                .delayUntil(response -> makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName, spaceScoped)
+                    .then(Mono.just(response)))
+=======
+                .delayUntil(response -> Mono.when(
                     makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName, spaceScoped),
                     makeServicePlanPubliclyVisible(cloudFoundryClient, serviceName + "-shareable", spaceScoped)
-                ))
+                )
+                    .then(Mono.just(response)))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/c656f6aa5f42563e62c3f226b05615e9e95c3087/integration-test/src/test/java/org/cloudfoundry/ServiceBrokerUtils.java/right.java
                 .map(response -> new ServiceBrokerMetadata(applicationMetadata, ResourceUtils.getId(response))));
     }
 
