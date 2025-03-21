@@ -52,8 +52,12 @@ public class Faker {
         this.options = new Options(randomService);
         this.code = new Code(randomService);
         this.finance = new Finance(fakeValuesService, randomService);
+<<<<<<< /usr/src/app/output/dius/java-faker/0fabf9922b6d2d2d929febfa7aa7948a35978d5c/src/main/java/com/github/javafaker/Faker.java/left.java
         this.countryService = new CountryService(fakeValuesService, randomService);
+||||||| /usr/src/app/output/dius/java-faker/0fabf9922b6d2d2d929febfa7aa7948a35978d5c/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.dateAndTime = new DateAndTime(randomService);
+>>>>>>> /usr/src/app/output/dius/java-faker/0fabf9922b6d2d2d929febfa7aa7948a35978d5c/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
