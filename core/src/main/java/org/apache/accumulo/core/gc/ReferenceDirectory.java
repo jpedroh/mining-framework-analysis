@@ -1,23 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.accumulo.core.gc;
-
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.metadata.schema.MetadataSchema;
 
@@ -25,7 +6,7 @@ import org.apache.accumulo.core.metadata.schema.MetadataSchema;
  * A GC reference to a Tablet directory, like t-0003.
  */
 public class ReferenceDirectory extends ReferenceFile {
-  private final String tabletDir; // t-0003
+  private final String tabletDir;
 
   public ReferenceDirectory(TableId tableId, String dirName) {
     super(tableId, dirName, false);
@@ -33,8 +14,7 @@ public class ReferenceDirectory extends ReferenceFile {
     this.tabletDir = dirName;
   }
 
-  @Override
-  public boolean isDirectory() {
+  @Override public boolean isDirectory() {
     return true;
   }
 
@@ -45,11 +25,9 @@ public class ReferenceDirectory extends ReferenceFile {
   /**
    * A Tablet directory should have a metadata entry equal to the dirName.
    */
-  @Override
-  public String getMetadataPath() {
+  @Override public String getMetadataPath() {
     if (!tabletDir.equals(metadataPath)) {
-      throw new IllegalStateException(
-          "Tablet dir " + tabletDir + " is not equal to metadataPath: " + metadataPath);
+      throw new IllegalStateException("Tablet dir " + tabletDir + " is not equal to metadataPath: " + metadataPath);
     }
     return metadataPath;
   }

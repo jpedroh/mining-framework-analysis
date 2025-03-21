@@ -1,29 +1,9 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.accumulo.gc;
-
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.accumulo.core.metadata.schema.TabletMetadata.ColumnType.DIR;
 import static org.apache.accumulo.core.metadata.schema.TabletMetadata.ColumnType.FILES;
 import static org.apache.accumulo.core.metadata.schema.TabletMetadata.ColumnType.SCANS;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +20,6 @@ import java.util.SortedMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.IsolatedScanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
@@ -77,22 +56,28 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.annotations.VisibleForTesting;
 
 /**
  * A single garbage collection performed on a table (Root, MD) or all User tables.
  */
 public class GCRun implements GarbageCollectionEnvironment {
-  // loggers are not static to support unique naming by level
   private final Logger log;
+
   private static final String fileActionPrefix = "FILE-ACTION:";
+
   private final Ample.DataLevel level;
+
   private final ServerContext context;
+
   private final AccumuloConfiguration config;
+
   private long candidates = 0;
+
   private long inUse = 0;
+
   private long deleted = 0;
+
   private long errors = 0;
 
   public GCRun(Ample.DataLevel level, ServerContext context) {
@@ -102,8 +87,7 @@ public class GCRun implements GarbageCollectionEnvironment {
     this.config = context.getConfiguration();
   }
 
-  @Override
-  public Iterator<GcCandidate> getCandidates() {
+  @Override public Iterator<GcCandidate> getCandidates() {
     return context.getAmple().getGcCandidates(level);
   }
 
@@ -113,12 +97,9 @@ public class GCRun implements GarbageCollectionEnvironment {
    * @param gcCandidates Collection of deletion reference candidates to remove.
    * @param type type of deletion reference candidates.
    */
-  @Override
-  public void deleteGcCandidates(Collection<GcCandidate> gcCandidates, GcCandidateType type) {
+  @Override public void deleteGcCandidates(Collection<GcCandidate> gcCandidates, GcCandidateType type) {
     if (inSafeMode()) {
-      System.out.println("SAFEMODE: There are " + gcCandidates.size()
-          + " reference file gcCandidates entries marked for deletion from " + level + " of type: "
-          + type + ".\n          Examine the log files to identify them.\n");
+      System.out.println("SAFEMODE: There are " + gcCandidates.size() + " reference file gcCandidates entries marked for deletion from " + level + " of type: " + type + ".\n          Examine the log files to identify them.\n");
       log.info("SAFEMODE: Listing all ref file gcCandidates for deletion");
       for (GcCandidate gcCandidate : gcCandidates) {
         log.info("SAFEMODE: {}", gcCandidate);
@@ -126,102 +107,80 @@ public class GCRun implements GarbageCollectionEnvironment {
       log.info("SAFEMODE: End reference candidates for deletion");
       return;
     }
-
     log.info("Attempting to delete gcCandidates of type {} from metadata", type);
     context.getAmple().deleteGcCandidates(level, gcCandidates, type);
   }
 
-  @Override
-  public List<GcCandidate> readCandidatesThatFitInMemory(Iterator<GcCandidate> candidates) {
+  @Override public List<GcCandidate> readCandidatesThatFitInMemory(Iterator<GcCandidate> candidates) {
     long candidateLength = 0;
-    // Converting the bytes to approximate number of characters for batch size.
     long candidateBatchSize = getCandidateBatchSize() / 2;
-
     List<GcCandidate> candidatesBatch = new ArrayList<>();
-
     while (candidates.hasNext()) {
       GcCandidate candidate = candidates.next();
       candidateLength += candidate.getPath().length();
       candidatesBatch.add(candidate);
       if (candidateLength > candidateBatchSize) {
-        log.info("Candidate batch of size {} has exceeded the threshold. Attempting to delete "
-            + "what has been gathered so far.", candidateLength);
+        log.info("Candidate batch of size {} has exceeded the threshold. Attempting to delete " + "what has been gathered so far.", candidateLength);
         return candidatesBatch;
       }
     }
     return candidatesBatch;
   }
 
-  @Override
-  public Stream<String> getBlipPaths() throws TableNotFoundException {
-
+  @Override public Stream<String> getBlipPaths() throws TableNotFoundException {
     if (level == Ample.DataLevel.ROOT) {
       return Stream.empty();
     }
-
     int blipPrefixLen = MetadataSchema.BlipSection.getRowPrefix().length();
-    var scanner =
-        new IsolatedScanner(context.createScanner(level.metaTable(), Authorizations.EMPTY));
+    var scanner = new IsolatedScanner(context.createScanner(level.metaTable(), Authorizations.EMPTY));
     scanner.setRange(MetadataSchema.BlipSection.getRange());
-    return scanner.stream()
-        .map(entry -> entry.getKey().getRow().toString().substring(blipPrefixLen))
-        .onClose(scanner::close);
+    return scanner.stream().map((entry) -> entry.getKey().getRow().toString().substring(blipPrefixLen)).onClose(scanner::close);
   }
 
-  @Override
-  public Stream<Reference> getReferences() {
+  @Override public Stream<Reference> getReferences() {
     Stream<TabletMetadata> tabletStream;
-
-    // create a stream of metadata entries read from file, scan and tablet dir columns
     if (level == Ample.DataLevel.ROOT) {
       tabletStream = Stream.of(context.getAmple().readTablet(RootTable.EXTENT, DIR, FILES, SCANS));
     } else {
-      var tabletsMetadata = TabletsMetadata.builder(context).scanTable(level.metaTable())
-          .checkConsistency().fetch(DIR, FILES, SCANS).build();
+      var tabletsMetadata = TabletsMetadata.builder(context).scanTable(level.metaTable()).checkConsistency().fetch(DIR, FILES, SCANS).build();
       tabletStream = tabletsMetadata.stream();
     }
-
-    // there is a lot going on in this "one line" so see below for more info
-    var tabletReferences = tabletStream.flatMap(tm -> {
+    var tabletReferences = tabletStream.flatMap((tm) -> {
       var tableId = tm.getTableId();
-
-      // verify that dir and prev row entries present for to check for complete row scan
-      log.trace("tablet metadata table id: {}, end row:{}, dir:{}, saw: {}, prev row: {}", tableId,
-          tm.getEndRow(), tm.getDirName(), tm.sawPrevEndRow(), tm.getPrevEndRow());
+      log.trace("tablet metadata table id: {}, end row:{}, dir:{}, saw: {}, prev row: {}", tableId, tm.getEndRow(), tm.getDirName(), tm.sawPrevEndRow(), tm.getPrevEndRow());
       if (tm.getDirName() == null || tm.getDirName().isEmpty() || !tm.sawPrevEndRow()) {
-        throw new IllegalStateException("possible incomplete metadata scan for table id: " + tableId
-            + ", end row: " + tm.getEndRow() + ", dir: " + tm.getDirName() + ", saw prev row: "
-            + tm.sawPrevEndRow());
+        throw new IllegalStateException("possible incomplete metadata scan for table id: " + tableId + ", end row: " + tm.getEndRow() + ", dir: " + tm.getDirName() + ", saw prev row: " + tm.sawPrevEndRow());
       }
-
-      // combine all the entries read from file and scan columns in the metadata table
       Stream<StoredTabletFile> stfStream = tm.getFiles().stream();
-      // map the files to Reference objects
-      var fileStream = stfStream.map(f -> ReferenceFile.forFile(tableId, f));
-
-      // scans are normally empty, so only introduce a layer of indirection when needed
+      var fileStream = stfStream.map((f) -> ReferenceFile.forFile(tableId, f.getMetaUpdateDelete()));
       final var tmScans = tm.getScans();
       if (!tmScans.isEmpty()) {
-        var scanStream = tmScans.stream().map(s -> ReferenceFile.forScan(tableId, s));
+        var scanStream = tmScans.stream().map((s) -> ReferenceFile.forScan(tableId, s.getMetaUpdateDelete()));
         fileStream = Stream.concat(fileStream, scanStream);
       }
-      // if dirName is populated, then we have a tablet directory aka srv:dir
+
+<<<<<<< /usr/src/app/output/apache/accumulo/c4c8c572c8be14d882899f8f9370700227e87423/server/gc/src/main/java/org/apache/accumulo/gc/GCRun.java/left.java
+      var stream = fileStream.map((f) -> new ReferenceFile(tm.getTableId(), f));
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
       if (tm.getDirName() != null) {
-        // add the tablet directory to the stream
         var tabletDir = new ReferenceDirectory(tableId, tm.getDirName());
         fileStream = Stream.concat(fileStream, Stream.of(tabletDir));
       }
       return fileStream;
     });
-
-    var scanServerRefs = context.getAmple().getScanServerFileReferences()
-        .map(sfr -> ReferenceFile.forScan(sfr.getTableId(), sfr));
-
+    var scanServerRefs = context.getAmple().getScanServerFileReferences().map((sfr) -> 
+<<<<<<< /usr/src/app/output/apache/accumulo/c4c8c572c8be14d882899f8f9370700227e87423/server/gc/src/main/java/org/apache/accumulo/gc/GCRun.java/left.java
+    new ReferenceFile(sfr.getTableId(), sfr)
+=======
+    ReferenceFile.forScan(sfr.getTableId(), sfr.getPathStr())
+>>>>>>> /usr/src/app/output/apache/accumulo/c4c8c572c8be14d882899f8f9370700227e87423/server/gc/src/main/java/org/apache/accumulo/gc/GCRun.java/right.java
+    );
     return Stream.concat(tabletReferences, scanServerRefs);
   }
 
-  @Override
-  public Map<TableId,TableState> getTableIDs() throws InterruptedException {
+  @Override public Map<TableId, TableState> getTableIDs() throws InterruptedException {
     final String tablesPath = context.getZooKeeperRoot() + Constants.ZTABLES;
     final ZooReader zr = context.getZooReader();
     int retries = 1;
@@ -229,12 +188,11 @@ public class GCRun implements GarbageCollectionEnvironment {
     while (retries <= 10) {
       try {
         zr.sync(tablesPath);
-        final Map<TableId,TableState> tids = new HashMap<>();
+        final Map<TableId, TableState> tids = new HashMap<>();
         for (String table : zr.getChildren(tablesPath)) {
           TableId tableId = TableId.of(table);
           TableState tableState = null;
-          String statePath = context.getZooKeeperRoot() + Constants.ZTABLES + "/"
-              + tableId.canonical() + Constants.ZTABLE_STATE;
+          String statePath = context.getZooKeeperRoot() + Constants.ZTABLES + "/" + tableId.canonical() + Constants.ZTABLE_STATE;
           try {
             byte[] state = zr.getData(statePath);
             if (state == null) {
@@ -261,17 +219,11 @@ public class GCRun implements GarbageCollectionEnvironment {
     throw ioe;
   }
 
-  @Override
-  public void deleteConfirmedCandidates(SortedMap<String,GcCandidate> confirmedDeletes)
-      throws TableNotFoundException {
+  @Override public void deleteConfirmedCandidates(SortedMap<String, GcCandidate> confirmedDeletes) throws TableNotFoundException {
     final VolumeManager fs = context.getVolumeManager();
-    var metadataLocation = level == Ample.DataLevel.ROOT
-        ? context.getZooKeeperRoot() + " for " + RootTable.NAME : level.metaTable();
-
+    var metadataLocation = level == Ample.DataLevel.ROOT ? context.getZooKeeperRoot() + " for " + RootTable.NAME : level.metaTable();
     if (inSafeMode()) {
-      System.out.println("SAFEMODE: There are " + confirmedDeletes.size()
-          + " data file candidates marked for deletion in " + metadataLocation + ".\n"
-          + "          Examine the log files to identify them.\n");
+      System.out.println("SAFEMODE: There are " + confirmedDeletes.size() + " data file candidates marked for deletion in " + metadataLocation + ".\n" + "          Examine the log files to identify them.\n");
       log.info("{} SAFEMODE: Listing all data file candidates for deletion", fileActionPrefix);
       for (GcCandidate candidate : confirmedDeletes.values()) {
         log.info("{} SAFEMODE: {}", fileActionPrefix, candidate);
@@ -279,108 +231,74 @@ public class GCRun implements GarbageCollectionEnvironment {
       log.info("SAFEMODE: End candidates for deletion");
       return;
     }
-
     List<GcCandidate> processedDeletes = Collections.synchronizedList(new ArrayList<>());
-
     minimizeDeletes(confirmedDeletes, processedDeletes, fs, log);
-
-    ExecutorService deleteThreadPool = ThreadPools.getServerThreadPools()
-        .createExecutorService(config, Property.GC_DELETE_THREADS, false);
-
-    final List<Pair<Path,Path>> replacements = context.getVolumeReplacements();
-
+    ExecutorService deleteThreadPool = ThreadPools.getServerThreadPools().createExecutorService(config, Property.GC_DELETE_THREADS, false);
+    final List<Pair<Path, Path>> replacements = context.getVolumeReplacements();
     for (final GcCandidate delete : confirmedDeletes.values()) {
-
       Runnable deleteTask = () -> {
         boolean removeFlag = false;
-
         try {
           Path fullPath;
-          Path switchedDelete = VolumeUtil.switchVolume(new Path(delete.getPath()),
-              VolumeManager.FileType.TABLE, replacements);
+          Path switchedDelete = VolumeUtil.switchVolume(new Path(delete.getPath()), VolumeManager.FileType.TABLE, replacements);
           if (switchedDelete != null) {
-            // actually replacing the volumes in the metadata table would be tricky because the
-            // entries would be different rows. So it could not be
-            // atomically in one mutation and extreme care would need to be taken that delete
-            // entry was not lost. Instead of doing that, just deal with
-            // volume switching when something needs to be deleted. Since the rest of the code
-            // uses suffixes to compare delete entries, there is no danger
-            // of deleting something that should not be deleted. Must not change value of delete
-            // variable because that's what's stored in metadata table.
             log.debug("Volume replaced {} -> {}", delete.getPath(), switchedDelete);
             fullPath = ValidationUtil.validate(switchedDelete);
           } else {
             fullPath = new Path(ValidationUtil.validate(delete.getPath()));
           }
-
           for (Path pathToDel : GcVolumeUtil.expandAllVolumesUri(fs, fullPath)) {
             log.debug("{} Deleting {}", fileActionPrefix, pathToDel);
-
             if (moveToTrash(pathToDel) || fs.deleteRecursively(pathToDel)) {
-              // delete succeeded, still want to delete
               removeFlag = true;
               deleted++;
-            } else if (fs.exists(pathToDel)) {
-              // leave the entry in the metadata; we'll try again later
-              removeFlag = false;
-              errors++;
-              log.warn("{} File exists, but was not deleted for an unknown reason: {}",
-                  fileActionPrefix, pathToDel);
-              break;
             } else {
-              // this failure, we still want to remove the metadata entry
-              removeFlag = true;
-              errors++;
-              String[] parts = pathToDel.toString().split(Constants.ZTABLES)[1].split("/");
-              if (parts.length > 2) {
-                TableId tableId = TableId.of(parts[1]);
-                String tabletDir = parts[2];
-                context.getTableManager().updateTableStateCache(tableId);
-                TableState tableState = context.getTableManager().getTableState(tableId);
-                if (tableState != null && tableState != TableState.DELETING) {
-                  // clone directories don't always exist
-                  if (!tabletDir.startsWith(Constants.CLONE_PREFIX)) {
-                    log.debug("{} File doesn't exist: {}", fileActionPrefix, pathToDel);
-                  }
-                }
+              if (fs.exists(pathToDel)) {
+                removeFlag = false;
+                errors++;
+                log.warn("{} File exists, but was not deleted for an unknown reason: {}", fileActionPrefix, pathToDel);
+                break;
               } else {
-                log.warn("{} Delete failed due to invalid file path format: {}", fileActionPrefix,
-                    delete.getPath());
+                removeFlag = true;
+                errors++;
+                String[] parts = pathToDel.toString().split(Constants.ZTABLES)[1].split("/");
+                if (parts.length > 2) {
+                  TableId tableId = TableId.of(parts[1]);
+                  String tabletDir = parts[2];
+                  context.getTableManager().updateTableStateCache(tableId);
+                  TableState tableState = context.getTableManager().getTableState(tableId);
+                  if (tableState != null && tableState != TableState.DELETING) {
+                    if (!tabletDir.startsWith(Constants.CLONE_PREFIX)) {
+                      log.debug("{} File doesn\'t exist: {}", fileActionPrefix, pathToDel);
+                    }
+                  }
+                } else {
+                  log.warn("{} Delete failed due to invalid file path format: {}", fileActionPrefix, delete.getPath());
+                }
               }
             }
           }
-
-          // proceed to clearing out the flags for successful deletes and
-          // non-existent files
           if (removeFlag) {
             processedDeletes.add(delete);
           }
         } catch (Exception e) {
           log.error("{} Exception while deleting files ", fileActionPrefix, e);
         }
-
       };
-
       deleteThreadPool.execute(deleteTask);
     }
-
     deleteThreadPool.shutdown();
-
     try {
-      while (!deleteThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS)) { // empty
+      while (!deleteThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
       }
     } catch (InterruptedException e1) {
       log.error("{}", e1.getMessage(), e1);
     }
-
     deleteGcCandidates(processedDeletes, GcCandidateType.VALID);
   }
 
-  @Override
-  public void deleteTableDirIfEmpty(TableId tableID) throws IOException {
+  @Override public void deleteTableDirIfEmpty(TableId tableID) throws IOException {
     final VolumeManager fs = context.getVolumeManager();
-    // if dir exist and is empty, then empty list is returned...
-    // hadoop 2.0 will throw an exception if the file does not exist
     for (String dir : context.getTablesDirs()) {
       FileStatus[] tabletDirs;
       try {
@@ -388,7 +306,6 @@ public class GCRun implements GarbageCollectionEnvironment {
       } catch (FileNotFoundException ex) {
         continue;
       }
-
       if (tabletDirs.length == 0) {
         Path p = new Path(dir + "/" + tableID);
         log.debug("{} Removing table dir {}", fileActionPrefix, p);
@@ -399,66 +316,54 @@ public class GCRun implements GarbageCollectionEnvironment {
     }
   }
 
-  @Override
-  public void incrementCandidatesStat(long i) {
+  @Override public void incrementCandidatesStat(long i) {
     candidates += i;
   }
 
-  @Override
-  public void incrementInUseStat(long i) {
+  @Override public void incrementInUseStat(long i) {
     inUse += i;
   }
 
-  @VisibleForTesting
-  static void minimizeDeletes(SortedMap<String,GcCandidate> confirmedDeletes,
-      List<GcCandidate> processedDeletes, VolumeManager fs, Logger logger) {
+  @VisibleForTesting static void minimizeDeletes(SortedMap<String, GcCandidate> confirmedDeletes, List<GcCandidate> processedDeletes, VolumeManager fs, Logger logger) {
     Set<Path> seenVolumes = new HashSet<>();
-
-    // when deleting a dir and all files in that dir, only need to delete the dir.
-    // The dir will sort right before the files... so remove the files in this case
-    // to minimize namenode ops
-    Iterator<Map.Entry<String,GcCandidate>> cdIter = confirmedDeletes.entrySet().iterator();
-
+    Iterator<Map.Entry<String, GcCandidate>> cdIter = confirmedDeletes.entrySet().iterator();
     String lastDirRel = null;
     Path lastDirAbs = null;
     while (cdIter.hasNext()) {
-      Map.Entry<String,GcCandidate> entry = cdIter.next();
+      Map.Entry<String, GcCandidate> entry = cdIter.next();
       String relPath = entry.getKey();
       Path absPath = new Path(entry.getValue().getPath());
-
       if (SimpleGarbageCollector.isDir(relPath)) {
         lastDirRel = relPath;
         lastDirAbs = absPath;
-      } else if (lastDirRel != null) {
-        if (relPath.startsWith(lastDirRel)) {
-          Path vol = VolumeManager.FileType.TABLE.getVolume(absPath);
-
-          boolean sameVol = false;
-
-          if (GcVolumeUtil.isAllVolumesUri(lastDirAbs)) {
-            if (seenVolumes.contains(vol)) {
-              sameVol = true;
-            } else {
-              for (Volume cvol : fs.getVolumes()) {
-                if (cvol.containsPath(vol)) {
-                  seenVolumes.add(vol);
-                  sameVol = true;
+      } else {
+        if (lastDirRel != null) {
+          if (relPath.startsWith(lastDirRel)) {
+            Path vol = VolumeManager.FileType.TABLE.getVolume(absPath);
+            boolean sameVol = false;
+            if (GcVolumeUtil.isAllVolumesUri(lastDirAbs)) {
+              if (seenVolumes.contains(vol)) {
+                sameVol = true;
+              } else {
+                for (Volume cvol : fs.getVolumes()) {
+                  if (cvol.containsPath(vol)) {
+                    seenVolumes.add(vol);
+                    sameVol = true;
+                  }
                 }
               }
+            } else {
+              sameVol = Objects.equals(VolumeManager.FileType.TABLE.getVolume(lastDirAbs), vol);
+            }
+            if (sameVol) {
+              logger.info("{} Ignoring {} because {} exist", fileActionPrefix, entry.getValue().getPath(), lastDirAbs);
+              processedDeletes.add(entry.getValue());
+              cdIter.remove();
             }
           } else {
-            sameVol = Objects.equals(VolumeManager.FileType.TABLE.getVolume(lastDirAbs), vol);
+            lastDirRel = null;
+            lastDirAbs = null;
           }
-
-          if (sameVol) {
-            logger.info("{} Ignoring {} because {} exist", fileActionPrefix,
-                entry.getValue().getPath(), lastDirAbs);
-            processedDeletes.add(entry.getValue());
-            cdIter.remove();
-          }
-        } else {
-          lastDirRel = null;
-          lastDirAbs = null;
         }
       }
     }
@@ -478,8 +383,7 @@ public class GCRun implements GarbageCollectionEnvironment {
    *
    * @return value of {@link Property#GC_REMOVE_IN_USE_CANDIDATES}
    */
-  @Override
-  public boolean canRemoveInUseCandidates() {
+  @Override public boolean canRemoveInUseCandidates() {
     return context.getConfiguration().getBoolean(Property.GC_REMOVE_IN_USE_CANDIDATES);
   }
 
@@ -539,26 +443,27 @@ public class GCRun implements GarbageCollectionEnvironment {
    * @return The table ids
    * @throws InterruptedException if interrupted when calling ZooKeeper
    */
-  @Override
-  public Set<TableId> getCandidateTableIDs() throws InterruptedException {
+  @Override public Set<TableId> getCandidateTableIDs() throws InterruptedException {
     if (level == DataLevel.ROOT) {
       return Set.of(RootTable.ID);
-    } else if (level == DataLevel.METADATA) {
-      return Set.of(MetadataTable.ID);
-    } else if (level == DataLevel.USER) {
-      Set<TableId> tableIds = new HashSet<>();
-      getTableIDs().forEach((k, v) -> {
-        if (v == TableState.ONLINE || v == TableState.OFFLINE) {
-          // Don't return tables that are NEW, DELETING, or in an
-          // UNKNOWN state.
-          tableIds.add(k);
-        }
-      });
-      tableIds.remove(MetadataTable.ID);
-      tableIds.remove(RootTable.ID);
-      return tableIds;
     } else {
-      throw new IllegalArgumentException("Unexpected level in GC Env: " + this.level.name());
+      if (level == DataLevel.METADATA) {
+        return Set.of(MetadataTable.ID);
+      } else {
+        if (level == DataLevel.USER) {
+          Set<TableId> tableIds = new HashSet<>();
+          getTableIDs().forEach((k, v) -> {
+            if (v == TableState.ONLINE || v == TableState.OFFLINE) {
+              tableIds.add(k);
+            }
+          });
+          tableIds.remove(MetadataTable.ID);
+          tableIds.remove(RootTable.ID);
+          return tableIds;
+        } else {
+          throw new IllegalArgumentException("Unexpected level in GC Env: " + this.level.name());
+        }
+      }
     }
   }
 }
