@@ -87,6 +87,7 @@ public class DataPrep {
 		new FileOutputStream(new File(spanFilename), false).close(); // clobber spans file. this is gross
 		this.feLines = feLines;
 		this.tagLines = tagLines;
+		spanPruner = new CandidateSpanPruner();
 		candidateLines = load(tagLines, feLines);
 	}
 
