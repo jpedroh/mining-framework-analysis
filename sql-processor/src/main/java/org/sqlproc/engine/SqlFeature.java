@@ -312,13 +312,17 @@ public interface SqlFeature {
      */
     // TODO $t - table name, $c - column name
     // public static final String POSTGRESQL_DEFAULT_IDSEL = "select currval(pg_get_serial_sequence('$t','$c'))";
+<<<<<<< /usr/src/app/output/hudec/sql-processor/fbee2a4770ce875e26132c747ce5f30583584483/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/left.java
     /**
      * <code>INFORMIX_DEFAULT_IDSEL</code> is the default value related to the key <code>SET_IDSEL</code> in the case
      * the filter value <code>INFORMIX</code> is used for the {@link SqlEngineLoader} instance creation.
      */
     public static final String INFORMIX_DEFAULT_IDSEL = "SELECT FIRST 1 dbinfo('bigserial') FROM systables";
-    /*
+||||||| /usr/src/app/output/hudec/sql-processor/fbee2a4770ce875e26132c747ce5f30583584483/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/base.java
+=======
+    /**
      * <code>DEFAULT_VERSION_COLUMN</code> is the default name of the column devoted to the optimistic locking.
      */
     public static final String DEFAULT_VERSION_COLUMN = "version";
+>>>>>>> /usr/src/app/output/hudec/sql-processor/fbee2a4770ce875e26132c747ce5f30583584483/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/right.java
 }
