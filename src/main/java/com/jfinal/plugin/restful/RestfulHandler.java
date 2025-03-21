@@ -18,6 +18,7 @@ public class RestfulHandler extends Handler {
     private TreeMap<String, Action> actionTreeMap;
     private boolean initialized;
 
+<<<<<<< /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/left.java
     public void init() {
         actionTreeMap = new TreeMap<String, Action>(new RestfulKeyComparator());
         JFinal jf = JFinal.me();
@@ -31,13 +32,48 @@ public class RestfulHandler extends Handler {
         }
         initialized = true;
     }
+||||||| /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/base.java
+    public void init() 
+=======
+    public void init() {
+        actionTreeMap = new TreeMap<String, Action>(new RestfulKeyComparator());
+        JFinal jf = JFinal.me();
+        List<String> actionKeys = jf.getAllActionKeys();
+        String[] empty = new String[]{null};
+        for (String k : actionKeys) {
+            if (!k.startsWith("@")) {
+                continue;
+            }
+            actionTreeMap.put(k, jf.getAction(k, empty));
+        }
+        init = true;
+    }
+>>>>>>> /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/right.java
+
+    private boolean init;
 
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
+<<<<<<< /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/left.java
         if (!initialized) {
             init();
         }
-
+||||||| /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/base.java
+=======
+        if (!init) {
+            actionTreeMap = new TreeMap<String, Action>(new RestfulKeyComparator());
+            JFinal jf = JFinal.me();
+            List<String> actionKeys = jf.getAllActionKeys();
+            String[] empty = new String[]{null};
+            for (String k : actionKeys) {
+                if (!k.startsWith("@")) {
+                    continue;
+                }
+                actionTreeMap.put(k, jf.getAction(k, empty));
+            }
+            init = true;
+        }
+>>>>>>> /usr/src/app/output/jfinal/jfinal/77040eaf33ff2f0c2d3c7ea6d7b3b6d0755999d7/src/main/java/com/jfinal/plugin/restful/RestfulHandler.java/right.java
         String actionKey = matchActionKey(target, request.getMethod());
 
         if (actionKey != null) {
