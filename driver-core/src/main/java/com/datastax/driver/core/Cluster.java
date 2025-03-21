@@ -976,8 +976,6 @@ public class Cluster implements Closeable {
                         controlConnection.connect();
                         if (connectionFactory.protocolVersion < 0)
                             connectionFactory.protocolVersion = 2;
-
-                        isInit = true;
                         return;
                     } catch (UnsupportedProtocolVersionException e) {
                         assert connectionFactory.protocolVersion < 1;
@@ -992,6 +990,8 @@ public class Cluster implements Closeable {
                 close();
                 throw e;
             }
+
+            isInit = true;
         }
 
         int protocolVersion() {
