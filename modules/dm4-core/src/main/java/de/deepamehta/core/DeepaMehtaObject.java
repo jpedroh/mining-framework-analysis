@@ -1,92 +1,59 @@
 package de.deepamehta.core;
-
 import de.deepamehta.core.model.ChildTopicsModel;
 import de.deepamehta.core.model.DeepaMehtaObjectModel;
 import de.deepamehta.core.model.SimpleValue;
 import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.service.ResultList;
-
 import java.util.List;
 
-
-
 public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
+  long getId();
 
+  String getUri();
 
+  void setUri(String uri);
 
-    // === Model ===
+  String getTypeUri();
 
-    // --- ID ---
+  void setTypeUri(String typeUri);
 
-    long getId();
+  SimpleValue getSimpleValue();
 
-    // --- URI ---
+  void setSimpleValue(String value);
 
-    String getUri();
+  void setSimpleValue(int value);
 
-    void setUri(String uri);
+  void setSimpleValue(long value);
 
-    // --- Type URI ---
+  void setSimpleValue(boolean value);
 
-    String getTypeUri();
+  void setSimpleValue(SimpleValue value);
 
-    void setTypeUri(String typeUri);
+  ChildTopics getChildTopics();
 
-    // --- Simple Value ---
+  void setChildTopics(ChildTopicsModel childTopics);
 
-    SimpleValue getSimpleValue();
+  DeepaMehtaObject loadChildTopics();
 
-    void setSimpleValue(String value);
-    void setSimpleValue(int value);
-    void setSimpleValue(long value);
-    void setSimpleValue(boolean value);
-    void setSimpleValue(SimpleValue value);
+  DeepaMehtaObject loadChildTopics(String childTypeUri);
 
-    // --- Child Topics ---
+  DeepaMehtaObjectModel getModel();
 
-    ChildTopics getChildTopics();
+  void update(DeepaMehtaObjectModel model);
 
-    void setChildTopics(ChildTopicsModel childTopics);
+  void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef);
 
-    // ---
+  void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef);
 
-    DeepaMehtaObject loadChildTopics();
-    DeepaMehtaObject loadChildTopics(String childTypeUri);
-
-    // ---
-
-    DeepaMehtaObjectModel getModel();
-
-
-
-    // === Updating ===
-
-    void update(DeepaMehtaObjectModel model);
-
-    // ---
-
-    void updateChildTopic(TopicModel newChildTopic, AssociationDefinition assocDef);
-    void updateChildTopics(List<TopicModel> newChildTopics, AssociationDefinition assocDef);
-
-
-
-    // === Deletion ===
-
-    /**
+  /**
      * Deletes the DeepaMehta object in its entirety, that is
      * - the object itself (the <i>parent</i>)
      * - all child topics associated via "dm4.core.composition", recusively
      * - all the remaining direct associations, e.g. "dm4.core.instantiation"
      */
-    void delete();
+  void delete();
 
-
-
-    // === Traversal ===
-
-    // --- Topic Retrieval ---
-
-    /**
+  /**
      * Fetches and returns a related topic or <code>null</code> if no such topic extists.
      *
      * @param   assocTypeUri        may be null
@@ -94,71 +61,54 @@ public interface DeepaMehtaObject extends Identifiable, JSONEnabled {
      * @param   othersRoleTypeUri   may be null
      * @param   othersTopicTypeUri  may be null
      */
-    RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                 String othersTopicTypeUri);
+  RelatedTopic getRelatedTopic(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri);
 
-    ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, int maxResultSize);
+  ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, int maxResultSize);
 
-    /**
+  /**
      * @param   assocTypeUri        may be null
      * @param   myRoleTypeUri       may be null
      * @param   othersRoleTypeUri   may be null
      * @param   othersTopicTypeUri  may be null
      * @param   maxResultSize       Result size limit. Pass 0 for no limit.
      */
-    ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                              String othersTopicTypeUri, int maxResultSize);
+  ResultList<RelatedTopic> getRelatedTopics(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, int maxResultSize);
 
-    /**
+  /**
      * @param   assocTypeUris       may *not* be null
      * @param   myRoleTypeUri       may be null
      * @param   othersRoleTypeUri   may be null
      * @param   othersTopicTypeUri  may be null
      */
-    ResultList<RelatedTopic> getRelatedTopics(List assocTypeUris, String myRoleTypeUri, String othersRoleTypeUri,
-                                              String othersTopicTypeUri, int maxResultSize);
+  ResultList<RelatedTopic> getRelatedTopics(List assocTypeUris, String myRoleTypeUri, String othersRoleTypeUri, String othersTopicTypeUri, int maxResultSize);
 
-    // --- Association Retrieval ---
-
-    /**
+  /**
      * @param   assocTypeUri        may be null
      * @param   myRoleTypeUri       may be null
      * @param   othersRoleTypeUri   may be null
      * @param   othersAssocTypeUri  may be null
      */
-    RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
-                                             String othersAssocTypeUri);
+  RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersAssocTypeUri);
 
-    /**
+  /**
      * @param   assocTypeUri        may be null
      * @param   myRoleTypeUri       may be null
      * @param   othersRoleTypeUri   may be null
      * @param   othersAssocTypeUri  may be null
      */
-    ResultList<RelatedAssociation> getRelatedAssociations(String assocTypeUri, String myRoleTypeUri,
-                                                          String othersRoleTypeUri, String othersAssocTypeUri);
+  ResultList<RelatedAssociation> getRelatedAssociations(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, String othersAssocTypeUri);
 
-    // ---
+  Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId);
 
-    Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri, long othersTopicId);
+  List<Association> getAssociations();
 
-    List<Association> getAssociations();
+  Object getProperty(String propUri);
 
+  boolean hasProperty(String propUri);
 
+  void setProperty(String propUri, Object propValue, boolean addToIndex);
 
-    // === Properties ===
+  void removeProperty(String propUri);
 
-    Object getProperty(String propUri);
-
-    boolean hasProperty(String propUri);
-
-    void setProperty(String propUri, Object propValue, boolean addToIndex);
-
-    void removeProperty(String propUri);
-
-
-
-    // === Misc ===
-
-    Object getDatabaseVendorObject();
+  Object getDatabaseVendorObject();
 }
