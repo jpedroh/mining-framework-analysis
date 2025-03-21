@@ -37,7 +37,51 @@ public class Module extends AbstractModule {
         bind(GreetingService.class).to(GreetingServiceImpl.class);
         // Bind the UDP ping controller so it starts up on server start
         // bind(UdpPingController.class);
-
+        
     }
 
+<<<<<<< /usr/src/app/output/ninjaframework/ninja/4bbabcbc03c02b8b20481b1f47ad180f54f5d4f6/ninja-core-demo/src/main/java/conf/Module.java/left.java
+    @Override
+    protected ServletModule setupServlets() {
+        // add new Servlet filter ONLY if you have some stuff that MUST use Servlet filter.
+        // otherwise use filters that provide ninja
+        
+        // every filter must be defined as singleton       
+        bind(NinjaServletDispatcher.class).asEagerSingleton();
+
+        //this one only as reference
+        //remove it in your app
+        bind(DemoServletFilter.class).asEagerSingleton();
+        return new ServletModule() {
+            @Override
+            protected void configureServlets() {                
+                filter("/*").through(DemoServletFilter.class);
+                serve("/*").with(NinjaServletDispatcher.class);
+            }
+        };
+    }
+
+||||||| /usr/src/app/output/ninjaframework/ninja/4bbabcbc03c02b8b20481b1f47ad180f54f5d4f6/ninja-core-demo/src/main/java/conf/Module.java/base.java
+    @Override
+    protected ServletModule setupServlets() {
+        // add new Servlet filter ONLY if you have some stuff that MUST use Servlet filter.
+        // otherwise use filters that provide ninja
+        
+        // every filter must be defined as singleton       
+        bind(NinjaServletDispatcher.class).asEagerSingleton();
+
+        //this one only as reference
+        //remove it in your app
+        bind(DemoServletFilter.class).asEagerSingleton();
+        return new ServletModule() {
+            @Override
+            protected void configureServlets() {                
+                filter("/*").through(DemoServletFilter.class);
+                filter("/*").through(NinjaServletDispatcher.class);
+            }
+        };
+    }
+
+=======
+>>>>>>> /usr/src/app/output/ninjaframework/ninja/4bbabcbc03c02b8b20481b1f47ad180f54f5d4f6/ninja-core-demo/src/main/java/conf/Module.java/right.java
 }
