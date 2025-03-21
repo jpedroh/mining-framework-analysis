@@ -52,11 +52,47 @@ public final class Version {
         Properties versionProps = new Properties();
         String jarName = "(unknown)";
         String versionString = "(unknown)";
+<<<<<<< /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/Version.java/left.java
         try (InputStream stream = Version.class.getResourceAsStream("Version.properties")) {
             try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 versionProps.load(reader);
                 jarName = versionProps.getProperty("jarName", jarName);
                 versionString = versionProps.getProperty("version", versionString);
+||||||| /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/Version.java/base.java
+        final ClassLoader classLoader = Version.class.getClassLoader();
+        try {
+            resources = classLoader == null ? ClassLoader.getSystemResources("META-INF/MANIFEST.MF") : classLoader.getResources("META-INF/MANIFEST.MF");
+            while (resources.hasMoreElements()) {
+                final URL url = resources.nextElement();
+                try {
+                    final InputStream stream = url.openStream();
+                    if (stream != null) try {
+                        final Manifest manifest = new Manifest(stream);
+                        final Attributes mainAttributes = manifest.getMainAttributes();
+                        if (mainAttributes != null && "JBoss Remoting".equals(mainAttributes.getValue("Specification-Title"))) {
+                            jarName = mainAttributes.getValue("Jar-Name");
+                            versionString = mainAttributes.getValue("Jar-Version");
+                        }
+                    } finally {
+                        safeClose(stream);
+                    }
+                } catch (IOException ignored) {
+                }
+=======
+        try {
+            final InputStream stream = Version.class.getResourceAsStream("Version.properties");
+            try {
+                final InputStreamReader reader = new InputStreamReader(stream);
+                try {
+                    versionProps.load(reader);
+                    jarName = versionProps.getProperty("jarName", jarName);
+                    versionString = versionProps.getProperty("version", versionString);
+                } finally {
+                    safeClose(reader);
+                }
+            } finally {
+                safeClose(stream);
+>>>>>>> /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/Version.java/right.java
             }
         } catch (IOException ignored) {
         }

@@ -33,8 +33,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.regex.Pattern;
 
@@ -186,6 +186,20 @@ final class EndpointImpl extends AbstractHandleableCloseable<Endpoint> implement
             old = resourceCountUpdater.get(this);
             if ((old & CLOSED_FLAG) != 0) {
                 throw new NotOpenException("Endpoint is not open");
+            }
+        } while (! resourceCountUpdater.compareAndSet(this, old, old + 1));
+        if (log.isTraceEnabled()) {
+            log.tracef("Allocated tick to %d of %s (opened %s)", Integer.valueOf(old + 1), this, opened);
+        }
+    }
+
+    void executorUntick(Object opened) {
+        // just like resourceUntick - except we allow tasks to be submitted after close begins.
+        int old;
+        do {
+            old = resourceCountUpdater.get(this);
+            if (old == CLOSED_FLAG) {
+                throw new RejectedExecutionException("Endpoint is not open");
             }
         } while (! resourceCountUpdater.compareAndSet(this, old, old + 1));
         if (log.isTraceEnabled()) {

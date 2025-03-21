@@ -74,15 +74,30 @@ final class RemoteReadListener implements ChannelListener<ConnectedMessageChanne
             ByteBuffer buffer = pooled.getResource();
             try {
                 for (;;) try {
+<<<<<<< /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/left.java
+                    boolean exit = false;
+                    res = channel.receive(buffer);
+||||||| /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/base.java
+                    res = channel.receive(buffer);
+=======
                     boolean exit = false;
                     synchronized (lock) {
                         res = channel.receive(buffer);
                     }
+>>>>>>> /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/right.java
                     if (res == -1) {
                         log.trace("Received connection end-of-stream");
                         exit = true;
                     } else if (res == 0) {
                         log.trace("No message ready; returning");
+<<<<<<< /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/left.java
+                        return;
+                    }
+                    if (exit) {
+                        channel.shutdownReads();
+                        handler.receiveCloseRequest();
+||||||| /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/base.java
+=======
                         return;
                     }
                     if (exit) {
@@ -90,6 +105,7 @@ final class RemoteReadListener implements ChannelListener<ConnectedMessageChanne
                             channel.shutdownReads();
                         }
                         handler.receiveCloseRequest();
+>>>>>>> /usr/src/app/output/jboss-remoting/jboss-remoting/dd7f776d66ed721f4e2f6237137d69faa3d1b703/src/main/java/org/jboss/remoting3/remote/RemoteReadListener.java/right.java
                         return;
                     }
                     buffer.flip();
