@@ -245,6 +245,83 @@ public final class UserProvidedServicesTest extends AbstractIntegrationTest {
             .verify(Duration.ofMinutes(5));
     }
 
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/38b5a2a415bc2535d60f12f33237f5a17d44e3be/integration-test/src/test/java/org/cloudfoundry/client/v2/UserProvidedServicesTest.java/left.java
+    //TODO: Await https://github.com/cloudfoundry/cloud_controller_ng/issues/900
+    @Ignore("Await https://github.com/cloudfoundry/cloud_controller_ng/issues/900")
+    @Test
+    public void listRoutesFilterByOrganizationId() {
+        String domainName = this.nameFactory.getDomainName();
+        String instanceName = this.nameFactory.getServiceInstanceName();
+
+        Mono.zip(
+            this.organizationId
+                .flatMap(organizationId -> createPrivateDomainId(this.cloudFoundryClient, domainName, organizationId)),
+            this.organizationId,
+            this.spaceId
+        )
+            .flatMap(function((domainId, organizationId, spaceId) -> Mono.zip(
+                createUserProvidedServiceInstanceId(this.cloudFoundryClient, instanceName, spaceId),
+                Mono.just(organizationId),
+                createRouteId(this.cloudFoundryClient, domainId, null, null, spaceId))
+            ))
+            .flatMap(function((instanceId, organizationId, routeId) -> requestAssociateRoute(this.cloudFoundryClient, instanceId, routeId)
+                .thenReturn(Tuples.of(instanceId, organizationId))))
+            .flatMapMany(function((instanceId, organizationId) -> Mono.zip(
+                Mono.just(instanceId),
+                PaginationUtils.requestClientV2Resources(page -> this.cloudFoundryClient.userProvidedServiceInstances()
+                    .listRoutes(ListUserProvidedServiceInstanceRoutesRequest.builder()
+                        .organizationId(organizationId)
+                        .page(page)
+                        .userProvidedServiceInstanceId(instanceId)
+                        .build()))
+                    .map(resource -> ResourceUtils.getEntity(resource).getServiceInstanceId())
+                    .single())))
+            .as(StepVerifier::create)
+            .consumeNextWith(tupleEquality())
+            .expectComplete()
+            .verify(Duration.ofMinutes(5));
+    }
+
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/38b5a2a415bc2535d60f12f33237f5a17d44e3be/integration-test/src/test/java/org/cloudfoundry/client/v2/UserProvidedServicesTest.java/base.java
+    //TODO: Await https://github.com/cloudfoundry/cloud_controller_ng/issues/900
+    @Ignore("Await https://github.com/cloudfoundry/cloud_controller_ng/issues/900")
+    @Test
+    public void listRoutesFilterByOrganizationId() {
+        String domainName = this.nameFactory.getDomainName();
+        String instanceName = this.nameFactory.getServiceInstanceName();
+
+        Mono
+            .when(
+                this.organizationId
+                    .then(organizationId -> createPrivateDomainId(this.cloudFoundryClient, domainName, organizationId)),
+                this.organizationId,
+                this.spaceId
+            )
+            .then(function((domainId, organizationId, spaceId) -> Mono.when(
+                createUserProvidedServiceInstanceId(this.cloudFoundryClient, instanceName, spaceId),
+                Mono.just(organizationId),
+                createRouteId(this.cloudFoundryClient, domainId, null, null, spaceId))
+            ))
+            .then(function((instanceId, organizationId, routeId) -> requestAssociateRoute(this.cloudFoundryClient, instanceId, routeId)
+                .then(Mono.just(Tuples.of(instanceId, organizationId)))))
+            .flatMapMany(function((instanceId, organizationId) -> Mono.when(
+                Mono.just(instanceId),
+                PaginationUtils.requestClientV2Resources(page -> this.cloudFoundryClient.userProvidedServiceInstances()
+                    .listRoutes(ListUserProvidedServiceInstanceRoutesRequest.builder()
+                        .organizationId(organizationId)
+                        .page(page)
+                        .userProvidedServiceInstanceId(instanceId)
+                        .build()))
+                    .map(resource -> ResourceUtils.getEntity(resource).getServiceInstanceId())
+                    .single())))
+            .as(StepVerifier::create)
+            .consumeNextWith(tupleEquality())
+            .expectComplete()
+            .verify(Duration.ofMinutes(5));
+    }
+
+=======
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/38b5a2a415bc2535d60f12f33237f5a17d44e3be/integration-test/src/test/java/org/cloudfoundry/client/v2/UserProvidedServicesTest.java/right.java
     @Test
     public void listRoutesFilterByPath() {
         String domainName = this.nameFactory.getDomainName();
