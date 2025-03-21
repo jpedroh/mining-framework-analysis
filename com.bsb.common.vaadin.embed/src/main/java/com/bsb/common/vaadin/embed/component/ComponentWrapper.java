@@ -1,20 +1,4 @@
-/*
- * Copyright 2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.bsb.common.vaadin.embed.component;
-
 import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
@@ -31,108 +15,90 @@ import com.vaadin.ui.Window;
  * @author Stephane Nicoll
  */
 public class ComponentWrapper {
+  private static final int SPLIT_POSITION = 20;
 
-    private static final int SPLIT_POSITION = 20;
+  private final ComponentBasedVaadinServer server;
 
-    private final ComponentBasedVaadinServer server;
-
-    /**
+  /**
      * Creates a new instance.
      *
      * @param server the server handling this application
      */
-    public ComponentWrapper(ComponentBasedVaadinServer server) {
-        this.server = server;
-    }
+  public ComponentWrapper(ComponentBasedVaadinServer server) {
+    this.server = server;
+  }
 
-    /**
-     * Wraps the specified {@link Component} into a UI
+  /**
+     * Wraps the specified {@link Component} into a Vaadin application.
      *
      * @param component the component to wrap
-     * @return an UI displaying that component
+     * @return an application displaying that component
      * @see #wrapLayout(com.vaadin.ui.Layout)
+     * @see #wrapWindow(com.vaadin.ui.Window)
      */
-    public UI wrap(Component component) {
-        if (component instanceof UI) {
-            return (UI) component;
-        }
-        if (component instanceof Window) {
-            return wrapWindow((Window) component);
-        }
-        if (component instanceof Layout) {
-            return wrapLayout((Layout) component);
-        }
-
-        // Ok it's a component we cannot handle directly
-        final VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSizeFull();
-        layout.addComponent(component);
-        layout.setExpandRatio(component, 1);
-        return wrapLayout(layout);
+  public UI wrap(Component component) {
+    if (component instanceof UI) {
+      return (UI) component;
     }
+    if (component instanceof Window) {
+      return wrapWindow((Window) component);
+    }
+    if (component instanceof Layout) {
+      return wrapLayout((Layout) component);
+    }
+    final VerticalLayout layout = new VerticalLayout();
+    layout.setMargin(true);
+    layout.setSizeFull();
+    layout.addComponent(component);
+    layout.setExpandRatio(component, 1);
+    return wrapLayout(layout);
+  }
 
-    /**
+  /**
      * Wraps a {@link Layout} into a Vaadin application.
      *
      * @param layout the layout to wrap
      * @return an application displaying that layout
      */
-    public UI wrapLayout(Layout layout) {
-        // TODO: add a header to switch the style, etc
-        // TODO: add bookmark to set the style
-        if (server.getConfig().isDevelopmentHeader()) {
-            final VerticalSplitPanel mainLayout = new VerticalSplitPanel();
-            mainLayout.setSizeFull();
-            mainLayout.setSplitPosition(SPLIT_POSITION, Sizeable.Unit.PIXELS);
-            mainLayout.setLocked(true);
-
-            final DevApplicationHeader header = new DevApplicationHeader(server);
-            header.setSpacing(true);
-            mainLayout.setFirstComponent(header);
-
-            mainLayout.setSecondComponent(layout);
-
-            return new DevUI(mainLayout);
-        } else {
-            return new DevUI(layout);
-        }
+  public UI wrapLayout(Layout layout) {
+    if (server.getConfig().isDevelopmentHeader()) {
+      final VerticalSplitPanel mainLayout = new VerticalSplitPanel();
+      mainLayout.setSizeFull();
+      mainLayout.setSplitPosition(SPLIT_POSITION, Sizeable.Unit.PIXELS);
+      mainLayout.setLocked(true);
+      final DevApplicationHeader header = new DevApplicationHeader(server);
+      header.setSpacing(true);
+      mainLayout.setFirstComponent(header);
+      mainLayout.setSecondComponent(layout);
+      return new DevUI(mainLayout);
+    } else {
+      return new DevUI(layout);
     }
+  }
 
-    /**
-     * Wraps the specified {@link Window} into a UI. Adds the specified pop-up
-     * window to a simple, empty vertical layout.
+  /**
+     * Wraps a {@link Window} into a Vaadin application.
      *
-     * @param window the pop-up window to wrap
-     * @return an application displaying that pop-up window
+     * @param window the window to wrap
+     * @return an application using that window as primary window
      */
-    public UI wrapWindow(Window window) {
-        final UI ui = wrapLayout(new VerticalLayout());
-        ui.addWindow(window);
-        return ui;
-    }
+  public UI wrapWindow(Window window) {
+    final UI ui = wrapLayout(new VerticalLayout());
+    ui.addWindow(window);
+    return ui;
+  }
 
+  @SuppressWarnings(value = { "serial" }) static class DevUI extends UI {
     /**
-     * A development {@link UI} that displays a simple layout.
-     *
-     * @author Stephane Nicoll
-     */
-    @SuppressWarnings("serial")
-    static class DevUI extends UI {
-
-        /**
          * Creates a new instance.
          *
          * @param content the content of the UI
          */
-        public DevUI(ComponentContainer content) {
-            setContent(content);
-        }
-
-        @Override
-        protected void init(VaadinRequest vaadinRequest) {
-        }
-
+    public DevUI(ComponentContainer content) {
+      setContent(content);
     }
 
+    @Override protected void init(VaadinRequest vaadinRequest) {
+    }
+  }
 }
