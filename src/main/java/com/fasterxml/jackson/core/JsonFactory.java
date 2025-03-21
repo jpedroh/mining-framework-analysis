@@ -358,8 +358,12 @@ public class JsonFactory
         _objectCodec = oc;
         _quoteChar = DEFAULT_QUOTE_CHAR;
         _streamReadConstraints = StreamReadConstraints.defaults();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/b2003a3318df29bc077da96f4f1496f6f7bd06ba/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/left.java
         _streamWriteConstraints = StreamWriteConstraints.defaults();
+||||||| /usr/src/app/output/fasterxml/jackson-core/b2003a3318df29bc077da96f4f1496f6f7bd06ba/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/base.java
+=======
         _generatorDecorators = null;
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/b2003a3318df29bc077da96f4f1496f6f7bd06ba/src/main/java/com/fasterxml/jackson/core/JsonFactory.java/right.java
     }
 
     /**
