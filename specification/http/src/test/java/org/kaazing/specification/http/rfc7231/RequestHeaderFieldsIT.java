@@ -33,14 +33,14 @@ import org.kaazing.k3po.junit.rules.K3poRule;
  */
 public class RequestHeaderFieldsIT {
 
+<<<<<<< /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/left.java
     private final K3poRule k3po = new K3poRule().setScriptRoot("org/kaazing/specification/http/rfc7231/request.header");
+||||||| /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/base.java
+=======
+    private final K3poRule k3po = new K3poRule().setScriptRoot("org/kaazing/specification/http/rfc7231/request.header.fields");
+>>>>>>> /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/right.java
 
     private final TestRule timeout = new DisableOnDebug(new Timeout(5, SECONDS));
-
-
-    /**
-     * starts k3po rule.
-     */
 
     @Rule
     public final TestRule chain = outerRule(k3po).around(timeout);
@@ -49,8 +49,8 @@ public class RequestHeaderFieldsIT {
      * See <a href="https://tools.ietf.org/html/rfc7231#section-5.1">RFC 7230 section 5.1: Controls</a>.
      * @throws Exception when k3po fails.
      */
-    @Test
 
+    @Test
     @Specification({
         "expectation.responds.with.417/request",
         "expectation.responds.with.417/response" })
@@ -65,6 +65,8 @@ public class RequestHeaderFieldsIT {
      * See <a href="https://tools.ietf.org/html/rfc7231#section-5.1">RFC 7230 section 5.1: Controls</a>.
      * @throws Exception when k3po fails.
      */
+
+<<<<<<< /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/left.java
     @Test
     @Specification({
         "intermediary.decrement.max.forward.header/request",
@@ -72,16 +74,49 @@ public class RequestHeaderFieldsIT {
     public void intermediaryMustDecrementMaxForwardHeaderOnOptionsOrTraceRequest() throws Exception {
         k3po.finish();
     }
+||||||| /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/base.java
+=======
+    @Test
+    @Ignore("Not Implemented")
+    public void intermediaryMustDecrementMaxForwardHeaderOnOptionsOrTraceRequest() throws Exception {
+        k3po.finish();
+    }
+>>>>>>> /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/right.java
 
     /**
      * See <a href="https://tools.ietf.org/html/rfc7231#section-5.1">RFC 7230 section 5.1: Controls</a>.
      * @throws Exception when k3po fails.
      */
+
+<<<<<<< /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/left.java
     @Test
     @Specification({
         "intermediary.responds.zero.max.forward/request",
         "intermediary.responds.zero.max.forward/response" })
     public void intermediaryThatReceivesMaxForwardOfZeroOnOptionsOrTraceMustRespondToRequest() throws Exception {
+        k3po.finish();
+    }
+||||||| /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/base.java
+=======
+    @Test
+    @Ignore("Not Implemented")
+    public void intermediaryThatReceivesMaxForwardOfZeroOnOptionsOrTraceMustRespondToRequest() throws Exception {
+        k3po.finish();
+    }
+>>>>>>> /usr/src/app/output/k3po/k3po/1b2a7eaed60d376ab87a8130c29b2ec957bca767/specification/http/src/test/java/org/kaazing/specification/http/rfc7231/RequestHeaderFieldsIT.java/right.java
+
+    /**
+     * starts k3po rule.
+     */
+
+    @Test
+    @Ignore("not complete")
+    @Specification({"server.responds.to.unmeetable.expect.with.417/request",
+                    "server.responds.to.unmeetable.expect.with.417/response" })
+    public void serverRespondsToUnmeetableExpectWith417() throws Exception {
+        // A server that receives an Expect field-value that is doesn't recognize
+        // MAY respond with a 417 (Expectation Failed) status code to indicate
+        // that the unexpected expectation cannot be met.
         k3po.finish();
     }
 }
