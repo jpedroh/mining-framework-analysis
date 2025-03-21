@@ -140,7 +140,7 @@ public class FeaturesOverviewPageIntegrationTest extends PageTest {
         firstRow.hasExactValues("1st feature", "10", "0", "0", "0", "0", "10", "1", "0", "0", "0", "1", "1m 39s 263ms", "Passed");
         firstRow.hasExactCSSClasses("tagname", "passed", "", "", "", "", "total", "passed", "", "", "", "total", "duration", "passed");
         firstRow.hasExactDataValues("", "", "", "", "", "", "", "", "", "", "", "", "99263122889", "");
-        firstRow.getReportLink().hasLabelAndAddress("1st feature", "report-feature_net-masterthought-example-s--ATM--u6771-u4EAC-feature.html");
+        firstRow.getReportLink().hasLabelAndAddress("1st feature", "report-feature_net-masterthought-example-s--ATM-local-feature.html");
 
         TableRowAssertion secondRow = bodyRows[1];
         secondRow.hasExactValues("Second feature", "5", "1", "2", "1", "2", "11", "1", "1", "0", "0", "2", "092ms", "Failed");
@@ -149,6 +149,7 @@ public class FeaturesOverviewPageIntegrationTest extends PageTest {
         secondRow.getReportLink().hasLabelAndAddress("Second feature", "report-feature_net-masterthought-example-ATMK-feature.html");
     }
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/c502aa0ba26acc0f5ba914f6a8c9eb3b9de6a189/src/test/java/net/masterthought/cucumber/generators/integrations/FeaturesOverviewPageIntegrationTest.java/left.java
     @Test
     public void generatePage_generatesStatsTableFooter() {
 
@@ -166,5 +167,27 @@ public class FeaturesOverviewPageIntegrationTest extends PageTest {
         assertThat(footerRows).hasSize(2);
         footerRows[0].hasExactValues("2", "15", "1", "2", "1", "2", "21", "2", "1", "0", "0", "3", "1m 39s 355ms", "");
         footerRows[1].hasExactValues("", "71.43%", "4.76%", "9.52%", "4.76%", "9.52%", "", "66.67%", "33.33%", "0.00%", "0.00%", "", "", "50.00%");
+
     }
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/c502aa0ba26acc0f5ba914f6a8c9eb3b9de6a189/src/test/java/net/masterthought/cucumber/generators/integrations/FeaturesOverviewPageIntegrationTest.java/base.java
+=======
+    @Test
+    public void generatePage_generatesStatsTableFooter() {
+
+        // given
+        setUpWithJson(SAMPLE_JSON);
+        page = new FeaturesOverviewPage(reportResult, configuration);
+
+        // when
+        page.generatePage();
+
+        // then
+        DocumentAssertion document = documentFrom(page.getWebPage());
+        TableRowAssertion[] footerRows = document.getReport().getTableStats().getAllFooterRows();
+
+        assertThat(footerRows).hasSize(2);
+        footerRows[0].hasExactValues("", "15", "1", "2", "1", "3", "22", "2", "2", "4", "1:39.355", "2");
+        footerRows[1].hasExactValues("", "68.18%", "4.55%", "9.09%", "4.55%", "13.64%", "", "50.00%", "50.00%", "", "", "50.00%");
+    }
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/c502aa0ba26acc0f5ba914f6a8c9eb3b9de6a189/src/test/java/net/masterthought/cucumber/generators/integrations/FeaturesOverviewPageIntegrationTest.java/right.java
 }

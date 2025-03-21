@@ -5,9 +5,9 @@ import org.apache.commons.lang.StringUtils;
 import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
-import net.masterthought.cucumber.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import net.masterthought.cucumber.util.Util;
 
 public class Element implements Durationable {
     private static final Logger LOG = LogManager.getLogger(Element.class);
