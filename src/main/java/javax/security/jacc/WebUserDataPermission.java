@@ -1,5 +1,4 @@
 package javax.security.jacc;
-
 import java.io.Serializable;
 import java.io.ObjectStreamField;
 import java.io.ObjectInputStream;
@@ -22,32 +21,30 @@ import javax.servlet.http.HttpServletRequest;
  * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
  * @author <a href="mailto:anil.saldhana@jboss.org">Anil Saldhana</a>
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
- * @see java.security.Permission
+ * @see {@link Permission}
  */
-@SuppressWarnings({"unused", "unchecked"})
-public final class WebUserDataPermission extends Permission implements Serializable
-{
-   /** @since 4.0.2 */
-   private static final long serialVersionUID = 1;
+@SuppressWarnings(value = { "unused", "unchecked" }) public final class WebUserDataPermission extends Permission implements Serializable {
+  /** @since 4.0.2 */
+  private static final long serialVersionUID = 1;
 
-   /**
+  /**
     * @serialField actions String the actions string.
     */
-   private static final ObjectStreamField[] serialPersistentFields = {new ObjectStreamField("actions", String.class)};
+  private static final ObjectStreamField[] serialPersistentFields = { new ObjectStreamField("actions", String.class) };
 
-   private transient URLPatternSpec urlSpec;
+  private transient URLPatternSpec urlSpec;
 
-   private transient String httpMethodsString;
+  private transient String httpMethodsString;
 
-   private transient String transportType;
+  private transient String transportType;
 
-   private transient TreeSet<String> httpMethods;
+  private transient TreeSet<String> httpMethods;
 
-   private transient TreeSet<String> httpExceptionList;
+  private transient TreeSet<String> httpExceptionList;
 
-   private transient String httpExceptionString;
+  private transient String httpExceptionString;
 
-   /**
+  /**
     * <p>
     * Creates a new WebUserDataPermission from the HttpServletRequest object.
     * </p>
@@ -62,12 +59,11 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           TransportType component of the permission’s actions is determined by calling
     *           HttpServletRequest.isSecure().
     */
-   public WebUserDataPermission(HttpServletRequest request)
-   {
-      this(WebResourcePermission.requestURI(request), requestActions(request));
-   }
+  public WebUserDataPermission(HttpServletRequest request) {
+    this(WebResourcePermission.requestURI(request), requestActions(request));
+  }
 
-   /**
+  /**
     * <p>
     * Creates a new WebUserDataPermission with the specified name and actions.
     * </p>
@@ -164,16 +160,16 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           through this parameter is null or the empty string, then the permission is constructed with actions
     *           corresponding to all the possible HTTP methods and transportType "NONE".
     */
-   public WebUserDataPermission(String name, String actions)
-   {
-      super(name == null ? "/" : name);
-      if (name == null)
-         name = "/";
-      this.urlSpec = new URLPatternSpec(name);
-      parseActions(actions);
-   }
+  public WebUserDataPermission(String name, String actions) {
+    super(name == null ? "/" : name);
+    if (name == null) {
+      name = "/";
+    }
+    this.urlSpec = new URLPatternSpec(name);
+    parseActions(actions);
+  }
 
-   /**
+  /**
     * <p>
     * Creates a new WebUserDataPermission with name corresponding to the URLPatternSpec, and actions composed from the
     * array of HTTP methods and the transport type.
@@ -194,19 +190,19 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           - a String whose value is a transportType. If the value passed through this parameter is null, then the
     *           permission is constructed with actions containing transportType "NONE".
     */
-   public WebUserDataPermission(String urlPatternSpec, String[] httpMethods, String transportType)
-   {
-      super(urlPatternSpec);
-      this.urlSpec = new URLPatternSpec(urlPatternSpec);
-      Object[] methodInfo = WebResourcePermission.canonicalMethods(httpMethods);
-      this.httpMethods = (TreeSet<String>) methodInfo[0];
-      this.httpMethodsString = (String) methodInfo[1];
-      if (transportType != null && transportType.equalsIgnoreCase("NONE"))
-         transportType = null;
-      this.transportType = transportType;
-   }
+  public WebUserDataPermission(String urlPatternSpec, String[] httpMethods, String transportType) {
+    super(urlPatternSpec);
+    this.urlSpec = new URLPatternSpec(urlPatternSpec);
+    Object[] methodInfo = WebResourcePermission.canonicalMethods(httpMethods);
+    this.httpMethods = (TreeSet<String>) methodInfo[0];
+    this.httpMethodsString = (String) methodInfo[1];
+    if (transportType != null && transportType.equalsIgnoreCase("NONE")) {
+      transportType = null;
+    }
+    this.transportType = transportType;
+  }
 
-   /**
+  /**
     * <p>
     * Checks two WebUserDataPermission objects for equality. WebUserDataPermission objects are equivalent if their
     * URLPatternSpec and (canonicalized) actions values are equivalent. The URLPatternSpec of a reference permission is
@@ -223,20 +219,15 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           - the WebUserDataPermission object being tested for equality with this WebUserDataPermission.
     * @return true if the argument WebUserDataPermission object is equivalent to this WebUserDataPermission.
     */
-   @Override
-   public boolean equals(Object p)
-   {
-      // boolean equals = false;
-      if (p == null || !(p instanceof WebUserDataPermission))
-         return false;
-      WebUserDataPermission perm = (WebUserDataPermission) p;
-      /**
-       * Two Permission objects, P1 and P2, are equivalent if and only if P1.implies(P2) && P2.implies(P1).
-       */
-      return this.implies(perm) && perm.implies(this);
-   }
+  @Override public boolean equals(Object p) {
+    if (p == null || !(p instanceof WebUserDataPermission)) {
+      return false;
+    }
+    WebUserDataPermission perm = (WebUserDataPermission) p;
+    return this.implies(perm) && perm.implies(this);
+  }
 
-   /**
+  /**
     * <p>
     * Returns a canonical String representation of the actions of this WebUserDataPermission. The canonical form of the
     * actions of a WebUserDataPermission is described by the following syntax description.
@@ -275,27 +266,22 @@ public final class WebUserDataPermission extends Permission implements Serializa
     * 
     * @return a String containing the canonicalized actions of this WebUserDataPermission (or the null value).
     */
-   @Override
-   public String getActions()
-   {
-      String actions = null;
-      if (httpMethodsString != null)
-      {
-         actions = httpMethodsString;
+  @Override public String getActions() {
+    String actions = null;
+    if (httpMethodsString != null) {
+      actions = httpMethodsString;
+    } else {
+      if (httpExceptionString != null) {
+        actions = "!" + httpExceptionString;
       }
-      else if (httpExceptionString != null)
-      {
-         actions = "!" + httpExceptionString;
-      }
+    }
+    if (transportType != null) {
+      actions = (actions == null) ? ":" + transportType : actions + ":" + transportType;
+    }
+    return actions;
+  }
 
-      if (transportType != null)
-      {
-         actions = (actions == null) ? ":" + transportType : actions + ":" + transportType;
-      }
-      return actions;
-   }
-
-   /**
+  /**
     * <p>
     * Returns the hash code value for this WebUserDataPermission. The properties of the returned hash code must be as
     * follows:
@@ -310,17 +296,16 @@ public final class WebUserDataPermission extends Permission implements Serializa
     * 
     * @return the integer hash code value for this object.
     */
-   @Override
-   public int hashCode()
-   {
-      int hashCode = 17;
-      hashCode = 37 * hashCode + this.urlSpec.hashCode();
-      if (this.httpMethods != null)
-         hashCode = 37 * hashCode + this.httpMethods.hashCode();
-      return hashCode;
-   }
+  @Override public int hashCode() {
+    int hashCode = 17;
+    hashCode = 37 * hashCode + this.urlSpec.hashCode();
+    if (this.httpMethods != null) {
+      hashCode = 37 * hashCode + this.httpMethods.hashCode();
+    }
+    return hashCode;
+  }
 
-   /**
+  /**
     * <p>
     * Determines if the argument Permission is "implied by" this WebUserDataPermission. For this to be the case all of
     * the following must be true:
@@ -363,31 +348,27 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           - “this” WebUserDataPermission is checked to see if it implies the argument permission.
     * @return true if the specified permission is implied by this object, false if not.
     */
-   @Override
-   public boolean implies(Permission p)
-   {
-      if (p == null || !(p instanceof WebUserDataPermission))
-         return false;
-      WebUserDataPermission perm = (WebUserDataPermission) p;
-      // Check the URL patterns
-      boolean implies = urlSpec.implies(perm.urlSpec);
-      if (implies == true)
-      {
-         if (httpExceptionList != null)
-            implies = WebResourcePermission.matchExceptionList(httpExceptionList, perm.httpExceptionList);
-         // Check the http methods
-         if (httpMethods != null && perm.httpMethods != null)
-            implies = httpMethods.containsAll(perm.httpMethods);
-         // Check the transport guarantee
-         if (implies == true && transportType != null)
-            implies = transportType.equals(perm.transportType);
+  @Override public boolean implies(Permission p) {
+    if (p == null || !(p instanceof WebUserDataPermission)) {
+      return false;
+    }
+    WebUserDataPermission perm = (WebUserDataPermission) p;
+    boolean implies = urlSpec.implies(perm.urlSpec);
+    if (implies == true) {
+      if (httpExceptionList != null) {
+        implies = WebResourcePermission.matchExceptionList(httpExceptionList, perm.httpExceptionList);
       }
+      if (httpMethods != null && perm.httpMethods != null) {
+        implies = httpMethods.containsAll(perm.httpMethods);
+      }
+      if (implies == true && transportType != null) {
+        implies = transportType.equals(perm.transportType);
+      }
+    }
+    return implies;
+  }
 
-      return implies;
-   }
-
-   // Private -------------------------------------------------------
-   /**
+  /**
     * Build the request permission actions from the HTTP method component using HttpServletRequest.getMethod() + the
     * TransportType component of the action from HttpServletRequest.isSecure().
     * 
@@ -395,54 +376,45 @@ public final class WebUserDataPermission extends Permission implements Serializa
     *           - the servlet request
     * @return the permission actions string
     */
-   private static String requestActions(HttpServletRequest request)
-   {
-      String actions = request.getMethod() + (request.isSecure() ? ":CONFIDENTIAL" : "");
-      return actions;
-   }
+  private static String requestActions(HttpServletRequest request) {
+    String actions = request.getMethod() + (request.isSecure() ? ":CONFIDENTIAL" : "");
+    return actions;
+  }
 
-   private void parseActions(String actions)
-   {
-      // Remove any transport spec
-      if (actions != null)
-      {
-         int colon = actions.indexOf(':');
-         if (colon >= 0)
-         {
-            this.transportType = actions.substring(colon + 1);
-            if (transportType.equalsIgnoreCase("NONE"))
-               transportType = null;
-            actions = actions.substring(0, colon);
-         }
+  private void parseActions(String actions) {
+    if (actions != null) {
+      int colon = actions.indexOf(':');
+      if (colon >= 0) {
+        this.transportType = actions.substring(colon + 1);
+        if (transportType.equalsIgnoreCase("NONE")) {
+          transportType = null;
+        }
+        actions = actions.substring(0, colon);
       }
-      boolean exceptionListNeeded = actions != null && actions.startsWith("!");
-      if (exceptionListNeeded)
-         actions = actions.substring(1);
+    }
+    boolean exceptionListNeeded = actions != null && actions.startsWith("!");
+    if (exceptionListNeeded) {
+      actions = actions.substring(1);
+    }
+    Object[] methodInfo = WebResourcePermission.canonicalMethods(actions);
+    if (exceptionListNeeded) {
+      this.httpExceptionList = (TreeSet<String>) methodInfo[0];
+      this.httpExceptionString = (String) methodInfo[1];
+    } else {
+      this.httpMethods = (TreeSet<String>) methodInfo[0];
+      this.httpMethodsString = (String) methodInfo[1];
+    }
+  }
 
-       Object[] methodInfo = WebResourcePermission.canonicalMethods(actions);
-      if (exceptionListNeeded)
-      {
-         this.httpExceptionList = (TreeSet<String>) methodInfo[0];
-         this.httpExceptionString = (String) methodInfo[1];
-      }
-      else
-      {
-         this.httpMethods = (TreeSet<String>) methodInfo[0];
-         this.httpMethodsString = (String) methodInfo[1];
-      }
-   }
+  private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+    ObjectInputStream.GetField fields = ois.readFields();
+    String actions = (String) fields.get("actions", null);
+    parseActions(actions);
+  }
 
-   private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
-   {
-      ObjectInputStream.GetField fields = ois.readFields();
-      String actions = (String) fields.get("actions", null);
-      parseActions(actions);
-   }
-
-   private void writeObject(ObjectOutputStream oos) throws IOException
-   {
-      ObjectOutputStream.PutField fields = oos.putFields();
-      fields.put("actions", this.getActions());
-      oos.writeFields();
-   }
+  private void writeObject(ObjectOutputStream oos) throws IOException {
+    ObjectOutputStream.PutField fields = oos.putFields();
+    fields.put("actions", this.getActions());
+    oos.writeFields();
+  }
 }

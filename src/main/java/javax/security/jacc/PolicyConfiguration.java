@@ -1,5 +1,4 @@
 package javax.security.jacc;
-
 import java.security.Permission;
 import java.security.PermissionCollection;
 
@@ -185,14 +184,11 @@ import java.security.PermissionCollection;
  * 
  * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
- * @see java.security.Permission
- * @see java.security.PermissionCollection
- * @see PolicyContextException
- * @see PolicyConfigurationFactory
-  */
-public interface PolicyConfiguration
-{
-   /**
+ * @see {@link Permission}, {@link PermissionCollection}, {@link PolicyContextException},
+ *      {@link PolicyConfigurationFactory}.
+ */
+public interface PolicyConfiguration {
+  /**
     * <p>
     * Used to add a single excluded policy statement to this PolicyConfiguration.
     * </p>
@@ -209,9 +205,9 @@ public interface PolicyConfiguration
     *            addToExcludedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void addToExcludedPolicy(Permission permission) throws PolicyContextException;
+  public void addToExcludedPolicy(Permission permission) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to add excluded policy statements to this PolicyConfiguration.
     * </p>
@@ -229,9 +225,9 @@ public interface PolicyConfiguration
     *            addToExcludedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void addToExcludedPolicy(PermissionCollection permissions) throws PolicyContextException;
+  public void addToExcludedPolicy(PermissionCollection permissions) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to add a single permission to a named role in this PolicyConfiguration. If the named role does not exist in
     * the PolicyConfiguration, it is created as a result of the call to this function.
@@ -256,9 +252,9 @@ public interface PolicyConfiguration
     *            method signature. The exception thrown by the implementation class will be encapsulated (during
     *            construction) in the thrown PolicyContextException.
     */
-   public void addToRole(String roleName, Permission permission) throws PolicyContextException;
+  public void addToRole(String roleName, Permission permission) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to add permissions to a named role in this PolicyConfiguration. If the named role does not exist in the
     * PolicyConfiguration, it is created as a result of the call to this function.
@@ -283,9 +279,9 @@ public interface PolicyConfiguration
     *            method signature. The exception thrown by the implementation class will be encapsulated (during
     *            construction) in the thrown PolicyContextException.
     */
-   public void addToRole(String roleName, PermissionCollection permissions) throws PolicyContextException;
+  public void addToRole(String roleName, PermissionCollection permissions) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to add a single unchecked policy statement to this PolicyConfiguration.
     * </p>
@@ -302,9 +298,9 @@ public interface PolicyConfiguration
     *            addToUncheckedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void addToUncheckedPolicy(Permission permission) throws PolicyContextException;
+  public void addToUncheckedPolicy(Permission permission) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to add unchecked policy statements to this PolicyConfiguration.
     * </p>
@@ -322,9 +318,9 @@ public interface PolicyConfiguration
     *            addToUncheckedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void addToUncheckedPolicy(PermissionCollection permissions) throws PolicyContextException;
+  public void addToUncheckedPolicy(PermissionCollection permissions) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * This method is used to set to "inService" the state of the policy context whose interface is this
     * PolicyConfiguration Object. Only those policy contexts whose state is "inService" will be included in the policy
@@ -348,9 +344,9 @@ public interface PolicyConfiguration
     *            signature. The exception thrown by the implementation class will be encapsulated (during construction)
     *            in the thrown PolicyContextException.
     */
-   public void commit() throws PolicyContextException;
+  public void commit() throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Causes all policy statements to be deleted from this PolicyConfiguration and sets its internal state such that
     * calling any method, other than delete, getContextID, or inService on the PolicyConfiguration will be rejected and
@@ -369,9 +365,9 @@ public interface PolicyConfiguration
     *            signature. The exception thrown by the implementation class will be encapsulated (during construction)
     *            in the thrown PolicyContextException.
     */
-   public void delete() throws PolicyContextException;
+  public void delete() throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * This method returns this object’s policy context identifier.
     * </p>
@@ -385,9 +381,9 @@ public interface PolicyConfiguration
     *            method signature. The exception thrown by the implementation class will be encapsulated (during
     *            construction) in the thrown PolicyContextException.
     */
-   public String getContextID() throws PolicyContextException;
+  public String getContextID() throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * This method is used to determine if the policy context whose interface is this PolicyConfiguration Object is in
     * the "inService" state.
@@ -401,9 +397,9 @@ public interface PolicyConfiguration
     *            method signature. The exception thrown by the implementation class will be encapsulated (during
     *            construction) in the thrown PolicyContextException.
     */
-   public boolean inService() throws PolicyContextException;
+  public boolean inService() throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Creates a relationship between this configuration and another such that they share the same principal-to- role
     * mappings. PolicyConfigurations are linked to apply a common principal-to-role mapping to multiple separately
@@ -434,9 +430,9 @@ public interface PolicyConfiguration
     *            linkConfiguration method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void linkConfiguration(PolicyConfiguration link) throws PolicyContextException;
+  public void linkConfiguration(PolicyConfiguration link) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to remove any excluded policy statements from this PolicyConfiguration. This method has no effect on the
     * links between this PolicyConfiguration and others.
@@ -452,9 +448,9 @@ public interface PolicyConfiguration
     *            removeExcludedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void removeExcludedPolicy() throws PolicyContextException;
+  public void removeExcludedPolicy() throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to remove a role and all its permissions from this PolicyConfiguration. This method has no effect on the
     * links between this PolicyConfiguration and others.
@@ -475,9 +471,9 @@ public interface PolicyConfiguration
     *            method signature. The exception thrown by the implementation class will be encapsulated (during
     *            construction) in the thrown PolicyContextException.
     */
-   public void removeRole(String roleName) throws PolicyContextException;
+  public void removeRole(String roleName) throws PolicyContextException;
 
-   /**
+  /**
     * <p>
     * Used to remove any unchecked policy statements from this PolicyConfiguration. This method has no effect on the
     * links between this PolicyConfiguration and others.
@@ -493,5 +489,5 @@ public interface PolicyConfiguration
     *            removeUncheckedPolicy method signature. The exception thrown by the implementation class will be
     *            encapsulated (during construction) in the thrown PolicyContextException.
     */
-   public void removeUncheckedPolicy() throws PolicyContextException;
+  public void removeUncheckedPolicy() throws PolicyContextException;
 }

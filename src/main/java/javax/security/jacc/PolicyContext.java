@@ -1,5 +1,4 @@
 package javax.security.jacc;
-
 import java.util.Set;
 import java.util.Map;
 import java.util.Collections;
@@ -53,22 +52,20 @@ import java.security.SecurityPermission;
  * 
  * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
- * @see PolicyContextHandler
+ * @see {@link PolicyContextHandler}
  */
-public final class PolicyContext
-{
-   private static SecurityPermission setPolicy = new SecurityPermission("setPolicy");
+public final class PolicyContext {
+  private static SecurityPermission setPolicy = new SecurityPermission("setPolicy");
 
-   private static SecurityPermission getPolicy = new SecurityPermission("getPolicy");
+  private static SecurityPermission getPolicy = new SecurityPermission("getPolicy");
 
-   private static ThreadLocal<Object> handlerDataLocal = new ThreadLocal<Object>();
+  private static ThreadLocal<Object> handlerDataLocal = new ThreadLocal<Object>();
 
-   private static ThreadLocal<String> contextIDLocal = new ThreadLocal<String>();
+  private static ThreadLocal<String> contextIDLocal = new ThreadLocal<String>();
 
-   private static Map<String, PolicyContextHandler> handlerMap = Collections
-         .synchronizedMap(new HashMap<String, PolicyContextHandler>());
+  private static Map<String, PolicyContextHandler> handlerMap = Collections.synchronizedMap(new HashMap<String, PolicyContextHandler>());
 
-   /**
+  /**
     * <p>
     * This method may be used by a {@code Policy} provider to activate the {@code PolicyContextHandler} registered to
     * the context object key and cause it to return the corresponding policy context object from the container. When
@@ -90,23 +87,24 @@ public final class PolicyContext
     *            - if an operation by this method on the identified {@code PolicyContextHandler} causes it to throw a
     *            checked exception that is not accounted for in the signature of this method.
     */
-   public static Object getContext(String key) throws PolicyContextException
-   {
-      if (key == null || handlerMap.containsKey(key) == false)
-         throw new IllegalArgumentException("No PolicyContextHandler for key=" + key);
-      SecurityManager sm = System.getSecurityManager();
-      if (sm != null)
-         sm.checkPermission(getPolicy);
+  public static Object getContext(String key) throws PolicyContextException {
+    if (key == null || handlerMap.containsKey(key) == false) {
+      throw new IllegalArgumentException("No PolicyContextHandler for key=" + key);
+    }
+    SecurityManager sm = System.getSecurityManager();
+    if (sm != null) {
+      sm.checkPermission(getPolicy);
+    }
+    PolicyContextHandler handler = handlerMap.get(key);
+    if (handler.supports(key) == false) {
+      throw new IllegalArgumentException("PolicyContextHandler does not support key=" + key);
+    }
+    Object data = handlerDataLocal.get();
+    Object context = handler.getContext(key, data);
+    return context;
+  }
 
-      PolicyContextHandler handler = handlerMap.get(key);
-      if (handler.supports(key) == false)
-         throw new IllegalArgumentException("PolicyContextHandler does not support key=" + key);
-      Object data = handlerDataLocal.get();
-      Object context = handler.getContext(key, data);
-      return context;
-   }
-
-   /**
+  /**
     * <p>
     * This static method returns the value of the policy context identifier associated with the thread on which the
     * accessor is called.
@@ -119,13 +117,12 @@ public final class PolicyContext
     *            - if the calling {@code AccessControlContext} is not authorized by the container to call this method.
     *            Containers may choose to authorize calls to this method by any {@code AccessControlContext}.
     */
-   public static String getContextID()
-   {
-      String contextID = contextIDLocal.get();
-      return contextID;
-   }
+  public static String getContextID() {
+    String contextID = contextIDLocal.get();
+    return contextID;
+  }
 
-   /**
+  /**
     * <p>
     * This method may be used to obtain the keys that identify the container specific context handlers registered by the
     * container.
@@ -137,13 +134,11 @@ public final class PolicyContext
     *           - if the calling {@code AccessControlContext} is not authorized by the container to call this method.
     *           Containers may choose to authorize calls to this methods by any {@code AccessControlContext}.
     */
-   @SuppressWarnings("unchecked")
-   public static Set getHandlerKeys()
-   {
-      return handlerMap.keySet();
-   }
+  @SuppressWarnings(value = { "unchecked" }) public static Set getHandlerKeys() {
+    return handlerMap.keySet();
+  }
 
-   /**
+  /**
     * <p>
     * Authorization protected method used to register a container specific {@code PolicyContext} handler. A handler may
     * be registered to handle multiple keys, but at any time, at most one handler may be registered for a key.
@@ -169,25 +164,25 @@ public final class PolicyContext
     *            - if an operation by this method on the argument {@code PolicyContextHandler} causes it to throw a
     *            checked exception that is not accounted for in the signature of this method.
     */
-   public static void registerHandler(String key, PolicyContextHandler handler, boolean replace)
-         throws PolicyContextException
-   {
-      if (key == null)
-         throw new IllegalArgumentException("The key may not be null");
-      if (handler == null)
-         throw new IllegalArgumentException("The handler may not be null");
-      SecurityManager sm = System.getSecurityManager();
-      if (sm != null)
-         sm.checkPermission(setPolicy);
-      if (replace == false && handlerMap.containsKey(key) == true)
-      {
-         String msg = "Handler for key=" + key + ", exists, handler: " + handlerMap.get(key);
-         throw new IllegalArgumentException(msg);
-      }
-      handlerMap.put(key, handler);
-   }
+  public static void registerHandler(String key, PolicyContextHandler handler, boolean replace) throws PolicyContextException {
+    if (key == null) {
+      throw new IllegalArgumentException("The key may not be null");
+    }
+    if (handler == null) {
+      throw new IllegalArgumentException("The handler may not be null");
+    }
+    SecurityManager sm = System.getSecurityManager();
+    if (sm != null) {
+      sm.checkPermission(setPolicy);
+    }
+    if (replace == false && handlerMap.containsKey(key) == true) {
+      String msg = "Handler for key=" + key + ", exists, handler: " + handlerMap.get(key);
+      throw new IllegalArgumentException(msg);
+    }
+    handlerMap.put(key, handler);
+  }
 
-   /**
+  /**
     * <p>
     * Authorization protected method used to modify the value of the policy context identifier associated with the
     * thread on which this method is called.
@@ -199,15 +194,15 @@ public final class PolicyContext
     * @throws SecurityException
     *            - if the calling {@code AccessControlContext} is not authorized by the container to call this method.
     */
-   public static void setContextID(String contextID)
-   {
-      SecurityManager sm = System.getSecurityManager();
-      if (sm != null)
-         sm.checkPermission(setPolicy);
-      contextIDLocal.set(contextID);
-   }
+  public static void setContextID(String contextID) {
+    SecurityManager sm = System.getSecurityManager();
+    if (sm != null) {
+      sm.checkPermission(setPolicy);
+    }
+    contextIDLocal.set(contextID);
+  }
 
-   /**
+  /**
     * <p>
     * Authorization protected method that may be used to associate a thread-scoped handler data object with the
     * PolicyContext. The handler data object will be made available to handlers, where it can serve to supply or bind
@@ -222,20 +217,19 @@ public final class PolicyContext
     * @throws SecurityException
     *            - if the calling {@code AccessControlContext} is not authorized by the container to call this method.
     */
-   public static void setHandlerData(Object data)
-   {
-      SecurityManager sm = System.getSecurityManager();
-      if (sm != null)
-         sm.checkPermission(setPolicy);
-      handlerDataLocal.set(data);
-   }
+  public static void setHandlerData(Object data) {
+    SecurityManager sm = System.getSecurityManager();
+    if (sm != null) {
+      sm.checkPermission(setPolicy);
+    }
+    handlerDataLocal.set(data);
+  }
 
-   /**
+  /**
     * <p>
     * Private constructor.
     * </p>
     */
-   private PolicyContext()
-   {
-   }
+  private PolicyContext() {
+  }
 }

@@ -1,5 +1,4 @@
 package javax.security.jacc;
-
 import java.io.Serializable;
 import java.security.Permission;
 
@@ -27,18 +26,17 @@ import java.security.Permission;
  * 
  * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
- * @see java.security.Permission
+ * @see {@link Permission}
  */
-public final class WebRoleRefPermission extends Permission implements Serializable
-{
-   private static final long serialVersionUID = 1;
+public final class WebRoleRefPermission extends Permission implements Serializable {
+  private static final long serialVersionUID = 1;
 
-   /** The security-role-ref/role-link value */
-   private String actions;
+  /** The security-role-ref/role-link value */
+  private String actions;
 
-   private transient int hashCode;
+  private transient int hashCode;
 
-   /**
+  /**
     * <p>
     * Creates a new WebRoleRefPermission with the specified name and actions.
     * </p>
@@ -51,14 +49,13 @@ public final class WebRoleRefPermission extends Permission implements Serializab
     *           Web resource identified in the name parameter. The value of the role reference must not be null or the
     *           empty string.
     */
-   public WebRoleRefPermission(String name, String actions)
-   {
-      super(name);
-      this.actions = actions;
-      this.hashCode = name.hashCode() + actions.hashCode();
-   }
+  public WebRoleRefPermission(String name, String actions) {
+    super(name);
+    this.actions = actions;
+    this.hashCode = name.hashCode() + actions.hashCode();
+  }
 
-   /**
+  /**
     * <p>
     * Checks two WebRoleRefPermission objects for equality. WebRoleRefPermission objects are equivalent if they have
     * case equivalent name and actions values.
@@ -76,40 +73,37 @@ public final class WebRoleRefPermission extends Permission implements Serializab
     *           - the WebRoleRefPermission object being tested for equality with this WebRoleRefPermission.
     * @return true if the argument WebRoleRefPermission object is equivalent to this WebRoleRefPermission.
     */
-   @Override
-   public boolean equals(Object p)
-   {
-      if (p == this)
-         return true;
-      if ((p instanceof WebRoleRefPermission) == false)
-         return false;
-
-      boolean equals = false;
-      WebRoleRefPermission wrrp = (WebRoleRefPermission) p;
-      String pname = wrrp.getName();
-      if (this.getName().equals(pname))
-      {
-         String pactions = wrrp.getActions();
-         if (this.getActions().equals(pactions))
-            equals = true;
+  @Override public boolean equals(Object p) {
+    if (p == this) {
+      return true;
+    }
+    if ((p instanceof WebRoleRefPermission) == false) {
+      return false;
+    }
+    boolean equals = false;
+    WebRoleRefPermission wrrp = (WebRoleRefPermission) p;
+    String pname = wrrp.getName();
+    if (this.getName().equals(pname)) {
+      String pactions = wrrp.getActions();
+      if (this.getActions().equals(pactions)) {
+        equals = true;
       }
-      return equals;
-   }
+    }
+    return equals;
+  }
 
-   /**
+  /**
     * <p>
     * Returns a canonical String representation of the actions of this WebRoleRefPermission.
     * </p>
     * 
     * @return a String containing the canonicalized actions of this WebRoleRefPermission.
     */
-   @Override
-   public String getActions()
-   {
-      return actions;
-   }
+  @Override public String getActions() {
+    return actions;
+  }
 
-   /**
+  /**
     * <p>
     * Returns the hash code value for this WebRoleRefPermission. The properties of the returned hash code must be as
     * follows:
@@ -124,13 +118,11 @@ public final class WebRoleRefPermission extends Permission implements Serializab
     * 
     * @return the integer hash code value for this object.
     */
-   @Override
-   public int hashCode()
-   {
-      return hashCode;
-   }
+  @Override public int hashCode() {
+    return hashCode;
+  }
 
-   /**
+  /**
     * <p>
     * Determines if the argument Permission is "implied by" this WebRoleRefPermission. For this to be the case:
     * <ul>
@@ -148,9 +140,7 @@ public final class WebRoleRefPermission extends Permission implements Serializab
     *           - “this” WebRoleRefPermission is checked to see if it implies the argument permission.
     * @return true if the specified permission is implied by this object, false if not.
     */
-   @Override
-   public boolean implies(Permission p)
-   {
-      return equals(p);
-   }
+  @Override public boolean implies(Permission p) {
+    return equals(p);
+  }
 }
