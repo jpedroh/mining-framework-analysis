@@ -248,7 +248,37 @@ public class WriterBasedJsonGenerator
     public void writeStartArray() throws IOException
     {
         _verifyValueWrite("start an array");
-        _tokenWriteContext = _tokenWriteContext.createChildArrayContext(null);
+        _tokenWriteContext = _tokenWriteContext.createChildArrayContext();
+        if (_cfgPrettyPrinter != null) {
+            _cfgPrettyPrinter.writeStartArray(this);
+        } else {
+            if (_outputTail >= _outputEnd) {
+                _flushBuffer();
+            }
+            _outputBuffer[_outputTail++] = '[';
+        }
+    }
+
+    @Override // since 2.10
+    public void writeStartArray(int size) throws IOException
+    {
+        _verifyValueWrite("start an array");
+        _writeContext = _writeContext.createChildArrayContext();
+        if (_cfgPrettyPrinter != null) {
+            _cfgPrettyPrinter.writeStartArray(this);
+        } else {
+            if (_outputTail >= _outputEnd) {
+                _flushBuffer();
+            }
+            _outputBuffer[_outputTail++] = '[';
+        }
+    }
+    
+    @Override
+    public void writeStartArray(int len) throws IOException
+    {
+        _verifyValueWrite("start an array");
+        _tokenWriteContext = _tokenWriteContext.createChildArrayContext();
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartArray(this);
         } else {
@@ -260,21 +290,6 @@ public class WriterBasedJsonGenerator
     }
 
     @Override
-    public void writeStartArray(int size) throws IOException
-    {
-        _verifyValueWrite("start an array");
-        _tokenWriteContext = _tokenWriteContext.createChildArrayContext(null);
-        if (_cfgPrettyPrinter != null) {
-            _cfgPrettyPrinter.writeStartArray(this);
-        } else {
-            if (_outputTail >= _outputEnd) {
-                _flushBuffer();
-            }
-            _outputBuffer[_outputTail++] = '[';
-        }
-    }
-
-@Override
     public void writeStartArray(Object forValue, int len) throws IOException
     {
         _verifyValueWrite("start an array");
@@ -310,7 +325,7 @@ public class WriterBasedJsonGenerator
     public void writeStartObject() throws IOException
     {
         _verifyValueWrite("start an object");
-        _tokenWriteContext = _tokenWriteContext.createChildObjectContext(null);
+        _tokenWriteContext = _tokenWriteContext.createChildObjectContext();
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartObject(this);
         } else {
@@ -325,8 +340,19 @@ public class WriterBasedJsonGenerator
     public void writeStartObject(Object forValue) throws IOException
     {
         _verifyValueWrite("start an object");
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/ed79f76bc8682380e02b0c51369968e0decd4392/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java/left.java
         JsonWriteContext ctxt = _tokenWriteContext.createChildObjectContext(forValue);
         _tokenWriteContext = ctxt;
+||||||| /usr/src/app/output/fasterxml/jackson-core/ed79f76bc8682380e02b0c51369968e0decd4392/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java/base.java
+        JsonWriteContext ctxt = _writeContext.createChildObjectContext();
+        _writeContext = ctxt;
+        if (forValue != null) {
+            ctxt.setCurrentValue(forValue);
+        }
+=======
+        JsonWriteContext ctxt = _writeContext.createChildObjectContext(forValue);
+        _writeContext = ctxt;
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/ed79f76bc8682380e02b0c51369968e0decd4392/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java/right.java
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartObject(this);
         } else {

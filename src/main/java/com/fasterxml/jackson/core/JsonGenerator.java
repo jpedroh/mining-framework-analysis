@@ -28,35 +28,37 @@ public abstract class JsonGenerator
     implements Closeable, Flushable, Versioned
 {
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Construction, initialization
-    /**********************************************************************
+    /**********************************************************
      */
 
     protected JsonGenerator() { }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Versioned
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
      * Accessor for finding out version of the bundle that provided this generator instance.
      */
+
     @Override
     public abstract Version version();
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, output configuration, state access
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
      * Accessor for context object that provides information about low-level
      * logical position withing output token stream.
      */
+
     public abstract TokenStreamContext getOutputContext();
 
     /**
@@ -67,6 +69,7 @@ public abstract class JsonGenerator
      *
      * @since 3.0
      */
+
     public abstract ObjectWriteContext getObjectWriteContext();
 
     /**
@@ -84,6 +87,7 @@ public abstract class JsonGenerator
      * In general use of this accessor should be considered as
      * "last effort", i.e. only used if no other mechanism is applicable.
      */
+
     public Object getOutputTarget() {
         return null;
     }
@@ -104,6 +108,7 @@ public abstract class JsonGenerator
      * @return Amount of content buffered in internal units, if amount known and
      *    accessible; -1 if not accessible.
      */
+
     public int getOutputBuffered() {
         return -1;
     }
@@ -119,6 +124,7 @@ public abstract class JsonGenerator
      * The reason it is included here is that it can be stored and accessed hierarchically,
      * and gets passed through data-binding.
      */
+
     public abstract Object getCurrentValue();
 
     /**
@@ -127,12 +133,13 @@ public abstract class JsonGenerator
      *   getOutputContext().setCurrentValue(v);
      *</code>
      */
+
     public abstract void setCurrentValue(Object v);
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, Feature configuration
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -141,6 +148,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public abstract JsonGenerator enable(StreamWriteFeature f);
 
     /**
@@ -149,6 +157,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public abstract JsonGenerator disable(StreamWriteFeature f);
 
     /**
@@ -157,6 +166,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public final JsonGenerator configure(StreamWriteFeature f, boolean state) {
         if (state) enable(f); else disable(f);
         return this;
@@ -166,6 +176,7 @@ public abstract class JsonGenerator
      * Method for checking whether given feature is enabled.
      * Check {@link StreamWriteFeature} for list of available features.
      */
+
     public abstract boolean isEnabled(StreamWriteFeature f);
 
     /**
@@ -176,6 +187,7 @@ public abstract class JsonGenerator
      *
      * @since 3.0
      */
+
     public abstract int streamWriteFeatures();
 
     /**
@@ -186,12 +198,13 @@ public abstract class JsonGenerator
      *
      * @since 3.0
      */
+
     public abstract int formatWriteFeatures();
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, Schema configuration
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -209,6 +222,7 @@ public abstract class JsonGenerator
      * 
      * @throws UnsupportedOperationException if generator does not support schema
      */
+
     public void setSchema(FormatSchema schema) {
         String schemaType = (schema == null) ? "NULL" : schema.getSchemaType();
         throw new UnsupportedOperationException("Generator of type "+getClass().getName()+" does not support schema of type '"
@@ -219,6 +233,7 @@ public abstract class JsonGenerator
      * Method for accessing Schema that this parser uses, if any.
      * Default implementation returns null.
      */
+
     public FormatSchema getSchema() { return null; }
 
     /*
@@ -248,6 +263,7 @@ public abstract class JsonGenerator
      *   is to be done; or highest code point not to escape (meaning higher
      *   ones will be), if positive value.
      */
+
     public JsonGenerator setHighestNonEscapedChar(int charCode) { return this; }
 
     /**
@@ -262,28 +278,33 @@ public abstract class JsonGenerator
      * @return Currently active limitation for highest non-escaped character,
      *   if defined; or 0 to indicate no additional escaping is performed.
      */
+
     public int getHighestNonEscapedChar() { return 0; }
 
     /**
      * Method for accessing custom escapes generator uses for {@link JsonGenerator}s
      * it creates.
      */
+
     public CharacterEscapes getCharacterEscapes() { return null; }
 
     // 04-Oct-2017, tatu: Would like to remove this method, but alas JSONP-support
+
     //    does require it...
+
     /**
      * Method for defining custom escapes factory uses for {@link JsonGenerator}s
      * it creates.
      *<p>
      * Default implementation does nothing and simply returns this instance.
      */
+
     public JsonGenerator setCharacterEscapes(CharacterEscapes esc) { return this; }
-    
+
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, capability introspection methods
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -294,8 +315,9 @@ public abstract class JsonGenerator
      * 
      * @return True if this generator can use given schema; false if not
      */
+
     public boolean canUseSchema(FormatSchema schema) { return false; }
-    
+
     /**
      * Introspection method that may be called to see if the underlying
      * data format supports some kind of Object Ids natively (many do not;
@@ -308,6 +330,7 @@ public abstract class JsonGenerator
      * use a non-native notation (explicit property or such), or fail,
      * in case it can not use native object ids.
      */
+
     public boolean canWriteObjectId() { return false; }
 
     /**
@@ -322,6 +345,7 @@ public abstract class JsonGenerator
      * use a non-native notation (explicit property or such), or fail,
      * in case it can not use native type ids.
      */
+
     public boolean canWriteTypeId() { return false; }
 
     /**
@@ -332,14 +356,16 @@ public abstract class JsonGenerator
      * Default implementation returns false; overridden by data formats
      * that do support native binary content.
      */
+
     public boolean canWriteBinaryNatively() { return false; }
-    
+
     /**
      * Introspection method to call to check whether it is ok to omit
      * writing of Object fields or not. Most formats do allow omission,
      * but certain positional formats (such as CSV) require output of
      * placeholders, even if no real values are to be emitted.
      */
+
     public boolean canOmitFields() { return true; }
 
     /**
@@ -352,12 +378,13 @@ public abstract class JsonGenerator
      * formatting of numbers may be applied by higher-level code (databinding)
      * or not.
      */
+
     public boolean canWriteFormattedNumbers() { return false; }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, structural
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -369,6 +396,7 @@ public abstract class JsonGenerator
      * are allowed: meaning everywhere except for when
      * a field name is expected.
      */
+
     public abstract void writeStartArray() throws IOException;
 
     /**
@@ -384,6 +412,7 @@ public abstract class JsonGenerator
      *   {@link #writeEndArray()} MUST match; generator MAY verify
      *   this is the case.
      */
+
     public void writeStartArray(int size) throws IOException {
         writeStartArray();
     }
@@ -401,6 +430,7 @@ public abstract class JsonGenerator
      *   {@link #writeEndArray()} MUST match; generator MAY verify
      *   this is the case.
      */
+
     public abstract void writeStartArray(Object forValue, int size) throws IOException;
 
     /**
@@ -411,23 +441,16 @@ public abstract class JsonGenerator
      * Marker can be written if the innermost structured type
      * is Array.
      */
+
     public abstract void writeEndArray() throws IOException;
 
-    /**
-     * Method for writing starting marker of an Object value
-     * (character '{'; plus possible white space decoration
-     * if pretty-printing is enabled).
-     *<p>
-     * Object values can be written in any context where values
-     * are allowed: meaning everywhere except for when
-     * a field name is expected.
-     */
     public abstract void writeStartObject() throws IOException;
 
     /**
-     * Method for writing starting marker of an Object value
-     * to represent the given Java Object value.
-     * Argument is offered as metadata, but more
+     * Method for writing starting marker of a JSON Object value
+     * (character '{'; plus possible white space decoration
+     * if pretty-printing is enabled), to represent Java given
+     * as the argument. Argument is offered as metadata, but more
      * importantly it should be assigned as the "current value"
      * for the Object content that gets constructed and initialized.
      *<p>
@@ -435,38 +458,9 @@ public abstract class JsonGenerator
      * are allowed: meaning everywhere except for when
      * a field name is expected.
      */
+
     public abstract void writeStartObject(Object forValue) throws IOException;
 
-    /**
-     * Method for writing starting marker of an Object value
-     * to represent the given Java Object value.
-     * Argument is offered as metadata, but more
-     * importantly it should be assigned as the "current value"
-     * for the Object content that gets constructed and initialized.
-     * In addition, caller knows number of key/value pairs ("properties")
-     * that will get written for the Object value: this is relevant for
-     * some format backends (but not, as an example, for JSON).
-     *<p>
-     * Object values can be written in any context where values
-     * are allowed: meaning everywhere except for when
-     * a field name is expected.
-     */
-    public void writeStartObject(Object forValue, int size) throws IOException
-    {
-        writeStartObject();
-        setCurrentValue(forValue);
-    }
-
-    /**
-     * Method for writing closing marker of an Object value
-     * (character '}'; plus possible white space decoration
-     * if pretty-printing is enabled).
-     *<p>
-     * Marker can be written if the innermost structured type
-     * is Object, and the last written event was either a
-     * complete value, or START-OBJECT marker (see JSON specification
-     * for more details).
-     */
     public abstract void writeEndObject() throws IOException;
 
     /**
@@ -478,6 +472,7 @@ public abstract class JsonGenerator
      * JSON specification for details), when field name is expected
      * (field names alternate with values).
      */
+
     public abstract void writeFieldName(String name) throws IOException;
 
     /**
@@ -491,6 +486,7 @@ public abstract class JsonGenerator
      * serialized String; implementations are strongly encouraged to make
      * use of more efficient methods argument object has.
      */
+
     public abstract void writeFieldName(SerializableString name) throws IOException;
 
     /**
@@ -501,14 +497,15 @@ public abstract class JsonGenerator
      * Default implementation will simply convert id into <code>String</code>
      * and call {@link #writeFieldName(String)}.
      */
+
     public void writeFieldId(long id) throws IOException {
         writeFieldName(Long.toString(id));
     }
 
     /*
-    /**********************************************************************
-    /* Public API, write methods, scalar arrays
-    /**********************************************************************
+    /**********************************************************
+    /* Public API, write methods, scalar arrays (2.8)
+    /**********************************************************
      */
 
     /**
@@ -520,13 +517,14 @@ public abstract class JsonGenerator
      * @param offset Offset of the first element to write, within array
      * @param length Number of elements in array to write, from `offset` to `offset + len - 1`
      */
+
     public void writeArray(int[] array, int offset, int length) throws IOException
     {
         if (array == null) {
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
-        writeStartArray(array, length);
+        writeStartArray();
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
@@ -542,13 +540,14 @@ public abstract class JsonGenerator
      * @param offset Offset of the first element to write, within array
      * @param length Number of elements in array to write, from `offset` to `offset + len - 1`
      */
+
     public void writeArray(long[] array, int offset, int length) throws IOException
     {
         if (array == null) {
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
-        writeStartArray(array, length);
+        writeStartArray();
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
@@ -564,13 +563,14 @@ public abstract class JsonGenerator
      * @param offset Offset of the first element to write, within array
      * @param length Number of elements in array to write, from `offset` to `offset + len - 1`
      */
+
     public void writeArray(double[] array, int offset, int length) throws IOException
     {
         if (array == null) {
             throw new IllegalArgumentException("null array");
         }
         _verifyOffsets(array.length, offset, length);
-        writeStartArray(array, length);
+        writeStartArray();
         for (int i = offset, end = offset+length; i < end; ++i) {
             writeNumber(array[i]);
         }
@@ -578,9 +578,9 @@ public abstract class JsonGenerator
     }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, text/String values
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -590,6 +590,7 @@ public abstract class JsonGenerator
      * surrounded in double quotes, and contents will be properly
      * escaped as required by JSON specification.
      */
+
     public abstract void writeString(String text) throws IOException;
 
     /**
@@ -602,6 +603,7 @@ public abstract class JsonGenerator
      * If len is &lt; 0, then write all contents of the reader.
      * Otherwise, write only len characters.
      */
+
     public void writeString(Reader reader, int len) throws IOException {
         // Let's implement this as "unsupported" to make it easier to add new parser impls
         _reportUnsupportedOperation();
@@ -614,6 +616,7 @@ public abstract class JsonGenerator
      * surrounded in double quotes, and contents will be properly
      * escaped as required by JSON specification.
      */
+
     public abstract void writeString(char[] text, int offset, int len) throws IOException;
 
     /**
@@ -626,6 +629,7 @@ public abstract class JsonGenerator
      * sub-classes should override it with more efficient implementation
      * if possible.
      */
+
     public abstract void writeString(SerializableString text) throws IOException;
 
     /**
@@ -642,6 +646,7 @@ public abstract class JsonGenerator
      * {@link UnsupportedOperationException} due to ineffectiveness
      * of having to decode input.
      */
+
     public abstract void writeRawUTF8String(byte[] text, int offset, int length)
         throws IOException;
 
@@ -663,13 +668,14 @@ public abstract class JsonGenerator
      * {@link UnsupportedOperationException} due to ineffectiveness
      * of having to decode input.
      */
+
     public abstract void writeUTF8String(byte[] text, int offset, int length)
         throws IOException;
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, binary/raw content
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -684,6 +690,7 @@ public abstract class JsonGenerator
      * such by-pass methods: those that do not will throw
      * {@link UnsupportedOperationException}.
      */
+
     public abstract void writeRaw(String text) throws IOException;
 
     /**
@@ -698,6 +705,7 @@ public abstract class JsonGenerator
      * such by-pass methods: those that do not will throw
      * {@link UnsupportedOperationException}.
      */
+
     public abstract void writeRaw(String text, int offset, int len) throws IOException;
 
     /**
@@ -712,6 +720,7 @@ public abstract class JsonGenerator
      * such by-pass methods: those that do not will throw
      * {@link UnsupportedOperationException}.
      */
+
     public abstract void writeRaw(char[] text, int offset, int len) throws IOException;
 
     /**
@@ -726,6 +735,7 @@ public abstract class JsonGenerator
      * such by-pass methods: those that do not will throw
      * {@link UnsupportedOperationException}.
      */
+
     public abstract void writeRaw(char c) throws IOException;
 
     /**
@@ -745,7 +755,9 @@ public abstract class JsonGenerator
      * to implement it in more efficient manner (especially if they
      * use UTF-8 encoding).
      */
+
 //    public abstract void writeRaw(SerializableString raw) throws IOException;
+
     public void writeRaw(SerializableString raw) throws IOException {
         writeRaw(raw.getValue());
     }
@@ -758,6 +770,7 @@ public abstract class JsonGenerator
      * are added if and as needed (comma or colon), and generator
      * state updated to reflect this.
      */
+
     public abstract void writeRawValue(String text) throws IOException;
 
     public abstract void writeRawValue(String text, int offset, int len) throws IOException;
@@ -769,6 +782,7 @@ public abstract class JsonGenerator
      * efficient as it may be able to use pre-encoded content (similar to
      * {@link #writeRaw(SerializableString)}.
      */
+
     public void writeRawValue(SerializableString raw) throws IOException {
         writeRawValue(raw.getValue());
     }
@@ -794,6 +808,7 @@ public abstract class JsonGenerator
      *   what is the maximum line length before adding linefeed,
      *   and also the underlying alphabet to use.
      */
+
     public abstract void writeBinary(Base64Variant bv,
             byte[] data, int offset, int len) throws IOException;
 
@@ -802,6 +817,7 @@ public abstract class JsonGenerator
      * but default to using the Jackson default Base64 variant 
      * (which is {@link Base64Variants#MIME_NO_LINEFEEDS}).
      */
+
     public void writeBinary(byte[] data, int offset, int len) throws IOException {
         writeBinary(Base64Variants.getDefaultVariant(), data, offset, len);
     }
@@ -812,6 +828,7 @@ public abstract class JsonGenerator
      * (which is {@link Base64Variants#MIME_NO_LINEFEEDS}). Also
      * assumes that whole byte array is to be output.
      */
+
     public void writeBinary(byte[] data) throws IOException {
         writeBinary(Base64Variants.getDefaultVariant(), data, 0, data.length);
     }
@@ -829,11 +846,12 @@ public abstract class JsonGenerator
      *    depends on underlying data format: JSON output does NOT require length,
      *    other formats may
      */
+
     public int writeBinary(InputStream data, int dataLength)
         throws IOException {
         return writeBinary(Base64Variants.getDefaultVariant(), data, dataLength);
     }
-    
+
     /**
      * Method similar to {@link #writeBinary(Base64Variant,byte[],int,int)},
      * but where input is provided through a stream, allowing for incremental
@@ -853,13 +871,14 @@ public abstract class JsonGenerator
      * 
      * @return Number of bytes read from <code>data</code> and written as binary payload
      */
+
     public abstract int writeBinary(Base64Variant bv,
             InputStream data, int dataLength) throws IOException;
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, numeric
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -871,6 +890,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public void writeNumber(short v) throws IOException { writeNumber((int) v); }
 
     /**
@@ -882,6 +902,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(int v) throws IOException;
 
     /**
@@ -893,6 +914,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(long v) throws IOException;
 
     /**
@@ -904,6 +926,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(BigInteger v) throws IOException;
 
     /**
@@ -915,6 +938,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(double v) throws IOException;
 
     /**
@@ -926,6 +950,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(float v) throws IOException;
 
     /**
@@ -937,6 +962,7 @@ public abstract class JsonGenerator
      *
      * @param v Number value to write
      */
+
     public abstract void writeNumber(BigDecimal v) throws IOException;
 
     /**
@@ -960,14 +986,15 @@ public abstract class JsonGenerator
      *   to just output a String instead (Schema-based formats may require actual
      *   number, for example)
      */
+
     public abstract void writeNumber(String encodedValue) throws IOException;
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, other value types
-    /**********************************************************************
+    /**********************************************************
      */
-    
+
     /**
      * Method for outputting literal JSON boolean value (one of
      * Strings 'true' and 'false').
@@ -976,6 +1003,7 @@ public abstract class JsonGenerator
      * Additional white space may be added around the value
      * if pretty-printing is enabled.
      */
+
     public abstract void writeBoolean(boolean state) throws IOException;
 
     /**
@@ -985,12 +1013,14 @@ public abstract class JsonGenerator
      * Additional white space may be added around the value
      * if pretty-printing is enabled.
      */
+
     public abstract void writeNull() throws IOException;
 
     /**
      * Method that can be called on backends that support passing opaque datatypes of
      * non-JSON formats
      */
+
     public void writeEmbeddedObject(Object object) throws IOException {
         // 01-Sep-2016, tatu: As per [core#318], handle small number of cases
         if (object == null) {
@@ -1007,9 +1037,9 @@ public abstract class JsonGenerator
     }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, Native Ids (type, object)
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1021,6 +1051,7 @@ public abstract class JsonGenerator
      * If output is not allowed by the data format in this position,
      * a {@link JsonGenerationException} will be thrown.
      */
+
     public void writeObjectId(Object id) throws IOException {
         throw new JsonGenerationException("No native support for writing Object Ids", this);
     }
@@ -1034,10 +1065,11 @@ public abstract class JsonGenerator
      * If output is not allowed by the data format in this position,
      * a {@link JsonGenerationException} will be thrown.
      */
+
     public void writeObjectRef(Object id) throws IOException {
         throw new JsonGenerationException("No native support for writing Object Ids", this);
     }
-    
+
     /**
      * Method that can be called to output so-called native Type Id.
      * Note that it may only be called after ensuring this is legal
@@ -1047,6 +1079,7 @@ public abstract class JsonGenerator
      * If output is not allowed by the data format in this position,
      * a {@link JsonGenerationException} will be thrown.
      */
+
     public void writeTypeId(Object id) throws IOException {
         throw new JsonGenerationException("No native support for writing Type Ids", this);
     }
@@ -1063,6 +1096,7 @@ public abstract class JsonGenerator
      * -- this is discouraged, but not illegal, and may be necessary as a work-around
      * in some cases.
      */
+
     public WritableTypeId writeTypePrefix(WritableTypeId typeIdDef) throws IOException
     {
         Object id = typeIdDef.id;
@@ -1159,9 +1193,9 @@ public abstract class JsonGenerator
     }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, write methods, serializing Java objects
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1170,6 +1204,7 @@ public abstract class JsonGenerator
      * This is done by delegating call to
      * {@link ObjectWriteContext#writeValue(JsonGenerator, Object)}.
      */
+
     public abstract void writeObject(Object pojo) throws IOException;
 
     /**
@@ -1178,12 +1213,13 @@ public abstract class JsonGenerator
      * This is done by delegating call to
      * {@link ObjectWriteContext#writeTree}.
      */
+
     public abstract void writeTree(TreeNode rootNode) throws IOException;
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, convenience field write methods
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1196,6 +1232,7 @@ public abstract class JsonGenerator
      *<p>
      * Note: many performance-sensitive implementations override this method
      */
+
     public void writeStringField(String fieldName, String value) throws IOException {
         writeFieldName(fieldName);
         writeString(value);
@@ -1209,6 +1246,7 @@ public abstract class JsonGenerator
      *  writeBoolean(value);
      *</pre>
      */
+
     public final void writeBooleanField(String fieldName, boolean value) throws IOException {
         writeFieldName(fieldName);
         writeBoolean(value);
@@ -1222,6 +1260,7 @@ public abstract class JsonGenerator
      *  writeNull();
      *</pre>
      */
+
     public final void writeNullField(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeNull();
@@ -1235,6 +1274,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
+
     public final void writeNumberField(String fieldName, int value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
@@ -1248,6 +1288,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
+
     public final void writeNumberField(String fieldName, long value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
@@ -1261,6 +1302,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
+
     public final void writeNumberField(String fieldName, double value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
@@ -1274,6 +1316,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
+
     public final void writeNumberField(String fieldName, float value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
@@ -1288,6 +1331,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
+
     public final void writeNumberField(String fieldName, BigDecimal value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
@@ -1302,6 +1346,7 @@ public abstract class JsonGenerator
      *  writeBinary(value);
      *</pre>
      */
+
     public final void writeBinaryField(String fieldName, byte[] data) throws IOException {
         writeFieldName(fieldName);
         writeBinary(data);
@@ -1320,24 +1365,12 @@ public abstract class JsonGenerator
      * (by calling {#link #writeEndArray}) after writing all values
      * of the value Array.
      */
+
     public final void writeArrayFieldStart(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeStartArray();
     }
 
-    /**
-     * Convenience method for outputting a field entry ("member")
-     * (that will contain an Object value), and the START_OBJECT marker.
-     * Equivalent to:
-     *<pre>
-     *  writeFieldName(fieldName);
-     *  writeStartObject();
-     *</pre>
-     *<p>
-     * Note: caller still has to take care to close the Object
-     * (by calling {#link #writeEndObject}) after writing all
-     * entries of the value Object.
-     */
     public final void writeObjectFieldStart(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeStartObject();
@@ -1352,6 +1385,7 @@ public abstract class JsonGenerator
      *  writeObject(pojo);
      *</pre>
      */
+
     public final void writeObjectField(String fieldName, Object pojo) throws IOException {
         writeFieldName(fieldName);
         writeObject(pojo);
@@ -1364,12 +1398,13 @@ public abstract class JsonGenerator
      *<p>
      * Default implementation does nothing.
      */
+
     public void writeOmittedField(String fieldName) throws IOException { }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, copy-through methods
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1382,6 +1417,7 @@ public abstract class JsonGenerator
      * parser, although it may cause parser to internally process
      * more data (if it lazy loads contents of value events, for example)
      */
+
     public void copyCurrentEvent(JsonParser p) throws IOException
     {
         JsonToken t = p.currentToken();
@@ -1486,6 +1522,7 @@ public abstract class JsonGenerator
      * the event parser already pointed to (if there were no
      * enclosed events), or the last enclosed event copied.
      */
+
     public void copyCurrentStructure(JsonParser p) throws IOException
     {
         JsonToken t = p.currentToken();
@@ -1521,9 +1558,9 @@ public abstract class JsonGenerator
     }
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Public API, buffer handling
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1531,6 +1568,7 @@ public abstract class JsonGenerator
      * target (output stream, writer), and to flush the target itself
      * as well.
      */
+
     @Override
     public abstract void flush() throws IOException;
 
@@ -1538,12 +1576,13 @@ public abstract class JsonGenerator
      * Method that can be called to determine whether this generator
      * is closed or not. If it is closed, no more output can be done.
      */
+
     public abstract boolean isClosed();
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Closeable implementation
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1558,13 +1597,14 @@ public abstract class JsonGenerator
      * If either of above is true, the target is also closed. Otherwise
      * (not managing, feature not enabled), target is not closed.
      */
+
     @Override
     public abstract void close() throws IOException;
 
     /*
-    /**********************************************************************
+    /**********************************************************
     /* Helper methods for sub-classes
-    /**********************************************************************
+    /**********************************************************
      */
 
     /**
@@ -1574,6 +1614,7 @@ public abstract class JsonGenerator
      * Note that sub-classes may override this method to add more detail
      * or use a {@link JsonGenerationException} sub-class.
      */
+
     protected <T> T  _reportError(String msg) throws JsonGenerationException {
         throw new JsonGenerationException(msg, this);
     }
@@ -1592,4 +1633,264 @@ public abstract class JsonGenerator
                     offset, length, arrayLength));
         }
     }
+
+    /**
+     * Method for writing starting marker of an Object value
+     * (character '{'; plus possible white space decoration
+     * if pretty-printing is enabled).
+     *<p>
+     * Object values can be written in any context where values
+     * are allowed: meaning everywhere except for when
+     * a field name is expected.
+     */
+
+    /**
+     * Method for writing starting marker of an Object value
+     * to represent the given Java Object value.
+     * Argument is offered as metadata, but more
+     * importantly it should be assigned as the "current value"
+     * for the Object content that gets constructed and initialized.
+     *<p>
+     * Object values can be written in any context where values
+     * are allowed: meaning everywhere except for when
+     * a field name is expected.
+     *
+     * @since 2.8
+     */
+
+    /**
+     * Method for writing starting marker of an Object value
+     * to represent the given Java Object value.
+     * Argument is offered as metadata, but more
+     * importantly it should be assigned as the "current value"
+     * for the Object content that gets constructed and initialized.
+     * In addition, caller knows number of key/value pairs ("properties")
+     * that will get written for the Object value: this is relevant for
+     * some format backends (but not, as an example, for JSON).
+     *<p>
+     * Object values can be written in any context where values
+     * are allowed: meaning everywhere except for when
+     * a field name is expected.
+     *
+     * @since 2.10
+     */
+
+    public void writeStartObject(Object forValue, int size) throws IOException
+    {
+        writeStartObject();
+        setCurrentValue(forValue);
+    }
+
+    /**
+     * Method for writing closing marker of an Object value
+     * (character '}'; plus possible white space decoration
+     * if pretty-printing is enabled).
+     *<p>
+     * Marker can be written if the innermost structured type
+     * is Object, and the last written event was either a
+     * complete value, or START-OBJECT marker (see JSON specification
+     * for more details).
+     */
+
+    /**
+     * Value write method that can be called to write a single
+     * array (sequence of {@link JsonToken#START_ARRAY}, zero or
+     * more {@link JsonToken#VALUE_NUMBER_INT}, {@link JsonToken#END_ARRAY})
+     *
+     * @since 2.8
+     *
+     * @param array Array that contains values to write
+     * @param offset Offset of the first element to write, within array
+     * @param length Number of elements in array to write, from `offset` to `offset + len - 1`
+     */
+
+    /**
+     * Value write method that can be called to write a single
+     * array (sequence of {@link JsonToken#START_ARRAY}, zero or
+     * more {@link JsonToken#VALUE_NUMBER_INT}, {@link JsonToken#END_ARRAY})
+     *
+     * @since 2.8
+     *
+     * @param array Array that contains values to write
+     * @param offset Offset of the first element to write, within array
+     * @param length Number of elements in array to write, from `offset` to `offset + len - 1`
+     */
+
+    /**
+     * Method for outputting a String value. Depending on context
+     * this means either array element, (object) field value or
+     * a stand alone String; but in all cases, String will be
+     * surrounded in double quotes, and contents will be properly
+     * escaped as required by JSON specification.
+     */
+
+    /**
+     * Method for outputting a String value. Depending on context
+     * this means either array element, (object) field value or
+     * a stand alone String; but in all cases, String will be
+     * surrounded in double quotes, and contents will be properly
+     * escaped as required by JSON specification.
+     */
+
+    /**
+     * Method that will force generator to copy
+     * input text verbatim with <b>no</b> modifications (including
+     * that no escaping is done and no separators are added even
+     * if context [array, object] would otherwise require such).
+     * If such separators are desired, use
+     * {@link #writeRawValue(String)} instead.
+     *<p>
+     * Note that not all generator implementations necessarily support
+     * such by-pass methods: those that do not will throw
+     * {@link UnsupportedOperationException}.
+     */
+
+    /**
+     * Method that will force generator to copy
+     * input text verbatim with <b>no</b> modifications (including
+     * that no escaping is done and no separators are added even
+     * if context [array, object] would otherwise require such).
+     * If such separators are desired, use
+     * {@link #writeRawValue(String)} instead.
+     *<p>
+     * Note that not all generator implementations necessarily support
+     * such by-pass methods: those that do not will throw
+     * {@link UnsupportedOperationException}.
+     */
+
+    /**
+     * Method that will force generator to copy
+     * input text verbatim with <b>no</b> modifications (including
+     * that no escaping is done and no separators are added even
+     * if context [array, object] would otherwise require such).
+     * If such separators are desired, use
+     * {@link #writeRawValue(String)} instead.
+     *<p>
+     * Note that not all generator implementations necessarily support
+     * such by-pass methods: those that do not will throw
+     * {@link UnsupportedOperationException}.
+     */
+
+    /**
+     * Method that will force generator to copy
+     * input text verbatim with <b>no</b> modifications (including
+     * that no escaping is done and no separators are added even
+     * if context [array, object] would otherwise require such).
+     * If such separators are desired, use
+     * {@link #writeRawValue(String)} instead.
+     *<p>
+     * Note that not all generator implementations necessarily support
+     * such by-pass methods: those that do not will throw
+     * {@link UnsupportedOperationException}.
+     */
+
+    /**
+     * Method for outputting given value as JSON number.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Method for outputting given value as JSON number.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Method for outputting given value as JSON number.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Method for outputting indicate JSON numeric value.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Method for outputting indicate JSON numeric value.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Method for outputting indicate JSON numeric value.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
+     *
+     * @param v Number value to write
+     */
+
+    /**
+     * Convenience method for outputting a field entry ("member")
+     * that has the specified numeric value. Equivalent to:
+     *<pre>
+     *  writeFieldName(fieldName);
+     *  writeNumber(value);
+     *</pre>
+     */
+
+    /**
+     * Convenience method for outputting a field entry ("member")
+     * that has the specified numeric value. Equivalent to:
+     *<pre>
+     *  writeFieldName(fieldName);
+     *  writeNumber(value);
+     *</pre>
+     */
+
+    /**
+     * Convenience method for outputting a field entry ("member")
+     * that has the specified numeric value. Equivalent to:
+     *<pre>
+     *  writeFieldName(fieldName);
+     *  writeNumber(value);
+     *</pre>
+     */
+
+    /**
+     * Convenience method for outputting a field entry ("member")
+     * that has the specified numeric value. Equivalent to:
+     *<pre>
+     *  writeFieldName(fieldName);
+     *  writeNumber(value);
+     *</pre>
+     */
+
+    /**
+     * Convenience method for outputting a field entry ("member")
+     * (that will contain an Object value), and the START_OBJECT marker.
+     * Equivalent to:
+     *<pre>
+     *  writeFieldName(fieldName);
+     *  writeStartObject();
+     *</pre>
+     *<p>
+     * Note: caller still has to take care to close the Object
+     * (by calling {#link #writeEndObject}) after writing all
+     * entries of the value Object.
+     */    
 }

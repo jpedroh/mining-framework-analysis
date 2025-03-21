@@ -210,6 +210,9 @@ public class UTF8JsonGenerator
             }
             _outputBuffer[_outputTail++] = BYTE_COMMA;
         }
+        /* To support [JACKSON-46], we'll do this:
+         * (Question: should quoting of spaces (etc) still be enabled?)
+         */
         if (_cfgUnqNames) {
             _writeStringSegments(name, false);
             return;
@@ -296,7 +299,22 @@ public class UTF8JsonGenerator
     public final void writeStartArray() throws IOException
     {
         _verifyValueWrite("start an array");
-        _tokenWriteContext = _tokenWriteContext.createChildArrayContext(null);
+        _tokenWriteContext = _tokenWriteContext.createChildArrayContext();
+        if (_cfgPrettyPrinter != null) {
+            _cfgPrettyPrinter.writeStartArray(this);
+        } else {
+            if (_outputTail >= _outputEnd) {
+                _flushBuffer();
+            }
+            _outputBuffer[_outputTail++] = BYTE_LBRACKET;
+        }
+    }
+
+    @Override // since 2.10
+    public void writeStartArray(int size) throws IOException
+    {
+        _verifyValueWrite("start an array");
+        _writeContext = _writeContext.createChildArrayContext();
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartArray(this);
         } else {
@@ -308,10 +326,10 @@ public class UTF8JsonGenerator
     }
 
     @Override
-    public final void writeStartArray(int size) throws IOException
+    public final void writeStartArray(int len) throws IOException
     {
         _verifyValueWrite("start an array");
-        _tokenWriteContext = _tokenWriteContext.createChildArrayContext(null);
+        _tokenWriteContext = _tokenWriteContext.createChildArrayContext();
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartArray(this);
         } else {
@@ -358,7 +376,7 @@ public class UTF8JsonGenerator
     public final void writeStartObject() throws IOException
     {
         _verifyValueWrite("start an object");
-        _tokenWriteContext = _tokenWriteContext.createChildObjectContext(null);
+        _tokenWriteContext = _tokenWriteContext.createChildObjectContext();
         if (_cfgPrettyPrinter != null) {
             _cfgPrettyPrinter.writeStartObject(this);
         } else {
