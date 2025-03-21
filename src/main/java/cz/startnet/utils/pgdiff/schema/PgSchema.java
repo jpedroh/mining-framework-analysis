@@ -26,7 +26,7 @@ public class PgSchema {
      * List of procedures defined in the schema.
      */
     @SuppressWarnings("CollectionWithoutInitialCapacity")
-    private final List<PgProcedure> procedures = new ArrayList<PgProcedure>();     
+    private final List<PgProcedure> procedures = new ArrayList<PgProcedure>();
     /**
      * List of sequences defined in the schema.
      */
@@ -58,7 +58,6 @@ public class PgSchema {
      */
     @SuppressWarnings("CollectionWithoutInitialCapacity")
     private final List<PgRule> rules = new ArrayList<PgRule>();
-    
     /**
      * Name of the schema.
      */
@@ -75,7 +74,6 @@ public class PgSchema {
      * Comment.
      */
     private String comment;
-
     /**
      * Creates a new PgSchema object.
      *
@@ -84,7 +82,6 @@ public class PgSchema {
     public PgSchema(final String name) {
         this.name = name;
     }
-
     /**
      * Setter for {@link #authorization}.
      *
@@ -93,7 +90,6 @@ public class PgSchema {
     public void setAuthorization(final String authorization) {
         this.authorization = authorization;
     }
-
     /**
      * Getter for {@link #authorization}.
      *
@@ -102,7 +98,6 @@ public class PgSchema {
     public String getAuthorization() {
         return authorization;
     }
-
     /**
      * Getter for {@link #comment}.
      *
@@ -111,7 +106,6 @@ public class PgSchema {
     public String getComment() {
         return comment;
     }
-
     /**
      * Setter for {@link #comment}.
      *
@@ -120,7 +114,6 @@ public class PgSchema {
     public void setComment(final String comment) {
         this.comment = comment;
     }
-
     /**
      * Getter for {@link #definition}.
      *
@@ -129,7 +122,6 @@ public class PgSchema {
     public String getDefinition() {
         return definition;
     }
-
     /**
      * Setter for {@link #definition}.
      *
@@ -138,7 +130,6 @@ public class PgSchema {
     public void setDefinition(final String definition) {
         this.definition = definition;
     }
-
     /**
      * Creates and returns SQL for creation of the schema.
      *
@@ -169,7 +160,6 @@ public class PgSchema {
 
         return sbSQL.toString();
     }
-
     /**
      * Finds function according to specified function {@code signature}.
      *
@@ -186,7 +176,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Getter for {@link #functions}. The list cannot be modified.
      *
@@ -195,7 +184,6 @@ public class PgSchema {
     public List<PgFunction> getFunctions() {
         return Collections.unmodifiableList(functions);
     }
-    
     /**
      * Finds procedure according to specified procedure {@code signature}.
      *
@@ -212,7 +200,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Getter for {@link #procedures}. The list cannot be modified.
      *
@@ -221,7 +208,6 @@ public class PgSchema {
     public List<PgProcedure> getProcedures() {
         return Collections.unmodifiableList(procedures);
     }
-
     /**
      * Getter for {@link #name}.
      *
@@ -230,7 +216,6 @@ public class PgSchema {
     public String getName() {
         return name;
     }
-
     /**
      * Finds index according to specified index {@code name}.
      *
@@ -247,7 +232,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Finds primary key according to specified primary key {@code name}.
      *
@@ -264,7 +248,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Finds sequence according to specified sequence {@code name}.
      *
@@ -281,7 +264,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Getter for {@link #indexes}. The list cannot be modified.
      *
@@ -290,7 +272,6 @@ public class PgSchema {
     public List<PgIndex> getIndexes() {
         return Collections.unmodifiableList(indexes);
     }
-
     /**
      * Getter for {@link #primaryKeys}. The list cannot be modified.
      *
@@ -299,7 +280,6 @@ public class PgSchema {
     public List<PgConstraint> getPrimaryKeys() {
         return Collections.unmodifiableList(primaryKeys);
     }
-
     /**
      * Getter for {@link #sequences}. The list cannot be modified.
      *
@@ -308,7 +288,6 @@ public class PgSchema {
     public List<PgSequence> getSequences() {
         return Collections.unmodifiableList(sequences);
     }
-
     /**
      * Finds table/view according to specified {@code name}.
      *
@@ -325,7 +304,6 @@ public class PgSchema {
 
         return null;
     }
-
     /**
      * Finds table according to specified table {@code name}.
      *
@@ -339,7 +317,6 @@ public class PgSchema {
             return null;
         return (PgTable) rel;
     }
-
     /**
      * Get a list of tables from {@link #rels}.
      *
@@ -357,7 +334,6 @@ public class PgSchema {
 
         return list;
     }
-
     /**
      * Getter for {@link #rels}. The list cannot be modified.
      *
@@ -366,7 +342,6 @@ public class PgSchema {
     public List<PgRelation> getRels() {
         return Collections.unmodifiableList(rels);
     }
-
     /**
      * Finds view according to specified view {@code name}.
      *
@@ -380,7 +355,6 @@ public class PgSchema {
             return null;
         return (PgView) rel;
     }
-
     /**
      * Get a list of views from {@link #rels}.
      *
@@ -398,7 +372,6 @@ public class PgSchema {
 
         return list;
     }
-
     /**
      * Adds {@code index} to the list of indexes.
      *
@@ -407,7 +380,6 @@ public class PgSchema {
     public void addIndex(final PgIndex index) {
         indexes.add(index);
     }
-
     /**
      * Adds {@code primary key} to the list of primary keys.
      *
@@ -416,7 +388,6 @@ public class PgSchema {
     public void addPrimaryKey(final PgConstraint primaryKey) {
         primaryKeys.add(primaryKey);
     }
-
     /**
      * Adds {@code function} to the list of functions.
      *
@@ -425,7 +396,6 @@ public class PgSchema {
     public void addFunction(final PgFunction function) {
         functions.add(function);
     }
-    
     /**
      * Adds {@code procedure} to the list of procedures.
      *
@@ -434,7 +404,6 @@ public class PgSchema {
     public void addProcedure(final PgProcedure procedure) {
         procedures.add(procedure);
     }
-
     /**
      * Adds {@code sequence} to the list of sequences.
      *
@@ -443,7 +412,6 @@ public class PgSchema {
     public void addSequence(final PgSequence sequence) {
         sequences.add(sequence);
     }
-
     /**
      * Adds {@code rel} table or view to the list of rels.
      *
@@ -452,7 +420,6 @@ public class PgSchema {
     public void addRelation(final PgRelation rel) {
         rels.add(rel);
     }
-
     /**
      * Adds {@code type} to the list of types.
      *
@@ -461,7 +428,6 @@ public class PgSchema {
     public void addType(final PgType type) {
         types.add(type);
     }
-
     /**
      * Returns a list of types
      *
@@ -470,7 +436,6 @@ public class PgSchema {
     public List<PgType> getTypes() {
         return types;
     }
-
     /**
      * Finds type according to specified name {@code name}.
      *
@@ -487,7 +452,6 @@ public class PgSchema {
 
         return null;
     }
-    
     /**
      * Get a list of rules from {@link #rels}.
      *
@@ -505,7 +469,6 @@ public class PgSchema {
 
         return list;
     }
-    
     /**
      * Returns true if schema contains type with given {@code name}, otherwise
      * false.
@@ -524,7 +487,6 @@ public class PgSchema {
 
         return false;
     }
-
     /**
      * Returns true if schema contains type with given {@code name}, otherwise
      * false.
@@ -543,7 +505,6 @@ public class PgSchema {
 
         return false;
     }
-
     /**
      * Returns true if schema contains function with given {@code signature},
      * otherwise false.
@@ -562,7 +523,6 @@ public class PgSchema {
 
         return false;
     }
-    
     /**
      * Returns true if schema contains procedure with given {@code signature},
      * otherwise false.
@@ -581,6 +541,32 @@ public class PgSchema {
 
         return false;
     }
+   /**
+     * List of rules defined in the schema.
+     */
+    /**
+     * Get a list of rules from {@link #rels}.
+     *
+     * @return list of rules
+     */
+    /**
+     * Returns true if schema contains type with given {@code name}, otherwise
+     * false.
+     *
+     * @param name name of the table
+     *
+     * @return true if schema contains table with given {@code name}, otherwise
+     * false.
+     */
+    /**
+     * Returns true if schema contains type with given {@code name}, otherwise
+     * false.
+     *
+     * @param name name of the table
+     *
+     * @return true if schema contains table with given {@code name}, otherwise
+     * false.
+     */
 
     /**
      * Returns true if schema contains sequence with given {@code name},
