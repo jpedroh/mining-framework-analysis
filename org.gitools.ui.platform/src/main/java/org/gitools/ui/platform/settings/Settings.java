@@ -407,14 +407,6 @@ public class Settings extends Model {
         return recentFiles;
     }
 
-    public int getRecentFilesNumber() {
-        return recentFilesNumber;
-    }
-
-    public void setRecentFilesNumber(int recentFilesNumber) {
-        this.recentFilesNumber = recentFilesNumber;
-    }
-
     public Proxy getProxy() {
 
         if (isProxyEnable()) {
@@ -431,5 +423,13 @@ public class Settings extends Model {
         System.getProperties().put("http.proxyPort", "");
 
         return Proxy.NO_PROXY;
+    }
+
+    public int getRecentFilesNumber() {
+        return recentFilesNumber;
+    }
+
+    public void setRecentFilesNumber(int recentFilesNumber) {
+        this.recentFilesNumber = recentFilesNumber;
     }
 }
