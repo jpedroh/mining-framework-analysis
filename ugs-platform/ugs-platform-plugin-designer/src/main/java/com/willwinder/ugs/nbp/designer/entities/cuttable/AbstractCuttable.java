@@ -100,6 +100,27 @@ public abstract class AbstractCuttable extends AbstractEntity implements Cuttabl
             graphics.draw(getShape());
         }
     }
+    @Override
+    public void render(Graphics2D graphics) {
+        if (getCutType() != CutType.NONE && getCutDepth() == 0) {
+            graphics.setStroke(new BasicStroke(0.4f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
+            graphics.setColor(Colors.SHAPE_HINT);
+            graphics.draw(getShape());
+        } else if (getCutType() == CutType.POCKET) {
+            graphics.setStroke(new BasicStroke(0.4f));
+            graphics.setColor(getCutColor());
+            graphics.fill(getShape());
+            graphics.draw(getShape());
+        } else if (getCutType() == CutType.INSIDE_PATH || getCutType() == CutType.ON_PATH || getCutType() == CutType.OUTSIDE_PATH) {
+            graphics.setStroke(new BasicStroke(0.4f));
+            graphics.setColor(getCutColor());
+            graphics.draw(getShape());
+        } else {
+            graphics.setStroke(new BasicStroke(0.4f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
+            graphics.setColor(Colors.SHAPE_OUTLINE);
+            graphics.draw(getShape());
+        }
+    }
 
     private Color getCutColor() {
         int color = Math.max(0, Math.min(255, (int) Math.round(255d * getCutAlpha()) - 25));
