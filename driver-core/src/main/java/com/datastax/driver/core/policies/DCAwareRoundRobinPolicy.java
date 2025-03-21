@@ -209,10 +209,19 @@ public class DCAwareRoundRobinPolicy implements LoadBalancingPolicy, CloseableLo
                 prev.addIfAbsent(host);
         }
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/5a6a084a6ed84a2742a7c2211c1071193df4c2e7/driver-core/src/main/java/com/datastax/driver/core/policies/DCAwareRoundRobinPolicy.java/left.java
+        if (notInLocalDC.size() > 0) {
+            String nonLocalHosts = Joiner.on(",").join(notInLocalDC);
+            logger.warn("Some contact points don't match specified local data center. Local DC = {}. Non-conforming contact points: {}", localDc, nonLocalHosts);
+        }
+||||||| /usr/src/app/output/datastax/java-driver/5a6a084a6ed84a2742a7c2211c1071193df4c2e7/driver-core/src/main/java/com/datastax/driver/core/policies/DCAwareRoundRobinPolicy.java/base.java
+        if (notInLocalDC.size() > 0) 
+=======
         if (notInLocalDC.size() > 0) {
             String nonLocalHosts = Joiner.on(",").join(notInLocalDC);
             logger.warn("Some contact points don't match local data center. Local DC = {}. Non-conforming contact points: {}", localDc, nonLocalHosts);
         }
+>>>>>>> /usr/src/app/output/datastax/java-driver/5a6a084a6ed84a2742a7c2211c1071193df4c2e7/driver-core/src/main/java/com/datastax/driver/core/policies/DCAwareRoundRobinPolicy.java/right.java
     }
 
     private String dc(Host host) {

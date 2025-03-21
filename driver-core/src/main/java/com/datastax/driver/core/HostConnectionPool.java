@@ -39,7 +39,9 @@ abstract class HostConnectionPool {
     }
 
     final Host host;
+
     volatile HostDistance hostDistance;
+
     protected final SessionManager manager;
 
     protected final AtomicReference<CloseFuture> closeFuture = new AtomicReference<CloseFuture>();
@@ -58,8 +60,6 @@ abstract class HostConnectionPool {
     abstract void ensureCoreConnections();
 
     abstract void replaceDefunctConnection(final PooledConnection connection);
-
-    abstract void trashIdleConnections(long now);
 
     abstract int opened();
 
@@ -82,6 +82,14 @@ abstract class HostConnectionPool {
         return closeFuture.compareAndSet(null, future)
             ? future
             : closeFuture.get(); // We raced, it's ok, return the future that was actually set
+    }
+
+    void trashIdleConnections(long now) {
+        for (PooledConnection connection : connections) {
+            if (connection.getTrashTime() < now) {
+                trashConnection(connection);
+            }
+        }
     }
 
     static class PoolState {
