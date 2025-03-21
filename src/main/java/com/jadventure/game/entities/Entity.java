@@ -268,12 +268,35 @@ public abstract class Entity {
             damage -= item.getProperty("damage");
             double diffDamage = damage - oldDamage;
             result.put("damage", String.valueOf(diffDamage));
+<<<<<<< /usr/src/app/output/progether/jadventure/4668178a9c920ebca8b3619cf105864c8b83c454/src/main/java/com/jadventure/game/entities/Entity.java/left.java
         } 
         if (item.containsProperty("armour")) {
             int oldArmour = armour;
             armour -= item.getProperty("armour");
             int diffArmour = armour - oldArmour;
             result.put("armour", String.valueOf(diffArmour));
+||||||| /usr/src/app/output/progether/jadventure/4668178a9c920ebca8b3619cf105864c8b83c454/src/main/java/com/jadventure/game/entities/Entity.java/base.java
+=======
+        } 
+        if (item.containsProperty("armour")) {
+            int oldArmour = armour;
+            armour -= item.getProperty("armour");
+            int diffArmour = armour - oldArmour;
+            result.put("armour", String.valueOf(diffArmour));
+        }
+        if (item.containsProperty("health")) {
+            int oldHealth = health;
+            health -= item.getProperty("health");
+            int diffHealth = health - oldHealth;
+            result.put("health", String.valueOf(diffHealth));
+        }
+        if (item.containsProperty("healthMax")) {
+            int oldHealthMax = armour;
+            healthMax -= item.getProperty("healthMax");
+            health = (health > healthMax) ? healthMax : health;
+            int diffHealthMax = healthMax - oldHealthMax;
+            result.put("healthMax", String.valueOf(diffHealthMax));
+>>>>>>> /usr/src/app/output/progether/jadventure/4668178a9c920ebca8b3619cf105864c8b83c454/src/main/java/com/jadventure/game/entities/Entity.java/right.java
         }
         return result;
     }
