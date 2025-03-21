@@ -160,14 +160,56 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         for (String propName : getProperties().keySet()) {
             updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
-
+<<<<<<< /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/left.java
+        
             PropertyDef propertyDef = globalConfigDef.getPropertyDef( propName );
             if ( propertyDef == null) {
                 // we're only processing defined properties, i.e. ones shown in the UI
                 continue;
+||||||| /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/base.java
+            
+            log.debug("Checking property ["+propName+"]");
+            log.debug("Request value is ["+incomingProp+"]");
+            
+            // some special treatment for booleans
+            // this is a bit hacky since we are assuming that any prop
+            // with a value of "true" or "false" is meant to be a boolean
+            // it may not always be the case, but we should be okay for now
+            // null check below needed w/Oracle
+            if( updProp.getValue() != null
+                    && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
+                
+                if(incomingProp == null || !incomingProp.equals("on")) {
+                    incomingProp = "false";
+                }
+                else {
+                    incomingProp = "true";
+                }
+=======
+            
+            log.debug("Checking property ["+propName+"]");
+            log.debug("Request value is ["+incomingProp+"]");
+            
+            // some special treatment for booleans
+            // this is a bit hacky since we are assuming that any prop
+            // with a value of "true" or "false" is meant to be a boolean
+            // it may not always be the case, but we should be okay for now
+            // null check below needed w/Oracle
+            if( updProp.getValue() != null
+                    && (   updProp.getValue().equals("true") || updProp.getValue().equals("false")
+                        || updProp.getValue().equals("on")   || updProp.getValue().equals("off")
+                       )) {
+                if (incomingProp != null && (incomingProp.equalsIgnoreCase("true") || incomingProp.equalsIgnoreCase("on"))) {
+                    incomingProp = "true";
+                }
+                else {
+                    incomingProp = "false";
+                }
+>>>>>>> /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/right.java
             }
-
-            if ( incomingProp != null && propertyDef.getType().equals("boolean") ) {
+<<<<<<< /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/left.java
+        
+            if ( propertyDef.getType().equals("boolean") ) {
 
                 try {
                     Boolean.parseBoolean(incomingProp);
@@ -176,10 +218,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 } catch ( Exception nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidBooleanProperty",
-                            Arrays.asList(propDesc, propName));
+                            Arrays.asList( new Object[] { propDesc, propName } ));
                 }
 
-            } else if ( incomingProp != null && propertyDef.getType().equals("integer") ) {
+            } else if ( propertyDef.getType().equals("integer") ) {
 
                 try {
                     Integer.parseInt(incomingProp);
@@ -188,19 +230,19 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 } catch ( NumberFormatException nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidIntegerProperty",
-                            Arrays.asList(propDesc, propName));
+                            Arrays.asList( new Object[] { propDesc, propName } ));
                 }
 
-            } else if ( incomingProp != null && propertyDef.getType().equals("float") ) {
+            } else if ( propertyDef.getType().equals("float") ) {
 
                 try {
                     Float.parseFloat(incomingProp);
                     updProp.setValue(incomingProp);
                     log.debug("Set float " + propName + " = " + incomingProp);
                 } catch ( NumberFormatException nfe ) {
-                    String propDesc = bundle.getString(propertyDef.getKey());
+                    String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidFloatProperty",
-                        Arrays.asList(propDesc, propName));
+                            Arrays.asList( new Object[] { propDesc, propName } ));
                 }
 
             } else if ( incomingProp != null ){
@@ -212,6 +254,23 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
             } else {
                 addError("ConfigForm.invalidProperty", propName);
+||||||| /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/base.java
+            
+            // only work on props that were submitted with the request
+            if(incomingProp != null) {
+                log.debug("Setting new value for ["+propName+"]");
+                
+                // NOTE: the old way had some locale sensitive way to do this??
+                updProp.setValue(incomingProp.trim());
+=======
+        
+            // only work on props that were submitted with the request
+            if(incomingProp != null) {
+                log.debug("Setting new value for ["+propName+"]");
+                
+                // NOTE: the old way had some locale sensitive way to do this??
+                updProp.setValue(incomingProp.trim());
+>>>>>>> /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/right.java
             }
 
         }
