@@ -108,7 +108,13 @@ public class StoreSCP {
                 String cuid = rq.getString(Tag.AffectedSOPClassUID);
                 String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
                 String tsuid = pc.getTransferSyntax();
+<<<<<<< /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/left.java
                 File file = File.createTempFile(iuid, PART_EXT, storageDir);
+||||||| /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/base.java
+                File file = new File(storageDir, iuid + PART_EXT);
+=======
+                File file = new File(storageDir, String.format("%s_%s%s", iuid, UUID.randomUUID(), PART_EXT));
+>>>>>>> /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/right.java
                 try {
                     storeTo(as, as.createFileMetaInformation(iuid, cuid, tsuid),
                             data, file);
@@ -162,6 +168,21 @@ public class StoreSCP {
     private void renameTo(Association as, File from, File dest)
             throws IOException {
         LOG.info("{}: M-RENAME {} to {}", as, from, dest);
+<<<<<<< /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/left.java
+        if (!dest.getParentFile().mkdirs())
+            dest.delete();
+        try {
+            Files.move(from.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            from.delete();
+            throw e;
+        }
+||||||| /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/base.java
+        if (!dest.getParentFile().mkdirs())
+            dest.delete();
+        if (!from.renameTo(dest))
+            throw new IOException("Failed to rename " + from + " to " + dest);
+=======
         for(int try_count = 0; try_count <= renameRetries; try_count++) {
             try{
                 dest.getParentFile().mkdirs();
@@ -178,6 +199,7 @@ public class StoreSCP {
                 }
             }
         }
+>>>>>>> /usr/src/app/output/dcm4che/dcm4che/39a46b5bc5f7ae3b1298aad7e0e1befa615f1404/dcm4che-tool/dcm4che-tool-storescp/src/main/java/org/dcm4che3/tool/storescp/StoreSCP.java/right.java
     }
 
     private static Attributes parse(File file) throws IOException {
