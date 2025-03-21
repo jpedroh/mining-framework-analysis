@@ -1,5 +1,4 @@
 package com.mercadopago.core;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -15,85 +14,77 @@ import org.apache.http.HttpResponse;
  * Created by Eduardo Paoletta on 11/17/16.
  */
 public class MPBaseResponse {
+  private HttpResponse _httpResponse;
 
-    private HttpResponse _httpResponse;
+  private int statusCode;
 
-    private int statusCode;
-    private String reasonPhrase;
+  private String reasonPhrase;
 
-    private String stringResponse;
-    private JsonObject jsonResponse;
+  private String stringResponse;
 
-    private JsonObject jsonEntity;
+  private JsonObject jsonResponse;
 
-    public MPBaseResponse(HttpResponse response) throws MPException {
-        this._httpResponse = response;
-        parseResponse(response);
-    }
+  private JsonObject jsonEntity;
 
-    public int getStatusCode() {
-        return this.statusCode;
-    }
+  public MPBaseResponse(HttpResponse response) throws MPException {
+    this._httpResponse = response;
+    parseResponse(response);
+  }
 
-    public String getReasonPhrase() {
-        return this.reasonPhrase;
-    }
+  public int getStatusCode() {
+    return this.statusCode;
+  }
 
+  public String getReasonPhrase() {
+    return this.reasonPhrase;
+  }
 
-    public String getStringResponse() {
-        return this.stringResponse;
-    }
+  public String getStringResponse() {
+    return this.stringResponse;
+  }
 
-    public JsonObject getJsonResponse() {
-        return this.jsonResponse;
-    }
+  public JsonObject getJsonResponse() {
+    return this.jsonResponse;
+  }
 
-    public JsonObject getJsonEntity() {
-        return this.jsonEntity;
-    }
+  public JsonObject getJsonEntity() {
+    return this.jsonEntity;
+  }
 
-    public Header[] getHeaders(String headerName) {
-        return this._httpResponse.getHeaders(headerName);
-    }
+  public Header[] getHeaders(String headerName) {
+    return this._httpResponse.getHeaders(headerName);
+  }
 
-
-    /**
+  /**
      * Parses the http response in a custom MPBaseResponse object.
      *
      * @param response              a Http response to be parsed
      * @throws MPException
      */
-    private void parseResponse(HttpResponse response) throws MPException {
-        this.statusCode = response.getStatusLine().getStatusCode();
-        this.reasonPhrase = response.getStatusLine().getReasonPhrase();
-
-        if (this.statusCode == 200 &&
-                response.getEntity() != null) {
-            HttpEntity respEntity = response.getEntity();
-            try {
-                this.stringResponse = MPCoreUtils.inputStreamToString(respEntity.getContent());
-            } catch (Exception ex) {
-                throw new MPException(ex);
-            }
-<<<<<<< HEAD
-
-            // Try to parse the response to a json, and a extract the entity of the response.
-            // When the response is not a json parseable string then the string response must be used.
-            try {
-                this.jsonResponse = new JsonParser().parse(this.stringResponse).getAsJsonObject();
-                if (this.jsonResponse.has("json") &&
-                        this.jsonResponse.get("json").isJsonObject())
-                    this.jsonEntity = this.jsonResponse.getAsJsonObject("json");
-            } catch (JsonParseException jsonParseException) {
-                // Do nothing
-=======
-            this.jsonResponse = new JsonParser().parse(this.stringResponse).getAsJsonObject();
-            if (this.jsonResponse.has("json") &&
-                    this.jsonResponse.get("json").isJsonObject()) {
-                this.jsonEntity = this.jsonResponse.getAsJsonObject("json");
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
-            }
+  private void parseResponse(HttpResponse response) throws MPException {
+    this.statusCode = response.getStatusLine().getStatusCode();
+    this.reasonPhrase = response.getStatusLine().getReasonPhrase();
+    if (this.statusCode == 200 && response.getEntity() != null) {
+      HttpEntity respEntity = response.getEntity();
+      try {
+        this.stringResponse = MPCoreUtils.inputStreamToString(respEntity.getContent());
+      } catch (Exception ex) {
+        throw new MPException(ex);
+      }
+      try {
+        this.jsonResponse = new JsonParser().parse(this.stringResponse).getAsJsonObject();
+        if (this.jsonResponse.has("json") && this.jsonResponse.get("json").isJsonObject()) {
+          this.jsonEntity = this.jsonResponse.getAsJsonObject("json");
         }
-    }
+      } catch (JsonParseException jsonParseException) {
+      }
 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      if (this.jsonResponse.has("json") && this.jsonResponse.get("json").isJsonObject()) {
+        this.jsonEntity = this.jsonResponse.getAsJsonObject("json");
+      }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/core/MPBaseResponse.java/right.java
+    }
+  }
 }

@@ -1,16 +1,16 @@
-package com.mercadopago.core.restannotations;
 
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/core/RestAnnotations/DELETE.java/left.java
+package com.mercadopago.core.restannotations;
 import java.lang.annotation.*;
 
-/**
- * Mercado Pago SDK
- * Rest Information annotation interface for DELETE
- *
- * Created by Eduardo Paoletta on 11/4/16.
- */
-@Inherited
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DELETE {
-    String path();
+@Inherited @Target(value = { ElementType.TYPE, ElementType.METHOD }) @Retention(value = RetentionPolicy.RUNTIME) public @interface DELETE {
+  String path();
 }
+=======
+package com.mercadopago.core.RestAnnotations;
+import java.lang.annotation.*;
+
+@Inherited @Target(value = { ElementType.METHOD }) @Retention(value = RetentionPolicy.RUNTIME) public @interface DELETE {
+  String path();
+}
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/core/RestAnnotations/DELETE.java/right.java
