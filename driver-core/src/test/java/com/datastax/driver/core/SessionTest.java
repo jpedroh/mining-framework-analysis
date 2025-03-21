@@ -149,7 +149,6 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
         assertEquals(state.getInFlightQueries(host), 0);
         assertEquals(state.getSession(), session);
     }
-
     /**
      * Check for session memory leaks by creating and closing 10,000 connections.
      * Each time a session is created and closed we check the number of sessions the
