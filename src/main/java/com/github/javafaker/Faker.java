@@ -152,6 +152,7 @@ public class Faker {
         this.yoda = new Yoda(this);
         this.matz = new Matz(this);
         this.witcher = new Witcher(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/9d2c78bea6bbf69aac5204f6bc82be552fcf89a8/src/main/java/com/github/javafaker/Faker.java/left.java
         this.dragonBall = new DragonBall(this);
         this.funnyName = new FunnyName(this);
         this.hitchhikersGuideToTheGalaxy = new HitchhikersGuideToTheGalaxy(this);
@@ -161,8 +162,11 @@ public class Faker {
         this.overwatch = new Overwatch(this);
         this.robin = new Robin(this);
         this.starTrek = new StarTrek(this);
+||||||| /usr/src/app/output/dius/java-faker/9d2c78bea6bbf69aac5204f6bc82be552fcf89a8/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.weather = new Weather(this);
         this.lebowski = new Lebowski(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/9d2c78bea6bbf69aac5204f6bc82be552fcf89a8/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
