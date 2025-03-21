@@ -80,17 +80,14 @@ public final class VertexClassImpl extends
 	 * the valid from EdgeClasses - only set if schema is finished
 	 */
 	private Set<EdgeClass> validFromEdgeClasses;
-
 	/**
 	 * the valid to EdgeClasses - only set if schema is finished
 	 */
 	private Set<EdgeClass> validToEdgeClasses;
-
 	/**
 	 * the valid to far IncidenceClasses - only set if schema is finished
 	 */
 	private Set<IncidenceClass> validToFarIncidenceClasses;
-
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
@@ -100,10 +97,9 @@ public final class VertexClassImpl extends
 		((VertexClassImpl) vc).setInternal(true);
 		return vc;
 	}
-
 	/**
 	 * builds a new vertex class object
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */
@@ -112,18 +108,15 @@ public final class VertexClassImpl extends
 		super(simpleName, pkg, aGraphClass);
 		register();
 	}
-
 	@Override
 	protected void register() {
 		((PackageImpl) parentPackage).addVertexClass(this);
 		((GraphClassImpl) graphClass).addVertexClass(this);
 	}
-
 	@Override
 	public String getVariableName() {
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
-
 	void addInIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
@@ -131,7 +124,6 @@ public final class VertexClassImpl extends
 		checkDuplicateRolenames(incClass);
 		inIncidenceClasses.add(incClass);
 	}
-
 	void addOutIncidenceClass(IncidenceClass incClass) {
 		if (incClass.getVertexClass() != this) {
 			throwSchemaException();
@@ -139,7 +131,6 @@ public final class VertexClassImpl extends
 		checkDuplicateRolenames(incClass);
 		outIncidenceClasses.add(incClass);
 	}
-
 	private void checkDuplicateRolenames(IncidenceClass incClass) {
 
 		String rolename = incClass.getOpposite().getRolename();
@@ -155,7 +146,6 @@ public final class VertexClassImpl extends
 		checkDuplicatedRolenameForAllIncidences(incClass,
 				getAllOutIncidenceClasses());
 	}
-
 	private void checkDuplicatedRolenameForACyclicIncidence(
 			IncidenceClass incClass) {
 
@@ -170,7 +160,6 @@ public final class VertexClassImpl extends
 			throwSchemaException(incClass);
 		}
 	}
-
 	private void checkDuplicatedRolenameForAllIncidences(
 			IncidenceClass incClass, Set<IncidenceClass> incidenceSet) {
 
@@ -189,33 +178,39 @@ public final class VertexClassImpl extends
 			}
 		}
 	}
-
 	private void throwSchemaExceptionRolenameUsedTwice(IncidenceClass incidence) {
 		throw new SchemaException("The rolename "
 				+ incidence.getOpposite().getRolename()
 				+ " is used twice at class " + getQualifiedName());
 	}
-
 	private void throwSchemaException(IncidenceClass incClass) {
 		throw new SchemaException("The rolename " + incClass.getRolename()
 				+ " may be not used at both ends of the reflexive edge class "
 				+ incClass.getEdgeClass().getQualifiedName());
 	}
-
 	private void throwSchemaException() {
 		throw new SchemaException(
 				"IncidenceClasses may be added only to vertices they are connected to");
 	}
-
 	@Override
 	public void addSuperClass(VertexClass superClass) {
 		// Checked in super class
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/left.java
+		// if(isFinished()){
+		// throw new SchemaException("No changes to finished schema!");
+		// }
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/base.java
+	//		if(isFinished()){
+	//			throw new SchemaException("No changes to finished schema!");
+	//		}
+=======
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
 		// }
 		if ((superClass == this) || (superClass == null)) {
 			return;
 		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/right.java
 		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
 		if (!superClass.equals(getSchema().getDefaultVertexClass())) {
@@ -223,28 +218,24 @@ public final class VertexClassImpl extends
 					.createEdge(superClass, this);
 		}
 	}
-
 	private void checkDuplicateRolenames(VertexClass superClass) {
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllInIncidenceClasses());
 		checkDuplicatedRolenamesAgainstAllIncidences(superClass
 				.getAllOutIncidenceClasses());
 	}
-
 	private void checkDuplicatedRolenamesAgainstAllIncidences(
 			Set<IncidenceClass> incidences) {
 		for (IncidenceClass incidence : incidences) {
 			checkDuplicateRolenames(incidence);
 		}
 	}
-
 	/**
 	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
 	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
 	 * not redefined by A or a superclass of A
-	 * 
+	 *
 	 */
-
 	@Override
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
 		if (isFinished()) {
@@ -273,7 +264,6 @@ public final class VertexClassImpl extends
 
 		return validFromInc;
 	}
-
 	@Override
 	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
 		if (isFinished()) {
@@ -301,11 +291,10 @@ public final class VertexClassImpl extends
 
 		return validToInc;
 	}
-
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
 		if (isFinished()) {
-			return validFromEdgeClasses;
+			return this.validFromEdgeClasses;
 		}
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
@@ -316,11 +305,10 @@ public final class VertexClassImpl extends
 		}
 		return validFrom;
 	}
-
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
 		if (isFinished()) {
-			return validToEdgeClasses;
+			return this.validToEdgeClasses;
 		}
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
@@ -331,15 +319,12 @@ public final class VertexClassImpl extends
 		}
 		return validTo;
 	}
-
 	public Set<IncidenceClass> getOwnInIncidenceClasses() {
 		return inIncidenceClasses;
 	}
-
 	public Set<IncidenceClass> getOwnOutIncidenceClasses() {
 		return outIncidenceClasses;
 	}
-
 	@Override
 	public Set<IncidenceClass> getAllInIncidenceClasses() {
 		if (isFinished()) {
@@ -352,7 +337,6 @@ public final class VertexClassImpl extends
 		}
 		return incidenceClasses;
 	}
-
 	@Override
 	public Set<IncidenceClass> getAllOutIncidenceClasses() {
 		if (isFinished()) {
@@ -365,7 +349,6 @@ public final class VertexClassImpl extends
 		}
 		return incidenceClasses;
 	}
-
 	@Override
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
 		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
@@ -383,7 +366,6 @@ public final class VertexClassImpl extends
 		}
 		return result;
 	}
-
 	@Override
 	public Set<EdgeClass> getConnectedEdgeClasses() {
 		Set<EdgeClass> result = new HashSet<EdgeClass>();
@@ -395,7 +377,6 @@ public final class VertexClassImpl extends
 		}
 		return result;
 	}
-
 	@Override
 	public Set<EdgeClass> getOwnConnectedEdgeClasses() {
 		Set<EdgeClass> result = new HashSet<EdgeClass>();
@@ -407,7 +388,86 @@ public final class VertexClassImpl extends
 		}
 		return result;
 	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/left.java
+	@Override
+	protected void finish() {
+		this.allInIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allInIncidenceClasses.addAll(inIncidenceClasses);
 
+		this.allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allOutIncidenceClasses.addAll(outIncidenceClasses);
+
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			this.allInIncidenceClasses.addAll(((VertexClass) vc)
+					.getAllInIncidenceClasses());
+			this.allOutIncidenceClasses.addAll(((VertexClass) vc)
+					.getAllOutIncidenceClasses());
+		}
+
+		this.allInIncidenceClasses = Collections
+				.unmodifiableSet(this.allInIncidenceClasses);
+		this.allOutIncidenceClasses = Collections
+				.unmodifiableSet(this.allOutIncidenceClasses);
+
+		this.validFromFarIncidenceClasses = Collections.unmodifiableSet(this
+				.getValidFromFarIncidenceClasses());
+		this.validToFarIncidenceClasses = Collections.unmodifiableSet(this
+				.getValidToFarIncidenceClasses());
+
+		this.validFromEdgeClasses = Collections.unmodifiableSet(this
+				.getValidFromEdgeClasses());
+		this.validToEdgeClasses = Collections.unmodifiableSet(this
+				.getValidToEdgeClasses());
+
+		this.inIncidenceClasses = Collections
+				.unmodifiableSet(this.inIncidenceClasses);
+		this.outIncidenceClasses = Collections
+				.unmodifiableSet(this.outIncidenceClasses);
+
+		for (IncidenceClass ic : this.inIncidenceClasses) {
+			((IncidenceClassImpl) ic).finish();
+		}
+		for (IncidenceClass ic : this.outIncidenceClasses) {
+			((IncidenceClassImpl) ic).finish();
+		}
+
+		super.finish();
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/base.java
+	@Override
+	protected void finish(){
+		this.allInIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allInIncidenceClasses.addAll(inIncidenceClasses);
+		
+		this.allOutIncidenceClasses = new HashSet<IncidenceClass>();
+		this.allOutIncidenceClasses.addAll(outIncidenceClasses);
+		
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			this.allInIncidenceClasses.addAll(((VertexClass) vc)
+					.getAllInIncidenceClasses());
+			this.allOutIncidenceClasses.addAll(((VertexClass)vc)
+					.getAllOutIncidenceClasses());
+		}
+		
+		this.allInIncidenceClasses = Collections.unmodifiableSet(this.allInIncidenceClasses);
+		this.allOutIncidenceClasses = Collections.unmodifiableSet(this.allOutIncidenceClasses);
+
+		this.validFromFarIncidenceClasses = Collections.unmodifiableSet(this.getValidFromFarIncidenceClasses());
+		this.validToFarIncidenceClasses = Collections.unmodifiableSet(this.getValidToFarIncidenceClasses());
+		
+		this.inIncidenceClasses = Collections.unmodifiableSet(this.inIncidenceClasses);
+		this.outIncidenceClasses = Collections.unmodifiableSet(this.outIncidenceClasses);
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).finish();
+		}
+		
+		super.finish();
+	}
+=======
 	@Override
 	protected void finish() {
 		allInIncidenceClasses = new HashSet<IncidenceClass>();
@@ -431,11 +491,6 @@ public final class VertexClassImpl extends
 		validToFarIncidenceClasses = Collections
 				.unmodifiableSet(getValidToFarIncidenceClasses());
 
-		validFromEdgeClasses = Collections
-				.unmodifiableSet(getValidFromEdgeClasses());
-		validToEdgeClasses = Collections
-				.unmodifiableSet(getValidToEdgeClasses());
-
 		inIncidenceClasses = Collections.unmodifiableSet(inIncidenceClasses);
 		outIncidenceClasses = Collections.unmodifiableSet(outIncidenceClasses);
 
@@ -448,25 +503,63 @@ public final class VertexClassImpl extends
 
 		super.finish();
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/right.java
 	@Override
 	public boolean isValidFromFor(EdgeClass ec) {
 		return getValidFromEdgeClasses().contains(ec);
 	}
-
 	@Override
 	public boolean isValidToFor(EdgeClass ec) {
 		return getValidToEdgeClasses().contains(ec);
 	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/left.java
+	@Override
+	protected void reopen() {
+		this.allInIncidenceClasses = null;
+		this.allOutIncidenceClasses = null;
+		this.validFromFarIncidenceClasses = null;
+		this.validToFarIncidenceClasses = null;
+		this.validFromEdgeClasses = null;
+		this.validToEdgeClasses = null;
+		this.inIncidenceClasses = new HashSet<IncidenceClass>(
+				this.inIncidenceClasses);
+		this.outIncidenceClasses = new HashSet<IncidenceClass>(
+				this.outIncidenceClasses);
 
+		for (IncidenceClass ic : this.inIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+		for (IncidenceClass ic : this.outIncidenceClasses) {
+			((IncidenceClassImpl) ic).reopen();
+		}
+
+		super.reopen();
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/base.java
+	protected void reopen(){
+		this.allInIncidenceClasses = null;
+		this.allOutIncidenceClasses = null;
+		this.validFromFarIncidenceClasses = null;
+		this.validToFarIncidenceClasses = null;
+		this.inIncidenceClasses = new HashSet<IncidenceClass>(this.inIncidenceClasses);
+		this.outIncidenceClasses = new HashSet<IncidenceClass>(this.outIncidenceClasses);
+		
+		for(IncidenceClass ic : this.inIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+		for(IncidenceClass ic : this.outIncidenceClasses){
+			((IncidenceClassImpl)ic).reopen();
+		}
+
+		super.reopen();
+	}
+=======
 	@Override
 	protected void reopen() {
 		allInIncidenceClasses = null;
 		allOutIncidenceClasses = null;
 		validFromFarIncidenceClasses = null;
 		validToFarIncidenceClasses = null;
-		validFromEdgeClasses = null;
-		validToEdgeClasses = null;
 		inIncidenceClasses = new HashSet<IncidenceClass>(inIncidenceClasses);
 		outIncidenceClasses = new HashSet<IncidenceClass>(outIncidenceClasses);
 
@@ -479,5 +572,6 @@ public final class VertexClassImpl extends
 
 		super.reopen();
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/VertexClassImpl.java/right.java
 
 }

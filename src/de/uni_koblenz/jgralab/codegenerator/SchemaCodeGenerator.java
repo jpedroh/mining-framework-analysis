@@ -140,13 +140,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
-				" * Creates a new #gcName# graph.",
-				"*/",
-				"public #gcName# create#gcCamelName#(ImplementationType implType) {",
-				"\treturn create#gcCamelName#(implType,null,1000,1000);",
-				"}",
-				"",
-				"/**",
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
 				" * Creates a new #gcName# graph with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
 				" *",
 				" * @param vMax initial vertex count",
@@ -168,6 +162,83 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
 				"}",
 				"",
+				"/**",
+				" * Creates a new #gcName# graph with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param id the id name of the new graph",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				" */",
+				"public #gcName# create#gcCamelName#(ImplementationType implType, int vMax, int eMax) {",
+				"\treturn create#gcCamelName#(implType,null,vMax,eMax);",
+				"}",
+				"",
+				"/**",
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+				" * Creates a new #gcName# graph with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				"*/",
+				"public #gcName# create#gcCamelName#(ImplementationType implType, String id, int vMax, int eMax) {",
+				"\tswitch(implType){",
+				((config.hasStandardSupport()) ?
+						"\tcase STANDARD: \n"+
+						"\t\t\tGraphFactory stdFactory = new #schemaImplStdPackage#.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\t#gcCamelName# stdGraph = (#gcCamelName#) stdFactory.createGraph(id, vMax, eMax); \n"+
+						"\t\t\treturn stdGraph;\n"
+						: ""),
+				((config.hasTransactionSupport())? "\tcase TRANSACTION: \n"+
+						"\t\t\tGraphFactory transFactory = new #schemaImplTransPackage#.#gcCamelName#FactoryImpl(); \n"+
+						"\t\t\t#gcCamelName# transGraph = (#gcCamelName#) transFactory.createGraph(id, vMax, eMax); \n"+
+						"\t\t\treturn transGraph;\n"
+						: ""),		
+				"\t}",
+				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
+				"}",
+				"",
+				"/**",
+				" * Creates a new #gcName# graph with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param id the id name of the new graph",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				" */",
+				"public #gcName# create#gcCamelName#(ImplementationType implType, int vMax, int eMax) {",
+				"\treturn create#gcCamelName#(implType,null,vMax,eMax);",
+				"}",
+				"",
+				"/**",
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#(ImplementationType implType) {",
+				"\treturn create#gcCamelName#(implType,null,1000,1000);",
+				"}",
+				"",
+				"/**",
+				" * Creates a new #gcName# graph with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				"*/",
+				"public #gcName# create#gcCamelName#(ImplementationType implType, String id, int vMax, int eMax) {",
+				"\tswitch(implType){",
+				((config.hasStandardSupport()) ? "\tcase STANDARD:\n"
+						+ "\t\t\tGraphFactory stdFactory = new #schemaImplStdPackage#.#gcCamelName#FactoryImpl(); \n"
+						+ "\t\t\t#gcCamelName# stdGraph = (#gcCamelName#) stdFactory.createGraph(id, vMax, eMax); \n"
+						+ "\t\t\treturn stdGraph;\n"
+						: ""),
+				((config.hasTransactionSupport()) ? "\tcase TRANSACTION:\n"
+						+ "\t\t\tGraphFactory transFactory = new #schemaImplTransPackage#.#gcCamelName#FactoryImpl(); \n"
+						+ "\t\t\t#gcCamelName# transGraph = (#gcCamelName#) transFactory.createGraph(id, vMax, eMax); \n"
+						+ "\t\t\treturn transGraph;\n"
+						: ""),
+				"\t}",
+				"\tthrow new UnsupportedOperationException(\"No \"+implType+\" support compiled.\");",
+				"}",
+				"",
 				// ---- database support -------
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
@@ -175,11 +246,23 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param id Identifier of new graph",
 				" * @param graphDatabase Database which should contain graph",
 				" */",
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
 				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
 				((config.hasDatabaseSupport()) ? "\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"
 						+ "\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"
 						+ "\tGraph graph = graphFactory.createGraph"
 						+ "(id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? 
+						"\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"+
+						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
+						"\tGraph graph = graphFactory.createGraph" +
+						"(id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+=======
+				"public #gcName# create#gcCamelName#(String id, GraphDatabase graphDatabase) throws GraphDatabaseException {",
+				(config.hasDatabaseSupport() ? "\treturn create#gcCamelName#(id, 100, 100, graphDatabase);"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
 				"}",
 				"",
@@ -192,9 +275,20 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param graphDatabase Database which should contain graph",
 				" */",
 				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
 				((config.hasDatabaseSupport()) ? "\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"
 						+ "\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"
 						+ "\tGraph graph = graphFactory.createGraph(id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+				((config.hasDatabaseSupport()) ? 
+						"\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"+
+						"\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"+
+						"\tGraph graph = graphFactory.createGraph(id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+=======
+				(config.hasDatabaseSupport() ? "\tGraphFactoryImpl graphFactory = new #schemaImplDbPackage#.#gcCamelName#FactoryImpl();\n"
+						+ "\t\tgraphFactory.setGraphDatabase(graphDatabase);\n\t"
+						+ "\tGraph graph = graphFactory.createGraph(id, vMax, eMax);\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
 				"}",
 				"",
@@ -224,10 +318,24 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						+ "\t\tGraph stdGraph = GraphIO.loadGraphFromFileWithStandardSupport(filename, this, pf);\n\t"
 						+ "\t\tif (!(stdGraph instanceof #gcName#)) {\n\t"
 						+ "\t\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n\t"
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
 						+ "\t\t}\n\t" + "\t\treturn (#gcName#) stdGraph;\n"
 						: ""),
 				((config.hasTransactionSupport()) ? "\tcase TRANSACTION:\n\t"
 						+ "\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, this, pf);\n\t"
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+						+ "\t\t}\n\t" 
+						+ "\t\treturn (#gcName#) stdGraph;\n"
+						: ""), 
+				((config.hasTransactionSupport()) ? 
+						"\tcase TRANSACTION:\n\t"+
+						"\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n\t"
+=======
+						+ "\t\t}\n\t" + "\t\treturn (#gcName#) stdGraph;\n"
+						: ""),
+				((config.hasTransactionSupport()) ? "\tcase TRANSACTION:\n\t"
+						+ "\t\tGraph transGraph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n\t"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 						+ "\t\tif (!(transGraph instanceof #gcName#)) {\n\t"
 						+ "\t\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n\t"
 						+ "\t\t}\n\t" + "\t\treturn (#gcName#) transGraph;\n"

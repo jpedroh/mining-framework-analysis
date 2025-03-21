@@ -6421,6 +6421,22 @@ public class VertexTest extends InstanceTest {
 		}
 	}
 
+	// tests of the method boolean isValidAlpha(Edge edge);
+
+	/**
+	 * Checks some cases for true and false considering heredity.
+	 * 
+	 * @throws CommitFailedException
+	 */
+
+	// tests of the method boolean isValidOmega(Edge edge);
+
+	/**
+	 * Checks some cases for true and false.
+	 * 
+	 * @throws CommitFailedException
+	 */
+
 	/*
 	 * Test of the Interface GraphElement
 	 */

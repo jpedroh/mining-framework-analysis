@@ -47,9 +47,33 @@ public class GenericVertexImpl extends VertexImpl {
 
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/impl/generic/GenericVertexImpl.java/left.java
+	@Override
+	public AttributedElementClass getAttributedElementClass() {
+		return type;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/impl/generic/GenericVertexImpl.java/base.java
+	@Override
+	public AttributedElementClass getAttributedElementClass() {
+		return type;
+	}
+=======
 	@Override
 	public VertexClass getAttributedElementClass() {
 		return type;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/impl/generic/GenericVertexImpl.java/right.java
+
+	@Override
+	public boolean isValidAlpha(Edge edge) {
+		return ((GenericGraphImpl) getGraph()).cachedIsValidAlpha(type,
+				(edge.getAttributedElementClass()));
+	}
+
+	@Override
+	public boolean isValidOmega(Edge edge) {
+		return ((GenericGraphImpl) getGraph()).cachedIsValidOmega(type,
+				(edge.getAttributedElementClass()));
 	}
 
 	@Override
@@ -65,8 +89,8 @@ public class GenericVertexImpl extends VertexImpl {
 											getSchema())));
 			return;
 		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
+		throw new NoSuchAttributeException(this
+				+ " doesn't have an attribute " + attributeName);
 	}
 
 	@Override

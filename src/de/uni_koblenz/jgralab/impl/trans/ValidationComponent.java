@@ -590,7 +590,7 @@ public class ValidationComponent {
 											if ((edge.nextEdge
 													.getLatestPersistentValue().prevEdge
 													.getLatestPersistentVersion() > transaction.persistentVersionAtBot)
-													&& !((transaction.changedEseqEdges
+													&& !( (transaction.changedEseqEdges
 															.containsKey(edge.nextEdge
 																	.getLatestPersistentValue()) && transaction.changedEseqEdges
 															.get(edge.nextEdge

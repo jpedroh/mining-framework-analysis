@@ -84,8 +84,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	/**
 	 * the sub classes of this class - only set if the schema is finish
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+	protected Set<AttributedElementClass> allSubClasses;
+
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+	protected Set<AttributedElementClass> allSubClasses;
+	
+=======
 	protected Set<SC> allSubClasses;
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	/**
 	 * the immediate super classes of this class
 	 */
@@ -94,8 +102,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	/**
 	 * the super classes of this class - only set if the schema is finish
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+	protected Set<AttributedElementClass> allSuperClasses;
+
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+	protected Set<AttributedElementClass> allSuperClasses;
+	
+=======
 	protected Set<SC> allSuperClasses;
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	/**
 	 * true if the schema is finish
 	 */
@@ -134,7 +150,15 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 
 	@Override
 	public void addAttribute(Attribute anAttribute) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
 		if(finish){
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		if(finish){
+=======
+
+		if (finish) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 			throw new SchemaException("No changes to finished schema!");
 		}
 
@@ -209,8 +233,40 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 							+ superClass.getQualifiedName());
 		}
 		directSuperClasses.add(superClass);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
+
+		if(superClass instanceof VertexClass){
+			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so it is not in the DAG
+			if(!superClass.equals(getSchema().getDefaultVertexClass())){
+				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
+					.createEdge((VertexClass)superClass, (VertexClass)this);
+			}
+		}else if(superClass instanceof EdgeClass){
+			if(!superClass.equals(getSchema().getDefaultEdgeClass())){
+				((GraphClassImpl)getSchema().getGraphClass()).getEdgeCsDag()
+					.createEdge((EdgeClass)superClass, ((EdgeClass)this));
+			}
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
+		
+		if(superClass instanceof VertexClass){
+			// DefaultVertexClass has a the DefaultGraphClass as graphClass, so it is not in the DAG
+			if(!superClass.equals(getSchema().getDefaultVertexClass())){
+				((GraphClassImpl) getSchema().getGraphClass()).getVertexCsDag()
+					.createEdge((VertexClass)superClass, (VertexClass)this);
+			}
+		}else if(superClass instanceof EdgeClass){
+			if(!superClass.equals(getSchema().getDefaultEdgeClass())){
+				((GraphClassImpl)getSchema().getGraphClass()).getEdgeCsDag()
+					.createEdge((EdgeClass)superClass, ((EdgeClass)this));
+			}
+		}
+=======
 		((AttributedElementClassImpl<SC, IC>) superClass).directSubClasses
 				.add((SC) this);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	}
 
 	/**
@@ -243,9 +299,19 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		if (finish) {
 			return allSubClasses;
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+		Set<AttributedElementClass> returnSet = new HashSet<AttributedElementClass>();
+		for (AttributedElementClass subclass : directSubClasses) {
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		Set<AttributedElementClass> returnSet = new HashSet<AttributedElementClass>();
+		for (AttributedElementClass subclass : directSubClasses) {
+=======
 
 		Set<SC> returnSet = new HashSet<SC>();
 		for (SC subclass : directSubClasses) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 			returnSet.add(subclass);
 			returnSet.addAll(subclass.getAllSubClasses());
 		}
@@ -257,8 +323,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		if (finish) {
 			return allSuperClasses;
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
+=======
 
 		HashSet<SC> allSuperClasses = new HashSet<SC>();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 		allSuperClasses.addAll(directSuperClasses);
 		for (SC superClass : directSuperClasses) {
 			allSuperClasses.addAll(superClass.getAllSuperClasses());
@@ -467,8 +541,16 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
 	 * Called if the schema is finished, saves complete subclass, superclass
 	 * and attribute list
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+	 * Called if the schema is finished, saves complete subclass, superclass 
+	 * and attribute list 
+=======
+	 * Called if the schema is finished, saves complete subclass, superclass and
+	 * attribute list
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	 */
 	protected void finish() {
 		allSuperClasses = new HashSet<SC>();
@@ -476,18 +558,65 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		for (SC superClass : directSuperClasses) {
 			allSuperClasses.addAll(superClass.getAllSuperClasses());
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+		this.allSubClasses = new HashSet<AttributedElementClass>();
+		this.allSubClasses.addAll(directSubClasses);
+		for(AttributedElementClass subClass : directSubClasses){
+			this.allSubClasses.addAll(subClass.getAllSubClasses());
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		this.allSubClasses = new HashSet<AttributedElementClass>();
+		this.allSubClasses.addAll(directSubClasses);
+		for(AttributedElementClass subClass : directSubClasses){
+			this.allSubClasses.addAll(subClass.getAllSubClasses());
+=======
 
 		allSubClasses = new HashSet<SC>();
 		allSubClasses.addAll(directSubClasses);
 		for (SC subClass : directSubClasses) {
 			allSubClasses.addAll(subClass.getAllSubClasses());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+		this.allAttributeList = new TreeSet<Attribute>();
+		this.allAttributeList.addAll(attributeList);
+		for (AttributedElementClass superClass : directSuperClasses) {
+			this.allAttributeList.addAll(superClass.getAttributeList());
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		this.allAttributeList = new TreeSet<Attribute>();
+		this.allAttributeList.addAll(attributeList);
+		for (AttributedElementClass superClass : directSuperClasses) {
+			this.allAttributeList.addAll(superClass.getAttributeList());
+=======
 
 		allAttributeList = new TreeSet<Attribute>();
 		allAttributeList.addAll(attributeList);
 		for (SC superClass : directSuperClasses) {
 			allAttributeList.addAll(superClass.getAttributeList());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+		this.directSubClasses = Collections.unmodifiableSet(this.directSubClasses);
+		this.directSuperClasses = Collections.unmodifiableSet(this.directSuperClasses);
+		this.allSuperClasses = Collections.unmodifiableSet(this.allSuperClasses);
+		this.allSubClasses = Collections.unmodifiableSet(this.allSubClasses);
+		this.allAttributeList = Collections.unmodifiableSortedSet(this.allAttributeList);
+
+		this.finish = true;
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+		
+		this.directSubClasses = Collections.unmodifiableSet(this.directSubClasses);
+		this.directSuperClasses = Collections.unmodifiableSet(this.directSuperClasses);
+		this.allSuperClasses = Collections.unmodifiableSet(this.allSuperClasses);
+		this.allSubClasses = Collections.unmodifiableSet(this.allSubClasses);
+		this.allAttributeList = Collections.unmodifiableSortedSet(this.allAttributeList);
+		
+		this.finish = true;
+=======
 
 		directSubClasses = Collections.unmodifiableSet(directSubClasses);
 		directSuperClasses = Collections.unmodifiableSet(directSuperClasses);
@@ -496,11 +625,31 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		allAttributeList = Collections.unmodifiableSortedSet(allAttributeList);
 
 		finish = true;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	}
 
 	/**
 	 * Called if the schema is reopen
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+	protected void reopen(){
+		this.directSubClasses = new HashSet<AttributedElementClass>(this.directSubClasses);
+		this.directSuperClasses = new HashSet<AttributedElementClass>(this.directSuperClasses);
+		this.allSuperClasses = null;
+		this.allSubClasses = null;
+		this.allAttributeList = null;
+
+		this.finish = false;
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+	protected void reopen(){
+		this.directSubClasses = new HashSet<AttributedElementClass>(this.directSubClasses);
+		this.directSuperClasses = new HashSet<AttributedElementClass>(this.directSuperClasses);
+		this.allSuperClasses = null;
+		this.allSubClasses = null;
+		this.allAttributeList = null;
+		
+		this.finish = false;
+=======
 	protected void reopen() {
 		directSubClasses = new HashSet<SC>(directSubClasses);
 		directSuperClasses = new HashSet<SC>(directSuperClasses);
@@ -509,9 +658,18 @@ public abstract class AttributedElementClassImpl<SC extends AttributedElementCla
 		allAttributeList = null;
 
 		finish = false;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/left.java
+
+	protected boolean isFinished(){
+||||||| /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/base.java
+	
+	protected boolean isFinished(){
+=======
 
 	protected boolean isFinished() {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/schema/impl/AttributedElementClassImpl.java/right.java
 		return finish;
 	}
 }
