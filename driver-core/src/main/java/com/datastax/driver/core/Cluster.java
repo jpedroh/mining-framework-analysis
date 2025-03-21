@@ -978,6 +978,7 @@ public class Cluster implements Closeable {
                         if (connectionFactory.protocolVersion < 0)
                             connectionFactory.protocolVersion = 2;
 
+                        isInit = true;
                         return;
                     } catch (UnsupportedProtocolVersionException e) {
                         assert connectionFactory.protocolVersion < 1;
@@ -994,8 +995,13 @@ public class Cluster implements Closeable {
             }
         }
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/32a415ddf1a3cf8983f83a765299d0fda0ffb7df/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
         int protocolVersion() {
             return connectionFactory.protocolVersion;
+||||||| /usr/src/app/output/datastax/java-driver/32a415ddf1a3cf8983f83a765299d0fda0ffb7df/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+            isInit = true;
+=======
+>>>>>>> /usr/src/app/output/datastax/java-driver/32a415ddf1a3cf8983f83a765299d0fda0ffb7df/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
         }
 
         Cluster getCluster() {
