@@ -27,7 +27,12 @@ class MetricsNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("metric-registry", new MetricRegistryBeanDefinitionParser());
 		registerBeanDefinitionParser("health-check-registry", new HealthCheckRegistryBeanDefinitionParser());
 		registerBeanDefinitionParser("reporter", new ReporterBeanDefinitionParser());
-		registerBeanDefinitionParser("register", new RegisterMetricBeanDefinitionParser());
+<<<<<<< /usr/src/app/output/ryantenney/metrics-spring/4ddab2725aa59f451c78609e432999812eee675a/src/main/java/com/ryantenney/metrics/spring/config/MetricsNamespaceHandler.java/left.java
+        registerBeanDefinitionParser("metric-set", new MetricSetBeanDefinitionParser());
+||||||| /usr/src/app/output/ryantenney/metrics-spring/4ddab2725aa59f451c78609e432999812eee675a/src/main/java/com/ryantenney/metrics/spring/config/MetricsNamespaceHandler.java/base.java
+=======
+        registerBeanDefinitionParser("register", new RegisterMetricBeanDefinitionParser());
+>>>>>>> /usr/src/app/output/ryantenney/metrics-spring/4ddab2725aa59f451c78609e432999812eee675a/src/main/java/com/ryantenney/metrics/spring/config/MetricsNamespaceHandler.java/right.java
 	}
 
 }
