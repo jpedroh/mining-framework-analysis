@@ -1,6 +1,6 @@
 package org.openpnp.machine.reference.vision;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,6 @@ import org.openpnp.model.AbstractVisionSettings;
 import org.openpnp.model.BoardLocation;
 import org.openpnp.model.BottomVisionSettings;
 import org.openpnp.model.Configuration;
-import org.openpnp.model.Footprint;
 import org.openpnp.model.Length;
 import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
@@ -305,9 +304,55 @@ public class ReferenceBottomVision extends AbstractPartAlignment {
 
     private boolean partSizeCheck(Part part, BottomVisionSettings bottomVisionSettings, RotatedRect partRect, Camera camera) {
         // Check if this test needs to be done
+<<<<<<< /usr/src/app/output/openpnp/openpnp/5f47cac410b0b91c98034f026b69c9c955f79e4c/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/left.java
         Location partSize = bottomVisionSettings.getPartCheckSize(part);
         if (partSize == null) {
             return true;
+||||||| /usr/src/app/output/openpnp/openpnp/5f47cac410b0b91c98034f026b69c9c955f79e4c/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/base.java
+        PartSizeCheckMethod partSizeCheckMethod = bottomVisionSettings.getCheckPartSizeMethod();
+
+        double checkWidth = 0.0;
+        double checkHeight = 0.0;
+
+        Footprint footprint = part.getPackage().getFootprint();
+        LengthUnit footprintLengthUnit = footprint.getUnits();
+
+        // Get the part footprint body dimensions to compare to
+        switch (partSizeCheckMethod) {
+            case Disabled:
+                return true;
+            case BodySize:
+                checkWidth = footprint.getBodyWidth();
+                checkHeight = footprint.getBodyHeight();
+                break;
+            case PadExtents:
+                Rectangle bounds = footprint.getPadsShape().getBounds();
+                checkWidth = bounds.getWidth();
+                checkHeight = bounds.getHeight();
+                break;
+=======
+        PartSizeCheckMethod partSizeCheckMethod = bottomVisionSettings.getCheckPartSizeMethod();
+
+        double checkWidth = 0.0;
+        double checkHeight = 0.0;
+
+        Footprint footprint = part.getPackage().getFootprint();
+        LengthUnit footprintLengthUnit = footprint.getUnits();
+
+        // Get the part footprint body dimensions to compare to
+        switch (partSizeCheckMethod) {
+            case Disabled:
+                return true;
+            case BodySize:
+                checkWidth = footprint.getBodyWidth();
+                checkHeight = footprint.getBodyHeight();
+                break;
+            case PadExtents:
+                Rectangle2D bounds = footprint.getPadsShape().getBounds2D();
+                checkWidth = bounds.getWidth();
+                checkHeight = bounds.getHeight();
+                break;
+>>>>>>> /usr/src/app/output/openpnp/openpnp/5f47cac410b0b91c98034f026b69c9c955f79e4c/src/main/java/org/openpnp/machine/reference/vision/ReferenceBottomVision.java/right.java
         }
 
         // Make sure width is the longest dimension
@@ -462,6 +507,7 @@ public class ReferenceBottomVision extends AbstractPartAlignment {
 
     @Override
     public void setName(String name) {
+
     }
 
     @Override
@@ -608,6 +654,7 @@ public class ReferenceBottomVision extends AbstractPartAlignment {
 
         @Deprecated
         public PartSettings() {
+
         }
 
         @Deprecated
