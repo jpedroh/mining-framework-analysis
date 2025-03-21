@@ -1087,6 +1087,7 @@ public class SmallDenseDomainTest {
 
     }
 
+
     public IntDomain createDomain(Interval... intervals)
     {
         IntDomain result = new IntervalDomain();
