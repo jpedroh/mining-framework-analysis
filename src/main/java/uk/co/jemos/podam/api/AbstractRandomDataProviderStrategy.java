@@ -1,15 +1,9 @@
-/**
- *
- */
 package uk.co.jemos.podam.api;
-
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.co.jemos.podam.api.DataProviderStrategy.Order;
 import uk.co.jemos.podam.common.*;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -38,246 +32,188 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  *
  */
-@ThreadSafe
-public abstract class AbstractRandomDataProviderStrategy implements DataProviderStrategy {
+@ThreadSafe public abstract class AbstractRandomDataProviderStrategy implements DataProviderStrategy {
+  /** Application logger */
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractRandomDataProviderStrategy.class);
 
-	// ------------------->> Constants
+  /** A RANDOM generator */
+  private static final Random RANDOM = new Random(System.currentTimeMillis());
 
-	/** Application logger */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AbstractRandomDataProviderStrategy.class);
-
-	/** A RANDOM generator */
-	private static final Random RANDOM = new Random(System.currentTimeMillis());
-
-	/**
+  /**
 	 * How many times it is allowed to PODAM to create an instance of the same
 	 * class in a recursive hierarchy
 	 */
-	public static final int MAX_DEPTH = 1;
+  public static final int MAX_DEPTH = 1;
 
-	/** The max stack trace depth. */
-	private final AtomicInteger maxDepth = new AtomicInteger(MAX_DEPTH);
+  /** The max stack trace depth. */
+  private final AtomicInteger maxDepth = new AtomicInteger(MAX_DEPTH);
 
-	/** The number of collection elements. */
-	private final AtomicInteger nbrOfCollectionElements = new AtomicInteger();
+  /** The number of collection elements. */
+  private final AtomicInteger nbrOfCollectionElements = new AtomicInteger();
 
-	/** Flag to enable/disable the memoization setting. */
-	private final AtomicBoolean isMemoizationEnabled = new AtomicBoolean();
+  /** Flag to enable/disable the memoization setting. */
+  private final AtomicBoolean isMemoizationEnabled = new AtomicBoolean();
 
-	/**
+  /**
 	 * A map to keep one object for each class. If memoization is enabled, the
 	 * factory will use this table to avoid creating objects of the same class
 	 * multiple times.
 	 */
-	private final ConcurrentMap<Class<?>, Map<Type[], Object>> memoizationTable = new ConcurrentHashMap<Class<?>, Map<Type[], Object>>();
+  private final ConcurrentMap<Class<?>, Map<Type[], Object>> memoizationTable = new ConcurrentHashMap<Class<?>, Map<Type[], Object>>();
 
-	/**
+  /**
 	 * A list of user-submitted specific implementations for interfaces and
 	 * abstract classes
 	 */
-	private final ConcurrentMap<Class<?>, Class<?>> specificTypes = new ConcurrentHashMap<Class<?>, Class<?>>();
+  private final ConcurrentMap<Class<?>, Class<?>> specificTypes = new ConcurrentHashMap<Class<?>, Class<?>>();
 
-	/**
+  /**
 	 * Mapping between annotations and attribute strategies
 	 */
-	private final ConcurrentMap<Class<? extends Annotation>, Class<AttributeStrategy<?>>> attributeStrategies
-			= new ConcurrentHashMap<Class<? extends Annotation>, Class<AttributeStrategy<?>>>();
+  private final ConcurrentMap<Class<? extends Annotation>, Class<AttributeStrategy<?>>> attributeStrategies = new ConcurrentHashMap<Class<? extends Annotation>, Class<AttributeStrategy<?>>>();
 
-	/** The constructor comparator */
-	private AbstractConstructorComparator constructorHeavyComparator =
-			ConstructorHeavyFirstComparator.INSTANCE;
+  /** The constructor comparator */
+  private AbstractConstructorComparator constructorHeavyComparator = ConstructorHeavyFirstComparator.INSTANCE;
 
-	/** The constructor comparator */
-	private AbstractConstructorComparator constructorLightComparator =
-			ConstructorLightFirstComparator.INSTANCE;
+  /** The constructor comparator */
+  private AbstractConstructorComparator constructorLightComparator = ConstructorLightFirstComparator.INSTANCE;
 
-	/** The constructor comparator */
-	private AbstractMethodComparator methodHeavyComparator
-			= MethodHeavyFirstComparator.INSTANCE;
+  /** The constructor comparator */
+  private AbstractMethodComparator methodHeavyComparator = MethodHeavyFirstComparator.INSTANCE;
 
-	/** The constructor comparator */
-	private AbstractMethodComparator methodLightComparator
-			= MethodLightFirstComparator.INSTANCE;
+  /** The constructor comparator */
+  private AbstractMethodComparator methodLightComparator = MethodLightFirstComparator.INSTANCE;
 
-	// ------------------->> Instance / Static variables
-
-	// ------------------->> Constructors
-
-	/**
+  /**
 	 * Implementation of the Singleton pattern
 	 */
-	public AbstractRandomDataProviderStrategy() {
-		this(PodamConstants.DEFAULT_NBR_COLLECTION_ELEMENTS);
-	}
+  public AbstractRandomDataProviderStrategy() {
+    this(PodamConstants.DEFAULT_NBR_COLLECTION_ELEMENTS);
+  }
 
-	public AbstractRandomDataProviderStrategy(int nbrOfCollectionElements) {
-		this.nbrOfCollectionElements.set(nbrOfCollectionElements);
-	}
+  public AbstractRandomDataProviderStrategy(int nbrOfCollectionElements) {
+    this.nbrOfCollectionElements.set(nbrOfCollectionElements);
+  }
 
-	// ------------------->> Public methods
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Boolean getBoolean(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return Boolean.TRUE;
+  }
 
-	@Override
-	public Boolean getBoolean(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return Boolean.TRUE;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Byte getByte(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    byte nextByte;
+    do {
+      nextByte = (byte) RANDOM.nextInt(Byte.MAX_VALUE);
+    } while(nextByte == 0);
+    return nextByte;
+  }
 
-	@Override
-	public Byte getByte(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		byte nextByte;
-		do {
-			nextByte = (byte) RANDOM.nextInt(Byte.MAX_VALUE);
-		} while (nextByte == 0);
-		return nextByte;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Byte getByteInRange(byte minValue, byte maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return (byte) (minValue + Math.random() * (maxValue - minValue) + 0.5);
+  }
 
-	@Override
-	public Byte getByteInRange(byte minValue, byte maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return (byte) (minValue + Math.random() * (maxValue - minValue) + 0.5);
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Character getCharacter(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return PodamUtils.getNiceCharacter();
+  }
 
-	@Override
-	public Character getCharacter(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return PodamUtils.getNiceCharacter();
-
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Character getCharacterInRange(char minValue, char maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return (char) (minValue + Math.random() * (maxValue - minValue) + 0.5);
+  }
 
-	@Override
-	public Character getCharacterInRange(char minValue, char maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return (char) (minValue + Math.random() * (maxValue - minValue) + 0.5);
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Double getDouble(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    double retValue;
+    do {
+      retValue = RANDOM.nextDouble();
+    } while(retValue == 0.0);
+    return retValue;
+  }
 
-	@Override
-	public Double getDouble(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		double retValue;
-		do {
-			retValue = RANDOM.nextDouble();
-		} while (retValue == 0.0);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Double getDoubleInRange(double minValue, double maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    if (minValue == maxValue) {
+      return minValue;
+    }
+    double retValue;
+    do {
+      retValue = minValue + Math.random() * (maxValue - minValue + 1);
+    } while(retValue > maxValue);
+    return retValue;
+  }
 
-	@Override
-	public Double getDoubleInRange(double minValue, double maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		// This can happen. It's a way to specify a precise value
-		if (minValue == maxValue) {
-			return minValue;
-		}
-		double retValue;
-		do {
-			retValue = minValue + Math.random() * (maxValue - minValue + 1);
-		} while (retValue > maxValue);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Float getFloat(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    float retValue;
+    do {
+      retValue = RANDOM.nextFloat();
+    } while(retValue == 0.0f);
+    return retValue;
+  }
 
-	@Override
-	public Float getFloat(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		float retValue;
-		do {
-			retValue = RANDOM.nextFloat();
-		} while (retValue == 0.0f);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Float getFloatInRange(float minValue, float maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    if (minValue == maxValue) {
+      return minValue;
+    }
+    float retValue;
+    do {
+      retValue = (float) (minValue + Math.random() * (maxValue - minValue + 1));
+    } while(retValue > maxValue);
+    return retValue;
+  }
 
-	@Override
-	public Float getFloatInRange(float minValue, float maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		// This can happen. It's a way to specify a precise value
-		if (minValue == maxValue) {
-			return minValue;
-		}
-		float retValue;
-		do {
-			retValue = (float) (minValue
-					+ Math.random() * (maxValue - minValue + 1));
-		} while (retValue > maxValue);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Integer getInteger(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    Integer retValue;
+    do {
+      retValue = RANDOM.nextInt();
+    } while(retValue.intValue() == 0);
+    return retValue;
+  }
 
-	@Override
-	public Integer getInteger(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		Integer retValue;
-		do {
-			retValue = RANDOM.nextInt();
-		} while (retValue.intValue() == 0);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public int getIntegerInRange(int minValue, int maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return (int) (minValue + Math.random() * (maxValue - minValue) + 0.5);
+  }
 
-	@Override
-	public int getIntegerInRange(int minValue, int maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return (int) (minValue + Math.random() * (maxValue - minValue) + 0.5);
-	}
-
-	/**
+  /**
 	 * This implementation returns the current time in milliseconds.
 	 * <p>
 	 * This can be useful for Date-like constructors which accept a long as
@@ -287,199 +223,152 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 * </p>
 	 * {@inheritDoc}
 	 */
+  @Override public Long getLong(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return System.nanoTime();
+  }
 
-	@Override
-	public Long getLong(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return System.nanoTime();
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Long getLongInRange(long minValue, long maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return PodamUtils.getLongInRange(minValue, maxValue);
+  }
 
-	@Override
-	public Long getLongInRange(long minValue, long maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return PodamUtils.getLongInRange(minValue, maxValue);
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Short getShort(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    short retValue;
+    do {
+      retValue = (short) RANDOM.nextInt(Byte.MAX_VALUE);
+    } while(retValue == 0);
+    return retValue;
+  }
 
-	@Override
-	public Short getShort(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		short retValue;
-		do {
-			retValue = (short) RANDOM.nextInt(Byte.MAX_VALUE);
-		} while (retValue == 0);
-		return retValue;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public Short getShortInRange(short minValue, short maxValue, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return (short) (minValue + Math.random() * (maxValue - minValue) + 0.5);
+  }
 
-	@Override
-	public Short getShortInRange(short minValue, short maxValue,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return (short) (minValue + Math.random() * (maxValue - minValue) + 0.5);
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public String getStringValue(AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    return getStringOfLength(PodamConstants.STR_DEFAULT_LENGTH, attributeMetadata);
+  }
 
-	@Override
-	public String getStringValue(AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		return getStringOfLength(PodamConstants.STR_DEFAULT_LENGTH,
-				attributeMetadata);
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
+  @Override public String getStringOfLength(int length, AttributeMetadata attributeMetadata) {
+    log(attributeMetadata);
+    StringBuilder buff = new StringBuilder();
+    while (buff.length() < length) {
+      buff.append(getCharacter(attributeMetadata));
+    }
+    return buff.toString();
+  }
 
-	@Override
-	public String getStringOfLength(int length,
-			AttributeMetadata attributeMetadata) {
-
-		log(attributeMetadata);
-		StringBuilder buff = new StringBuilder();
-
-		while (buff.length() < length) {
-			buff.append(getCharacter(attributeMetadata));
-		}
-
-		return buff.toString();
-
-	}
-
-	// ------------------->> Getters / Setters
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public int getNumberOfCollectionElements(Class<?> type) {
-		return nbrOfCollectionElements.get();
-	}
+  @Override public int getNumberOfCollectionElements(Class<?> type) {
+    return nbrOfCollectionElements.get();
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void setDefaultNumberOfCollectionElements(int newNumberOfCollectionElements) {
-		nbrOfCollectionElements.set(newNumberOfCollectionElements);
-	}
+  @Override public void setDefaultNumberOfCollectionElements(int newNumberOfCollectionElements) {
+    nbrOfCollectionElements.set(newNumberOfCollectionElements);
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public int getMaxDepth(Class<?> type) {
-		return maxDepth.get();
-	}
+  @Override public int getMaxDepth(Class<?> type) {
+    return maxDepth.get();
+  }
 
-	/**
+  /**
 	 * Sets the new max stack trace depth.
 	 *
 	 * @param newMaxDepth
 	 *            The new max stack trace depth.
 	 */
-	public void setMaxDepth(int newMaxDepth) {
-		maxDepth.set(newMaxDepth);
-	}
+  public void setMaxDepth(int newMaxDepth) {
+    maxDepth.set(newMaxDepth);
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public boolean isMemoizationEnabled() {
-		return isMemoizationEnabled.get();
-	}
+  @Override public boolean isMemoizationEnabled() {
+    return isMemoizationEnabled.get();
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void setMemoization(boolean isMemoizationEnabled) {
-		this.isMemoizationEnabled.set(isMemoizationEnabled);
-	}
+  @Override public void setMemoization(boolean isMemoizationEnabled) {
+    this.isMemoizationEnabled.set(isMemoizationEnabled);
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public Object getMemoizedObject(AttributeMetadata attributeMetadata) {
+  @Override public Object getMemoizedObject(AttributeMetadata attributeMetadata) {
+    if (isMemoizationEnabled.get()) {
+      Class<?> pojoClass = attributeMetadata.getPojoClass();
+      if (pojoClass == null || (!pojoClass.isArray() && !Collection.class.isAssignableFrom(pojoClass) && !Map.class.isAssignableFrom(pojoClass))) {
+        synchronized (memoizationTable) {
+          Map<Type[], Object> map = memoizationTable.get(attributeMetadata.getAttributeType());
+          if (map != null) {
+            for (Entry<Type[], Object> entry : map.entrySet()) {
+              if (Arrays.equals(entry.getKey(), attributeMetadata.getAttrGenericArgs())) {
+                return entry.getValue();
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
 
-		if (isMemoizationEnabled.get()) {
-			/* No memoization for arrays, collections and maps */
-			Class<?> pojoClass = attributeMetadata.getPojoClass();
-			if (pojoClass == null ||
-					(!pojoClass.isArray() &&
-					!Collection.class.isAssignableFrom(pojoClass) &&
-					!Map.class.isAssignableFrom(pojoClass))) {
-				synchronized (memoizationTable) {
-					Map<Type[], Object> map = memoizationTable.get(attributeMetadata.getAttributeType());
-					if (map != null) {
-						for (Entry<Type[], Object> entry : map.entrySet()) {
-							if (Arrays.equals(entry.getKey(), attributeMetadata.getAttrGenericArgs())) {
-								return entry.getValue();
-							}
-						}
-					}
-				}
-
-			}
-		}
-		return null;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void cacheMemoizedObject(AttributeMetadata attributeMetadata,
-			Object instance) {
+  @Override public void cacheMemoizedObject(AttributeMetadata attributeMetadata, Object instance) {
+    if (isMemoizationEnabled.get()) {
+      synchronized (memoizationTable) {
+        Map<Type[], Object> map = memoizationTable.get(attributeMetadata.getAttributeType());
+        if (map == null) {
+          map = new HashMap<Type[], Object>();
+          memoizationTable.put(attributeMetadata.getAttributeType(), map);
+        }
+        map.put(attributeMetadata.getAttrGenericArgs(), instance);
+      }
+    }
+  }
 
-		if (isMemoizationEnabled.get()) {
-			synchronized (memoizationTable) {
-				Map<Type[], Object> map = memoizationTable.get(attributeMetadata.getAttributeType());
-				if (map == null) {
-					map = new HashMap<Type[], Object>();
-
-					memoizationTable.put(attributeMetadata.getAttributeType(), map);
-
-				}
-				map.put(attributeMetadata.getAttrGenericArgs(), instance);
-			}
-
-		}
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void clearMemoizationCache() {
-		synchronized (memoizationTable) {
-			memoizationTable.clear();
-		}
+  @Override public void clearMemoizationCache() {
+    synchronized (memoizationTable) {
+      memoizationTable.clear();
+    }
+  }
 
-	}
-
-	/**
+  /**
 	 * Rearranges POJO's constructors in order they will be tried to produce the
 	 * POJO. Default strategy consist of putting constructors with less
 	 * parameters to be tried first.
@@ -489,21 +378,20 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 * @param order
 	 *            {@link Order} how to sort constructors
 	 */
-	@Override
-	public void sort(Constructor<?>[] constructors, Order order) {
-		AbstractConstructorComparator constructorComparator;
-		switch(order) {
-		case HEAVY_FIRST:
-			constructorComparator = constructorHeavyComparator;
-			break;
-		default:
-			constructorComparator = constructorLightComparator;
-			break;
-		}
-		Arrays.sort(constructors, constructorComparator);
-	}
+  @Override public void sort(Constructor<?>[] constructors, Order order) {
+    AbstractConstructorComparator constructorComparator;
+    switch (order) {
+      case HEAVY_FIRST:
+      constructorComparator = constructorHeavyComparator;
+      break;
+      default:
+      constructorComparator = constructorLightComparator;
+      break;
+    }
+    Arrays.sort(constructors, constructorComparator);
+  }
 
-	/**
+  /**
 	 * Rearranges POJO's methods in order they will be tried to produce the
 	 * POJO. Default strategy consist of putting methods with more
 	 * parameters to be tried first.
@@ -513,21 +401,20 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 * @param order
 	 *            {@link Order} how to sort constructors
 	 */
-	@Override
-	public void sort(Method[] methods, Order order) {
-		AbstractMethodComparator methodComparator;
-		switch(order) {
-		case HEAVY_FIRST:
-			methodComparator = methodHeavyComparator;
-			break;
-		default:
-			methodComparator = methodLightComparator;
-			break;
-		}
-		Arrays.sort(methods, methodComparator);
-	}
+  @Override public void sort(Method[] methods, Order order) {
+    AbstractMethodComparator methodComparator;
+    switch (order) {
+      case HEAVY_FIRST:
+      methodComparator = methodHeavyComparator;
+      break;
+      default:
+      methodComparator = methodLightComparator;
+      break;
+    }
+    Arrays.sort(methods, methodComparator);
+  }
 
-	/**
+  /**
 	 * Bind an interface/abstract class to a specific implementation. If the
 	 * strategy previously contained a binding for the interface/abstract class,
 	 * the old value is replaced by the new value. If you want to implement
@@ -541,15 +428,14 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 *            {@code abstractClass}.
 	 * @return itself
 	 */
-	public <T> AbstractRandomDataProviderStrategy addSpecific(
-			final Class<T> abstractClass, final Class<? extends T> specificClass) {
-		synchronized (specificTypes) {
-			specificTypes.put(abstractClass, specificClass);
-		}
-		return this;
-	}
+  public <T extends java.lang.Object> AbstractRandomDataProviderStrategy addSpecific(final Class<T> abstractClass, final Class<? extends T> specificClass) {
+    synchronized (specificTypes) {
+      specificTypes.put(abstractClass, specificClass);
+    }
+    return this;
+  }
 
-	/**
+  /**
 	 * Remove binding of an interface/abstract class to a specific
 	 * implementation
 	 *
@@ -558,34 +444,27 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 *            the interface/abstract class to remove binding
 	 * @return itself
 	 */
-	public <T> AbstractRandomDataProviderStrategy removeSpecific(
-			final Class<T> abstractClass) {
-		synchronized (specificTypes) {
-			specificTypes.remove(abstractClass);
-		}
+  public <T extends java.lang.Object> AbstractRandomDataProviderStrategy removeSpecific(final Class<T> abstractClass) {
+    synchronized (specificTypes) {
+      specificTypes.remove(abstractClass);
+    }
+    return this;
+  }
 
-		return this;
-	}
-
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public <T> Class<? extends T> getSpecificClass(
-			Class<T> nonInstantiatableClass) {
+  @Override public <T extends java.lang.Object> Class<? extends T> getSpecificClass(Class<T> nonInstantiatableClass) {
+    synchronized (specificTypes) {
+      Class<? extends T> found = (Class<? extends T>) specificTypes.get(nonInstantiatableClass);
+      if (found == null) {
+        found = nonInstantiatableClass;
+      }
+      return found;
+    }
+  }
 
-		synchronized (specificTypes) {
-			Class<? extends T> found = (Class<? extends T>) specificTypes
-					.get(nonInstantiatableClass);
-			if (found == null) {
-				found = nonInstantiatableClass;
-			}
-			return found;
-		}
-
-	}
-
-	/**
+  /**
 	 * Bind an annotation to attribute strategy class. If the
 	 * strategy previously contained a binding for the annotation,
 	 * the old value is replaced by the new value. If you want to implement
@@ -597,121 +476,107 @@ public abstract class AbstractRandomDataProviderStrategy implements DataProvider
 	 *            the attribute strategy class
 	 * @return itself
 	 */
-	public AbstractRandomDataProviderStrategy addAttributeStrategy(
-			final Class<? extends Annotation> annotationClass,
-			final Class<AttributeStrategy<?>> strategyClass) {
-		synchronized (attributeStrategies) {
-			attributeStrategies.put(annotationClass, strategyClass);
-		}
-		return this;
-	}
+  public AbstractRandomDataProviderStrategy addAttributeStrategy(final Class<? extends Annotation> annotationClass, final Class<AttributeStrategy<?>> strategyClass) {
+    synchronized (attributeStrategies) {
+      attributeStrategies.put(annotationClass, strategyClass);
+    }
+    return this;
+  }
 
-	/**
+  /**
 	 * Remove binding of an annotation to attribute strategy
 	 *
 	 * @param annotationClass
 	 *            the annotation class to remove binding
 	 * @return itself
 	 */
-	public AbstractRandomDataProviderStrategy removeAttributeStrategy(
-			final Class<? extends Annotation> annotationClass) {
-		synchronized (attributeStrategies) {
-			attributeStrategies.remove(annotationClass);
-		}
-		return this;
-	}
+  public AbstractRandomDataProviderStrategy removeAttributeStrategy(final Class<? extends Annotation> annotationClass) {
+    synchronized (attributeStrategies) {
+      attributeStrategies.remove(annotationClass);
+    }
+    return this;
+  }
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public Class<AttributeStrategy<?>> getStrategyForAnnotation(
-			final Class<? extends Annotation> annotationClass) {
-		synchronized (attributeStrategies) {
-			return attributeStrategies.get(annotationClass);
-		}
-	}
+  @Override public Class<AttributeStrategy<?>> getStrategyForAnnotation(final Class<? extends Annotation> annotationClass) {
+    synchronized (attributeStrategies) {
+      return attributeStrategies.get(annotationClass);
+    }
+  }
 
-	/**
+  /**
 	 * Getter for constructor light comparator
 	 * @return current constructor comparator used by strategy
 	 */
-	public AbstractConstructorComparator getConstructorLightComparator() {
-		return constructorLightComparator;
-	}
+  public AbstractConstructorComparator getConstructorLightComparator() {
+    return constructorLightComparator;
+  }
 
-	/**
+  /**
 	 * Setter for constructor öight comparator. Default implementations are
 	 * {@link uk.co.jemos.podam.common.ConstructorHeavyFirstComparator} and
 	 * {@link uk.co.jemos.podam.common.ConstructorLightFirstComparator}.
 	 * @param constructorComparator constructor comparator to set
 	 */
-	public void setConstructorLightComparator(AbstractConstructorComparator constructorLightComparator) {
-		this.constructorLightComparator = constructorLightComparator;
-	}
+  public void setConstructorLightComparator(AbstractConstructorComparator constructorLightComparator) {
+    this.constructorLightComparator = constructorLightComparator;
+  }
 
-	/**
+  /**
 	 * Getter for constructor heavy comparator
 	 * @return current constructor comparator used by strategy
 	 */
-	public AbstractConstructorComparator getConstructorHeavyComparator() {
-		return constructorHeavyComparator;
-	}
+  public AbstractConstructorComparator getConstructorHeavyComparator() {
+    return constructorHeavyComparator;
+  }
 
-	/**
+  /**
 	 * Setter for constructor heavy comparator. Default implementations are
 	 * {@link uk.co.jemos.podam.common.ConstructorHeavyFirstComparator} and
 	 * {@link uk.co.jemos.podam.common.ConstructorLightFirstComparator}.
 	 * @param constructorComparator constructor comparator to set
 	 */
-	public void setConstructorHeavyComparator(AbstractConstructorComparator constructorHeavyComparator) {
-		this.constructorHeavyComparator = constructorHeavyComparator;
-	}
+  public void setConstructorHeavyComparator(AbstractConstructorComparator constructorHeavyComparator) {
+    this.constructorHeavyComparator = constructorHeavyComparator;
+  }
 
-	/**
+  /**
 	 * Getter for method light comparator
 	 * @return current method comparator used by strategy
 	 */
-	public AbstractMethodComparator getMethodLightComparator() {
-		return methodLightComparator;
-	}
+  public AbstractMethodComparator getMethodLightComparator() {
+    return methodLightComparator;
+  }
 
-	/**
+  /**
 	 * Setter for method light comparator. Default implementations is
 	 * {@link uk.co.jemos.podam.common.MethodHeavyFirstComparator}.
 	 * @param methodComparator method comparator to set
 	 */
-	public void setMethodLightComparator(AbstractMethodComparator methodLightComparator) {
-		this.methodLightComparator = methodLightComparator;
-	}
+  public void setMethodLightComparator(AbstractMethodComparator methodLightComparator) {
+    this.methodLightComparator = methodLightComparator;
+  }
 
-	/**
+  /**
 	 * Getter for method heavy comparator
 	 * @return current method comparator used by strategy
 	 */
-	public AbstractMethodComparator getMethodHeavyComparator() {
-		return methodHeavyComparator;
-	}
+  public AbstractMethodComparator getMethodHeavyComparator() {
+    return methodHeavyComparator;
+  }
 
-	/**
+  /**
 	 * Setter for method heavy comparator. Default implementations is
 	 * {@link uk.co.jemos.podam.common.MethodHeavyFirstComparator}.
 	 * @param methodComparator method comparator to set
 	 */
-	public void setMethodHeavyComparator(AbstractMethodComparator methodHeavyComparator) {
-		this.methodHeavyComparator = methodHeavyComparator;
-	}
+  public void setMethodHeavyComparator(AbstractMethodComparator methodHeavyComparator) {
+    this.methodHeavyComparator = methodHeavyComparator;
+  }
 
-	// ------------------->> Private methods
-
-	private void log(AttributeMetadata attributeMetadata) {
-		LOG.trace("Providing data for attribute {}.{}",
-				attributeMetadata.getPojoClass().getName(),
-				attributeMetadata.getAttributeName() != null ? attributeMetadata.getAttributeName() : "");
-	}
-
-	// ------------------->> equals() / hashcode() / toString()
-
-	// ------------------->> Inner classes
-
+  private void log(AttributeMetadata attributeMetadata) {
+    LOG.trace("Providing data for attribute {}.{}", attributeMetadata.getPojoClass().getName(), attributeMetadata.getAttributeName() != null ? attributeMetadata.getAttributeName() : "");
+  }
 }
