@@ -1,5 +1,4 @@
 package net.sacredlabyrinth.phaed.simpleclans.ui.frames;
-
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.RankPermission;
@@ -16,91 +15,74 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
 import static net.sacredlabyrinth.phaed.simpleclans.SimpleClans.lang;
 
 public class CoordsFrame extends SCFrame {
+  private final Clan subject;
 
-	private final Clan subject;
-	private Paginator paginator;
+  private Paginator paginator;
 
-	public CoordsFrame(Player viewer, SCFrame parent, Clan subject) {
-		super(parent, viewer);
+  public CoordsFrame(Player viewer, SCFrame parent, Clan subject) {
+    super(parent, viewer);
+    this.subject = subject;
+  }
 
-		this.subject = subject;
-	}
+  @Override public void createComponents() {
+    List<ClanPlayer> allMembers = subject.getOnlineMembers();
+    allMembers.sort((cp1, cp2) -> Boolean.compare(cp1.isLeader(), cp2.isLeader()));
+    paginator = new Paginator(getSize() - 9, allMembers.size());
+    for (int slot = 0; slot < 9; slot++) {
+      if (slot == 2 || slot == 6 || slot == 7) {
+        continue;
+      }
+      add(Components.getPanelComponent(slot));
+    }
+    add(Components.getBackComponent(getParent(), 2));
+    add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
+    add(Components.getNextPageComponent(7, this::nextPage, paginator));
+    int slot = 9;
+    for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+      ClanPlayer cp = allMembers.get(i);
+      Location cpLoc = cp.toPlayer().getLocation();
+      int distance = (int) Math.ceil(cpLoc.toVector().distance(getViewer().getLocation().toVector()));
+      SCComponent c = new SCComponentImpl(lang("gui.playerdetails.player.title", cp.getName()), Arrays.asList(lang("gui.coords.player.lore.distance", distance), lang("gui.coords.player.lore.coords", cpLoc.getBlockX(), cpLoc.getBlockY(), cpLoc.getBlockZ()), lang("gui.coords.player.lore.world", Objects.requireNonNull(cpLoc.getWorld()).getName())), Material.SKULL_ITEM, (byte) 3, slot);
+      SkullMeta itemMeta = (SkullMeta) c.getItemMeta();
+      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(cp.getUniqueId());
+      if (itemMeta != null) {
+        itemMeta.setOwner(offlinePlayer.getName());
+        c.setItemMeta(itemMeta);
+      }
+      c.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new PlayerDetailsFrame(getViewer(), this, offlinePlayer)));
+      c.setLorePermission(RankPermission.COORDS);
+      add(c);
+      slot++;
+    }
+  }
 
-	@Override
-	public void createComponents() {
-		List<ClanPlayer> allMembers = subject.getOnlineMembers();
-		allMembers.sort((cp1, cp2) -> Boolean.compare(cp1.isLeader(), cp2.isLeader()));
+  private void previousPage() {
+    if (paginator.previousPage()) {
+      updateFrame();
+    }
+  }
 
-		paginator = new Paginator(getSize() - 9, allMembers.size());
+  private void nextPage() {
+    if (paginator.nextPage()) {
+      updateFrame();
+    }
+  }
 
-		for (int slot = 0; slot < 9; slot++) {
-			if (slot == 2 || slot == 6 || slot == 7)
-				continue;
-			add(Components.getPanelComponent(slot));
-		}
+  private void updateFrame() {
+    InventoryDrawer.update(this);
+  }
 
-		add(Components.getBackComponent(getParent(), 2));
+  @Override @NotNull public String getTitle() {
+    return lang("gui.coords.title");
+  }
 
-		add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
-		add(Components.getNextPageComponent(7, this::nextPage, paginator));
-		int slot = 9;
-		for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
-			ClanPlayer cp = allMembers.get(i);
-			Location cpLoc = cp.toPlayer().getLocation();
-			int distance = (int) Math.ceil(cpLoc.toVector().distance(getViewer().getLocation().toVector()));
-
-			SCComponent c = new SCComponentImpl(lang("gui.playerdetails.player.title", cp.getName()),
-					Arrays.asList(lang("gui.coords.player.lore.distance", distance),
-							lang("gui.coords.player.lore.coords", cpLoc.getBlockX(),
-									cpLoc.getBlockY(), cpLoc.getBlockZ()),
-							lang("gui.coords.player.lore.world", Objects.requireNonNull(cpLoc.getWorld()).getName())),
-					Material.SKULL_ITEM, (byte) 3, slot);
-			SkullMeta itemMeta = (SkullMeta) c.getItemMeta();
-			OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(cp.getUniqueId());
-			if (itemMeta != null) {
-				itemMeta.setOwner(offlinePlayer.getName());
-				c.setItemMeta(itemMeta);
-			}
-			c.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new PlayerDetailsFrame(getViewer(), this, offlinePlayer)));
-			c.setLorePermission(RankPermission.COORDS);
-			add(c);
-			slot++;
-		
-		}
-	}
-
-	private void previousPage() {
-		if (paginator.previousPage()) {
-			updateFrame();
-		}
-	}
-
-	private void nextPage() {
-		if (paginator.nextPage()) {
-			updateFrame();
-		}
-	}
-
-	private void updateFrame() {
-		InventoryDrawer.update(this);
-	}
-
-	@Override
-	@NotNull
-	public String getTitle() {
-		return lang("gui.coords.title");
-	}
-
-	@Override
-	public int getSize() {
-		return 6 * 9;
-	}
+  @Override public int getSize() {
+    return 6 * 9;
+  }
 }

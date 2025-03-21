@@ -1,5 +1,4 @@
 package net.sacredlabyrinth.phaed.simpleclans.ui.frames;
-
 import net.sacredlabyrinth.phaed.simpleclans.RankPermission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
@@ -12,81 +11,70 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static net.sacredlabyrinth.phaed.simpleclans.SimpleClans.lang;
 
 public class InviteFrame extends SCFrame {
+  private Paginator paginator;
 
-	private Paginator paginator;
+  public InviteFrame(SCFrame parent, Player viewer) {
+    super(parent, viewer);
+  }
 
-	public InviteFrame(SCFrame parent, Player viewer) {
-		super(parent, viewer);
-	}
+  @Override public void createComponents() {
+    SimpleClans plugin = SimpleClans.getInstance();
+    ClanManager cm = plugin.getClanManager();
+    List<Player> players = plugin.getServer().getOnlinePlayers().stream().filter((p) -> cm.getClanPlayer(p) == null).collect(Collectors.toList());
+    paginator = new Paginator(getSize() - 9, players.size());
+    for (int slot = 0; slot < 9; slot++) {
+      if (slot == 2 || slot == 6 || slot == 7) {
+        continue;
+      }
+      add(Components.getPanelComponent(slot));
+    }
+    add(Components.getBackComponent(getParent(), 2));
+    add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
+    add(Components.getNextPageComponent(7, this::nextPage, paginator));
+    int slot = 9;
+    for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+      Player player = players.get(i);
+      SCComponent c = new SCComponentImpl(lang("gui.invite.player.title", player.getName()), Collections.singletonList(lang("gui.invite.player.lore")), Material.SKULL_ITEM, (byte) 3, slot);
+      SkullMeta itemMeta = (SkullMeta) c.getItemMeta();
+      OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
+      if (itemMeta != null) {
+        itemMeta.setOwner(offlinePlayer.getName());
+        c.setItemMeta(itemMeta);
+      }
+      c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), "invite " + player.getName(), false));
+      c.setPermission(ClickType.LEFT, RankPermission.INVITE);
+      add(c);
+      slot++;
+    }
+  }
 
-	@Override
-	public void createComponents() {
-		SimpleClans plugin = SimpleClans.getInstance();
-		ClanManager cm = plugin.getClanManager();
-		List<Player> players = plugin.getServer().getOnlinePlayers().stream().filter(p -> cm.getClanPlayer(p) == null).collect(Collectors.toList());
-		paginator = new Paginator(getSize() - 9, players.size());
+  private void previousPage() {
+    if (paginator.previousPage()) {
+      updateFrame();
+    }
+  }
 
-		for (int slot = 0; slot < 9; slot++) {
-			if (slot == 2 || slot == 6 || slot == 7)
-				continue;
-			add(Components.getPanelComponent(slot));
-		}
-		add(Components.getBackComponent(getParent(), 2));
+  private void nextPage() {
+    if (paginator.nextPage()) {
+      updateFrame();
+    }
+  }
 
-		add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
-		add(Components.getNextPageComponent(7, this::nextPage, paginator));
+  private void updateFrame() {
+    InventoryDrawer.update(this);
+  }
 
-		int slot = 9;
-		for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+  @Override public @NotNull String getTitle() {
+    return lang("gui.invite.title");
+  }
 
-			Player player = players.get(i);
-			SCComponent c = new SCComponentImpl(
-					lang("gui.invite.player.title", player.getName()),
-					Collections.singletonList(lang("gui.invite.player.lore")), Material.SKULL_ITEM, (byte) 3, slot);
-			SkullMeta itemMeta = (SkullMeta) c.getItemMeta();
-			OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
-			if (itemMeta != null) {
-				itemMeta.setOwner(offlinePlayer.getName());
-				c.setItemMeta(itemMeta);
-			}
-			c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), "invite " + player.getName(), false));
-			c.setPermission(ClickType.LEFT, RankPermission.INVITE);
-			add(c);
-			slot++;
-		}
-	}
-
-	private void previousPage() {
-		if (paginator.previousPage()) {
-			updateFrame();
-		}
-	}
-
-	private void nextPage() {
-		if (paginator.nextPage()) {
-			updateFrame();
-		}
-	}
-
-	private void updateFrame() {
-		InventoryDrawer.update(this);
-	}
-
-	@Override
-	public @NotNull String getTitle() {
-		return lang("gui.invite.title");
-	}
-	
-	@Override
-	public int getSize() {
-		return 3 * 9;
-	}
+  @Override public int getSize() {
+    return 3 * 9;
+  }
 }

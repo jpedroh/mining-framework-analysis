@@ -1,5 +1,4 @@
 package net.sacredlabyrinth.phaed.simpleclans.ui.frames;
-
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.Helper;
 import net.sacredlabyrinth.phaed.simpleclans.Rank;
@@ -12,112 +11,93 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import static net.sacredlabyrinth.phaed.simpleclans.SimpleClans.lang;
 
 public class RanksFrame extends SCFrame {
-	private Paginator paginator;
-	private final Clan subject;
-	private final OfflinePlayer toEdit;
+  private Paginator paginator;
 
-	public RanksFrame(SCFrame parent, Player viewer, Clan subject, @Nullable OfflinePlayer toEdit) {
-		super(parent, viewer);
-		this.subject = subject;
-		this.toEdit = toEdit;
-	}
+  private final Clan subject;
 
-	@Override
-	public void createComponents() {
-		List<Rank> ranks = subject != null ? subject.getRanks() : new ArrayList<>();
-		paginator = new Paginator(getSize() - 9, ranks.size());
+  private final OfflinePlayer toEdit;
 
-		for (int slot = 0; slot < 9; slot++) {
-			if (slot == 2 || slot == 4 || slot == 6 || slot == 7)
-				continue;
-			add(Components.getPanelComponent(slot));
-		}
-		
-		add(Components.getBackComponent(getParent(), 2));
+  public RanksFrame(SCFrame parent, Player viewer, Clan subject, @Nullable OfflinePlayer toEdit) {
+    super(parent, viewer);
+    this.subject = subject;
+    this.toEdit = toEdit;
+  }
 
-		SCComponent create = new SCComponentImpl(lang("gui.ranks.create.title"),
-				Collections.singletonList(lang("gui.ranks.create.lore")), Material.WOOL, 4);
-		create.setVerifiedOnly(ClickType.LEFT);
-		create.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), "rank create", false));
-		create.setPermission(ClickType.LEFT, "simpleclans.leader.rank.create");
-		add(create);
+  @Override public void createComponents() {
+    List<Rank> ranks = subject != null ? subject.getRanks() : new ArrayList<>();
+    paginator = new Paginator(getSize() - 9, ranks.size());
+    for (int slot = 0; slot < 9; slot++) {
+      if (slot == 2 || slot == 4 || slot == 6 || slot == 7) {
+        continue;
+      }
+      add(Components.getPanelComponent(slot));
+    }
+    add(Components.getBackComponent(getParent(), 2));
+    SCComponent create = new SCComponentImpl(lang("gui.ranks.create.title"), Collections.singletonList(lang("gui.ranks.create.lore")), Material.WOOL, 4);
+    create.setVerifiedOnly(ClickType.LEFT);
+    create.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), "rank create", false));
+    create.setPermission(ClickType.LEFT, "simpleclans.leader.rank.create");
+    add(create);
+    add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
+    add(Components.getNextPageComponent(7, this::nextPage, paginator));
+    int slot = 9;
+    for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+      Rank rank = ranks.get(i);
+      List<String> lore;
+      if (toEdit == null) {
+        lore = Arrays.asList(lang("gui.ranks.rank.displayname.lore", Helper.parseColors(rank.getDisplayName())), lang("gui.ranks.rank.edit.permissions.lore"), lang("gui.ranks.rank.remove.lore"));
+      } else {
+        lore = Arrays.asList(lang("gui.ranks.rank.displayname.lore", Helper.parseColors(rank.getDisplayName())), lang("gui.ranks.rank.assign.lore", toEdit.getName()));
+      }
+      SCComponent c = new SCComponentImpl(lang("gui.ranks.rank.title", rank.getName()), lore, Material.MAP, slot);
+      if (toEdit != null) {
+        c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), String.format("rank assign %s %s", toEdit.getName(), rank.getName()), true));
+        c.setPermission(ClickType.LEFT, "simpleclans.leader.rank.assign");
+      } else {
+        c.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new PermissionsFrame(this, getViewer(), rank)));
+        c.setPermission(ClickType.LEFT, "simpleclans.leader.rank.permissions.list");
+        c.setListener(ClickType.RIGHT, () -> InventoryController.runSubcommand(getViewer(), String.format("rank delete %s", rank.getName()), true));
+        c.setPermission(ClickType.RIGHT, "simpleclans.leader.rank.delete");
+      }
+      c.setVerifiedOnly(ClickType.LEFT);
+      c.setVerifiedOnly(ClickType.RIGHT);
+      add(c);
+      slot++;
+    }
+  }
 
-		add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
-		add(Components.getNextPageComponent(7, this::nextPage, paginator));
+  private void previousPage() {
+    if (paginator.previousPage()) {
+      updateFrame();
+    }
+  }
 
-		int slot = 9;
-		for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
-			Rank rank = ranks.get(i);
-			List<String> lore;
-			if (toEdit == null) {
-				lore = Arrays.asList(
-						lang("gui.ranks.rank.displayname.lore",
-								Helper.parseColors(rank.getDisplayName())),
-						lang("gui.ranks.rank.edit.permissions.lore"),
-						lang("gui.ranks.rank.remove.lore"));
-			} else {
-				lore = Arrays.asList(
-						lang("gui.ranks.rank.displayname.lore",
-								Helper.parseColors(rank.getDisplayName())),
-						lang("gui.ranks.rank.assign.lore", toEdit.getName()));
-			}
-			SCComponent c = new SCComponentImpl(lang("gui.ranks.rank.title", rank.getName()), lore,
-					Material.MAP, slot);
-			if (toEdit != null) {
-				c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(),
-						String.format("rank assign %s %s", toEdit.getName(), rank.getName()), true));
-				c.setPermission(ClickType.LEFT, "simpleclans.leader.rank.assign");
-			} else {
-				c.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new PermissionsFrame(this, getViewer(), rank)));
-				c.setPermission(ClickType.LEFT, "simpleclans.leader.rank.permissions.list");
-				c.setListener(ClickType.RIGHT, () -> InventoryController.runSubcommand(getViewer(),
-						String.format("rank delete %s", rank.getName()), true));
-				c.setPermission(ClickType.RIGHT, "simpleclans.leader.rank.delete");
-			}
-			c.setVerifiedOnly(ClickType.LEFT);
-			c.setVerifiedOnly(ClickType.RIGHT);
-			add(c);
-			slot++;
-		}
-	}
+  private void nextPage() {
+    if (paginator.nextPage()) {
+      updateFrame();
+    }
+  }
 
-	private void previousPage() {
-		if (paginator.previousPage()) {
-			updateFrame();
-		}
-	}
+  private void updateFrame() {
+    InventoryDrawer.update(this);
+  }
 
-	private void nextPage() {
-		if (paginator.nextPage()) {
-			updateFrame();
-		}
-	}
+  @Override public @NotNull String getTitle() {
+    if (toEdit != null) {
+      String rank = SimpleClans.getInstance().getClanManager().getAnyClanPlayer(toEdit.getUniqueId()).getRankId();
+      return lang("gui.ranks.title.set.rank", rank);
+    }
+    return lang("gui.ranks.title");
+  }
 
-	private void updateFrame() {
-		InventoryDrawer.update(this);
-	}
-
-	@Override
-	public @NotNull String getTitle() {
-		if (toEdit != null) {
-			String rank = SimpleClans.getInstance().getClanManager().getAnyClanPlayer(toEdit.getUniqueId()).getRankId();
-			return lang("gui.ranks.title.set.rank", rank);
-		}
-		return lang("gui.ranks.title");
-	}
-
-	@Override
-	public int getSize() {
-		return 3 * 9;
-	}
-
+  @Override public int getSize() {
+    return 3 * 9;
+  }
 }

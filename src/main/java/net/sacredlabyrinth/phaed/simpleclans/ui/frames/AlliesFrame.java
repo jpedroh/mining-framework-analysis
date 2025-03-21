@@ -1,5 +1,4 @@
 package net.sacredlabyrinth.phaed.simpleclans.ui.frames;
-
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.RankPermission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
@@ -12,90 +11,80 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import static net.sacredlabyrinth.phaed.simpleclans.SimpleClans.lang;
 
 public class AlliesFrame extends SCFrame {
-	private final SimpleClans plugin = SimpleClans.getInstance();
-	private final Paginator paginator;
-	private final List<String> allies;
-	private final Clan subject;
+  private final SimpleClans plugin = SimpleClans.getInstance();
 
-	public AlliesFrame(Player viewer, SCFrame parent, Clan subject) {
-		super(parent, viewer);
-		this.subject = subject;
-		allies = subject.getAllies();
-		paginator = new Paginator(getSize() - 9, allies.size());
-	}
+  private final Paginator paginator;
 
-	@Override
-	public void createComponents() {
-		for (int slot = 0; slot < 9; slot++) {
-			if (slot == 2 || slot == 4 || slot == 6 || slot == 7)
-				continue;
-			add(Components.getPanelComponent(slot));
-		}
+  private final List<String> allies;
 
-		add(Components.getBackComponent(getParent(), 2));
+  private final Clan subject;
 
-		@SuppressWarnings("deprecation")
-		SCComponent add = new SCComponentImpl(lang("gui.allies.add.title"), null, Material.WOOL, DyeColor.CYAN.getWoolData(), 4);
-		add.setVerifiedOnly(ClickType.LEFT);
-		add.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new AddAllyFrame(this, getViewer(), subject)));
-		add.setPermission(ClickType.LEFT, RankPermission.ALLY_ADD);
-		add(add);
+  public AlliesFrame(Player viewer, SCFrame parent, Clan subject) {
+    super(parent, viewer);
+    this.subject = subject;
+    allies = subject.getAllies();
+    paginator = new Paginator(getSize() - 9, allies.size());
+  }
 
-		add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
-		add(Components.getNextPageComponent(7, this::nextPage, paginator));
+  @Override public void createComponents() {
+    for (int slot = 0; slot < 9; slot++) {
+      if (slot == 2 || slot == 4 || slot == 6 || slot == 7) {
+        continue;
+      }
+      add(Components.getPanelComponent(slot));
+    }
+    add(Components.getBackComponent(getParent(), 2));
+    @SuppressWarnings(value = { "deprecation" }) SCComponent add = new SCComponentImpl(lang("gui.allies.add.title"), null, Material.WOOL, DyeColor.CYAN.getWoolData(), 4);
+    add.setVerifiedOnly(ClickType.LEFT);
+    add.setListener(ClickType.LEFT, () -> InventoryDrawer.open(new AddAllyFrame(this, getViewer(), subject)));
+    add.setPermission(ClickType.LEFT, RankPermission.ALLY_ADD);
+    add(add);
+    add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
+    add(Components.getNextPageComponent(7, this::nextPage, paginator));
+    int slot = 9;
+    for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+      Clan clan = plugin.getClanManager().getClan(allies.get(i));
+      if (clan == null) {
+        continue;
+      }
+      SCComponent c = new SCComponentImpl(lang("gui.clanlist.clan.title", clan.getColorTag(), clan.getName()), Collections.singletonList(lang("gui.allies.clan.lore")), Material.BANNER, slot);
+      ItemMeta itemMeta = c.getItemMeta();
+      ((BannerMeta) Objects.requireNonNull(itemMeta)).setBaseColor(DyeColor.CYAN);
+      c.setItemMeta(itemMeta);
+      c.setListener(ClickType.RIGHT, () -> InventoryController.runSubcommand(getViewer(), String.format("ally %s %s", lang("remove"), clan.getTag()), false));
+      c.setPermission(ClickType.RIGHT, RankPermission.ALLY_REMOVE);
+      add(c);
+      slot++;
+    }
+  }
 
-		int slot = 9;
-		for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+  private void previousPage() {
+    if (paginator.previousPage()) {
+      updateFrame();
+    }
+  }
 
-			Clan clan = plugin.getClanManager().getClan(allies.get(i));
-			if (clan == null)
-				continue;
-			SCComponent c = new SCComponentImpl(
-					lang("gui.clanlist.clan.title", clan.getColorTag(), clan.getName()),
-					Collections.singletonList(lang("gui.allies.clan.lore")), Material.BANNER, slot);
-			ItemMeta itemMeta = c.getItemMeta();
-			((BannerMeta) Objects.requireNonNull(itemMeta)).setBaseColor(DyeColor.CYAN);
-			c.setItemMeta(itemMeta);
-			c.setListener(ClickType.RIGHT, () -> InventoryController.runSubcommand(getViewer(),
-					String.format("ally %s %s", lang("remove"), clan.getTag()), false));
-			c.setPermission(ClickType.RIGHT, RankPermission.ALLY_REMOVE);
-			add(c);
-			slot++;
-		}
-	}
+  private void nextPage() {
+    if (paginator.nextPage()) {
+      updateFrame();
+    }
+  }
 
-	private void previousPage() {
-		if (paginator.previousPage()) {
-			updateFrame();
-		}
-	}
+  private void updateFrame() {
+    InventoryDrawer.update(this);
+  }
 
-	private void nextPage() {
-		if (paginator.nextPage()) {
-			updateFrame();
-		}
-	}
+  @Override public @NotNull String getTitle() {
+    return lang("gui.allies.title");
+  }
 
-	private void updateFrame() {
-		InventoryDrawer.update(this);
-	}
-
-	@Override
-	public @NotNull String getTitle() {
-		return lang("gui.allies.title");
-	}
-
-	@Override
-	public int getSize() {
-		return 6 * 9;
-	}
-
+  @Override public int getSize() {
+    return 6 * 9;
+  }
 }

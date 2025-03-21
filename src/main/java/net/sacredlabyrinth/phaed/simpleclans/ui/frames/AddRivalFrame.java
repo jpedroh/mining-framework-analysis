@@ -1,15 +1,12 @@
 package net.sacredlabyrinth.phaed.simpleclans.ui.frames;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.RankPermission;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
@@ -21,77 +18,66 @@ import net.sacredlabyrinth.phaed.simpleclans.ui.SCFrame;
 import net.sacredlabyrinth.phaed.simpleclans.utils.Paginator;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.jetbrains.annotations.NotNull;
-
 import static net.sacredlabyrinth.phaed.simpleclans.SimpleClans.lang;
 
 public class AddRivalFrame extends SCFrame {
-	private final SimpleClans plugin = SimpleClans.getInstance();
+  private final SimpleClans plugin = SimpleClans.getInstance();
 
-	private final List<Clan> notRivals;
-	private final Paginator paginator;
+  private final List<Clan> notRivals;
 
-	public AddRivalFrame(SCFrame parent, Player viewer, Clan subject) {
-		super(parent, viewer);
-		notRivals = plugin.getClanManager().getClans().stream()
-				.filter(c -> !c.equals(subject) && !c.isRival(subject.getTag()) && !c.isAlly(subject.getTag()))
-				.collect(Collectors.toList());
-		paginator = new Paginator(getSize() - 9, notRivals.size());
-	}
+  private final Paginator paginator;
 
-	@Override
-	public void createComponents() {
-		for (int slot = 0; slot < 9; slot++) {
-			if (slot == 2 || slot == 6 || slot == 7)
-				continue;
-			add(Components.getPanelComponent(slot));
-		}
-		add(Components.getBackComponent(getParent(), 2));
+  public AddRivalFrame(SCFrame parent, Player viewer, Clan subject) {
+    super(parent, viewer);
+    notRivals = plugin.getClanManager().getClans().stream().filter((c) -> !c.equals(subject) && !c.isRival(subject.getTag()) && !c.isAlly(subject.getTag())).collect(Collectors.toList());
+    paginator = new Paginator(getSize() - 9, notRivals.size());
+  }
 
-		add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
-		add(Components.getNextPageComponent(7, this::nextPage, paginator));
+  @Override public void createComponents() {
+    for (int slot = 0; slot < 9; slot++) {
+      if (slot == 2 || slot == 6 || slot == 7) {
+        continue;
+      }
+      add(Components.getPanelComponent(slot));
+    }
+    add(Components.getBackComponent(getParent(), 2));
+    add(Components.getPreviousPageComponent(6, this::previousPage, paginator));
+    add(Components.getNextPageComponent(7, this::nextPage, paginator));
+    int slot = 9;
+    for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+      Clan notRival = notRivals.get(i);
+      SCComponent c = new SCComponentImpl(lang("gui.clanlist.clan.title", notRival.getColorTag(), notRival.getName()), Arrays.asList(lang("gui.add.rival.clan.lore")), Material.BANNER, slot);
+      BannerMeta bannerMeta = (BannerMeta) Objects.requireNonNull(c.getItemMeta());
+      bannerMeta.setBaseColor(DyeColor.RED);
+      c.setItemMeta(bannerMeta);
+      c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(), String.format("rival %s %s", lang("add"), notRival.getTag()), false));
+      c.setPermission(ClickType.LEFT, RankPermission.RIVAL_ADD);
+      add(c);
+      slot++;
+    }
+  }
 
-		int slot = 9;
-		for (int i = paginator.getMinIndex(); paginator.isValidIndex(i); i++) {
+  private void previousPage() {
+    if (paginator.previousPage()) {
+      updateFrame();
+    }
+  }
 
-			Clan notRival = notRivals.get(i);
-			SCComponent c = new SCComponentImpl(
-					lang("gui.clanlist.clan.title", notRival.getColorTag(), notRival.getName()),
-					Arrays.asList(lang("gui.add.rival.clan.lore")), Material.BANNER, slot);
-			BannerMeta bannerMeta = (BannerMeta) Objects.requireNonNull(c.getItemMeta());
-			bannerMeta.setBaseColor(DyeColor.RED);
-			c.setItemMeta(bannerMeta);
+  private void nextPage() {
+    if (paginator.nextPage()) {
+      updateFrame();
+    }
+  }
 
-			c.setListener(ClickType.LEFT, () -> InventoryController.runSubcommand(getViewer(),
-					String.format("rival %s %s", lang("add"), notRival.getTag()), false));
-			c.setPermission(ClickType.LEFT, RankPermission.RIVAL_ADD);
-			add(c);
-			slot++;
-		}
-	}
+  private void updateFrame() {
+    InventoryDrawer.update(this);
+  }
 
-	private void previousPage() {
-		if (paginator.previousPage()) {
-			updateFrame();
-		}
-	}
+  @Override public @NotNull String getTitle() {
+    return lang("gui.add.rival.title");
+  }
 
-	private void nextPage() {
-		if (paginator.nextPage()) {
-			updateFrame();
-		}
-	}
-
-	private void updateFrame() {
-		InventoryDrawer.update(this);
-	}
-
-	@Override
-	public @NotNull String getTitle() {
-		return lang("gui.add.rival.title");
-	}
-
-	@Override
-	public int getSize() {
-		return 6 * 9;
-	}
+  @Override public int getSize() {
+    return 6 * 9;
+  }
 }
