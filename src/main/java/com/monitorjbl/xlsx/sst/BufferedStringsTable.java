@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx.sst;
-
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -7,7 +6,6 @@ import org.apache.poi.util.StaxHelper;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -19,8 +17,7 @@ import java.util.List;
 public class BufferedStringsTable extends SharedStringsTable implements AutoCloseable {
   private final FileBackedList list;
 
-  public static BufferedStringsTable getSharedStringsTable(File tmp, int cacheSizeBytes, OPCPackage pkg)
-      throws IOException {
+  public static BufferedStringsTable getSharedStringsTable(File tmp, int cacheSizeBytes, OPCPackage pkg) throws IOException {
     List<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
     return parts.size() == 0 ? null : new BufferedStringsTable(parts.get(0), tmp, cacheSizeBytes);
   }
@@ -30,19 +27,16 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
     readFrom(part.getInputStream());
   }
 
-  @Override
-  public void readFrom(InputStream is) throws IOException {
+  @Override public void readFrom(InputStream is) throws IOException {
     try {
       XMLEventReader xmlEventReader = StaxHelper.newXMLInputFactory().createXMLEventReader(is);
-
-      while(xmlEventReader.hasNext()) {
+      while (xmlEventReader.hasNext()) {
         XMLEvent xmlEvent = xmlEventReader.nextEvent();
-
-        if(xmlEvent.isStartElement() && xmlEvent.asStartElement().getName().getLocalPart().equals("si")) {
+        if (xmlEvent.isStartElement() && xmlEvent.asStartElement().getName().getLocalPart().equals("si")) {
           list.add(parseCT_Rst(xmlEventReader));
         }
       }
-    } catch(XMLStreamException e) {
+    } catch (XMLStreamException e) {
       throw new IOException(e);
     }
   }
@@ -53,23 +47,22 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
    * type {@code CT_Rst}</a>.
    */
   private String parseCT_Rst(XMLEventReader xmlEventReader) throws XMLStreamException {
-    // Precondition: pointing to <si>;  Post condition: pointing to </si>
     StringBuilder buf = new StringBuilder();
     XMLEvent xmlEvent;
-    while((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
-      switch(xmlEvent.asStartElement().getName().getLocalPart()) {
-        case "t": // Text
-          buf.append(xmlEventReader.getElementText());
-          break;
-        case "r": // Rich Text Run
-          parseCT_RElt(xmlEventReader, buf);
-          break;
-        case "rPh": // Phonetic Run
-        case "phoneticPr": // Phonetic Properties
-          skipElement(xmlEventReader);
-          break;
+    while ((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
+      switch (xmlEvent.asStartElement().getName().getLocalPart()) {
+        case "t":
+        buf.append(xmlEventReader.getElementText());
+        break;
+        case "r":
+        parseCT_RElt(xmlEventReader, buf);
+        break;
+        case "rPh":
+        case "phoneticPr":
+        skipElement(xmlEventReader);
+        break;
         default:
-          throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
+        throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
       }
     }
     return buf.toString();
@@ -81,36 +74,32 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
    * type {@code CT_RElt}</a>.
    */
   private void parseCT_RElt(XMLEventReader xmlEventReader, StringBuilder buf) throws XMLStreamException {
-    // Precondition: pointing to <r>;  Post condition: pointing to </r>
     XMLEvent xmlEvent;
-    while((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
-      switch(xmlEvent.asStartElement().getName().getLocalPart()) {
-        case "t": // Text
-          buf.append(xmlEventReader.getElementText());
-          break;
-        case "rPr": // Run Properties
-          skipElement(xmlEventReader);
-          break;
+    while ((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
+      switch (xmlEvent.asStartElement().getName().getLocalPart()) {
+        case "t":
+        buf.append(xmlEventReader.getElementText());
+        break;
+        case "rPr":
+        skipElement(xmlEventReader);
+        break;
         default:
-          throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
+        throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
       }
     }
   }
 
   private void skipElement(XMLEventReader xmlEventReader) throws XMLStreamException {
-    // Precondition: pointing to start element;  Post condition: pointing to end element
-    while(xmlEventReader.nextTag().isStartElement()) {
-      skipElement(xmlEventReader); // recursively skip over child
+    while (xmlEventReader.nextTag().isStartElement()) {
+      skipElement(xmlEventReader);
     }
   }
 
-  @Override
-  public RichTextString getItemAt(int idx) {
+  @Override public RichTextString getItemAt(int idx) {
     return new XSSFRichTextString(list.getAt(idx));
   }
 
-  @Override
-  public void close() throws IOException {
+  @Override public void close() throws IOException {
     super.close();
     list.close();
   }
