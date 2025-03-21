@@ -693,6 +693,7 @@ public class EWAHCompressedBitmapTest {
     }
     EWAHCompressedBitmap answer = ewah[0];
     EWAHCompressedBitmap answer2 = ewah[0];
+    ;
     for (int k = 1; k < ewah.length; ++k) {
       answer = answer.andNot(ewah[k]);
       EWAHCompressedBitmap copy = null;
@@ -808,12 +809,12 @@ public class EWAHCompressedBitmapTest {
     bitmap.set(7);
     isTrue(1 == bitmap.cardinality());
     isTrue(1 == bitmap.getPositions().size());
-    isTrue(7 == bitmap.getPositions().get(0).intValue());
+    isTrue(7 == bitmap.getPositions().get(0));
     bitmap.clear();
     bitmap.set( 5000 );
     isTrue(1 == bitmap.cardinality());
     isTrue(1 == bitmap.getPositions().size());
-    isTrue(5000 == bitmap.getPositions().get(0).intValue());
+    isTrue(5000 == bitmap.getPositions().get(0));
     bitmap.set(5001);
     bitmap.set(5005);
     bitmap.set(5100);
@@ -826,28 +827,10 @@ public class EWAHCompressedBitmapTest {
     isTrue(4 == bitmap.cardinality());
     List<Integer> positions = bitmap.getPositions();
     isTrue(4 == positions.size());
-    isTrue(5 == positions.get(0).intValue());
-    isTrue(7 == positions.get(1).intValue());
-    isTrue(1000 == positions.get(2).intValue());
-    isTrue(1001 == positions.get(3).intValue());
-  }
-  
-  /**
-   * Test the intersects method
-   */
-  @Test
-  public void testIntersectsMethod(){
-      System.out.println("testing Intersets Bug");
-      EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
-      bitmap.set(1);
-      EWAHCompressedBitmap bitmap2 = new EWAHCompressedBitmap();
-      bitmap2.set(1);
-      bitmap2.set(11);
-      bitmap2.set(111);
-      bitmap2.set(1111111);
-      bitmap2.set(11111111);
-      isTrue(bitmap.intersects(bitmap2));
-      isTrue(bitmap2.intersects(bitmap));
+    isTrue(5 == positions.get(0));
+    isTrue(7 == positions.get(1));
+    isTrue(1000 == positions.get(2));
+    isTrue(1001 == positions.get(3));
   }
 
   @Test
@@ -879,5 +862,23 @@ public class EWAHCompressedBitmapTest {
     EWAHCompressedBitmap expected = bitmap1.or(bitmap2).or(bitmap3).or(bitmap1);
 
     assertEqualsPositions(expected, EWAHCompressedBitmap.or(bitmap1,bitmap2,bitmap3,bitmap1));
+  }
+  
+  /**
+   * Test the intersects method
+   */
+  @Test
+  public void testIntersectsMethod(){
+      System.out.println("testing Intersets Bug");
+      EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
+      bitmap.set(1);
+      EWAHCompressedBitmap bitmap2 = new EWAHCompressedBitmap();
+      bitmap2.set(1);
+      bitmap2.set(11);
+      bitmap2.set(111);
+      bitmap2.set(1111111);
+      bitmap2.set(11111111);
+      isTrue(bitmap.intersects(bitmap2));
+      isTrue(bitmap2.intersects(bitmap));
   }
 }
