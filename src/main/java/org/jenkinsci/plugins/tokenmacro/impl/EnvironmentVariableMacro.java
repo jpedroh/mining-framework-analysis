@@ -8,6 +8,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +56,27 @@ public class EnvironmentVariableMacro extends DataBoundTokenMacro {
      */
     @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     private String getEnvVarFromWorkflowRun(Run<?,?> run) {
+        Class<?> workflowRunClass = run.getClass();
         try {
+<<<<<<< /usr/src/app/output/jenkinsci/token-macro-plugin/47d8b7d061275a8c961c9f0fd17bffcb2a656b89/src/main/java/org/jenkinsci/plugins/tokenmacro/impl/EnvironmentVariableMacro.java/left.java
+            if(workflowRunClass.getName().contains("WorkflowRun")) {
+                // get the FlowExecution object for this run
+                Method getExecution = workflowRunClass.getMethod("getExecution");
+                Object execution = getExecution.invoke(run);
+||||||| /usr/src/app/output/jenkinsci/token-macro-plugin/47d8b7d061275a8c961c9f0fd17bffcb2a656b89/src/main/java/org/jenkinsci/plugins/tokenmacro/impl/EnvironmentVariableMacro.java/base.java
+            Class<?> workflowRunClass = run.getClass();
+
+            if(workflowRunClass.getName().contains("WorkflowRun")) {
+                // get the FlowExecution object for this run
+                Method getExecution = workflowRunClass.getMethod("getExecution");
+                Object execution = getExecution.invoke(run);
+=======
             WorkflowRun workflowRun = (WorkflowRun) run;
 
             FlowExecution execution = workflowRun.getExecution();
             if(execution != null) {
                 List<StepExecution> actualExecutions = execution.getCurrentExecutions(true).get();
+>>>>>>> /usr/src/app/output/jenkinsci/token-macro-plugin/47d8b7d061275a8c961c9f0fd17bffcb2a656b89/src/main/java/org/jenkinsci/plugins/tokenmacro/impl/EnvironmentVariableMacro.java/right.java
 
                 StepContext context = actualExecutions.get(0).getContext();
                 Map<String, String> vars = context.get(EnvVars.class);
@@ -68,7 +84,7 @@ public class EnvironmentVariableMacro extends DataBoundTokenMacro {
                     return vars.get(var);
                 }
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             // don't do anything here
         }
         return "";
