@@ -1,10 +1,8 @@
 package javapns.notification.transmission;
-
 import javapns.devices.Device;
 import javapns.devices.Devices;
 import javapns.devices.exceptions.InvalidDeviceTokenFormatException;
 import javapns.notification.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -23,18 +21,24 @@ import java.util.stream.Collectors;
  * @see NotificationThread
  */
 public class NotificationThreads extends ThreadGroup implements PushQueue {
-  private static final long DEFAULT_DELAY_BETWEEN_THREADS = 500; // the number of milliseconds to wait between each thread startup
+  private static final long DEFAULT_DELAY_BETWEEN_THREADS = 500;
+
   private static final String JAVAPNS_NOTIFICATION_THREADS = "javapns notification threads (";
+
   private static final String THREADS = " threads)";
 
   private final Object finishPoint = new Object();
 
   private List<NotificationThread> threads = new ArrayList<>();
+
   private NotificationProgressListener listener;
 
   private boolean started = false;
+
   private int threadsRunning = 0;
+
   private int nextThread = 0;
+
   private long delayBetweenThreads = DEFAULT_DELAY_BETWEEN_THREADS;
 
   /**
@@ -47,7 +51,7 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
    */
   public NotificationThreads(final AppleNotificationServer server, final Payload payload, final List<Device> devices, final int numberOfThreads) {
     super(JAVAPNS_NOTIFICATION_THREADS + numberOfThreads + THREADS);
-    threads.addAll(makeGroups(devices, numberOfThreads).stream().map(deviceGroup -> new NotificationThread(this, new PushNotificationManager(), server, payload, deviceGroup)).collect(Collectors.toList()));
+    threads.addAll(makeGroups(devices, numberOfThreads).stream().map((deviceGroup) -> new NotificationThread(this, new PushNotificationManager(), server, payload, deviceGroup)).collect(Collectors.toList()));
   }
 
   /**
@@ -59,7 +63,7 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
    */
   public NotificationThreads(final AppleNotificationServer server, final List<PayloadPerDevice> messages, final int numberOfThreads) {
     super(JAVAPNS_NOTIFICATION_THREADS + numberOfThreads + THREADS);
-    threads.addAll(makeGroups(messages, numberOfThreads).stream().map(deviceGroup -> new NotificationThread(this, new PushNotificationManager(), server, deviceGroup)).collect(Collectors.toList()));
+    threads.addAll(makeGroups(messages, numberOfThreads).stream().map((deviceGroup) -> new NotificationThread(this, new PushNotificationManager(), server, deviceGroup)).collect(Collectors.toList()));
   }
 
   /**
@@ -86,8 +90,7 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
    * @param devices a very large list of devices
    * @param threads a list of pre-built threads
    */
-  @SuppressWarnings("unchecked")
-  private NotificationThreads(final AppleNotificationServer server, final Payload payload, final List<Device> devices, final List<NotificationThread> threads) {
+  @SuppressWarnings(value = { "unchecked" }) private NotificationThreads(final AppleNotificationServer server, final Payload payload, final List<Device> devices, final List<NotificationThread> threads) {
     super(JAVAPNS_NOTIFICATION_THREADS + threads.size() + THREADS);
     this.threads = threads;
     final List<List<?>> groups = makeGroups(devices, threads.size());
@@ -180,7 +183,6 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
       final List threadObjects = objects.subList(firstObject, lastObject);
       groups.add(threadObjects);
     }
-
     return groups;
   }
 
@@ -193,7 +195,7 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
   }
 
   public PushQueue add(final PayloadPerDevice message) {
-    start(); // just in case start() was not invoked before
+    start();
     final NotificationThread targetThread = getNextAvailableThread();
     targetThread.add(message);
     return targetThread;
@@ -212,7 +214,7 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
         return thread;
       }
     }
-    return getNextThread(); /* All threads are busy, return the next one regardless of its busy status */
+    return getNextThread();
   }
 
   /**
@@ -246,10 +248,8 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
       threadsRunning++;
       thread.start();
       try {
-        /* Wait for a specific number of milliseconds to elapse so that not all threads start simultaenously. */
         Thread.sleep(delayBetweenThreads);
       } catch (final InterruptedException e) {
-        // empty
       }
     }
     if (listener != null) {
@@ -338,7 +338,6 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
           finishPoint.notifyAll();
         }
       } catch (final Exception e) {
-        // empty
       }
     }
   }
@@ -359,7 +358,6 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
         finishPoint.wait();
       }
     } catch (final IllegalMonitorStateException e) {
-      /* All threads are most likely already done, so we ignore this */
     }
   }
 
@@ -479,5 +477,4 @@ public class NotificationThreads extends ThreadGroup implements PushQueue {
   public void setDelayBetweenThreads(final long delayBetweenThreads) {
     this.delayBetweenThreads = delayBetweenThreads;
   }
-
 }

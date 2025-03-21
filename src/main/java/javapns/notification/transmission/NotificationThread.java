@@ -1,12 +1,10 @@
 package javapns.notification.transmission;
-
 import javapns.communication.exceptions.CommunicationException;
 import javapns.communication.exceptions.KeystoreException;
 import javapns.devices.Device;
 import javapns.devices.Devices;
 import javapns.devices.exceptions.InvalidDeviceTokenFormatException;
 import javapns.notification.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -33,30 +31,40 @@ import java.util.Vector;
  */
 public class NotificationThread implements Runnable, PushQueue {
   private static final int DEFAULT_MAXNOTIFICATIONSPERCONNECTION = 200;
+
   private static final String JAVA_PNS = "JavaPNS";
+
   private static final String STANDALONE = " standalone";
+
   private static final String GROUPED = " grouped";
 
   private final Thread thread;
+
   private final AppleNotificationServer server;
+
   private final PushNotificationManager notificationManager;
+
   private final PushedNotifications notifications = new PushedNotifications();
 
   private boolean started = false;
+
   private int maxNotificationsPerConnection = DEFAULT_MAXNOTIFICATIONSPERCONNECTION;
+
   private long sleepBetweenNotifications = 0;
+
   private NotificationProgressListener listener;
+
   private int threadNumber = 1;
+
   private int nextMessageIdentifier = 1;
 
   private MODE mode = MODE.LIST;
+
   private boolean busy = false;
 
-  /* Single payload to multiple devices */
   private Payload payload;
 
   private List<Device> devices;
-  /* Individual payload per device */
 
   private List<PayloadPerDevice> messages = new ArrayList<>();
 
@@ -168,7 +176,6 @@ public class NotificationThread implements Runnable, PushQueue {
     try {
       this.thread.start();
     } catch (final IllegalStateException e) {
-      // empty
     }
     return this;
   }
@@ -179,13 +186,13 @@ public class NotificationThread implements Runnable, PushQueue {
   public void run() {
     switch (mode) {
       case LIST:
-        runList();
-        break;
+      runList();
+      break;
       case QUEUE:
-        runQueue();
-        break;
+      runQueue();
+      break;
       default:
-        break;
+      break;
     }
   }
 
@@ -216,7 +223,6 @@ public class NotificationThread implements Runnable, PushQueue {
             Thread.sleep(sleepBetweenNotifications);
           }
         } catch (final InterruptedException e) {
-          // empty
         }
         if (i != 0 && i % maxNotificationsPerConnection == 0) {
           if (listener != null) {
@@ -236,7 +242,6 @@ public class NotificationThread implements Runnable, PushQueue {
     if (listener != null) {
       listener.eventThreadFinished(this);
     }
-    /* Also notify the parent NotificationThreads, so that it can determine when all threads have finished working */
     if (this.thread.getThreadGroup() instanceof NotificationThreads) {
       ((NotificationThreads) this.thread.getThreadGroup()).threadFinished(this);
     }
@@ -263,7 +268,6 @@ public class NotificationThread implements Runnable, PushQueue {
               Thread.sleep(sleepBetweenNotifications);
             }
           } catch (final InterruptedException e) {
-            // empty
           }
           if (notificationsPushed != 0 && notificationsPushed % maxNotificationsPerConnection == 0) {
             if (listener != null) {
@@ -276,7 +280,6 @@ public class NotificationThread implements Runnable, PushQueue {
         try {
           Thread.sleep(10 * 1000);
         } catch (final Exception e) {
-          // empty
         }
       }
       notificationManager.stopConnection();
@@ -289,7 +292,6 @@ public class NotificationThread implements Runnable, PushQueue {
     if (listener != null) {
       listener.eventThreadFinished(this);
     }
-    /* Also notify the parent NotificationThreads, so that it can determine when all threads have finished working */
     if (this.thread.getThreadGroup() instanceof NotificationThreads) {
       ((NotificationThreads) this.thread.getThreadGroup()).threadFinished(this);
     }
@@ -311,7 +313,6 @@ public class NotificationThread implements Runnable, PushQueue {
       messages.add(message);
       this.thread.interrupt();
     } catch (final Exception e) {
-      // empty
     }
     return this;
   }
@@ -515,23 +516,8 @@ public class NotificationThread implements Runnable, PushQueue {
     return exceptions;
   }
 
-  /**
-   * Working modes supported by Notification Threads.
-   */
   public enum MODE {
-    /**
-     * In LIST mode, the thread is given a predefined list of devices and pushes all notifications as soon as it is started.
-     * Its work is complete, the connection is closed and the thread ends as soon as all notifications have been sent.
-     * This mode is appropriate when you have a large amount of notifications to send in one batch.
-     */
     LIST,
-
-    /**
-     * In QUEUE mode, the thread is started with an open connection and no notification to send, and waits for notifications to be queued.
-     * It opens a connection and waits for messages to be added to its queue using a queue(..) method.
-     * This mode is appropriate when you need to periodically send random individual notifications and you do not wish to open and close connections to Apple all the time (which is something Apple warns against in their documentation).
-     * Unless your software is constantly generating large amounts of random notifications and that you absolutely need to stream them over multiple threaded connections, you should not need to create more than one NotificationThread in QUEUE mode.
-     */
     QUEUE
   }
 }
