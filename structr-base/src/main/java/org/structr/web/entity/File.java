@@ -49,6 +49,8 @@ import org.structr.core.property.PropertyKey;
 import org.structr.core.property.PropertyMap;
 import org.structr.core.scheduler.JobQueueManager;
 import org.structr.core.script.Scripting;
+import org.structr.core.storage.StorageProvider;
+import org.structr.core.storage.StorageProviderFactory;
 import org.structr.storage.StorageProvider;
 import org.structr.storage.StorageProviderFactory;
 import org.structr.rest.common.XMLStructureAnalyzer;
