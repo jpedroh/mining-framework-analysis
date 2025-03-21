@@ -33,14 +33,11 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralab.greql2.evaluator;
-
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
-
 public interface GreqlEvaluator {
 	// TODO [greqlevaluator] create public interface
 	public Object getResult();
@@ -56,3 +53,4 @@ public interface GreqlEvaluator {
 	public Object evaluate(QueryImpl query, Graph datagraph,
 			GreqlEnvironment environment, ProgressFunction progressFunction);
 }
+import java.util.WeakHashMap;
