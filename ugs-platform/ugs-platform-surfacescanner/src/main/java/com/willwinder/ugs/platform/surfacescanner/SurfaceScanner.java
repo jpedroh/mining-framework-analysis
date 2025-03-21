@@ -165,10 +165,19 @@ public class SurfaceScanner {
         Position expectedProbePosition = pendingPositions.pop();
         Position probedPosition = p.getPositionIn(expectedProbePosition.getUnits());
 
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/b35723447a7acc01274ecf342d6e6c23a506b25f/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
         // The position reported from the controller might lack some precision on the X/Y position.
         // We therefore need to lower the precision when checking the probed X/Y axes
         double delta = expectedProbePosition.getUnits() == Units.MM ? 0.01 : 0.001;
         if (!isEqual(probedPosition.getX(), expectedProbePosition.getX(), delta) || !isEqual(probedPosition.getY(), expectedProbePosition.getY(), delta)) {
+||||||| /usr/src/app/output/winder/universal-g-code-sender/b35723447a7acc01274ecf342d6e6c23a506b25f/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+        if (!isEqual(probedPosition.getX(), expectedProbePosition.getX(), 0.0001) || !isEqual(probedPosition.getY(), expectedProbePosition.getY(), 0.0001)) {
+=======
+        // The position reported from controller might lack some precision on the X/Y position.
+        // We therefore need to lower the precision when checking the probed X/Y axes
+        double delta = expectedProbePosition.getUnits() == Units.MM ? 0.01 : 0.001;
+        if (!isEqual(probedPosition.getX(), expectedProbePosition.getX(), delta) || !isEqual(probedPosition.getY(), expectedProbePosition.getY(), delta)) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/b35723447a7acc01274ecf342d6e6c23a506b25f/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
             reset();
             throw new RuntimeException(String.format("Unexpected probe location, expected %s to be %s", probedPosition, expectedProbePosition));
         }
