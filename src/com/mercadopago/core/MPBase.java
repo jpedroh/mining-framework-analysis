@@ -9,15 +9,16 @@ import com.mercadopago.MPConf;
 import com.mercadopago.core.annotations.rest.*;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpMethod;
-import com.mercadopago.net.MPRestClient;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mercado Pago SDK
@@ -236,56 +237,80 @@ public abstract class MPBase {
                 if (StringUtils.isEmpty(delete.path())) {
                     throw new MPException("Path not found for DELETE method");
                 }
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
                 hashAnnotation = fillHashAnnotations(
                         hashAnnotation,
-                        HttpMethod.DELETE,
+                        MPRestClient.HttpMethod.DELETE,
                         delete.path(),
                         null,
                         delete.retries(),
                         delete.connectionTimeout(),
                         delete.soTimeout());
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+                hashAnnotation = fillHashAnnotations(hashAnnotation, MPRestClient.HttpMethod.DELETE, delete.path(), null, delete.retries());
+=======
+                hashAnnotation = fillHashAnnotations(hashAnnotation, HttpMethod.DELETE, delete.path(), null);
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
 
             } else if (annotation instanceof GET) {
                 GET get = (GET) annotation;
                 if (StringUtils.isEmpty(get.path())) {
                     throw new MPException("Path not found for GET method");
                 }
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
                 hashAnnotation = fillHashAnnotations(
                         hashAnnotation,
-                        HttpMethod.GET,
+                        MPRestClient.HttpMethod.GET,
                         get.path(),
                         null,
                         get.retries(),
                         get.connectionTimeout(),
                         get.soTimeout());
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+                hashAnnotation = fillHashAnnotations(hashAnnotation, MPRestClient.HttpMethod.GET, get.path(), null, get.retries());
+=======
+                hashAnnotation = fillHashAnnotations(hashAnnotation, HttpMethod.GET, get.path(), null);
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
 
             } else if (annotation instanceof POST) {
                 POST post = (POST) annotation;
                 if (StringUtils.isEmpty(post.path())) {
                     throw new MPException("Path not found for POST method");
                 }
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
                 hashAnnotation = fillHashAnnotations(
                         hashAnnotation,
-                        HttpMethod.POST,
+                        MPRestClient.HttpMethod.POST,
                         post.path(),
                         post.payloadType(),
                         post.retries(),
                         post.connectionTimeout(),
                         post.soTimeout());
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+                hashAnnotation = fillHashAnnotations(hashAnnotation, MPRestClient.HttpMethod.POST, post.path(), post.payloadType(), post.retries());
+=======
+                hashAnnotation = fillHashAnnotations(hashAnnotation, HttpMethod.POST, post.path(), post.payloadType());
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
 
             } else if (annotation instanceof PUT) {
                 PUT put = (PUT) annotation;
                 if (StringUtils.isEmpty(put.path())) {
                     throw new MPException("Path not found for PUT method");
                 }
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
                 hashAnnotation = fillHashAnnotations(
                         hashAnnotation,
-                        HttpMethod.PUT,
+                        MPRestClient.HttpMethod.PUT,
                         put.path(),
                         put.payloadType(),
                         put.retries(),
                         put.connectionTimeout(),
                         put.soTimeout());
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+                hashAnnotation = fillHashAnnotations(hashAnnotation, MPRestClient.HttpMethod.PUT, put.path(), put.payloadType(), put.retries());
+=======
+                hashAnnotation = fillHashAnnotations(hashAnnotation, HttpMethod.PUT, put.path(), put.payloadType());
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
             }
         }
         return hashAnnotation;
@@ -301,14 +326,20 @@ public abstract class MPBase {
      * @return                      the HashMap object that is received by param
      * @throws MPException
      */
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
     private HashMap<String, Object> fillHashAnnotations(
             HashMap<String, Object> hashAnnotation,
-            HttpMethod method,
+            MPRestClient.HttpMethod method,
             String path,
             PayloadType payloadType,
             int retries,
             int connectionTimeout,
             int soTimeout)
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+    private HashMap<String, Object> fillHashAnnotations(HashMap<String, Object> hashAnnotation, MPRestClient.HttpMethod method, String path, PayloadType payloadType, int retries)
+=======
+    private HashMap<String, Object> fillHashAnnotations(HashMap<String, Object> hashAnnotation, HttpMethod method, String path, PayloadType payloadType)
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
             throws MPException {
         if (hashAnnotation.containsKey("method")) {
             throw new MPException("Multiple rest methods found");
@@ -316,9 +347,14 @@ public abstract class MPBase {
         hashAnnotation.put("method", method);
         hashAnnotation.put("path", path);
         hashAnnotation.put("payloadType", payloadType);
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/left.java
         hashAnnotation.put("retries", retries);
         hashAnnotation.put("connectionTimeout", connectionTimeout);
         hashAnnotation.put("soTimeout", soTimeout);
+||||||| /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/base.java
+        hashAnnotation.put("retries", retries);
+=======
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/34ee96bc8793f17a98d6048e2ddb058f4c02de76/src/com/mercadopago/core/MPBase.java/right.java
         return hashAnnotation;
     }
 
