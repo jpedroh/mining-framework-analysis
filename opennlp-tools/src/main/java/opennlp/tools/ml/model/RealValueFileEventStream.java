@@ -1,36 +1,14 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package opennlp.tools.ml.model;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import opennlp.tools.ml.AbstractTrainer;
 import opennlp.tools.ml.PluggableParameters;
 import opennlp.tools.ml.maxent.GIS;
 import opennlp.tools.ml.maxent.io.SuffixSensitiveGISModelWriter;
 
 public class RealValueFileEventStream extends FileEventStream {
-
   public RealValueFileEventStream(String fileName) throws IOException {
     super(fileName);
   }
@@ -82,8 +60,7 @@ public class RealValueFileEventStream extends FileEventStream {
     return values;
   }
 
-  @Override
-  public Event read() throws IOException {
+  @Override public Event read() throws IOException {
     String line;
     if ((line = reader.readLine()) != null) {
       int si = line.indexOf(' ');
@@ -92,7 +69,6 @@ public class RealValueFileEventStream extends FileEventStream {
       float[] values = parseContexts(contexts);
       return new Event(outcome, contexts, values);
     }
-
     return null;
   }
 
@@ -110,21 +86,30 @@ public class RealValueFileEventStream extends FileEventStream {
     }
     int ai = 0;
     String eventFile = args[ai++];
-
-    Map<String,String> params=new HashMap<>(); 
-    params.put(AbstractTrainer.ITERATIONS_PARAM,"100");
+    Map<String, String> params = 
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/left.java
+    new HashMap<String, String>()
+=======
+    new HashMap<>()
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/right.java
+    ;
+    params.put(AbstractTrainer.ITERATIONS_PARAM, "100");
     params.put(AbstractTrainer.CUTOFF_PARAM, "5");
     if (ai < args.length) {
-      params.put(AbstractTrainer.ITERATIONS_PARAM,args[ai++]);
+      params.put(AbstractTrainer.ITERATIONS_PARAM, args[ai++]);
       params.put(AbstractTrainer.CUTOFF_PARAM, args[ai++]);
     }
-    PluggableParameters parameters = new PluggableParameters(params, new HashMap<>());
+    PluggableParameters parameters = new PluggableParameters(params, 
+<<<<<<< /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/left.java
+    new HashMap<String, String>()
+=======
+    new HashMap<>()
+>>>>>>> /usr/src/app/output/apache/opennlp/c7d4346838f8dacac362afa0f532a3b715dc6320/opennlp-tools/src/main/java/opennlp/tools/ml/model/RealValueFileEventStream.java/right.java
+    );
     AbstractModel model;
     try (RealValueFileEventStream es = new RealValueFileEventStream(eventFile)) {
-      DataIndexer indexer=new OnePassDataIndexer();
+      DataIndexer indexer = new OnePassDataIndexer();
       indexer.init(params, new HashMap<String, String>());
-
-      // GIS should handle this better... 
       model = GIS.trainModel(parameters.getIntParam(AbstractTrainer.ITERATIONS_PARAM, AbstractTrainer.CUTOFF_DEFAULT), indexer);
     }
     new SuffixSensitiveGISModelWriter(model, new File(eventFile + ".bin.gz")).persist();

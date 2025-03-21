@@ -1,24 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package opennlp.tools.ml.model;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import opennlp.tools.util.ObjectStream;
 
 /**
@@ -38,7 +17,6 @@ import opennlp.tools.util.ObjectStream;
  * predicates.
  */
 public class OnePassDataIndexer extends AbstractDataIndexer {
-
   /**
    * One argument constructor for DataIndexer which calls the two argument
    * constructor assuming no cutoff.
@@ -47,14 +25,11 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
    *          An Event[] which contains the a list of all the Events seen in the
    *          training data.
    */
-  @Deprecated
-  public OnePassDataIndexer(ObjectStream<Event> eventStream) throws IOException {
+  @Deprecated public OnePassDataIndexer(ObjectStream<Event> eventStream) throws IOException {
     this(eventStream, 0);
   }
 
-  @Deprecated
-  public OnePassDataIndexer(ObjectStream<Event> eventStream, int cutoff)
-      throws IOException {
+  @Deprecated public OnePassDataIndexer(ObjectStream<Event> eventStream, int cutoff) throws IOException {
     this(eventStream, cutoff, true);
   }
 
@@ -68,59 +43,42 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
    *          The minimum number of times a predicate must have been observed in
    *          order to be included in the model.
    */
-  @Deprecated
-  public OnePassDataIndexer(ObjectStream<Event> eventStream, int cutoff, boolean sort)
-      throws IOException {
+  @Deprecated public OnePassDataIndexer(ObjectStream<Event> eventStream, int cutoff, boolean sort) throws IOException {
     Map<String, Integer> predicateIndex = new HashMap<>();
     List<Event> events;
     List<ComparableEvent> eventsToCompare;
-  
     System.out.println("Indexing events using cutoff of " + cutoff + "\n");
-  
     System.out.print("\tComputing event counts...  ");
     events = computeEventCounts(eventStream, predicateIndex, cutoff);
     System.out.println("done. " + events.size() + " events");
-  
     System.out.print("\tIndexing...  ");
     eventsToCompare = index(events, predicateIndex);
-    // done with event list
     events = null;
-    // done with predicates
     predicateIndex = null;
-  
     System.out.println("done.");
-  
     System.out.print("Sorting and merging events... ");
     sortAndMerge(eventsToCompare, sort);
     System.out.println("Done indexing.");
   }
 
-  public OnePassDataIndexer(){}
+  public OnePassDataIndexer() {
+  }
 
-  @Override
-  public void index(ObjectStream<Event> eventStream) throws IOException{
-    int cutoff=parameters.getIntParam(CUTOFF_PARAM, CUTOFF_DEFAULT);
-    boolean sort=parameters.getBooleanParam(SORT_PARAM, SORT_DEFAULT);
-
+  @Override public void index(ObjectStream<Event> eventStream) throws IOException {
+    int cutoff = parameters.getIntParam(CUTOFF_PARAM, CUTOFF_DEFAULT);
+    boolean sort = parameters.getBooleanParam(SORT_PARAM, SORT_DEFAULT);
     Map<String, Integer> predicateIndex = new HashMap<>();
     List<Event> events;
     List<ComparableEvent> eventsToCompare;
-
     System.out.println("Indexing events using cutoff of " + cutoff + "\n");
-
     System.out.print("\tComputing event counts...  ");
     events = computeEventCounts(eventStream, predicateIndex, cutoff);
     System.out.println("done. " + events.size() + " events");
-
     System.out.print("\tIndexing...  ");
     eventsToCompare = index(events, predicateIndex);
-    // done with event list
     events = null;
-    // done with predicates
     predicateIndex = null;
-
     System.out.println("done.");
-
     System.out.print("Sorting and merging events... ");
     sortAndMerge(eventsToCompare, sort);
     System.out.println("Done indexing.");
@@ -140,8 +98,7 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
    *          an <code>int</code> value
    * @return a <code>TLinkedList</code> value
    */
-  private List<Event> computeEventCounts(ObjectStream<Event> eventStream,
-      Map<String, Integer> predicatesInOut, int cutoff) throws IOException {
+  private List<Event> computeEventCounts(ObjectStream<Event> eventStream, Map<String, Integer> predicatesInOut, int cutoff) throws IOException {
     Set<String> predicateSet = new HashSet<>();
     Map<String, Integer> counter = new HashMap<>();
     List<Event> events = new LinkedList<>();
@@ -160,36 +117,28 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
     return events;
   }
 
-  protected List<ComparableEvent> index(List<Event> events,
-      Map<String, Integer> predicateIndex) {
+  protected List<ComparableEvent> index(List<Event> events, Map<String, Integer> predicateIndex) {
     Map<String, Integer> omap = new HashMap<>();
-
     int numEvents = events.size();
     int outcomeCount = 0;
     List<ComparableEvent> eventsToCompare = new ArrayList<>(numEvents);
     List<Integer> indexedContext = new ArrayList<>();
-
-    for(Event ev:events){
+    for (Event ev : events) {
       String[] econtext = ev.getContext();
       ComparableEvent ce;
-
       int ocID;
       String oc = ev.getOutcome();
-
       if (omap.containsKey(oc)) {
         ocID = omap.get(oc);
       } else {
         ocID = outcomeCount++;
         omap.put(oc, ocID);
       }
-
       for (String pred : econtext) {
         if (predicateIndex.containsKey(pred)) {
           indexedContext.add(predicateIndex.get(pred));
         }
       }
-
-      // drop events with no active features
       if (indexedContext.size() > 0) {
         int[] cons = new int[indexedContext.size()];
         for (int ci = 0; ci < cons.length; ci++) {
@@ -198,15 +147,12 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
         ce = new ComparableEvent(ocID, cons);
         eventsToCompare.add(ce);
       } else {
-        System.err.println("Dropped event " + ev.getOutcome() + ":"
-            + Arrays.asList(ev.getContext()));
+        System.err.println("Dropped event " + ev.getOutcome() + ":" + Arrays.asList(ev.getContext()));
       }
-      // recycle the TIntArrayList
       indexedContext.clear();
     }
     outcomeLabels = toIndexedStringArray(omap);
     predLabels = toIndexedStringArray(predicateIndex);
     return eventsToCompare;
   }
-
 }
