@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010 SonarSource and Akram Ben Aissi
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.php.phpunit;
-
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -37,7 +17,6 @@ import org.sonar.plugins.php.api.Php;
 import org.sonar.plugins.php.phpunit.xml.TestCase;
 import org.sonar.plugins.php.phpunit.xml.TestSuite;
 import org.sonar.plugins.php.phpunit.xml.TestSuites;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -49,7 +28,6 @@ import java.util.List;
  * The Class PhpUnitResultParser.
  */
 public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
-
   private static final double PERCENT = 100d;
 
   private static final double MILLISECONDS = 1000d;
@@ -65,12 +43,18 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
    * The context.
    */
   private SensorContext context;
+
+  /**
+   * The project.
+   */
   private FileSystem fileSystem;
+
   private FilePredicates filePredicates;
 
   /**
    * Instantiates a new php unit result parser.
    *
+   * @param project the project
    * @param context the context
    */
   public PhpUnitResultParser(SensorContext context, FileSystem fileSystem) {
@@ -90,7 +74,6 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
     InputStream inputStream = null;
     try {
       XStream xstream = new XStream();
-      // Sonar 2.2 migration
       xstream.setClassLoader(getClass().getClassLoader());
       xstream.aliasSystemAttribute("fileName", "class");
       xstream.processAnnotations(TestSuites.class);
@@ -98,10 +81,10 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
       xstream.processAnnotations(TestCase.class);
       inputStream = new FileInputStream(report);
       TestSuites testSuites = (TestSuites) xstream.fromXML(inputStream);
-      LOG.debug("Tests suites: " + testSuites);
+      LOG.debug("Tests suites: " + testSuites.getTestSuites());
       return testSuites;
     } catch (IOException e) {
-      throw new SonarException("Can't read PhpUnit report : " + report.getAbsolutePath(), e);
+      throw new SonarException("Can\'t read PhpUnit report : " + report.getAbsolutePath(), e);
     } finally {
       IOUtils.closeQuietly(inputStream);
     }
@@ -113,11 +96,28 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
    * @param report the unit test report
    */
   private InputFile getUnitTestInputFile(PhpUnitTestReport report) {
-    return fileSystem.inputFile(fileSystem.predicates().and(
-      filePredicates.hasPath(report.getFile()),
-      filePredicates.hasType(InputFile.Type.TEST),
-      filePredicates.hasLanguage(Php.KEY)));
+    return fileSystem.inputFile(fileSystem.predicates().and(filePredicates.hasPath(report.getFile()), filePredicates.hasType(InputFile.Type.TEST), filePredicates.hasLanguage(Php.KEY)));
   }
+
+
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitResultParser.java/left.java
+  @VisibleForTesting Resource getUnitTestResource(String filename) {
+    File testFile;
+    try {
+      testFile = new File(filename);
+    } catch (NullPointerException e) {
+      LOG.warn("Unit test resource not found: " + filename);
+      return null;
+    }
+    Resource resource = org.sonar.api.resources.File.fromIOFile(testFile, project);
+    if (resource == null) {
+      resource = org.sonar.api.resources.File.fromIOFile(testFile, moduleFileSystem.testDirs());
+    }
+    return resource;
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
 
   /**
    * Insert zero when no reports can be found.
@@ -131,7 +131,7 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
    *
    * @param reportFile the reports directories to be scan
    */
-  protected void parse(File reportFile) {
+  public void parse(File reportFile) {
     if (reportFile == null) {
       insertZeroWhenNoReports();
     } else {
@@ -196,8 +196,7 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
       }
       saveTestsDetails(fileReport);
     } else {
-      LOG.debug("Following file is not located in the test folder specified in the Sonar configuration: " + fileReport.getFile()
-        + ". The test results won't be reported in Sonar.");
+      LOG.debug("Following file is not located in the test folder specified in the Sonar configuration: " + fileReport.getFile() + ". The test results won\'t be reported in Sonar.");
     }
   }
 
