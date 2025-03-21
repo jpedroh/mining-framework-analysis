@@ -1,5 +1,4 @@
 package de.deepamehta.core.service;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.AssociationType;
 import de.deepamehta.core.DeepaMehtaTransaction;
@@ -11,13 +10,10 @@ import de.deepamehta.core.model.AssociationTypeModel;
 import de.deepamehta.core.model.SimpleValue;
 import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.model.TopicTypeModel;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-
 
 /**
  * Specification of the DeepaMehta core service -- the heart of DeepaMehta.
@@ -34,12 +30,9 @@ import java.util.Set;
  * core service is available through the <code>dms</code> object.
  */
 public interface DeepaMehtaService {
+  Topic getTopic(long id, boolean fetchComposite, ClientState clientState);
 
-    // === Topics ===
-
-    Topic getTopic(long id, boolean fetchComposite, ClientState clientState);
-
-    /**
+  /**
      * Looks up a single topic by exact property value.
      * If no such topic exists <code>null</code> is returned.
      * If more than one topic is found a runtime exception is thrown.
@@ -50,113 +43,81 @@ public interface DeepaMehtaService {
      * by calling DataField's {@link DataField#setIndexingMode} method with <code>"KEY"</code> as argument
      * (for dynamically created data fields, typically in migration classes).
      */
-    Topic getTopic(String key, SimpleValue value, boolean fetchComposite, ClientState clientState);
+  Topic getTopic(String key, SimpleValue value, boolean fetchComposite, ClientState clientState);
 
-    ResultSet<Topic> getTopics(String typeUri, boolean fetchComposite, int maxResultSize, ClientState clientState);
+  ResultSet<Topic> getTopics(String typeUri, boolean fetchComposite, int maxResultSize, ClientState clientState);
 
-    /**
+  /**
      * Performs a fulltext search.
      *
      * @param   fieldUri    The URI of the data field to search. If null is provided all fields are searched.
      * @param   wholeWord   If true the searchTerm is regarded as whole word.
      *                      If false the searchTerm is regarded as begin-of-word substring.
      */
-    Set<Topic> searchTopics(String searchTerm, String fieldUri, boolean wholeWord, ClientState clientState);
+  Set<Topic> searchTopics(String searchTerm, String fieldUri, boolean wholeWord, ClientState clientState);
 
-    Topic createTopic(TopicModel model, ClientState clientState);
+  Topic createTopic(TopicModel model, ClientState clientState);
 
-    Directives updateTopic(TopicModel model, ClientState clientState);
+  Directives updateTopic(TopicModel model, ClientState clientState);
 
-    Directives deleteTopic(long topicId, ClientState clientState);
+  Directives deleteTopic(long topicId, ClientState clientState);
 
+  Association getAssociation(long assocId, boolean fetchComposite, ClientState clientState);
 
-
-    // === Associations ===
-
-    Association getAssociation(long assocId, boolean fetchComposite, ClientState clientState);
-
-    /**
+  /**
      * Returns the association between two topics, qualified by association type and both role types.
      * If no such association exists <code>null</code> is returned.
      * If more than one association exist, a runtime exception is thrown.
      *
      * @param   assocTypeUri    Association type filter. Pass <code>null</code> to switch filter off.
      */
-    Association getAssociation(String assocTypeUri, long topic1Id, long topic2Id,
-                                                    String roleTypeUri1, String roleTypeUri2,
-                                                    boolean fetchComposite, ClientState clientState);
+  Association getAssociation(String assocTypeUri, long topic1Id, long topic2Id, String roleTypeUri1, String roleTypeUri2, boolean fetchComposite, ClientState clientState);
 
-    Association getAssociationBetweenTopicAndAssociation(String assocTypeUri, long topicId, long assocId,
-                                                    String topicRoleTypeUri, String assocRoleTypeUri,
-                                                    boolean fetchComposite, ClientState clientState);
+  Association getAssociationBetweenTopicAndAssociation(String assocTypeUri, long topicId, long assocId, String topicRoleTypeUri, String assocRoleTypeUri, boolean fetchComposite, ClientState clientState);
 
-    // ---
-
-    /**
+  /**
      * Returns all associations between two topics. If no such association exists an empty set is returned.
      */
-    Set<Association> getAssociations(long topic1Id, long topic2Id);
+  Set<Association> getAssociations(long topic1Id, long topic2Id);
 
-    /**
+  /**
      * Returns the associations between two topics. If no such association exists an empty set is returned.
      *
      * @param   assocTypeUri    Association type filter. Pass <code>null</code> to switch filter off.
      */
-    Set<Association> getAssociations(long topic1Id, long topic2Id, String assocTypeUri);
+  Set<Association> getAssociations(long topic1Id, long topic2Id, String assocTypeUri);
 
-    // ---
+  Association createAssociation(AssociationModel model, ClientState clientState);
 
-    Association createAssociation(AssociationModel model, ClientState clientState);
+  Directives updateAssociation(AssociationModel model, ClientState clientState);
 
-    Directives updateAssociation(AssociationModel model, ClientState clientState);
+  Directives deleteAssociation(long assocId, ClientState clientState);
 
-    Directives deleteAssociation(long assocId, ClientState clientState);
+  Set<String> getTopicTypeUris();
 
+  TopicType getTopicType(String topicTypeUri, ClientState clientState);
 
+  Set<TopicType> getAllTopicTypes(ClientState clientState);
 
-    // === Topic Types ===
+  TopicType createTopicType(TopicTypeModel model, ClientState clientState);
 
-    Set<String> getTopicTypeUris();
+  Directives updateTopicType(TopicTypeModel model, ClientState clientState);
 
-    TopicType getTopicType(String topicTypeUri, ClientState clientState);
+  Set<String> getAssociationTypeUris();
 
-    Set<TopicType> getAllTopicTypes(ClientState clientState);
+  AssociationType getAssociationType(String assocTypeUri, ClientState clientState);
 
-    TopicType createTopicType(TopicTypeModel model, ClientState clientState);
+  Set<AssociationType> getAllAssociationTypes(ClientState clientState);
 
-    Directives updateTopicType(TopicTypeModel model, ClientState clientState);
+  AssociationType createAssociationType(AssociationTypeModel model, ClientState clientState);
 
+  Plugin getPlugin(String pluginUri);
 
+  Set<PluginInfo> getPluginInfo();
 
-    // === Association Types ===
+  List<Object> fireEvent(CoreEvent event, Object... params);
 
-    Set<String> getAssociationTypeUris();
+  DeepaMehtaTransaction beginTx();
 
-    AssociationType getAssociationType(String assocTypeUri, ClientState clientState);
-
-    Set<AssociationType> getAllAssociationTypes(ClientState clientState);
-
-    AssociationType createAssociationType(AssociationTypeModel model, ClientState clientState);
-
-
-
-    // === Plugins ===
-
-    Plugin getPlugin(String pluginUri);
-
-    Set<PluginInfo> getPluginInfo();
-
-
-
-    // === Events ===
-
-    List<Object> fireEvent(CoreEvent event, Object... params);
-
-
-
-    // === Misc ===
-
-    DeepaMehtaTransaction beginTx();
-
-    ObjectFactory getObjectFactory();
+  ObjectFactory getObjectFactory();
 }
