@@ -129,7 +129,7 @@ import bibliothek.gui.dock.wizard.WizardSplitDockStationFactory;
  * 
  * @author Benjamin Sigg
  */
-public class ToolbarExtension implements Extension{
+public class ToolbarExtension implements Extension {
 	/** unique flag for marking {@link DockTitle}s shown above a toolbar */
 	public static final ViewTarget<BasicTitleViewItem<JComponent>> TOOLBAR_TITLE = new ViewTarget<BasicTitleViewItem<JComponent>>( "target TOOLBAR TITLE" );
 
@@ -137,71 +137,71 @@ public class ToolbarExtension implements Extension{
 	public void install( final DockController controller ){
 		final ActionViewConverter converter = controller.getActionViewConverter();
 		converter.putDefault( ActionType.BUTTON, TOOLBAR_TITLE, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
 				final BasicButtonHandler handler = new BasicButtonHandler( action, dockable );
 				final ToolbarMiniButton button = new ToolbarMiniButton( handler, handler );
-								handler.setModel(button.getModel());
-								return handler;
-							}
-						});
+				handler.setModel( button.getModel() );
+				return handler;
+			}
+		} );
 
 		converter.putDefault( ActionType.MENU, TOOLBAR_TITLE, new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
 				final BasicMenuHandler handler = new BasicMenuHandler( action, dockable );
 				final ToolbarMiniButton button = new ToolbarMiniButton( handler, handler );
-								handler.setModel(button.getModel());
-								return handler;
-							}
-						});
+				handler.setModel( button.getModel() );
+				return handler;
+			}
+		} );
 
 		converter.putDefault( ActionType.SEPARATOR, TOOLBAR_TITLE, new ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
-								if (action.shouldDisplay(ViewTarget.TITLE))
+				if( action.shouldDisplay( ViewTarget.TITLE ) )
 					return new ToolbarSeparator( action, Color.LIGHT_GRAY );
 
-								return null;
-							}
-						});
+				return null;
+			}
+		} );
 
 		converter.putDefault( ActionType.BUTTON, ToolbarActionDockable.TOOLBAR, new ViewGenerator<ButtonDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, ButtonDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.BUTTON, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 		converter.putDefault( ActionType.CHECK, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.CHECK, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 		converter.putDefault( ActionType.DROP_DOWN, ToolbarActionDockable.TOOLBAR, new ViewGenerator<DropDownAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, DropDownAction action, Dockable dockable ){
 				return converter.createView( ActionType.DROP_DOWN, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 		converter.putDefault( ActionType.MENU, ToolbarActionDockable.TOOLBAR, new ViewGenerator<MenuDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, MenuDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.MENU, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 		converter.putDefault( ActionType.RADIO, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SelectableDockAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SelectableDockAction action, Dockable dockable ){
 				return converter.createView( ActionType.RADIO, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 		converter.putDefault( ActionType.SEPARATOR, ToolbarActionDockable.TOOLBAR, new ViewGenerator<SeparatorAction, BasicTitleViewItem<JComponent>>(){
-							@Override
+			@Override
 			public BasicTitleViewItem<JComponent> create( ActionViewConverter converter, SeparatorAction action, Dockable dockable ){
 				return converter.createView( ActionType.SEPARATOR, action, ViewTarget.TITLE, dockable );
-							}
-						});
+			}
+		} );
 
 		final IconManager icons = controller.getIcons();
 		icons.setIconDefault( "toolbar.item.expand.horizontal", loadIcon( "expand_horizontal.png" ) );
@@ -223,60 +223,52 @@ public class ToolbarExtension implements Extension{
 		icons.setIconDefault( "toolbar.customization.here", loadIcon( "here.png" ) );
 
 		// controller.addActionGuard( new ExpandedActionGuard( controller ) );
-		new ExpandManager(controller);
+		new ExpandManager( controller );
 
 		// add or remove a filter for preventing fullscreen
 		final ToolbarFullscreenFilter filter = new ToolbarFullscreenFilter( controller );
 		controller.getRegister().addDockRegisterListener( new DockRegisterAdapter(){
-					@Override
+			@Override
 			public void dockStationRegistering( DockController controller, DockStation station ){
-						if (station instanceof ScreenDockStation){
+				if( station instanceof ScreenDockStation ) {
 					((ScreenDockStation) station).addFullscreenFilter( filter );
-						}
-					}
+				}
+			}
 
-					@Override
+			@Override
 			public void dockStationUnregistered( DockController controller, DockStation station ){
-						if (station instanceof ScreenDockStation){
+				if( station instanceof ScreenDockStation ) {
 					((ScreenDockStation) station).removeFullscreenFilter( filter );
-						}
-					}
-				});
+				}
+			}
+		} );
 
 		// install expandable strategy
 		controller.getProperties().addListener( ExpandableToolbarItemStrategy.STRATEGY, new DockPropertyListener<ExpandableToolbarItemStrategy>(){
-					@Override
+			@Override
 			public void propertyChanged( DockProperties properties, PropertyKey<ExpandableToolbarItemStrategy> property, ExpandableToolbarItemStrategy oldValue, ExpandableToolbarItemStrategy newValue ){
-						if (oldValue != null){
-							oldValue.uninstall(controller);
-						}
-						if (newValue != null){
-							newValue.install(controller);
-						}
-					}
-				});
+				if( oldValue != null ) {
+					oldValue.uninstall( controller );
+				}
+				if( newValue != null ) {
+					newValue.install( controller );
+				}
+			}
+		} );
 		controller.getProperties().get( ExpandableToolbarItemStrategy.STRATEGY ).install( controller );
 
-		controller.getThemeManager().put(Priority.THEME,
-				ThemeManager.STATION_PAINT + ".toolbar",
-				ThemeManager.STATION_PAINT_TYPE,
-				new ToolbarStationPaint(new Color(255, 0, 0, 125)));
 		controller.getThemeManager().put(
-				Priority.THEME,
-				ThemeManager.STATION_PAINT + ".toolbar",
-				ThemeManager.STATION_PAINT_TYPE,
-				new ToolbarStationPaint(new Color(255, 0, 0, 125), new Color(
-						128, 128, 128, 125)));
-		controller.getThemeManager().put( Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint( new Color( 255, 0, 0, 125 ) ) );
+				Priority.THEME, ThemeManager.STATION_PAINT + ".toolbar", ThemeManager.STATION_PAINT_TYPE, new ToolbarStationPaint( new Color( 255, 0, 0, 125 ), new Color(
+				128, 128, 128, 125)) );
 	}
 
 	private Icon loadIcon( String name ){
-		try{
+		try {
 			final InputStream in = getClass().getResourceAsStream( "/data/bibliothek/gui/toolbar/" + name );
-			if (in == null){
+			if( in == null ) {
 				throw new FileNotFoundException( "cannot find file '" + name + "'" );
 			}
-			final ImageIcon icon = new ImageIcon(ImageIO.read(in));
+			final ImageIcon icon = new ImageIcon( ImageIO.read( in ) );
 			in.close();
 			return icon;
 		}
@@ -289,47 +281,47 @@ public class ToolbarExtension implements Extension{
 	@Override
 	public void uninstall( DockController controller ){
 		final ActionViewConverter converter = controller.getActionViewConverter();
-		converter.putDefault(ActionType.BUTTON, TOOLBAR_TITLE, null);
+		converter.putDefault( ActionType.BUTTON, TOOLBAR_TITLE, null );
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> Collection<E> load( DockController controller, ExtensionName<E> extension ){
-		if (extension.getName().equals(PropertyTransformer.FACTORY_EXTENSION)){
+		if( extension.getName().equals( PropertyTransformer.FACTORY_EXTENSION ) ) {
 			return (Collection<E>) createPropertyFactoryExtension();
 		}
-		if (extension.getName().equals(DefaultDockRelocator.MERGE_EXTENSION)){
+		if( extension.getName().equals( DefaultDockRelocator.MERGE_EXTENSION ) ) {
 			return (Collection<E>) createMergerExtension();
 		}
-		if (extension.getName().equals(DefaultDockRelocator.INSERTER_EXTENSION)){
-			return (Collection<E>) createInserterExtension(controller);
+		if( extension.getName().equals( DefaultDockRelocator.INSERTER_EXTENSION ) ) {
+			return (Collection<E>) createInserterExtension( controller );
 		}
 		if( extension.getName().equals( ScreenDockStation.ATTRACTOR_STRATEGY_EXTENSION ) ) {
 			return (Collection<E>) createAttractorStrategies();
 		}
-		if (extension.getName().equals(DockSituation.DOCK_FACTORY_EXTENSION)){
+		if( extension.getName().equals( DockSituation.DOCK_FACTORY_EXTENSION ) ) {
 			return (Collection<E>) createDockFactories();
 		}
-		if (extension.getName().equals(DockThemeExtension.DOCK_THEME_EXTENSION)){
+		if( extension.getName().equals( DockThemeExtension.DOCK_THEME_EXTENSION ) ) {
 			return (Collection<E>) createDockThemeExtension();
 		}
 		if( extension.getName().equals( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION ) ) {
 			return (Collection<E>) createTitleFactories( (DockTitleVersion) extension.get( DockTitleVersion.DOCK_TITLE_VERSION_EXTENSION_PARAMETER ) );
 		}
-		if (extension.getName().equals(DisplayerFactory.DISPLAYER_EXTENSION)){
+		if( extension.getName().equals( DisplayerFactory.DISPLAYER_EXTENSION ) ) {
 			return (Collection<E>) createDisplayerFactories( controller, (String) extension.get( DisplayerFactory.DISPLAYER_EXTENSION_ID ) );
 		}
-		if (extension.getName().equals(TextManager.TEXT_EXTENSION)){
+		if( extension.getName().equals( TextManager.TEXT_EXTENSION ) ) {
 			return (Collection<E>) createBundles( (Locale) extension.get( TextManager.TEXT_EXTENSION_LOCALE ) );
 		}
 		if( extension.getName().equals( DefaultScreenDockWindowConfiguration.CONFIGURATION_EXTENSION ) ) {
-			return (Collection<E>) createWindowConfigurationExtension(controller);
+			return (Collection<E>) createWindowConfigurationExtension( controller );
 		}
 		if( extension.getName().equals( DefaultDockableMovingImageFactory.FACTORY_EXTENSION ) ) {
 			return (Collection<E>) createMovingImageFactory();
 		}
-		if (extension.getName().equals(ScreenDockStation.STATION_EXTENSION)){
-			return (Collection<E>) createScreenDockStationExtension(controller);
+		if( extension.getName().equals( ScreenDockStation.STATION_EXTENSION ) ) {
+			return (Collection<E>) createScreenDockStationExtension( controller );
 		}
 
 		return null;
@@ -337,45 +329,45 @@ public class ToolbarExtension implements Extension{
 
 	protected Collection<DockablePropertyFactory> createPropertyFactoryExtension(){
 		final List<DockablePropertyFactory> result = new ArrayList<DockablePropertyFactory>();
-		result.add(new ToolbarPropertyFactory());
-		result.add(new ToolbarContainerPropertyFactory());
-		result.add(new ToolbarGroupPropertyFactory());
+		result.add( new ToolbarPropertyFactory() );
+		result.add( new ToolbarContainerPropertyFactory() );
+		result.add( new ToolbarGroupPropertyFactory() );
 		return result;
 	}
 
 	protected Collection<Merger> createMergerExtension(){
 		final List<Merger> result = new ArrayList<Merger>();
-		result.add(new ToolbarDockStationMerger());
-		result.add(new ToolbarGroupDockStationMerger());
+		result.add( new ToolbarDockStationMerger() );
+		result.add( new ToolbarGroupDockStationMerger() );
 		return result;
 	}
 
 	protected Collection<Inserter> createInserterExtension( DockController controller ){
 		final List<Inserter> result = new ArrayList<Inserter>();
-		result.add(new ScreenToolbarInserter(controller));
+		result.add( new ScreenToolbarInserter( controller ) );
 		return result;
 	}
 
 	protected Collection<AttractorStrategy> createAttractorStrategies(){
 		final List<AttractorStrategy> result = new ArrayList<AttractorStrategy>();
-		result.add(new ToolbarAttractorStrategy());
+		result.add( new ToolbarAttractorStrategy() );
 		return result;
 	}
 
 	protected Collection<DockFactory<?, ?, ?>> createDockFactories(){
 		final List<DockFactory<?, ?, ?>> result = new ArrayList<DockFactory<?, ?, ?>>();
-		result.add(new ToolbarPartDockFactory());
-		result.add(new ToolbarGroupDockStationFactory());
-		result.add(new ToolbarDockStationFactory());
-		result.add(new ToolbarContainerDockStationFactory());
-		result.add(new ToolbarTabDockStationFactory());
-		result.add(new WizardSplitDockStationFactory());
-		result.add(new ToolbarActionDockableFactory());
+		result.add( new ToolbarPartDockFactory() );
+		result.add( new ToolbarGroupDockStationFactory() );
+		result.add( new ToolbarDockStationFactory() );
+		result.add( new ToolbarContainerDockStationFactory() );
+		result.add( new ToolbarTabDockStationFactory() );
+		result.add( new WizardSplitDockStationFactory() );
+		result.add( new ToolbarActionDockableFactory() );
 		return result;
 	}
 
 	protected Collection<DockTitleFactory> createTitleFactories( DockTitleVersion version ){
-		if (version.getID().equals(ScreenDockStation.TITLE_ID)){
+		if( version.getID().equals( ScreenDockStation.TITLE_ID ) ) {
 			final List<DockTitleFactory> result = new ArrayList<DockTitleFactory>();
 			result.add( new ScreenToolbarDockTitleFactory( version.getController() ) );
 			return result;
@@ -384,9 +376,9 @@ public class ToolbarExtension implements Extension{
 	}
 
 	protected Collection<DisplayerFactory> createDisplayerFactories( DockController controller, String id ){
-		if (id.equals(ScreenDockStation.DISPLAYER_ID)){
+		if( id.equals( ScreenDockStation.DISPLAYER_ID ) ) {
 			final List<DisplayerFactory> result = new ArrayList<DisplayerFactory>();
-			result.add(new ScreenToolbarDisplayerFactory(controller));
+			result.add( new ScreenToolbarDisplayerFactory( controller ) );
 			return result;
 		}
 		return null;
@@ -411,8 +403,8 @@ public class ToolbarExtension implements Extension{
 				manager.put( Priority.THEME, ThemeManager.DISPLAYER_FACTORY + ".toolbar.screen", ThemeManager.DISPLAYER_FACTORY_TYPE, ToolbarDockableDisplayer.FACTORY );
 
 				final DockTitleManager titles = controller.getDockTitleManager();
-//				titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
-//						ToolbarDockTitleGrip.createFactory());
+				// titles.registerTheme(ToolbarGroupDockStation.TITLE_ID,
+				// ToolbarDockTitleGrip.createFactory());
 				titles.registerTheme( ToolbarGroupDockStation.TITLE_ID, ToolbarDockTitlePoint.createFactory() );
 				titles.registerTheme( ToolbarDockStation.TITLE_ID, NullTitleFactory.INSTANCE );
 
@@ -438,12 +430,12 @@ public class ToolbarExtension implements Extension{
 			}
 
 		};
-		return Collections.singleton(extension);
+		return Collections.singleton( extension );
 	}
 
 	protected Collection<ScreenDockWindowConfiguration> createWindowConfigurationExtension( DockController controller ){
 		final List<ScreenDockWindowConfiguration> result = new ArrayList<ScreenDockWindowConfiguration>();
-		result.add(new ToolbarWindowConfiguration(controller));
+		result.add( new ToolbarWindowConfiguration( controller ) );
 		return result;
 	}
 
@@ -457,7 +449,7 @@ public class ToolbarExtension implements Extension{
 
 	protected Collection<ScreenDockStationExtension> createScreenDockStationExtension( DockController controller ){
 		List<ScreenDockStationExtension> result = new ArrayList<ScreenDockStationExtension>();
-		result.add(new ToolbarScreenDockStationExtension(controller));
+		result.add( new ToolbarScreenDockStationExtension( controller ) );
 		return result;
 	}
 }
