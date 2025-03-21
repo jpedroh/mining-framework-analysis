@@ -91,7 +91,7 @@ public class WebservicePlugin extends PluginActivator {
         try {
             ResultSet<Topic> topics = dms.getTopics(typeUri, fetchComposite, maxResultSize, clientState);
             //
-            firePreSend(topics, clientState);
+            triggerPreSend(topics, clientState);
             //
             return topics;
         } catch (Exception e) {
@@ -162,7 +162,7 @@ public class WebservicePlugin extends PluginActivator {
         try {
             Association assoc = dms.getAssociation(assocId, fetchComposite, clientState);
             //
-            // firePreSend(assoc, clientState);  ### TODO
+            // triggerPreSend(assoc, clientState);  ### TODO
             //
             return assoc;
         } catch (Exception e) {
@@ -286,7 +286,7 @@ public class WebservicePlugin extends PluginActivator {
         try {
             TopicType topicType = dms.createTopicType(topicTypeModel, clientState);
             //
-            firePreSend(topicType, clientState);
+            triggerPreSend(topicType, clientState);
             //
             return topicType;
         } catch (Exception e) {
@@ -300,7 +300,7 @@ public class WebservicePlugin extends PluginActivator {
         try {
             Directives directives = dms.updateTopicType(model, clientState);
             //
-            firePreSend(directives, clientState);
+            triggerPreSend(directives, clientState);
             //
             return directives;
         } catch (Exception e) {
@@ -437,9 +437,9 @@ public class WebservicePlugin extends PluginActivator {
         dms.fireEvent(CoreEvent.PRE_SEND_TOPIC_TYPE, topicType, clientState);
     }
 
-    private void firePreSend(ResultSet<Topic> topics, ClientState clientState) {
+    private void triggerPreSend(ResultSet<Topic> topics, ClientState clientState) {
         for (Topic topic : topics) {
-            firePreSend(topic, clientState);
+            triggerPreSend(topic, clientState);
         }
     }
 
