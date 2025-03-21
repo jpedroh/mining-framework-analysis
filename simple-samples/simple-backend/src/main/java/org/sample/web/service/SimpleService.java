@@ -480,6 +480,7 @@ public class SimpleService {
         return postResult;
     }
     
+    
     @Required
     public void setContactService(ContactService contactService) {
         this.contactService = contactService;
