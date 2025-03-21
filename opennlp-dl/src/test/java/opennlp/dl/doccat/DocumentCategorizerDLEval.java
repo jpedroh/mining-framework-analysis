@@ -77,14 +77,28 @@ public class DocumentCategorizerDLEval extends AbstactDLTest {
         0.11939861625432968,
         0.03615010157227516};
 
+<<<<<<< /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/left.java
     System.out.println("Actual:   " + Arrays.toString(sortedResult));
     System.out.println("Expected: " + Arrays.toString(expected));
 
-    Assertions.assertArrayEquals(expected, sortedResult, 0.0);
+    Assert.assertArrayEquals("Arrays differ in value.", expected, sortedResult, 0.0);
+    Assert.assertEquals(5, result.length);
+||||||| /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/base.java
+    Assert.assertTrue(Arrays.equals(expected, result));
+    Assert.assertEquals(5, result.length);
+=======
+    Assertions.assertTrue(Arrays.equals(expected, result));
     Assertions.assertEquals(5, result.length);
+>>>>>>> /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/right.java
 
     final String category = documentCategorizerDL.getBestCategory(result);
-    Assertions.assertEquals("bad", category);
+<<<<<<< /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/left.java
+    Assert.assertEquals("bad", category);
+||||||| /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/base.java
+    Assert.assertEquals("very bad", category);
+=======
+    Assertions.assertEquals("very bad", category);
+>>>>>>> /usr/src/app/output/apache/opennlp/4187f57778ff83d027a578ede39621b20bc84104/opennlp-dl/src/test/java/opennlp/dl/doccat/DocumentCategorizerDLEval.java/right.java
 
   }
 
@@ -145,10 +159,11 @@ public class DocumentCategorizerDLEval extends AbstactDLTest {
             inferenceOptions);
 
     final double[] result = documentCategorizerDL.categorize(new String[]{"I am angry"});
+    System.out.println(Arrays.toString(result));
 
     final double[] expected = new double[]{0.8851314783096313, 0.11486853659152985};
 
-    Assertions.assertArrayEquals(expected, result, 0.0);
+    Assertions.assertArrayEquals("Arrays differ in value.", expected, result, 0.0);
     Assertions.assertEquals(2, result.length);
 
     final String category = documentCategorizerDL.getBestCategory(result);
@@ -170,7 +185,7 @@ public class DocumentCategorizerDLEval extends AbstactDLTest {
                 new InferenceOptions());
 
     final Map<String, Double> result = documentCategorizerDL.scoreMap(new String[]{"I am happy"});
-
+    
     Assertions.assertEquals(0.6352779865264893, result.get("very good").doubleValue(), 0);
     Assertions.assertEquals(0.3003573715686798, result.get("good").doubleValue(), 0);
     Assertions.assertEquals(0.04995147883892059, result.get("neutral").doubleValue(), 0);
