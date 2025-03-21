@@ -88,10 +88,100 @@ public class SingleUserReviewAction extends ProcessingAction {
         return options;
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/d0c507df643b23e8ef877db855d5388390a5f800/dspace-api/src/main/java/org/dspace/xmlworkflow/state/actions/processingaction/SingleUserReviewAction.java/left.java
+    public ActionResult processMainPage(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request)
+        throws SQLException, AuthorizeException {
+        if (request.getParameter(SUBMIT_APPROVE) != null) {
+            //Delete the tasks
+            addApprovedProvenance(c, wfi);
+
+            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
+        } else if (request.getParameter(SUBMIT_REJECT) != null) {
+            // Make sure we indicate which page we want to process
+            if (wfi.getSubmitter() == null) {
+                request.setAttribute("page", SUBMITTER_IS_DELETED_PAGE);
+            } else {
+                request.setAttribute("page", REJECT_PAGE);
+            }
+            // We have pressed reject item, so take the user to a page where they can reject
+            return new ActionResult(ActionResult.TYPE.TYPE_PAGE);
+        } else if (request.getParameter(SUBMIT_DECLINE_TASK) != null) {
+            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, OUTCOME_REJECT);
+
+        } else {
+            //We pressed the leave button so return to our submissions page
+            return new ActionResult(ActionResult.TYPE.TYPE_SUBMISSION_PAGE);
+        }
+    }
+
+    private void addApprovedProvenance(Context c, XmlWorkflowItem wfi) throws SQLException, AuthorizeException {
+        //Add the provenance for the accept
+        String now = DCDate.getCurrent().toString();
+
+        // Get user's name + email address
+        String usersName = XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService()
+                                                    .getEPersonName(c.getCurrentUser());
+
+        String provDescription = getProvenanceStartId() + " Approved for entry into archive by "
+            + usersName + " on " + now + " (GMT) ";
+
+        // Add to item as a DC field
+        itemService.addMetadata(c, wfi.getItem(), MetadataSchemaEnum.DC.getName(), "description", "provenance", "en",
+                                provDescription);
+        itemService.update(c, wfi.getItem());
+    }
+
+    public ActionResult processRejectPage(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request)
+||||||| /usr/src/app/output/dspace/dspace/d0c507df643b23e8ef877db855d5388390a5f800/dspace-api/src/main/java/org/dspace/xmlworkflow/state/actions/processingaction/SingleUserReviewAction.java/base.java
+    public ActionResult processMainPage(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request)
+        throws SQLException, AuthorizeException {
+        if (request.getParameter(SUBMIT_APPROVE) != null) {
+            //Delete the tasks
+            addApprovedProvenance(c, wfi);
+
+            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
+        } else if (request.getParameter(SUBMIT_REJECT) != null) {
+            // Make sure we indicate which page we want to process
+            if (wfi.getSubmitter() == null) {
+                request.setAttribute("page", SUBMITTER_IS_DELETED_PAGE);
+            } else {
+                request.setAttribute("page", REJECT_PAGE);
+            }
+            // We have pressed reject item, so take the user to a page where he can reject
+            return new ActionResult(ActionResult.TYPE.TYPE_PAGE);
+        } else if (request.getParameter(SUBMIT_DECLINE_TASK) != null) {
+            return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, OUTCOME_REJECT);
+
+        } else {
+            //We pressed the leave button so return to our submissions page
+            return new ActionResult(ActionResult.TYPE.TYPE_SUBMISSION_PAGE);
+        }
+    }
+
+    private void addApprovedProvenance(Context c, XmlWorkflowItem wfi) throws SQLException, AuthorizeException {
+        //Add the provenance for the accept
+        String now = DCDate.getCurrent().toString();
+
+        // Get user's name + email address
+        String usersName = XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService()
+                                                    .getEPersonName(c.getCurrentUser());
+
+        String provDescription = getProvenanceStartId() + " Approved for entry into archive by "
+            + usersName + " on " + now + " (GMT) ";
+
+        // Add to item as a DC field
+        itemService.addMetadata(c, wfi.getItem(), MetadataSchemaEnum.DC.getName(), "description", "provenance", "en",
+                                provDescription);
+        itemService.update(c, wfi.getItem());
+    }
+
+    public ActionResult processRejectPage(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request)
+=======
     /**
      * Since original submitter no longer exists, workflow item is permanently deleted
      */
     private ActionResult processDelete(Context c, XmlWorkflowItem wfi)
+>>>>>>> /usr/src/app/output/dspace/dspace/d0c507df643b23e8ef877db855d5388390a5f800/dspace-api/src/main/java/org/dspace/xmlworkflow/state/actions/processingaction/SingleUserReviewAction.java/right.java
         throws SQLException, AuthorizeException, IOException {
         EPerson user = c.getCurrentUser();
         c.turnOffAuthorisationSystem();
