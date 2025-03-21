@@ -1,9 +1,12 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.promises.*;
-import com.englishtown.vertx.elasticsearch.ElasticSearch;
-import com.englishtown.vertx.promises.WhenEventBus;
-import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import static org.vertx.testtools.VertxAssert.assertEquals;
+import static org.vertx.testtools.VertxAssert.assertNotNull;
+import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.fail;
+import static org.vertx.testtools.VertxAssert.testComplete;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -15,10 +18,14 @@ import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.vertx.testtools.VertxAssert.*;
+import com.englishtown.promises.FulfilledRunnable;
+import com.englishtown.promises.Promise;
+import com.englishtown.promises.RejectedRunnable;
+import com.englishtown.promises.Value;
+import com.englishtown.promises.When;
+import com.englishtown.vertx.elasticsearch.ElasticSearch;
+import com.englishtown.vertx.promises.WhenEventBus;
+import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
 
 /**
  * {@link ElasticSearch} integration test
