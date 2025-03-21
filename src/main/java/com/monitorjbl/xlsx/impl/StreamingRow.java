@@ -1,21 +1,23 @@
 package com.monitorjbl.xlsx.impl;
-
 import com.monitorjbl.xlsx.exceptions.NotSupportedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class StreamingRow implements Row {
   private int rowIndex;
+
   private boolean isHidden;
+
   private final float rowHeight;
+
   private final CellStyle rowStyle;
+
   private TreeMap<Integer, Cell> cellMap = new TreeMap<>();
 
   public StreamingRow(int rowIndex, boolean isHidden) {
@@ -37,31 +39,26 @@ public class StreamingRow implements Row {
     this.cellMap = cellMap;
   }
 
- /* Supported */
-
   /**
    * Get row number this row represents
    *
    * @return the row number (0 based)
    */
-  @Override
-  public int getRowNum() {
+  @Override public int getRowNum() {
     return rowIndex;
   }
 
   /**
    * @return Cell iterator of the physically defined cells for this row.
    */
-  @Override
-  public Iterator<Cell> cellIterator() {
+  @Override public Iterator<Cell> cellIterator() {
     return cellMap.values().iterator();
   }
 
   /**
    * @return Cell iterator of the physically defined cells for this row.
    */
-  @Override
-  public Iterator<Cell> iterator() {
+  @Override public Iterator<Cell> iterator() {
     return cellMap.values().iterator();
   }
 
@@ -72,8 +69,7 @@ public class StreamingRow implements Row {
    * @param cellnum 0 based column number
    * @return Cell representing that column or null if undefined.
    */
-  @Override
-  public Cell getCell(int cellnum) {
+  @Override public Cell getCell(int cellnum) {
     return cellMap.get(cellnum);
   }
 
@@ -83,8 +79,7 @@ public class StreamingRow implements Row {
    * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
    * or -1 if the row does not contain any cells.
    */
-  @Override
-  public short getLastCellNum() {
+  @Override public short getLastCellNum() {
     return (short) (cellMap.size() == 0 ? -1 : cellMap.lastEntry().getValue().getColumnIndex() + 1);
   }
 
@@ -93,8 +88,7 @@ public class StreamingRow implements Row {
    *
    * @return - zHeight height is zero or not.
    */
-  @Override
-  public boolean getZeroHeight() {
+  @Override public boolean getZeroHeight() {
     return isHidden;
   }
 
@@ -104,17 +98,15 @@ public class StreamingRow implements Row {
    *
    * @return int representing the number of defined cells in the row.
    */
-  @Override
-  public int getPhysicalNumberOfCells() {
+  @Override public int getPhysicalNumberOfCells() {
     return cellMap.size();
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public short getFirstCellNum() {
-    if(cellMap.size() == 0) {
+  @Override public short getFirstCellNum() {
+    if (cellMap.size() == 0) {
       return -1;
     }
     return cellMap.firstKey().shortValue();
@@ -123,13 +115,18 @@ public class StreamingRow implements Row {
   /**
    * {@inheritDoc}
    */
-  @Override
-  public Cell getCell(int cellnum, MissingCellPolicy policy) {
+  @Override public Cell getCell(int cellnum, MissingCellPolicy policy) {
     StreamingCell cell = (StreamingCell) cellMap.get(cellnum);
-    if(policy == MissingCellPolicy.CREATE_NULL_AS_BLANK) {
-      if(cell == null) { return new StreamingCell(cellnum, rowIndex, false); }
-    } else if(policy == MissingCellPolicy.RETURN_BLANK_AS_NULL) {
-      if(cell == null || cell.getCellTypeEnum() == CellType.BLANK) { return null; }
+    if (policy == MissingCellPolicy.CREATE_NULL_AS_BLANK) {
+      if (cell == null) {
+        return new StreamingCell(cellnum, rowIndex, false);
+      }
+    } else {
+      if (policy == MissingCellPolicy.RETURN_BLANK_AS_NULL) {
+        if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
+          return null;
+        }
+      }
     }
     return cell;
   }
@@ -137,132 +134,112 @@ public class StreamingRow implements Row {
   /**
    * {@inheritDoc}
    */
-  @Override
-  public short getHeight() {
-    // the same conversion from XSSFRow
+  @Override public short getHeight() {
     return (short) (getHeightInPoints() * 20);
   }
 
   /**
+   * Not supported
+   */
+  @Override public Cell createCell(int column) {
+    throw new NotSupportedException();
+  }
+
+  /**
    * {@inheritDoc}
    */
-  @Override
-  public float getHeightInPoints() {
+  @Override public float getHeightInPoints() {
     return rowHeight;
   }
 
   /**
+   * Not supported
+   */
+  @Override public Cell createCell(int i, CellType cellType) {
+    throw new NotSupportedException();
+  }
+
+  /**
    * {@inheritDoc}
    */
-  @Override
-  public boolean isFormatted() {
+  @Override public boolean isFormatted() {
     return rowStyle != null;
   }
 
   /**
+   * Not supported
+   */
+  @Override public void removeCell(Cell cell) {
+    throw new NotSupportedException();
+  }
+
+  /**
    * {@inheritDoc}
    */
-  @Override
-  public CellStyle getRowStyle() {
+  @Override public CellStyle getRowStyle() {
     return rowStyle;
   }
 
-  /* Not supported */
-
   /**
    * Not supported
    */
-  @Override
-  public Cell createCell(int column) {
+  @Override public void setRowNum(int rowNum) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public Cell createCell(int column, int type) {
+  @Override public void setHeight(short height) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public Cell createCell(int i, CellType cellType) {
+  @Override public void setZeroHeight(boolean zHeight) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public void removeCell(Cell cell) {
+  @Override public void setHeightInPoints(float height) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public void setRowNum(int rowNum) {
+  @Override public void setRowStyle(CellStyle style) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public void setHeight(short height) {
+  @Override public Sheet getSheet() {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public void setZeroHeight(boolean zHeight) {
+  @Override public int getOutlineLevel() {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public void setRowStyle(CellStyle style) {
+  @Override public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
     throw new NotSupportedException();
   }
 
   /**
    * Not supported
    */
-  @Override
-  public Sheet getSheet() {
+  @Override public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
     throw new NotSupportedException();
   }
-
-  /**
-   * Not supported
-   */
-  @Override
-  public int getOutlineLevel() {
-    throw new NotSupportedException();
-  }
-
-  /**
-   * Not supported
-   */
-  @Override
-  public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-    throw new NotSupportedException();
-  }
-
-  /**
-   * Not supported
-   */
-  @Override
-  public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-    throw new NotSupportedException();
-  }
-
 }
