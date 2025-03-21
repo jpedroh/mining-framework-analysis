@@ -517,10 +517,8 @@ public class BulkAccessControlIT extends AbstractIntegrationTestWithDatabase {
                                                     .build();
 
         Community subCommunityThree = CommunityBuilder.createSubCommunity(context, parentCommunity)
-                                                      .withName("sub community two")
+                                                      .withName("sub community three")
                                                       .build();
-                                              .withName("sub community three")
-                                              .build();
 
         Collection collectionOne = CollectionBuilder.createCollection(context, subCommunityOne)
                                                     .withName("collection one")
@@ -596,9 +594,6 @@ public class BulkAccessControlIT extends AbstractIntegrationTestWithDatabase {
         assertThat(itemFour.getResourcePolicies(), hasItem(
             matches(Constants.READ, anonymousGroup, ResourcePolicy.TYPE_INHERITED)
         ));
-
-
-
 
     }
 
@@ -834,14 +829,6 @@ public class BulkAccessControlIT extends AbstractIntegrationTestWithDatabase {
                    .stream()
                    .flatMap(bundle -> bundle.getBitstreams().stream())
                    .collect(Collectors.toList());
-    }
-
-    private void matchItemsResourcePolicies(
-        Iterator<Item> itemIterator, Group group, String rpName, String rpType, String startDate, String endDate) {
-        while (itemIterator.hasNext()) {
-            Item item = itemIterator.next();
-            matchItemResourcePolicies(item, group, rpName, rpType, startDate, endDate);
-        }
     }
 
     private void matchItemResourcePolicies(

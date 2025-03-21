@@ -235,7 +235,7 @@ public class BulkAccessControl extends DSpaceRunnable<BulkAccessControlScriptCon
         if (uuids.size() > 1  && containsConstraints(bitstream)) {
             handler.logError("constraint isn't supported when multiple uuids are provided");
             throw new BulkAccessControlException("constraint isn't supported when multiple uuids are provided");
-        } else if (uuids.size() == 1 && containsConstraints(bitstream)) {
+        } else if (uuids.length == 1 && containsConstraints(bitstream)) {
             DSpaceObject dso =
                 dSpaceObjectUtils.findDSpaceObject(context, UUID.fromString(uuids.get(0)));
 
@@ -360,21 +360,64 @@ public class BulkAccessControl extends DSpaceRunnable<BulkAccessControlScriptCon
     }
 
     private void updateBitstreamsPolicies(Item item, AccessControl accessControl) {
+<<<<<<< /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/left.java
 
         if (containsConstraints(accessControl.getBitstream())) {
             findMatchedBitstreams(item, accessControl.getBitstream().getConstraints().getUuid())
+||||||| /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/base.java
+
+        if (containsConstraints(accessControl.getBitstream())) {
+            findMatchedBitstreams(item, accessControl.getBitstream().getConstraint().getUuids())
+=======
         item.getBundles(Constants.CONTENT_BUNDLE_NAME).stream()
                 .flatMap(bundle -> bundle.getBitstreams().stream())
                 .filter(bitstream -> uuids == null ||
                     uuids.size() == 0 ||
                     uuids.contains(bitstream.getID().toString()))
+>>>>>>> /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/right.java
                 .forEach(bitstream -> updateBitstreamPolicies(bitstream, item, accessControl));
     }
 
     private boolean containsConstraints(AccessConditionBitstream bitstream) {
         return Objects.nonNull(bitstream) &&
+<<<<<<< /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/left.java
             Objects.nonNull(bitstream.getConstraints()) &&
             isNotEmpty(bitstream.getConstraints().getUuid());
+    }
+
+    private List<Bitstream> findMatchedBitstreams(Item item, List<String> uuids) {
+        return item.getBundles().stream()
+                   .flatMap(bundle -> bundle.getBitstreams().stream())
+                   .filter(bitstream -> uuids.contains(bitstream.getID().toString()))
+                   .collect(Collectors.toList());
+    }
+
+    private List<Bitstream> findAllBitstreams(Item item) {
+        return item.getBundles()
+                   .stream()
+                   .flatMap(bundle -> bundle.getBitstreams().stream())
+                   .collect(Collectors.toList());
+||||||| /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/base.java
+            Objects.nonNull(bitstream.getConstraint()) &&
+            isNotEmpty(bitstream.getConstraint().getUuids());
+    }
+
+    private List<Bitstream> findMatchedBitstreams(Item item, List<String> uuids) {
+        return item.getBundles().stream()
+                   .flatMap(bundle -> bundle.getBitstreams().stream())
+                   .filter(bitstream -> uuids.contains(bitstream.getID().toString()))
+                   .collect(Collectors.toList());
+    }
+
+    private List<Bitstream> findAllBitstreams(Item item) {
+        return item.getBundles()
+                   .stream()
+                   .flatMap(bundle -> bundle.getBitstreams().stream())
+                   .collect(Collectors.toList());
+=======
+            Objects.nonNull(bitstream.getConstraint()) &&
+            isNotEmpty(bitstream.getConstraint().getUuids());
+>>>>>>> /usr/src/app/output/dspace/dspace/fd388620c086ab7dbfe9a30fc3e6ef4d0cb55ba1/dspace-api/src/main/java/org/dspace/app/bulkaccesscontrol/BulkAccessControl.java/right.java
     }
 
     private void updateBitstreamPolicies(Bitstream bitstream, Item item, AccessControl accessControl) {
