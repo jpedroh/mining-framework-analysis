@@ -38,12 +38,12 @@ public class BillVoteView implements ViewObject
             );
         }
     }
-    public BillVoteView(){
-
-    }
 
     public BillIdView getBillId() {
         return billId;
+    }
+    public BillVoteView(){
+
     }
 
     public String getVersion() {
