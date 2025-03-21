@@ -90,6 +90,8 @@ public abstract class BenchmarkModule {
 
     private HikariDataSource dataSource = null;
 
+    private static final Integer MAX_POOL_SIZE = 50;
+
     public BenchmarkModule(WorkloadConfiguration workConf, boolean withCatalog) {
 
 
@@ -101,7 +103,12 @@ public abstract class BenchmarkModule {
         config.setJdbcUrl(workConf.getDBConnection());
         config.setUsername(workConf.getDBUsername());
         config.setPassword(workConf.getDBPassword());
+<<<<<<< /usr/src/app/output/oltpbenchmark/oltpbench/3c6f9eb68e6945dde630a5e8e4ec554114921e67/src/main/java/com/oltpbenchmark/api/BenchmarkModule.java/left.java
+        config.setMaximumPoolSize(MAX_POOL_SIZE);
+||||||| /usr/src/app/output/oltpbenchmark/oltpbench/3c6f9eb68e6945dde630a5e8e4ec554114921e67/src/main/java/com/oltpbenchmark/api/BenchmarkModule.java/base.java
+=======
         config.setMaximumPoolSize(workConf.getDBPoolSize());
+>>>>>>> /usr/src/app/output/oltpbenchmark/oltpbench/3c6f9eb68e6945dde630a5e8e4ec554114921e67/src/main/java/com/oltpbenchmark/api/BenchmarkModule.java/right.java
 
         dataSource = new HikariDataSource(config);
     }
