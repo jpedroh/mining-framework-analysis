@@ -82,7 +82,13 @@ public class PtyMaster extends Thread {
           corrected[ptr++] = codepoints[i];
         }
       }
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/left.java
+      conn.stdoutHandler().accept(corrected);
+||||||| /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/base.java
+      conn.writeHandler().accept(corrected);
+=======
       stdout.accept(corrected);
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/right.java
     });
 
     public Pipe(InputStream in) {
@@ -155,7 +161,13 @@ public class PtyMaster extends Thread {
         setStatus(Status.FAILED);
       }
     } catch (IOException e) {
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/left.java
+      conn.stdoutHandler().accept(Helper.toCodePoints(e.getMessage() + "\r\n"));
+||||||| /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/base.java
+      conn.writeHandler().accept(Helper.toCodePoints(e.getMessage() + "\r\n"));
+=======
       stdout.accept(Helper.toCodePoints(e.getMessage() + "\r\n"));
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/right.java
     }
 
     //

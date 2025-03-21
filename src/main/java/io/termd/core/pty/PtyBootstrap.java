@@ -52,7 +52,63 @@ public class PtyBootstrap implements Consumer<TtyConnection> {
 
   @Override
   public void accept(final TtyConnection conn) {
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyBootstrap.java/left.java
+    InputStream inputrc = KeyDecoder.class.getResourceAsStream("inputrc");
+    Keymap keymap = new Keymap(inputrc);
+    Readline readline = new Readline(keymap);
+    for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
+      log.trace("Server is adding function to readline: {}", function);
+
+      readline.addFunction(function);
+    }
+    conn.setTermHandler(term -> {
+        // Not used yet but we should propagage this to the process builder
+        System.out.println("CLIENT $TERM=" + term);
+    });
+    conn.stdoutHandler().accept(Helper.toCodePoints("Welcome sir\r\n"));
+    read(conn, readline);
+  }
+
+  public void read(final TtyConnection conn, final Readline readline) {
+    Consumer<String> requestHandler = new Consumer<String>() {
+      @Override
+      public void accept(String line) {
+        PtyMaster task = new PtyMaster(PtyBootstrap.this, conn, readline, line);
+        taskCreationListener.accept(task);
+        task.start();
+      }
+    };
+    readline.readline(conn, "% ", requestHandler);
+||||||| /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyBootstrap.java/base.java
+    InputStream inputrc = KeyDecoder.class.getResourceAsStream("inputrc");
+    Keymap keymap = new Keymap(inputrc);
+    Readline readline = new Readline(keymap);
+    for (io.termd.core.readline.Function function : Helper.loadServices(Thread.currentThread().getContextClassLoader(), io.termd.core.readline.Function.class)) {
+      log.trace("Server is adding function to readline: {}", function);
+
+      readline.addFunction(function);
+    }
+    conn.setTermHandler(term -> {
+        // Not used yet but we should propagage this to the process builder
+        System.out.println("CLIENT $TERM=" + term);
+    });
+    conn.writeHandler().accept(Helper.toCodePoints("Welcome sir\r\n"));
+    read(conn, readline);
+  }
+
+  public void read(final TtyConnection conn, final Readline readline) {
+    Consumer<String> requestHandler = new Consumer<String>() {
+      @Override
+      public void accept(String line) {
+        PtyMaster task = new PtyMaster(PtyBootstrap.this, conn, readline, line);
+        taskCreationListener.accept(task);
+        task.start();
+      }
+    };
+    readline.readline(conn, "% ", requestHandler);
+=======
     TtyBridge bridge = new TtyBridge(conn);
     bridge.readline();
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyBootstrap.java/right.java
   }
 }
