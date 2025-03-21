@@ -78,16 +78,20 @@ public class GelfMessage {
         return JSONValue.toJSONString(map);
     }
 
-    public ByteBuffer[] toDatagrams() {
+    public ByteBuffer[] toDatagrams()
+	{
 		byte[] messageBytes = gzipMessage( toJson() );
 		ByteBuffer[] datagrams = new ByteBuffer[ messageBytes.length / MAXIMUM_CHUNK_SIZE + 1 ];
-		if ( messageBytes.length > MAXIMUM_CHUNK_SIZE ) {
-			sliceDatagrams( messageBytes, datagrams );
-		} else {
-			datagrams[0] = ByteBuffer.allocate( messageBytes.length );
-			datagrams[0].put( messageBytes );
-			datagrams[0].flip();
-		}
+		if ( messageBytes.length > MAXIMUM_CHUNK_SIZE )
+    {
+    	sliceDatagrams( messageBytes, datagrams );
+    }
+    else
+    {
+    	datagrams[0] = ByteBuffer.allocate( messageBytes.length );
+    	datagrams[0].put( messageBytes );
+    	datagrams[0].flip();
+    }
 		return datagrams;
 	}
 
@@ -96,23 +100,33 @@ public class GelfMessage {
 	{
         int messageLength = messageBytes.length;
         byte[] messageId = ByteBuffer.allocate(8)
-            .putInt(getCurrentMillis())       // 4 least-significant-bytes of the time in millis
-            .put(hostBytes)                                // 4 least-significant-bytes of the host
-            .array();
+	    .putInt(getCurrentMillis())       // 4 least-significant-bytes of the time in millis
+	    .put(hostBytes)                                // 4 least-significant-bytes of the host
+	    .array();
 
         int num = ((Double) Math.ceil((double) messageLength / MAXIMUM_CHUNK_SIZE)).intValue();
         for (int idx = 0; idx < num; idx++) {
-            byte[] header = concatByteArray(GELF_CHUNKED_ID, concatByteArray(messageId, new byte[]{(byte) idx, (byte) num}));
-            int from = idx * MAXIMUM_CHUNK_SIZE;
-            int to = from + MAXIMUM_CHUNK_SIZE;
-            if (to >= messageLength) {
-                to = messageLength;
-            }
-			byte[] datagram = concatByteArray( header, Arrays.copyOfRange( messageBytes, from, to ) );
-			datagrams[idx] = ByteBuffer.allocate( datagram.length );
-			datagrams[idx].put(datagram);
-			datagrams[idx].flip();
-        }
+	    byte[] header = concatByteArray(GELF_CHUNKED_ID, concatByteArray(messageId, new byte[]{(byte) idx, (byte) num}));
+	    int from = idx * MAXIMUM_CHUNK_SIZE;
+	    int to = from + MAXIMUM_CHUNK_SIZE;
+	    if (to >= messageLength) {
+	        to = messageLength;
+	    }
+<<<<<<< /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/main/java/org/graylog2/GelfMessage.java/left.java
+				byte[] datagram = concatByteArray( header, Arrays.copyOfRange( messageBytes, from, to ) );
+				datagrams[idx] = ByteBuffer.allocate( datagram.length );
+				datagrams[idx].put(datagram);
+				datagrams[idx].flip();
+||||||| /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/main/java/org/graylog2/GelfMessage.java/base.java
+	    byte[] datagram = concatByteArray(header, Arrays.copyOfRange(messageBytes, from, to));
+	    datagrams.add(datagram);
+=======
+				byte[] datagram = concatByteArray( header, Arrays.copyOfRange( messageBytes, from, to ) );
+				datagrams[ idx ] = ByteBuffer.allocate( datagram.length );
+				datagrams[ idx ].put( datagram );
+				datagrams[ idx ].flip();
+>>>>>>> /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/main/java/org/graylog2/GelfMessage.java/right.java
+	}
     }
 
     public int getCurrentMillis() {
@@ -124,13 +138,7 @@ public class GelfMessage {
 
         try {
             GZIPOutputStream stream = new GZIPOutputStream(bos);
-            byte[] bytes = null;
-            try {
-                bytes = message.getBytes("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("No UTF-8 support available.", e);
-            }
-            stream.write(bytes);
+            stream.write(message.getBytes());
             stream.finish();
             stream.close();
             byte[] zipped = bos.toByteArray();

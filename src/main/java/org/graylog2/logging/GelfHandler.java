@@ -135,6 +135,10 @@ public class GelfHandler
       {
 	      reportError( "IO exception", e, ErrorManager.WRITE_FAILURE );
       }
+      catch ( IOException e )
+      {
+	      reportError( "IO exception", e, ErrorManager.WRITE_FAILURE );
+      }
     }
     if ( null == gelfSender ||
          !gelfSender.sendMessage( makeMessage( record ) ) )

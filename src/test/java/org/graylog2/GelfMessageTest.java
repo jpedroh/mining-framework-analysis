@@ -23,6 +23,7 @@ public class GelfMessageTest {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/GelfMessageTest.java/left.java
     public void testSendLongMessage() throws Exception {
         String longString = "01234567890123456789 ";
         for (int i = 0; i < 15; i++) {
@@ -36,6 +37,23 @@ public class GelfMessageTest {
         assertTrue(bytes2[1].get(10) == (byte) 0x01);
         assertTrue(bytes2[1].get(11) == (byte) 0x02);
     }
+||||||| /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/GelfMessageTest.java/base.java
+    public void testSendLongMessage() throws Exception 
+=======
+    public void testSendLongMessage() throws Exception {
+        String longString = "01234567890123456789 ";
+        for (int i = 0; i < 15; i++) {
+            longString += longString;
+        }
+        GelfMessage message = new GelfMessage("Long", longString, new Date(), "1");
+    	    ByteBuffer[] bytes2 = message.toDatagrams();
+        assertEquals(2, bytes2.length);
+        assertTrue(bytes2[0].get(10) ==  (byte) 0x00);
+    	    assertTrue(bytes2[0].get(11) == (byte) 0x02);
+    	    assertTrue(bytes2[1].get(10) == (byte) 0x01);
+    	    assertTrue(bytes2[1].get(11) == (byte) 0x02);
+    }
+>>>>>>> /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/GelfMessageTest.java/right.java
 
     @Test
     public void testSimpleMessage() throws Exception {

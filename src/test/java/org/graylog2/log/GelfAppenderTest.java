@@ -129,7 +129,13 @@ public class GelfAppenderTest {
 
         private GelfMessage lastMessage;
 
+<<<<<<< /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/log/GelfAppenderTest.java/left.java
         public TestGelfSender(String host) throws IOException {
+||||||| /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/log/GelfAppenderTest.java/base.java
+        public TestGelfSender(String host) throws UnknownHostException, SocketException {
+=======
+        public TestGelfSender(String host) throws IOException, SocketException {
+>>>>>>> /usr/src/app/output/t0xa/gelfj/f57a572d8c372b60afde1f1f300fdb93e3d1a194/src/test/java/org/graylog2/log/GelfAppenderTest.java/right.java
             super(host);
         }
 
