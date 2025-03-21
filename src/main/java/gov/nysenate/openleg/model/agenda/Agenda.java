@@ -1,10 +1,8 @@
 package gov.nysenate.openleg.model.agenda;
-
 import gov.nysenate.openleg.model.base.BaseLegislativeContent;
 import gov.nysenate.openleg.model.base.SessionYear;
 import gov.nysenate.openleg.model.base.Version;
 import gov.nysenate.openleg.model.entity.CommitteeId;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -17,210 +15,165 @@ import java.util.stream.Stream;
  * It is comprised of a collection of addenda which either contains committee meeting information
  * including bills that are to be brought up, or committee votes.
  */
-public class Agenda extends BaseLegislativeContent implements Serializable
-{
-    private static final long serialVersionUID = -6763891242038699549L;
+public class Agenda extends BaseLegislativeContent implements Serializable {
+  private static final long serialVersionUID = -6763891242038699549L;
 
-    /** The agenda id. */
-    private AgendaId id;
+  /** The agenda id. */
+  private AgendaId id;
 
-    /** The map of committee info updates keyed by the addendum id. */
-    private Map<String, AgendaInfoAddendum> agendaInfoAddenda;
+  /** The map of committee info updates keyed by the addendum id. */
+  private Map<String, AgendaInfoAddendum> agendaInfoAddenda;
 
-    /** The map of committee vote updates keyed by the addendum id. */
-    private Map<String, AgendaVoteAddendum> agendaVoteAddenda;
+  /** The map of committee vote updates keyed by the addendum id. */
+  private Map<String, AgendaVoteAddendum> agendaVoteAddenda;
 
-    /** --- Constructors --- */
+  /** --- Constructors --- */
+  public Agenda() {
+    super();
+    this.setAgendaInfoAddenda(new TreeMap<>());
+    this.setAgendaVoteAddenda(new TreeMap<>());
+  }
 
-    public Agenda() {
-        super();
-        this.setAgendaInfoAddenda(new TreeMap<>());
-        this.setAgendaVoteAddenda(new TreeMap<>());
+  public Agenda(AgendaId id) {
+    this();
+    this.setId(id);
+  }
+
+  /** --- Overrides --- */
+  @Override public String toString() {
+    return "Agenda " + id;
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public Agenda(AgendaId id) {
-        this();
-        this.setId(id);
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
+    final Agenda other = (Agenda) obj;
+    return Objects.equals(this.year, other.year) && Objects.equals(this.id, other.id) && Objects.equals(this.agendaInfoAddenda, other.agendaInfoAddenda) && Objects.equals(this.agendaVoteAddenda, other.agendaVoteAddenda) && Objects.equals(this.publishedDateTime, other.publishedDateTime);
+  }
 
-    /** --- Overrides --- */
+  @Override public int hashCode() {
+    return Objects.hash(year, id, agendaInfoAddenda, agendaVoteAddenda, publishedDateTime);
+  }
 
-    @Override
-    public String toString() {
-        return "Agenda " + id;
-    }
+  /** --- Functional Getters/Setters --- */
+  public AgendaInfoAddendum getAgendaInfoAddendum(String addendumId) {
+    return this.agendaInfoAddenda.get(addendumId);
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        final Agenda other = (Agenda) obj;
-        return Objects.equals(this.year, other.year) &&
-               Objects.equals(this.id, other.id) &&
-               Objects.equals(this.agendaInfoAddenda, other.agendaInfoAddenda) &&
-               Objects.equals(this.agendaVoteAddenda, other.agendaVoteAddenda) &&
-               Objects.equals(this.publishedDateTime, other.publishedDateTime);
-    }
+  public void putAgendaInfoAddendum(AgendaInfoAddendum addendum) {
+    this.agendaInfoAddenda.put(addendum.getId(), addendum);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(year, id, agendaInfoAddenda, agendaVoteAddenda, publishedDateTime);
-    }
+  public AgendaVoteAddendum getAgendaVoteAddendum(String addendumId) {
+    return this.agendaVoteAddenda.get(addendumId);
+  }
 
-    /** --- Functional Getters/Setters --- */
+  public void putAgendaVoteAddendum(AgendaVoteAddendum addendum) {
+    this.agendaVoteAddenda.put(addendum.getId(), addendum);
+  }
 
-    public AgendaInfoAddendum getAgendaInfoAddendum(String addendumId) {
-        return this.agendaInfoAddenda.get(addendumId);
-    }
-
-    public void putAgendaInfoAddendum(AgendaInfoAddendum addendum) {
-        this.agendaInfoAddenda.put(addendum.getId(), addendum);
-    }
-
-    public AgendaVoteAddendum getAgendaVoteAddendum(String addendumId) {
-        return this.agendaVoteAddenda.get(addendumId);
-    }
-
-    public void putAgendaVoteAddendum(AgendaVoteAddendum addendum) {
-        this.agendaVoteAddenda.put(addendum.getId(), addendum);
-    }
-
-    /**
+  /**
      * Finds any 'weekOf' set within the info addenda and returns it, If the data is not complete, it could be possible
      * that the agenda doesn't have a weekOf set in which case an empty Optional is returned.
      * @return Optional<LocalDate>.
      */
-    public Optional<LocalDate> getWeekOf() {
-        return agendaInfoAddenda.values().stream()
-            .filter(ia -> ia.getWeekOf() != null)
-            .map(ia -> ia.getWeekOf())
-            .findAny();
-    }
+  public Optional<LocalDate> getWeekOf() {
+    return agendaInfoAddenda.values().stream().filter((ia) -> ia.getWeekOf() != null).map((ia) -> ia.getWeekOf()).findAny();
+  }
 
-    public Integer totalBillsConsidered() {
-        return totalBillsConsidered(Optional.empty());
-    }
+  public Integer totalBillsConsidered() {
+    return totalBillsConsidered(Optional.empty());
+  }
 
-    public Integer totalBillsConsidered(Optional<CommitteeId> committeeId) {
-        return agendaInfoAddenda.values().stream()
-            .flatMap(ia ->
-                    (committeeId.isPresent())
-                    ? (ia.getCommitteeInfoMap().containsKey(committeeId.get()))
-                        ? Stream.of(ia.getCommitteeInfoMap().get(committeeId.get()))
-                        : Stream.empty()
-                    : ia.getCommitteeInfoMap().values().stream()
-            )
-            .map(ic -> ic.getItems().size())
-            .reduce(0, Integer::sum);
-    }
+  public Integer totalBillsConsidered(Optional<CommitteeId> committeeId) {
+    return agendaInfoAddenda.values().stream().flatMap((ia) -> (committeeId.isPresent()) ? (ia.getCommitteeInfoMap().containsKey(committeeId.get())) ? Stream.of(ia.getCommitteeInfoMap().get(committeeId.get())) : Stream.empty() : ia.getCommitteeInfoMap().values().stream()).map((ic) -> ic.getItems().size()).reduce(0, Integer::sum);
+  }
 
-    public Integer totalBillsVoted() {
-        return totalBillsVoted(Optional.empty());
-    }
+  public Integer totalBillsVoted() {
+    return totalBillsVoted(Optional.empty());
+  }
 
-    public Integer totalBillsVoted(Optional<CommitteeId> committeeId) {
-        return agendaVoteAddenda.values().stream()
-            .flatMap(ia ->
-                (committeeId.isPresent())
-                    ? (ia.getCommitteeVoteMap().containsKey(committeeId.get()))
-                        ? Stream.of(ia.getCommitteeVoteMap().get(committeeId.get()))
-                        : Stream.empty()
-                    : ia.getCommitteeVoteMap().values().stream()
-            )
-            .map(ic -> ic.getVotedBills().size())
-            .reduce(0, Integer::sum);
-    }
+  public Integer totalBillsVoted(Optional<CommitteeId> committeeId) {
+    return agendaVoteAddenda.values().stream().flatMap((ia) -> (committeeId.isPresent()) ? (ia.getCommitteeVoteMap().containsKey(committeeId.get())) ? Stream.of(ia.getCommitteeVoteMap().get(committeeId.get())) : Stream.empty() : ia.getCommitteeVoteMap().values().stream()).map((ic) -> ic.getVotedBills().size()).reduce(0, Integer::sum);
+  }
 
-    public Long totalCommittees() {
-        return agendaInfoAddenda.values().stream()
-            .flatMap(ia -> ia.getCommitteeInfoMap().keySet().stream())
-            .distinct()
-            .count();
-    }
+  public Long totalCommittees() {
+    return agendaInfoAddenda.values().stream().flatMap((ia) -> ia.getCommitteeInfoMap().keySet().stream()).distinct().count();
+  }
 
-    /**
+  /**
      * Returns true if there is data contained in this agenda for the given committee.
      */
-    public boolean hasCommittee(CommitteeId committeeId) {
-        return agendaInfoAddenda.values().stream()
-            .map(a -> a.getCommitteeInfoMap().keySet())
-            .filter(a -> a.contains(committeeId))
-            .findAny().isPresent();
-    }
+  public boolean hasCommittee(CommitteeId committeeId) {
+    return agendaInfoAddenda.values().stream().map((a) -> a.getCommitteeInfoMap().keySet()).filter((a) -> a.contains(committeeId)).findAny().isPresent();
+  }
 
-    /**
+  /**
      * Returns a set of committees that have agenda info addenda.
      */
-    public Set<CommitteeId> getCommittees() {
-        return agendaInfoAddenda.values().stream().flatMap(a -> a.getCommitteeInfoMap().keySet().stream())
-            .collect(Collectors.toSet());
-    }
+  public Set<CommitteeId> getCommittees() {
+    return agendaInfoAddenda.values().stream().flatMap((a) -> a.getCommitteeInfoMap().keySet().stream()).collect(Collectors.toSet());
+  }
 
-    public void setId(AgendaId id) {
-        this.id = id;
-        this.setYear(id.getYear());
-    }
+  public void setId(AgendaId id) {
+    this.id = id;
+    this.setYear(id.getYear());
+  }
 
-    /** --- Basic Getters/Setters --- */
+  /** --- Basic Getters/Setters --- */
+  public AgendaId getId() {
+    return id;
+  }
 
-    public AgendaId getId() {
-        return id;
-    }
+  public Map<String, AgendaInfoAddendum> getAgendaInfoAddenda() {
+    return agendaInfoAddenda;
+  }
 
-    public Map<String, AgendaInfoAddendum> getAgendaInfoAddenda() {
-        return agendaInfoAddenda;
-    }
+  public void setAgendaInfoAddenda(Map<String, AgendaInfoAddendum> agendaInfoAddenda) {
+    this.agendaInfoAddenda = agendaInfoAddenda;
+  }
 
-    public void setAgendaInfoAddenda(Map<String, AgendaInfoAddendum> agendaInfoAddenda) {
-        this.agendaInfoAddenda = agendaInfoAddenda;
-    }
+  public Map<String, AgendaVoteAddendum> getAgendaVoteAddenda() {
+    return agendaVoteAddenda;
+  }
 
-    public Map<String, AgendaVoteAddendum> getAgendaVoteAddenda() {
-        return agendaVoteAddenda;
-    }
+  public void setAgendaVoteAddenda(Map<String, AgendaVoteAddendum> agendaVoteAddenda) {
+    this.agendaVoteAddenda = agendaVoteAddenda;
+  }
 
-    public void setAgendaVoteAddenda(Map<String, AgendaVoteAddendum> agendaVoteAddenda) {
-        this.agendaVoteAddenda = agendaVoteAddenda;
-    }
+  /** --- Functional Getters --- */
+  public List<CommitteeAgendaAddendumId> getCommitteeAgendaAddendumIds() {
+    return agendaInfoAddenda.values().stream().flatMap((agendaInfoAddendum) -> agendaInfoAddendum.getCommitteeInfoMap().values().stream()).map((agendaInfoCommittee) -> new CommitteeAgendaAddendumId(agendaInfoCommittee.getAgendaId(), agendaInfoCommittee.getCommitteeId(), agendaInfoCommittee.getAddendum())).collect(Collectors.toList());
+  }
 
-    /** --- Functional Getters --- */
-
-    public List<CommitteeAgendaAddendumId> getCommitteeAgendaAddendumIds(){
-        return agendaInfoAddenda.values().stream()
-                .flatMap(agendaInfoAddendum -> agendaInfoAddendum.getCommitteeInfoMap().values().stream())
-                .map(agendaInfoCommittee -> new CommitteeAgendaAddendumId(agendaInfoCommittee.getAgendaId(),
-                        agendaInfoCommittee.getCommitteeId(),
-                        agendaInfoCommittee.getAddendum())).collect(Collectors.toList());
-    }
-
-    /**
+  /**
      * Gets a flat mapping of {@link CommitteeAgendaAddendumId} to {@link AgendaVoteCommittee}
      * which contains all votes in this agenda
      *
      * @return {@link Map<CommitteeAgendaAddendumId, AgendaVoteCommittee>}
      */
-    public Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> getVotes() {
-        Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> votes = new HashMap<>();
-        for (AgendaVoteAddendum addendum : agendaVoteAddenda.values()) {
-            for (AgendaVoteCommittee voteComm : addendum.getCommitteeVoteMap().values()) {
-                CommitteeAgendaAddendumId voteId = new CommitteeAgendaAddendumId(
-                        id, voteComm.getCommitteeId(), Version.of(addendum.getId()));
-                votes.put(voteId, voteComm);
-            }
-        }
-        return votes;
+  public Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> getVotes() {
+    Map<CommitteeAgendaAddendumId, AgendaVoteCommittee> votes = new HashMap<>();
+    for (AgendaVoteAddendum addendum : agendaVoteAddenda.values()) {
+      for (AgendaVoteCommittee voteComm : addendum.getCommitteeVoteMap().values()) {
+        CommitteeAgendaAddendumId voteId = new CommitteeAgendaAddendumId(id, voteComm.getCommitteeId(), Version.of(addendum.getId()));
+        votes.put(voteId, voteComm);
+      }
     }
+    return votes;
+  }
 
-    /**
+  /**
      * Given a {@code committeeId}, returns all {@link AgendaVoteCommittee}'s for
      * that committee in this agenda.
      * @param committeeId
      * @return
      */
-    public List<AgendaVoteCommittee> getVotesForCommittee(CommitteeId committeeId) {
-        return this.getAgendaVoteAddenda().values().stream()
-                .map(a -> a.getCommitteeVoteMap().get(committeeId))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
+  public List<AgendaVoteCommittee> getVotesForCommittee(CommitteeId committeeId) {
+    return this.getAgendaVoteAddenda().values().stream().map((a) -> a.getCommitteeVoteMap().get(committeeId)).filter(Objects::nonNull).collect(Collectors.toList());
+  }
 }
