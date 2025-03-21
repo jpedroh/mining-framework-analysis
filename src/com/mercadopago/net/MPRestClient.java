@@ -170,47 +170,60 @@ public class MPRestClient {
 
         HttpRequestBase request = null;
         if (httpMethod.equals("GET")) {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/left.java
             if (entity != null)
                 throw new MPRestException("Payload not supported for this method.");
-            request = new HttpGet(uri);
-        } else if (httpMethod.equals("POST")) {
-            if (entity == null)
-                throw new MPRestException("Must include payload for this method.");
+||||||| /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/base.java
+            if (entity != null)
+                throw new MPRestException("Not supported for this method.");
 =======
             if (entity != null) {
                 throw new MPRestException("Not supported for this method.");
             }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/right.java
             request = new HttpGet(uri);
         } else if (httpMethod.equals("POST")) {
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/left.java
+            if (entity == null)
+                throw new MPRestException("Must include payload for this method.");
+||||||| /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/base.java
+            if (entity == null)
+                throw new MPRestException("Not supported for this method.");
+=======
             if (entity == null) {
                 throw new MPRestException("Not supported for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/right.java
             HttpPost post = new HttpPost(uri);
             post.setEntity(entity);
             request = post;
         } else if (httpMethod.equals("PUT")) {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/left.java
             if (entity == null)
                 throw new MPRestException("Must include payload for this method.");
+||||||| /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/base.java
+            if (entity == null)
+                throw new MPRestException("Not supported for this method.");
 =======
             if (entity == null) {
                 throw new MPRestException("Not supported for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/right.java
             HttpPut put = new HttpPut(uri);
             put.setEntity(entity);
             request = put;
         } else if (httpMethod.equals("DELETE")) {
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/left.java
             if (entity != null)
                 throw new MPRestException("Payload not supported for this method.");
+||||||| /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/base.java
+            if (entity != null)
+                throw new MPRestException("Not supported for this method.");
 =======
             if (entity != null) {
                 throw new MPRestException("Not supported for this method.");
             }
->>>>>>> a31e410d5ae37a8d97ed3404c940b393a0a28c71
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/2c9be5b677644ad12b969e41953f21f308218aa0/src/com/mercadopago/net/MPRestClient.java/right.java
             request = new HttpDelete(uri);
         }
         return request;
