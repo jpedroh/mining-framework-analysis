@@ -1,250 +1,237 @@
 package com.github.javafaker.service;
-
 import java.io.File;
-import java.io.IOException;
+import com.github.javafaker.Address;
 import java.io.InputStream;
+import com.github.javafaker.Faker;
 import java.lang.reflect.Constructor;
+import com.github.javafaker.Name;
 import java.lang.reflect.InvocationTargetException;
+import com.mifmif.common.regex.Generex;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
+import org.apache.commons.lang3.ClassUtils;
 import java.net.URL;
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import org.yaml.snakeyaml.Yaml;
+import java.io.IOException;
+import java.net.JarURLConnection;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.yaml.snakeyaml.Yaml;
-
-import com.github.javafaker.Address;
-import com.github.javafaker.Faker;
-import com.github.javafaker.Name;
-import com.mifmif.common.regex.Generex;
-
 public class FakeValuesService {
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#\\{([a-z0-9A-Z_.]+)\\s?(?:'([^']+)')?(?:,'([^']+)')*\\}");
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#\\{([a-z0-9A-Z_.]+)\\s?(?:\'([^\']+)\')?(?:,\'([^\']+)\')*\\}");
 
-    private final Logger log = Logger.getLogger("faker");
+  private final Logger log = Logger.getLogger("faker");
 
-    private final List<Map<String, Object>> fakeValuesMaps;
+  private final List<Map<String, Object>> fakeValuesMaps;
 
-    private final RandomService randomService;
+  private final RandomService randomService;
 
-    /**
+  /**
      * <p>
-     * Resolves YAML file using the most specific path first based on language and country code.
-     * 'en_US' would resolve in the following order:
-     * <ol>
-     * <li>/en-US.yml</li>
-     * <li>/en.yml</li>
-     * </ol>
-     * The search is case-insensitive, so the following will all resolve correctly.  Also, either a hyphen or
-     * an underscore can be used when constructing a {@link Locale} instance.  This is legacy behavior and not
-     * condoned, but it will work.
-     * <ul>
-     * <li>EN_US</li>
-     * <li>En-Us</li>
-     * <li>eN_uS</li>
-     * </ul>
+     *     Resolves YAML file using the most specific path first based on language and country code.
+     *      'en_US' would resolve in the following order:
+     *      <ol>
+     *          <li>/en-US.yml</li>
+     *          <li>/en.yml</li>
+     *      </ol>
+     *      The search is case-insensitive, so the following will all resolve correctly.  Also, either a hyphen or
+     *      an underscore can be used when constructing a {@link Locale} instance.  This is legacy behavior and not
+     *      condoned, but it will work.
+     *      <ul>
+     *          <li>EN_US</li>
+     *          <li>En-Us</li>
+     *          <li>eN_uS</li>
+     *      </ul>
      * </p>
-     *
      * @param locale
      * @param randomService
      */
-    public FakeValuesService(Locale locale, RandomService randomService) {
-        if (locale == null) {
-            throw new IllegalArgumentException("locale is required");
-        }
-        this.randomService = randomService;
-        locale = normalizeLocale(locale);
-
-        final List<Locale> locales = localeChain(locale);
-        final List<Map<String, Object>> all = new ArrayList<Map<String, Object>>(locales.size());
-        final Set<Locale> loadedLocales = new HashSet<Locale>();
-
-        for (final Locale l : locales) {
-            final StringBuilder filename = new StringBuilder(language(l));
-            if (!"".equals(l.getCountry())) {
-                filename.append("-").append(l.getCountry());
-            }
-
-            // need to treat jar files differently
-            if (isJarFile(filename.toString())) {
-                loadFromJarFile(all, loadedLocales, l, filename);
-            } else {
-                // list the files on the classpath... so if we pass in "en"
-                // it will look for a folder "en" and list all the files underneath it
-                File[] files = listFilesInDirectoryOnClasspath(filename.toString());
-                for (File resourceFolderFile : files) {
-                    String fileToLoad = filename + "/" + resourceFolderFile.getName();
-                    final InputStream stream = getClass().getClassLoader().getResourceAsStream(fileToLoad);
-                    if (stream != null) {
-                        all.add(fakerFromStream(stream, filename.toString()));
-                        loadedLocales.add(l);
-                    }
-                }
-                final InputStream stream = findStream(filename.toString());
-                if (stream != null) {
-                    all.add(fakerFromStream(stream, filename.toString()));
-                    loadedLocales.add(l);
-                }
-            }
-        }
-
-        if (loadedLocales.size() == 1 && loadedLocales.contains(Locale.ENGLISH) && !locale.equals(Locale.ENGLISH)) {
-            // if we have only successfully loaded ENGLISH and the requested locale
-            // wasn't english that means we were unable to load the requested locale
-            // in that case we vomit.
-            // If someone requests FRANCE ("fr","FR") and we can't load fr_FR but we
-            // load "fr", then that's ok. we picked up a variant. only if we ONLY pick up
-            // the default do we throw that exception.
-            throw new LocaleDoesNotExistException(locale.toString() + " does not exist");
-        }
-
-        this.fakeValuesMaps = Collections.unmodifiableList(all);
+  public FakeValuesService(Locale locale, RandomService randomService) {
+    if (locale == null) {
+      throw new IllegalArgumentException("locale is required");
     }
-
-    private void loadFromJarFile(List<Map<String, Object>> all, Set<Locale> loadedLocales, Locale locale, StringBuilder filename) {
-        try {
-            ClassLoader loader = getClass().getClassLoader();
-            URL url = loader.getResource(filename.toString());
-            JarURLConnection connection = (JarURLConnection) url.openConnection();
-            JarFile jarFile = connection.getJarFile();
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                String jarEntryName = jarEntry.getName();
-                if (jarEntryName.contains(filename.toString() + "/") && jarEntryName.endsWith(".yml")) {
-                    InputStream inputStream = jarFile.getInputStream(jarEntry);
-                    if (inputStream != null) {
-                        all.add(fakerFromStream(inputStream, filename.toString()));
-                        loadedLocales.add(locale);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new LocaleDoesNotExistException(filename.toString());
+    this.randomService = randomService;
+    locale = normalizeLocale(locale);
+    final List<Locale> locales = localeChain(locale);
+    final List<Map<String, Object>> all = new ArrayList<Map<String, Object>>();
+    final Set<Locale> loadedLocales = new HashSet<Locale>();
+    for (final Locale l : locales) {
+      final StringBuilder filename = new StringBuilder(language(l));
+      if (!"".equals(l.getCountry())) {
+        filename.append("-").append(l.getCountry());
+      }
+      for (File resourceFolderFile : files) {
+        String fileToLoad = filename + "/" + resourceFolderFile.getName();
+        final InputStream stream = getClass().getClassLoader().getResourceAsStream(fileToLoad);
+        if (stream != null) {
+          Map<String, Object> map = fakerFromStream(stream, filename.toString());
+          all.add(map);
+          loadedLocales.add(l);
         }
-    }
-
-    private boolean isJarFile(String fileName) {
-        ClassLoader loader = getClass().getClassLoader();
-        URL url = loader.getResource(fileName);
-        return url != null && url.getProtocol().equals("jar");
-    }
-
-    private File[] listFilesInDirectoryOnClasspath(String dir) {
-        ClassLoader loader = getClass().getClassLoader();
-        URL url = loader.getResource(dir);
-        if (url == null) {
-            return new File[0];
-        } else {
-            return new File(url.getPath()).listFiles();
+      }
+      if (isJarFile(filename.toString())) {
+        loadFromJarFile(all, loadedLocales, l, filename);
+      } else {
+        File[] files = listFilesInDirectoryOnClasspath(filename.toString());
+        for (File resourceFolderFile : files) {
+          String fileToLoad = filename + "/" + resourceFolderFile.getName();
+          final InputStream stream = getClass().getClassLoader().getResourceAsStream(fileToLoad);
+          if (stream != null) {
+            Map map = fakerFromStream(stream, filename.toString());
+            all.add(map);
+            loadedLocales.add(l);
+          }
         }
+        final InputStream stream = findStream(filename.toString());
+        if (stream != null) {
+          all.add(fakerFromStream(stream, filename.toString()));
+          loadedLocales.add(l);
+        }
+      }
     }
+    if (loadedLocales.size() == 1 && loadedLocales.contains(Locale.ENGLISH) && !locale.equals(Locale.ENGLISH)) {
+      throw new LocaleDoesNotExistException(locale.toString() + " does not exist");
+    }
+    this.fakeValuesMaps = Collections.unmodifiableList(all);
+  }
 
-    /**
+  private void loadFromJarFile(List<Map<String, Object>> all, Set<Locale> loadedLocales, Locale locale, StringBuilder filename) {
+    try {
+      ClassLoader loader = getClass().getClassLoader();
+      URL url = loader.getResource(filename.toString());
+      JarURLConnection connection = (JarURLConnection) url.openConnection();
+      JarFile jarFile = connection.getJarFile();
+      Enumeration<JarEntry> entries = jarFile.entries();
+      while (entries.hasMoreElements()) {
+        JarEntry jarEntry = entries.nextElement();
+        String jarEntryName = jarEntry.getName();
+        if (jarEntryName.contains(filename.toString() + "/") && jarEntryName.endsWith(".yml")) {
+          InputStream inputStream = jarFile.getInputStream(jarEntry);
+          if (inputStream != null) {
+            Map map = fakerFromStream(inputStream, filename.toString());
+            all.add(map);
+            loadedLocales.add(locale);
+          }
+        }
+      }
+    } catch (IOException e) {
+      throw new LocaleDoesNotExistException(filename.toString());
+    }
+  }
+
+  private boolean isJarFile(String fileName) {
+    ClassLoader loader = getClass().getClassLoader();
+    URL url = loader.getResource(fileName);
+    return url != null && url.getProtocol().equals("jar");
+  }
+
+  private File[] listFilesInDirectoryOnClasspath(String dir) {
+    ClassLoader loader = getClass().getClassLoader();
+    URL url = loader.getResource(dir);
+    if (url == null) {
+      return new File[0];
+    } else {
+      return new File(url.getPath()).listFiles();
+    }
+  }
+
+  /**
      * If you new up a locale with "he", it gets converted to "iw" which is old.
      * This addresses that unfortunate condition.
      */
-    private String language(Locale l) {
-        if (l.getLanguage().equals("iw")) {
-            return "he";
-        }
-        return l.getLanguage();
+  private String language(Locale l) {
+    if (l.getLanguage().equals("iw")) {
+      return "he";
     }
+    return l.getLanguage();
+  }
 
-    /**
-     * @return the embedded faker: clause from the loaded Yml by the localeName, so .yml > en-us: > faker:
+  /**
+     * @return the embedded faker: clause from the loaded Yml by the localeName, so .yml > en-us: > faker: 
      */
-    @SuppressWarnings("unchecked")
-	protected Map<String, Object> fakerFromStream(InputStream stream, String localeName) {
-        final Map<String, Object> valuesMap = new Yaml().loadAs(stream, Map.class);
-        final Map<String, Object> localeBased = ((Map<String, Object>)valuesMap.get(localeName));
-        return (Map<String, Object>) localeBased.get("faker");
-    }
+  @SuppressWarnings(value = { "unchecked" }) protected Map<String, Object> fakerFromStream(InputStream stream, String localeName) {
+    final Map<String, Object> valuesMap = new Yaml().loadAs(stream, Map.class);
+    final Map<String, Object> localeBased = ((Map<String, Object>) valuesMap.get(localeName));
+    return (Map<String, Object>) localeBased.get("faker");
+  }
 
-    /**
+  /**
      * Convert the specified locale into a chain of locales used for message resolution. For example:
-     * <p>
-     * {@link Locale#FRANCE} (fr_FR) -> [ fr_FR, anotherTest, en ]
-     *
+     * 
+     * {@link Locale#FRANCE} (fr_FR) -> [ fr_FR, fr, en ]
+     * 
      * @return a list of {@link Locale} instances
      */
-    protected List<Locale> localeChain(Locale from) {
-        if (Locale.ENGLISH.equals(from)) {
-            return Collections.singletonList(Locale.ENGLISH);
-        }
-
-        final Locale normalized = normalizeLocale(from);
-
-        final List<Locale> chain = new ArrayList<Locale>(3);
-        chain.add(normalized);
-        if (!"".equals(normalized.getCountry()) && !Locale.ENGLISH.getLanguage().equals(normalized.getLanguage())) {
-            chain.add(new Locale(normalized.getLanguage()));
-        }
-        chain.add(Locale.ENGLISH); // default
-        return chain;
+  protected List<Locale> localeChain(Locale from) {
+    if (Locale.ENGLISH.equals(from)) {
+      return Collections.singletonList(Locale.ENGLISH);
     }
+    final Locale normalized = normalizeLocale(from);
+    final List<Locale> chain = new ArrayList<Locale>(3);
+    chain.add(normalized);
+    if (!"".equals(normalized.getCountry()) && !Locale.ENGLISH.getLanguage().equals(normalized.getLanguage())) {
+      chain.add(new Locale(normalized.getLanguage()));
+    }
+    chain.add(Locale.ENGLISH);
+    return chain;
+  }
 
-    /**
+  /**
      * @return a proper {@link Locale} instance with language and country code set regardless of how
-     * it was instantiated.  new Locale("pt-br") will be normalized to a locale constructed
-     * with new Locale("pt","BR").
+     *         it was instantiated.  new Locale("pt-br") will be normalized to a locale constructed
+     *         with new Locale("pt","BR").
      */
-    private Locale normalizeLocale(Locale locale) {
-        final String[] parts = locale.toString().split("[-\\_]");
-
-        if (parts.length == 1) {
-            return new Locale(parts[0]);
-        } else {
-            return new Locale(parts[0], parts[1]);
-        }
+  private Locale normalizeLocale(Locale locale) {
+    final String[] parts = locale.toString().split("[-\\_]");
+    if (parts.length == 1) {
+      return new Locale(parts[0]);
+    } else {
+      return new Locale(parts[0], parts[1]);
     }
+  }
 
-    private InputStream findStream(String filename) {
-        String filenameWithExtension = "/" + filename + ".yml";
-        InputStream streamOnClass = getClass().getResourceAsStream(filenameWithExtension);
-        if (streamOnClass != null) {
-            return streamOnClass;
-        }
-        return ClassLoader.getSystemResourceAsStream(filenameWithExtension);
+  private InputStream findStream(String filename) {
+    String filenameWithExtension = "/" + filename + ".yml";
+    InputStream streamOnClass = this.getClass().getResourceAsStream(filenameWithExtension);
+    if (streamOnClass != null) {
+      return streamOnClass;
     }
+    return ClassLoader.getSystemResourceAsStream(filenameWithExtension);
+  }
 
-    /**
+  /**
      * Fetch a random value from an array item specified by the key
      *
      * @param key
      * @return
      */
-    @SuppressWarnings("unchecked")
-	public Object fetch(String key) {
-        List<Object> valuesArray = (List<Object>)fetchObject(key);
-        return valuesArray == null ? null : valuesArray.get(randomService.nextInt(valuesArray.size()));
-    }
+  @SuppressWarnings(value = { "unchecked" }) public Object fetch(String key) {
+    List<Object> valuesArray = (List<Object>) fetchObject(key);
+    return valuesArray == null ? null : valuesArray.get(randomService.nextInt(valuesArray.size()));
+  }
 
-    /**
+  /**
      * Same as {@link #fetch(String)} except this casts the result into a String.
      *
      * @param key
      * @return
      */
-    public String fetchString(String key) {
-        return (String) fetch(key);
-    }
+  public String fetchString(String key) {
+    return (String) fetch(key);
+  }
 
-    /**
+  /**
      * Safely fetches a key.
      * <p>
      * If the value is null, it will return an empty string.
@@ -260,73 +247,79 @@ public class FakeValuesService {
      * @param defaultIfNull the value to return if the fetched value is null
      * @return see above
      */
-    @SuppressWarnings("unchecked")
-    public String safeFetch(String key, String defaultIfNull) {
-        Object o = fetchObject(key);
-        if (o == null) return defaultIfNull;
-        if (o instanceof List) {
-            List<String> values = (List<String>) o;
-            if (values.size() == 0) {
-                return defaultIfNull;
-            }
-            return values.get(randomService.nextInt(values.size()));
-        } else if (isSlashDelimitedRegex(o.toString())) {
-            return String.format("#{regexify '%s'}", trimRegexSlashes(o.toString()));
-        } else {
-            return (String) o;
-        }
+  @SuppressWarnings(value = { "unchecked" }) public String safeFetch(String key, String defaultIfNull) {
+    Object o = fetchObject(key);
+    if (o == null) {
+      return defaultIfNull;
     }
-    
-    @SuppressWarnings("unchecked")
-    public String safeFetch(String key, String defaultIfNull, int size) {
-        Object o = fetchObject(key);
-        if (o == null) return defaultIfNull;
-        if (o instanceof List) {
-            List<String> values = (List<String>) o;
-            if (values.size() == 0) {
-                return defaultIfNull;
-            }
-            List<String> subset = new ArrayList<String>();
-            for (int i = 0; i < values.size(); i++)
-                if (values.get(i).length() == size && StringUtils.isNoneEmpty(values.get(i)))
-                    subset.add(values.get(i));
-            if (subset.size() == 0) {
-                return defaultIfNull;
-            }
-            return subset.get(randomService.nextInt(subset.size()));
-        } else if (isSlashDelimitedRegex(o.toString())) {
-            return String.format("#{regexify '%s'}", trimRegexSlashes(o.toString()));
-        } else {
-            return (String) o;
-        }
+    if (o instanceof List) {
+      List<String> values = (List<String>) o;
+      if (values.size() == 0) {
+        return defaultIfNull;
+      }
+      return values.get(randomService.nextInt(values.size()));
+    } else {
+      if (isSlashDelimitedRegex(o.toString())) {
+        return String.format("#{regexify \'%s\'}", trimRegexSlashes(o.toString()));
+      } else {
+        return (String) o;
+      }
     }
+  }
 
-    /**
+  @SuppressWarnings(value = { "unchecked" }) public String safeFetch(String key, String defaultIfNull, int size) {
+    Object o = fetchObject(key);
+    if (o == null) {
+      return defaultIfNull;
+    }
+    if (o instanceof List) {
+      List<String> values = (List<String>) o;
+      if (values.size() == 0) {
+        return defaultIfNull;
+      }
+      List<String> subset = new ArrayList<String>();
+      for (int i = 0; i < values.size(); i++) {
+        if (values.get(i).length() == size && StringUtils.isNoneEmpty(values.get(i))) {
+          subset.add(values.get(i));
+        }
+      }
+      if (subset.size() == 0) {
+        return defaultIfNull;
+      }
+      return subset.get(randomService.nextInt(subset.size()));
+    } else {
+      if (isSlashDelimitedRegex(o.toString())) {
+        return String.format("#{regexify \'%s\'}", trimRegexSlashes(o.toString()));
+      } else {
+        return (String) o;
+      }
+    }
+  }
+
+  /**
      * Return the object selected by the key from yaml file.
      *
      * @param key key contains path to an object. Path segment is separated by
      *            dot. E.g. name.first_name
      * @return
      */
-    @SuppressWarnings("unchecked")
-    public Object fetchObject(String key) {
-        String[] path = key.split("\\.");
-
-        Object result = null;
-        for (Map<String, Object> fakeValuesMap : fakeValuesMaps) {
-            Object currentValue = fakeValuesMap;
-            for (int p = 0; currentValue != null && p < path.length; p++) {
-                currentValue = ((Map<String, Object>) currentValue).get(path[p]);
-            }
-            result = currentValue;
-            if (result != null) {
-                break;
-            }
-        }
-        return result;
+  @SuppressWarnings(value = { "unchecked" }) public Object fetchObject(String key) {
+    String[] path = key.split("\\.");
+    Object result = null;
+    for (Map<String, Object> fakeValuesMap : fakeValuesMaps) {
+      Object currentValue = fakeValuesMap;
+      for (int p = 0; currentValue != null && p < path.length; p++) {
+        currentValue = ((Map<String, Object>) currentValue).get(path[p]);
+      }
+      result = currentValue;
+      if (result != null) {
+        break;
+      }
     }
+    return result;
+  }
 
-    /**
+  /**
      * Returns a string with the '#' characters in the parameter replaced with random digits between 0-9 inclusive.
      * <p/>
      * For example, the string "ABC##EFG" could be replaced with a string like "ABC99EFG".
@@ -334,52 +327,51 @@ public class FakeValuesService {
      * @param numberString
      * @return
      */
-    public String numerify(String numberString) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numberString.length(); i++) {
-            if (numberString.charAt(i) == '#') {
-                sb.append(randomService.nextInt(10));
-            } else {
-                sb.append(numberString.charAt(i));
-            }
-        }
-
-        return sb.toString();
+  public String numerify(String numberString) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < numberString.length(); i++) {
+      if (numberString.charAt(i) == '#') {
+        sb.append(randomService.nextInt(10));
+      } else {
+        sb.append(numberString.charAt(i));
+      }
     }
+    return sb.toString();
+  }
 
-    /**
+  /**
      * Applies both a {@link #numerify(String)} and a {@link #letterify(String)}
      * over the incoming string.
      *
      * @param string
      * @return
      */
-    public String bothify(String string) {
-        return letterify(numerify(string));
-    }
+  public String bothify(String string) {
+    return letterify(numerify(string));
+  }
 
-    /**
-     * Applies both a {@link #numerify(String)} and a {@link #letterify(String, boolean)}
+  /**
+     * Applies both a {@link #numerify(String)} and a {@link #letterify(String,boolean)}
      * over the incoming string.
      *
      * @param string
      * @param isUpper
      * @return
      */
-    public String bothify(String string, boolean isUpper) {
-        return letterify(numerify(string), isUpper);
-    }
+  public String bothify(String string, boolean isUpper) {
+    return letterify(numerify(string), isUpper);
+  }
 
-    /**
+  /**
      * Generates a String that matches the given regular expression.
      */
-    public String regexify(String regex) {
-        Generex generex = new Generex(regex);
-        generex.setSeed(randomService.nextLong());
-        return generex.random();
-    }
+  public String regexify(String regex) {
+    Generex generex = new Generex(regex);
+    generex.setSeed(randomService.nextLong());
+    return generex.random();
+  }
 
-    /**
+  /**
      * Returns a string with the '?' characters in the parameter replaced with random alphabetic
      * characters.
      * <p/>
@@ -388,341 +380,286 @@ public class FakeValuesService {
      * @param letterString
      * @return
      */
-    public String letterify(String letterString) {
-        return this.letterify(letterString, false);
-    }
+  public String letterify(String letterString) {
+    return this.letterify(letterString, false);
+  }
 
-    /**
+  /**
      * Returns a string with the '?' characters in the parameter replaced with random alphabetic
      * characters.
      * <p/>
      * For example, the string "12??34" could be replaced with a string like "12AB34".
      *
      * @param letterString
-     * @param isUpper      specifies whether or not letters should be upper case
+     * @param isUpper specifies whether or not letters should be upper case
      * @return
      */
-    public String letterify(String letterString, boolean isUpper) {
-        return letterHelper((isUpper) ? 65 : 97, letterString); // from ascii table
+  public String letterify(String letterString, boolean isUpper) {
+    return letterHelper((isUpper) ? 65 : 97, letterString);
+  }
+
+  private String letterHelper(int baseChar, String letterString) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < letterString.length(); i++) {
+      if (letterString.charAt(i) == '?') {
+        sb.append((char) (baseChar + randomService.nextInt(26)));
+      } else {
+        sb.append(letterString.charAt(i));
+      }
     }
+    return sb.toString();
+  }
 
-    private String letterHelper(int baseChar, String letterString) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < letterString.length(); i++) {
-            if (letterString.charAt(i) == '?') {
-                sb.append((char) (baseChar + randomService.nextInt(26))); // a-z
-            } else {
-                sb.append(letterString.charAt(i));
-            }
-        }
-
-        return sb.toString();
-    }
-
-    /**
+  /**
      * Resolves a key to a method on an object.
-     * <p>
-     * #{hello} with result in a method call to current.hello();
-     * <p>
-     * #{Person.hello_someone} will result in a method call to person.helloSomeone();
-     */
-    public String resolve(String key, Object current, Faker root) {
-        final String expression = safeFetch(key, null);
-        if (expression == null) {
-            throw new RuntimeException(key + " resulted in null expression");
-        }
-
-        return resolveExpression(expression, current, root);
-    }
-    
-    public String resolve(String key, Object current, Faker root, int size) {
-        final String expression = safeFetch(key, null, size);
-        if (expression == null) {
-            throw new RuntimeException(key + " with size " + size + " resulted in null expression");
-        }
-
-        return resolveExpression(expression, current, root);
-    }
-
-    /**
-     * resolves an expression using the current faker.
      *
+     * #{hello} with result in a method call to current.hello();
+     *
+     * #{Person.hello_someone} will result in a method call to person.helloSomeone();
+     *
+     */
+  public String resolve(String key, Object current, Faker root) {
+    final String expression = safeFetch(key, null);
+    if (expression == null) {
+      throw new RuntimeException(key + " resulted in null expression");
+    }
+    return resolveExpression(expression, current, root);
+  }
+
+  public String resolve(String key, Object current, Faker root, int size) {
+    final String expression = safeFetch(key, null, size);
+    if (expression == null) {
+      throw new RuntimeException(key + " with size " + size + " resulted in null expression");
+    }
+    return resolveExpression(expression, current, root);
+  }
+
+  /**
+     * resolves an expression using the current faker.
      * @param expression
      * @param faker
      * @return
      */
-    public String expression(String expression, Faker faker) {
-        return resolveExpression(expression, null, faker);
-    }
+  public String expression(String expression, Faker faker) {
+    return resolveExpression(expression, null, faker);
+  }
 
-    /**
+  /**
      * <p>processes a expression in the style #{X.y} using the current objects as the 'current' location
      * within the yml file (or the {@link Faker} object hierarchy as it were).
      * </p>
      * <p>
-     * #{Address.streetName} would get resolved to {@link Faker#address()}'s {@link Address#streetName()}
+     *     #{Address.streetName} would get resolved to {@link Faker#address()}'s {@link Address#streetName()}
      * </p>
      * <p>
-     * #{address.street} would get resolved to the YAML > locale: faker: address: street:
+     *     #{address.street} would get resolved to the YAML > locale: faker: address: street:
      * </p>
      * <p>
-     * Combinations are supported as well: "#{x} #{y}"
+     *     Combinations are supported as well: "#{x} #{y}"
      * </p>
      * <p>
-     * Recursive templates are supported.  if "#{x}" resolves to "#{Address.streetName}" then "#{x}" resolves to
-     * {@link Faker#address()}'s {@link Address#streetName()}.
+     *     Recursive templates are supported.  if "#{x}" resolves to "#{Address.streetName}" then "#{x}" resolves to
+     *     {@link Faker#address()}'s {@link Address#streetName()}.
      * </p>
      */
-    protected String resolveExpression(String expression, Object current, Faker root) {
-        final Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
-
-        String result = expression;
-        while (matcher.find()) {
-            final String escapedDirective = matcher.group(0);
-            final String directive = matcher.group(1);
-            List<String> args = new ArrayList<String>();
-            for (int i = 2; i < matcher.groupCount() + 1 && matcher.group(i) != null; i++) {
-                args.add(matcher.group(i));
-            }
-
-            // resolve the expression and reprocess it to handle recursive templates
-            String resolved = resolveExpression(directive, args, current, root);
-            if (resolved == null) {
-                throw new RuntimeException("Unable to resolve " + escapedDirective + " directive.");
-            }
-
-            resolved = resolveExpression(resolved, current, root);
-            result = StringUtils.replaceOnce(result, escapedDirective, resolved);
-        }
-        return result;
+  protected String resolveExpression(String expression, Object current, Faker root) {
+    final Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
+    String result = expression;
+    while (matcher.find()) {
+      final String escapedDirective = matcher.group(0);
+      final String directive = matcher.group(1);
+      List<String> args = new ArrayList<String>();
+      for (int i = 2; i < matcher.groupCount() + 1 && matcher.group(i) != null; i++) {
+        args.add(matcher.group(i));
+      }
+      String resolved = resolveExpression(directive, args, current, root);
+      if (resolved == null) {
+        throw new RuntimeException("Unable to resolve " + escapedDirective + " directive.");
+      }
+      resolved = resolveExpression(resolved, current, root);
+      result = StringUtils.replaceOnce(result, escapedDirective, resolved);
     }
+    return result;
+  }
 
-    /**
+  /**
      * <h1>Search Order</h1>
      * <ul>
-     * <li>Search for methods on the current object</li>
-     * <li>local keys in Yaml File</li>
-     * <li>Search for methods on faker child objects</li>
-     * <li>Search for keys in yaml file by transforming object reference to yaml reference</li>
+     *     <li>Search for methods on the current object</li>
+     *     <li>local keys in Yaml File</li>
+     *     <li>Search for methods on faker child objects</li>
+     *     <li>Search for keys in yaml file by transforming object reference to yaml reference</li>
      * </ul>
-     *
      * @return null if unable to resolve
      */
-    private String resolveExpression(String directive, List<String> args, Object current, Faker root) {
-        // name.name (resolve locally)
-        // Name.first_name (resolve to faker.name().firstName())
-        final String simpleDirective = (isDotDirective(directive) || current == null)
-                ? directive
-                : classNameToYamlName(current) + "." + directive;
-
-        String resolved = null;
-        // resolve method references on CURRENT object like #{number_between '1','10'} on Number or
-        // #{ssn_valid} on IdNumber
-        if (!isDotDirective(directive)) {
-            resolved = resolveFromMethodOn(current, directive, args);
-        }
-
-        // simple fetch of a value from the yaml file. the directive may have been mutated
-        // such that if the current yml object is car: and directive is #{wheel} then
-        // car.wheel will be looked up in the YAML file.
-        if (resolved == null) {
-            resolved = safeFetch(simpleDirective, null);
-        }
-
-        // resolve method references on faker object like #{regexify '[a-z]'}
-        if (resolved == null && !isDotDirective(directive)) {
-            resolved = resolveFromMethodOn(root, directive, args);
-        }
-
-        // Resolve Faker Object method references like #{ClassName.method_name}
-        if (resolved == null && isDotDirective(directive)) {
-            resolved = resolveFakerObjectAndMethod(root, directive, args);
-        }
-
-        // last ditch effort.  Due to Ruby's dynamic nature, something like 'Address.street_title' will resolve
-        // because 'street_title' is a dynamic method on the Address object.  We can't do this in Java so we go
-        // thru the normal resolution above, but if we will can't resolve it, we once again do a 'safeFetch' as we
-        // did first but FIRST we change the Object reference Class.method_name with a yml style internal refernce ->
-        // class.method_name (lowercase)
-        if (resolved == null && isDotDirective(directive)) {
-            resolved = safeFetch(javaNameToYamlName(simpleDirective), null);
-        }
-
-        return resolved;
+  private String resolveExpression(String directive, List<String> args, Object current, Faker root) {
+    final String simpleDirective = (isDotDirective(directive) || current == null) ? directive : classNameToYamlName(current) + "." + directive;
+    String resolved = null;
+    if (!isDotDirective(directive)) {
+      resolved = resolveFromMethodOn(current, directive, args);
     }
+    if (resolved == null) {
+      resolved = safeFetch(simpleDirective, null);
+    }
+    if (resolved == null && !isDotDirective(directive)) {
+      resolved = resolveFromMethodOn(root, directive, args);
+    }
+    if (resolved == null && isDotDirective(directive)) {
+      resolved = resolveFakerObjectAndMethod(root, directive, args);
+    }
+    if (resolved == null && isDotDirective(directive)) {
+      resolved = safeFetch(javaNameToYamlName(simpleDirective), null);
+    }
+    return resolved;
+  }
 
-
-    /**
+  /**
      * @param expression input expression
      * @return true if s is non null and is a slash delimited regex (ex. {@code /[ab]/})
      */
-    private boolean isSlashDelimitedRegex(String expression) {
-        return expression != null && expression.startsWith("/") && expression.endsWith("/");
-    }
+  private boolean isSlashDelimitedRegex(String expression) {
+    return expression != null && expression.startsWith("/") && expression.endsWith("/");
+  }
 
-    /**
+  /**
      * Given a {@code slashDelimitedRegex} such as {@code /[ab]/}, removes the slashes and returns only {@code [ab]}
-     *
      * @param slashDelimitedRegex a non null slash delimited regex (ex. {@code /[ab]/})
      * @return the regex without the slashes (ex. {@code [ab]})
      */
-    private String trimRegexSlashes(String slashDelimitedRegex) {
-        return slashDelimitedRegex.substring(1, slashDelimitedRegex.length() - 1);
-    }
+  private String trimRegexSlashes(String slashDelimitedRegex) {
+    return slashDelimitedRegex.substring(1, slashDelimitedRegex.length() - 1);
+  }
 
-    private boolean isDotDirective(String directive) {
-        return directive.contains(".");
-    }
+  private boolean isDotDirective(String directive) {
+    return directive.contains(".");
+  }
 
-    /**
-     * @return a yaml style name from the classname of the supplied object (PhoneNumber => phone_number)
+  /**
+     * @return a yaml style name from the classname of the supplied object (PhoneNumber => phone_number) 
      */
-    private String classNameToYamlName(Object current) {
-        return javaNameToYamlName(current.getClass().getSimpleName());
-    }
+  private String classNameToYamlName(Object current) {
+    return javaNameToYamlName(current.getClass().getSimpleName());
+  }
 
-    /**
-     * @return a yaml style name like 'phone_number' from a java style name like 'PhoneNumber'
+  /**
+     * @return a yaml style name like 'phone_number' from a java style name like 'PhoneNumber' 
      */
-    private String javaNameToYamlName(String expression) {
-        return expression.replaceAll("([A-Z])", "_$1")
-                .substring(1)
-                .toLowerCase();
-    }
+  private String javaNameToYamlName(String expression) {
+    return expression.replaceAll("([A-Z])", "_$1").substring(1).toLowerCase();
+  }
 
-
-    /**
+  /**
      * Given a directive like 'firstName', attempts to resolve it to a method.  For example if obj is an instance of
      * {@link Name} then this method would return {@link Name#firstName()}.  Returns null if the directive is nested
      * (i.e. has a '.') or the method doesn't exist on the <em>obj</em> object.
      */
-    private String resolveFromMethodOn(Object obj, String directive, List<String> args) {
-        if (obj == null) {
-            return null;
-        }
-        try {
-            final MethodAndCoercedArgs accessor = accessor(obj, directive, args);
-            return (accessor == null)
-                    ? null
-                    : string(accessor.invoke(obj));
-        } catch (Exception e) {
-            log.log(Level.FINE, "Can't call " + directive + " on " + obj, e);
-            return null;
-        }
+  private String resolveFromMethodOn(Object obj, String directive, List<String> args) {
+    if (obj == null) {
+      return null;
     }
+    try {
+      final MethodAndCoercedArgs accessor = accessor(obj, directive, args);
+      return (accessor == null) ? null : string(accessor.invoke(obj));
+    } catch (Exception e) {
+      log.log(Level.FINE, "Can\'t call " + directive + " on " + obj, e);
+      return null;
+    }
+  }
 
-    /**
+  /**
      * Accepts a {@link Faker} instance and a name.firstName style 'key' which is resolved to the return value of:
      * {@link Faker#name()}'s {@link Name#firstName()} method.
-     *
      * @throws RuntimeException if there's a problem invoking the method or it doesn't exist.
      */
-    private String resolveFakerObjectAndMethod(Faker faker, String key, List<String> args) {
-        final String[] classAndMethod = key.split("\\.", 2);
-
-        try {
-            String fakerMethodName = classAndMethod[0].replaceAll("_", "");
-            MethodAndCoercedArgs fakerAccessor = accessor(faker, fakerMethodName, Collections.<String>emptyList());
-            if (fakerAccessor == null) {
-                log.fine("Can't find top level faker object named " + fakerMethodName + ".");
-                return null;
-            }
-            Object objectWithMethodToInvoke = fakerAccessor.invoke(faker);
-            String nestedMethodName = classAndMethod[1].replaceAll("_", "");
-            final MethodAndCoercedArgs accessor = accessor(objectWithMethodToInvoke, classAndMethod[1].replaceAll("_", ""), args);
-            if (accessor == null) {
-                throw new Exception("Can't find method on "
-                        + objectWithMethodToInvoke.getClass().getSimpleName()
-                        + " called " + nestedMethodName + ".");
-            }
-
-            return string(accessor.invoke(objectWithMethodToInvoke));
-        } catch (Exception e) {
-            log.fine(e.getMessage());
-            return null;
-        }
+  private String resolveFakerObjectAndMethod(Faker faker, String key, List<String> args) {
+    final String[] classAndMethod = key.split("\\.", 2);
+    try {
+      String fakerMethodName = classAndMethod[0].replaceAll("_", "");
+      MethodAndCoercedArgs fakerAccessor = accessor(faker, fakerMethodName, Collections.<String>emptyList());
+      if (fakerAccessor == null) {
+        log.fine("Can\'t find top level faker object named " + fakerMethodName + ".");
+        return null;
+      }
+      Object objectWithMethodToInvoke = fakerAccessor.invoke(faker);
+      String nestedMethodName = classAndMethod[1].replaceAll("_", "");
+      final MethodAndCoercedArgs accessor = accessor(objectWithMethodToInvoke, classAndMethod[1].replaceAll("_", ""), args);
+      if (accessor == null) {
+        throw new Exception("Can\'t find method on " + objectWithMethodToInvoke.getClass().getSimpleName() + " called " + nestedMethodName + ".");
+      }
+      return string(accessor.invoke(objectWithMethodToInvoke));
+    } catch (Exception e) {
+      log.fine(e.getMessage());
+      return null;
     }
+  }
 
-
-    /**
+  /**
      * Find an accessor by name ignoring case.
      */
-    private MethodAndCoercedArgs accessor(Object onObject, String name, List<String> args) {
-        log.log(Level.FINE, "Find accessor named " + name + " on " + onObject.getClass().getSimpleName() + " with args " + args);
-
-        for (Method m : onObject.getClass().getMethods()) {
-            if (m.getName().equalsIgnoreCase(name)
-                    && m.getParameterTypes().length == args.size()) {
-                final List<Object> coercedArguments = coerceArguments(m, args);
-                if (coercedArguments != null) {
-                    return new MethodAndCoercedArgs(m, coercedArguments);
-                }
-            }
+  private MethodAndCoercedArgs accessor(Object onObject, String name, List<String> args) {
+    log.log(Level.FINE, "Find accessor named " + name + " on " + onObject.getClass().getSimpleName() + " with args " + args);
+    for (Method m : onObject.getClass().getMethods()) {
+      if (m.getName().equalsIgnoreCase(name) && m.getParameterTypes().length == args.size()) {
+        final List<Object> coercedArguments = coerceArguments(m, args);
+        if (coercedArguments != null) {
+          return new MethodAndCoercedArgs(m, coercedArguments);
         }
-
-        if (name.contains("_")) {
-            return accessor(onObject, name.replaceAll("_", ""), args);
-        }
-        return null;
+      }
     }
+    if (name.contains("_")) {
+      return accessor(onObject, name.replaceAll("_", ""), args);
+    }
+    return null;
+  }
 
-    /**
+  /**
      * Coerce arguments in <em>args</em> into the appropriate types (if possible) for the parameter arguments
      * to <em>accessor</em>.
-     *
      * @return array of coerced values if successful, null otherwise
      * @throws Exception if unable to coerce
      */
-    private List<Object> coerceArguments(Method accessor, List<String> args) {
-        final List<Object> coerced = new ArrayList<Object>();
-        for (int i = 0; i < accessor.getParameterTypes().length; i++) {
+  private List<Object> coerceArguments(Method accessor, List<String> args) {
+    final List<Object> coerced = new ArrayList<Object>();
+    for (int i = 0; i < accessor.getParameterTypes().length; i++) {
+      Class<?> toType = ClassUtils.primitiveToWrapper(accessor.getParameterTypes()[i]);
+      try {
+        final Constructor<?> ctor = toType.getConstructor(String.class);
+        final Object coercedArgument = ctor.newInstance(args.get(i));
+        coerced.add(coercedArgument);
+      } catch (Exception e) {
+        log.fine("Unable to coerce " + args.get(i) + " to " + toType.getSimpleName() + " via " + toType.getSimpleName() + "(String) constructor.");
+        return null;
+      }
+    }
+    return coerced;
+  }
 
-            Class<?> toType = ClassUtils.primitiveToWrapper(accessor.getParameterTypes()[i]);
-            try {
-                final Constructor<?> ctor = toType.getConstructor(String.class);
-                final Object coercedArgument = ctor.newInstance(args.get(i));
+  private String string(Object obj) {
+    return (obj == null) ? null : obj.toString();
+  }
 
-                coerced.add(coercedArgument);
-            } catch (Exception e) {
-                log.fine("Unable to coerce " + args.get(i) + " to " + toType.getSimpleName() + " via " + toType.getSimpleName() + "(String) constructor.");
-                return null;
-            }
-        }
-        return coerced;
+  private class MethodAndCoercedArgs {
+    private final Method method;
+
+    private final List<Object> coerced;
+
+    private MethodAndCoercedArgs(Method m, List<Object> coerced) {
+      this.method = requireNonNull(m, "method cannot be null");
+      this.coerced = requireNonNull(coerced, "coerced arguments cannot be null");
     }
 
-    private String string(Object obj) {
-        return (obj == null) ? null : obj.toString();
+    private Object invoke(Object on) throws InvocationTargetException, IllegalAccessException {
+      return method.invoke(on, coerced.toArray());
     }
 
     /**
-     * simple wrapper class around an accessor and a list of coerced arguments.
-     * this is useful as we get to find the method and coerce the arguments in one
-     * shot, returning both when successful.  This saves us from doing it more than once (coercing args).
-     */
-    private class MethodAndCoercedArgs {
-
-        private final Method method;
-
-        private final List<Object> coerced;
-
-        private MethodAndCoercedArgs(Method m, List<Object> coerced) {
-            this.method = requireNonNull(m, "method cannot be null");
-            this.coerced = requireNonNull(coerced, "coerced arguments cannot be null");
-        }
-
-        private Object invoke(Object on) throws InvocationTargetException, IllegalAccessException {
-            return method.invoke(on, coerced.toArray());
-        }
-
-        /**
          * source level precludes me from using Objects.requireNonNull
          */
-        private <T> T requireNonNull(T instance, String messageIfNull) {
-            if (instance == null) {
-                throw new NullPointerException(messageIfNull);
-            }
-            return instance;
-        }
+    private <T extends java.lang.Object> T requireNonNull(T instance, String messageIfNull) {
+      if (instance == null) {
+        throw new NullPointerException(messageIfNull);
+      }
+      return instance;
     }
+  }
 }
