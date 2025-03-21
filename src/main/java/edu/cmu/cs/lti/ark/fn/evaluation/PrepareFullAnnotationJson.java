@@ -160,7 +160,13 @@ public class PrepareFullAnnotationJson {
 		for (Range0Based targetSpan : predictionsByFrame.keySet()) {
 			final List<RankedScoredRoleAssignment> predictionsForFrame = predictionsByFrame.get(targetSpan);
 			final RankedScoredRoleAssignment first = predictionsForFrame.get(0);
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/evaluation/PrepareFullAnnotationJson.java/left.java
 			final NamedSpanSet target = makeSpan(first.targetSpan().start, first.targetSpan().end + 1, first.frame(), tokens);
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/evaluation/PrepareFullAnnotationJson.java/base.java
+			final NamedSpanSet target = makeSpan(first.targetSpan.getStart(), first.targetSpan.getEnd() + 1, first.frame(), tokens);
+=======
+			final NamedSpanSet target = makeSpan(first.targetSpan.start, first.targetSpan.end + 1, first.frame(), tokens);
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/evaluation/PrepareFullAnnotationJson.java/right.java
 			final List<Frame.ScoredRoleAssignment> scoredRoleAssignments = Lists.newArrayList();
 			for (RankedScoredRoleAssignment ra : predictionsForFrame) {
 				// extract frame elements

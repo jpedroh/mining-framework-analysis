@@ -56,6 +56,7 @@ public class Range0Based extends Range implements Comparable<Range0Based> {
 	}
 
 	/** Determines whether this and the other span overlap */
+
 	public boolean overlaps(Range0Based other) {
 		// empty spans can't overlap with anything
 		if(isEmpty() || other.isEmpty()) return false;

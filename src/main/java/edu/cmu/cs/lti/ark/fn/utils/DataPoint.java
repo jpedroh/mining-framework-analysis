@@ -28,7 +28,6 @@ import edu.cmu.cs.lti.ark.util.ds.Range;
 import edu.cmu.cs.lti.ark.util.ds.Range0Based;
 import edu.cmu.cs.lti.ark.util.nlp.parse.DependencyParse;
 import gnu.trove.THashMap;
-
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -39,16 +38,13 @@ public abstract class DataPoint {
 	/* token indices of target phrase */
 	protected int[] targetTokenIdxs;
 	protected int sentNum;
-	
 	protected String dataSet;
-	
 	/**
 	 * Maps token numbers in the sentence to corresponding character indices
 	 * @see #processOrgLine(String)
 	 * @see #getCharacterIndicesForToken(int)
 	 */
 	private THashMap<Integer,Range0Based> tokenIndexMap;
-
 	/**
 	 * Given a sentence tokenized with space separators, populates tokenIndexMap with mappings 
 	 * from token numbers to strings in the format StartCharacterOffset\tEndCharacterOffset
@@ -56,7 +52,6 @@ public abstract class DataPoint {
 	public void processOrgLine(String tokenizedSentence) {
 		tokenIndexMap = getCharOffsetsOfTokens(tokenizedSentence);
 	}
-
 	public static THashMap<Integer, Range0Based> getCharOffsetsOfTokens(String tokenizedSentence) {
 		final StringTokenizer st = new StringTokenizer(tokenizedSentence.trim(), " ", true);
 		final THashMap<Integer, Range0Based> localTokenIndexMap = new THashMap<>();
@@ -77,23 +72,18 @@ public abstract class DataPoint {
 		}
 		return localTokenIndexMap;
 	}
-
 	public DependencyParse getParse() {
 		return parse;
 	}
-	
 	public String getFrameName() {
 		return frameName;
 	}
-
 	public int[] getTargetTokenIdxs() {
 		return targetTokenIdxs;
 	}
-	
 	public int getSentenceNum() {
 		return sentNum;
 	}
-
 	public static DependencyParse[] buildParsesForLine(String parseLine) {
 		StringTokenizer st = new StringTokenizer(parseLine, "\t");
 		int numWords = Integer.parseInt(st.nextToken());	// number of word tokens in the sentence
@@ -126,15 +116,12 @@ public abstract class DataPoint {
 			parse.processSentence();
 		return dependencyParses;
 	}
-
 	public Range getCharacterIndicesForToken(int tokenNum) {
 		return tokenIndexMap.get(tokenNum);
 	}
-
 	public List<Range0Based> getTokenStartEnds() {
 		return getContiguousSpans(this.targetTokenIdxs);
 	}
-
 	public static List<Range0Based> getContiguousSpans(int[] tokenIdxs) {
 		final List<Range0Based> result = Lists.newArrayList();
 		Optional<Range0Based> oCurrent = Optional.absent();
@@ -143,7 +130,13 @@ public abstract class DataPoint {
 				oCurrent = Optional.of(new Range0Based(tknNum, tknNum));
 			} else {
 				final Range0Based current = oCurrent.get();
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/left.java
 				if (current.start == tknNum - 1) {
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/base.java
+				if (mergeAdjacent && current.getStart() == tknNum - 1) {
+=======
+				if (mergeAdjacent && current.start == tknNum - 1) {
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/right.java
 					// merge with previous
 					oCurrent = Optional.of(new Range0Based(current.start, tknNum));
 				} else {
@@ -157,7 +150,7 @@ public abstract class DataPoint {
 		if (oCurrent.isPresent()) result.add(oCurrent.get());
 		return result;
 	}
-
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/left.java
 	public List<Range0Based> getCharStartEnds(List<Range0Based> tokenSpans) {
 		final List<Range0Based> result = Lists.newArrayList();
 		for (Range0Based tokenSpan : tokenSpans) {
@@ -165,18 +158,35 @@ public abstract class DataPoint {
 		}
 		return result;
 	}
-
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/base.java
+=======
+	public List<Range0Based> getCharStartEnds(List<Range0Based> tokenRanges) {
+		final List<Range0Based> result = Lists.newArrayList();
+		for (Range0Based tokenRange : tokenRanges) {
+			final Range0Based charRange =
+					new Range0Based(
+							tokenIndexMap.get(tokenRange.start).start,
+							tokenIndexMap.get(tokenRange.end).end
+					);
+			result.add(charRange);
+		}
+		return result;
+	}
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPoint.java/right.java
 	public static Range0Based getCharSpan(Range0Based tokenSpan, THashMap<Integer, Range0Based> tokenIndexMap) {
 		return new Range0Based(
 				tokenIndexMap.get(tokenSpan.start).start,
 				tokenIndexMap.get(tokenSpan.end).end
 		);
 	}
-
 	public static final String FN13_LEXICON_EXEMPLARS = "exemplars";
 	public static final String SEMEVAL07_TRAIN_SET = "train";
 	public static final String SEMEVAL07_DEV_SET = "dev";
 	public static final String SEMEVAL07_TEST_SET = "test";
+	/** Sentence index ranges for documents in the train, dev, and test portions of the SemEval'07 data */
+// e.g. 'cause.v'
+	/* token indices of target phrase */
+	// for benefit of subclasses
 	/** Sentence index ranges for documents in the train, dev, and test portions of the SemEval'07 data */
 	protected static final Map<String,Map<String,? extends Range>> DOCUMENT_SENTENCE_RANGES = new THashMap<String,Map<String,? extends Range>>();
 	static {

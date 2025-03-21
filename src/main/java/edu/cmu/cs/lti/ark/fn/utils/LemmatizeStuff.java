@@ -23,14 +23,13 @@ package edu.cmu.cs.lti.ark.fn.utils;
 
 import edu.cmu.cs.lti.ark.util.nlp.Lemmatizer;
 import edu.cmu.cs.lti.ark.util.nlp.MorphaLemmatizer;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
-
 import static org.apache.commons.io.IOUtils.closeQuietly;
+import java.io.*;
 
 public class LemmatizeStuff {
 	private static Lemmatizer lemmatizer = new MorphaLemmatizer();
@@ -44,6 +43,8 @@ public class LemmatizeStuff {
 	 * @param inFilename path to a file containing the input sentences
 	 * @param outFilename path to file to which to write
 	 */
+
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/LemmatizeStuff.java/left.java
 	public static void lemmatize(String inFilename, String outFilename) throws FileNotFoundException {
 		Scanner sc = new Scanner(new FileInputStream(inFilename));
 		PrintStream ps = new PrintStream(new FileOutputStream (outFilename));
@@ -61,4 +62,51 @@ public class LemmatizeStuff {
 		sc.close();
 		closeQuietly(ps);
 	}
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/LemmatizeStuff.java/base.java
+	private static void run() {
+		Scanner sc = null;
+		PrintStream ps = null;
+		try {
+			sc = new Scanner(new FileInputStream(infilename));
+			ps = new PrintStream(new FileOutputStream (outfilename));
+		} catch (IOException ioe){
+			System.out.println(ioe.getMessage());
+		}
+		while(sc.hasNextLine()) {
+			String line = sc.nextLine();
+			ps.print(line + "\t");
+			String[] toks = line.trim().split("\\s");
+			int sentLen = Integer.parseInt(toks[0]);
+			for(int i = 0; i < sentLen; i++) {
+				String lemma = wnr.getLemma(toks[i + 1].toLowerCase(), toks[i + 1 + sentLen]);
+				ps.print(lemma + "\t");
+			}
+			ps.println();
+		}
+	}
+=======
+	public static void lemmatize(String infile, String outfile) throws FileNotFoundException {
+		infilename = infile;
+		outfilename = outfile;
+		run();
+	}
+
+	private static void run() throws FileNotFoundException {
+		Scanner sc = new Scanner(new FileInputStream(infilename));
+		PrintStream ps = new PrintStream(new FileOutputStream (outfilename));
+		while(sc.hasNextLine()) {
+			String line = sc.nextLine();
+			ps.print(line + "\t");
+			String[] toks = line.trim().split("\\s");
+			int sentLen = Integer.parseInt(toks[0]);
+			for(int i = 0; i < sentLen; i++) {
+				String lemma = lemmatizer.getLemma(toks[i + 1].toLowerCase(), toks[i + 1 + sentLen]);
+				ps.print(lemma + "\t");
+			}
+			ps.println();
+		}
+		sc.close();
+		closeQuietly(ps);
+	}
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/LemmatizeStuff.java/right.java
 }

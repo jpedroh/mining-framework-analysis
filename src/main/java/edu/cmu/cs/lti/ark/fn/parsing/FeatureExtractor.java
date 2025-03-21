@@ -35,6 +35,7 @@ import java.util.List;
 import static edu.cmu.cs.lti.ark.fn.parsing.CandidateSpanPruner.EMPTY_SPAN;
 import static edu.cmu.cs.lti.ark.fn.parsing.FeatureExtractor.ConjoinLevel.*;
 import static java.lang.Math.max;
+import static edu.cmu.cs.lti.ark.fn.parsing.CandidateFrameElementFilters.isEmptySpan;
 
 /**
  * Extract features for the parsing model. Based on FeatureExtractor for the
@@ -104,9 +105,21 @@ public class FeatureExtractor {
 		final DependencyParse[] nodes = parse.getIndexSortedListOfNodes();
 		final DependencyParse targetHeadNode = DependencyParse.getHeuristicHead(nodes, targetTokenNums);
 
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/FeatureExtractor.java/left.java
 		final boolean isEmpty = fillerSpanRange.equals(EMPTY_SPAN());
 		String overtness = isEmpty ? "NULL" : "OVERT";
 		conjoinAndAdd(overtness, frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);	// overtness of the role
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/FeatureExtractor.java/base.java
+		DependencyParse[] nodes = parse.getIndexSortedListOfNodes();
+		DependencyParse targetHeadNode = DependencyParse.getHeuristicHead(nodes, targetTokenNums);
+
+		String overtness = (CandidateFrameElementFilters.isEmptySpan(fillerSpanRange)) ? "NULL" : "OVERT";
+		$(overtness,2);	// overtness of the role
+=======
+		final boolean isEmpty = isEmptySpan(fillerSpanRange);
+		String overtness = isEmpty ? "NULL" : "OVERT";
+		conjoinAndAdd(overtness, frameAndRoleName, roleName, FRAME_AND_ROLE_NAME, featureMap);	// overtness of the role
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/FeatureExtractor.java/right.java
 		
 		String nullness = isEmpty ? "NULL_" : "";
 		for (int targetTokenNum : targetTokenNums) {

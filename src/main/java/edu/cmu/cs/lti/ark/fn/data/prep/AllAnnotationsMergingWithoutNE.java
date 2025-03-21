@@ -24,6 +24,7 @@ package edu.cmu.cs.lti.ark.fn.data.prep;
 import com.google.common.collect.Lists;
 import edu.cmu.cs.lti.ark.fn.utils.LemmatizeStuff;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,13 @@ import java.util.StringTokenizer;
  * Script to merge the POS tags, dependency parse, and lemmatized version of each sentence into one line
  */
 public class AllAnnotationsMergingWithoutNE {
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/left.java
+	public static void main(String[] args) throws FileNotFoundException {
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/base.java
+	public static void main(String[] args) throws URISyntaxException {
+=======
 	public static void main(String[] args) throws IOException {
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/right.java
 		// parse args
 		final String tokenizedFile = args[0];
 		final String conllParseFile = args[1];
@@ -52,7 +59,13 @@ public class AllAnnotationsMergingWithoutNE {
 	 * @param outfile path to file to which to write the combined sentences
 	 */
 	public static void mergeAllAnnotations(String tokenizedFile, String conllParseFile, String tmpParseFile,
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/left.java
+										   String outfile) throws FileNotFoundException {
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/base.java
+										   String outfile) throws URISyntaxException {
+=======
 										   String outfile) throws IOException {
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/data/prep/AllAnnotationsMergingWithoutNE.java/right.java
 		List<String> tokenizedSentences = ParsePreparation.readLines(tokenizedFile);
 		ArrayList<String> neSentences = findDummyNESentences(tokenizedSentences);
 		ArrayList<ArrayList<String>> parses = OneLineDataCreation.readCoNLLParses(conllParseFile);

@@ -130,6 +130,18 @@ public class DependencyParse extends ParseNode<DependencyParse> {
 		}
 		return parseData;
 	}
+	public DependencyParse[] getLeftChildren() {
+		return getLeftAndRightChildren().first;
+	}
+	public DependencyParse[] getRightChildren() {
+		return getLeftAndRightChildren().second;
+	}
+	public DependencyParse[] getLeftDescendants() {
+		return getLeftAndRightDescendants().first;
+	}
+	public DependencyParse[] getRightDescendants() {
+		return getLeftAndRightDescendants().second;
+	}
 
 	/**
 	 * Generates DependencyParse instances from string representations returned from a parser.

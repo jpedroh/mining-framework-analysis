@@ -72,6 +72,120 @@ public class DataPointWithFrameElements extends DataPoint {
 		this.frameElementsAndSpans = ImmutableList.copyOf(roleAssignment.fesAndSpans());
 	}
 
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPointWithFrameElements.java/left.java
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPointWithFrameElements.java/base.java
+	public static Range0Based getSpan(String feSpan) {
+		int feStart;
+		int feEnd;
+		if (feSpan.contains(":")) {
+			// startIndex:endIndex range
+			String[] rangeParts = feSpan.split(":");
+			feStart = parseInt(rangeParts[0]);
+			feEnd = parseInt(rangeParts[1]);
+		} else {
+			// single token in the span
+			feStart = feEnd = parseInt(feSpan);
+		}
+		return createSpanRange(feStart, feEnd);
+	}
+
+	/**
+	 * Produces a frame elements line representation of a specified frame annotation. 
+	 * Result does not end in a newline.
+	 * 
+	 * @param arguments Map from role names to filler argument token ranges
+	 * @param frameName
+	 * @param lexicalUnit
+	 * @param tokenNums Token numbers for the target
+	 * @param target The target word(s), separated by spaces
+	 * @param sentNum
+	 * @return
+	 */
+	public static String makeFrameElementsLine(Map<String,Range0Based> arguments, String frameName, String lexicalUnit, int[] tokenNums, String target, int sentNum) {
+		String s = makeFrameLine(frameName, lexicalUnit, tokenNums, target, sentNum) + "\t";
+		int numNonemptySpans = 0;
+		for (Map.Entry<String,Range0Based> argument : arguments.entrySet()) {
+			Range0Based span = argument.getValue();
+			if (CandidateFrameElementFilters.isEmptySpan(span))	// unfilled FE
+				continue;
+			String rangeS = ""+span.getStart();
+			if (span.length()>1)
+				rangeS += ":" + (span.getStart()+span.length());
+			s += argument.getKey() + "\t" + rangeS + "\t";
+			numNonemptySpans++;
+		}
+		return (numNonemptySpans+1) + "\t" + s.trim();
+	}
+	
+	public int getNumSpans() {
+		return numSpans;
+	}
+	
+	/**
+	 * @return The number of spans in the sentence annotated with frame elements of this frame. 
+	 * Does not include null instantiations (INI, DNI, CNI).
+	 */
+	public int getNumOvertFrameElementFillers() {
+		return getNumSpans() - 1;
+	}
+	
+=======
+	public static Range0Based getSpan(String feSpan) {
+		int feStart;
+		int feEnd;
+		if (feSpan.contains(":")) {
+			// startIndex:endIndex range
+			String[] rangeParts = feSpan.split(":");
+			feStart = parseInt(rangeParts[0]);
+			feEnd = parseInt(rangeParts[1]);
+		} else {
+			// single token in the span
+			feStart = feEnd = parseInt(feSpan);
+		}
+		return createSpanRange(feStart, feEnd);
+	}
+
+	/**
+	 * Produces a frame elements line representation of a specified frame annotation. 
+	 * Result does not end in a newline.
+	 * 
+	 * @param arguments Map from role names to filler argument token ranges
+	 * @param frameName
+	 * @param lexicalUnit
+	 * @param tokenNums Token numbers for the target
+	 * @param target The target word(s), separated by spaces
+	 * @param sentNum
+	 * @return
+	 */
+	public static String makeFrameElementsLine(Map<String,Range0Based> arguments, String frameName, String lexicalUnit, int[] tokenNums, String target, int sentNum) {
+		String s = makeFrameLine(frameName, lexicalUnit, tokenNums, target, sentNum) + "\t";
+		int numNonemptySpans = 0;
+		for (Map.Entry<String,Range0Based> argument : arguments.entrySet()) {
+			Range0Based span = argument.getValue();
+			if (CandidateFrameElementFilters.isEmptySpan(span))	// unfilled FE
+				continue;
+			String rangeS = ""+ span.start;
+			if (span.length()>1)
+				rangeS += ":" + (span.start +span.length());
+			s += argument.getKey() + "\t" + rangeS + "\t";
+			numNonemptySpans++;
+		}
+		return (numNonemptySpans+1) + "\t" + s.trim();
+	}
+	
+	public int getNumSpans() {
+		return numSpans;
+	}
+	
+	/**
+	 * @return The number of spans in the sentence annotated with frame elements of this frame. 
+	 * Does not include null instantiations (INI, DNI, CNI).
+	 */
+	public int getNumOvertFrameElementFillers() {
+		return getNumSpans() - 1;
+	}
+	
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/utils/DataPointWithFrameElements.java/right.java
 	/**
 	 * @return An array listing, in the order they were annotated in the XML file, the frame element names 
 	 * (of this frame) corresponding to annotated filler spans in the sentence. The same element name may be 

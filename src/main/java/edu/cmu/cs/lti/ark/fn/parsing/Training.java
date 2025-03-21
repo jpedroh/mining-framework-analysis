@@ -30,6 +30,7 @@ import riso.numerical.LBFGS;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +47,13 @@ public class Training {
 	// all of these arrays get reused to conserve memory
 	private final double[] weights;
 	private final double[] gradients;
-	private final double lambda; // L2 regularization hyperparameter
+	private final double lambda;
+// L2 regularization hyperparameter
 	private final int numThreads;
-	private final double[][] threadGradients; // per-thread gradients
-	private final double[] threadObjectives; // per-thread objective values
-	
+	private final double[][] threadGradients;
+// per-thread gradients
+	private final double[] threadObjectives;
+// per-thread objective values
 	/**
 	 * @param args command-line arguments as follows:
 	 *   frameFeaturesCacheFile: path to file containing a serialized cache of all of the features
@@ -72,7 +75,6 @@ public class Training {
 		final Training training = new Training(modelFile, alphabetFile, frameFeaturesList, lambda, numThreads);
 		training.runCustomLBFGS();
 	}
-
 	public Training(String modelFile,
 					String alphabetFile,
 					ArrayList<FrameFeatures> frameFeaturesList,
@@ -88,14 +90,12 @@ public class Training {
 		threadGradients =  new double[numThreads][numFeatures];
 		threadObjectives = new double[numThreads];
 	}
-	
 	private int readNumFeatures(String alphabetFile) {
 		final Scanner scanner = FileUtil.openInFile(alphabetFile);
 		final int numFeatures = scanner.nextInt() + 1;
 		scanner.close();
 		return numFeatures;
 	}
-
 	private Pair<Double, double[]> getObjectiveAndGradient(FrameFeatures ffs) {
 		final int modelSize = weights.length;
 		final List<SpanAndFeatures[]> featsList = ffs.fElementSpansAndFeatures;
@@ -138,8 +138,6 @@ public class Training {
 		}
 		return Pair.of(value, gradients);
 	}
-
-
 	public void processBatch(int taskID, int start, int end) {
 		final int threadID = taskID % numThreads;
 		System.out.println("Processing batch:" + taskID + " thread ID:" + threadID);
@@ -154,6 +152,37 @@ public class Training {
 				threadGradients[threadID][i] += gradient[i];
 			}
 		}
+	}
+	public void init(String modelFile,
+					 String alphabetFile,
+					 ArrayList<FrameFeatures> list,
+					 String frFile) throws IOException {
+		mModelFile = modelFile;
+		mAlphabetFile = alphabetFile;
+		initModel();
+		mFrameList = list;
+		mFrameLines = ParsePreparation.readLines(frFile);
+		rand = new Random(new Date().getTime());
+		mLambda = 0.0;
+		numDataPoints = mFrameList.size();
+		mNumThreads = 1;
+	}
+	public void init(String modelFile,
+					 String alphabetFile,
+					 ArrayList<FrameFeatures> list,
+					 String frFile,
+					 String reg,
+					 double lambda,
+					 int numThreads) throws IOException {
+		mModelFile = modelFile;
+		mAlphabetFile = alphabetFile;
+		initModel();
+		mFrameList = list;
+		mFrameLines = ParsePreparation.readLines(frFile);
+		rand = new Random(new Date().getTime());
+		mLambda = lambda;
+		numDataPoints = mFrameList.size();
+		mNumThreads = numThreads;
 	}
 
 	public Runnable createTask(final int count, final int start, final int end) {

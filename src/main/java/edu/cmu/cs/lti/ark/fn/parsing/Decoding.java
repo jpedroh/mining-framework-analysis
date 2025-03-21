@@ -29,9 +29,7 @@ import edu.cmu.cs.lti.ark.util.ds.Range0Based;
 import edu.cmu.cs.lti.ark.util.ds.Scored;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
-
 import java.util.*;
-
 import static com.google.common.collect.ImmutableList.copyOf;
 import static com.google.common.collect.Iterables.transform;
 import static edu.cmu.cs.lti.ark.util.ds.Scored.scored;
@@ -48,6 +46,7 @@ public class Decoding {
 	protected double[] modelWeights;
 
 	/** An assignment of spans to roles of a particular frame */
+
 	public static class RoleAssignments implements Comparable<RoleAssignments> {
 		private final static Function<Map.Entry<String,Range0Based>,String> JOIN_ENTRY =
 				new Function<Map.Entry<String, Range0Based>, String>() {
@@ -68,6 +67,7 @@ public class Decoding {
 			this(HashTreePMap.<String, Range0Based>empty(), HashTreePMap.<String, Range0Based>empty());
 		}
 
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/left.java
 		public RoleAssignments plus(String key, Range0Based value) {
 			if (value.isEmpty()) {
 				return new RoleAssignments(nonNullAssignments, nullAssignments.plus(key, value));
@@ -75,6 +75,16 @@ public class Decoding {
 				return new RoleAssignments(nonNullAssignments.plus(key, value), nullAssignments);
 			}
 		}
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/base.java
+=======
+		public RoleAssignments plus(String key, Span value) {
+			if (value.isEmpty()) {
+				return new RoleAssignments(nonNullAssignments, nullAssignments.plus(key, value));
+			} else {
+				return new RoleAssignments(nonNullAssignments.plus(key, value), nullAssignments);
+			}
+		}
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/right.java
 
 		private static String spanToString(Range0Based span) {
 			return (span.start == span.end) ? (""+span.start) : (span.start + ":" + span.end);
@@ -105,6 +115,7 @@ public class Decoding {
 	}
 
 	/** A sorted list of spans and their log score for a particular role */
+
 	public static class CandidatesForRole extends TreeSet<Scored<Range0Based>> { }
 
 	public Decoding(double[] modelWeights) {
@@ -167,6 +178,7 @@ public class Decoding {
 	 * @param weights an array of weights into which feats indexes
 	 * @return the sum of the weights of firing features
 	 */
+
 	public static double getWeightSum(int[] feats, double[] weights) {
 		// the 0th coordinate is the bias; it always fires
 		double weightSum = weights[0];
@@ -177,6 +189,7 @@ public class Decoding {
 	}
 
 	/** Adds 'offset' to the sentence field and discards the 1st two fields. */
+
 	protected String getInitialDecisionLine(String frameLine, int offset) {
 		String[] frameTokens = frameLine.split("\t");
 		frameTokens[7] = "" + (parseInt(frameTokens[7]) + offset);
@@ -195,6 +208,7 @@ public class Decoding {
 	 * @param kBestOutput the number of top configurations we should return
 	 * @return a list of Strings encoding the best k configurations of spans for all roles of the given frame
 	 */
+
 	public List<Scored<RoleAssignments>> getPredictions(FrameFeatures frameFeatures, int kBestOutput) {
 		// group by role
 		final Map<String, CandidatesForRole> candidatesAndScoresByRole =
@@ -230,11 +244,25 @@ public class Decoding {
 			final CandidatesForRole candidatesForRole = new CandidatesForRole();
 			for (SpanAndFeatures spanAndFeatures : featuresList.get(i)) {
 				final Range0Based span = spanAndFeatures.span();
+<<<<<<< /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/left.java
 				final double logScore = getWeightSum(spanAndFeatures.features(), modelWeights);
+||||||| /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/base.java
+				final double logScore = new LDouble(getWeightSum(spanAndFeatures.features, modelWeights));
+=======
+				final double logScore = getWeightSum(spanAndFeatures.features, modelWeights);
+>>>>>>> /usr/src/app/output/sammthomson/semafor/1b62f9ce9b3c32ea3e1c737df5c9acf3c23d27e1/src/main/java/edu/cmu/cs/lti/ark/fn/parsing/Decoding.java/right.java
 				candidatesForRole.add(scored(span, logScore));
 			}
 			results.put(roleName, candidatesForRole);
 		}
 		return results;
 	}
+
+	/** 0-indexed. Both ends inclusive. Null span is represented as [-1,-1]. */
+
+	/** An assignment of spans to roles of a particular frame */
+
+	/** A sorted list of spans and their log score for a particular role */
+
+	/** Adds 'offset' to the sentence field and discards the 1st two fields. */
 }

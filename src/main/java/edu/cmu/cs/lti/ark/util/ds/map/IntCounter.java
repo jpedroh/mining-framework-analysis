@@ -38,7 +38,7 @@ import java.util.*;
  * @since 2009-03-19
  * @param <T> Type for keys
  */
-@NotThreadSafe
+@NotThreadSafe @NotThreadSafe
 public class IntCounter<T> implements ICounter<T, Integer>, java.io.Serializable {
 	private static final long serialVersionUID = -5622820446958578575L;
 
