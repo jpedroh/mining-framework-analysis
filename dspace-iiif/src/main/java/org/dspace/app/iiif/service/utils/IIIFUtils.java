@@ -7,11 +7,6 @@
  */
 package org.dspace.app.iiif.service.utils;
 
-import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_HEIGHT;
-import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_IMAGE;
-import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_SCHEMA;
-import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_WIDTH;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,8 +33,12 @@ import org.dspace.content.Item;
 import org.dspace.content.MetadataValue;
 import org.dspace.content.service.BitstreamService;
 import org.dspace.core.Context;
-import org.dspace.iiif.util.IIIFSharedUtils;
 import org.dspace.services.ConfigurationService;
+import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_HEIGHT;
+import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_IMAGE;
+import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_SCHEMA;
+import static org.dspace.iiif.util.IIIFSharedUtils.METADATA_IIIF_WIDTH;
+import org.dspace.iiif.util.IIIFSharedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -92,12 +90,60 @@ public class IIIFUtils {
     @Autowired
     ConfigurationService configurationService;
 
+    /**
+     * This method returns the bundles holding IIIF resources if any.
+     * If there is no IIIF content available an empty bundle list is returned.
+     * @param item the DSpace item
+     *
+     * @return list of DSpace bundles with IIIF content
+     */
+
     public List<Bundle> getIIIFBundles(Item item) {
         return IIIFSharedUtils.getIIIFBundles(item);
     }
 
+    /**
+     * This method verify if the IIIF feature is enabled on the item
+     *
+     * @param item the dspace item
+     * @return true if the item supports IIIF
+     */
+
+<<<<<<< /usr/src/app/output/dspace/dspace/3ef96ba30c08b67327c7661a28f5a1cbc8e2ff68/dspace-iiif/src/main/java/org/dspace/app/iiif/service/utils/IIIFUtils.java/left.java
+    public boolean isIIIFEnabled(Item item) {
+        return item.getMetadata().stream()
+                .filter(m -> m.getMetadataField().toString('.').contentEquals(METADATA_IIIF_ENABLED))
+                .anyMatch(m -> m.getValue().equalsIgnoreCase("true")  ||
+                        m.getValue().equalsIgnoreCase("yes"));
+    }
+||||||| /usr/src/app/output/dspace/dspace/3ef96ba30c08b67327c7661a28f5a1cbc8e2ff68/dspace-iiif/src/main/java/org/dspace/app/iiif/service/utils/IIIFUtils.java/base.java
+    public boolean isIIIFEnabled(Item item) {
+        return item.getMetadata().stream()
+                .filter(m -> m.getMetadataField().toString('.').contentEquals(METADATA_IIIF_ENABLED))
+                .anyMatch(m -> m.getValue().equalsIgnoreCase("true")  ||
+                        m.getValue().equalsIgnoreCase("yes"));
+    }
+=======
     public boolean isIIIFEnabled(Item item) {
         return IIIFSharedUtils.isIIIFEnabled(item);
+    }
+>>>>>>> /usr/src/app/output/dspace/dspace/3ef96ba30c08b67327c7661a28f5a1cbc8e2ff68/dspace-iiif/src/main/java/org/dspace/app/iiif/service/utils/IIIFUtils.java/right.java
+
+    /**
+     * Utility method to check if a bundle can contain bitstreams to use as IIIF
+     * resources
+     *
+     * @param b the DSpace bundle to check
+     * @return true if the bundle can contain bitstreams to use as IIIF resources
+     */
+
+    private boolean isIIIFBundle(Bundle b) {
+        return !StringUtils.equalsAnyIgnoreCase(b.getName(), Constants.LICENSE_BUNDLE_NAME,
+                Constants.METADATA_BUNDLE_NAME, CreativeCommonsServiceImpl.CC_BUNDLE_NAME, "THUMBNAIL",
+                "BRANDED_PREVIEW", "TEXT", OTHER_CONTENT_BUNDLE)
+                && b.getMetadata().stream()
+                        .filter(m -> m.getMetadataField().toString('.').contentEquals(METADATA_IIIF_ENABLED))
+                        .noneMatch(m -> m.getValue().equalsIgnoreCase("false") || m.getValue().equalsIgnoreCase("no"));
     }
 
     /**
