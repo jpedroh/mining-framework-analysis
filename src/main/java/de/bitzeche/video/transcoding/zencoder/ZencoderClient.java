@@ -173,9 +173,15 @@ public class ZencoderClient implements IZencoderClient {
 				job.setJobId(Integer.parseInt(id));
 				return response;
 			}
-			completeJobInfo(job, response);
+<<<<<<< /usr/src/app/output/bitzeche/zencoder-java/fbdc46df52f91095d127c9df2b2223207aa84dc1/src/main/java/de/bitzeche/video/transcoding/zencoder/ZencoderClient.java/left.java
 			LOGGER.error("Error when sending request to Zencoder: ", response);
 			throw new ZencoderErrorResponseException(response);
+||||||| /usr/src/app/output/bitzeche/zencoder-java/fbdc46df52f91095d127c9df2b2223207aa84dc1/src/main/java/de/bitzeche/video/transcoding/zencoder/ZencoderClient.java/base.java
+			return response;
+=======
+			completeJobInfo(job, response);
+			return response;
+>>>>>>> /usr/src/app/output/bitzeche/zencoder-java/fbdc46df52f91095d127c9df2b2223207aa84dc1/src/main/java/de/bitzeche/video/transcoding/zencoder/ZencoderClient.java/right.java
 		} catch (ParserConfigurationException e) {
 			LOGGER.error("Parser threw Exception", e);
 		} catch (XPathExpressionException e) {

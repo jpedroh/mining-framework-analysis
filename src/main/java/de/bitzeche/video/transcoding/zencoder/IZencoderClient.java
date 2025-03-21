@@ -30,8 +30,9 @@ public interface IZencoderClient {
 	 * @param job
 	 * @return XML Response from zencoder
 	 */
-    public Document createJob(ZencoderJob job)
-            throws ZencoderErrorResponseException;
+	public Document createJob(ZencoderJob job)
+			throws ZencoderErrorResponseException;
+	
 	/**
 	 * Send a jobProgress request for a job.
 	 * @param jobId ID for the requested job.
@@ -60,7 +61,6 @@ public interface IZencoderClient {
 	 * @return true if job was resubmitted successfully.  
 	 * Attempting to resubmit an already finished job returns false. 
 	 */
-
 	public boolean resubmitJob(ZencoderJob job);
 
 	/**
@@ -81,7 +81,7 @@ public interface IZencoderClient {
 
 	@Deprecated
 	public boolean deleteJob(int jobId);
-	
+
 	@Deprecated
 	public boolean deleteJob(ZencoderJob job);
 }
