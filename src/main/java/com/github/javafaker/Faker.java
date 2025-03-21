@@ -86,15 +86,6 @@ public class Faker {
     private final Weather weather;
     private final Lebowski lebowski;
     private final Medical medical;
-    private final Animal animal;
-    private final BackToTheFuture backToTheFuture;
-    private final PrincessBride princessBride;
-    private final Buffy buffy;
-    private final Relationships relationships;
-    private final Nation nation;
-    private final Dune dune;
-    private final AquaTeenHungerForce aquaTeenHungerForce;
-    private final ProgrammingLanguage programmingLanguage;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -188,6 +179,10 @@ public class Faker {
         this.starTrek = new StarTrek(this);
         this.weather = new Weather(this);
         this.lebowski = new Lebowski(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/0ae869d23fd0b3013111cef31b069bf663f07513/src/main/java/com/github/javafaker/Faker.java/left.java
+        this.medical = new Medical(this);
+||||||| /usr/src/app/output/dius/java-faker/0ae869d23fd0b3013111cef31b069bf663f07513/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.medical = new Medical(this);
         this.country = new Country(this);
         this.animal = new Animal(this);
@@ -199,6 +194,7 @@ public class Faker {
         this.dune = new Dune(this);
         this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
         this.programmingLanguage = new ProgrammingLanguage(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/0ae869d23fd0b3013111cef31b069bf663f07513/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -206,6 +202,7 @@ public class Faker {
      *
      * @return {@link Faker#Faker()}
      */
+
     public static Faker instance() {
         return new Faker();
     }
@@ -216,6 +213,7 @@ public class Faker {
      * @param locale - {@link Locale}
      * @return {@link Faker#Faker(Locale)}
      */
+
     public static Faker instance(Locale locale) {
         return new Faker(locale);
     }
@@ -226,6 +224,7 @@ public class Faker {
      * @param random - {@link Random}
      * @return {@link Faker#Faker(Random)}
      */
+
     public static Faker instance(Random random) {
         return new Faker(random);
     }
@@ -237,6 +236,7 @@ public class Faker {
      * @param random - {@link Random}
      * @return {@link Faker#Faker(Locale, Random)}
      */
+
     public static Faker instance(Locale locale, Random random) {
         return new Faker(locale, random);
     }
@@ -249,6 +249,7 @@ public class Faker {
      * @param numberString
      * @return
      */
+
     public String numerify(String numberString) {
         return fakeValuesService.numerify(numberString);
     }
@@ -262,6 +263,7 @@ public class Faker {
      * @param letterString
      * @return
      */
+
     public String letterify(String letterString) {
         return fakeValuesService.letterify(letterString);
     }
@@ -276,6 +278,7 @@ public class Faker {
      * @param isUpper
      * @return
      */
+
     public String letterify(String letterString, boolean isUpper) {
         return fakeValuesService.letterify(letterString, isUpper);
     }
@@ -287,6 +290,7 @@ public class Faker {
      * @param string
      * @return
      */
+
     public String bothify(String string) {
         return fakeValuesService.bothify(string);
     }
@@ -299,6 +303,7 @@ public class Faker {
      * @param isUpper
      * @return
      */
+
     public String bothify(String string, boolean isUpper) {
         return fakeValuesService.bothify(string, isUpper);
     }
@@ -306,6 +311,7 @@ public class Faker {
     /**
      * Generates a String that matches the given regular expression.
      */
+
     public String regexify(String regex) {
         return fakeValuesService.regexify(regex);
     }
@@ -596,6 +602,24 @@ public class Faker {
     }
 
     public Medical medical(){return medical;}
+
+    private final Animal animal;
+
+    private final BackToTheFuture backToTheFuture;
+
+    private final PrincessBride princessBride;
+
+    private final Buffy buffy;
+
+    private final Relationships relationships;
+
+    private final Nation nation;
+
+    private final Dune dune;
+
+    private final AquaTeenHungerForce aquaTeenHungerForce;
+
+    private final ProgrammingLanguage programmingLanguage;
 
     public Country country(){ return country;}
 
