@@ -40,14 +40,19 @@ import opennlp.tools.tokenize.WordpieceTokenizer;
  */
 public abstract class Inference {
 
+  public static final String INPUT_IDS = "input_ids";
+  public static final String ATTENTION_MASK = "attention_mask";
+  public static final String TOKEN_TYPE_IDS = "token_type_ids";
+
   protected final OrtEnvironment env;
   protected final OrtSession session;
 
   private final Tokenizer tokenizer;
   private final Map<String, Integer> vocabulary;
-  protected InferenceOptions inferenceOptions;
 
   private static final int SPLIT_LENGTH = 125;
+
+  protected InferenceOptions inferenceOptions;
 
   /**
    * Instantiates a new inference class.

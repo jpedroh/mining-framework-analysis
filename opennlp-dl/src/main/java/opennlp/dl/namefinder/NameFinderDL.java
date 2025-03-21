@@ -29,61 +29,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-
-import opennlp.dl.InferenceOptions;
 import opennlp.dl.SpanEnd;
 import opennlp.dl.Tokens;
 import opennlp.tools.namefind.TokenNameFinder;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.WordpieceTokenizer;
 import opennlp.tools.util.Span;
+import opennlp.dl.InferenceOptions;
 
 /**
  * An implementation of {@link TokenNameFinder} that uses ONNX models.
  */
 public class NameFinderDL implements TokenNameFinder {
 
-  public static final String INPUT_IDS = "input_ids";
-  public static final String ATTENTION_MASK = "attention_mask";
-  public static final String TOKEN_TYPE_IDS = "token_type_ids";
-
   public static final String I_PER = "I-PER";
   public static final String B_PER = "B-PER";
 
-  private final NameFinderDLInference inference;
+  private final Inference inference;
   protected final OrtSession session;
-
   private final Map<Integer, String> ids2Labels;
   private final Tokenizer tokenizer;
   private final Map<String, Integer> vocab;
   protected final OrtEnvironment env;
-
   private static final int SPLIT_LENGTH = 125;
-
   /**
    * Creates a new NameFinderDL for entity recognition using ONNX models.
    *
    * @param model     The ONNX model file.
+   * @param vocabulary     The model's vocabulary file.
+   * @param doLowerCase Whether to lowercase the text prior to inference.
    * @param ids2Labels  A map of values and their assigned labels used to train the model.
    * @throws Exception Thrown if the models cannot be loaded.
    */
-  public NameFinderDL(File model, File vocabulary, Map<Integer, String> ids2Labels)
-          throws Exception {
+  public NameFinderDL(File model, File vocabulary, boolean doLowerCase, Map<Integer, String> ids2Labels)
+      throws Exception {
 
     this.env = OrtEnvironment.getEnvironment();
     this.session = env.createSession(model.getPath(), new OrtSession.SessionOptions());
     this.ids2Labels = ids2Labels;
-    this.inference = new NameFinderDLInference(model, vocabulary, new InferenceOptions());
+    this.inference = new TokenNameFinderInference(model, vocabulary, doLowerCase);
     this.vocab = loadVocab(vocabulary);
     this.tokenizer = new WordpieceTokenizer(vocab.keySet());
 
   }
-
   @Override
   public Span[] find(String[] input) {
 
@@ -106,11 +98,11 @@ public class NameFinderDL implements TokenNameFinder {
 
         // The inputs to the ONNX model.
         final Map<String, OnnxTensor> inputs = new HashMap<>();
-        inputs.put(INPUT_IDS, OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getIds()),
+        inputs.put("input_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getIds()),
             new long[] {1, tokens.getIds().length}));
-        inputs.put(ATTENTION_MASK, OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getMask()),
+        inputs.put("attention_mask", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getMask()),
             new long[] {1, tokens.getMask().length}));
-        inputs.put(TOKEN_TYPE_IDS, OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getTypes()),
+        inputs.put("token_type_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getTypes()),
             new long[] {1, tokens.getTypes().length}));
 
         // The outputs from the model.
@@ -219,12 +211,10 @@ public class NameFinderDL implements TokenNameFinder {
     return spans.toArray(new Span[0]);
 
   }
-
   @Override
   public void clearAdaptiveData() {
     // No use for this in this implementation.
   }
-
   private SpanEnd findSpanEnd(float[][][] v, int startIndex, Map<Integer, String> id2Labels,
                               String[] tokens) {
 
@@ -264,7 +254,6 @@ public class NameFinderDL implements TokenNameFinder {
     return new SpanEnd(index, characterEnd);
 
   }
-
   private int maxIndex(float[] arr) {
 
     double max = Float.NEGATIVE_INFINITY;
@@ -280,7 +269,6 @@ public class NameFinderDL implements TokenNameFinder {
     return index;
 
   }
-
   public static String findByRegex(String text, String span) {
 
     final String regex = span
@@ -299,7 +287,6 @@ public class NameFinderDL implements TokenNameFinder {
     return span;
 
   }
-
   private List<Tokens> tokenize(final String text) {
 
     final List<Tokens> t = new LinkedList<>();
@@ -351,7 +338,6 @@ public class NameFinderDL implements TokenNameFinder {
     return t;
 
   }
-
   /**
    * Loads a vocabulary file from disk.
    * @param vocab The vocabulary file.
@@ -376,6 +362,51 @@ public class NameFinderDL implements TokenNameFinder {
     }
 
     return v;
+
+  }
+  /**
+   * Creates a new NameFinderDL for entity recognition using ONNX models.
+   *
+   * @param model     The ONNX model file.
+   * @param vocab     The model's vocabulary file.
+   * @param ids2Labels  A map of values and their assigned labels used to train the model.
+   * @throws Exception Thrown if the models cannot be loaded.
+   */
+  public NameFinderDL(File model, File vocab, Map<Integer, String> ids2Labels)
+          throws Exception {
+
+    this.ids2Labels = ids2Labels;
+    this.inference = new NameFinderInference(model, vocab, new InferenceOptions());
+
+  }
+  /**
+   * Creates a new NameFinderDL for entity recognition using ONNX models.
+   *
+   * @param model     The ONNX model file.
+   * @param vocab     The model's vocabulary file.
+   * @param ids2Labels  A map of values and their assigned labels used to train the model.
+   * @param inferenceOptions The {@link InferenceOptions} used to customize the inference process.
+   * @throws Exception Thrown if the models cannot be loaded.
+   */
+  public NameFinderDL(File model, File vocab, Map<Integer, String> ids2Labels,
+                      InferenceOptions inferenceOptions) throws Exception {
+
+    this.ids2Labels = ids2Labels;
+    this.inference = new NameFinderInference(model, vocab, inferenceOptions);
+
+  }
+  /**
+   * Creates a new NameFinderDL for entity recognition using ONNX models.
+   *
+   * @param ids2Labels  A map of values and their assigned labels used to train the model.
+   * @param inference A custom implementation of {@link Inference}.
+   * @throws Exception Thrown if the models cannot be loaded.
+   */
+  public NameFinderDL(Map<Integer, String> ids2Labels,
+                      Inference inference) throws Exception {
+
+    this.ids2Labels = ids2Labels;
+    this.inference = inference;
 
   }
 

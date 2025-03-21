@@ -32,18 +32,17 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
-
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-
-import opennlp.dl.InferenceOptions;
 import opennlp.dl.Tokens;
+import opennlp.dl.doccat.scoring.AverageClassifcationScoringStrategy;
 import opennlp.dl.doccat.scoring.ClassificationScoringStrategy;
 import opennlp.tools.doccat.DocumentCategorizer;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.WordpieceTokenizer;
+import opennlp.dl.InferenceOptions;
 
 /**
  * An implementation of {@link DocumentCategorizer} that performs document classification
@@ -54,17 +53,26 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
   public static final String INPUT_IDS = "input_ids";
   public static final String ATTENTION_MASK = "attention_mask";
   public static final String TOKEN_TYPE_IDS = "token_type_ids";
-
-  private final Tokenizer tokenizer;
-  private final Map<String, Integer> vocabulary;
-  private final Map<Integer, String> categories;
-  private final ClassificationScoringStrategy classificationScoringStrategy;
-  private final InferenceOptions inferenceOptions;
   protected final OrtEnvironment env;
   protected final OrtSession session;
-
+  private final Tokenizer tokenizer;
+  private final Map<Integer, String> categories;
+  private final Map<String, Integer> vocabulary;
+  private final ClassificationScoringStrategy classificationScoringStrategy;
   private static final int SPLIT_LENGTH = 125;
+  /**
+   * Creates a new document categorizer using ONNX models. This will calculate document scores
+   * by averaging scores for individual document parts using the {@link AverageClassifcationScoringStrategy}.
+   * @param model The ONNX model file.
+   * @param vocab The model's vocabulary file.
+   * @param categories The categories.
+   */
+  public DocumentCategorizerDL(File model, File vocab, Map<Integer, String> categories)
+      throws IOException, OrtException {
 
+    this(model, vocab, categories, new AverageClassifcationScoringStrategy());
+
+  }
   /**
    * Creates a new document categorizer using ONNX models.
    * @param model The ONNX model file.
@@ -73,29 +81,35 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
    * @param classificationScoringStrategy Implementation of {@link ClassificationScoringStrategy} used
    *                                      to calculate the classification scores given the score of each
    *                                      individual document part.
-   * @param inferenceOptions {@link InferenceOptions} to control the inference.
    */
   public DocumentCategorizerDL(File model, File vocab, Map<Integer, String> categories,
-                               ClassificationScoringStrategy classificationScoringStrategy,
-                               InferenceOptions inferenceOptions)
+                               ClassificationScoringStrategy classificationScoringStrategy)
       throws IOException, OrtException {
 
     this.env = OrtEnvironment.getEnvironment();
     this.session = env.createSession(model.getPath(), new OrtSession.SessionOptions());
     this.vocabulary = loadVocab(vocab);
     this.tokenizer = new WordpieceTokenizer(vocabulary.keySet());
+
+    this.model = model;
+    this.vocab = vocab;
     this.categories = categories;
     this.classificationScoringStrategy = classificationScoringStrategy;
-    this.inferenceOptions = inferenceOptions;
 
   }
-
   @Override
   public double[] categorize(String[] strings) {
 
     try {
 
+
+<<<<<<< /usr/src/app/output/apache/opennlp/2f90d876fbdf09a6e1453c8bafd4ea4cdedb574e/opennlp-dl/src/main/java/opennlp/dl/doccat/DocumentCategorizerDL.java/left.java
       final List<Tokens> tokens = tokenize(strings[0]);
+||||||| /usr/src/app/output/apache/opennlp/2f90d876fbdf09a6e1453c8bafd4ea4cdedb574e/opennlp-dl/src/main/java/opennlp/dl/doccat/DocumentCategorizerDL.java/base.java
+      final double[][] vectors = tokenize(strings[0]);
+=======
+      final Object output = tokenize(strings[0]);
+>>>>>>> /usr/src/app/output/apache/opennlp/2f90d876fbdf09a6e1453c8bafd4ea4cdedb574e/opennlp-dl/src/main/java/opennlp/dl/doccat/DocumentCategorizerDL.java/right.java
 
       final List<double[]> scores = new LinkedList<>();
 
@@ -129,37 +143,30 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return new double[]{};
 
   }
-
   @Override
   public double[] categorize(String[] strings, Map<String, Object> map) {
     return categorize(strings);
   }
-
   @Override
   public String getBestCategory(double[] doubles) {
     return categories.get(maxIndex(doubles));
   }
-
   @Override
   public int getIndex(String s) {
     return getKey(s);
   }
-
   @Override
   public String getCategory(int i) {
     return categories.get(i);
   }
-
   @Override
   public int getNumberOfCategories() {
     return categories.size();
   }
-
   @Override
   public String getAllResults(double[] doubles) {
     return null;
   }
-
   @Override
   public Map<String, Double> scoreMap(String[] strings) {
 
@@ -174,7 +181,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return scoreMap;
 
   }
-
   @Override
   public SortedMap<Double, Set<String>> sortedScoreMap(String[] strings) {
 
@@ -195,7 +201,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return scoreMap;
 
   }
-
   private int getKey(String value) {
 
     for (Map.Entry<Integer, String> entry : categories.entrySet()) {
@@ -210,7 +215,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return -1;
 
   }
-
   /**
    * Loads a vocabulary file from disk.
    * @param vocab The vocabulary file.
@@ -237,7 +241,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return v;
 
   }
-
   private Tokens oldTokenize(String text) {
 
     final String[] tokens = tokenizer.tokenize(text);
@@ -259,7 +262,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return new Tokens(tokens, lids, mask, types);
 
   }
-
   private List<Tokens> tokenize(final String text) {
 
     final List<Tokens> t = new LinkedList<>();
@@ -311,7 +313,6 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return t;
 
   }
-
   /**
    * Applies softmax to an array of values.
    * @param input An array of values.
@@ -337,11 +338,40 @@ public class DocumentCategorizerDL implements DocumentCategorizer {
     return output;
 
   }
-
   private int maxIndex(double[] arr) {
     return IntStream.range(0, arr.length)
         .reduce((i, j) -> arr[i] > arr[j] ? i : j)
         .orElse(-1);
+  }
+  private final Inference inference;
+  public DocumentCategorizerDL(File model, File vocab, Map<Integer, String> categories) throws Exception {
+
+    this(categories, new DocumentCategorizerInference(model, vocab, new InferenceOptions()));
+
+  }
+  /**
+   * Creates a new document categorizer using ONNX models.
+   * @param model The ONNX model file.
+   * @param vocab The model's vocabulary file.
+   * @param categories The categories.
+   * @param inferenceOptions The {@link InferenceOptions} used to customize the inference process.
+   */
+  public DocumentCategorizerDL(File model, File vocab, Map<Integer, String> categories,
+                               InferenceOptions inferenceOptions) throws Exception {
+
+    this(categories, new DocumentCategorizerInference(model, vocab, inferenceOptions));
+
+  }
+  /**
+   * Creates a new document categorizer using ONNX models.
+   * @param categories The categories.
+   * @param inference The {@link Inference} inference implementation.
+   */
+  public DocumentCategorizerDL(Map<Integer, String> categories, Inference inference) {
+
+    this.categories = categories;
+    this.inference = inference;
+
   }
 
 }
