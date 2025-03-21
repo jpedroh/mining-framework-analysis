@@ -34,17 +34,36 @@ public class SSLCertificatesVerificationDisabledCheck extends FunctionArgumentCh
 
   private static final String CURL_SETOPT = "curl_setopt";
   private static final String CURLOPT_SSL_VERIFYPEER = "CURLOPT_SSL_VERIFYPEER";
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/left.java
+  private static final Set<String> VERIFY_PEER_COMPLIANT_VALUES = ImmutableSet.of("true", "1");
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/base.java
+  private static final Set<String> VERIFY_PEER_COMPLIANT_VALUES = ImmutableSet.of("true", "1");
+=======
   private static final Set<String> VERIFY_PEER_COMPLIANT_VALUES = ImmutableSet.of("false", "0");
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/right.java
 
   @Override
   public void visitFunctionCall(FunctionCallTree tree) {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/left.java
+    checkArgument(tree, CURL_SETOPT, new ArgumentIndicator(1, CURLOPT_SSL_VERIFYPEER), new ArgumentVerifier(2, VERIFY_PEER_COMPLIANT_VALUES, false));
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/base.java
+    String functionName = CheckUtils.getLowerCaseFunctionName(tree);
+    List<ExpressionTree> arguments = tree.arguments();
+=======
     checkArgument(tree, CURL_SETOPT, new ArgumentMatcher(1, CURLOPT_SSL_VERIFYPEER), new ArgumentVerifier(2, VERIFY_PEER_COMPLIANT_VALUES));
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/right.java
 
-    // super method must be called in order to visit function call node's children
     super.visitFunctionCall(tree);
   }
 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/left.java
+  protected void createIssue(ExpressionTree expressionTree) {
+    context().newIssue(this, expressionTree, MESSAGE);
+  }
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/base.java
+=======
   protected void createIssue(ExpressionTree argument) {
     context().newIssue(this, argument, MESSAGE);
   }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/926cb8c06d4ab0dadb8f0f0e978cdb64f567510e/php-checks/src/main/java/org/sonar/php/checks/SSLCertificatesVerificationDisabledCheck.java/right.java
 }
