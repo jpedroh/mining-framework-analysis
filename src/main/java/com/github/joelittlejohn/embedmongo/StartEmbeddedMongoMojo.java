@@ -79,11 +79,6 @@ public class StartEmbeddedMongoMojo extends AbstractEmbeddedMongoMojo {
     private static final String PACKAGE_NAME = StartEmbeddedMongoMojo.class.getPackage().getName();
     public static final String MONGOD_CONTEXT_PROPERTY_NAME = PACKAGE_NAME + ".mongod";
 
-    @Override
-    protected void savePortToProjectProperties(int port) {
-        super.savePortToProjectProperties(port);
-    }
-
     /**
      * The location of a directory that will hold the MongoDB data files.
      * 
@@ -139,8 +134,11 @@ public class StartEmbeddedMongoMojo extends AbstractEmbeddedMongoMojo {
     protected void onSkip() {
         getLog().debug("skip=true, not starting embedmongo");
     }
-
-    @Parameter(property = "embedmongo.journal", defaultValue = "false")
+    /**
+     * Should journaling be enabled for MongoDB
+     *
+     * @parameter expression="${embedmongo.journal}" default-value="false"
+     */
     private boolean journal;
 
     @Override
