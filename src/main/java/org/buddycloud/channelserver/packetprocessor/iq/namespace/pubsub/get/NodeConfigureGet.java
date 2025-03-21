@@ -86,14 +86,12 @@ public class NodeConfigureGet extends PubSubElementProcessorAbstract {
             // If access model is 'local' and its not a local user return 'authorize'
             value = nodeConf.get(key);
             if ((key.equals(AccessModel.FIELD_NAME)) && (value.equals(AccessModel.local.toString())) && (!Configuration.getInstance().isLocalJID(actor))) {
-
                 value = AccessModel.authorize.toString();
             }
             x.addField(key, null, null).addValue(value);
         }
-
-        Element pubsub = response.setChildElement(XMLConstants.PUBSUB_ELEM, JabberPubsub.NS_PUBSUB_OWNER);
-
+        Element pubsub = response.setChildElement(XMLConstants.PUBSUB_ELEM,
+                JabberPubsub.NS_PUBSUB_OWNER);
         Element configure = pubsub.addElement("configure");
         configure.addAttribute("node", node);
         configure.add(x.getElement());

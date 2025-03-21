@@ -29,17 +29,18 @@ public class NodeCreate extends PubSubElementProcessorAbstract {
 
     private static final Logger LOGGER = LogManager.getLogger(NodeCreate.class);
 
-    public NodeCreate(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
+    public NodeCreate(BlockingQueue<Packet> outQueue,
+            ChannelManager channelManager) {
         setChannelManager(channelManager);
         setOutQueue(outQueue);
     }
 
-    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm)
+            throws Exception {
         element = elm;
         response = IQ.createResultIQ(reqIQ);
         request = reqIQ;
         actor = actorJID;
-
         node = element.attributeValue(XMLConstants.NODE_ATTR);
         if (null == actorJID) {
             actor = request.getFrom();
@@ -52,8 +53,9 @@ public class NodeCreate extends PubSubElementProcessorAbstract {
             makeRemoteRequest();
             return;
         }
-        if ((doesNodeExist()) || (!actorIsRegistered()) || (!nodeHandledByThisServer())) {
-
+        if ( (doesNodeExist())
+                || (!actorIsRegistered())
+                || (!nodeHandledByThisServer())) {
             outQueue.put(response);
             return;
         }

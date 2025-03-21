@@ -97,8 +97,8 @@ public class NodeItemsGet implements PubSubElementProcessor {
         }
 
         if (!Configuration.getInstance().isLocalNode(node) && !isCached) {
-            LOGGER.debug("Node " + node + " is remote and not cached, off to get some data");
-
+            LOGGER.debug("Node " + node
+                    + " is remote and not cached, off to get some data");
             makeRemoteRequest();
             return;
         }
@@ -130,20 +130,20 @@ public class NodeItemsGet implements PubSubElementProcessor {
     }
 
     private boolean getItem() throws Exception {
-        NodeItem nodeItem = channelManager.getNodeItem(node, element.element(XMLConstants.ITEM_ELEM).attributeValue(XMLConstants.ID_ATTR));
-
+        NodeItem nodeItem = channelManager.getNodeItem(node,
+                element.element(XMLConstants.ITEM_ELEM).attributeValue(XMLConstants.ID_ATTR));
         if (nodeItem == null) {
             if (!Configuration.getInstance().isLocalNode(node)) {
                 makeRemoteRequest();
                 return false;
             }
-            setErrorCondition(PacketError.Type.cancel, PacketError.Condition.item_not_found);
+            setErrorCondition(PacketError.Type.cancel,
+                    PacketError.Condition.item_not_found);
             return true;
         }
-
-        Element pubsub = reply.getElement().addElement(XMLConstants.PUBSUB_ELEM, JabberPubsub.NAMESPACE_URI);
+        Element pubsub = reply.getElement().addElement(XMLConstants.PUBSUB_ELEM,
+                JabberPubsub.NAMESPACE_URI);
         Element items = pubsub.addElement(XMLConstants.ITEMS_ELEM).addAttribute(XMLConstants.NODE_ATTR, node);
-
         addItemToResponse(nodeItem, items);
         return true;
     }
@@ -180,7 +180,6 @@ public class NodeItemsGet implements PubSubElementProcessor {
         String afterItemId = null;
 
         String maxItems = element.attributeValue(XMLConstants.MAX_ITEMS_ATTR);
-
         if (maxItems != null) {
             maxItemsToReturn = Integer.parseInt(maxItems);
         }
@@ -217,8 +216,9 @@ public class NodeItemsGet implements PubSubElementProcessor {
         entry = null;
         int totalEntriesCount = getNodeItems(items, maxItemsToReturn, afterItemId);
 
-        if ((false == Configuration.getInstance().isLocalNode(node)) && (0 == rsmEntriesCount)) {
-            LOGGER.debug("No results in cache for remote node, so " + "we're going federated to get more");
+        if ((!Configuration.getInstance().isLocalNode(node)) && (0 == rsmEntriesCount)) {
+            LOGGER.debug("No results in cache for remote node, so "
+                    + "we're going federated to get more");
             makeRemoteRequest();
             return;
         }
@@ -245,11 +245,13 @@ public class NodeItemsGet implements PubSubElementProcessor {
     private boolean userCanViewNode() throws NodeStoreException {
         NodeMembership nodeMembership = channelManager.getNodeMembership(node, actor);
 
-        if (getNodeViewAcl().canViewNode(node, nodeMembership, getNodeAccessModel(), Configuration.getInstance().isLocalJID(actor))) {
+        if (getNodeViewAcl().canViewNode(node, nodeMembership,
+                getNodeAccessModel(), Configuration.getInstance().isLocalJID(actor))) {
             return true;
         }
         NodeAclRefuseReason reason = getNodeViewAcl().getReason();
-        createExtendedErrorReply(reason.getType(), reason.getCondition(), reason.getAdditionalErrorElement());
+        createExtendedErrorReply(reason.getType(), reason.getCondition(),
+                reason.getAdditionalErrorElement());
         return false;
     }
 
@@ -290,7 +292,8 @@ public class NodeItemsGet implements PubSubElementProcessor {
 
     private void addItemToResponse(NodeItem nodeItem, Element parent) {
         try {
-            entry = xmlReader.read(new StringReader(nodeItem.getPayload())).getRootElement();
+            entry = xmlReader.read(new StringReader(nodeItem.getPayload()))
+                    .getRootElement();
             Element item = parent.addElement("item");
             item.addAttribute("id", nodeItem.getId());
             item.add(entry);

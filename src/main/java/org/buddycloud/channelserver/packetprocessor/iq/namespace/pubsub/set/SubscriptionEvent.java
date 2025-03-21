@@ -62,19 +62,21 @@ public class SubscriptionEvent extends PubSubElementProcessorAbstract {
         if (actor == null) {
             actor = request.getFrom();
         }
-
         if (!nodeProvided()) {
             outQueue.put(response);
             return;
         }
-
+        
         if (!Configuration.getInstance().isLocalNode(node)) {
             makeRemoteRequest();
             return;
         }
         try {
-            if ((!nodeProvided()) || (!validRequestStanza()) || (!checkNodeExists()) || (!actorHasPermissionToAuthorize())
-                    || (actorIsModifyingTheirSubscription()) || (!userIsSubscribable())) {
+            if ( (!validRequestStanza())
+                    || (!checkNodeExists())
+                    || (!actorHasPermissionToAuthorize())
+                    || (actorIsModifyingTheirSubscription())
+                    || (!userIsSubscribable())) {
                 outQueue.put(response);
                 return;
             }
@@ -82,7 +84,8 @@ public class SubscriptionEvent extends PubSubElementProcessorAbstract {
             sendNotifications();
         } catch (NodeStoreException e) {
             LOGGER.error(e);
-            setErrorCondition(PacketError.Type.wait, PacketError.Condition.internal_server_error);
+            setErrorCondition(PacketError.Type.wait,
+                    PacketError.Condition.internal_server_error);
             outQueue.put(response);
         }
 
@@ -146,7 +149,8 @@ public class SubscriptionEvent extends PubSubElementProcessorAbstract {
         if (newSubscription.equals(Subscriptions.invited)) {
             Message alertInvitedUser = rootElement.createCopy();
             JID to = jid;
-            alertInvitedUser.getElement().attribute("remote-server-discover").detach();
+            alertInvitedUser.getElement().attribute("remote-server-discover")
+                    .detach();
             if (!Configuration.getInstance().isLocalJID(jid)) {
                 to = invitedUsersDomain;
             }

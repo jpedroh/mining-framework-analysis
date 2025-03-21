@@ -53,7 +53,8 @@ public class NodeDelete extends PubSubElementProcessorAbstract {
             makeRemoteRequest();
             return;
         }
-        if (!nodeExists() || !actorIsRegistered() || !nodeHandledByThisServer() || !actorAllowedToDelete()) {
+        if (!nodeExists() || !actorIsRegistered() || !nodeHandledByThisServer()
+                || !actorAllowedToDelete()) {
             outQueue.put(response);
             return;
         }
@@ -113,8 +114,11 @@ public class NodeDelete extends PubSubElementProcessorAbstract {
             return true;
         }
         response.setType(IQ.Type.error);
-        Element nodeIdRequired = new DOMElement("nodeid-required", new Namespace("", JabberPubsub.NS_PUBSUB_ERROR));
-        Element badRequest = new DOMElement(PacketError.Condition.bad_request.toXMPP(), new Namespace("", JabberPubsub.NS_XMPP_STANZAS));
+        Element nodeIdRequired = new DOMElement("nodeid-required",
+                new Namespace("", JabberPubsub.NS_PUBSUB_ERROR));
+        Element badRequest = new DOMElement(
+                PacketError.Condition.bad_request.toXMPP(), new Namespace("",
+                        JabberPubsub.NS_XMPP_STANZAS));
         Element error = new DOMElement("error");
         error.addAttribute("type", "modify");
         error.add(badRequest);
@@ -150,8 +154,10 @@ public class NodeDelete extends PubSubElementProcessorAbstract {
     }
 
     private boolean nodeHandledByThisServer() {
-        if (!node.contains("@" + getServerDomain()) && !node.contains("@" + getTopicsDomain())) {
-            setErrorCondition(PacketError.Type.modify, PacketError.Condition.not_acceptable);
+        if (!node.contains("@" + getServerDomain())
+                && !node.contains("@" + getTopicsDomain())) {
+            setErrorCondition(PacketError.Type.modify,
+                    PacketError.Condition.not_acceptable);
             return false;
         }
         return true;
@@ -159,7 +165,8 @@ public class NodeDelete extends PubSubElementProcessorAbstract {
 
     private boolean nodeValid() {
         if (!node.matches(NODE_REG_EX)) {
-            setErrorCondition(PacketError.Type.modify, PacketError.Condition.bad_request);
+            setErrorCondition(PacketError.Type.modify,
+                    PacketError.Condition.bad_request);
             return false;
         }
         return true;
@@ -167,7 +174,8 @@ public class NodeDelete extends PubSubElementProcessorAbstract {
 
     private void makeRemoteRequest() throws InterruptedException {
         request.setTo(new JID(node.split("/")[2]).getDomain());
-        Element actor = request.getElement().element("pubsub").addElement("actor", Buddycloud.NS);
+        Element actor = request.getElement().element("pubsub")
+                .addElement("actor", Buddycloud.NS);
         actor.addText(request.getFrom().toBareJID());
         outQueue.put(request);
     }

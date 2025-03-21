@@ -64,9 +64,10 @@ public class NodeThreadsGet extends PubSubElementProcessorAbstract {
             return;
         }
 
-        if (!Configuration.getInstance().isLocalNode(node) && !channelManager.isCachedNode(node)) {
-            LOGGER.debug("Node " + node + " is remote and not cached, off to get some data");
-
+        if (!Configuration.getInstance().isLocalNode(node)
+                && !channelManager.isCachedNode(node)) {
+            LOGGER.debug("Node " + node
+                    + " is remote and not cached, off to get some data");
             makeRemoteRequest();
             return;
         }
@@ -158,8 +159,10 @@ public class NodeThreadsGet extends PubSubElementProcessorAbstract {
         NodeViewAcl nodeViewAcl = new NodeViewAcl();
         Map<String, String> nodeConfiguration = channelManager.getNodeConf(node);
 
-        if (nodeViewAcl.canViewNode(node, channelManager.getNodeMembership(node, actor), getNodeAccessModel(nodeConfiguration), Configuration
-                .getInstance().isLocalJID(actor))) {
+        if (nodeViewAcl.canViewNode(node,
+                channelManager.getNodeMembership(node, actor),
+                getNodeAccessModel(nodeConfiguration),
+                Configuration.getInstance().isLocalJID(actor))) {
             return true;
         }
 
