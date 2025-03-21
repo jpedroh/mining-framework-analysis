@@ -28,6 +28,7 @@ import org.reficio.p2.log.Logger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.jar.Attributes;
@@ -107,7 +108,17 @@ public class BundleWrapper {
     }
 
     private void handleBundleJarWrap(WrapRequest request) throws IOException {
+<<<<<<< /usr/src/app/output/reficio/p2-maven-plugin/92a12c5bf3624825e5a803ffdd622971b120c846/src/main/java/org/reficio/p2/utils/BundleWrapper.java/left.java
         FileUtils.copyFile(request.getInputFile(), request.getOutputFile());
+||||||| /usr/src/app/output/reficio/p2-maven-plugin/92a12c5bf3624825e5a803ffdd622971b120c846/src/main/java/org/reficio/p2/utils/BundleWrapper.java/base.java
+        Jar inputJar = new Jar(inputJarFile);
+        return bundleUtils.isBundle(inputJar);
+=======
+        Jar inputJar = new Jar(inputJarFile);
+        boolean isBundle = this.bundleUtils.isBundle(inputJar);
+        inputJar.close();
+        return isBundle;
+>>>>>>> /usr/src/app/output/reficio/p2-maven-plugin/92a12c5bf3624825e5a803ffdd622971b120c846/src/main/java/org/reficio/p2/utils/BundleWrapper.java/right.java
     }
 
     private void handleVanillaJarWrap(WrapRequest request) throws Exception {
@@ -144,8 +155,11 @@ public class BundleWrapper {
                     continue;
                 }
                 zipOutputStream.putNextEntry(entry);
-                IOUtils.copy(zip.getInputStream(entry), zipOutputStream);
+                InputStream zipInputStream = zip.getInputStream(entry);
+                IOUtils.copy(zipInputStream, zipOutputStream);
+                zipInputStream.close();
             }
+            zip.close();
             zipOutputStream.close();
             FileUtils.copyFile(unsignedJar, jarToUnsign);
             unsignedJar.delete();
