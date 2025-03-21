@@ -163,8 +163,12 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.aquaTeenHungerForce());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.programmingLanguage());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.kaamelott());
+<<<<<<< /usr/src/app/output/dius/java-faker/3f9d548891cf8beac59f0cfcd3c8e54a1df0317d/src/test/java/com/github/javafaker/integration/FakerIT.java/left.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.bojackHorseman());
+||||||| /usr/src/app/output/dius/java-faker/3f9d548891cf8beac59f0cfcd3c8e54a1df0317d/src/test/java/com/github/javafaker/integration/FakerIT.java/base.java
+=======
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.disease());
+>>>>>>> /usr/src/app/output/dius/java-faker/3f9d548891cf8beac59f0cfcd3c8e54a1df0317d/src/test/java/com/github/javafaker/integration/FakerIT.java/right.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.basketball());
     }
 
