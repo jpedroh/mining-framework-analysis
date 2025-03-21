@@ -43,7 +43,8 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
 
     private Client client;
-    private IronMQConfiguration configuration;
+    
+    private final IronMQConfiguration configuration;
     private Queue queue;
 
     public IronMQEndpoint(String uri, IronMQComponent component, IronMQConfiguration ironMQConfiguration) {
@@ -51,10 +52,12 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         this.configuration = ironMQConfiguration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new IronMQProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         IronMQConsumer ironMQConsumer = new IronMQConsumer(this, processor);
         configureConsumer(ironMQConsumer);
@@ -84,6 +87,7 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
         return exchange;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

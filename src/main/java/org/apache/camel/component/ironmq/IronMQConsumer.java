@@ -95,11 +95,26 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // add on completion to handle after work when the exchange is done
+<<<<<<< /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/left.java
             // if batchDelete is not enabled
             if (!getEndpoint().getConfiguration().isBatchDelete()) {
                 exchange.addOnCompletion(new Synchronization() {
                     final String reservationId = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
                     final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
+||||||| /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/base.java
+            exchange.addOnCompletion(new Synchronization() {
+                public void onComplete(Exchange exchange) {
+                    processCommit(exchange);
+                }
+=======
+            exchange.addOnCompletion(new Synchronization() {
+
+                final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
+
+                public void onComplete(Exchange exchange) {
+                    processCommit(exchange, messageid);
+                }
+>>>>>>> /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/right.java
 
                     public void onComplete(Exchange exchange) {
                         processCommit(exchange, messageid, reservationId);
@@ -129,10 +144,27 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
      * 
      * @param exchange the exchange
      */
+<<<<<<< /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/left.java
     protected void processCommit(Exchange exchange, String messageid, String reservationId) {
+||||||| /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/base.java
+    protected void processCommit(Exchange exchange) {
+        String messageid = null;
+=======
+    protected void processCommit(Exchange exchange, String messageid) {
+>>>>>>> /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/right.java
         try {
+<<<<<<< /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/left.java
             LOG.trace("Deleting message with messageId {} and reservationId {}...", messageid, reservationId);
             getEndpoint().getQueue().deleteMessage(messageid, reservationId);
+||||||| /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/base.java
+            messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
+            LOG.trace("Deleting message with id {}...", messageid);
+            getEndpoint().getQueue().deleteMessage(messageid);
+=======
+
+            LOG.trace("Deleting message with id {}...", messageid);
+            getEndpoint().getQueue().deleteMessage(messageid);
+>>>>>>> /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/right.java
             LOG.trace("Message deleted");
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred during delete of message. This exception is ignored.", exchange, e);
