@@ -682,6 +682,15 @@ public class DbcReader {
                     value.setUnit(splitted[8]);
                 }
 
+                // Omit empty consumer
+                if (!"".equals(splitted[9])) {
+                    Consumer consumer = (Consumer) factory.createConsumer();
+                    NodeRef ref = (NodeRef) factory.createNodeRef();
+                    ref.setId(splitted[9]);
+                    consumer.getNodeRef().add(ref);
+                    tSignal.setConsumer(consumer);
+                }
+
                 // Omit default min = 0.0
                 if (min != 0.0) {
                     value.setMin(min);
