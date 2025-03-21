@@ -92,28 +92,9 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	public static final String BACKGROUND_COLOR = rootKey + "."
 			+ PageConstants.BACKGROUND_COLOR;
 
-	/**
-	 * Property name for setting the size of the pages output by this {@code PDFGraphics2D}.
-	 * <p>
-	 * To set a pre-defined page size, set this property to one of the page size constants defined
-	 * in {@link PageConstants} - for instance, {@linkplain PageConstants#A4},
-	 * {@linkplain PageConstants#LETTER}.
-	 * <p>
-	 * To set a custom page size, set this property to the value {@link CUSTOM_PAGE_SIZE}.  Then,
-	 * set the {@link CUSTOM_PAGE_SIZE} property to a {@link Dimension} object.
-	 * @see UserProperties
-	 */
 	public static final String PAGE_SIZE = rootKey + "."
 			+ PageConstants.PAGE_SIZE;
 
-	/**
-	 * Property name (and value!) for setting a custom page size.
-	 * <p>
-	 * If the {@link PAGE_SIZE} property is set to THIS VALUE, then the properties are consulted
-	 * for the value of THIS KEY.  The value of this key should be a {@link Dimension} object,
-	 * in the "user coordinates" of Java2D.
-	 *
-	 */
 	public static final String CUSTOM_PAGE_SIZE = rootKey + "."
 			+ PageConstants.CUSTOM_PAGE_SIZE;
 
@@ -153,6 +134,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 			+ InfoConstants.KEYWORDS;
 
 	private static final UserProperties defaultProperties = new UserProperties();
+
 	static {
 		defaultProperties.setProperty(TRANSPARENT, true);
 		defaultProperties.setProperty(BACKGROUND, false);
@@ -211,6 +193,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 */
 
 	// output
+
 	private OutputStream ros;
 
 	private PDFWriter os;
@@ -218,17 +201,25 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	private PDFStream pageStream;
 
 	// remember some things to do
-	private PDFFontTable fontTable; // remember which standard fonts were used
 
-	private PDFImageDelayQueue delayImageQueue; // remember images XObjects to
+	private PDFFontTable fontTable;
+
+// remember which standard fonts were used
+
+	private PDFImageDelayQueue delayImageQueue;
+
+// remember images XObjects to
 
 	// include in the file
 
-	private PDFPaintDelayQueue delayPaintQueue; // remember patterns to include
+	private PDFPaintDelayQueue delayPaintQueue;
+
+// remember patterns to include
 
 	// in the file
 
 	// multipage
+
 	private int currentPage;
 
 	private boolean multiPage;
@@ -248,6 +239,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	private List<String> titles;
 
 	// extra pointers
+
 	int alphaIndex;
 
 	Map<Float, String> extGStates;
@@ -288,6 +280,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/** Cloneconstructor */
+
 	protected PDFGraphics2D(PDFGraphics2D graphics, boolean doRestoreOnDispose) {
 		super(graphics, doRestoreOnDispose);
 
@@ -311,6 +304,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 2. Document Settings
 	 * ================================================================================
 	 */
+
 	public void setMultiPage(boolean multiPage) {
 		this.multiPage = multiPage;
 	}
@@ -325,6 +319,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * set incorrectly (not yet understood; AWT seems to not correctly dispose
 	 * of graphic contexts). A workaround is to simply switch it off.
 	 */
+
 	public static void setClipEnabled(boolean enabled) {
 		defaultProperties.setProperty(CLIP, enabled);
 	}
@@ -334,12 +329,14 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 3. Header, Trailer, Multipage & Comments
 	 * ================================================================================
 	 */
+
 	/* 3.1 Header & Trailer */
 
 	/**
 	 * Writes the catalog, docinfo, preferences, and (as we use only single page
 	 * output the page tree.
 	 */
+
 	public void writeHeader() throws IOException {
 		os = new PDFWriter(new BufferedOutputStream(ros), PDF_VERSION);
 
@@ -406,6 +403,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		}
 	}
 
+<<<<<<< /usr/src/app/output/freehep/freehep-vectorgraphics/5477c71d3adde8d7029035133d94c44e32eb9083/freehep-graphicsio-pdf/src/main/java/org/freehep/graphicsio/pdf/PDFGraphics2D.java/left.java
 	public Dimension getPageSize() {
 		Dimension pageSize = PageConstants.getSize(getProperty(PAGE_SIZE),
 						   getProperty(ORIENTATION));
@@ -423,6 +421,31 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 		}
 		return pageSize;
 	}
+||||||| /usr/src/app/output/freehep/freehep-vectorgraphics/5477c71d3adde8d7029035133d94c44e32eb9083/freehep-graphicsio-pdf/src/main/java/org/freehep/graphicsio/pdf/PDFGraphics2D.java/base.java
+=======
+	protected Dimension getPageSize() {
+		// A4 ... A0 or PageConstants.CUSTOM_PAGE_SIZE expected
+		// if PageConstants.CUSTOM_PAGE_SIZE is found,
+		// PageConstants.CUSTOM_PAGE_SIZE is used as Key too
+		String pageSizeProperty = getProperty(PAGE_SIZE);
+
+		// determine page size
+		Dimension result;
+		if (CUSTOM_PAGE_SIZE.equals(pageSizeProperty)) {
+			result = getPropertyDimension(CUSTOM_PAGE_SIZE);
+		} else {
+			result = PageConstants.getSize(getProperty(PAGE_SIZE),
+				getProperty(ORIENTATION));
+		}
+
+		// set a default value
+		if (result == null) {
+			result = PageConstants.getSize(PageConstants.INTERNATIONAL);
+		}
+
+		return result;
+	}
+>>>>>>> /usr/src/app/output/freehep/freehep-vectorgraphics/5477c71d3adde8d7029035133d94c44e32eb9083/freehep-graphicsio-pdf/src/main/java/org/freehep/graphicsio/pdf/PDFGraphics2D.java/right.java
 
 	public void writeTrailer() throws IOException {
 		if (!isMultiPage())
@@ -434,6 +457,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 			pages.addPage("Page" + i);
 		}
 		Dimension pageSize = getPageSize();
+
 		pages.setMediaBox(0, 0, pageSize.getWidth(), pageSize.getHeight());
 		pages.setResources("Resources");
 		os.close(pages);
@@ -513,6 +537,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/* 3.2 MultipageDocument methods */
+
 	public void openPage(Component component) throws IOException {
 		openPage(component.getSize(), component.getName(), component);
 	}
@@ -725,6 +750,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * ================================================================================ /*
 	 * 5.1.4. shapes
 	 */
+
 	public void draw(Shape s) {
 		try {
 			if (getStroke() instanceof BasicStroke) {
@@ -755,6 +781,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/* 5.2 Images */
+
 	public void copyArea(int x, int y, int width, int height, int dx, int dy) {
 		writeWarning(getClass()
 				+ ": copyArea(int, int, int, int, int, int) not implemented.");
@@ -776,6 +803,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/* 5.3. Strings */
+
 	protected void writeString(String str, double x, double y)
 			throws IOException {
 		// save the graphics context, especially the transformation matrix
@@ -805,7 +833,9 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 6. Transformations
 	 * ================================================================================
 	 */
+
 	/** Write the given transformation matrix to the file. */
+
 	protected void writeTransform(AffineTransform t) throws IOException {
 		pageStream.matrix(t);
 	}
@@ -815,6 +845,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 7. Clipping
 	 * ================================================================================
 	 */
+
 	protected void writeSetClip(Shape s) throws IOException {
 		// clear old clip
 		try {
@@ -868,7 +899,9 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 8. Graphics State
 	 * ================================================================================
 	 */
+
 	/* 8.1. stroke/linewidth */
+
 	protected void writeWidth(float width) throws IOException {
 		pageStream.width(width);
 	}
@@ -912,6 +945,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/* 8.2. paint/color */
+
 	public void setPaintMode() {
 		writeWarning(getClass() + ": setPaintMode() not implemented.");
 	}
@@ -963,6 +997,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	}
 
 	/* 8.3. font */
+
 	protected void writeFont(Font font) throws IOException {
 		// written when needed
 	}
@@ -972,6 +1007,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 9. Auxiliary
 	 * ================================================================================
 	 */
+
 	public GraphicsConfiguration getDeviceConfiguration() {
 		writeWarning(getClass() + ": getDeviceConfiguration() not implemented.");
 		return null;
@@ -991,6 +1027,7 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 * 10. Private/Utility
 	 * ================================================================================
 	 */
+
 	public void showString(Font font, String str) throws IOException {
 		String fontRef = fontTable.fontReference(font, isProperty(EMBED_FONTS),
 				getProperty(EMBED_FONTS_AS));
@@ -1005,40 +1042,10 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 	 *      org.freehep.graphics2d.font.CharTable,
 	 *      org.freehep.graphics2d.font.FontUtilities.ShowString)
 	 */
+
 	private void showCharacterCodes(String str) throws IOException {
 		FontUtilities.showString(getFont(), str, Lookup.getInstance().getTable(
 				"PDFLatin"), this);
-	}
-
-	/**
-	 * Reads the PAGE_SIZE Property. If A4 .. A0 is found,
-	 * PageConstants will determine the size. If CUSTOM_PAGE_SIZE
-	 * is found, CUSTOM_PAGE_SIZE is used as a Property key for
-	 * a dimension object.
-	 *
-	 * @return Size of page
-	 */
-	protected Dimension getPageSize() {
-		// A4 ... A0 or PageConstants.CUSTOM_PAGE_SIZE expected
-		// if PageConstants.CUSTOM_PAGE_SIZE is found,
-		// PageConstants.CUSTOM_PAGE_SIZE is used as Key too
-		String pageSizeProperty = getProperty(PAGE_SIZE);
-
-		// determine page size
-		Dimension result;
-		if (CUSTOM_PAGE_SIZE.equals(pageSizeProperty)) {
-			result = getPropertyDimension(CUSTOM_PAGE_SIZE);
-		} else {
-			result = PageConstants.getSize(getProperty(PAGE_SIZE),
-				getProperty(ORIENTATION));
-		}
-
-		// set a default value
-		if (result == null) {
-			result = PageConstants.getSize(PageConstants.INTERNATIONAL);
-		}
-
-		return result;
 	}
 
 	private double getWidth() {
@@ -1054,5 +1061,71 @@ public class PDFGraphics2D extends AbstractVectorGraphicsIO implements
 				getPropertyInsets(PAGE_MARGINS), getProperty(ORIENTATION));
 		return pageSize.getHeight() - margins.top - margins.bottom;
 	}
+
+	/**
+	 * Property name for setting the size of the pages output by this {@code PDFGraphics2D}.
+	 * <p>
+	 * To set a pre-defined page size, set this property to one of the page size constants defined
+	 * in {@link PageConstants} - for instance, {@linkplain PageConstants#A4},
+	 * {@linkplain PageConstants#LETTER}.
+	 * <p>
+	 * To set a custom page size, set this property to the value {@link CUSTOM_PAGE_SIZE}.  Then,
+	 * set the {@link CUSTOM_PAGE_SIZE} property to a {@link Dimension} object.
+	 * @see UserProperties
+	 */
+
+	/**
+	 * Property name (and value!) for setting a custom page size.
+	 * <p>
+	 * If the {@link PAGE_SIZE} property is set to THIS VALUE, then the properties are consulted
+	 * for the value of THIS KEY.  The value of this key should be a {@link Dimension} object,
+	 * in the "user coordinates" of Java2D.
+	 *
+	 */
+
+	// output
+
+	// remember some things to do
+
+// remember which standard fonts were used
+
+// remember images XObjects to
+
+	// include in the file
+
+// remember patterns to include
+
+	// in the file
+
+	// multipage
+
+	// extra pointers
+
+	/** Cloneconstructor */
+
+	/* 3.1 Header & Trailer */
+
+	/* 3.2 MultipageDocument methods */
+
+	/* 5.2 Images */
+
+	/* 5.3. Strings */
+
+	/** Write the given transformation matrix to the file. */
+
+	/* 8.1. stroke/linewidth */
+
+	/* 8.2. paint/color */
+
+	/* 8.3. font */
+
+	/**
+	 * Reads the PAGE_SIZE Property. If A4 .. A0 is found,
+	 * PageConstants will determine the size. If CUSTOM_PAGE_SIZE
+	 * is found, CUSTOM_PAGE_SIZE is used as a Property key for
+	 * a dimension object.
+	 *
+	 * @return Size of page
+	 */
 
 }
