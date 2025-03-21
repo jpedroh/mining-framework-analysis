@@ -28,9 +28,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.junit.Assert;
 import org.apache.commons.io.testtools.YellOnCloseInputStream;
 import org.apache.commons.io.testtools.YellOnCloseOutputStream;
-import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +39,52 @@ import org.junit.Test;
  * JUnit Test Case for {@link TeeInputStream}.
  */
 public class TeeInputStreamTest  {
+
+    private static class ExceptionOnCloseByteArrayInputStream extends ByteArrayInputStream {
+
+        public ExceptionOnCloseByteArrayInputStream() {
+            super(new byte[0]);
+        }
+
+        @Override
+        public void close() throws IOException {
+            throw new IOException();
+        }
+    }
+
+    private static class RecordCloseByteArrayInputStream extends ByteArrayInputStream {
+
+        boolean closed;
+
+        public RecordCloseByteArrayInputStream() {
+            super(new byte[0]);
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            closed = true;
+        }
+    }
+
+    private static class ExceptionOnCloseByteArrayOutputStream extends ByteArrayOutputStream {
+
+        @Override
+        public void close() throws IOException {
+            throw new IOException();
+        }
+    }
+
+    private static class RecordCloseByteArrayOutputStream extends ByteArrayOutputStream {
+
+        boolean closed;
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            closed = true;
+        }
+    }
 
     private final String ASCII = "US-ASCII";
 
@@ -119,6 +166,26 @@ public class TeeInputStreamTest  {
      * Tests that the main {@code InputStream} is closed when closing the branch {@code OutputStream} throws an
      * exception on {@link TeeInputStream#close()}, if specified to do so.
      */
+<<<<<<< /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/left.java
+    @Test
+    public void testCloseBranchIOException() throws Exception {
+        final RecordCloseByteArrayInputStream goodIs = new RecordCloseByteArrayInputStream();
+        final ByteArrayOutputStream badOs = new ExceptionOnCloseByteArrayOutputStream();
+
+        final TeeInputStream nonClosingTis = new TeeInputStream(goodIs, badOs, false);
+        nonClosingTis.close();
+        Assert.assertTrue(goodIs.closed);
+
+        final TeeInputStream closingTis = new TeeInputStream(goodIs, badOs, true);
+        try {
+            closingTis.close();
+            Assert.fail("Expected " + IOException.class.getName());
+        } catch (final IOException e) {
+            Assert.assertTrue(goodIs.closed);
+        }
+    }
+||||||| /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/base.java
+=======
     @Test
     public void testCloseBranchIOException() throws Exception {
         final ByteArrayInputStream goodIs = mock(ByteArrayInputStream.class);
@@ -136,11 +203,35 @@ public class TeeInputStreamTest  {
             verify(goodIs, times(2)).close();
         }
     }
-
+>>>>>>> /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/right.java
     /**
      * Tests that the branch {@code OutputStream} is closed when closing the main {@code InputStream} throws an
      * exception on {@link TeeInputStream#close()}, if specified to do so.
      */
+<<<<<<< /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/left.java
+    @Test
+    public void testCloseMainIOException() {
+        final ByteArrayInputStream badIs = new ExceptionOnCloseByteArrayInputStream();
+        final RecordCloseByteArrayOutputStream goodOs = new RecordCloseByteArrayOutputStream();
+
+        final TeeInputStream nonClosingTis = new TeeInputStream(badIs, goodOs, false);
+        try {
+            nonClosingTis.close();
+            Assert.fail("Expected " + IOException.class.getName());
+        } catch (final IOException e) {
+            Assert.assertFalse(goodOs.closed);
+        }
+
+        final TeeInputStream closingTis = new TeeInputStream(badIs, goodOs, true);
+        try {
+            closingTis.close();
+            Assert.fail("Expected " + IOException.class.getName());
+        } catch (final IOException e) {
+            Assert.assertTrue(goodOs.closed);
+        }
+    }
+||||||| /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/base.java
+=======
     @Test
     public void testCloseMainIOException() throws IOException {
         final InputStream badIs = new YellOnCloseInputStream();
@@ -162,5 +253,14 @@ public class TeeInputStreamTest  {
             verify(goodOs).close();
         }
     }
+>>>>>>> /usr/src/app/output/apache/commons-io/a07c36067143ced7302aace252d6219d952cbd14/src/test/java/org/apache/commons/io/input/TeeInputStreamTest.java/right.java
+    /**
+     * Tests that the main {@code InputStream} is closed when closing the branch {@code OutputStream} throws an
+     * exception on {@link TeeInputStream#close()}, if specified to do so.
+     */
+    /**
+     * Tests that the branch {@code OutputStream} is closed when closing the main {@code InputStream} throws an
+     * exception on {@link TeeInputStream#close()}, if specified to do so.
+     */
 
 }
