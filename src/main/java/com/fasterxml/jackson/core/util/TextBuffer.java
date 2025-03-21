@@ -92,6 +92,7 @@ public class TextBuffer
     /**
      * Amount of characters in segments in {@link #_segments}
      */
+
     private int _segmentSize;
 
     private char[] _currentSegment;
@@ -99,6 +100,7 @@ public class TextBuffer
     /**
      * Number of characters in currently active (last) segment
      */
+
     private int _currentSize;
 
     /*
@@ -111,6 +113,7 @@ public class TextBuffer
      * String that will be constructed when the whole contents are
      * needed; will be temporarily stored in case asked for again.
      */
+
     private String _resultString;
 
     private char[] _resultArray;
@@ -126,6 +129,7 @@ public class TextBuffer
     }
 
     // @since 2.10
+
     protected TextBuffer(BufferRecycler allocator, char[] initialSegment) {
         this(allocator);
         _currentSegment = initialSegment;
@@ -144,6 +148,7 @@ public class TextBuffer
      *
      * @since 2.10
      */
+
     public static TextBuffer fromInitial(char[] initialSegment) {
         return new TextBuffer(null, initialSegment);
     }
@@ -159,6 +164,7 @@ public class TextBuffer
      * aggregated contents (that is, {@code _currentSegment}, to retain
      * current token text if (but only if!) already aggregated.
      */
+
     public void releaseBuffers()
     {
         // inlined `resetWithEmpty()` (except leaving `_resultString` as-is
@@ -191,6 +197,7 @@ public class TextBuffer
      * Method called to clear out any content text buffer may have, and
      * initializes buffer to use non-shared data.
      */
+
     public void resetWithEmpty()
     {
         _inputStart = -1; // indicates shared buffer not used
@@ -215,6 +222,7 @@ public class TextBuffer
      *
      * @since 2.9
      */
+
     public void resetWith(char ch)
     {
         _inputStart = -1;
@@ -242,6 +250,7 @@ public class TextBuffer
      * @param offset Offset of the first content character in {@code buf}
      * @param len Length of content in {@code buf}
      */
+
     public void resetWithShared(char[] buf, int offset, int len)
     {
         // First, let's clear intermediate values, if any:
@@ -265,6 +274,7 @@ public class TextBuffer
      * @param len Length of content in {@code buf}
      * @throws IllegalStateException if the buffer has grown too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public void resetWithCopy(char[] buf, int offset, int len)
     {
         _inputBuffer = null;
@@ -291,6 +301,7 @@ public class TextBuffer
      * @throws IllegalStateException if the buffer has grown too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      * @since 2.9
      */
+
     public void resetWithCopy(String text, int start, int len)
     {
         _inputBuffer = null;
@@ -313,6 +324,7 @@ public class TextBuffer
      * @param value to replace existing buffer
      * @throws IllegalStateException if the value is too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public void resetWithString(String value)
     {
         _inputBuffer = null;
@@ -342,12 +354,61 @@ public class TextBuffer
      *
      * @since 2.9
      */
+
     public char[] getBufferWithoutReset() {
         return _currentSegment;
     }
 
+    /**
+     * @param lastSegmentEnd End offset in the currently active segment,
+     *    could be 0 in the case of first character is
+     *    delimiter or end-of-line
+     * @param trimTrailingSpaces Whether trailing spaces should be trimmed or not
+     * @return token as text
+     * @throws JsonParseException if the text is too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
+     * @since 2.15
+     */
+
+    public String finishAndReturn(int lastSegmentEnd, boolean trimTrailingSpaces) throws JsonParseException
+    {
+        if (trimTrailingSpaces) {
+            // First, see if it's enough to trim end of current segment:
+            int ptr = lastSegmentEnd - 1;
+            if (ptr < 0 || _currentSegment[ptr] <= 0x0020) {
+                return _doTrim(ptr);
+            }
+        }
+        _currentSize = lastSegmentEnd;
+        return _contentsAsString();
+    }
+
+    private String _doTrim(int ptr) throws JsonParseException
+    {
+        while (true) {
+            final char[] curr = _currentSegment;
+            while (--ptr >= 0) {
+                if (curr[ptr] > 0x0020) { // found the ending non-space char, all done:
+                    _currentSize = ptr+1;
+                    return _contentsAsString();
+                }
+            }
+            // nope: need to handle previous segment; if there is one:
+            if (_segments == null || _segments.isEmpty()) {
+                break;
+            }
+            _currentSegment = _segments.remove(_segments.size() - 1);
+            ptr = _currentSegment.length;
+        }
+        // we get here if everything was trimmed, so:
+        _currentSize = 0;
+        _hasSegments = false;
+        return _contentsAsString();
+    }
+
     // Helper method used to find a buffer to use, ideally one
+
     // recycled earlier.
+
     private char[] buf(int needed)
     {
         if (_allocator != null) {
@@ -379,6 +440,7 @@ public class TextBuffer
     /**
      * @return Number of characters currently stored in this buffer
      */
+
     public int size() {
         if (_inputStart >= 0) { // shared copy from input buf
             return _inputLen;
@@ -408,6 +470,7 @@ public class TextBuffer
      * @return {@code True} if access via {@link #getTextBuffer()} would be efficient
      *   (that is, content already available as aggregated {@code char[]})
      */
+
     public boolean hasTextAsCharacters()
     {
         // if we have array in some form, sure
@@ -425,6 +488,7 @@ public class TextBuffer
      * @return Aggregated {@code char[]} that contains all buffered content
      * @throws IllegalStateException if the text is too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public char[] getTextBuffer()
     {
         // Are we just using shared input buffer?
@@ -455,6 +519,7 @@ public class TextBuffer
      * @return Aggregated buffered contents as a {@link java.lang.String}
      * @throws IllegalStateException if the contents are too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public String contentsAsString()
     {
         try {
@@ -528,6 +593,7 @@ public class TextBuffer
      * @return char array
      * @throws IllegalStateException if the text is too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public char[] contentsAsArray() {
         char[] result = _resultArray;
         if (result == null) {
@@ -551,6 +617,7 @@ public class TextBuffer
      *
      * @since 2.14
      */
+
     public double contentsAsDouble(final boolean useFastParser) throws NumberFormatException {
         try {
             return NumberInput.parseDouble(_contentsAsString(), useFastParser);
@@ -570,6 +637,7 @@ public class TextBuffer
      *
      * @deprecated use {@link #contentsAsDouble(boolean)}
      */
+
     @Deprecated // @since 2.14
     public double contentsAsDouble() throws NumberFormatException {
         return contentsAsDouble(false);
@@ -584,6 +652,7 @@ public class TextBuffer
      * @throws NumberFormatException if contents are not a valid Java number
      * @deprecated use {@link #contentsAsFloat(boolean)}
      */
+
     @Deprecated // @since 2.14
     public float contentsAsFloat() throws NumberFormatException {
         return contentsAsFloat(false);
@@ -599,6 +668,7 @@ public class TextBuffer
      * @throws NumberFormatException if contents are not a valid Java number
      * @since 2.14
      */
+
     public float contentsAsFloat(final boolean useFastParser) throws NumberFormatException {
         try {
             return NumberInput.parseFloat(_contentsAsString(), useFastParser);
@@ -617,6 +687,7 @@ public class TextBuffer
      *   {@link NumberInput#parseBigDecimal(String, boolean)} (or other overloads)
      *   directly instead
      */
+
     @Deprecated
     public BigDecimal contentsAsDecimal() throws NumberFormatException {
         // Was more optimized earlier, removing special handling due to deprecation
@@ -643,6 +714,7 @@ public class TextBuffer
      *
      * @since 2.9
      */
+
     public int contentsAsInt(boolean neg) {
         if ((_inputStart >= 0) && (_inputBuffer != null)) {
             if (neg) {
@@ -671,6 +743,7 @@ public class TextBuffer
      *
      * @since 2.9
      */
+
     public long contentsAsLong(boolean neg) {
         if ((_inputStart >= 0) && (_inputBuffer != null)) {
             if (neg) {
@@ -695,6 +768,7 @@ public class TextBuffer
      *
      * @since 2.8
      */
+
     public int contentsToWriter(Writer w) throws IOException
     {
         if (_resultArray != null) {
@@ -741,6 +815,7 @@ public class TextBuffer
      * Method called to make sure that buffer is not using shared input
      * buffer; if it is, it will copy such contents to private buffer.
      */
+
     public void ensureNotShared() {
         if (_inputStart >= 0) {
             unshare(16);
@@ -751,6 +826,7 @@ public class TextBuffer
      * @param c char to append
      * @throws IllegalStateException if the buffer has grown too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public void append(char c) {
         // Using shared buffer so far?
         if (_inputStart >= 0) {
@@ -775,6 +851,7 @@ public class TextBuffer
      * @param len number of chars to take from the array
      * @throws IllegalStateException if the buffer has grown too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public void append(char[] c, int start, int len)
     {
         // Can't append to shared buf (sanity check)
@@ -820,6 +897,7 @@ public class TextBuffer
      * @param len number of chars to take from the string
      * @throws IllegalStateException if the buffer has grown too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public void append(String str, int offset, int len)
     {
         // Can't append to shared buf (sanity check)
@@ -920,6 +998,7 @@ public class TextBuffer
     }
 
     public int getCurrentSegmentSize() { return _currentSize; }
+
     public void setCurrentLength(int len) { _currentSize = len; }
 
     /**
@@ -935,6 +1014,7 @@ public class TextBuffer
      *
      * @since 2.6
      */
+
     public String setCurrentAndReturn(int len) {
         _currentSize = len;
         // We can simplify handling here compared to full `contentsAsString()`:
@@ -957,6 +1037,7 @@ public class TextBuffer
      * @return char array
      * @throws IllegalStateException if the text is too large, see {@link com.fasterxml.jackson.core.StreamReadConstraints.Builder#maxStringLength(int)}
      */
+
     public char[] finishCurrentSegment() {
         if (_segments == null) {
             _segments = new ArrayList<char[]>();
@@ -985,51 +1066,6 @@ public class TextBuffer
     }
 
     /**
-     * @param lastSegmentEnd End offset in the currently active segment,
-     *    could be 0 in the case of first character is
-     *    delimiter or end-of-line
-     * @param trimTrailingSpaces Whether trailing spaces should be trimmed or not
-     * @return token as text
-     * @since 2.15
-     */
-    public String finishAndReturn(int lastSegmentEnd, boolean trimTrailingSpaces) throws JsonParseException
-    {
-        if (trimTrailingSpaces) {
-            // First, see if it's enough to trim end of current segment:
-            int ptr = lastSegmentEnd - 1;
-            if (ptr < 0 || _currentSegment[ptr] <= 0x0020) {
-                return _doTrim(ptr);
-            }
-        }
-        _currentSize = lastSegmentEnd;
-        return _contentsAsString();
-    }
-
-    // @since 2.15
-    private String _doTrim(int ptr) throws JsonParseException
-    {
-        while (true) {
-            final char[] curr = _currentSegment;
-            while (--ptr >= 0) {
-                if (curr[ptr] > 0x0020) { // found the ending non-space char, all done:
-                    _currentSize = ptr+1;
-                    return _contentsAsString();
-                }
-            }
-            // nope: need to handle previous segment; if there is one:
-            if (_segments == null || _segments.isEmpty()) {
-                break;
-            }
-            _currentSegment = _segments.remove(_segments.size() - 1);
-            ptr = _currentSegment.length;
-        }
-        // we get here if everything was trimmed, so:
-        _currentSize = 0;
-        _hasSegments = false;
-        return _contentsAsString();
-    }
-
-    /**
      * Method called to expand size of the current segment, to
      * accommodate for more contiguous content. Usually only
      * used when parsing tokens like names if even then.
@@ -1037,6 +1073,7 @@ public class TextBuffer
      *
      * @return Expanded current segment
      */
+
     public char[] expandCurrentSegment()
     {
         final char[] curr = _currentSegment;
@@ -1061,6 +1098,7 @@ public class TextBuffer
      *
      * @since 2.4
      */
+
     public char[] expandCurrentSegment(int minSize) {
         char[] curr = _currentSegment;
         if (curr.length >= minSize) return curr;
@@ -1079,6 +1117,7 @@ public class TextBuffer
      * {@link #contentsAsString}, since it's not guaranteed that resulting
      * String is cached.
      */
+
     @Override public String toString() {
         try {
             return contentsAsString();
@@ -1098,6 +1137,7 @@ public class TextBuffer
      * Method called if/when we need to append content when we have been
      * initialized to use shared buffer.
      */
+
     private void unshare(int needExtra)
     {
         int sharedLen = _inputLen;
@@ -1120,6 +1160,7 @@ public class TextBuffer
     }
 
     // Method called when current segment is full, to allocate new segment.
+
     private void expand()
     {
         // First, let's move current segment to segment list:
@@ -1201,6 +1242,20 @@ public class TextBuffer
      * @throws JsonParseException If length exceeds maximum
      * @since 2.15
      */
+
+    // // // Currently used segment; not (yet) contained in _seqments
+
+    // @since 2.10
+
+    // @since 2.9
+
+    // Helper method used to find a buffer to use, ideally one
+
+    // recycled earlier.
+
+    // @since 2.15
+
+    // Method called when current segment is full, to allocate new segment.
     protected void validateStringLength(int length) throws JsonParseException
     {
         // no-op
