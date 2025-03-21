@@ -1,10 +1,17 @@
 package org.ektorp.impl;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberInputStream;
+import java.io.PushbackInputStream;
+import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -203,486 +210,548 @@ public class StdCouchDbConnector implements CouchDbConnector {
                     }
                 });
     }
-
-    @Override
+	
+<<<<<<< /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/left.java
+	public <T> T get(final Class<T> c, String id) {
+		return get(c, id, EMPTY_OPTIONS);
+	}
+||||||| /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/base.java
+	public <T> T get(final Class<T> c, String id) {
+		return get(c, id, EMPTY_OPTIONS);
+	}
+=======
+	@Override
     public <T> T get(final Class<T> c, String id) {
         return get(c, id, EMPTY_OPTIONS);
     }
+>>>>>>> /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/right.java
+	
+	@Override
+	public <T> T get(final Class<T> c, String id, String rev) {
+	    Assert.notNull(c, "Class may not be null");
+	    assertDocIdHasValue(id);
+	    Assert.hasText(rev, "Revision may not be null or empty");
+	    return get(c, id, new Options().revision(rev));
+	}
+	
+	@Override
+	public <T> T getWithConflicts(final Class<T> c, String id) {
+	    Assert.notNull(c, "Class may not be null");
+	    assertDocIdHasValue(id);
+	    return get(c, id, new Options().includeConflicts());
+	}
+	
+	@Override
+	public <T> T find(Class<T> c, String id) {
+	    return find(c, id, EMPTY_OPTIONS);
+	}
+	
+	@Override
+	public <T> T find(final Class<T> c, String id, Options options) {
+	    Assert.notNull(c, "Class may not be null");
+	    assertDocIdHasValue(id);
+	    URI uri = dbURI.append(id);
+	    applyOptions(options, uri);
+	    return restTemplate.get(uri.toString(),
+	            new StdResponseHandler<T>() {
+	                @Override
+	                public T success(HttpResponse hr) throws Exception {
+	                    return objectMapper.readValue(hr.getContent(), c);
+	                }
 
-    @Override
-    public <T> T get(final Class<T> c, String id, Options options) {
-        Assert.notNull(c, "Class may not be null");
-        assertDocIdHasValue(id);
-        URI uri = dbURI.append(id);
-        applyOptions(options, uri);
-        return restTemplate.get(uri.toString(),
-                new StdResponseHandler<T>() {
-                    @Override
-                    public T success(HttpResponse hr) throws Exception {
-                        return objectMapper.readValue(hr.getContent(), c);
-                    }
-                });
-    }
+	                @Override
+	                public T error(HttpResponse hr) {
+	                    return hr.getCode() == HttpStatus.NOT_FOUND ? null : super.error(hr);
+	                }
+	            });
+	}
+	
+	private void applyOptions(Options options, URI uri) {
+	    if (options != null && !options.isEmpty()) {
+	        uri.params(options.getOptions());
+	    }
+	}
+	
+	@Override
+	public List<Revision> getRevisions(String id) {
+	    assertDocIdHasValue(id);
+	    return restTemplate.get(dbURI.append(id).param("revs_info", "true")
+	            .toString(), new StdResponseHandler<List<Revision>>() {
 
-    @Override
-    public <T> T get(final Class<T> c, String id, String rev) {
-        Assert.notNull(c, "Class may not be null");
-        assertDocIdHasValue(id);
-        Assert.hasText(rev, "Revision may not be null or empty");
-        return get(c, id, new Options().revision(rev));
-    }
+	        @Override
+	        public List<Revision> success(HttpResponse hr) throws Exception {
+	            JsonNode root = objectMapper.readValue(hr.getContent(),
+	                    JsonNode.class);
+	            List<Revision> revs = new ArrayList<Revision>();
+	            for (Iterator<JsonNode> i = root.get("_revs_info")
+	                    .getElements(); i.hasNext();) {
+	                JsonNode rev = i.next();
+	                revs.add(new Revision(rev.get("rev").getTextValue(), rev
+	                        .get("status").getTextValue()));
+	            }
+	            return revs;
+	        }
 
-    @Override
-    public <T> T getWithConflicts(final Class<T> c, String id) {
-        Assert.notNull(c, "Class may not be null");
-        assertDocIdHasValue(id);
-        return get(c, id, new Options().includeConflicts());
-    }
+	        @Override
+	        public List<Revision> error(HttpResponse hr) {
+	            if (hr.getCode() == HttpStatus.NOT_FOUND) {
+	                return Collections.emptyList();
+	            }
+	            return super.error(hr);
+	        }
+	    });
+	}
+	
+	@Override
+	public InputStream getAsStream(String id) {
+	    assertDocIdHasValue(id);
+	    return getAsStream(id, EMPTY_OPTIONS);
+	}
+	
+	@Override
+	public InputStream getAsStream(String id, Options options) {
+	    URI uri = dbURI.append(id);
+	    applyOptions(options, uri);
+	    HttpResponse r = restTemplate.get(uri.toString());
+	    return r.getContent();
+	}
+	
+	@Override
+	public InputStream getAsStream(String id, String rev) {
+	    assertDocIdHasValue(id);
+	    Assert.hasText(rev, "Revision may not be null or empty");
+	    return getAsStream(id, new Options().revision(rev));
+	}
+	
+	@Override
+	public void update(final Object o) {
+	    Assert.notNull(o, "Document cannot be null");
+	    final String id = Documents.getId(o);
+	    assertDocIdHasValue(id);
+	    restTemplate.put(dbURI.append(id).toString(), jsonSerializer.toJson(o),
+	            new StdResponseHandler<Void>() {
 
-    @Override
-    public <T> T find(Class<T> c, String id) {
-        return find(c, id, EMPTY_OPTIONS);
-    }
+	                @Override
+	                public Void success(HttpResponse hr) throws Exception {
+	                    JsonNode n = objectMapper.readValue(hr.getContent(),
+	                            JsonNode.class);
+	                    Documents.setRevision(o, n.get("rev").getTextValue());
+	                    return null;
+	                }
 
-    @Override
-    public <T> T find(final Class<T> c, String id, Options options) {
-        Assert.notNull(c, "Class may not be null");
-        assertDocIdHasValue(id);
-        URI uri = dbURI.append(id);
-        applyOptions(options, uri);
-        return restTemplate.get(uri.toString(),
-                new StdResponseHandler<T>() {
-                    @Override
-                    public T success(HttpResponse hr) throws Exception {
-                        return objectMapper.readValue(hr.getContent(), c);
-                    }
+	                @Override
+	                public Void error(HttpResponse hr) {
+	                    if (hr.getCode() == HttpStatus.CONFLICT) {
+	                        throw new UpdateConflictException(id, Documents
+	                                .getRevision(o));
+	                    }
+	                    return super.error(hr);
+	                }
+	            });
+	}
+	
+	@Override
+	public String delete(String id, String revision) {
+	    assertDocIdHasValue(id);
+	    return restTemplate.delete(
+	            dbURI.append(id).param("rev", revision).toString(),
+	            revisionHandler).getRevision();
+	}
+	
+	@Override
+	public List<String> getAllDocIds() {
+	    return restTemplate.get(dbURI.append("_all_docs").toString(),
+	            docIdResponseHandler);
+	}
+	
+	@Override
+	public void createDatabaseIfNotExists() {
+	    if (!dbInstance.checkIfDbExists(new DbPath(dbName))) {
+	        dbInstance.createDatabase(dbName);
+	    }
+	}
+	
+	@Override
+	public String getDatabaseName() {
+	    return dbName;
+	}
+	
+	@Override
+	public <T> List<T> queryView(final ViewQuery query, final Class<T> type) {
+	    Assert.notNull(query, "query may not be null");
+	    query.dbPath(dbURI.toString());
 
-                    @Override
-                    public T error(HttpResponse hr) {
-                        return hr.getCode() == HttpStatus.NOT_FOUND ? null : super.error(hr);
-                    }
-                });
-    }
+	    EmbeddedDocViewResponseHandler<T> rh = new EmbeddedDocViewResponseHandler<T>(
+	            type, objectMapper, query.isIgnoreNotFound());
 
-    private void applyOptions(Options options, URI uri) {
-        if (options != null && !options.isEmpty()) {
-            uri.params(options.getOptions());
-        }
-    }
+	    return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
+	            query.getKeysAsJson(), rh) : restTemplate.get(
+	            query.buildQuery(), rh);
+	}
+	
+	@Override
+	public <T> Page<T> queryForPage(ViewQuery query, PageRequest pr, Class<T> type) {
+	    Assert.notNull(query, "query may not be null");
+	    Assert.notNull(pr, "PageRequest may not be null");
+	    Assert.notNull(type, "type may not be null");
 
-    @Override
-    public List<Revision> getRevisions(String id) {
-        assertDocIdHasValue(id);
-        return restTemplate.get(dbURI.append(id).param("revs_info", "true")
-                .toString(), new StdResponseHandler<List<Revision>>() {
+	    query.dbPath(dbURI.toString());
+	    if (LOG.isDebugEnabled()) {
+	        LOG.debug("startKey: {}", pr.getStartKey());
+	        LOG.debug("startDocId: {}", pr.getStartKeyDocId());
+	    }
+	    PageResponseHandler<T> ph = new PageResponseHandler<T>(pr, type, objectMapper, query.isIgnoreNotFound());
+	    query = PageRequest.applyPagingParameters(query, pr);
+	    return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
+	            query.getKeysAsJson(), ph) : restTemplate.get(
+	            query.buildQuery(), ph);
+	}
+	
+	@Override
+	public ViewResult queryView(ViewQuery query) {
+	    Assert.notNull(query, "query cannot be null");
+	    query.dbPath(dbURI.toString());
+	    ResponseCallback<ViewResult> rh = new StdResponseHandler<ViewResult>() {
 
-            @Override
-            public List<Revision> success(HttpResponse hr) throws Exception {
-                JsonNode root = objectMapper.readValue(hr.getContent(),
-                        JsonNode.class);
-                List<Revision> revs = new ArrayList<Revision>();
-                for (Iterator<JsonNode> i = root.get("_revs_info")
-                        .getElements(); i.hasNext();) {
-                    JsonNode rev = i.next();
-                    revs.add(new Revision(rev.get("rev").getTextValue(), rev
-                            .get("status").getTextValue()));
-                }
-                return revs;
-            }
+	        @Override
+	        public ViewResult success(HttpResponse hr) throws Exception {
+	            return new ViewResult(objectMapper.readTree(hr.getContent()));
+	        }
 
-            @Override
-            public List<Revision> error(HttpResponse hr) {
-                if (hr.getCode() == HttpStatus.NOT_FOUND) {
-                    return Collections.emptyList();
-                }
-                return super.error(hr);
-            }
-        });
-    }
+	    };
+	    return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
+	            query.getKeysAsJson(), rh) : restTemplate.get(
+	            query.buildQuery(), rh);
+	}
+	
+	@Override
+	public StreamingViewResult queryForStreamingView(ViewQuery query) {
+	    return new StreamingViewResult(objectMapper, queryForStream(query));
+	}
+	
+	@Override
+	public InputStream queryForStream(ViewQuery query) {
+	    Assert.notNull(query, "query cannot be null");
+	    query.dbPath(dbURI.toString());
+	    return query.hasMultipleKeys() ? restTemplate.postUncached(query.buildQuery(),
+	            query.getKeysAsJson()).getContent() : restTemplate.getUncached(
+	            query.buildQuery()).getContent();
+	}
+	
+	@Override
+	public String deleteAttachment(String docId, String revision,
+	        String attachmentId) {
+	    return restTemplate.delete(
+	            dbURI.append(docId).append(attachmentId).param("rev", revision)
+	                    .toString(), revisionHandler).getRevision();
+	}
+	
+	private void assertDocIdHasValue(String docId) {
+	    Assert.hasText(docId, "document id cannot be empty");
+	}
+	
+	@Override
+	public HttpClient getConnection() {
+	    return dbInstance.getConnection();
+	}
+	
+	@Override
+	public DbInfo getDbInfo() {
+	    return restTemplate.get(dbURI.toString(),
+	            new StdResponseHandler<DbInfo>() {
 
-    @Override
-    public InputStream getAsStream(String id) {
-        assertDocIdHasValue(id);
-        return getAsStream(id, EMPTY_OPTIONS);
-    }
+	                @Override
+	                public DbInfo success(HttpResponse hr) throws Exception {
+	                    return objectMapper.readValue(hr.getContent(),
+	                            DbInfo.class);
+	                }
+	            });
+	}
+	
+	@Override
+	public DesignDocInfo getDesignDocInfo(String designDocId) {
+	    Assert.hasText(designDocId, "designDocId may not be null or empty");
+	    String uri = dbURI.append("_design").append(designDocId)
+	            .append("_info").toString();
 
-    @Override
-    public InputStream getAsStream(String id, Options options) {
-        URI uri = dbURI.append(id);
-        applyOptions(options, uri);
-        HttpResponse r = restTemplate.get(uri.toString());
-        return r.getContent();
-    }
+	    return restTemplate.get(uri, new StdResponseHandler<DesignDocInfo>() {
 
-    @Override
-    public InputStream getAsStream(String id, String rev) {
-        assertDocIdHasValue(id);
-        Assert.hasText(rev, "Revision may not be null or empty");
-        return getAsStream(id, new Options().revision(rev));
-    }
+	        @Override
+	        public DesignDocInfo success(HttpResponse hr) throws Exception {
+	            return objectMapper.readValue(hr.getContent(),
+	                    DesignDocInfo.class);
+	        }
+	    });
+	}
+	
+	@Override
+	public void compact() {
+	    restTemplate.post(dbURI.append("_compact").toString(), "not_used",
+	            VOID_RESPONSE_HANDLER);
+	}
+	
+	@Override
+	public void cleanupViews() {
+	    restTemplate.post(dbURI.append("_view_cleanup").toString(), "not_used",
+	            VOID_RESPONSE_HANDLER);
+	}
+	
+	@Override
+	public ReplicationStatus replicateFrom(String source) {
+	    ReplicationCommand cmd = new ReplicationCommand.Builder()
+	            .target(dbName).source(source).build();
 
-    @Override
-    public void update(final Object o) {
-        Assert.notNull(o, "Document cannot be null");
-        final String id = Documents.getId(o);
-        assertDocIdHasValue(id);
-        restTemplate.put(dbURI.append(id).toString(), jsonSerializer.toJson(o),
-                new StdResponseHandler<Void>() {
+	    return dbInstance.replicate(cmd);
+	}
+	
+	@Override
+	public ReplicationStatus replicateFrom(String source,
+	        Collection<String> docIds) {
+	    ReplicationCommand cmd = new ReplicationCommand.Builder()
+	            .target(dbName).source(source).docIds(docIds).build();
 
-                    @Override
-                    public Void success(HttpResponse hr) throws Exception {
-                        JsonNode n = objectMapper.readValue(hr.getContent(),
-                                JsonNode.class);
-                        Documents.setRevision(o, n.get("rev").getTextValue());
-                        return null;
-                    }
+	    return dbInstance.replicate(cmd);
+	}
+	
+	@Override
+	public ReplicationStatus replicateTo(String target) {
+	    ReplicationCommand cmd = new ReplicationCommand.Builder()
+	            .target(target).source(dbName).build();
 
-                    @Override
-                    public Void error(HttpResponse hr) {
-                        if (hr.getCode() == HttpStatus.CONFLICT) {
-                            throw new UpdateConflictException(id, Documents
-                                    .getRevision(o));
-                        }
-                        return super.error(hr);
-                    }
-                });
-    }
+	    return dbInstance.replicate(cmd);
+	}
+	
+	@Override
+	public ReplicationStatus replicateTo(String target,
+	        Collection<String> docIds) {
+	    ReplicationCommand cmd = new ReplicationCommand.Builder()
+	            .target(target).source(dbName).docIds(docIds).build();
 
-    @Override
-    public String delete(String id, String revision) {
-        assertDocIdHasValue(id);
-        return restTemplate.delete(
-                dbURI.append(id).param("rev", revision).toString(),
-                revisionHandler).getRevision();
-    }
-
-    @Override
-    public List<String> getAllDocIds() {
-        return restTemplate.get(dbURI.append("_all_docs").toString(),
-                docIdResponseHandler);
-    }
-
-    @Override
-    public void createDatabaseIfNotExists() {
-        if (!dbInstance.checkIfDbExists(new DbPath(dbName))) {
-            dbInstance.createDatabase(dbName);
-        }
-    }
-
-    @Override
-    public String getDatabaseName() {
-        return dbName;
-    }
-
-    @Override
-    public <T> List<T> queryView(final ViewQuery query, final Class<T> type) {
-        Assert.notNull(query, "query may not be null");
-        query.dbPath(dbURI.toString());
-
-        EmbeddedDocViewResponseHandler<T> rh = new EmbeddedDocViewResponseHandler<T>(
-                type, objectMapper, query.isIgnoreNotFound());
-
-        return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
-                query.getKeysAsJson(), rh) : restTemplate.get(
-                query.buildQuery(), rh);
-    }
-
-    @Override
-    public <T> Page<T> queryForPage(ViewQuery query, PageRequest pr, Class<T> type) {
-        Assert.notNull(query, "query may not be null");
-        Assert.notNull(pr, "PageRequest may not be null");
-        Assert.notNull(type, "type may not be null");
-
-        query.dbPath(dbURI.toString());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("startKey: {}", pr.getStartKey());
-            LOG.debug("startDocId: {}", pr.getStartKeyDocId());
-        }
-        PageResponseHandler<T> ph = new PageResponseHandler<T>(pr, type, objectMapper, query.isIgnoreNotFound());
-        query = PageRequest.applyPagingParameters(query, pr);
-        return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
-                query.getKeysAsJson(), ph) : restTemplate.get(
-                query.buildQuery(), ph);
-    }
-
-    @Override
-    public ViewResult queryView(ViewQuery query) {
-        Assert.notNull(query, "query cannot be null");
-        query.dbPath(dbURI.toString());
-        ResponseCallback<ViewResult> rh = new StdResponseHandler<ViewResult>() {
-
-            @Override
-            public ViewResult success(HttpResponse hr) throws Exception {
-                return new ViewResult(objectMapper.readTree(hr.getContent()));
-            }
-
-        };
-        return query.hasMultipleKeys() ? restTemplate.post(query.buildQuery(),
-                query.getKeysAsJson(), rh) : restTemplate.get(
-                query.buildQuery(), rh);
-    }
-
-    @Override
-    public StreamingViewResult queryForStreamingView(ViewQuery query) {
-        return new StreamingViewResult(objectMapper, queryForStream(query));
-    }
-
-    @Override
-    public InputStream queryForStream(ViewQuery query) {
-        Assert.notNull(query, "query cannot be null");
-        query.dbPath(dbURI.toString());
-        return query.hasMultipleKeys() ? restTemplate.postUncached(query.buildQuery(),
-                query.getKeysAsJson()).getContent() : restTemplate.getUncached(
-                query.buildQuery()).getContent();
-    }
-
-    @Override
-    public String deleteAttachment(String docId, String revision,
-            String attachmentId) {
-        return restTemplate.delete(
-                dbURI.append(docId).append(attachmentId).param("rev", revision)
-                        .toString(), revisionHandler).getRevision();
-    }
-
-    private void assertDocIdHasValue(String docId) {
-        Assert.hasText(docId, "document id cannot be empty");
-    }
-
-    @Override
-    public HttpClient getConnection() {
-        return dbInstance.getConnection();
-    }
-
-    @Override
-    public DbInfo getDbInfo() {
-        return restTemplate.get(dbURI.toString(),
-                new StdResponseHandler<DbInfo>() {
-
-                    @Override
-                    public DbInfo success(HttpResponse hr) throws Exception {
-                        return objectMapper.readValue(hr.getContent(),
-                                DbInfo.class);
-                    }
-                });
-    }
-
-    @Override
-    public DesignDocInfo getDesignDocInfo(String designDocId) {
-        Assert.hasText(designDocId, "designDocId may not be null or empty");
-        String uri = dbURI.append("_design").append(designDocId)
-                .append("_info").toString();
-
-        return restTemplate.get(uri, new StdResponseHandler<DesignDocInfo>() {
-
-            @Override
-            public DesignDocInfo success(HttpResponse hr) throws Exception {
-                return objectMapper.readValue(hr.getContent(),
-                        DesignDocInfo.class);
-            }
-        });
-    }
-
-    @Override
-    public void compact() {
-        restTemplate.post(dbURI.append("_compact").toString(), "not_used",
-                VOID_RESPONSE_HANDLER);
-    }
-
-    @Override
-    public void cleanupViews() {
-        restTemplate.post(dbURI.append("_view_cleanup").toString(), "not_used",
-                VOID_RESPONSE_HANDLER);
-    }
-
-    @Override
-    public ReplicationStatus replicateFrom(String source) {
-        ReplicationCommand cmd = new ReplicationCommand.Builder()
-                .target(dbName).source(source).build();
-
-        return dbInstance.replicate(cmd);
-    }
-
-    @Override
-    public ReplicationStatus replicateFrom(String source,
-            Collection<String> docIds) {
-        ReplicationCommand cmd = new ReplicationCommand.Builder()
-                .target(dbName).source(source).docIds(docIds).build();
-
-        return dbInstance.replicate(cmd);
-    }
-
-    @Override
-    public ReplicationStatus replicateTo(String target) {
-        ReplicationCommand cmd = new ReplicationCommand.Builder()
-                .target(target).source(dbName).build();
-
-        return dbInstance.replicate(cmd);
-    }
-
-    @Override
-    public ReplicationStatus replicateTo(String target,
-            Collection<String> docIds) {
-        ReplicationCommand cmd = new ReplicationCommand.Builder()
-                .target(target).source(dbName).docIds(docIds).build();
-
-        return dbInstance.replicate(cmd);
-    }
-
-    @Override
-    public void compactViews(String designDocumentId) {
-        Assert.hasText(designDocumentId,
-                "designDocumentId may not be null or empty");
-        restTemplate.post(dbURI.append("_compact").append(designDocumentId)
-                .toString(), "not_used", VOID_RESPONSE_HANDLER);
-    }
-    
-    @Override
-    public List<DocumentOperationResult> executeAllOrNothing(
+	    return dbInstance.replicate(cmd);
+	}
+	
+	@Override
+	public void compactViews(String designDocumentId) {
+	    Assert.hasText(designDocumentId,
+	            "designDocumentId may not be null or empty");
+	    restTemplate.post(dbURI.append("_compact").append(designDocumentId)
+	            .toString(), "not_used", VOID_RESPONSE_HANDLER);
+	}
+	
+	public List<DocumentOperationResult> executeAllOrNothing(
             InputStream inputStream) {
         return executeBulk(inputStream, true);
     }
-
-    @Override
+	
     public List<DocumentOperationResult> executeBulk(InputStream inputStream) {
         return executeBulk(inputStream, false);
     }
-    
-    private List<DocumentOperationResult> executeBulk(InputStream inputStream,
-            boolean allOrNothing) {
-        BulkDocumentWriter writer = new BulkDocumentWriter(objectMapper);
-
-        return restTemplate.post(
-            dbURI.append("_bulk_docs").toString(),
-            writer.createInputStreamWrapper(allOrNothing, inputStream),
-            new BulkOperationResponseHandler(objectMapper));
-
-    }
-
-    @Override
+	
+<<<<<<< /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/left.java
+	public List<DocumentOperationResult> executeAllOrNothing(
+			Collection<?> objects) {
+		return executeBulk(objects, true);
+	}
+||||||| /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/base.java
+	public List<DocumentOperationResult> executeAllOrNothing(
+			Collection<?> objects) {
+		return executeBulk(objects, true);
+	}
+=======
+	@Override
     public List<DocumentOperationResult> executeAllOrNothing(
             Collection<?> objects) {
         return executeBulk(objects, true);
     }
-
-    @Override
+>>>>>>> /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/right.java
+	
+<<<<<<< /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/left.java
+	public List<DocumentOperationResult> executeBulk(Collection<?> objects) {
+		return executeBulk(objects, false);
+	}
+||||||| /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/base.java
+	public List<DocumentOperationResult> executeBulk(Collection<?> objects) {
+		return executeBulk(objects, false);
+	}
+=======
+	@Override
     public List<DocumentOperationResult> executeBulk(Collection<?> objects) {
         return executeBulk(objects, false);
     }
+>>>>>>> /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/right.java
+	
+	@Override
+	public void addToBulkBuffer(Object o) {
+	    bulkBufferManager.add(o);
+	    LOG.debug("{} added to bulk buffer", o);
+	}
+	
+	@Override
+	public void clearBulkBuffer() {
+	    bulkBufferManager.clear();
+	    LOG.debug("bulk buffer cleared");
+	}
+	
+	@Override
+	public List<DocumentOperationResult> flushBulkBuffer() {
+	    try {
+	        Collection<?> buffer = bulkBufferManager.getCurrentBuffer();
+	        if (buffer != null && !buffer.isEmpty()) {
+	            LOG.debug("flushing bulk buffer");
+	            return executeBulk(buffer);
+	        } else {
+	            LOG.debug("bulk buffer was empty");
+	            return Collections.emptyList();
+	        }
+	    } finally {
+	        clearBulkBuffer();
+	    }
 
-    @Override
-    public void addToBulkBuffer(Object o) {
-        bulkBufferManager.add(o);
-        LOG.debug("{} added to bulk buffer", o);
-    }
-
-    @Override
-    public void clearBulkBuffer() {
-        bulkBufferManager.clear();
-        LOG.debug("bulk buffer cleared");
-    }
-
-    @Override
-    public List<DocumentOperationResult> flushBulkBuffer() {
-        try {
-            Collection<?> buffer = bulkBufferManager.getCurrentBuffer();
-            if (buffer != null && !buffer.isEmpty()) {
-                LOG.debug("flushing bulk buffer");
-                return executeBulk(buffer);
-            } else {
-                LOG.debug("bulk buffer was empty");
-                return Collections.emptyList();
-            }
-        } finally {
-            clearBulkBuffer();
-        }
-
-    }
-
-    public void setJsonSerializer(JsonSerializer js) {
-        Assert.notNull(js, "JsonSerializer may not be null");
-        this.jsonSerializer = js;
-    }
-
-    private List<DocumentOperationResult> executeBulk(Collection<?> objects,
+	}
+	
+	public void setJsonSerializer(JsonSerializer js) {
+	    Assert.notNull(js, "JsonSerializer may not be null");
+	    this.jsonSerializer = js;
+	}
+	
+	private List<DocumentOperationResult> executeBulk(InputStream inputStream,
             boolean allOrNothing) {
-        BulkOperation op = jsonSerializer.createBulkOperation(objects,
-                allOrNothing);
-        List<DocumentOperationResult> result = restTemplate.post(
-                dbURI.append("_bulk_docs").toString(), op.getData(),
-                new BulkOperationResponseHandler(objects, objectMapper));
-        op.awaitCompletion();
-        return result;
+        
+	    BulkDocumentWriter writer = new BulkDocumentWriter(objectMapper);
+	    
+        return restTemplate.post(
+                dbURI.append("_bulk_docs").toString(), 
+                writer.createInputStreamWrapper(allOrNothing, inputStream),
+                new BulkOperationResponseHandler(objectMapper));
     }
+	
+	private List<DocumentOperationResult> executeBulk(Collection<?> objects,
+	        boolean allOrNothing) {
+	    BulkOperation op = jsonSerializer.createBulkOperation(objects,
+	            allOrNothing);
+	    List<DocumentOperationResult> result = restTemplate.post(
+	            dbURI.append("_bulk_docs").toString(), op.getData(),
+	            new BulkOperationResponseHandler(objects, objectMapper));
+	    op.awaitCompletion();
+	    return result;
+	}
+	
+	@Override
+	public int getRevisionLimit() {
+	    return restTemplate.get(dbURI.append("_revs_limit").toString(),
+	            new StdResponseHandler<Integer>() {
+	                @Override
+	                public Integer success(HttpResponse hr) throws Exception {
+	                    JsonNode rlimit = objectMapper.readTree(hr.getContent());
+	                    return rlimit.getValueAsInt();
+	                }
+	            });
+	}
+	
+	@Override
+	public void setRevisionLimit(int limit) {
+	    restTemplate.put(dbURI.append("_revs_limit").toString(),
+	            Integer.toString(limit), VOID_RESPONSE_HANDLER);
+	}
+	
+	private InputStream changesAsStream(ChangesCommand cmd) {
+	    HttpResponse r = restTemplate.get(dbURI.append(cmd.toString())
+	            .toString());
+	    return r.getContent();
+	}
+	
+	@Override
+	public List<DocumentChange> changes(ChangesCommand cmd) {
+	    if (cmd.continuous) {
+	        throw new IllegalArgumentException(
+	                "ChangesCommand may not declare continous = true while calling changes");
+	    }
 
-    @Override
-    public int getRevisionLimit() {
-        return restTemplate.get(dbURI.append("_revs_limit").toString(),
-                new StdResponseHandler<Integer>() {
-                    @Override
-                    public Integer success(HttpResponse hr) throws Exception {
-                        JsonNode rlimit = objectMapper.readTree(hr.getContent());
-                        return rlimit.getValueAsInt();
-                    }
-                });
-    }
+	    ChangesCommand actualCmd = new ChangesCommand.Builder().merge(cmd)
+	            .continuous(false).build();
 
-    @Override
-    public void setRevisionLimit(int limit) {
-        restTemplate.put(dbURI.append("_revs_limit").toString(),
-                Integer.toString(limit), VOID_RESPONSE_HANDLER);
-    }
+	    List<DocumentChange> changes = new ArrayList<DocumentChange>();
+	    try {
+	        JsonNode node = objectMapper.readTree(changesAsStream(actualCmd));
+	        JsonNode results = node.findPath("results");
 
-    private InputStream changesAsStream(ChangesCommand cmd) {
-        HttpResponse r = restTemplate.get(dbURI.append(cmd.toString())
-                .toString());
-        return r.getContent();
-    }
+	        for (JsonNode change : results) {
+	            changes.add(new StdDocumentChange(change));
+	        }
+	    } catch (IOException e) {
+	        throw Exceptions.propagate(e);
+	    }
+	    return changes;
+	}
+	
+	@Override
+	public ChangesFeed changesFeed(ChangesCommand cmd) {
+	    int heartbeat = cmd.heartbeat > 0 ? cmd.heartbeat
+	            : DEFAULT_HEARTBEAT_INTERVAL;
 
-    @Override
-    public List<DocumentChange> changes(ChangesCommand cmd) {
-        if (cmd.continuous) {
-            throw new IllegalArgumentException(
-                    "ChangesCommand may not declare continous = true while calling changes");
-        }
+	    String since = cmd.since != null ? cmd.since : getDbInfo().getUpdateSeqAsString();
 
-        ChangesCommand actualCmd = new ChangesCommand.Builder().merge(cmd)
-                .continuous(false).build();
+	    ChangesCommand actualCmd = new ChangesCommand.Builder().merge(cmd)
+	            .continuous(true).heartbeat(heartbeat).since(since).build();
 
-        List<DocumentChange> changes = new ArrayList<DocumentChange>();
-        try {
-            JsonNode node = objectMapper.readTree(changesAsStream(actualCmd));
-            JsonNode results = node.findPath("results");
-
-            for (JsonNode change : results) {
-                changes.add(new StdDocumentChange(change));
-            }
-        } catch (IOException e) {
-            throw Exceptions.propagate(e);
-        }
-        return changes;
-    }
-
-    @Override
-    public ChangesFeed changesFeed(ChangesCommand cmd) {
-        int heartbeat = cmd.heartbeat > 0 ? cmd.heartbeat
-                : DEFAULT_HEARTBEAT_INTERVAL;
-
-        String since = cmd.since != null ? cmd.since : getDbInfo().getUpdateSeqAsString();
-
-        ChangesCommand actualCmd = new ChangesCommand.Builder().merge(cmd)
-                .continuous(true).heartbeat(heartbeat).since(since).build();
-
-        return new ContinuousChangesFeed(dbName,
-                restTemplate.getUncached(dbURI.append(actualCmd.toString()).toString()));
-    }
-
-    @Override
-    public String callUpdateHandler(String designDocID, String function,
-            String docID) {
-        return callUpdateHandler(designDocID, function, docID, null);
-    }
-
-    @Override
+	    return new ContinuousChangesFeed(dbName,
+	            restTemplate.getUncached(dbURI.append(actualCmd.toString()).toString()));
+	}
+	
+	@Override
+	public String callUpdateHandler(String designDocID, String function,
+	        String docID) {
+	    return callUpdateHandler(designDocID, function, docID, null);
+	}
+	
+<<<<<<< /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/left.java
+	public String callUpdateHandler(String designDocID, String function, String docID, Map<String, String> params) {
+		Assert.hasText(designDocID, "designDocID may not be null or empty");
+		Assert.hasText(function, "functionName may not be null or empty");
+		Assert.hasText(docID, "docId may not be null or empty");
+ 		URI uri = dbURI.append(designDocID).append("_update").append(function)
+ 				.append(docID);
+ 		if(params != null && !params.isEmpty()) {
+ 			for (Map.Entry<String, String> p : params.entrySet()) {
+ 	 			uri.param(p.getKey(), p.getValue());
+ 	 		}	
+ 		}
+ 		
+ 		return restTemplate.put(uri.toString(), "", new StdResponseHandler<String>() {
+ 
+ 			public String success(HttpResponse hr)
+ 					throws JsonProcessingException, IOException {
+ 				return IOUtils.toString(hr.getContent(), "UTF-8");
+ 			}
+ 
+ 		});
+ 
+ 	}
+||||||| /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/base.java
+	public String callUpdateHandler(String designDocID, String function, String docID, Map<String, String> params) {
+		Assert.hasText(designDocID, "designDocID may not be null or empty");
+		Assert.hasText(function, "functionName may not be null or empty");
+		Assert.hasText(docID, "docId may not be null or empty");
+ 		URI uri = dbURI.append(designDocID).append("_update").append(function)
+ 				.append(docID);
+ 		if(params != null && !params.isEmpty()) {
+ 			for (Map.Entry<String, String> p : params.entrySet()) {
+ 	 			uri.param(p.getKey(), p.getValue());
+ 	 		}	
+ 		}
+ 		
+ 		return restTemplate.put(uri.toString(), "", new StdResponseHandler<String>() {
+ 
+ 			public String success(HttpResponse hr)
+ 					throws JsonProcessingException, IOException {
+ 				return IOUtils.toString(hr.getContent(), "UTF-8");
+ 			}
+ 
+ 		});
+ 
+ 	}
+=======
+	@Override
     public String callUpdateHandler(String designDocID, String function, String docID, Map<String, String> params) {
         Assert.hasText(designDocID, "designDocID may not be null or empty");
         Assert.hasText(function, "functionName may not be null or empty");
@@ -698,7 +767,23 @@ public class StdCouchDbConnector implements CouchDbConnector {
 
         return callUpdateHandler(req);
     }
-
+>>>>>>> /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/impl/StdCouchDbConnector.java/right.java
+	
+    @Override
+    public <T> T get(final Class<T> c, String id, Options options) {
+        Assert.notNull(c, "Class may not be null");
+        assertDocIdHasValue(id);
+        URI uri = dbURI.append(id);
+        applyOptions(options, uri);
+        return restTemplate.get(uri.toString(),
+                new StdResponseHandler<T>() {
+                    @Override
+                    public T success(HttpResponse hr) throws Exception {
+                        return objectMapper.readValue(hr.getContent(), c);
+                    }
+                });
+    }
+	
     private String serializeUpdateHandlerRequestBody(Object o) {
         if (o == null) {
             return "";
@@ -712,7 +797,7 @@ public class StdCouchDbConnector implements CouchDbConnector {
             }
         }
     }
-
+	
     @Override
     public String callUpdateHandler(final UpdateHandlerRequest req) {
         Assert.hasText(req.getDesignDocId(), "designDocID may not be null or empty");
@@ -733,7 +818,7 @@ public class StdCouchDbConnector implements CouchDbConnector {
 
                 });
     }
-
+	
     @Override
     public <T> T callUpdateHandler(final UpdateHandlerRequest req, final Class<T> c) {
         Assert.hasText(req.getDesignDocId(), "designDocID may not be null or empty");

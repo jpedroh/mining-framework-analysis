@@ -288,6 +288,240 @@ public interface CouchDbConnector {
      */
     <T> List<T> queryView(ViewQuery query, Class<T> type);
 
+<<<<<<< /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/CouchDbConnector.java/left.java
+	void setRevisionLimit(int limit);
+	/**
+	 * Replicate the content in the source database into this database.
+	 * @param source database
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateFrom(String source);
+	/**
+	 * Replicate the content in the source database into this database.
+	 * Replication is restricted to the specified document ids.
+	 * @param source database
+	 * @param docIds
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateFrom(String source, Collection<String> docIds);
+	/**
+	 * Replicate the content in this database into the specified target database.
+	 * The target must exist.
+	 * @param target database
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateTo(String target);
+	/**
+	 * Replicate the content in this database into the specified target database.
+	 * Replication is restricted to the specified document ids.
+	 * The target must exist.
+	 * @param target database
+	 * @param docIds
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateTo(String target, Collection<String> docIds);
+	/**
+	 * Add the object to the bulk buffer attached to the executing thread.
+	 * A subsequent call to either flushBulkBuffer or clearBulkBuffer is expected.
+	 * @param o
+	 */
+	void addToBulkBuffer(Object o);
+	/**
+	 * Sends the bulk buffer attached the the executing thread to the database (through a executeBulk call).
+	 * The bulk buffer will be cleared when this method is finished.
+	 */
+	List<DocumentOperationResult> flushBulkBuffer();
+	/**
+	 * Clears the bulk buffer attached the the executing thread.
+	 */
+	void clearBulkBuffer();
+	/**
+     * Creates, updates or deletes all objects in the supplied collection.
+     *
+     * If the json has no revision set, it will be created, otherwise it will be updated.
+     * If the json document contains a "_deleted"=true field it will be deleted.
+     *
+     *
+     * Some documents may successfully be saved and some may not.
+     * The response will tell the application which documents were saved or not. In the case of a power failure, when the database restarts some may have been saved and some not.
+     * @param an json array with documents  ex [{"_id":"1", "name": "hello world" }, "_id":"2", "name": "hello world 2"}]
+     * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+     */
+	List<DocumentOperationResult> executeBulk(InputStream inputStream);
+    /**
+     * Creates, updates or deletes all objects in the supplied collection.
+     * In the case of a power failure, when the database restarts either all the changes will have been saved or none of them.
+     * However, it does not do conflict checking, so the documents will be committed even if this creates conflicts.
+     * @param an json array with documents
+     * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+     */
+	List<DocumentOperationResult> executeAllOrNothing(InputStream inputStream);
+	/**
+	 * Creates, updates or deletes all objects in the supplied collection.
+	 *
+	 * If the object has no revision set, it will be created, otherwise it will be updated.
+	 * If the object's serialized json document contains a "_deleted"=true field it will be deleted.
+	 *
+	 * org.ektorp.BulkDeleteDocument.of(someObject) is the easiest way to create a delete doc for an instance.
+	 *
+	 * Some documents may successfully be saved and some may not.
+	 * The response will tell the application which documents were saved or not. In the case of a power failure, when the database restarts some may have been saved and some not.
+	 * @param objects, all objects will have their id and revision set.
+	 * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+	 */
+	List<DocumentOperationResult> executeBulk(Collection<?> objects);
+	/**
+	 * Creates, updates or deletes all objects in the supplied collection.
+	 * In the case of a power failure, when the database restarts either all the changes will have been saved or none of them.
+	 * However, it does not do conflict checking, so the documents will be committed even if this creates conflicts.
+	 * @param objects, all objects will have their id and revision set.
+	 * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+	 */
+	List<DocumentOperationResult> executeAllOrNothing(Collection<?> objects);
+	/**
+	 * Queries the database for changes.
+	 * This is a one-off operation. To listen to changes continuously @see changesFeed(ChangesCommand cmd).
+	 * @param cmd
+	 * @return
+	 */
+	List<DocumentChange> changes(ChangesCommand cmd);
+	/**
+	 * Sets up a continuous changes feed.
+	 * The current update sequence in the DB will be used if ChangesCommand does not specify the since parameter.
+	 * A heartbeat interval of 10 seconds will be used if ChangesCommand does not specify the heartbeat parameter.
+	 *
+	 * @param cmd
+	 * @return a running changes feed that buffers incoming changes in a unbounded queue (will grow until OutOfMemoryException if not polled).
+	 */
+	ChangesFeed changesFeed(ChangesCommand cmd);
+	/**
+	 * 
+	 * @param designDoc
+	 * @param function
+	 * @param docId
+	 * @return
+	 */
+	String callUpdateHandler(String designDocID, String function, String docId);
+	/**
+	 * 
+	 * @param designDoc
+	 * @param function
+	 * @param docId
+	 * @param params
+	 * @return
+	 */
+	String callUpdateHandler(String designDocID, String function, String docId, Map<String, String> params);
+	/**
+	 * Commits any recent changes to the specified database to disk.
+	 */
+	void ensureFullCommit();
+||||||| /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/CouchDbConnector.java/base.java
+	void setRevisionLimit(int limit);
+	/**
+	 * Replicate the content in the source database into this database.
+	 * @param source database
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateFrom(String source);
+	/**
+	 * Replicate the content in the source database into this database.
+	 * Replication is restricted to the specified document ids.
+	 * @param source database
+	 * @param docIds
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateFrom(String source, Collection<String> docIds);
+	/**
+	 * Replicate the content in this database into the specified target database.
+	 * The target must exist.
+	 * @param target database
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateTo(String target);
+	/**
+	 * Replicate the content in this database into the specified target database.
+	 * Replication is restricted to the specified document ids.
+	 * The target must exist.
+	 * @param target database
+	 * @param docIds
+	 * @return ReplicationStatus
+	 */
+	ReplicationStatus replicateTo(String target, Collection<String> docIds);
+	/**
+	 * Add the object to the bulk buffer attached to the executing thread.
+	 * A subsequent call to either flushBulkBuffer or clearBulkBuffer is expected.
+	 * @param o
+	 */
+	void addToBulkBuffer(Object o);
+	/**
+	 * Sends the bulk buffer attached the the executing thread to the database (through a executeBulk call).
+	 * The bulk buffer will be cleared when this method is finished.
+	 */
+	List<DocumentOperationResult> flushBulkBuffer();
+	/**
+	 * Clears the bulk buffer attached the the executing thread.
+	 */
+	void clearBulkBuffer();
+	/**
+	 * Creates, updates or deletes all objects in the supplied collection.
+	 *
+	 * If the object has no revision set, it will be created, otherwise it will be updated.
+	 * If the object's serialized json document contains a "_deleted"=true field it will be deleted.
+	 *
+	 * org.ektorp.BulkDeleteDocument.of(someObject) is the easiest way to create a delete doc for an instance.
+	 *
+	 * Some documents may successfully be saved and some may not.
+	 * The response will tell the application which documents were saved or not. In the case of a power failure, when the database restarts some may have been saved and some not.
+	 * @param objects, all objects will have their id and revision set.
+	 * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+	 */
+	List<DocumentOperationResult> executeBulk(Collection<?> objects);
+	/**
+	 * Creates, updates or deletes all objects in the supplied collection.
+	 * In the case of a power failure, when the database restarts either all the changes will have been saved or none of them.
+	 * However, it does not do conflict checking, so the documents will be committed even if this creates conflicts.
+	 * @param objects, all objects will have their id and revision set.
+	 * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
+	 */
+	List<DocumentOperationResult> executeAllOrNothing(Collection<?> objects);
+	/**
+	 * Queries the database for changes.
+	 * This is a one-off operation. To listen to changes continuously @see changesFeed(ChangesCommand cmd).
+	 * @param cmd
+	 * @return
+	 */
+	List<DocumentChange> changes(ChangesCommand cmd);
+	/**
+	 * Sets up a continuous changes feed.
+	 * The current update sequence in the DB will be used if ChangesCommand does not specify the since parameter.
+	 * A heartbeat interval of 10 seconds will be used if ChangesCommand does not specify the heartbeat parameter.
+	 *
+	 * @param cmd
+	 * @return a running changes feed that buffers incoming changes in a unbounded queue (will grow until OutOfMemoryException if not polled).
+	 */
+	ChangesFeed changesFeed(ChangesCommand cmd);
+	/**
+	 * 
+	 * @param designDoc
+	 * @param function
+	 * @param docId
+	 * @return
+	 */
+	String callUpdateHandler(String designDocID, String function, String docId);
+	/**
+	 * 
+	 * @param designDoc
+	 * @param function
+	 * @param docId
+	 * @param params
+	 * @return
+	 */
+	String callUpdateHandler(String designDocID, String function, String docId, Map<String, String> params);
+	/**
+	 * Commits any recent changes to the specified database to disk.
+	 */
+	void ensureFullCommit();
+=======
     /**
      * Provides paged view results. Implementation based on the recipe described in the book
      * "CouchDB The Definitive Guide" http://guide.couchdb.org/editions/1/en/recipes.html#pagination
@@ -451,29 +685,6 @@ public interface CouchDbConnector {
      * Clears the bulk buffer attached the the executing thread.
      */
     void clearBulkBuffer();
-     /**
-      * Creates, updates or deletes all objects in the supplied collection.
-      *
-      * If the json has no revision set, it will be created, otherwise it will be updated.
-      * If the json document contains a "_deleted"=true field it will be deleted.
-      *
-      * Some documents may successfully be saved and some may not.
-      * The response will tell the application which documents were saved or not. In the case of a power failure, when the database restarts some may have been saved and some not.
-      * 
-      * @param an json array with documents  ex [{"_id":"1", "name": "hello world" }, "_id":"2", "name": "hello world 2"}]
-      * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
-      */
-     List<DocumentOperationResult> executeBulk(InputStream inputStream);
-
-     /**
-      * Creates, updates or deletes all objects in the supplied collection.
-      * In the case of a power failure, when the database restarts either all the changes will have been saved or none of them.
-      * However, it does not do conflict checking, so the documents will be committed even if this creates conflicts.
-      * 
-      * @param an json array with documents
-      * @return The list will only contain entries for documents that has any kind of error code returned from CouchDB. i.e. the list will be empty if everything was completed successfully.
-      */
-     List<DocumentOperationResult> executeAllOrNothing(InputStream inputStream);
 
     /**
      * Creates, updates or deletes all objects in the supplied collection.
@@ -553,5 +764,6 @@ public interface CouchDbConnector {
      * Commits any recent changes to the specified database to disk.
      */
     void ensureFullCommit();
+>>>>>>> /usr/src/app/output/helun/ektorp/ecc17e03e4b4879293d2d8ef55ff5d29e7c11735/org.ektorp/src/main/java/org/ektorp/CouchDbConnector.java/right.java
 
 }
