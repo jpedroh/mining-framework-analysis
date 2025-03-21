@@ -49,14 +49,14 @@ public class ConfigurationSlicing extends ManagementLink {
         return "Configuration Slicing";
     }
 
-    public String getCategoryName() {
-        return "TOOLS";
-    }
-
     @CheckForNull
     @Override
     public Permission getRequiredPermission() {
         return Jenkins.ADMINISTER;
+    }
+
+    public String getCategoryName() {
+        return "TOOLS";
     }
 
     @SuppressWarnings("unchecked")
@@ -161,8 +161,8 @@ public class ConfigurationSlicing extends ManagementLink {
         }
 
 		public Slicer<T, I> getSlicer() {
-			return slicer;
-		}
+    	return slicer;
+    }
 
         public List<I> getChanged() {
             return changed;
