@@ -1,25 +1,22 @@
 package org.concurrentunit;
-
+import java.util.concurrent.ExecutorService;
 import static org.junit.Assert.assertEquals;
+import java.util.concurrent.TimeoutException;
 import static org.junit.Assert.assertFalse;
+import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Concurrent test case.
+ * Concurrent test case implementation.
  * 
  * <p>
- * Call {@link #sleep(long)}, {@link #sleep(long, int)}, {@link #threadWait(long)} or
- * {@link #threadWait(long, int)} from the main unit test thread to wait for some other thread to
- * perform assertions. These operations will block until {@link #resume()} is called, the operation
- * times out, or a threadAssert call fails.
+ * Call {@link #threadWait(long)} or {@link #sleep(long)} from the main unit test thread to wait for
+ * some other thread to perform assertions. These operations will block until {@link #resume()}, the
+ * operation times out, or a threadAssert call fails.
  * 
  * <p>
  * The threadAssert methods can be used from any thread to perform concurrent assertions. Assertion
@@ -30,15 +27,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * <pre>
  * @Test
- * public void assertAndResume() throws Throwable {
- *   new Thread(new Runnable() {
- *     public void run() {
- *       threadAssertTrue(true);
- *       resume();
- *     }
- *   }).start();
- *   
- *   sleep(500);
+ * public void sleepShouldSupportAssertionErrors() throws Throwable {
+ *     new Thread(new Runnable() {
+ *       public void run() {
+ *           threadAssertTrue(true);
+ *           resume();
+ *       }
+ *     }).start();
+ *     threadWait(500);
  * }
  * </pre>
  * 
@@ -46,8 +42,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class ConcurrentTestCase {
   private static final String TIMEOUT_MESSAGE = "Test timed out while waiting for an expected result";
+
   private final Thread mainThread;
+
   private AtomicInteger waitCount;
+
   private Throwable failure;
 
   /**
@@ -55,6 +54,13 @@ public abstract class ConcurrentTestCase {
    */
   public ConcurrentTestCase() {
     mainThread = Thread.currentThread();
+  }
+
+  /**
+   * Resumes the main thread.
+   */
+  protected void resume() {
+    resume(mainThread);
   }
 
   /**
@@ -74,6 +80,22 @@ public abstract class ConcurrentTestCase {
   }
 
   /**
+   * Resumes a waiting test case.
+   * 
+   * <p>
+   * Note: This method is likely not very useful since a concurrent run of a test case resulting in
+   * the need to resume from a separate thread would yield no correlation between the initiating
+   * thread and the thread where the resume call takes place.
+   * 
+   * @param thread Thread to resume
+   */
+  protected void resume(Thread thread) {
+    if (thread != mainThread || waitCount == null || waitCount.decrementAndGet() == 0) {
+      thread.interrupt();
+    }
+  }
+
+  /**
    * @see org.junit.Assert#assertEquals(Object, Object)
    */
   public void threadAssertEquals(Object x, Object y) {
@@ -82,6 +104,13 @@ public abstract class ConcurrentTestCase {
     } catch (AssertionError e) {
       threadFail(e);
     }
+  }
+
+  /**
+   * Fails the current test for the given reason.
+   */
+  public void threadFail(String reason) {
+    threadFail(new AssertionError(reason));
   }
 
   /**
@@ -96,11 +125,30 @@ public abstract class ConcurrentTestCase {
   }
 
   /**
+   * Fails the current test for the given exception.
+   */
+  public void threadFail(Throwable e) {
+    failure = e;
+    resume(mainThread);
+  }
+
+  /**
    * @see org.junit.Assert#assertNotNull(Object)
    */
   public void threadAssertNotNull(Object object) {
     try {
       assertNotNull(object);
+    } catch (AssertionError e) {
+      threadFail(e);
+    }
+  }
+
+  /**
+   * If expression not true, set status to indicate current testcase should fail
+   */
+  public void threadAssertTrue(boolean b) {
+    try {
+      assertTrue(b);
     } catch (AssertionError e) {
       threadFail(e);
     }
@@ -118,61 +166,19 @@ public abstract class ConcurrentTestCase {
   }
 
   /**
-   * @see org.junit.Assert#assertTrue(boolean)
-   */
-  public void threadAssertTrue(boolean b) {
-    try {
-      assertTrue(b);
-    } catch (AssertionError e) {
-      threadFail(e);
-    }
-  }
-
-  /**
-   * Fails the current test for the given reason.
-   */
-  public void threadFail(String reason) {
-    threadFail(new AssertionError(reason));
-  }
-
-  /**
-   * Fails the current test with the given Throwable.
-   */
-  public void threadFail(Throwable e) {
-    failure = e;
-    resume(mainThread);
-  }
-
-  /**
-   * Resumes the main test thread.
-   */
-  protected void resume() {
-    resume(mainThread);
-  }
-
-  /**
-   * Resumes a waiting test case if {@code thread} is not the mainThread, the waitCount is null or
-   * the decremented waitCount is 0.
+   * Sleep until the timeout has elapsed or interrupted and throws any exception that is set by any
+   * other thread running within the context of this test.
    * 
    * <p>
-   * Note: This method is likely not very useful to call directly since a concurrent run of a test
-   * case resulting in the need to resume from a separate thread would yield no correlation between
-   * the initiating thread and the thread where the resume call takes place.
+   * Call {@link #resume()} to interrupt the sleep.
    * 
-   * @param thread Thread to resume
-   */
-  protected void resume(Thread thread) {
-    if (thread != mainThread || waitCount == null || waitCount.decrementAndGet() == 0)
-      thread.interrupt();
-  }
-
-  /**
-   * Sleeps until the {@code sleepDuration} has elapsed, {@link #resume()} is called, or the test is
-   * failed.
+   * <p>
+   * Note: A sleep time of 0 will sleep indefinitely. This is only recommended to use if you are
+   * absolutely sure that {@link #resume()} will be called by some thread.
    * 
-   * @param sleepDuration
-   * @throws TimeoutException if the sleep operation times out while waiting for a result
-   * @throws Throwable the last reported test failure
+   * @param sleepTime
+   * @throws Throwable If any exception occurs while sleeping
+   * @throws TimeoutException If the sleep operation times out while waiting for a result
    */
   protected void sleep(long sleepDuration) throws Throwable {
     try {
@@ -180,8 +186,9 @@ public abstract class ConcurrentTestCase {
       throw new TimeoutException(TIMEOUT_MESSAGE);
     } catch (InterruptedException ignored) {
     } finally {
-      if (failure != null)
+      if (failure != null) {
         throw failure;
+      }
     }
   }
 
@@ -196,9 +203,9 @@ public abstract class ConcurrentTestCase {
    * @throws Throwable the last reported test failure
    */
   protected void sleep(long sleepDuration, int resumeThreshold) throws Throwable {
-    if (Thread.currentThread() != mainThread)
+    if (Thread.currentThread() != mainThread) {
       throw new IllegalStateException("Must be called from within the main test thread");
-
+    }
     waitCount = new AtomicInteger(resumeThreshold);
     sleep(sleepDuration);
     waitCount = null;
@@ -212,23 +219,26 @@ public abstract class ConcurrentTestCase {
   }
 
   /**
-   * Waits until {@link #resume()} is called, or the test is failed.
+   * Waits until resume is called {@code pResumeCount} times.
    * 
+   * @param waitTime Time to wait
+   * @param resumeCount Number of times resume must be called before wait completes
    * @throws IllegalStateException if called from outside the main test thread
-   * @throws Throwable the last reported test failure
+   * @throws TimeoutException if the wait operation times out while waiting for a result
    */
   protected void threadWait() throws Throwable {
-    if (Thread.currentThread() != mainThread)
+    if (Thread.currentThread() != mainThread) {
       throw new IllegalStateException("Must be called from within the main test thread");
-
+    }
     synchronized (this) {
       while (true) {
         try {
           wait();
           throw new TimeoutException(TIMEOUT_MESSAGE);
         } catch (InterruptedException e) {
-          if (failure != null)
+          if (failure != null) {
             throw failure;
+          }
           break;
         }
       }
@@ -242,25 +252,35 @@ public abstract class ConcurrentTestCase {
    * @see #sleep(long)
    */
   protected void threadWait(long waitDuration) throws Throwable {
-    if (waitDuration == 0)
+    if (waitDuration == 0) {
       threadWait();
-    else
+    } else {
       sleep(waitDuration);
+    }
   }
 
   /**
-   * Waits until the {@code waitDuration} has elapsed, {@link #resume()} is called
-   * {@code resumeThreshold} times, or the test is failed. Delegates to {@link #sleep(long, int)} to
-   * avoid spurious wakeups.
+   * Waits till the wait time has elapsed or the test case's monitor is interrupted, and throws any
+   * exception that is set by any other thread running within the context of this test.
    * 
-   * @see #sleep(long, int)
+   * <p>
+   * Call {@link #finish()} to interrupt the wait.
+   * 
+   * <p>
+   * Note: A wait time of 0 will wait indefinitely. This is only recommended to use if you are
+   * absolutely sure that {@link #finish()} will be called by some thread.
+   * 
+   * @param waitTime Time to wait
+   * @throws Throwable If any exception occurs while waiting
+   * @throws TimeoutException if the wait operation times out while waiting for a result
    */
   protected void threadWait(long waitDuration, int resumeThreshold) throws Throwable {
     if (waitDuration == 0) {
       waitCount = new AtomicInteger(resumeThreshold);
       threadWait();
       waitCount = null;
-    } else
+    } else {
       sleep(waitDuration, resumeThreshold);
+    }
   }
 }

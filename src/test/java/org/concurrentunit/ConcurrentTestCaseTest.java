@@ -1,7 +1,5 @@
 package org.concurrentunit;
-
 import java.util.concurrent.TimeoutException;
-
 import org.junit.Test;
 
 /**
@@ -11,8 +9,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
   /**
    * Should throw an exception.
    */
-  @Test
-  public void waitShouldSupportResume() throws Throwable {
+  @Test public void waitShouldSupportResume() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         resume();
@@ -24,8 +21,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
   /**
    * Should throw an exception.
    */
-  @Test(expected = IllegalArgumentException.class)
-  public void waitShouldSupportExceptions() throws Throwable {
+  @Test(expected = IllegalArgumentException.class) public void waitShouldSupportExceptions() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         try {
@@ -41,8 +37,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
   /**
    * Should throw an assertion error.
    */
-  @Test(expected = AssertionError.class)
-  public void waitShouldSupportAssertionErrors() throws Throwable {
+  @Test(expected = AssertionError.class) public void waitShouldSupportAssertionErrors() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         threadAssertTrue(false);
@@ -56,8 +51,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
    * 
    * @throws Throwable
    */
-  @Test(expected = TimeoutException.class)
-  public void waitShouldSupportTimeouts() throws Throwable {
+  @Test(expected = TimeoutException.class) public void waitShouldSupportTimeouts() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         threadAssertTrue(true);
@@ -71,8 +65,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
    * 
    * @throws Throwable
    */
-  @Test(expected = TimeoutException.class)
-  public void sleepShouldSupportTimeouts() throws Throwable {
+  @Test(expected = TimeoutException.class) public void sleepShouldSupportTimeouts() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
       }
@@ -85,8 +78,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
    * 
    * @throws Throwable
    */
-  @Test
-  public void sleepShouldSupportResume() throws Throwable {
+  @Test public void sleepShouldSupportResume() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         resume();
@@ -100,8 +92,7 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
    * 
    * @throws Throwable
    */
-  @Test(expected = AssertionError.class)
-  public void sleepShouldSupportAssertionErrors() throws Throwable {
+  @Test(expected = AssertionError.class) public void sleepShouldSupportAssertionErrors() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
         threadAssertTrue(false);
@@ -115,23 +106,23 @@ public class ConcurrentTestCaseTest extends ConcurrentTestCase {
    * 
    * @throws Throwable
    */
-  @Test
-  public void shouldSupportMultipleResumes() throws Throwable {
+  @Test public void shouldSupportMultipleResumes() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++) {
           resume();
+        }
       }
     }).start();
     threadWait(500, 5);
   }
 
-  @Test
-  public void shouldSupportThreadWait0WithResumeCount() throws Throwable {
+  @Test public void shouldSupportThreadWait0WithResumeCount() throws Throwable {
     new Thread(new Runnable() {
       public void run() {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++) {
           resume();
+        }
       }
     }).start();
     threadWait(0, 5);
