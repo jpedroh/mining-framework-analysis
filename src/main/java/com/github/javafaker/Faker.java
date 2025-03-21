@@ -185,8 +185,12 @@ public class Faker {
         this.princessBride = new PrincessBride(this);
         this.buffy = new Buffy(this);
         this.relationships = new Relationships(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/54149209be7428d6580269758b5a0a01d945bd11/src/main/java/com/github/javafaker/Faker.java/left.java
         this.nation = new Nation(this);
+||||||| /usr/src/app/output/dius/java-faker/54149209be7428d6580269758b5a0a01d945bd11/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.dune = new Dune(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/54149209be7428d6580269758b5a0a01d945bd11/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -601,14 +605,14 @@ public class Faker {
         return relationships;
     }
 
+    public Dune dune() {
+        return dune;
+    }
+
     public Nation nation() {
         return nation;
     }
 
-    public Dune dune() {
-        return dune;
-    }
-    
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }
