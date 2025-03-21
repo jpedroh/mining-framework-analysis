@@ -138,7 +138,13 @@ public class AShot implements Serializable {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = taker.take(driver);
         Screenshot screenshot = cropper.crop(shot, elementCoords);
+<<<<<<< /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/AShot.java/left.java
         Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
+||||||| /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/AShot.java/base.java
+        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(elementCoords));
+=======
+        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot.getCoordsToCompare()));
+>>>>>>> /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/AShot.java/right.java
         screenshot.setIgnoredAreas(ignoredAreas);
         return screenshot;
     }

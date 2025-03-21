@@ -38,6 +38,7 @@ public class IndentCropper extends DefaultCropper {
         Coords cropArea = createCropArea(coordsToCompare);
         Coords indentMask = createIndentMask(cropArea, image);
         Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
+<<<<<<< /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/cropper/indent/IndentCropper.java/left.java
         Screenshot croppedShot = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
         croppedShot.setOriginShift(coordsWithIndent);
         croppedShot.setCoordsToCompare(setReferenceCoords(coordsWithIndent, coordsToCompare));
@@ -45,6 +46,24 @@ public class IndentCropper extends DefaultCropper {
         croppedShot.setImage(applyFilters(croppedShot.getImage()));
         pasteAreasToCompare(croppedShot.getImage(), noFilteringAreas);
         return croppedShot;
+||||||| /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/cropper/indent/IndentCropper.java/base.java
+        coordsToCompare = Coords.setReferenceCoords(coordsWithIndent, coordsToCompare);
+        Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
+        cropped.setCoordsToCompare(coordsToCompare);
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped.getImage(), cropped.getCoordsToCompare());
+        cropped.setImage(applyFilters(cropped.getImage()));
+        pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
+        return cropped;
+
+
+=======
+        Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
+        cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped);
+        cropped.setImage(applyFilters(cropped.getImage()));
+        pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
+        return cropped;
+>>>>>>> /usr/src/app/output/yandex-qatools/ashot/c885c16709720ca016eeaad7056c0a39a9490878/src/main/java/ru/yandex/qatools/ashot/cropper/indent/IndentCropper.java/right.java
     }
 
     protected Coords applyIndentMask(Coords origin, Coords mask) {
