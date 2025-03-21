@@ -38,16 +38,11 @@ public class GitHubSource {
     private static String GITHUB_API_USERNAME = System.getenv("GITHUB_USERNAME");
     private static String GITHUB_API_PASSWORD = System.getenv("GITHUB_PASSWORD");
     private static File GITHUB_API_CACHE = new File(System.getenv().getOrDefault("GITHUB_CACHEDIR", "githubCache"));
-
     /* Using the OkHttp Cache reduces request rate limit use, but isn't actually faster, so let's cache the repo list manually in this file */
     private static File GITHUB_REPO_LIST = new File(GITHUB_API_CACHE, "repo-list.txt");
-
-    private Set<String> repoNames = null;
-    private Map<String, List<String>> topicNames = null;
+    private Set<String> repoNames;
     private Map<String, Boolean> githubIssuesEnabled = null;
-
-
-    protected void init() {
+    private void init() {
         try {
             if (GITHUB_API_USERNAME != null && GITHUB_API_PASSWORD != null) {
                 this.getRepositoryData("jenkinsci");
@@ -56,12 +51,23 @@ public class GitHubSource {
             // ignore, fall back to dumb mode
         }
     }
-
     protected String getGraphqlUrl() {
         return "https://api.github.com/graphql";
     }
-
-    protected void getRepositoryData(String organization) throws IOException {
+<<<<<<< /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/left.java
+    private void getRepositoryData(String organization) throws IOException {
+        if (this.topicNames != null && this.githubIssuesEnabled != null) {
+            return;
+||||||| /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/base.java
+    private Map<String, List<String>> getTopics(String organization) throws IOException {
+        if (this.topicNames != null) {
+            return this.topicNames;
+=======
+    protected Map<String, List<String>> getOrganizationTopics(String organization) throws IOException {
+        if (this.topicNames != null) {
+            return this.topicNames;
+>>>>>>> /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/right.java
+        }
         this.topicNames = new HashMap<>();
         this.githubIssuesEnabled = new HashMap<>();
         this.repoNames = new TreeSet<>(new Comparator<String>() {
@@ -153,9 +159,15 @@ public class GitHubSource {
                     continue;
                 }
                 String name = node.getString("name");
-                this.repoNames.add("https://github.com/" + organization + "/" + name);
-                this.githubIssuesEnabled.put(organization + "/" + name, node.getBoolean("hasIssuesEnabled"));
+<<<<<<< /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/left.java
+                this.repoNames.add(name);
+                this.githubIssuesEnabled.put(name, node.getBoolean("hasIssuesEnabled"));
+                this.topicNames.put(name, new ArrayList<>());
+||||||| /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/base.java
+                this.topicNames.put(name, new ArrayList<>());
+=======
                 this.topicNames.put(organization + "/" + name, new ArrayList<>());
+>>>>>>> /usr/src/app/output/jenkinsci/backend-update-center2/e2a2e33ea822cf3999e642f26bf9d1b17be958de/src/main/java/org/jvnet/hudson/update_center/GitHubSource.java/right.java
                 for (Object repositoryTopic : node.getJSONObject("repositoryTopics").getJSONArray("edges")) {
                     this.topicNames.get(organization + "/" + name).add(
                             ((JSONObject) repositoryTopic)
@@ -167,22 +179,21 @@ public class GitHubSource {
             }
         }
     }
-
     public List<String> getTopics(String organization, String repo) throws IOException {
+        this.getRepositoryData(organization);
         if (!this.topicNames.containsKey(repo)) {
             return Collections.emptyList();
         }
         return this.topicNames.get(repo);
     }
-
     public boolean issuesEnabled(String organization, String repo) throws IOException {
-        return this.githubIssuesEnabled == null ? false : this.githubIssuesEnabled.getOrDefault(organization + "/" + repo, false);
+        this.getRepositoryData(organization);
+        return this.githubIssuesEnabled.get(repo);
     }
-
+    private Map<String, List<String>> topicNames;
     public List<String> getRepositoryTopics(String org, String repo) throws IOException {
         return this.topicNames == null ? Collections.emptyList() : this.topicNames.getOrDefault(org + "/" + repo, Collections.emptyList());
     }
-
 
     private static GitHubSource instance;
 
