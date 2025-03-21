@@ -145,7 +145,6 @@ public class SFTPFileSystem extends FileSystem {
 	protected void connect() throws IOException {
 		
 		if (client == null || !client.isConnected()) {
-			
 			connection = getConnection();
 			LOG.info("Creating client");
 			client = new SFTPv3ClientWrapper(connection);
@@ -160,6 +159,7 @@ public class SFTPFileSystem extends FileSystem {
 		String keyPassword = conf.get(PARAM_KEY_PASSWORD);
 		String user = conf.get(PARAM_USER);
 		final String password = conf.get(PARAM_PASSWORD);
+
 		Connection connection = new Connection(host, port);
 
 		connection.connect(new ServerHostKeyVerifier() {
@@ -192,9 +192,9 @@ public class SFTPFileSystem extends FileSystem {
 				throw new IOException("Server does not support any of our supported password authentication methods");
 			}
 		} else {
-			connection.authenticateWithPublicKey(user, new File(key), keyPassword);
+			connection.authenticateWithPublicKey(user, new File(key),
+					keyPassword);
 		}
-		
 		return connection;		
 	}
 	
