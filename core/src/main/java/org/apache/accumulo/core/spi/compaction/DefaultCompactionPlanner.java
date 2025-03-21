@@ -1,25 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.accumulo.core.spi.compaction;
-
 import static org.apache.accumulo.core.util.LazySingletons.GSON;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -30,13 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.accumulo.core.client.admin.compaction.CompactableFile;
 import org.apache.accumulo.core.conf.ConfigurationTypeHelper;
 import org.apache.accumulo.core.util.compaction.CompactionJobPrioritizer;
-
 import com.google.common.base.Preconditions;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -93,10 +70,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * <pre>
  * {@code
- * [
- *  {"name":"small", "type": "internal", "maxSize":"100M","numThreads":3},
+ * [{"name":"small", "type": "internal", "maxSize":"100M","numThreads":3},
  *  {"name":"medium", "type": "internal", "maxSize":"500M","numThreads":3},
- *  {"name": "large", "type": "external", "queue", "Queue1"}
+ *  {"name: "large", "type": "external", "queue", "Queue1"}
  * ]}
  * </pre>
  *
@@ -109,19 +85,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 2.1.0
  * @see org.apache.accumulo.core.spi.compaction
  */
-
 public class DefaultCompactionPlanner implements CompactionPlanner {
-
   private static class ExecutorConfig {
     String type;
+
     String name;
+
     String maxSize;
+
     Integer numThreads;
+
     String queue;
   }
 
   private static class Executor {
     final CompactionExecutorId ceid;
+
     final Long maxSize;
 
     public Executor(CompactionExecutorId ceid, Long maxSize) {
@@ -134,75 +113,51 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
       return maxSize;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return "[ceid=" + ceid + ", maxSize=" + maxSize + "]";
     }
   }
 
   private List<Executor> executors;
+
   private int maxFilesToCompact;
 
-  @SuppressFBWarnings(value = {"UWF_UNWRITTEN_FIELD", "NP_UNWRITTEN_FIELD"},
-      justification = "Field is written by Gson")
-  @Override
-  public void init(InitParameters params) {
-    ExecutorConfig[] execConfigs =
-        GSON.get().fromJson(params.getOptions().get("executors"), ExecutorConfig[].class);
-
+  @SuppressFBWarnings(value = { "UWF_UNWRITTEN_FIELD", "NP_UNWRITTEN_FIELD" }, justification = "Field is written by Gson") @Override public void init(InitParameters params) {
+    ExecutorConfig[] execConfigs = GSON.get().fromJson(params.getOptions().get("executors"), ExecutorConfig[].class);
     List<Executor> tmpExec = new ArrayList<>();
-
     for (ExecutorConfig executorConfig : execConfigs) {
-      Long maxSize = executorConfig.maxSize == null ? null
-          : ConfigurationTypeHelper.getFixedMemoryAsBytes(executorConfig.maxSize);
-
+      Long maxSize = executorConfig.maxSize == null ? null : ConfigurationTypeHelper.getFixedMemoryAsBytes(executorConfig.maxSize);
       CompactionExecutorId ceid;
-
-      // If not supplied, GSON will leave type null. Default to internal
       if (executorConfig.type == null) {
         executorConfig.type = "internal";
       }
-
       switch (executorConfig.type) {
         case "internal":
-          Preconditions.checkArgument(null == executorConfig.queue,
-              "'queue' should not be specified for internal compactions");
-          int numThreads = Objects.requireNonNull(executorConfig.numThreads,
-              "'numThreads' must be specified for internal type");
-          ceid = params.getExecutorManager().createExecutor(executorConfig.name, numThreads);
-          break;
+        Preconditions.checkArgument(null == executorConfig.queue, "\'queue\' should not be specified for internal compactions");
+        int numThreads = Objects.requireNonNull(executorConfig.numThreads, "\'numThreads\' must be specified for internal type");
+        ceid = params.getExecutorManager().createExecutor(executorConfig.name, numThreads);
+        break;
         case "external":
-          Preconditions.checkArgument(null == executorConfig.numThreads,
-              "'numThreads' should not be specified for external compactions");
-          String queue = Objects.requireNonNull(executorConfig.queue,
-              "'queue' must be specified for external type");
-          ceid = params.getExecutorManager().getExternalExecutor(queue);
-          break;
+        Preconditions.checkArgument(null == executorConfig.numThreads, "\'numThreads\' should not be specified for external compactions");
+        String queue = Objects.requireNonNull(executorConfig.queue, "\'queue\' must be specified for external type");
+        ceid = params.getExecutorManager().getExternalExecutor(queue);
+        break;
         default:
-          throw new IllegalArgumentException("type must be 'internal' or 'external'");
+        throw new IllegalArgumentException("type must be \'internal\' or \'external\'");
       }
       tmpExec.add(new Executor(ceid, maxSize));
     }
-
-    Collections.sort(tmpExec, Comparator.comparing(Executor::getMaxSize,
-        Comparator.nullsLast(Comparator.naturalOrder())));
-
+    Collections.sort(tmpExec, Comparator.comparing(Executor::getMaxSize, Comparator.nullsLast(Comparator.naturalOrder())));
     executors = List.copyOf(tmpExec);
-
-    if (executors.stream().filter(e -> e.getMaxSize() == null).count() > 1) {
-      throw new IllegalArgumentException(
-          "Can only have one executor w/o a maxSize. " + params.getOptions().get("executors"));
+    if (executors.stream().filter((e) -> e.getMaxSize() == null).count() > 1) {
+      throw new IllegalArgumentException("Can only have one executor w/o a maxSize. " + params.getOptions().get("executors"));
     }
-
-    // use the add method on the Set interface to check for duplicate maxSizes
     Set<Long> maxSizes = new HashSet<>();
-    executors.forEach(e -> {
+    executors.forEach((e) -> {
       if (!maxSizes.add(e.getMaxSize())) {
-        throw new IllegalArgumentException(
-            "Duplicate maxSize set in executors. " + params.getOptions().get("executors"));
+        throw new IllegalArgumentException("Duplicate maxSize set in executors. " + params.getOptions().get("executors"));
       }
     });
-
     determineMaxFilesToCompact(params);
   }
 
@@ -210,89 +165,50 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
     this.maxFilesToCompact = Integer.parseInt(params.getOptions().getOrDefault("maxOpen", "10"));
   }
 
-  @Override
-  public CompactionPlan makePlan(PlanningParameters params) {
+  @Override public CompactionPlan makePlan(PlanningParameters params) {
     if (params.getCandidates().isEmpty()) {
       return params.createPlanBuilder().build();
     }
-
     Set<CompactableFile> filesCopy = new HashSet<>(params.getCandidates());
-
     long maxSizeToCompact = getMaxSizeToCompact(params.getKind());
-
     Collection<CompactableFile> group;
     if (params.getRunningCompactions().isEmpty()) {
-      group =
-          findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact, maxSizeToCompact);
-
-      if (!group.isEmpty() && group.size() < params.getCandidates().size()
-          && params.getCandidates().size() <= maxFilesToCompact
-          && (params.getKind() == CompactionKind.USER
-              || params.getKind() == CompactionKind.SELECTOR)) {
-        // USER and SELECTOR compactions must eventually compact all files. When a subset of files
-        // that meets the compaction ratio is selected, look ahead and see if the next compaction
-        // would also meet the compaction ratio. If not then compact everything to avoid doing
-        // more than logarithmic work across multiple comapctions.
-
+      group = findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact, maxSizeToCompact);
+      if (!group.isEmpty() && group.size() < params.getCandidates().size() && params.getCandidates().size() <= maxFilesToCompact && (params.getKind() == CompactionKind.USER || params.getKind() == CompactionKind.SELECTOR)) {
         filesCopy.removeAll(group);
         filesCopy.add(getExpected(group, 0));
-
-        if (findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact,
-            maxSizeToCompact).isEmpty()) {
-          // The next possible compaction does not meet the compaction ratio, so compact
-          // everything.
+        if (findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact, maxSizeToCompact).isEmpty()) {
           group = Set.copyOf(params.getCandidates());
         }
-
-      }
-
-    } else if (params.getKind() == CompactionKind.SYSTEM) {
-      // This code determines if once the files compacting finish would they be included in a
-      // compaction with the files smaller than them? If so, then wait for the running compaction
-      // to complete.
-
-      // The set of files running compactions may produce
-      var expectedFiles = getExpected(params.getRunningCompactions());
-
-      if (!Collections.disjoint(filesCopy, expectedFiles)) {
-        throw new AssertionError();
-      }
-
-      filesCopy.addAll(expectedFiles);
-
-      group =
-          findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact, maxSizeToCompact);
-
-      if (!Collections.disjoint(group, expectedFiles)) {
-        // file produced by running compaction will eventually compact with existing files, so
-        // wait.
-        group = Set.of();
       }
     } else {
-      group = Set.of();
+      if (params.getKind() == CompactionKind.SYSTEM) {
+        var expectedFiles = getExpected(params.getRunningCompactions());
+        if (!Collections.disjoint(filesCopy, expectedFiles)) {
+          throw new AssertionError();
+        }
+        filesCopy.addAll(expectedFiles);
+        group = findDataFilesToCompact(filesCopy, params.getRatio(), maxFilesToCompact, maxSizeToCompact);
+        if (!Collections.disjoint(group, expectedFiles)) {
+          group = Set.of();
+        }
+      } else {
+        group = Set.of();
+      }
     }
-
-    if (group.isEmpty()
-        && (params.getKind() == CompactionKind.USER || params.getKind() == CompactionKind.SELECTOR)
-        && params.getRunningCompactions().stream()
-            .noneMatch(job -> job.getKind() == params.getKind())) {
+    if (group.isEmpty() && (params.getKind() == CompactionKind.USER || params.getKind() == CompactionKind.SELECTOR) && params.getRunningCompactions().stream().noneMatch((job) -> job.getKind() == params.getKind())) {
       group = findMaximalRequiredSetToCompact(params.getCandidates(), maxFilesToCompact);
     }
-
     if (group.isEmpty()) {
       return params.createPlanBuilder().build();
     } else {
-      // determine which executor to use based on the size of the files
       var ceid = getExecutor(group);
-
       return params.createPlanBuilder().addJob(createPriority(params, group), ceid, group).build();
     }
   }
 
-  private static short createPriority(PlanningParameters params,
-      Collection<CompactableFile> group) {
-    return CompactionJobPrioritizer.createPriority(params.getKind(), params.getAll().size(),
-        group.size());
+  private static short createPriority(PlanningParameters params, Collection<CompactableFile> group) {
+    return CompactionJobPrioritizer.createPriority(params.getKind(), params.getAll().size(), group.size());
   }
 
   private long getMaxSizeToCompact(CompactionKind kind) {
@@ -308,9 +224,7 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
   private CompactableFile getExpected(Collection<CompactableFile> files, int count) {
     long size = files.stream().mapToLong(CompactableFile::getEstimatedSize).sum();
     try {
-      return CompactableFile.create(
-          new URI("hdfs://fake/accumulo/tables/adef/t-zzFAKEzz/FAKE-0000" + count + ".rf"), size,
-          0);
+      return CompactableFile.create(new URI("hdfs://fake/accumulo/tables/adef/t-zzFAKEzz/FAKE-0000" + count + ".rf"), size, 0);
     } catch (URISyntaxException e) {
       throw new IllegalStateException(e);
     }
@@ -320,47 +234,32 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
    * @return the expected files sizes for sets of compacting files.
    */
   private Set<CompactableFile> getExpected(Collection<CompactionJob> compacting) {
-
     Set<CompactableFile> expected = new HashSet<>();
-
     int count = 0;
-
     for (CompactionJob job : compacting) {
       count++;
       expected.add(getExpected(job.getFiles(), count));
     }
-
     return expected;
   }
 
-  private static Collection<CompactableFile>
-      findMaximalRequiredSetToCompact(Collection<CompactableFile> files, int maxFilesToCompact) {
-
+  private static Collection<CompactableFile> findMaximalRequiredSetToCompact(Collection<CompactableFile> files, int maxFilesToCompact) {
     if (files.size() <= maxFilesToCompact) {
       return files;
     }
-
     List<CompactableFile> sortedFiles = sortByFileSize(files);
-
     int numToCompact = maxFilesToCompact;
-
     if (sortedFiles.size() > maxFilesToCompact && sortedFiles.size() < 2 * maxFilesToCompact) {
-      // on the second to last compaction pass, compact the minimum amount of files possible
       numToCompact = sortedFiles.size() - maxFilesToCompact + 1;
     }
-
     return sortedFiles.subList(0, numToCompact);
   }
 
-  static Collection<CompactableFile> findDataFilesToCompact(Set<CompactableFile> files,
-      double ratio, int maxFilesToCompact, long maxSizeToCompact) {
+  static Collection<CompactableFile> findDataFilesToCompact(Set<CompactableFile> files, double ratio, int maxFilesToCompact, long maxSizeToCompact) {
     if (files.size() <= 1) {
       return Collections.emptySet();
     }
-
-    // sort files from smallest to largest. So position 0 has the smallest file.
     List<CompactableFile> sortedFiles = sortByFileSize(files);
-
     int maxSizeIndex = sortedFiles.size();
     long sum = 0;
     for (int i = 0; i < sortedFiles.size(); i++) {
@@ -370,25 +269,20 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
         break;
       }
     }
-
     if (maxSizeIndex < sortedFiles.size()) {
       sortedFiles = sortedFiles.subList(0, maxSizeIndex);
       if (sortedFiles.size() <= 1) {
         return Collections.emptySet();
       }
     }
-
     var loops = Math.max(1, sortedFiles.size() - maxFilesToCompact + 1);
     for (int i = 0; i < loops; i++) {
-      var filesToCompact = findDataFilesToCompact(
-          sortedFiles.subList(i, Math.min(sortedFiles.size(), maxFilesToCompact) + i), ratio);
+      var filesToCompact = findDataFilesToCompact(sortedFiles.subList(i, Math.min(sortedFiles.size(), maxFilesToCompact) + i), ratio);
       if (!filesToCompact.isEmpty()) {
         return filesToCompact;
       }
     }
-
     return Collections.emptySet();
-
   }
 
   /**
@@ -419,73 +313,50 @@ public class DefaultCompactionPlanner implements CompactionPlanner {
    * prevents a future compaction that could have occurred. This function will not choose the
    * smaller set because of it would prevent the future compaction.
    */
-  private static Collection<CompactableFile>
-      findDataFilesToCompact(List<CompactableFile> sortedFiles, double ratio) {
-
+  private static Collection<CompactableFile> findDataFilesToCompact(List<CompactableFile> sortedFiles, double ratio) {
     int larsmaIndex = -1;
     long larsmaSum = Long.MIN_VALUE;
-
-    // index into sortedFiles, everything at and below this index meets the compaction ratio
     int goodIndex = -1;
-
     long sum = sortedFiles.get(0).getEstimatedSize();
-
     for (int c = 1; c < sortedFiles.size(); c++) {
       long currSize = sortedFiles.get(c).getEstimatedSize();
-
-      // ensure data is sorted
       Preconditions.checkArgument(currSize >= sortedFiles.get(c - 1).getEstimatedSize());
-
       sum += currSize;
-
       if (currSize * ratio < sum) {
         goodIndex = c;
-      } else if (c - 1 == goodIndex) {
-        // The previous file met the compaction ratio, but the current file does not. So all of the
-        // previous files are candidates. However we must ensure that any candidate set produces a
-        // file smaller than the next largest file in the next candidate set to ensure future
-        // compactions are not prevented.
-        if (larsmaIndex == -1 || larsmaSum > sortedFiles.get(goodIndex).getEstimatedSize()) {
-          larsmaIndex = goodIndex;
-          larsmaSum = sum - currSize;
-        } else {
-          break;
+      } else {
+        if (c - 1 == goodIndex) {
+          if (larsmaIndex == -1 || larsmaSum > sortedFiles.get(goodIndex).getEstimatedSize()) {
+            larsmaIndex = goodIndex;
+            larsmaSum = sum - currSize;
+          } else {
+            break;
+          }
         }
       }
     }
-
-    if (sortedFiles.size() - 1 == goodIndex
-        && (larsmaIndex == -1 || larsmaSum > sortedFiles.get(goodIndex).getEstimatedSize())) {
+    if (sortedFiles.size() - 1 == goodIndex && (larsmaIndex == -1 || larsmaSum > sortedFiles.get(goodIndex).getEstimatedSize())) {
       larsmaIndex = goodIndex;
     }
-
     if (larsmaIndex == -1) {
       return Collections.emptySet();
     }
-
     return sortedFiles.subList(0, larsmaIndex + 1);
   }
 
   CompactionExecutorId getExecutor(Collection<CompactableFile> files) {
-
     long size = files.stream().mapToLong(CompactableFile::getEstimatedSize).sum();
-
     for (Executor executor : executors) {
       if (executor.maxSize == null || size < executor.maxSize) {
         return executor.ceid;
       }
     }
-
     return executors.get(executors.size() - 1).ceid;
   }
 
   private static List<CompactableFile> sortByFileSize(Collection<CompactableFile> files) {
     ArrayList<CompactableFile> sortedFiles = new ArrayList<>(files);
-
-    // sort from smallest file to largest
-    Collections.sort(sortedFiles, Comparator.comparingLong(CompactableFile::getEstimatedSize)
-        .thenComparing(CompactableFile::getUri));
-
+    Collections.sort(sortedFiles, Comparator.comparingLong(CompactableFile::getEstimatedSize).thenComparing(CompactableFile::getUri));
     return sortedFiles;
   }
 }
