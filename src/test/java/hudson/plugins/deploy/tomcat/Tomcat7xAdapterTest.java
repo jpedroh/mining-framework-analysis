@@ -1,11 +1,8 @@
 package hudson.plugins.deploy.tomcat;
-
 import hudson.EnvVars;
 import hudson.model.*;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
-
 import java.io.ByteArrayOutputStream;
-
 import org.codehaus.cargo.container.ContainerType;
 import org.codehaus.cargo.container.configuration.Configuration;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
@@ -22,60 +19,59 @@ import org.jvnet.hudson.test.JenkinsRule;
  * @author soudmaijer
  */
 public class Tomcat7xAdapterTest {
+  private Tomcat7xAdapter adapter;
 
-    private Tomcat7xAdapter adapter;
-    private static final String url = "http://localhost:8080";
-    private static final String configuredUrl = "http://localhost:8080/manager/text";
-    private static final String urlVariable = "URL";
-    private static final String username = "usernm";
-    private static final String usernameVariable = "USER";
-    private static final String password = "password";
-    private static final String variableStart = "${";
-    private static final String variableEnd = "}";
-    
-    @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
+  private static final String url = "http://localhost:8080";
 
-    @Before
-    public void setup() {
-        adapter = new  Tomcat7xAdapter(url, password, username);
-    }
+  private static final String configuredUrl = "http://localhost:8080/manager/text";
 
-    @Test
-    public void testContainerId() {
-        Assert.assertEquals(adapter.getContainerId(), new Tomcat7xRemoteContainer(null).getId());            
-    }
+  private static final String urlVariable = "URL";
 
-    @Test
-    public void testConfigure() {
-        Assert.assertEquals(adapter.url,url);
-        Assert.assertEquals(adapter.userName,username);
-        Assert.assertEquals(adapter.getPassword(),password);
-    }
-    
-    @Test
-    public void testVariables() throws Exception {
-        Node n = jenkinsRule.createSlave();
-    	EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
+  private static final String username = "usernm";
 
-    	EnvVars envVars = property.getEnvVars();
-    	envVars.put(urlVariable, url);
-    	envVars.put(usernameVariable, username);
-    	jenkinsRule.jenkins.getGlobalNodeProperties().add(property);
+  private static final String usernameVariable = "USER";
 
-        FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
-        project.setAssignedNode(n);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+  private static final String password = "password";
 
-        adapter = new Tomcat7xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));
-        Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
-        adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
-        
-        Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
-        Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
-    }
-    
-    private String getVariable(String variableName) {
-    	return variableStart + variableName + variableEnd;
-    }
+  private static final String variableStart = "${";
+
+  private static final String variableEnd = "}";
+
+  @Rule public JenkinsRule jenkinsRule = new JenkinsRule();
+
+  @Before public void setup() {
+    adapter = new Tomcat7xAdapter(url, password, username);
+  }
+
+  @Test public void testContainerId() {
+    Assert.assertEquals(adapter.getContainerId(), new Tomcat7xRemoteContainer(null).getId());
+  }
+
+  @Test public void testConfigure() {
+    Assert.assertEquals(adapter.url, url);
+    Assert.assertEquals(adapter.userName, username);
+    Assert.assertEquals(adapter.getPassword(), password);
+  }
+
+  @Test public void testVariables() throws Exception {
+    Node n = jenkinsRule.createSlave();
+    EnvironmentVariablesNodeProperty property = new EnvironmentVariablesNodeProperty();
+    EnvVars envVars = property.getEnvVars();
+    envVars.put(urlVariable, url);
+    envVars.put(usernameVariable, username);
+    jenkinsRule.getInstance().getGlobalNodeProperties().add(property);
+    FreeStyleProject project = jenkinsRule.getInstance().createProject(FreeStyleProject.class, "fsp");
+    project.setAssignedNode(n);
+    FreeStyleBuild build = project.scheduleBuild2(0).get();
+    BuildListener listener = new StreamBuildListener(new ByteArrayOutputStream());
+    adapter = new Tomcat7xAdapter(getVariable(urlVariable), password, getVariable(usernameVariable));
+    Configuration config = new DefaultConfigurationFactory().createConfiguration(adapter.getContainerId(), ContainerType.REMOTE, ConfigurationType.RUNTIME);
+    adapter.configure(config, project.getEnvironment(n, listener), build.getBuildVariableResolver());
+    Assert.assertEquals(configuredUrl, config.getPropertyValue(RemotePropertySet.URI));
+    Assert.assertEquals(username, config.getPropertyValue(RemotePropertySet.USERNAME));
+  }
+
+  private String getVariable(String variableName) {
+    return variableStart + variableName + variableEnd;
+  }
 }
