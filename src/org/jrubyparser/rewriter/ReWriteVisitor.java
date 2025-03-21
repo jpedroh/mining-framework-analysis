@@ -1386,30 +1386,37 @@ public class ReWriteVisitor implements NodeVisitor {
         return (Node) n.childNodes().get(0);
     }
 
-    @Override
+<<<<<<< /usr/src/app/output/jruby/jruby-parser/e6dae92cd4c87841431cbdfeffa34a4e05f3a2d9/src/org/jrubyparser/rewriter/ReWriteVisitor.java/left.java
     public Object visitRequiredKeywordArgumentValueNode(RequiredKeywordArgumentValueNode argumentValueNode) {
         return null;
     }
-
+||||||| /usr/src/app/output/jruby/jruby-parser/e6dae92cd4c87841431cbdfeffa34a4e05f3a2d9/src/org/jrubyparser/rewriter/ReWriteVisitor.java/base.java
+=======
     @Override
-    public Object visitRescueBodyNode(RescueBodyNode iVisited) {
-        if (iVisited.getBody() != null && config.getLastPosition().getStartLine() == getEndLine(iVisited.getBody())) {
-            print(" rescue ");
-        } else {
-            print("rescue");
-        }
-
-        if (iVisited.getExceptions() != null) {
-            printExceptionNode(iVisited);
-        } else {
-            visitNodeInIndentation(iVisited.getBody());
-        }
-
-        if (iVisited.getOptRescue() != null) printNewlineAndIndentation();
-
-        visitNode(iVisited.getOptRescue());
+    public Object visitRequiredKeywordArgumentValueNode(RequiredKeywordArgumentValueNode iVisted) {
         return null;
     }
+>>>>>>> /usr/src/app/output/jruby/jruby-parser/e6dae92cd4c87841431cbdfeffa34a4e05f3a2d9/src/org/jrubyparser/rewriter/ReWriteVisitor.java/right.java
+
+    @Override
+public Object visitRescueBodyNode(RescueBodyNode iVisited) {
+    if (iVisited.getBody() != null && config.getLastPosition().getStartLine() == getEndLine(iVisited.getBody())) {
+        print(" rescue ");
+    } else {
+        print("rescue");
+    }
+
+    if (iVisited.getExceptions() != null) {
+        printExceptionNode(iVisited);
+    } else {
+        visitNodeInIndentation(iVisited.getBody());
+    }
+
+    if (iVisited.getOptRescue() != null) printNewlineAndIndentation();
+
+    visitNode(iVisited.getOptRescue());
+    return null;
+}
 
     private void printExceptionNode(RescueBodyNode n) {
         if (n.getExceptions() == null) return;
