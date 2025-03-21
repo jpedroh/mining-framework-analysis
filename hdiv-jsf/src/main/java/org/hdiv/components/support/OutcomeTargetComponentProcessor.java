@@ -44,7 +44,7 @@ public class OutcomeTargetComponentProcessor extends AbstractComponentProcessor 
 			HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
 
 			String url = helper.getUrl(context, component);
-			String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
+			String hdivParameter = HDIVUtil.getHDIVParameter(request);
 			UrlData urlData = linkUrlProcessor.createUrlData(url, Method.GET, hdivParameter, request);
 			if (linkUrlProcessor.isHdivStateNecessary(urlData)) {
 
@@ -60,13 +60,23 @@ public class OutcomeTargetComponentProcessor extends AbstractComponentProcessor 
 				IDataComposer dataComposer = HDIVUtil.getDataComposer(request);
 				dataComposer.beginRequest(Method.GET, urlData.getUrlWithoutContextPath());
 
-				String processedParams = dataComposer.composeParams(urlData.getUrlParams(), Method.GET, Constants.ENCODING_UTF_8);
+				String processedParams = dataComposer.composeParams(urlData.getUrlParams(), Method.GET,
+						Constants.ENCODING_UTF_8);
 				urlData.setUrlParams(processedParams);
 
 				String stateParam = dataComposer.endRequest();
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-jsf/src/main/java/org/hdiv/components/support/OutcomeTargetComponentProcessor.java/left.java
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-jsf/src/main/java/org/hdiv/components/support/OutcomeTargetComponentProcessor.java/base.java
+				String hdivParameter = (String) externalContext.getSessionMap().get(Constants.HDIV_PARAMETER);
+
+=======
+				String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
+
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-jsf/src/main/java/org/hdiv/components/support/OutcomeTargetComponentProcessor.java/right.java
 				// Add a children UIParam component with HDIV state
-				UIParameter paramComponent = (UIParameter) context.getApplication().createComponent(UIParameter.COMPONENT_TYPE);
+				UIParameter paramComponent = (UIParameter) context.getApplication()
+						.createComponent(UIParameter.COMPONENT_TYPE);
 				paramComponent.setName(hdivParameter);
 				paramComponent.setValue(stateParam);
 				component.getChildren().add(paramComponent);

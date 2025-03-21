@@ -38,23 +38,47 @@ public class UserSessionStateScope extends AbstractStateScope {
 
 	private static final String USER_STATE_CACHE_ATTR = ScopedStateCache.class.getCanonicalName();
 
-	protected ISession session;
-
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/left.java
 	@Override
 	public ScopedStateCache getStateCache(final RequestContext context) {
-		ScopedStateCache cache = session.getAttribute(context, USER_STATE_CACHE_ATTR, ScopedStateCache.class);
+		final ScopedStateCache cache = (ScopedStateCache) context.getRequest().getSession().getAttribute(USER_STATE_CACHE_ATTR);
 		return cache;
 	}
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/base.java
+	public ScopedStateCache getStateCache(RequestContext context) {
+		ScopedStateCache cache = (ScopedStateCache) context.getRequest().getSession()
+				.getAttribute(USER_STATE_CACHE_ATTR);
+		return cache;
+	}
+=======
+	public ScopedStateCache getStateCache(RequestContext context) {
+		ScopedStateCache cache = this.session.getAttribute(context, USER_STATE_CACHE_ATTR, ScopedStateCache.class);
+		return cache;
+	}
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/right.java
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/left.java
 	@Override
 	public void setStateCache(final RequestContext context, final ScopedStateCache cache) {
-		session.setAttribute(context, USER_STATE_CACHE_ATTR, cache);
+		context.getRequest().getSession().setAttribute(USER_STATE_CACHE_ATTR, cache);
 	}
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/base.java
+	public void setStateCache(RequestContext context, ScopedStateCache cache) {
+		context.getRequest().getSession().setAttribute(USER_STATE_CACHE_ATTR, cache);
+	}
+=======
+	public void setStateCache(RequestContext context, ScopedStateCache cache) {
+		this.session.setAttribute(context, USER_STATE_CACHE_ATTR, cache);
+	}
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/state/scope/UserSessionStateScope.java/right.java
+
+	protected ISession session;
 
 	/**
 	 * @param session the session to set
 	 */
-	public void setSession(final ISession session) {
+
+	public void setSession(ISession session) {
 		this.session = session;
 	}
 

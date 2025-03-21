@@ -89,15 +89,11 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 
 		super(originalResponse);
 
-
 		Assert.notNull(request);
 		Assert.notNull(originalResponse);
 
 		this.requestContext = new RequestContext(request);
-
-		if (log.isDebugEnabled()) {
-			log.debug("New ResponseWrapper instance.");
-		}
+		log.debug("New ResponseWrapper instance.");
 	}
 
 	/**
@@ -234,7 +230,6 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
 				Constants.HDIV_COOKIES_KEY, Map.class);
 
 		if (sessionOriginalCookies != null && sessionOriginalCookies.size() > 0) {
-
 
 			sessionOriginalCookies.putAll(this.cookies);
 			this.session.setAttribute(this.requestContext, Constants.HDIV_COOKIES_KEY, sessionOriginalCookies);

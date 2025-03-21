@@ -145,6 +145,14 @@ public abstract class AbstractUrlProcessor {
 	 */
 	protected final String removeStateParameter(final String hdivParameter, final String params) {
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/left.java
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/base.java
+		String hdivParameter = (String) request.getSession().getAttribute(Constants.HDIV_PARAMETER);
+
+=======
+		String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
+
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/right.java
 		if (params == null || !params.contains(hdivParameter)) {
 			return params;
 		}
@@ -189,7 +197,13 @@ public abstract class AbstractUrlProcessor {
 
 		String value = urlParams.replaceAll("&amp;", "&");
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/left.java
+		String hdivParameter = HDIVUtil.getHDIVParameter(request);
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/base.java
+		String hdivParameter = (String) request.getSession().getAttribute(Constants.HDIV_PARAMETER);
+=======
 		String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/right.java
 
 		StringTokenizer st = new StringTokenizer(value, "&");
 		while (st.hasMoreTokens()) {
@@ -291,7 +305,16 @@ public abstract class AbstractUrlProcessor {
 		if (stateParam == null || stateParam.length() <= 0) {
 			return sb.toString();
 		}
+
+<<<<<<< /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/left.java
 		char separator = (urlData.containsParams()) ? '&' : '?';
+||||||| /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/base.java
+		String separator = (urlData.containsParams()) ? "&" : "?";
+		String hdivParameter = (String) request.getSession().getAttribute(Constants.HDIV_PARAMETER);
+=======
+		String separator = (urlData.containsParams()) ? "&" : "?";
+		String hdivParameter = HDIVUtil.getHdivStateParameterName(request);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/2f9993190a5d9e153c693e8060ef8050f2fe2baa/hdiv-core/src/main/java/org/hdiv/urlProcessor/AbstractUrlProcessor.java/right.java
 
 		sb.append(separator).append(hdivParameter).append('=').append(stateParam);
 		sb.append(urlData.getUriTemplate().replace('?', '&'));

@@ -24,7 +24,6 @@ import org.apache.struts.taglib.TagUtils;
 import org.apache.struts.taglib.html.FormTag;
 import org.hdiv.dataComposer.IDataComposer;
 import org.hdiv.urlProcessor.FormUrlProcessor;
-import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
 
 /**

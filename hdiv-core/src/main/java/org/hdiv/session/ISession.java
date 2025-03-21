@@ -15,17 +15,15 @@
  */
 package org.hdiv.session;
 
-import javax.servlet.http.HttpSession;
-
 import org.hdiv.context.RequestContext;
 import org.hdiv.state.IPage;
 import org.hdiv.state.IState;
-
 /**
- * Facade to access to attributes in {@link HttpSession}.
- * 
+ * A custom wrapper for Http session request that returns a wrapped Http session.
+ *
  * @author Roberto Velasco
  */
+import javax.servlet.http.HttpSession;
 public interface ISession {
 
 	/**

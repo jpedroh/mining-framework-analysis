@@ -49,7 +49,7 @@ public class ValidatorHelperTest extends AbstractHDIVTestCase {
 
 	private boolean confidentiality;
 
-	private final String targetName = "/path/testAction.do";
+	private String targetName = "/path/testAction.do";
 
 	private RequestWrapper requestWrapper;
 
@@ -64,15 +64,14 @@ public class ValidatorHelperTest extends AbstractHDIVTestCase {
 
 		DataComposerFactory dataComposerFactory = getApplicationContext().getBean(DataComposerFactory.class);
 		HttpServletRequest request = getMockRequest();
-		HttpServletResponse response = getMockResponse();
+		HttpServletResponse response = this.getMockResponse();
 		dataComposer = dataComposerFactory.newInstance(request);
-		HDIVUtil.setDataComposer(dataComposer, request);
+		HDIVUtil.setDataComposer(this.dataComposer, request);
 		dataComposer.startPage();
 
-		RequestInitializer requestInitializer = getApplicationContext().getBean(RequestInitializer.class);
-		requestWrapper = requestInitializer.createRequestWrapper(request, response);
-		responseWrapper = requestInitializer.createResponseWrapper(request, response);
-
+		RequestInitializer requestInitializer = this.getApplicationContext().getBean(RequestInitializer.class);
+		this.requestWrapper = requestInitializer.createRequestWrapper(request, response);
+		this.responseWrapper = requestInitializer.createResponseWrapper(request, response);
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class ValidatorHelperTest extends AbstractHDIVTestCase {
 
 		request.addParameter(hdivParameter, pageState);
 
-		boolean result = helper.validate(requestWrapper).isValid();
+		boolean result = helper.validate(this.requestWrapper).isValid();
 		assertTrue(result);
 	}
 

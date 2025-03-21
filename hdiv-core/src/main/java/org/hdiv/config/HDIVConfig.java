@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.hdiv.regex.PatternMatcher;
 import org.hdiv.regex.PatternMatcherFactory;
 import org.hdiv.state.IPage;
-import org.hdiv.util.HDIVUtil;
 import org.hdiv.util.Method;
+import org.hdiv.util.HDIVUtil;
 import org.hdiv.validator.EditableDataValidationProvider;
 
 /**
