@@ -1,20 +1,9 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
+import java.util.concurrent.TimeUnit;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.QueryExecutionException;
+import com.datastax.driver.core.exceptions.QueryValidationException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.
@@ -29,8 +18,7 @@ package com.datastax.driver.core;
  * at a time, so one instance per keyspace is necessary.
  */
 public interface Session {
-
-    /**
+  /**
      * Executes the provided query.
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query))}.
@@ -47,9 +35,9 @@ public interface Session {
      * @throws QueryValidationException if the query if invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet execute(String query);
+  public ResultSet execute(String query);
 
-    /**
+  /**
      * Executes the provided query using the provided value.
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query, values))}.
@@ -68,9 +56,9 @@ public interface Session {
      * @throws QueryValidationException if the query if invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet execute(String query, Object... values);
+  public ResultSet execute(String query, Object... values);
 
-    /**
+  /**
      * Executes the provided query.
      *
      * This method blocks until at least some result has been received from the
@@ -92,9 +80,9 @@ public interface Session {
      * @throws QueryValidationException if the query if invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet execute(Statement statement);
+  public ResultSet execute(Statement statement);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      *
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query))}.
@@ -102,9 +90,9 @@ public interface Session {
      * @param query the CQL query to execute.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(String query);
+  public ResultSetFuture executeAsync(String query);
 
-    /**
+  /**
      * Executes the provided query asynchronously using the provided values.
      *
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query, values))}.
@@ -114,9 +102,9 @@ public interface Session {
      * {@link SimpleStatement#SimpleStatement(String, Object...)} for more detail.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(String query, Object... values);
+  public ResultSetFuture executeAsync(String query, Object... values);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      *
      * This method does not block. It returns as soon as the query has been
@@ -132,9 +120,9 @@ public interface Session {
      * @param statement the CQL query to execute (that can be either any {@code Statement}.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(Statement statement);
+  public ResultSetFuture executeAsync(Statement statement);
 
-    /**
+  /**
      * Prepares the provided query string.
      *
      * @param query the CQL query string to prepare
@@ -143,9 +131,9 @@ public interface Session {
      * @throws NoHostAvailableException if no host in the cluster can be
      * contacted successfully to prepare this query.
      */
-    public PreparedStatement prepare(String query);
+  public PreparedStatement prepare(String query);
 
-    /**
+  /**
      * Prepares the provided query.
      * <p>
      * This method is essentially a shortcut for {@code prepare(statement.getQueryString())},
@@ -168,9 +156,9 @@ public interface Session {
      * though the {@link PreparedStatement#bind} method or through a corresponding
      * {@link BoundStatement}).
      */
-    public PreparedStatement prepare(RegularStatement statement);
+  public PreparedStatement prepare(RegularStatement statement);
 
-    /**
+  /**
      * Initiates a shutdown of this session instance.
      *
      * This method is asynchronous and return a future on the completion
@@ -192,12 +180,12 @@ public interface Session {
      *
      * @return a future on the completion of the shutdown process.
      */
-    public ShutdownFuture shutdown();
+  public ShutdownFuture shutdown();
 
-    /**
+  /**
      * Returns the {@code Cluster} object this session is part of.
      *
      * @return the {@code Cluster} object this session is part of.
      */
-    public Cluster getCluster();
+  public Cluster getCluster();
 }

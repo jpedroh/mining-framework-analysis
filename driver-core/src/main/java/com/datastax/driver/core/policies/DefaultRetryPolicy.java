@@ -1,22 +1,6 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.policies;
-
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
 
 /**
@@ -35,12 +19,12 @@ import com.datastax.driver.core.WriteType;
  * like {@link DowngradingConsistencyRetryPolicy}.
  */
 public class DefaultRetryPolicy implements RetryPolicy {
+  public static final DefaultRetryPolicy INSTANCE = new DefaultRetryPolicy();
 
-    public static final DefaultRetryPolicy INSTANCE = new DefaultRetryPolicy();
+  private DefaultRetryPolicy() {
+  }
 
-    private DefaultRetryPolicy() {}
-
-    /**
+  /**
      * Defines whether to retry and at which consistency level on a read timeout.
      * <p>
      * This method triggers a maximum of one retry, and only if enough
@@ -64,15 +48,14 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * @return {@code RetryDecision.retry(cl)} if no retry attempt has yet been tried and
      * {@code receivedResponses >= requiredResponses && !dataRetrieved}, {@code RetryDecision.rethrow()} otherwise.
      */
-    @Override
-    public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
-        if (nbRetry != 0)
-            return RetryDecision.rethrow();
-
-        return receivedResponses >= requiredResponses && !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  @Override public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
+    if (nbRetry != 0) {
+      return RetryDecision.rethrow();
     }
+    return receivedResponses >= requiredResponses && !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  }
 
-    /**
+  /**
      * Defines whether to retry and at which consistency level on a write timeout.
      * <p>
      * This method triggers a maximum of one retry, and only in the case of
@@ -96,16 +79,14 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * @return {@code RetryDecision.retry(cl)} if no retry attempt has yet been tried and
      * {@code writeType == WriteType.BATCH_LOG}, {@code RetryDecision.rethrow()} otherwise.
      */
-    @Override
-    public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
-        if (nbRetry != 0)
-            return RetryDecision.rethrow();
-
-        // If the batch log write failed, retry the operation as this might just be we were unlucky at picking candidates
-        return writeType == WriteType.BATCH_LOG ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  @Override public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
+    if (nbRetry != 0) {
+      return RetryDecision.rethrow();
     }
+    return writeType == WriteType.BATCH_LOG ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  }
 
-    /**
+  /**
      * Defines whether to retry and at which consistency level on an
      * unavailable exception.
      * <p>
@@ -122,8 +103,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * @param nbRetry the number of retry already performed for this operation.
      * @return {@code RetryDecision.rethrow()}.
      */
-    @Override
-    public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
-        return RetryDecision.rethrow();
-    }
+  @Override public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
+    return RetryDecision.rethrow();
+  }
 }

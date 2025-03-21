@@ -1,27 +1,10 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.policies;
-
 import java.util.Collection;
 import java.util.Iterator;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.HostDistance;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 
 /**
  * The policy that decides which Cassandra hosts to contact for each new query.
@@ -39,8 +22,7 @@ import com.datastax.driver.core.Statement;
  * policy is expected to exclude down hosts from query plans.
  */
 public interface LoadBalancingPolicy extends Host.StateListener {
-
-    /**
+  /**
      * Initialize this load balancing policy.
      * <p>
      * Note that the driver guarantees that it will call this method exactly
@@ -50,9 +32,9 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * @param cluster the {@code Cluster} instance for which the policy is created.
      * @param hosts the initial hosts to use.
      */
-    public void init(Cluster cluster, Collection<Host> hosts);
+  public void init(Cluster cluster, Collection<Host> hosts);
 
-    /**
+  /**
      * Returns the distance assigned by this policy to the provided host.
      * <p>
      * The distance of an host influence how much connections are kept to the
@@ -68,9 +50,9 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * @param host the host of which to return the distance of.
      * @return the HostDistance to {@code host}.
      */
-    public HostDistance distance(Host host);
+  public HostDistance distance(Host host);
 
-    /**
+  /**
      * Returns the hosts to use for a new query.
      * <p>
      * Each new query will call this method. The first host in the result will
@@ -88,5 +70,5 @@ public interface LoadBalancingPolicy extends Host.StateListener {
      * returned by this iterator in order, until the query has been sent
      * successfully to one of the host.
      */
-    public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement);
+  public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement);
 }

@@ -1,22 +1,6 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.policies;
-
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
 
 /**
@@ -67,23 +51,28 @@ import com.datastax.driver.core.WriteType;
  * than reading nothing, even if there is a risk of reading stale data.
  */
 public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
+  public static final DowngradingConsistencyRetryPolicy INSTANCE = new DowngradingConsistencyRetryPolicy();
 
-    public static final DowngradingConsistencyRetryPolicy INSTANCE = new DowngradingConsistencyRetryPolicy();
+  private DowngradingConsistencyRetryPolicy() {
+  }
 
-    private DowngradingConsistencyRetryPolicy() {}
-
-    private RetryDecision maxLikelyToWorkCL(int knownOk) {
-        if (knownOk >= 3)
-            return RetryDecision.retry(ConsistencyLevel.THREE);
-        else if (knownOk >= 2)
-            return RetryDecision.retry(ConsistencyLevel.TWO);
-        else if (knownOk >= 1)
-            return RetryDecision.retry(ConsistencyLevel.ONE);
-        else
-            return RetryDecision.rethrow();
+  private RetryDecision maxLikelyToWorkCL(int knownOk) {
+    if (knownOk >= 3) {
+      return RetryDecision.retry(ConsistencyLevel.THREE);
+    } else {
+      if (knownOk >= 2) {
+        return RetryDecision.retry(ConsistencyLevel.TWO);
+      } else {
+        if (knownOk >= 1) {
+          return RetryDecision.retry(ConsistencyLevel.ONE);
+        } else {
+          return RetryDecision.rethrow();
+        }
+      }
     }
+  }
 
-    /**
+  /**
      * Defines whether to retry and at which consistency level on a read timeout.
      * <p>
      * This method triggers a maximum of one retry. If less replica
@@ -104,27 +93,20 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * @param nbRetry the number of retry already performed for this operation.
      * @return a RetryDecision as defined above.
      */
-    @Override
-    public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
-        if (nbRetry != 0)
-            return RetryDecision.rethrow();
-
-        // CAS reads are not all that useful in terms of visibility of the writes since CAS write supports the
-        // normal consistency levels on the committing phase. So the main use case for CAS reads is probably for
-        // when you've timeouted on a CAS write and want to make sure what happened. Downgrading in that case
-        // would be always wrong so we just special case to rethrow.
-        if (cl == ConsistencyLevel.SERIAL || cl == ConsistencyLevel.LOCAL_SERIAL)
-            return RetryDecision.rethrow();
-
-        if (receivedResponses < requiredResponses) {
-            // Tries the biggest CL that is expected to work
-            return maxLikelyToWorkCL(receivedResponses);
-        }
-
-        return !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  @Override public RetryDecision onReadTimeout(Statement statement, ConsistencyLevel cl, int requiredResponses, int receivedResponses, boolean dataRetrieved, int nbRetry) {
+    if (nbRetry != 0) {
+      return RetryDecision.rethrow();
     }
+    if (cl == ConsistencyLevel.SERIAL || cl == ConsistencyLevel.LOCAL_SERIAL) {
+      return RetryDecision.rethrow();
+    }
+    if (receivedResponses < requiredResponses) {
+      return maxLikelyToWorkCL(receivedResponses);
+    }
+    return !dataRetrieved ? RetryDecision.retry(cl) : RetryDecision.rethrow();
+  }
 
-    /**
+  /**
      * Defines whether to retry and at which consistency level on a write timeout.
      * <p>
      * This method triggers a maximum of one retry. If {@code writeType ==
@@ -147,28 +129,23 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * @param nbRetry the number of retry already performed for this operation.
      * @return a RetryDecision as defined above.
      */
-    @Override
-    public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
-        if (nbRetry != 0)
-            return RetryDecision.rethrow();
-
-        switch (writeType) {
-            case SIMPLE:
-            case BATCH:
-                // Since we provide atomicity there is no point in retrying
-                return RetryDecision.ignore();
-            case UNLOGGED_BATCH:
-                // Since only part of the batch could have been persisted,
-                // retry with whatever consistency should allow to persist all
-                return maxLikelyToWorkCL(receivedAcks);
-            case BATCH_LOG:
-                return RetryDecision.retry(cl);
-        }
-        // We want to rethrow on COUNTER and CAS, because in those case "we don't know" and don't want to guess
-        return RetryDecision.rethrow();
+  @Override public RetryDecision onWriteTimeout(Statement statement, ConsistencyLevel cl, WriteType writeType, int requiredAcks, int receivedAcks, int nbRetry) {
+    if (nbRetry != 0) {
+      return RetryDecision.rethrow();
     }
+    switch (writeType) {
+      case SIMPLE:
+      case BATCH:
+      return RetryDecision.ignore();
+      case UNLOGGED_BATCH:
+      return maxLikelyToWorkCL(receivedAcks);
+      case BATCH_LOG:
+      return RetryDecision.retry(cl);
+    }
+    return RetryDecision.rethrow();
+  }
 
-    /**
+  /**
      * Defines whether to retry and at which consistency level on an
      * unavailable exception.
      * <p>
@@ -186,12 +163,10 @@ public class DowngradingConsistencyRetryPolicy implements RetryPolicy {
      * @param nbRetry the number of retry already performed for this operation.
      * @return a RetryDecision as defined above.
      */
-    @Override
-    public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
-        if (nbRetry != 0)
-            return RetryDecision.rethrow();
-
-        // Tries the biggest CL that is expected to work
-        return maxLikelyToWorkCL(aliveReplica);
+  @Override public RetryDecision onUnavailable(Statement statement, ConsistencyLevel cl, int requiredReplica, int aliveReplica, int nbRetry) {
+    if (nbRetry != 0) {
+      return RetryDecision.rethrow();
     }
+    return maxLikelyToWorkCL(aliveReplica);
+  }
 }

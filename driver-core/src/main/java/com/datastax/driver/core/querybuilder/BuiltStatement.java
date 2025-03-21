@@ -1,167 +1,146 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core.querybuilder;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.datastax.driver.core.*;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.policies.RetryPolicy;
 
 abstract class BuiltStatement extends RegularStatement {
+  private final List<ColumnMetadata> partitionKey;
 
-    private final List<ColumnMetadata> partitionKey;
-    private final ByteBuffer[] routingKey;
-    final String keyspace;
+  private final ByteBuffer[] routingKey;
 
-    private boolean dirty;
-    private String cache;
-    private ByteBuffer[] values;
+  final String keyspace;
 
-    Boolean isCounterOp;
+  private boolean dirty;
 
-    // Whether the user has inputed bind markers. If that's the case, we never generate values as
-    // it means the user meant for the statement to be prepared and we shouldn't add our own markers.
-    boolean hasBindMarkers;
-    private boolean forceNoValues;
+  private String cache;
 
-    BuiltStatement(String keyspace) {
-        this.partitionKey = null;
-        this.routingKey = null;
-        this.keyspace = keyspace;
+  private ByteBuffer[] values;
+
+  Boolean isCounterOp;
+
+  boolean hasBindMarkers;
+
+  private boolean forceNoValues;
+
+  BuiltStatement(String keyspace) {
+    this.partitionKey = null;
+    this.routingKey = null;
+    this.keyspace = keyspace;
+  }
+
+  BuiltStatement(TableMetadata tableMetadata) {
+    this.partitionKey = tableMetadata.getPartitionKey();
+    this.routingKey = new ByteBuffer[tableMetadata.getPartitionKey().size()];
+    this.keyspace = tableMetadata.getKeyspace().getName();
+  }
+
+  @Override public String getQueryString() {
+    maybeRebuildCache();
+    return cache;
+  }
+
+  private void maybeRebuildCache() {
+    if (!dirty && cache != null) {
+      return;
     }
-
-    BuiltStatement(TableMetadata tableMetadata) {
-        this.partitionKey = tableMetadata.getPartitionKey();
-        this.routingKey = new ByteBuffer[tableMetadata.getPartitionKey().size()];
-        this.keyspace = tableMetadata.getKeyspace().getName();
+    StringBuilder sb;
+    values = null;
+    if (hasBindMarkers || forceNoValues) {
+      sb = buildQueryString(null);
+    } else {
+      List<ByteBuffer> l = new ArrayList<ByteBuffer>();
+      sb = buildQueryString(l);
+      if (!l.isEmpty()) {
+        values = l.toArray(new ByteBuffer[l.size()]);
+      }
     }
+    maybeAddSemicolon(sb);
+    cache = sb.toString();
+    dirty = false;
+  }
 
-    @Override
-    public String getQueryString() {
-        maybeRebuildCache();
-        return cache;
+  static StringBuilder maybeAddSemicolon(StringBuilder sb) {
+    int l = sb.length();
+    while (l > 0 && sb.charAt(l - 1) <= ' ') {
+      l -= 1;
     }
-
-    private void maybeRebuildCache() {
-        if (!dirty && cache != null)
-            return;
-
-        StringBuilder sb;
-        values = null;
-
-        if (hasBindMarkers || forceNoValues) {
-            sb = buildQueryString(null);
-        } else {
-            List<ByteBuffer> l = new ArrayList<ByteBuffer>();
-            sb = buildQueryString(l);
-            if (!l.isEmpty())
-                values = l.toArray(new ByteBuffer[l.size()]);
-        }
-
-        maybeAddSemicolon(sb);
-
-        cache = sb.toString();
-        dirty = false;
+    if (l != sb.length()) {
+      sb.setLength(l);
     }
-
-    static StringBuilder maybeAddSemicolon(StringBuilder sb) {
-        // Use the same test that String#trim() uses to determine
-        // if a character is a whitespace character.
-        int l = sb.length();
-        while (l > 0 && sb.charAt(l - 1) <= ' ')
-            l -= 1;
-        if (l != sb.length())
-            sb.setLength(l);
-
-        if (l == 0 || sb.charAt(l - 1) != ';')
-            sb.append(';');
-        return sb;
+    if (l == 0 || sb.charAt(l - 1) != ';') {
+      sb.append(';');
     }
+    return sb;
+  }
 
-    abstract StringBuilder buildQueryString(List<ByteBuffer> variables);
+  abstract StringBuilder buildQueryString(List<ByteBuffer> variables);
 
-    boolean isCounterOp() {
-        return isCounterOp == null ? false : isCounterOp;
+  boolean isCounterOp() {
+    return isCounterOp == null ? false : isCounterOp;
+  }
+
+  void setCounterOp(boolean isCounterOp) {
+    this.isCounterOp = isCounterOp;
+  }
+
+  void checkForBindMarkers(Object value) {
+    dirty = true;
+    if (Utils.containsBindMarker(value)) {
+      hasBindMarkers = true;
     }
+  }
 
-    void setCounterOp(boolean isCounterOp) {
-        this.isCounterOp = isCounterOp;
+  void checkForBindMarkers(Utils.Appendeable value) {
+    dirty = true;
+    if (value != null && value.containsBindMarker()) {
+      hasBindMarkers = true;
     }
+  }
 
-    void checkForBindMarkers(Object value) {
-        dirty = true;
-        if (Utils.containsBindMarker(value))
-            hasBindMarkers = true;
+  void maybeAddRoutingKey(String name, Object value) {
+    if (routingKey == null || name == null || value == null || value instanceof BindMarker) {
+      return;
     }
-
-    void checkForBindMarkers(Utils.Appendeable value) {
-        dirty = true;
-        if (value != null && value.containsBindMarker())
-            hasBindMarkers = true;
+    for (int i = 0; i < partitionKey.size(); i++) {
+      if (name.equals(partitionKey.get(i).getName()) && Utils.isRawValue(value)) {
+        routingKey[i] = partitionKey.get(i).getType().parse(Utils.toRawString(value));
+        return;
+      }
     }
+  }
 
-    // TODO: Correctly document the InvalidTypeException
-    void maybeAddRoutingKey(String name, Object value) {
-        if (routingKey == null || name == null || value == null || value instanceof BindMarker)
-            return;
-
-        for (int i = 0; i < partitionKey.size(); i++) {
-            if (name.equals(partitionKey.get(i).getName()) && Utils.isRawValue(value)) {
-                routingKey[i] = partitionKey.get(i).getType().parse(Utils.toRawString(value));
-                return;
-            }
-        }
+  @Override public ByteBuffer getRoutingKey() {
+    if (routingKey == null) {
+      return null;
     }
-
-    @Override
-    public ByteBuffer getRoutingKey() {
-        if (routingKey == null)
-            return null;
-
-        for (ByteBuffer bb : routingKey)
-            if (bb == null)
-                return null;
-
-        return routingKey.length == 1
-             ? routingKey[0]
-             : compose(routingKey);
+    for (ByteBuffer bb : routingKey) {
+      if (bb == null) {
+        return null;
+      }
     }
+    return routingKey.length == 1 ? routingKey[0] : compose(routingKey);
+  }
 
-    @Override
-    public String getKeyspace() {
-        return keyspace;
+  @Override public String getKeyspace() {
+    return keyspace;
+  }
+
+  @Override public ByteBuffer[] getValues() {
+    maybeRebuildCache();
+    return values;
+  }
+
+  @Override public String toString() {
+    if (forceNoValues) {
+      return getQueryString();
     }
+    return maybeAddSemicolon(buildQueryString(null)).toString();
+  }
 
-    @Override
-    public ByteBuffer[] getValues() {
-        maybeRebuildCache();
-        return values;
-    }
-
-    @Override
-    public String toString() {
-        if (forceNoValues)
-            return getQueryString();
-
-        return maybeAddSemicolon(buildQueryString(null)).toString();
-    }
-
-    /**
+  /**
      * Allows to force this builder to not generate values (through its {@code getValues()} method).
      * <p>
      * By default and for performance reasons, the query builder will not
@@ -181,129 +160,107 @@ abstract class BuiltStatement extends RegularStatement {
      * @param forceNoValues whether or not this builder may generate values.
      * @return this statement.
      */
-    public RegularStatement setForceNoValues(boolean forceNoValues) {
-        this.forceNoValues = forceNoValues;
-        this.dirty = true;
-        return this;
+  public RegularStatement setForceNoValues(boolean forceNoValues) {
+    this.forceNoValues = forceNoValues;
+    this.dirty = true;
+    return this;
+  }
+
+  static ByteBuffer compose(ByteBuffer... buffers) {
+    int totalLength = 0;
+    for (ByteBuffer bb : buffers) {
+      totalLength += 2 + bb.remaining() + 1;
+    }
+    ByteBuffer out = ByteBuffer.allocate(totalLength);
+    for (ByteBuffer buffer : buffers) {
+      ByteBuffer bb = buffer.duplicate();
+      putShortLength(out, bb.remaining());
+      out.put(bb);
+      out.put((byte) 0);
+    }
+    out.flip();
+    return out;
+  }
+
+  private static void putShortLength(ByteBuffer bb, int length) {
+    bb.put((byte) ((length >> 8) & 0xFF));
+    bb.put((byte) (length & 0xFF));
+  }
+
+  abstract static class ForwardingStatement<T extends BuiltStatement> extends BuiltStatement {
+    T statement;
+
+    ForwardingStatement(T statement) {
+      super((String) null);
+      this.statement = statement;
     }
 
-    // This is a duplicate of the one in SimpleStatement, but I don't want to expose this publicly so...
-    static ByteBuffer compose(ByteBuffer... buffers) {
-        int totalLength = 0;
-        for (ByteBuffer bb : buffers)
-            totalLength += 2 + bb.remaining() + 1;
-
-        ByteBuffer out = ByteBuffer.allocate(totalLength);
-        for (ByteBuffer buffer : buffers)
-        {
-            ByteBuffer bb = buffer.duplicate();
-            putShortLength(out, bb.remaining());
-            out.put(bb);
-            out.put((byte) 0);
-        }
-        out.flip();
-        return out;
+    @Override public String getQueryString() {
+      return statement.getQueryString();
     }
 
-    private static void putShortLength(ByteBuffer bb, int length) {
-        bb.put((byte) ((length >> 8) & 0xFF));
-        bb.put((byte) (length & 0xFF));
+    @Override StringBuilder buildQueryString(List<ByteBuffer> values) {
+      return statement.buildQueryString(values);
     }
 
-    /**
-     * An utility class to create a BuiltStatement that encapsulate another one.
-     */
-    abstract static class ForwardingStatement<T extends BuiltStatement> extends BuiltStatement {
-
-        T statement;
-
-        ForwardingStatement(T statement) {
-            super((String)null);
-            this.statement = statement;
-        }
-
-        @Override
-        public String getQueryString() {
-            return statement.getQueryString();
-        }
-
-        @Override
-        StringBuilder buildQueryString(List<ByteBuffer> values) {
-            return statement.buildQueryString(values);
-        }
-
-        @Override
-        public ByteBuffer getRoutingKey() {
-            return statement.getRoutingKey();
-        }
-
-        @Override
-        public String getKeyspace() {
-            return statement.getKeyspace();
-        }
-
-        @Override
-        boolean isCounterOp() {
-            return statement.isCounterOp();
-        }
-
-        @Override
-        public Statement setConsistencyLevel(ConsistencyLevel consistency) {
-            statement.setConsistencyLevel(consistency);
-            return this;
-        }
-
-        @Override
-        public ConsistencyLevel getConsistencyLevel() {
-            return statement.getConsistencyLevel();
-        }
-
-        @Override
-        public Statement enableTracing() {
-            statement.enableTracing();
-            return this;
-        }
-
-        @Override
-        public Statement disableTracing() {
-            statement.disableTracing();
-            return this;
-        }
-
-        @Override
-        public boolean isTracing() {
-            return statement.isTracing();
-        }
-
-        @Override
-        public Statement setRetryPolicy(RetryPolicy policy) {
-            statement.setRetryPolicy(policy);
-            return this;
-        }
-
-        @Override
-        public RetryPolicy getRetryPolicy() {
-            return statement.getRetryPolicy();
-        }
-
-        @Override
-        public ByteBuffer[] getValues() {
-            return statement.getValues();
-        }
-
-        @Override
-        void checkForBindMarkers(Object value) {
-            statement.checkForBindMarkers(value);
-        }
-
-        @Override
-        void checkForBindMarkers(Utils.Appendeable value) {
-            statement.checkForBindMarkers(value);
-        }
-
-        @Override
-        public String toString() {
-            return statement.toString();
-        }
+    @Override public ByteBuffer getRoutingKey() {
+      return statement.getRoutingKey();
     }
+
+    @Override public String getKeyspace() {
+      return statement.getKeyspace();
+    }
+
+    @Override boolean isCounterOp() {
+      return statement.isCounterOp();
+    }
+
+    @Override public Statement setConsistencyLevel(ConsistencyLevel consistency) {
+      statement.setConsistencyLevel(consistency);
+      return this;
+    }
+
+    @Override public ConsistencyLevel getConsistencyLevel() {
+      return statement.getConsistencyLevel();
+    }
+
+    @Override public Statement enableTracing() {
+      statement.enableTracing();
+      return this;
+    }
+
+    @Override public Statement disableTracing() {
+      statement.disableTracing();
+      return this;
+    }
+
+    @Override public boolean isTracing() {
+      return statement.isTracing();
+    }
+
+    @Override public Statement setRetryPolicy(RetryPolicy policy) {
+      statement.setRetryPolicy(policy);
+      return this;
+    }
+
+    @Override public RetryPolicy getRetryPolicy() {
+      return statement.getRetryPolicy();
+    }
+
+    @Override public ByteBuffer[] getValues() {
+      return statement.getValues();
+    }
+
+    @Override void checkForBindMarkers(Object value) {
+      statement.checkForBindMarkers(value);
+    }
+
+    @Override void checkForBindMarkers(Utils.Appendeable value) {
+      statement.checkForBindMarkers(value);
+    }
+
+    @Override public String toString() {
+      return statement.toString();
+    }
+  }
 }

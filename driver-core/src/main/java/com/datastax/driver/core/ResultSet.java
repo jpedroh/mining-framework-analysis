@@ -1,25 +1,12 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
-
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.concurrent.ExecutionException;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
+import com.datastax.driver.core.exceptions.*;
 
 /**
  * The result of a query.
@@ -27,38 +14,37 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Note that this class is not thread-safe.
  */
 public interface ResultSet extends Iterable<Row> {
-
-    /**
+  /**
      * Returns the columns returned in this ResultSet.
      *
      * @return the columns returned in this ResultSet.
      */
-    public ColumnDefinitions getColumnDefinitions();
+  public ColumnDefinitions getColumnDefinitions();
 
-    /**
+  /**
      * Returns whether this ResultSet has more results.
      *
      * @return whether this ResultSet has more results.
      */
-    public boolean isExhausted();
+  public boolean isExhausted();
 
-    /**
+  /**
      * Returns the the next result from this ResultSet.
      *
      * @return the next row in this resultSet or null if this ResultSet is
      * exhausted.
      */
-    public Row one();
+  public Row one();
 
-    /**
+  /**
      * Returns all the remaining rows in this ResultSet as a list.
      *
      * @return a list containing the remaining results of this ResultSet. The
      * returned list is empty if and only the ResultSet is exhausted.
      */
-    public List<Row> all();
+  public List<Row> all();
 
-    /**
+  /**
      * Returns an iterator over the rows contained in this ResultSet.
      *
      * The {@link Iterator#next} method is equivalent to calling {@link #one}.
@@ -70,10 +56,9 @@ public interface ResultSet extends Iterable<Row> {
      * @return an iterator that will consume and return the remaining rows of
      * this ResultSet.
      */
-    @Override
-    public Iterator<Row> iterator();
+  @Override public Iterator<Row> iterator();
 
-    /**
+  /**
      * The number of rows that can be retrieved from this result set without
      * blocking to fetch.
      *
@@ -81,9 +66,9 @@ public interface ResultSet extends Iterable<Row> {
      * {@link #isFullyFetched()}, this is the total number of rows remaining
      * in this result set (after which the result set will be exhausted).
      */
-    public int getAvailableWithoutFetching();
+  public int getAvailableWithoutFetching();
 
-    /**
+  /**
      * Whether all results from this result set has been fetched from the
      * database.
      * <p>
@@ -94,9 +79,9 @@ public interface ResultSet extends Iterable<Row> {
      *
      * @return whether all results have been fetched.
      */
-    public boolean isFullyFetched();
+  public boolean isFullyFetched();
 
-    /**
+  /**
      * Force the fetching the next page of results for this result set, if any.
      * <p>
      * This method is entirely optional. It will be called automatically while
@@ -136,9 +121,9 @@ public interface ResultSet extends Iterable<Row> {
      * thrown (you should thus call {@code isFullyFetched() to know if calling this
      * method can be of any use}).
      */
-    public ListenableFuture<Void> fetchMoreResults();
+  public ListenableFuture<Void> fetchMoreResults();
 
-    /**
+  /**
      * Returns information on the execution of the last query made for this ResultSet.
      * <p>
      * Note that in most cases, a ResultSet is fetched with only one query, but large
@@ -151,9 +136,9 @@ public interface ResultSet extends Iterable<Row> {
      *
      * @return the execution info for the last query made for this ResultSet.
      */
-    public ExecutionInfo getExecutionInfo();
+  public ExecutionInfo getExecutionInfo();
 
-    /**
+  /**
      * Return the execution informations for all queries made to retrieve this
      * ResultSet.
      * <p>
@@ -164,5 +149,5 @@ public interface ResultSet extends Iterable<Row> {
      *
      * @return a list of the execution info for all the queries made for this ResultSet.
      */
-    public List<ExecutionInfo> getAllExecutionInfo();
+  public List<ExecutionInfo> getAllExecutionInfo();
 }

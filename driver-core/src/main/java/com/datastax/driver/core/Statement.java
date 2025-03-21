@@ -1,22 +1,5 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.nio.ByteBuffer;
-
 import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
@@ -27,50 +10,52 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * whether to trace the query, ...).
  */
 public abstract class Statement {
+  static final Statement DEFAULT = new Statement() {
+    @Override public ByteBuffer getRoutingKey() {
+      return null;
+    }
 
-    // An exception to the RegularStatement, BoundStatement or BatchStatement rule above. This is
-    // used when preparing a statement and for other internal queries. Do not expose publicly.
-    static final Statement DEFAULT = new Statement() {
-        @Override
-        public ByteBuffer getRoutingKey() { return null; }
+    @Override public String getKeyspace() {
+      return null;
+    }
+  };
 
-        @Override
-        public String getKeyspace() { return null; }
-    };
+  private volatile ConsistencyLevel consistency;
 
-    private volatile ConsistencyLevel consistency;
-    private volatile ConsistencyLevel serialConsistency;
-    private volatile boolean traceQuery;
-    private volatile int fetchSize;
+  private volatile ConsistencyLevel serialConsistency;
 
-    private volatile RetryPolicy retryPolicy;
+  private volatile boolean traceQuery;
 
-    // We don't want to expose the constructor, because the code rely on this being only subclassed RegularStatement, BoundStatement and BatchStatement
-    Statement() {}
+  private volatile int fetchSize;
 
-    /**
+  private volatile RetryPolicy retryPolicy;
+
+  protected Statement() {
+  }
+
+  /**
      * Sets the consistency level for the query.
      *
      * @param consistency the consistency level to set.
      * @return this {@code Statement} object.
      */
-    public Statement setConsistencyLevel(ConsistencyLevel consistency) {
-        this.consistency = consistency;
-        return this;
-    }
+  public Statement setConsistencyLevel(ConsistencyLevel consistency) {
+    this.consistency = consistency;
+    return this;
+  }
 
-    /**
+  /**
      * The consistency level for this query.
      *
      * @return the consistency level for this query, or {@code null} if no
      * consistency level has been specified (through {@code setConsistencyLevel}).
      * In the latter case, the default consistency level will be used.
      */
-    public ConsistencyLevel getConsistencyLevel() {
-        return consistency;
-    }
+  public ConsistencyLevel getConsistencyLevel() {
+    return consistency;
+  }
 
-    /**
+  /**
      * Sets the serial consistency level for the query.
      *
      * The serial consistency level is only used by conditional updates (so INSERT, UPDATE
@@ -97,14 +82,15 @@ public abstract class Statement {
      * @throws IllegalArgumentException if {@code serialConsistency} is not one of
      * {@code ConsistencyLevel.SERIAL} or {@code ConsistencyLevel.LOCAL_SERIAL}.
      */
-    public Statement setSerialConsistencyLevel(ConsistencyLevel serialConsistency) {
-        if (serialConsistency != ConsistencyLevel.SERIAL && serialConsistency != ConsistencyLevel.LOCAL_SERIAL)
-            throw new IllegalArgumentException();
-        this.serialConsistency = serialConsistency;
-        return this;
+  public Statement setSerialConsistencyLevel(ConsistencyLevel serialConsistency) {
+    if (serialConsistency != ConsistencyLevel.SERIAL && serialConsistency != ConsistencyLevel.LOCAL_SERIAL) {
+      throw new IllegalArgumentException();
     }
+    this.serialConsistency = serialConsistency;
+    return this;
+  }
 
-    /**
+  /**
      * The serial consistency level for this query.
      * <p>
      * See {@link #setSerialConsistencyLevel} for more detail on the serial consistency level.
@@ -113,43 +99,43 @@ public abstract class Statement {
      * consistency level has been specified (through {@code setSerialConsistencyLevel}).
      * In the latter case, the default serial consistency level will be used.
      */
-    public ConsistencyLevel getSerialConsistencyLevel() {
-        return serialConsistency;
-    }
+  public ConsistencyLevel getSerialConsistencyLevel() {
+    return serialConsistency;
+  }
 
-    /**
+  /**
      * Enables tracing for this query.
      *
      * By default (that is unless you call this method), tracing is not enabled.
      *
      * @return this {@code Statement} object.
      */
-    public Statement enableTracing() {
-        this.traceQuery = true;
-        return this;
-    }
+  public Statement enableTracing() {
+    this.traceQuery = true;
+    return this;
+  }
 
-    /**
+  /**
      * Disables tracing for this query.
      *
      * @return this {@code Statement} object.
      */
-    public Statement disableTracing() {
-        this.traceQuery = false;
-        return this;
-    }
+  public Statement disableTracing() {
+    this.traceQuery = false;
+    return this;
+  }
 
-    /**
+  /**
      * Returns whether tracing is enabled for this query or not.
      *
      * @return {@code true} if this query has tracing enabled, {@code false}
      * otherwise.
      */
-    public boolean isTracing() {
-        return traceQuery;
-    }
+  public boolean isTracing() {
+    return traceQuery;
+  }
 
-    /**
+  /**
      * Returns the routing key (in binary raw form) to use for token aware 
      * routing of this query.
      * <p>
@@ -163,9 +149,9 @@ public abstract class Statement {
      *
      * @return the routing key for this query or {@code null}.
      */
-    public abstract ByteBuffer getRoutingKey();
+  public abstract ByteBuffer getRoutingKey();
 
-    /**
+  /**
      * Returns the keyspace this query operates on.
      * <p>
      * Note that not all query specify on which keyspace they operate on, and
@@ -183,9 +169,9 @@ public abstract class Statement {
      *
      * @return the keyspace this query operate on if relevant or {@code null}.
      */
-    public abstract String getKeyspace();
+  public abstract String getKeyspace();
 
-    /**
+  /**
      * Sets the retry policy to use for this query.
      * <p>
      * The default retry policy, if this method is not called, is the one returned by
@@ -196,23 +182,23 @@ public abstract class Statement {
      * @param policy the retry policy to use for this query.
      * @return this {@code Statement} object.
      */
-    public Statement setRetryPolicy(RetryPolicy policy) {
-        this.retryPolicy = policy;
-        return this;
-    }
+  public Statement setRetryPolicy(RetryPolicy policy) {
+    this.retryPolicy = policy;
+    return this;
+  }
 
-    /**
+  /**
      * Returns the retry policy sets for this query, if any.
      *
      * @return the retry policy sets specifically for this query or {@code null} if no query specific
      * retry policy has been set through {@link #setRetryPolicy} (in which case
      * the Cluster retry policy will apply if necessary).
      */
-    public RetryPolicy getRetryPolicy() {
-        return retryPolicy;
-    }
+  public RetryPolicy getRetryPolicy() {
+    return retryPolicy;
+  }
 
-    /**
+  /**
      * Sets the query fetch size.
      * <p>
      * The fetch size controls how much resulting rows will be retrieved
@@ -231,19 +217,19 @@ public abstract class Statement {
      * result set, use {@code fetchSize == Integer.MAX_VALUE}.
      * @return this {@code Statement} object.
      */
-    public Statement setFetchSize(int fetchSize) {
-        this.fetchSize = fetchSize;
-        return this;
-    }
+  public Statement setFetchSize(int fetchSize) {
+    this.fetchSize = fetchSize;
+    return this;
+  }
 
-    /**
+  /**
      * The fetch size for this query.
      *
      * @return the fetch size for this query. If that value is less or equal
      * to 0 (the default unless {@link #setFetchSize} is used), the default
      * fetch size will be used.
      */
-    public int getFetchSize() {
-        return fetchSize;
-    }
+  public int getFetchSize() {
+    return fetchSize;
+  }
 }
