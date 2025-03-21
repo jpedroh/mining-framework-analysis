@@ -47,27 +47,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 
 public class CSSParser {
     private static final Set<String> SUPPORTED_PSEUDO_ELEMENTS = setOf("first-line", "first-letter", "before", "after");
     private static final Set<String> CSS21_PSEUDO_ELEMENTS = setOf("first-line", "first-letter", "before", "after");
-
     private Token _saved;
     private final Lexer _lexer;
     private CSSErrorHandler _errorHandler;
     private String _URI;
-
     private final Map<String, String> _namespaces = new HashMap<>();
     private boolean _supportCMYKColors;
-
     public CSSParser(CSSErrorHandler errorHandler) {
         _lexer = new Lexer(new StringReader(""));
         _errorHandler = errorHandler;
     }
-
     public Stylesheet parseStylesheet(String uri, int origin, Reader reader)
             throws IOException {
         _URI = uri;
@@ -78,7 +73,6 @@ public class CSSParser {
 
         return result;
     }
-
     public Ruleset parseDeclaration(int origin, String text) {
         try {
             // XXX Set this to something more reasonable
@@ -101,7 +95,6 @@ public class CSSParser {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
     public PropertyValue parsePropertyValue(CSSName cssName, int origin, String expr) {
         _URI = cssName + " property value";
         try {
@@ -134,7 +127,6 @@ public class CSSParser {
             return null;
         }
     }
-
 //    stylesheet
 //    : [ CHARSET_SYM S* STRING S* ';' ]?
 //      [S|CDO|CDC]* [ import [S|CDO|CDC]* ]*
@@ -233,7 +225,6 @@ public class CSSParser {
             }
         }
     }
-
 //  import
 //  : IMPORT_SYM S*
 //    [STRING|URI] S* [ medium [ COMMA S* medium]* ]? ';' S*
@@ -325,7 +316,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
 //  namespace
 //  : NAMESPACE_SYM S* [namespace_prefix S*]? [STRING|URI] S* ';' S*
 //  ;
@@ -373,7 +363,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
 //  media
 //  : MEDIA_SYM S* medium [ COMMA S* medium ]* LBRACE S* ruleset* '}' S*
 //  ;
@@ -438,7 +427,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
 //  medium
 //  : IDENT S*
 //  ;
@@ -454,7 +442,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_IDENT, getCurrentLine());
         }
     }
-
 //  font_face
 //    : FONT_FACE_SYM S*
 //      '{' S* declaration [ ';' S* declaration ]* '}' S*
@@ -505,7 +492,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
 //  page :
 //    PAGE_SYM S* IDENT? pseudo_page? S*
 //    '{' S* [ declaration | margin ]? [ ';' S* [ declaration | margin ]? ]* '}' S*
@@ -565,7 +551,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
 //  margin :
 //    margin_sym S* '{' declaration [ ';' S* declaration? ]* '}' S*
 //    ;
@@ -606,8 +591,6 @@ public class CSSParser {
             recover(false, false);
         }
     }
-
-
 //  pseudo_page
 //    : ':' IDENT
 //    ;
@@ -645,7 +628,6 @@ public class CSSParser {
                 break;
         }
     }
-
 //  combinator
 //    : PLUS S*
 //    | GREATER S*
@@ -665,7 +647,6 @@ public class CSSParser {
         }
         return t;
     }
-
 //  unary_operator
 //    : '-' | PLUS
 //    ;
@@ -683,7 +664,6 @@ public class CSSParser {
             return 1;
         }
     }
-
 //  property
 //    : IDENT S*
 //    ;
@@ -702,7 +682,6 @@ public class CSSParser {
 
         return result;
     }
-
 //  declaration_list
 //    : [ declaration ';' S* ]*
     private void declaration_list(
@@ -736,7 +715,6 @@ public class CSSParser {
             }
         }
     }
-
 //  ruleset
 //    : selector [ COMMA S* selector ]*
 //      LBRACE S* [ declaration ';' S* ]* '}' S*
@@ -783,7 +761,6 @@ public class CSSParser {
             recover(true, false);
         }
     }
-
 //  selector
 //    : simple_selector [ combinator simple_selector ]*
 //    ;
@@ -822,7 +799,6 @@ public class CSSParser {
         }
         ruleset.addFSSelector(mergeSimpleSelectors(selectors, combinators));
     }
-
     private Selector mergeSimpleSelectors(List<Selector> selectors, List<Token> combinators) {
         int count = selectors.size();
         if (count == 1) {
@@ -883,7 +859,6 @@ public class CSSParser {
 
         return result;
     }
-
 //  simple_selector
 //    : typed_value [ HASH | class | attrib | pseudo ]*
 //    | [ HASH | class | attrib | pseudo ]+
@@ -956,7 +931,6 @@ public class CSSParser {
         }
         return selector;
     }
-
 //    type_selector
 //    : [ namespace_prefix ]? element_name | IDENT
 //    ;
@@ -1015,7 +989,6 @@ public class CSSParser {
 
         return new NamespacePair(namespaceURI, name);
     }
-
 //  class
 //    : '.' IDENT
 //    ;
@@ -1035,7 +1008,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_PERIOD, getCurrentLine());
         }
     }
-
 //  element_name
 //    : IDENT | '*'
 //    ;
@@ -1052,7 +1024,6 @@ public class CSSParser {
         }
     }
     */
-
 //    attrib
 //    : '[' S* [ namespace_prefix ]? IDENT S*
 //          [ [ PREFIXMATCH |
@@ -1140,7 +1111,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_LBRACKET, getCurrentLine());
         }
     }
-
     private void addPseudoClassOrElement(Token t, Selector selector) {
         String value = getTokenValue(t);
         if (value.equals("link")) {
@@ -1167,7 +1137,6 @@ public class CSSParser {
             throw new CSSParseException(value + " is not a recognized pseudo-class", getCurrentLine());
         }
     }
-
     private void addPseudoClassOrElementFunction(Token t, Selector selector) throws IOException {
         String f = getTokenValue(t);
         f = f.substring(0, f.length()-1);
@@ -1207,7 +1176,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_RPAREN, getCurrentLine());
         }
     }
-
     private void addPseudoElement(Token t, Selector selector) {
         String value = getTokenValue(t);
         if (SUPPORTED_PSEUDO_ELEMENTS.contains(value)) {
@@ -1216,7 +1184,6 @@ public class CSSParser {
             throw new CSSParseException(value + " is not a recognized psuedo-element", getCurrentLine());
         }
     }
-
 //  pseudo
 //    : ':' ':'? [ IDENT | FUNCTION S* IDENT? S* ')' ]
 //    ;
@@ -1246,7 +1213,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_COLON, getCurrentLine());
         }
     }
-
     private boolean checkCSSName(CSSName cssName, String propertyName) {
         if (cssName == null) {
             _errorHandler.error(
@@ -1275,7 +1241,6 @@ public class CSSParser {
 
         return true;
     }
-
 //  declaration
 //    : property ':' S* expr prio?
 //    ;
@@ -1335,7 +1300,6 @@ public class CSSParser {
             recover(false, true);
         }
     }
-
 //  prio
 //    : IMPORTANT_SYM S*
 //    ;
@@ -1349,7 +1313,6 @@ public class CSSParser {
             throw new CSSParseException(t, Token.TK_IMPORTANT_SYM, getCurrentLine());
         }
     }
-
 //  expr
 //    : term [ operator term ]*
 //    ;
@@ -1414,7 +1377,6 @@ public class CSSParser {
 
         return result;
     }
-
     private String extractNumber(Token t) {
         String token = getTokenValue(t);
 
@@ -1440,16 +1402,13 @@ public class CSSParser {
 
         return token.substring(0, offset);
     }
-
     private String extractUnit(Token t) {
         String s = extractNumber(t);
         return getTokenValue(t).substring(s.length());
     }
-
     private String sign(float sign) {
         return sign == -1.0f ? "-" : "";
     }
-
 //  term
 //    : unary_operator?
 //      [ NUMBER S* | PERCENTAGE S* | LENGTH S* | EMS S* | EXS S* | ANGLE S* |
@@ -1593,7 +1552,6 @@ public class CSSParser {
         }
         return result;
     }
-
 //  function
 //    : FUNCTION S* expr ')' S*
 //    ;
@@ -1632,7 +1590,6 @@ public class CSSParser {
 
         return result;
     }
-
     private FSCMYKColor createCMYKColorFromFunction(List<PropertyValue> params) {
         if (params.size() != 4) {
             throw new CSSParseException(
@@ -1649,7 +1606,6 @@ public class CSSParser {
         return new FSCMYKColor(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
 
     }
-
     private float parseCMYKColorComponent(PropertyValue value, int paramNo) {
         short type = value.getPrimitiveType();
         float result;
@@ -1670,7 +1626,6 @@ public class CSSParser {
 
         return result;
     }
-
     private FSRGBColor createRGBColorFromFunction(List<PropertyValue> params) {
         if (params.size() != 3) {
             throw new CSSParseException(
@@ -1716,7 +1671,6 @@ public class CSSParser {
 
         return new FSRGBColor(red, green, blue);
     }
-
 //  /*
 //  * There is a constraint on the color that it must
 //  * have either 3 or 6 hex-digits (i.e., [0-9a-fA-F])
@@ -1756,7 +1710,6 @@ public class CSSParser {
 
         return result;
     }
-
     private boolean isHexString(String s) {
         for (int i = 0; i < s.length(); i++) {
             if (! isHexChar(s.charAt(i))) {
@@ -1765,14 +1718,12 @@ public class CSSParser {
         }
         return true;
     }
-
     private int convertToInteger(char hexchar1, char hexchar2) {
         int result = convertToInteger(hexchar1);
         result <<= 4;
         result |= convertToInteger(hexchar2);
         return result;
     }
-
     private int convertToInteger(char hexchar1) {
         if (hexchar1 >= '0' && hexchar1 <= '9') {
             return hexchar1 - '0';
@@ -1782,7 +1733,6 @@ public class CSSParser {
             return hexchar1 - 'A' + 10;
         }
     }
-
     private void skip_whitespace() throws IOException {
         Token t;
         while ( (t = next()) == Token.TK_S) {
@@ -1790,7 +1740,6 @@ public class CSSParser {
         }
         push(t);
     }
-
     private void skip_whitespace_and_cdocdc() throws IOException {
         Token t;
         while (true) {
@@ -1801,7 +1750,6 @@ public class CSSParser {
         }
         push(t);
     }
-
     private Token next() throws IOException {
         if (_saved != null) {
             Token result = _saved;
@@ -1811,20 +1759,17 @@ public class CSSParser {
             return _lexer.yylex();
         }
     }
-
     private void push(Token t) {
         if (_saved != null) {
             throw new RuntimeException("saved must be null");
         }
         _saved = t;
     }
-
     private Token la() throws IOException {
         Token result = next();
         push(result);
         return result;
     }
-
     private void error(CSSParseException e, String what, boolean rethrowEOF) {
         if (! e.isCallerNotified()) {
             String message = e.getMessage() + " Skipping " + what + ".";
@@ -1835,7 +1780,6 @@ public class CSSParser {
             throw e;
         }
     }
-
     private void recover(boolean needBlock, boolean stopBeforeBlockClose) throws IOException {
         int braces = 0;
         boolean foundBlock = false;
@@ -1872,30 +1816,24 @@ public class CSSParser {
         }
         skip_whitespace();
     }
-
     public void reset(Reader r) {
         _saved = null;
         _namespaces.clear();
         _lexer.yyreset(r);
         _lexer.setyyline(0);
     }
-
     public CSSErrorHandler getErrorHandler() {
         return _errorHandler;
     }
-
     public void setErrorHandler(CSSErrorHandler errorHandler) {
         _errorHandler = errorHandler;
     }
-
     private String getRawTokenValue() {
         return _lexer.yytext();
     }
-
     private String getTokenValue(Token t) {
         return getTokenValue(t, false);
     }
-
     private String getTokenValue(Token t, boolean literal) {
         int start;
         int count;
@@ -1959,7 +1897,6 @@ public class CSSParser {
                 return _lexer.yytext();
         }
     }
-
     private boolean isRelativeURI(String uri) {
         try {
             return uri.length() > 0 && (uri.charAt(0) != '/' && ! new URI(uri).isAbsolute());
@@ -1967,7 +1904,6 @@ public class CSSParser {
             return false;
         }
     }
-
     private boolean isServerRelativeURI(String uri) {
         try {
             return uri.length() > 0 && uri.charAt(0) == '/' && !new URI(uri).isAbsolute();
@@ -1975,15 +1911,12 @@ public class CSSParser {
             return false;
         }
     }
-
     private int getCurrentLine() {
         return _lexer.yyline();
     }
-
     private static boolean isHexChar(char c) {
         return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
     }
-
     private static String processEscapes(char[] ch, int start, int end) {
         StringBuilder result = new StringBuilder(ch.length + 10);
 
@@ -2036,15 +1969,12 @@ public class CSSParser {
 
         return result.toString();
     }
-
     public boolean isSupportCMYKColors() {
         return _supportCMYKColors;
     }
-
     public void setSupportCMYKColors(boolean b) {
         _supportCMYKColors = b;
     }
-
     private static class NamespacePair {
         private final String _namespaceURI;
         private final String _name;
@@ -2062,8 +1992,120 @@ public class CSSParser {
             return _name;
         }
     }
-
     private static Set<String> setOf(String... values) {
         return unmodifiableSet(new HashSet<>(asList(values)));
     }
+//    stylesheet
+//    : [ CHARSET_SYM S* STRING S* ';' ]?
+//      [S|CDO|CDC]* [ import [S|CDO|CDC]* ]*
+//      [ namespace [S|CDO|CDC]* ]*
+//      [ [ ruleset | media | page | font_face ] [S|CDO|CDC]* ]*
+//  import
+//  : IMPORT_SYM S*
+//    [STRING|URI] S* [ medium [ COMMA S* medium]* ]? ';' S*
+//  ;
+//  namespace
+//  : NAMESPACE_SYM S* [namespace_prefix S*]? [STRING|URI] S* ';' S*
+//  ;
+//  namespace_prefix
+//  : IDENT
+//  ;
+//  media
+//  : MEDIA_SYM S* medium [ COMMA S* medium ]* LBRACE S* ruleset* '}' S*
+//  ;
+//  medium
+//  : IDENT S*
+//  ;
+//  font_face
+//    : FONT_FACE_SYM S*
+//      '{' S* declaration [ ';' S* declaration ]* '}' S*
+//    ;
+//  page :
+//    PAGE_SYM S* IDENT? pseudo_page? S*
+//    '{' S* [ declaration | margin ]? [ ';' S* [ declaration | margin ]? ]* '}' S*
+//
+//  margin :
+//    margin_sym S* '{' declaration [ ';' S* declaration? ]* '}' S*
+//    ;
+//  pseudo_page
+//    : ':' IDENT
+//    ;
+//  operator
+//    : '/' S* | COMMA S* | /* empty */
+//    ;
+//  combinator
+//    : PLUS S*
+//    | GREATER S*
+//    | S
+//    ;
+//  unary_operator
+//    : '-' | PLUS
+//    ;
+//  property
+//    : IDENT S*
+//    ;
+//  declaration_list
+//    : [ declaration ';' S* ]*
+//  ruleset
+//    : selector [ COMMA S* selector ]*
+//      LBRACE S* [ declaration ';' S* ]* '}' S*
+//    ;
+//  selector
+//    : simple_selector [ combinator simple_selector ]*
+//    ;
+//  simple_selector
+//    : typed_value [ HASH | class | attrib | pseudo ]*
+//    | [ HASH | class | attrib | pseudo ]+
+//    ;
+//    type_selector
+//    : [ namespace_prefix ]? element_name | IDENT
+//    ;
+//    namespace_prefix
+//    : [ IDENT | '*' ]? '|'
+//    ;
+//  class
+//    : '.' IDENT
+//    ;
+//  element_name
+//    : IDENT | '*'
+//    ;
+//    attrib
+//    : '[' S* [ namespace_prefix ]? IDENT S*
+//          [ [ PREFIXMATCH |
+//              SUFFIXMATCH |
+//              SUBSTRINGMATCH |
+//              '=' |
+//              INCLUDES |
+//              DASHMATCH ] S* [ IDENT | STRING ] S*
+//          ]? ']'
+//    ;
+//  pseudo
+//    : ':' ':'? [ IDENT | FUNCTION S* IDENT? S* ')' ]
+//    ;
+//  declaration
+//    : property ':' S* expr prio?
+//    ;
+//  prio
+//    : IMPORTANT_SYM S*
+//    ;
+//  expr
+//    : term [ operator term ]*
+//    ;
+//  term
+//    : unary_operator?
+//      [ NUMBER S* | PERCENTAGE S* | LENGTH S* | EMS S* | EXS S* | ANGLE S* |
+//        TIME S* | FREQ S* ]
+//    | STRING S* | IDENT S* | URI S* | hexcolor | function
+//    ;
+//  function
+//    : FUNCTION S* expr ')' S*
+//    ;
+//  /*
+//  * There is a constraint on the color that it must
+//  * have either 3 or 6 hex-digits (i.e., [0-9a-fA-F])
+//  * after the "#"; e.g., "#000" is OK, but "#abcd" is not.
+//  */
+// hexcolor
+//   : HASH S*
+//   ;
 }

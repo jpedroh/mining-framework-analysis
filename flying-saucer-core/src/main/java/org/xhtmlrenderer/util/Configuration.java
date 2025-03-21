@@ -38,8 +38,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
 import static java.nio.file.Files.newInputStream;
+import java.io.FileInputStream;
+import java.util.Enumeration;
 
 
 /**
@@ -681,7 +682,6 @@ public class Configuration {
                 .iterator();
     }
 
-    
     /**
      * Returns true if the value is "true" (ignores case), or the default
      * provided value if not found or if the value is not a valid boolean (true
