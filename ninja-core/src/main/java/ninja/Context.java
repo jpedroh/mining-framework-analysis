@@ -190,23 +190,34 @@ public interface Context {
 	 * @param object The object to render as Json
 	 */
 	void renderJson(Object object);
-	
-	///////////////////////////////////////////////////////////////////////////
-	// Allows to get the nicely parsed content of the request.
-	// For instance if the content is a json you could simply get the json
-	// as Java object.
-	///////////////////////////////////////////////////////////////////////////
-	/**
+
+    /**
 	 * This will give you the request body nicely parsed. You can register your
 	 * own parsers depending on the request type.
+<<<<<<< /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/left.java
 	 * 
 	 * Have a look at {@link ninja.bodyparser.BodyParserEngine} {@link BodyParserEngineJson}
+||||||| /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/base.java
+	 * 
+	 * Have a look at {@link BodyParserEngine} {@link BodyParserEngineJson} 
+=======
+	 *
+	 * Have a look at {@link BodyParserEngine} {@link BodyParserEngineJson}
+>>>>>>> /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/right.java
 	 * and {@link BodyParserEngineManager}
+<<<<<<< /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/left.java
 	 * 
 	 * @param classOfT The class of the result.
+||||||| /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/base.java
+	 * 
+	 * @param The class of the result.
+=======
+	 *
+	 * @param classOfT The class of the result.
+>>>>>>> /usr/src/app/output/ninjaframework/ninja/721820ed5a4dc9441a925b510318bc8c8daa56a9/ninja-core/src/main/java/ninja/Context.java/right.java
 	 * @return The parsed request or null if something went wrong.
 	 */
-	<T> T parseBody(Class<T> classOfT);
+    <T> T parseBody(Class<T> classOfT);
 
     /**
      * Indicate that this request will be handled asynchronously
