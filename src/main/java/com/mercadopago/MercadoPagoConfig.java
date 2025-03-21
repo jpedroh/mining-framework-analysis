@@ -1,27 +1,24 @@
 package com.mercadopago;
-
 import com.mercadopago.net.MPDefaultHttpClient;
 import com.mercadopago.net.MPHttpClient;
 import java.util.Objects;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.StreamHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Synchronized;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpRequestRetryHandler;
 
 /** Mercado Pago configuration class. */
 public class MercadoPagoConfig {
-
   public static final String CURRENT_VERSION = "2.0.0";
 
   public static final String PRODUCT_ID = "BC32A7VTRPP001U8NHJ0";
 
-  public static final String TRACKING_ID =
-      String.format(
-          "platform:%s,type:SDK%s,so;",
-          MercadoPagoConfig.getJavaVersion(), MercadoPagoConfig.CURRENT_VERSION);
+  public static final String TRACKING_ID = String.format("platform:%s,type:SDK%s,so;", MercadoPagoConfig.getJavaVersion(), MercadoPagoConfig.CURRENT_VERSION);
 
   public static final String BASE_URL = "https://api.mercadopago.com";
 
@@ -45,7 +42,7 @@ public class MercadoPagoConfig {
 
   @Getter @Setter private static volatile String integratorId;
 
-  @Getter @Setter private static volatile StreamHandler loggingHandler;
+  @Setter private static volatile StreamHandler loggingHandler;
 
   @Getter @Setter private static volatile String metricsScope = DEFAULT_METRICS_SCOPE;
 
@@ -55,16 +52,13 @@ public class MercadoPagoConfig {
 
   @Getter @Setter private static volatile int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT_MS;
 
-  @Getter @Setter
-  private static volatile int connectionRequestTimeout = DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS;
+  @Getter @Setter private static volatile int connectionRequestTimeout = DEFAULT_CONNECTION_REQUEST_TIMEOUT_MS;
 
   @Getter @Setter private static volatile int socketTimeout = DEFAULT_SOCKET_TIMEOUT_MS;
 
   @Setter private static volatile MPHttpClient httpClient;
 
-  @Getter(onMethod_ = {@Synchronized})
-  @Setter(onMethod_ = {@Synchronized})
-  private static HttpHost proxy;
+  @Getter(onMethod_ = { @Synchronized }) @Setter(onMethod_ = { @Synchronized }) private static HttpHost proxy;
 
   @Getter @Setter private static HttpRequestRetryHandler retryHandler;
 
@@ -81,22 +75,27 @@ public class MercadoPagoConfig {
   }
 
   /**
-   * Method responsible for getting Java version.
+   * Method responsible for return StreamHandler.
    *
-   * @return java version
+   * @return StreamHandler
    */
+  public static StreamHandler getStreamHandler() {
+    if (Objects.isNull(loggingHandler)) {
+      return new ConsoleHandler();
+    }
+    return loggingHandler;
+  }
+
   public static synchronized String getJavaVersion() {
     String version = System.getProperty("java.runtime.version");
     if (Objects.isNull(version)) {
       return null;
     }
-
     String major = version.replaceAll("^1\\.", "");
     int dotIndex = major.indexOf('.');
     if (dotIndex != -1) {
       major = major.substring(0, dotIndex);
     }
-
     return major + "|" + version;
   }
 }

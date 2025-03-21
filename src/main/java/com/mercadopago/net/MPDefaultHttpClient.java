@@ -1,9 +1,8 @@
 package com.mercadopago.net;
-
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.net.HttpStatus.BAD_REQUEST;
 import static com.mercadopago.net.HttpStatus.FORBIDDEN;
 import static com.mercadopago.net.HttpStatus.INTERNAL_SERVER_ERROR;
-
 import com.google.gson.JsonObject;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.exceptions.MPApiException;
@@ -16,11 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -57,23 +56,35 @@ public class MPDefaultHttpClient implements MPHttpClient {
 
   private static final String UTF_8 = "UTF-8";
 
-  private static final String PAYLOAD_NOT_SUPPORTED_MESSAGE =
-      "Payload not supported for this method.";
+  private static final String PAYLOAD_NOT_SUPPORTED_MESSAGE = "Payload not supported for this method.";
 
   private static final Logger LOGGER = Logger.getLogger(MPDefaultHttpClient.class.getName());
+
+  static {
+    StreamHandler streamHandler = getStreamHandler();
+    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
+    LOGGER.addHandler(streamHandler);
+  }
 
   private final HttpClient httpClient;
 
   /** MPDefaultHttpClient constructor. */
   public MPDefaultHttpClient() {
     this(null);
+
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/f86264fd19a10fd46dc8cc6370f727952d54580c/src/main/java/com/mercadopago/net/MPDefaultHttpClient.java/left.java
+    this.httpClient = createHttpClient();
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
   }
 
-  /** MPDefaultHttpClient constructor for testing only. */
-  protected MPDefaultHttpClient(HttpClient httpClient) {
-    StreamHandler streamHandler = getStreamHandler();
-    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
-    LOGGER.addHandler(streamHandler);
+  /**
+   * MPDefaultHttpClient constructor receiving httpClient.
+   *
+   * @param httpClient httpClient
+   */
+  public protected MPDefaultHttpClient(HttpClient httpClient) {
+    this.httpClient = httpClient;
     if (Objects.isNull(httpClient)) {
       this.httpClient = createHttpClient();
     } else {
@@ -81,78 +92,44 @@ public class MPDefaultHttpClient implements MPHttpClient {
     }
   }
 
-  private StreamHandler getStreamHandler() {
-    if (Objects.isNull(MercadoPagoConfig.getLoggingHandler())) {
-      return new ConsoleHandler();
-    }
-    return MercadoPagoConfig.getLoggingHandler();
-  }
-
   private HttpClient createHttpClient() {
     SSLContext sslContext = SSLContexts.createDefault();
-    SSLConnectionSocketFactory sslConnectionSocketFactory =
-        new SSLConnectionSocketFactory(
-            sslContext,
-            new String[] {"TLSv1.2"},
-            null,
-            SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-    Registry<ConnectionSocketFactory> registry =
-        RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("https", sslConnectionSocketFactory)
-            .build();
-
-    PoolingHttpClientConnectionManager connectionManager =
-        new PoolingHttpClientConnectionManager(registry);
+    SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, new String[] { "TLSv1.2" }, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+    Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create().register("https", sslConnectionSocketFactory).build();
+    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
     connectionManager.setMaxTotal(MercadoPagoConfig.getMaxConnections());
     connectionManager.setDefaultMaxPerRoute(MercadoPagoConfig.getMaxConnections());
     connectionManager.setValidateAfterInactivity(VALIDATE_INACTIVITY_INTERVAL_MS);
-
-    HttpClientBuilder httpClientBuilder =
-        HttpClients.custom()
-            .setConnectionManager(connectionManager)
-            .setKeepAliveStrategy(new KeepAliveStrategy())
-            .disableCookieManagement()
-            .disableRedirectHandling();
-
+    HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager).setKeepAliveStrategy(new KeepAliveStrategy()).disableCookieManagement().disableRedirectHandling();
     if (Objects.isNull(MercadoPagoConfig.getProxy())) {
       httpClientBuilder.setProxy(MercadoPagoConfig.getProxy());
     }
-
     if (Objects.isNull(MercadoPagoConfig.getRetryHandler())) {
       httpClientBuilder.setRetryHandler(MercadoPagoConfig.getRetryHandler());
     } else {
-      DefaultHttpRequestRetryHandler retryHandler =
-          new DefaultHttpRequestRetryHandler(DEFAULT_RETRIES, false);
+      DefaultHttpRequestRetryHandler retryHandler = new DefaultHttpRequestRetryHandler(DEFAULT_RETRIES, false);
       httpClientBuilder.setRetryHandler(retryHandler);
     }
-
     return httpClientBuilder.build();
   }
 
-  @Override
-  public MPResponse send(MPRequest mpRequest) throws MPException {
+  @Override public MPResponse send(MPRequest mpRequest) throws MPException {
     try {
       HttpRequestBase completeRequest = createHttpRequest(mpRequest);
       HttpClientContext context = HttpClientContext.create();
-
       HttpResponse response = executeHttpRequest(mpRequest, completeRequest, context);
-
       String responseBody = EntityUtils.toString(response.getEntity(), UTF_8);
       Map<String, List<String>> headers = getHeaders(response);
       int statusCode = response.getStatusLine().getStatusCode();
       MPResponse mpResponse = new MPResponse(statusCode, headers, responseBody);
-
       if (!Serializer.isJsonValid(responseBody)) {
         throw new MPApiException("Response body has malformed json", mpResponse);
       }
-
       if (statusCode > 299) {
         throw new MPApiException("Api error. Check response for details", mpResponse);
       }
-
       LOGGER.fine(String.format("Response body: %s", responseBody));
       return mpResponse;
-
     } catch (MPMalformedRequestException | MPApiException ex) {
       throw ex;
     } catch (Exception ex) {
@@ -160,40 +137,22 @@ public class MPDefaultHttpClient implements MPHttpClient {
     }
   }
 
-  private HttpRequestBase createHttpRequest(MPRequest mpRequest)
-      throws MPMalformedRequestException {
+  private HttpRequestBase createHttpRequest(MPRequest mpRequest) throws MPMalformedRequestException {
     HttpEntity entity = normalizePayload(mpRequest.getPayload());
     HttpRequestBase request = getRequestBase(mpRequest.getMethod(), mpRequest.getUri(), entity);
     Map<String, String> headers = new HashMap<>(mpRequest.getHeaders());
-
     for (Map.Entry<String, String> header : headers.entrySet()) {
       request.addHeader(new BasicHeader(header.getKey(), header.getValue()));
     }
-
-    int socketTimeout =
-        mpRequest.getSocketTimeout() != 0
-            ? mpRequest.getSocketTimeout()
-            : MercadoPagoConfig.getSocketTimeout();
-    int connectionTimeout =
-        mpRequest.getConnectionTimeout() != 0
-            ? mpRequest.getConnectionTimeout()
-            : MercadoPagoConfig.getConnectionTimeout();
-    int connectionRequestTimeout =
-        mpRequest.getConnectionRequestTimeout() != 0
-            ? mpRequest.getConnectionRequestTimeout()
-            : MercadoPagoConfig.getConnectionRequestTimeout();
-    RequestConfig.Builder requestConfigBuilder =
-        RequestConfig.custom()
-            .setSocketTimeout(socketTimeout)
-            .setConnectTimeout(connectionTimeout)
-            .setConnectionRequestTimeout(connectionRequestTimeout);
-
+    int socketTimeout = mpRequest.getSocketTimeout() != 0 ? mpRequest.getSocketTimeout() : MercadoPagoConfig.getSocketTimeout();
+    int connectionTimeout = mpRequest.getConnectionTimeout() != 0 ? mpRequest.getConnectionTimeout() : MercadoPagoConfig.getConnectionTimeout();
+    int connectionRequestTimeout = mpRequest.getConnectionRequestTimeout() != 0 ? mpRequest.getConnectionRequestTimeout() : MercadoPagoConfig.getConnectionRequestTimeout();
+    RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setSocketTimeout(socketTimeout).setConnectTimeout(connectionTimeout).setConnectionRequestTimeout(connectionRequestTimeout);
     request.setConfig(requestConfigBuilder.build());
     return request;
   }
 
-  private HttpResponse executeHttpRequest(
-      MPRequest mpRequest, HttpRequestBase completeRequest, HttpClientContext context) {
+  private HttpResponse executeHttpRequest(MPRequest mpRequest, HttpRequestBase completeRequest, HttpClientContext context) {
     try {
       if (Objects.nonNull(mpRequest.getPayload())) {
         LOGGER.fine(String.format("Request body: %s", mpRequest.getPayload().toString()));
@@ -205,16 +164,13 @@ public class MPDefaultHttpClient implements MPHttpClient {
       return httpClient.execute(completeRequest, context);
     } catch (ClientProtocolException e) {
       LOGGER.fine(String.format("ClientProtocolException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), BAD_REQUEST, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), BAD_REQUEST, null));
     } catch (SSLPeerUnverifiedException e) {
       LOGGER.fine(String.format("SSLException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), FORBIDDEN, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), FORBIDDEN, null));
     } catch (IOException e) {
       LOGGER.fine(String.format("IOException: %s", e.getMessage()));
-      return new BasicHttpResponse(
-          new BasicStatusLine(completeRequest.getProtocolVersion(), INTERNAL_SERVER_ERROR, null));
+      return new BasicHttpResponse(new BasicStatusLine(completeRequest.getProtocolVersion(), INTERNAL_SERVER_ERROR, null));
     }
   }
 
@@ -229,34 +185,37 @@ public class MPDefaultHttpClient implements MPHttpClient {
     return headers;
   }
 
-  private HttpRequestBase getRequestBase(HttpMethod method, String uri, HttpEntity entity)
-      throws MPMalformedRequestException {
+  private HttpRequestBase getRequestBase(HttpMethod method, String uri, HttpEntity entity) throws MPMalformedRequestException {
     if (method == null) {
-      throw new MPMalformedRequestException(
-          "HttpMethod must be either \"GET\", \"POST\", \"PUT\" or \"DELETE\".");
+      throw new MPMalformedRequestException("HttpMethod must be either \"GET\", \"POST\", \"PUT\" or \"DELETE\".");
     }
     if (StringUtils.isEmpty(uri)) {
       throw new MPMalformedRequestException("Uri can not be an empty String.");
     }
-
     if (method.equals(HttpMethod.GET)) {
       if (entity != null) {
         throw new MPMalformedRequestException(PAYLOAD_NOT_SUPPORTED_MESSAGE);
       }
       return new HttpGet(uri);
-    } else if (method.equals(HttpMethod.POST)) {
-      HttpPost post = new HttpPost(uri);
-      post.setEntity(entity);
-      return post;
-    } else if (method.equals(HttpMethod.PUT)) {
-      HttpPut put = new HttpPut(uri);
-      put.setEntity(entity);
-      return put;
-    } else if (method.equals(HttpMethod.DELETE)) {
-      if (entity != null) {
-        throw new MPMalformedRequestException(PAYLOAD_NOT_SUPPORTED_MESSAGE);
+    } else {
+      if (method.equals(HttpMethod.POST)) {
+        HttpPost post = new HttpPost(uri);
+        post.setEntity(entity);
+        return post;
+      } else {
+        if (method.equals(HttpMethod.PUT)) {
+          HttpPut put = new HttpPut(uri);
+          put.setEntity(entity);
+          return put;
+        } else {
+          if (method.equals(HttpMethod.DELETE)) {
+            if (entity != null) {
+              throw new MPMalformedRequestException(PAYLOAD_NOT_SUPPORTED_MESSAGE);
+            }
+            return new HttpDelete(uri);
+          }
+        }
       }
-      return new HttpDelete(uri);
     }
     return null;
   }
