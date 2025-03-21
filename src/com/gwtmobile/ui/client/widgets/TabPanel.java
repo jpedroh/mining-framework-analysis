@@ -36,15 +36,11 @@ public class TabPanel extends PanelBase
     private TabHeaderPanel _tabHeaderPanel;
     private TabContentPanel _tabContentPanel;
     private int _selectedTabIndex = -1;
-    private int _defaultTabIndex = 0;
-    private boolean _fullHeight = false;
-    private TabPosition _tabPosition = TabPosition.Top;
-
-	public TabPanel() {
+    private int _defaultTab = 0;
+    public TabPanel() {
         setStyleName(Primary.TabPanel);
         addStyleName(_tabPosition.toString());
     }
-    
     @Override
     public void add(Widget w) {
     	
@@ -79,7 +75,30 @@ public class TabPanel extends PanelBase
     	assert false : "TabPanel can only contains a TabHeaderPanel and a TabContentPanel. ("+w.getClass().getName()+")";
     	
     }
-    
+<<<<<<< /usr/src/app/output/dennisjzh/gwtmobile-ui/b1d29b7602f643ed5c7dd04acaa1d63631910a61/src/com/gwtmobile/ui/client/widgets/TabPanel.java/left.java
+    @Override
+    public void onInitialLoad() {
+      
+      // Added a default tab
+      // Frank Mena
+      int widgetCount = _tabHeaderPanel.getWidgetCount();
+      
+    	if (widgetCount > 0) {
+    	  if (_defaultTab < widgetCount)
+    	    selectTab(_defaultTab);
+    	  else
+          selectTab(0);
+    	}
+    }
+||||||| /usr/src/app/output/dennisjzh/gwtmobile-ui/b1d29b7602f643ed5c7dd04acaa1d63631910a61/src/com/gwtmobile/ui/client/widgets/TabPanel.java/base.java
+    @Override
+	public void onInitialLoad() {
+    	if (_tabHeaderPanel.getWidgetCount() > 0) {
+    		//FIXME:allow a different default tab to be set?
+            selectTab(0);
+    	}
+    }
+=======
     @Override
 	public void onInitialLoad() {
     	if (_tabHeaderPanel != null && _tabHeaderPanel.getWidgetCount() > 0) {
@@ -92,7 +111,7 @@ public class TabPanel extends PanelBase
     		}
     	}
     }
-    
+>>>>>>> /usr/src/app/output/dennisjzh/gwtmobile-ui/b1d29b7602f643ed5c7dd04acaa1d63631910a61/src/com/gwtmobile/ui/client/widgets/TabPanel.java/right.java
     public void selectTab(int index) {
 
     	if (_selectedTabIndex == index) {
@@ -107,23 +126,18 @@ public class TabPanel extends PanelBase
         _selectedTabIndex = index;
         SelectionEvent.fire(this, _selectedTabIndex);
     }
-
     public int getSelectedTabIndex() {
         return _selectedTabIndex;
     }
-
     public void setSelectedTabIndex(int index) {
         selectTab(index);
     }
-
     public TabHeader getSelectedTab() {
     	return (TabHeader) _tabHeaderPanel.getWidget(_selectedTabIndex);
     }
-    
     public TabContent getSelectedTabContent() {
     	return _tabContentPanel.getSelectedTabContent();
     }
-    
 	@Override
 	public void onClick(ClickEvent event) {
 		int index = _tabHeaderPanel.getClickedTabHeaderIndex(event);
@@ -131,17 +145,14 @@ public class TabPanel extends PanelBase
             selectTab(index);
 		}
 	}
-    
 	@Override
 	public HandlerRegistration addSelectionHandler(
 			SelectionHandler<Integer> handler) {
 		return this.addHandler(handler, SelectionEvent.getType());
 	}
-	
 	public TabPosition getTabPosition() {
 		return _tabPosition;
 	}
-
 	public void setTabPosition(TabPosition tabsPosition) {
 		this._tabPosition = tabsPosition;
 		if (tabsPosition == TabPosition.Bottom && getWidget(0) == _tabHeaderPanel) {
@@ -158,19 +169,15 @@ public class TabPanel extends PanelBase
 			removeStyleName(Secondary.Bottom);
 		}
 	}
-	
 	public int getDefaultTabIndex() {
 		return _defaultTabIndex;
 	}
-
 	public void setDefaultTabIndex(int defaultTabIndex) {
 		this._defaultTabIndex = defaultTabIndex;
 	}
-
 	public boolean isFullHeight() {
 		return _fullHeight;
 	}
-
 	public void setFullHeight(boolean fullHeight) {
 		this._fullHeight = fullHeight;
 		if (fullHeight){
@@ -179,7 +186,6 @@ public class TabPanel extends PanelBase
 			removeStyleName(Secondary.FullHeight);
 		}
 	}
-
 	public void setTabBarPanel(boolean isTabBarPanel) {
 		if (isTabBarPanel) {
 			addStyleName(Primary.TabBarPanel);
@@ -188,7 +194,19 @@ public class TabPanel extends PanelBase
 			removeStyleName(Primary.TabBarPanel);
 		}
 	}
-	
+	/**
+	 * Sets the default tab.
+	 *
+	 * @param defaultTab the new default tab
+	 * 
+	 * Frank Mena
+	 */
+	public void setDefaultTab(int defaultTab) {
+	  _defaultTab = defaultTab;
+	}
+    private int _defaultTabIndex = 0;
+    private boolean _fullHeight = false;
+    private TabPosition _tabPosition = TabPosition.Top;
 	@Override
 	protected String getDesignTimeMessage() {
 		return "Add a TabHeaderPanel and a TabContentPanel.";
