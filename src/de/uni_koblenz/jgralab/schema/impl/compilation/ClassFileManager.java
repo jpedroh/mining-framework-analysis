@@ -76,7 +76,6 @@ public class ClassFileManager extends
 		this.qualifiedSchemaName = ma.getManagedName();
 	}
 
-
 	@Override
 	public boolean hasLocation(Location location) {
 		return super.hasLocation(location)
@@ -106,8 +105,8 @@ public class ClassFileManager extends
 		}
 		// redirect compiler output to InMemoryClassFiles
 		InMemoryClassFile cfa = new InMemoryClassFile(className);
-		SchemaClassManager.instance(qualifiedSchemaName)
-				.putSchemaClass(className, cfa);
+		SchemaClassManager.instance(qualifiedSchemaName).putSchemaClass(
+				className, cfa);
 		// System.out.println("Registered class");
 		return cfa;
 	}

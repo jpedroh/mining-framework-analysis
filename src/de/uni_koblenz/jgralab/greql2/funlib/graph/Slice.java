@@ -70,17 +70,21 @@ public class Slice extends Function {
 
 	private Graph graph;
 
-	@Description(params = {"v", "nfa"}, description = 
-			"Returns a slice, starting at the given root vertex and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, Vertex v, NFA nfa) {
 		return evaluate(evaluator, v, nfa.getDFA());
 	}
 
-	@Description(params = {"v", "dfa"}, description = 
+	@Description(params = {"v", "nfa"}, description = 
 			"Returns a slice, starting at the given root vertex and "
+			 + " being structured according to the given path description.",
+			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(Vertex v, NFA nfa) {
+		return evaluate(v, nfa.getDFA());
+	}
+
+	@Description(params = {"roots", "nfa"}, description = 
+			"Returns a slice, starting at the given root vertices and "
 			 + " being structured according to the given path description.",
 			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
@@ -88,7 +92,7 @@ public class Slice extends Function {
 		return evaluate(evaluator, JGraLab.<Vertex> set().plus(v), dfa);
 	}
 
-	@Description(params = {"roots", "nfa"}, description = 
+	@Description(params = {"roots", "dfa"}, description = 
 			"Returns a slice, starting at the given root vertices and "
 			 + " being structured according to the given path description.",
 			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
@@ -97,10 +101,6 @@ public class Slice extends Function {
 		return evaluate(evaluator, roots, nfa.getDFA());
 	}
 
-	@Description(params = {"roots", "dfa"}, description = 
-			"Returns a slice, starting at the given root vertices and "
-			 + " being structured according to the given path description.",
-			 categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
 			InternalGreqlEvaluator evaluator, PSet<Vertex> roots, DFA dfa) {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
