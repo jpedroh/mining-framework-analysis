@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2019 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.checks;
-
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,35 +13,45 @@ import org.sonar.php.tree.impl.PHPTree;
 import org.sonar.plugins.php.api.tree.Tree;
 import org.sonar.plugins.php.api.tree.Tree.Kind;
 import org.sonar.plugins.php.api.tree.declaration.VariableDeclarationTree;
-import org.sonar.plugins.php.api.tree.expression.AssignmentExpressionTree;
+import org.sonar.plugins.php.api.tree.expression.*;
 import org.sonar.plugins.php.api.tree.expression.ExpressionTree;
 import org.sonar.plugins.php.api.tree.expression.FunctionCallTree;
-import org.sonar.plugins.php.api.tree.expression.LiteralTree;
 import org.sonar.plugins.php.api.tree.lexical.SyntaxToken;
 import org.sonar.plugins.php.api.visitors.PHPVisitorCheck;
 
-@Rule(key = HardCodedCredentialsCheck.KEY)
-public class HardCodedCredentialsCheck extends PHPVisitorCheck {
-
+@Rule(key = HardCodedCredentialsCheck.KEY) public class HardCodedCredentialsCheck extends PHPVisitorCheck {
   public static final String KEY = "S2068";
-  private static final String MESSAGE = "'%s' detected in this variable name, review this potentially hardcoded credential.";
-  private static final String MESSAGE_ARGUMENTS = "Review this hardcoded credential.";
+
+  private static final String MESSAGE = "\'%s\' detected in this variable name, review this potentially hardcoded credential.";
+
+  private static final String MESSAGE_ARGUMENTS = 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/left.java
+  "detected string in password argument, review this potentially hardcoded credential."
+=======
+  "Review this hardcoded credential."
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/right.java
+  ;
+
+
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/left.java
   private static final String MESSAGE_URI = "detected URI with password, review this potentially hardcoded credential.";
+=======
+  private static final Map<String, Integer> CONNECT_FUNCTIONS = initializeConnectFunctionsMap();
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/right.java
+
+
   private static final String DEFAULT_CREDENTIAL_WORDS = "password,passwd,pwd";
 
-  private static final String LITERAL_PATTERN_SUFFIX = "=(?!([\\?:']|%s))..";
+  private static final String LITERAL_PATTERN_SUFFIX = "=(?!([\\?:\']|%s))..";
+
   private static final Pattern URI_PATTERN = Pattern.compile("\\w+://(?!user(name)?:password)(\\S+):(\\S+)@");
 
   private static final int LITERAL_PATTERN_SUFFIX_LENGTH = LITERAL_PATTERN_SUFFIX.length();
-  private static final Map<String, Integer> CONNECT_FUNCTIONS = initializeConnectFunctionsMap();
 
-  @RuleProperty(
-    key = "credentialWords",
-    description = "Comma separated list of words identifying potential credentials",
-    defaultValue = DEFAULT_CREDENTIAL_WORDS)
-  public String credentialWords = DEFAULT_CREDENTIAL_WORDS;
+  @RuleProperty(key = "credentialWords", description = "Comma separated list of words identifying potential credentials", defaultValue = DEFAULT_CREDENTIAL_WORDS) public String credentialWords = DEFAULT_CREDENTIAL_WORDS;
 
   private List<Pattern> variablePatterns = null;
+
   private List<Pattern> literalPatterns = null;
 
   private static Map<String, Integer> initializeConnectFunctionsMap() {
@@ -83,7 +73,6 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
     connectFunctions.put("ifx_connect", 3);
     connectFunctions.put("dbx_connect", 5);
     connectFunctions.put("fbsql_pconnect", 3);
-
     return connectFunctions;
   }
 
@@ -102,14 +91,10 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
   }
 
   private List<Pattern> toPatterns(String suffix) {
-    return Stream.of(credentialWords.split(","))
-      .map(String::trim)
-      .map(word -> Pattern.compile(word + suffix, Pattern.CASE_INSENSITIVE))
-      .collect(Collectors.toList());
+    return Stream.of(credentialWords.split(",")).map(String::trim).map((word) -> Pattern.compile(word + suffix, Pattern.CASE_INSENSITIVE)).collect(Collectors.toList());
   }
 
-  @Override
-  public void visitFunctionCall(FunctionCallTree tree) {
+  @Override public void visitFunctionCall(FunctionCallTree tree) {
     String functionName = tree.callee().toString();
     if (CONNECT_FUNCTIONS.containsKey(functionName)) {
       checkArgument(tree, CONNECT_FUNCTIONS.get(functionName));
@@ -121,26 +106,20 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
     if (argNumber > tree.arguments().size()) {
       return;
     }
-
     ExpressionTree arg = tree.arguments().get(argNumber - 1);
-
     if (arg.is(Kind.REGULAR_STRING_LITERAL) && !isEmptyStringLiteral((LiteralTree) arg)) {
       context().newIssue(this, arg, MESSAGE_ARGUMENTS);
     }
   }
 
-  @Override
-  public void visitLiteral(LiteralTree literal) {
+  @Override public void visitLiteral(LiteralTree literal) {
     checkForCredentialQuery(literal);
     checkForCredentialUri(literal);
-
     super.visitLiteral(literal);
   }
 
   private void checkForCredentialQuery(LiteralTree literal) {
-    literalPatterns()
-      .filter(pattern -> pattern.matcher(literal.token().text()).find())
-      .findAny().ifPresent(pattern -> addIssue(pattern, literal));
+    literalPatterns().filter((pattern) -> pattern.matcher(literal.token().text()).find()).findAny().ifPresent((pattern) -> addIssue(pattern, literal));
   }
 
   private void checkForCredentialUri(LiteralTree literal) {
@@ -150,21 +129,19 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
     }
   }
 
-  @Override
-  public void visitVariableDeclaration(VariableDeclarationTree declaration) {
+  @Override public void visitVariableDeclaration(VariableDeclarationTree declaration) {
     checkVariable((declaration.identifier()).token(), declaration.initValue());
     super.visitVariableDeclaration(declaration);
   }
 
-  @Override
-  public void visitAssignmentExpression(AssignmentExpressionTree assignment) {
+  @Override public void visitAssignmentExpression(AssignmentExpressionTree assignment) {
     checkVariable(((PHPTree) assignment.variable()).getLastToken(), assignment.value());
     super.visitAssignmentExpression(assignment);
   }
 
   private void checkVariable(SyntaxToken reportTree, @Nullable Tree assignedValue) {
     if (assignedValue != null && assignedValue.is(Kind.REGULAR_STRING_LITERAL) && !isEmptyStringLiteral((LiteralTree) assignedValue)) {
-      variablePatterns().filter(pattern -> pattern.matcher(reportTree.text()).find()).findAny().ifPresent(pattern -> checkAssignedValue(pattern, reportTree, assignedValue));
+      variablePatterns().filter((pattern) -> pattern.matcher(reportTree.text()).find()).findAny().ifPresent((pattern) -> checkAssignedValue(pattern, reportTree, assignedValue));
     }
   }
 
@@ -188,5 +165,4 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
     }
     return pattern;
   }
-
 }
