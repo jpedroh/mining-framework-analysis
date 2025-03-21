@@ -247,7 +247,7 @@ public class CommandProcessorLoader {
             case "LineSplitter":
                 return Optional.of(new LineSplitter(pc.args.get("segmentLengthMM").getAsDouble()));
             case "EmptyLineRemoverProcessor":
-                return Optional.of(new EmptyLineRemoverProcessor());
+                return new EmptyLineRemoverProcessor();
             default:
                 LOGGER.severe("Unknown processor: " + pc.name);
                 return Optional.empty();
