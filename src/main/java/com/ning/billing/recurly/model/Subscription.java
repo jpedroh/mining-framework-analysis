@@ -1,6 +1,13 @@
 /*
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/77119f7049533f32febd250c0bdde8d0c3113ebc/src/main/java/com/ning/billing/recurly/model/Subscription.java/left.java
  * Copyright 2010-2014 Ning, Inc.
  * Copyright 2015 Pierre-Alexandre Meyer
+||||||| /usr/src/app/output/killbilling/recurly-java-library/77119f7049533f32febd250c0bdde8d0c3113ebc/src/main/java/com/ning/billing/recurly/model/Subscription.java/base.java
+ * Copyright 2010-2013 Ning, Inc.
+=======
+ * Copyright 2010-2013 Ning, Inc.
+ * Copyright 2015 Pierre-Alexandre Meyer
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/77119f7049533f32febd250c0bdde8d0c3113ebc/src/main/java/com/ning/billing/recurly/model/Subscription.java/right.java
  *
  * Pierre-Alexandre Meyer licenses this file to you under the Apache License,
  * version 2.0 (the "License"); you may not use this file except in compliance
