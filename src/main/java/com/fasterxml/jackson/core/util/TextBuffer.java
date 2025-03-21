@@ -1040,9 +1040,17 @@ public class TextBuffer
     @Override public String toString() {
         try {
             return contentsAsString();
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/56bb60e968fd1b9ceb8e04da18b8a759a70e993f/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/left.java
         } catch (IOException e) {
             return "TextBuffer: Exception when reading contents";
         }
+||||||| /usr/src/app/output/fasterxml/jackson-core/56bb60e968fd1b9ceb8e04da18b8a759a70e993f/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/base.java
+        } 
+=======
+        } catch (RuntimeException e) {
+            return "TextBuffer: Exception when reading contents";
+        }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/56bb60e968fd1b9ceb8e04da18b8a759a70e993f/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java/right.java
     }
 
     /*
