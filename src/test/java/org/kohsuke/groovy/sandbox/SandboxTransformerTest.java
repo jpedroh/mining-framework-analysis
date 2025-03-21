@@ -714,10 +714,13 @@ public class SandboxTransformerTest {
     }
 
     @Test public void forLoopDummyParameterIsNotDeclared() {
-        assertFailsWithSameException(
+        // TODO: assertFails
+        sandboxedEval(
                 "for (int i = 0; i < 1; i++) {\n" +
                 "  println(forLoopDummyParameter)\n" +
-                "}\n");
+                "}\n",
+                ShouldFail.class,
+                e -> ec.checkThat(e.getMessage(), containsString("No such property: forLoopDummyParameter")));
     }
 
 }
