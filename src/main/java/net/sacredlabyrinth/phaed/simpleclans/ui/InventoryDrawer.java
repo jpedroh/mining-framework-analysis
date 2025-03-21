@@ -36,7 +36,19 @@ public class InventoryDrawer {
         OPENING.put(uuid, frame);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
+<<<<<<< /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/left.java
+            @Override
+            public void run() {
+                try {
+                    Inventory inventory = Bukkit.createInventory(frame.getViewer(), frame.getSize(), getSafeTitle(frame));
+||||||| /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/base.java
+            @Override
+            public void run() {
+                try {
+                    Inventory inventory = Bukkit.createInventory(frame.getViewer(), frame.getSize(), frame.getTitle());
+=======
             Inventory inventory = prepareInventory(frame);
+>>>>>>> /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/right.java
 
             if (!frame.equals(OPENING.get(uuid))) {
                 return;
@@ -49,9 +61,21 @@ public class InventoryDrawer {
         });
     }
 
+<<<<<<< /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/left.java
+    @NotNull
+    private static String getSafeTitle(@NotNull SCFrame frame) {
+        String title = frame.getTitle();
+        if (title.length() > 32) {
+            title = title.substring(0, 32);
+        }
+        return title;
+    }
+
+||||||| /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/base.java
+=======
     @NotNull
     private static Inventory prepareInventory(@NotNull SCFrame frame) {
-        Inventory inventory = Bukkit.createInventory(frame.getViewer(), frame.getSize(), getSafeTitle(frame));
+        Inventory inventory = Bukkit.createInventory(frame.getViewer(), frame.getSize(), frame.getTitle());
         long start = System.currentTimeMillis();
         setComponents(inventory, frame);
 
@@ -63,18 +87,56 @@ public class InventoryDrawer {
         return inventory;
     }
 
-    @NotNull
-    private static String getSafeTitle(@NotNull SCFrame frame) {
-        String title = frame.getTitle();
-        if (title.length() > 32) {
-            title = title.substring(0, 32);
-        }
-        return title;
-    }
-
     @Deprecated
+>>>>>>> /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/right.java
     public static void update(@NotNull SCFrame frame) {
+<<<<<<< /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/left.java
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                InventoryView view = frame.getViewer().getOpenInventory();
+                Inventory inventory = view.getTopInventory();
+                if (inventory.getType() == InventoryType.CRAFTING) {
+                    return;
+                }
+                //if the title or size changed, the inventory needs to be recreated
+                if (!view.getTitle().equals(getSafeTitle(frame)) || inventory.getSize() != frame.getSize()) {
+                    open(frame);
+                    return;
+                }
+                inventory.clear();
+
+                setComponents(inventory, frame);
+
+            }
+        }.runTask(SimpleClans.getInstance());
+||||||| /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/base.java
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                InventoryView view = frame.getViewer().getOpenInventory();
+                Inventory inventory = view.getTopInventory();
+                if (inventory.getType() == InventoryType.CRAFTING) {
+                    return;
+                }
+                //if the title or size changed, the inventory needs to be recreated
+                if (!view.getTitle().equals(frame.getTitle()) || inventory.getSize() != frame.getSize()) {
+                    open(frame);
+                    return;
+                }
+                inventory.clear();
+
+                setComponents(inventory, frame);
+
+            }
+        }.runTask(SimpleClans.getInstance());
+=======
         open(frame);
+>>>>>>> /usr/src/app/output/phaed420/simpleclans/2244703564dec7ffa4bb40114daae24341080275/src/main/java/net/sacredlabyrinth/phaed/simpleclans/ui/InventoryDrawer.java/right.java
     }
 
     private static void setComponents(@NotNull Inventory inventory, @NotNull SCFrame frame) {
