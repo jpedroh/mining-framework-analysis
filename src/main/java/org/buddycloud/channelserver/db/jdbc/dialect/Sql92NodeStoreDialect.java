@@ -240,7 +240,13 @@ public class Sql92NodeStoreDialect implements NodeStoreSQLDialect {
 		+ "AND \"node\" IN (SELECT \"node\" FROM \"node_config\" WHERE \"key\" = ? AND \"value\" LIKE ? AND (\"node\" LIKE ? OR \"node\" LIKE ?)) "
 		+ "ORDER BY \"updated\" DESC, \"id\" ASC LIMIT ?";
 
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/ee3043efe741251853534591998abbc2a3823b3a/src/main/java/org/buddycloud/channelserver/db/jdbc/dialect/Sql92NodeStoreDialect.java/left.java
+	private static final String SELECT_USER_PUBLISHED_ITEMS = "SELECT \"node\", \"id\", \"updated\", \"xml\", \"in_reply_to\"" +
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/ee3043efe741251853534591998abbc2a3823b3a/src/main/java/org/buddycloud/channelserver/db/jdbc/dialect/Sql92NodeStoreDialect.java/base.java
+	private static final String SELECT_USER_ITEMS = "SELECT \"node\", \"id\", \"updated\", \"xml\", \"in_reply_to\"" +
+=======
 	private static final String SELECT_USER_ITEMS = "SELECT \"node\", \"id\", \"updated\", \"xml\", \"in_reply_to\", \"created\"" +
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/ee3043efe741251853534591998abbc2a3823b3a/src/main/java/org/buddycloud/channelserver/db/jdbc/dialect/Sql92NodeStoreDialect.java/right.java
 			" FROM \"items\" WHERE (CAST(xpath('//atom:author/atom:name/text()', xmlparse(document \"xml\")," +
 			" ARRAY[ARRAY['atom', 'http://www.w3.org/2005/Atom']]) AS TEXT[]))[1] = ?";
 
