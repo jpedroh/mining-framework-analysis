@@ -1,19 +1,9 @@
-/**
- * This code is free software; you can redistribute it and/or modify it under
- * the terms of the new BSD License.
- *
- * Copyright (c) 2011-2013, Sebastian Staudt
- */
-
 package com.github.koraktor.mavanagaiata.mojo;
-
 import java.io.File;
 import java.util.Properties;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
 import com.github.koraktor.mavanagaiata.git.GitRepository;
 import com.github.koraktor.mavanagaiata.git.GitRepositoryException;
 import com.github.koraktor.mavanagaiata.git.jgit.JGitRepository;
@@ -23,81 +13,80 @@ import com.github.koraktor.mavanagaiata.git.jgit.JGitRepository;
  * this Repository instance to subclasses.
  *
  * @author Sebastian Staudt
- * @see GitRepository
+ * @see Repository
  * @since 0.1.0
  */
 public abstract class AbstractGitMojo extends AbstractMojo {
-
-    /**
+  /**
      * The date format to use for various dates
      *
      * @parameter property="mavanagaiata.dateFormat"
      */
-    protected String baseDateFormat = "MM/dd/yyyy hh:mm a Z";
+  protected String baseDateFormat = "MM/dd/yyyy hh:mm a Z";
 
-    /**
+  /**
      * The project's base directory
      *
      * @parameter property="mavanagaiata.baseDir"
      *            default-value="${project.basedir}"
      */
-    protected File baseDir;
+  protected File baseDir;
 
-    /**
+  /**
      * The flag to append to refs if there are changes in the index or working
      * tree
      *
      * @parameter property="mavanagaiata.dirtyFlag"
      * @since 0.4.0
      */
-    protected String dirtyFlag = "-dirty";
+  protected String dirtyFlag = "-dirty";
 
-    /**
+  /**
      * The GIT_DIR path of the Git repository
      *
      * @parameter property="mavanagaiata.gitDir"yö
      */
-    protected File gitDir;
+  protected File gitDir;
 
-    /**
+  /**
      * The commit or ref to use as starting point for operations
      *
      * @parameter property="mavanagaiata.head"
      */
-    protected String head = "HEAD";
+  protected String head = "HEAD";
 
-    /**
+  /**
      * Skip the plugin execution.
      *
      * @parameter default-value="false"
      */
-    protected boolean skip = false;
+  protected boolean skip = false;
 
-    /**
+  /**
      * Skip the plugin execution if outside a git repository.
      *
      * @parameter default-value="false"
      */
-    protected boolean skipNoGit = false;
+  protected boolean skipNoGit = false;
 
-    /**
+  /**
      * The Maven project
      *
      * @parameter property="project"
      * @readonly
      */
-    protected MavenProject project;
+  protected MavenProject project;
 
-    /**
+  /**
      * The prefixes to prepend to property keys
      *
      * @parameter
      */
-    protected String[] propertyPrefixes = { "mavanagaiata", "mvngit" };
+  protected String[] propertyPrefixes = { "mavanagaiata", "mvngit" };
 
-    protected GitRepository repository;
+  protected GitRepository repository;
 
-    /**
+  /**
      * Generic execution sequence for a Mavanagaiata mojo
      * <p>
      * Will initialize any needed resources, run the actual mojo code and
@@ -108,24 +97,23 @@ public abstract class AbstractGitMojo extends AbstractMojo {
      * @see #run
      * @throws MojoExecutionException
      */
-    public final void execute() throws MojoExecutionException {
-        if (!skip) {
-            boolean init = false;
-            try {
-                init = this.init();
-
-                if (init) {
-                    this.run();
-                }
-            } finally {
-                if (init) {
-                    this.cleanup();
-                }
-            }
+  public final void execute() throws MojoExecutionException {
+    if (!skip) {
+      boolean init = false;
+      try {
+        init = this.init();
+        if (init) {
+          this.run();
         }
+      }  finally {
+        if (init) {
+          this.cleanup();
+        }
+      }
     }
+  }
 
-    /**
+  /**
      * Saves a property with the given name into the project's properties
      *
      * The value will be stored two times – with "mavanagaiata" and "mvngit" as
@@ -134,27 +122,26 @@ public abstract class AbstractGitMojo extends AbstractMojo {
      * @param name The property name
      * @param value The value of the property
      */
-    protected void addProperty(String name, String value) {
-        Properties properties = this.project.getProperties();
-
-        for(String prefix : this.propertyPrefixes) {
-            properties.put(prefix + "." + name, value);
-        }
+  protected void addProperty(String name, String value) {
+    Properties properties = this.project.getProperties();
+    for (String prefix : this.propertyPrefixes) {
+      properties.put(prefix + "." + name, value);
     }
+  }
 
-    /**
+  /**
      * Closes the JGit repository object
      *
-     * @see GitRepository#close
+     * @see Repository#close
      */
-    protected void cleanup() {
-        if (this.repository != null) {
-            this.repository.close();
-            this.repository = null;
-        }
+  protected void cleanup() {
+    if (this.repository != null) {
+      this.repository.close();
+      this.repository = null;
     }
+  }
 
-    /**
+  /**
      * Generic initialization for all Mavanagaiata mojos
      * <p>
      * This will initialize the JGit repository instance for further usage by
@@ -162,38 +149,58 @@ public abstract class AbstractGitMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException if the repository cannot be initialized
      */
-    protected boolean init() throws MojoExecutionException {
-        try {
-            return this.initRepository();
-        } catch (GitRepositoryException e) {
-            throw new MojoExecutionException("Unable to initialize Mojo", e);
-        }
+  protected boolean init() throws MojoExecutionException {
+    try {
+      return this.initRepository();
+    } catch (GitRepositoryException e) {
+      throw new MojoExecutionException("Unable to initialize Mojo", e);
     }
+  }
 
-    /**
+  /**
      * Initializes a JGit Repository object for further reference
      *
-     * @see GitRepository
-     * @throws GitRepositoryException if retrieving information from the Git
-     *         repository fails
+     * @see Repository
+     * @throws IOException if retrieving information from the Git repository
+     *         fails
      */
-    protected void initRepository()
-            throws GitRepositoryException {
-        this.repository = new JGitRepository(this.baseDir, this.gitDir);
-        if (!this.repository.check()) {
-            return false;
+  protected boolean initRepository() throws GitRepositoryException {
+
+<<<<<<< /usr/src/app/output/koraktor/mavanagaiata/3db986aced967917053dd5fad68a469976a6b27a/src/main/java/com/github/koraktor/mavanagaiata/mojo/AbstractGitMojo.java/left.java
+    if (this.gitDir == null && this.baseDir == null) {
+      throw new MojoExecutionException("Neither baseDir nor gitDir is set.");
+    } else {
+      if (this.baseDir != null && !this.baseDir.exists()) {
+        if (skipNoGit) {
+          return false;
         }
-
-        this.repository.setHeadRef(this.head);
-
-        return true;
+        throw new FileNotFoundException("The baseDir " + this.baseDir + " does not exist");
+      }
+      if (this.gitDir != null && !this.gitDir.exists()) {
+        if (skipNoGit) {
+          return false;
+        }
+        throw new FileNotFoundException("The gitDir " + this.gitDir + " does not exist");
+      }
     }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-    /**
+    this.repository = new JGitRepository(this.baseDir, this.gitDir);
+    if (!repository.check()) {
+      if (skipNoGit) {
+        return false;
+      }
+      throw new GitRepositoryException(baseDir + " is not a Git repository");
+    }
+    this.repository.setHeadRef(this.head);
+    return true;
+  }
+
+  /**
      * The actual implementation of the mojo
      * <p>
      * This is called internally by {@link #init}.
      */
-    protected abstract void run() throws MojoExecutionException;
-
+  protected abstract void run() throws MojoExecutionException;
 }
