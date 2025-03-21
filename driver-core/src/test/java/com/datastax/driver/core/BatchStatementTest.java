@@ -94,6 +94,8 @@ public class BatchStatementTest extends CCMBridge.PerClassSingleNodeCluster {
 
             assertEquals(3, batch.size());
 
+            assertEquals(3, batch.size());
+
             ResultSet rs = session.execute(batch);
             Row r = rs.one();
             assertTrue(!r.isNull("[applied]"));
