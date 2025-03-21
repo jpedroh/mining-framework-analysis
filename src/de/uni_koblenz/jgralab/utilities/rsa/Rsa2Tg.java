@@ -2291,7 +2291,13 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean edgeClassHierarchyIsAcyclic() {
 		if (edgeClassAcyclicEvaluator == null) {
 			edgeClassAcyclicEvaluator = new GreqlEvaluator(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/left.java
 					"on edgeTypeSubgraph{structure.SpecializesEdgeClass}(): isAcyclic()",
+||||||| /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/base.java
+					"on vSubgraph{structure.EdgeClass} : isAcyclic()",
+=======
+					"on vertexTypeSubgraph{structure.EdgeClass}() : isAcyclic()",
+>>>>>>> /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/right.java
 					sg, null);
 		}
 		edgeClassAcyclicEvaluator.startEvaluation();
@@ -2306,7 +2312,13 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean vertexClassHierarchyIsAcyclic() {
 		if (vertexClassAcyclicEvaluator == null) {
 			vertexClassAcyclicEvaluator = new GreqlEvaluator(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/left.java
 					"on edgeTypeSubgraph{structure.SpecializesVertexClass}(): isAcyclic()",
+||||||| /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/base.java
+					"on vSubgraph{structure.VertexClass} : isAcyclic()",
+=======
+					"on vertexTypeSubgraph{structure.VertexClass}() : isAcyclic()",
+>>>>>>> /usr/src/app/output/jgralab/jgralab/417131cf582e8d6eb01103d6614c231a7c391ee0/src/de/uni_koblenz/jgralab/utilities/rsa/Rsa2Tg.java/right.java
 					sg, null);
 		}
 		vertexClassAcyclicEvaluator.startEvaluation();
