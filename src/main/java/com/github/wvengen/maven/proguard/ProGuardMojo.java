@@ -20,6 +20,15 @@
  */
 package com.github.wvengen.maven.proguard;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
@@ -36,13 +45,8 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Expand;
 import org.apache.tools.ant.taskdefs.Java;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  *
@@ -208,6 +212,7 @@ public class ProGuardMojo extends AbstractMojo {
 	 * @parameter default-value="false"
 	 */
 	private boolean attachMap;
+	private boolean attachMap = false;
 
 	/**
 	 * Determines if {@link #attach} also attaches the {@link #seedFileName} file.
@@ -215,6 +220,7 @@ public class ProGuardMojo extends AbstractMojo {
 	 * @parameter default-value="false"
 	 */
 	private boolean attachSeed;
+	private boolean attachSeed = false;
 
 	/**
 	 * Specifies attach artifact type
@@ -238,6 +244,12 @@ public class ProGuardMojo extends AbstractMojo {
 	private boolean appendClassifier;
 
 	/**
+	 * Specifies whether or not to attach the created proguard map artifact to the project
+	 *
+	 * @parameter default-value="false"
+	 */
+
+	/**
 	 * Specifies attach proguard map artifact type
 	 *
 	 * @parameter default-value="txt"
@@ -250,6 +262,12 @@ public class ProGuardMojo extends AbstractMojo {
 	 * @parameter default-value="txt"
 	 */
 	private String attachSeedArtifactType = "txt";
+
+	/**
+	 * Specifies whether or not to attach the created proguard seed artifact to the project
+	 *
+	 * @parameter default-value="false"
+	 */
 
 	/**
 	 * Specifies attach artifact Classifier, ignored if attachMap=false
@@ -342,21 +360,18 @@ public class ProGuardMojo extends AbstractMojo {
 	 * @parameter default-value="true"
 	 */
 	private boolean processWarClassesDir = true;
-
 	/**
 	 * Sets the name of the ProGuard mapping file.
 	 *
 	 * @parameter default-value="proguard_map.txt"
 	 */
 	protected String mappingFileName = "proguard_map.txt";
-
 	/**
 	 * Sets the name of the ProGuard seed file.
 	 *
 	 * @parameter default-value="proguard_seed.txt"
 	 */
 	protected String seedFileName = "proguard_seeds.txt";
-
 	/**
 	 * The proguard jar to use. useful for using beta versions of
 	 * progaurd that aren't yet on Maven central.
@@ -364,7 +379,6 @@ public class ProGuardMojo extends AbstractMojo {
 	 * @parameter
 	 */
 	protected File proguardJar;
-
 	/**
 	 * If the plugin should be silent.
 	 *
@@ -557,11 +571,11 @@ public class ProGuardMojo extends AbstractMojo {
 
 		Set<String> inPath = new HashSet<String>();
 		boolean hasInclusionLibrary = false;
-		if (assembly != null && assembly.inclusions != null) {
-			@SuppressWarnings("unchecked")
-			final List<Inclusion> inclusions = assembly.inclusions;
-			for (Inclusion inc : inclusions) {
-				Set<Artifact> deps = getDependancies(inc, mavenProject); // get all matching dependencies as wildcard may have been used
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+		if (assembly != null) {
+			for (Iterator iter = assembly.inclusions.iterator(); iter.hasNext(); ) {
+				Inclusion inc = (Inclusion) iter.next();
+				Set<Artifact> deps = getDependancies(inc, mavenProject); // get all matching dependencies and wildcard may have been used
 				for (Artifact artifact : deps) {
 					if (!inc.library) {
 						File file = getClasspathElement(artifact, mavenProject, priorityLibsDir);
@@ -593,20 +607,124 @@ public class ProGuardMojo extends AbstractMojo {
 						// This may not be CompileArtifacts, maven 2.0.6 bug
 						File file = getClasspathElement(artifact, mavenProject, priorityLibsDir);
 						inPath.add(file.toString());
-						if(putLibraryJarsInTempDir){
-							libraryJars.add(file);
-						} else {
-							args.add("-libraryjars");
-							args.add(fileToString(file));
-						}
+						args.add("-libraryjars");
+						args.add(fileToString(file));
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+		if (assembly != null) {
+			for (Iterator iter = assembly.inclusions.iterator(); iter.hasNext();) {
+				Inclusion inc = (Inclusion) iter.next();
+				if (!inc.library) {
+					File file = getClasspathElement(getDependancy(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					log.debug("--- ADD injars:" + inc.artifactId);
+					StringBuffer filter = new StringBuffer(fileToString(file));
+					filter.append("(!META-INF/MANIFEST.MF");
+					if (!addMavenDescriptor) {
+						filter.append(",");
+						filter.append("!META-INF/maven/**");
+=======
+		if (assembly != null && assembly.inclusions != null) {
+			@SuppressWarnings("unchecked")
+			final List<Inclusion> inclusions = assembly.inclusions;
+			for (Inclusion inc : inclusions) {
+				if (!inc.library) {
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					log.debug("--- ADD injars:" + inc.artifactId);
+					StringBuilder filter = new StringBuilder(fileToString(file));
+					filter.append("(!META-INF/MANIFEST.MF");
+					if (!addMavenDescriptor) {
+						filter.append(",");
+						filter.append("!META-INF/maven/**");
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 					}
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+					if (inc.filter != null) {
+						filter.append(",").append(inc.filter);
+					}
+					filter.append(")");
+					args.add("-injars");
+					args.add(filter.toString());
+				} else {
+					hasInclusionLibrary = true;
+					log.debug("--- ADD libraryjars:" + inc.artifactId);
+					// This may not be CompileArtifacts, maven 2.0.6 bug
+					File file = getClasspathElement(getDependancy(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					args.add("-libraryjars");
+					args.add(fileToString(file));
+=======
+					if (inc.filter != null) {
+						filter.append(",").append(inc.filter);
+					}
+					filter.append(")");
+					args.add("-injars");
+					args.add(filter.toString());
+				} else {
+					hasInclusionLibrary = true;
+					log.debug("--- ADD libraryjars:" + inc.artifactId);
+					// This may not be CompileArtifacts, maven 2.0.6 bug
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					if(putLibraryJarsInTempDir){
+						libraryJars.add(file);
+					} else {
+						args.add("-libraryjars");
+						args.add(fileToString(file));
+					}
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 				}
 			}
 		}
 
 		if (inJarFile.exists() && !processingWar) {
 			args.add("-injars");
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 			args.add(buildJarReference(inJarFile, inFilter));
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+			StringBuffer filter = new StringBuffer(fileToString(inJarFile));
+			if ((inFilter != null) || (!addMavenDescriptor)) {
+				filter.append("(");
+				boolean coma = false;
+
+				if (!addMavenDescriptor) {
+					coma = true;
+					filter.append("!META-INF/maven/**");
+				}
+
+				if (inFilter != null) {
+					if (coma) {
+						filter.append(",");
+					}
+					filter.append(inFilter);
+				}
+
+				filter.append(")");
+			}
+			args.add(filter.toString());
+=======
+			StringBuilder filter = new StringBuilder(fileToString(inJarFile));
+			if ((inFilter != null) || (!addMavenDescriptor)) {
+				filter.append("(");
+				boolean coma = false;
+
+				if (!addMavenDescriptor) {
+					coma = true;
+					filter.append("!META-INF/maven/**");
+				}
+
+				if (inFilter != null) {
+					if (coma) {
+						filter.append(",");
+					}
+					filter.append(inFilter);
+				}
+
+				filter.append(")");
+			}
+			args.add(filter.toString());
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 		}
 
 
@@ -631,20 +749,39 @@ public class ProGuardMojo extends AbstractMojo {
 					args.add(fileToString(file));
 				} else {
 					log.debug("--- ADD libraryjars:" + artifact.getArtifactId());
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+					args.add("-libraryjars");
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+					args.add("-libraryjars");
+
+=======
 					if (putLibraryJarsInTempDir) {
 						libraryJars.add(file);
 					} else {
 						args.add("-libraryjars");
 						args.add(fileToString(file));
 					}
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 				}
 			}
 		}
 
 		if (args.contains("-injars")) {
 			args.add("-outjars");
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 			args.add(buildJarReference(outJarFile, outFilter));
-  	}
+	  	}
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+			args.add(fileToString(outJarFile));
+		}
+=======
+			StringBuilder filter = new StringBuilder(fileToString(outJarFile));
+			if (outFilter != null) {
+				filter.append("(").append(outFilter).append(")");
+			}
+			args.add(filter.toString());
+		}
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 
 		if (!obfuscate) {
 			args.add("-dontobfuscate");
@@ -671,6 +808,10 @@ public class ProGuardMojo extends AbstractMojo {
 			}
 		}
 
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+		File proguardMapFile = (new File(outputDirectory, "proguard_map.txt").getAbsoluteFile());
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+=======
 		if (!libraryJars.isEmpty()) {
 			log.debug("Copy libraryJars to temporary directory");
 			log.debug("Temporary directory: " + tempLibraryjarsDir);
@@ -696,13 +837,25 @@ public class ProGuardMojo extends AbstractMojo {
 			args.add(fileToString(tempLibraryjarsDir));
 		}
 
-		File proguardMapFile = (new File(outputDirectory, mappingFileName).getAbsoluteFile());
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 		args.add("-printmapping");
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 		args.add(fileToString(proguardMapFile));
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+		args.add(fileToString((new File(outputDirectory, "proguard_map.txt").getAbsoluteFile())));
+=======
+		args.add(fileToString((new File(outputDirectory, mappingFileName).getAbsoluteFile())));
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 
-		File proguardSeedFile = (new File(outputDirectory, seedFileName).getAbsoluteFile());
+		File proguardSeedFile = (new File(outputDirectory, "proguard_seeds.txt").getAbsoluteFile());
 		args.add("-printseeds");
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 		args.add(fileToString(proguardSeedFile));
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+		args.add(fileToString((new File(outputDirectory, "proguard_seeds.txt").getAbsoluteFile())));
+=======
+		args.add(fileToString((new File(outputDirectory,seedFileName).getAbsoluteFile())));
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 
 		if (log.isDebugEnabled()) {
 			args.add("-verbose");
@@ -714,7 +867,8 @@ public class ProGuardMojo extends AbstractMojo {
 
 		log.debug("Run Proguard with options" + args.toString());
 		proguardMain(getProguardJar(this), args, this);
-
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+	
 		if (processingWar) {
 			for (File f : inFiles) {
 				if (f.isDirectory()) {
@@ -730,10 +884,14 @@ public class ProGuardMojo extends AbstractMojo {
 				}
 			}
 		}
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+=======
+	
 
 		if (!libraryJars.isEmpty()) {
 			deleteFileOrDirectory(tempLibraryjarsDir);
 		}
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 
 		if ((assembly != null) && (hasInclusionLibrary)) {
 
@@ -762,8 +920,16 @@ public class ProGuardMojo extends AbstractMojo {
 				for (Inclusion inc : inclusions) {
 					if (inc.library) {
 						File file;
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 						Artifact artifact = getDependancy(inc, mavenProject);
 						file = getClasspathElement(artifact, mavenProject, priorityLibsDir);
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+						Artifact artifact = getDependancy(inc, mavenProject);
+						file = getClasspathElement(artifact, mavenProject);
+=======
+						Artifact artifact = getDependency(inc, mavenProject);
+						file = getClasspathElement(artifact, mavenProject);
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 						if (file.isDirectory()) {
 							getLog().info("merge project: " + artifact.getArtifactId() + " " + file);
 							jarArchiver.addDirectory(file);
@@ -812,6 +978,33 @@ public class ProGuardMojo extends AbstractMojo {
 			if (useArtifactClassifier()) {
 				classifier = attachArtifactClassifier;
 			} else {
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+				projectHelper.attachArtifact(mavenProject, attachArtifactType, null, outJarFile);
+			}
+		}
+
+		if (attachMap && attach) {
+			if (!proguardMapFile.exists()) {
+				log.warn("Cannot attach proguard map artifact as file does nto exist.");
+			} else if (useMapArtifactClassifier()) {
+				projectHelper.attachArtifact(mavenProject, attachMapArtifactType, attachMapArtifactClassifier, proguardMapFile);
+			} else {
+				throw new MojoExecutionException("Map artifact classifier cannot be empty");
+	//				projectHelper.attachArtifact(mavenProject, attachMapArtifactType, null, proguardMapFile);
+			}
+		}
+
+		if (attachSeed && attach) {
+			if (!proguardSeedFile.exists()) {
+				log.warn("Cannot attach proguard seed artifact as file does nto exist.");
+			} else if (useSeedArtifactClassifier()) {
+				projectHelper.attachArtifact(mavenProject, attachSeedArtifactType, attachSeedArtifactClassifier, proguardSeedFile);
+			} else {
+				throw new MojoExecutionException("Seed artifact classifier cannot be empty");
+	//				projectHelper.attachArtifact(mavenProject, attachSeedArtifactType, null, proguardSeedFile);
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+				projectHelper.attachArtifact(mavenProject, attachArtifactType, null, outJarFile);
+=======
 				classifier = null;
 			}
 			projectHelper.attachArtifact(mavenProject, attachArtifactType, classifier, outJarFile);
@@ -823,28 +1016,7 @@ public class ProGuardMojo extends AbstractMojo {
 			}
 			if (attachSeed) {
 				attachTextFile(new File(buildOutput, seedFileName), mainClassifier, "seed");
-			}
-		}
-
-		if (attachMap && attach) {
-			if (!proguardMapFile.exists()) {
-				log.warn("Cannot attach proguard map artifact as file does nto exist.");
-			} else if (useMapArtifactClassifier()) {
-				projectHelper.attachArtifact(mavenProject, attachMapArtifactType, attachMapArtifactClassifier, proguardMapFile);
-			} else {
-				throw new MojoExecutionException("Map artifact classifier cannot be empty");
-//				projectHelper.attachArtifact(mavenProject, attachMapArtifactType, null, proguardMapFile);
-			}
-		}
-
-		if (attachSeed && attach) {
-			if (!proguardSeedFile.exists()) {
-				log.warn("Cannot attach proguard seed artifact as file does nto exist.");
-			} else if (useSeedArtifactClassifier()) {
-				projectHelper.attachArtifact(mavenProject, attachSeedArtifactType, attachSeedArtifactClassifier, proguardSeedFile);
-			} else {
-				throw new MojoExecutionException("Seed artifact classifier cannot be empty");
-//				projectHelper.attachArtifact(mavenProject, attachSeedArtifactType, null, proguardSeedFile);
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/04246c46ef0921d01131be303e00c24498b10d01/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 			}
 		}
 	}
@@ -1003,21 +1175,22 @@ public class ProGuardMojo extends AbstractMojo {
 		}
 	}
 
+
 	private static Set<Artifact> getDependancies(Inclusion inc, MavenProject mavenProject) throws MojoExecutionException {
-		@SuppressWarnings("unchecked")
-		Set<Artifact> artifacts = mavenProject.getArtifacts();
-		Set<Artifact> dependencies = new HashSet<Artifact>();
-		for (Artifact artifact: artifacts) {
+		Set dependancy = mavenProject.getArtifacts();
+		Set<Artifact> deps = new HashSet<Artifact>();
+		for (Iterator i = dependancy.iterator(); i.hasNext(); ) {
+			Artifact artifact = (Artifact) i.next();
 			if (inc.match(artifact)) {
-				dependencies.add(artifact);
+				deps.add(artifact);
 			}
 		}
-		if (dependencies.size() == 0)
+		if (deps.size() == 0)
 			throw new MojoExecutionException("artifactId Not found " + inc.artifactId);
-		return dependencies;
+		return deps;
 	}
 
-	private static Artifact getDependancy(Inclusion inc, MavenProject mavenProject) throws MojoExecutionException {
+	private Artifact getDependency(Inclusion inc, MavenProject mavenProject) throws MojoExecutionException {
 		@SuppressWarnings("unchecked")
 		Set<Artifact> dependency = mavenProject.getArtifacts();
 		for (Artifact artifact : dependency) {
