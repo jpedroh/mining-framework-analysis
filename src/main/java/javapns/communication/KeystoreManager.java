@@ -1,10 +1,8 @@
 package javapns.communication;
-
 import javapns.communication.exceptions.InvalidKeystoreFormatException;
 import javapns.communication.exceptions.InvalidKeystorePasswordException;
 import javapns.communication.exceptions.InvalidKeystoreReferenceException;
 import javapns.communication.exceptions.KeystoreException;
-
 import java.io.*;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -21,7 +19,8 @@ import java.util.Enumeration;
 public class KeystoreManager {
   private static final String REVIEW_MESSAGE = " Please review the procedure for generating a keystore for JavaPNS.";
 
-  private KeystoreManager() {}
+  private KeystoreManager() {
+  }
 
   /**
    * Loads a keystore.
@@ -59,12 +58,10 @@ public class KeystoreManager {
     if (keystore instanceof KeyStore) {
       return (KeyStore) keystore;
     }
-
-    try (final InputStream keystoreStream = streamKeystore(keystore)) {
+    try (InputStream keystoreStream = streamKeystore(keystore)) {
       if (keystoreStream instanceof WrappedKeystore) {
         return ((WrappedKeystore) keystoreStream).getKeystore();
       }
-
       final KeyStore keyStore = KeyStore.getInstance(server.getKeystoreType());
       final char[] password = KeystoreManager.getKeystorePasswordForSSL(server);
       keyStore.load(keystoreStream, password);
@@ -126,22 +123,15 @@ public class KeystoreManager {
         if (certificate instanceof X509Certificate) {
           final X509Certificate xcert = (X509Certificate) certificate;
           numberOfCertificates++;
-
-          /* Check validity dates */
           xcert.checkValidity();
-
-          /* Check issuer */
           final boolean issuerIsApple = xcert.getIssuerDN().toString().contains("Apple");
           if (!issuerIsApple) {
             throw new KeystoreException("Certificate was not issued by Apple." + REVIEW_MESSAGE);
           }
-
-          /* Check certificate key usage */
           final boolean[] keyUsage = xcert.getKeyUsage();
           if (!keyUsage[0]) {
             throw new KeystoreException("Certificate usage is incorrect." + REVIEW_MESSAGE);
           }
-
         }
       }
       if (numberOfCertificates == 0) {
@@ -150,7 +140,6 @@ public class KeystoreManager {
       if (numberOfCertificates > 1) {
         throw new KeystoreException("Keystore contains too many certificates." + REVIEW_MESSAGE);
       }
-
     } catch (final KeystoreException e) {
       throw e;
     } catch (final CertificateExpiredException e) {
@@ -158,7 +147,6 @@ public class KeystoreManager {
     } catch (final CertificateNotYetValidException e) {
       throw new KeystoreException("Certificate is not yet valid. Wait until the validity period is reached or issue a new certificate.", e);
     } catch (final Exception e) {
-      /* We ignore any other exception, as we do not want to interrupt the process because of an error we did not expect. */
     }
   }
 
@@ -167,7 +155,6 @@ public class KeystoreManager {
     if (password == null) {
       password = "";
     }
-
     return password.toCharArray();
   }
 
@@ -184,7 +171,6 @@ public class KeystoreManager {
         return new InvalidKeystorePasswordException("Blank passwords not supported (#38).  You must create your keystore with a non-empty password.");
       }
     }
-
     return new KeystoreException("Keystore exception: " + (e != null ? e.getMessage() : null), e);
   }
 
@@ -202,16 +188,24 @@ public class KeystoreManager {
     try {
       if (keystore instanceof InputStream) {
         return (InputStream) keystore;
-      } else if (keystore instanceof KeyStore) {
-        return new WrappedKeystore((KeyStore) keystore);
-      } else if (keystore instanceof File) {
-        return new BufferedInputStream(new FileInputStream((File) keystore));
-      } else if (keystore instanceof String) {
-        return new BufferedInputStream(new FileInputStream((String) keystore));
-      } else if (keystore instanceof byte[]) {
-        return new ByteArrayInputStream((byte[]) keystore);
       } else {
-        return null; // we should not get here since validateKeystore ensures that the reference is valid
+        if (keystore instanceof KeyStore) {
+          return new WrappedKeystore((KeyStore) keystore);
+        } else {
+          if (keystore instanceof File) {
+            return new BufferedInputStream(new FileInputStream((File) keystore));
+          } else {
+            if (keystore instanceof String) {
+              return new BufferedInputStream(new FileInputStream((String) keystore));
+            } else {
+              if (keystore instanceof byte[]) {
+                return new ByteArrayInputStream((byte[]) keystore);
+              } else {
+                return null;
+              }
+            }
+          }
+        }
       }
     } catch (final Exception e) {
       throw new InvalidKeystoreReferenceException("Invalid keystore reference: " + e.getMessage());
@@ -265,5 +259,4 @@ public class KeystoreManager {
     }
     return;
   }
-
 }

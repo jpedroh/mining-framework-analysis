@@ -1,5 +1,4 @@
 package javapns.notification;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.Vector;
  */
 public class PushedNotifications extends ArrayList<PushedNotification> implements List<PushedNotification> {
   private static final long serialVersionUID = 1418782231076330494L;
+
   private int maxRetained = 1000;
 
   /**
@@ -72,14 +72,12 @@ public class PushedNotifications extends ArrayList<PushedNotification> implement
     return filteredList;
   }
 
-  @Override
-  public synchronized boolean add(final PushedNotification notification) {
+  @Override public synchronized boolean add(final PushedNotification notification) {
     prepareAdd(1);
     return super.add(notification);
   }
 
-  @Override
-  public synchronized boolean addAll(final Collection<? extends PushedNotification> notifications) {
+  @Override public synchronized boolean addAll(final Collection<? extends PushedNotification> notifications) {
     prepareAdd(notifications.size());
     return super.addAll(notifications);
   }
@@ -112,20 +110,21 @@ public class PushedNotifications extends ArrayList<PushedNotification> implement
     this.maxRetained = maxRetained;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-
+  @Override public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
     PushedNotifications that = (PushedNotifications) o;
-
     return maxRetained == that.maxRetained;
-
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     int result = super.hashCode();
     result = 31 * result + maxRetained;
     return result;
