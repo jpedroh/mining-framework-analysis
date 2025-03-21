@@ -60,6 +60,7 @@ public class UserItemsGet implements PubSubElementProcessor {
 	private int rsmEntriesCount;
 
 	private JID actor;
+
 	private Boolean isOwnerModerator;
 
 	public UserItemsGet(BlockingQueue<Packet> outQueue,
@@ -107,16 +108,23 @@ public class UserItemsGet implements PubSubElementProcessor {
 		}
 
 		this.actor = actorJID;
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/16fccb6debca05c76608e846e93b13dd4ff009b5/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/UserItemsGet.java/left.java
 		if (null == this.actor) {
 			this.actor = requestIq.getFrom();
 		}
+||||||| /usr/src/app/output/buddycloud/buddycloud-server-java/16fccb6debca05c76608e846e93b13dd4ff009b5/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/UserItemsGet.java/base.java
+=======
+		if (null != actorJID) {
+			fetchersJid = actorJID;
+		}
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/16fccb6debca05c76608e846e93b13dd4ff009b5/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/items/UserItemsGet.java/right.java
 
 		if (!channelManager.isLocalNode(node) && !isCached) {
-			logger.debug("Node " + node
-					+ " is remote and not cached, off to get some data");
-			makeRemoteRequest();
-			return;
-		}
+		logger.debug("Node " + node
+				+ " is remote and not cached, off to get some data");
+		makeRemoteRequest();
+		return;
+	}
 
 		try {
 			if (!nodeExists()) {
@@ -295,10 +303,8 @@ public class UserItemsGet implements PubSubElementProcessor {
 						.getSubscription();
 			}
 		}
-
-		if (getNodeViewAcl().canViewNode(node,
-				possibleExistingAffiliation, possibleExistingSubscription,
-				getNodeAccessModel(), channelManager.isLocalJID(actor))) {
+		if (getNodeViewAcl().canViewNode(node, possibleExistingAffiliation,
+				possibleExistingSubscription, getNodeAccessModel(), channelManager.isLocalJID(actor))) {
 			return true;
 		}
 		NodeAclRefuseReason reason = getNodeViewAcl().getReason();
@@ -393,7 +399,7 @@ public class UserItemsGet implements PubSubElementProcessor {
 
 	private boolean isOwnerModerator() throws NodeStoreException {
 		if (null == isOwnerModerator) {
-			isOwnerModerator = channelManager.getUserAffiliation(node, actor)
+			isOwnerModerator = channelManager.getUserAffiliation(node, fetchersJid)
 			    .getAffiliation()
 			    .in(Affiliations.moderator, Affiliations.owner);
 		}
