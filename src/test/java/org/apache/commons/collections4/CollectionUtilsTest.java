@@ -1685,22 +1685,42 @@ public class CollectionUtilsTest extends MockTestCase {
 
     @Test(expected=NullPointerException.class)
     public void testRemoveRangeNull() {
-        final Collection<Integer> list = null;
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
+        Collection<Integer> list = null;
         CollectionUtils.removeRange(list, 0, 0);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection<Integer> list = null;
+        Collection result = CollectionUtils.removeRange(list, 0, 0);
+=======
+        final Collection<Integer> list = null;
+        final Collection result = CollectionUtils.removeRange(list, 0, 0);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void testRemoveRangeStartIndexNegative() {
         final Collection<Integer> list = new ArrayList<>();
         list.add(1);
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
         CollectionUtils.removeRange(list, -1, 1);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection result = CollectionUtils.removeRange(list, -1, 1);
+=======
+        final Collection result = CollectionUtils.removeRange(list, -1, 1);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testRemoveRangeEndIndexNegative() {
         final Collection<Integer> list = new ArrayList<>();
         list.add(1);
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
         CollectionUtils.removeRange(list, 0, -1);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection result = CollectionUtils.removeRange(list, 0, -1);
+=======
+        final Collection result = CollectionUtils.removeRange(list, 0, -1);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -1708,14 +1728,26 @@ public class CollectionUtilsTest extends MockTestCase {
         final Collection<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
         CollectionUtils.removeRange(list, 1, 0);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection result = CollectionUtils.removeRange(list, 1, 0);
+=======
+        final Collection result = CollectionUtils.removeRange(list, 1, 0);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void testRemoveRangeWrongEndIndex() {
         final Collection<Integer> list = new ArrayList<>();
         list.add(1);
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
         CollectionUtils.removeRange(list, 0, 2);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection result = CollectionUtils.removeRange(list, 0, 2);
+=======
+        final Collection result = CollectionUtils.removeRange(list, 0, 2);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test
@@ -1751,27 +1783,57 @@ public class CollectionUtilsTest extends MockTestCase {
 
     @Test(expected=NullPointerException.class)
     public void testRemoveCountWithNull() {
-        final Collection<Integer> list = null;
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
+        Collection<Integer> list = null;
         CollectionUtils.removeCount(list, 0, 1);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection<Integer> list = null;
+        Collection result = CollectionUtils.removeCount(list, 0, 1);
+=======
+        final Collection<Integer> list = null;
+        final Collection result = CollectionUtils.removeCount(list, 0, 1);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void testRemoveCountStartNegative() {
-        final Collection<Integer> list = new ArrayList<>();
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
+        Collection<Integer> list = new ArrayList<>();
         CollectionUtils.removeCount(list, -1, 1);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection<Integer> list = new ArrayList<>();
+        Collection result = CollectionUtils.removeCount(list, -1, 1);
+=======
+        final Collection<Integer> list = new ArrayList<>();
+        final Collection result = CollectionUtils.removeCount(list, -1, 1);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void testRemoveCountNegative() {
-        final Collection<Integer> list = new ArrayList<>();
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
+        Collection<Integer> list = new ArrayList<>();
         CollectionUtils.removeCount(list, 0, -1);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection<Integer> list = new ArrayList<>();
+        Collection result = CollectionUtils.removeCount(list, 0, -1);
+=======
+        final Collection<Integer> list = new ArrayList<>();
+        final Collection result = CollectionUtils.removeCount(list, 0, -1);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test(expected=IndexOutOfBoundsException.class)
     public void testRemoveCountWrongCount() {
         final Collection<Integer> list = new ArrayList<>();
         list.add(1);
+<<<<<<< /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/left.java
         CollectionUtils.removeCount(list, 0, 2);
+||||||| /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/base.java
+        Collection result = CollectionUtils.removeCount(list, 0, 2);
+=======
+        final Collection result = CollectionUtils.removeCount(list, 0, 2);
+>>>>>>> /usr/src/app/output/apache/commons-collections/900af49dc3f82c796cb19eb5b0192e39b0f41518/src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java/right.java
     }
 
     @Test
