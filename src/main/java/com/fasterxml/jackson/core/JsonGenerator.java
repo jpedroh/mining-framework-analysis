@@ -371,34 +371,57 @@ public abstract class JsonGenerator
      */
     public abstract void writeStartArray() throws IOException;
 
+    // TODO: deprecate in 2.11 (remove from 3.0)
     /**
      * Method for writing start marker of an Array value, similar
-     * to {@link #writeStartArray()}, but also specifying what is the
-     * Java object that the Array Object being written represents (if any);
-     * {@code null} may be passed if not known or not applicable.
-     * This value is accessible from context as "current value"
-     *
-     * @param currentValue Java Object that Array being written represents, if any
-     *    (or {@code null} if not known or not applicable)
-     */
-    public abstract void writeStartArray(Object currentValue) throws IOException;
-
-    /**
-     * Method for writing start marker of an Array value, similar
-     * to {@link #writeStartArray()}, but also specifying what is the
-     * Java object that the Array Object being written represents (if any)
-     * and how many elements will be written for the array before calling
+     * to {@link #writeStartArray()}, but also specifying how many
+     * elements will be written for the array before calling
      * {@link #writeEndArray()}.
+     *<p>
+     * Default implementation simply calls {@link #writeStartArray()}.
      * 
-     * @param currentValue Java Object that Array being written represents, if any
-     *    (or {@code null} if not known or not applicable)
      * @param size Number of elements this array will have: actual
      *   number of values written (before matching call to
      *   {@link #writeEndArray()} MUST match; generator MAY verify
      *   this is the case.
      */
-    public abstract void writeStartArray(Object currentValue, int size) throws IOException;
+    public void writeStartArray(int size) throws IOException {
+        writeStartArray();
+    }
 
+    /**
+     * Method for writing start marker of an Array value, similar
+     * to {@link #writeStartArray()}, but also specifying how many
+     * elements will be written for the array before calling
+     * {@link #writeEndArray()}.
+     *<p>
+     * Default implementation simply calls {@link #writeStartArray()}.
+     * 
+     * @param size Number of elements this array will have: actual
+     *   number of values written (before matching call to
+     *   {@link #writeEndArray()} MUST match; generator MAY verify
+     *   this is the case.
+     */
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/62af5370d301c243ace8b6028329bce2e10ac8d7/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/left.java
+    public abstract void writeStartArray(Object forValue, int size) throws IOException;
+||||||| /usr/src/app/output/fasterxml/jackson-core/62af5370d301c243ace8b6028329bce2e10ac8d7/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/base.java
+=======
+    public void writeStartArray(Object forValue, int size) throws IOException {
+        writeStartArray(size);
+        setCurrentValue(forValue);
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/62af5370d301c243ace8b6028329bce2e10ac8d7/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/right.java
+    /**
+     * @since 2.10
+     */
+    public void writeStartArray(Object forValue) throws IOException {
+        writeStartArray();
+        setCurrentValue(forValue);
+    }
+    /**
+     * @since 2.10
+     */
+    
     /**
      * Method for writing closing marker of a JSON Array value
      * (character ']'; plus possible white space decoration
@@ -430,11 +453,8 @@ public abstract class JsonGenerator
      * Object values can be written in any context where values
      * are allowed: meaning everywhere except for when
      * a field name is expected.
-     *
-     * @param currentValue Java Object that Object being written represents, if any
-     *    (or {@code null} if not known or not applicable)
      */
-    public abstract void writeStartObject(Object currentValue) throws IOException;
+    public abstract void writeStartObject(Object forValue) throws IOException;
 
     /**
      * Method for writing starting marker of an Object value
@@ -450,7 +470,11 @@ public abstract class JsonGenerator
      * are allowed: meaning everywhere except for when
      * a field name is expected.
      */
-    public abstract void writeStartObject(Object forValue, int size) throws IOException;
+    public void writeStartObject(Object forValue, int size) throws IOException
+    {
+        writeStartObject();
+        setCurrentValue(forValue);
+    }
 
     /**
      * Method for writing closing marker of an Object value
@@ -496,7 +520,9 @@ public abstract class JsonGenerator
      * Default implementation will simply convert id into <code>String</code>
      * and call {@link #writeFieldName(String)}.
      */
-    public abstract void writeFieldId(long id) throws IOException;
+    public void writeFieldId(long id) throws IOException {
+        writeFieldName(Long.toString(id));
+    }
 
     /*
     /**********************************************************************
@@ -1202,7 +1228,7 @@ public abstract class JsonGenerator
      *  writeBoolean(value);
      *</pre>
      */
-    public void writeBooleanField(String fieldName, boolean value) throws IOException {
+    public final void writeBooleanField(String fieldName, boolean value) throws IOException {
         writeFieldName(fieldName);
         writeBoolean(value);
     }
@@ -1215,7 +1241,7 @@ public abstract class JsonGenerator
      *  writeNull();
      *</pre>
      */
-    public void writeNullField(String fieldName) throws IOException {
+    public final void writeNullField(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeNull();
     }
@@ -1228,7 +1254,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
-    public void writeNumberField(String fieldName, int value) throws IOException {
+    public final void writeNumberField(String fieldName, int value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
     }
@@ -1241,7 +1267,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
-    public void writeNumberField(String fieldName, long value) throws IOException {
+    public final void writeNumberField(String fieldName, long value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
     }
@@ -1254,7 +1280,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
-    public void writeNumberField(String fieldName, double value) throws IOException {
+    public final void writeNumberField(String fieldName, double value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
     }
@@ -1267,7 +1293,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
-    public void writeNumberField(String fieldName, float value) throws IOException {
+    public final void writeNumberField(String fieldName, float value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
     }
@@ -1281,7 +1307,7 @@ public abstract class JsonGenerator
      *  writeNumber(value);
      *</pre>
      */
-    public void writeNumberField(String fieldName, BigDecimal value) throws IOException {
+    public final void writeNumberField(String fieldName, BigDecimal value) throws IOException {
         writeFieldName(fieldName);
         writeNumber(value);
     }
@@ -1295,7 +1321,7 @@ public abstract class JsonGenerator
      *  writeBinary(value);
      *</pre>
      */
-    public void writeBinaryField(String fieldName, byte[] data) throws IOException {
+    public final void writeBinaryField(String fieldName, byte[] data) throws IOException {
         writeFieldName(fieldName);
         writeBinary(data);
     }
@@ -1313,7 +1339,7 @@ public abstract class JsonGenerator
      * (by calling {#link #writeEndArray}) after writing all values
      * of the value Array.
      */
-    public void writeArrayFieldStart(String fieldName) throws IOException {
+    public final void writeArrayFieldStart(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeStartArray();
     }
@@ -1331,7 +1357,7 @@ public abstract class JsonGenerator
      * (by calling {#link #writeEndObject}) after writing all
      * entries of the value Object.
      */
-    public void writeObjectFieldStart(String fieldName) throws IOException {
+    public final void writeObjectFieldStart(String fieldName) throws IOException {
         writeFieldName(fieldName);
         writeStartObject();
     }
@@ -1345,7 +1371,7 @@ public abstract class JsonGenerator
      *  writeObject(pojo);
      *</pre>
      */
-    public void writeObjectField(String fieldName, Object pojo) throws IOException {
+    public final void writeObjectField(String fieldName, Object pojo) throws IOException {
         writeFieldName(fieldName);
         writeObject(pojo);
     }
