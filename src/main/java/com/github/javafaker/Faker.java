@@ -60,8 +60,8 @@ public class Faker {
     private final HarryPotter harryPotter;
     private final RockBand rockBand;
     private final Esports esports;
-    private final Friends friends;
     private final Job job;
+    private final Friends friends;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -123,8 +123,12 @@ public class Faker {
         this.harryPotter = new HarryPotter(this);
         this.rockBand = new RockBand(this);
         this.esports = new Esports(this);
-        this.friends = new Friends(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/1c159d7d6401464d09b39472e6179f1189427ed7/src/main/java/com/github/javafaker/Faker.java/left.java
         this.job = new Job(this);
+||||||| /usr/src/app/output/dius/java-faker/1c159d7d6401464d09b39472e6179f1189427ed7/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
+        this.friends = new Friends(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/1c159d7d6401464d09b39472e6179f1189427ed7/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -380,12 +384,11 @@ public class Faker {
         return esports;
     }
 
-    public Friends friends() {
-        return friends;
-    }
-
     public Job job() {
         return job;
+    }
+    public Friends friends() {
+        return friends;
     }
 
     public String resolve(String key) {
