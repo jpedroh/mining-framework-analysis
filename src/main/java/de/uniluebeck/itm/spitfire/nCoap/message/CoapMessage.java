@@ -319,12 +319,25 @@ public abstract class CoapMessage {
             switch(optionName){
                 case URI_HOST:
                     result = new ArrayList<Option>(1);
-
+<<<<<<< /usr/src/app/output/okleine/ncoap/a823abff038fd7f1526fd6c6ad13c8a7edfab6ca/src/main/java/de/uniluebeck/itm/spitfire/nCoap/message/CoapMessage.java/left.java
+                    if(IPAddressUtil.isIPv6LiteralAddress(rcptAddress.getHostAddress())){
+                        result.add(Option.createStringOption(OptionRegistry.OptionName.URI_HOST,
+                            "[" + rcptAddress.getHostAddress() + "]"));
+                    }
+                    else{
+                        result.add(Option.createStringOption(OptionRegistry.OptionName.URI_HOST,
+                            rcptAddress.getHostAddress()));
+                    }
+||||||| /usr/src/app/output/okleine/ncoap/a823abff038fd7f1526fd6c6ad13c8a7edfab6ca/src/main/java/de/uniluebeck/itm/spitfire/nCoap/message/CoapMessage.java/base.java
+                    result.add(Option.createStringOption(OptionRegistry.OptionName.URI_HOST,
+                            "[" + rcptAddress.getHostAddress() + "]"));
+=======
                     String targetIP = rcptAddress.getHostAddress();
                     if(IPAddressUtil.isIPv6LiteralAddress(targetIP)){
                         targetIP = "[" + targetIP + "]";
                     }
                     result.add(Option.createStringOption(OptionRegistry.OptionName.URI_HOST, targetIP));
+>>>>>>> /usr/src/app/output/okleine/ncoap/a823abff038fd7f1526fd6c6ad13c8a7edfab6ca/src/main/java/de/uniluebeck/itm/spitfire/nCoap/message/CoapMessage.java/right.java
                     break;
                 case URI_PORT:
                     result = new ArrayList<Option>(1);
