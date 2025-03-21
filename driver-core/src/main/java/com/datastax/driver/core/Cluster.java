@@ -67,7 +67,6 @@ public class Cluster {
     // Some per-JVM number that allows to generate unique cluster names when
     // multiple Cluster instance are created in the same JVM.
     private static final AtomicInteger CLUSTER_ID = new AtomicInteger(0);
-
     private static final int DEFAULT_THREAD_KEEP_ALIVE = 30;
 
     final Manager manager;
@@ -783,7 +782,6 @@ public class Cluster {
     private static String generateClusterName() {
         return "cluster" + CLUSTER_ID.incrementAndGet();
     }
-
     private static ListeningExecutorService makeExecutor(int threads, String name) {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(threads,
                                                              threads,
@@ -846,10 +844,13 @@ public class Cluster {
         private Manager(String clusterName, List<InetAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
             logger.debug("Starting new cluster with contact points " + contactPoints);
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/43556c49244cb0afbb8c6d8447ac60e97dbe1076/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
             this.clusterName = clusterName == null ? generateClusterName() : clusterName;
-
+||||||| /usr/src/app/output/datastax/java-driver/43556c49244cb0afbb8c6d8447ac60e97dbe1076/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+=======
             this.executor = makeExecutor(Runtime.getRuntime().availableProcessors(), "Cassandra Java Driver worker-%d");
             this.blockingTasksExecutor = makeExecutor(2, "Cassandra Java Driver blocking tasks worker-%d");
+>>>>>>> /usr/src/app/output/datastax/java-driver/43556c49244cb0afbb8c6d8447ac60e97dbe1076/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
 
             this.configuration = configuration;
             this.metadata = new Metadata(this);

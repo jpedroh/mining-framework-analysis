@@ -343,10 +343,6 @@ public class Session {
             return cluster.manager.executor;
         }
 
-        public ListeningExecutorService blockingExecutor() {
-            return cluster.manager.blockingTasksExecutor;
-        }
-
         boolean isShutdown() {
             return shutdownFuture.get() != null;
         }
@@ -417,6 +413,7 @@ public class Session {
          * This method ensures that all hosts for which a pool should exist
          * have one, and hosts that shouldn't don't.
          */
+
         void updateCreatedPools() {
             for (Host h : cluster.getMetadata().allHosts()) {
                 HostDistance dist = loadBalancingPolicy().distance(h);
@@ -509,8 +506,13 @@ public class Session {
          * This method will find a suitable node to connect to using the
          * {@link LoadBalancingPolicy} and handle host failover.
          */
+
         public void execute(RequestHandler.Callback callback, Statement statement) {
             new RequestHandler(this, callback, statement).sendRequest();
+        }
+
+        public ListeningExecutorService blockingExecutor() {
+            return cluster.manager.blockingTasksExecutor;
         }
 
         public void prepare(String query, InetAddress toExclude) throws InterruptedException {
