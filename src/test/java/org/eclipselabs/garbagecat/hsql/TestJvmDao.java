@@ -14,7 +14,6 @@ package org.eclipselabs.garbagecat.hsql;
 
 import java.io.File;
 import java.util.List;
-
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.Jvm;
 import org.eclipselabs.garbagecat.domain.JvmRun;
@@ -24,7 +23,6 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -79,6 +77,7 @@ public class TestJvmDao extends TestCase {
         Assert.assertEquals("Last timestamp not correct.", 0, jvmRun.getLastTimestamp());
     }
     
+<<<<<<< /usr/src/app/output/doctau/garbagecat/583416b443b6e9679f87705f5b98f0f42e3cd19d/src/test/java/org/eclipselabs/garbagecat/hsql/TestJvmDao.java/left.java
     public void testSameTimestampOrdering() {
         JvmDao jvmDao = new JvmDao();
         ParNewEvent event1 = new ParNewEvent("3010778.296: [GC 3010778.296: [ParNew: 337824K->32173K(368640K),"
@@ -92,7 +91,6 @@ public class TestJvmDao extends TestCase {
                 + " [Tenured: 468292K->482213K(819200K), 1.9920590 secs] 824995K->482213K(1187840K),"
                 + " [Perm : 123092K->122684K(262144K)], 1.9924510 secs]");
         jvmDao.addBlockingEvent(event3);
-<<<<<<< HEAD
         jvmDao.processBlockingBatch();
 
         // check they are the correct way around
@@ -100,6 +98,30 @@ public class TestJvmDao extends TestCase {
         Assert.assertTrue(events.get(1) instanceof ParNewEvent);
         Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
     }   
+||||||| /usr/src/app/output/doctau/garbagecat/583416b443b6e9679f87705f5b98f0f42e3cd19d/src/test/java/org/eclipselabs/garbagecat/hsql/TestJvmDao.java/base.java
+    public void testSameTimestampOrdering()    
+=======
+    public void testSameTimestampOrdering() {
+        JvmDao jvmDao = new JvmDao();
+        ParNewEvent event1 = new ParNewEvent("3010778.296: [GC 3010778.296: [ParNew: 337824K->32173K(368640K),"
+                + " 0.0803880 secs] 806117K->500466K(1187840K), 0.0805980 secs]");
+        jvmDao.addBlockingEvent(event1);
+        ParNewEvent event2 = new ParNewEvent(
+                "3010786.012: [GC 3010786.012: [ParNew: 356703K->356703K(368640K), 0.0000190 secs]"
+                        + " 824995K->824995K(1187840K), 0.0001460 secs]");
+        jvmDao.addBlockingEvent(event2);
+        SerialOldEvent event3 = new SerialOldEvent("3010786.012: [Full GC 3010786.012:"
+                + " [Tenured: 468292K->482213K(819200K), 1.9920590 secs] 824995K->482213K(1187840K),"
+                + " [Perm : 123092K->122684K(262144K)], 1.9924510 secs]");
+        jvmDao.addBlockingEvent(event3);
+        jvmDao.processBatch();
+
+        // check they are the correct way around
+        List<BlockingEvent> events = jvmDao.getBlockingEvents();
+        Assert.assertTrue(events.get(1) instanceof ParNewEvent);
+        Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
+    }   
+>>>>>>> /usr/src/app/output/doctau/garbagecat/583416b443b6e9679f87705f5b98f0f42e3cd19d/src/test/java/org/eclipselabs/garbagecat/hsql/TestJvmDao.java/right.java
     
     public void testSummaryStatsStoppedTime() {
 
@@ -126,13 +148,4 @@ public class TestJvmDao extends TestCase {
         Assert.assertEquals("Stopped time throughput not calculated correctly.", 63, jvmRun.getStoppedTimeThroughput());
         Assert.assertEquals("GC/Stopped ratio not calculated correctly.", 6, jvmRun.getGcStoppedRatio());
     }
-=======
-        jvmDao.processBatch();
-
-        // check they are the correct way around
-        List<BlockingEvent> events = jvmDao.getBlockingEvents();
-        Assert.assertTrue(events.get(1) instanceof ParNewEvent);
-        Assert.assertTrue(events.get(2) instanceof SerialOldEvent);
-    }      
->>>>>>> branch 'master' of https://github.com/mgm3746/garbagecat.git
 }
