@@ -592,9 +592,9 @@ public class RecurlyClient {
             request = new Subscription();
             Account account = new Account();
             BillingInfo billingInfo = new BillingInfo();
-            billingInfo.setThreeDSecureActionResultTokenId(ThreeDSecureActionResultTokenId);
+            billingInfo.setThreeDSecureActionResultTokenId(ThreeDSecureActionResultTokenId); 
             account.setBillingInfo(billingInfo);
-            request.setAccount(account);
+            request.setAccount(account);   
         }
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + urlEncode(subscriptionUuid) + "/convert_trial",
             request, Subscription.class);
@@ -792,9 +792,9 @@ public class RecurlyClient {
      */
     public Subscriptions getInvoiceSubscriptions(final String invoiceId, final QueryParams params) {
         return doGET(Invoices.INVOICES_RESOURCE
-                        + "/" + urlEncode(invoiceId)
+                        + "/" + urlEncode(invoiceId) 
                         + Subscriptions.SUBSCRIPTIONS_RESOURCE,
-                Subscriptions.class,
+                Subscriptions.class, 
                 params);
     }
 
@@ -2397,7 +2397,18 @@ public class RecurlyClient {
             return null;
         }
 
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/12a461e91eecef158fb2c17ae39cf7cd240bab92/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
         return callRecurlySafeXmlContent(client.preparePut(baseUrl + resource).setBody(xmlPayload), clazz);
+||||||| /usr/src/app/output/killbilling/recurly-java-library/12a461e91eecef158fb2c17ae39cf7cd240bab92/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+        validateHost(baseUrl + resource);
+
+        return callRecurlySafeXmlContent(client.preparePut(baseUrl + resource).setBody(xmlPayload), clazz);
+=======
+        final String url = baseUrl + resource;
+        validateHost(url);
+
+        return callRecurlySafeXmlContent(client.preparePut(url).setBody(xmlPayload), clazz);
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/12a461e91eecef158fb2c17ae39cf7cd240bab92/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
     }
 
     private FluentCaseInsensitiveStringsMap doHEAD(final String resource, QueryParams params) {
@@ -2486,12 +2497,25 @@ public class RecurlyClient {
                 RecurlyAPIError recurlyError = RecurlyAPIError.buildFromResponse(response);
                 // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
                 if (statusCode == 422) {
+                    // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
+                    // as well as bad input payloads
                     Errors errors = null;
                     try {
                         errors = xmlMapper.readValue(payload, Errors.class);
                     } catch (Exception e) {
                         log.warn("Unable to extract error", e);
                         return null;
+                    }
+
+                    // Sometimes a single `Error` response is returned rather than `Errors`.
+                    // In this case, all fields will be null.
+                    if (errors == null || (
+                        errors.getRecurlyErrors() == null &&
+                        errors.getTransaction() == null &&
+                        errors.getTransactionError() == null
+                    )) {
+                        recurlyError = RecurlyAPIError.buildFromXml(xmlMapper, payload, response);
+                        throw new RecurlyAPIException(recurlyError);
                     }
                   if (errors == null || (errors.getTransactionError() == null && errors.getRecurlyErrors() == null)) {
                     throw new RecurlyAPIException(createRecurlyAPIError(payload, statusCode));
