@@ -130,8 +130,12 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.rockBand());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.esports());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.friends());
+<<<<<<< /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/test/java/com/github/javafaker/integration/FakerIT.java/left.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.hipster());
+||||||| /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/test/java/com/github/javafaker/integration/FakerIT.java/base.java
+=======
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.job());
+>>>>>>> /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/test/java/com/github/javafaker/integration/FakerIT.java/right.java
     }
 
     private void testAllMethodsThatReturnStringsActuallyReturnStrings(Object object) throws Exception {

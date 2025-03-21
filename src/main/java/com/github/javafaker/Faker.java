@@ -63,7 +63,7 @@ public class Faker {
     private final Friends friends;
     private final Hipster hipster;
     private final Job job;
-  
+
     public Faker() {
         this(Locale.ENGLISH);
     }
@@ -125,8 +125,12 @@ public class Faker {
         this.rockBand = new RockBand(this);
         this.esports = new Esports(this);
         this.friends = new Friends(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/main/java/com/github/javafaker/Faker.java/left.java
         this.hipster = new Hipster(this);
+||||||| /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.job = new Job(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/3365ac2c6cd6f8162657959785ce9817f5e72dce/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -389,7 +393,6 @@ public class Faker {
     public Hipster hipster() {
         return hipster;
     }
-  
     public Job job() {
         return job;
     }
