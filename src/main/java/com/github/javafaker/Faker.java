@@ -1,10 +1,8 @@
 package com.github.javafaker;
-
-import com.github.javafaker.service.FakeValuesService;
-import com.github.javafaker.service.RandomService;
-
 import java.util.Locale;
+import com.github.javafaker.service.FakeValuesService;
 import java.util.Random;
+import com.github.javafaker.service.RandomService;
 
 /**
  * Provides utility methods for generating fake strings, such as names, phone
@@ -13,43 +11,73 @@ import java.util.Random;
  * @author ren
  */
 public class Faker {
-    private final RandomService randomService;
-    private final FakeValuesService fakeValuesService;
-    private final Lorem lorem;
-    private final Name name;
-    private final Internet internet;
-    private final PhoneNumber phoneNumber;
-    private final Address address;
-    private final Business business;
-    private final Options options;
-    private final Code code;
+  private final RandomService randomService;
 
-    public Faker() {
-        this(Locale.ENGLISH);
-    }
+  private final FakeValuesService fakeValuesService;
 
-    public Faker(Locale locale) {
-        this(locale, null);
-    }
+  private final Lorem lorem;
 
-    public Faker(Random random) {
-        this(Locale.ENGLISH, random);
-    }
+  private final Name name;
 
-    public Faker(Locale locale, Random random) {
-        this.randomService = new RandomService(random);
-        this.fakeValuesService = new FakeValuesService(locale, randomService);
-        this.lorem = new Lorem(fakeValuesService, randomService);
-        this.name = new Name(fakeValuesService);
-        this.internet = new Internet(name, fakeValuesService);
-        this.phoneNumber = new PhoneNumber(fakeValuesService);
-        this.address = new Address(name, fakeValuesService);
-        this.business = new Business(fakeValuesService);
-        this.options = new Options(randomService);
-        this.code = new Code(randomService);
-    }
+  private final Internet internet;
 
-    /**
+  private final PhoneNumber phoneNumber;
+
+  private final Address address;
+
+  private final Business business;
+
+  private final 
+<<<<<<< /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/left.java
+  Options
+=======
+  Code
+>>>>>>> /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/right.java
+   
+<<<<<<< /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/left.java
+  options
+=======
+  code
+>>>>>>> /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/right.java
+  ;
+
+  public Faker() {
+    this(Locale.ENGLISH);
+  }
+
+  public Faker(Locale locale) {
+    this(locale, null);
+  }
+
+  public Faker(Random random) {
+    this(Locale.ENGLISH, random);
+  }
+
+  public Faker(Locale locale, Random random) {
+    this.randomService = new RandomService(random);
+    this.fakeValuesService = new FakeValuesService(locale, randomService);
+    this.lorem = new Lorem(fakeValuesService, randomService);
+    this.name = new Name(fakeValuesService);
+    this.internet = new Internet(name, fakeValuesService);
+    this.phoneNumber = new PhoneNumber(fakeValuesService);
+    this.address = new Address(name, fakeValuesService);
+    this.business = new Business(fakeValuesService);
+    this.
+<<<<<<< /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/left.java
+    options
+=======
+    code
+>>>>>>> /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/right.java
+     = new 
+<<<<<<< /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/left.java
+    Options
+=======
+    Code
+>>>>>>> /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/right.java
+    (randomService);
+  }
+
+  /**
      * Returns a string with the '#' characters in the parameter replaced with random digits between 0-9 inclusive.
      * <p/>
      * For example, the string "ABC##EFG" could be replaced with a string like "ABC99EFG".
@@ -57,11 +85,11 @@ public class Faker {
      * @param numberString
      * @return
      */
-    public String numerify(String numberString) {
-        return fakeValuesService.numerify(numberString);
-    }
+  public String numerify(String numberString) {
+    return fakeValuesService.numerify(numberString);
+  }
 
-    /**
+  /**
      * Returns a string with the '?' characters in the parameter replaced with random alphabetic
      * characters.
      * <p/>
@@ -70,50 +98,50 @@ public class Faker {
      * @param letterString
      * @return
      */
-    public String letterify(String letterString) {
-        return fakeValuesService.letterify(letterString);
-    }
+  public String letterify(String letterString) {
+    return fakeValuesService.letterify(letterString);
+  }
 
-    /**
+  /**
      * Applies both a {@link #numerify(String)} and a {@link #letterify(String)}
      * over the incoming string.
      *
      * @param string
      * @return
      */
-    public String bothify(String string) {
-        return fakeValuesService.bothify(string);
-    }
+  public String bothify(String string) {
+    return fakeValuesService.bothify(string);
+  }
 
-    public Name name() {
-        return name;
-    }
+  public Name name() {
+    return name;
+  }
 
-    public Internet internet() {
-        return internet;
-    }
+  public Internet internet() {
+    return internet;
+  }
 
-    public PhoneNumber phoneNumber() {
-        return phoneNumber;
-    }
+  public PhoneNumber phoneNumber() {
+    return phoneNumber;
+  }
 
-    public Lorem lorem() {
-        return lorem;
-    }
+  public Lorem lorem() {
+    return lorem;
+  }
 
-    public Address address() {
-        return address;
-    }
+  public Address address() {
+    return address;
+  }
 
-    public Business business() {
-        return business;
-    }
+  public Business business() {
+    return business;
+  }
 
-    public Options options() {
-        return options;
-    }
+  public Options options() {
+    return options;
+  }
 
-    public Code code() {
-        return code;
-    }
+  public Code code() {
+    return code;
+  }
 }
