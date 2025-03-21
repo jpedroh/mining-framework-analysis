@@ -32,7 +32,6 @@ import java.security.SignatureException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -43,7 +42,6 @@ import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.DHPublicKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
 import net.java.otr4j.io.SerializationUtils;
 
 /**
@@ -54,17 +52,13 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 
 	private static final String CIPHER_ALGORITHM = "AES/CTR/NoPadding";
 	private static final String CIPHER_NAME = "AES";
-
 	private static final String DSA_SIGNATURE_ALGORITHM = "NONEwithDSAinP1363Format";
-
 	/**
 	 * DSA signing is used without first computing a digest of the data, so there is a prescribed length for such input
 	 * data.
 	 */
 	private static final int DSA_RAW_DATA_LENGTH_BYTES = 20;
-
 	private static final int DSA_KEY_LENGTH_BITS = 1024;
-
 	@Override
 	public KeyPair generateDSAKeyPair() {
 		try {
@@ -75,7 +69,7 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 			throw new IllegalStateException("DSA algorithm is not supported.", e);
 		}
 	}
-
+<<<<<<< /usr/src/app/output/redsolution/otr4j/282b34caf770e1c59f2aea66544055f2bac531a0/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/left.java
 	@Override
 	public KeyPair generateDHKeyPair() {
 		try {
@@ -88,10 +82,23 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 			throw new IllegalStateException("BUG: DH algorithm is unavailable (for keypair generation).", e);
 		}
 	}
+||||||| /usr/src/app/output/redsolution/otr4j/282b34caf770e1c59f2aea66544055f2bac531a0/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/base.java
+=======
+	@Override
+	public KeyPair generateDHKeyPair() throws OtrCryptoException {
+		try {
+			KeyPairGenerator gen = KeyPairGenerator.getInstance("DH");
+			gen.initialize(new DHParameterSpec(MODULUS, GENERATOR, DH_PRIVATE_KEY_MINIMUM_BIT_LENGTH));
+			return gen.generateKeyPair();
+		} catch (Exception e) {
+			throw new OtrCryptoException(e);
+		}
+	}
+>>>>>>> /usr/src/app/output/redsolution/otr4j/282b34caf770e1c59f2aea66544055f2bac531a0/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/right.java
 
 	public DHPublicKey getDHPublicKey(byte[] mpiBytes) throws OtrCryptoException {
-		return getDHPublicKey(new BigInteger(mpiBytes));
-	}
+	return getDHPublicKey(new BigInteger(mpiBytes));
+}
 
 	@Override
 	public DHPublicKey getDHPublicKey(BigInteger mpi) throws OtrCryptoException {
