@@ -22,10 +22,25 @@ class RubyPluginRuntimeResolver extends RubyRuntimeResolver {
 	@Override
 	public Ruby unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 		String pluginid = reader.getAttribute("pluginid");
+<<<<<<< /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/left.java
 		RubyPlugin plugin = (RubyPlugin) Jenkins.getActiveInstance().getPlugin(pluginid);
+||||||| /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/base.java
+		RubyPlugin plugin = (RubyPlugin) Jenkins.getInstance().getPlugin(pluginid);
+=======
+		RubyPlugin plugin = (RubyPlugin) Jenkins.get().getPlugin(pluginid);
+>>>>>>> /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/right.java
+<<<<<<< /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/left.java
 		if (plugin == null) {
-			throw new XStreamException("no such plugin " + pluginid);
+			//TODO: JRuby XStream does not document ways to properly propagate such errors.
+			//It just throws runtime exceptions like IllegalArgumentException, so we do it here as well.
+			throw new IllegalStateException("Cannot find Ruby plugin with id=" + pluginid);
 		}
+||||||| /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/base.java
+=======
+		if (plugin == null) {
+            throw new XStreamException("no such plugin " + pluginid);
+        }
+>>>>>>> /usr/src/app/output/jenkinsci/ruby-runtime-plugin/39375b570201fcf8b133343bea4d124bf7351210/src/main/java/ruby/RubyPluginRuntimeResolver.java/right.java
 		return plugin.getScriptingContainer().getProvider().getRuntime();
 	}
 
