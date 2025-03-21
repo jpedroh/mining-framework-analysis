@@ -1,5 +1,4 @@
 package net.krilivye.jocco;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,165 +12,150 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tautua.markdownpapers.Markdown;
 import org.tautua.markdownpapers.parser.ParseException;
-
 import freemarker.template.TemplateException;
 
 /**
  * @author Krilivye-Homestation This is the Jocco main class.
  */
 public class Jocco {
+  private transient List<File> files;
 
-    private transient List<File> files;
-    private transient List<Section> listOfSections;
-    private final transient Markdown markdown = new Markdown();
+  private transient List<Section> listOfSections;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Jocco.class);
+  private final transient Markdown markdown = new Markdown();
 
-    /**
+  private static final Logger LOGGER = LoggerFactory.getLogger(Jocco.class);
+
+  /**
      * For Test interface.
      */
-    public Jocco() {
-        files = new ArrayList<File>();
-    }
+  public Jocco() {
+    files = new ArrayList<File>();
+  }
 
-    /**
+  /**
      * @param dirOrFile
      */
-    public Jocco(final String dirOrFile) {
-        validate(dirOrFile);
+  public Jocco(final String dirOrFile) {
+    validate(dirOrFile);
+  }
+
+  private void validate(final String dirOrFile) {
+    final File file = new File(dirOrFile);
+    if (file.exists()) {
+      files = new LinkedList<File>();
+      addFiles(files, file);
+    } else {
+      throw new IllegalArgumentException(Messages.getString("Program.main.illegal"));
     }
+  }
 
-    // Valide le constructeur en vérifiant que l'argument est bien un répertoire
-    // ou un fichier.
-    private void validate(final String dirOrFile) {
-
-        final File file = new File(dirOrFile);
-        if (file.exists()) {
-            files = new LinkedList<File>();
-            addFiles(files, file);
-        } else {
-            throw new IllegalArgumentException(
-                    Messages.getString("Program.main.illegal")); //$NON-NLS-1$
+  private void addFiles(final List<File> listOffiles, final File dir) {
+    if (dir != null) {
+      if (dir.isDirectory()) {
+        for (final File file : dir.listFiles()) {
+          addFiles(listOffiles, file);
         }
+      } else {
+        listOffiles.add(dir);
+      }
     }
+  }
 
-    // Méthode qui construit la liste des fichier en garantissant qu'il n'y ait
-    // aucun null
-    private void addFiles(final List<File> listOffiles, final File dir) {
-        if (dir != null) {
-            if (dir.isDirectory()) {
-                for (final File file : dir.listFiles()) {
-                    addFiles(listOffiles, file);
-                }
-            } else {
-                listOffiles.add(dir);
-            }
-        }
-
-    }
-
-    /**
+  /**
      * @return a list of files
      */
-    public List<File> getFiles() {
-        return files;
-    }
+  public List<File> getFiles() {
+    return files;
+  }
 
-    /**
+  /**
      * This setter does not permit null value
-     * 
      * @param fileOrDir
-     *            a file or a dir name
+     * a file or a dir name
      */
-    public void setFiles(final String fileOrDir) {
-        if (fileOrDir == null) {
-            throw new IllegalArgumentException(
-                    Messages.getString("Program.main.null")); //$NON-NLS-1$
-        }
-        validate(fileOrDir);
-
+  public void setFiles(final String fileOrDir) {
+    if (fileOrDir == null) {
+      throw new IllegalArgumentException(Messages.getString("Program.main.null"));
     }
+    validate(fileOrDir);
+  }
 
-    /**
+  /**
      * @return true if the process's have been correctly executed, false
-     *         otherwise.
+     * otherwise.
      * @throws IOException
      * @throws TemplateException
      */
-    public boolean generateDoc() throws IOException, TemplateException {
-        final Writer fileout = new FileWriter(new File("documentation.html")); //$NON-NLS-1$
-        final Template template = new Template();
-        final DocumentationModel docmodel = new DocumentationModel();
-        for (final File file : files) {
-            final FileModel model = new FileModel();
-            final List<Section> sections = parseFile(file);
-            markDownHiglight(sections);
-            model.setListOfSections(sections);
-            model.setName(file.getName().split("\\.")[0]); //$NON-NLS-1$
-            model.setExtension(file.getName().split("\\.")[1]); //$NON-NLS-1$
+  public boolean generateDoc() throws IOException, TemplateException {
+    final Writer fileout = new FileWriter(new File("documentation.html"));
+    final Template template = new Template();
+    final DocumentationModel docmodel = new DocumentationModel();
+    for (final File file : files) {
+      final FileModel model = generateFileModel(file);
+      docmodel.add(model);
+    }
+    fileout.write(template.fillTemplate(docmodel));
+    fileout.close();
+    return true;
+  }
 
-            docmodel.add(model);
+  private FileModel generateFileModel(final File file) throws FileNotFoundException, IOException {
+    final FileModel model = new FileModel();
+    final List<Section> sections = parseFile(file);
+    markDownHiglight(sections);
+    model.setListOfSections(sections);
+    model.setName(file.getName().split("\\.")[0]);
+    model.setExtension(file.getName().split("\\.")[1]);
+    return model;
+  }
 
+  private void markDownHiglight(final List<Section> sections) {
+    for (final Section section : sections) {
+      transformDoc(section);
+      section.setCodeHTML("<pre><code class=\'prettyprint\'>" + section.getCode() + "</code></pre>");
+    }
+  }
+
+  private void transformDoc(final Section section) {
+    final Writer out = new StringWriter();
+    final Reader input = new StringReader(section.getDoc());
+    try {
+      markdown.transform(input, out);
+      section.setDocHTML(out.toString());
+    } catch (final ParseException e) {
+      LOGGER.error(e.getMessage());
+    }
+  }
+
+  private List<Section> parseFile(final File file) throws FileNotFoundException, IOException {
+    listOfSections = new LinkedList<Section>();
+    final BufferedReader input = new BufferedReader(new FileReader(file));
+    final StringBuilder docsText = new StringBuilder();
+    final StringBuilder codeText = new StringBuilder();
+    String line = input.readLine();
+    while (null != line) {
+      if (line.contains("*") || line.contains("////")) {
+        if (codeText.length() > 0) {
+          save(docsText, codeText);
+          docsText.setLength(0);
+          codeText.setLength(0);
         }
-        fileout.write(template.fillTemplate(docmodel));
-        fileout.close();
-
-        return true;
+        docsText.append(line).append("\n");
+      } else {
+        codeText.append(line).append("\n");
+      }
+      line = input.readLine();
     }
+    save(docsText, codeText);
+    return listOfSections;
+  }
 
-    private void markDownHiglight(final List<Section> sections) {
-
-        for (final Section section : sections) {
-            transformDoc(section);
-            section.setCodeHTML("<pre><code class='prettyprint'>" + section.getCode() + "</code></pre>"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        }
-
-    }
-
-    private void transformDoc(final Section section) {
-        final Writer out = new StringWriter();
-        final Reader input = new StringReader(section.getDoc());
-        try {
-            markdown.transform(input, out);
-            section.setDocHTML(out.toString());
-        } catch (final ParseException e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
-
-    private List<Section> parseFile(final File file)
-            throws FileNotFoundException, IOException {
-        listOfSections = new LinkedList<Section>();
-        final BufferedReader input = new BufferedReader(new FileReader(file));
-
-        final StringBuilder docsText = new StringBuilder();
-        final StringBuilder codeText = new StringBuilder();
-
-        String line;
-        while (null != (line = input.readLine())) {
-            if (line.contains("*") || line.contains("////")) { //$NON-NLS-1$ //$NON-NLS-2$
-                if (codeText.length() > 0) {
-                    save(docsText, codeText);
-                    docsText.setLength(0);
-                    codeText.setLength(0);
-                }
-                docsText.append(line).append("\n"); //$NON-NLS-1$
-            } else {
-                codeText.append(line).append("\n"); //$NON-NLS-1$
-            }
-        }
-        save(docsText, codeText);
-        return listOfSections;
-    }
-
-    private void save(final StringBuilder docsText, final StringBuilder codeText) {
-        listOfSections
-                .add(new Section(docsText.toString(), codeText.toString()));
-    }
+  private void save(final StringBuilder docsText, final StringBuilder codeText) {
+    listOfSections.add(new Section(docsText.toString(), codeText.toString()));
+  }
 }
