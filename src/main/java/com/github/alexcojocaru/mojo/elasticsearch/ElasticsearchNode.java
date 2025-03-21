@@ -69,6 +69,18 @@ public class ElasticsearchNode
      * @throws MojoExecutionException 
      * @return an instance of an ElasticsearchNode
      */
+    
+    /**
+     * Start a local ES node with default settings.
+     * <br>
+     * If the local node is already running prior to calling this method,
+     * an IllegalStateException will be thrown.
+     * @param dataPath
+     * @param httpPort
+     * @param tcpPort
+     * @throws MojoExecutionException 
+     * @return an instance of an ElasticsearchNode
+     */
     public static ElasticsearchNode start(String dataPath, int httpPort, int tcpPort)
             throws MojoExecutionException
     {

@@ -35,12 +35,20 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         mojo = (StartElasticsearchNodeMojo) lookupMojo("start", testPom);
         mojo.setPluginContext(new HashMap());
+<<<<<<< /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StartElasticsearchDataMojoTest.java/left.java
+        
+        // I cannot find another way of setting the two required propperties at run time.
+        mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
+        mojo.tcpPort = esPorts.get(ElasticsearchPort.TCP);
+||||||| /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StartElasticsearchDataMojoTest.java/base.java
+=======
         
         // I cannot find another way of setting the two required propperties at run time.
         mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
         mojo.tcpPort = esPorts.get(ElasticsearchPort.TCP);
 
         httpClient = HttpClientBuilder.create().build();
+>>>>>>> /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StartElasticsearchDataMojoTest.java/right.java
     }
     
     @Override

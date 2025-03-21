@@ -68,9 +68,13 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         mojo.execute();
 
         HttpClient client = HttpClientBuilder.create().build();
-        
+<<<<<<< /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/left.java
+||||||| /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/base.java
+=======
+>>>>>>> /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/right.java
         HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
-
+<<<<<<< /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/left.java
+        
         final int connectionTimeout = 500; // millis
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(connectionTimeout)
@@ -79,6 +83,18 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
                 .build();
         get.setConfig(requestConfig);
 
+||||||| /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/base.java
+=======
+    
+        final int connectionTimeout = 500; // millis
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(connectionTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setSocketTimeout(connectionTimeout)
+                .build();
+        get.setConfig(requestConfig);
+
+>>>>>>> /usr/src/app/output/alexcojocaru/elasticsearch-maven-plugin/80a84ddaaedf4d73d3e2a4a952dea3593b11d4a3/src/test/java/com/github/alexcojocaru/mojo/elasticsearch/StopElasticsearchDataMojoTest.java/right.java
         try
         {
             client.execute(get);
