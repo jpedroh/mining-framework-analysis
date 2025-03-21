@@ -1,19 +1,10 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.content.service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.browse.ItemCountException;
 import org.dspace.content.Bitstream;
@@ -31,15 +22,10 @@ import org.dspace.eperson.Group;
  *
  * @author kevinvandevelde at atmire.com
  */
-public interface CollectionService
-        extends DSpaceObjectService<Collection>, DSpaceObjectLegacySupportService<Collection> {
+public interface CollectionService extends DSpaceObjectService<Collection>, DSpaceObjectLegacySupportService<Collection> {
+  public static final String SOLR_SORT_FIELD = "dc.title_sort";
 
-    /*
-     * Field used to sort community and collection lists at solr
-     */
-    public static final String SOLR_SORT_FIELD = "dc.title_sort";
-
-    /**
+  /**
      * Create a new collection with a new ID.
      * Once created the collection is added to the given community
      *
@@ -49,10 +35,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public Collection create(Context context, Community community) throws SQLException,
-        AuthorizeException;
+  public Collection create(Context context, Community community) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Create a new collection with the supplied handle and with a new ID.
      * Once created the collection is added to the given community
      *
@@ -63,10 +48,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public Collection create(Context context, Community community, String handle) throws SQLException,
-        AuthorizeException;
+  public Collection create(Context context, Community community, String handle) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Create a new collection with the supplied handle and ID.
      * Once created the collection is added to the given community
      *
@@ -78,10 +62,9 @@ public interface CollectionService
      * @throws SQLException if database error
      * @throws AuthorizeException if authorization error
      */
-    public Collection create(Context context, Community community, String handle, UUID uuid) throws SQLException,
-            AuthorizeException;
+  public Collection create(Context context, Community community, String handle, UUID uuid) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Get all collections in the system. These are alphabetically sorted by
      * collection name.
      *
@@ -89,9 +72,9 @@ public interface CollectionService
      * @return the collections in the system
      * @throws SQLException if database error
      */
-    public List<Collection> findAll(Context context) throws SQLException;
+  public List<Collection> findAll(Context context) throws SQLException;
 
-    /**
+  /**
      * Get all collections in the system. Adds support for limit and offset.
      *
      * @param context The relevant DSpace Context.
@@ -100,19 +83,19 @@ public interface CollectionService
      * @return List of Collections
      * @throws SQLException if database error
      */
-    public List<Collection> findAll(Context context, Integer limit, Integer offset) throws SQLException;
+  public List<Collection> findAll(Context context, Integer limit, Integer offset) throws SQLException;
 
-    public List<Collection> findAuthorizedOptimized(Context context, int actionID) throws java.sql.SQLException;
+  public List<Collection> findAuthorizedOptimized(Context context, int actionID) throws java.sql.SQLException;
 
-    public List<Collection> findDirectMapped(Context context, int actionID) throws java.sql.SQLException;
+  public List<Collection> findDirectMapped(Context context, int actionID) throws java.sql.SQLException;
 
-    public List<Collection> findGroup2CommunityMapped(Context context) throws SQLException;
+  public List<Collection> findGroup2CommunityMapped(Context context) throws SQLException;
 
-    public List<Collection> findGroup2GroupMapped(Context context, int actionID) throws SQLException;
+  public List<Collection> findGroup2GroupMapped(Context context, int actionID) throws SQLException;
 
-    public List<Collection> findGroupMapped(Context context, int actionID) throws java.sql.SQLException;
+  public List<Collection> findGroupMapped(Context context, int actionID) throws java.sql.SQLException;
 
-    /**
+  /**
      * Give the collection a logo. Passing in <code>null</code> removes any
      * existing logo. You will need to set the format of the new logo bitstream
      * before it will work, for example to "JPEG". Note that
@@ -129,10 +112,9 @@ public interface CollectionService
      * @throws IOException        if IO error
      * @throws SQLException       if database error
      */
-    public Bitstream setLogo(Context context, Collection collection, InputStream is) throws AuthorizeException,
-        IOException, SQLException;
+  public Bitstream setLogo(Context context, Collection collection, InputStream is) throws AuthorizeException, IOException, SQLException;
 
-    /**
+  /**
      * Create a workflow group for the given step if one does not already exist.
      * Returns either the newly created group or the previously existing one.
      * Note that while the new group is created in the database, the association
@@ -146,10 +128,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public Group createWorkflowGroup(Context context, Collection collection, int step) throws SQLException,
-        AuthorizeException;
+  public Group createWorkflowGroup(Context context, Collection collection, int step) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Set the workflow group corresponding to a particular workflow step.
      * <code>null</code> can be passed in if there should be no associated
      * group for that workflow step; any existing group is NOT deleted.
@@ -161,10 +142,9 @@ public interface CollectionService
      * @throws SQLException passed through.
      * @throws AuthorizeException passed through.
      */
-    public void setWorkflowGroup(Context context, Collection collection, int step, Group group)
-        throws SQLException, AuthorizeException;
+  public void setWorkflowGroup(Context context, Collection collection, int step, Group group) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Get the the workflow group corresponding to a particular workflow step.
      * This returns <code>null</code> if there is no group associated with
      * this collection for the given step.
@@ -174,9 +154,9 @@ public interface CollectionService
      * @param step       the workflow step (1-3)
      * @return the group of reviewers or <code>null</code>
      */
-    public Group getWorkflowGroup(Context context, Collection collection, int step);
+  public Group getWorkflowGroup(Context context, Collection collection, int step);
 
-    /**
+  /**
      * Create a default submitters group if one does not already exist. Returns
      * either the newly created group or the previously existing one. Note that
      * other groups may also be allowed to submit to this collection by the
@@ -188,9 +168,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public Group createSubmitters(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public Group createSubmitters(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Remove the submitters group, if no group has already been created
      * then return without error. This will merely dereference the current
      * submitters group from the collection so that it may be deleted
@@ -201,10 +181,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public void removeSubmitters(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public void removeSubmitters(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-
-    /**
+  /**
      * Create a default administrators group if one does not already exist.
      * Returns either the newly created group or the previously existing one.
      * Note that other groups may also be administrators.
@@ -215,9 +194,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public Group createAdministrators(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public Group createAdministrators(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Remove the administrators group, if no group has already been created
      * then return without error. This will merely dereference the current
      * administrators group from the collection so that it may be deleted
@@ -228,9 +207,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public void removeAdministrators(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public void removeAdministrators(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Get the license that users must grant before submitting to this
      * collection. If the collection does not have a specific license, the
      * site-wide default is returned.
@@ -238,17 +217,17 @@ public interface CollectionService
      * @param collection Collection
      * @return the license for this collection
      */
-    public String getLicense(Collection collection);
+  public String getLicense(Collection collection);
 
-    /**
+  /**
      * Find out if the collection has a custom license
      *
      * @param collection Collection
      * @return <code>true</code> if the collection has a custom license
      */
-    public boolean hasCustomLicense(Collection collection);
+  public boolean hasCustomLicense(Collection collection);
 
-    /**
+  /**
      * Create an empty template item for this collection. If one already exists,
      * no action is taken. Caution: Make sure you call <code>update</code> on
      * the collection after doing this, or the item will have been created but
@@ -259,9 +238,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public void createTemplateItem(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public void createTemplateItem(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Remove the template item for this collection, if there is one. Note that
      * since this has to remove the old template item ID from the collection
      * record in the database, the collection record will be changed, including
@@ -274,10 +253,9 @@ public interface CollectionService
      * @throws AuthorizeException if authorization error
      * @throws IOException        if IO error
      */
-    public void removeTemplateItem(Context context, Collection collection)
-        throws SQLException, AuthorizeException, IOException;
+  public void removeTemplateItem(Context context, Collection collection) throws SQLException, AuthorizeException, IOException;
 
-    /**
+  /**
      * Add an item to the collection. This simply adds a relationship between
      * the item and the collection - it does nothing like set an issue date,
      * remove a personal workspace item etc. This has instant effect;
@@ -289,9 +267,9 @@ public interface CollectionService
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
      */
-    public void addItem(Context context, Collection collection, Item item) throws SQLException, AuthorizeException;
+  public void addItem(Context context, Collection collection, Item item) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Remove an item. If the item is then orphaned, it is deleted.
      *
      * @param context    DSpace Context
@@ -301,20 +279,17 @@ public interface CollectionService
      * @throws AuthorizeException if authorization error
      * @throws IOException        if IO error
      */
-    public void removeItem(Context context, Collection collection, Item item) throws SQLException, AuthorizeException,
-        IOException;
+  public void removeItem(Context context, Collection collection, Item item) throws SQLException, AuthorizeException, IOException;
 
-    public boolean canEditBoolean(Context context, Collection collection) throws SQLException;
+  public boolean canEditBoolean(Context context, Collection collection) throws SQLException;
 
-    public boolean canEditBoolean(Context context, Collection collection, boolean useInheritance)
-        throws java.sql.SQLException;
+  public boolean canEditBoolean(Context context, Collection collection, boolean useInheritance) throws java.sql.SQLException;
 
-    public void canEdit(Context context, Collection collection) throws SQLException, AuthorizeException;
+  public void canEdit(Context context, Collection collection) throws SQLException, AuthorizeException;
 
-    public void canEdit(Context context, Collection collection, boolean useInheritance)
-        throws SQLException, AuthorizeException;
+  public void canEdit(Context context, Collection collection, boolean useInheritance) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * return an array of collections that user has a given permission on
      * (useful for trimming 'select to collection' list) or figuring out which
      * collections a person is an editor for.
@@ -325,32 +300,31 @@ public interface CollectionService
      * @return Collection [] of collections with matching permissions
      * @throws SQLException if database error
      */
-    public List<Collection> findAuthorized(Context context, Community community, int actionID)
-        throws java.sql.SQLException;
+  public List<Collection> findAuthorized(Context context, Community community, int actionID) throws java.sql.SQLException;
 
-    /**
+  /**
      *
      * @param context DSpace Context
      * @param group EPerson Group
      * @return the collection, if any, that has the specified group as administrators or submitters
      * @throws SQLException
      */
-    public Collection findByGroup(Context context, Group group) throws SQLException;
+  public Collection findByGroup(Context context, Group group) throws SQLException;
 
-    List<Collection> findCollectionsWithSubscribers(Context context) throws SQLException;
+  List<Collection> findCollectionsWithSubscribers(Context context) throws SQLException;
 
-    int countTotal(Context context) throws SQLException;
+  int countTotal(Context context) throws SQLException;
 
-    /**
+  /**
      * The map entry returned contains a collection as a key and sum of bitstream sizes in bytes as a value
      *
      * @param context DSpace Context
      * @return List of Collections and bitstream sizes map
      * @throws SQLException if database error
      */
-    List<Map.Entry<Collection, Long>> getCollectionsWithBitstreamSizesTotal(Context context) throws SQLException;
+  List<Map.Entry<Collection, Long>> getCollectionsWithBitstreamSizesTotal(Context context) throws SQLException;
 
-    /**
+  /**
      * This method will create a default read group for the given Collection. It'll create either a defaultItemRead or
      * a defaultBitstreamRead group depending on the given parameters
      *
@@ -362,10 +336,9 @@ public interface CollectionService
      * @throws SQLException     If something goes wrong
      * @throws AuthorizeException   If something goes wrong
      */
-    Group createDefaultReadGroup(Context context, Collection collection, String typeOfGroupString, int defaultRead)
-        throws SQLException, AuthorizeException;
+  Group createDefaultReadGroup(Context context, Collection collection, String typeOfGroupString, int defaultRead) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * This method will return the name to give to the group created by the
      * {@link #createDefaultReadGroup(Context, Collection, String, int)} method
      *
@@ -373,9 +346,9 @@ public interface CollectionService
      * @param typeOfGroupString The type of group to use in the name generation
      * @return the name to give to the group that hold default read for the collection
      */
-    String getDefaultReadGroupName(Collection collection, String typeOfGroupString);
+  String getDefaultReadGroupName(Collection collection, String typeOfGroupString);
 
-    /**
+  /**
      * Returns Collections for which the current user has 'submit' privileges.
      * NOTE: for better performance, this method retrieves its results from an
      *       index (cache) and does not query the database directly.
@@ -393,10 +366,9 @@ public interface CollectionService
      * @throws SQLException              if something goes wrong
      * @throws SearchServiceException    if search error
      */
-    public List<Collection> findCollectionsWithSubmit(String q, Context context, Community community,
-            String entityType, int offset, int limit) throws SQLException, SearchServiceException;
+  public List<Collection> findCollectionsWithSubmit(String q, Context context, Community community, String entityType, int offset, int limit) throws SQLException, SearchServiceException;
 
-    /**
+  /**
      * Returns Collections for which the current user has 'submit' privileges.
      * NOTE: for better performance, this method retrieves its results from an
      *       index (cache) and does not query the database directly.
@@ -414,10 +386,9 @@ public interface CollectionService
      * @throws SQLException              if something goes wrong
      * @throws SearchServiceException    if search error
      */
-    public List<Collection> findCollectionsWithSubmit(String q, Context context, Community community,
-        int offset, int limit) throws SQLException, SearchServiceException;
+  public List<Collection> findCollectionsWithSubmit(String q, Context context, Community community, int offset, int limit) throws SQLException, SearchServiceException;
 
-    /**
+  /**
      * Counts the number of Collection for which the current user has 'submit' privileges.
      * NOTE: for better performance, this method retrieves its results from an index (cache)
      *       and does not query the database directly.
@@ -433,10 +404,9 @@ public interface CollectionService
      * @throws SQLException              if something goes wrong
      * @throws SearchServiceException    if search error
      */
-    public int countCollectionsWithSubmit(String q, Context context, Community community)
-        throws SQLException, SearchServiceException;
+  public int countCollectionsWithSubmit(String q, Context context, Community community) throws SQLException, SearchServiceException;
 
-    /**
+  /**
      * Counts the number of Collection for which the current user has 'submit' privileges.
      * NOTE: for better performance, this method retrieves its results from an index (cache)
      *       and does not query the database directly.
@@ -453,22 +423,21 @@ public interface CollectionService
      * @throws SQLException              if something goes wrong
      * @throws SearchServiceException    if search error
      */
-    public int countCollectionsWithSubmit(String q, Context context, Community community, String entityType)
-        throws SQLException, SearchServiceException;
+  public int countCollectionsWithSubmit(String q, Context context, Community community, String entityType) throws SQLException, SearchServiceException;
 
-    /**
+  int countArchivedItem(Collection collection) throws ItemCountException;
+
+  /**
      * Returns a list of all collections for a specific entity type.
      * NOTE: for better performance, this method retrieves its results from an index (cache)
      *       and does not query the database directly.
      *       This means that results may be stale or outdated until
      *       https://github.com/DSpace/DSpace/issues/2853 is resolved."
-     *
+     * 
      * @param context          DSpace Context
      * @param entityType       limit the returned collection to those related to given entity type
      * @return                 list of collections found
      * @throws SearchServiceException    if search error
      */
-    public List<Collection> findAllCollectionsByEntityType(Context context, String entityType)
-        throws SearchServiceException;
-    int countArchivedItem(Collection collection) throws ItemCountException;
+  public List<Collection> findAllCollectionsByEntityType(Context context, String entityType) throws SearchServiceException;
 }
