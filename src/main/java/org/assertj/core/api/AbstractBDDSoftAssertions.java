@@ -12,16 +12,16 @@
  */
 package org.assertj.core.api;
 
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.*;
 import java.util.*;
+import java.time.*;
 
-import static org.assertj.core.api.Assertions.catchThrowable;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 public abstract class AbstractBDDSoftAssertions extends AbstractSoftAssertions {
 

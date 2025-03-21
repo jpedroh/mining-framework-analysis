@@ -594,6 +594,20 @@ public interface WithAssertions {
     return Assertions.assertThat(localDate);
   }
 
+  /**
+   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalTime)}
+   */
+  default public AbstractLocalTimeAssert<?> assertThat(final LocalTime localTime) {
+      return Assertions.assertThat(localTime);
+  }
+
+  /**
+   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(OffsetTime)}
+   */
+  default public AbstractOffsetTimeAssert<?> assertThat(final OffsetTime offsetTime) {
+      return Assertions.assertThat(offsetTime);
+  }
+
   // --------------------------------------------------------------------------------------------------
   // Filter methods : not assertions but here to have a complete entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
@@ -610,19 +624,5 @@ public interface WithAssertions {
    */
   default public <E> Filters<E> filter(final Iterable<E> iterableToFilter) {
     return Assertions.filter(iterableToFilter);
-  }
-
-  /**
-   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalTime)}
-   */
-  default public AbstractLocalTimeAssert<?> assertThat(final LocalTime localTime) {
-      return Assertions.assertThat(localTime);
-  }
-
-  /**
-   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(OffsetTime)}
-   */
-  default public AbstractOffsetTimeAssert<?> assertThat(final OffsetTime offsetTime) {
-      return Assertions.assertThat(offsetTime);
   }
 }

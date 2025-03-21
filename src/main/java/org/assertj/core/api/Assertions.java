@@ -12,6 +12,15 @@
  */
 package org.assertj.core.api;
 
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.text.DateFormat;
+import java.util.*;
+import java.time.*;
+
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.condition.AllOf;
@@ -26,15 +35,6 @@ import org.assertj.core.groups.Tuple;
 import org.assertj.core.util.Files;
 import org.assertj.core.util.FilesException;
 import org.assertj.core.util.introspection.FieldSupport;
-
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.text.DateFormat;
-import java.time.*;
-import java.util.*;
 
 /**
  * Entry point for assertion methods for different data types. Each method in this class is a static factory for the
@@ -80,6 +80,17 @@ public class Assertions {
   }
 
   /**
+   * Create assertion for {@link java.time.OffsetTime}.
+   *
+   * @param offsetTime the actual value.
+   *
+   * @return the created assertion object.
+   */
+  public static OffsetTimeAssert assertThat(OffsetTime offsetTime) {
+      return new OffsetTimeAssert(offsetTime);
+  }
+
+  /**
    * Create assertion for {@link java.util.OptionalDouble}.
    *
    * @param optionalDouble the actual value.
@@ -112,18 +123,7 @@ public class Assertions {
         return new OptionalLongAssert(optionalLong);
     }
 
-  /**
-   * Create assertion for {@link java.time.OffsetTime}.
-   *
-   * @param offsetTime the actual value.
-   *
-   * @return the created assertion object.
-   */
-  public static OffsetTimeAssert assertThat(OffsetTime offsetTime) {
-      return new OffsetTimeAssert(offsetTime);
-  }
-
-  /**
+    /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
    * @param actual the actual value.
@@ -242,6 +242,12 @@ public class Assertions {
    */
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
     return new GenericComparableAssert<>(actual);
+  }
+  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
+    return new ObjectAssert<>(actual);
+  }
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
   }
 
   /**
@@ -434,9 +440,6 @@ public class Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> AbstractObjectAssert<?, T> assertThat(T actual) {
-    return new ObjectAssert<>(actual);
-  }
 
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
@@ -495,9 +498,6 @@ public class Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
@@ -600,7 +600,7 @@ public class Assertions {
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
-   * @param date the actual value.
+   * @param actual the actual value.
    * @return the created assertion object.
    */
   public static AbstractZonedDateTimeAssert<?> assertThat(ZonedDateTime date) {
@@ -610,7 +610,7 @@ public class Assertions {
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
-   * @param localDateTime the actual value.
+   * @param actual the actual value.
    * @return the created assertion object.
    */
   public static AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime localDateTime) {

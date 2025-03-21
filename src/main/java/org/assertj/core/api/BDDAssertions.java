@@ -12,13 +12,13 @@
  */
 package org.assertj.core.api;
 
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.time.*;
 import java.util.*;
+import java.time.*;
+
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 /**
  * BDD style entry point for assertion methods for different data types. Each method in this class is a static factory
