@@ -1,3 +1,4 @@
+
 package com.jfinal.kit;
 
 import java.nio.charset.Charset;
@@ -13,12 +14,11 @@ import javax.crypto.spec.SecretKeySpec;
  * @ClassName: AesKit  
  */
 public class AesKit {
-	
 	private static final Charset UTF_8 = Charset.forName("UTF-8");
 	
 	private AesKit(){}
 	
-	public static String genAesKey(){
+	public static String genAesKey() {
 		return HashKit.generateSalt(32);
 	}
 	
@@ -30,7 +30,7 @@ public class AesKit {
 		return encrypt(content.getBytes(UTF_8), aesTextKey.getBytes(UTF_8));
 	}
 	
-	public static byte[] encrypt(String content, String charsetName, String aesTextKey){
+	public static byte[] encrypt(String content, String charsetName, String aesTextKey) {
 		return encrypt(content.getBytes(Charset.forName(charsetName)), aesTextKey.getBytes(UTF_8));
 	}
 	
@@ -63,7 +63,7 @@ public class AesKit {
 
 	public static byte[] decrypt(byte[] encrypted, byte[] aesKey){
 		try {
-			if(aesKey.length != 32){
+			if(aesKey.length != 32) {
 				throw new RuntimeException("IllegalAesKey, aesKey's length must be 32");
 			}
 			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
@@ -113,3 +113,10 @@ public class AesKit {
 	    }
 	}
 }
+
+
+
+
+
+
+
