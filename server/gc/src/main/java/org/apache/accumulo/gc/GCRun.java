@@ -202,7 +202,8 @@ public class GCRun implements GarbageCollectionEnvironment {
       // scans are normally empty, so only introduce a layer of indirection when needed
       final var tmScans = tm.getScans();
       if (!tmScans.isEmpty()) {
-        var scanStream = tmScans.stream().map(s -> ReferenceFile.forScan(tableId, s));
+        var scanStream =
+            tmScans.stream().map(s -> ReferenceFile.forScan(tableId, s.getMetaUpdateDelete()));
         fileStream = Stream.concat(fileStream, scanStream);
       }
       // if dirName is populated, then we have a tablet directory aka srv:dir
