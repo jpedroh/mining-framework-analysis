@@ -48,7 +48,7 @@ public class ADTokenSampleStreamTest {
   @BeforeEach
   void setup() throws IOException, URISyntaxException {
     ADTokenSampleStreamFactory<ADTokenSampleStreamFactory.Parameters> factory =
-            new ADTokenSampleStreamFactory<>(ADTokenSampleStreamFactory.Parameters.class);
+        new ADTokenSampleStreamFactory<>(ADTokenSampleStreamFactory.Parameters.class);
 
     File dict = new File(Objects.requireNonNull(getClass().getClassLoader()
         .getResource("opennlp/tools/tokenize/latin-detokenizer.xml")).toURI());

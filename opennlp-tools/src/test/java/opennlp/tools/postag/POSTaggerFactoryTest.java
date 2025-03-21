@@ -88,9 +88,19 @@ public class POSTaggerFactoryTest {
     POSModel posModel = trainPOSModel(new POSTaggerFactory(null, null, posDict));
 
     POSTaggerFactory factory = posModel.getFactory();
+<<<<<<< /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/left.java
+    Assert.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
+    Assert.assertNotNull(factory.getPOSContextGenerator());
+    Assert.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+||||||| /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/base.java
+    Assert.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
+    Assert.assertTrue(factory.getPOSContextGenerator() != null);
+    Assert.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+=======
     Assertions.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
-    Assertions.assertNotNull(factory.getPOSContextGenerator());
+    Assertions.assertTrue(factory.getPOSContextGenerator() != null);
     Assertions.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+>>>>>>> /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/right.java
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     posModel.serialize(out);
@@ -99,9 +109,19 @@ public class POSTaggerFactoryTest {
     POSModel fromSerialized = new POSModel(in);
 
     factory = fromSerialized.getFactory();
+<<<<<<< /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/left.java
+    Assert.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
+    Assert.assertNotNull(factory.getPOSContextGenerator());
+    Assert.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+||||||| /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/base.java
+    Assert.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
+    Assert.assertTrue(factory.getPOSContextGenerator() != null);
+    Assert.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+=======
     Assertions.assertTrue(factory.getTagDictionary() instanceof POSDictionary);
-    Assertions.assertNotNull(factory.getPOSContextGenerator());
+    Assertions.assertTrue(factory.getPOSContextGenerator() != null);
     Assertions.assertTrue(factory.getSequenceValidator() instanceof DefaultPOSSequenceValidator);
+>>>>>>> /usr/src/app/output/apache/opennlp/2b3da98ce263962eb229a0023199ed5286834af1/opennlp-tools/src/test/java/opennlp/tools/postag/POSTaggerFactoryTest.java/right.java
   }
 
   @Test

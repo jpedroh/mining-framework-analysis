@@ -149,13 +149,13 @@ public class NgramLanguageModelTest {
         }
       }
       String[] tokens = languageModel.predictNextTokens("neural",
-          "network", "language");
+              "network", "language");
       Assertions.assertNotNull(tokens);
       Assertions.assertArrayEquals(new String[] {"models"}, tokens);
       double p1 = languageModel.calculateProbability("neural", "network",
-          "language", "models");
+              "language", "models");
       double p2 = languageModel.calculateProbability("neural", "network",
-          "language", "model");
+              "language", "model");
       Assertions.assertTrue(p1 > p2);
     }
   }
