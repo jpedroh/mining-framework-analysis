@@ -54,7 +54,13 @@ public class UniqueNameAllocator {
   public synchronized String getNextName() {
 
     while (next >= maxAllocated) {
+<<<<<<< /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/server/base/src/main/java/org/apache/accumulo/server/tablets/UniqueNameAllocator.java/left.java
+      final int allocate = 100 + RANDOM.get().nextInt(100);
+||||||| /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/server/base/src/main/java/org/apache/accumulo/server/tablets/UniqueNameAllocator.java/base.java
+      final int allocate = 100 + random.nextInt(100);
+=======
       final int allocate = getAllocation();
+>>>>>>> /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/server/base/src/main/java/org/apache/accumulo/server/tablets/UniqueNameAllocator.java/right.java
 
       try {
         byte[] max = context.getZooReaderWriter().mutateExisting(nextNamePath, currentValue -> {
@@ -89,7 +95,7 @@ public class UniqueNameAllocator {
 
     int totalAllocation = baseAllocation;
     if (jitterAllocation > 0) {
-      totalAllocation += RANDOM.get().nextInt(jitterAllocation);
+      totalAllocation += random.nextInt(jitterAllocation);
     }
 
     log.debug("Allocating {} filenames", totalAllocation);

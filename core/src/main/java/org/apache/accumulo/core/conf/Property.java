@@ -1446,9 +1446,19 @@ public enum Property {
         || key.startsWith(Property.TSERV_PREFIX.getKey())
         || key.startsWith(Property.MANAGER_PREFIX.getKey())
         || key.startsWith(Property.GC_PREFIX.getKey())
+<<<<<<< /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/core/src/main/java/org/apache/accumulo/core/conf/Property.java/left.java
+        || key.startsWith(Property.GENERAL_ARBITRARY_PROP_PREFIX.getKey());
+||||||| /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/core/src/main/java/org/apache/accumulo/core/conf/Property.java/base.java
+        || key.startsWith(Property.GENERAL_ARBITRARY_PROP_PREFIX.getKey())
+        || key.startsWith(VFS_CONTEXT_CLASSPATH_PROPERTY.getKey())
+        || key.startsWith(REPLICATION_PREFIX.getKey());
+=======
         || key.startsWith(Property.GENERAL_ARBITRARY_PROP_PREFIX.getKey())
         || key.equals(Property.GENERAL_FILENAME_BASE_ALLOCATION.getKey())
-        || key.equals(Property.GENERAL_FILENAME_JITTER_ALLOCATION.getKey());
+        || key.equals(Property.GENERAL_FILENAME_JITTER_ALLOCATION.getKey())
+        || key.startsWith(VFS_CONTEXT_CLASSPATH_PROPERTY.getKey())
+        || key.startsWith(REPLICATION_PREFIX.getKey());
+>>>>>>> /usr/src/app/output/apache/accumulo/5bec1c33af6c464ce75f25ade7b4bd4dba0709ea/core/src/main/java/org/apache/accumulo/core/conf/Property.java/right.java
   }
 
   /**
