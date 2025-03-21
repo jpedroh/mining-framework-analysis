@@ -3,6 +3,7 @@ package hudson.plugins.deploy;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import hudson.*;
 import hudson.model.*;
+import hudson.model.AbstractBuild;
 import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
