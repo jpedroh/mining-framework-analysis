@@ -168,7 +168,7 @@ public class NonStandardNumberParsingTest
         }
     }
 
-    private void _testLeadingDotInNegativeDecimalAllowed(JsonFactory f, int mode)
+    private void _testLeadingDotInNegativeDecimalAllowed(JsonFactory f, int mode) throws Exception
     {
         try (JsonParser p = createParser(f, mode, " -.125 ")) {
             assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
