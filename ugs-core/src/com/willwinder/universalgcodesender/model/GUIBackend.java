@@ -92,7 +92,9 @@ public class GUIBackend implements BackendAPI {
     }
 
     /////////////
+
     // GUI API //
+
     /////////////
 
     @Override
@@ -128,6 +130,7 @@ public class GUIBackend implements BackendAPI {
      * Additional rules:
      * * Comment lines are left
      */
+
     protected void preprocessAndExportToFile(GcodeParser gcp, File input, IGcodeWriter gcw) throws Exception {
         logger.log(Level.INFO, "Preprocessing {0} to {1}", new Object[]{input.getCanonicalPath(), gcw.getCanonicalPath()});
         GcodeParserUtils.processAndExport(gcp, input, gcw);
@@ -223,6 +226,7 @@ public class GUIBackend implements BackendAPI {
     /**
      * This allows us to visualize a file without loading a controller profile.
      */
+
     private static void initializeWithFallbackProcessors(GcodeParser parser) {
         // Comment processor must come first otherwise we try to parse codes
         // out of the comments, like an f-code when we see "(feed rate is 100)"
@@ -627,13 +631,32 @@ public class GUIBackend implements BackendAPI {
     }
 
     ///////////////////////
+
     // Utility functions //
+
     ///////////////////////
 
     @Override
     public void requestParserState() throws Exception {
         this.controller.viewParserState();
     }
+
+    /////////////////////////
+
+    // Controller Listener //
+
+    /////////////////////////
+
+    @Override
+    public void fileStreamComplete(String filename) {
+        this.sendUGSEvent(new FileStateEvent(FileState.FILE_STREAM_COMPLETE, filename));
+    }
+
+    ///////////////////////
+
+    // Utility functions //
+
+    ///////////////////////
 
     /**
      * This would be static but I want to define it in the interface.

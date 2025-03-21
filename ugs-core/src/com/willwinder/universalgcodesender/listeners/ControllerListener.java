@@ -30,6 +30,7 @@ import com.willwinder.universalgcodesender.types.GcodeCommand;
 public interface ControllerListener {
 
     /**
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/left.java
      * An event triggered when a stream is stopped
      */
     void streamCanceled();
@@ -50,9 +51,24 @@ public interface ControllerListener {
     void streamResumed();
 
     /**
+||||||| /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/base.java
+     * The controller has modified the state by itself, such as pausing a job on
+     * an error.
+     */
+    void controlStateChange(CommunicatorState state);
+
+    /**
+=======
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/right.java
      * The file streaming has completed.
      */
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/left.java
     void streamComplete(String filename);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/base.java
+    void fileStreamComplete(String filename, boolean success);
+=======
+    void fileStreamComplete(String filename);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/listeners/ControllerListener.java/right.java
 
     /**
      * If an alarm is received from the controller

@@ -804,13 +804,20 @@ public abstract class AbstractController implements CommunicatorListener, IContr
         }
     }
 
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/AbstractController.java/left.java
     protected void dispatchStreamComplete(String filename) {
         listeners.forEach(l -> l.streamComplete(filename));
     }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/AbstractController.java/base.java
+=======
+    protected void dispatchStreamComplete(String filename) {
+        listeners.forEach(l -> l.fileStreamComplete(filename));
+    }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/ecb4e57f1fd34179074d7194438f5e864f84b619/ugs-core/src/com/willwinder/universalgcodesender/AbstractController.java/right.java
 
     protected void dispatchCommandSkipped(GcodeCommand command) {
-        listeners.forEach(l -> l.commandSkipped(command));
-    }
+    listeners.forEach(l -> l.commandSkipped(command));
+}
 
     protected void dispatchCommandSent(GcodeCommand command) {
         listeners.forEach(l -> l.commandSent(command));
