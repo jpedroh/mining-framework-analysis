@@ -39,7 +39,13 @@ public class EgressDiagnostics {
             System.out.println("local: " + local);
             NetworkInterface ni = NetworkInterface.getByInetAddress(local);
             System.out.println("interface: " + ni);
+<<<<<<< /usr/src/app/output/cowtowncoder/java-uuid-generator/34ea9b33399f186391b0bfa1534c86a03b9d192a/src/main/java/test/EgressDiagnostics.java/left.java
             System.out.println("hardware: " + (ni == null ? null : macBytesToHex(ni.getHardwareAddress())));
+||||||| /usr/src/app/output/cowtowncoder/java-uuid-generator/34ea9b33399f186391b0bfa1534c86a03b9d192a/src/main/java/test/EgressDiagnostics.java/base.java
+            System.out.println("hardware: " + ni.getHardwareAddress());
+=======
+            System.out.println("hardware: " + (ni == null ? null : ni.getHardwareAddress().toString().substring(3)));
+>>>>>>> /usr/src/app/output/cowtowncoder/java-uuid-generator/34ea9b33399f186391b0bfa1534c86a03b9d192a/src/main/java/test/EgressDiagnostics.java/right.java
         } catch (Throwable t) {
             System.out.println(t);
             t.printStackTrace();
