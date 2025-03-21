@@ -16,8 +16,11 @@ public class PublishStatusView implements ViewObject
             this.effectDateTime = publishStatus.getEffectDateTime().toString();
         }
     }
+    public PublishStatusView(){}
 
-    protected PublishStatusView() {}
+    protected PublishStatusView() {
+        super();
+    }
 
     @Override
     public String getViewType() {

@@ -25,6 +25,7 @@ public class AgendaCommAddendumView implements ViewObject
     private AgendaVoteView voteInfo;
     private AgendaId agendaId;
     private CommitteeId committeeId;
+    private CommitteeAgendaAddendumId committeeAgendaAddendumId;
 
     public AgendaCommAddendumView(String addendumId, LocalDateTime modDateTime, AgendaInfoCommittee infoComm,
                                   AgendaVoteCommittee voteComm, BillDataService billDataService) {
@@ -40,8 +41,15 @@ public class AgendaCommAddendumView implements ViewObject
             if (this.hasVotes) {
                 this.voteInfo = new AgendaVoteView(voteComm);
             }
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/0dcc6a0996c0d14e9e3c49b973e1e37ede8a3b97/src/main/java/gov/nysenate/openleg/client/view/agenda/AgendaCommAddendumView.java/left.java
             this.agendaId = infoComm.getAgendaId();
             this.committeeId = infoComm.getCommitteeId();
+            this.committeeAgendaAddendumId = new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(addendumId));
+||||||| /usr/src/app/output/nysenate/openlegislation/0dcc6a0996c0d14e9e3c49b973e1e37ede8a3b97/src/main/java/gov/nysenate/openleg/client/view/agenda/AgendaCommAddendumView.java/base.java
+=======
+            this.agendaId = infoComm.getAgendaId();
+            this.committeeId = infoComm.getCommitteeId();
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/0dcc6a0996c0d14e9e3c49b973e1e37ede8a3b97/src/main/java/gov/nysenate/openleg/client/view/agenda/AgendaCommAddendumView.java/right.java
         }
     }
 
@@ -88,6 +96,11 @@ public class AgendaCommAddendumView implements ViewObject
         this.committeeId = committeeId;
     }
 
+    public CommitteeAgendaAddendumId getCommitteeAgendaAddendumId() {
+        return new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(this.addendumId) );
+    }
+
+    @JsonIgnore
     public CommitteeAgendaAddendumId getCommitteeAgendaAddendumId() {
         return new CommitteeAgendaAddendumId(this.agendaId, this.committeeId, Version.of(this.addendumId) );
     }

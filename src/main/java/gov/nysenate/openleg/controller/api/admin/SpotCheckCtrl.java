@@ -30,7 +30,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -291,6 +290,21 @@ public class SpotCheckCtrl extends BaseCtrl
     }
 
     /**
+     * Spotcheck Interval Report Run API
+     *
+     * Attempts to run all spotcheck reports designated as interval reports
+     *
+     * Usage: (GET) /api/3/admin/spotcheck/run/interval
+     */
+    @RequiresPermissions("admin:view")
+    @RequestMapping(value = "/run/interval")
+    public BaseResponse runWeeklyReports() {
+        spotcheckRunService.runIntervalReports();
+        return new SimpleResponse(true, "interval reports run", "report report");
+    }
+
+
+    /**
      * Spotcheck Report Run API
      *
      * Attempts to run spotcheck reports for the given report types
@@ -316,21 +330,6 @@ public class SpotCheckCtrl extends BaseCtrl
                 refTypes.stream().map(SpotCheckRefType::toString).collect(Collectors.toList())),
                 "spotcheck reports run");
     }
-
-    /**
-     * Spotcheck Interval Report Run API
-     *
-     * Attempts to run all spotcheck reports designated as interval reports
-     *
-     * Usage: (GET) /api/3/admin/spotcheck/run/interval
-     */
-    @RequiresPermissions("admin:view")
-    @RequestMapping(value = "/run/interval")
-    public BaseResponse runWeeklyReports() {
-        spotcheckRunService.runIntervalReports();
-        return new SimpleResponse(true, "interval reports run", "report report");
-    }
-
 
     /** --- Internal Methods --- */
 

@@ -60,7 +60,7 @@ public class Environment
     /** --- Processing settings --- */
 
     /** Enable processing of data. */
-    @Value("${sobi.process.enabled:true}")
+    @Value("${sobi.process.enabled}")
     private boolean sobiProcessEnabled;
 
     @Value("${data.process.enabled}") private boolean processingEnabled;
@@ -116,19 +116,12 @@ public class Environment
     /** The domain and the context path of the application */
     @Value ("${domain.url}") private String url;
 
-    /** The base url of the NYSenate.gov public website */
-    @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
-
+    /** The domain and context path for the 1.9.2 prod server */
     /** ---- Openleg Reference ---*/
-
     @Value ("${ref.api.key}") private String refApiKey;
-
     @Value ("${ref.url}") private String refUrl;
-
     /** --- Constructors --- */
-
     public Environment() {}
-
     @PostConstruct
     private void init() {
         deployedDateTime = LocalDateTime.now();
@@ -140,245 +133,186 @@ public class Environment
 
         this.spotcheckAlertGracePeriod = Duration.ofMinutes(rawAlertGracePeriod);
     }
-
     /** --- Basic Getters/Setters --- */
-
     public String getSchema() {
         return schema;
     }
-
     public void setSchema(String schema) {
         this.schema = schema;
     }
-
     public File getBaseDir() {
         return baseDir;
     }
-
     public File getStagingDir() {
         return stagingDir;
     }
-
     public File getArchiveDir() {
         return archiveDir;
     }
-
     public boolean isElasticIndexing() {
         return elasticIndexing;
     }
-
     public void setElasticIndexing(boolean elasticIndexing) {
         this.elasticIndexing = elasticIndexing;
     }
-
     public boolean isProcessingEnabled() {
         return processingEnabled;
     }
-
     public void setProcessingEnabled(boolean processingEnabled) {
         this.processingEnabled = processingEnabled;
     }
-
     public boolean isProcessLoggingEnabled() {
         return processLoggingEnabled;
     }
-
     public void setProcessLoggingEnabled(boolean processLoggingEnabled) {
         this.processLoggingEnabled = processLoggingEnabled;
     }
-
     public boolean isSobiBatchEnabled() {
         return sobiBatchEnabled;
     }
-
     public void setSobiBatchEnabled(boolean sobiBatchEnabled) {
         this.sobiBatchEnabled = sobiBatchEnabled;
     }
-
     public int getSobiBatchSize() {
         return sobiBatchSize;
     }
-
     public void setSobiBatchSize(int sobiBatchSize) {
         this.sobiBatchSize = sobiBatchSize;
     }
-
     public String getApiSecret() {
         return apiSecret;
     }
-
     public boolean isProcessingScheduled() {
         return processingScheduled;
     }
-
     public void setProcessingScheduled(boolean processingScheduled) {
         this.processingScheduled = processingScheduled;
     }
-
     public boolean isSpotcheckScheduled() {
         return spotcheckScheduled;
     }
-
     public void setSpotcheckScheduled(boolean spotcheckScheduled) {
         this.spotcheckScheduled = spotcheckScheduled;
     }
-
     public boolean isNotificationsEnabled() {
         return notificationsEnabled;
     }
-
     public String getUrl() {
         return url;
     }
-
     public void setUrl(String url) {
         this.url = url;
     }
-
     public int getSlackLineLimit() {
         return slackLineLimit;
     }
-
     public void setSlackLineLimit(int slackLineLimit) {
         this.slackLineLimit = slackLineLimit;
     }
-
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
-
     public void setBaseDir(File baseDir) {
         this.baseDir = baseDir;
     }
-
     public void setStagingDir(File stagingDir) {
         this.stagingDir = stagingDir;
     }
-
     public void setArchiveDir(File archiveDir) {
         this.archiveDir = archiveDir;
     }
-
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
     }
-
     public String getEmailHost() {
         return emailHost;
     }
-
     public void setEmailHost(String emailHost) {
         this.emailHost = emailHost;
     }
-
     public String getEmailUser() {
         return emailUser;
     }
-
     public void setEmailUser(String emailUser) {
         this.emailUser = emailUser;
     }
-
     public String getEmailPass() {
         return emailPass;
     }
-
     public void setEmailPass(String emailPass) {
         this.emailPass = emailPass;
     }
-
     public String getEmailReceivingFolder() {
         return emailReceivingFolder;
     }
-
     public void setEmailReceivingFolder(String emailReceivingFolder) {
         this.emailReceivingFolder = emailReceivingFolder;
     }
-
     public String getEmailProcessedFolder() {
         return emailProcessedFolder;
     }
-
     public void setEmailProcessedFolder(String emailProcessedFolder) {
         this.emailProcessedFolder = emailProcessedFolder;
     }
-
     public Duration getSpotcheckAlertGracePeriod() {
         return spotcheckAlertGracePeriod;
     }
-
     public void setSpotcheckAlertGracePeriod(Duration spotcheckAlertGracePeriod) {
         this.spotcheckAlertGracePeriod = spotcheckAlertGracePeriod;
     }
-
     public File getScrapedStagingDir() {
         return scrapedStagingDir;
     }
-
     public void setScrapedStagingDir(File scrapedStagingDir) {
         this.scrapedStagingDir = scrapedStagingDir;
     }
-
     public String getDefaultAdminName() {
         return defaultAdminName;
     }
-
     public void setDefaultAdminName(String defaultAdminName) {
         this.defaultAdminName = defaultAdminName;
     }
-
     public String getDefaultAdminPass() {
         return defaultAdminPass;
     }
-
     public void setDefaultAdminPass(String defaultAdminPass) {
         this.defaultAdminPass = defaultAdminPass;
     }
-
     public boolean isBillScrapeQueueEnabled() {
         return billScrapeQueueEnabled;
     }
-
     public void setBillScrapeQueueEnabled(boolean billScrapeQueueEnabled) {
         this.billScrapeQueueEnabled = billScrapeQueueEnabled;
     }
-
     public LocalDateTime getDeployedDateTime() {
         return deployedDateTime;
     }
-
     public boolean getSobiProcessEnabled() {
         return sobiProcessEnabled;
     }
-
     public String getRefApiKey() {
         return refApiKey;
     }
-
     public void setRefApiKey(String refApiKey) {
         this.refApiKey = refApiKey;
     }
-
     public String getRefUrl() {
         return refUrl;
     }
-
     public void setRefUrl(String refUrl) {
         this.refUrl = refUrl;
     }
-
+    /** The base url of the NYSenate.gov public website */
+    @Value ("${nysenate.gov.url:https://www.NYSenate.gov}") private String senSiteUrl;
     public String getSenSiteUrl() {
         return senSiteUrl;
     }
-
     public void setSenSiteUrl(String senSiteUrl) {
         this.senSiteUrl = senSiteUrl;
     }
-
     public boolean isCheckmailEnabled() {
         return checkmailEnabled;
     }
-
     public void setCheckmailEnabled(boolean checkmailEnabled) {
         this.checkmailEnabled = checkmailEnabled;
     }

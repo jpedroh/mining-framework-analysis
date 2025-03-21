@@ -3,14 +3,11 @@ package gov.nysenate.openleg.model.calendar.spotcheck;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ComparisonChain;
 import gov.nysenate.openleg.model.base.Version;
-import gov.nysenate.openleg.model.calendar.*;
-import gov.nysenate.openleg.model.calendar.CalendarId;
-import gov.nysenate.openleg.model.calendar.CalendarType;
-
-import static gov.nysenate.openleg.model.calendar.CalendarType.ACTIVE_LIST;
-import static gov.nysenate.openleg.model.calendar.CalendarType.SUPPLEMENTAL_CALENDAR;
 
 import static gov.nysenate.openleg.model.calendar.CalendarType.*;
+import gov.nysenate.openleg.model.calendar.*;
+import static gov.nysenate.openleg.model.calendar.CalendarType.ACTIVE_LIST;
+import static gov.nysenate.openleg.model.calendar.CalendarType.SUPPLEMENTAL_CALENDAR;
 
 /**
  * Identifies a data type that contains a calendar entry list
@@ -25,24 +22,20 @@ public class CalendarEntryListId extends CalendarId {
     /** Indicates sequence number if the entry list is for an active list */
     protected Integer sequenceNo;
 
-    /* --- Constructors --- */
-
     public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo) {
         super(calendarId);
-        this.type = type;
         this.version = version;
         this.sequenceNo = sequenceNo;
+        this.type = type;
     }
 
-    public CalendarEntryListId(CalendarActiveListId activeListId) {
-        this(activeListId, ACTIVE_LIST, null, activeListId.getSequenceNo());
+    public CalendarEntryListId(CalendarId calendarId, CalendarType type, Version version, Integer sequenceNo, LocalDate calDate) {
+        super(calendarId);
+        this.version = version;
+        this.sequenceNo = sequenceNo;
+        this.calDate = calDate;
+        this.type = type;
     }
-
-    public CalendarEntryListId(CalendarSupplementalId calSupId) {
-        this(calSupId, SUPPLEMENTAL_CALENDAR, calSupId.getVersion(), null);
-    }
-
-    /* --- Overridden Methods --- */
 
     @Override
     public boolean equals(Object o) {
@@ -109,6 +102,22 @@ public class CalendarEntryListId extends CalendarId {
     public CalendarId getCalendarId(){
         return this;
     }
+
+    /* --- Constructors --- */
+
+    public CalendarEntryListId(CalendarActiveListId activeListId) {
+        this(activeListId, ACTIVE_LIST, null, activeListId.getSequenceNo());
+    }
+
+    public CalendarEntryListId(CalendarSupplementalId calSupId) {
+        this(calSupId, SUPPLEMENTAL_CALENDAR, calSupId.getVersion(), null);
+    }
+
+    /* --- Functional Getters --- */
+
+    /* --- Overridden Methods --- */
+
+    /* --- Basic Getters --- */
 
     public CalendarType getType() { return type; }
 
