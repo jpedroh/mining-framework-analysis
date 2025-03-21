@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.checks.utils;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
@@ -43,7 +23,6 @@ import org.sonar.plugins.php.api.visitors.PHPVisitorCheck;
  * {@link ArgumentMatcher} can be used. They are used as a condition for the verification.
  */
 public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
-
   private AssignmentExpressionVisitor assignmentExpressionVisitor;
 
   /**
@@ -63,7 +42,6 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
   public void checkArgument(FunctionCallTree tree, String expectedFunctionName, ArgumentMatcher... expectedArgument) {
     String functionName = CheckUtils.getLowerCaseFunctionName(tree);
     List<ExpressionTree> arguments = tree.arguments();
-
     if (expectedFunctionName.equals(functionName)) {
       for (ArgumentMatcher argumentMatcher : expectedArgument) {
         if (argumentMatcher.position >= arguments.size() || !verifyArgument(arguments, argumentMatcher)) {
@@ -73,8 +51,7 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
     }
   }
 
-  @Override
-  public void visitCompilationUnit(CompilationUnitTree tree) {
+  @Override public void visitCompilationUnit(CompilationUnitTree tree) {
     assignmentExpressionVisitor = new AssignmentExpressionVisitor(context().symbolTable());
     tree.accept(assignmentExpressionVisitor);
     super.visitCompilationUnit(tree);
@@ -83,20 +60,16 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
   private boolean verifyArgument(List<ExpressionTree> arguments, ArgumentMatcher argumentMatcher) {
     ExpressionTree argument = arguments.get(argumentMatcher.position);
     ExpressionTree argumentValue = getAssignedValue(argument);
-
     Optional<String> value = nameOf(argumentValue);
     if (value.isPresent()) {
       String quoteLessLowercaseValue = CheckUtils.trimQuotes(value.get()).toLowerCase(Locale.ENGLISH);
       boolean containValues = argumentMatcher.values.contains(quoteLessLowercaseValue);
-
       if (argumentMatcher instanceof ArgumentVerifier && ((ArgumentVerifier) argumentMatcher).raiseIssueOnMatch == containValues) {
         createIssue(argument);
         return true;
       }
-
       return containValues;
     }
-
     return false;
   }
 
@@ -116,15 +89,12 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
   private ExpressionTree getAssignedValue(ExpressionTree value) {
     if (value.is(Tree.Kind.VARIABLE_IDENTIFIER)) {
       Symbol valueSymbol = context().symbolTable().getSymbol(value);
-      return assignmentExpressionVisitor
-        .getUniqueAssignedValue(valueSymbol)
-        .orElse(value);
+      return assignmentExpressionVisitor.getUniqueAssignedValue(valueSymbol).orElse(value);
     }
     return value;
   }
 
   protected static class ArgumentMatcher {
-
     private final int position;
 
     private final Set<String> values;
@@ -135,24 +105,19 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
 
     public ArgumentMatcher(int position, Set<String> values) {
       this.position = position;
-      this.values = values.stream()
-        .map(name -> name.toLowerCase(Locale.ENGLISH))
-        .collect(Collectors.toSet());
+      this.values = values.stream().map((name) -> name.toLowerCase(Locale.ENGLISH)).collect(Collectors.toSet());
     }
 
-    @VisibleForTesting
-    int getPosition() {
+    @VisibleForTesting int getPosition() {
       return position;
     }
 
-    @VisibleForTesting
-    Set<String> getValues() {
+    @VisibleForTesting Set<String> getValues() {
       return values;
     }
   }
 
   protected static class ArgumentVerifier extends ArgumentMatcher {
-
     private boolean raiseIssueOnMatch = true;
 
     public ArgumentVerifier(int position, Set<String> values) {
@@ -173,8 +138,7 @@ public abstract class FunctionArgumentCheck extends PHPVisitorCheck {
       this.raiseIssueOnMatch = raiseIssueOnMatch;
     }
 
-    @VisibleForTesting
-    boolean isRaiseIssueOnMatch() {
+    @VisibleForTesting boolean isRaiseIssueOnMatch() {
       return raiseIssueOnMatch;
     }
   }
