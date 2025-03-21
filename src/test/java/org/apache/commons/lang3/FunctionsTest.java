@@ -188,9 +188,8 @@ class FunctionsTest {
 
     @Test
     void testAsRunnable() {
-        FailureOnOddInvocations.invocation = 0;
         final Runnable runnable = Functions.asRunnable(FailureOnOddInvocations::new);
-        final UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, () ->  runnable.run());
+        final UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, runnable::run);
         final Throwable cause = e.getCause();
         assertNotNull(cause);
         assertTrue(cause instanceof SomeException);
@@ -213,8 +212,15 @@ class FunctionsTest {
 
     @Test
     void testAsCallable() {
-        FailureOnOddInvocations.invocation = 0;
+<<<<<<< /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/left.java
+        final FailableCallable<FailureOnOddInvocations, SomeException> failableCallable = FailureOnOddInvocations::new;
+||||||| /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/base.java
+        final FailableCallable<FailureOnOddInvocations, SomeException> failableCallable = () -> {
+            return new FailureOnOddInvocations();
+        };
+=======
         final FailableCallable<FailureOnOddInvocations, SomeException> failableCallable = () -> new FailureOnOddInvocations();
+>>>>>>> /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/right.java
         final Callable<FailureOnOddInvocations> callable = Functions.asCallable(failableCallable);
         final UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, callable::call);
         final Throwable cause = e.getCause();
@@ -257,7 +263,13 @@ class FunctionsTest {
     void testAsConsumer() {
         final IllegalStateException ise = new IllegalStateException();
         final Testable testable = new Testable(ise);
+<<<<<<< /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/left.java
+        final Consumer<Testable> consumer = Functions.asConsumer(Testable::test);
+||||||| /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/base.java
+        final Consumer<Testable> consumer = Functions.asConsumer((t) -> t.test());
+=======
         final Consumer<Testable> consumer = Functions.asConsumer(t -> t.test());
+>>>>>>> /usr/src/app/output/apache/commons-lang/dd17065cb283c129ac34fd862a2f095191aa5c1d/src/test/java/org/apache/commons/lang3/FunctionsTest.java/right.java
         Throwable e = assertThrows(IllegalStateException.class, () -> consumer.accept(testable));
         assertSame(ise, e);
 
@@ -441,7 +453,6 @@ class FunctionsTest {
     @Test
     @DisplayName("Test that asPredicate(FailablePredicate) is converted to -> Predicate ")
     public void testAsPredicate() {
-        FailureOnOddInvocations.invocation = 0;
         final Functions.FailablePredicate<Object, Throwable> failablePredicate = t -> FailureOnOddInvocations.failingBool();
         final Predicate<?> predicate = Functions.asPredicate(failablePredicate);
         final UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, () -> predicate.test(null));
@@ -469,7 +480,6 @@ class FunctionsTest {
 
     @Test
     public void testAsSupplier() {
-        FailureOnOddInvocations.invocation = 0;
         final Functions.FailableSupplier<FailureOnOddInvocations, Throwable> failableSupplier = FailureOnOddInvocations::new;
         final Supplier<FailureOnOddInvocations> supplier = Functions.asSupplier(failableSupplier);
         final UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, supplier::get);
