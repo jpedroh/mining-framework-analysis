@@ -1,8 +1,6 @@
 package org.webbitserver.wrapper;
-
 import org.webbitserver.HttpRequest;
 import org.webbitserver.helpers.QueryParameters;
-
 import java.net.HttpCookie;
 import java.net.SocketAddress;
 import java.net.URI;
@@ -11,130 +9,109 @@ import java.util.Map;
 import java.util.Set;
 
 public class HttpRequestWrapper implements HttpRequest {
+  private HttpRequest request;
 
-    private HttpRequest request;
+  public HttpRequestWrapper(HttpRequest request) {
+    this.request = request;
+  }
 
-    public HttpRequestWrapper(HttpRequest request) {
-        this.request = request;
+  public HttpRequest underlyingRequest() {
+    return request;
+  }
+
+  public HttpRequestWrapper underlyingRequest(HttpRequest request) {
+    this.request = request;
+    return this;
+  }
+
+  public HttpRequest originalRequest() {
+    if (request instanceof HttpRequestWrapper) {
+      HttpRequestWrapper wrapper = (HttpRequestWrapper) request;
+      return wrapper.originalRequest();
+    } else {
+      return request;
     }
+  }
 
-    public HttpRequest underlyingRequest() {
-        return request;
-    }
+  @Override public String uri() {
+    return request.uri();
+  }
 
-    public HttpRequestWrapper underlyingRequest(HttpRequest request) {
-        this.request = request;
-        return this;
-    }
+  @Override public HttpRequestWrapper uri(String uri) {
+    request.uri(uri);
+    return this;
+  }
 
-    public HttpRequest originalRequest() {
-        if (request instanceof HttpRequestWrapper) {
-            HttpRequestWrapper wrapper = (HttpRequestWrapper) request;
-            return wrapper.originalRequest();
-        } else {
-            return request;
-        }
-    }
+  @Override public String header(String name) {
+    return request.header(name);
+  }
 
-    @Override
-    public String uri() {
-        return request.uri();
-    }
+  @Override public boolean hasHeader(String name) {
+    return request.hasHeader(name);
+  }
 
-    @Override
-    public HttpRequestWrapper uri(String uri) {
-        request.uri(uri);
-        return this;
-    }
+  @Override public List<HttpCookie> cookies() {
+    return request.cookies();
+  }
 
-    @Override
-    public String header(String name) {
-        return request.header(name);
-    }
+  @Override public HttpCookie cookie(String name) {
+    return request.cookie(name);
+  }
 
-    @Override
-    public boolean hasHeader(String name) {
-        return request.hasHeader(name);
-    }
+  @Override public String queryParam(String key) {
+    return request.queryParam(key);
+  }
 
-    @Override
-    public List<HttpCookie> cookies() {
-        return request.cookies();
-    }
+  @Override public List<String> queryParams(String key) {
+    return request.queryParams(key);
+  }
 
-    @Override
-    public HttpCookie cookie(String name) {
-        return request.cookie(name);
-    }
+  @Override public String cookieValue(String name) {
+    return request.cookieValue(name);
+  }
 
-    @Override
-    public String queryParam(String key) {
-        return request.queryParam(key);
-    }
+  @Override public List<String> headers(String name) {
+    return request.headers(name);
+  }
 
-    @Override
-    public List<String> queryParams(String key) {
-        return request.queryParams(key);
-    }
+  @Override public List<Map.Entry<String, String>> allHeaders() {
+    return request.allHeaders();
+  }
 
-    @Override
-    public String cookieValue(String name) {
-        return request.cookieValue(name);
-    }
+  @Override public String method() {
+    return request.method();
+  }
 
-    @Override
-    public List<String> headers(String name) {
-        return request.headers(name);
-    }
+  @Override public String body() {
+    return request.body();
+  }
 
-    @Override
-    public List<Map.Entry<String, String>> allHeaders() {
-        return request.allHeaders();
-    }
+  @Override public Map<String, Object> data() {
+    return request.data();
+  }
 
-    @Override
-    public String method() {
-        return request.method();
-    }
+  @Override public Object data(String key) {
+    return request.data(key);
+  }
 
-    @Override
-    public String body() {
-        return request.body();
-    }
+  @Override public HttpRequestWrapper data(String key, Object value) {
+    request.data(key, value);
+    return this;
+  }
 
-    @Override
-    public Map<String, Object> data() {
-        return request.data();
-    }
+  @Override public Set<String> dataKeys() {
+    return request.dataKeys();
+  }
 
-    @Override
-    public Object data(String key) {
-        return request.data(key);
-    }
+  @Override public SocketAddress remoteAddress() {
+    return request.remoteAddress();
+  }
 
-    @Override
-    public HttpRequestWrapper data(String key, Object value) {
-        request.data(key, value);
-        return this;
-    }
+  @Override public Object id() {
+    return request.id();
+  }
 
-    @Override
-    public Set<String> dataKeys() {
-        return request.dataKeys();
-    }
-
-    @Override
-    public SocketAddress remoteAddress() {
-        return request.remoteAddress();
-    }
-
-    @Override
-    public Object id() {
-        return request.id();
-    }
-
-    @Override
-    public long timestamp() {
-        return request.timestamp();
-    }
+  @Override public long timestamp() {
+    return request.timestamp();
+  }
 }

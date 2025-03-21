@@ -1,141 +1,121 @@
 package org.webbitserver.netty;
-
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.util.CharsetUtil;
 import org.webbitserver.InboundCookieParser;
 import org.webbitserver.helpers.QueryParameters;
-
 import java.net.HttpCookie;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.*;
 
 public class NettyHttpRequest implements org.webbitserver.HttpRequest {
+  private final HttpRequest httpRequest;
 
-    private final HttpRequest httpRequest;
-    private final MessageEvent messageEvent;
-    private final Map<String, Object> data = new HashMap<String, Object>();
-    private final Object id;
-    private final long timestamp;
+  private final MessageEvent messageEvent;
 
-    public NettyHttpRequest(MessageEvent messageEvent, HttpRequest httpRequest, Object id, long timestamp) {
-        this.messageEvent = messageEvent;
-        this.httpRequest = httpRequest;
-        this.id = id;
-        this.timestamp = timestamp;
+  private final Map<String, Object> data = new HashMap<String, Object>();
+
+  private final Object id;
+
+  private final long timestamp;
+
+  public NettyHttpRequest(MessageEvent messageEvent, HttpRequest httpRequest, Object id, long timestamp) {
+    this.messageEvent = messageEvent;
+    this.httpRequest = httpRequest;
+    this.id = id;
+    this.timestamp = timestamp;
+  }
+
+  @Override public String uri() {
+    return httpRequest.getUri();
+  }
+
+  @Override public NettyHttpRequest uri(String uri) {
+    httpRequest.setUri(uri);
+    return this;
+  }
+
+  @Override public String header(String name) {
+    return httpRequest.getHeader(name);
+  }
+
+  @Override public List<String> headers(String name) {
+    return httpRequest.getHeaders(name);
+  }
+
+  @Override public boolean hasHeader(String name) {
+    return httpRequest.containsHeader(name);
+  }
+
+  @Override public List<HttpCookie> cookies() {
+    return InboundCookieParser.parse(headers(COOKIE_HEADER));
+  }
+
+  @Override public HttpCookie cookie(String name) {
+    for (HttpCookie cookie : cookies()) {
+      if (cookie.getName().equals(name)) {
+        return cookie;
+      }
     }
+    return null;
+  }
 
-    @Override
-    public String uri() {
-        return httpRequest.getUri();
-    }
+  @Override public String queryParam(String key) {
+    return new QueryParameters(URI.create(uri()).getQuery()).first(key);
+  }
 
-    @Override
-    public NettyHttpRequest uri(String uri) {
-        httpRequest.setUri(uri);
-        return this;
-    }
+  @Override public List<String> queryParams(String key) {
+    return new QueryParameters(URI.create(uri()).getQuery()).all(key);
+  }
 
-    @Override
-    public String header(String name) {
-        return httpRequest.getHeader(name);
-    }
+  @Override public String cookieValue(String name) {
+    HttpCookie cookie = cookie(name);
+    return cookie == null ? null : cookie.getValue();
+  }
 
-    @Override
-    public List<String> headers(String name) {
-        return httpRequest.getHeaders(name);
-    }
+  @Override public List<Map.Entry<String, String>> allHeaders() {
+    return httpRequest.getHeaders();
+  }
 
-    @Override
-    public boolean hasHeader(String name) {
-        return httpRequest.containsHeader(name);
-    }
+  @Override public String method() {
+    return httpRequest.getMethod().getName();
+  }
 
-    @Override
-    public List<HttpCookie> cookies() {
-        return InboundCookieParser.parse(headers(COOKIE_HEADER));
-    }
+  @Override public String body() {
+    return httpRequest.getContent().toString(CharsetUtil.UTF_8);
+  }
 
-    @Override
-    public HttpCookie cookie(String name) {
-        for (HttpCookie cookie : cookies()) {
-            if(cookie.getName().equals(name)) {
-                return cookie;
-            }
-        }
-        return null;
-    }
+  @Override public Map<String, Object> data() {
+    return data;
+  }
 
-    @Override
-    public String queryParam(String key) {
-        return new QueryParameters(URI.create(uri()).getQuery()).first(key);
-    }
+  @Override public Object data(String key) {
+    return data.get(key);
+  }
 
-    @Override
-    public List<String> queryParams(String key) {
-        return new QueryParameters(URI.create(uri()).getQuery()).all(key);
-    }
+  @Override public NettyHttpRequest data(String key, Object value) {
+    data.put(key, value);
+    return this;
+  }
 
-    @Override
-    public String cookieValue(String name) {
-        HttpCookie cookie = cookie(name);
-        return cookie == null ? null : cookie.getValue();
-    }
+  @Override public Set<String> dataKeys() {
+    return data.keySet();
+  }
 
-    @Override
-    public List<Map.Entry<String, String>> allHeaders() {
-        return httpRequest.getHeaders();
-    }
+  @Override public SocketAddress remoteAddress() {
+    return messageEvent.getRemoteAddress();
+  }
 
-    @Override
-    public String method() {
-        return httpRequest.getMethod().getName();
-    }
+  @Override public Object id() {
+    return id;
+  }
 
-    @Override
-    public String body() {
-        return httpRequest.getContent().toString(CharsetUtil.UTF_8); // TODO get charset from request
-    }
+  @Override public long timestamp() {
+    return timestamp;
+  }
 
-    @Override
-    public Map<String, Object> data() {
-        return data;
-    }
-
-    @Override
-    public Object data(String key) {
-        return data.get(key);
-    }
-
-    @Override
-    public NettyHttpRequest data(String key, Object value) {
-        data.put(key, value);
-        return this;
-    }
-
-    @Override
-    public Set<String> dataKeys() {
-        return data.keySet();
-    }
-
-    @Override
-    public SocketAddress remoteAddress() {
-        return messageEvent.getRemoteAddress();
-    }
-
-    @Override
-    public Object id() {
-        return id;
-    }
-
-    @Override
-    public long timestamp() {
-        return timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return messageEvent.getRemoteAddress() + " " + httpRequest.getMethod() + " " + httpRequest.getUri();
-    }
+  @Override public String toString() {
+    return messageEvent.getRemoteAddress() + " " + httpRequest.getMethod() + " " + httpRequest.getUri();
+  }
 }
