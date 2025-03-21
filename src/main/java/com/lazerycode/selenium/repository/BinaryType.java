@@ -42,11 +42,11 @@ public enum BinaryType {
             ),
             "webdriver.edge.driver"),
     FIREFOX(
-            asList(
-                "*",
-                "firefox.exe",
-                "firefox"
-            ),
+            new ArrayList<String>() {{
+                add("*");
+                add("firefox.exe");
+                add("firefox");
+            }},
             "webdriver.firefox.bin");
 
     private final List<String> binaryFilenames;
