@@ -1,12 +1,4 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest.security;
-
 import org.dspace.app.rest.exception.DSpaceAccessDeniedHandler;
 import org.dspace.authenticate.service.AuthenticationService;
 import org.dspace.services.RequestService;
@@ -37,131 +29,38 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * @author Frederic Van Reet (frederic dot vanreet at atmire dot com)
  * @author Tom Desair (tom dot desair at atmire dot com)
  */
-@EnableWebSecurity
-@Configuration
-@EnableConfigurationProperties(SecurityProperties.class)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity @Configuration @EnableConfigurationProperties(value = SecurityProperties.class) @EnableGlobalMethodSecurity(prePostEnabled = true) public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+  public static final String ADMIN_GRANT = "ADMIN";
 
-    public static final String ADMIN_GRANT = "ADMIN";
-    public static final String AUTHENTICATED_GRANT = "AUTHENTICATED";
-    public static final String ANONYMOUS_GRANT = "ANONYMOUS";
+  public static final String AUTHENTICATED_GRANT = "AUTHENTICATED";
 
-    @Autowired
-    private EPersonRestAuthenticationProvider ePersonRestAuthenticationProvider;
+  public static final String ANONYMOUS_GRANT = "ANONYMOUS";
 
-    @Autowired
-    private RestAuthenticationService restAuthenticationService;
+  @Autowired private EPersonRestAuthenticationProvider ePersonRestAuthenticationProvider;
 
-    @Autowired
-    private RequestService requestService;
+  @Autowired private RestAuthenticationService restAuthenticationService;
 
-    @Autowired
-    private CustomLogoutHandler customLogoutHandler;
+  @Autowired private RequestService requestService;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+  @Autowired private CustomLogoutHandler customLogoutHandler;
 
-    @Autowired
-    private DSpaceAccessDeniedHandler accessDeniedHandler;
+  @Autowired private AuthenticationService authenticationService;
 
-    @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
-        // Define URL patterns which Spring Security will ignore entirely.
-        webSecurity
-            .ignoring()
-                // These /login request types are purposefully unsecured, as they all throw errors.
-                .antMatchers(HttpMethod.GET, "/api/authn/login")
-                .antMatchers(HttpMethod.PUT, "/api/authn/login")
-                .antMatchers(HttpMethod.PATCH, "/api/authn/login")
-                .antMatchers(HttpMethod.DELETE, "/api/authn/login");
-    }
+  @Autowired private DSpaceAccessDeniedHandler accessDeniedHandler;
 
+  @Override public void configure(WebSecurity webSecurity) throws Exception {
+    webSecurity.ignoring().antMatchers(HttpMethod.GET, "/api/authn/login").antMatchers(HttpMethod.PUT, "/api/authn/login").antMatchers(HttpMethod.PATCH, "/api/authn/login").antMatchers(HttpMethod.DELETE, "/api/authn/login");
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // Configure authentication requirements for ${dspace.server.url}/api/ URL only
-        // NOTE: REST API is hardcoded to respond on /api/. Other modules (OAI, SWORD, IIIF, etc) use other root paths.
-        http.requestMatchers()
-            .antMatchers("/api/**", "/iiif/**")
-            .and()
-            // Enable Spring Security authorization on these paths
-            .authorizeRequests()
-                // Allow POST by anyone on the login endpoint
-                .antMatchers(HttpMethod.POST,"/api/authn/login").permitAll()
-                // Everyone can call GET on the status endpoint (used to check your authentication status)
-                .antMatchers(HttpMethod.GET, "/api/authn/status").permitAll()
-            .and()
-            // Tell Spring to not create Sessions
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            // Anonymous requests should have the "ANONYMOUS" security grant
-            .anonymous().authorities(ANONYMOUS_GRANT).and()
-            // Wire up the HttpServletRequest with the current SecurityContext values
-            .servletApi().and()
-            // Enable CORS for Spring Security (see CORS settings in Application and ApplicationConfig)
-            .cors().and()
-            // Enable CSRF protection with custom csrfTokenRepository and custom sessionAuthenticationStrategy
-            // (both are defined below as methods).
-            // While we primarily use JWT in headers, CSRF protection is needed because we also support JWT via Cookies
-            .csrf()
-                .csrfTokenRepository(this.csrfTokenRepository())
-                .sessionAuthenticationStrategy(this.sessionAuthenticationStrategy())
-            .and()
-            .exceptionHandling()
-                // Return 401 on authorization failures with a correct WWWW-Authenticate header
-                .authenticationEntryPoint(new DSpace401AuthenticationEntryPoint(restAuthenticationService))
-                // Custom handler for AccessDeniedExceptions, including CSRF exceptions
-                .accessDeniedHandler(accessDeniedHandler)
-            .and()
+  @Override protected void configure(HttpSecurity http) throws Exception {
+    http.requestMatchers().antMatchers("/api/**", "/iiif/**").and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/authn/login").permitAll().antMatchers(HttpMethod.GET, "/api/authn/status").permitAll().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().anonymous().authorities(ANONYMOUS_GRANT).and().servletApi().and().cors().and().csrf().csrfTokenRepository(this.csrfTokenRepository()).sessionAuthenticationStrategy(this.sessionAuthenticationStrategy()).and().exceptionHandling().authenticationEntryPoint(new DSpace401AuthenticationEntryPoint(restAuthenticationService)).accessDeniedHandler(accessDeniedHandler).and().logout().addLogoutHandler(customLogoutHandler).logoutRequestMatcher(new AntPathRequestMatcher("/api/authn/logout", HttpMethod.POST.name())).logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT)).permitAll().and().addFilterBefore(new AnonymousAdditionalAuthorizationFilter(authenticationManager(), authenticationService), StatelessAuthenticationFilter.class).addFilterBefore(new StatelessLoginFilter("/api/authn/login", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new OrcidAuthenticationFilter("/api/authn/orcid", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(), restAuthenticationService), LogoutFilter.class).addFilterBefore(new StatelessAuthenticationFilter(authenticationManager(), restAuthenticationService, ePersonRestAuthenticationProvider, requestService), StatelessLoginFilter.class);
+  }
 
-            // Logout configuration
-            .logout()
-                // On logout, clear the "session" salt
-                .addLogoutHandler(customLogoutHandler)
-                // Configure the logout entry point & require POST
-                .logoutRequestMatcher(new AntPathRequestMatcher("/api/authn/logout", HttpMethod.POST.name()))
-                // When logout is successful, return OK (204) status
-                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
-                // Everyone can call this endpoint
-                .permitAll()
-            .and()
+  @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.authenticationProvider(ePersonRestAuthenticationProvider);
+  }
 
-            // Add a filter before any request to handle DSpace IP-based authorization/authentication
-            // (e.g. anonymous users may be added to special DSpace groups if they are in a given IP range)
-            .addFilterBefore(new AnonymousAdditionalAuthorizationFilter(authenticationManager(), authenticationService),
-                             StatelessAuthenticationFilter.class)
-            // Add a filter before our login endpoints to do the authentication based on the data in the HTTP request
-            .addFilterBefore(new StatelessLoginFilter("/api/authn/login", authenticationManager(),
-                                                      restAuthenticationService),
-                             LogoutFilter.class)
-            // Add a filter before our shibboleth endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(),
-                                                       restAuthenticationService),
-                             LogoutFilter.class)
-            //Add a filter before our ORCID endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new OrcidAuthenticationFilter("/api/authn/orcid", authenticationManager(),
-                                                       restAuthenticationService),
-                             LogoutFilter.class)
-            //Add a filter before our OIDC endpoints to do the authentication based on the data in the
-            // HTTP request
-            .addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(),
-                                                      restAuthenticationService),
-                             LogoutFilter.class)
-            // Add a custom Token based authentication filter based on the token previously given to the client
-            // before each URL
-            .addFilterBefore(new StatelessAuthenticationFilter(authenticationManager(), restAuthenticationService,
-                                                               ePersonRestAuthenticationProvider, requestService),
-                             StatelessLoginFilter.class);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(ePersonRestAuthenticationProvider);
-    }
-
-    /**
+  /**
      * Returns a custom DSpaceCsrfTokenRepository based on Spring Security's CookieCsrfTokenRepository, which is
      * designed for Angular Apps.
      * <P>
@@ -175,18 +74,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
      *
      * @return CsrfTokenRepository as described above
      */
-    @Lazy
-    @Bean
-    public CsrfTokenRepository csrfTokenRepository() {
-        return new DSpaceCsrfTokenRepository();
-    }
+  @Lazy @Bean public CsrfTokenRepository csrfTokenRepository() {
+    return new DSpaceCsrfTokenRepository();
+  }
 
-    /**
+  /**
      * Returns a custom DSpaceCsrfAuthenticationStrategy, which ensures that (after authenticating) the CSRF token
      * is only refreshed when it is used (or attempted to be used) by the client.
      */
-    private SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new DSpaceCsrfAuthenticationStrategy(csrfTokenRepository());
-    }
-
+  private SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+    return new DSpaceCsrfAuthenticationStrategy(csrfTokenRepository());
+  }
 }
