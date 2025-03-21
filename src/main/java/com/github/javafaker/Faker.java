@@ -84,8 +84,12 @@ public class Faker implements Resolver {
         this.code = new Code(randomService);
         this.finance = new Finance(proxiedFakeValueService, randomService);
         this.dateAndTime = new DateAndTime(randomService);
+<<<<<<< /usr/src/app/output/dius/java-faker/f694c4a84ee5d48d3cd8606c1026c9c4a7f7ac43/src/main/java/com/github/javafaker/Faker.java/left.java
         this.educator = new Educator(proxiedFakeValueService);
+||||||| /usr/src/app/output/dius/java-faker/f694c4a84ee5d48d3cd8606c1026c9c4a7f7ac43/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.shakespeare = new Shakespeare(randomService);
+>>>>>>> /usr/src/app/output/dius/java-faker/f694c4a84ee5d48d3cd8606c1026c9c4a7f7ac43/src/main/java/com/github/javafaker/Faker.java/right.java
         this.superhero = new Superhero(this, proxiedFakeValueService);
         this.team = new Team(this, proxiedFakeValueService);
         this.bool = new Bool(randomService);
@@ -220,7 +224,7 @@ public class Faker implements Resolver {
     public Educator educator() {
         return educator;
     }
-    
+
     public Shakespeare shakespeare() {
         return shakespeare;
     }
