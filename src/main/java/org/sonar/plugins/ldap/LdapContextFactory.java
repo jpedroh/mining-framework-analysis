@@ -55,9 +55,9 @@ public class LdapContextFactory {
 	static final String CRAM_MD5_METHOD = "CRAM-MD5";
 
 	/**
-	 * The Sun LDAP property used to enable connection pooling. This is used in
-	 * the default implementation to enable LDAP connection pooling.
-	 */
+     * The Sun LDAP property used to enable connection pooling. This is used in
+     * the default implementation to enable LDAP connection pooling.
+     */
 	private static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
 
 	private static final String SASL_REALM_PROPERTY = "java.naming.security.sasl.realm";
@@ -95,9 +95,9 @@ public class LdapContextFactory {
 	}
 
 	/**
-	 * Returns {@code InitialDirContext} for specified user. Note that pooling
-	 * intentionally disabled by this method.
-	 */
+     * Returns {@code InitialDirContext} for specified user. Note that pooling
+     * intentionally disabled by this method.
+     */
 	public InitialDirContext createUserContext(String principal,
 			String credentials) throws NamingException {
 		return createInitialDirContext(principal, credentials, false);
@@ -126,9 +126,16 @@ public class LdapContextFactory {
 		if (principal != null) {
 			env.put(Context.SECURITY_PRINCIPAL, principal);
 		}
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/left.java
 		// Note: debug is intentionally was placed here - in order to not expose
 		// password in log
-		LOG.debug("Initializing LDAP context {}", env);
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/base.java
+		// Note: debug is intentionally was placed here - in order to not expose password in log
+=======
+		// Note: debug is intentionally was placed here - in order to not expose
+	// password in log
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/right.java
+        LOG.debug("Initializing LDAP context {}", env);
 		if (credentials != null) {
 			env.put(Context.SECURITY_CREDENTIALS, credentials);
 		}
@@ -146,11 +153,20 @@ public class LdapContextFactory {
 	}
 
 	/**
-	 * Tests connection.
-	 * 
-	 * @throws SonarException
-	 *             if unable to open connection
-	 */
+     * Tests connection.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/left.java
+     * 
+     * @throws SonarException
+     *             if unable to open connection
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/base.java
+     *
+     * @throws SonarException if unable to open connection
+=======
+     * 
+     * @throws SonarException
+     *           if unable to open connection
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/right.java
+     */
 	public void testConnection() {
 		if (StringUtils.isBlank(username) && isSasl()) {
 			throw new SonarException(

@@ -58,9 +58,16 @@ public class LdapUsersProvider extends ExternalUsersProvider {
 
 	/**
 	 * @return details for specified user, or null if such user doesn't exist
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUsersProvider.java/left.java
 	 * @throws SonarException
 	 *             if unable to retrieve details
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUsersProvider.java/base.java
+	 * @throws SonarException if unable to retrieve details
+=======
+	 * @throws SonarException
+   *           if unable to retrieve details
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUsersProvider.java/right.java
+     */
 	public UserDetails doGetUserDetails(String username) {
 		LOG.debug("Requesting details for user {}", username);
 		if (userMappings.size() == 0) {

@@ -99,9 +99,16 @@ public class LdapUserMapping {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUserMapping.java/left.java
 	 * Base DN. For example "ou=users,o=mycompany" or "cn=users" (Active
 	 * Directory Server).
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUserMapping.java/base.java
+	 * Base DN. For example "ou=users,o=mycompany" or "cn=users" (Active Directory Server).
+=======
+	 * Base DN. For example "ou=users,o=mycompany" or "cn=users" (Active Directory
+   * Server).
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapUserMapping.java/right.java
+     */
 	public String getBaseDn() {
 		return baseDn;
 	}
@@ -109,7 +116,7 @@ public class LdapUserMapping {
 	/**
 	 * Request. For example:
 	 * 
-	 * <pre>
+     * <pre>
 	 * (&(objectClass=inetOrgPerson)(uid={0}))
 	 * (&(objectClass=user)(sAMAccountName={0}))
 	 * </pre>

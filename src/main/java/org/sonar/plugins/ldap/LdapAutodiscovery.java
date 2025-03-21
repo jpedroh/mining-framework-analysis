@@ -46,22 +46,38 @@ public final class LdapAutodiscovery {
 	/**
 	 * Get the DNS domain name (eg: example.org).
 	 * 
-	 * @return DNS domain
+     * @return DNS domain
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/left.java
 	 * @throws java.net.UnknownHostException
 	 *             if unable to determine DNS domain
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/base.java
+	 * @throws java.net.UnknownHostException if unable to determine DNS domain
+=======
+	 * @throws java.net.UnknownHostException
+   *           if unable to determine DNS domain
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/right.java
+     */
 	public static String getDnsDomainName() throws UnknownHostException {
 		return getDnsDomainName(InetAddress.getLocalHost()
 				.getCanonicalHostName());
 	}
 
 	/**
-	 * Extracts DNS domain name from Fully Qualified Domain Name.
-	 * 
-	 * @param fqdn
-	 *            Fully Qualified Domain Name
-	 * @return DNS domain name or null, if can't be extracted
-	 */
+     * Extracts DNS domain name from Fully Qualified Domain Name.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/left.java
+     * 
+     * @param fqdn
+     *            Fully Qualified Domain Name
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/base.java
+     *
+     * @param fqdn Fully Qualified Domain Name
+=======
+     * 
+     * @param fqdn
+     *          Fully Qualified Domain Name
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/right.java
+     * @return DNS domain name or null, if can't be extracted
+     */
 	public static String getDnsDomainName(String fqdn) {
 		if (fqdn.indexOf('.') == -1) {
 			return null;
@@ -70,12 +86,21 @@ public final class LdapAutodiscovery {
 	}
 
 	/**
-	 * Get the DNS DN domain (eg: dc=example,dc=org).
-	 * 
-	 * @param domain
-	 *            DNS domain
-	 * @return DNS DN domain
-	 */
+     * Get the DNS DN domain (eg: dc=example,dc=org).
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/left.java
+     * 
+     * @param domain
+     *            DNS domain
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/base.java
+     *
+     * @param domain DNS domain
+=======
+     * 
+     * @param domain
+     *          DNS domain
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/right.java
+     * @return DNS DN domain
+     */
 	public static String getDnsDomainDn(String domain) {
 		StringBuilder result = new StringBuilder();
 		String[] domainPart = domain.split("[.]");
@@ -86,12 +111,21 @@ public final class LdapAutodiscovery {
 	}
 
 	/**
-	 * Get LDAP exampleServer from DNS.
-	 * 
-	 * @param domain
-	 *            DNS domain
-	 * @return LDAP exampleServer or null if unable to determine
-	 */
+     * Get LDAP exampleServer from DNS.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/left.java
+     * 
+     * @param domain
+     *            DNS domain
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/base.java
+     *
+     * @param domain DNS domain
+=======
+     * 
+     * @param domain
+     *          DNS domain
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAutodiscovery.java/right.java
+     * @return LDAP exampleServer or null if unable to determine
+     */
 	public static String getLdapServer(String domain) {
 		try {
 			return getLdapServer(new InitialDirContext(), domain);

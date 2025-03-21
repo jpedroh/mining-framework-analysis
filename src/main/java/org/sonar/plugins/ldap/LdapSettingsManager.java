@@ -32,28 +32,40 @@ public class LdapSettingsManager {
 	/**
 	 * The base ldap index variable.
 	 */
-	public static final String LDAP = "ldap";
+  /**
+   * The base ldap index variable.
+   */
+  public static final String LDAP = "ldap";
 	private Settings settings;
 	private Map<String, LdapUserMapping> userMappings = null;
 	private Map<String, LdapGroupMapping> groupMappings = null;
 	private Map<String, LdapContextFactory> contextFactories;
 
 	/**
-	 * Create an instance of the settings manager.
-	 * 
-	 * @param settings
-	 *            The settings to use.
-	 */
+     * Create an instance of the settings manager.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/left.java
+     * 
+     * @param settings
+     *            The settings to use.
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/base.java
+     *
+     * @param settings The settings to use.
+=======
+     * 
+     * @param settings
+     *          The settings to use.
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/right.java
+     */
 	public LdapSettingsManager(Settings settings) {
 		this.settings = settings;
 	}
 
 	/**
-	 * Get all the @link{LdapUserMapping}s available in the settings.
-	 * 
-	 * @return A @link{Map} with all the @link{LdapUserMapping} objects. The key
-	 *         is the prefix used in the settings (ldap = Default).
-	 */
+     * Get all the @link{LdapUserMapping}s available in the settings.
+     * 
+     * @return A @link{Map} with all the @link{LdapUserMapping} objects. The key
+     *         is the prefix used in the settings (ldap = Default).
+     */
 	public Map<String, LdapUserMapping> getUserMappings() {
 		if (userMappings == null) {
 			userMappings = new HashMap<String, LdapUserMapping>();
@@ -70,11 +82,21 @@ public class LdapSettingsManager {
 	}
 
 	/**
-	 * Get all the @link{LdapGroupMapping}s available in the settings.
-	 * 
-	 * @return A @link{Map} with all the @link{LdapGroupMapping} objects. The
-	 *         key is the prefix used in the settings (ldap = Default).
-	 */
+     * Get all the @link{LdapGroupMapping}s available in the settings.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/left.java
+     * 
+     * @return A @link{Map} with all the @link{LdapGroupMapping} objects. The
+     *         key is the prefix used in the settings (ldap = Default).
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/base.java
+     *
+     * @return A @link{Map} with all the @link{LdapGroupMapping} objects.
+     *         The key is the prefix used in the settings (ldap = Default).
+=======
+     * 
+     * @return A @link{Map} with all the @link{LdapGroupMapping} objects. The key
+     *         is the prefix used in the settings (ldap = Default).
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSettingsManager.java/right.java
+     */
 	public Map<String, LdapGroupMapping> getGroupMappings() {
 		if (groupMappings == null) {
 			groupMappings = new HashMap<String, LdapGroupMapping>();
@@ -91,11 +113,11 @@ public class LdapSettingsManager {
 	}
 
 	/**
-	 * Get all the @link{LdapContextFactory}s available in the settings.
-	 * 
-	 * @return A @link{Map} with all the @link{LdapContextFactory} objects. The
-	 *         key is the prefix used in the settings (ldap = Default).
-	 */
+     * Get all the @link{LdapContextFactory}s available in the settings.
+     * 
+     * @return A @link{Map} with all the @link{LdapContextFactory} objects. The
+     *         key is the prefix used in the settings (ldap = Default).
+     */
 	public Map<String, LdapContextFactory> getContextFactories() {
 		if (contextFactories == null) {
 			contextFactories = new HashMap<String, LdapContextFactory>();

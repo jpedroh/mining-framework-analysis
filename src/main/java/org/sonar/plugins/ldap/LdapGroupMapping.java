@@ -138,7 +138,7 @@ public class LdapGroupMapping {
 	/**
 	 * Request. For example:
 	 * 
-	 * <pre>
+     * <pre>
 	 * (&(objectClass=groupOfUniqueNames)(uniqueMember={0}))
 	 * (&(objectClass=posixGroup)(memberUid={0}))
 	 * (&(|(objectClass=groupOfUniqueNames)(objectClass=posixGroup))(|(uniqueMember={0})(memberUid={1})))

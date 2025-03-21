@@ -28,13 +28,6 @@ import static org.fest.assertions.Assertions.assertThat;
  * Here we test the settingsManagers ability to cope with multiple ldap servers.
  */
 public class LdapSettingsManagerTest {
-
-	/**
-	 * Test there are 2 @link{org.sonar.plugins.ldap.LdapContextFactory}s found.
-	 * 
-	 * @throws Exception
-	 *             This is not expected.
-	 */
 	@Test
 	public void testContextFactories() throws Exception {
 		LdapSettingsManager settingsManager = new LdapSettingsManager(
@@ -43,13 +36,6 @@ public class LdapSettingsManagerTest {
 		// We do it twice to make sure the settings keep the same.
 		assertThat(settingsManager.getContextFactories().size()).isEqualTo(2);
 	}
-
-	/**
-	 * Test there are 2 @link{org.sonar.plugins.ldap.LdapUserMapping}s found.
-	 * 
-	 * @throws Exception
-	 *             This is not expected.
-	 */
 	@Test
 	public void testUserMappings() throws Exception {
 		LdapSettingsManager settingsManager = new LdapSettingsManager(
@@ -58,13 +44,6 @@ public class LdapSettingsManagerTest {
 		// We do it twice to make sure the settings keep the same.
 		assertThat(settingsManager.getUserMappings().size()).isEqualTo(2);
 	}
-
-	/**
-	 * Test there are 2 @link{org.sonar.plugins.ldap.LdapGroupMapping}s found.
-	 * 
-	 * @throws Exception
-	 *             This is not expected.
-	 */
 	@Test
 	public void testGroupMappings() throws Exception {
 		LdapSettingsManager settingsManager = new LdapSettingsManager(
@@ -73,7 +52,6 @@ public class LdapSettingsManagerTest {
 		// We do it twice to make sure the settings keep the same.
 		assertThat(settingsManager.getGroupMappings().size()).isEqualTo(2);
 	}
-
 	/**
 	 * Test what happens when no configuration is set. Normally there will be a
 	 * contextFactory, but the autodiscovery doesn't work for the test server.
@@ -82,13 +60,12 @@ public class LdapSettingsManagerTest {
 	 */
 	@Test
 	public void testEmptySettings() throws Exception {
-		LdapSettingsManager settingsManager = new LdapSettingsManager(
-				new Settings());
-		assertThat(settingsManager.getContextFactories().size()).isEqualTo(0);
-		assertThat(settingsManager.getUserMappings().size()).isEqualTo(0);
-		assertThat(settingsManager.getGroupMappings().size()).isEqualTo(0);
+	LdapSettingsManager settingsManager = new LdapSettingsManager(
+		new Settings());
+	assertThat(settingsManager.getContextFactories().size()).isEqualTo(0);
+	assertThat(settingsManager.getUserMappings().size()).isEqualTo(0);
+	assertThat(settingsManager.getGroupMappings().size()).isEqualTo(0);
 	}
-
 	// TODO: Make it possible to test autodiscovery.
 	/*
 	 * @Test public void testSettingsManagerWithoutUrl() {
@@ -100,26 +77,24 @@ public class LdapSettingsManagerTest {
 	 * assertThat(settingsManager.getUserMappings().size()).isEqualTo(2);
 	 * assertThat(settingsManager.getGroupMappings().size()).isEqualTo(2); }
 	 */
-
 	private Settings generateMultipleLdapSettingsWithUserAndGroupMapping() {
-		Settings settings = new Settings();
-		settings.setProperty("ldap.url", "/users.example.org.ldif")
-				.setProperty("ldap.user.baseDn", "ou=users,dc=example,dc=org")
-				.setProperty("ldap.group.baseDn", "ou=groups,dc=example,dc=org")
-				.setProperty("ldap.group.request",
-						"(&(objectClass=posixGroup)(memberUid={uid}))");
+	Settings settings = new Settings();
+	settings
+		.setProperty("ldap.url", "/users.example.org.ldif")
+		.setProperty("ldap.user.baseDn", "ou=users,dc=example,dc=org")
+		.setProperty("ldap.group.baseDn", "ou=groups,dc=example,dc=org")
+		.setProperty("ldap.group.request",
+			"(&(objectClass=posixGroup)(memberUid={uid}))");
 
-		settings.setProperty("ldap1.url", "/users.infosupport.com.ldif")
-				.setProperty("ldap1.user.baseDn",
-						"ou=users,dc=infosupport,dc=com")
-				.setProperty("ldap1.group.baseDn",
-						"ou=groups,dc=infosupport,dc=com")
-				.setProperty("ldap1.group.request",
-						"(&(objectClass=posixGroup)(memberUid={uid}))");
+	settings
+		.setProperty("ldap1.url", "/users.infosupport.com.ldif")
+		.setProperty("ldap1.user.baseDn", "ou=users,dc=infosupport,dc=com")
+		.setProperty("ldap1.group.baseDn", "ou=groups,dc=infosupport,dc=com")
+		.setProperty("ldap1.group.request",
+			"(&(objectClass=posixGroup)(memberUid={uid}))");
 
-		return settings;
+	return settings;
 	}
-
 	/*
 	 * private Settings generateAutoDiscoverySettings() { Settings settings =
 	 * generateMultipleLdapSettingsWithUserAndGroupMapping();
@@ -130,4 +105,49 @@ public class LdapSettingsManagerTest {
 	 * 
 	 * return settings; }
 	 */
+  /**
+   * Test there are 2 @link{org.sonar.plugins.ldap.LdapContextFactory}s found.
+   * 
+   * @throws Exception
+   *           This is not expected.
+   */
+  /**
+   * Test there are 2 @link{org.sonar.plugins.ldap.LdapUserMapping}s found.
+   * 
+   * @throws Exception
+   *           This is not expected.
+   */
+  /**
+   * Test there are 2 @link{org.sonar.plugins.ldap.LdapGroupMapping}s found.
+   * 
+   * @throws Exception
+   *           This is not expected.
+   */
+  /**
+   * Test what happens when no configuration is set. Normally there will be a
+   * contextFactory, but the autodiscovery doesn't work for the test server.
+   * 
+   * @throws Exception
+   */
+  // TODO: Make it possible to test autodiscovery.
+  /*
+   * @Test public void testSettingsManagerWithoutUrl() {
+   * 
+   * LdapSettingsManager settingsManager = new LdapSettingsManager(
+   * generateAutoDiscoverySettings());
+   * 
+   * assertThat(settingsManager.getContextFactories().size()).isEqualTo(2);
+   * assertThat(settingsManager.getUserMappings().size()).isEqualTo(2);
+   * assertThat(settingsManager.getGroupMappings().size()).isEqualTo(2); }
+   */
+  /*
+   * private Settings generateAutoDiscoverySettings() { Settings settings =
+   * generateMultipleLdapSettingsWithUserAndGroupMapping();
+   * settings.removeProperty("ldap.url").removeProperty("ldap1.url");
+   * 
+   * // we put the realm because the test ldap server has no dns entry
+   * settings.setProperty("ldap.realm", "").setProperty( "ldap1.realm", "");
+   * 
+   * return settings; }
+   */
 }

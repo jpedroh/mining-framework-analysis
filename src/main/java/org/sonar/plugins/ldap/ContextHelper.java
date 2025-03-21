@@ -38,33 +38,78 @@ public final class ContextHelper {
 	}
 
 	/**
-	 * <pre>
-	 * public void useContextNicely() throws NamingException {
-	 * 	InitialDirContext context = null;
-	 * 	boolean threw = true;
-	 * 	try {
-	 * 		context = new InitialDirContext();
-	 * 		// Some code which does something with the Context and may throw a
-	 * 		// NamingException
-	 * 		threw = false; // No throwable thrown
-	 * 	} finally {
-	 * 		// Close context
-	 * 		// If an exception occurs, only rethrow it if (threw==false)
-	 * 		close(context, threw);
-	 * 	}
-	 * }
-	 * </pre>
-	 * 
-	 * @param context
-	 *            the {@code Context} object to be closed, or null, in which
-	 *            case this method does nothing
-	 * @param swallowIOException
-	 *            if true, don't propagate {@code NamingException} thrown by the
-	 *            {@code close} method
-	 * @throws NamingException
-	 *             if {@code swallowIOException} is false and {@code close}
-	 *             throws a {@code NamingException}.
-	 */
+     * <pre>
+     * public void useContextNicely() throws NamingException {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/left.java
+     * 	InitialDirContext context = null;
+     * 	boolean threw = true;
+     * 	try {
+     * 		context = new InitialDirContext();
+     * 		// Some code which does something with the Context and may throw a
+     * 		// NamingException
+     * 		threw = false; // No throwable thrown
+     * 	} finally {
+     * 		// Close context
+     * 		// If an exception occurs, only rethrow it if (threw==false)
+     * 		close(context, threw);
+     * 	}
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/base.java
+     *   InitialDirContext context = null;
+     *   boolean threw = true;
+     *   try {
+     *     context = new InitialDirContext();
+     *     // Some code which does something with the Context and may throw a NamingException
+     *     threw = false; // No throwable thrown
+     *   } finally {
+     *     // Close context
+     *     // If an exception occurs, only rethrow it if (threw==false)
+     *     close(context, threw);
+     *   }
+=======
+     *   InitialDirContext context = null;
+     *   boolean threw = true;
+     *   try {
+     * 	context = new InitialDirContext();
+     * 	// Some code which does something with the Context and may throw a
+     * 	// NamingException
+     * 	threw = false; // No throwable thrown
+     *   } finally {
+     * 	// Close context
+     * 	// If an exception occurs, only rethrow it if (threw==false)
+     * 	close(context, threw);
+     *   }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/right.java
+     * }
+     * </pre>
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/left.java
+     * 
+     * @param context
+     *            the {@code Context} object to be closed, or null, in which
+     *            case this method does nothing
+     * @param swallowIOException
+     *            if true, don't propagate {@code NamingException} thrown by the
+     *            {@code close} method
+     * @throws NamingException
+     *             if {@code swallowIOException} is false and {@code close}
+     *             throws a {@code NamingException}.
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/base.java
+     *
+     * @param context            the {@code Context} object to be closed, or null, in which case this method does nothing
+     * @param swallowIOException if true, don't propagate {@code NamingException} thrown by the {@code close} method
+     * @throws NamingException if {@code swallowIOException} is false and {@code close} throws a {@code NamingException}.
+=======
+     * 
+     * @param context
+     *          the {@code Context} object to be closed, or null, in which case
+     *          this method does nothing
+     * @param swallowIOException
+     *          if true, don't propagate {@code NamingException} thrown by the
+     *          {@code close} method
+     * @throws NamingException
+     *           if {@code swallowIOException} is false and {@code close} throws a
+     *           {@code NamingException}.
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/ContextHelper.java/right.java
+     */
 	public static void close(@Nullable Context context,
 			boolean swallowIOException) throws NamingException {
 		if (context == null) {

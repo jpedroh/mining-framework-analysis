@@ -53,9 +53,15 @@ public class LdapRealm extends SecurityRealm {
 	/**
 	 * Initializes LDAP realm and tests connection.
 	 * 
-	 * @throws org.sonar.api.utils.SonarException
+     * @throws org.sonar.api.utils.SonarException
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapRealm.java/left.java
 	 *             if a NamingException was thrown during test
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapRealm.java/base.java
+	 *          if a NamingException was thrown during test
+=======
+	 *           if a NamingException was thrown during test
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapRealm.java/right.java
+     */
 	@Override
 	public void init() {
 

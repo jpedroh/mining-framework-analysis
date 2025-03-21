@@ -48,26 +48,51 @@ public class LdapAuthenticator implements LoginPasswordAuthenticator {
 		this.userMappings = userMappings;
 	}
 
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/left.java
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sonar.api.security.LoginPasswordAuthenticator#init()
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/base.java
+	/* (non-Javadoc)
+=======
+	/*
+   * (non-Javadoc)
+   * 
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/right.java
+     * @see org.sonar.api.security.LoginPasswordAuthenticator#init()
 	 */
 	public void init() {
 		// nothing to do
 	}
 
 	/**
-	 * Authenticate the user against all the ldap servers and return true if 1
-	 * succeeds.
-	 * 
-	 * @param login
-	 *            The login to use.
-	 * @param password
-	 *            The password to use.
-	 * @return false if specified user cannot be authenticated with specified
-	 *         password
-	 */
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/left.java
+     * Authenticate the user against all the ldap servers and return true if 1
+     * succeeds.
+     * 
+     * @param login
+     *            The login to use.
+     * @param password
+     *            The password to use.
+     * @return false if specified user cannot be authenticated with specified
+     *         password
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/base.java
+     * Authenticate the user against all the ldap servers and return true if 1 succeeds.
+     * @param login The login to use.
+     * @param password The password to use.
+     * @return false if specified user cannot be authenticated with specified password
+=======
+     * Authenticate the user against all the ldap servers and return true if 1
+     * succeeds.
+     * 
+     * @param login
+     *          The login to use.
+     * @param password
+     *          The password to use.
+     * @return false if specified user cannot be authenticated with specified
+     *         password
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/right.java
+     */
 	public boolean authenticate(String login, String password) {
 		for (String ldapIndex : userMappings.keySet()) {
 			final String principal;

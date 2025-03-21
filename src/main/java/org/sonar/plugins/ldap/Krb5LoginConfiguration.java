@@ -50,16 +50,30 @@ public class Krb5LoginConfiguration extends Configuration {
 	 */
 	public AppConfigurationEntry[] getAppConfigurationEntry(
 			String applicationName) {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/left.java
 		// We will ignore the applicationName, since we want all apps to use
 		// Kerberos V5
-		return CONFIG_LIST.clone();
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/base.java
+		// We will ignore the applicationName, since we want all apps to use Kerberos V5
+=======
+		// We will ignore the applicationName, since we want all apps to use
+	// Kerberos V5
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/right.java
+        return CONFIG_LIST.clone();
 	}
 
 	/**
 	 * Interface method for reloading the configuration. We don't need this.
 	 */
 	public void refresh() {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/left.java
 		// Right now this is a load once scheme and we will not implement the
 		// refresh method
-	}
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/base.java
+		// Right now this is a load once scheme and we will not implement the refresh method
+=======
+		// Right now this is a load once scheme and we will not implement the
+	// refresh method
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/Krb5LoginConfiguration.java/right.java
+    }
 }

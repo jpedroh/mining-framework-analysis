@@ -66,7 +66,7 @@ public class LdapSearch {
 	/**
 	 * Sets the search scope.
 	 * 
-	 * @see SearchControls#ONELEVEL_SCOPE
+     * @see SearchControls#ONELEVEL_SCOPE
 	 * @see SearchControls#SUBTREE_SCOPE
 	 * @see SearchControls#OBJECT_SCOPE
 	 */
@@ -116,9 +116,16 @@ public class LdapSearch {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/left.java
 	 * @throws NamingException
 	 *             if unable to perform search
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/base.java
+	 * @throws NamingException if unable to perform search
+=======
+	 * @throws NamingException
+   *           if unable to perform search
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/right.java
+     */
 	public NamingEnumeration<SearchResult> find() throws NamingException {
 		LOG.debug("Search: {}", this);
 		NamingEnumeration<SearchResult> result;
@@ -139,9 +146,16 @@ public class LdapSearch {
 
 	/**
 	 * @return result, or null if not found
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/left.java
 	 * @throws NamingException
 	 *             if unable to perform search, or non unique result
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/base.java
+	 * @throws NamingException if unable to perform search, or non unique result
+=======
+	 * @throws NamingException
+   *           if unable to perform search, or non unique result
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapSearch.java/right.java
+     */
 	public SearchResult findUnique() throws NamingException {
 		NamingEnumeration<SearchResult> result = find();
 		if (result.hasMore()) {

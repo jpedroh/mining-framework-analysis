@@ -55,9 +55,16 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapGroupsProvider.java/left.java
 	 * @throws SonarException
 	 *             if unable to retrieve groups
-	 */
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapGroupsProvider.java/base.java
+	 * @throws SonarException if unable to retrieve groups
+=======
+	 * @throws SonarException
+   *           if unable to retrieve groups
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/main/java/org/sonar/plugins/ldap/LdapGroupsProvider.java/right.java
+     */
 	public Collection<String> doGetGroups(String username) {
 		if (userMappings.keySet().size() == 0
 				|| groupMappings.keySet().size() == 0) {
@@ -67,7 +74,7 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
 		for (String ldapIndex : userMappings.keySet()) {
 			if (!groupMappings.containsKey(ldapIndex)) {
 				// No group mapping for this ldap instance.
-				continue;
+                continue;
 			}
 			try {
 				LOG.debug("Requesting groups for user {}", username);

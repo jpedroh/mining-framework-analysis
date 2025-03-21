@@ -32,7 +32,7 @@ public class LdapSettingsFactory {
 	/**
 	 * Generate simple settings for 2 ldap servers that allows anonymous access.
 	 * 
-	 * @return The specific settings.
+     * @return The specific settings.
 	 */
 	public static Settings generateSimpleAnonymousAccessSettings(
 			LdapServer exampleServer, LdapServer infosupportServer) {
@@ -52,14 +52,26 @@ public class LdapSettingsFactory {
 	}
 
 	/**
-	 * Generate settings for 2 ldap servers that require authenticaten.
-	 * 
-	 * @param exampleServer
-	 *            The first ldap server.
-	 * @param infosupportServer
-	 *            The second ldap server.
-	 * @return The specific settings.
-	 */
+     * Generate settings for 2 ldap servers that require authenticaten.
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/test/java/org/sonar/plugins/ldap/LdapSettingsFactory.java/left.java
+     * 
+     * @param exampleServer
+     *            The first ldap server.
+     * @param infosupportServer
+     *            The second ldap server.
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/test/java/org/sonar/plugins/ldap/LdapSettingsFactory.java/base.java
+     *
+     * @param exampleServer     The first ldap server.
+     * @param infosupportServer The second ldap server.
+=======
+     * 
+     * @param exampleServer
+     *          The first ldap server.
+     * @param infosupportServer
+     *          The second ldap server.
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/245133355f897caada1272aff129ffe56d3ad4a2/src/test/java/org/sonar/plugins/ldap/LdapSettingsFactory.java/right.java
+     * @return The specific settings.
+     */
 	public static Settings generateAuthenticationSettings(
 			LdapServer exampleServer, LdapServer infosupportServer) {
 		Settings settings = new Settings();
