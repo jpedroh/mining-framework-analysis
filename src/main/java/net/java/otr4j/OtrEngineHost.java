@@ -56,7 +56,13 @@ public interface OtrEngineHost {
 	/**
 	 * Get instructions for the necessary fragmentation operations.
 	 *
+<<<<<<< /usr/src/app/output/redsolution/otr4j/001049afe7cabe92929fed4bdc5b639a581763a9/src/main/java/net/java/otr4j/OtrEngineHost.java/left.java
+	 * If no fragmentation is necessary, return <code>null</code> to set the default
+||||||| /usr/src/app/output/redsolution/otr4j/001049afe7cabe92929fed4bdc5b639a581763a9/src/main/java/net/java/otr4j/OtrEngineHost.java/base.java
+	 * If no fragmentation is necessary, return <tt>null</tt> to set the default
+=======
 	 * If no fragmentation is necessary, return {@code null} to set the default
+>>>>>>> /usr/src/app/output/redsolution/otr4j/001049afe7cabe92929fed4bdc5b639a581763a9/src/main/java/net/java/otr4j/OtrEngineHost.java/right.java
 	 * fragmentation instructions which are to use an unlimited number of
 	 * messages of unlimited size each. Hence fragmentation is not necessary or
 	 * applied.
