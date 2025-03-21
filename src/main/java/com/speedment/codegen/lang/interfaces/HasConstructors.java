@@ -1,22 +1,6 @@
-/**
- *
- * Copyright (c) 2006-2015, Speedment, Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); You may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.speedment.codegen.lang.interfaces;
-
 import com.speedment.codegen.lang.models.Constructor;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,25 +10,28 @@ import java.util.List;
  * @param <T> The extending type
  */
 public interface HasConstructors<T extends HasConstructors<T>> {
-    
-    /**
+  /**
      * Adds the specified {@link Constructor} to this model.
      * 
      * @param constr  the new child
      * @return        a reference to this
      */
-    @SuppressWarnings("unchecked")
-    default T add(final Constructor constr) {
-        getConstructors().add(constr);
-        return (T) this;
-    }
-    
-    /**
+  @SuppressWarnings(value = { "unchecked" }) default T add(final Constructor constr) {
+    getConstructors().add(constr.copy());
+    return (T) this;
+  }
+
+  @SuppressWarnings(value = { "unchecked" }) default T addAllConstructors(final Collection<Constructor> constr) {
+    constr.forEach(this::add);
+    return (T) this;
+  }
+
+  /**
      * Returns a list of all the constructors of this model.
      * <p>
      * The list returned must be mutable for changes!
      * 
      * @return  the constructors 
      */
-    List<Constructor> getConstructors();
+  List<Constructor> getConstructors();
 }
