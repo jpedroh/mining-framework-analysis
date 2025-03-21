@@ -359,9 +359,19 @@ public class MaterialFlowResourcesServiceImpl implements MaterialFlowResourcesSe
             prepareQuery.append("dto.quantity as quantity, ");
             prepareQuery.append("dto.productUnit as unit, ");
             prepareQuery.append("dto.quantityInAdditionalUnit as additionalQuantity, ");
-
-            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl, ");
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/left.java
+            prepareQuery.append("dto.quantityInAdditionalUnit as additionalQuantity,  ");
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/base.java
+            prepareQuery.append("dto.quantityInAdditionalUnit as additionalQuantity  ");
+=======
+            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl,  ");
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/right.java
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/left.java
+            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl ");
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/base.java
+=======
             prepareQuery.append("dto.qualityRating as qualityRating ");
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/right.java
             prepareQuery.append("FROM materialFlowResources_resourceDto as dto ");
             prepareQuery.append("WHERE dto.number = :resourceNumber");
 
@@ -399,9 +409,19 @@ public class MaterialFlowResourcesServiceImpl implements MaterialFlowResourcesSe
             prepareQuery.append("dto.productUnit as unit, ");
             prepareQuery.append("dto.quantityInAdditionalUnit as additionalQuantity, ");
             prepareQuery.append("dto.conversion as conversionValue, ");
-
-            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl, ");
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/left.java
+            prepareQuery.append("dto.conversion as conversionValue,  ");
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/base.java
+            prepareQuery.append("dto.conversion as conversionValue  ");
+=======
+            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl,  ");
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/right.java
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/left.java
+            prepareQuery.append("dto.blockedForQualityControl as blockedForQualityControl ");
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/base.java
+=======
             prepareQuery.append("dto.qualityRating as qualityRating ");
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/MaterialFlowResourcesServiceImpl.java/right.java
             prepareQuery.append("FROM materialFlowResources_resourceDto as dto ");
             prepareQuery.append("WHERE dto.number = :resourceNumber ");
             prepareQuery.append("AND dto.locationNumber IN (:userLocations)");

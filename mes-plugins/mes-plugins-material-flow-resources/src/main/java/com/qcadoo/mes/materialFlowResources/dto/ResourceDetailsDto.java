@@ -19,16 +19,6 @@ public class ResourceDetailsDto {
     private BigDecimal additionalQuantity;
     private Boolean blockedForQualityControl;
 
-    private String qualityRating;
-
-    public String getQualityRating() {
-        return qualityRating;
-    }
-
-    public void setQualityRating(String qualityRating) {
-        this.qualityRating = qualityRating;
-    }
-
     public Long getLocationId() {
         return locationId;
     }
@@ -43,6 +33,16 @@ public class ResourceDetailsDto {
 
     public void setBlockedForQualityControl(Boolean blockedForQualityControl) {
         this.blockedForQualityControl = blockedForQualityControl;
+    }
+
+    private String qualityRating;
+
+    public String getQualityRating() {
+        return qualityRating;
+    }
+
+    public void setQualityRating(String qualityRating) {
+        this.qualityRating = qualityRating;
     }
 
     public String getStorageLocationNumber() {

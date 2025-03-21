@@ -20,21 +20,20 @@ public class StorageLocationHooks {
     @Autowired
     private DataDefinitionService dataDefinitionService;
 
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/hooks/StorageLocationHooks.java/left.java
     public void onSave(final DataDefinition storageLocationDD, final Entity storageLocation) {
-
+        updateDefaultStorageLocation(storageLocationDD, storageLocation);
+        addAuditChanges(storageLocationDD, storageLocation);
+    }
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/hooks/StorageLocationHooks.java/base.java
+    public void onSave(final DataDefinition storageLocationDD, final Entity storageLocation) 
+=======
+    public void onSave(final DataDefinition storageLocationDD, final Entity storageLocation) {
         clearMaxNumberOfPallets(storageLocationDD, storageLocation);
         updateDefaultStorageLocation(storageLocationDD, storageLocation);
         addAuditChanges(storageLocationDD, storageLocation);
     }
-
-
-    private void clearMaxNumberOfPallets(final DataDefinition storageLocationDD, final Entity storageLocation) {
-        boolean placeStorageLocation = storageLocation.getBooleanField(StorageLocationFields.PLACE_STORAGE_LOCATION);
-
-        if (!placeStorageLocation) {
-            storageLocation.setField(StorageLocationFields.MAXIMUM_NUMBER_OF_PALLETS, null);
-        }
-    }
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-material-flow-resources/src/main/java/com/qcadoo/mes/materialFlowResources/hooks/StorageLocationHooks.java/right.java
 
     private void updateDefaultStorageLocation(final DataDefinition storageLocationDD, final Entity storageLocation) {
         Long storageLocationId = storageLocation.getId();
@@ -65,6 +64,14 @@ public class StorageLocationHooks {
             }
 
             storageLocation.setField(StorageLocationFields.PRODUCTS, products);
+        }
+    }
+
+    private void clearMaxNumberOfPallets(final DataDefinition storageLocationDD, final Entity storageLocation) {
+        boolean placeStorageLocation = storageLocation.getBooleanField(StorageLocationFields.PLACE_STORAGE_LOCATION);
+
+        if (!placeStorageLocation) {
+            storageLocation.setField(StorageLocationFields.MAXIMUM_NUMBER_OF_PALLETS, null);
         }
     }
 

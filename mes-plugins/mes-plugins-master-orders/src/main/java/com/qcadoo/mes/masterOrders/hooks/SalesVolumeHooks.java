@@ -73,4 +73,88 @@ public class SalesVolumeHooks {
         }
     }
 
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/hooks/SalesVolumeHooks.java/left.java
+    public void onView(final DataDefinition salesVolumeDD, final Entity salesVolume) {
+        fillStockFields(salesVolume);
+    }
+
+    public void fillStockFields(final Entity salesVolume) {
+        Entity product = salesVolume.getBelongsToField(SalesVolumeFields.PRODUCT);
+
+        if (Objects.nonNull(product)) {
+            BigDecimal dailySalesVolume;
+
+            try {
+                dailySalesVolume = salesVolume.getDecimalField(SalesVolumeFields.DAILY_SALES_VOLUME);
+
+                if (Objects.nonNull(dailySalesVolume) && BigDecimal.ZERO.compareTo(dailySalesVolume) < 0) {
+                    BigDecimal currentStock = getCurrentStock(product);
+                    Integer stockForDays = currentStock.divide(dailySalesVolume, 0, RoundingMode.FLOOR).intValue();
+
+                    salesVolume.setField(SalesVolumeFields.CURRENT_STOCK, currentStock);
+                    salesVolume.setField(SalesVolumeFields.STOCK_FOR_DAYS, stockForDays);
+                }
+            } catch (IllegalArgumentException ex) {
+            }
+        }
+    }
+
+    private BigDecimal getCurrentStock(final Entity product) {
+        BigDecimal currentStock = BigDecimal.ZERO;
+
+        List<Entity> locations = materialFlowResourcesService.getWarehouseLocationsFromDB();
+
+        Map<Long, Map<Long, BigDecimal>> resourceStocks = materialFlowResourcesService.getQuantitiesForProductsAndLocations(Lists.newArrayList(product), locations);
+
+        for (Map.Entry<Long, Map<Long, BigDecimal>> resourceStock : resourceStocks.entrySet()) {
+            currentStock = currentStock.add(BigDecimalUtils.convertNullToZero(resourceStock.getValue().get(product.getId())),
+                    numberService.getMathContext());
+        }
+
+        return currentStock;
+    }
+
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/hooks/SalesVolumeHooks.java/base.java
+    public void onView(final DataDefinition salesVolumeDD, final Entity salesVolume) {
+        fillStockFields(salesVolume);
+    }
+
+    public void fillStockFields(final Entity salesVolume) {
+        Entity product = salesVolume.getBelongsToField(SalesVolumeFields.PRODUCT);
+
+        if (Objects.nonNull(product)) {
+            BigDecimal dailySalesVolume;
+
+            try {
+                dailySalesVolume = salesVolume.getDecimalField(SalesVolumeFields.DAILY_SALES_VOLUME);
+
+                if (Objects.nonNull(dailySalesVolume) && BigDecimal.ZERO.compareTo(dailySalesVolume) < 0) {
+                    BigDecimal currentStock = getCurrentStock(product);
+                    BigDecimal stockForDays = currentStock.divide(dailySalesVolume, 0, RoundingMode.FLOOR);
+
+                    salesVolume.setField(SalesVolumeFields.CURRENT_STOCK, currentStock);
+                    salesVolume.setField(SalesVolumeFields.STOCK_FOR_DAYS, stockForDays);
+                }
+            } catch (IllegalArgumentException ex) {
+            }
+        }
+    }
+
+    private BigDecimal getCurrentStock(final Entity product) {
+        BigDecimal currentStock = BigDecimal.ZERO;
+
+        List<Entity> locations = materialFlowResourcesService.getWarehouseLocationsFromDB();
+
+        Map<Long, Map<Long, BigDecimal>> resourceStocks = materialFlowResourcesService.getQuantitiesForProductsAndLocations(Lists.newArrayList(product), locations);
+
+        for (Map.Entry<Long, Map<Long, BigDecimal>> resourceStock : resourceStocks.entrySet()) {
+            currentStock = currentStock.add(BigDecimalUtils.convertNullToZero(resourceStock.getValue().get(product.getId())),
+                    numberService.getMathContext());
+        }
+
+        return currentStock;
+    }
+
+=======
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/hooks/SalesVolumeHooks.java/right.java
 }

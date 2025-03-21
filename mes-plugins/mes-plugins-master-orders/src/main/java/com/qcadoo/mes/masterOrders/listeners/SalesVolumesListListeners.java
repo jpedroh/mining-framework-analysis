@@ -57,28 +57,7 @@ public class SalesVolumesListListeners {
         oldEntries.forEach(oldEntry -> oldEntry.getDataDefinition().delete(oldEntry.getId()));
     }
 
-    public final void showProductsRunningOutOfStock(final ViewDefinitionState view, final ComponentState state, final String[] args) {
-        GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
-
-        Integer runningOutOfStockDays = IntegerUtils.convertNullToZero(getDocumentPositionParameters().getIntegerField(DocumentPositionParametersFieldsMO.RUNNING_OUT_OF_STOCK_DAYS));
-
-        Map<String, String> filters = salesVolumesGrid.getFilters();
-
-        filters.put(SalesVolumeFields.STOCK_FOR_DAYS, L_LT + runningOutOfStockDays);
-
-        salesVolumesGrid.setFilters(filters);
-    }
-
-    public final void showProductsAll(final ViewDefinitionState view, final ComponentState state, final String[] args) {
-        GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
-
-        Map<String, String> filters = salesVolumesGrid.getFilters();
-
-        filters.put(SalesVolumeFields.STOCK_FOR_DAYS, L_SPACE);
-
-        salesVolumesGrid.setFilters(filters);
-    }
-
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/left.java
     public final void showProductsRunningOutOfStock(final ViewDefinitionState view, final ComponentState state, final String[] args) {
         GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
 
@@ -91,16 +70,43 @@ public class SalesVolumesListListeners {
                 .collect(Collectors.toList())
         );
     }
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/base.java
+=======
+    public final void showProductsRunningOutOfStock(final ViewDefinitionState view, final ComponentState state, final String[] args) {
+        GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
 
+        Integer runningOutOfStockDays = IntegerUtils.convertNullToZero(getDocumentPositionParameters().getIntegerField(DocumentPositionParametersFieldsMO.RUNNING_OUT_OF_STOCK_DAYS));
+
+        Map<String, String> filters = salesVolumesGrid.getFilters();
+
+        filters.put(SalesVolumeFields.STOCK_FOR_DAYS, L_LT + runningOutOfStockDays);
+
+        salesVolumesGrid.setFilters(filters);
+    }
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/right.java
+
+<<<<<<< /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/left.java
     public final void showProductsAll(final ViewDefinitionState view, final ComponentState state, final String[] args) {
         GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
 
         salesVolumesGrid.performEvent(view, "refresh");
     }
+||||||| /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/base.java
+=======
+    public final void showProductsAll(final ViewDefinitionState view, final ComponentState state, final String[] args) {
+        GridComponent salesVolumesGrid = (GridComponent) view.getComponentByReference(QcadooViewConstants.L_GRID);
+
+        Map<String, String> filters = salesVolumesGrid.getFilters();
+
+        filters.put(SalesVolumeFields.STOCK_FOR_DAYS, L_SPACE);
+
+        salesVolumesGrid.setFilters(filters);
+    }
+>>>>>>> /usr/src/app/output/qcadoo/mes/f2bd4f55611e1699ec432c9a59deda4dea07d659/mes-plugins/mes-plugins-master-orders/src/main/java/com/qcadoo/mes/masterOrders/listeners/SalesVolumesListListeners.java/right.java
 
     private DataDefinition getSalesVolumeMultiDD() {
-        return dataDefinitionService.get(MasterOrdersConstants.PLUGIN_IDENTIFIER, MasterOrdersConstants.MODEL_SALES_VOLUME_MULTI);
-    }
+    return dataDefinitionService.get(MasterOrdersConstants.PLUGIN_IDENTIFIER, MasterOrdersConstants.MODEL_SALES_VOLUME_MULTI);
+}
 
     private Entity getDocumentPositionParameters() {
         return getDocumentPositionParametersDD().find().setMaxResults(1).uniqueResult();
