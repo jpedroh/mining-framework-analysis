@@ -394,7 +394,12 @@ public class GeoServerRESTPublisher {
                 GSCoverageEncoder coverageEncoder = new GSCoverageEncoder();
                 coverageEncoder.addName(FilenameUtils.getBaseName(geotiff.getName()));
                 coverageEncoder.addSRS(srs);
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/GeoServerRESTPublisher.java/left.java
+                coverageEncoder.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/GeoServerRESTPublisher.java/base.java
+=======
                 coverageEncoder.addProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/GeoServerRESTPublisher.java/right.java
                 configureCoverage(coverageEncoder, workspace, storeName, coverageName);
 
                 // config layer props (style, ...)

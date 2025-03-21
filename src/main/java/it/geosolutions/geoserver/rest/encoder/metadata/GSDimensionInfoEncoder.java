@@ -29,29 +29,41 @@ import it.geosolutions.geoserver.rest.encoder.utils.XmlElement;
 
 import java.math.BigDecimal;
 
+import org.jdom.Element;
+
+/**
+ * 
+ * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
+ *
+ */
+
 /**
  * 
  * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
  *
  */
 public class GSDimensionInfoEncoder extends XmlElement{
-	public final static String DIMENSIONINFO="dimensionInfo";
-	
-	public final static String RESOLUTION="resolution";
-	public final static String PRESENTATION="presentation";
-	
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/left.java
+	final boolean enabled;
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/base.java
+	final boolean enabled;
+=======
 	private boolean enabled;
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/right.java
 	
 	/**
 	 * Enum for presentation mode
 	 */
+	
 	public enum Presentation{
 		LIST,
 		CONTINUOUS_INTERVAL
 	}
+	
 	/**
 	 * Enum for presentation mode which needs arguments
 	 */
+	
 	public enum PresentationDiscrete{
 		DISCRETE_INTERVAL
 	}
@@ -61,6 +73,7 @@ public class GSDimensionInfoEncoder extends XmlElement{
 	 * @param enabled enable dimension if true
 	 * @note a enabled dimension also need a presentation mode set.
 	 */
+	
 	public GSDimensionInfoEncoder(final boolean enabled) {
 		super(DIMENSIONINFO);
 		add("enabled", (enabled)?"true":"false");
@@ -70,11 +83,22 @@ public class GSDimensionInfoEncoder extends XmlElement{
 	/**
 	 * build an not enabled dimension
 	 */
+	
 	public GSDimensionInfoEncoder() {
 		super(DIMENSIONINFO);
 		add("enabled", "false");
 		this.enabled=Boolean.FALSE;
 	}
+	
+	public final static String DIMENSIONINFO="dimensionInfo";
+	
+	public final static String RESOLUTION="resolution";
+	
+	public final static String PRESENTATION="presentation";
+	
+	/**
+	 * Enum for presentation mode
+	 */
 	
 	public void setEnabled(final boolean enabled){
 		set("enabled", "true");
@@ -91,7 +115,13 @@ public class GSDimensionInfoEncoder extends XmlElement{
 		}
 	}
 	
-	public void setPresentation(final Presentation pres){
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/left.java
+	public void addPresentation(final PresentationDiscrete pres){
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/base.java
+	public void addPresentation(final DiscretePresentation pres){
+=======
+	public void addPresentation(final Presentation pres){
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/metadata/GSDimensionInfoEncoder.java/right.java
 		if (enabled){
 			set(PRESENTATION,pres.toString());
 			remove(RESOLUTION);
@@ -116,6 +146,13 @@ public class GSDimensionInfoEncoder extends XmlElement{
 			set(RESOLUTION,String.valueOf(interval));	
 		}
 	}
+	
+    
+    public void add(String nodename, String nodetext) {
+    	final Element el=new Element(nodename);
+    	el.setText(nodetext);
+    	this.addContent(el);
+    }
 	
 	
 }

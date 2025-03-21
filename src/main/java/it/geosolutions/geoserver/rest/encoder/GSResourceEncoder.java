@@ -31,10 +31,19 @@ import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import it.geosolutions.geoserver.rest.encoder.metadata.GSDimensionInfoEncoder;
 import it.geosolutions.geoserver.rest.encoder.metadata.GSMetadataEncoder;
 import it.geosolutions.geoserver.rest.encoder.utils.PropertyXMLEncoder;
-
 import org.jdom.Element;
+/**
+ * 
+ * Encode a GeoServer resouce. The <T> type regards the GDSDimensionInfoEncoder
+ * metadata Type which has different specialization for Features.
+ * 
+ * @see GSDimensionInfoEncoder
+ * @see GSFeatureDimensionInfoEncoder
+ * 
+ * @author ETj (etj at geo-solutions.it)
+ * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
+ */
 import org.jdom.filter.Filter;
-
 /**
  * 
  * Encode a GeoServer resouce. The <T> type regards the GDSDimensionInfoEncoder
@@ -48,7 +57,6 @@ import org.jdom.filter.Filter;
  */
 public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 		extends PropertyXMLEncoder {
-	private final static String NAME="name";
 
 	final private GSMetadataEncoder<T> metadata = new GSMetadataEncoder<T>();
 	final private Element keywordsListEncoder = new Element("keywords");
@@ -66,20 +74,163 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 		addContent(metadata.getRoot());
 		addContent(keywordsListEncoder);
 	}
-	
+	public void addMetadata(String key, T dimensionInfo) {
+		metadata.add(key, dimensionInfo.getRoot());
+	}
+	public void addKeyword(String keyword) {
+		final Element el = new Element("string");
+		el.setText(keyword);
+		keywordsListEncoder.addContent(el);
+	}
+	/**
+	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
+	 */
+	public enum ProjectionPolicy {
+		REPROJECT_TO_DECLARED, FORCE_DECLARED, NONE
+	}
+	private final static String PROJECTIONPOLICY="projectionPolicy";
+	/**
+	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
+	 * 
+	 * @deprecated use the setProjectionPolicy. <br>
+	 *             This method will be set as private in the next release
+	 */
+	public void addProjectionPolicy(ProjectionPolicy policy) {
+		add(PROJECTIONPOLICY, policy.toString());
+	}
+	/**
+	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
+	 */
+	public void setProjectionPolicy(ProjectionPolicy policy) {
+		set(PROJECTIONPOLICY, policy.toString());
+	}
+	private final static String NAME="name";
+	/**
+	 * Add the 'name' node with a text value from 'name'
+	 * 
+	 * @note REQUIRED to configure a resource
+	 * @deprecated use the setName. <br>
+	 *             This method will be set as private in the next release
+	 */
+	public void addName(final String name) {
+		add(NAME, name);
+	}
+	/**
+	 * Set or modify the 'name' node with a text value from 'name'
+	 * 
+	 * @note REQUIRED to configure a resource
+	 */
+	public void setName(final String name) {
+		set(NAME, name);
+	}
+	private final static String TITLE="title";
+	/**
+	 * Add the 'title' node with a text value from 'title'
+	 * 
+	 * @deprecated use the setTitle. <br>
+	 *             This method will be set as private in the next release
+	 */
+	public void addTitle(final String title) {
+		add(TITLE, title);
+	}
+	/**
+	 * Set or modify the 'title' node with a text value from 'title'
+	 */
+	public void setTitle(final String title) {
+		set(TITLE, title);
+	}
+	private final static String SRS="srs";
+	/**
+	 * Add the 'SRS' node with a text value from 'srs'
+	 * 
+	 * @deprecated use the setSRS. <br>
+	 *             This method will be set as private in the next release
+	 */
+	public void addSRS(final String srs) {
+		add(SRS, srs);
+	}
+	/**
+	 * Set or modify the 'SRS' node with a text value from 'srs'
+	 */
+	public void setSRS(final String srs) {
+		set(SRS, srs);
+	}
+	private final static String LATLONBBMINX="latLonBoundingBox/minx";
+	private final static String LATLONBBMAXX="latLonBoundingBox/maxx";
+	private final static String LATLONBBMINY="latLonBoundingBox/miny";
+	private final static String LATLONBBMAXY="latLonBoundingBox/maxy";
+	private final static String LATLONBBCRS="latLonBoundingBox/crs";
+	/**
+	 * @deprecated use the setSRS. <br>
+	 *             This method will be set as private in the next release
+	 *             
+	 * @param minx
+	 * @param maxy
+	 * @param maxx
+	 * @param miny
+	 * @param crs
+	 */
+	public void addLatLonBoundingBox(double minx, double maxy, double maxx,
+			double miny, final String crs) {
+		add(LATLONBBMINX, String.valueOf(minx));
+		add(LATLONBBMAXY, String.valueOf(maxy));
+		add(LATLONBBMAXX, String.valueOf(maxx));
+		add(LATLONBBMINY, String.valueOf(miny));
+		add(LATLONBBCRS, crs);
+	}
+	public void setLatLonBoundingBox(double minx, double maxy, double maxx,
+			double miny, final String crs) {
+		set(LATLONBBMINX, String.valueOf(minx));
+		set(LATLONBBMAXY, String.valueOf(maxy));
+		set(LATLONBBMAXX, String.valueOf(maxx));
+		set(LATLONBBMINY, String.valueOf(miny));
+		set(LATLONBBCRS, crs);
+	}
+	private final static String NATIVEBBMINX="nativeBoundingBox/minx";
+	private final static String NATIVEBBMAXX="nativeBoundingBox/maxx";
+	private final static String NATIVEBBMINY="nativeBoundingBox/miny";
+	private final static String NATIVEBBMAXY="nativeBoundingBox/maxy";
+	private final static String NATIVEBBCRS="nativeBoundingBox/crs";
+	/**
+	 * @deprecated use the setSRS. <br>
+	 *             This method will be set as private in the next release
+	 *             
+	 * @param minx
+	 * @param maxy
+	 * @param maxx
+	 * @param miny
+	 * @param crs
+	 */
+	public void addNativeBoundingBox(double minx, double maxy, double maxx,
+			double miny, final String crs) {
+		add(NATIVEBBMINX, String.valueOf(minx));
+		add(NATIVEBBMAXY, String.valueOf(maxy));
+		add(NATIVEBBMAXX, String.valueOf(maxx));
+		add(NATIVEBBMINY, String.valueOf(miny));
+		add(NATIVEBBCRS, crs);
+	}
+	public void setNativeBoundingBox(double minx, double maxy, double maxx,
+			double miny, final String crs) {
+		set(NATIVEBBMINX, String.valueOf(minx));
+		set(NATIVEBBMAXY, String.valueOf(maxy));
+		set(NATIVEBBMAXX, String.valueOf(maxx));
+		set(NATIVEBBMINY, String.valueOf(miny));
+		set(NATIVEBBCRS, crs);
+	}
+	/**
+	 * @param rootName
+	 *            Actually 'feature' or 'coverage'
+	 * @see GSFeatureTypeEncoder
+	 * @see GSCoverageEncoder
+	 */
 	public void setEnabled(boolean enabled){
 		set("enabled",(enabled)?"true":"false");
 	}
-
 	/**
 	 * @param key
 	 * @param dimensionInfo
 	 * @deprecated will be set to protected in the next release
 	 */
-	public void addMetadata(String key, T dimensionInfo) {
-		metadata.add(key, dimensionInfo.getRoot());
-	}
-	
 	/**
 	 * @param key the name of the metadata to add (f.e.: elevation, time)
 	 * @return true if something is removed, false otherwise
@@ -87,18 +238,9 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 	public boolean delMetadata(String key) {
 		return metadata.remove(key);
 	}
-	
 	public void setMetadata(String key, T dimensionInfo) {
 		metadata.set(key, dimensionInfo.getRoot());
 	}
-
-
-	public void addKeyword(String keyword) {
-		final Element el = new Element("string");
-		el.setText(keyword);
-		keywordsListEncoder.addContent(el);
-	}
-	
 	/**
 	 * delete a keyword from the list
 	 * @param keyword
@@ -117,32 +259,18 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 			}
 		})).size()==0?false:true;
 	}
-
 	/**
 	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
 	 */
-	public enum ProjectionPolicy {
-		REPROJECT_TO_DECLARED, FORCE_DECLARED, NONE
-	}
-
-	private final static String PROJECTIONPOLICY="projectionPolicy";
 	/**
 	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
 	 * 
 	 * @deprecated use the setProjectionPolicy. <br>
 	 *             This method will be set as protected in the next release
 	 */
-	public void addProjectionPolicy(ProjectionPolicy policy) {
-		add(PROJECTIONPOLICY, policy.toString());
-	}
-
 	/**
 	 * NONE, REPROJECT_TO_DECLARED, FORCE_DECLARED
 	 */
-	public void setProjectionPolicy(ProjectionPolicy policy) {
-		set(PROJECTIONPOLICY, policy.toString());
-	}
-
 	/**
 	 * Add the 'name' node with a text value from 'name'
 	 * 
@@ -150,60 +278,29 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 	 * @deprecated use the setName. <br>
 	 *             This method will be set as protected in the next release
 	 */
-	public void addName(final String name) {
-		add(NAME, name);
-	}
 	/**
 	 * Set or modify the 'name' node with a text value from 'name'
 	 * 
 	 * @note REQUIRED to configure a resource
 	 */
-	public void setName(final String name) {
-		set(NAME, name);
-	}
-
-	private final static String TITLE="title";
 	/**
 	 * Add the 'title' node with a text value from 'title'
 	 * 
 	 * @deprecated use the setTitle. <br>
 	 *             This method will be set as protected in the next release
 	 */
-	public void addTitle(final String title) {
-		add(TITLE, title);
-	}
-	
 	/**
 	 * Set or modify the 'title' node with a text value from 'title'
 	 */
-	public void setTitle(final String title) {
-		set(TITLE, title);
-	}
-
-	private final static String SRS="srs";
 	/**
 	 * Add the 'SRS' node with a text value from 'srs'
 	 * 
 	 * @deprecated use the setSRS. <br>
 	 *             This method will be set as protected in the next release
 	 */
-	public void addSRS(final String srs) {
-		add(SRS, srs);
-	}
-	
 	/**
 	 * Set or modify the 'SRS' node with a text value from 'srs'
 	 */
-	public void setSRS(final String srs) {
-		set(SRS, srs);
-	}
-
-	private final static String LATLONBBMINX="latLonBoundingBox/minx";
-	private final static String LATLONBBMAXX="latLonBoundingBox/maxx";
-	private final static String LATLONBBMINY="latLonBoundingBox/miny";
-	private final static String LATLONBBMAXY="latLonBoundingBox/maxy";
-	private final static String LATLONBBCRS="latLonBoundingBox/crs";
-	
 	/**
 	 * @deprecated use the setSRS. <br>
 	 *             This method will be set as protected in the next release
@@ -214,30 +311,6 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 	 * @param miny
 	 * @param crs
 	 */
-	public void addLatLonBoundingBox(double minx, double maxy, double maxx,
-			double miny, final String crs) {
-		add(LATLONBBMINX, String.valueOf(minx));
-		add(LATLONBBMAXY, String.valueOf(maxy));
-		add(LATLONBBMAXX, String.valueOf(maxx));
-		add(LATLONBBMINY, String.valueOf(miny));
-		add(LATLONBBCRS, crs);
-	}
-
-	public void setLatLonBoundingBox(double minx, double maxy, double maxx,
-			double miny, final String crs) {
-		set(LATLONBBMINX, String.valueOf(minx));
-		set(LATLONBBMAXY, String.valueOf(maxy));
-		set(LATLONBBMAXX, String.valueOf(maxx));
-		set(LATLONBBMINY, String.valueOf(miny));
-		set(LATLONBBCRS, crs);
-	}
-	
-	private final static String NATIVEBBMINX="nativeBoundingBox/minx";
-	private final static String NATIVEBBMAXX="nativeBoundingBox/maxx";
-	private final static String NATIVEBBMINY="nativeBoundingBox/miny";
-	private final static String NATIVEBBMAXY="nativeBoundingBox/maxy";
-	private final static String NATIVEBBCRS="nativeBoundingBox/crs";
-	
 	/**
 	 * @deprecated use the setSRS. <br>
 	 *             This method will be set as protected in the next release
@@ -248,22 +321,5 @@ public abstract class GSResourceEncoder<T extends GSDimensionInfoEncoder>
 	 * @param miny
 	 * @param crs
 	 */
-	public void addNativeBoundingBox(double minx, double maxy, double maxx,
-			double miny, final String crs) {
-		add(NATIVEBBMINX, String.valueOf(minx));
-		add(NATIVEBBMAXY, String.valueOf(maxy));
-		add(NATIVEBBMAXX, String.valueOf(maxx));
-		add(NATIVEBBMINY, String.valueOf(miny));
-		add(NATIVEBBCRS, crs);
-	}
-	
-	public void setNativeBoundingBox(double minx, double maxy, double maxx,
-			double miny, final String crs) {
-		set(NATIVEBBMINX, String.valueOf(minx));
-		set(NATIVEBBMAXY, String.valueOf(maxy));
-		set(NATIVEBBMAXX, String.valueOf(maxx));
-		set(NATIVEBBMINY, String.valueOf(miny));
-		set(NATIVEBBCRS, crs);
-	}
 
 }

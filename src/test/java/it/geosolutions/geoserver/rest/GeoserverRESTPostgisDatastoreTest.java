@@ -110,8 +110,6 @@ public class GeoserverRESTPostgisDatastoreTest extends GeoserverRESTTest {
         
         assertTrue(publisher.createWorkspace(wsName));
         
-        assertTrue(publisher.createWorkspace(wsName));
-        
         // creation test
         boolean created = publisher.createPostGISDatastore(wsName, datastoreEncoder);
 

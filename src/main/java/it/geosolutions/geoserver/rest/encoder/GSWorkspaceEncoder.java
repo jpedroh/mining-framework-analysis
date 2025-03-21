@@ -43,17 +43,36 @@ public class GSWorkspaceEncoder extends PropertyXMLEncoder {
         super(WORKSPACE);
     }
 
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/left.java
+    public GSWorkspaceEncoder(String name) {
+    	super("workspace");
+        addName(name);
+    }
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/base.java
+    public GSWorkspaceEncoder(String name) 
+=======
     public GSWorkspaceEncoder(String name) {
     	super(WORKSPACE);
         addName(name);
     }
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/right.java
     
     /**
      * Add the name to this workspace
      * @param name
      * @throws IllegalStateException if name is already set
-     * @deprecated will be set to protected in the next release
      */
+    
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/left.java
+    public void addName(String name) {
+    	final Element el=contains("name");
+    	if (el==null)
+    		add("name", name);
+    	else
+    		throw new IllegalStateException("Workspace name is already set: "+el.getText());
+    }
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/base.java
+=======
     public void addName(String name) {
     	final Element el=ElementUtils.contains(getRoot(),NAME);
     	if (el==null)
@@ -61,11 +80,23 @@ public class GSWorkspaceEncoder extends PropertyXMLEncoder {
     	else
     		throw new IllegalStateException("Workspace name is already set: "+el.getText());
     }
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/right.java
     
     /**
      * add or change (if already set) the workspace name
      * @param name
      */
+    
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/left.java
+    public void setName(String name) {
+    	final Element el=contains("name");
+    	if (el==null)
+    		add("name", name);
+    	else
+    		el.setText(name);
+    }
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/base.java
+=======
     public void setName(String name) {
     	final Element el=ElementUtils.contains(getRoot(),NAME);
     	if (el==null)
@@ -73,9 +104,28 @@ public class GSWorkspaceEncoder extends PropertyXMLEncoder {
     	else
     		el.setText(name);
     }
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/right.java
+    
+    /**
+     * Add the name to this workspace
+     * @param name
+     * @throws IllegalStateException if name is already set
+     * @deprecated will be set to protected in the next release
+     */
+    
+    /**
+     * add or change (if already set) the workspace name
+     * @param name
+     */
     
     public String getName(){
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/left.java
+    	final Element el=contains(getRoot(),NAME);
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/base.java
+    	final Element el=get(getRoot(),NAME);
+=======
     	final Element el=ElementUtils.contains(getRoot(),NAME);
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSWorkspaceEncoder.java/right.java
     	if (el!=null)
     		return el.getTextTrim();
     	else

@@ -30,10 +30,16 @@ import it.geosolutions.geoserver.rest.encoder.utils.PropertyXMLEncoder;
 /**
  *
  * @author ETj (etj at geo-solutions.it)
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/left.java
  * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
  * 
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/base.java
+=======
+ * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
+ *  
  * The layer encoder is enabled by default
  * 
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/right.java
  */
 public class GSLayerEncoder extends PropertyXMLEncoder {
 
@@ -49,7 +55,13 @@ public class GSLayerEncoder extends PropertyXMLEncoder {
     /**
      * @param enable true if layer should be set to enabled 
      */
+<<<<<<< /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/left.java
+    public void addDefaultStyle(boolean enable){
+||||||| /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/base.java
+    public void setDefaultStyle(boolean enable){
+=======
     public void setEnabled(boolean enable){
+>>>>>>> /usr/src/app/output/geosolutions-it/geoserver-manager/352e241e0bf2b9c4a7d640dd5ca7795e1b5d303a/src/main/java/it/geosolutions/geoserver/rest/encoder/GSLayerEncoder.java/right.java
     	if (enable)
     		set("enabled","true");
     	else
