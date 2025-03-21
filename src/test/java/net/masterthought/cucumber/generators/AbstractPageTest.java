@@ -1,18 +1,14 @@
 package net.masterthought.cucumber.generators;
-
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.File;
 import java.util.Properties;
-
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.StringUtils;
+import mockit.Deencapsulation;
 import org.apache.velocity.VelocityContext;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Trends;
 import net.masterthought.cucumber.ValidationException;
@@ -25,194 +21,101 @@ import net.masterthought.cucumber.util.Util;
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class AbstractPageTest extends PageTest {
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  @Before public void setUp() {
+    setUpWithJson(SAMPLE_JSON);
+  }
 
-    @Before
-    public void setUp() {
-        setUpWithJson(SAMPLE_JSON);
-    }
+  @Test public void generateReport_CreatesReportFile() {
+    page = new FeaturesOverviewPage(reportResult, configuration);
+    page.generatePage();
+    File reportFile = new File(configuration.getReportDirectory(), ReportBuilder.BASE_DIRECTORY + File.separatorChar + page.getWebPage());
+    assertThat(reportFile).exists();
+  }
 
-    @Test
-    public void generateReport_CreatesReportFile() {
+  @Test public void generateReport_DisplaysContentAsEscapedText() {
+    page = new FeatureReportPage(reportResult, configuration, features.get(1));
+    page.generatePage();
+    DocumentAssertion document = documentFrom(page.getWebPage());
+    assertThat(document.getFeature().getDescription()).isEqualTo("As an Account Holder I want to withdraw cash from an ATM,<br>so that I can get money when the bank is closed");
+    assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getEmbedding()[3].text()).isEqualTo("Attachment 4 (HTML)");
+    assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getMessage().text()).isEqualTo("java.lang.AssertionError: java.lang.AssertionError: \n" + "Expected: is <80>\n" + "     got: <90>\n" + "\n" + "\tat org.junit.Assert.assertThat(Assert.java:780)\n" + "\tat org.junit.Assert.assertThat(Assert.java:738)\n" + "\tat net.masterthought.example.ATMScenario.checkBalance(ATMScenario.java:69)\n" + "\tat \u273d.And the account balance should be 90(net/masterthought/example/ATMK.feature:12)");
+  }
 
-        // given
-        page = new FeaturesOverviewPage(reportResult, configuration);
+  @Test public void generateReport_OnInvalidPath_ThrowsException() {
+    page = new FeaturesOverviewPage(reportResult, configuration) {
+      @Override public String getWebPage() {
+        return StringUtils.EMPTY;
+      }
+    };
+    thrown.expect(ValidationException.class);
+    Deencapsulation.invoke(page, "generatePage");
+  }
 
-        // when
-        page.generatePage();
+  @Test public void buildProperties_ReturnsProperties() {
+    page = new FeaturesOverviewPage(reportResult, configuration);
+    Properties props = Deencapsulation.invoke(page, "buildProperties");
+    assertThat(props).hasSize(3);
+    assertThat(props.getProperty("resource.loader")).isNotNull();
+    assertThat(props.getProperty("class.resource.loader.class")).isNotNull();
+    assertThat(props.getProperty("runtime.log")).isNotNull();
+  }
 
-        // then
-        File reportFile = new File(configuration.getReportDirectory(),
-                ReportBuilder.BASE_DIRECTORY + File.separatorChar + page.getWebPage());
-        assertThat(reportFile).exists();
-    }
+  @Test public void buildGeneralParameters_AddsCommonProperties() {
+    page = new TagsOverviewPage(reportResult, configuration);
+    VelocityContext context = page.context;
+    assertThat(context.getKeys()).hasSize(7);
+    Object obj = context.get("counter");
+    assertThat(obj).isInstanceOf(Counter.class);
+    Counter counter = (Counter) obj;
+    assertThat(counter.next()).isEqualTo(1);
+    assertThat(context.get("util")).isInstanceOf(Util.class);
+    assertThat(context.get("run_with_jenkins")).isEqualTo(configuration.isRunWithJenkins());
+    assertThat(context.get("build_project_name")).isEqualTo(configuration.getProjectName());
+    assertThat(context.get("build_number")).isEqualTo(configuration.getBuildNumber());
+  }
 
+  @Test public void buildGeneralParameters_OnInvalidBuildNumber_SkipsBuildPreviousNumberProperty() {
+    configuration.setBuildNumber("notAnumber");
+    configuration.setRunWithJenkins(true);
+    page = new ErrorPage(null, configuration, null, jsonReports);
+    VelocityContext context = page.context;
+    assertThat(context.getKeys()).hasSize(7);
+    assertThat(context.get("build_time")).isNotNull();
+  }
 
-    @Test
-    public void generateReport_DisplaysContentAsEscapedText() {
+  @Test public void buildGeneralParameters_OnBuildNumber_AddsBuildPreviousNumberProperty() {
+    configuration.setBuildNumber("12");
+    configuration.setRunWithJenkins(false);
+    page = new ErrorPage(null, configuration, null, jsonReports);
+    VelocityContext context = page.context;
+    assertThat(context.getKeys()).hasSize(7);
+    assertThat(context.get("build_time")).isNotNull();
+  }
 
-        // given
-        page = new FeatureReportPage(reportResult, configuration, features.get(1));
+  @Test public void buildGeneralParameters_OnErrorPage_AddsExtraProperties() {
+    configuration.setBuildNumber("3@");
+    page = new ErrorPage(null, configuration, null, jsonReports);
+    VelocityContext context = page.context;
+    assertThat(context.getKeys()).hasSize(7);
+    assertThat(context.get("build_previous_number")).isNull();
+  }
 
-        // when
-        page.generatePage();
+  @Test public void buildGeneralParameters_OnInvalidBuildNumber_DoesNotAddPreviousBuildNumberProperty() {
+    configuration.setBuildNumber("34");
+    configuration.setRunWithJenkins(true);
+    page = new TagsOverviewPage(reportResult, configuration);
+    VelocityContext context = page.context;
+    assertThat(context.getKeys()).hasSize(8);
+    assertThat(context.get("build_previous_number")).isEqualTo(33);
+  }
 
-        // then
-        DocumentAssertion document = documentFrom(page.getWebPage());
-        assertThat(document.getFeature().getDescription())
-                .isEqualTo("As an Account Holder I want to withdraw cash from an ATM,<br>so that I can get money when the bank is closed");
-        assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getEmbedding()[3].text())
-                .isEqualTo("Attachment 4 (HTML)");
-        assertThat(document.getFeature().getElements()[0].getStepsSection().getSteps()[5].getMessage().text())
-                .isEqualTo("java.lang.AssertionError: java.lang.AssertionError: \n" +
-                        "Expected: is <80>\n" +
-                        "     got: <90>\n" +
-                        "\n" +
-                        "\tat org.junit.Assert.assertThat(Assert.java:780)\n" +
-                        "\tat org.junit.Assert.assertThat(Assert.java:738)\n" +
-                        "\tat net.masterthought.example.ATMScenario.checkBalance(ATMScenario.java:69)\n" +
-                        "\tat ✽.And the account balance should be 90(net/masterthought/example/ATMK.feature:12)");
-    }
-
-    @Test
-    public void generateReport_OnInvalidPath_ThrowsException() {
-
-        // given
-        page = new FeaturesOverviewPage(reportResult, configuration) {
-            @Override
-            public String getWebPage() {
-                // invalid file path
-                return StringUtils.EMPTY;
-            }
-        };
-
-        // when
-        thrown.expect(ValidationException.class);
-        Deencapsulation.invoke(page, "generatePage");
-    }
-
-    @Test
-    public void buildProperties_ReturnsProperties() {
-
-        // given
-        page = new FeaturesOverviewPage(reportResult, configuration);
-
-        // when
-        Properties props = Deencapsulation.invoke(page, "buildProperties");
-
-        // then
-        assertThat(props).hasSize(3);
-        assertThat(props.getProperty("resource.loader")).isNotNull();
-        assertThat(props.getProperty("class.resource.loader.class")).isNotNull();
-        assertThat(props.getProperty("runtime.log")).isNotNull();
-    }
-
-    @Test
-    public void buildGeneralParameters_AddsCommonProperties() {
-
-        // given
-        page = new TagsOverviewPage(reportResult, configuration);
-
-        // when
-        // buildGeneralParameters() already called by constructor
-
-        // then
-        VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
-
-        Object obj = context.get("counter");
-        assertThat(obj).isInstanceOf(Counter.class);
-        Counter counter = (Counter) obj;
-        assertThat(counter.next()).isEqualTo(1);
-
-        assertThat(context.get("util")).isInstanceOf(Util.class);
-
-        assertThat(context.get("run_with_jenkins")).isEqualTo(configuration.isRunWithJenkins());
-        assertThat(context.get("build_project_name")).isEqualTo(configuration.getProjectName());
-        assertThat(context.get("build_number")).isEqualTo(configuration.getBuildNumber());
-    }
-
-    @Test
-    public void buildGeneralParameters_OnInvalidBuildNumber_SkipsBuildPreviousNumberProperty() {
-
-        // given
-        configuration.setBuildNumber("notAnumber");
-        configuration.setRunWithJenkins(true);
-        page = new ErrorPage(null, configuration, null, jsonReports);
-
-        // when
-        // buildGeneralParameters() already called by constructor
-
-        // then
-        VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
-        assertThat(context.get("build_time")).isNotNull();
-    }
-
-    @Test
-    public void buildGeneralParameters_OnBuildNumber_AddsBuildPreviousNumberProperty() {
-
-        // given
-        configuration.setBuildNumber("12");
-        configuration.setRunWithJenkins(false);
-        page = new ErrorPage(null, configuration, null, jsonReports);
-
-        // when
-        // buildGeneralParameters() already called by constructor
-
-        // then
-        VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
-        assertThat(context.get("build_time")).isNotNull();
-    }
-
-    @Test
-    public void buildGeneralParameters_OnErrorPage_AddsExtraProperties() {
-
-        // given
-        configuration.setBuildNumber("3@");
-        page = new ErrorPage(null, configuration, null, jsonReports);
-
-        // when
-        // buildGeneralParameters() already called by constructor
-
-        // then
-        VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(7);
-        assertThat(context.get("build_previous_number")).isNull();
-    }
-
-    @Test
-    public void buildGeneralParameters_OnInvalidBuildNumber_DoesNotAddPreviousBuildNumberProperty() {
-
-        // given
-        configuration.setBuildNumber("34");
-        configuration.setRunWithJenkins(true);
-        page = new TagsOverviewPage(reportResult, configuration);
-
-        // when
-        // buildGeneralParameters() already called by constructor
-
-        // then
-        VelocityContext context = page.context;
-        assertThat(context.getKeys()).hasSize(8);
-        assertThat(context.get("build_previous_number")).isEqualTo(33);
-    }
-
-    @Test
-    public void buildGeneralParameters_OnTrendsStatsFile_AddsTrendsFlag() {
-
-        // given
-        configuration.setTrendsStatsFile(TRENDS_FILE);
-        Trends trends = Deencapsulation.invoke(ReportBuilder.class, "loadTrends", TRENDS_FILE);
-        page = new TrendsOverviewPage(reportResult, configuration, trends);
-
-        // when
-        boolean hasTrends = (Boolean) page.context.get("trends_present");
-
-        // then
-        assertThat(hasTrends).isTrue();
-    }
+  @Test public void buildGeneralParameters_OnTrendsStatsFile_AddsTrendsFlag() {
+    configuration.setTrendsStatsFile(TRENDS_FILE);
+    Trends trends = Deencapsulation.invoke(ReportBuilder.class, "loadTrends", TRENDS_FILE);
+    page = new TrendsOverviewPage(reportResult, configuration, trends);
+    boolean hasTrends = (Boolean) page.context.get("trends_present");
+    assertThat(hasTrends).isTrue();
+  }
 }

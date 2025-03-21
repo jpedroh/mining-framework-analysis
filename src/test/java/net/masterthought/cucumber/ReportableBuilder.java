@@ -1,6 +1,4 @@
 package net.masterthought.cucumber;
-
-
 import net.masterthought.cucumber.json.support.Status;
 
 /**
@@ -9,126 +7,113 @@ import net.masterthought.cucumber.json.support.Status;
  * @author Damian Szczepanik (damianszczepanik@github)
  */
 public class ReportableBuilder implements Reportable {
+  protected String name;
 
-    protected String name;
-    protected String deviceName;
+  protected String deviceName;
 
-    protected ReportCounts featureCounts;
-    protected ReportCounts scenarioCounts;
-    protected ReportCounts stepCounts;
+  protected ReportCounts featureCounts;
 
-    protected long duration;
+  protected ReportCounts scenarioCounts;
 
-    public ReportableBuilder(ReportCounts featureCounts, ReportCounts scenarioCounts, ReportCounts stepCounts, long duration) {
+  protected ReportCounts stepCounts;
 
-        this.featureCounts = featureCounts;
-        this.scenarioCounts = scenarioCounts;
-        this.stepCounts = stepCounts;
-        this.duration = duration;
-    }
+  protected long duration;
 
-    public static Reportable buildSample() {
-        // only prime numbers. Totals should add up.
-        ReportCounts featureCounts = new ReportCounts(2, 3, 5, 7, 11, 28);
-        ReportCounts scenarioCounts = new ReportCounts(13, 17, 19, 23, 29, 101);
-        ReportCounts stepCounts = new ReportCounts(31, 37, 41, 73,79, 261);
-        return new ReportableBuilder(featureCounts, scenarioCounts, stepCounts, 3206126182390L);
-    }
+  public ReportableBuilder(ReportCounts featureCounts, ReportCounts scenarioCounts, ReportCounts stepCounts, long duration) {
+    this.featureCounts = featureCounts;
+    this.scenarioCounts = scenarioCounts;
+    this.stepCounts = stepCounts;
+    this.duration = duration;
+  }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+  public static Reportable buildSample() {
+    ReportCounts featureCounts = new ReportCounts(2, 3, 5, 7, 11, 28);
+    ReportCounts scenarioCounts = new ReportCounts(13, 17, 19, 23, 29, 101);
+    ReportCounts stepCounts = new ReportCounts(31, 37, 41, 73, 79, 261);
+    return new ReportableBuilder(featureCounts, scenarioCounts, stepCounts, 3206126182390L);
+  }
 
-    @Override
-    public String getDeviceName() {
-        return deviceName;
-    }
+  @Override public String getName() {
+    return name;
+  }
 
-    @Override
-    public int getPassedFeatures() {
-        return featureCounts.passed;
-    }
+  @Override public String getDeviceName() {
+    return deviceName;
+  }
 
-    @Override
-    public int getFailedFeatures() {
-        return featureCounts.failed;
-    }
+  @Override public int getPassedFeatures() {
+    return featureCounts.passed;
+  }
 
-    @Override
-    public int getPendingFeatures() { return featureCounts.pending; }
+  @Override public int getFailedFeatures() {
+    return featureCounts.failed;
+  }
 
-    @Override
-    public int getUndefinedFeatures() { return featureCounts.undefined; }
+  @Override public int getPendingFeatures() {
+    return featureCounts.pending;
+  }
 
-    @Override
-    public int getFeatures() {
-        return featureCounts.total;
-    }
+  @Override public int getUndefinedFeatures() {
+    return featureCounts.undefined;
+  }
 
-    @Override
-    public int getPassedScenarios() {
-        return scenarioCounts.passed;
-    }
+  @Override public int getFeatures() {
+    return featureCounts.total;
+  }
 
-    @Override
-    public int getFailedScenarios() {
-        return scenarioCounts.failed;
-    }
+  @Override public int getPassedScenarios() {
+    return scenarioCounts.passed;
+  }
 
-    @Override
-    public int getPendingScenarios() { return scenarioCounts.pending; }
+  @Override public int getFailedScenarios() {
+    return scenarioCounts.failed;
+  }
 
-    @Override
-    public int getUndefinedScenarios() { return scenarioCounts.undefined; }
+  @Override public int getPendingScenarios() {
+    return scenarioCounts.pending;
+  }
 
-    @Override
-    public int getScenarios() {
-        return scenarioCounts.total;
-    }
+  @Override public int getUndefinedScenarios() {
+    return scenarioCounts.undefined;
+  }
 
-    @Override
-    public int getPassedSteps() {
-        return stepCounts.passed;
-    }
+  @Override public int getScenarios() {
+    return scenarioCounts.total;
+  }
 
-    @Override
-    public int getFailedSteps() {
-        return stepCounts.failed;
-    }
+  @Override public int getPassedSteps() {
+    return stepCounts.passed;
+  }
 
-    @Override
-    public int getSkippedSteps() {
-        return stepCounts.skipped;
-    }
+  @Override public int getFailedSteps() {
+    return stepCounts.failed;
+  }
 
-    @Override
-    public int getUndefinedSteps() {
-        return stepCounts.undefined;
-    }
+  @Override public int getSkippedSteps() {
+    return stepCounts.skipped;
+  }
 
-    @Override
-    public int getPendingSteps() {
-        return stepCounts.pending;
-    }
+  @Override public int getUndefinedSteps() {
+    return stepCounts.undefined;
+  }
 
-    @Override
-    public int getSteps() {
-        return stepCounts.total;
-    }
+  @Override public int getPendingSteps() {
+    return stepCounts.pending;
+  }
 
-    @Override
-    public long getDuration() {
-        return duration;
-    }
+  @Override public int getSteps() {
+    return stepCounts.total;
+  }
 
-    @Override
-    public String getFormattedDuration() {
-        throw new IllegalStateException("Not implemented!");
-    }
+  @Override public long getDuration() {
+    return duration;
+  }
 
-    @Override
-    public Status getStatus() {
-        throw new IllegalStateException("Not implemented!");
-    }
+  @Override public String getFormattedDuration() {
+    throw new IllegalStateException("Not implemented!");
+  }
+
+  @Override public Status getStatus() {
+    throw new IllegalStateException("Not implemented!");
+  }
 }

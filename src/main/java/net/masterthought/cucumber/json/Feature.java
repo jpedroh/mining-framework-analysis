@@ -1,242 +1,213 @@
 package net.masterthought.cucumber.json;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 import net.masterthought.cucumber.Configuration;
+import java.util.List;
 import net.masterthought.cucumber.Reportable;
+import org.apache.commons.lang.StringUtils;
 import net.masterthought.cucumber.json.support.Durationable;
 import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Feature implements Reportable, Durationable {
+  private final String id = null;
 
-    // Start: attributes from JSON file report
-    private final String id = null;
-    private final String name = null;
-    // as long as this is private attribute without getter deserialization must be forced by annotation
-    @JsonProperty("uri")
-    private final String uri = null;
-    private final String description = null;
-    private final String keyword = null;
+  private final String name = null;
 
-    private final Element[] elements = new Element[0];
-    private final Tag[] tags = new Tag[0];
-    // End: attributes from JSON file report
+  @JsonProperty(value = "uri") private final String uri = null;
 
-    private String jsonFile;
-    private String reportFileName;
-    private String deviceName;
-    private final List<Element> scenarios = new ArrayList<>();
-    private final StatusCounter elementsCounter = new StatusCounter();
-    private final StatusCounter stepsCounter = new StatusCounter();
+  private final String description = null;
 
-    private Status featureStatus;
-    private long duration;
+  private final String keyword = null;
 
-    @Override
-    public String getDeviceName() {
-        return deviceName;
-    }
+  private final Element[] elements = new Element[0];
 
-    public String getId() {
-        return id;
-    }
+  private final Tag[] tags = new Tag[0];
 
-    public Element[] getElements() {
-        return elements;
-    }
+  private String jsonFile;
 
-    public String getReportFileName() {
-        return reportFileName;
-    }
+  private String reportFileName;
 
-    public Tag[] getTags() {
-        return tags;
-    }
+  private String deviceName;
 
-    @Override
-    public Status getStatus() {
-        return featureStatus;
-    }
+  private final List<Element> scenarios = new ArrayList<>();
 
-    @Override
-    public String getName() {
-        return StringUtils.defaultString(name);
-    }
+  private final StatusCounter elementsCounter = new StatusCounter();
 
-    public String getKeyword() {
-        return StringUtils.defaultString(keyword);
-    }
+  private final StatusCounter stepsCounter = new StatusCounter();
 
-    public String getDescription() {
-        return StringUtils.defaultString(description);
-    }
+  private Status featureStatus;
 
-    @Override
-    public int getFeatures() {
-        return 1;
-    }
+  private long duration;
 
-    @Override
-    public int getPassedFeatures() {
-        return getStatus().isPassed() ? 1 : 0;
-    }
+  @Override public String getDeviceName() {
+    return deviceName;
+  }
 
-    @Override
-    public int getFailedFeatures() {
-        return getStatus().isFailed() ? 1 : 0;
-    }
+  public String getId() {
+    return id;
+  }
 
-    @Override
-    public int getPendingFeatures() { return getStatus().isPending() ? 1 : 0; }
+  public Element[] getElements() {
+    return elements;
+  }
 
-    @Override
-    public int getUndefinedFeatures() { return getStatus().isUndefined() ? 1 : 0; }
+  public String getReportFileName() {
+    return reportFileName;
+  }
 
-    @Override
-    public int getScenarios() {
-        return scenarios.size();
-    }
+  public Tag[] getTags() {
+    return tags;
+  }
 
-    @Override
-    public int getSteps() {
-        return stepsCounter.size();
-    }
+  @Override public Status getStatus() {
+    return featureStatus;
+  }
 
-    @Override
-    public int getPassedSteps() {
-        return stepsCounter.getValueFor(Status.PASSED);
-    }
+  @Override public String getName() {
+    return StringUtils.defaultString(name);
+  }
 
-    @Override
-    public int getFailedSteps() {
-        return stepsCounter.getValueFor(Status.FAILED);
-    }
+  public String getKeyword() {
+    return StringUtils.defaultString(keyword);
+  }
 
-    @Override
-    public int getPendingSteps() {
-        return stepsCounter.getValueFor(Status.PENDING);
-    }
+  public String getDescription() {
+    return StringUtils.defaultString(description);
+  }
 
-    @Override
-    public int getSkippedSteps() {
-        return stepsCounter.getValueFor(Status.SKIPPED);
-    }
+  @Override public int getFeatures() {
+    return 1;
+  }
 
-    @Override
-    public int getUndefinedSteps() {
-        return stepsCounter.getValueFor(Status.UNDEFINED);
-    }
+  @Override public int getPassedFeatures() {
+    return getStatus().isPassed() ? 1 : 0;
+  }
 
-    @Override
-    public long getDuration() {
-        return duration;
-    }
+  @Override public int getFailedFeatures() {
+    return getStatus().isFailed() ? 1 : 0;
+  }
 
-    @Override
-    public String getFormattedDuration() {
-        return Util.formatDuration(duration);
-    }
+  @Override public int getPendingFeatures() {
+    return getStatus().isPending() ? 1 : 0;
+  }
 
-    @Override
-    public int getPassedScenarios() {
-        return elementsCounter.getValueFor(Status.PASSED);
-    }
+  @Override public int getUndefinedFeatures() {
+    return getStatus().isUndefined() ? 1 : 0;
+  }
 
-    @Override
-    public int getFailedScenarios() {
-        return elementsCounter.getValueFor(Status.FAILED);
-    }
+  @Override public int getScenarios() {
+    return scenarios.size();
+  }
 
-    @Override
-    public int getPendingScenarios() { return elementsCounter.getValueFor(Status.PENDING); }
+  @Override public int getSteps() {
+    return stepsCounter.size();
+  }
 
-    @Override
-    public int getUndefinedScenarios() { return elementsCounter.getValueFor(Status.UNDEFINED); }
+  @Override public int getPassedSteps() {
+    return stepsCounter.getValueFor(Status.PASSED);
+  }
 
-    public String getJsonFile() {
-        return jsonFile;
-    }
+  @Override public int getFailedSteps() {
+    return stepsCounter.getValueFor(Status.FAILED);
+  }
 
-    /**
+  @Override public int getPendingSteps() {
+    return stepsCounter.getValueFor(Status.PENDING);
+  }
+
+  @Override public int getSkippedSteps() {
+    return stepsCounter.getValueFor(Status.SKIPPED);
+  }
+
+  @Override public int getUndefinedSteps() {
+    return stepsCounter.getValueFor(Status.UNDEFINED);
+  }
+
+  @Override public long getDuration() {
+    return duration;
+  }
+
+  @Override public String getFormattedDuration() {
+    return Util.formatDuration(duration);
+  }
+
+  @Override public int getPassedScenarios() {
+    return elementsCounter.getValueFor(Status.PASSED);
+  }
+
+  @Override public int getFailedScenarios() {
+    return elementsCounter.getValueFor(Status.FAILED);
+  }
+
+  @Override public int getPendingScenarios() {
+    return elementsCounter.getValueFor(Status.PENDING);
+  }
+
+  @Override public int getUndefinedScenarios() {
+    return elementsCounter.getValueFor(Status.UNDEFINED);
+  }
+
+  public String getJsonFile() {
+    return jsonFile;
+  }
+
+  /**
      * Sets additional information and calculates values which should be calculated during object creation.
-     * @param jsonFile JSON file name
-     * @param jsonFileNo index of the JSON file
-     * @param configuration configuration for the report
      */
-    public void setMetaData(String jsonFile, int jsonFileNo, Configuration configuration) {
-        this.jsonFile = jsonFile;
-
-        for (Element element : elements) {
-            element.setMetaData(this);
-
-            if (element.isScenario()) {
-                scenarios.add(element);
-            }
-        }
-
-        deviceName = calculateDeviceName();
-        calculateReportFileName(jsonFileNo, configuration);
-        featureStatus = calculateFeatureStatus();
-
-        calculateSteps();
+  public void setMetaData(String jsonFile, int jsonFileNo, Configuration configuration) {
+    this.jsonFile = jsonFile;
+    for (Element element : elements) {
+      element.setMetaData(this);
+      if (element.isScenario()) {
+        scenarios.add(element);
+      }
     }
+    deviceName = calculateDeviceName();
+    calculateReportFileName(jsonFileNo, configuration);
+    featureStatus = calculateFeatureStatus();
+    calculateSteps();
+  }
 
-    private String calculateDeviceName() {
-        String[] splitJsonFile = jsonFile.split("[^\\d\\w]");
-        // it should have at least two parts: file name and its extension (.json)
-        if (splitJsonFile.length > 1) {
-            // file name without path and extension (usually path/jsonFile.json)
-            return splitJsonFile[splitJsonFile.length - 2];
-        } else {
-            // path name without special characters
-            return splitJsonFile[0];
-        }
+  private String calculateDeviceName() {
+    String[] splitJsonFile = jsonFile.split("[^\\d\\w]");
+    if (splitJsonFile.length > 1) {
+      return splitJsonFile[splitJsonFile.length - 2];
+    } else {
+      return splitJsonFile[0];
     }
+  }
 
-    private void calculateReportFileName(int jsonFileNo, Configuration configuration) {
-        // remove all characters that might not be valid file name
-        reportFileName = "report-feature_" + Util.toValidFileName(uri);
-
-        // If we expect to have parallel executions, we add postfix to file name
-        if (configuration.isParallelTesting()) {
-            reportFileName += "_" + getDeviceName();
-        }
-
-        // if there is only one JSON file - skip unique prefix
-        if (jsonFileNo > 0) {
-            // add jsonFile index to the file name so if two the same features are reported
-            // in two different JSON files then file name must be different
-            reportFileName += "_" + jsonFileNo;
-        }
-
-        reportFileName += ".html";
+  private void calculateReportFileName(int jsonFileNo, Configuration configuration) {
+    reportFileName = "report-feature_" + Util.toValidFileName(uri);
+    if (configuration.isParallelTesting()) {
+      reportFileName += "_" + getDeviceName();
     }
-
-    private Status calculateFeatureStatus() {
-        StatusCounter statusCounter = new StatusCounter();
-        for (Element element : elements) {
-            statusCounter.incrementFor(element.getStatus());
-        }
-        Status finalStatus = statusCounter.getFinalStatus();
-        return finalStatus;
+    if (jsonFileNo > 0) {
+      reportFileName += "_" + jsonFileNo;
     }
+    reportFileName += ".html";
+  }
 
-    private void calculateSteps() {
-        for (Element element : elements) {
-            if (element.isScenario()) {
-                elementsCounter.incrementFor(element.getStatus());
-            }
-
-            for (Step step : element.getSteps()) {
-                stepsCounter.incrementFor(step.getResult().getStatus());
-                duration += step.getDuration();
-            }
-        }
+  private Status calculateFeatureStatus() {
+    StatusCounter statusCounter = new StatusCounter();
+    for (Element element : elements) {
+      statusCounter.incrementFor(element.getStatus());
     }
+    Status finalStatus = statusCounter.getFinalStatus();
+    return finalStatus;
+  }
+
+  private void calculateSteps() {
+    for (Element element : elements) {
+      if (element.isScenario()) {
+        elementsCounter.incrementFor(element.getStatus());
+      }
+      for (Step step : element.getSteps()) {
+        stepsCounter.incrementFor(step.getResult().getStatus());
+        duration += step.getDuration();
+      }
+    }
+  }
 }
