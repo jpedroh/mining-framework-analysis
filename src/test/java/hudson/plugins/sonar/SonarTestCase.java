@@ -1,24 +1,4 @@
-/*
- * SonarQube Scanner for Jenkins
- * Copyright (C) 2007-2021 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package hudson.plugins.sonar;
-
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import hudson.Functions;
@@ -44,27 +24,25 @@ import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.SingleFileSCM;
-
 import java.io.File;
 import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Evgeny Mandrikov
  */
 public abstract class SonarTestCase {
-
-  @Rule
-  public JenkinsRule j = new JenkinsRule();
+  @Rule public JenkinsRule j = new JenkinsRule();
 
   /**
    * Setting this to non-existent host, allows us to avoid intersection with exist Sonar.
    */
   public static final String SONAR_HOST = "http://example.org:9999/sonar";
+
   public static final String DATABASE_PASSWORD = "password";
 
   public static final String ROOT_POM = "sonar-pom.xml";
+
   public static final String SONAR_INSTALLATION_NAME = "default";
 
   /**
@@ -77,7 +55,6 @@ public abstract class SonarTestCase {
     File mvn = new File(getClass().getResource("SonarTestCase/maven/bin/mvn").toURI().getPath());
     if (!Functions.isWindows()) {
       try {
-        // noinspection OctalInteger
         GNUCLibrary.LIBC.chmod(mvn.getPath(), 0755);
       } catch (Error e) {
         e.printStackTrace();
@@ -101,7 +78,6 @@ public abstract class SonarTestCase {
   protected SonarRunnerInstallation configureDefaultSonarRunner(boolean broken) throws Exception {
     File exe = new File(getClass().getResource("SonarTestCase/sonar-runner" + (broken ? "-broken" : "") + "/bin/sonar-runner").toURI().getPath());
     if (!Functions.isWindows()) {
-      // noinspection OctalInteger
       GNUCLibrary.LIBC.chmod(exe.getPath(), 0755);
     }
     String home = exe.getParentFile().getParentFile().getAbsolutePath();
@@ -120,13 +96,10 @@ public abstract class SonarTestCase {
 
   protected MavenModuleSet setupSonarMavenProject(String pomName) throws Exception {
     final MavenModuleSet project = j.jenkins.createProject(MavenModuleSet.class, "MavenProject");
-    // Setup SCM
     project.setScm(new SingleFileSCM(pomName, getClass().getResource("/hudson/plugins/sonar/SonarTestCase/pom.xml")));
-    // Setup Maven
     project.setRootPOM(pomName);
     project.setGoals("clean install");
     project.setIsArchivingDisabled(true);
-    // Setup Sonar
     project.getPublishersList().add(newSonarPublisherForMavenProject());
     return project;
   }
@@ -137,9 +110,7 @@ public abstract class SonarTestCase {
 
   protected FreeStyleProject setupFreeStyleProject(Builder b) throws Exception {
     FreeStyleProject project = j.createFreeStyleProject("FreeStyleProject");
-    // Setup SCM
     project.setScm(new NullSCM());
-    // Setup SonarQube step
     project.getBuildersList().add(b);
     return project;
   }
@@ -156,8 +127,10 @@ public abstract class SonarTestCase {
     Run<?, ?> build = null;
     if (project instanceof AbstractProject) {
       build = ((AbstractProject<?, ?>) project).scheduleBuild2(0, cause).get();
-    } else if (project instanceof SCMTriggerItem) {
-      build = (Run<?, ?>) ((SCMTriggerItem) project).scheduleBuild2(0, new CauseAction(cause)).get();
+    } else {
+      if (project instanceof SCMTriggerItem) {
+        build = (Run<?, ?>) ((SCMTriggerItem) project).scheduleBuild2(0, new CauseAction(cause)).get();
+      }
     }
     if (expectedStatus != null && build != null) {
       j.assertBuildStatus(expectedStatus, build);
@@ -170,18 +143,7 @@ public abstract class SonarTestCase {
   }
 
   protected static SonarPublisher newSonarPublisherForFreeStyleProject(String pomName) {
-    return new SonarPublisher(
-      SONAR_INSTALLATION_NAME,
-      null,
-      new TriggersConfig(),
-      null,
-      null,
-      "default", // Maven Installation Name
-      pomName, // Root POM
-      null,
-      null,
-      null,
-      false);
+    return new SonarPublisher(SONAR_INSTALLATION_NAME, null, new TriggersConfig(), null, null, "default", pomName, null, null, null, false);
   }
 
   /**
@@ -192,18 +154,13 @@ public abstract class SonarTestCase {
    * @throws Exception if something is wrong
    */
   protected void assertSonarExecution(Run<?, ?> build, String args, boolean success) throws Exception {
-    // Check command line arguments
     assertLogContains(args, build);
-
     if (success) {
-      // SONARPLUGINS-320: Check that small badge was added to build history
       assertThat(build.getAction(SonarBuildBadgeAction.class)).as(SonarBuildBadgeAction.class.getSimpleName() + " not found").isNotNull();
     } else {
-      // SONARJNKNS-203 Do not add link if build has failed
       assertThat(build.getAction(SonarBuildBadgeAction.class)).as(SonarBuildBadgeAction.class.getSimpleName() + " not found").isNotNull();
       assertThat(build.getAction(SonarBuildBadgeAction.class).getUrl()).isNull();
     }
-    // SONARPLUGINS-165: Check that link added to project
     Job<?, ?> parent = build.getParent();
     if (parent instanceof AbstractProject) {
       assertThat(((AbstractProject<?, ?>) parent).getAction(SonarProjectIconAction.class)).isNotNull();
@@ -216,7 +173,6 @@ public abstract class SonarTestCase {
 
   protected void assertNoSonarExecution(Run<?, ?> build, String cause) throws Exception {
     assertLogContains(cause, build);
-    // SONARPLUGINS-320: Check that small badge was not added to build history
     assertThat(build.getAction(SonarBuildBadgeAction.class)).as(SonarBuildBadgeAction.class.getSimpleName() + " found").isNull();
   }
 
@@ -239,8 +195,7 @@ public abstract class SonarTestCase {
 
   protected void addCredential(String id, String token) {
     SystemCredentialsProvider instance = SystemCredentialsProvider.getInstance();
-    instance.getCredentials().add(new StringCredentialsImpl(CredentialsScope.GLOBAL, id, "Sonar token", Secret
-            .fromString(token)));
+    instance.getCredentials().add(new StringCredentialsImpl(CredentialsScope.GLOBAL, id, "Sonar token", Secret.fromString(token)));
     try {
       instance.save();
     } catch (IOException e) {
