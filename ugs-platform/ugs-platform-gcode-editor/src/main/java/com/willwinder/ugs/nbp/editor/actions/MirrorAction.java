@@ -1,5 +1,4 @@
 package com.willwinder.ugs.nbp.editor.actions;
-
 import com.willwinder.ugs.nbp.editor.GcodeDataObject;
 import com.willwinder.ugs.nbp.editor.GcodeLanguageConfig;
 import com.willwinder.ugs.nbp.lib.lookup.CentralLookup;
@@ -26,7 +25,6 @@ import org.openide.awt.ActionRegistration;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -34,124 +32,89 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ActionID(
-        category = LocalizingService.CATEGORY_PROGRAM,
-        id = "MirrorAction")
-@ActionRegistration(
-        iconBase = MirrorAction.ICON_BASE,
-        displayName = MirrorAction.NAME,
-        lazy = false)
-@ActionReferences({
-        @ActionReference(
-                path = LocalizingService.MENU_PROGRAM,
-                position = 1220)
-})
-@EditorActionRegistration(
-        name = "mirror-gcode",
-        toolBarPosition = 12,
-        mimeType = GcodeLanguageConfig.MIME_TYPE,
-        iconResource = MirrorAction.ICON_BASE
-)
-public class MirrorAction extends CookieAction implements UGSEventListener {
+@ActionID(category = LocalizingService.CATEGORY_PROGRAM, id = "MirrorAction") @ActionRegistration(iconBase = MirrorAction.ICON_BASE, displayName = MirrorAction.NAME, lazy = false) @ActionReferences(value = { @ActionReference(path = LocalizingService.MENU_PROGRAM, position = 1220) }) @EditorActionRegistration(name = "mirror-gcode", toolBarPosition = 12, mimeType = GcodeLanguageConfig.MIME_TYPE, iconResource = MirrorAction.ICON_BASE) public class MirrorAction extends CookieAction implements UGSEventListener {
+  public static final String ICON_BASE = "icons/mirror.svg";
 
-    public static final String ICON_BASE = "icons/mirror.svg";
+  public static final String NAME = "Mirror";
 
-    public static final String NAME = "Mirror";
-    public static final double ARC_SEGMENT_LENGTH = 0.5;
-    private final transient BackendAPI backend;
+  public static final double ARC_SEGMENT_LENGTH = 0.5;
 
-    public MirrorAction() {
-        this.backend = CentralLookup.getDefault().lookup(BackendAPI.class);
-        this.backend.addUGSEventListener(this);
-        setEnabled(isEnabled());
+  private final transient BackendAPI backend;
+
+  public MirrorAction() {
+    this.backend = CentralLookup.getDefault().lookup(BackendAPI.class);
+    this.backend.addUGSEventListener(this);
+    setEnabled(isEnabled());
+  }
+
+  @Override public void UGSEvent(UGSEvent cse) {
+    if (cse instanceof ControllerStateEvent || cse instanceof FileStateEvent) {
+      EventQueue.invokeLater(() -> setEnabled(isEnabled()));
     }
+  }
 
-    @Override
-    public void UGSEvent(UGSEvent cse) {
-        if (cse instanceof ControllerStateEvent || cse instanceof FileStateEvent) {
-            EventQueue.invokeLater(() -> setEnabled(isEnabled()));
-        }
+  @Override public boolean isEnabled() {
+    return backend.getGcodeFile() != null && !backend.isSendingFile() && super.isEnabled();
+  }
+
+  @Override public String getName() {
+    return NAME;
+  }
+
+  @Override public HelpCtx getHelpCtx() {
+    return null;
+  }
+
+  @Override protected String iconResource() {
+    return ICON_BASE;
+  }
+
+  @Override protected void performAction(Node[] activatedNodes) {
+    if (!isEnabled()) {
+      return;
     }
+    ThreadHelper.invokeLater(() -> {
+      try {
+        LoaderDialogHelper.showDialog("Mirroring model", 1000);
+        File gcodeFile = backend.getProcessedGcodeFile();
+        Position center = getCenter(gcodeFile);
+        MirrorProcessor translateProcessor = new MirrorProcessor(PartialPosition.from(center));
+        backend.applyCommandProcessor(translateProcessor);
+      } catch (Exception ex) {
+        GUIHelpers.displayErrorDialog(ex.getLocalizedMessage());
+      } finally {
+        LoaderDialogHelper.closeDialog();
+      }
+    });
+  }
 
-    @Override
-    public boolean isEnabled() {
-        return backend.getGcodeFile() != null && !backend.isSendingFile() && super.isEnabled();
+  @Override protected int mode() {
+    return CookieAction.MODE_ANY;
+  }
+
+  @Override protected Class<?>[] cookieClasses() {
+    return new Class[] { GcodeDataObject.class };
+  }
+
+  private Position getCenter(File gcodeFile) throws IOException, GcodeParserException {
+    List<LineSegment> lineSegments = parseGcodeLinesFromFile(gcodeFile);
+    List<PartialPosition> pointList = lineSegments.parallelStream().filter((lineSegment) -> !lineSegment.isFastTraverse()).flatMap((lineSegment) -> {
+      PartialPosition start = PartialPosition.from(lineSegment.getStart());
+      PartialPosition end = PartialPosition.from(lineSegment.getEnd());
+      return Stream.of(start, end);
+    }).distinct().collect(Collectors.toList());
+    return MathUtils.getCenter(pointList);
+  }
+
+  private List<LineSegment> parseGcodeLinesFromFile(File gcodeFile) throws IOException, GcodeParserException {
+    List<LineSegment> result;
+    GcodeViewParse gcvp = new GcodeViewParse();
+    try (IGcodeStreamReader gsr = new GcodeStreamReader(gcodeFile)) {
+      result = gcvp.toObjFromReader(gsr, ARC_SEGMENT_LENGTH);
+    } catch (GcodeStreamReader.NotGcodeStreamFile e) {
+      List<String> linesInFile = VisualizerUtils.readFiletoArrayList(gcodeFile.getAbsolutePath());
+      result = gcvp.toObjRedux(linesInFile, ARC_SEGMENT_LENGTH);
     }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public HelpCtx getHelpCtx() {
-        return null;
-    }
-
-    @Override
-    protected String iconResource() {
-        return ICON_BASE;
-    }
-
-    @Override
-    protected void performAction(Node[] activatedNodes) {
-        if (!isEnabled()) {
-            return;
-        }
-
-        ThreadHelper.invokeLater(() -> {
-            try {
-                LoaderDialogHelper.showDialog("Mirroring model", 1000);
-                File gcodeFile = backend.getProcessedGcodeFile();
-                Position center = getCenter(gcodeFile);
-                MirrorProcessor translateProcessor = new MirrorProcessor(PartialPosition.from(center));
-                backend.applyCommandProcessor(translateProcessor);
-            } catch (Exception ex) {
-                GUIHelpers.displayErrorDialog(ex.getLocalizedMessage());
-            } finally {
-                LoaderDialogHelper.closeDialog();
-            }
-        });
-    }
-
-    @Override
-    protected int mode() {
-        return CookieAction.MODE_ANY;
-    }
-
-    @Override
-    protected Class<?>[] cookieClasses() {
-        return new Class[]{GcodeDataObject.class};
-    }
-
-    private Position getCenter(File gcodeFile) throws IOException, GcodeParserException {
-        List<LineSegment> lineSegments = parseGcodeLinesFromFile(gcodeFile);
-
-        // We only care about carving motion, filter those commands out
-        List<PartialPosition> pointList = lineSegments.parallelStream()
-                .filter(lineSegment -> !lineSegment.isFastTraverse())
-                .flatMap(lineSegment -> {
-                    PartialPosition start = PartialPosition.from(lineSegment.getStart());
-                    PartialPosition end = PartialPosition.from(lineSegment.getEnd());
-                    return Stream.of(start, end);
-                })
-                .distinct()
-                .collect(Collectors.toList());
-
-        return MathUtils.getCenter(pointList);
-    }
-
-    private List<LineSegment> parseGcodeLinesFromFile(File gcodeFile) throws IOException, GcodeParserException {
-        List<LineSegment> result;
-
-        GcodeViewParse gcvp = new GcodeViewParse();
-        try (IGcodeStreamReader gsr = new GcodeStreamReader(gcodeFile)) {
-            result = gcvp.toObjFromReader(gsr, ARC_SEGMENT_LENGTH);
-        } catch (GcodeStreamReader.NotGcodeStreamFile e) {
-            List<String> linesInFile = VisualizerUtils.readFiletoArrayList(gcodeFile.getAbsolutePath());
-            result = gcvp.toObjRedux(linesInFile, ARC_SEGMENT_LENGTH);
-        }
-
-        return result;
-    }
+    return result;
+  }
 }
