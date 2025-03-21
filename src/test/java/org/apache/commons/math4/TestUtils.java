@@ -53,7 +53,9 @@ public class TestUtils {
     public static void assertEquals(double expected, double actual, double delta) {
         Assert.assertEquals(null, expected, actual, delta);
     }
-
+    public static void assertEquals(double expected[], double observed[], double tolerance) {
+        assertEquals("Array comparison failure", expected, observed, tolerance);
+    }
     /**
      * Verifies that expected and actual are within delta, or are both NaN or
      * infinities of the same sign.
@@ -67,7 +69,6 @@ public class TestUtils {
             Assert.assertEquals(msg, expected, actual, delta);
         }
     }
-
     /**
      * Verifies that the two arguments are exactly the same, either
      * both NaN or infinities of same sign, or identical floating point values.
@@ -75,7 +76,6 @@ public class TestUtils {
     public static void assertSame(double expected, double actual) {
      Assert.assertEquals(expected, actual, 0);
     }
-
     /**
      * Verifies that real and imaginary parts of the two complex arguments
      * are exactly the same.  Also ensures that NaN / infinite components match.
@@ -84,7 +84,6 @@ public class TestUtils {
         assertSame(expected.getReal(), actual.getReal());
         assertSame(expected.getImaginary(), actual.getImaginary());
     }
-
     /**
      * Verifies that real and imaginary parts of the two complex arguments
      * differ by at most delta.  Also ensures that NaN / infinite components match.
@@ -93,14 +92,9 @@ public class TestUtils {
         Assert.assertEquals(expected.getReal(), actual.getReal(), delta);
         Assert.assertEquals(expected.getImaginary(), actual.getImaginary(), delta);
     }
-
     /**
      * Verifies that two double arrays have equal entries, up to tolerance
      */
-    public static void assertEquals(double expected[], double observed[], double tolerance) {
-        assertEquals("Array comparison failure", expected, observed, tolerance);
-    }
-
     /**
      * Serializes an object to a bytes array and then recovers the object from the bytes array.
      * Returns the deserialized object.
@@ -125,7 +119,6 @@ public class TestUtils {
             return null;
         }
     }
-
     /**
      * Verifies that serialization preserves equals and hashCode.
      * Serializes the object, then recovers it and checks equals and hash code.
@@ -137,7 +130,6 @@ public class TestUtils {
         Assert.assertEquals("Equals check", object, object2);
         Assert.assertEquals("HashCode check", object.hashCode(), object2.hashCode());
     }
-
     /**
      * Verifies that the relative error in actual vs. expected is less than or
      * equal to relativeError.  If expected is infinite or NaN, actual must be
@@ -151,7 +143,6 @@ public class TestUtils {
             double relativeError) {
         assertRelativelyEquals(null, expected, actual, relativeError);
     }
-
     /**
      * Verifies that the relative error in actual vs. expected is less than or
      * equal to relativeError.  If expected is infinite or NaN, actual must be
@@ -177,7 +168,6 @@ public class TestUtils {
             Assert.assertEquals(msg, expected, actual, absError);
         }
     }
-
     /**
      * Fails iff values does not contain a number within epsilon of z.
      *
@@ -196,7 +186,6 @@ public class TestUtils {
         }
         Assert.fail(msg + " Unable to find " + (new ComplexFormat()).format(z));
     }
-
     /**
      * Fails iff values does not contain a number within epsilon of z.
      *
@@ -208,7 +197,6 @@ public class TestUtils {
             Complex z, double epsilon) {
         assertContains(null, values, z, epsilon);
     }
-
     /**
      * Fails iff values does not contain a number within epsilon of x.
      *
@@ -226,7 +214,6 @@ public class TestUtils {
         }
         Assert.fail(msg + " Unable to find " + x);
     }
-
     /**
      * Fails iff values does not contain a number within epsilon of x.
      *
@@ -238,7 +225,6 @@ public class TestUtils {
             double epsilon) {
        assertContains(null, values, x, epsilon);
     }
-
     /**
      * Asserts that all entries of the specified vectors are equal to within a
      * positive {@code delta}.
@@ -260,7 +246,6 @@ public class TestUtils {
                 actual.getEntry(i), delta);
         }
     }
-
     /**
      * Asserts that all entries of the specified vectors are equal to within a
      * positive {@code delta}.
@@ -283,7 +268,6 @@ public class TestUtils {
                 expected.getEntry(i), actual.getEntry(i), delta);
         }
     }
-
     /** verifies that two matrices are close (1-norm) */
     public static void assertEquals(String msg, RealMatrix expected, RealMatrix observed, double tolerance) {
 
@@ -309,7 +293,6 @@ public class TestUtils {
             Assert.fail(messageBuffer.toString());
         }
     }
-
     /** verifies that two matrices are equal */
     public static void assertEquals(FieldMatrix<? extends FieldElement<?>> expected,
                                     FieldMatrix<? extends FieldElement<?>> observed) {
@@ -335,7 +318,6 @@ public class TestUtils {
             }
         }
     }
-
     /** verifies that two arrays are close (sup norm) */
     public static void assertEquals(String msg, double[] expected, double[] observed, double tolerance) {
         StringBuilder out = new StringBuilder(msg);
@@ -364,7 +346,6 @@ public class TestUtils {
             Assert.fail(out.toString());
         }
     }
-    
     /** verifies that two arrays are close (sup norm) */
     public static void assertEquals(String msg, float[] expected, float[] observed, float tolerance) {
         StringBuilder out = new StringBuilder(msg);
@@ -393,7 +374,6 @@ public class TestUtils {
             Assert.fail(out.toString());
         }
     }
-   
     /** verifies that two arrays are close (sup norm) */
     public static void assertEquals(String msg, Complex[] expected, Complex[] observed, double tolerance) {
         StringBuilder out = new StringBuilder(msg);
@@ -432,75 +412,42 @@ public class TestUtils {
             Assert.fail(out.toString());
         }
     }
-
+    /** verifies that two arrays are equal */
+    /**
+     * Verifies that expected and actual are within delta, or are both NaN or
+     * infinities of the same sign.
+     */
+    /**
+     * Verifies that expected and actual are within delta, or are both NaN or
+     * infinities of the same sign.
+     */
+    /**
+     * Asserts that all entries of the specified vectors are equal to within a
+     * positive {@code delta}.
+     *
+     * @param message the identifying message for the assertion error (can be
+     * {@code null})
+     * @param expected expected value
+     * @param actual actual value
+     * @param delta the maximum difference between the entries of the expected
+     * and actual vectors for which both entries are still considered equal
+     */
+    /**
+     * Asserts that all entries of the specified vectors are equal to within a
+     * positive {@code delta}.
+     *
+     * @param message the identifying message for the assertion error (can be
+     * {@code null})
+     * @param expected expected value
+     * @param actual actual value
+     * @param delta the maximum difference between the entries of the expected
+     * and actual vectors for which both entries are still considered equal
+     */
+    /** verifies that two matrices are close (1-norm) */
+    /** verifies that two matrices are equal */
     /** verifies that two arrays are close (sup norm) */
-    public static void assertEquals(String msg, float[] expected, float[] observed, float tolerance) {
-        StringBuilder out = new StringBuilder(msg);
-        if (expected.length != observed.length) {
-            out.append("\n Arrays not same length. \n");
-            out.append("expected has length ");
-            out.append(expected.length);
-            out.append(" observed length = ");
-            out.append(observed.length);
-            Assert.fail(out.toString());
-        }
-        boolean failure = false;
-        for (int i=0; i < expected.length; i++) {
-            if (!Precision.equalsIncludingNaN(expected[i], observed[i], tolerance)) {
-                failure = true;
-                out.append("\n Elements at index ");
-                out.append(i);
-                out.append(" differ. ");
-                out.append(" expected = ");
-                out.append(expected[i]);
-                out.append(" observed = ");
-                out.append(observed[i]);
-            }
-        }
-        if (failure) {
-            Assert.fail(out.toString());
-        }
-    }
-
     /** verifies that two arrays are close (sup norm) */
-    public static void assertEquals(String msg, Complex[] expected, Complex[] observed, double tolerance) {
-        StringBuilder out = new StringBuilder(msg);
-        if (expected.length != observed.length) {
-            out.append("\n Arrays not same length. \n");
-            out.append("expected has length ");
-            out.append(expected.length);
-            out.append(" observed length = ");
-            out.append(observed.length);
-            Assert.fail(out.toString());
-        }
-        boolean failure = false;
-        for (int i=0; i < expected.length; i++) {
-            if (!Precision.equalsIncludingNaN(expected[i].getReal(), observed[i].getReal(), tolerance)) {
-                failure = true;
-                out.append("\n Real elements at index ");
-                out.append(i);
-                out.append(" differ. ");
-                out.append(" expected = ");
-                out.append(expected[i].getReal());
-                out.append(" observed = ");
-                out.append(observed[i].getReal());
-            }
-            if (!Precision.equalsIncludingNaN(expected[i].getImaginary(), observed[i].getImaginary(), tolerance)) {
-                failure = true;
-                out.append("\n Imaginary elements at index ");
-                out.append(i);
-                out.append(" differ. ");
-                out.append(" expected = ");
-                out.append(expected[i].getImaginary());
-                out.append(" observed = ");
-                out.append(observed[i].getImaginary());
-            }
-        }
-        if (failure) {
-            Assert.fail(out.toString());
-        }
-    }
-
+    /** verifies that two arrays are close (sup norm) */
     /** verifies that two arrays are equal */
     public static <T extends FieldElement<T>> void assertEquals(T[] m, T[] n) {
         if (m.length != n.length) {
