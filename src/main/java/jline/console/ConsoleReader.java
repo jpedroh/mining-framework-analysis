@@ -1943,6 +1943,19 @@ public class ConsoleReader
         return c;
     }
 
+    public final int readCharacter(final char... allowed) throws IOException {
+        // if we restrict to a limited set and the current character is not in the set, then try again.
+        char c;
+
+        Arrays.sort(allowed); // always need to sort before binarySearch
+
+        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
+            // nothing
+        }
+
+        return c;
+    }
+
     /**
      * Clear the echoed characters for the specified character code.
      */
@@ -2015,19 +2028,6 @@ public class ConsoleReader
         }
 
         return sbuff;
-    }
-
-    public final int readCharacter(final char... allowed) throws IOException {
-        // if we restrict to a limited set and the current character is not in the set, then try again.
-        char c;
-
-        Arrays.sort(allowed); // always need to sort before binarySearch
-
-        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
-            // nothing
-        }
-
-        return c;
     }
 
     //
@@ -3499,54 +3499,7 @@ public class ConsoleReader
 
     // return column position, reported by the terminal
     // TODO: This appears to be unused. Delete?
-    private int getCurrentPosition() {
-        // check for ByteArrayInputStream to disable for unit tests
-        if (terminal.isAnsiSupported() && !this.isUnitTestInput) {
-            try {
-                printAnsiSequence("6n");
-                flush();
-                StringBuffer b = new StringBuffer(8);
-                // position is sent as <ESC>[{ROW};{COLUMN}R
-                int r;
-                while((r = in.read()) > -1 && r != 'R') {
-                    if (r != 27 && r != '[') {
-                        b.append((char) r);
-                    }
-                }
-                String[] pos = b.toString().split(";");
-                return Integer.parseInt(pos[1]);
-            } catch (Exception x) {
-                // no luck
-            }
-        }
-
-        return -1; // TODO: throw exception instead?
-    }
-
     // return row position, reported by the terminal
     // needed to know whether to scroll up on cursor move in last col for weird
     // wrapping terminals - not tested for anything else
-    private int getCurrentAnsiRow() {
-        // check for ByteArrayInputStream to disable for unit tests
-        if (terminal.isAnsiSupported() && !this.isUnitTestInput) {
-            try {
-                printAnsiSequence("6n");
-                flush();
-                StringBuffer b = new StringBuffer(8);
-                // position is sent as <ESC>[{ROW};{COLUMN}R
-                int r;
-                while((r = in.read()) > -1 && r != 'R') {
-                    if (r != 27 && r != '[') {
-                        b.append((char) r);
-                    }
-                }
-                String[] pos = b.toString().split(";");
-                return Integer.parseInt(pos[0]);
-            } catch (Exception x) {
-                // no luck
-            }
-        }
-
-        return -1; // TODO: throw exception instead?
-    }
 }
