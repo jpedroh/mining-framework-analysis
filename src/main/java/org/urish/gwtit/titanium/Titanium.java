@@ -1,25 +1,5 @@
-/*
- * Copyright 2011 Uri Shaked
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
-/* Automatically generated code, don't edit ! */
-
 package org.urish.gwtit.titanium;
-
 import org.urish.gwtit.client.EventCallback;
-
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -86,200 +66,98 @@ import com.google.gwt.core.client.JavaScriptObject;
  * @since 0.1
  */
 public class Titanium extends org.urish.gwtit.titanium.Module {
-	protected Titanium() {
-	}
+  protected Titanium() {
+  }
 
-	/**
+  /**
 	 * @return The user-agent string used by titanium
 	 */
-	public static native String getUserAgent()
-	/*-{
-		return Titanium.userAgent;
-	}-*/;
+  public static native String getUserAgent();
 
-	public static native void setUserAgent(String value)
-	/*-{
-		Titanium.userAgent = value;
-	}-*/;
+  public static native void setUserAgent(String value);
 
-	/**
+  /**
 	 * @return The version of titanium that is executing
 	 */
-	public static native float getVersion()
-	/*-{
-		return Titanium.version;
-	}-*/;
+  public static native float getVersion();
 
-	public static native void setVersion(float value)
-	/*-{
-		Titanium.version = value;
-	}-*/;
+  public static native void setVersion(float value);
 
-	public static native org.urish.gwtit.titanium.Blob createBlob()
-	/*-{
-		return Titanium.createBlob();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Blob createBlob();
 
-	public static native org.urish.gwtit.titanium.BlobStream createBlobStream()
-	/*-{
-		return Titanium.createBlobStream();
-	}-*/;
+  public static native org.urish.gwtit.titanium.BlobStream createBlobStream();
 
-	public static native org.urish.gwtit.titanium.BufferStream createBufferStream()
-	/*-{
-		return Titanium.createBufferStream();
-	}-*/;
+  public static native org.urish.gwtit.titanium.BufferStream createBufferStream();
 
-	public static native org.urish.gwtit.titanium.IOStream createIOStream()
-	/*-{
-		return Titanium.createIOStream();
-	}-*/;
+  public static native org.urish.gwtit.titanium.IOStream createIOStream();
 
-	public static native org.urish.gwtit.titanium.Module createModule()
-	/*-{
-		return Titanium.createModule();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Module createModule();
 
-	public static native org.urish.gwtit.titanium.Proxy createProxy()
-	/*-{
-		return Titanium.createProxy();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Proxy createProxy();
 
-	public static native org.urish.gwtit.titanium.Accelerometer createAccelerometer()
-	/*-{
-		return Titanium.createAccelerometer();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Accelerometer createAccelerometer();
 
-	public static native org.urish.gwtit.titanium.Analytics createAnalytics()
-	/*-{
-		return Titanium.createAnalytics();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Analytics createAnalytics();
 
-	public static native org.urish.gwtit.titanium.Android createAndroid()
-	/*-{
-		return Titanium.createAndroid();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Android createAndroid();
 
-	public static native org.urish.gwtit.titanium.API createAPI()
-	/*-{
-		return Titanium.createAPI();
-	}-*/;
+  public static native org.urish.gwtit.titanium.API createAPI();
 
-	public static native org.urish.gwtit.titanium.App createApp()
-	/*-{
-		return Titanium.createApp();
-	}-*/;
+  public static native org.urish.gwtit.titanium.App createApp();
 
-	public static native org.urish.gwtit.titanium.Codec createCodec()
-	/*-{
-		return Titanium.createCodec();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Codec createCodec();
 
-	public static native org.urish.gwtit.titanium.Contacts createContacts()
-	/*-{
-		return Titanium.createContacts();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Contacts createContacts();
 
-	public static native org.urish.gwtit.titanium.Database createDatabase()
-	/*-{
-		return Titanium.createDatabase();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Database createDatabase();
 
-	public static native org.urish.gwtit.titanium.Facebook createFacebook()
-	/*-{
-		return Titanium.createFacebook();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Facebook createFacebook();
 
-	public static native org.urish.gwtit.titanium.Filesystem createFilesystem()
-	/*-{
-		return Titanium.createFilesystem();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Filesystem createFilesystem();
 
-	public static native org.urish.gwtit.titanium.Geolocation createGeolocation()
-	/*-{
-		return Titanium.createGeolocation();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Geolocation createGeolocation();
 
-	public static native org.urish.gwtit.titanium.Gesture createGesture()
-	/*-{
-		return Titanium.createGesture();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Gesture createGesture();
 
-	public static native org.urish.gwtit.titanium.Locale createLocale()
-	/*-{
-		return Titanium.createLocale();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Locale createLocale();
 
-	public static native org.urish.gwtit.titanium.Map createMap()
-	/*-{
-		return Titanium.createMap();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Map createMap();
 
-	public static native org.urish.gwtit.titanium.Media createMedia()
-	/*-{
-		return Titanium.createMedia();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Media createMedia();
 
-	public static native org.urish.gwtit.titanium.Network createNetwork()
-	/*-{
-		return Titanium.createNetwork();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Network createNetwork();
 
-	public static native org.urish.gwtit.titanium.Platform createPlatform()
-	/*-{
-		return Titanium.createPlatform();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Platform createPlatform();
 
-	public static native org.urish.gwtit.titanium.Stream createStream()
-	/*-{
-		return Titanium.createStream();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Stream createStream();
 
-	public static native org.urish.gwtit.titanium.UI createUI()
-	/*-{
-		return Titanium.createUI();
-	}-*/;
+  public static native org.urish.gwtit.titanium.UI createUI();
 
-	public static native org.urish.gwtit.titanium.Utils createUtils()
-	/*-{
-		return Titanium.createUtils();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Utils createUtils();
 
-	public static native org.urish.gwtit.titanium.XML createXML()
-	/*-{
-		return Titanium.createXML();
-	}-*/;
+  public static native org.urish.gwtit.titanium.XML createXML();
 
-	public static native org.urish.gwtit.titanium.Yahoo createYahoo()
-	/*-{
-		return Titanium.createYahoo();
-	}-*/;
+  public static native org.urish.gwtit.titanium.Yahoo createYahoo();
 
-	/**
+  /**
 	 * A filename to include as if the javascript code was written in place.
 	 * this is similar to a c `#include` function.
 	 * 
 	 * @param name
 	 *            filename to include
 	 */
-	public static native void include(String name)
-	/*-{
-		return Titanium.include(name);
-	}-*/;
+  public static native void include(String name);
 
-	/**
+  /**
 	 * Creates a new buffer based on the params
 	 * 
 	 * @param params
 	 *            creation arguments
 	 * @return The new buffer.
 	 */
-	public static native org.urish.gwtit.titanium.Buffer createBuffer(org.urish.gwtit.titanium.CreateBufferArgs params)
-	/*-{
-		return Titanium.createBuffer(params);
-	}-*/;
+  public static native org.urish.gwtit.titanium.Buffer createBuffer(org.urish.gwtit.titanium.CreateBufferArgs params);
 
-	/**
+  /**
 	 * Add an event listener for the instance to receive triggered events
 	 * 
 	 * @param name
@@ -287,12 +165,9 @@ public class Titanium extends org.urish.gwtit.titanium.Module {
 	 * @param callback
 	 *            callback function to invoke when the event is fired
 	 */
-	public static native void addEventListener(String name, EventCallback<JavaScriptObject> callback)
-	/*-{
-		return Titanium.addEventListener(name, function(e) { callback.@org.urish.gwtit.client.EventCallback::onEvent(Lcom/google/gwt/core/client/JavaScriptObject;)(e); });
-	}-*/;
+  public static native void addEventListener(String name, EventCallback<JavaScriptObject> callback);
 
-	/**
+  /**
 	 * Remove a previously added event listener
 	 * 
 	 * @param name
@@ -300,12 +175,9 @@ public class Titanium extends org.urish.gwtit.titanium.Module {
 	 * @param callbac
 	 *            callback function passed in addEventListener
 	 */
-	public static native void removeEventListener(String name, EventCallback<JavaScriptObject> callbac)
-	/*-{
-		return Titanium.removeEventListener(name, function(e) { callbac.@org.urish.gwtit.client.EventCallback::onEvent(Lcom/google/gwt/core/client/JavaScriptObject;)(e); });
-	}-*/;
+  public static native void removeEventListener(String name, EventCallback<JavaScriptObject> callbac);
 
-	/**
+  /**
 	 * Fire a synthesized event to the views listener
 	 * 
 	 * @param name
@@ -313,9 +185,5 @@ public class Titanium extends org.urish.gwtit.titanium.Module {
 	 * @param event
 	 *            event object
 	 */
-	public static native void fireEvent(String name, Object event)
-	/*-{
-		return Titanium.fireEvent(name, event);
-	}-*/;
-
+  public static native void fireEvent(String name, Object event);
 }
