@@ -32,8 +32,13 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
-    private Role role1;     // attached object cache
-    private Role role2;     // attached object cache
+    private Role role1;
+
+// attached object cache
+
+    private Role role2;
+
+// attached object cache
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
@@ -48,13 +53,11 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
 
     // -------------------------------------------------------------------------------------------------- Public Methods
 
-
-
     // ******************************************
+
     // *** AttachedDeepaMehtaObject Overrides ***
+
     // ******************************************
-
-
 
     // === Updating ===
 
@@ -64,6 +67,7 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
      *                  If role 1 is <code>null</code> it is not updated.
      *                  If role 2 is <code>null</code> it is not updated.
      */
+
     @Override
     public void update(AssociationModel model) {
         // ### TODO: there is no possible POST_UPDATE_ASSOCIATION_REQUEST event to fire here (compare to
@@ -82,8 +86,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         //
         dms.fireEvent(CoreEvent.POST_UPDATE_ASSOCIATION, this, oldModel);
     }
-
-
 
     // === Deletion ===
 
@@ -126,13 +128,11 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         }
     }
 
-
-
     // **********************************
+
     // *** Association Implementation ***
+
     // **********************************
-
-
 
     @Override
     public Role getRole1() {
@@ -217,13 +217,21 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         return (AssociationModel) super.getModel();
     }
 
+    // === Traversal ===
 
+    @Override
+    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri,
+                                                                         String othersRoleTypeUri) {
+        RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(),
+            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, null); // othersAssocTypeUri=null
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null;   // checkAccess=true
+    }
 
     // ***************************************
+
     // *** DeepaMehtaObject Implementation ***
+
     // ***************************************
-
-
 
     // === Traversal ===
 
@@ -240,24 +248,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     // --- Association Retrieval ---
 
     @Override
-    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri,
-                                                    String othersRoleTypeUri, String othersAssocTypeUri) {
-        RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(),
-            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
-        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null;   // checkAccess=true
-    }
-
-    @Override
-    public ResultList<RelatedAssociation> getRelatedAssociations(String assocTypeUri, String myRoleTypeUri,
-                                                                 String othersRoleTypeUri, String othersAssocTypeUri) {
-        ResultList<RelatedAssociationModel> assocs = dms.storageDecorator.fetchAssociationRelatedAssociations(getId(),
-            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
-        return dms.instantiateRelatedAssociations(assocs); 
-    }
-
-    // ---
-
-    @Override
     public Association getAssociation(String assocTypeUri, String myRoleTypeUri, String othersRoleTypeUri,
                                                                                    long othersTopicId) {
         AssociationModel assoc = dms.storageDecorator.fetchAssociationBetweenTopicAndAssociation(assocTypeUri,
@@ -269,8 +259,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     public List<Association> getAssociations() {
         return dms.instantiateAssociations(dms.storageDecorator.fetchAssociationAssociations(getId()));
     }
-
-
 
     // === Properties ===
 
@@ -284,18 +272,15 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
         dms.storageDecorator.removeAssociationProperty(getId(), propUri);
     }
 
-
-
     // ----------------------------------------------------------------------------------------- Package Private Methods
 
     /**
      * Convenience method.
      */
+
     AssociationType getAssociationType() {
         return (AssociationType) getType();
     }
-
-
 
     // === Implementation of the abstract methods ===
 
@@ -337,8 +322,6 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
             othersRoleTypeUri, othersTopicTypeUri, maxResultSize);
     }
 
-
-
     // ------------------------------------------------------------------------------------------------- Private Methods
 
     // --- Update ---
@@ -346,6 +329,7 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
     /**
      * @param   nr      used only for logging
      */
+
     private void updateRole(RoleModel newModel, int nr) {
         if (newModel != null) {
             // Note: We must lookup the roles individually.
@@ -378,6 +362,88 @@ class AttachedAssociation extends AttachedDeepaMehtaObject implements Associatio
             topics.add(((TopicRole) role).getTopic());
         }
     }
+
+    // ---
+
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+
+// attached object cache
+
+// attached object cache
+
+    // ---------------------------------------------------------------------------------------------------- Constructors
+
+    // -------------------------------------------------------------------------------------------------- Public Methods
+
+    // ******************************************
+
+    // *** AttachedDeepaMehtaObject Overrides ***
+
+    // ******************************************
+
+    // === Updating ===
+
+    // === Deletion ===
+
+    // **********************************
+
+    // *** Association Implementation ***
+
+    // **********************************
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ***************************************
+
+    // *** DeepaMehtaObject Implementation ***
+
+    // ***************************************
+
+    // === Traversal ===
+
+    // --- Topic Retrieval ---
+
+    // --- Association Retrieval ---
+
+    @Override
+    public RelatedAssociation getRelatedAssociation(String assocTypeUri, String myRoleTypeUri,
+                                                    String othersRoleTypeUri, String othersAssocTypeUri) {
+        RelatedAssociationModel assoc = dms.storageDecorator.fetchAssociationRelatedAssociation(getId(),
+            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
+        return assoc != null ? dms.instantiateRelatedAssociation(assoc, true) : null; 
+    }
+
+    @Override
+    public ResultList<RelatedAssociation> getRelatedAssociations(String assocTypeUri, String myRoleTypeUri,
+                                                                 String othersRoleTypeUri, String othersAssocTypeUri) {
+        ResultList<RelatedAssociationModel> assocs = dms.storageDecorator.fetchAssociationRelatedAssociations(getId(),
+            assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersAssocTypeUri);
+        return dms.instantiateRelatedAssociations(assocs); 
+    }
+
+    // ---
+
+    // === Properties ===
+
+    // ----------------------------------------------------------------------------------------- Package Private Methods
+
+    // === Implementation of the abstract methods ===
+
+    // ---
+
+    // ------------------------------------------------------------------------------------------------- Private Methods
+
+    // --- Update ---
+
+    // --- Helper ---
 
     // ---
 

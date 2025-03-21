@@ -694,7 +694,21 @@ public class EmbeddedService implements DeepaMehtaService {
         return relAssocs;
     }
 
+    // ===
 
+    private void checkAccess(TopicModel model, boolean checkAccess) {
+        if (checkAccess) {
+            fireEvent(CoreEvent.PRE_GET_TOPIC, model.getId());          // throws AccessControlException
+        }
+    }
+
+    private void checkAccess(AssociationModel model, boolean checkAccess) {
+        if (checkAccess) {
+            fireEvent(CoreEvent.PRE_GET_ASSOCIATION, model.getId());    // throws AccessControlException
+        }
+    }
+
+    // ---
 
     // === Factory ===
 
@@ -706,20 +720,6 @@ public class EmbeddedService implements DeepaMehtaService {
             return topic;
         } catch (Exception e) {
             throw new RuntimeException("Creating topic failed (" + model + ")", e);
-        }
-    }
-
-    // ---
-
-    private void checkAccess(TopicModel model, boolean checkAccess) {
-        if (checkAccess) {
-            fireEvent(CoreEvent.PRE_GET_TOPIC, model.getId());          // throws AccessControlException
-        }
-    }
-
-    private void checkAccess(AssociationModel model, boolean checkAccess) {
-        if (checkAccess) {
-            fireEvent(CoreEvent.PRE_GET_ASSOCIATION, model.getId());    // throws AccessControlException
         }
     }
 
