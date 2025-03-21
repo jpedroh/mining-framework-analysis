@@ -1,22 +1,4 @@
-
-/**
- * Copyright (C) 2010 dennis zhuang (killme2008@gmail.com)
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this program;
- * if not, write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- **/
 package com.googlecode.aviator;
-
-
 import java.io.OutputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -97,7 +79,6 @@ import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorFunction;
 import com.googlecode.aviator.runtime.type.AviatorNil;
 
-
 /**
  * A aviator evaluator instance
  *
@@ -106,7 +87,6 @@ import com.googlecode.aviator.runtime.type.AviatorNil;
  *
  */
 public final class AviatorEvaluatorInstance {
-
   private AviatorClassLoader aviatorClassLoader;
 
   private OutputStream traceOutputStream = System.out;
@@ -121,10 +101,8 @@ public final class AviatorEvaluatorInstance {
    */
   private volatile Map<Options, Value> options = new IdentityHashMap<Options, Value>();
 
-
   /** function loader list */
   private List<FunctionLoader> functionLoaders;
-
 
   /**
    * Adds a function loader
@@ -173,21 +151,17 @@ public final class AviatorEvaluatorInstance {
     this.options = newOpts;
   }
 
-
   /**
    * Returns the current evaluator option value, returns null if missing.
    *
    * @param opt
    * @return
    */
-  @Deprecated
-  @SuppressWarnings("unchecked")
-  public <T> T getOption(Options opt) {
+  @Deprecated @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> T getOption(Options opt) {
     Value val = options.get(opt);
     if (val == null) {
       val = opt.getDefaultValueObject();
     }
-
     return (T) opt.intoObject(val);
   }
 
@@ -203,7 +177,6 @@ public final class AviatorEvaluatorInstance {
     return val;
   }
 
-
   /**
    * Returns the generated java classes byte code version, 1.6 by defualt.
    *
@@ -212,7 +185,6 @@ public final class AviatorEvaluatorInstance {
   public int getBytecodeVersion() {
     return bytecodeVersion;
   }
-
 
   /**
    * Set the generated java classes java byte code version.
@@ -223,7 +195,6 @@ public final class AviatorEvaluatorInstance {
   public void setBytecodeVersion(int bytecodeVersion) {
     this.bytecodeVersion = bytecodeVersion;
   }
-
 
   /**
    * Get the evaluator instance options
@@ -238,7 +209,6 @@ public final class AviatorEvaluatorInstance {
     return ret;
   }
 
-
   /**
    * Returns the functions map
    *
@@ -247,7 +217,6 @@ public final class AviatorEvaluatorInstance {
   public Map<String, Object> getFuncMap() {
     return funcMap;
   }
-
 
   /**
    * Returns the operators map.
@@ -258,7 +227,6 @@ public final class AviatorEvaluatorInstance {
     return opsMap;
   }
 
-
   /**
    * Get current trace output stream,default is System.out
    *
@@ -267,7 +235,6 @@ public final class AviatorEvaluatorInstance {
   public OutputStream getTraceOutputStream() {
     return traceOutputStream;
   }
-
 
   /**
    * Set trace output stream
@@ -280,24 +247,17 @@ public final class AviatorEvaluatorInstance {
 
   {
     aviatorClassLoader = AccessController.doPrivileged(new PrivilegedAction<AviatorClassLoader>() {
-
-      @Override
-      public AviatorClassLoader run() {
+      @Override public AviatorClassLoader run() {
         return new AviatorClassLoader(AviatorEvaluatorInstance.class.getClassLoader());
       }
-
     });
   }
 
   private final Map<String, Object> funcMap = new HashMap<String, Object>();
 
-  private final Map<OperatorType, AviatorFunction> opsMap =
-      new IdentityHashMap<OperatorType, AviatorFunction>();
-
+  private final Map<OperatorType, AviatorFunction> opsMap = new IdentityHashMap<OperatorType, AviatorFunction>();
 
   private void loadLib() {
-    // Load internal functions
-    // load sys lib
     addFunction(new SysDateFunction());
     addFunction(new PrintlnFunction());
     addFunction(new PrintFunction());
@@ -323,8 +283,6 @@ public final class AviatorEvaluatorInstance {
     addFunction(new TupleFunction());
     addFunction(new MinFunction());
     addFunction(new MaxFunction());
-
-    // load string lib
     addFunction(new StringContainsFunction());
     addFunction(new StringIndexOfFunction());
     addFunction(new StringStartsWithFunction());
@@ -335,8 +293,6 @@ public final class AviatorEvaluatorInstance {
     addFunction(new StringJoinFunction());
     addFunction(new StringReplaceFirstFunction());
     addFunction(new StringReplaceAllFunction());
-
-    // load math lib
     addFunction(new MathAbsFunction());
     addFunction(new MathRoundFunction());
     addFunction(new MathPowFunction());
@@ -346,8 +302,6 @@ public final class AviatorEvaluatorInstance {
     addFunction(new MathSinFunction());
     addFunction(new MathCosFunction());
     addFunction(new MathTanFunction());
-
-    // seq lib
     addFunction(new SeqNewListFunction());
     addFunction(new SeqNewMapFunction());
     addFunction(new SeqNewSetFunction());
@@ -374,8 +328,7 @@ public final class AviatorEvaluatorInstance {
     addFunction(new SeqCompsitePredFunFunction("seq.and", LogicOp.AND));
     addFunction(new SeqCompsitePredFunFunction("seq.or", LogicOp.OR));
     addFunction(new SeqMakePredicateFunFunction("seq.true", OperatorType.EQ, AviatorBoolean.TRUE));
-    addFunction(
-        new SeqMakePredicateFunFunction("seq.false", OperatorType.EQ, AviatorBoolean.FALSE));
+    addFunction(new SeqMakePredicateFunFunction("seq.false", OperatorType.EQ, AviatorBoolean.FALSE));
     addFunction(new SeqMakePredicateFunFunction("seq.nil", OperatorType.EQ, AviatorNil.NIL));
     addFunction(new SeqMakePredicateFunFunction("seq.exists", OperatorType.NEQ, AviatorNil.NIL));
   }
@@ -383,14 +336,7 @@ public final class AviatorEvaluatorInstance {
   /**
    * Compiled Expression cache
    */
-  private final ConcurrentHashMap<String/* text expression */, FutureTask<Expression>/*
-                                                                                      * Compiled
-                                                                                      * expression
-                                                                                      * task
-                                                                                      */> cacheExpressions =
-      new ConcurrentHashMap<String, FutureTask<Expression>>();
-
-
+  private final ConcurrentHashMap<String, FutureTask<Expression>> cacheExpressions = new ConcurrentHashMap<String, FutureTask<Expression>>();
 
   /**
    * Create a aviator evaluator instance.
@@ -410,7 +356,6 @@ public final class AviatorEvaluatorInstance {
     cacheExpressions.clear();
   }
 
-
   /**
    * Returns classloader
    *
@@ -419,7 +364,6 @@ public final class AviatorEvaluatorInstance {
   public AviatorClassLoader getAviatorClassLoader() {
     return getAviatorClassLoader(false);
   }
-
 
   /**
    * Returns classloader
@@ -433,7 +377,6 @@ public final class AviatorEvaluatorInstance {
       return new AviatorClassLoader(Thread.currentThread().getContextClassLoader());
     }
   }
-
 
   /**
    * Add an aviator function,it's not thread-safe.
@@ -456,8 +399,7 @@ public final class AviatorEvaluatorInstance {
       throw new IllegalArgumentException("Invalid function name, lambda is a keyword.");
     }
     if (funcMap.containsKey(name)) {
-      System.out.println("[Aviator WARN] The function '" + name
-          + "' is already exists, but is replaced with new one.");
+      System.out.println("[Aviator WARN] The function \'" + name + "\' is already exists, but is replaced with new one.");
     }
     funcMap.put(name, function);
   }
@@ -486,7 +428,6 @@ public final class AviatorEvaluatorInstance {
     this.addFunction(name, function);
   }
 
-
   /**
    * Remove an aviator function by name,it's not thread-safe.
    *
@@ -496,7 +437,6 @@ public final class AviatorEvaluatorInstance {
   public AviatorFunction removeFunction(String name) {
     return (AviatorFunction) funcMap.remove(name);
   }
-
 
   /**
    * Retrieve an aviator function by name,throw exception if not found or null.It's not thread-safe.
@@ -517,7 +457,6 @@ public final class AviatorEvaluatorInstance {
       }
     }
     if (function == null) {
-      // Returns a delegate function that will try to find the function from runtime env.
       function = new RuntimeFunctionDelegator(name);
     }
     return function;
@@ -531,7 +470,6 @@ public final class AviatorEvaluatorInstance {
   public void addOpFunction(OperatorType opType, AviatorFunction function) {
     opsMap.put(opType, function);
   }
-
 
   /**
    * Retrieve an operator aviator function by op type, return null if not found.It's not
@@ -556,7 +494,6 @@ public final class AviatorEvaluatorInstance {
     return opsMap.remove(opType);
   }
 
-
   /**
    * Check if the function is existed in aviator
    *
@@ -576,7 +513,6 @@ public final class AviatorEvaluatorInstance {
   public AviatorFunction removeFunction(AviatorFunction function) {
     return removeFunction(function.getName());
   }
-
 
   /**
    * Returns a compiled expression in cache
@@ -614,8 +550,6 @@ public final class AviatorEvaluatorInstance {
     return this.cacheExpressions.size();
   }
 
-
-
   /**
    * Compile a text expression to Expression object
    *
@@ -627,18 +561,15 @@ public final class AviatorEvaluatorInstance {
     if (expression == null || expression.trim().length() == 0) {
       throw new CompileExpressionErrorException("Blank expression");
     }
-
     if (cached) {
       FutureTask<Expression> task = cacheExpressions.get(expression);
       if (task != null) {
         return getCompiledExpression(expression, task);
       }
       task = new FutureTask<Expression>(new Callable<Expression>() {
-        @Override
-        public Expression call() throws Exception {
+        @Override public Expression call() throws Exception {
           return innerCompile(expression, cached);
         }
-
       });
       FutureTask<Expression> existedTask = cacheExpressions.putIfAbsent(expression, task);
       if (existedTask == null) {
@@ -646,13 +577,10 @@ public final class AviatorEvaluatorInstance {
         existedTask.run();
       }
       return getCompiledExpression(expression, existedTask);
-
     } else {
       return innerCompile(expression, cached);
     }
-
   }
-
 
   private Expression getCompiledExpression(final String expression, FutureTask<Expression> task) {
     try {
@@ -662,7 +590,6 @@ public final class AviatorEvaluatorInstance {
       throw new CompileExpressionErrorException("Compile expression failure:" + expression, e);
     }
   }
-
 
   private Expression innerCompile(final String expression, boolean cached) {
     ExpressionLexer lexer = new ExpressionLexer(this, expression);
@@ -679,28 +606,23 @@ public final class AviatorEvaluatorInstance {
     return getOptionValue(Options.OPTIMIZE_LEVEL).level;
   }
 
-
   public CodeGenerator newCodeGenerator(boolean cached) {
     AviatorClassLoader classLoader = getAviatorClassLoader(cached);
     return newCodeGenerator(classLoader);
-
   }
 
   public CodeGenerator newCodeGenerator(AviatorClassLoader classLoader) {
     switch (getOptimizeLevel()) {
       case AviatorEvaluator.COMPILE:
-        ASMCodeGenerator asmCodeGenerator = new ASMCodeGenerator(this, classLoader,
-            traceOutputStream, getOptionValue(Options.TRACE).bool);
-        asmCodeGenerator.start();
-        return asmCodeGenerator;
+      ASMCodeGenerator asmCodeGenerator = new ASMCodeGenerator(this, classLoader, traceOutputStream, getOptionValue(Options.TRACE).bool);
+      asmCodeGenerator.start();
+      return asmCodeGenerator;
       case AviatorEvaluator.EVAL:
-        return new OptimizeCodeGenerator(this, classLoader, traceOutputStream,
-            getOptionValue(Options.TRACE).bool);
+      return new OptimizeCodeGenerator(this, classLoader, traceOutputStream, getOptionValue(Options.TRACE).bool);
       default:
-        throw new IllegalArgumentException("Unknow option " + getOptimizeLevel());
+      throw new IllegalArgumentException("Unknow option " + getOptimizeLevel());
     }
   }
-
 
   /**
    * Compile a text expression to Expression Object without caching
@@ -711,7 +633,6 @@ public final class AviatorEvaluatorInstance {
   public Expression compile(String expression) {
     return compile(expression, false);
   }
-
 
   /**
    * Execute a text expression with values that are variables order in the expression.It only runs
@@ -747,7 +668,6 @@ public final class AviatorEvaluatorInstance {
     }
   }
 
-
   /**
    * Execute a text expression with environment
    *
@@ -764,7 +684,6 @@ public final class AviatorEvaluatorInstance {
     }
   }
 
-
   /**
    * Execute a text expression without caching
    *
@@ -776,7 +695,6 @@ public final class AviatorEvaluatorInstance {
     return execute(expression, env, false);
   }
 
-
   /**
    * Invalidate expression cache
    *
@@ -785,7 +703,6 @@ public final class AviatorEvaluatorInstance {
   public void invalidateCache(String expression) {
     cacheExpressions.remove(expression);
   }
-
 
   /**
    * Execute a text expression without caching and env map.
