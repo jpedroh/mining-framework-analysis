@@ -1,21 +1,4 @@
-/*
- * Copyright 2013-2021 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.cloudfoundry.client;
-
 import org.cloudfoundry.client.v2.applications.ApplicationsV2;
 import org.cloudfoundry.client.v2.applicationusageevents.ApplicationUsageEvents;
 import org.cloudfoundry.client.v2.blobstores.Blobstores;
@@ -63,9 +46,9 @@ import org.cloudfoundry.client.v3.processes.Processes;
 import org.cloudfoundry.client.v3.resourcematch.ResourceMatchV3;
 import org.cloudfoundry.client.v3.roles.RolesV3;
 import org.cloudfoundry.client.v3.routes.RoutesV3;
+import org.cloudfoundry.client.v3.serviceinstances.ServiceInstancesV3;
 import org.cloudfoundry.client.v3.servicebindings.ServiceBindingsV3;
 import org.cloudfoundry.client.v3.servicebrokers.ServiceBrokersV3;
-import org.cloudfoundry.client.v3.serviceinstances.ServiceInstancesV3;
 import org.cloudfoundry.client.v3.serviceofferings.ServiceOfferingsV3;
 import org.cloudfoundry.client.v3.serviceplans.ServicePlansV3;
 import org.cloudfoundry.client.v3.spaces.SpacesV3;
@@ -76,284 +59,283 @@ import org.cloudfoundry.client.v3.tasks.Tasks;
  * Main entry point to the Cloud Foundry Client API
  */
 public interface CloudFoundryClient {
-
-    /**
+  /**
      * The currently supported Cloud Controller API version
      */
-    String SUPPORTED_API_VERSION = "2.186.0";
+  String SUPPORTED_API_VERSION = "2.186.0";
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Application Usage Events Client API
      */
-    AdminV3 adminV3();
+  AdminV3 adminV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Application Usage Events Client API
      */
-    ApplicationUsageEvents applicationUsageEvents();
+  ApplicationUsageEvents applicationUsageEvents();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Applications V2 Client API
      */
-    ApplicationsV2 applicationsV2();
+  ApplicationsV2 applicationsV2();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Applications V3 Client API
      */
-    ApplicationsV3 applicationsV3();
+  ApplicationsV3 applicationsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Audit Events V3 Client API
      */
-    AuditEventsV3 auditEventsV3();
+  AuditEventsV3 auditEventsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Blobstores Client API
      */
-    Blobstores blobstores();
+  Blobstores blobstores();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Buildpacks Client API
      */
-    Buildpacks buildpacks();
+  Buildpacks buildpacks();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Buildpacks V3 Client API
      */
-    BuildpacksV3 buildpacksV3();
+  BuildpacksV3 buildpacksV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Builds Client API
      */
-    Builds builds();
+  Builds builds();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Deployments V3 Client API
      */
-    DeploymentsV3 deploymentsV3();
+  DeploymentsV3 deploymentsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Domains Client API
      */
-    Domains domains();
+  Domains domains();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Domains V3 Client API
      */
-    DomainsV3 domainsV3();
+  DomainsV3 domainsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Droplets Client API
      */
-    Droplets droplets();
+  Droplets droplets();
 
-    /***
+  /***
      * Main entry point to the Cloud Foundry Environment Variable Groups Client API
      */
-    EnvironmentVariableGroups environmentVariableGroups();
+  EnvironmentVariableGroups environmentVariableGroups();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Events Client API
      */
-    Events events();
+  Events events();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Feature Flags Client API
      */
-    FeatureFlags featureFlags();
+  FeatureFlags featureFlags();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Info Client API
      */
-    Info info();
+  Info info();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Isolation Segments API
      */
-    IsolationSegments isolationSegments();
+  IsolationSegments isolationSegments();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Jobs Client API
      */
-    Jobs jobs();
+  Jobs jobs();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Jobs V3 Client API
      */
-    JobsV3 jobsV3();
+  JobsV3 jobsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Quota Definitions Client API
      */
-    OrganizationQuotaDefinitions organizationQuotaDefinitions();
+  OrganizationQuotaDefinitions organizationQuotaDefinitions();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Organizations V2 Client API
      */
-    Organizations organizations();
+  Organizations organizations();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Organizations V3 Client API
      */
-    OrganizationsV3 organizationsV3();
+  OrganizationsV3 organizationsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Packages Client API
      */
-    Packages packages();
+  Packages packages();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Private Domains Client API
      */
-    PrivateDomains privateDomains();
+  PrivateDomains privateDomains();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Processes Client API
      */
-    Processes processes();
+  Processes processes();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Resource Match Client API
      */
-    ResourceMatch resourceMatch();
+  ResourceMatch resourceMatch();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Resource Match V3 Client API
      */
-    ResourceMatchV3 resourceMatchV3();
+  ResourceMatchV3 resourceMatchV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Roles V3 Client API
      */
-    RolesV3 rolesV3();
+  RolesV3 rolesV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Route Mappings Client API
      */
-    RouteMappings routeMappings();
+  RouteMappings routeMappings();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Routes Client API
      */
-    Routes routes();
+  Routes routes();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Routes V3 Client API
      */
-    RoutesV3 routesV3();
+  RoutesV3 routesV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Security Groups Client API
      */
-    SecurityGroups securityGroups();
+  SecurityGroups securityGroups();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Bindings V2 Client API
      */
-    ServiceBindingsV2 serviceBindingsV2();
+  ServiceBindingsV2 serviceBindingsV2();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Bindings V3 Client API
      */
-    ServiceBindingsV3 serviceBindingsV3();
+  ServiceBindingsV3 serviceBindingsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Brokers Client API
      */
-    ServiceBrokers serviceBrokers();
+  ServiceBrokers serviceBrokers();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Brokers V3 Client API
      */
-    ServiceBrokersV3 serviceBrokersV3();
+  ServiceBrokersV3 serviceBrokersV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Instances Client API
      */
-    ServiceInstances serviceInstances();
+  ServiceInstances serviceInstances();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Instances V3 Client API
      */
-    ServiceInstancesV3 serviceInstancesV3();
+  ServiceInstancesV3 serviceInstancesV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Keys Client API
      */
-    ServiceKeys serviceKeys();
+  ServiceKeys serviceKeys();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Offerings V3 Client API
      */
-    ServiceOfferingsV3 serviceOfferingsV3();
+  ServiceOfferingsV3 serviceOfferingsV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Plan Visibilities Client API
      */
-    ServicePlanVisibilities servicePlanVisibilities();
+  ServicePlanVisibilities servicePlanVisibilities();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Plans Client API
      */
-    ServicePlans servicePlans();
+  ServicePlans servicePlans();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Plans V3 Client API
      */
-    ServicePlansV3 servicePlansV3();
+  ServicePlansV3 servicePlansV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Service Usage Events Client API
      */
-    ServiceUsageEvents serviceUsageEvents();
+  ServiceUsageEvents serviceUsageEvents();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Services Client API
      */
-    Services services();
+  Services services();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Shared Domains Client API
      */
-    SharedDomains sharedDomains();
+  SharedDomains sharedDomains();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Space Quota Definitions Client API
      */
-    SpaceQuotaDefinitions spaceQuotaDefinitions();
+  SpaceQuotaDefinitions spaceQuotaDefinitions();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Spaces V2 Client API
      */
-    Spaces spaces();
+  Spaces spaces();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Spaces V3 Client API
      */
-    SpacesV3 spacesV3();
+  SpacesV3 spacesV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Stacks Client API
      */
-    Stacks stacks();
+  Stacks stacks();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Stacks V3 Client API
      */
-    StacksV3 stacksV3();
+  StacksV3 stacksV3();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Tasks Client API
      */
-    Tasks tasks();
+  Tasks tasks();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry User Provided Service Instances Client API
      */
-    UserProvidedServiceInstances userProvidedServiceInstances();
+  UserProvidedServiceInstances userProvidedServiceInstances();
 
-    /**
+  /**
      * Main entry point to the Cloud Foundry Users Client API
      */
-    Users users();
+  Users users();
 }
