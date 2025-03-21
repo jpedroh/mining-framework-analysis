@@ -16,13 +16,15 @@ import static org.dspace.eperson.Group.ANONYMOUS;
 import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import javax.annotation.PostConstruct;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dspace.app.profile.service.AfterResearcherProfileCreationAction;
 import org.dspace.app.exception.ResourceAlreadyExistsException;
 import org.dspace.app.profile.service.ResearcherProfileService;
 import org.dspace.authorize.AuthorizeException;
@@ -86,6 +88,18 @@ public class ResearcherProfileServiceImpl implements ResearcherProfileService {
     @Autowired
     private AuthorizeService authorizeService;
 
+    @Autowired(required = false)
+    private List<AfterResearcherProfileCreationAction> afterCreationActions;
+
+    @PostConstruct
+    public void postConstruct() {
+
+        if (afterCreationActions == null) {
+            afterCreationActions = Collections.emptyList();
+        }
+
+    }
+
     @Override
     public ResearcherProfile findById(Context context, UUID id) throws SQLException, AuthorizeException {
         Assert.notNull(id, "An id must be provided to find a researcher profile");
@@ -114,7 +128,15 @@ public class ResearcherProfileServiceImpl implements ResearcherProfileService {
         try {
 
             Item item = createProfileItem(context, ePerson, collection);
-            return new ResearcherProfile(item);
+
+<<<<<<< /usr/src/app/output/dspace/dspace/949dd0d0d8d36305d9d7085feb561942534bfbc1/dspace-api/src/main/java/org/dspace/app/profile/ResearcherProfileServiceImpl.java/left.java
+        for (AfterResearcherProfileCreationAction afterCreationAction : afterCreationActions) {
+            afterCreationAction.perform(context, researcherProfile, ePerson);
+        }
+||||||| /usr/src/app/output/dspace/dspace/949dd0d0d8d36305d9d7085feb561942534bfbc1/dspace-api/src/main/java/org/dspace/app/profile/ResearcherProfileServiceImpl.java/base.java
+=======
+        return new ResearcherProfile(item);
+>>>>>>> /usr/src/app/output/dspace/dspace/949dd0d0d8d36305d9d7085feb561942534bfbc1/dspace-api/src/main/java/org/dspace/app/profile/ResearcherProfileServiceImpl.java/right.java
 
         } finally {
             context.restoreAuthSystemState();
