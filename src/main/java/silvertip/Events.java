@@ -1,20 +1,4 @@
-/*
- * Copyright 2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package silvertip;
-
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -68,7 +52,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Events {
   private List<EventSource> sources = new ArrayList<EventSource>();
+
   private Selector selector;
+
   private boolean stopped;
 
   public static Events open() throws IOException {
@@ -87,8 +73,9 @@ public class Events {
 
   public void dispatch(long timeout) throws IOException {
     while (!isStopped()) {
-      if (!process(timeout))
+      if (!process(timeout)) {
         break;
+      }
     }
   }
 
@@ -97,17 +84,14 @@ public class Events {
       long start = System.nanoTime();
       int numKeys = selector.select(timeout);
       long end = System.nanoTime();
-
       unregisterClosed();
-
-      if (selector.keys().isEmpty())
+      if (selector.keys().isEmpty()) {
         return false;
-
+      }
       if (numKeys > 0) {
         dispatchMessages();
         break;
       }
-
       timeout -= TimeUnit.NANOSECONDS.toMillis(end - start);
       if (timeout <= 0) {
         timeout();
@@ -119,15 +103,13 @@ public class Events {
 
   public boolean processNow() throws IOException {
     int numKeys = selector.selectNow();
-
     unregisterClosed();
-
-    if (selector.keys().isEmpty())
+    if (selector.keys().isEmpty()) {
       return false;
-
-    if (numKeys > 0)
+    }
+    if (numKeys > 0) {
       dispatchMessages();
-
+    }
     return true;
   }
 
@@ -163,23 +145,27 @@ public class Events {
       if (key.isValid()) {
         if (key.isAcceptable()) {
           EventSource newSource = source.accept(key);
-          if (newSource != null)
+          if (newSource != null) {
             newSources.add(newSource);
-          else
+          } else {
             key.cancel();
+          }
         }
-
         if (key.isValid()) {
-          if (key.isReadable())
+          if (key.isReadable()) {
             source.read(key);
-          else if (key.isWritable())
-            source.write(key);
+          } else {
+            if (key.isWritable()) {
+              source.write(key);
+            }
+          }
         }
       }
       it.remove();
     }
-    for (EventSource source : newSources)
+    for (EventSource source : newSources) {
       register(source);
+    }
   }
 
   public void stop() {

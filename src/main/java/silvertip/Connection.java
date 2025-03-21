@@ -1,20 +1,4 @@
-/*
- * Copyright 2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package silvertip;
-
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
@@ -31,8 +15,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Connection<T> implements EventSource {
-  public interface Callback<T> {
+public class Connection<T extends java.lang.Object> implements EventSource {
+  public interface Callback<T extends java.lang.Object> {
     void connected(Connection<T> connection);
 
     void messages(Connection<T> connection, Iterator<T> messages);
@@ -45,38 +29,43 @@ public class Connection<T> implements EventSource {
   }
 
   private List<ByteBuffer> txBuffers = Collections.synchronizedList(new LinkedList<ByteBuffer>());
+
   private ByteBuffer rxBuffer = ByteBuffer.allocate(4096);
+
   private SelectionKey selectionKey;
+
   private SocketChannel channel;
+
   private MessageParser<T> parser;
+
   private Callback<T> callback;
 
-  public static <T> Connection<T> attemptToConnect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback)
-      throws IOException {
+  public static <T extends java.lang.Object> Connection<T> attemptToConnect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback) throws IOException {
     return attemptToConnect(address, parser, callback, 3, 100);
   }
 
-  public static <T> Connection<T> attemptToConnect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback,
-      int maxNumAttempts, int retryDelay) throws IOException {
+  public static <T extends java.lang.Object> Connection<T> attemptToConnect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback, int maxNumAttempts, int retryDelay) throws IOException {
     for (int numAttempts = 0; numAttempts < maxNumAttempts; numAttempts++) {
       try {
         return Connection.connect(address, parser, callback);
       } catch (ConnectException e1) {
-        try { Thread.sleep(retryDelay); } catch (InterruptedException e2) { }
+        try {
+          Thread.sleep(retryDelay);
+        } catch (InterruptedException e2) {
+        }
       }
     }
     throw new ConnectException("Could not be connected");
   }
 
-  public static <T> Connection<T> connect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback)
-      throws IOException {
+  public static <T extends java.lang.Object> Connection<T> connect(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback) throws IOException {
     SocketChannel channel = SocketChannel.open();
     channel.connect(address);
     channel.configureBlocking(false);
     return new Connection<T>(channel, parser, callback);
   }
 
-  public static <T> Connection<T> accept(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback) throws IOException {
+  public static <T extends java.lang.Object> Connection<T> accept(InetSocketAddress address, MessageParser<T> parser, Callback<T> callback) throws IOException {
     ServerSocketChannel serverChannel = ServerSocketChannel.open();
     ServerSocket socket = serverChannel.socket();
     socket.bind(address);
@@ -116,8 +105,10 @@ public class Connection<T> implements EventSource {
         if (messages.hasNext()) {
           callback.messages(this, messages);
         }
-      } else if (len < 0) {
-        close();
+      } else {
+        if (len < 0) {
+          close();
+        }
       }
     }
   }
@@ -150,8 +141,9 @@ public class Connection<T> implements EventSource {
 
   public void send(ByteBuffer buffer) {
     txBuffers.add(buffer);
-    if (selectionKey == null)
+    if (selectionKey == null) {
       throw new IllegalStateException("Connection is not registered");
+    }
     selectionKey.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
     selectionKey.selector().wakeup();
   }
@@ -162,27 +154,27 @@ public class Connection<T> implements EventSource {
     } catch (IOException e) {
       close();
     }
-    if (txBuffers.isEmpty())
+    if (txBuffers.isEmpty()) {
       key.interestOps(SelectionKey.OP_READ);
+    }
   }
 
   public void close() {
     try {
-      while (!txBuffers.isEmpty())
+      while (!txBuffers.isEmpty()) {
         flush();
+      }
     } catch (IOException e) {
     }
-
     SocketChannel sc = (SocketChannel) selectionKey.channel();
     SocketChannels.close(sc);
-
     selectionKey.attach(null);
     selectionKey.cancel();
     selectionKey.selector().wakeup();
   }
 
   private void flush() throws IOException {
-    synchronized(txBuffers) {
+    synchronized (txBuffers) {
       while (!txBuffers.isEmpty()) {
         ByteBuffer txBuffer = txBuffers.get(0);
         if (!write(txBuffer)) {
