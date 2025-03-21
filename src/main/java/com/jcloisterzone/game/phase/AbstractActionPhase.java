@@ -57,6 +57,7 @@ public abstract class AbstractActionPhase extends Phase {
             // TODO use interface instead
             places = places.filter(t -> !(t._2 instanceof Castle) && !(t._2 instanceof SoloveiRazboynik) && !(t._2 instanceof Acrobats) && !(t._2 instanceof Circus));
 
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/e130f66d41180438fd4418a41367ecd488c41309/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/left.java
             if (isCurrentTile && tile.getTile().hasModifier(BardsLuteCapability.BARDS_LUTE)) {
             	Location placedTokenLocation = state.getCapabilityModel(BardsLuteCapability.class)
                 		.filter(t -> t._1.getPosition().equals(tile.getPosition()) && t._2)
@@ -65,6 +66,17 @@ public abstract class AbstractActionPhase extends Phase {
             	places = places.filter(t -> !(t._1.getLocation().equals(placedTokenLocation)));
             }
             
+            if (!state.getBooleanRule(Rule.FARMERS)) {
+                places = places.filter(t -> !(t._2 instanceof Field));
+            }
+
+||||||| /usr/src/app/output/farin/jcloisterzone/e130f66d41180438fd4418a41367ecd488c41309/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/base.java
+            if (!state.getBooleanRule(Rule.FARMERS)) {
+                places = places.filter(t -> !(t._2 instanceof Field));
+            }
+
+=======
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/e130f66d41180438fd4418a41367ecd488c41309/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/right.java
             // towers are handled by Tower capability separately (needs collect towers on all tiles)
             // (and flier or magic portal use is also not allowed to be placed on tower
             places = places.filter(t -> !(t._2 instanceof Tower));
