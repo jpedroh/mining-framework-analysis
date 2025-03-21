@@ -334,7 +334,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanAssert<?> then(boolean actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
    *
@@ -344,7 +343,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanAssert<?> then(Boolean actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.BooleanArrayAssert}</code>.
    *
@@ -354,7 +352,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractBooleanArrayAssert<?> then(boolean[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Boolean2DArrayAssert}</code>.
    *
@@ -365,7 +362,6 @@ public class BDDAssertions extends Assertions {
   public static Boolean2DArrayAssert then(boolean[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
    *
@@ -375,7 +371,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteAssert<?> then(byte actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
    *
@@ -385,7 +380,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteAssert<?> then(Byte actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ByteArrayAssert}</code>.
    *
@@ -395,7 +389,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractByteArrayAssert<?> then(byte[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Byte2DArrayAssert}</code>.
    *
@@ -406,7 +399,6 @@ public class BDDAssertions extends Assertions {
   public static Byte2DArrayAssert then(byte[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
    *
@@ -416,7 +408,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharacterAssert<?> then(char actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharArrayAssert}</code>.
    *
@@ -426,7 +417,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharArrayAssert<?> then(char[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Char2DArrayAssert}</code>.
    *
@@ -437,7 +427,6 @@ public class BDDAssertions extends Assertions {
   public static Char2DArrayAssert then(char[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
    *
@@ -447,7 +436,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharacterAssert<?> then(Character actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ClassAssert}</code>.
    *
@@ -457,7 +445,6 @@ public class BDDAssertions extends Assertions {
   public static ClassAssert then(Class<?> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.GenericComparableAssert}</code> with
    * standard comparison semantics.
@@ -466,10 +453,49 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssertions.java/left.java
   public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
     return assertThat(actual);
   }
-
+  public static <T> ObjectAssert<T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends SQLException> AbstractThrowableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T then(T assertion) {
+    return assertion;
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssertions.java/base.java
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T> ObjectAssert<T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T then(T assertion) {
+    return assertion;
+  }
+=======
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T> ObjectAssert<T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> then(T actual) {
+    return assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T then(T assertion) {
+    return assertion;
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssertions.java/right.java
   /**
    * Creates a new instance of <code>{@link UniversalComparableAssert}</code> with
    * standard comparison semantics.
@@ -485,7 +511,6 @@ public class BDDAssertions extends Assertions {
   public static <T> AbstractUniversalComparableAssert<?, T> thenComparable(Comparable<T> actual) {
     return assertThatComparable(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IterableAssert}</code>.
    *
@@ -496,7 +521,6 @@ public class BDDAssertions extends Assertions {
   public static <T> IterableAssert<T> then(Iterable<? extends T> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IterableAssert}</code>.
    * <p>
@@ -511,7 +535,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> IterableAssert<ELEMENT> thenIterable(Iterable<? extends ELEMENT> actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IteratorAssert}</code>.
    * <p>
@@ -535,7 +558,6 @@ public class BDDAssertions extends Assertions {
   public static <T> IteratorAssert<T> then(Iterator<? extends T> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IteratorAssert}</code>.
    * <p>
@@ -550,7 +572,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> IteratorAssert<ELEMENT> thenIterator(Iterator<? extends ELEMENT> actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -594,7 +615,6 @@ public class BDDAssertions extends Assertions {
                                                                                  AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -629,7 +649,6 @@ public class BDDAssertions extends Assertions {
                                                                                           Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -672,7 +691,6 @@ public class BDDAssertions extends Assertions {
                                                                                         AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -707,9 +725,7 @@ public class BDDAssertions extends Assertions {
                                                                                       Class<ELEMENT_ASSERT> assertClass) {
     return assertThat(actual, assertClass);
   }
-
 //@format:on
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
    *
@@ -719,7 +735,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleAssert<?> then(double actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
    *
@@ -729,7 +744,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleAssert<?> then(Double actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DoubleArrayAssert}</code>.
    *
@@ -739,7 +753,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDoubleArrayAssert<?> then(double[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Double2DArrayAssert}</code>.
    *
@@ -750,7 +763,6 @@ public class BDDAssertions extends Assertions {
   public static Double2DArrayAssert then(double[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FileAssert}</code>.
    *
@@ -760,7 +772,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFileAssert<?> then(File actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of {@link PathAssert}
    *
@@ -770,7 +781,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractPathAssert<?> then(Path actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of {@link PathAssert}
    * <p>
@@ -784,7 +794,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractPathAssert<?> thenPath(Path actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of {@link FutureAssert}
    *
@@ -796,7 +805,6 @@ public class BDDAssertions extends Assertions {
   public static <RESULT> FutureAssert<RESULT> then(Future<RESULT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.InputStreamAssert}</code>.
    *
@@ -806,7 +814,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractInputStreamAssert<?, ? extends InputStream> then(InputStream actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
    *
@@ -816,7 +823,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatAssert<?> then(float actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
    *
@@ -826,7 +832,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatAssert<?> then(Float actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.FloatArrayAssert}</code>.
    *
@@ -836,7 +841,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractFloatArrayAssert<?> then(float[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Float2DArrayAssert}</code>.
    *
@@ -847,7 +851,6 @@ public class BDDAssertions extends Assertions {
   public static Float2DArrayAssert then(float[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
    *
@@ -857,7 +860,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntegerAssert<?> then(int actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntArrayAssert}</code>.
    *
@@ -867,7 +869,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntArrayAssert<?> then(int[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Int2DArrayAssert}</code>.
    *
@@ -878,7 +879,6 @@ public class BDDAssertions extends Assertions {
   public static Int2DArrayAssert then(int[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
    *
@@ -888,7 +888,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractIntegerAssert<?> then(Integer actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CollectionAssert}</code>.
    *
@@ -900,7 +899,6 @@ public class BDDAssertions extends Assertions {
   public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> then(Collection<? extends E> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CollectionAssert}</code>.
    * <p>
@@ -915,7 +913,6 @@ public class BDDAssertions extends Assertions {
   public static <E> AbstractCollectionAssert<?, Collection<? extends E>, E, ObjectAssert<E>> thenCollection(Collection<? extends E> actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ListAssert}</code>.
    *
@@ -926,7 +923,6 @@ public class BDDAssertions extends Assertions {
   public static <T> ListAssert<T> then(List<? extends T> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code>.
    * <p>
@@ -941,7 +937,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> ListAssert<ELEMENT> thenList(List<? extends ELEMENT> actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
    *
@@ -951,7 +946,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongAssert<?> then(long actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
    *
@@ -961,7 +955,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongAssert<?> then(Long actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LongArrayAssert}</code>.
    *
@@ -971,7 +964,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLongArrayAssert<?> then(long[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Long2DArrayAssert}</code>.
    *
@@ -982,7 +974,6 @@ public class BDDAssertions extends Assertions {
   public static Long2DArrayAssert then(long[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectAssert}</code>.
    *
@@ -990,10 +981,6 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T> ObjectAssert<T> then(T actual) {
-    return assertThat(actual);
-  }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectArrayAssert}</code>.
    *
@@ -1004,7 +991,6 @@ public class BDDAssertions extends Assertions {
   public static <T> ObjectArrayAssert<T> then(T[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Object2DArrayAssert}</code>.
    *
@@ -1016,7 +1002,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Object2DArrayAssert<T> then(T[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.MapAssert}</code>.
    *
@@ -1028,7 +1013,6 @@ public class BDDAssertions extends Assertions {
   public static <K, V> MapAssert<K, V> then(Map<K, V> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
    *
@@ -1038,7 +1022,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortAssert<?> then(short actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
    *
@@ -1048,7 +1031,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortAssert<?> then(Short actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ShortArrayAssert}</code>.
    *
@@ -1058,7 +1040,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractShortArrayAssert<?> then(short[] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.Short2DArrayAssert}</code>.
    *
@@ -1069,7 +1050,6 @@ public class BDDAssertions extends Assertions {
   public static Short2DArrayAssert then(short[][] actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharSequenceAssert}</code>.
    *
@@ -1079,7 +1059,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> then(CharSequence actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharSequenceAssert}</code> from a {@link StringBuilder}.
    *
@@ -1090,7 +1069,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> then(StringBuilder actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.CharSequenceAssert}</code> from a {@link StringBuffer}.
    *
@@ -1101,7 +1079,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractCharSequenceAssert<?, ? extends CharSequence> then(StringBuffer actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.StringAssert}</code>.
    *
@@ -1111,7 +1088,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractStringAssert<?> then(String actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.DateAssert}</code>.
    *
@@ -1121,7 +1097,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDateAssert<?> then(Date actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicBoolean}.
    *
@@ -1132,7 +1107,6 @@ public class BDDAssertions extends Assertions {
   public static AtomicBooleanAssert then(AtomicBoolean actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicInteger}.
    *
@@ -1143,7 +1117,6 @@ public class BDDAssertions extends Assertions {
   public static AtomicIntegerAssert then(AtomicInteger actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicIntegerArray}.
    *
@@ -1154,7 +1127,6 @@ public class BDDAssertions extends Assertions {
   public static AtomicIntegerArrayAssert then(AtomicIntegerArray actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicIntegerFieldUpdater}.
    *
@@ -1166,7 +1138,6 @@ public class BDDAssertions extends Assertions {
   public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> then(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link LongAdder}.
    *
@@ -1177,7 +1148,6 @@ public class BDDAssertions extends Assertions {
   public static LongAdderAssert then(LongAdder actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLong}.
    *
@@ -1188,7 +1158,6 @@ public class BDDAssertions extends Assertions {
   public static AtomicLongAssert then(AtomicLong actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongArray}.
    *
@@ -1199,7 +1168,6 @@ public class BDDAssertions extends Assertions {
   public static AtomicLongArrayAssert then(AtomicLongArray actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongFieldUpdater}.
    *
@@ -1211,7 +1179,6 @@ public class BDDAssertions extends Assertions {
   public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> then(AtomicLongFieldUpdater<OBJECT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReference}.
    *
@@ -1223,7 +1190,6 @@ public class BDDAssertions extends Assertions {
   public static <VALUE> AtomicReferenceAssert<VALUE> then(AtomicReference<VALUE> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceArray}.
    *
@@ -1235,7 +1201,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> then(AtomicReferenceArray<ELEMENT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceFieldUpdater}.
    *
@@ -1248,7 +1213,6 @@ public class BDDAssertions extends Assertions {
   public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> then(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicMarkableReference}.
    *
@@ -1260,7 +1224,6 @@ public class BDDAssertions extends Assertions {
   public static <VALUE> AtomicMarkableReferenceAssert<VALUE> then(AtomicMarkableReference<VALUE> actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicStampedReference}.
    *
@@ -1272,7 +1235,6 @@ public class BDDAssertions extends Assertions {
   public static <VALUE> AtomicStampedReferenceAssert<VALUE> then(AtomicStampedReference<VALUE> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ThrowableAssert}</code>.
    *
@@ -1280,10 +1242,6 @@ public class BDDAssertions extends Assertions {
    * @param actual the actual value.
    * @return the created assertion Throwable.
    */
-  public static <T extends Throwable> AbstractThrowableAssert<?, T> then(T actual) {
-    return assertThat(actual);
-  }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ThrowableAssert}</code>.
    * This overload's purpose is to disambiguate the call for <code>{@link SQLException}</code>.
@@ -1294,10 +1252,6 @@ public class BDDAssertions extends Assertions {
    * @return the created assertion Throwable.
    * @since 3.23.1
    */
-  public static <T extends SQLException> AbstractThrowableAssert<?, T> then(T actual) {
-    return assertThat(actual);
-  }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} (easier done with lambdas).
    * <p>
@@ -1330,7 +1284,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> thenThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} like {@code thenThrownBy(ThrowingCallable)} but this method
    * let you set the assertion description the same way you do with {@link AbstractAssert#as(String, Object...) as(String, Object...)}.
@@ -1367,7 +1320,6 @@ public class BDDAssertions extends Assertions {
                                                                              String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
    *
@@ -1412,7 +1364,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractThrowableAssert<?, ? extends Throwable> thenCode(ThrowingCallable shouldRaiseOrNotThrowable) {
     return assertThat(catchThrowable(shouldRaiseOrNotThrowable));
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ObjectAssert}</code> for any object.
    * <p>
@@ -1433,7 +1384,6 @@ public class BDDAssertions extends Assertions {
   public static <T> ObjectAssert<T> thenObject(T actual) {
     return then(actual);
   }
-
   /**
    * Uses the given instance as the instance under test for all the assertions expressed as the passed {@link Consumer}s.
    * <p>
@@ -1460,7 +1410,6 @@ public class BDDAssertions extends Assertions {
   public static <T> ObjectAssert<T> thenWith(T actual, Consumer<T>... requirements) {
     return then(actual).satisfies(requirements);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateAssert}</code>.
    *
@@ -1470,7 +1419,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLocalDateAssert<?> then(LocalDate actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.LocalDateTimeAssert}</code>.
    *
@@ -1480,7 +1428,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLocalDateTimeAssert<?> then(LocalDateTime actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link org.assertj.core.api.ZonedDateTimeAssert}</code>.
    *
@@ -1490,7 +1437,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractZonedDateTimeAssert<?> then(ZonedDateTime actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -1500,7 +1446,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractLocalTimeAssert<?> then(LocalTime actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
    *
@@ -1510,7 +1455,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractOffsetTimeAssert<?> then(OffsetTime actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InstantAssert}</code>.
    *
@@ -1521,7 +1465,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractInstantAssert<?> then(Instant actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DurationAssert}</code>.
    *
@@ -1532,7 +1475,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractDurationAssert<?> then(Duration actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link PeriodAssert}</code>.
    *
@@ -1543,7 +1485,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractPeriodAssert<?> then(Period actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UriAssert}</code>.
    *
@@ -1553,7 +1494,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractUriAssert<?> then(URI actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UrlAssert}</code>.
    *
@@ -1563,7 +1503,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractUrlAssert<?> then(URL actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
    *
@@ -1573,7 +1512,6 @@ public class BDDAssertions extends Assertions {
   public static AbstractOffsetDateTimeAssert<?> then(OffsetDateTime actual) {
     return assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.CompletableFuture}.
    *
@@ -1585,7 +1523,6 @@ public class BDDAssertions extends Assertions {
   public static <RESULT> CompletableFutureAssert<RESULT> then(CompletableFuture<RESULT> future) {
     return assertThat(future);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.CompletionStage} by converting it to a {@link CompletableFuture} and returning a {@link CompletableFutureAssert}.
    * <p>
@@ -1599,7 +1536,6 @@ public class BDDAssertions extends Assertions {
   public static <RESULT> CompletableFutureAssert<RESULT> then(CompletionStage<RESULT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Returns the given assertion. This method improves code readability by surrounding the given assertion with
    * <code>then</code>.
@@ -1650,10 +1586,6 @@ public class BDDAssertions extends Assertions {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  public static <T extends AssertDelegateTarget> T then(T assertion) {
-    return assertion;
-  }
-
   /**
    * Delegates the creation of the {@link Assert} to the {@link AssertProvider#assertThat()} of the given component.
    *
@@ -1669,7 +1601,6 @@ public class BDDAssertions extends Assertions {
   public static <T> T then(final AssertProvider<T> component) {
     return component.assertThat();
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
    * <p>
@@ -1700,7 +1631,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> ListAssert<ELEMENT> then(Stream<? extends ELEMENT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link Stream}.
    * <p>
@@ -1735,7 +1665,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> ListAssert<ELEMENT> thenStream(Stream<? extends ELEMENT> actual) {
     return then(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link DoubleStream}.
    * <p>
@@ -1765,7 +1694,6 @@ public class BDDAssertions extends Assertions {
   public static ListAssert<Double> then(DoubleStream actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link LongStream}.
    * <p>
@@ -1795,7 +1723,6 @@ public class BDDAssertions extends Assertions {
   public static ListAssert<Long> then(LongStream actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ListAssert}</code> from the given {@link IntStream}.
    * <p>
@@ -1825,7 +1752,6 @@ public class BDDAssertions extends Assertions {
   public static ListAssert<Integer> then(IntStream actual) {
     return assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link SpliteratorAssert}</code> from the given {@link Spliterator}.
    *
@@ -1841,7 +1767,6 @@ public class BDDAssertions extends Assertions {
   public static <ELEMENT> SpliteratorAssert<ELEMENT> then(Spliterator<ELEMENT> actual) {
     return assertThat(actual);
   }
-
   /**
    * Allows catching a {@link Throwable} more easily when used with Java 8 lambdas.
    * <p>
@@ -1869,7 +1794,6 @@ public class BDDAssertions extends Assertions {
   public static Throwable catchThrowable(ThrowingCallable shouldRaiseThrowable) {
     return AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
   }
-
   /**
    * Allows catching a {@link Throwable} of a specific type.
    * <p>
@@ -1913,7 +1837,6 @@ public class BDDAssertions extends Assertions {
                                                                              Class<THROWABLE> type) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseThrowable, type);
   }
-
   /**
    * Allows catching an instance of {@link Exception}.
    * <p>
@@ -1940,7 +1863,6 @@ public class BDDAssertions extends Assertions {
   public static Exception catchException(ThrowingCallable shouldRaiseException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseException, Exception.class);
   }
-
   /**
    * Allows catching an instance of {@link RuntimeException}.
    * <p>
@@ -1967,7 +1889,6 @@ public class BDDAssertions extends Assertions {
   public static RuntimeException catchRuntimeException(ThrowingCallable shouldRaiseRuntimeException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseRuntimeException, RuntimeException.class);
   }
-
   /**
    * Allows catching an instance of {@link NullPointerException}.
    * <p>
@@ -1994,7 +1915,6 @@ public class BDDAssertions extends Assertions {
   public static NullPointerException catchNullPointerException(ThrowingCallable shouldRaiseNullPointerException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseNullPointerException, NullPointerException.class);
   }
-
   /**
    * Allows catching an instance of {@link IllegalArgumentException}.
    * <p>
@@ -2021,7 +1941,6 @@ public class BDDAssertions extends Assertions {
   public static IllegalArgumentException catchIllegalArgumentException(ThrowingCallable shouldRaiseIllegalArgumentException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIllegalArgumentException, IllegalArgumentException.class);
   }
-
   /**
    * Allows catching an instance of {@link IOException}.
    * <p>
@@ -2048,7 +1967,6 @@ public class BDDAssertions extends Assertions {
   public static IOException catchIOException(ThrowingCallable shouldRaiseIOException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIOException, IOException.class);
   }
-
   /**
    * Allows catching an instance of {@link ReflectiveOperationException}.
    * <p>
@@ -2075,7 +1993,6 @@ public class BDDAssertions extends Assertions {
   public static ReflectiveOperationException catchReflectiveOperationException(ThrowingCallable shouldRaiseReflectiveOperationException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseReflectiveOperationException, ReflectiveOperationException.class);
   }
-
   /**
    * Allows catching an instance of {@link IllegalStateException}.
    * <p>
@@ -2102,7 +2019,6 @@ public class BDDAssertions extends Assertions {
   public static IllegalStateException catchIllegalStateException(ThrowingCallable shouldRaiseIllegalStateException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIllegalStateException, IllegalStateException.class);
   }
-
   /**
    * Allows catching an instance of {@link IndexOutOfBoundsException}.
    * <p>
@@ -2129,7 +2045,6 @@ public class BDDAssertions extends Assertions {
   public static IndexOutOfBoundsException catchIndexOutOfBoundsException(ThrowingCallable shouldRaiseIndexOutOfBoundException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIndexOutOfBoundException, IndexOutOfBoundsException.class);
   }
-
   /**
    * Entry point to check that an exception of type T is thrown by a given {@code throwingCallable}
    * which allows to chain assertions on the thrown exception.
@@ -2148,7 +2063,6 @@ public class BDDAssertions extends Assertions {
   public static <T extends Throwable> ThrowableTypeAssert<T> thenExceptionOfType(final Class<? extends T> exceptionType) {
     return assertThatExceptionOfType(exceptionType);
   }
-
   /**
    * Entry point to check that no exception of any type is thrown by a given {@code throwingCallable}.
    * <p>
@@ -2163,7 +2077,6 @@ public class BDDAssertions extends Assertions {
   public static NotThrownAssert thenNoException() {
     return assertThatNoException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link NullPointerException}.
    *
@@ -2172,7 +2085,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<NullPointerException> thenNullPointerException() {
     return assertThatNullPointerException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link IllegalArgumentException}.
    *
@@ -2181,7 +2093,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<IllegalArgumentException> thenIllegalArgumentException() {
     return assertThatIllegalArgumentException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link IOException}.
    *
@@ -2190,7 +2101,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<IOException> thenIOException() {
     return assertThatIOException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link IllegalStateException}.
    *
@@ -2199,7 +2109,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<IllegalStateException> thenIllegalStateException() {
     return assertThatIllegalStateException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link Exception}.
    *
@@ -2209,7 +2118,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<Exception> thenException() {
     return assertThatException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link IndexOutOfBoundsException}.
    *
@@ -2219,7 +2127,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<IndexOutOfBoundsException> thenIndexOutOfBoundsException() {
     return assertThatIndexOutOfBoundsException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link ReflectiveOperationException}.
    *
@@ -2229,7 +2136,6 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<ReflectiveOperationException> thenReflectiveOperationException() {
     return assertThatReflectiveOperationException();
   }
-
   /**
    * Alias for {@link #thenExceptionOfType(Class)} for {@link RuntimeException}.
    *
@@ -2239,11 +2145,9 @@ public class BDDAssertions extends Assertions {
   public static ThrowableTypeAssert<RuntimeException> thenRuntimeException() {
     return assertThatRuntimeException();
   }
-
   // -------------------------------------------------------------------------------------------------
   // fail methods : not assertions but here to have a single entry point to all AssertJ features.
   // -------------------------------------------------------------------------------------------------
-
   /**
    * Sets whether we remove elements related to AssertJ from assertion error stack trace.
    * <p>
@@ -2256,7 +2160,6 @@ public class BDDAssertions extends Assertions {
   public static void setRemoveAssertJRelatedElementsFromStackTrace(boolean removeAssertJRelatedElementsFromStackTrace) {
     Assertions.setRemoveAssertJRelatedElementsFromStackTrace(removeAssertJRelatedElementsFromStackTrace);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message.
    *
@@ -2271,7 +2174,6 @@ public class BDDAssertions extends Assertions {
   public static <T> T fail(String failureMessage) {
     return Assertions.fail(failureMessage);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message built as {@link String#format(String, Object...)}.
    *
@@ -2287,7 +2189,6 @@ public class BDDAssertions extends Assertions {
   public static <T> T fail(String failureMessage, Object... args) {
     return Assertions.fail(failureMessage, args);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message and with the {@link Throwable} that caused the failure.
    * @param <T> dummy return value type
@@ -2302,7 +2203,6 @@ public class BDDAssertions extends Assertions {
   public static <T> T fail(String failureMessage, Throwable realCause) {
     return Assertions.fail(failureMessage, realCause);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -2318,7 +2218,6 @@ public class BDDAssertions extends Assertions {
   public static <T> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     return Assertions.shouldHaveThrown(throwableClass);
   }
-
   /**
    * In error messages, sets the threshold when iterable/array formatting will be on one line (if their String description
    * length &lt;= this parameter) or it will be formatted with one element per line.
@@ -2345,7 +2244,6 @@ public class BDDAssertions extends Assertions {
   public static void setMaxLengthForSingleLineDescription(int maxLengthForSingleLineDescription) {
     Assertions.setMaxLengthForSingleLineDescription(maxLengthForSingleLineDescription);
   }
-
   /**
    * Sets the maximum number of elements to display in error messages for iterables, arrays and map .
    * <p>
@@ -2368,7 +2266,6 @@ public class BDDAssertions extends Assertions {
   public static void setMaxElementsForPrinting(int maxElementsForPrinting) {
     Assertions.setMaxElementsForPrinting(maxElementsForPrinting);
   }
-
   /**
    * Enable/disable printing assertions description to the console (disabled by default).
    * <p>
@@ -2383,7 +2280,6 @@ public class BDDAssertions extends Assertions {
   public static void setPrintAssertionsDescription(boolean printAssertionsDescription) {
     Assertions.setPrintAssertionsDescription(printAssertionsDescription);
   }
-
   /**
    * All assertions description will be consumed by the given {@link Consumer Consumer&lt;Description&gt;} allowing for example to record them in a file.
    * <p>
@@ -2398,7 +2294,6 @@ public class BDDAssertions extends Assertions {
   public static void setDescriptionConsumer(Consumer<Description> descriptionConsumer) {
     Assertions.setDescriptionConsumer(descriptionConsumer);
   }
-
   /**
    * Sets how many stacktrace elements are included in {@link Throwable} representation (by default this set to 3).
    * <p>
@@ -2431,11 +2326,9 @@ public class BDDAssertions extends Assertions {
   public static void setMaxStackTraceElementsDisplayed(int maxStackTraceElementsDisplayed) {
     Assertions.setMaxStackTraceElementsDisplayed(maxStackTraceElementsDisplayed);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // properties methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -2469,7 +2362,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Assertions.extractProperty(propertyName, propertyType);
   }
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -2501,7 +2393,6 @@ public class BDDAssertions extends Assertions {
   public static Properties<Object> extractProperty(String propertyName) {
     return Assertions.extractProperty(propertyName);
   }
-
   /**
    * Utility method to build nicely a {@link Tuple} when working with {@link IterableAssert#extracting(String...)} or
    * {@link ObjectArrayAssert#extracting(String...)}
@@ -2514,7 +2405,6 @@ public class BDDAssertions extends Assertions {
   public static Tuple tuple(Object... values) {
     return Assertions.tuple(values);
   }
-
   /**
    * Globally sets whether
    * <code>{@link org.assertj.core.api.AbstractIterableAssert#extracting(String) IterableAssert#extracting(String)}</code>
@@ -2529,7 +2419,6 @@ public class BDDAssertions extends Assertions {
   public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
     Assertions.setAllowExtractingPrivateFields(allowExtractingPrivateFields);
   }
-
   /**
    * Globally sets whether the use of private fields is allowed for comparison.
    * The following (incomplete) list of methods will be impacted by this change :
@@ -2549,7 +2438,6 @@ public class BDDAssertions extends Assertions {
   public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
     Assertions.setAllowComparingPrivateFields(allowComparingPrivateFields);
   }
-
   /**
    * Globally sets whether the extractor considers bare-named property methods like {@code String name()}.
    * Defaults to enabled.
@@ -2560,11 +2448,9 @@ public class BDDAssertions extends Assertions {
   public static void setExtractBareNamePropertyMethods(boolean barenamePropertyMethods) {
     Assertions.setExtractBareNamePropertyMethods(barenamePropertyMethods);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
    * all
@@ -2586,7 +2472,6 @@ public class BDDAssertions extends Assertions {
   public static <K, V> MapEntry<K, V> entry(K key, V value) {
     return Assertions.entry(key, value);
   }
-
   /**
    * Only delegate to {@link Index#atIndex(int)} so that Assertions offers a full feature entry point to all AssertJ
    * features (but you can use {@link Index} if you prefer).
@@ -2604,7 +2489,6 @@ public class BDDAssertions extends Assertions {
   public static Index atIndex(int index) {
     return Assertions.atIndex(index);
   }
-
   /**
    * Builds an {@link Offset} to use with {@code isCloseTo} assertions.
    * <p>
@@ -2620,7 +2504,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Double> within(Double value) {
     return Assertions.offset(value);
   }
-
   /**
    * Builds an {@link Offset} to use with real number assertions.
    * <p>
@@ -2636,7 +2519,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Double> withPrecision(Double value) {
     return Assertions.offset(value);
   }
-
   /**
    * Builds an {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2653,7 +2535,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Float> within(Float value) {
     return Assertions.offset(value);
   }
-
   /**
    * Builds an {@link Offset} to use with real number assertions.
    * <p>
@@ -2669,7 +2550,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Float> withPrecision(Float value) {
     return Assertions.offset(value);
   }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2686,7 +2566,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<BigDecimal> within(BigDecimal value) {
     return Assertions.within(value);
   }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2704,7 +2583,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<BigInteger> within(BigInteger value) {
     return Assertions.within(value);
   }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2721,7 +2599,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Byte> within(Byte value) {
     return Assertions.within(value);
   }
-
   /**
    * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2738,7 +2615,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Integer> within(Integer value) {
     return Assertions.within(value);
   }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2755,7 +2631,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Short> within(Short value) {
     return Assertions.within(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with {@link AbstractLongAssert#isCloseTo(long, Offset) isCloseTo} assertions.
    * <p>
@@ -2772,26 +2647,9 @@ public class BDDAssertions extends Assertions {
   public static Offset<Long> within(Long value) {
     return Assertions.within(value);
   }
-
-  /**
-   * Assertions entry point for {@link TemporalUnitOffset} with less than or equal condition
-   * to use with isCloseTo temporal assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
-   * LocalTime _07_12 = LocalTime.of(7, 12);
-   * assertThat(_07_10).isCloseTo(_07_12, within(5, ChronoUnit.MINUTES));</code></pre>
-   *
-   * @param value the allowed offset
-   * @param unit the {@link TemporalUnit} of the offset
-   * @return the created {@code Offset}.
-   *
-   * @since 3.20.0
-   */
   public static TemporalUnitOffset within(long value, TemporalUnit unit) {
     return Assertions.within(value, unit);
   }
-
   /**
    * Syntactic sugar method to use with {@link AbstractDurationAssert#isCloseTo(Duration, Duration)} assertion.
    * <p>
@@ -2806,7 +2664,6 @@ public class BDDAssertions extends Assertions {
   public static Duration withMarginOf(Duration allowedDifference) {
     return Assertions.withMarginOf(allowedDifference);
   }
-
   /**
    * Assertions entry point for Double {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2824,7 +2681,6 @@ public class BDDAssertions extends Assertions {
   public static Percentage withinPercentage(Double value) {
     return Assertions.withinPercentage(value);
   }
-
   /**
    * Assertions entry point for Integer {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2842,7 +2698,6 @@ public class BDDAssertions extends Assertions {
   public static Percentage withinPercentage(Integer value) {
     return Assertions.withinPercentage(value);
   }
-
   /**
    * Assertions entry point for Long {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2860,7 +2715,6 @@ public class BDDAssertions extends Assertions {
   public static Percentage withinPercentage(Long value) {
     return Assertions.withinPercentage(value);
   }
-
   /**
    * Build a {@link Offset#strictOffset(Number) <b>strict</b> Offset} to use with {@link AbstractDoubleAssert#isCloseTo(double, Offset)} and {@link AbstractDoubleAssert#isNotCloseTo(double, Offset)} assertions.
    * <p>
@@ -2884,7 +2738,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Double> byLessThan(Double value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
@@ -2901,7 +2754,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Float> byLessThan(Float value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2918,7 +2770,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<BigDecimal> byLessThan(BigDecimal value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2935,7 +2786,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<BigInteger> byLessThan(BigInteger value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2952,7 +2802,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Byte> byLessThan(Byte value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with strict {@link AbstractIntegerAssert#isCloseTo(int, Offset) isCloseTo} assertions.
    * <p>
@@ -2969,7 +2818,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Integer> byLessThan(Integer value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2986,7 +2834,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Short> byLessThan(Short value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with strict {@link AbstractLongAssert#isCloseTo(long, Offset) isCloseTo} assertions.
    * <p>
@@ -3003,7 +2850,6 @@ public class BDDAssertions extends Assertions {
   public static Offset<Long> byLessThan(Long value) {
     return Assertions.byLessThan(value);
   }
-
   /**
    * Assertions entry point for {@link TemporalUnitOffset} with strict less than condition
    * to use with {@code isCloseTo} temporal assertions.
@@ -3022,7 +2868,6 @@ public class BDDAssertions extends Assertions {
   public static TemporalUnitOffset byLessThan(long value, TemporalUnit unit) {
     return Assertions.byLessThan(value, unit);
   }
-
   /**
    * A syntax sugar to write fluent assertion using {@link ObjectAssert#returns(Object, Function)} and
    * {@link ObjectAssert#doesNotReturn(Object, Function)}.
@@ -3043,7 +2888,6 @@ public class BDDAssertions extends Assertions {
   public static <F, T> Function<F, T> from(Function<F, T> extractor) {
     return Assertions.from(extractor);
   }
-
   /**
    * A syntax sugar to write fluent assertion with methods having an {@link InstanceOfAssertFactory} parameter.
    * <p>
@@ -3074,7 +2918,6 @@ public class BDDAssertions extends Assertions {
   // ------------------------------------------------------------------------------------------------------
   // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -3090,7 +2933,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
     return Assertions.allOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -3105,7 +2947,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.allOf(conditions);
   }
-
   /**
    * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link AnyOf} if you prefer).
@@ -3124,7 +2965,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
     return Assertions.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AnyOf}</code>
    *
@@ -3139,7 +2979,6 @@ public class BDDAssertions extends Assertions {
   public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link DoesNotHave}</code>.
    *
@@ -3152,7 +2991,6 @@ public class BDDAssertions extends Assertions {
   public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return Assertions.doesNotHave(condition);
   }
-
   /**
    * Creates a new <code>{@link Not}</code>.
    *
@@ -3165,11 +3003,9 @@ public class BDDAssertions extends Assertions {
   public static <T> Not<T> not(Condition<? super T> condition) {
     return Assertions.not(condition);
   }
-
   // --------------------------------------------------------------------------------------------------
   // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -3194,7 +3030,6 @@ public class BDDAssertions extends Assertions {
   public static InFilter in(Object... values) {
     return Assertions.in(values);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -3219,7 +3054,6 @@ public class BDDAssertions extends Assertions {
   public static NotInFilter notIn(Object... valuesNotToMatch) {
     return Assertions.notIn(valuesNotToMatch);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -3244,11 +3078,9 @@ public class BDDAssertions extends Assertions {
   public static NotFilter not(Object valueNotToMatch) {
     return Assertions.not(valueNotToMatch);
   }
-
   // --------------------------------------------------------------------------------------------------
   // File methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -3267,7 +3099,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(File file, Charset charset) {
     return Assertions.contentOf(file, charset);
   }
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -3286,7 +3117,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(File file, String charsetName) {
     return Assertions.contentOf(file, charsetName);
   }
-
   /**
    * Loads the text content of a file with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -3304,7 +3134,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(File file) {
     return Assertions.contentOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -3320,7 +3149,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(File file) {
     return Assertions.linesOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -3336,7 +3164,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(File file, Charset charset) {
     return Assertions.linesOf(file, charset);
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -3352,7 +3179,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(File file, String charsetName) {
     return Assertions.linesOf(file, charsetName);
   }
-
 	/**
 	 * Loads the text content of a file at a given path into a list of strings with the default charset, each string corresponding to a
 	 * line.
@@ -3368,7 +3194,6 @@ public class BDDAssertions extends Assertions {
 	public static List<String> linesOf(Path path) {
 		return Assertions.linesOf(path, Charset.defaultCharset());
 	}
-
 	/**
 	 * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line.
 	 * The line endings are either \n, \r or \r\n.
@@ -3384,7 +3209,6 @@ public class BDDAssertions extends Assertions {
 	public static List<String> linesOf(Path path, Charset charset) {
 		return Assertions.linesOf(path, charset);
 	}
-
 	/**
 	 * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line. The line endings are
 	 * either \n, \r or \r\n.
@@ -3400,11 +3224,9 @@ public class BDDAssertions extends Assertions {
 	public static List<String> linesOf(Path path, String charsetName) {
 		return Assertions.linesOf(path, charsetName);
 	}
-
   // --------------------------------------------------------------------------------------------------
   // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -3422,7 +3244,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(URL url, Charset charset) {
     return Assertions.contentOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -3440,7 +3261,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(URL url, String charsetName) {
     return Assertions.contentOf(url, charsetName);
   }
-
   /**
    * Loads the text content of a URL with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -3457,7 +3277,6 @@ public class BDDAssertions extends Assertions {
   public static String contentOf(URL url) {
     return Assertions.contentOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -3473,7 +3292,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(URL url) {
     return Assertions.linesOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -3489,7 +3307,6 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(URL url, Charset charset) {
     return Assertions.linesOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -3505,7 +3322,155 @@ public class BDDAssertions extends Assertions {
   public static List<String> linesOf(URL url, String charsetName) {
     return Assertions.linesOf(url, charsetName);
   }
-
+  // --------------------------------------------------------------------------------------------------
+  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+//@format:off
+//@format:on
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link org.assertj.core.api.ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link OffsetTimeAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  // -------------------------------------------------------------------------------------------------
+  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
+  // -------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Assertions entry point for {@link TemporalUnitOffset} with less than or equal condition
+   * to use with isCloseTo temporal assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
+   * LocalTime _07_12 = LocalTime.of(7, 12);
+   * assertThat(_07_10).isCloseTo(_07_12, within(5, ChronoUnit.MINUTES));</code></pre>
+   *
+   * @param value the allowed offset
+   * @param unit the {@link TemporalUnit} of the offset
+   * @return the created {@code Offset}.
+   *
+   * @since 3.20.0
+   */
+  // ------------------------------------------------------------------------------------------------------
+  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // File methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------------------------
   // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------

@@ -1,3 +1,6 @@
+
+package org.assertj.core.api;
+import java.sql.SQLException;
 /*
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -10,11 +13,8 @@
  *
  * Copyright 2012-2023 the original author or authors.
  */
-package org.assertj.core.api;
-
 import static org.assertj.core.configuration.ConfigurationProvider.CONFIGURATION_PROVIDER;
 import static org.assertj.core.data.Percentage.withPercentage;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -74,7 +73,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.api.filter.FilterOperator;
 import org.assertj.core.api.filter.Filters;
@@ -282,7 +280,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static OptionalIntAssert assertThat(OptionalInt actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.OptionalInt}.
    *
@@ -293,7 +290,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static OptionalLongAssert assertThat(OptionalLong actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
   * Create assertion for {@link java.util.regex.Matcher}.
   *
@@ -304,7 +300,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static MatcherAssert assertThat(Matcher actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BigDecimalAssert}</code>.
    *
@@ -314,7 +309,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractBigDecimalAssert<?> assertThat(BigDecimal actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BigIntegerAssert}</code>.
    *
@@ -325,7 +319,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractBigIntegerAssert<?> assertThat(BigInteger actual) {
     return new BigIntegerAssert(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UriAssert}</code>.
    *
@@ -335,7 +328,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractUriAssert<?> assertThat(URI actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link UrlAssert}</code>.
    *
@@ -345,7 +337,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractUrlAssert<?> assertThat(URL actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -355,7 +346,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractBooleanAssert<?> assertThat(boolean actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanAssert}</code>.
    *
@@ -365,7 +355,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractBooleanAssert<?> assertThat(Boolean actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link BooleanArrayAssert}</code>.
    *
@@ -375,7 +364,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractBooleanArrayAssert<?> assertThat(boolean[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Boolean2DArrayAssert}</code>.
    *
@@ -386,7 +374,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Boolean2DArrayAssert assertThat(boolean[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -396,7 +383,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractByteAssert<?> assertThat(byte actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteAssert}</code>.
    *
@@ -406,7 +392,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractByteAssert<?> assertThat(Byte actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ByteArrayAssert}</code>.
    *
@@ -416,7 +401,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractByteArrayAssert<?> assertThat(byte[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Byte2DArrayAssert}</code>.
    *
@@ -427,7 +411,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Byte2DArrayAssert assertThat(byte[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -437,7 +420,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractCharacterAssert<?> assertThat(char actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharArrayAssert}</code>.
    *
@@ -447,7 +429,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractCharArrayAssert<?> assertThat(char[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharArrayAssert}</code>.
    *
@@ -458,7 +439,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Char2DArrayAssert assertThat(char[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link CharacterAssert}</code>.
    *
@@ -468,7 +448,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractCharacterAssert<?> assertThat(Character actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassAssert}</code>.
    *
@@ -478,7 +457,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ClassAssert assertThat(Class<?> actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -488,7 +466,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractDoubleAssert<?> assertThat(double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleAssert}</code>.
    *
@@ -498,7 +475,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractDoubleAssert<?> assertThat(Double actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DoubleArrayAssert}</code>.
    *
@@ -508,7 +484,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractDoubleArrayAssert<?> assertThat(double[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Double2DArrayAssert}</code>.
    *
@@ -519,7 +494,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Double2DArrayAssert assertThat(double[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FileAssert}</code>.
    *
@@ -529,7 +503,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractFileAssert<?> assertThat(File actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.util.concurrent.Future}.
    *
@@ -542,7 +515,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <RESULT> FutureAssert<RESULT> assertThat(Future<RESULT> actual) {
     return new FutureAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InputStreamAssert}</code>.
    *
@@ -552,7 +524,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractInputStreamAssert<?, ? extends InputStream> assertThat(InputStream actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -562,7 +533,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractFloatAssert<?> assertThat(float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatAssert}</code>.
    *
@@ -572,7 +542,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractFloatAssert<?> assertThat(Float actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FloatArrayAssert}</code>.
    *
@@ -582,7 +551,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractFloatArrayAssert<?> assertThat(float[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -592,7 +560,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractIntegerAssert<?> assertThat(int actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntArrayAssert}</code>.
    *
@@ -602,7 +569,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractIntArrayAssert<?> assertThat(int[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Int2DArrayAssert}</code>.
    *
@@ -613,7 +579,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Int2DArrayAssert assertThat(int[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Float2DArrayAssert}</code>.
    *
@@ -624,7 +589,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Float2DArrayAssert assertThat(float[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link IntegerAssert}</code>.
    *
@@ -634,7 +598,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractIntegerAssert<?> assertThat(Integer actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -678,7 +641,6 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                                  AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableIterableAssert}</code> allowing to navigate to any {@code Iterable} element
    * in order to perform assertions on it.
@@ -714,7 +676,6 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                                           Class<ELEMENT_ASSERT> assertClass) {
            return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
   /**
    * Creates a new instance of <code>{@link FactoryBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -758,7 +719,6 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                                         AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertFactory);
   }
-
   /**
    * Creates a new instance of <code>{@link ClassBasedNavigableListAssert}</code> allowing to navigate to any {@code List} element
    * in order to perform assertions on it.
@@ -794,9 +754,7 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                                       Class<ELEMENT_ASSERT> assertClass) {
     return AssertionsForInterfaceTypes.assertThat(actual, assertClass);
   }
-
   //@format:on
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -806,7 +764,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLongAssert<?> assertThat(long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongAssert}</code>.
    *
@@ -816,7 +773,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLongAssert<?> assertThat(Long actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LongArrayAssert}</code>.
    *
@@ -826,7 +782,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLongArrayAssert<?> assertThat(long[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Long2DArrayAssert}</code>.
    *
@@ -837,7 +792,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Long2DArrayAssert assertThat(long[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectAssert}</code>.
    *
@@ -845,10 +799,49 @@ public class Assertions implements InstanceOfAssertFactories {
    * @param actual the actual value.
    * @return the created assertion object.
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/Assertions.java/left.java
   public static <T> ObjectAssert<T> assertThat(T actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends SQLException> AbstractThrowableAssert<?, T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/Assertions.java/base.java
+  public static <T> ObjectAssert<T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+=======
+  public static <T> ObjectAssert<T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> assertThat(T actual) {
+    return AssertionsForClassTypes.assertThat(actual);
+  }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
+    return AssertionsForInterfaceTypes.assertThat(actual);
+  }
+  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
+    return assertion;
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/Assertions.java/right.java
   /**
    * Creates a new instance of <code>{@link ObjectArrayAssert}</code>.
    *
@@ -859,7 +852,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> ObjectArrayAssert<T> assertThat(T[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Object2DArrayAssert}</code>.
    *
@@ -871,7 +863,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Object2DArrayAssert<T> assertThat(T[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -881,7 +872,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractShortAssert<?> assertThat(short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortAssert}</code>.
    *
@@ -891,7 +881,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractShortAssert<?> assertThat(Short actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ShortArrayAssert}</code>.
    *
@@ -901,7 +890,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractShortArrayAssert<?> assertThat(short[] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link Short2DArrayAssert}</code>.
    *
@@ -912,7 +900,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Short2DArrayAssert assertThat(short[][] actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DateAssert}</code>.
    *
@@ -922,7 +909,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractDateAssert<?> assertThat(Date actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ZonedDateTimeAssert}</code>.
    *
@@ -932,7 +918,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractZonedDateTimeAssert<?> assertThat(ZonedDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateTimeAssert}</code>.
    *
@@ -942,7 +927,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLocalDateTimeAssert<?> assertThat(LocalDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link java.time.OffsetDateTime}</code>.
    *
@@ -952,7 +936,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractOffsetDateTimeAssert<?> assertThat(OffsetDateTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link java.time.OffsetTime}.
    *
@@ -962,7 +945,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractOffsetTimeAssert<?> assertThat(OffsetTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalTimeAssert}</code>.
    *
@@ -972,7 +954,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLocalTimeAssert<?> assertThat(LocalTime actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link LocalDateAssert}</code>.
    *
@@ -982,7 +963,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractLocalDateAssert<?> assertThat(LocalDate actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link InstantAssert}</code>.
    *
@@ -993,7 +973,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractInstantAssert<?> assertThat(Instant actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link DurationAssert}</code>.
    *
@@ -1004,7 +983,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractDurationAssert<?> assertThat(Duration actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link PeriodAssert}</code>.
    *
@@ -1015,7 +993,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractPeriodAssert<?> assertThat(Period actual) {
     return AssertionsForClassTypes.assertThat(actual);
   }
-
   /**
    * Create assertion for {@link AtomicBoolean}.
    *
@@ -1026,7 +1003,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AtomicBooleanAssert assertThat(AtomicBoolean actual) {
     return new AtomicBooleanAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicInteger}.
    *
@@ -1037,7 +1013,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AtomicIntegerAssert assertThat(AtomicInteger actual) {
     return new AtomicIntegerAssert(actual);
   }
-
   /**
    * Create int[] assertion for {@link AtomicIntegerArray}.
    *
@@ -1048,7 +1023,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AtomicIntegerArrayAssert assertThat(AtomicIntegerArray actual) {
     return new AtomicIntegerArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicIntegerFieldUpdater}.
    *
@@ -1060,7 +1034,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> assertThat(AtomicIntegerFieldUpdater<OBJECT> actual) {
     return new AtomicIntegerFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link LongAdder}.
    *
@@ -1071,7 +1044,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static LongAdderAssert assertThat(LongAdder actual) {
     return new LongAdderAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLong}.
    *
@@ -1082,7 +1054,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AtomicLongAssert assertThat(AtomicLong actual) {
     return new AtomicLongAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongArray}.
    *
@@ -1093,7 +1064,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AtomicLongArrayAssert assertThat(AtomicLongArray actual) {
     return new AtomicLongArrayAssert(actual);
   }
-
   /**
    * Create assertion for {@link AtomicLongFieldUpdater}.
    *
@@ -1105,7 +1075,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> assertThat(AtomicLongFieldUpdater<OBJECT> actual) {
     return new AtomicLongFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReference}.
    *
@@ -1117,7 +1086,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <VALUE> AtomicReferenceAssert<VALUE> assertThat(AtomicReference<VALUE> actual) {
     return new AtomicReferenceAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceArray}.
    *
@@ -1129,7 +1097,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> assertThat(AtomicReferenceArray<ELEMENT> actual) {
     return new AtomicReferenceArrayAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicReferenceFieldUpdater}.
    *
@@ -1142,7 +1109,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> assertThat(AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
     return new AtomicReferenceFieldUpdaterAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicMarkableReference}.
    *
@@ -1154,7 +1120,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <VALUE> AtomicMarkableReferenceAssert<VALUE> assertThat(AtomicMarkableReference<VALUE> actual) {
     return new AtomicMarkableReferenceAssert<>(actual);
   }
-
   /**
    * Create assertion for {@link AtomicStampedReference}.
    *
@@ -1166,7 +1131,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <VALUE> AtomicStampedReferenceAssert<VALUE> assertThat(AtomicStampedReference<VALUE> actual) {
     return new AtomicStampedReferenceAssert<>(actual);
   }
-
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code>.
    *
@@ -1174,10 +1138,6 @@ public class Assertions implements InstanceOfAssertFactories {
    * @param actual the actual value.
    * @return the created {@link ThrowableAssert}.
    */
-  public static <T extends Throwable> AbstractThrowableAssert<?, T> assertThat(T actual) {
-    return AssertionsForClassTypes.assertThat(actual);
-  }
-
   /**
    * Creates a new instance of <code>{@link ThrowableAssert}</code>.
    * This overload's purpose is to disambiguate the call for <code>{@link SQLException}</code>.
@@ -1188,10 +1148,6 @@ public class Assertions implements InstanceOfAssertFactories {
    * @return the created {@link ThrowableAssert}.
    * @since 3.23.1
    */
-  public static <T extends SQLException> AbstractThrowableAssert<?, T> assertThat(T actual) {
-    return AssertionsForClassTypes.assertThat(actual);
-  }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} (easier done with lambdas).
    * <p>
@@ -1224,7 +1180,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatThrownBy(ThrowingCallable shouldRaiseThrowable) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} like {@code assertThatThrownBy(ThrowingCallable)} but this method
    * let you set the assertion description the same way you do with {@link AbstractAssert#as(String, Object...) as(String, Object...)}.
@@ -1262,7 +1217,6 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                                    String description, Object... args) {
     return assertThat(catchThrowable(shouldRaiseThrowable)).as(description, args).hasBeenThrown();
   }
-
   /**
    * Allows to capture and then assert on a {@link Throwable} (easier done with lambdas).
    * <p>
@@ -1301,7 +1255,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static AbstractThrowableAssert<?, ? extends Throwable> assertThatCode(ThrowingCallable shouldRaiseOrNotThrowable) {
     return AssertionsForClassTypes.assertThatCode(shouldRaiseOrNotThrowable);
   }
-
   /**
    * Creates a new instance of <code>{@link ObjectAssert}</code> for any object.
    *
@@ -1326,7 +1279,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> ObjectAssert<T> assertThatObject(T actual) {
     return assertThat(actual);
   }
-
   /**
    * Uses the given instance as the instance under test for all the assertions expressed as the passed {@link Consumer}.
    * <p>
@@ -1354,7 +1306,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> ObjectAssert<T> assertWith(T actual, Consumer<T>... requirements) {
     return assertThat(actual).satisfies(requirements);
   }
-
   /**
    * Allows catching a {@link Throwable} more easily when used with Java 8 lambdas.
    * <p>
@@ -1380,7 +1331,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Throwable catchThrowable(ThrowingCallable shouldRaiseThrowable) {
     return AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
   }
-
   /**
    * Allows catching a {@link Throwable} of a specific type.
    * <p>
@@ -1423,7 +1373,6 @@ public class Assertions implements InstanceOfAssertFactories {
                                                                              Class<THROWABLE> type) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseThrowable, type);
   }
-
   /**
    * Allows catching an instance of {@link Exception}.
    * <p>
@@ -1450,7 +1399,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Exception catchException(ThrowingCallable shouldRaiseException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseException, Exception.class);
   }
-
   /**
    * Allows catching an instance of {@link RuntimeException}.
    * <p>
@@ -1477,7 +1425,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static RuntimeException catchRuntimeException(ThrowingCallable shouldRaiseRuntimeException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseRuntimeException, RuntimeException.class);
   }
-
   /**
    * Allows catching an instance of {@link NullPointerException}.
    * <p>
@@ -1504,7 +1451,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static NullPointerException catchNullPointerException(ThrowingCallable shouldRaiseNullPointerException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseNullPointerException, NullPointerException.class);
   }
-
   /**
    * Allows catching an instance of {@link IllegalArgumentException}.
    * <p>
@@ -1531,7 +1477,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static IllegalArgumentException catchIllegalArgumentException(ThrowingCallable shouldRaiseIllegalArgumentException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIllegalArgumentException, IllegalArgumentException.class);
   }
-
   /**
    * Allows catching an instance of {@link IOException}.
    * <p>
@@ -1558,7 +1503,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static IOException catchIOException(ThrowingCallable shouldRaiseIOException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIOException, IOException.class);
   }
-
   /**
    * Allows catching an instance of {@link ReflectiveOperationException}.
    * <p>
@@ -1585,7 +1529,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ReflectiveOperationException catchReflectiveOperationException(ThrowingCallable shouldRaiseReflectiveOperationException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseReflectiveOperationException, ReflectiveOperationException.class);
   }
-
   /**
    * Allows catching an instance of {@link IllegalStateException}.
    * <p>
@@ -1612,7 +1555,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static IllegalStateException catchIllegalStateException(ThrowingCallable shouldRaiseIllegalStateException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIllegalStateException, IllegalStateException.class);
   }
-
   /**
    * Allows catching an instance of {@link IndexOutOfBoundsException}.
    * <p>
@@ -1639,7 +1581,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static IndexOutOfBoundsException catchIndexOutOfBoundsException(ThrowingCallable shouldRaiseIndexOutOfBoundException) {
     return AssertionsForClassTypes.catchThrowableOfType(shouldRaiseIndexOutOfBoundException, IndexOutOfBoundsException.class);
   }
-
   /**
    * Entry point to check that an exception of type T is thrown by a given {@code throwingCallable}
    * which allows to chain assertions on the thrown exception.
@@ -1658,7 +1599,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T extends Throwable> ThrowableTypeAssert<T> assertThatExceptionOfType(final Class<? extends T> exceptionType) {
     return AssertionsForClassTypes.assertThatExceptionOfType(exceptionType);
   }
-
   /**
    * Entry point to check that no exception of any type is thrown by a given {@code throwingCallable}.
    * <p>
@@ -1673,7 +1613,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static NotThrownAssert assertThatNoException() {
     return AssertionsForClassTypes.assertThatNoException();
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link NullPointerException}.
    *
@@ -1684,7 +1623,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<NullPointerException> assertThatNullPointerException() {
     return assertThatExceptionOfType(NullPointerException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IllegalArgumentException}.
    *
@@ -1695,7 +1633,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<IllegalArgumentException> assertThatIllegalArgumentException() {
     return assertThatExceptionOfType(IllegalArgumentException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IOException}.
    *
@@ -1706,7 +1643,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<IOException> assertThatIOException() {
     return assertThatExceptionOfType(IOException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IllegalStateException}.
    *
@@ -1717,7 +1653,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<IllegalStateException> assertThatIllegalStateException() {
     return assertThatExceptionOfType(IllegalStateException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link Exception}.
    *
@@ -1728,7 +1663,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<Exception> assertThatException(){
     return assertThatExceptionOfType(Exception.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link RuntimeException}.
    *
@@ -1739,7 +1673,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<RuntimeException> assertThatRuntimeException(){
     return assertThatExceptionOfType(RuntimeException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link ReflectiveOperationException}.
    *
@@ -1750,7 +1683,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<ReflectiveOperationException> assertThatReflectiveOperationException(){
     return assertThatExceptionOfType(ReflectiveOperationException.class);
   }
-
   /**
    * Alias for {@link #assertThatExceptionOfType(Class)} for {@link IndexOutOfBoundsException}.
    *
@@ -1761,11 +1693,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static ThrowableTypeAssert<IndexOutOfBoundsException> assertThatIndexOutOfBoundsException(){
     return assertThatExceptionOfType(IndexOutOfBoundsException.class);
   }
-
   // -------------------------------------------------------------------------------------------------
   // fail methods : not assertions but here to have a single entry point to all AssertJ features.
   // -------------------------------------------------------------------------------------------------
-
   /**
    * Sets whether we remove elements related to AssertJ from assertion error stack trace.
    * <p>
@@ -1776,7 +1706,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setRemoveAssertJRelatedElementsFromStackTrace(boolean removeAssertJRelatedElementsFromStackTrace) {
     Fail.setRemoveAssertJRelatedElementsFromStackTrace(removeAssertJRelatedElementsFromStackTrace);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message.
    *
@@ -1789,7 +1718,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> T fail(String failureMessage) {
     return Fail.fail(failureMessage);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message built as {@link String#format(String, Object...)}.
    *
@@ -1803,7 +1731,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> T fail(String failureMessage, Object... args) {
     return Fail.fail(failureMessage, args);
   }
-
   /**
    * Throws an {@link AssertionError} with the given message and with the {@link Throwable} that caused the failure.
    * @param <T> dummy return value type
@@ -1816,7 +1743,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> T fail(String failureMessage, Throwable realCause) {
     return Fail.fail(failureMessage, realCause);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1833,7 +1759,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> T failBecauseExceptionWasNotThrown(Class<? extends Throwable> throwableClass) {
     return Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * Throws an {@link AssertionError} with a message explaining that a {@link Throwable} of given class was expected to be thrown
    * but had not been.
@@ -1847,7 +1772,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> T shouldHaveThrown(Class<? extends Throwable> throwableClass) {
     return Fail.shouldHaveThrown(throwableClass);
   }
-
   /**
    * In error messages, sets the threshold when iterable/array formatting will be on one line (if their String description
    * length &lt;= this parameter) or it will be formatted with one element per line.
@@ -1872,7 +1796,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setMaxLengthForSingleLineDescription(int maxLengthForSingleLineDescription) {
     StandardRepresentation.setMaxLengthForSingleLineDescription(maxLengthForSingleLineDescription);
   }
-
   /**
    * Sets the maximum number of elements to display in error messages for iterables, arrays and map .
    * <p>
@@ -1894,7 +1817,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setMaxElementsForPrinting(int maxElementsForPrinting) {
     StandardRepresentation.setMaxElementsForPrinting(maxElementsForPrinting);
   }
-
   /**
    * Enable/disable printing assertions description to the console (disabled by default).
    * <p>
@@ -1908,7 +1830,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setPrintAssertionsDescription(boolean printAssertionsDescription) {
     AbstractAssert.setPrintAssertionsDescription(printAssertionsDescription);
   }
-
   /**
    * All assertions description will be consumed by the given {@link Consumer Consumer&lt;Description&gt;} allowing for example to record them in a file.
    * <p>
@@ -1922,7 +1843,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setDescriptionConsumer(Consumer<Description> descriptionConsumer) {
     AbstractAssert.setDescriptionConsumer(descriptionConsumer);
   }
-
   /**
    * Sets how many stacktrace elements are included in {@link Throwable} representation (by default this set to 3).
    * <p>
@@ -1954,11 +1874,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setMaxStackTraceElementsDisplayed(int maxStackTraceElementsDisplayed) {
     StandardRepresentation.setMaxStackTraceElementsDisplayed(maxStackTraceElementsDisplayed);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // properties methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -1990,7 +1908,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Properties<T> extractProperty(String propertyName, Class<T> propertyType) {
     return Properties.extractProperty(propertyName, propertyType);
   }
-
   /**
    * Only delegate to {@link Properties#extractProperty(String)} so that Assertions offers a full feature entry point
    * to
@@ -2020,7 +1937,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Properties<Object> extractProperty(String propertyName) {
     return Properties.extractProperty(propertyName);
   }
-
   /**
    * Utility method to build nicely a {@link Tuple} when working with {@link IterableAssert#extracting(String...)} or
    * {@link ObjectArrayAssert#extracting(String...)}
@@ -2031,7 +1947,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Tuple tuple(Object... values) {
     return Tuple.tuple(values);
   }
-
   /**
    * Globally sets whether
    * <code>{@link org.assertj.core.api.AbstractIterableAssert#extracting(String) IterableAssert#extracting(String)}</code>
@@ -2044,7 +1959,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setAllowExtractingPrivateFields(boolean allowExtractingPrivateFields) {
     FieldSupport.extraction().setAllowUsingPrivateFields(allowExtractingPrivateFields);
   }
-
   /**
    * Globally sets whether the use of private fields is allowed for comparison.
    * The following (incomplete) list of methods will be impacted by this change :
@@ -2062,7 +1976,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setAllowComparingPrivateFields(boolean allowComparingPrivateFields) {
     FieldSupport.comparison().setAllowUsingPrivateFields(allowComparingPrivateFields);
   }
-
   /**
    * Globally sets whether the extractor considers bare-named property methods like {@code String name()}.
    * Defaults to enabled.
@@ -2071,11 +1984,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static void setExtractBareNamePropertyMethods(boolean barenamePropertyMethods) {
     Introspection.setExtractBareNamePropertyMethods(barenamePropertyMethods);
   }
-
   // ------------------------------------------------------------------------------------------------------
   // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link MapEntry#entry(Object, Object)} so that Assertions offers a full feature entry point to
    * all
@@ -2095,7 +2006,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <K, V> MapEntry<K, V> entry(K key, V value) {
     return MapEntry.entry(key, value);
   }
-
   /**
    * Only delegate to {@link Index#atIndex(int)} so that Assertions offers a full feature entry point to all AssertJ
    * features (but you can use {@link Index} if you prefer).
@@ -2111,7 +2021,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Index atIndex(int index) {
     return Index.atIndex(index);
   }
-
   /**
    * Assertions entry point for double {@link Offset}.
    * <p>
@@ -2125,7 +2034,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Double> offset(Double value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for float {@link Offset}.
    * <p>
@@ -2139,7 +2047,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Float> offset(Float value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Double)} to use with isCloseTo assertions.
    * <p>
@@ -2153,7 +2060,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Double> within(Double value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Double)} to use with real number assertions.
    * <p>
@@ -2167,7 +2073,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Double> withPrecision(Double value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
@@ -2182,7 +2087,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Float> within(Float value) {
     return Offset.offset(value);
   }
-
   /**
    * Alias for {@link #offset(Float)} to use with real number assertions.
    * <p>
@@ -2196,7 +2100,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Float> withPrecision(Float value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2211,7 +2114,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<BigDecimal> within(BigDecimal value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2228,7 +2130,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<BigInteger> within(BigInteger value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2243,7 +2144,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Byte> within(Byte value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Integer {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2258,7 +2158,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Integer> within(Integer value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2273,7 +2172,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Short> within(Short value) {
     return Offset.offset(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with {@link AbstractLongAssert#isCloseTo(long, Offset) isCloseTo} assertions.
    * <p>
@@ -2288,26 +2186,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Long> within(Long value) {
     return Offset.offset(value);
   }
-
-  /**
-   * Assertions entry point for {@link TemporalUnitOffset} with less than or equal condition
-   * to use with isCloseTo temporal assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
-   * LocalTime _07_12 = LocalTime.of(7, 12);
-   * assertThat(_07_10).isCloseTo(_07_12, within(5, ChronoUnit.MINUTES));</code></pre>
-   *
-   * @param value the allowed offset
-   * @param unit the {@link TemporalUnit} of the offset
-   * @return the created {@code Offset}.
-   * @since 3.7.0
-   * @see #byLessThan(long, TemporalUnit)
-   */
   public static TemporalUnitOffset within(long value, TemporalUnit unit) {
     return new TemporalUnitWithinOffset(value, unit);
   }
-
   /**
    * Syntactic sugar method to use with {@link AbstractDurationAssert#isCloseTo(Duration, Duration)} assertion.
    * <p>
@@ -2320,7 +2201,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Duration withMarginOf(Duration allowedDifference) {
     return allowedDifference;
   }
-
   /**
    * Assertions entry point for Double {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2336,7 +2216,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Percentage withinPercentage(Double value) {
     return withPercentage(value);
   }
-
   /**
    * Assertions entry point for Integer {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2352,7 +2231,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Percentage withinPercentage(Integer value) {
     return withPercentage(value);
   }
-
   /**
    * Assertions entry point for Long {@link org.assertj.core.data.Percentage} to use with isCloseTo assertions for
    * percentages.
@@ -2368,7 +2246,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Percentage withinPercentage(Long value) {
     return withPercentage(value);
   }
-
   /**
    * Build a {@link Offset#strictOffset(Number) <b>strict</b> Offset} to use with {@link AbstractDoubleAssert#isCloseTo(double, Offset)} and {@link AbstractDoubleAssert#isNotCloseTo(double, Offset)} assertions.
    * <p>
@@ -2390,7 +2267,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Double> byLessThan(Double value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Alias for {@link #offset(Float)} to use with isCloseTo assertions.
    * <p>
@@ -2405,7 +2281,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Float> byLessThan(Float value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for BigDecimal {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2420,7 +2295,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<BigDecimal> byLessThan(BigDecimal value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for BigInteger {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2436,7 +2310,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<BigInteger> byLessThan(BigInteger value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for Byte {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2451,7 +2324,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Byte> byLessThan(Byte value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with strict {@link AbstractIntegerAssert#isCloseTo(int, Offset) isCloseTo} assertions.
    * <p>
@@ -2466,7 +2338,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Integer> byLessThan(Integer value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for Short {@link Offset} to use with isCloseTo assertions.
    * <p>
@@ -2481,7 +2352,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Short> byLessThan(Short value) {
     return Offset.strictOffset(value);
   }
-
   /**
    * Assertions entry point for Long {@link Offset} to use with strict {@link AbstractLongAssert#isCloseTo(long, Offset) isCloseTo} assertions.
    * <p>
@@ -2496,26 +2366,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static Offset<Long> byLessThan(Long value) {
     return Offset.strictOffset(value);
   }
-
-  /**
-   * Assertions entry point for {@link TemporalUnitOffset} with strict less than condition
-   * to use with {@code isCloseTo} temporal assertions.
-   * <p>
-   * Typical usage :
-   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
-   * LocalTime _07_12 = LocalTime.of(7, 12);
-   * assertThat(_07_10).isCloseTo(_07_12, byLessThan(5, ChronoUnit.MINUTES));</code></pre>
-   *
-   * @param value the value of the offset.
-   * @param unit the {@link TemporalUnit} of the offset.
-   * @return the created {@code Offset}.
-   * @since 3.7.0
-   * @see #within(long, TemporalUnit) 
-   */
   public static TemporalUnitOffset byLessThan(long value, TemporalUnit unit) {
     return new TemporalUnitLessThanOffset(value, unit);
   }
-
   /**
    * A syntax sugar to write fluent assertion using {@link ObjectAssert#returns(Object, Function)} and
    * {@link ObjectAssert#doesNotReturn(Object, Function)}.
@@ -2534,7 +2387,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <F, T> Function<F, T> from(Function<F, T> extractor) {
     return extractor;
   }
-
   /**
    * A syntax sugar to write fluent assertion with methods having an {@link InstanceOfAssertFactory} parameter.
    * <p>
@@ -2560,11 +2412,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T, ASSERT extends AbstractAssert<?, ?>> InstanceOfAssertFactory<T, ASSERT> as(InstanceOfAssertFactory<T, ASSERT> assertFactory) {
     return assertFactory;
   }
-
   // ------------------------------------------------------------------------------------------------------
   // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
   // ------------------------------------------------------------------------------------------------------
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -2578,7 +2428,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Condition<T> allOf(Condition<? super T>... conditions) {
     return AllOf.allOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AllOf}</code>
    *
@@ -2591,7 +2440,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Condition<T> allOf(Iterable<? extends Condition<? super T>> conditions) {
     return AllOf.allOf(conditions);
   }
-
   /**
    * Only delegate to {@link AnyOf#anyOf(Condition...)} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link AnyOf} if you prefer).
@@ -2608,7 +2456,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Condition<T> anyOf(Condition<? super T>... conditions) {
     return AnyOf.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link AnyOf}</code>
    *
@@ -2621,7 +2468,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Condition<T> anyOf(Iterable<? extends Condition<? super T>> conditions) {
     return AnyOf.anyOf(conditions);
   }
-
   /**
    * Creates a new <code>{@link DoesNotHave}</code>.
    *
@@ -2632,7 +2478,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> DoesNotHave<T> doesNotHave(Condition<? super T> condition) {
     return DoesNotHave.doesNotHave(condition);
   }
-
   /**
    * Creates a new <code>{@link Not}</code>.
    *
@@ -2643,11 +2488,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <T> Not<T> not(Condition<? super T> condition) {
     return Not.not(condition);
   }
-
   // --------------------------------------------------------------------------------------------------
   // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -2670,7 +2513,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <E> Filters<E> filter(E[] array) {
     return Filters.filter(array);
   }
-
   /**
    * Only delegate to {@link Filters#filter(Object[])} so that Assertions offers a full feature entry point to all
    * AssertJ features (but you can use {@link Filters} if you prefer).
@@ -2694,7 +2536,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static <E> Filters<E> filter(Iterable<E> iterableToFilter) {
     return Filters.filter(iterableToFilter);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -2717,7 +2558,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static InFilter in(Object... values) {
     return InFilter.in(values);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -2740,7 +2580,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static NotInFilter notIn(Object... valuesNotToMatch) {
     return NotInFilter.notIn(valuesNotToMatch);
   }
-
   /**
    * Create a {@link FilterOperator} to use in {@link AbstractIterableAssert#filteredOn(String, FilterOperator)
    * filteredOn(String, FilterOperation)} to express a filter keeping all Iterable elements whose property/field
@@ -2763,11 +2602,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static NotFilter not(Object valueNotToMatch) {
     return NotFilter.not(valueNotToMatch);
   }
-
   // --------------------------------------------------------------------------------------------------
   // File methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2784,7 +2621,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(File file, Charset charset) {
     return Files.contentOf(file, charset);
   }
-
   /**
    * Loads the text content of a file, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2801,7 +2637,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(File file, String charsetName) {
     return Files.contentOf(file, charsetName);
   }
-
   /**
    * Loads the text content of a file with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -2817,7 +2652,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(File file) {
     return Files.contentOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -2831,7 +2665,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(File file) {
     return Files.linesOf(file, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -2845,7 +2678,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(File file, Charset charset) {
     return Files.linesOf(file, charset);
   }
-
   /**
    * Loads the text content of a file into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -2859,7 +2691,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(File file, String charsetName) {
     return Files.linesOf(file, charsetName);
   }
-
   /**
    * Loads the text content of a file at a given path into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -2875,7 +2706,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(Path path) {
     return Paths.linesOf(path, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -2891,7 +2721,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(Path path, Charset charset) {
     return Paths.linesOf(path, charset);
   }
-
   /**
    * Loads the text content of a file at a given path into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -2907,11 +2736,9 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(Path path, String charsetName) {
     return Paths.linesOf(path, charsetName);
   }
-
   // --------------------------------------------------------------------------------------------------
   // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2927,7 +2754,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(URL url, Charset charset) {
     return URLs.contentOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL, so that it can be passed to {@link #assertThat(String)}.
    * <p>
@@ -2943,7 +2769,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(URL url, String charsetName) {
     return URLs.contentOf(url, charsetName);
   }
-
   /**
    * Loads the text content of a URL with the default character set, so that it can be passed to
    * {@link #assertThat(String)}.
@@ -2958,7 +2783,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static String contentOf(URL url) {
     return URLs.contentOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings with the default charset, each string corresponding to a
    * line.
@@ -2972,7 +2796,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(URL url) {
     return URLs.linesOf(url, Charset.defaultCharset());
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line.
    * The line endings are either \n, \r or \r\n.
@@ -2986,7 +2809,6 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(URL url, Charset charset) {
     return URLs.linesOf(url, charset);
   }
-
   /**
    * Loads the text content of a URL into a list of strings, each string corresponding to a line. The line endings are
    * either \n, \r or \r\n.
@@ -3000,7 +2822,172 @@ public class Assertions implements InstanceOfAssertFactories {
   public static List<String> linesOf(URL url, String charsetName) {
     return URLs.linesOf(url, charsetName);
   }
-
+  // --------------------------------------------------------------------------------------------------
+  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  /**
+   * Create assertion for {@link java.util.OptionalInt}.
+   *
+   * @param actual the actual value.
+   *
+   * @return the created assertion object.
+   */
+  /**
+   * Create assertion for {@link java.util.OptionalInt}.
+   *
+   * @param actual the actual value.
+   *
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link BooleanAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ByteAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link CharacterAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link DoubleAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  //@format:off
+  //@format:on
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  // -------------------------------------------------------------------------------------------------
+  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
+  // -------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  /**
+   * Assertions entry point for {@link TemporalUnitOffset} with less than or equal condition
+   * to use with isCloseTo temporal assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
+   * LocalTime _07_12 = LocalTime.of(7, 12);
+   * assertThat(_07_10).isCloseTo(_07_12, within(5, ChronoUnit.MINUTES));</code></pre>
+   *
+   * @param value the allowed offset
+   * @param unit the {@link TemporalUnit} of the offset
+   * @return the created {@code Offset}.
+   * @since 3.7.0
+   * @see #byLessThan(long, TemporalUnit)
+   */
+  /**
+   * Assertions entry point for {@link TemporalUnitOffset} with strict less than condition
+   * to use with {@code isCloseTo} temporal assertions.
+   * <p>
+   * Typical usage :
+   * <pre><code class='java'> LocalTime _07_10 = LocalTime.of(7, 10);
+   * LocalTime _07_12 = LocalTime.of(7, 12);
+   * assertThat(_07_10).isCloseTo(_07_12, byLessThan(5, ChronoUnit.MINUTES));</code></pre>
+   *
+   * @param value the value of the offset.
+   * @param unit the {@link TemporalUnit} of the offset.
+   * @return the created {@code Offset}.
+   * @since 3.7.0
+   * @see #within(long, TemporalUnit) 
+   */
+  // ------------------------------------------------------------------------------------------------------
+  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // File methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
   // --------------------------------------------------------------------------------------------------
   // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
   // --------------------------------------------------------------------------------------------------
@@ -3554,9 +3541,6 @@ public class Assertions implements InstanceOfAssertFactories {
    * @param actual the actual value.
    * @return the created assertion object.
    */
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> assertThat(T actual) {
-    return AssertionsForInterfaceTypes.assertThat(actual);
-  }
 
   /**
    * Creates a new instance of <code>{@link UniversalComparableAssert}</code> with
@@ -3625,9 +3609,6 @@ public class Assertions implements InstanceOfAssertFactories {
    * @param assertion the assertion to return.
    * @return the given assertion.
    */
-  public static <T extends AssertDelegateTarget> T assertThat(T assertion) {
-    return assertion;
-  }
 
   /**
    * Use the given {@link Representation} in all remaining tests assertions.

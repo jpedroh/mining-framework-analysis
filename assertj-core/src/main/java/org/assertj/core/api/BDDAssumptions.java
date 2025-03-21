@@ -1265,36 +1265,67 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractObjectAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssumptions.java/left.java
   public static <T> ObjectAssert<T> given(T actual) {
     return assumeThat(actual);
   }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends SQLException> AbstractThrowableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssumptions.java/base.java
+  public static <T> ObjectAssert<T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+=======
+  public static <T> ObjectAssert<T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+  public static <T extends Throwable> AbstractThrowableAssert<?, T> given(T actual) {
+    return assumeThat(actual);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/8f86172def405d9d7f16b261c132a23b0138d2c3/assertj-core/src/main/java/org/assertj/core/api/BDDAssumptions.java/right.java
 
   /**
-   * Creates a new assumption's instance for an objects' array.
-   * <p>
-   * Examples:
-   * <p>
-   * Executed test:
-   * <pre><code class='java'> {@literal @Test}
-   * public void given_the_assumption_is_met_the_test_is_executed() {
-   *   given(new String[] { "A", "B" }).hasSizeGreaterThan(1);
-   *   // the remaining code is executed
-   *   // ...
-   * }</code></pre>
-   * <p>
-   * Skipped test:
-   * <pre><code class='java'> {@literal @Test}
-   * public void given_the_assumption_is_not_met_the_test_is_skipped() {
-   *   given(new String[] { "A", "B" }).hasSizeGreaterThan(2);
-   *   // the remaining code is NOT executed.
-   *   // ...
-   *}</code></pre>
-   *
-   * @param <T> the type of elements of the actual objects' array.
-   * @param actual the actual objects' array to be validated..
-   * @return the {@link AbstractObjectArrayAssert} assertion object to be used for assumptions.
-   * @since 3.14.0
-   */
+ * Creates a new assumption's instance for an objects' array.
+ * <p>
+ * Examples:
+ * <p>
+ * Executed test:
+ * <pre><code class='java'> {@literal @Test}
+ * public void given_the_assumption_is_met_the_test_is_executed() {
+ *   given(new String[] { "A", "B" }).hasSizeGreaterThan(1);
+ *   // the remaining code is executed
+ *   // ...
+ * }</code></pre>
+ * <p>
+ * Skipped test:
+ * <pre><code class='java'> {@literal @Test}
+ * public void given_the_assumption_is_not_met_the_test_is_skipped() {
+ *   given(new String[] { "A", "B" }).hasSizeGreaterThan(2);
+ *   // the remaining code is NOT executed.
+ *   // ...
+ *}</code></pre>
+ *
+ * @param <T> the type of elements of the actual objects' array.
+ * @param actual the actual objects' array to be validated..
+ * @return the {@link AbstractObjectArrayAssert} assertion object to be used for assumptions.
+ * @since 3.14.0
+ */
   public static <T> ObjectArrayAssert<T> given(T[] actual) {
     return assumeThat(actual);
   }
@@ -1385,9 +1416,6 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractComparableAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T extends Comparable<? super T>> AbstractComparableAssert<?, T> given(T actual) {
-    return assumeThat(actual);
-  }
 
   /**
    * Creates a new assumption's instance of a <code>{@link Comparable}</code> value.
@@ -1430,9 +1458,6 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractThrowableAssert} assertion object to be used for assumptions.
    * @since 3.14.0
    */
-  public static <T extends Throwable> AbstractThrowableAssert<?, T> given(T actual) {
-    return assumeThat(actual);
-  }
 
   /**
    * Creates a new assumption's instance for a {@link java.sql.SQLException} value.
@@ -1460,9 +1485,6 @@ public final class BDDAssumptions extends Assumptions {
    * @return the {@link AbstractThrowableAssert} assertion object to be used for assumptions.
    * @since 3.23.1
    */
-  public static <T extends SQLException> AbstractThrowableAssert<?, T> given(T actual) {
-    return assumeThat(actual);
-  }
 
   /**
    * Creates a new assumption's instance for a {@link Throwable} value.
