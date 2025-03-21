@@ -117,17 +117,17 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 	@Override
 	public Dimension maximumLayoutSize( Container parent ){
-		return layoutSize( parent, layout(), Size.MAXIMUM );
+		return layoutSize( parent, layout(), Size.MAXIMUM);
 	}
 
 	@Override
 	public Dimension preferredLayoutSize( Container parent ){
-		return layoutSize( parent, layout(), Size.PREFERRED );
+		return layoutSize( parent, layout(), Size.PREFERRED);
 	}
 
 	@Override
 	public Dimension minimumLayoutSize( Container parent ){
-		return layoutSize( parent, layout(), Size.MINIMUM );
+		return layoutSize( parent, layout(), Size.MINIMUM);
 	}
 
 	private Dimension layoutSize( Container parent, Wrapper[][] content, Size size ){
@@ -187,23 +187,45 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 		final Dimension preferred = layoutSize( parent, components, Size.PREFERRED);
 		if ((preferred.width <= available.width)
 				&& (preferred.height <= available.height)){
-			layout(parent, components, preferred, available, Size.PREFERRED);
+			layout( parent, components, preferred, available, Size.PREFERRED);
 		} else{
-			layout(parent, components, layoutSize(parent, components, Size.MINIMUM), available,
+			layout( parent, components, layoutSize( parent, components, Size.MINIMUM), available,
 					Size.MINIMUM);
 		}
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/layout/ToolbarGridLayoutManager.java/left.java
 	 * Layouts <code>components</code> such that they fit into <code>available</code>.
 	 * @param parent the {@link Container} whose layout is upated
 	 * @param components the components to layout
 	 * @param required the size required for the optimal layout
 	 * @param available the size that is actually available
 	 * @param size which {@link Dimension} to get for layouting the components
+||||||| /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/layout/ToolbarGridLayoutManager.java/base.java
+	 * Layouts <code>components</code> such that they fit into <code>available</code>.
+	 * @param components the components to layout
+	 * @param required the size required for the optimal layout
+	 * @param available the size that is actually available
+	 * @param size which {@link Dimension} to get for layouting the components
+=======
+	 * Layouts <code>components</code> such that they fit into
+	 * <code>available</code>.
+	 * 
+	 * @param components
+	 *            the components to layout
+	 * @param required
+	 *            the size required for the optimal layout
+	 * @param available
+	 *            the size that is actually available
+	 * @param size
+	 *            which {@link Dimension} to get for layouting the components
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/station/toolbar/layout/ToolbarGridLayoutManager.java/right.java
 	 */
-	protected void layout( Container parent, Wrapper[][] components, Dimension required, Dimension available, Size size ){
-		if( components.length == 0 || available.width < 1 || available.height < 1 ) {
+	protected void layout( Container parent, Wrapper[][] components, Dimension required,
+			Dimension available, Size size ){
+		if ((components.length == 0) || (available.width < 1)
+				|| (available.height < 1)){
 			return;
 		}
 
@@ -214,9 +236,10 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 
 		Insets insets = parent.getInsets();
 		
-		if( orientation == Orientation.HORIZONTAL ) {
-			if( required.height > available.height ) {
-				double factor = available.height / (double) required.height;
+		if ( orientation == Orientation.HORIZONTAL ){
+			if (required.height > available.height){
+				final double factor = available.height
+						/ (double) required.height;
 				int sum = 0;
 				for (int i = 0, n = columns.length - 1; i < n; i++){
 					columns[i].height = (int) (factor * columns[i].height);
@@ -228,8 +251,8 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			if( insets != null ){
 				y = insets.top;
 			}
-			for( int i = 0; i < columns.length; i++ ) {
-				layout( components[i], columns[i], available, y, size );
+			for (int i = 0; i < columns.length; i++){
+				layout(components[i], columns[i], available, y, size);
 				y += columns[i].height;
 			}
 		} else{
@@ -247,8 +270,8 @@ public abstract class ToolbarGridLayoutManager<P extends PlaceholderListItem<Doc
 			if( insets != null ){
 				x = insets.left;
 			}
-			for( int i = 0; i < columns.length; i++ ) {
-				layout( components[i], columns[i], available, x, size );
+			for (int i = 0; i < columns.length; i++){
+				layout(components[i], columns[i], available, x, size);
 				x += columns[i].width;
 			}
 		}

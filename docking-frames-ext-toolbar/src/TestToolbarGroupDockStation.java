@@ -58,8 +58,9 @@ public class TestToolbarGroupDockStation{
 
 		final ToolbarGroupDockStation group = new ToolbarGroupDockStation();
 
-//		Icon icon = new ImageIcon(
-//				TestPersistentLayout.class.getResource("/resources/film.png"));
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/left.java
+	//		Icon icon = new ImageIcon(
+	//				TestPersistentLayout.class.getResource("/resources/film.png"));
 		
 		Icon icon = new Icon(){
 			@Override
@@ -79,6 +80,13 @@ public class TestToolbarGroupDockStation{
 			}
 		};
 		
+||||||| /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/base.java
+		ImageIcon icon = new ImageIcon(
+				TestPersistentLayout.class.getResource("/resources/film.png"));
+=======
+		final ImageIcon icon = new ImageIcon(
+				TestPersistentLayout.class.getResource("/resources/film.png"));
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/right.java
 		group.drop(createToolbar(icon, icon, icon), 0, 0);
 		group.drop(createToolbar(icon, icon, icon), 0, 1);
 		group.drop(createToolbar(icon, icon), 1, 0);
@@ -119,10 +127,15 @@ public class TestToolbarGroupDockStation{
 		return toolbar;
 	}
 
-
 	private static ToolbarDockStation createToolbar( Icon ... icons ){
-		ToolbarDockStation toolbar = new ToolbarDockStation();
+		final ToolbarDockStation toolbar = new ToolbarDockStation();
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/left.java
 		for (Icon icon : icons){
+||||||| /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/base.java
+		for (ImageIcon icon : icons){
+=======
+		for (final ImageIcon icon : icons){
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7935b028be17625e43af6d7cebd81e42d7ebbd5d/docking-frames-ext-toolbar/src/TestToolbarGroupDockStation.java/right.java
 			toolbar.drop(createDockable(icon));
 		}
 		return toolbar;
@@ -138,7 +151,7 @@ public class TestToolbarGroupDockStation{
 	}
 
 	private static ComponentDockable createDockable( Icon icon ){
-		JButton button = new JButton(icon);
+		final JButton button = new JButton(icon);
 		button.setBorder(new EmptyBorder(new Insets(4, 4, 4, 4)));
 		final ComponentDockable dockable = new ComponentDockable(button);
 		return dockable;
