@@ -53,6 +53,9 @@ public class TestUtils {
     public static void assertEquals(double expected, double actual, double delta) {
         Assert.assertEquals(null, expected, actual, delta);
     }
+    public static void assertEquals(double expected[], double observed[], double tolerance) {
+        assertEquals("Array comparison failure", expected, observed, tolerance);
+    }
 
     /**
      * Verifies that expected and actual are within delta, or are both NaN or
@@ -97,9 +100,6 @@ public class TestUtils {
     /**
      * Verifies that two double arrays have equal entries, up to tolerance
      */
-    public static void assertEquals(double expected[], double observed[], double tolerance) {
-        assertEquals("Array comparison failure", expected, observed, tolerance);
-    }
 
     /**
      * Serializes an object to a bytes array and then recovers the object from the bytes array.
