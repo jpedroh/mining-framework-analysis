@@ -37,13 +37,12 @@ public class ShortestPathTreeCreator {
 		this.weightPropertyName = weightPropertyName;
 		this.nodeIdsToProcess = nodesInSubGraph;
 	}
-
+	
 	public ShortestPathTree createShortestPathTree(Node rootNode) {
 		initNodes(rootNode);
 
 		while (!queue.isEmpty()) {
 			Node minimumDistanceNode = queue.poll();
-
 			if (nodeIdsToProcess == null || nodeIdsToProcess.contains(minimumDistanceNode.getId())) {
 				stack.push(minimumDistanceNode);
 
@@ -71,13 +70,14 @@ public class ShortestPathTreeCreator {
 				}
 			}
 		}
+
 		return new ShortestPathTree(stack, predecessors);
 	}
-
+	
 	protected Iterable<Relationship> getEdgesConnectedTo(Node node) {
-		return node.getRelationships();
+	  return node.getRelationships();
 	}
-
+	
 	private double getDistance(Node node) {
 		Double distance = sptNodeDistancesToRootNode.get(node);
 		return (distance == null) ? Double.POSITIVE_INFINITY : distance.doubleValue();
