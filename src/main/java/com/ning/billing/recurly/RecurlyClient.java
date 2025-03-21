@@ -2277,18 +2277,33 @@ public class RecurlyClient {
           int statusCode = response.getStatusCode();
           if (statusCode >= 300) {
                 log.warn("Recurly error whilst calling: {}\n{}", response.getUri(), payload);
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
+||||||| /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+                RecurlyAPIError recurlyError = new RecurlyAPIError();
+=======
                 log.warn("Error status code: {}\n", response.getStatusCode());
                 RecurlyAPIError recurlyError = RecurlyAPIError.buildFromResponse(response);
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
+
                 // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
                 if (statusCode == 422) {
                     Errors errors = null;
                     try {
                         errors = xmlMapper.readValue(payload, Errors.class);
                     } catch (Exception e) {
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
+                        log.debug("Unable to extract error", e);
+||||||| /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+                        // 422 is returned for transaction errors (see https://recurly.readme.io/v2.0/page/transaction-errors)
+                        // as well as bad input payloads
+                        log.debug("Unable to extract error", e);
+                        return null;
+=======
                         // 422 is returned for transaction errors (see https://recurly.readme.io/v2.0/page/transaction-errors)
                         // as well as bad input payloads
                         log.warn("Unable to extract error", e);
                         return null;
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
                     }
                   if (errors == null || (errors.getTransactionError() == null && errors.getRecurlyErrors() == null)) {
                     throw new RecurlyAPIException(createRecurlyAPIError(payload, statusCode));
@@ -2296,11 +2311,23 @@ public class RecurlyClient {
                     throw new TransactionErrorException(errors);
                   }
                 } else if (statusCode == 401) {
-                    recurlyError = new RecurlyAPIError();
+                    RecurlyAPIError recurlyError = new RecurlyAPIError();
                     recurlyError.setSymbol("unauthorized");
                     recurlyError.setDescription("We could not authenticate your request. Either your subdomain and private key are not set or incorrect");
                     throw new RecurlyAPIException(recurlyError);
                 } else {
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/left.java
+                    throw new RecurlyAPIException(createRecurlyAPIError(payload, statusCode));
+||||||| /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/base.java
+                    try {
+                        recurlyError = xmlMapper.readValue(payload, RecurlyAPIError.class);
+                    } catch (Exception e) {
+                        log.debug("Unable to extract error", e);
+                    }
+
+                    recurlyError.setHttpStatusCode(response.getStatusCode());
+                    throw new RecurlyAPIException(recurlyError);
+=======
                     try {
                         recurlyError = RecurlyAPIError.buildFromXml(xmlMapper, payload, response);
                     } catch (Exception e) {
@@ -2308,6 +2335,7 @@ public class RecurlyClient {
                     }
 
                     throw new RecurlyAPIException(recurlyError);
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/c66260fbaabb34a438415f9c195d0c0a546d6f7e/src/main/java/com/ning/billing/recurly/RecurlyClient.java/right.java
                 }
             }
 
