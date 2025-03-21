@@ -69,7 +69,6 @@ public class RunFromService implements UGSEventListener {
 
     @Override
     public void UGSEvent(UGSEvent evt) {
-
         if (evt instanceof FileStateEvent && ((FileStateEvent)evt).getFileState() == FileState.OPENING_FILE) {
             runFromProcessor.setLineNumber(0);
         }

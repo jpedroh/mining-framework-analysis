@@ -40,6 +40,8 @@ import java.awt.event.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
+import static com.willwinder.universalgcodesender.model.UGSEvent.FileState.FILE_LOADED;
+
 /**
  * Process all the listeners and call methods in the renderer.
  *
@@ -111,8 +113,15 @@ public class RendererInputHandler implements
      */
     @Override
     public void UGSEvent(UGSEvent cse) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/left.java
         if (cse instanceof FileStateEvent) {
+||||||| /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/base.java
+        if (cse.isFileChangeEvent()) {
+=======
+        if (cse.isFileChangeEvent() && cse.getFileState() == FILE_LOADED) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/right.java
             animator.pause();
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/left.java
             FileStateEvent fileStateEvent = (FileStateEvent) cse;
             switch (fileStateEvent.getFileState()) {
                 case FILE_LOADED:
@@ -123,8 +132,29 @@ public class RendererInputHandler implements
                     break;
             }
 
+||||||| /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/base.java
+
+            switch (cse.getFileState()) {
+                case FILE_LOADED:
+                    setGcodeFile(cse.getFile());
+                    break;
+            }
+
+=======
+            setGcodeFile(cse.getFile());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/right.java
             animator.resume();
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/left.java
         } else if (cse instanceof SettingChangedEvent) {
+||||||| /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/base.java
+        }
+
+        if(cse.isSettingChangeEvent()) {
+=======
+        }
+
+        if (cse.isSettingChangeEvent()) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/right.java
             sizeDisplay.setUnits(settings.getPreferredUnits());
         } else if (cse instanceof ControllerStatusEvent) {
             ControllerStatusEvent controllerStatusEvent = (ControllerStatusEvent) cse;
@@ -333,5 +363,102 @@ public class RendererInputHandler implements
     @Override
     public void keyReleased(KeyEvent ke) {
         setFPS(LOW_FPS);
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/left.java
+||||||| /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/base.java
+    }
+
+    /**
+     * Controller listener methods
+     */
+    @Override
+    public void statusStringListener(ControllerStatus status) {
+        gcodeRenderer.setMachineCoordinate(status.getMachineCoord());
+        gcodeRenderer.setWorkCoordinate(status.getWorkCoord());
+    }
+
+    @Override
+    public void controlStateChange(UGSEvent.ControlState state) {
+    }
+
+    @Override
+    public void fileStreamComplete(String filename, boolean success) {
+        gcodeModel.setCurrentCommandNumber(0);
+    }
+
+    @Override
+    public void receivedAlarm(Alarm alarm) {
+
+    }
+
+    @Override
+    public void commandSkipped(GcodeCommand command) {
+    }
+
+    @Override
+    public void commandSent(GcodeCommand command) {
+    }
+
+    @Override
+    public void commandComplete(GcodeCommand command) {
+        gcodeModel.setCurrentCommandNumber(command.getCommandNumber());
+        // TODO: When to redraw??
+    }
+
+    @Override
+    public void commandComment(String comment) {
+    }
+
+    @Override
+    public void probeCoordinates(Position p) {
+=======
+    }
+
+    /**
+     * Controller listener methods
+     */
+    @Override
+    public void statusStringListener(ControllerStatus status) {
+        gcodeRenderer.setMachineCoordinate(status.getMachineCoord());
+        gcodeRenderer.setWorkCoordinate(status.getWorkCoord());
+    }
+
+    @Override
+    public void controlStateChange(UGSEvent.ControlState state) {
+    }
+
+    @Override
+    public void fileStreamComplete(String filename, boolean success) {
+        gcodeModel.setCurrentCommandNumber(0);
+    }
+
+    @Override
+    public void receivedAlarm(Alarm alarm) {
+
+    }
+
+    @Override
+    public void commandSkipped(GcodeCommand command) {
+    }
+
+    @Override
+    public void commandSent(GcodeCommand command) {
+    }
+
+    @Override
+    public void commandComplete(GcodeCommand command) {
+        if (command.isGenerated()) {
+            gcodeModel.setCurrentCommandNumber(0);
+        } else {
+            gcodeModel.setCurrentCommandNumber(command.getCommandNumber());
+        }
+    }
+
+    @Override
+    public void commandComment(String comment) {
+    }
+
+    @Override
+    public void probeCoordinates(Position p) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/abec25e62f3c0a4b402f159d852c016cd4b6dc26/ugs-platform/ugs-platform-visualizer/src/main/java/com/willwinder/ugs/nbm/visualizer/RendererInputHandler.java/right.java
     }
 }

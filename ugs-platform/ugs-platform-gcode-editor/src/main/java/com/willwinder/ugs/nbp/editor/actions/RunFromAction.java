@@ -35,9 +35,8 @@ import org.openide.awt.ActionRegistration;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
 import org.openide.util.actions.CookieAction;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 @ActionID(
         category = LocalizingService.RunFromCategory,
