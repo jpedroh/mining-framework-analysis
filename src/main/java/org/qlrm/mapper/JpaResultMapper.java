@@ -23,7 +23,7 @@ public class JpaResultMapper extends ResultMapper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> list(Query q, Class<T> clazz) throws IllegalArgumentException {
+	public <T> List<T> list(final Query q, final Class<T> clazz) throws IllegalArgumentException {
 		List<T> result = new ArrayList<T>();
 		List<Object[]> list = postProcessResultList(q.getResultList());
 
@@ -51,14 +51,22 @@ public class JpaResultMapper extends ResultMapper {
 		return rawResult instanceof Object[] ? (Object[]) rawResult : new Object[] { rawResult };
 	}
 
-	public <T> T uniqueResult(Query q, Class<T> clazz) {
+	public <T> T uniqueResult(final Query q, final Class<T> clazz) {
 		Object[] rec = postProcessSingleResult(q.getSingleResult());
 		Constructor<?> ctor = findConstructor(clazz, rec);
 
 		return createInstance(ctor, rec);
 	}
 
+<<<<<<< /usr/src/app/output/simasch/qlrm/e03f1617f3978b3a1906f96e92317514eef243ff/src/main/java/org/qlrm/mapper/JpaResultMapper.java/left.java
+	private Constructor<?> findConstructor(	final Class<?> clazz,
+											final Object[] args) {
+||||||| /usr/src/app/output/simasch/qlrm/e03f1617f3978b3a1906f96e92317514eef243ff/src/main/java/org/qlrm/mapper/JpaResultMapper.java/base.java
+	private Constructor<?> findConstructor(	Class<?> clazz,
+											Object[] args) {
+=======
 	private Constructor<?> findConstructor(Class<?> clazz, Object... args) {
+>>>>>>> /usr/src/app/output/simasch/qlrm/e03f1617f3978b3a1906f96e92317514eef243ff/src/main/java/org/qlrm/mapper/JpaResultMapper.java/right.java
 		Constructor<?> result = null;
 		final Constructor<?>[] ctors = clazz.getDeclaredConstructors();
 
@@ -93,7 +101,7 @@ public class JpaResultMapper extends ResultMapper {
 		if (null == result) {
 			StringBuilder sb = new StringBuilder("No constructor taking:\n");
 			for (Object object : args) {
-				sb.append("\t").append(object.getClass().getName()).append("\n");
+				sb.append("\t").append(object != null ? object.getClass().getName() : null).append("\n");
 			}
 			throw new RuntimeException(sb.toString());
 		}
