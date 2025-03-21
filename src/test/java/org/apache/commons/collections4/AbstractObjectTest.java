@@ -174,7 +174,17 @@ public abstract class AbstractObjectTest extends BulkTest {
             final Object object = makeObject();
             if (object instanceof Serializable) {
                 final String name = getCanonicalEmptyCollectionName(object);
+<<<<<<< /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/left.java
                 assertTrue(new File(name).exists());
+||||||| /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/base.java
+                assertTrue(
+                    "Canonical empty collection (" + name + ") is not in SVN",
+                    new File(name).exists());
+=======
+                assertTrue(
+                    "Canonical empty collection (" + name + ") is not in SCM",
+                    new File(name).exists());
+>>>>>>> /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/right.java
             }
         }
     }
@@ -188,7 +198,17 @@ public abstract class AbstractObjectTest extends BulkTest {
             final Object object = makeObject();
             if (object instanceof Serializable) {
                 final String name = getCanonicalFullCollectionName(object);
+<<<<<<< /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/left.java
                 assertTrue(new File(name).exists());
+||||||| /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/base.java
+                assertTrue(
+                    "Canonical full collection (" + name + ") is not in SVN",
+                    new File(name).exists());
+=======
+                assertTrue(
+                    "Canonical full collection (" + name + ") is not in SCM",
+                    new File(name).exists());
+>>>>>>> /usr/src/app/output/apache/commons-collections/d74240b0e88fc87c8918d2973eb4fa98d62ead2c/src/test/java/org/apache/commons/collections4/AbstractObjectTest.java/right.java
             }
         }
     }

@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-
 import org.apache.commons.collections4.BulkTest;
 import org.junit.Assume;
 import org.junit.Test;
