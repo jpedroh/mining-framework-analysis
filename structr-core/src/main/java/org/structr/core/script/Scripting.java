@@ -40,7 +40,6 @@ import org.structr.core.script.polyglot.PolyglotWrapper;
 import org.structr.core.script.polyglot.context.ContextFactory;
 import org.structr.schema.action.ActionContext;
 import org.structr.schema.parser.DatePropertyParser;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,6 +143,7 @@ public class Scripting {
 	 * @throws FrameworkException
 	 * @throws UnlicensedScriptException
 	 */
+
 	public static Object evaluate(final ActionContext actionContext, final GraphObject entity, final String input, final String methodName) throws FrameworkException, UnlicensedScriptException {
 
 		final String expression = StringUtils.strip(input);
@@ -219,6 +219,7 @@ public class Scripting {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/structr/structr/82bae61d22a72269a404e509d31b3a307f054bc3/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
 	public static Object evaluateJavascript(final ActionContext actionContext, final GraphObject entity, final Snippet snippet) throws FrameworkException {
 
 		final String entityType        = entity != null ? (entity.getClass().getSimpleName() + ".") : "";
@@ -246,34 +247,6 @@ public class Scripting {
 		}
 
 	}
-
-
-	private static String getExceptionMessage (final ActionContext actionContext) {
-
-		final StringBuilder sb = new StringBuilder("Exception in Scripting context");
-
-		if (Settings.LogJSExcpetionRequest.getValue()) {
-
-			sb.append(" (");
-
-			final String requestInfo = actionContext.getRequestInfoForVerboseJavaScriptExceptionLog();
-
-			if (requestInfo != null) {
-
-				sb.append(requestInfo);
-
-			} else {
-
-				sb.append("no request information available for this scripting error");
-			}
-
-			sb.append(")");
-		}
-
-		return sb.toString();
-	}
-
-	// ----- private methods -----
 	private static Object evaluateScript(final ActionContext actionContext, final GraphObject entity, final String engineName, final String script) throws FrameworkException {
 
 		try {
@@ -321,7 +294,89 @@ public class Scripting {
 		}
 
 	}
+||||||| /usr/src/app/output/structr/structr/82bae61d22a72269a404e509d31b3a307f054bc3/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+=======
+	public static Object evaluateJavascript(final ActionContext actionContext, final GraphObject entity, final Snippet snippet) throws FrameworkException {
 
+		final String entityType        = entity != null ? (entity.getClass().getSimpleName() + ".") : "";
+		final String entityName        = entity != null ? entity.getProperty(AbstractNode.name) : null;
+		final String entityDescription = entity != null ? ( StringUtils.isNotBlank(entityName) ? "\"" + entityName + "\":" : "" ) + entity.getUuid() : "anonymous";
+
+		Context context = ContextFactory.getContext("js", actionContext, entity);
+
+		try {
+			Object result = PolyglotWrapper.unwrap(actionContext, context.eval("js", embedInFunction(snippet.getSource())));
+
+			return result;
+		} catch (Exception ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		}
+
+	}
+	private static Object evaluateScript(final ActionContext actionContext, final GraphObject entity, final String engineName, final String script) throws FrameworkException {
+
+		try {
+
+			final Context context = ContextFactory.getContext(engineName, actionContext, entity);
+
+			final StringBuilder wrappedScript = new StringBuilder();
+
+			switch (engineName) {
+				case "R":
+					wrappedScript.append("main <- function() {");
+					wrappedScript.append(script);
+					wrappedScript.append("}\n");
+					break;
+				case "python":
+					// Prepend tabs
+					final String tabPrependedScript = Arrays.stream(script.trim().split("\n")).map(line -> "	" + line).collect(Collectors.joining("\n"));
+					wrappedScript.append("def main():\n");
+					wrappedScript.append(tabPrependedScript);
+					wrappedScript.append("\n");
+					break;
+			}
+
+			context.eval(engineName, wrappedScript.toString());
+
+			return PolyglotWrapper.unwrap(actionContext, context.getBindings(engineName).getMember("main").execute());
+		} catch (PolyglotException ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		} catch (Throwable ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		}
+
+	}
+>>>>>>> /usr/src/app/output/structr/structr/82bae61d22a72269a404e509d31b3a307f054bc3/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
+
+	private static String getExceptionMessage (final ActionContext actionContext) {
+
+		final StringBuilder sb = new StringBuilder("Exception in Scripting context");
+
+		if (Settings.LogJSExcpetionRequest.getValue()) {
+
+			sb.append(" (");
+
+			final String requestInfo = actionContext.getRequestInfoForVerboseJavaScriptExceptionLog();
+
+			if (requestInfo != null) {
+
+				sb.append(requestInfo);
+
+			} else {
+
+				sb.append("no request information available for this scripting error");
+			}
+
+			sb.append(")");
+		}
+
+		return sb.toString();
+	}
+
+	// ----- private methods -----
 
 	private static String embedInFunction(final Snippet snippet) {
 
@@ -345,6 +400,7 @@ public class Scripting {
 	}
 
 	// this is only public to be testable :(
+
 	public static List<String> extractScripts(final String source) {
 
 		final List<String> otherParts  = new LinkedList<>();
@@ -539,6 +595,14 @@ public class Scripting {
 
 		}
 	}
+
+	// ----- nested classes -----
+
+	//private static final Map<String, Script> compiledScripts = Collections.synchronizedMap(new LRUMap<>(10000));
+
+	// ----- private methods -----
+
+	// this is only public to be testable :(
 
 	// ----- nested classes -----
 	private static class Tuple {
