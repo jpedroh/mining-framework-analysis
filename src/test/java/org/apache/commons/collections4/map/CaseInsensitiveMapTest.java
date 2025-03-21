@@ -152,11 +152,15 @@ public class CaseInsensitiveMapTest<K, V> extends AbstractIterableMapTest<K, V> 
     // COLLECTIONS-803
     @Test
     @SuppressWarnings("unchecked")
-    public void testPutConvertKeyOnlyOnce() {
+    public
+    @Test
+<<<<<<< /usr/src/app/output/apache/commons-collections/219336301fd7957feebed1203ccebe9e2858412f/src/test/java/org/apache/commons/collections4/map/CaseInsensitiveMapTest.java/left.java
+    @SuppressWarnings("unchecked") void testPutConvertKeyOnlyOnce() {
         CaseInsensitiveMap mock = EasyMock.partialMockBuilder(CaseInsensitiveMap.class)
                 .addMockedMethod("convertKey")
                 .createMock();
         mock.data = new AbstractHashedMap.HashEntry[16];
+
         EasyMock.expect(mock.convertKey("Key")).andReturn("key").once();
         EasyMock.replay(mock);
 
@@ -164,4 +168,22 @@ public class CaseInsensitiveMapTest<K, V> extends AbstractIterableMapTest<K, V> 
 
         EasyMock.verify(mock);
     }
+||||||| /usr/src/app/output/apache/commons-collections/219336301fd7957feebed1203ccebe9e2858412f/src/test/java/org/apache/commons/collections4/map/CaseInsensitiveMapTest.java/base.java
+    @SuppressWarnings("unchecked") void testPutConvertKeyOnlyOnce() 
+=======
+    @SuppressWarnings("unchecked") void testPutConvertKeyOnlyOnce() {
+        CaseInsensitiveMap mock = EasyMock.partialMockBuilder(CaseInsensitiveMap.class)
+                .withConstructor(Map.class)
+                .withArgs(new HashMap<>())
+                .addMockedMethod("convertKey")
+                .createMock();
+        EasyMock.expect(mock.convertKey("Key")).andReturn("key").once();
+        EasyMock.replay(mock);
+
+        mock.put("Key", "value");
+
+        EasyMock.verify(mock);
+    }
+>>>>>>> /usr/src/app/output/apache/commons-collections/219336301fd7957feebed1203ccebe9e2858412f/src/test/java/org/apache/commons/collections4/map/CaseInsensitiveMapTest.java/right.java
+    // COLLECTIONS-803
 }
