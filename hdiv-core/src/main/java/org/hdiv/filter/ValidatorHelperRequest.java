@@ -515,9 +515,32 @@ public class ValidatorHelperRequest implements IValidationHelper {
 
 		if (stateParameter == null && actionParamValues == null) {
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/left.java
+			// If the parameter is not defined in the state, it is an error.
+			// With this verification we guarantee that no extra parameters are added.
+			if (log.isDebugEnabled()) {
+				log.debug("Validation Error Detected: Parameter [" + parameter
+						+ "] does not exist in the state for action [" + target + "]");
+			}
+
+			ValidatorError error = new ValidatorError(HDIVErrorCodes.PARAMETER_NOT_EXISTS, target, parameter);
+			return new ValidatorHelperResult(error);
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/base.java
+			// If the parameter is not defined in the state, it is an error.
+			// With this verification we guarantee that no extra parameters are added.
+			this.logger.log(HDIVErrorCodes.PARAMETER_NOT_EXISTS, target, parameter, null);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Validation Error Detected: Parameter [" + parameter
+						+ "] does not exist in the state for action [" + target + "]");
+			}
+
+			return new ValidatorHelperResult(HDIVErrorCodes.PARAMETER_NOT_EXISTS);
+=======
 			// The parameter is not defined in the state, it is an extra parameter.
 			return validateExtraParameter(request, stateParameter, actionParamValues, unauthorizedEditableParameters,
 					hdivParameter, target, parameter);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/right.java
 		}
 
 		// At this point we are processing a noneditable parameter
@@ -567,18 +590,19 @@ public class ValidatorHelperRequest implements IValidationHelper {
 	 * @since HDIV 2.1.13
 	 */
 	protected ValidatorHelperResult validateExtraParameter(HttpServletRequest request, IParameter stateParameter,
-			String[] actionParamValues, List<ValidatorError> unauthorizedEditableParameters, String hdivParameter,
+			String[] actionParamValues, Map<String, String[]> unauthorizedEditableParameters, String hdivParameter,
 			String target, String parameter) {
 
 		// If the parameter is not defined in the state, it is an error.
 		// With this verification we guarantee that no extra parameters are added.
+		this.logger.log(HDIVErrorCodes.PARAMETER_NOT_EXISTS, target, parameter, null);
+
 		if (log.isDebugEnabled()) {
 			log.debug("Validation Error Detected: Parameter [" + parameter
 					+ "] does not exist in the state for action [" + target + "]");
 		}
 
-		ValidatorError error = new ValidatorError(HDIVErrorCodes.PARAMETER_NOT_EXISTS, target, parameter);
-		return new ValidatorHelperResult(error);
+		return new ValidatorHelperResult(HDIVErrorCodes.PARAMETER_NOT_EXISTS);
 	}
 
 	/**
@@ -871,10 +895,19 @@ public class ValidatorHelperRequest implements IValidationHelper {
 			}
 
 			if (receivedValues.contains(values[i])) {
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/left.java
 				String originalValue = stateValues.size() > 1 ? stateValues.toString() : stateValues.get(0);
 				ValidatorError error = new ValidatorError(HDIVErrorCodes.REPEATED_VALUES, target, parameter, values[i],
 						originalValue);
 				return new ValidatorHelperResult(error);
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/base.java
+				String originalValue = stateValues.size() > 1 ? stateValues.toString() : stateValues.get(0);
+				this.logger.log(HDIVErrorCodes.REPEATED_VALUES, target, parameter, values[i], originalValue);
+				return new ValidatorHelperResult(HDIVErrorCodes.REPEATED_VALUES);
+=======
+				this.logger.log(HDIVErrorCodes.REPEATED_VALUES, target, parameter, values[i]);
+				return new ValidatorHelperResult(HDIVErrorCodes.REPEATED_VALUES);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/right.java
 			}
 
 			receivedValues.add(values[i]);
@@ -914,23 +947,38 @@ public class ValidatorHelperRequest implements IValidationHelper {
 			}
 
 			if (!exists) {
-
-				String originalValue = "";
-				if (tempStateValues.size() == 1) {
-					originalValue = tempStateValues.get(0);
-				} else if (tempStateValues.size() > 1) {
-					originalValue = tempStateValues.toString();
-				}
-
 				if (receivedValues.contains(values[i])) {
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/left.java
+					String originalValue = tempStateValues.size() > 1 ? tempStateValues.toString() : tempStateValues
+							.get(0);
 					ValidatorError error = new ValidatorError(HDIVErrorCodes.REPEATED_VALUES, target, parameter,
 							values[i], originalValue);
 					return new ValidatorHelperResult(error);
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/base.java
+					String originalValue = tempStateValues.size() > 1 ? tempStateValues.toString() : tempStateValues
+							.get(0);
+					this.logger.log(HDIVErrorCodes.REPEATED_VALUES, target, parameter, values[i], originalValue);
+					return new ValidatorHelperResult(HDIVErrorCodes.REPEATED_VALUES);
+=======
+					this.logger.log(HDIVErrorCodes.REPEATED_VALUES, target, parameter, values[i]);
+					return new ValidatorHelperResult(HDIVErrorCodes.REPEATED_VALUES);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/right.java
 				}
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/left.java
+				String originalValue = tempStateValues.size() > 1 ? tempStateValues.toString() : tempStateValues.get(0);
 
 				ValidatorError error = new ValidatorError(HDIVErrorCodes.PARAMETER_VALUE_INCORRECT, target, parameter,
 						values[i], originalValue);
 				return new ValidatorHelperResult(error);
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/base.java
+				String originalValue = tempStateValues.size() > 1 ? tempStateValues.toString() : tempStateValues.get(0);
+				this.logger.log(HDIVErrorCodes.PARAMETER_VALUE_INCORRECT, target, parameter, values[i], originalValue);
+				return new ValidatorHelperResult(HDIVErrorCodes.PARAMETER_VALUE_INCORRECT);
+=======
+			
+				this.logger.log(HDIVErrorCodes.PARAMETER_VALUE_INCORRECT, target, parameter, values[i]);
+				return new ValidatorHelperResult(HDIVErrorCodes.PARAMETER_VALUE_INCORRECT);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/filter/ValidatorHelperRequest.java/right.java
 			}
 
 			receivedValues.add(values[i]);

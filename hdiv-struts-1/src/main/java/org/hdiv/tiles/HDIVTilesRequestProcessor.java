@@ -17,26 +17,41 @@ package org.hdiv.tiles;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+
 import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
+
 import org.apache.struts.action.ActionForm;
+
 import org.apache.struts.action.ActionMapping;
+
 import org.apache.struts.action.ActionMessage;
+
 import org.apache.struts.action.ActionMessages;
+
 import org.apache.struts.action.InvalidCancelException;
+
 import org.apache.struts.config.ForwardConfig;
+
 import org.apache.struts.taglib.TagUtils;
+
 import org.apache.struts.tiles.TilesRequestProcessor;
+
 import org.apache.struts.util.RequestUtils;
-import org.hdiv.filter.RequestWrapper;
+
 import org.hdiv.filter.ValidatorError;
+
 import org.hdiv.urlProcessor.LinkUrlProcessor;
+
+import org.hdiv.filter.RequestWrapper;
+
 import org.hdiv.urlProcessor.UrlData;
 import org.hdiv.util.Constants;
 import org.hdiv.util.HDIVUtil;
@@ -200,6 +215,72 @@ public class HDIVTilesRequestProcessor extends TilesRequestProcessor {
     }
 
     /**
+     * Obtains the errors detected by HDIV during the validation process of the
+     * editable parameters.
+     * 
+     * @param request
+     *            The servlet request we are processing
+     * @return errors detected by HDIV during the validation process of the
+     *         editable parameters.
+     */
+    public ActionMessages getEditableParametersErrors(HttpServletRequest request) {
+
+	@SuppressWarnings("unchecked")
+	Map<String, String[]> unauthorizedEditableParameters = (Map<String, String[]>) request
+		.getAttribute(EDITABLE_PARAMETER_ERROR);
+
+	ActionMessages errors = null;
+	if ((unauthorizedEditableParameters != null) && (unauthorizedEditableParameters.size() > 0)) {
+	    errors = new ActionMessages();
+	    for (Iterator it = unauthorizedEditableParameters.keySet().iterator(); it.hasNext();) {
+
+		String currentParameter = (String) it.next();
+		String[] currentUnauthorizedValues = (String[]) unauthorizedEditableParameters.get(currentParameter);
+
+		ActionMessage error = null;
+		if ((currentUnauthorizedValues.length == 1)
+			&& (currentUnauthorizedValues[0].equals(HDIV_EDITABLE_PASSWORD_ERROR))) {
+		    error = new ActionMessage(HDIV_EDITABLE_PASSWORD_ERROR);
+
+		} else {
+		    String printedValue = this.createMessageError(currentUnauthorizedValues);
+		    error = new ActionMessage(HDIV_EDITABLE_ERROR, printedValue);
+		}
+		errors.add("hdiv.editable." + currentParameter, error);
+	    }
+	}
+	return errors;
+    }
+
+    /**
+     * It creates the message error from the values <code>values</code>.
+     * 
+     * @param values
+     *            values with not allowed characters
+     * @return message error to show
+     */
+    public String createMessageError(String[] values) {
+
+	StringBuffer printedValue = new StringBuffer();
+
+	for (int i = 0; i < values.length; i++) {
+
+	    if (i > 0) {
+		printedValue.append(", ");
+	    }
+	    if (values[i].length() > 20) {
+		printedValue.append(TagUtils.getInstance().filter(values[i]).substring(0, 20) + "...");
+	    } else {
+		printedValue.append(TagUtils.getInstance().filter(values[i]));
+	    }
+
+	    if (printedValue.length() > 20) {
+		break;
+	    }
+	}
+
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/left.java
+	/**
 	 * Obtains the errors detected by HDIV during the validation process of the
 	 * editable parameters.
 	 * 
@@ -212,7 +293,26 @@ public class HDIVTilesRequestProcessor extends TilesRequestProcessor {
 		@SuppressWarnings("unchecked")
 		List<ValidatorError> validationErrors = (List<ValidatorError>)  request
 				.getAttribute(EDITABLE_PARAMETER_ERROR);
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/base.java
+	/**
+	 * Obtains the errors detected by HDIV during the validation process of the
+	 * editable parameters.
+	 * 
+	 * @param request The servlet request we are processing
+	 * @return errors detected by HDIV during the validation process of the editable
+	 *         parameters.
+	 */
+	public ActionMessages getEditableParametersErrors(HttpServletRequest request) {
+		
+	    	@SuppressWarnings("unchecked")
+		Map<String, String[]> unauthorizedEditableParameters = 
+			(Map<String, String[]>) request.getAttribute(EDITABLE_PARAMETER_ERROR);
+=======
+	return printedValue.toString();
+    }
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/right.java
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/left.java
 		ActionMessages errors = null;
 		if (validationErrors != null && validationErrors.size() > 0) {
 
@@ -233,38 +333,28 @@ public class HDIVTilesRequestProcessor extends TilesRequestProcessor {
 			}
 		}
 		return errors;
-	}
-
-	/**
-	 * It creates the message error from the values <code>values</code>.
-	 * 
-	 * @param paramValues values with not allowed characters
-	 * @return message error to show
-	 */
-	public String createMessageError(String paramValues) {
-
-		String[] values = paramValues.split(",");
-		StringBuffer printedValue = new StringBuffer();
-
-		for (int i = 0; i < values.length; i++) {
-
-			if (i > 0) {
-				printedValue.append(", ");
-			}
-			if (values[i].length() > 20) {
-				printedValue.append(TagUtils.getInstance().filter(values[i]).substring(0, 20) + "...");
-			} else {
-				printedValue.append(TagUtils.getInstance().filter(values[i]));
-			}
-
-			if (printedValue.length() > 20) {
-				break;
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/base.java
+		ActionMessages errors = null;
+		if ((unauthorizedEditableParameters != null) && (unauthorizedEditableParameters.size() > 0)) {
+			errors = new ActionMessages();
+			for (Iterator it = unauthorizedEditableParameters.keySet().iterator(); it.hasNext();) {
+				
+				String currentParameter = (String) it.next();
+				String [] currentUnauthorizedValues = (String []) unauthorizedEditableParameters.get(currentParameter);
+				
+				ActionMessage error = null;
+				if ((currentUnauthorizedValues.length == 1) && (currentUnauthorizedValues[0].equals(HDIV_EDITABLE_PASSWORD_ERROR))) {					
+					error = new ActionMessage(HDIV_EDITABLE_PASSWORD_ERROR);															
+					
+				} else {			
+					String printedValue = this.createMessageError(currentUnauthorizedValues);	
+					error = new ActionMessage(HDIV_EDITABLE_ERROR, printedValue);
+				}	
+				errors.add("hdiv.editable." + currentParameter, error);				
 			}
 		}
-
-		return printedValue.toString();
-	}
-
+		return errors;
+=======
     /**
      * Overloaded method from Struts' RequestProcessor. Forward or redirect to
      * the specified destination by the specified mechanism. This method catches
@@ -286,13 +376,38 @@ public class HDIVTilesRequestProcessor extends TilesRequestProcessor {
 	// Required by struts contract
 	if (forward == null) {
 	    return;
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/right.java
 	}
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/left.java
+	/**
+	 * It creates the message error from the values <code>values</code>.
+	 * 
+	 * @param paramValues values with not allowed characters
+	 * @return message error to show
+	 */
+	public String createMessageError(String paramValues) {
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/base.java
+	/**
+	 * It creates the message error from the values <code>values</code>.
+	 * 
+	 * @param values values with not allowed characters
+	 * @return message error to show
+	 */
+	public String createMessageError(String[] values) {
+=======
 	String forwardPath = forward.getPath();
 	if (log.isDebugEnabled()) {
 	    log.debug("processForwardConfig(" + forwardPath + ")");
 	}
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/right.java
 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/left.java
+		String[] values = paramValues.split(",");
+		StringBuffer printedValue = new StringBuffer();
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/base.java
+		StringBuffer printedValue = new StringBuffer();
+=======
 	// Try to process the definition.
 	if (processTilesDefinition(forwardPath, request, response)) {
 	    if (log.isDebugEnabled()) {
@@ -300,6 +415,7 @@ public class HDIVTilesRequestProcessor extends TilesRequestProcessor {
 	    }
 	    return;
 	}
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-struts-1/src/main/java/org/hdiv/tiles/HDIVTilesRequestProcessor.java/right.java
 
 	if (log.isDebugEnabled()) {
 	    log.debug("  '" + forwardPath + "' - processed as uri");

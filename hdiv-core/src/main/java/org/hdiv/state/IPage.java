@@ -132,9 +132,16 @@ public interface IPage {
 
 	/**
 	 * Returns the state id of the parent page
-	 * 
+<<<<<<< /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/state/IPage.java/left.java
+	 * 	  
 	 * @return the parent state id
 	 * 
+||||||| /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/state/IPage.java/base.java
+	 * 	  
+=======
+	 * 
+	 * @return the parent state id
+>>>>>>> /usr/src/app/output/hdiv/hdiv/c99a61a046a1cc2b7897a9866fb405ce151e1099/hdiv-core/src/main/java/org/hdiv/state/IPage.java/right.java
 	 * @since HDIV 2.1.13
 	 */
 	public String getParentStateId();
