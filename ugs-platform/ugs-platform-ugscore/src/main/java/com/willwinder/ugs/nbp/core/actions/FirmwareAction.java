@@ -91,6 +91,7 @@ public class FirmwareAction extends CallableSystemAction implements UGSEventList
 
     @Override
     public Component getToolbarPresenter() {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/decd78be797530ba0ab5596c62093d167ab0a1ea/ugs-platform/ugs-platform-ugscore/src/main/java/com/willwinder/ugs/nbp/core/actions/FirmwareAction.java/left.java
         if (c == null) {
             firmwareCombo = new JComboBox<>();
             JPanel panel = new JPanel(new FlowLayout());
@@ -103,6 +104,22 @@ public class FirmwareAction extends CallableSystemAction implements UGSEventList
 
             firmwareCombo.addActionListener(a -> setFirmware());
         }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/decd78be797530ba0ab5596c62093d167ab0a1ea/ugs-platform/ugs-platform-ugscore/src/main/java/com/willwinder/ugs/nbp/core/actions/FirmwareAction.java/base.java
+        if (c == null) 
+=======
+        if (c == null) {
+            firmwareCombo = new JComboBox<>();
+            JPanel panel = new JPanel(new FlowLayout());
+            panel.add(new JLabel(Localization.getString("mainWindow.swing.firmwareLabel")));
+            panel.add(firmwareCombo);
+            c = panel;
+
+            firmwareCombo.addActionListener(a -> setFirmware());
+
+            // Baud rate options.
+            loadFirmwareSelector();
+        }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/decd78be797530ba0ab5596c62093d167ab0a1ea/ugs-platform/ugs-platform-ugscore/src/main/java/com/willwinder/ugs/nbp/core/actions/FirmwareAction.java/right.java
         return c;
     }
 

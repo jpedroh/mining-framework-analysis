@@ -341,7 +341,6 @@ public class ActionRegistrationService {
     private void invalidateCache() {
         actionCache = new HashMap<>();
     }
-
     /**
      * Returns all actions by the given category
      * @param category the name of the category to fetch
@@ -350,4 +349,7 @@ public class ActionRegistrationService {
     public List<ActionReference> getActionsByCategory(String category) {
         return new ArrayList<>(getCategoryActions().getOrDefault(category, Collections.emptyList()));
     }
+    /**
+     * Invalidates the action cache and forces to reread all actions
+     */
 }

@@ -64,11 +64,9 @@ public final class OpenAction extends AbstractAction {
     private transient final FileFilterService fileFilterService;
     private transient final BackendAPI backend;
     private final JFileChooser fileChooser;
-
     public OpenAction() {
         this(CentralLookup.getDefault().lookup(BackendAPI.class).getSettings().getLastOpenedFilename());
     }
-
     public OpenAction(String directory) {
         this.backend = CentralLookup.getDefault().lookup(BackendAPI.class);
         this.fileFilterService = Lookup.getDefault().lookup(FileFilterService.class);
@@ -80,12 +78,10 @@ public final class OpenAction extends AbstractAction {
 
         fileChooser = createFileChooser(directory);
     }
-
     @Override
     public boolean isEnabled() {
         return backend != null;
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         // Fetches all available file formats that UGS can open
@@ -101,7 +97,6 @@ public final class OpenAction extends AbstractAction {
             }
         }
     }
-
     public void openFile(File selectedFile) throws DataObjectNotFoundException {
         if (EditorUtils.closeOpenEditors()) {
             backend.getSettings().setLastOpenedFilename(selectedFile.getAbsolutePath());
@@ -111,7 +106,6 @@ public final class OpenAction extends AbstractAction {
                     .open();
         }
     }
-
     private JFileChooser createFileChooser(String directory) {
         JFileChooser fileChooser = new JFileChooser(directory);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
