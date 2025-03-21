@@ -265,9 +265,20 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
         // Note 2: workspace_facet is a multi-facet. So we must call addRef() (as opposed to putRef()).
         FacetValue value = new FacetValue("dm4.workspaces.workspace").addRef(workspaceId);
         facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value);
+        // clientState=null
         //
         // 2) store assignment property
-        object.setProperty(PROP_WORKSPACE_ID, workspaceId, false);      // addToIndex=false
+        DeepaMehtaTransaction tx = dms.beginTx();
+        try {
+            object.setProperty(PROP_WORKSPACE_ID, workspaceId, false);      // addToIndex=false
+            tx.success();
+        } catch (Exception e) {
+            logger.warning("ROLLBACK!");
+            throw new RuntimeException("Storing workspace assignment of object " + object.getId() +
+                " failed (workspaceId=" + workspaceId + ")", e);
+        } finally {
+            tx.finish();
+        }
     }
 
     // --- Helper ---
