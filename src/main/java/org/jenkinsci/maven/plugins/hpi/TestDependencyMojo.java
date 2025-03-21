@@ -549,12 +549,22 @@ public class TestDependencyMojo extends AbstractHpiMojo {
                         if (version == null) {
                             throw new IllegalArgumentException("Failed to determine version for " + name);
                         }
+<<<<<<< /usr/src/app/output/jenkinsci/maven-hpi-plugin/d65f4ba879cf14e39c5e502787d736afa054ea92/src/main/java/org/jenkinsci/maven/plugins/hpi/TestDependencyMojo.java/left.java
+                        // handle any extra info in snapshots e.g. " (private-abcd1234-username)"
+                        version = version.replaceFirst(" [(].+[)]$", "");
+                        if (version.endsWith("-SNAPSHOT")) {
+                            getLog().warn("War contains a SNAPSHOT of " + groupId + ":" + artifactId
+                                    + " build will not be fully repeatable");
+                        }
+||||||| /usr/src/app/output/jenkinsci/maven-hpi-plugin/d65f4ba879cf14e39c5e502787d736afa054ea92/src/main/java/org/jenkinsci/maven/plugins/hpi/TestDependencyMojo.java/base.java
+=======
                         // handle any extra info in snapshots e.g. " (private-abcd1234-username)"
                         version = version.replaceFirst(" [(].+[)]$", "");
                         if (version.endsWith("-SNAPSHOT")) {
                             getLog().warn("WAR contains a SNAPSHOT of " + groupId + ":" + artifactId
                                     + "; build will not be fully repeatable");
                         }
+>>>>>>> /usr/src/app/output/jenkinsci/maven-hpi-plugin/d65f4ba879cf14e39c5e502787d736afa054ea92/src/main/java/org/jenkinsci/maven/plugins/hpi/TestDependencyMojo.java/right.java
                         String key = String.format("%s:%s", groupId, artifactId);
                         String self = String.format("%s:%s", project.getGroupId(), project.getArtifactId());
                         if (!key.equals(self)) {
