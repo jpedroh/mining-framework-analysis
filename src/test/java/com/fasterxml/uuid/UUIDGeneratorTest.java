@@ -762,6 +762,7 @@ public class UUIDGeneratorTest extends TestCase
     }
 
     // Modified version for Variant 7 (Unix Epoch monotonic timestamps)
+    // Modified version for Version 7 (Unix Epoch timestamps)
     private void checkUUIDArrayForCorrectCreationTimeEpoch(UUID[] uuidArray,
             long startTime, long endTime)
     {

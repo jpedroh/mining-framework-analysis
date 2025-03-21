@@ -128,8 +128,20 @@ public class Generators
 
     /**
      * Factory method for constructing UUID generator that generates UUID using
+<<<<<<< /usr/src/app/output/cowtowncoder/java-uuid-generator/48e9a51d19fecb5e51db498c1caa70acc5102efb/src/main/java/com/fasterxml/uuid/Generators.java/left.java
      * variant 7 (Unix Epoch time+random based).
     */
+||||||| /usr/src/app/output/cowtowncoder/java-uuid-generator/48e9a51d19fecb5e51db498c1caa70acc5102efb/src/main/java/com/fasterxml/uuid/Generators.java/base.java
+     * variant 7 (time+random based), using specified Ethernet address
+     * as the location part of UUID.
+     * No additional external synchronization is used.
+     */
+=======
+     * version 7 (time+random based), using specified Ethernet address
+     * as the location part of UUID.
+     * No additional external synchronization is used.
+     */
+>>>>>>> /usr/src/app/output/cowtowncoder/java-uuid-generator/48e9a51d19fecb5e51db498c1caa70acc5102efb/src/main/java/com/fasterxml/uuid/Generators.java/right.java
     public static TimeBasedEpochGenerator timeBasedEpochGenerator(Random random)
     {
         return new TimeBasedEpochGenerator(random);
