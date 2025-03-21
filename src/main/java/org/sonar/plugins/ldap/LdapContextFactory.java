@@ -1,27 +1,6 @@
-/*
- * SonarQube LDAP Plugin
- * Copyright (C) 2009 SonarSource
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.ldap;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Objects;
-
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Properties;
@@ -33,7 +12,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,21 +22,19 @@ import org.sonar.api.utils.SonarException;
  * @author Evgeny Mandrikov
  */
 public class LdapContextFactory {
-
   private static final Logger LOG = LoggerFactory.getLogger(LdapContextFactory.class);
 
   private static final String DEFAULT_AUTHENTICATION = "simple";
+
   private static final String DEFAULT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
+
   private static final String DEFAULT_REFERRAL = "follow";
 
-  @VisibleForTesting
-  static final String GSSAPI_METHOD = "GSSAPI";
+  @VisibleForTesting static final String GSSAPI_METHOD = "GSSAPI";
 
-  @VisibleForTesting
-  static final String DIGEST_MD5_METHOD = "DIGEST-MD5";
+  @VisibleForTesting static final String DIGEST_MD5_METHOD = "DIGEST-MD5";
 
-  @VisibleForTesting
-  static final String CRAM_MD5_METHOD = "CRAM-MD5";
+  @VisibleForTesting static final String CRAM_MD5_METHOD = "CRAM-MD5";
 
   /**
    * The Sun LDAP property used to enable connection pooling. This is used in the default implementation to enable
@@ -67,14 +43,19 @@ public class LdapContextFactory {
   private static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
 
   private static final String SASL_REALM_PROPERTY = "java.naming.security.sasl.realm";
-  
+
   private static final String LDAP_BINARY_ATTRIBUTES_PROPERTY = "java.naming.ldap.attributes.binary";
 
   private final String providerUrl;
+
   private final String authentication;
+
   private final String factory;
+
   private final String username;
+
   private final String password;
+
   private final String realm;
 
   public LdapContextFactory(Settings settings, String settingsPrefix, String ldapUrl) {
@@ -90,13 +71,13 @@ public class LdapContextFactory {
    * Returns {@code InitialDirContext} for Bind user.
    */
   public InitialDirContext createBindContext() throws NamingException {
-      if (isGssapi()) {
-          LOG.debug("LDAP connection using Gssapi with username {}", username);
-          return createInitialDirContextUsingGssapi(username, password, true);
-        } else {
-          LOG.debug("LDAP connection with default bind with username {}", username);
-          return createInitialDirContext(username, password, true);
-      }
+    if (isGssapi()) {
+      LOG.debug("LDAP connection using Gssapi with username {}", username);
+      return createInitialDirContextUsingGssapi(username, password, true);
+    } else {
+      LOG.debug("LDAP connection with default bind with username {}", username);
+      return createInitialDirContext(username, password, true);
+    }
   }
 
   /**
@@ -109,34 +90,28 @@ public class LdapContextFactory {
 
   private InitialDirContext createInitialDirContextUsingGssapi(String principal, String credentials, final boolean pooling) throws NamingException {
     Configuration.setConfiguration(new Krb5LoginConfiguration());
-    //Configuration.getConfiguration();
     InitialDirContext initialDirContext = null;
     LoginContext lc = null;
     try {
       lc = new LoginContext(getClass().getName(), new CallbackHandlerImpl(principal, credentials));
       lc.login();
-      
       initialDirContext = Subject.doAs(lc.getSubject(), new PrivilegedExceptionAction<InitialDirContext>() {
-        @Override
-        public InitialDirContext run() throws NamingException {
+        @Override public InitialDirContext run() throws NamingException {
           return new InitialLdapContext(getEnvironment(null, null, pooling), null);
         }
       });
     } catch (LoginException e) {
-      // Bad username: Client not found in Kerberos database
-      // Bad password: Integrity check on decrypted field failed
       throw new NamingException(e.getMessage());
     } catch (PrivilegedActionException e) {
       if (e.getException() instanceof NamingException) {
         NamingException innerException = (NamingException) e.getException();
         throw innerException;
-      }        
+      }
       throw new NamingException(e.getMessage());
-  } 
-    
+    }
     return initialDirContext;
   }
-  
+
   private InitialDirContext createInitialDirContext(String principal, String credentials, boolean pooling) throws NamingException {
     return new InitialLdapContext(getEnvironment(principal, credentials, pooling), null);
   }
@@ -148,17 +123,21 @@ public class LdapContextFactory {
       env.put(SASL_REALM_PROPERTY, realm);
     }
     if (pooling) {
-      // Enable connection pooling
       env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
     }
-    env.put(LDAP_BINARY_ATTRIBUTES_PROPERTY, "objectSid objectGUID");
+    env.put(
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/left.java
+    "java.naming.ldap.attributes.binary"
+=======
+    LDAP_BINARY_ATTRIBUTES_PROPERTY
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/right.java
+    , "objectSid objectGUID");
     env.put(Context.INITIAL_CONTEXT_FACTORY, factory);
     env.put(Context.PROVIDER_URL, providerUrl);
     env.put(Context.REFERRAL, DEFAULT_REFERRAL);
     if (principal != null) {
       env.put(Context.SECURITY_PRINCIPAL, principal);
     }
-    // Note: debug is intentionally was placed here - in order to not expose password in log
     LOG.debug("Initializing LDAP context {}", env);
     if (credentials != null) {
       env.put(Context.SECURITY_CREDENTIALS, credentials);
@@ -167,9 +146,7 @@ public class LdapContextFactory {
   }
 
   public boolean isSasl() {
-    return DIGEST_MD5_METHOD.equals(authentication) ||
-      CRAM_MD5_METHOD.equals(authentication) ||
-      GSSAPI_METHOD.equals(authentication);
+    return DIGEST_MD5_METHOD.equals(authentication) || CRAM_MD5_METHOD.equals(authentication) || GSSAPI_METHOD.equals(authentication);
   }
 
   public boolean isGssapi() {
@@ -199,15 +176,7 @@ public class LdapContextFactory {
     return providerUrl;
   }
 
-  @Override
-  public String toString() {
-    return Objects.toStringHelper(this)
-      .add("url", providerUrl)
-      .add("authentication", authentication)
-      .add("factory", factory)
-      .add("bindDn", username)
-      .add("realm", realm)
-      .toString();
+  @Override public String toString() {
+    return Objects.toStringHelper(this).add("url", providerUrl).add("authentication", authentication).add("factory", factory).add("bindDn", username).add("realm", realm).toString();
   }
-
 }

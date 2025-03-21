@@ -1,24 +1,4 @@
-/*
- * SonarQube LDAP Plugin
- * Copyright (C) 2009 SonarSource
- * dev@sonar.codehaus.org
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.ldap;
-
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,11 +19,12 @@ import org.sonar.api.utils.SonarException;
  * @author Evgeny Mandrikov
  */
 public class LdapGroupsProvider extends ExternalGroupsProvider {
-
   private static final Logger LOG = LoggerFactory.getLogger(LdapGroupsProvider.class);
 
   private final Map<String, LdapContextFactory> contextFactories;
+
   private final Map<String, LdapUserMapping> userMappings;
+
   private final Map<String, LdapGroupMapping> groupMappings;
 
   public LdapGroupsProvider(Map<String, LdapContextFactory> contextFactories, Map<String, LdapUserMapping> userMappings, Map<String, LdapGroupMapping> groupMapping) {
@@ -61,37 +42,26 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
     List<SonarException> sonarExceptions = new ArrayList<SonarException>();
     for (String serverKey : userMappings.keySet()) {
       if (!groupMappings.containsKey(serverKey)) {
-        // No group mapping for this ldap instance.
         LOG.debug(" No group mapping for this ldap instance {}", serverKey);
         continue;
       }
       SearchResult searchResult = searchUserGroups(username, sonarExceptions, serverKey);
-
       if (searchResult != null) {
         try {
-          String[] serverKeysForGroup = groupMappings
-              .get(serverKey)
-              .getGroupRequestServersOverride();
+          String[] serverKeysForGroup = groupMappings.get(serverKey).getGroupRequestServersOverride();
           if (serverKeysForGroup == null) {
             serverKeysForGroup = new String[] { serverKey };
           }
-          for(String serverKeyForGroup : serverKeysForGroup)
-          {
-            NamingEnumeration<SearchResult> result = groupMappings
-                .get(serverKeyForGroup)
-                .createSearch(contextFactories.get(serverKeyForGroup), searchResult)
-                .find();
-              groups.addAll(mapGroups(serverKey, result));
+          for (String serverKeyForGroup : serverKeysForGroup) {
+            NamingEnumeration<SearchResult> result = groupMappings.get(serverKeyForGroup).createSearch(contextFactories.get(serverKeyForGroup), searchResult).find();
+            groups.addAll(mapGroups(serverKey, result));
           }
-          // if no exceptions occur, we found the user and his groups and mapped his details.
           break;
         } catch (NamingException e) {
-          // just in case if Sonar silently swallowed exception
           LOG.debug(e.getMessage(), e);
           sonarExceptions.add(new SonarException("Unable to retrieve groups for user " + username + " in " + serverKey, e));
         }
       } else {
-        // user not found
         LOG.debug("user not found on server {}", serverKey);
         continue;
       }
@@ -102,7 +72,6 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
 
   private void checkResults(Set<String> groups, List<SonarException> sonarExceptions) {
     if (groups.isEmpty() && !sonarExceptions.isEmpty()) {
-      // No groups found and there is an exception so there is a reason the user could not be found.
       throw sonarExceptions.iterator().next();
     }
   }
@@ -117,12 +86,8 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
     SearchResult searchResult = null;
     try {
       LOG.debug("Requesting groups for user {} on Server {}", username, serverKey);
-
-      searchResult = userMappings.get(serverKey).createSearch(contextFactories.get(serverKey), username)
-        .returns(groupMappings.get(serverKey).getRequiredUserAttributes())
-        .findUnique();
+      searchResult = userMappings.get(serverKey).createSearch(contextFactories.get(serverKey), username).returns(groupMappings.get(serverKey).getRequiredUserAttributes()).findUnique();
     } catch (NamingException e) {
-      // just in case if Sonar silently swallowed exception
       LOG.debug(e.getMessage(), e);
       sonarExceptions.add(new SonarException("Unable to retrieve groups for user " + username + " in " + serverKey, e));
     }
@@ -148,5 +113,4 @@ public class LdapGroupsProvider extends ExternalGroupsProvider {
     }
     return groups;
   }
-
 }
