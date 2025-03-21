@@ -55,6 +55,7 @@ public class MethodSymbolImpl extends FunctionSymbolIndex.FunctionSymbolImpl imp
   }
 
   private Trilean computeIsOverriding() {
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/2ebc3248b4cc888b29b2dc46de1ee82a9e5b281c/php-frontend/src/main/java/org/sonar/php/symbols/MethodSymbolImpl.java/left.java
     if (visibility().equals(Visibility.PRIVATE) || name().equals("__construct")) {
       return  Trilean.FALSE;
     }
@@ -70,6 +71,20 @@ public class MethodSymbolImpl extends FunctionSymbolIndex.FunctionSymbolImpl imp
       ClassSymbol visitedClass = workList.removeLast();
       if (!visitedClasses.add(visitedClass)) {
         continue;
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/2ebc3248b4cc888b29b2dc46de1ee82a9e5b281c/php-frontend/src/main/java/org/sonar/php/symbols/MethodSymbolImpl.java/base.java
+    Optional<ClassSymbol> superClass = owner.superClass();
+    while (superClass.isPresent()) {
+      if (superClass.get().isUnknownSymbol()) {
+        return Trilean.UNKNOWN;
+=======
+    if ("__construct".equals(name())) {
+      return Trilean.FALSE;
+    }
+    Optional<ClassSymbol> superClass = owner.superClass();
+    while (superClass.isPresent()) {
+      if (superClass.get().isUnknownSymbol()) {
+        return Trilean.UNKNOWN;
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/2ebc3248b4cc888b29b2dc46de1ee82a9e5b281c/php-frontend/src/main/java/org/sonar/php/symbols/MethodSymbolImpl.java/right.java
       }
 
       if (visitedClass.isUnknownSymbol()) {
