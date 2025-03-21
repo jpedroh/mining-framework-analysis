@@ -142,12 +142,6 @@ public @interface JsonFormat
         // // // Concrete physical shapes, scalars
 
         /**
-         * Value that indicates that Binary type (native, if format supports it;
-         * encoding using Base64 if only textual types supported) should be used.
-         */
-        BINARY,
-
-        /**
          * Value that indicates that (JSON) boolean type
          * (true, false) should be used.
          */
@@ -220,26 +214,40 @@ public @interface JsonFormat
          *
          * @since 3.0
          */
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/a4fb1ae8d14b3aecf38e23486fd273eefbce7f7a/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/left.java
         POJO,
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/a4fb1ae8d14b3aecf38e23486fd273eefbce7f7a/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/base.java
+        POJO
+=======
+        POJO,
+
+        /**
+         * Value that indicates that Binary type (native, if format supports it;
+         * encoding using Base64 if only textual types supported) should be used.
+         *
+         * @since 2.10
+         */
+        BINARY
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/a4fb1ae8d14b3aecf38e23486fd273eefbce7f7a/src/main/java/com/fasterxml/jackson/annotation/JsonFormat.java/right.java
         ;
 
-        public boolean isNumeric() {
-            return (this == NUMBER) || (this == NUMBER_INT) || (this == NUMBER_FLOAT);
-        }
+    public boolean isNumeric() {
+        return (this == NUMBER) || (this == NUMBER_INT) || (this == NUMBER_FLOAT);
+    }
 
-        /** @since 3.0 */
-        public static boolean isNumeric(Shape shapeOrNull) {
-            return (shapeOrNull != null) && shapeOrNull.isNumeric();
-        }
+    /** @since 3.0 */
+    public static boolean isNumeric(Shape shapeOrNull) {
+        return (shapeOrNull != null) && shapeOrNull.isNumeric();
+    }
 
-        public boolean isStructured() {
-            return (this == OBJECT) || (this == ARRAY) || (this == POJO);
-        }
+    public boolean isStructured() {
+        return (this == OBJECT) || (this == ARRAY) || (this == POJO);
+    }
 
-        /** @since 3.0 */
-        public static boolean isStructured(Shape shapeOrNull) {
-            return (shapeOrNull != null) && shapeOrNull.isStructured();
-        }
+    /** @since 3.0 */
+    public static boolean isStructured(Shape shapeOrNull) {
+        return (shapeOrNull != null) && shapeOrNull.isStructured();
+    }
     }
 
     /**
@@ -273,6 +281,8 @@ public @interface JsonFormat
         /**
          * Override for <code>MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES</code>.
          * Only affects deserialization, has no effect on serialization.
+         * 
+         * @since 2.10
          */
         ACCEPT_CASE_INSENSITIVE_VALUES,
 
