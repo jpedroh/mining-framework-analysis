@@ -1,40 +1,4 @@
-/*
- * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2012 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- * 
- * For bug reports, documentation and further information, visit
- * 
- *                         https://github.com/jgralab/jgralab
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
- * Additional permission under GNU GPL version 3 section 7
- * 
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
-
 package de.uni_koblenz.jgralab.codegenerator;
-
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -42,169 +6,314 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class generates the code of the GraphElement Factory.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphFactoryGenerator extends CodeGenerator {
+  private final Schema schema;
 
-	private final Schema schema;
+  public GraphFactoryGenerator(Schema schema, String schemaPackageName, CodeGeneratorConfiguration config) {
+    super(schemaPackageName, "", config);
+    this.schema = schema;
+    rootBlock.setVariable("schemaName", schema.getQualifiedName());
+    rootBlock.setVariable("simpleClassName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schema.getName()
+=======
+    schema.getGraphClass().getSimpleName()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+     + "Factory");
+    rootBlock.setVariable("simpleClassName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schema.getName()
+=======
+    schema.getGraphClass().getSimpleName()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+     + "FactoryImpl");
+    rootBlock.setVariable("isClassOnly", "false");
+  }
 
-	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
-			CodeGeneratorConfiguration config) {
-		super(schemaPackageName, "", config);
-		this.schema = schema;
-		rootBlock.setVariable("schemaName", schema.getQualifiedName());
-		rootBlock.setVariable("simpleClassName", schema.getGraphClass()
-				.getSimpleName() + "Factory");
-		rootBlock.setVariable("simpleImplClassName", schema.getGraphClass()
-				.getSimpleName() + "FactoryImpl");
-		rootBlock.setVariable("isClassOnly", "false");
-	}
+  @Override protected CodeBlock createHeader() {
+    CodeSnippet code = new CodeSnippet(true);
 
-	@Override
-	protected CodeBlock createHeader() {
-		CodeSnippet code = new CodeSnippet(true);
-		if (currentCycle.isAbstract()) {
-			addImports("#jgPackage#.GraphFactory");
-			code.add("public interface #simpleClassName# extends GraphFactory {");
-		} else {
-			addImports("#schemaPackage#.#simpleClassName#");
-			addImports("#jgImplPackage#.GraphFactoryImpl");
-			addImports("#jgPackage#.ImplementationType");
-			code.add("public class #simpleImplClassName# extends GraphFactoryImpl implements #simpleClassName# {");
-		}
-		return code;
-	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    code.setVariable("className", schema.getName() + "Factory");
+=======
+    if (currentCycle.isAbstract()) {
+      addImports("#jgPackage#.GraphFactory");
+      code.add("public interface #simpleClassName# extends GraphFactory {");
+    } else {
+      addImports("#schemaPackage#.#simpleClassName#");
+      addImports("#jgImplPackage#.GraphFactoryImpl");
+      addImports("#jgPackage#.ImplementationType");
+      code.add("public class #simpleImplClassName# extends GraphFactoryImpl implements #simpleClassName# {");
+    }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
 
-	@Override
-	protected CodeBlock createBody() {
-		CodeList code = new CodeList();
-		if (currentCycle.isStdOrDbImplOrTransImpl()) {
-			code.add(createConstructor());
-		}
-		return code;
-	}
+    return code;
+  }
 
-	protected CodeBlock createConstructor() {
-		CodeList code = new CodeList();
-		if (currentCycle.isStdImpl()) {
-			code.setVariable("implTypeInfix", "STANDARD");
-		}
-		if (currentCycle.isTransImpl()) {
-			code.setVariable("implTypeInfix", "TRANSACTION");
-		}
-		if (currentCycle.isDbImpl()) {
-			code.setVariable("implTypeInfix", "DATABASE");
-		}
-		CodeSnippet s = new CodeSnippet(true);
-		s.add("public #simpleImplClassName#() {",
-				"\tsuper(#schemaName#.instance(), ImplementationType.#implTypeInfix#);",
-				"\tcreateMaps();");
+  @Override protected CodeBlock createBody() {
+    CodeList code = new CodeList();
+    if (currentCycle.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    isClassOnly()
+=======
+    isStdOrDbImplOrTransImpl()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    ) {
+      code.add(createConstructor());
+      code.add(createFillTableMethod());
+    }
+    return code;
+  }
 
-		code.addNoIndent(s);
-		code.add(createFillTableMethod());
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
+  protected CodeBlock createConstructor() {
+    CodeList code = new CodeList();
 
-	protected CodeBlock createFillTableMethod() {
-		if (currentCycle.isAbstract()) {
-			return null;
-		}
-		CodeList code = new CodeList();
-		GraphClass graphClass = schema.getGraphClass();
-		code.addNoIndent(createFillTableForGraph(graphClass));
-		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			code.addNoIndent(createFillTableForVertex(vertexClass));
-		}
-		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			code.addNoIndent(createFillTableForEdge(edgeClass));
-		}
-		return code;
-	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    code.setVariable("className", schema.getName() + "Factory");
+=======
+    if (currentCycle.isStdImpl()) {
+      code.setVariable("implTypeInfix", "STANDARD");
+    }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
 
-	protected CodeBlock createFillTableForGraph(GraphClass graphClass) {
-		if (graphClass.isAbstract()) {
-			return null;
-		}
+    if (currentCycle.isTransImpl()) {
+      code.setVariable("implTypeInfix", "TRANSACTION");
+    }
+    if (currentCycle.isDbImpl()) {
+      code.setVariable("implTypeInfix", "DATABASE");
+    }
+    CodeSnippet s = new CodeSnippet(true);
+    s.add("public #simpleImplClassName#() {", "\tsuper(#schemaName#.instance(), ImplementationType.#implTypeInfix#);", "\tcreateMaps();");
+    code.addNoIndent(s);
+    code.add(createFillTableMethod());
+    code.addNoIndent(new CodeSnippet("}"));
+    return code;
+  }
 
-		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("graphName", graphClass.getQualifiedName() + ".GC");
-		code.setVariable("graphImplName", "#schemaImplStdPackage#."
-				+ graphClass.getQualifiedName() + "Impl");
-		code.setVariable("graphTransactionImplName",
-				"#schemaImplTransPackage#." + graphClass.getQualifiedName()
-						+ "Impl");
-		code.setVariable("graphDatabaseImplName", "#schemaImplDbPackage#."
-				+ graphClass.getQualifiedName() + "Impl");
+  protected CodeBlock createFillTableMethod() {
+    if (currentCycle.isAbstract()) {
+      return null;
+    }
+    CodeList code = new CodeList();
+    GraphClass graphClass = schema.getGraphClass();
+    code.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    add(createFillTableForGraph(graphClass))
+=======
+    addNoIndent(createFillTableForGraph(graphClass))
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    ;
+    for (VertexClass vertexClass : graphClass.getVertexClasses()) {
+      code.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      add(createFillTableForVertex(vertexClass))
+=======
+      addNoIndent(createFillTableForVertex(vertexClass))
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+      ;
+    }
+    for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
+      code.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      add(createFillTableForEdge(edgeClass))
+=======
+      addNoIndent(createFillTableForEdge(edgeClass))
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+      ;
+    }
+    return code;
+  }
 
-		if (!graphClass.isAbstract()) {
-			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
-			}
-			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphTransactionImplName#.class);");
-			}
-			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphDatabaseImplName#.class);");
-			}
-		}
-		return code;
-	}
+  protected CodeBlock createFillTableForGraph(GraphClass graphClass) {
+    if (graphClass.isAbstract()) {
+      return null;
+    }
+    CodeSnippet code = new CodeSnippet(false);
+    code.setVariable("graphName", graphClass.getQualifiedName() + ".GC");
+    code.setVariable("graphImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.std."
+=======
+    "#schemaImplStdPackage#." + graphClass.getQualifiedName()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+     + "Impl");
+    code.setVariable("graphTransactionImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.trans." + graphClass.getQualifiedName()
+=======
+    "#schemaImplTransPackage#." + graphClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    code.setVariable("graphDatabaseImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.db." + graphClass.getQualifiedName()
+=======
+    "#schemaImplDbPackage#." + graphClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    if (!graphClass.isAbstract()) {
 
-	protected CodeBlock createFillTableForVertex(VertexClass vertexClass) {
-		if (vertexClass.isAbstract()) {
-			return null;
-		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasStandardSupport()) {
+        code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+        code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
 
-		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("vertexName", vertexClass.getQualifiedName() + ".VC");
 
-		code.setVariable("vertexImplName", "#schemaImplStdPackage#."
-				+ vertexClass.getQualifiedName() + "Impl");
-		code.setVariable("vertexTransactionImplName",
-				"#schemaImplTransPackage#." + vertexClass.getQualifiedName()
-						+ "Impl");
-		code.setVariable("vertexDatabaseImplName", "#schemaImplDbPackage#."
-				+ vertexClass.getQualifiedName() + "Impl");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasTransactionSupport()) {
+        code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+        code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphTransactionImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
 
-		if (!vertexClass.isAbstract()) {
-			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexImplName#.class);");
-			}
-			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexTransactionImplName#.class);");
-			}
-			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexDatabaseImplName#.class);");
-			}
-		}
-		return code;
-	}
 
-	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
-		CodeSnippet code = new CodeSnippet(false);
-		code.setVariable("edgeName", edgeClass.getQualifiedName() + ".EC");
-		code.setVariable("edgeImplName",
-				"#schemaImplStdPackage#." + edgeClass.getQualifiedName()
-						+ "Impl");
-		code.setVariable("edgeTransactionImplName", "#schemaImplTransPackage#."
-				+ edgeClass.getQualifiedName() + "Impl");
-		code.setVariable("edgeDatabaseImplName", "#schemaImplDbPackage#."
-				+ edgeClass.getQualifiedName() + "Impl");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasDatabaseSupport()) {
+        code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+        code.add("setGraphImplementationClass(#schemaPackage#.#graphName#, #graphDatabaseImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    }
+    return code;
+  }
 
-		if (!edgeClass.isAbstract()) {
-			if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
-				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeImplName#.class);");
-			}
-			if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
-				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeTransactionImplName#.class);");
-			}
-			if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
-				code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeDatabaseImplName#.class);");
-			}
-		}
-		return code;
-	}
+  protected CodeBlock createFillTableForVertex(VertexClass vertexClass) {
+    if (vertexClass.isAbstract()) {
+      return null;
+    }
+    CodeSnippet code = new CodeSnippet(false);
+    code.setVariable("vertexName", vertexClass.getQualifiedName() + ".VC");
+    code.setVariable("vertexImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.std."
+=======
+    "#schemaImplStdPackage#." + vertexClass.getQualifiedName()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+     + "Impl");
+    code.setVariable("vertexTransactionImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.trans." + vertexClass.getQualifiedName()
+=======
+    "#schemaImplTransPackage#." + vertexClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    code.setVariable("vertexDatabaseImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.db." + vertexClass.getQualifiedName()
+=======
+    "#schemaImplDbPackage#." + vertexClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    if (!vertexClass.isAbstract()) {
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasStandardSupport()) {
+        code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+        code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasTransactionSupport()) {
+        code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+        code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexTransactionImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasDatabaseSupport()) {
+        code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+        code.add("setVertexImplementationClass(#schemaPackage#.#vertexName#, #vertexDatabaseImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    }
+    return code;
+  }
+
+  protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
+    CodeSnippet code = new CodeSnippet(false);
+    code.setVariable("edgeName", edgeClass.getQualifiedName() + ".EC");
+    code.setVariable("edgeImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.std."
+=======
+    "#schemaImplStdPackage#." + edgeClass.getQualifiedName()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+     + "Impl");
+    code.setVariable("edgeTransactionImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.trans." + edgeClass.getQualifiedName()
+=======
+    "#schemaImplTransPackage#." + edgeClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    code.setVariable("edgeDatabaseImplName", 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+    schemaRootPackageName + ".impl.db." + edgeClass.getQualifiedName()
+=======
+    "#schemaImplDbPackage#." + edgeClass.getQualifiedName() + "Impl"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    );
+    if (!edgeClass.isAbstract()) {
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasStandardSupport()) {
+        code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isStdImpl() && config.hasStandardSupport()) {
+        code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasTransactionSupport()) {
+        code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isTransImpl() && config.hasTransactionSupport()) {
+        code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeTransactionImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/left.java
+      if (config.hasDatabaseSupport()) {
+        code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+      }
+=======
+      if (currentCycle.isDbImpl() && config.hasDatabaseSupport()) {
+        code.add("setEdgeImplementationClass(#schemaPackage#.#edgeName#, #edgeDatabaseImplName#.class);");
+      }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/GraphFactoryGenerator.java/right.java
+    }
+    return code;
+  }
 }
