@@ -572,8 +572,13 @@ public final class PersistenceLayer extends StorageDecorator {
 
     void deleteTopicType(String topicTypeUri) {
         try {
+<<<<<<< /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/left.java
+            // ### FIXME: access control
+||||||| /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/base.java
+=======
             TypeModelImpl type = _getTopicType(topicTypeUri);
             type.checkWriteAccess();
+>>>>>>> /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/right.java
             type.delete();
             // ### TODO: delete view config topics
         } catch (Exception e) {
@@ -583,8 +588,13 @@ public final class PersistenceLayer extends StorageDecorator {
 
     void deleteAssociationType(String assocTypeUri) {
         try {
+<<<<<<< /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/left.java
+            // ### FIXME: access control
+||||||| /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/base.java
+=======
             TypeModelImpl type = _getAssociationType(assocTypeUri);
             type.checkWriteAccess();
+>>>>>>> /usr/src/app/output/jri/deepamehta/bb8bcadad884e859b6ea52ab74fac664166acf6c/modules/dm4-core/src/main/java/de/deepamehta/core/impl/PersistenceLayer.java/right.java
             type.delete();
             // ### TODO: delete view config topics
         } catch (Exception e) {
@@ -776,7 +786,6 @@ public final class PersistenceLayer extends StorageDecorator {
 
     // ---
 
-    // TODO: add return to model's checkReadAccess() and drop this method?
     <M extends DeepaMehtaObjectModelImpl> M checkReadAccess(M model) {
         model.checkReadAccess();
         return model;
