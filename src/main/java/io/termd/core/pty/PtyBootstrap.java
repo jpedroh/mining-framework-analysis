@@ -1,24 +1,6 @@
-/*
- * Copyright 2015 Julien Viet
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.termd.core.pty;
-
 import io.termd.core.http.vertx.VertxSockJSBootstrap;
 import io.termd.core.tty.TtyConnection;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
@@ -27,18 +9,14 @@ import java.util.function.Consumer;
  * @author <a href="mailto:matejonnet@gmail.com">Matej Lazar</a>
  */
 public class PtyBootstrap implements Consumer<TtyConnection> {
-
   public PtyBootstrap() {
   }
 
   public static void main(String[] args) throws Exception {
     PtyBootstrap bootstrap = new PtyBootstrap();
-    VertxSockJSBootstrap sockJSBootstrap = new VertxSockJSBootstrap(
-        "localhost",
-        8080,
-        bootstrap);
+    VertxSockJSBootstrap sockJSBootstrap = new VertxSockJSBootstrap("localhost", 8080, bootstrap);
     final CountDownLatch latch = new CountDownLatch(1);
-    sockJSBootstrap.bootstrap(event -> {
+    sockJSBootstrap.bootstrap((event) -> {
       if (event.succeeded()) {
         System.out.println("Server started on " + 8080);
       } else {
@@ -50,9 +28,14 @@ public class PtyBootstrap implements Consumer<TtyConnection> {
     latch.await();
   }
 
-  @Override
-  public void accept(final TtyConnection conn) {
+  @Override public void accept(final TtyConnection conn) {
     TtyBridge bridge = new TtyBridge(conn);
-    bridge.readline();
+    bridge.
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyBootstrap.java/left.java
+    stdoutHandler().accept(Helper.toCodePoints("Welcome sir\r\n"))
+=======
+    readline()
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyBootstrap.java/right.java
+    ;
   }
 }

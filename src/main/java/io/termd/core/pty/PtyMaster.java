@@ -1,24 +1,6 @@
-/*
- * Copyright 2015 Julien Viet
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.termd.core.pty;
-
 import io.termd.core.io.BinaryDecoder;
 import io.termd.core.util.Helper;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -35,15 +17,19 @@ import java.util.function.Consumer;
  * @author <a href="mailto:matejonnet@gmail.com">Matej Lazar</a>
  */
 public class PtyMaster extends Thread {
+  private Process process;
 
   private final String line;
-  private BiConsumer<Status, Status> changeHandler;
-  private final Consumer<Void> doneHandler;
-  private final Consumer<int[]> stdout;
-  private Status status;
-  private Process process;
+
   private boolean interrupted;
 
+  private BiConsumer<Status, Status> changeHandler;
+
+  private final Consumer<int[]> stdout;
+
+  private final Consumer<Void> doneHandler;
+
+  private Status status;
 
   public PtyMaster(String line, Consumer<int[]> stdout, Consumer<Void> doneHandler) {
     this.line = line;
@@ -61,21 +47,46 @@ public class PtyMaster extends Thread {
   }
 
   private class Pipe extends Thread {
+    private final Charset charset = StandardCharsets.UTF_8;
 
-    private final Charset charset = StandardCharsets.UTF_8; // We suppose the process out/err uses UTF-8
     private final InputStream in;
-    private final BinaryDecoder decoder = new BinaryDecoder(charset, codepoints -> {
-      // Replace any \n by \r\n (need to improve that somehow...)
+
+    private final BinaryDecoder decoder = new BinaryDecoder(charset, (codepoints) -> 
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/left.java
+    conn.schedule(() -> {
       int len = codepoints.length;
-      for (int i = 0;i < codepoints.length;i++) {
-        if (codepoints[i] == '\n' && (i == 0 || codepoints[i -1] != '\r')) {
+      for (int i = 0; i < codepoints.length; i++) {
+        if (codepoints[i] == '\n' && (i == 0 || codepoints[i - 1] != '\r')) {
           len++;
         }
       }
       int ptr = 0;
       int[] corrected = new int[len];
-      for (int i = 0;i < codepoints.length;i++) {
-        if (codepoints[i] == '\n' && (i == 0 || codepoints[i -1] != '\r')) {
+      for (int i = 0; i < codepoints.length; i++) {
+        if (codepoints[i] == '\n' && (i == 0 || codepoints[i - 1] != '\r')) {
+          corrected[ptr++] = '\r';
+          corrected[ptr++] = '\n';
+        } else {
+          corrected[ptr++] = codepoints[i];
+        }
+      }
+      conn.stdoutHandler().accept(corrected);
+      if (processOutputConsumer != null) {
+        processOutputConsumer.accept(corrected);
+      }
+    })
+=======
+    {
+      int len = codepoints.length;
+      for (int i = 0; i < codepoints.length; i++) {
+        if (codepoints[i] == '\n' && (i == 0 || codepoints[i - 1] != '\r')) {
+          len++;
+        }
+      }
+      int ptr = 0;
+      int[] corrected = new int[len];
+      for (int i = 0; i < codepoints.length; i++) {
+        if (codepoints[i] == '\n' && (i == 0 || codepoints[i - 1] != '\r')) {
           corrected[ptr++] = '\r';
           corrected[ptr++] = '\n';
         } else {
@@ -83,14 +94,15 @@ public class PtyMaster extends Thread {
         }
       }
       stdout.accept(corrected);
-    });
+    }
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/right.java
+    );
 
     public Pipe(InputStream in) {
       this.in = in;
     }
 
-    @Override
-    public void run() {
+    @Override public void run() {
       byte[] buffer = new byte[512];
       while (true) {
         try {
@@ -110,19 +122,7 @@ public class PtyMaster extends Thread {
     return process;
   }
 
-  public Status getStatus() {
-    return status;
-  }
-
-  public void interruptProcess() {
-    if (!interrupted) {
-      interrupted = true;
-      process.destroy();
-    }
-  }
-
-  @Override
-  public void run() {
+  @Override public void run() {
     ProcessBuilder builder = new ProcessBuilder(line.split("\\s+"));
     try {
       process = builder.start();
@@ -155,11 +155,26 @@ public class PtyMaster extends Thread {
         setStatus(Status.FAILED);
       }
     } catch (IOException e) {
-      stdout.accept(Helper.toCodePoints(e.getMessage() + "\r\n"));
+      stdout.
+<<<<<<< /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/left.java
+      stdoutHandler().accept(Helper.toCodePoints(e.getMessage() + "\r\n"))
+=======
+      accept(Helper.toCodePoints(e.getMessage() + "\r\n"))
+>>>>>>> /usr/src/app/output/termd/termd/75f5c20e784c95a7d810d61508d3c6be690661dc/src/main/java/io/termd/core/pty/PtyMaster.java/right.java
+      ;
     }
-
-    //
     doneHandler.accept(null);
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public void interruptProcess() {
+    if (!interrupted) {
+      interrupted = true;
+      process.destroy();
+    }
   }
 
   private void setStatus(Status next) {
