@@ -355,6 +355,17 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
             }
         }
 
+        if (this instanceof NotNullAnnotationFeatures) {
+            notNullOption = (NotNullAnnotationFeatures)this;
+            if (additionalProperties.containsKey(NOT_NULL_JACKSON_ANNOTATION)) {
+                notNullOption.setNotNullJacksonAnnotation(convertPropertyToBoolean(NOT_NULL_JACKSON_ANNOTATION));
+                writePropertyBack(NOT_NULL_JACKSON_ANNOTATION, notNullOption.isNotNullJacksonAnnotation());
+                if (notNullOption.isNotNullJacksonAnnotation()) {
+                    importMapping.put("JsonInclude", "com.fasterxml.jackson.annotation.JsonInclude");
+                }
+            }
+        }
+
         if (fullJavaUtil) {
             javaUtilPrefix = "java.util.";
         }
