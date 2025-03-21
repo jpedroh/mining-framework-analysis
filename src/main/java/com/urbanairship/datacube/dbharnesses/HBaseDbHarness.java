@@ -5,7 +5,6 @@ Copyright 2012 Urban Airship and Contributors
 package com.urbanairship.datacube.dbharnesses;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.urbanairship.datacube.*;
 import com.yammer.metrics.Metrics;
@@ -22,10 +21,13 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
+import com.google.common.collect.Lists;
+import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.Timer;
 
 public class HBaseDbHarness<T extends Op> implements DbHarness<T> {
     
