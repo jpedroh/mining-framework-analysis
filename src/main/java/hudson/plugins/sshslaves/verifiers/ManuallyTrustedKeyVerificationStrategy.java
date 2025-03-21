@@ -113,6 +113,44 @@ public class ManuallyTrustedKeyVerificationStrategy extends SshHostKeyVerificati
         return algorithms;
     }
 
+<<<<<<< /usr/src/app/output/jenkinsci/ssh-slaves-plugin/67b86f05f7f5d4cce393b8a6eeda9ebf5af23307/src/main/java/hudson/plugins/sshslaves/verifiers/ManuallyTrustedKeyVerificationStrategy.java/left.java
+    /** TODO replace with {@link Computer#addAction} after core baseline picks up JENKINS-42969 fix */
+    private static void addAction(@NonNull Computer c, @NonNull Action a) {
+        try {
+            c.addAction(a);
+        } catch (UnsupportedOperationException x) {
+            try {
+                Field actionsF = Actionable.class.getDeclaredField("actions");
+                actionsF.setAccessible(true);
+                @SuppressWarnings("unchecked")
+                List<Action> actions = (List) actionsF.get(c);
+                actions.add(a);
+            } catch (Exception x2) {
+                LOGGER.log(Level.WARNING, null, x2);
+            }
+        }
+    }
+
+||||||| /usr/src/app/output/jenkinsci/ssh-slaves-plugin/67b86f05f7f5d4cce393b8a6eeda9ebf5af23307/src/main/java/hudson/plugins/sshslaves/verifiers/ManuallyTrustedKeyVerificationStrategy.java/base.java
+    /** TODO replace with {@link Computer#addAction} after core baseline picks up JENKINS-42969 fix */
+    private static void addAction(@Nonnull Computer c, @Nonnull Action a) {
+        try {
+            c.addAction(a);
+        } catch (UnsupportedOperationException x) {
+            try {
+                Field actionsF = Actionable.class.getDeclaredField("actions");
+                actionsF.setAccessible(true);
+                @SuppressWarnings("unchecked")
+                List<Action> actions = (List) actionsF.get(c);
+                actions.add(a);
+            } catch (Exception x2) {
+                LOGGER.log(Level.WARNING, null, x2);
+            }
+        }
+    }
+    
+=======
+>>>>>>> /usr/src/app/output/jenkinsci/ssh-slaves-plugin/67b86f05f7f5d4cce393b8a6eeda9ebf5af23307/src/main/java/hudson/plugins/sshslaves/verifiers/ManuallyTrustedKeyVerificationStrategy.java/right.java
     private boolean hasExistingTrustAction(SlaveComputer computer, HostKey hostKey) {
         for (TrustHostKeyAction action : computer.getActions(TrustHostKeyAction.class)) {
             if (!action.isComplete() && action.getHostKey().equals(hostKey)) {
