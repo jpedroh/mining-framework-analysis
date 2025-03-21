@@ -309,14 +309,26 @@ public class MethodNodeTest {
 				methodThatCointainsGet.contains(dw.getMethod("org.designwizard.design.Entity.getClassNode()")));
 		Assert.assertTrue(
 				methodThatCointainsGet.contains(dw.getMethod("org.designwizard.design.PackageNode.getAllMethods()")));
-		Assert.assertEquals(193, methodThatCointainsGet.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/left.java
+		assertEquals(193, methodThatCointainsGet.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/base.java
+		assertTrue(methodThatCointainsGet.size() == 189);
+=======
+		Assert.assertTrue(methodThatCointainsGet.size() == 189);
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/right.java
 
 		// Testa o retorno das method que terminam com a string "String)"
 		Set<MethodNode> methodsFinishingWithParenteses = dw.getMethods(".*(String(\\W))$");
 		Assert.assertFalse(methodsFinishingWithParenteses.isEmpty());
 		Assert.assertTrue(methodsFinishingWithParenteses
 				.contains(dw.getMethod("org.designwizard.design.Design.packageExtracted(java.lang.String)")));
-		Assert.assertEquals(130, methodsFinishingWithParenteses.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/left.java
+		assertEquals(130, methodsFinishingWithParenteses.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/base.java
+		assertTrue(methodsFinishingWithParenteses.size() == 125);
+=======
+		Assert.assertTrue(methodsFinishingWithParenteses.size() == 125);
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/right.java
 
 		// Testa o retorno das method que contém a string "get" ou ".set"
 		Set<MethodNode> methodsThatContainsGetOrSet = dw.getMethods(".*get.*|.*(\\W)set.*");
@@ -326,6 +338,12 @@ public class MethodNodeTest {
 		Assert.assertTrue(methodsThatContainsGetOrSet
 				.contains(dw.getMethod("org.designwizard.design.PackageNode.getAllMethods()")));
 		Assert.assertFalse(methodsThatContainsGetOrSet.contains(dw.getMethod("org.designwizard.api.util.FileUtil.reset()")));
-		Assert.assertEquals(226, methodsThatContainsGetOrSet.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/left.java
+		assertEquals(226, methodsThatContainsGetOrSet.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/base.java
+		assertTrue(methodsThatContainsGetOrSet.size() == 220);
+=======
+		Assert.assertTrue(methodsThatContainsGetOrSet.size() == 220);
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/e6622431f3d8f4212901815a6b367fe10d3e81d3/src_tests/tests/org/designwizard/design/MethodNodeTest.java/right.java
 	}	
 }
