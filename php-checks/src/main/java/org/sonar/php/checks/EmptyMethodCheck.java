@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.checks;
-
 import com.google.common.collect.Iterables;
 import java.util.Collections;
 import java.util.regex.Pattern;
@@ -35,32 +15,26 @@ import org.sonar.plugins.php.api.tree.lexical.SyntaxTrivia;
 import org.sonar.plugins.php.api.tree.statement.BlockTree;
 import org.sonar.plugins.php.api.visitors.PHPVisitorCheck;
 
-@Rule(key = "S1186")
-public class EmptyMethodCheck extends PHPVisitorCheck {
-
+@Rule(key = "S1186") public class EmptyMethodCheck extends PHPVisitorCheck {
   private static final String MESSAGE = "Add a nested comment explaining why this %s is empty, throw an Exception or complete the implementation.";
 
   private static final int MIN_WORD_CHARS = 3;
+
   private static final String VALUABLE_COMMENT_FORMAT = "\\w{%d}";
 
   private static final Pattern VALUABLE_COMMENT_PATTERN = Pattern.compile(String.format(VALUABLE_COMMENT_FORMAT, MIN_WORD_CHARS));
 
-
-  @Override
-  public void visitMethodDeclaration(MethodDeclarationTree tree) {
+  @Override public void visitMethodDeclaration(MethodDeclarationTree tree) {
     if (tree.body().is(Kind.BLOCK) && !(hasValuableBody((BlockTree) tree.body()) || isClassAbstract(tree) || hasCommentAbove(((PHPTree) tree).getFirstToken()))) {
       commitIssue(tree, "method");
     }
-
     super.visitMethodDeclaration(tree);
   }
 
-  @Override
-  public void visitFunctionDeclaration(FunctionDeclarationTree tree) {
+  @Override public void visitFunctionDeclaration(FunctionDeclarationTree tree) {
     if (!(hasValuableBody(tree.body()) || hasCommentAbove(((PHPTree) tree).getFirstToken()))) {
       commitIssue(tree, "function");
     }
-
     super.visitFunctionDeclaration(tree);
   }
 
@@ -79,8 +53,6 @@ public class EmptyMethodCheck extends PHPVisitorCheck {
     if (!tree.statements().isEmpty()) {
       return true;
     }
-
-    // Check whether there is a valuable comment in method body
     SyntaxTrivia trivia = Iterables.getLast(tree.closeCurlyBraceToken().trivias(), null);
     return trivia != null && isValuableComment(trivia);
   }
@@ -92,5 +64,4 @@ public class EmptyMethodCheck extends PHPVisitorCheck {
   private void commitIssue(FunctionTree tree, String type) {
     context().newIssue(this, tree, String.format(MESSAGE, type));
   }
-
 }
