@@ -2,7 +2,13 @@
  * This code is free software; you can redistribute it and/or modify it under
  * the terms of the new BSD License.
  *
+<<<<<<< /usr/src/app/output/koraktor/steam-condenser-java/38c728a429397a5e8c647045144da9fd12930c65/src/main/java/com/github/koraktor/steamcondenser/PacketBuffer.java/left.java
+ * Copyright (c) 2008-2013, Sebastian Staudt
+||||||| /usr/src/app/output/koraktor/steam-condenser-java/38c728a429397a5e8c647045144da9fd12930c65/src/main/java/com/github/koraktor/steamcondenser/PacketBuffer.java/base.java
+ * Copyright (c) 2008-2011, Sebastian Staudt
+=======
  * Copyright (c) 2008-2014, Sebastian Staudt
+>>>>>>> /usr/src/app/output/koraktor/steam-condenser-java/38c728a429397a5e8c647045144da9fd12930c65/src/main/java/com/github/koraktor/steamcondenser/PacketBuffer.java/right.java
  */
 
 package com.github.koraktor.steamcondenser;
